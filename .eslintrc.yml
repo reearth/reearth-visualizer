@@ -1,0 +1,120 @@
+env:
+  es6: true
+  node: true
+extends:
+  - eslint:recommended
+  - plugin:prettier/recommended
+parserOptions:
+  ecmaVersion: 2020
+plugins:
+  - prettier
+root: true
+rules:
+  prettier/prettier: warn
+overrides:
+  - files:
+      - '*.ts'
+      - '*.tsx'
+    parser: '@typescript-eslint/parser'
+    parserOptions:
+      sourceType: module
+    env:
+      browser: true
+      commonjs: true
+      node: false
+    plugins:
+      - react
+      - react-hooks
+      - '@typescript-eslint'
+      - testing-library
+    extends:
+      - plugin:react/recommended
+      - plugin:@typescript-eslint/recommended
+      - prettier/@typescript-eslint
+      - plugin:testing-library/recommended
+      - plugin:testing-library/react
+    rules:
+      '@typescript-eslint/explicit-function-return-type': 'off'
+      '@typescript-eslint/explicit-module-boundary-types': 'off'
+      '@typescript-eslint/interface-name-prefix': 'off'
+      '@typescript-eslint/no-empty-function': 'off'
+      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-unused-vars':
+        - 'error'
+        - argsIgnorePattern: '^_'
+          varsIgnorePattern: '^_'
+      '@typescript-eslint/no-use-before-define': 'off'
+      '@typescript-eslint/prefer-optional-chain': warn
+      '@typescript-eslint/ban-types': [
+        'error',
+        {
+          'extendDefaults': true,
+          'types': {
+            '{}': false
+          }
+        }
+      ]
+      no-undef: 'off'
+      react/prop-types: 'off'
+      react-hooks/rules-of-hooks: error
+      react-hooks/exhaustive-deps: warn
+    settings:
+      react:
+        version: detect
+  - files:
+      - '*.js'
+    extends:
+      - plugin:node/recommended
+    plugins:
+      - node
+    rules:
+      node/no-unpublished-require: 'off'
+      node/no-unpublished-import: 'off'
+  - files:
+      - src/**/queries.ts
+      - src/gql/fragments/*.ts
+    plugins:
+      - graphql
+    rules:
+      graphql/template-strings:
+        - error
+        - env: apollo
+      graphql/capitalized-type-name:
+        - error
+        - env: apollo
+      graphql/no-deprecated-fields:
+        - error
+        - env: apollo
+      graphql/required-fields:
+        - error
+        - env: apollo
+          requiredFields:
+            - id
+  # TODO: I want to apply Prettier to GraphQL documents
+  - files:
+      - src/**/*.graphql
+    plugins:
+      - graphql
+    rules:
+      graphql/template-strings:
+        - error
+        - env: literal
+      graphql/capitalized-type-name:
+        - error
+        - env: literal
+      graphql/no-deprecated-fields:
+        - error
+        - env: literal
+      graphql/required-fields:
+        - error
+        - env: literal
+          requiredFields:
+            - id
+  - files:
+      - cypress/**/*
+    parserOptions:
+      sourceType: module
+    extends:
+      - plugin:cypress/recommended
+    rules:
+      node/no-unsupported-features/es-syntax: [error, { ignores: [modules] }]

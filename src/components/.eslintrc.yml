@@ -1,0 +1,52 @@
+# ESLint rules for atomic design
+overrides:
+  - files: '**/*'
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - '@emotion/react'
+            - '@emotion/styled'
+  - files: atoms/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - '@reearth/gql'
+            - '@reearth/state'
+            - '@reearth/util/use-dnd'
+            - 'reach-router'
+          patterns:
+            - '@reearth/components/molecules/*'
+            - '@reearth/components/organisms/*'
+            - '@reearth/components/pages/*'
+  - files: molecules/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - '@reearth/gql'
+            - '@reearth/state'
+            - 'reach-router'
+          patterns:
+            - '@reearth/components/organisms/*'
+            - '@reearth/components/pages/*'
+  - files: organisms/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - patterns:
+            - '@reearth/components/pages/*'
+  - files: organisms/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - '@reearth/util/use-dnd'
+            - '@reearth/theme'
+  - files: pages/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - '@reearth/theme'

@@ -1,0 +1,395 @@
+src:
+  components:
+    atoms:
+      DropHolder:
+        '2563828564': Drop here
+      NotFound:
+        '4184561493': Notfound
+      PublicationStatus:
+        '739063002': Unpublished
+        '3640454975': Published
+    molecules:
+      Common:
+        AssetModal:
+          '164261147': Select Image
+          '388451950': Select Resource
+          '854575786': Assets Library
+          '1115770113': Save
+          '2229699602': Resource URL
+          '2599388697': Use URL
+          '3304605076': Add video URL
+          '3528672691': Cancel
+          '4035057905': Image URL
+          '4070151372': Select
+          AssetContainer:
+            '3057159632': Upload image
+            '3863945965': Upload file
+        Header:
+          '248888005': Account Settings
+          '2355459246': Logout
+        ProjectCreationModal:
+          '1215917108': Project Name
+          '2202304674': Select thumbnail image
+          '2794683164': Create New Project
+          '3374163063': Description
+          '3528672691': Cancel
+          '4120989039': Create
+        ProjectMenu:
+          '1936593459': Top page
+          '2222696742': Help
+          '2661706411': Datasets
+          '3029638665': Project settings
+          '3873048483': Manage projects
+        TeamMenu:
+          '763237856': Switch Workspace
+          '3828443189': New Workspace
+          '4157106658': Manage Workspaces
+        WorkspaceCreationModal:
+          '840520006': Create New Workspace
+          '2523193532': Workspace Name
+          '3528672691': Cancel
+          '4120989039': Create
+        plugin:
+          builtin:
+            blocks:
+              '463005216': Double click here to write.
+      Dashboard:
+        '499824730': >-
+          You have no projects in your workspace. Click the button above in the
+          Quick Start to create a project now!
+        '1068381306': User guide
+        '2148917173': '''s workspace'
+        '3428478975': New workspace
+        '3662865152': New project
+        '4173541988': Quick Start
+      EarthEditor:
+        DatasetPane:
+          '293739158': Add Dataset
+          '2446409280': No Dataset is here
+          '3786358103': Other Source
+          DatasetModal:
+            '293739158': Add Dataset
+            '489401013': sending...
+            '2280307158': 'Sorry, that service is unavailable at this time.'
+            '2842500457': Add dataset
+            '3162171995': Upload from your device
+            '3528672691': Cancel
+            '3980428931': Upload CSV file
+            '4064435443': 'Supports CSV, JSON, GIS files'
+        Earth:
+          FovSlider:
+            '3017293479': Narrow
+            '3291465140': Angle
+            '3723856417': Wide
+        ExportPane:
+          '3590336714': Export
+          '3977973714': Export type
+        Header:
+          '1458938618': Update
+          '1547167026': Publish
+          '2237014112': Unpublish
+          '3637715635': Preview
+        InfoBox:
+          InfoBox:
+            '3037025019': Move mouse here and click "+" to add content
+        LayerMultipleSelectionModal:
+          '1115770113': Save
+          '2221959784': Selectable Layers
+          '2703758654': Remove
+          '3096288057': Stories
+          '3099331554': Add
+          '3528672691': Cancel
+          '4258523167': Layer selection
+        LayerSelectionModal:
+          '1115770113': Save
+          '3528672691': Cancel
+          '4258523167': Layer selection
+        LayerTreeViewItem:
+          LayerActions:
+            '219790765': Create new folder.
+            '649072858': Delete selected layer.
+            '3062135486': Add Layer.
+        OutlinePane:
+          '1538011248': Scene
+          '1835798571': Layers
+          '2793623359': Widgets
+        PropertyPane:
+          '3453457092': Create Infobox
+          PropertyField:
+            CameraField:
+              '129313613': Position Set
+              '323753263': Pose Set
+              '1096873652': Not Set
+              '1843776221': Roll
+              '1956102114': Edit Position
+              '2095247710': Longtitude
+              '2222144661': Latitude
+              '2299790601': Pitch
+              '2468683988': Heading
+              '2671930823': Check Pose
+              '3067266584': Altitude
+              '3528672691': Cancel
+              '3553425520': Jump
+              '3821373974': Edit Pose
+              '4211710217': Capture
+            ColorField:
+              '1115770113': Save
+              '3528672691': Cancel
+            LocationField:
+              '2222144661': Latitude
+              '3067266584': Altitude
+              '4252415638': Longitude
+            NonEditableField:
+              '1777212703': 'This field is linked to {datasetField}.'
+              '3724530840': This field is not editable currently.
+            PropertyTitle:
+              PropertyLinkPanel:
+                '773082751': Clear this field
+                '910188724': No selectable items
+                '1055097961': Link to other datasets
+                '1592005573': Overridden
+                '1793784174': This field cannot be linked to any dataset
+                '1848096251': Unlink the dataset
+                '2426906682': Linked Dataset
+                '2737916394': Link to datasets
+                '2945406747': No linked dataset
+                '3068746276': Reset this field
+            URLField:
+              '1533357798': Not set
+          PropertyItem:
+            '367293545': >-
+              You are deleting the infobox and all its contents. Are you sure
+              you want to do that?
+            '660592555': OK
+            '3528672691': Cancel
+            '3645414921': Delete
+            '3682158234': Basic
+          PropertyList:
+            '179601186': List
+          WidgetToggleSwitch:
+            '2224658704': Enable
+        PublicationModal:
+          '383867403': Copy
+          '562103780': '**Warning**: This includes websites where this project is embedded.'
+          '660270439': Your project has been published!
+          '951834708': >-
+            Your published project will be updated. This means all current
+            changes will overwrite the current published project.
+          '1267684353': Publish your project
+          '1458938618': Update
+          '1545651299': Your project will be unpublished.
+          '1547167026': Publish
+          '1848511752': Public URL
+          '2051262815': Search engine indexing
+          '2324218928': Close
+          '2837536782': >-
+            * Please use this code if you want to embed your project into a
+            webpage
+          '3017637822': '* Anyone can see your project with this URL'
+          '3185451863': Congratulations!
+          '3528672691': Cancel
+          '3575955052': >-
+            Your project will be published. This means anybody with the below
+            URL will be able to view this project.
+          '3577703060': Ok
+          '3640052215': Continue
+          '3701940701': more options
+          '3733220817': >-
+            This means that anybody with the URL will become unable to view this
+            project.
+          '3869801582': Embed Code
+          '4062044511': Update your project
+      Settings:
+        Account:
+          AccountSection:
+            '1049124733': Service language
+            '1766832403': Email address
+            '2237029987': Password
+            '3198092477': Account
+          PasswordModal:
+            '539787951': Set your password now
+            '740918511': New password (for confirmation)
+            '1000887516': 'In order to protect your account, make sure your password:'
+            '1068339636': Change your password now
+            '1515529938': Is Longer than 8 characters
+            '2039038750': New password
+            '2521568990': Change Password
+            '3546326308': Use lowercase and uppercase letters
+            '3850603475': Old password
+            '4270021428': At least 2 different numbers
+          ProfileSection:
+            '636461959': Name
+            '1534468327': Profile
+            '2131015997': Profile picture
+        Navigation:
+          '165162143': Assets
+          '2057458630': Plugins
+          '2611517824': Workspaces
+          '3198092477': Account
+          '3503703629': Projects list
+          '3833270271': Dataset
+        Project:
+          ArchivedMessage:
+            '1354606874': Notice
+            '4112013314': >-
+              Most project settings are hidden for archived repositories. This
+              project mus be unarchived to make changes to them.
+          ChangeSiteNameModal:
+            '551846905': >-
+              You are about to change the site name for your project. Only
+              alphanumeric characters and hyphens are allows.
+            '1115770113': Save
+            '2397004844': Change site name
+            '3528672691': Cancel
+          DangerSection:
+            '16496977': >-
+              Archiving your project will put it into a state where you cannot
+              edit it or it's settings.
+            '181468144': This action cannot be undone.
+            '325391901': Please type your project name to continue.
+            '636677879': Danger Zone
+            '703292905': Archive this project
+            '1432074936': I am sure I want to unarchive this project.
+            '1692420285': >-
+              This will permanently delete the project. If the project was
+              published, this also means websites and domains referencing the
+              project will not be able to access it anymore.
+            '2368081840': Unarchive this project
+            '2747023189': >-
+              This will bring this repository back to a state it can be editted
+              and worked on by you and your team.
+            '2901501812': Unarchive project
+            '3084110538': I am sure I want to delete this project.
+            '3221869035': I am sure I want to archive this project.
+            '3314090612': Archive project
+            '3557712431': Delete project
+            '3640758950': >-
+              Once you delete a project, there is no going back. Please be
+              certain.
+            '3912825707': 'Once archived, you can unarchive the repository at any time.'
+            '4078297214': Mark this project as archived and read-only
+            '4235968010': Unarchive this project to become editable again.
+            '4258544441': Delete this project
+          ProfileSection:
+            '583832611': Project name
+            '1534468327': Profile
+            '2015762758': Thumbnail
+            '3374163063': Description
+          PublishSection:
+            '784802132': Site settings
+            '1485704502': >-
+              By default, once published your project will be accessible via the
+              URL below.
+            '3572249962': Site name
+          StatusSection:
+            '2025719264': This project is published with search engine indexing disabled.
+            '3306960224': This project is not published.
+            '4019421471': This project is published with search engine indexing enabled.
+        ProjectList:
+          ProjectCell:
+            '3038786653': No Title Project
+            '4204406466': No Description...
+          ProjectList:
+            '899189507': Current Projects
+            '1355637676': Archived Projects
+            '4146466746': New Project
+        SettingsHeader:
+          '893550186': (Your personal workspace)
+        Workspace:
+          AddMemberModal:
+            '2509478264': Add a team member
+            '2914740708': Input an email address or a user name
+            '3099331554': Add
+            '3528672691': Cancel
+          Asset:
+            AssetSection:
+              '1047600431': Add Asset
+              '3458626630': All Assets
+          DangerSection:
+            '181468144': This action cannot be undone.
+            '636677879': Danger Zone
+            '904076184': >-
+              Once you delete a workspace, there is no going back. Please be
+              certain.
+            '2478692658': Delete this workspace
+            '3240562240': Delete workspace
+            '3321682164': >-
+              This will permanently delete the workspace and all related
+              projects, assets and datasets for all team members.
+            '3399326760': I am sure I want to delete this workspace.
+            '4086722238': Please type your workspace name to continue.
+          Dataset:
+            DatasetItem:
+              '2065124393': Delete this dataset
+              '3112669357': Are you sure you want to delete it?
+              '3528672691': Cancel
+              '3645414921': Delete
+            DatasetSection:
+              '293739158': Add Dataset
+              '3833270271': Dataset
+          MemberListItem:
+            '1068157859': Writer
+            '1954432048': Reader
+            '3470351671': Owner
+          MembersSection:
+            '721495104': New member
+            '2734377620': Members
+          Plugin:
+            PluginAccordion:
+              PluginAccordionItem:
+                '31593394': Uninstall
+                '730907263': Installed
+                '3480550112': Install
+            PluginSection:
+              '3060204202': Under Construction. Coming Soon.
+              PluginInstall:
+                '149186996': Uploaded plugin
+                '311550959': Private GitHub repository
+                '1361263844': Public GitHub repository
+                '1889877734': Plugins lists
+                '3129492077': Zip file from PC
+              PluginList:
+                '1933254449': Advanced options
+          ProfileSection:
+            '2999985900': Workspace name
+        WorkspaceList:
+          WorkspaceCell:
+            '293600023': 'Team Members:'
+            '2968463849': This is your personal account
+            '3038786653': No Title Project
+          WorkspaceList:
+            '3435539653': All workspaces
+            '3828443189': New Workspace
+      TopPage:
+        '1405865627': Sign in
+    organisms:
+      EarthEditor:
+        LeftMenu:
+          '3127270027': Outline
+          '3833270271': Dataset
+        OutlinePane:
+          '24000205': Folder
+        RightMenu:
+          '422058490': Layer
+          '1538011248': Scene
+          '1676374721': Widget
+          '1884622259': Infobox
+          '3590336714': Export
+      Settings:
+        Account:
+          '3198092477': Account
+        Project:
+          Dataset:
+            '3833270271': Dataset
+          Plugin:
+            '2057458630': Plugins
+        ProjectList:
+          '2927642235': Projects List
+        Workspace:
+          Asset:
+            '165162143': Assets
+        WorkspaceList:
+          '2840189105': Workspaces list
+    pages:
+      TopPage:
+        '802859307': Sign in error

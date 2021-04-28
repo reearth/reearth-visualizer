@@ -1,0 +1,45 @@
+import React from "react";
+import { useIntl } from "react-intl";
+
+import useHooks from "./hooks";
+
+// Components
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
+import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
+import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import Loading from "@reearth/components/atoms/Loading";
+
+type Props = {
+  teamId: string;
+};
+
+const ProjectList: React.FC<Props> = ({ teamId }) => {
+  const intl = useIntl();
+  const {
+    loading,
+    currentProjects,
+    archivedProjects,
+    modalShown,
+    openModal,
+    handleModalClose,
+    createProject,
+    selectProject,
+  } = useHooks();
+
+  return (
+    <SettingPage teamId={teamId}>
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Projects List" })} />
+      <MoleculeProjectList
+        projects={currentProjects}
+        onProjectSelect={selectProject}
+        onCreationButtonClick={openModal}
+      />
+      <MoleculeProjectList projects={archivedProjects} archived onProjectSelect={selectProject} />
+      <ProjectCreationModal open={modalShown} onClose={handleModalClose} onSubmit={createProject} />
+      {loading && <Loading portal overlay />}
+    </SettingPage>
+  );
+};
+
+export default ProjectList;

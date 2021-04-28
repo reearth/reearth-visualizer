@@ -1,0 +1,11 @@
+Thumbs.db
+.DS_Store
+node_modules
+*.log
+/coverage
+/build
+/vendor
+/storybook-static
+__screenshots__
+/cypress/videos
+/cypress/screenshots

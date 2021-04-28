@@ -1,0 +1,32 @@
+overwrite: true
+schema: http://localhost:8080/api/graphql
+documents:
+  - src/**/queries.ts
+  - src/gql/fragments/*.ts
+  - src/**/*.graphql
+generates:
+  ./src/gql/graphql-client-api.tsx:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      useTypeImports: true
+      scalars:
+        DateTime: Date
+        FileSize: number
+        ID: string
+        Cursor: string
+        URL: string
+        PluginID: string
+        PluginExtensionID: string
+        PropertySchemaID: string
+        PropertySchemaFieldID: string
+  ./src/gql/graphql.schema.json:
+    plugins:
+      - introspection
+  ./src/gql/fragmentMatcher.json:
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 3

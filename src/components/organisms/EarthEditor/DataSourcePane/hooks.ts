@@ -1,0 +1,131 @@
+import { useMemo, useCallback } from "react";
+
+import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
+import {
+  useGetAllDataSetsQuery,
+  useAddLayerGroupFromDatasetSchemaMutation,
+  useSyncDatasetMutation,
+  useImportDatasetMutation,
+  useRemoveDatasetMutation,
+} from "@reearth/gql";
+import { useLocalState } from "@reearth/state";
+import { useApolloClient } from "@apollo/client";
+
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+
+const pluginId = "reearth";
+const extensionId = "marker";
+
+export default () => {
+  const [{ sceneId }, setLocalState] = useLocalState(s => ({
+    sceneId: s.sceneId,
+  }));
+  const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
+
+  const { data, loading } = useGetAllDataSetsQuery({
+    variables: { sceneId: sceneId || "" },
+    skip: !sceneId,
+  });
+
+  const datasetSchemas = useMemo(
+    () =>
+      data
+        ? data.datasetSchemas.nodes
+            .map<DatasetSchema | undefined>(n =>
+              n
+                ? {
+                    id: n.id,
+                    name: n.name,
+                    source: n.source as DataSource,
+                    totalCount: n.datasets.totalCount,
+                    onDrop: async (layerId: string, index?: number) => {
+                      await addLayerGroupFromDatasetSchemaMutation({
+                        variables: {
+                          parentLayerId: layerId,
+                          datasetSchemaId: n.id,
+                          pluginId,
+                          extensionId,
+                          index,
+                        },
+                        refetchQueries: ["GetLayers"],
+                      });
+                    },
+                  }
+                : undefined,
+            )
+            .filter((e): e is DatasetSchema => !!e)
+        : [],
+    [addLayerGroupFromDatasetSchemaMutation, data],
+  );
+
+  // dataset sync
+  const client = useApolloClient();
+  const [syncData] = useSyncDatasetMutation();
+
+  const handleDatasetSync = useCallback(
+    async (value: string) => {
+      if (!sceneId) return;
+      await syncData({
+        variables: { sceneId, url: value },
+      });
+      // re-render
+      await client.resetStore();
+    },
+    [client, sceneId, syncData],
+  );
+
+  const [importData] = useImportDatasetMutation();
+
+  const handleDatasetImport = useCallback(
+    async (file: File, schemeId: string | null) => {
+      if (!sceneId) return;
+      await importData({
+        variables: {
+          file,
+          sceneId,
+          datasetSchemaId: schemeId,
+        },
+      });
+      // re-render
+      await client.resetStore();
+    },
+    [client, importData, sceneId],
+  );
+
+  const [removeDatasetSchema] = useRemoveDatasetMutation();
+  const handleRemoveDataset = useCallback(
+    async (schemaId: string) => {
+      await removeDatasetSchema({
+        variables: {
+          schemaId,
+          force: true,
+        },
+      });
+      // re-render
+      await client.resetStore();
+    },
+    [client, removeDatasetSchema],
+  );
+
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setLocalState({
+        notification: {
+          type: type,
+          text: text,
+        },
+      });
+    },
+    [setLocalState],
+  );
+
+  return {
+    datasetSchemas,
+    handleDatasetSync,
+    handleDatasetImport,
+    handleRemoveDataset,
+    loading,
+    onNotify,
+  };
+};

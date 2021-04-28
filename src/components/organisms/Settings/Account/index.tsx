@@ -1,0 +1,38 @@
+import React from "react";
+import { useIntl } from "react-intl";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import ProfileSection from "@reearth/components/molecules/Settings/Account/ProfileSection";
+import AccountSection from "@reearth/components/molecules/Settings/Account/AccountSection";
+import useHooks from "./hooks";
+
+export type Props = {};
+
+const Account: React.FC<Props> = () => {
+  const intl = useIntl();
+  const {
+    currentTeam,
+    currentProject,
+    me,
+    hasPassword,
+    updateName,
+    updatePassword,
+    updateLanguage,
+  } = useHooks();
+
+  return (
+    <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Account" })} />
+      <ProfileSection username={me?.name} updateName={updateName} />
+      <AccountSection
+        email={me?.email}
+        lang={me?.lang}
+        hasPassword={hasPassword}
+        updatePassword={updatePassword}
+        updateLanguage={updateLanguage}
+      />
+    </SettingPage>
+  );
+};
+
+export default Account;
