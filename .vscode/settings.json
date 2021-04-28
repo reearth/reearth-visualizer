@@ -1,0 +1,33 @@
+{
+  "editor.formatOnSave": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": [
+    "--fast"
+  ],
+  "yaml.format.enable": true,
+  "yaml.completion": true,
+  "yaml.validate": true,
+  "yaml.hover": true,
+  "yaml.schemas": {
+    "./plugin_manifest_schema.json": [
+      "/pkg/builtin/manifest.yml"
+    ],
+    "./plugin_manifest_schema_translation.json": [
+      "/pkg/builtin/manifest_*.yml"
+    ]
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/pkg/builtin/manifest.json"
+      ],
+      "url": "./plugin_manifest_schema.json"
+    },
+    {
+      "fileMatch": [
+        "/pkg/builtin/manifest_*.json"
+      ],
+      "url": "./plugin_manifest_schema_translation.json"
+    }
+  ]
+}

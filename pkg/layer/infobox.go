@@ -1,0 +1,163 @@
+package layer
+
+import (
+	"errors"
+	"fmt"
+
+	"github.com/reearth/reearth-backend/pkg/builtin"
+	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/property"
+)
+
+type Infobox struct {
+	property id.PropertyID
+	fields   []*InfoboxField
+	// for checking duplication
+	ids map[id.InfoboxFieldID]struct{}
+}
+
+func NewInfobox(fields []*InfoboxField, p id.PropertyID) *Infobox {
+	infobox := Infobox{
+		property: p,
+		fields:   make([]*InfoboxField, len(fields)),
+		ids:      make(map[id.InfoboxFieldID]struct{}, len(fields)),
+	}
+	for i, f := range fields {
+		if f == nil {
+			continue
+		}
+		infobox.fields[i] = f
+		infobox.ids[f.ID()] = struct{}{}
+	}
+	return &infobox
+}
+
+func (i *Infobox) Property() id.PropertyID {
+	return i.property
+}
+
+func (i *Infobox) PropertyRef() *id.PropertyID {
+	if i == nil {
+		return nil
+	}
+	pid := i.property
+	return &pid
+}
+
+func (i *Infobox) Fields() []*InfoboxField {
+	if i == nil {
+		return nil
+	}
+	return append([]*InfoboxField{}, i.fields...)
+}
+
+func (i *Infobox) Field(field id.InfoboxFieldID) *InfoboxField {
+	for _, f := range i.fields {
+		if f.ID() == field {
+			return f
+		}
+	}
+	return nil
+}
+
+func (i *Infobox) FieldAt(index int) *InfoboxField {
+	if i == nil || index < 0 || len(i.fields) <= index {
+		return nil
+	}
+	return i.fields[index]
+}
+
+func (i *Infobox) Has(id id.InfoboxFieldID) bool {
+	_, ok := i.ids[id]
+	return ok
+}
+
+func (i *Infobox) Count() int {
+	return len(i.fields)
+}
+
+func (i *Infobox) Add(field *InfoboxField, index int) {
+	l := len(i.fields)
+	if index < 0 || l <= index {
+		index = l
+	}
+
+	id := field.ID()
+	if i.Has(id) {
+		return
+	}
+	i.fields = append(i.fields[:index], append([]*InfoboxField{field}, i.fields[index:]...)...)
+	i.ids[id] = struct{}{}
+}
+
+func (i *Infobox) Move(field id.InfoboxFieldID, toIndex int) {
+	for fromIndex, f := range i.fields {
+		if f.ID() == field {
+			i.MoveAt(fromIndex, toIndex)
+			return
+		}
+	}
+}
+
+func (i *Infobox) MoveAt(fromIndex int, toIndex int) {
+	l := len(i.fields)
+	if fromIndex < 0 || l <= fromIndex {
+		return
+	}
+	if toIndex < 0 || l <= toIndex {
+		toIndex = l - 1
+	}
+	f := i.fields[fromIndex]
+
+	i.fields = append(i.fields[:fromIndex], i.fields[fromIndex+1:]...)
+	newSlice := make([]*InfoboxField, toIndex+1)
+	copy(newSlice, i.fields[:toIndex])
+	newSlice[toIndex] = f
+	i.fields = append(newSlice, i.fields[toIndex:]...)
+}
+
+func (i *Infobox) Remove(field id.InfoboxFieldID) {
+	for index, f := range i.fields {
+		if f.ID() == field {
+			i.RemoveAt(index)
+			return
+		}
+	}
+}
+
+func (i *Infobox) RemoveAt(index int) {
+	l := len(i.fields)
+	if index < 0 || l <= index {
+		index = l
+	}
+
+	f := i.fields[index]
+	if index == l {
+		i.fields = i.fields[:index]
+	} else {
+		i.fields = append(i.fields[:index], i.fields[index+1:]...)
+	}
+	delete(i.ids, f.ID())
+}
+
+func (i *Infobox) ValidateProperties(pm property.Map) error {
+	if i == nil || pm == nil {
+		return nil
+	}
+
+	lp := pm[i.property]
+	if lp == nil {
+		return errors.New("property does not exist")
+	}
+	if lp.Schema() != builtin.PropertySchemaIDInfobox {
+		return errors.New("property has a invalid schema")
+	}
+
+	for i, f := range i.fields {
+		if err := f.ValidateProperty(pm); err != nil {
+			return fmt.Errorf("field[%d](%s): %w", i, f.ID(), err)
+		}
+	}
+
+	return nil
+}

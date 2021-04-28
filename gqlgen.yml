@@ -1,0 +1,35 @@
+# .gqlgen.yml example
+#
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+
+schema:
+  - schema.graphql
+exec:
+  filename: internal/graphql/generated.go
+model:
+  filename: internal/adapter/graphql/models_gen.go
+resolver:
+  filename: internal/graphql/resolver.go
+  type: Resolver
+models:
+  DateTime:
+    model: github.com/99designs/gqlgen/graphql.Time
+  FileSize:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  ID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.ID
+  Cursor:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.Cursor
+  URL:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.URL
+  PluginID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.PluginID
+  PluginExtensionID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.PluginExtensionID
+  PropertySchemaID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.PropertySchemaID
+  PropertySchemaFieldID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.PropertySchemaFieldID
+  TranslatedString:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.Map

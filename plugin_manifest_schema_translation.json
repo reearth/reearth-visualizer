@@ -1,0 +1,126 @@
+{
+  "$id": "https://app.reearth.io/schemas/plugin-manifest-translation",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "description": "Re:Earth plugin manifest schema translation",
+  "definitions": {
+    "propertySchemaField": {
+      "$id": "#propertySchemaField",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "choices": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[A-Za-z]{1}[\\w-:.]{0,}$": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "propertySchemaGroup": {
+      "$id": "#propertySchemaGroup",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[A-Za-z]{1}[\\w-:.]{0,}$": {
+              "$ref": "#/definitions/propertySchemaField"
+            }
+          }
+        }
+      }
+    },
+    "propertySchema": {
+      "$id": "#propertySchema",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Za-z]{1}[\\w-:.]{0,}$": {
+          "$ref": "#/definitions/propertySchemaGroup"
+        }
+      }
+    },
+    "extension": {
+      "$id": "#extension",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "propertySchema": {
+          "$ref": "#/definitions/propertySchema"
+        }
+      }
+    },
+    "root": {
+      "$id": "#root",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z]{1}[\\w-:.]{0,}$": {
+              "$ref": "#/definitions/extension"
+            }
+          }
+        },
+        "schema": {
+          "$ref": "#/definitions/propertySchema"
+        }
+      }
+    }
+  },
+  "$ref": "#/definitions/root"
+}

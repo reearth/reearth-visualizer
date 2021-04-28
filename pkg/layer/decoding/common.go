@@ -1,0 +1,531 @@
+package decoding
+
+import (
+	"errors"
+	"fmt"
+	"math"
+
+	"github.com/reearth/reearth-backend/pkg/builtin"
+	"github.com/reearth/reearth-backend/pkg/czml"
+	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/kml"
+	"github.com/reearth/reearth-backend/pkg/property"
+)
+
+var (
+	ErrBadColor  = errors.New("bad color")
+	ErrFieldType = errors.New("incompatible field Type")
+)
+
+var (
+	extensions = map[string]id.PluginExtensionID{
+		"Point":    id.PluginExtensionID("marker"),
+		"Polygon":  id.PluginExtensionID("polygon"),
+		"Polyline": id.PluginExtensionID("polyline"),
+	}
+	propertySchemas = map[string]id.PropertySchemaID{
+		"Point":    id.MustPropertySchemaID("reearth/marker"),
+		"Polygon":  id.MustPropertySchemaID("reearth/polygon"),
+		"Polyline": id.MustPropertySchemaID("reearth/polyline"),
+	}
+	propertyItems  = id.PropertySchemaFieldID("default")
+	propertyFields = map[string]id.PropertySchemaFieldID{
+		"Point":    id.PropertySchemaFieldID("location"),
+		"Polygon":  id.PropertySchemaFieldID("polygon"),
+		"Polyline": id.PropertySchemaFieldID("coordinates"),
+	}
+)
+
+func rgbaToHex(rgba []int64) (string, error) {
+	hex := ""
+	if len(rgba) != 4 {
+		return "", ErrBadColor
+	}
+	for _, i := range rgba {
+		if i > 255 || i < 0 {
+			return "", ErrBadColor
+		}
+		h := fmt.Sprintf("%x", i)
+		if len(h) == 1 {
+			h += "0"
+		}
+		hex += h
+	}
+	return hex, nil
+}
+
+func rgbafToHex(rgbaf []float64) (string, error) {
+	var rgba []int64
+	if len(rgbaf) != 4 {
+		return "", ErrBadColor
+	}
+	for _, f := range rgbaf {
+		var i int64
+		if f > 1.0 {
+			return "", ErrBadColor
+		} else if f == 1.0 {
+			i = 255
+		} else {
+			i = int64(math.Floor(f * 256))
+		}
+
+		rgba = append(rgba, i)
+	}
+	return rgbaToHex(rgba)
+}
+
+func MustCreateProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) *property.Property {
+	p, err := createProperty(t, v, sceneID, styleItem, extension)
+	if err != nil {
+		panic(err)
+	}
+	return p
+}
+
+func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
+	propertySchema := propertySchemas[t]
+	item := propertyItems
+	field := propertyFields[t]
+	ps := builtin.GetPropertySchema(propertySchema)
+	p, err := property.
+		New().
+		NewID().
+		Scene(sceneID).
+		Schema(propertySchema).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+	f, _, _, _ := p.GetOrCreateField(
+		ps,
+		property.PointFieldBySchemaGroup(item, field),
+	)
+
+	switch t {
+	case "Point":
+		if pf, ok := v.(property.LatLngHeight); ok {
+			v2, ok := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
+			if !ok {
+				return nil, ErrFieldType
+			}
+			f.UpdateUnsafe(v2)
+
+			v3, ok := property.ValueTypeNumber.ValueFrom(pf.Height)
+			if !ok {
+				return nil, ErrFieldType
+			}
+			f2, _, _, _ := p.GetOrCreateField(
+				ps,
+				property.PointFieldBySchemaGroup(item, "height"),
+			)
+
+			f2.UpdateUnsafe(v3)
+		} else if pf, ok := v.(property.LatLng); ok {
+			v2, ok := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
+			if !ok {
+				return nil, ErrFieldType
+			}
+			f.UpdateUnsafe(v2)
+		}
+
+		switch extension {
+		case "kml":
+			s, ok := styleItem.(kml.Style)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+			if s.IconStyle.Icon != nil && len(s.IconStyle.Icon.Href) > 0 {
+				imageValue, ok := property.ValueTypeURL.ValueFrom(s.IconStyle.Icon.Href)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				imageField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "image"),
+				)
+				imageField.UpdateUnsafe(imageValue)
+			}
+			if s.IconStyle.Scale != 0 {
+				scaleValue, ok := property.ValueTypeNumber.ValueFrom(s.IconStyle.Scale)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				scaleField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "imageSize"),
+				)
+				scaleField.UpdateUnsafe(scaleValue)
+			}
+			if len(s.IconStyle.Color) > 0 {
+				colorValue, ok := property.ValueTypeString.ValueFrom(s.IconStyle.Color)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "pointColor"),
+				)
+				colorField.UpdateUnsafe(colorValue)
+			}
+		case "geojson":
+			s, ok := styleItem.(string)
+			if !ok {
+				return nil, ErrFieldType
+			}
+			if len(s) > 0 {
+				colorValue, ok := property.ValueTypeString.ValueFrom(s)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "pointColor"),
+				)
+				colorField.UpdateUnsafe(colorValue)
+			}
+		case "czml":
+			s, ok := styleItem.(*czml.Point)
+			if !ok {
+				return nil, ErrFieldType
+			}
+			if len(s.Color) > 0 {
+				colorValue, ok := property.ValueTypeString.ValueFrom(s.Color)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "pointColor"),
+				)
+				colorField.UpdateUnsafe(colorValue)
+			}
+			if s.PixelSize != 0 {
+				sizeValue, ok := property.ValueTypeNumber.ValueFrom(s.PixelSize)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				sizeField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "pointSize"),
+				)
+				sizeField.UpdateUnsafe(sizeValue)
+			}
+		}
+	case "Polygon":
+		v2, ok := property.ValueTypePolygon.ValueFrom(v)
+		if !ok {
+			return nil, ErrFieldType
+		}
+		f.UpdateUnsafe(v2)
+
+		switch extension {
+		case "kml":
+			s, ok := styleItem.(kml.Style)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+			if s.PolyStyle.Stroke {
+				stroke, ok := property.ValueTypeBool.ValueFrom(s.PolyStyle.Stroke)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				strokeField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "stroke"),
+				)
+				strokeField.UpdateUnsafe(stroke)
+			}
+			if s.LineStyle.Width != 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+			if len(s.LineStyle.Color) > 0 {
+				color, ok := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+			if s.PolyStyle.Fill {
+				fill, ok := property.ValueTypeBool.ValueFrom(s.PolyStyle.Fill)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				fillField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "fill"),
+				)
+				fillField.UpdateUnsafe(fill)
+			}
+			if len(s.PolyStyle.Color) > 0 {
+				color, ok := property.ValueTypeString.ValueFrom(s.PolyStyle.Color)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "fillColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+
+		case "czml":
+			s, ok := styleItem.(*czml.Polygon)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+			if s.Stroke {
+				stroke, ok := property.ValueTypeBool.ValueFrom(s.Stroke)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				strokeField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "stroke"),
+				)
+				strokeField.UpdateUnsafe(stroke)
+			}
+			if s.StrokeWidth != 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+			if s.StrokeColor != nil {
+				var colorValue string
+				var err error
+				if len(s.StrokeColor.RGBA) > 0 {
+					colorValue, err = rgbaToHex(s.StrokeColor.RGBA)
+					if err != nil {
+						return nil, err
+					}
+				}
+				if len(s.StrokeColor.RGBAF) > 0 {
+					colorValue, err = rgbafToHex(s.StrokeColor.RGBAF)
+					if err != nil {
+						return nil, err
+					}
+				}
+				color, ok := property.ValueTypeString.ValueFrom(colorValue)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+			if s.Fill {
+				fill, ok := property.ValueTypeBool.ValueFrom(s.Fill)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				fillField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "fill"),
+				)
+				fillField.UpdateUnsafe(fill)
+			}
+			if s.Material.SolidColor.Color != nil {
+				var colorValue string
+				var err error
+				if len(s.Material.SolidColor.Color.RGBA) > 0 {
+					colorValue, err = rgbaToHex(s.Material.SolidColor.Color.RGBA)
+					if err != nil {
+						return nil, err
+					}
+				}
+				if len(s.Material.SolidColor.Color.RGBAF) > 0 {
+					colorValue, err = rgbafToHex(s.Material.SolidColor.Color.RGBAF)
+					if err != nil {
+						return nil, err
+					}
+				}
+				color, ok := property.ValueTypeString.ValueFrom(colorValue)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "fillColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+		case "geojson":
+			s, ok := styleItem.(GeoStyle)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+
+			if s.StrokeWidth > 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+
+			if len(s.FillColor) > 0 {
+				fill, ok := property.ValueTypeString.ValueFrom(s.FillColor)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				fillField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "fillColor"),
+				)
+				fillField.UpdateUnsafe(fill)
+			}
+
+			if len(s.StrokeColor) > 0 {
+				color, ok := property.ValueTypeString.ValueFrom(s.StrokeColor)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+		}
+
+	case "Polyline":
+		v2, ok := property.ValueTypeCoordinates.ValueFrom(v)
+		if !ok {
+			return nil, ErrFieldType
+		}
+		f.UpdateUnsafe(v2)
+
+		switch extension {
+		case "kml":
+			s, ok := styleItem.(kml.Style)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+
+			if len(s.LineStyle.Color) > 0 {
+				color, ok := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+
+			if s.LineStyle.Width != 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+		case "czml":
+			s, ok := styleItem.(*czml.Polyline)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+
+			if s.Width != 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.Width)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+
+			if s.Material.PolylineOutline.Color != nil {
+				var colorValue string
+				var err error
+
+				if len(s.Material.PolylineOutline.Color.RGBA) > 0 {
+					colorValue, err = rgbaToHex(s.Material.PolylineOutline.Color.RGBA)
+					if err != nil {
+						return nil, err
+					}
+				}
+
+				if len(s.Material.PolylineOutline.Color.RGBAF) > 0 {
+					colorValue, err = rgbafToHex(s.Material.PolylineOutline.Color.RGBAF)
+					if err != nil {
+						return nil, err
+					}
+				}
+
+				color, ok := property.ValueTypeString.ValueFrom(colorValue)
+				if !ok {
+					return nil, ErrFieldType
+				}
+
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+		case "geojson":
+			s, ok := styleItem.(GeoStyle)
+			if !ok && styleItem != nil {
+				return nil, ErrFieldType
+			}
+
+			if s.StrokeWidth > 0 {
+				width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				widthField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeWidth"),
+				)
+				widthField.UpdateUnsafe(width)
+			}
+
+			if len(s.StrokeColor) > 0 {
+				color, ok := property.ValueTypeString.ValueFrom(s.StrokeColor)
+				if !ok {
+					return nil, ErrFieldType
+				}
+				colorField, _, _, _ := p.GetOrCreateField(
+					ps,
+					property.PointFieldBySchemaGroup(item, "strokeColor"),
+				)
+				colorField.UpdateUnsafe(color)
+			}
+		}
+	}
+
+	return p, nil
+}

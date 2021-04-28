@@ -1,0 +1,28 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+.DS_Store
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Editor
+.idea
+
+# reearth
+/reearth
+/reearth-backend
+__debug_bin
+/data
+/bin
+/debug
+/mongo
+.env.local
+/coverage.txt
+/web

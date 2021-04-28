@@ -1,0 +1,1027 @@
+id: reearth
+system: true
+title: Re:Earth Official Plugin
+description: Official Plugin
+author: Re:Earth
+extensions:
+  - id: cesium
+    title: Cesium
+    description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
+    visualizer: cesium
+    type: visualizer
+    schema:
+      groups:
+        - id: default
+          title: Scene
+          fields:
+            - id: camera
+              type: camera
+              title: Initial camera position
+              description: The starting position of your project.
+            - id: terrain
+              type: bool
+              title: Terrain
+              description: Show elevation when close to the surface.
+            - id: skybox
+              type: bool
+              title: Sky
+              defaultValue: true
+              description: Show the stars.
+            - id: bgcolor
+              type: string
+              title: Background color
+              description: With Sky disabled, choose a background color.
+              ui: color
+            - id: ion
+              type: string
+              title: Cesium Ion API access token
+              description: Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.
+        - id: tiles
+          title: Tiles
+          description: You may change the look of the Earth by obtaining map tile data and setting it here.
+          list: true
+          representativeField: tile_type
+          fields:
+            - id: tile_type
+              type: string
+              title: Tile Type
+              defaultValue: default
+              choices:
+                - key: default
+                  label: Default
+                - key: default_label
+                  label: Labelled
+                - key: default_road
+                  label: Road Map
+                - key: stamen_watercolor
+                  label: Stamen Watercolor
+                - key: stamen_toner
+                  label: Stamen Toner
+                - key: open_street_map
+                  label: Open Street Map
+                - key: esri_world_topo
+                  label: ESRI Topography
+                - key: black_marble
+                  label: Earth at night
+                - key: japan_gsi_standard
+                  label: Japan GSI Standard Map
+                - key: url
+                  label: URL
+            - id: tile_url
+              type: string
+              title: Tile map URL
+              availableIf:
+                field: tile_type
+                type: string
+                value: url
+            - id: tile_minLevel
+              type: number
+              title: Minimum zoom level
+              min: 0
+              max: 30
+            - id: tile_maxLevel
+              type: number
+              title: Maximum zoom level
+              min: 0
+              max: 30
+        - id: atmosphere
+          title: Atmospheric Conditions
+          description: Set the look and feel of the Earth.
+          fields:
+            - id: enable_sun
+              type: bool
+              title: Sun
+              defaultValue: true
+              description: Display the Sun.
+            - id: enable_lighting
+              type: bool
+              title: Lighting
+              defaultValue: false
+              description: Display natural lighting from the sun.
+            - id: ground_atmosphere
+              type: bool
+              title: Ground atmosphere
+              defaultValue: true
+              description: Display a lower atmospheric layer.
+            - id: sky_atmosphere
+              type: bool
+              title: Sky atmosphere
+              defaultValue: true
+              description: Display an upper atmospheric layer.
+            - id: fog
+              type: bool
+              title: Fog
+              defaultValue: true
+              description: Display customizable fog.
+            - id: fog_density
+              type: number
+              title: Fog density
+              defaultValue: 2.0e-4
+              description: "Set a thickness to the fog. Min: 0 Max: 1"
+              min: 0
+              max: 1
+            - id: brightness_shift
+              type: number
+              title: Fog Brightness
+              defaultValue: 0.03
+              description: "Set brightness of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+            - id: hue_shift
+              type: number
+              title: Fog Hue
+              description: "Set hue of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+            - id: surturation_shift
+              type: number
+              title: Fog Saturation
+              description: "Set saturation of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+  - id: infobox
+    title: Infobox
+    visualizer: cesium
+    type: infobox
+    description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: size
+              type: string
+              title: Size Type
+              defaultValue: small
+              choices:
+                - key: small
+                  label: Small
+                - key: large
+                  label: Large
+            - id: bgcolor
+              type: string
+              title: Background Color
+              ui: color
+            - id: typography
+              type: typography
+              title: Font
+  - id: marker
+    visualizer: cesium
+    type: primitive
+    title: Marker
+    description: A standard map marker.
+    schema:
+      groups:
+        - id: default
+          title: Marker
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: style
+              type: string
+              title: Style
+              defaultValue: image
+              choices:
+                - key: point
+                  label: Point
+                - key: image
+                  label: Icon
+            - id: pointColor
+              type: string
+              title: Point color
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: pointSize
+              type: number
+              title: Point size
+              defaultValue: 10
+              min: 0
+              suffix: px
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageSize
+              type: number
+              title: Image scale
+              defaultValue: 1
+              min: 0
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageHorizontalOrigin
+              type: string
+              title: Image horizontal origin
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageVerticalOrigin
+              type: string
+              title: Image vertical origin
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: baseline
+                  label: Baseline
+                - key: bottom
+                  label: Bottom
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageCrop
+              type: string
+              title: Image crop
+              defaultValue: none
+              choices:
+                - key: none
+                  label: None
+                # - key: rounded
+                #   label: Rounded
+                - key: circle
+                  label: Circle
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadow
+              type: bool
+              title: Image shadow
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadowColor
+              type: string
+              title: Shadow color
+              ui: color
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowBlur
+              type: number
+              title: Shadow radius
+              defaultValue: 3
+              suffix: px
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionX
+              type: number
+              title: Shadow X
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionY
+              type: number
+              title: Shadow Y
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: label
+              type: bool
+              title: Label
+            - id: labelText
+              type: string
+              title: Label text
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelTypography
+              type: typography
+              title: Label font
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: extrude
+              type: bool
+              title: Extruded
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: location
+        url:
+          schemaGroupId: default
+          fieldId: image
+  - id: polyline
+    visualizer: cesium
+    type: primitive
+    title: Polyline
+    description: Polyline primitive
+    schema:
+      groups:
+        - id: default
+          title: Polyline
+          fields:
+            - id: coordinates
+              type: coordinates
+              title: Coordinates
+            - id: strokeColor
+              type: string
+              title: Stroke color
+              ui: color
+            - id: strokeWidth
+              type: number
+              title: Stroke width
+              min: 0
+              defaultValue: 1
+              suffix: px
+  - id: polygon
+    visualizer: cesium
+    type: primitive
+    title: Polygon
+    description: Polygon primitive
+    schema:
+      groups:
+        - id: default
+          title: Polygon
+          fields:
+            - id: polygon
+              type: polygon
+              title: Polygon
+            - id: fill
+              type: bool
+              title: Fill
+              defaultValue: true
+            - id: fillColor
+              type: string
+              title: Fill color
+              ui: color
+              availableIf:
+                field: fill
+                type: bool
+                value: true
+            - id: stroke
+              type: bool
+              title: Stroke
+            - id: strokeColor
+              type: string
+              title: Stroke color
+              ui: color
+              availableIf:
+                field: stroke
+                type: bool
+                value: true
+            - id: strokeWidth
+              type: number
+              title: Stroke width
+              min: 0
+              defaultValue: 1
+              suffix: px
+              availableIf:
+                field: stroke
+                type: bool
+                value: true
+  - id: rect
+    visualizer: cesium
+    type: primitive
+    title: Rectangle
+    description: Rectangle primitive
+    schema:
+      groups:
+        - id: default
+          title: Rectangle
+          fields:
+            - id: rect
+              type: rect
+              title: Rect
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: extrudedHeight
+              type: number
+              title: Extruded height
+              min: 0
+            - id: style
+              type: string
+              title: Style
+              defaultValue: color
+              choices:
+                - key: color
+                  label: Color
+                - key: image
+                  label: Image
+            - id: fillColor
+              type: string
+              title: Fill
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: color
+            - id: image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: style
+                type: string
+                value: image
+  - id: photooverlay
+    visualizer: cesium
+    type: primitive
+    title: Photo overlay
+    description: An Icon marker that allows you to set a photo that will appear after reaching its location.
+    schema:
+      groups:
+        - id: default
+          title: Photo overlay
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: height
+              type: number
+              title: Height
+            - id: camera
+              type: camera
+              title: Camera
+              description: Set the camera position for the overlay.
+            - id: image
+              type: url
+              ui: image
+              title: Icon
+            - id: imageSize
+              type: number
+              title: Icon size
+              prefix: x
+              defaultValue: 1
+            - id: imageHorizontalOrigin
+              type: string
+              title: Image horizontal origin
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+            - id: imageVerticalOrigin
+              type: string
+              title: Image vertical origin
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: baseline
+                  label: Baseline
+                - key: bottom
+                  label: Bottom
+            - id: imageCrop
+              type: string
+              title: Icon crop
+              defaultValue: none
+              choices:
+                - key: none
+                  label: None
+                # - key: rounded
+                #   label: Rounded
+                - key: circle
+                  label: Circle
+            - id: imageShadow
+              type: bool
+              title: Icon shadow
+            - id: imageShadowColor
+              type: string
+              title: Shadow color
+              ui: color
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowBlur
+              type: number
+              title: Shadow radius
+              defaultValue: 3
+              suffix: px
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionX
+              type: number
+              title: Shadow X
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionY
+              type: number
+              title: Shadow Y
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: photoOverlayImage
+              type: url
+              title: Photo
+              ui: image
+            - id: photoOverlayDescription
+              type: string
+              ui: multiline
+              title: Photo description
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: location
+  - id: ellipsoid
+    visualizer: cesium
+    type: primitive
+    title: Sphere
+    description: A ball-like marker.
+    schema:
+      groups:
+        - id: default
+          title: Ellipsoid
+          fields:
+            - id: position
+              type: latlng
+              title: Position
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: radius
+              type: number
+              title: Radius
+              defaultValue: 1000
+              min: 0
+              suffix: m
+            - id: fillColor
+              type: string
+              title: Fill
+              ui: color
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: position
+  - id: resource
+    visualizer: cesium
+    type: primitive
+    title: File
+    description: Import your own primitives to be used instead of Re:Earth's built in ones.
+    schema:
+      groups:
+        - id: default
+          title: File
+          fields:
+            - id: url
+              type: url
+              title: File URL
+              ui: file
+            - id: type
+              type: string
+              title: File format
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: kml
+                  label: KML
+                - key: geojson
+                  label: GeoJSON / TopoJSON
+                - key: czml
+                  label: CZML
+  - id: textblock
+    visualizer: cesium
+    type: block
+    title: Text
+    description: Text block
+    schema:
+      groups:
+        - id: default
+          title: Text block
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+            - id: markdown
+              type: bool
+              title: Use markdown
+            - id: typography
+              type: typography
+              title: Font
+  - id: imageblock
+    visualizer: cesium
+    type: block
+    title: Image
+    description: Image block
+    schema:
+      groups:
+        - id: default
+          title: Image block
+          fields:
+            - id: image
+              type: url
+              title: Image
+              ui: image
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+            - id: imageSize
+              type: string
+              title: Image size
+              defaultValue: cover
+              choices:
+                - key: cover
+                  label: Cover
+                - key: contain
+                  label: Contain
+            - id: imagePositionX
+              type: string
+              title: Image horizontal position
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+            - id: imagePositionY
+              type: string
+              title: Image vertical position
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: bottom
+                  label: Bottom
+      linkable:
+        url:
+          schemaGroupId: default
+          fieldId: image
+  - id: videoblock
+    visualizer: cesium
+    type: block
+    title: Video
+    description: Video block
+    schema:
+      groups:
+        - id: default
+          title: Video block
+          fields:
+            - id: url
+              type: url
+              title: Video URL
+              ui: video
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+  - id: locationblock
+    visualizer: cesium
+    type: block
+    title: Location
+    description: Location block
+    schema:
+      groups:
+        - id: default
+          title: Location block
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+  - id: dlblock
+    visualizer: cesium
+    type: block
+    title: Table
+    description: Table block
+    schema:
+      groups:
+        - id: default
+          title: Table block
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: typography
+              type: typography
+              title: Font
+        - id: items
+          list: true
+          title: Items
+          fields:
+            - id: item_title
+              type: string
+              title: Title
+            - id: item_datatype
+              type: string
+              title: Type
+              defaultValue: string
+              choices:
+                - key: string
+                  label: String
+                - key: number
+                  label: Number
+            - id: item_datastr
+              type: string
+              title: Data
+              availableIf:
+                field: item_datatype
+                type: string
+                value: string
+            - id: item_datanum
+              type: number
+              title: Data
+              availableIf:
+                field: item_datatype
+                type: string
+                value: number
+  # - id: navigator
+  #   visualizer: cesium
+  #   type: widget
+  #   title: Navigator
+  #   description: Navigator widget
+  - id: menu
+    visualizer: cesium
+    type: widget
+    title: Menu
+    description: Menu widgets
+    schema:
+      groups:
+        - id: buttons
+          title: Buttons
+          list: true
+          fields:
+            - id: buttonInvisible
+              type: bool
+              title: Hide
+            - id: buttonTitle
+              type: string
+              title: Title
+            - id: buttonPosition
+              type: string
+              title: Position
+              defaultValue: topleft
+              choices:
+                - key: topleft
+                  label: Top-Left
+                - key: topright
+                  label: Top-Right
+                - key: bottomleft
+                  label: Bottom-Left
+                - key: bottomright
+                  label: Bottom-Right
+            - id: buttonStyle
+              type: string
+              title: Style
+              defaultValue: text
+              choices:
+                - key: text
+                  label: Text only
+                - key: icon
+                  label: Icon only
+                - key: texticon
+                  label: Text and icon
+            - id: buttonIcon
+              type: url
+              title: Icon
+              ui: image
+            - id: buttonColor
+              type: string
+              title: Text color
+              ui: color
+            - id: buttonBgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: buttonType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: menu
+                  label: Menu
+                - key: camera
+                  label: Camera flight
+            - id: buttonLink
+              type: url
+              title: Link
+              availableIf:
+                field: buttonType
+                type: string
+                value: link
+            - id: buttonCamera
+              type: camera
+              title: Camera flight
+              availableIf:
+                field: buttonType
+                type: string
+                value: camera
+        - id: menu
+          title: Menu
+          list: true
+          fields:
+            - id: menuTitle
+              type: string
+              title: Title
+            - id: menuIcon
+              type: url
+              title: Icon
+            - id: menuType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: camera
+                  label: Camera
+                - key: border
+                  label: Break
+            - id: menuLink
+              type: url
+              title: Link
+              availableIf:
+                field: menuType
+                type: string
+                value: link
+            - id: menuCamera
+              type: camera
+              title: Camera
+              availableIf:
+                field: menuType
+                type: string
+                value: camera
+  - id: splashscreen
+    visualizer: cesium
+    type: widget
+    title: Splash screen
+    description: A unique start screen that will display on load of your archive(ex. display the archive's title).
+    schema:
+      groups:
+        - id: overlay
+          title: Overlay screen
+          fields:
+            - id: overlayEnabled
+              type: bool
+              title: Enabled
+            - id: overlayDelay
+              type: number
+              title: Delay
+              suffix: s
+              min: 0
+            - id: overlayDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+            - id: overlayTransitionDuration
+              type: number
+              title: Fade out
+              suffix: s
+              min: 0
+            - id: overlayImage
+              type: url
+              title: Image
+              ui: image
+            - id: overlayImageW
+              type: number
+              title: Image width
+            - id: overlayImageH
+              type: number
+              title: Image height
+            - id: overlayBgcolor
+              type: string
+              title: Background color
+              ui: color
+        - id: camera
+          title: Camera flight sequence
+          list: true
+          fields:
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+            - id: cameraDelay
+              type: number
+              title: Delay
+              suffix: s
+              min: 0
+  - id: storytelling
+    visualizer: cesium
+    type: widget
+    title: Storytelling
+    description: SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.
+    schema:
+      groups:
+        - id: default
+          title: Storytelling
+          fields:
+            - id: duration
+              title: Duration
+              type: number
+              suffix: s
+              defaultValue: 3
+            - id: range
+              title: Range
+              type: number
+              suffix: m
+              defaultValue: 50000
+            - id: camera
+              title: Camera pose
+              type: camera
+              ui: camera_pose
+            - id: autoStart
+              title: Auto start
+              type: bool
+        - id: stories
+          title: Stories
+          representativeField: layer
+          list: true
+          fields:
+            - id: layer
+              title: Layer
+              type: ref
+              ui: layer
+            - id: layerDuration
+              title: Duration
+              type: number
+              suffix: s
+            - id: layerRange
+              title: Range
+              type: number
+              suffix: m
+            - id: layerCamera
+              title: Camera position
+              type: camera

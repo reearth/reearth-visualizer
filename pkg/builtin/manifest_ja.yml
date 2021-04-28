@@ -1,0 +1,472 @@
+title: Re:Earth公式プラグイン
+description: 公式プラグイン
+extensions:
+  cesium:
+    title: Cesium
+    description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
+    propertySchema:
+      default:
+        title: シーン
+        fields:
+          camera:
+            title: カメラ初期位置
+            description: ページロード後最初に表示するカメラの位置を設定します。
+          terrain:
+            title: 地形
+            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          skybox:
+            title: 宇宙の表示
+            description: 宇宙空間の表示を切り替えます。
+          bgcolor:
+            title: 背景色
+            description: 宇宙空間が非表示の場合の、背景色を設定します。
+          ion:
+            title: Cesium Icon APIアクセストークン
+            description: 自身のCesium IonアカウントからAPIキーを発行し、ここに設定します。Cesium Ionのアセット（タイルデータ、3Dデータなど）の使用が可能になるため、設定を推奨します。
+      tiles:
+        title: タイル
+        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
+        fields:
+          tile_title:
+            title: 名前
+          tile_type:
+            title: 種類
+            choices:
+              default: デフォルト
+              default_label: ラベル付き地図
+              default_road: 道路地図
+              stamen_watercolor: Stamen Watercolor
+              stamen_toner: Stamen Toner
+              open_street_map: Open Street Map
+              esri_world_topo: ESRI Topography
+              black_marble: Black Marble
+              japan_gsi_standard: 地理院地図 標準地図
+              url: URL
+          tile_url:
+            title: URL
+          tile_minLevel:
+            title: 最小レベル
+          tile_maxLevel:
+            title: 最大レベル
+      atmosphere:
+        title: 大気
+        description: 地球を覆う大気圏の設定ができます。
+        fields:
+          enable_sun:
+            title: 太陽
+            description: 宇宙空間に存在する太陽の表示を切り替えます。
+          enable_lighting:
+            title: 太陽光
+            description: 太陽光のON/OFFを切り替えることで、昼夜を表現することができます。
+          ground_atmosphere:
+            title: 地表の大気
+            description: 地表の大気圏のON/OFFを切り替えます。
+          sky_atmosphere:
+            title: 上空の大気
+            description: 地球を覆う大気圏のON/OFFを切り替えます。
+          fog:
+            title: 霧
+            description: 霧のON/OFFを切り替えます。
+          fog_density:
+            title: 濃度
+            description: 霧の濃度を0以上から設定します。
+          brightness_shift:
+            title: 明度
+          hue_shift:
+            title: 色相
+          surturation_shift:
+            title: 彩度
+  infobox:
+    title: インフォボックス
+    description: 閲覧者が地図上のレイヤーをクリックした時に表示されるボックスです。テキストや画像、動画などのコンテンツを表示することができます。
+    propertySchema:
+      default:
+        title: インフォボックス
+        fields:
+          title:
+            title: タイトル
+          size:
+            title: サイズ
+            choices:
+              small: 小
+              large: 大
+          bgcolor:
+            title: 背景色
+          typography:
+            title: フォント
+  marker:
+    title: マーカー
+    description: ドラッグ&ドロップすることで、地図上にマーカーを追加します。マーカーにはテキストや画像を紐づけることができ、閲覧者はマーカーをクリックすることでそれらのコンテンツを見ることができます。
+    propertySchema:
+      default:
+        title: マーカー
+        fields:
+          location:
+            title: 位置
+          height:
+            title: 高度
+          style:
+            title: 表示方法
+            choices:
+              point: ポイント
+              image: アイコン
+          pointColor:
+            title: ポイント色
+          pointSize:
+            title: ポイントサイズ
+          image:
+            title: 画像URL
+          imageSize:
+            title: 画像サイズ
+          imageCrop:
+            title: 切り抜き
+            choices:
+              none: なし
+              circle: 円形
+          imageShadow:
+            title: シャドウ
+          imageShadowColor:
+            title: シャドウ色
+          imageShadowBlur:
+            title: シャドウ半径
+          imageShadowPositionX:
+            title: シャドウX
+          imageShadowPositionY:
+            title: シャドウY
+          label:
+            title: ラベル
+          labelText:
+            title: ラベル文字
+          labelTypography:
+            title: ラベルフォント
+          extrude:
+            title: 地面から線を伸ばす
+  polyline:
+    title: 直線
+    description: Polyline primitive
+    propertySchema:
+      default:
+        title: 直線
+        fields:
+          coordinates:
+            title: 頂点
+          strokeColor:
+            title: 線色
+          strokeWidth:
+            title: 線幅
+  polygon:
+    title: ポリゴン
+    description: Polygon primitive
+    propertySchema:
+      default:
+        title: ポリゴン
+        fields:
+          polygon:
+            title: ポリゴン
+          fill:
+            title: 塗り
+          fillColor:
+            title: 塗り色
+          stroke:
+            title: 線
+          strokeColor:
+            title: 線色
+          strokeWidth:
+            title: 線幅
+  rect:
+    title: 長方形
+    description: Rectangle primitive
+    propertySchema:
+      default:
+        title: 長方形
+        fields:
+          rect:
+            title: 長方形
+          height:
+            title: 高度
+          extrudedHeight:
+            title: 高さ
+          style:
+            title: スタイル
+            choices:
+              color: 色
+              image: 画像
+          fillColor:
+            title: 塗り色
+          image:
+            title: 画像URL
+  photooverlay:
+    title: フォトオーバーレイ
+    description: 地図上に追加されたフォトオーバーレイを選択すると、設定した画像をモーダル形式で表示することができます。
+    propertySchema:
+      default:
+        title: フォトオーバーレイ
+        fields:
+          location:
+            title: 位置
+          height:
+            title: 高度
+          camera:
+            title: カメラ
+            description: クリックされたときに移動するカメラの設定をします。
+          image:
+            title: アイコン
+          imageSize:
+            title: アイコンサイズ
+          imageCrop:
+            title: 切り抜き
+            choices:
+              none: なし
+              circle: 円形
+          imageShadow:
+            title: アイコンシャドウ
+          imageShadowColor:
+            title: シャドウ色
+          imageShadowBlur:
+            title: シャドウ半径
+          imageShadowPositionX:
+            title: シャドウX
+          imageShadowPositionY:
+            title: シャドウY
+          photoOverlayImage:
+            title: オーバレイ画像
+  ellipsoid:
+    title: 球体ツール
+    description: 楕円形ツールを地図上にドラッグ&ドロップすることで追加できます。楕円形ツールによって立体的なオブジェクトを地図上に表示できます。
+    propertySchema:
+      default:
+        title: 球体ツール
+        fields:
+          position:
+            title: 位置
+          height:
+            title: 高度
+          radius:
+            title: 半径
+          fillColor:
+            title: 塗り色
+  resource:
+    title: ファイル
+    description: 外部からデータ（形式何？？？）をインポートすることができます。地図上に追加後、URLを指定することで外部データが読み込まれます。
+    propertySchema:
+      default:
+        title: ファイル
+        fields:
+          url:
+            title: ファイル URL
+            choices:
+              auto: 自動
+              kml: KML
+              geojson: GeoJSON / TopoJSON
+              czml: CZML
+  textblock:
+    title: テキスト
+    description: Text block
+    propertySchema:
+      default:
+        title: テキストブロック
+        fields:
+          title:
+            title: タイトル
+          text:
+            title: コンテンツ
+          markdown:
+            title: マークダウン
+          typography:
+            title: フォント
+  imageblock:
+    title: 画像
+    description: 画像ブロック
+    propertySchema:
+      default:
+        title: 画像ブロック
+        fields:
+          image:
+            title: 画像
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+          imageSize:
+            title: 画像サイズ
+            choices:
+              cover: カバー
+              contain: 含む
+          imagePositionX:
+            title: 水平位置
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imagePositionY:
+            title: 垂直位置
+            choices:
+              top: 上
+              center: 中央
+              bottom: 下
+  videoblock:
+    title: 動画
+    description: 動画ブロック
+    propertySchema:
+      default:
+        title: 動画ブロック
+        fields:
+          url:
+            title: 動画 URL
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+  locationblock:
+    title: 位置情報
+    description: 位置情報ブロック
+    propertySchema:
+      default:
+        title: 位置情報ブロック
+        fields:
+          location:
+            title: 位置情報
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+  dlblock:
+    title: 表
+    description: 表ブロック
+    propertySchema:
+      default:
+        title: 表ブロック
+        fields:
+          title:
+            title: タイトル
+          typography:
+            title: フォント
+      items:
+        title: アイテム
+        fields:
+          item_title:
+            title: タイトル
+          item_datatype:
+            title: 種類
+            choices:
+              string: 文字
+              number: 数字
+          item_datastr:
+            title: データ(文字)
+          item_datanum:
+            title: データ(数字)
+  menu:
+    title: メニュー
+    description: シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。\n・リンク：ボタン自体が外部サイトへのリンクになります。\n・メニュー：追加したメニューを開きます\n・カメラアクション：クリック時にカメラを移動します。
+    propertySchema:
+      buttons:
+        title: ボタン
+        fields:
+          buttonInvisible:
+            title: 非表示
+          buttonTitle:
+            title: タイトル
+          buttonPosition:
+            title: 表示位置
+            choices:
+              topleft: 上左
+              topright: 上右
+              bottomleft: 下左
+              bottomright: 下右
+          buttonStyle:
+            title: 表示方法
+            choices:
+              text: テキストのみ
+              icon: アイコンのみ
+              texticon: テキスト＋アイコン
+          buttonIcon:
+            title: アイコン
+          buttonColor:
+            title: テキスト色
+          buttonBgcolor:
+            title: 背景色
+          buttonType:
+            title: アクション
+            choices:
+              link: リンク
+              menu: メニュー開閉
+              camera: カメラ移動
+          buttonLink:
+            title: リンク
+          buttonCamera:
+            title: カメラ
+      menu:
+        title: メニュー
+        fields:
+          menuTitle:
+            title: タイトル
+          menuIcon:
+            title: アイコン
+          menuType:
+            title: アクション
+            choices:
+              link: リンク
+              camera: カメラ移動
+              border: 区切り線
+          menuLink:
+            title: リンク
+          menuCamera:
+            title: カメラ
+  splashscreen:
+    title: スプラッシュスクリーン
+    description: ページロード後、最初に表示される演出を設定できます。例えば、プロジェクトのタイトルを閲覧者に見せたり、カメラを移動させることができます。
+    propertySchema:
+      overlay:
+        title: オーバーレイ
+        fields:
+          overlayEnabled:
+            title: 有効
+          overlayDelay:
+            title: 開始時間
+          overlayDuration:
+            title: 表示時間
+          overlayTransitionDuration:
+            title: フェード時間
+          overlayImage:
+            title: オーバーレイ画像
+          overlayImageW:
+            title: 画像幅
+          overlayImageH:
+            title: 画像高さ
+          overlayBgcolor:
+            title: 背景色
+      camera:
+        title: カメラアニメーション
+        fields:
+          cameraPosition:
+            title: カメラ位置
+          cameraDuration:
+            title: カメラ開始時間
+          cameraDelay:
+            title: カメラ移動時間
+  storytelling:
+    title: ストーリーテリング
+    description: ストーリーテリング機能を使えば、データ間の繋がりや時系列をもとに、順番に資料を閲覧してもらうことが可能です。使用するには、右パネルから地球上のレイヤーに順番を付与します。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          duration:
+            title: カメラ移動時間
+          range:
+            title: 画角
+          camera:
+            title: カメラ
+          autoStart:
+            title: 自動再生
+      stories:
+        title: ストーリー
+        fields:
+          layer:
+            title: レイヤー
+          layerDuration:
+            title: 移動時間
+          layerRange:
+            title: カメラ画角
+          layerCamera:
+            title: カメラ

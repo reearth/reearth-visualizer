@@ -1,0 +1,55 @@
+package {{.PackageName}}
+{{$controller := ""}}{{if .Flags.controller}}{{$controller = index .Flags.controller 0}}{{end}}
+{{$id := ""}}{{if .Flags.id}}{{$id = index .Flags.id 0}}{{end}}
+{{$method := "Fetch"}}{{if .Flags.method}}{{$method = index .Flags.method 0}}{{end}}
+import (
+	"context"
+	"time"
+
+	"github.com/reearth/reearth-backend/internal/adapter/graphql"
+	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/pkg/id"
+)
+{{range .Flags.m}}
+type {{camel .}}DataLoader interface {
+	Load(id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) (*graphql.{{camel .}}, error)
+	LoadAll([]id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) ([]*graphql.{{camel .}}, []error)
+}
+
+func new{{camel .}}(ctx context.Context, c *graphql.{{if $controller}}{{$controller}}{{else}}{{camel .}}{{end}}Controller, o *usecase.Operator) *{{camel .}}Loader {
+	return New{{camel .}}Loader({{camel .}}LoaderConfig{
+		Wait:     1 * time.Millisecond,
+		MaxBatch: 100,
+		Fetch: func(keys []id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) ([]*graphql.{{camel .}}, []error) {
+			return c.{{$method}}(ctx, keys, o)
+		},
+	})
+}
+
+func newOrdinary{{camel .}}(ctx context.Context, c *graphql.{{if $controller}}{{$controller}}{{else}}{{camel .}}{{end}}Controller, o *usecase.Operator) {{camel .}}DataLoader {
+	return &ordinary{{camel .}}Loader{
+		fetch: func(keys []id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) ([]*graphql.{{camel .}}, []error) {
+			return c.{{$method}}(ctx, keys, o)
+		},
+	}
+}
+
+type ordinary{{camel .}}Loader struct {
+	fetch func(keys []id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) ([]*graphql.{{camel .}}, []error)
+}
+
+func (l *ordinary{{camel .}}Loader) Load(key id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) (*graphql.{{camel .}}, error) {
+	res, errs := l.fetch([]id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}{key})
+	if len(errs) > 0 {
+		return nil, errs[0]
+	}
+	if len(res) > 0 {
+		return res[0], nil
+	}
+	return nil, nil
+}
+
+func (l *ordinary{{camel .}}Loader) LoadAll(keys []id.{{if $id}}{{$id}}{{else}}{{camel .}}ID{{end}}) ([]*graphql.{{camel .}}, []error) {
+	return l.fetch(keys)
+}
+{{end}}

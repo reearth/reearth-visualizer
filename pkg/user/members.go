@@ -1,0 +1,127 @@
+package user
+
+import (
+	"errors"
+	"sort"
+
+	"github.com/reearth/reearth-backend/pkg/id"
+)
+
+var (
+	ErrUserAlreadyJoined        = errors.New("user already joined")
+	ErrCannotModifyPersonalTeam = errors.New("personal team cannot be modified")
+	ErrTeamWithProjects         = errors.New("target team still has some project")
+	ErrTargetUserNotInTheTeam   = errors.New("target user does not exist in the team")
+)
+
+type Members struct {
+	members map[id.UserID]Role
+	fixed   bool
+}
+
+func NewMembers() *Members {
+	m := &Members{members: map[id.UserID]Role{}}
+	return m
+}
+
+func NewFixedMembers(u id.UserID) *Members {
+	m := &Members{members: map[id.UserID]Role{u: RoleOwner}, fixed: true}
+	return m
+}
+
+func NewMembersWith(members map[id.UserID]Role) *Members {
+	m := &Members{members: map[id.UserID]Role{}}
+	for k, v := range members {
+		m.members[k] = v
+	}
+	return m
+}
+
+func CopyMembers(members *Members) *Members {
+	return NewMembersWith(members.members)
+}
+
+func (m *Members) Members() map[id.UserID]Role {
+	members := make(map[id.UserID]Role)
+	for k, v := range m.members {
+		members[k] = v
+	}
+	return members
+}
+
+func (m *Members) ContainsUser(u id.UserID) bool {
+	for k := range m.members {
+		if k == u {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *Members) Count() int {
+	return len(m.members)
+}
+
+func (m *Members) GetRole(u id.UserID) Role {
+	return m.members[u]
+}
+
+func (m *Members) UpdateRole(u id.UserID, role Role) error {
+	if m.fixed {
+		return ErrCannotModifyPersonalTeam
+	}
+	if role == Role("") {
+		return nil
+	}
+	if _, ok := m.members[u]; ok {
+		m.members[u] = role
+	} else {
+		return ErrTargetUserNotInTheTeam
+	}
+	return nil
+}
+
+func (m *Members) Join(u id.UserID, role Role) error {
+	if m.fixed {
+		return ErrCannotModifyPersonalTeam
+	}
+	if _, ok := m.members[u]; ok {
+		return ErrUserAlreadyJoined
+	}
+	if role == Role("") {
+		role = RoleReader
+	}
+	m.members[u] = role
+	return nil
+}
+
+func (m *Members) Leave(u id.UserID) error {
+	if m.fixed {
+		return ErrCannotModifyPersonalTeam
+	}
+	if _, ok := m.members[u]; ok {
+		delete(m.members, u)
+	} else {
+		return ErrTargetUserNotInTheTeam
+	}
+	return nil
+}
+
+func (m *Members) UsersByRole(role Role) []id.UserID {
+	users := make([]id.UserID, 0, len(m.members))
+	for u, r := range m.members {
+		if r == role {
+			users = append(users, u)
+		}
+	}
+
+	sort.SliceStable(users, func(a, b int) bool {
+		return users[a].ID().Compare(users[b].ID()) > 0
+	})
+
+	return users
+}
+
+func (m *Members) IsOnlyOwner(u id.UserID) bool {
+	return len(m.UsersByRole(RoleOwner)) == 1 && m.members[u] == RoleOwner
+}

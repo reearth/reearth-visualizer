@@ -1,0 +1,411 @@
+package interactor
+
+import (
+	"context"
+	"errors"
+	"io"
+	"time"
+
+	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/internal/usecase/gateway"
+	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
+	"github.com/reearth/reearth-backend/internal/usecase/repo"
+	"github.com/reearth/reearth-backend/pkg/asset"
+	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/file"
+	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/scene/builder"
+)
+
+type Project struct {
+	commonScene
+	commonSceneLock
+	assetRepo         repo.Asset
+	projectRepo       repo.Project
+	userRepo          repo.User
+	teamRepo          repo.Team
+	sceneRepo         repo.Scene
+	propertyRepo      repo.Property
+	layerRepo         repo.Layer
+	datasetRepo       repo.Dataset
+	datasetSchemaRepo repo.DatasetSchema
+	transaction       repo.Transaction
+	file              gateway.File
+}
+
+func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
+	return &Project{
+		commonScene:       commonScene{sceneRepo: r.Scene},
+		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:         r.Asset,
+		projectRepo:       r.Project,
+		userRepo:          r.User,
+		teamRepo:          r.Team,
+		sceneRepo:         r.Scene,
+		propertyRepo:      r.Property,
+		layerRepo:         r.Layer,
+		datasetRepo:       r.Dataset,
+		datasetSchemaRepo: r.DatasetSchema,
+		transaction:       r.Transaction,
+		file:              gr.File,
+	}
+}
+
+func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*project.Project, error) {
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+	return i.projectRepo.FindByIDs(ctx, ids, operator.ReadableTeams)
+}
+
+func (i *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
+	if err := i.CanReadTeam(id, operator); err != nil {
+		return nil, nil, err
+	}
+	return i.projectRepo.FindByTeam(ctx, id, p)
+}
+
+func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = tx.End(ctx)
+	}()
+
+	if err := i.CanWriteTeam(p.TeamID, operator); err != nil {
+		return nil, err
+	}
+
+	pb := project.New().
+		NewID().
+		Team(p.TeamID).
+		Visualizer(p.Visualizer)
+	if p.Name != nil {
+		pb = pb.Name(*p.Name)
+	}
+	if p.Description != nil {
+		pb = pb.Description(*p.Description)
+	}
+	if p.ImageURL != nil {
+		pb = pb.ImageURL(p.ImageURL)
+	}
+	if p.Alias != nil {
+		pb = pb.Alias(*p.Alias)
+	}
+	if p.Archived != nil {
+		pb = pb.IsArchived(*p.Archived)
+	}
+
+	project, err := pb.Build()
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.projectRepo.Save(ctx, project)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return project, nil
+}
+
+func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = tx.End(ctx)
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, p.ID, operator.WritableTeams)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+		return nil, err
+	}
+
+	oldAlias := prj.Alias()
+
+	if p.Name != nil {
+		prj.UpdateName(*p.Name)
+	}
+
+	if p.Description != nil {
+		prj.UpdateDescription(*p.Description)
+	}
+
+	if p.Alias != nil {
+		if err := prj.UpdateAlias(*p.Alias); err != nil {
+			return nil, err
+		}
+	}
+
+	if p.ImageURL != nil && !p.DeleteImageURL {
+		prj.SetImageURL(p.ImageURL)
+	}
+	if p.DeleteImageURL {
+		prj.SetImageURL(nil)
+	}
+
+	if p.Archived != nil {
+		prj.SetArchived(*p.Archived)
+	}
+
+	if p.PublicTitle != nil {
+		prj.UpdatePublicTitle(*p.PublicTitle)
+	}
+
+	if p.PublicDescription != nil {
+		prj.UpdatePublicDescription(*p.PublicDescription)
+	}
+
+	if p.PublicImage != nil && !p.DeletePublicImage {
+		asset, err := i.createAsset(ctx, p.PublicImage, prj.Team())
+		if err != nil {
+			return nil, err
+		}
+		prj.UpdatePublicImage(asset.URL())
+	}
+
+	if p.PublicNoIndex != nil {
+		prj.UpdatePublicNoIndex(*p.PublicNoIndex)
+	}
+
+	if p.DeletePublicImage {
+		prj.UpdatePublicImage("")
+	}
+
+	err = i.projectRepo.Save(ctx, prj)
+	if err != nil {
+		return nil, err
+	}
+
+	if prj.PublishmentStatus() != project.PublishmentStatusPrivate && p.Alias != nil && *p.Alias != oldAlias {
+		if err := i.file.MoveBuiltScene(ctx, oldAlias, *p.Alias); err != nil {
+			// ignore ErrNotFound
+			if !errors.Is(err, err1.ErrNotFound) {
+				return nil, err
+			}
+		}
+	}
+
+	tx.Commit()
+	return prj, nil
+}
+
+func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
+	if !project.CheckAliasPattern(alias) {
+		return false, project.ErrInvalidAlias
+	}
+
+	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
+	if prj == nil && err == nil || err != nil && errors.Is(err, err1.ErrNotFound) {
+		return true, nil
+	}
+
+	return false, err
+}
+
+func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = tx.End(ctx)
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, params.ID, operator.WritableTeams)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+		return nil, err
+	}
+
+	s, err := i.sceneRepo.FindByProject(ctx, params.ID, operator.WritableTeams)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
+		return nil, err
+	}
+
+	sceneID := s.ID()
+
+	prevAlias := prj.Alias()
+	if params.Alias == nil && prevAlias == "" && params.Status != project.PublishmentStatusPrivate {
+		return nil, interfaces.ErrProjectAliasIsNotSet
+	}
+
+	var prevPublishedAlias string
+	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
+		prevPublishedAlias = prevAlias
+	}
+
+	newAlias := prevAlias
+	if params.Alias != nil {
+		if err := prj.UpdateAlias(*params.Alias); err != nil {
+			return nil, err
+		}
+		newAlias = *params.Alias
+	}
+
+	newPublishedAlias := newAlias
+
+	// Lock
+	if err := i.UpdateSceneLock(ctx, sceneID, scene.LockModeFree, scene.LockModePublishing); err != nil {
+		return nil, err
+	}
+
+	defer i.ReleaseSceneLock(ctx, sceneID)
+
+	if params.Status == project.PublishmentStatusPrivate {
+		// unpublish
+		if err = i.file.RemoveBuiltScene(ctx, prevPublishedAlias); err != nil {
+			return prj, err
+		}
+	} else {
+		// publish
+		r, w := io.Pipe()
+
+		// Build
+		scenes := []id.SceneID{sceneID}
+		go func() {
+			var err error
+
+			defer func() {
+				_ = w.CloseWithError(err)
+			}()
+
+			err = builder.New(
+				repo.LayerLoaderFrom(i.layerRepo, scenes),
+				repo.PropertyLoaderFrom(i.propertyRepo, scenes),
+				repo.DatasetGraphLoaderFrom(i.datasetRepo, scenes),
+			).BuildScene(ctx, w, s, time.Now())
+		}()
+
+		// Save
+		if err := i.file.UploadBuiltScene(ctx, r, newPublishedAlias); err != nil {
+			return nil, err
+		}
+
+		// If project has been published before and alias is changed,
+		// remove old published data.
+		if prevPublishedAlias != "" && newPublishedAlias != prevPublishedAlias {
+			if err := i.file.RemoveBuiltScene(ctx, prevPublishedAlias); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	prj.UpdatePublishmentStatus(params.Status)
+	prj.SetPublishedAt(time.Now())
+
+	err = i.projectRepo.Save(ctx, prj)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return prj, nil
+}
+
+func (i *Project) createAsset(ctx context.Context, f *file.File, t id.TeamID) (_ *asset.Asset, err error) {
+
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = tx.End(ctx)
+	}()
+
+	url, err := i.file.UploadAsset(ctx, f)
+	if err != nil {
+		return nil, err
+	}
+
+	asset, err := asset.New().
+		NewID().
+		Team(t).
+		Name(f.Name).
+		Size(f.Size).
+		URL(url.String()).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.assetRepo.Save(ctx, asset)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return asset, nil
+}
+
+func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
+
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = tx.End(ctx)
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, projectID, operator.WritableTeams)
+	if err != nil {
+		return err
+	}
+
+	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+		return err
+	}
+
+	deleter := ProjectDeleter{
+		SceneDeleter: SceneDeleter{
+			Scene:         i.sceneRepo,
+			SceneLock:     i.sceneLockRepo,
+			Layer:         i.layerRepo,
+			Property:      i.propertyRepo,
+			Dataset:       i.datasetRepo,
+			DatasetSchema: i.datasetSchemaRepo,
+		},
+		File:    i.file,
+		Project: i.projectRepo,
+	}
+	if err := deleter.Delete(ctx, prj, true, operator); err != nil {
+		return err
+	}
+
+	tx.Commit()
+	return nil
+}
