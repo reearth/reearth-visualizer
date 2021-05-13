@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
@@ -11,6 +12,7 @@ import (
 )
 
 type Dataset struct {
+	lock sync.Mutex
 	data map[id.DatasetID]dataset.Dataset
 }
 
@@ -21,6 +23,9 @@ func NewDataset() repo.Dataset {
 }
 
 func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID, f []id.SceneID) (*dataset.Dataset, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	p, ok := r.data[id]
 	if ok && isSceneIncludes(p.Scene(), f) {
 		return &p, nil
@@ -29,6 +34,9 @@ func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID, f []id.SceneID)
 }
 
 func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.SceneID) (dataset.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := dataset.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -43,6 +51,9 @@ func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.Scen
 }
 
 func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, f []id.SceneID, p *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := dataset.List{}
 	for _, d := range r.data {
 		if d.Schema() == id && isSceneIncludes(d.Scene(), f) {
@@ -69,6 +80,9 @@ func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, f []i
 }
 
 func (r *Dataset) FindBySchemaAll(ctx context.Context, id id.DatasetSchemaID) (dataset.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := dataset.List{}
 	for _, d := range r.data {
 		if d.Schema() == id {
@@ -80,6 +94,9 @@ func (r *Dataset) FindBySchemaAll(ctx context.Context, id id.DatasetSchemaID) (d
 }
 
 func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, f []id.SceneID, fields []id.DatasetSchemaFieldID) (dataset.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := make(dataset.List, 0, len(fields))
 	next := i
 	for _, nextField := range fields {
@@ -100,11 +117,17 @@ func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, f []id.SceneID,
 }
 
 func (r *Dataset) Save(ctx context.Context, d *dataset.Dataset) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[d.ID()] = *d
 	return nil
 }
 
 func (r *Dataset) SaveAll(ctx context.Context, dl dataset.List) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, d := range dl {
 		r.data[d.ID()] = *d
 	}
@@ -112,11 +135,17 @@ func (r *Dataset) SaveAll(ctx context.Context, dl dataset.List) error {
 }
 
 func (r *Dataset) Remove(ctx context.Context, id id.DatasetID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, id)
 	return nil
 }
 
 func (r *Dataset) RemoveAll(ctx context.Context, ids []id.DatasetID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, id := range ids {
 		delete(r.data, id)
 	}
@@ -124,6 +153,9 @@ func (r *Dataset) RemoveAll(ctx context.Context, ids []id.DatasetID) error {
 }
 
 func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for did, d := range r.data {
 		if d.Scene() == sceneID {
 			delete(r.data, did)

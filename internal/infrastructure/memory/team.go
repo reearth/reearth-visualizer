@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	err1 "github.com/reearth/reearth-backend/pkg/error"
@@ -10,6 +11,7 @@ import (
 )
 
 type Team struct {
+	lock sync.Mutex
 	data map[id.TeamID]user.Team
 }
 
@@ -20,6 +22,9 @@ func NewTeam() repo.Team {
 }
 
 func (r *Team) FindByUser(ctx context.Context, i id.UserID) ([]*user.Team, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*user.Team{}
 	for _, d := range r.data {
 		if d.Members().ContainsUser(i) {
@@ -30,6 +35,9 @@ func (r *Team) FindByUser(ctx context.Context, i id.UserID) ([]*user.Team, error
 }
 
 func (r *Team) FindByIDs(ctx context.Context, ids []id.TeamID) ([]*user.Team, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*user.Team{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -42,6 +50,9 @@ func (r *Team) FindByIDs(ctx context.Context, ids []id.TeamID) ([]*user.Team, er
 }
 
 func (r *Team) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	d, ok := r.data[id]
 	if ok {
 		return &d, nil
@@ -50,11 +61,17 @@ func (r *Team) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
 }
 
 func (r *Team) Save(ctx context.Context, t *user.Team) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[t.ID()] = *t
 	return nil
 }
 
 func (r *Team) SaveAll(ctx context.Context, teams []*user.Team) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, t := range teams {
 		r.data[t.ID()] = *t
 	}
@@ -62,11 +79,17 @@ func (r *Team) SaveAll(ctx context.Context, teams []*user.Team) error {
 }
 
 func (r *Team) Remove(ctx context.Context, id id.TeamID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, id)
 	return nil
 }
 
 func (r *Team) RemoveAll(ctx context.Context, ids []id.TeamID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, id := range ids {
 		delete(r.data, id)
 	}

@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
@@ -11,6 +12,7 @@ import (
 )
 
 type Asset struct {
+	lock sync.Mutex
 	data map[id.AssetID]*asset.Asset
 }
 
@@ -21,6 +23,9 @@ func NewAsset() repo.Asset {
 }
 
 func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	d, ok := r.data[id]
 	if ok {
 		return d, nil
@@ -29,16 +34,25 @@ func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, erro
 }
 
 func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[a.ID()] = a
 	return nil
 }
 
 func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, id)
 	return nil
 }
 
 func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*asset.Asset, *usecase.PageInfo, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*asset.Asset{}
 	for _, d := range r.data {
 		if d.Team() == id {

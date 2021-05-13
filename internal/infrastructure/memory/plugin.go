@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
@@ -12,6 +13,7 @@ import (
 )
 
 type Plugin struct {
+	lock sync.Mutex
 	data []*plugin.Plugin
 }
 
@@ -22,6 +24,9 @@ func NewPlugin() repo.Plugin {
 }
 
 func (r *Plugin) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if p := builtin.GetPlugin(id); p != nil {
 		return p, nil
 	}
@@ -35,6 +40,9 @@ func (r *Plugin) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, 
 }
 
 func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*plugin.Plugin{}
 	for _, id := range ids {
 		if p := builtin.GetPlugin(id); p != nil {
@@ -54,6 +62,9 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Pl
 }
 
 func (r *Plugin) Save(ctx context.Context, p *plugin.Plugin) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if p.ID().System() {
 		return errors.New("cannnot save system plugin")
 	}

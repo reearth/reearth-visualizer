@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	err1 "github.com/reearth/reearth-backend/pkg/error"
@@ -10,6 +11,7 @@ import (
 )
 
 type User struct {
+	lock sync.Mutex
 	data map[id.UserID]user.User
 }
 
@@ -20,6 +22,9 @@ func NewUser() repo.User {
 }
 
 func (r *User) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*user.User{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -32,6 +37,9 @@ func (r *User) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, er
 }
 
 func (r *User) FindByID(ctx context.Context, id id.UserID) (*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	d, ok := r.data[id]
 	if ok {
 		return &d, nil
@@ -40,11 +48,17 @@ func (r *User) FindByID(ctx context.Context, id id.UserID) (*user.User, error) {
 }
 
 func (r *User) Save(ctx context.Context, u *user.User) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[u.ID()] = *u
 	return nil
 }
 
 func (r *User) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if auth0sub == "" {
 		return nil, err1.ErrInvalidParams
 	}
@@ -59,6 +73,9 @@ func (r *User) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User,
 }
 
 func (r *User) FindByEmail(ctx context.Context, email string) (*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if email == "" {
 		return nil, err1.ErrInvalidParams
 	}
@@ -73,6 +90,9 @@ func (r *User) FindByEmail(ctx context.Context, email string) (*user.User, error
 }
 
 func (r *User) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if nameOrEmail == "" {
 		return nil, err1.ErrInvalidParams
 	}
@@ -87,6 +107,9 @@ func (r *User) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user
 }
 
 func (r *User) Remove(ctx context.Context, user id.UserID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, user)
 	return nil
 }

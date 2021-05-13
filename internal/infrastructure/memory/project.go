@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
@@ -12,6 +13,7 @@ import (
 )
 
 type Project struct {
+	lock sync.Mutex
 	data map[id.ProjectID]*project.Project
 }
 
@@ -22,6 +24,9 @@ func NewProject() repo.Project {
 }
 
 func (r *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*project.Project{}
 	for _, d := range r.data {
 		if d.Team() == id {
@@ -47,6 +52,9 @@ func (r *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagin
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids []id.ProjectID, filter []id.TeamID) ([]*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := []*project.Project{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -61,6 +69,9 @@ func (r *Project) FindByIDs(ctx context.Context, ids []id.ProjectID, filter []id
 }
 
 func (r *Project) FindByID(ctx context.Context, id id.ProjectID, filter []id.TeamID) (*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	p, ok := r.data[id]
 	if ok && isTeamIncludes(p.Team(), filter) {
 		return p, nil
@@ -69,6 +80,9 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID, filter []id.Tea
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	if name == "" {
 		return nil, nil
 	}
@@ -81,6 +95,9 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 }
 
 func (r *Project) CountByTeam(ctx context.Context, team id.TeamID) (c int, err error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, p := range r.data {
 		if p.Team() == team {
 			c++
@@ -90,12 +107,18 @@ func (r *Project) CountByTeam(ctx context.Context, team id.TeamID) (c int, err e
 }
 
 func (r *Project) Save(ctx context.Context, p *project.Project) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	p.SetUpdatedAt(time.Now())
 	r.data[p.ID()] = p
 	return nil
 }
 
 func (r *Project) Remove(ctx context.Context, projectID id.ProjectID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for sid := range r.data {
 		if sid == projectID {
 			delete(r.data, sid)

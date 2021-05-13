@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	err1 "github.com/reearth/reearth-backend/pkg/error"
@@ -10,6 +11,7 @@ import (
 )
 
 type Layer struct {
+	lock sync.Mutex
 	data map[id.LayerID]layer.Layer
 }
 
@@ -20,6 +22,9 @@ func NewLayer() repo.Layer {
 }
 
 func (r *Layer) FindByID(ctx context.Context, id id.LayerID, f []id.SceneID) (layer.Layer, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	res, ok := r.data[id]
 	if ok && isSceneIncludes(res.Scene(), f) {
 		return res, nil
@@ -28,6 +33,9 @@ func (r *Layer) FindByID(ctx context.Context, id id.LayerID, f []id.SceneID) (la
 }
 
 func (r *Layer) FindByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := layer.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -42,6 +50,9 @@ func (r *Layer) FindByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID)
 }
 
 func (r *Layer) FindGroupByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.GroupList, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := layer.GroupList{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -58,6 +69,9 @@ func (r *Layer) FindGroupByIDs(ctx context.Context, ids []id.LayerID, f []id.Sce
 }
 
 func (r *Layer) FindItemByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.ItemList, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := layer.ItemList{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -74,6 +88,9 @@ func (r *Layer) FindItemByIDs(ctx context.Context, ids []id.LayerID, f []id.Scen
 }
 
 func (r *Layer) FindItemByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Item, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	d, ok := r.data[id]
 	if !ok {
 		return &layer.Item{}, nil
@@ -87,6 +104,9 @@ func (r *Layer) FindItemByID(ctx context.Context, id id.LayerID, f []id.SceneID)
 }
 
 func (r *Layer) FindGroupByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	d, ok := r.data[id]
 	if !ok {
 		return &layer.Group{}, nil
@@ -100,6 +120,9 @@ func (r *Layer) FindGroupByID(ctx context.Context, id id.LayerID, f []id.SceneID
 }
 
 func (r *Layer) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, s id.SceneID, ds id.DatasetSchemaID) (layer.GroupList, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := layer.GroupList{}
 	for _, l := range r.data {
 		if l.Scene() != s {
@@ -115,6 +138,9 @@ func (r *Layer) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, s id
 }
 
 func (r *Layer) FindByProperty(ctx context.Context, id id.PropertyID, f []id.SceneID) (layer.Layer, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, l := range r.data {
 		if !isSceneIncludes(l.Scene(), f) {
 			continue
@@ -135,6 +161,9 @@ func (r *Layer) FindByProperty(ctx context.Context, id id.PropertyID, f []id.Sce
 }
 
 func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, l := range r.data {
 		if !isSceneIncludes(l.Scene(), f) {
 			continue
@@ -153,6 +182,9 @@ func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID, f []id.SceneI
 }
 
 func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	res := layer.List{}
 	for _, l := range r.data {
 		if l.Scene() == sceneID {
@@ -163,6 +195,9 @@ func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List
 }
 
 func (r *Layer) FindAllByDatasetSchema(ctx context.Context, datasetSchemaID id.DatasetSchemaID) (layer.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	res := layer.List{}
 	for _, l := range r.data {
 		if d := layer.ToLayerGroup(l).LinkedDatasetSchema(); d != nil && *d == datasetSchemaID {
@@ -173,11 +208,17 @@ func (r *Layer) FindAllByDatasetSchema(ctx context.Context, datasetSchemaID id.D
 }
 
 func (r *Layer) Save(ctx context.Context, l layer.Layer) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[l.ID()] = l
 	return nil
 }
 
 func (r *Layer) SaveAll(ctx context.Context, ll layer.List) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, l := range ll {
 		layer := *l
 		r.data[layer.ID()] = layer
@@ -186,11 +227,17 @@ func (r *Layer) SaveAll(ctx context.Context, ll layer.List) error {
 }
 
 func (r *Layer) Remove(ctx context.Context, id id.LayerID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, id)
 	return nil
 }
 
 func (r *Layer) RemoveAll(ctx context.Context, ids []id.LayerID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, id := range ids {
 		delete(r.data, id)
 	}
@@ -198,6 +245,9 @@ func (r *Layer) RemoveAll(ctx context.Context, ids []id.LayerID) error {
 }
 
 func (r *Layer) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for lid, p := range r.data {
 		if p.Scene() == sceneID {
 			delete(r.data, lid)

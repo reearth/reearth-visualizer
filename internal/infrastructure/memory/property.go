@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 
 	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -11,6 +12,7 @@ import (
 )
 
 type Property struct {
+	lock sync.Mutex
 	data map[id.PropertyID]property.Property
 }
 
@@ -21,6 +23,9 @@ func NewProperty() repo.Property {
 }
 
 func (r *Property) FindByID(ctx context.Context, id id.PropertyID, f []id.SceneID) (*property.Property, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	p, ok := r.data[id]
 	if ok && isSceneIncludes(p.Scene(), f) {
 		return &p, nil
@@ -29,6 +34,9 @@ func (r *Property) FindByID(ctx context.Context, id id.PropertyID, f []id.SceneI
 }
 
 func (r *Property) FindByIDs(ctx context.Context, ids []id.PropertyID, f []id.SceneID) (property.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := property.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
@@ -43,6 +51,9 @@ func (r *Property) FindByIDs(ctx context.Context, ids []id.PropertyID, f []id.Sc
 }
 
 func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := property.List{}
 	for _, p := range r.data {
 		if p.IsDatasetLinked(sid, did) {
@@ -53,6 +64,9 @@ func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, di
 }
 
 func (r *Property) FindLinkedAll(ctx context.Context, s id.SceneID) (property.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	result := property.List{}
 	for _, p := range r.data {
 		if p.Scene() != s {
@@ -67,11 +81,17 @@ func (r *Property) FindLinkedAll(ctx context.Context, s id.SceneID) (property.Li
 }
 
 func (r *Property) Save(ctx context.Context, p *property.Property) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	r.data[p.ID()] = *p
 	return nil
 }
 
 func (r *Property) SaveAll(ctx context.Context, pl property.List) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, p := range pl {
 		r.data[p.ID()] = *p
 	}
@@ -79,11 +99,17 @@ func (r *Property) SaveAll(ctx context.Context, pl property.List) error {
 }
 
 func (r *Property) Remove(ctx context.Context, id id.PropertyID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	delete(r.data, id)
 	return nil
 }
 
 func (r *Property) RemoveAll(ctx context.Context, ids []id.PropertyID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for _, id := range ids {
 		delete(r.data, id)
 	}
@@ -91,6 +117,9 @@ func (r *Property) RemoveAll(ctx context.Context, ids []id.PropertyID) error {
 }
 
 func (r *Property) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
 	for pid, p := range r.data {
 		if p.Scene() == sceneID {
 			delete(r.data, pid)
