@@ -29,6 +29,7 @@ type Config struct {
 
 type Auth0Config struct {
 	Domain       string
+	Audience     string
 	ClientID     string
 	ClientSecret string
 	WebClientID  string

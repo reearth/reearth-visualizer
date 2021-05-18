@@ -116,7 +116,7 @@ func addPathSep(path string) string {
 
 func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 	iss := addPathSep(cfg.Config.Auth0.Domain)
-	aud := iss + "api/v2/"
+	aud := cfg.Config.Auth0.Audience
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -134,8 +134,7 @@ func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 
 				// Verify 'aud' claim
-				checkAud := claims.VerifyAudience(aud, false)
-				if !checkAud {
+				if aud != "" && !claims.VerifyAudience(aud, true) {
 					return errorResponse(c, "invalid audience")
 				}
 
