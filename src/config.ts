@@ -3,8 +3,9 @@ export type Config = {
   published: string;
   plugin: string;
   export: string;
-  auth0ClientId: string;
-  auth0Domain: string;
+  auth0ClientId?: string;
+  auth0Domain?: string;
+  auth0Audience?: string;
 };
 
 declare global {
@@ -18,8 +19,6 @@ export const defaultConfig: Config = {
   export: "/api/layers/",
   plugin: "/plugins",
   published: "/p/{}",
-  auth0ClientId: "",
-  auth0Domain: "",
 };
 
 export default async function loadConfig() {
