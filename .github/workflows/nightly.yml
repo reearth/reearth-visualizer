@@ -36,7 +36,9 @@ jobs:
         with:
           allowUpdates: true
           artifacts: nightly.tar.gz
-          commit: main
+          artifactContentType: application/gzip
+          commit: ${{ env.GITHUB_SHA }}
           name: Nightly release
           prerelease: true
+          tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
