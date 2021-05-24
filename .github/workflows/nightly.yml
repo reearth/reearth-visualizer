@@ -1,12 +1,15 @@
-name: main
+name: nightly
 on:
-  push:
-    branches:
+  workflow_run:
+    workflows:
       - main
+    types:
+      - completed
 jobs:
-  main:
-    name: main
+  nightly:
+    name: nightly
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -25,19 +28,15 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install
         run: yarn install
-      - name: Check
-        run: yarn run check
-      - name: Send coverage report
-        uses: codecov/codecov-action@v1
+      - name: Build
+        run: yarn build
+      - name: Package
+        run: mv build reearth-web && tar -zcvf nightly.tar.gz reearth-web
+      - uses: ncipollo/release-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage/lcov.info
-      # - name: Slack Notification
-      #   uses: 8398a7/action-slack@v3
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,commit,action,workflow
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          allowUpdates: true
+          artifacts: nightly.tar.gz
+          commit: main
+          name: Nightly release
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
