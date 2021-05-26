@@ -24,6 +24,9 @@ func web(e *echo.Echo, wc WebConfig, ac Auth0Config) {
 	if ac.WebClientID != "" {
 		config["auth0ClientId"] = ac.WebClientID
 	}
+	if ac.Audience != "" {
+		config["auth0Audience"] = ac.Audience
+	}
 	for k, v := range wc {
 		config[k] = v
 	}
