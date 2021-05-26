@@ -40,7 +40,11 @@ module.exports = (env, args = {}) => {
       },
       before(app) {
         app.get("/reearth_config.json", (_req, res) => {
-          res.json(config);
+          res.json({
+            api: "http://localhost:8080/api",
+            published: "http://localhost:8080/p/{}",
+            ...config,
+          });
         });
       },
     },

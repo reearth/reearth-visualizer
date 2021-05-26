@@ -82,6 +82,7 @@ Cypress.Commands.add("login", () => {
       body: {
         username: Cypress.env("REEARTH_WEB_E2E_USERNAME"),
         password: Cypress.env("REEARTH_WEB_E2E_PASSWORD"),
+        audience: Cypress.env("REEARTH_WEB_AUTH0_AUDIENCE"),
         client_id: Cypress.env("REEARTH_WEB_AUTH0_CLIENT_ID"),
         grant_type: "password",
         scope: "openid email profile",

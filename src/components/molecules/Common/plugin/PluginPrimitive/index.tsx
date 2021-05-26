@@ -27,11 +27,12 @@ export type PluginPrimitiveProps<P = any, PP = any> = PrimitiveProps<P, PP> & {
 export type PrimitiveComponent<P = any, PP = any> = React.FC<PrimitiveProps<P, PP>>;
 
 const getUrl = (pluginId: string) => {
+  if (!window.REEARTH_CONFIG?.api) return undefined;
   const [id, version] = pluginId.split("#");
   if (!id || !version) return undefined;
-  return `${window.REEARTH_CONFIG?.plugin || ""}/${encodeURIComponent(
-    id || "",
-  )}/${encodeURIComponent(version || "")}/`;
+  return `${window.REEARTH_CONFIG.api}/plugins/${encodeURIComponent(id || "")}/${encodeURIComponent(
+    version || "",
+  )}/`;
 };
 
 const PluginPrimitive: React.FC<PluginPrimitiveProps> = props => {

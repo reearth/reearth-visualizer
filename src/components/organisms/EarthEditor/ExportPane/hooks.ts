@@ -17,7 +17,7 @@ export default () => {
 
   const onExport = useCallback(
     async (format: Format) => {
-      if (!selectedLayer || !window.REEARTH_CONFIG?.export) return;
+      if (!selectedLayer || !window.REEARTH_CONFIG?.api) return;
 
       const accessToken = await getAccessTokenSilently();
       if (!accessToken) return;
@@ -30,7 +30,7 @@ export default () => {
           ? "application/json"
           : "application/octet-stream";
 
-      const res = await fetch(`${window.REEARTH_CONFIG.export}${filename}`, {
+      const res = await fetch(`${window.REEARTH_CONFIG.api}/layers/${filename}`, {
         headers: {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },

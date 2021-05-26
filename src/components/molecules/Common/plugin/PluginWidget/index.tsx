@@ -22,11 +22,12 @@ export type PluginWidgetProps<P = any, PP = any> = WidgetProps<P, PP> & {
 export type WidgetComponent<P = any, PP = any> = React.FC<WidgetProps<P, PP>>;
 
 const getUrl = (pluginId: string) => {
+  if (!window.REEARTH_CONFIG?.api) return undefined;
   const [id, version] = pluginId.split("#");
   if (!id || !version) return undefined;
-  return `${window.REEARTH_CONFIG?.plugin || ""}/${encodeURIComponent(
-    id || "",
-  )}/${encodeURIComponent(version || "")}/`;
+  return `${window.REEARTH_CONFIG.api}/plugins/${encodeURIComponent(id || "")}/${encodeURIComponent(
+    version || "",
+  )}/`;
 };
 
 const PluginWidget: React.FC<PluginWidgetProps> = props => {

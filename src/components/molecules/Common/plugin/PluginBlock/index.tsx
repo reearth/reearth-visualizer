@@ -44,11 +44,12 @@ export type BlockComponent<P = { [key in string]: any }, PP = { [key in string]:
 >;
 
 const getUrl = (pluginId: string) => {
+  if (!window.REEARTH_CONFIG?.api) return undefined;
   const [id, version] = pluginId.split("#");
   if (!id || !version) return undefined;
-  return `${window.REEARTH_CONFIG?.plugin || ""}/${encodeURIComponent(
-    id || "",
-  )}/${encodeURIComponent(version || "")}/`;
+  return `${window.REEARTH_CONFIG.api}/plugins/${encodeURIComponent(id || "")}/${encodeURIComponent(
+    version || "",
+  )}/`;
 };
 
 const PluginBlock: React.FC<Props> = props => {

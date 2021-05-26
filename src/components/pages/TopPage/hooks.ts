@@ -18,7 +18,7 @@ export default () => {
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {
-    if (!isAuthenticated || currentTeam || !data) return;
+    if (!isAuthenticated || currentTeam || !data || !teamId) return;
     setLocalState({ currentTeam: data.me?.myTeam });
     navigate(`/dashboard/${teamId}`);
   }, [isAuthenticated, navigate, currentTeam, setLocalState, data, teamId]);

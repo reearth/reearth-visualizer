@@ -1,8 +1,6 @@
 export type Config = {
   api: string;
   published: string;
-  plugin: string;
-  export: string;
   auth0ClientId?: string;
   auth0Domain?: string;
   auth0Audience?: string;
@@ -15,10 +13,8 @@ declare global {
 }
 
 export const defaultConfig: Config = {
-  api: "/api/graphql",
-  export: "/api/layers/",
-  plugin: "/plugins",
-  published: "/p/{}",
+  api: "/api",
+  published: location.origin + "/p/{}",
 };
 
 export default async function loadConfig() {

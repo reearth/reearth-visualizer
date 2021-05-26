@@ -6,7 +6,7 @@ const Provider: React.FC = ({ children }) => {
   const clientId = window.REEARTH_CONFIG?.auth0ClientId;
   const audience = window.REEARTH_CONFIG?.auth0Audience;
 
-  return domain && clientId && audience ? (
+  return domain && clientId ? (
     <Auth0Provider
       domain={domain}
       clientId={clientId}

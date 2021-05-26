@@ -47,11 +47,8 @@ const Provider: React.FC = ({ children }) => {
   });
 
   const client = new ApolloClient({
-    uri: window.REEARTH_CONFIG?.api,
-    // '(upload link as unknown) as ApolloLink' is because
-    // apollo-upload-client as of 14.1.3 has wrong types for uploadLink
-    // https://github.com/jaydenseric/apollo-upload-client/issues/213
-    link: ApolloLink.from([errorLink, authLink, (uploadLink as unknown) as ApolloLink]),
+    uri: window.REEARTH_CONFIG?.api ? `${window.REEARTH_CONFIG.api}/graphql` : "/api/graphql",
+    link: ApolloLink.from([errorLink, authLink, uploadLink]),
     cache,
     connectToDevTools: process.env.NODE_ENV === "development",
   });
