@@ -9,6 +9,9 @@ import { store, localSlice } from "@reearth/state";
 import fragmentMatcher from "./fragmentMatcher.json";
 
 const Provider: React.FC = ({ children }) => {
+  const endpoint = window.REEARTH_CONFIG?.api
+    ? `${window.REEARTH_CONFIG.api}/graphql`
+    : "/api/graphql";
   const { getAccessTokenSilently } = useAuth0();
 
   const authLink = setContext(async (_, { headers }) => {
@@ -24,7 +27,7 @@ const Provider: React.FC = ({ children }) => {
   });
 
   const uploadLink = createUploadLink({
-    uri: window.REEARTH_CONFIG?.api,
+    uri: endpoint,
   });
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -47,7 +50,7 @@ const Provider: React.FC = ({ children }) => {
   });
 
   const client = new ApolloClient({
-    uri: window.REEARTH_CONFIG?.api ? `${window.REEARTH_CONFIG.api}/graphql` : "/api/graphql",
+    uri: endpoint,
     link: ApolloLink.from([errorLink, authLink, uploadLink]),
     cache,
     connectToDevTools: process.env.NODE_ENV === "development",

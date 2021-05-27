@@ -15,10 +15,15 @@ const { readEnv } = require("read-env");
 
 module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
-  const envName = Object.keys(env).find(e => !e.startsWith("WEBPACK_"));
+  let envfile = "";
+  try {
+    envfile = fs.readFileSync(`.env.local`);
+  } catch {
+    // ignore
+  }
   const config = readEnv("REEARTH_WEB", {
     source: {
-      ...dotenv.parse(fs.readFileSync(`.env${envName ? `.${envName}` : ""}`)),
+      ...dotenv.parse(envfile),
       ...process.env,
     },
   });
@@ -43,7 +48,7 @@ module.exports = (env, args = {}) => {
           res.json({
             api: "http://localhost:8080/api",
             published: "http://localhost:8080/p/{}",
-            ...config,
+            ...Object.fromEntries(Object.entries(config).filter(([, v]) => Boolean(v))),
           });
         });
       },
