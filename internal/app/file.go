@@ -14,9 +14,7 @@ import (
 
 func serveFiles(
 	ec *echo.Echo,
-	r *echo.Group,
 	repo gateway.File,
-	debug bool,
 ) {
 	if repo == nil {
 		return
@@ -39,7 +37,7 @@ func serveFiles(
 		}
 	}
 
-	r.GET(
+	ec.GET(
 		"/assets/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
@@ -48,7 +46,7 @@ func serveFiles(
 		}),
 	)
 
-	r.GET(
+	ec.GET(
 		"/plugins/:name/:version/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			pid, err := id.PluginIDFrom(ctx.Param("name") + "#" + ctx.Param("version"))
@@ -61,7 +59,7 @@ func serveFiles(
 		}),
 	)
 
-	r.GET(
+	ec.GET(
 		"/published/:name",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			name := ctx.Param("name")
@@ -69,5 +67,4 @@ func serveFiles(
 			return r, name + ".json", err
 		}),
 	)
-
 }

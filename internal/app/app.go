@@ -79,11 +79,6 @@ func initAppEcho(cfg *ServerConfig) *echo.Echo {
 		))
 	}
 
-	if cfg.Config.ServeFiles {
-		files := e.Group("")
-		serveFiles(e, files, cfg.Gateways.File, cfg.Debug)
-	}
-
 	e.GET("/api/published/:name", apiPublished(cfg))
 	e.GET("/api/published_data/:name", apiPublishedData(cfg))
 	api := e.Group("/api")
@@ -95,6 +90,8 @@ func initAppEcho(cfg *ServerConfig) *echo.Echo {
 	publicRoute(e, api, cfg.Config, cfg.Repos, cfg.Gateways)
 	graphqlRoute(e, privateApi, cfg, controllers)
 	userRoute(e, privateApi, cfg.Repos)
+
+	serveFiles(e, cfg.Gateways.File)
 	web(e, cfg.Config.Web, cfg.Config.Auth0)
 
 	return e
