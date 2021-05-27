@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	"sync"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
@@ -25,7 +26,6 @@ const (
 	contextUser             contextKey = "reearth_user"
 )
 
-// JSONWebKeys _
 type JSONWebKeys struct {
 	Kty string   `json:"kty"`
 	Kid string   `json:"kid"`
@@ -35,18 +35,15 @@ type JSONWebKeys struct {
 	X5c []string `json:"x5c"`
 }
 
-// Jwks _
 type Jwks interface {
 	GetJwks(string) ([]JSONWebKeys, error)
 }
 
-// JwksSyncOnce _
 type JwksSyncOnce struct {
 	jwks []JSONWebKeys
 	once sync.Once
 }
 
-// GetJwks _
 func (jso *JwksSyncOnce) GetJwks(publicKeyURL string) ([]JSONWebKeys, error) {
 	var err error
 	jso.once.Do(func() {
@@ -104,18 +101,8 @@ func getPemCert(token *jwt.Token, publicKeyURL string, jwks Jwks) (string, error
 	return cert, nil
 }
 
-func addPathSep(path string) string {
-	if path == "" {
-		return path
-	}
-	if path[len(path)-1] != '/' {
-		path += "/"
-	}
-	return path
-}
-
 func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
-	iss := addPathSep(cfg.Config.Auth0.Domain)
+	iss := urlFromDomain(cfg.Config.Auth0.Domain)
 	aud := cfg.Config.Auth0.Audience
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -134,7 +121,7 @@ func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 
 				// Verify 'aud' claim
-				if aud != "" && !claims.VerifyAudience(aud, true) {
+				if !verifyAudience(claims, aud) {
 					return errorResponse(c, "invalid audience")
 				}
 
@@ -155,7 +142,7 @@ func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 }
 
 func jwtEchoMiddleware(jwks Jwks, cfg *ServerConfig) echo.MiddlewareFunc {
-	jwksURL := addPathSep(cfg.Config.Auth0.Domain) + ".well-known/jwks.json"
+	jwksURL := urlFromDomain(cfg.Config.Auth0.Domain) + ".well-known/jwks.json"
 
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		CredentialsOptional: cfg.Debug,
@@ -183,6 +170,51 @@ func jwtEchoMiddleware(jwks Jwks, cfg *ServerConfig) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+func urlFromDomain(path string) string {
+	if path == "" {
+		return path
+	}
+	if !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
+		path = "https://" + path
+	}
+	if path[len(path)-1] != '/' {
+		path += "/"
+	}
+	return path
+}
+
+// WORKAROUND: https://github.com/dgrijalva/jwt-go/pull/308 should be merged
+func verifyAudience(claims jwt.MapClaims, aud string) bool {
+	if aud == "" {
+		return true
+	}
+
+	auds, ok := claims["aud"].([]string)
+	if !ok {
+		auds2, ok := claims["aud"].([]interface{})
+		if ok {
+			for _, a := range auds2 {
+				if aa, ok := a.(string); ok {
+					auds = append(auds, aa)
+				}
+			}
+		} else {
+			a, ok := claims["aud"].(string)
+			if !ok || a == "" {
+				return false
+			}
+			auds = append(auds, a)
+		}
+	}
+
+	for _, a := range auds {
+		if jwt.MapClaims(map[string]interface{}{"aud": a}).VerifyAudience(aud, true) {
+			return true
+		}
+	}
+	return false
 }
 
 func errorResponse(c echo.Context, err string) error {
