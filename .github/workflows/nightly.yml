@@ -35,10 +35,22 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: nightly.tar.gz
+          artifacts: reearth-web_nightly.tar.gz
           artifactContentType: application/gzip
           commit: ${{ env.GITHUB_SHA }}
           name: Nightly release
           prerelease: true
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: nightly
+          path: reearth-web
+          if-no-files-found: error
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        continue-on-error: true
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

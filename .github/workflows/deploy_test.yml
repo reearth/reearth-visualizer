@@ -1,0 +1,37 @@
+name: deploy_test
+on:
+  workflow_run:
+    workflows:
+      - nightly
+    types:
+      - completed
+env:
+  REEARTH_URL: test.reearth.dev
+  GCS_DEST: gs://test.reearth.dev/
+jobs:
+  deploy_test:
+    name: deploy_test
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: nightly
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '341.0.0'
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: put reearth_config.json
+        run: curl -L -o reearth-web/reearth_config.json https://${{ env.REEARTH_URL }}/reearth_config.json
+      - name: rsync
+        run: gsutil -m -h "Cache-Control:no-store" rsync -dr reearth-web/ ${{ env.GCS_DEST }}
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        continue-on-error: true
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

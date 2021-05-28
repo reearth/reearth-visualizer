@@ -36,12 +36,10 @@ jobs:
           GITHUB_PR_COMMENTS_URL: ${{ github.event.pull_request.comments_url }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_BRANCH_NAME: ${{ github.event.pull_request.base.ref }}
-      # - name: Slack Notification
-      #   uses: 8398a7/action-slack@v3
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,commit,action,workflow
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        continue-on-error: true
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
