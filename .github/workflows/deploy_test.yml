@@ -14,16 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@master
         with:
-          version: '341.0.0'
           project_id: ${{ secrets.GCP_PROJECT }}
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
       - uses: dsaltares/fetch-gh-release-asset@master
         with:
-          version: nightly
+          version: tags/nightly
           file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: tar -xvf reearth-web_nightly.tar.gz
