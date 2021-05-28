@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Package
-        run: mv build reearth-web && tar -zcvf nightly.tar.gz reearth-web
+        run: mv build reearth-web && tar -zcvf reearth-web_nightly.tar.gz reearth-web
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -42,15 +42,9 @@ jobs:
           prerelease: true
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: nightly
-          path: reearth-web
-          if-no-files-found: error
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()
-        continue-on-error: true
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

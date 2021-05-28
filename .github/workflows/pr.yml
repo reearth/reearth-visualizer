@@ -39,7 +39,6 @@ jobs:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()
-        continue-on-error: true
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
