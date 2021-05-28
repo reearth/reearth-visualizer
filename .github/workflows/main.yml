@@ -32,6 +32,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - main
+    runs-on: ubuntu-latest
+    steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()

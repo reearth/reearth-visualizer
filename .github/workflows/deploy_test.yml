@@ -29,6 +29,13 @@ jobs:
         run: curl -L -o reearth-web/reearth_config.json https://${{ env.REEARTH_URL }}/reearth_config.json
       - name: rsync
         run: gsutil -m -h "Cache-Control:no-store" rsync -dr reearth-web/ ${{ env.GCS_DEST }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - deploy_test
+    runs-on: ubuntu-latest
+    steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()

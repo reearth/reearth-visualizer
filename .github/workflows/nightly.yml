@@ -42,6 +42,13 @@ jobs:
           prerelease: true
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - nightly
+    runs-on: ubuntu-latest
+    steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()

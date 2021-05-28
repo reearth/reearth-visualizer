@@ -36,6 +36,13 @@ jobs:
           GITHUB_PR_COMMENTS_URL: ${{ github.event.pull_request.comments_url }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_BRANCH_NAME: ${{ github.event.pull_request.base.ref }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - pr
+    runs-on: ubuntu-latest
+    steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
         if: always()
