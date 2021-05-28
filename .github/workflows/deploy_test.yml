@@ -1,0 +1,48 @@
+name: deploy_test
+on:
+  workflow_run:
+    workflows:
+      - nightly
+    types:
+      - completed
+env:
+  IMAGE: reearth/reearth-backend:nightly
+  IMAGE_GCP: us.gcr.io/reearth-oss/reearth-backend:nightly
+  GCP_REGION: us-central1
+jobs:
+  deploy_test:
+    name: deploy_test
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: docker push
+        run: |
+          docker pull $IMAGE
+          docker tag $IMAGE $IMAGE_GCP
+          docker push $IMAGE_GCP
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy reearth-backend \
+            --image $IMAGE_GCP \
+            --project ${{ secrets.GCP_PROJECT }} \
+            --region $GCP_REGION \
+            --platform managed \
+            --quiet
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - deploy_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

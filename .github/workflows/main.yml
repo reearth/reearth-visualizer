@@ -33,12 +33,16 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage.txt
-      # - name: Slack Notification
-      #   uses: 8398a7/action-slack@v3
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,commit,action,workflow
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
