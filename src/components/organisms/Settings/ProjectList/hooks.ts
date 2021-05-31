@@ -7,9 +7,11 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
+  useAssetsQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
+import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -118,6 +120,12 @@ export default () => {
     [navigate, setLocalState],
   );
 
+  const { data: assetsData } = useAssetsQuery({
+    variables: { teamId: teamId ?? "" },
+    skip: !teamId,
+  });
+  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+
   return {
     currentProjects,
     archivedProjects,
@@ -128,5 +136,6 @@ export default () => {
     handleModalClose,
     createProject,
     selectProject,
+    assets,
   };
 };

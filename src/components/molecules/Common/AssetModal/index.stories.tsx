@@ -14,7 +14,15 @@ const assets: Asset[] = [
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
-    size: 100,
+    size: 4300,
+    contentType: "asset-image",
+  },
+  {
+    url: `${process.env.PUBLIC_URL}/sample.svg`,
+    name: "hoge",
+    id: "hoge",
+    teamId: "hoge",
+    size: 1010,
     contentType: "asset-image",
   },
   {
@@ -30,7 +38,15 @@ const assets: Asset[] = [
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
-    size: 100,
+    size: 2400,
+    contentType: "asset-image",
+  },
+  {
+    url: `${process.env.PUBLIC_URL}/sample.svg`,
+    name: "hoge",
+    id: "hoge",
+    teamId: "hoge",
+    size: 1300,
     contentType: "asset-image",
   },
   {
@@ -42,11 +58,19 @@ const assets: Asset[] = [
     contentType: "asset-image",
   },
   {
+    url: "www.filelocation.com/maps.kml",
+    name: "hoge.kml",
+    id: "hoge",
+    teamId: "hoge",
+    size: 100,
+    contentType: "asset-file",
+  },
+  {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
-    size: 100,
+    size: 4300,
     contentType: "asset-image",
   },
   {
@@ -54,7 +78,7 @@ const assets: Asset[] = [
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
-    size: 100,
+    size: 1010,
     contentType: "asset-image",
   },
 ];
@@ -63,16 +87,36 @@ export const Default: Story<Props> = args => {
   const [isOpen, open] = useState(true);
   return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
 };
-export const Multiple: Story<Props> = args => {
+export const Selected: Story<Props> = args => {
+  const [isOpen, open] = useState(true);
+  return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
+};
+export const File: Story<Props> = args => {
+  const [isOpen, open] = useState(true);
+  return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
+};
+export const Video: Story<Props> = args => {
   const [isOpen, open] = useState(true);
   return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
 };
 
 Default.args = {
   assets: assets,
+  fileType: "image",
 };
 
-Multiple.args = {
+Selected.args = {
   assets: assets,
-  isMultipleSelectable: true,
+  value: `${process.env.PUBLIC_URL}/sample.svg`,
+  fileType: "image",
+};
+
+File.args = {
+  assets: assets,
+  fileType: "file",
+};
+
+Video.args = {
+  assets: assets,
+  fileType: "video",
 };

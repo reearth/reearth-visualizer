@@ -25,6 +25,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     createProject,
     selectProject,
+    assets,
   } = useHooks();
 
   return (
@@ -36,7 +37,12 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         onCreationButtonClick={openModal}
       />
       <MoleculeProjectList projects={archivedProjects} archived onProjectSelect={selectProject} />
-      <ProjectCreationModal open={modalShown} onClose={handleModalClose} onSubmit={createProject} />
+      <ProjectCreationModal
+        open={modalShown}
+        onClose={handleModalClose}
+        onSubmit={createProject}
+        assets={assets}
+      />
       {loading && <Loading portal overlay />}
     </SettingPage>
   );

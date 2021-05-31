@@ -158,6 +158,7 @@ const AssetModal: React.FC<Props> = ({
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           onCreateAsset={onCreateAsset}
+          initialAsset={initialAsset}
           selectedAssets={selectedAssets}
           selectAsset={selectAsset}
           fileType={fileType}

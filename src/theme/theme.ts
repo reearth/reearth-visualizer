@@ -123,10 +123,12 @@ export type Theme = {
     shadow: string;
     text: string;
   };
-  imageCard: {
+  assetCard: {
     bg: string;
+    bgHover: string;
     highlight: string;
     text: string;
+    textHover: string;
     shadow: string;
   };
   assetsContainer: {

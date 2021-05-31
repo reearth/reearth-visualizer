@@ -128,6 +128,7 @@ const ProjectCreationModal: React.FC<Props> = ({
         isOpen={openAssets}
         onClose={() => setOpenAssets(false)}
         assets={assets}
+        fileType="image"
         onCreateAsset={createAssets}
         onSelect={handleSelect}
       />

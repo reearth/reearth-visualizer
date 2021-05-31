@@ -27,7 +27,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
     <StyledSelect value={selectedKey} onChange={onChange} fullWidth={fullWidth}>
       {items.map(({ key, label, icon }) => (
         <Option key={key} value={key} label={label}>
-          <OptionCheck size="xs">{key === selectedKey && <Icon icon="check" />}</OptionCheck>
+          <OptionCheck size="xs">
+            {key === selectedKey && <Icon icon="check" size={14} />}
+          </OptionCheck>
           {hasIcon && <OptionIcon size="xs">{icon && <img src={icon} />}</OptionIcon>}
           {label}
         </Option>

@@ -75,10 +75,12 @@ const darkTheme: Theme = {
     shadow: colors.bg[1],
     text: colors.text.strong,
   },
-  imageCard: {
+  assetCard: {
     bg: colors.bg[4],
+    bgHover: colors.bg[5],
     highlight: colors.brand.main,
     text: colors.text.main,
+    textHover: colors.text.strong,
     shadow: colors.bg[1],
   },
   assetsContainer: {

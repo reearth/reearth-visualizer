@@ -32,7 +32,7 @@ const Option = styled.li<Props>`
       : inactive
       ? colors.outline.main
       : theme.properties.contentsText};
-  background: ${({ focused }) => (focused ? "#222222" : "transparent")};
+  background: ${({ focused, theme }) => (focused ? theme.colors.bg[4] : theme.colors.bg[2])};
   cursor: pointer;
 `;
 

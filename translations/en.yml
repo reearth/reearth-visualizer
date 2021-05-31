@@ -22,7 +22,16 @@ src:
           '4035057905': Image URL
           '4070151372': Select
           AssetContainer:
+            '1982191895': File size
+            '2409515782': >-
+              You haven't uploaded any file assets yet. Click the upload button
+              above and select a compatible file from your computer.
+            '2854191800': Time
+            '2906553848': Alphabetical
             '3057159632': Upload image
+            '3715622784': >-
+              You haven't uploaded any image assets yet. Click the upload button
+              above and select an image from your computer.
             '3863945965': Upload file
         Header:
           '248888005': Account Settings
