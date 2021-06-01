@@ -97,7 +97,9 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -140,7 +142,9 @@ func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropert
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -175,7 +179,9 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if inp.File == nil {
@@ -255,7 +261,9 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -315,7 +323,9 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -362,7 +372,9 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -410,7 +422,9 @@ func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItem
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -448,7 +462,9 @@ func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemoveProperty
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)

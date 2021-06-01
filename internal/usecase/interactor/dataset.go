@@ -75,7 +75,9 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	schema.Rename(inp.Name)
@@ -97,7 +99,9 @@ func (i *Dataset) AddDynamicDatasetSchema(ctx context.Context, inp interfaces.Ad
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	schemaBuilder := dataset.NewSchema().
@@ -128,7 +132,9 @@ func (i *Dataset) AddDynamicDataset(ctx context.Context, inp interfaces.AddDynam
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	fields := []*dataset.Field{}
@@ -184,7 +190,9 @@ func (i *Dataset) ImportDataset(ctx context.Context, inp interfaces.ImportDatase
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	seperator := ','
@@ -433,7 +441,9 @@ func (i *Dataset) Sync(ctx context.Context, sceneID id.SceneID, url string, oper
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.UpdateSceneLock(ctx, sceneID, scene.LockModeFree, scene.LockModeDatasetSyncing); err != nil {
@@ -499,7 +509,9 @@ func (i *Dataset) AddDatasetSchema(ctx context.Context, inp interfaces.AddDatase
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	schemaBuilder := dataset.NewSchema().
@@ -552,7 +564,9 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	// list of datasets attached by the schema

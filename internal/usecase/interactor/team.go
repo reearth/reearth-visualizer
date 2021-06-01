@@ -52,7 +52,9 @@ func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID) (_ 
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	team, err := user.NewTeam().
@@ -84,7 +86,9 @@ func (i *Team) Update(ctx context.Context, id id.TeamID, name string, operator *
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if operator == nil {
@@ -120,7 +124,9 @@ func (i *Team) AddMember(ctx context.Context, id id.TeamID, u id.UserID, role us
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if operator == nil {
@@ -164,7 +170,9 @@ func (i *Team) RemoveMember(ctx context.Context, id id.TeamID, u id.UserID, oper
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if operator == nil {
@@ -207,7 +215,9 @@ func (i *Team) UpdateMember(ctx context.Context, id id.TeamID, u id.UserID, role
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if operator == nil {
@@ -250,7 +260,9 @@ func (i *Team) Remove(ctx context.Context, id id.TeamID, operator *usecase.Opera
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if operator == nil {

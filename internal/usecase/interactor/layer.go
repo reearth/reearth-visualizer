@@ -158,7 +158,9 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -242,7 +244,9 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -452,7 +456,9 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -518,7 +524,9 @@ func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, ope
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -560,7 +568,9 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -622,7 +632,9 @@ func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *use
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -673,7 +685,9 @@ func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator 
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -719,7 +733,9 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -792,7 +808,9 @@ func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfobox
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -833,7 +851,9 @@ func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInf
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
@@ -899,7 +919,9 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if inp.File == nil {

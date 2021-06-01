@@ -47,7 +47,9 @@ func (i *Plugin) Upload(ctx context.Context, r io.Reader, operator *usecase.Oper
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.OnlyOperator(operator); err != nil {

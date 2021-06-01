@@ -90,7 +90,9 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	// Check if user and team already exists
@@ -178,7 +180,9 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	var team *user.Team
@@ -254,7 +258,9 @@ func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	u, err = i.userRepo.FindByID(ctx, operator.User)
@@ -291,7 +297,9 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	u, err := i.userRepo.FindByID(ctx, userID)

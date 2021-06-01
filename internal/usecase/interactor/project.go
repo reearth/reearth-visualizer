@@ -74,7 +74,9 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.CanWriteTeam(p.TeamID, operator); err != nil {
@@ -122,7 +124,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.OnlyOperator(operator); err != nil {
@@ -227,7 +231,9 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.OnlyOperator(operator); err != nil {
@@ -339,7 +345,9 @@ func (i *Project) createAsset(ctx context.Context, f *file.File, t id.TeamID) (_
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	url, err := i.file.UploadAsset(ctx, f)
@@ -374,7 +382,9 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	if err := i.OnlyOperator(operator); err != nil {

@@ -43,7 +43,9 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	url, err := i.file.UploadAsset(ctx, inp.File)
@@ -85,7 +87,9 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 		return
 	}
 	defer func() {
-		err = tx.End(ctx)
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	team, err := i.teamRepo.FindByID(ctx, asset.Team())
