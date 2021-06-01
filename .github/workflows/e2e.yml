@@ -3,14 +3,22 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1-5'
-
 jobs:
+  e2e_pre:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.e2e_pre.outputs.result }}
+    env:
+      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+    steps:
+      - name: Set vars
+        id: e2e_pre
+        run: echo "::set-output name=result::$CYPRESS_PROJECT_ID"
   e2e:
     name: E2E test
     runs-on: ubuntu-latest
-    env:
-      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-    if: env.CYPRESS_PROJECT_ID != null
+    needs: e2e_pre
+    if: needs.e2e_pre.outputs.result != null
     steps:
       - uses: actions/setup-node@v2
         with:
