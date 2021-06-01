@@ -1309,77 +1309,77 @@ type Query {
 
 type Mutation {
     # Asset
-    createAsset(input: CreateAssetInput!): CreateAssetPayload!
-    removeAsset(input: RemoveAssetInput!): RemoveAssetPayload!
+    createAsset(input: CreateAssetInput!): CreateAssetPayload
+    removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
 
     # User
-    signup(input: SignupInput!): SignupPayload!
-    updateMe(input: UpdateMeInput!): UpdateMePayload!
-    removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload!
-    deleteMe(input: DeleteMeInput!): DeleteMePayload!
+    signup(input: SignupInput!): SignupPayload
+    updateMe(input: UpdateMeInput!): UpdateMePayload
+    removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
+    deleteMe(input: DeleteMeInput!): DeleteMePayload
 
     # Team
-    createTeam(input: CreateTeamInput!): CreateTeamPayload!
-    deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload!
-    updateTeam(input: UpdateTeamInput!): UpdateTeamPayload!
-    addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload!
-    removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload!
-    updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload!
+    createTeam(input: CreateTeamInput!): CreateTeamPayload
+    deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
+    updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
+    addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
+    removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
+    updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
 
     # Project
-    createProject(input: CreateProjectInput!): ProjectPayload!
-    updateProject(input: UpdateProjectInput!): ProjectPayload!
-    publishProject(input: PublishProjectInput!): ProjectPayload!
-    deleteProject(input: DeleteProjectInput!): DeleteProjectPayload!
+    createProject(input: CreateProjectInput!): ProjectPayload
+    updateProject(input: UpdateProjectInput!): ProjectPayload
+    publishProject(input: PublishProjectInput!): ProjectPayload
+    deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
 
     # Plugin
-    uploadPlugin(input: UploadPluginInput!): UploadPluginPayload!
+    uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
 
     # Scene
-    createScene(input: CreateSceneInput!): CreateScenePayload!
-    addWidget(input: AddWidgetInput!): AddWidgetPayload!
-    updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload!
-    removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload!
-    installPlugin(input: InstallPluginInput!): InstallPluginPayload!
-    uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload!
-    upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload!
+    createScene(input: CreateSceneInput!): CreateScenePayload
+    addWidget(input: AddWidgetInput!): AddWidgetPayload
+    updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+    removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
+    installPlugin(input: InstallPluginInput!): InstallPluginPayload
+    uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+    upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
 
     # Dataset
-    updateDatasetSchema(input:UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload!
-    syncDataset(input: SyncDatasetInput!): SyncDatasetPayload!
-    addDynamicDatasetSchema(input:AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload!
-    addDynamicDataset(input:AddDynamicDatasetInput!): AddDynamicDatasetPayload!
-    removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload!
-    importDataset(input: ImportDatasetInput!): ImportDatasetPayload!
-    addDatasetSchema(input:AddDatasetSchemaInput!): AddDatasetSchemaPayload!
+    updateDatasetSchema(input:UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload
+    syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
+    addDynamicDatasetSchema(input:AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload
+    addDynamicDataset(input:AddDynamicDatasetInput!): AddDynamicDatasetPayload
+    removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload
+    importDataset(input: ImportDatasetInput!): ImportDatasetPayload
+    addDatasetSchema(input:AddDatasetSchemaInput!): AddDatasetSchemaPayload
 
     # Property
-    updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload!
-    updatePropertyValueLatLng(input: UpdatePropertyValueLatLngInput!): PropertyFieldPayload!
-    updatePropertyValueLatLngHeight(input: UpdatePropertyValueLatLngHeightInput!): PropertyFieldPayload!
-    updatePropertyValueCamera(input: UpdatePropertyValueCameraInput!): PropertyFieldPayload!
-    updatePropertyValueTypography(input: UpdatePropertyValueTypographyInput!): PropertyFieldPayload!
-    removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload!
-    uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload!
-    linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload!
-    unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload!
-    addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload!
-    movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload!
-    removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload!
-    updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload!
+    updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
+    updatePropertyValueLatLng(input: UpdatePropertyValueLatLngInput!): PropertyFieldPayload
+    updatePropertyValueLatLngHeight(input: UpdatePropertyValueLatLngHeightInput!): PropertyFieldPayload
+    updatePropertyValueCamera(input: UpdatePropertyValueCameraInput!): PropertyFieldPayload
+    updatePropertyValueTypography(input: UpdatePropertyValueTypographyInput!): PropertyFieldPayload
+    removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
+    uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
+    linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
+    unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
+    addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
+    movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
+    removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
+    updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
 
     # Layer
-    addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload!
-    addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload!
-    removeLayer(input: RemoveLayerInput!): RemoveLayerPayload!
-    updateLayer(input: UpdateLayerInput!): UpdateLayerPayload!
-    moveLayer(input: MoveLayerInput!): MoveLayerPayload!
-    createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload!
-    removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload!
-    addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload!
-    moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload!
-    removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload!
-    importLayer(input:ImportLayerInput!): ImportLayerPayload!
+    addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
+    addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
+    removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
+    updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
+    moveLayer(input: MoveLayerInput!): MoveLayerPayload
+    createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
+    removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
+    addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
+    moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
+    removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
+    importLayer(input:ImportLayerInput!): ImportLayerPayload
 }
 
 schema {
