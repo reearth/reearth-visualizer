@@ -49,13 +49,14 @@ Cypress.Commands.add("init", () => {
         body: {
           query: `mutation($userId: ID!, $teamId: ID!, $name: String!, $lang: String!) {
   deleteMe(input: { userId: $userId }) { userId }
-  signup(input: { userId: $userId, teamId: $teamId }) { user { id } }
+  signup(input: { userId: $userId, teamId: $teamId, secret: $secret }) { user { id } }
   updateMe(input: { name: $name, lang: $lang }) { user { id, name, lang } }
 }`,
           variables: {
             userId: config.userId,
             teamId: config.teamId,
             name: config.userName,
+            secret: config.signUpSecret,
             lang: "en",
           },
         },
