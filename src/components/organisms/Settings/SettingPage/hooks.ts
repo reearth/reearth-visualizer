@@ -119,7 +119,7 @@ export default (params: Params) => {
         variables: { name: data.name },
         refetchQueries: ["teams"],
       });
-      const team = results.data?.createTeam.team;
+      const team = results.data?.createTeam?.team;
       if (results) {
         setLocalState({ currentTeam: team });
       }

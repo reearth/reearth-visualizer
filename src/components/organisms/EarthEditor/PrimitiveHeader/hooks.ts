@@ -65,7 +65,7 @@ export default () => {
               refetchQueries: ["GetLayers"],
             });
 
-            const selectedLayer = data?.addLayerItem.layer.id;
+            const selectedLayer = data?.addLayerItem?.layer.id;
             if (selectedLayer) {
               setLocalState({ selectedLayer });
             }

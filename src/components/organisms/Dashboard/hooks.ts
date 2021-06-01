@@ -71,9 +71,9 @@ export default (teamId?: string) => {
         variables: { name: data.name },
         refetchQueries: ["teams"],
       });
-      if (results) {
-        setLocalState({ currentTeam: results.data?.createTeam.team });
-        navigate(`/dashboard/${results.data?.createTeam.team.id}`);
+      if (results.data?.createTeam) {
+        setLocalState({ currentTeam: results.data.createTeam.team });
+        navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
@@ -159,13 +159,13 @@ export default (teamId?: string) => {
           imageUrl: data.imageUrl,
         },
       });
-      if (project.errors || !project.data) {
+      if (project.errors || !project.data?.createProject) {
         throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
-      if (scene.errors || !scene.data) {
+      if (scene.errors || !scene.data?.createScene) {
         throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
       }
       setModalShown(false);

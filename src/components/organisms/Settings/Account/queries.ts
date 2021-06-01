@@ -4,7 +4,7 @@ export const UPDATE_ME = gql`
   mutation updateMe(
     $name: String
     $email: String
-    $lang: String
+    $lang: Lang
     $password: String
     $passwordConfirmation: String
   ) {

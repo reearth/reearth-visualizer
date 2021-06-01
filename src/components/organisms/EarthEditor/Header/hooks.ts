@@ -191,8 +191,8 @@ export default () => {
         variables: { name: data.name },
         refetchQueries: ["teams"],
       });
-      if (results) {
-        setLocalState({ currentTeam: results.data?.createTeam.team });
+      if (results.data?.createTeam) {
+        setLocalState({ currentTeam: results.data.createTeam.team });
         navigate("/");
       }
     },

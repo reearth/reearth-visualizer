@@ -96,14 +96,14 @@ export default () => {
           description: data.description,
         },
       });
-      if (project.errors || !project.data) {
-        throw new Error("プロジェクトの作成に失敗しました。");
+      if (project.errors || !project.data?.createProject) {
+        throw new Error("プロジェクトの作成に失敗しました。"); // TODO: translate
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
       if (scene.errors || !scene.data) {
-        throw new Error("プロジェクトの作成に失敗しました。");
+        throw new Error("プロジェクトの作成に失敗しました。"); // TODO: translate
       }
       setModalShown(false);
     },
