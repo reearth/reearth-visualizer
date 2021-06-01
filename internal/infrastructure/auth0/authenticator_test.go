@@ -106,6 +106,7 @@ func client(t *testing.T) *http.Client {
 					StatusCode: http.StatusOK,
 					Body: res(map[string]interface{}{
 						"access_token": token,
+						"scope":        "read:users update:users",
 						"expires_in":   expiresIn,
 					}),
 					Header: make(http.Header),

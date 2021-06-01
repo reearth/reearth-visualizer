@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -27,19 +26,21 @@ type Auth0 struct {
 	disableLogging bool
 }
 
-type response struct {
-	ID            string `json:"user_id"`
-	Name          string `json:"name"`
-	UserName      string `json:"username"`
-	Email         string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
-	Message       string `json:"string"`
-	Token         string `json:"access_token"`
-	ExpiresIn     int64  `json:"expires_in"`
-}
-
 func currentTime() time.Time {
 	return time.Now()
+}
+
+type response struct {
+	ID               string `json:"user_id"`
+	Name             string `json:"name"`
+	UserName         string `json:"username"`
+	Email            string `json:"email"`
+	EmailVerified    bool   `json:"email_verified"`
+	Message          string `json:"message"`
+	Token            string `json:"access_token"`
+	Scope            string `json:"scope"`
+	ExpiresIn        int64  `json:"expires_in"`
+	ErrorDescription string `json:"error_description"`
 }
 
 func (u response) Into() gateway.AuthenticatorUser {
@@ -56,6 +57,13 @@ func (u response) Into() gateway.AuthenticatorUser {
 	}
 }
 
+func (u response) Error() string {
+	if u.ErrorDescription != "" {
+		return u.ErrorDescription
+	}
+	return u.Message
+}
+
 func New(domain, clientID, clientSecret string) *Auth0 {
 	return &Auth0{
 		domain:       urlFromDomain(domain),
@@ -64,23 +72,20 @@ func New(domain, clientID, clientSecret string) *Auth0 {
 	}
 }
 
-func (a *Auth0) FetchUser(id string) (data gateway.AuthenticatorUser, err error) {
-	err = a.updateToken()
-	if err != nil {
-		return
+func (a *Auth0) FetchUser(id string) (gateway.AuthenticatorUser, error) {
+	if err := a.updateToken(); err != nil {
+		return gateway.AuthenticatorUser{}, err
 	}
 
 	var r response
-	r, err = a.exec(http.MethodGet, "api/v2/users/"+id, a.token, nil)
+	r, err := a.exec(http.MethodGet, "api/v2/users/"+id, a.token, nil)
 	if err != nil {
 		if !a.disableLogging {
-			log.Errorf("auth0: fetch user: %s", err)
+			log.Errorf("auth0: fetch user: %+v", err)
 		}
-		err = fmt.Errorf("failed to auth")
-		return
+		return gateway.AuthenticatorUser{}, errors.New("failed to auth")
 	}
-	data = r.Into()
-	return
+	return r.Into(), nil
 }
 
 func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway.AuthenticatorUser, err error) {
@@ -108,9 +113,9 @@ func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway
 	r, err = a.exec(http.MethodPatch, "api/v2/users/"+p.ID, a.token, payload)
 	if err != nil {
 		if !a.disableLogging {
-			log.Errorf("auth0: update user: %s", err)
+			log.Errorf("auth0: update user: %+v", err)
 		}
-		err = fmt.Errorf("failed to update user")
+		err = errors.New("failed to update user")
 		return
 	}
 
@@ -147,17 +152,27 @@ func (a *Auth0) updateToken() error {
 	r, err := a.exec(http.MethodPost, "oauth/token", "", map[string]string{
 		"client_id":     a.clientID,
 		"client_secret": a.clientSecret,
-		"audience":      a.domain + "api/v2/",
+		"audience":      urlFromDomain(a.domain) + "api/v2/",
 		"grant_type":    "client_credentials",
+		"scope":         "read:users update:users",
 	})
 	if err != nil {
-		return err
+		if !a.disableLogging {
+			log.Errorf("auth0: access token error: %+v", err)
+		}
+		return errors.New("failed to auth")
 	}
 
 	if a.current == nil {
 		a.current = currentTime
 	}
 
+	if r.Token == "" {
+		if !a.disableLogging {
+			log.Errorf("auth0: no token: %+v", r)
+		}
+		return errors.New("failed to auth")
+	}
 	a.token = r.Token
 	a.expireAt = a.current().Add(time.Duration(r.ExpiresIn * int64(time.Second)))
 
@@ -188,7 +203,7 @@ func (a *Auth0) exec(method, path, token string, b interface{}) (r response, err
 	}
 
 	var req *http.Request
-	req, err = http.NewRequest(method, a.domain+path, body)
+	req, err = http.NewRequest(method, urlFromDomain(a.domain)+path, body)
 	if err != nil {
 		return
 	}
@@ -207,12 +222,21 @@ func (a *Auth0) exec(method, path, token string, b interface{}) (r response, err
 		_ = resp.Body.Close()
 	}()
 
-	err = json.NewDecoder(resp.Body).Decode(&r)
+	respb, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
+
+	if !a.disableLogging {
+		log.Infof("auth0: path: %s, status: %d, resp: %s", path, resp.StatusCode, respb)
+	}
+
+	if err = json.Unmarshal(respb, &r); err != nil {
+		return
+	}
+
 	if resp.StatusCode >= 300 {
-		err = errors.New(r.Message)
+		err = errors.New(r.Error())
 		return
 	}
 	return
