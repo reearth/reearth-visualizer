@@ -123,7 +123,8 @@ Cypress.Commands.add("waitForGraphQL", () =>
 
 Cypress.Commands.add("cesiumViewer", () => cy.window().then(w => w.REEARTH_E2E_CESIUM_VIEWER));
 
-function oauthDomain(u: string): string {
+function oauthDomain(u: string | undefined): string {
+  if (!u) return u;
   if (!u.startsWith("https://") && !u.startsWith("http://")) {
     u = "https://" + u;
   }
