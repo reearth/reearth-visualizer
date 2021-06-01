@@ -58,6 +58,10 @@ func ReadConfig(debug bool) (*Config, error) {
 	var c Config
 	err := envconfig.Process(configPrefix, &c)
 
+	if debug {
+		c.Dev = true
+	}
+
 	return &c, err
 }
 
