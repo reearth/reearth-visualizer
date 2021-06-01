@@ -8,6 +8,9 @@ jobs:
   e2e:
     name: E2E test
     runs-on: ubuntu-latest
+    env:
+      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+    if: env.CYPRESS_PROJECT_ID != null
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -44,7 +47,7 @@ jobs:
           REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
           REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
   slack-notification:
-    if: always()
+    if: ${{ success() || failure() }}
     name: Slack Notification
     needs:
       - e2e

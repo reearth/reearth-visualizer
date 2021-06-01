@@ -45,7 +45,7 @@ Cypress.Commands.add("init", () => {
     .then(token =>
       cy.request({
         method: "POST",
-        url: config.api,
+        url: `${config.api}/graphql`,
         body: {
           query: `mutation($userId: ID!, $teamId: ID!, $name: String!, $lang: String!) {
   deleteMe(input: { userId: $userId }) { userId }
