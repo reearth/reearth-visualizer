@@ -1,5 +1,6 @@
 import "@testing-library/cypress/add-commands";
 import "./types";
+import * as config from "./config";
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -34,17 +35,17 @@ import "./types";
 Cypress.Commands.add("init", () => {
   Cypress.log({
     name: "init",
-    message: `${Cypress.env("REEARTH_WEB_API")}`,
+    message: `${config.api}/graphql`,
   });
 
-  cy.intercept(Cypress.env("REEARTH_WEB_API")).as("graphql");
+  cy.intercept(`${config.api}/graphql`).as("graphql");
 
   return cy
     .login()
     .then(token =>
       cy.request({
         method: "POST",
-        url: Cypress.env("REEARTH_WEB_API"),
+        url: config.api,
         body: {
           query: `mutation($userId: ID!, $teamId: ID!, $name: String!, $lang: String!) {
   deleteMe(input: { userId: $userId }) { userId }
@@ -52,9 +53,9 @@ Cypress.Commands.add("init", () => {
   updateMe(input: { name: $name, lang: $lang }) { user { id, name, lang } }
 }`,
           variables: {
-            userId: Cypress.env("REEARTH_WEB_E2E_USER_ID"),
-            teamId: Cypress.env("REEARTH_WEB_E2E_TEAM_ID"),
-            name: Cypress.env("REEARTH_WEB_E2E_USERNAME"),
+            userId: config.userId,
+            teamId: config.teamId,
+            name: config.userName,
             lang: "en",
           },
         },
@@ -78,12 +79,12 @@ Cypress.Commands.add("login", () => {
   return cy
     .request({
       method: "POST",
-      url: `https://${Cypress.env("REEARTH_WEB_AUTH0_DOMAIN")}/oauth/token`,
+      url: `${oauthDomain(config.authUrl)}/oauth/token`,
       body: {
-        username: Cypress.env("REEARTH_WEB_E2E_USERNAME"),
-        password: Cypress.env("REEARTH_WEB_E2E_PASSWORD"),
-        audience: Cypress.env("REEARTH_WEB_AUTH0_AUDIENCE"),
-        client_id: Cypress.env("REEARTH_WEB_AUTH0_CLIENT_ID"),
+        username: config.userName,
+        password: config.password,
+        audience: config.authAudience,
+        client_id: config.authClientId,
         grant_type: "password",
         scope: "openid email profile",
       },
@@ -121,3 +122,10 @@ Cypress.Commands.add("waitForGraphQL", () =>
 );
 
 Cypress.Commands.add("cesiumViewer", () => cy.window().then(w => w.REEARTH_E2E_CESIUM_VIEWER));
+
+function oauthDomain(u: string): string {
+  if (!u.startsWith("https://") && !u.startsWith("http://")) {
+    u = "https://" + u;
+  }
+  return u.endsWith("/") ? u.slice(0, -1) : u;
+}
