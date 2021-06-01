@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Set vars
         id: e2e_pre
-        run: echo "::set-output name=result::$CYPRESS_PROJECT_ID"
+        run: echo "::set-output name=result::`test -n "$CYPRESS_PROJECT_ID" && echo 1`"
   e2e:
     name: E2E test
     runs-on: ubuntu-latest
