@@ -23,6 +23,7 @@ __debug_bin
 /bin
 /debug
 /mongo
-.env.local
+/.env
+/.env.local
 /coverage.txt
 /web

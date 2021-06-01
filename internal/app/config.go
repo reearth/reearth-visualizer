@@ -1,7 +1,9 @@
 package app
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -57,4 +59,15 @@ func ReadConfig(debug bool) (*Config, error) {
 	err := envconfig.Process(configPrefix, &c)
 
 	return &c, err
+}
+
+func (c Config) Print() string {
+	s := fmt.Sprintf("%+v", c)
+	for _, secret := range []string{c.DB, c.Auth0.ClientSecret} {
+		if secret == "" {
+			continue
+		}
+		s = strings.ReplaceAll(s, secret, "***")
+	}
+	return s
 }

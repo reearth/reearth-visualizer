@@ -16,6 +16,7 @@ func Start(debug bool, version string) {
 	if cerr != nil {
 		log.Fatal(cerr)
 	}
+	log.Infof("config: %s", conf.Print())
 
 	// Init profiler
 	initProfiler(conf.Profiler, version)

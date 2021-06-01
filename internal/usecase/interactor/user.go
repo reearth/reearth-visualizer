@@ -152,7 +152,6 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 }
 
 func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operator *usecase.Operator) (u *user.User, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -242,7 +241,6 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 }
 
 func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *usecase.Operator) (u *user.User, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -280,7 +278,6 @@ func (i *User) SearchUser(ctx context.Context, nameOrEmail string, operator *use
 }
 
 func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase.Operator) (err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
