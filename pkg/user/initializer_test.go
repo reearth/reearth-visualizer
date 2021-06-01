@@ -1,23 +1,22 @@
-package initializer
+package user
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/user"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInitUser(t *testing.T) {
+func TestInit(t *testing.T) {
 	uid := id.NewUserID()
 	tid := id.NewTeamID()
 	testCases := []struct {
 		Name, Email, Username, Sub string
 		UID                        *id.UserID
 		TID                        *id.TeamID
-		ExpectedUser               *user.User
-		ExpectedTeam               *user.Team
+		ExpectedUser               *User
+		ExpectedTeam               *Team
 		Err                        error
 	}{
 		{
@@ -27,18 +26,17 @@ func TestInitUser(t *testing.T) {
 			Sub:      "###",
 			UID:      &uid,
 			TID:      &tid,
-			ExpectedUser: user.New().
+			ExpectedUser: New().
 				ID(uid).
 				Email("xx@yy.zz").
 				Name("nnn").
 				Team(tid).
-				Auths([]user.Auth{user.AuthFromAuth0Sub("###")}).
+				Auths([]Auth{AuthFromAuth0Sub("###")}).
 				MustBuild(),
-			ExpectedTeam: user.NewTeam().
+			ExpectedTeam: NewTeam().
 				ID(tid).
 				Name("nnn").
-				Members(map[id.UserID]user.
-					Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,
@@ -50,18 +48,17 @@ func TestInitUser(t *testing.T) {
 			Sub:      "###",
 			UID:      &uid,
 			TID:      nil,
-			ExpectedUser: user.New().
+			ExpectedUser: New().
 				ID(uid).
 				Email("xx@yy.zz").
 				Name("nnn").
 				Team(tid).
-				Auths([]user.Auth{user.AuthFromAuth0Sub("###")}).
+				Auths([]Auth{AuthFromAuth0Sub("###")}).
 				MustBuild(),
-			ExpectedTeam: user.NewTeam().
+			ExpectedTeam: NewTeam().
 				NewID().
 				Name("nnn").
-				Members(map[id.UserID]user.
-					Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,
@@ -73,18 +70,17 @@ func TestInitUser(t *testing.T) {
 			Sub:      "###",
 			UID:      nil,
 			TID:      &tid,
-			ExpectedUser: user.New().
+			ExpectedUser: New().
 				NewID().
 				Email("xx@yy.zz").
 				Name("nnn").
 				Team(tid).
-				Auths([]user.Auth{user.AuthFromAuth0Sub("###")}).
+				Auths([]Auth{AuthFromAuth0Sub("###")}).
 				MustBuild(),
-			ExpectedTeam: user.NewTeam().
+			ExpectedTeam: NewTeam().
 				ID(tid).
 				Name("nnn").
-				Members(map[id.UserID]user.
-					Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,
@@ -94,7 +90,13 @@ func TestInitUser(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			u, t, err := InitUser(tc.Email, tc.Username, tc.Sub, tc.UID, tc.TID)
+			u, t, err := Init(InitParams{
+				Email:    tc.Email,
+				Name:     tc.Username,
+				Auth0Sub: tc.Sub,
+				UserID:   tc.UID,
+				TeamID:   tc.TID,
+			})
 			if err == nil {
 				assert.Equal(tt, tc.ExpectedUser.Email(), u.Email())
 				assert.Equal(tt, tc.ExpectedUser.Name(), u.Name())

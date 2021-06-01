@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/user"
+	"golang.org/x/text/language"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -18,8 +19,8 @@ var (
 
 type SignupParam struct {
 	Sub    string
-	Name   string
-	Email  string
+	Lang   *language.Tag
+	Theme  *user.Theme
 	UserID *id.UserID
 	TeamID *id.TeamID
 	Secret string
@@ -28,7 +29,7 @@ type SignupParam struct {
 type UpdateMeParam struct {
 	Name                 *string
 	Email                *string
-	Lang                 *string
+	Lang                 *language.Tag
 	Theme                *user.Theme
 	Password             *string
 	PasswordConfirmation *string

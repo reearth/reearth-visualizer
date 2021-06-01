@@ -20,6 +20,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
+	"golang.org/x/text/language"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -5275,6 +5276,7 @@ directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITI
 scalar Cursor
 scalar DateTime
 scalar URL
+scalar Lang
 scalar FileSize
 scalar PluginID
 scalar PluginExtensionID
@@ -5388,7 +5390,7 @@ type User implements Node {
     id: ID!
     name: String!
     email: String!
-    lang: String!
+    lang: Lang!
     theme: Theme!
     myTeamId: ID!
     auths: [String!]!
@@ -5919,6 +5921,8 @@ input RemoveAssetInput {
 }
 
 input SignupInput {
+    lang: Lang
+    theme: Theme
     userId: ID
     teamId: ID
     secret: String
@@ -5927,7 +5931,7 @@ input SignupInput {
 input UpdateMeInput {
     name: String
     email: String
-    lang: String
+    lang: Lang
     theme: Theme
     password: String
     passwordConfirmation: String
@@ -26343,9 +26347,9 @@ func (ec *executionContext) _User_lang(ctx context.Context, field graphql.Collec
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(language.Tag)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_theme(ctx context.Context, field graphql.CollectedField, obj *graphql1.User) (ret graphql.Marshaler) {
@@ -28844,6 +28848,22 @@ func (ec *executionContext) unmarshalInputSignupInput(ctx context.Context, obj i
 
 	for k, v := range asMap {
 		switch k {
+		case "lang":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
+			it.Lang, err = ec.unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "theme":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("theme"))
+			it.Theme, err = ec.unmarshalOTheme2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐTheme(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "userId":
 			var err error
 
@@ -29064,7 +29084,7 @@ func (ec *executionContext) unmarshalInputUpdateMeInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
-			it.Lang, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Lang, err = ec.unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36556,6 +36576,21 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (language.Tag, error) {
+	res, err := graphql1.UnmarshalLang(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, sel ast.SelectionSet, v language.Tag) graphql.Marshaler {
+	res := graphql1.MarshalLang(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) marshalNLayer2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐLayer(ctx context.Context, sel ast.SelectionSet, v graphql1.Layer) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -38848,6 +38883,21 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return graphql.MarshalInt(*v)
+}
+
+func (ec *executionContext) unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (*language.Tag, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql1.UnmarshalLang(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, sel ast.SelectionSet, v *language.Tag) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql1.MarshalLang(*v)
 }
 
 func (ec *executionContext) marshalOLayer2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐLayer(ctx context.Context, sel ast.SelectionSet, v graphql1.Layer) graphql.Marshaler {

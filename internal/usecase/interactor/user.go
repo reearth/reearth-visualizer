@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"golang.org/x/text/language"
-
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
@@ -14,7 +12,6 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
 	"github.com/reearth/reearth-backend/pkg/user"
-	"github.com/reearth/reearth-backend/pkg/user/initializer"
 )
 
 type User struct {
@@ -125,9 +122,15 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		}
 	}
 
+	// Fetch user info
+	ui, err := i.authenticator.FetchUser(inp.Sub)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	// Check if user and team already exists
 	var team *user.Team
-	existed, err = i.userRepo.FindByEmail(ctx, inp.Email)
+	existed, err = i.userRepo.FindByEmail(ctx, ui.Email)
 	if err != nil && !errors.Is(err, err1.ErrNotFound) {
 		return nil, nil, err
 	}
@@ -136,7 +139,15 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 	}
 
 	// Initialize user and team
-	u, team, err = initializer.InitUser(inp.Email, inp.Name, inp.Sub, inp.UserID, inp.TeamID)
+	u, team, err = user.Init(user.InitParams{
+		Email:    ui.Email,
+		Name:     ui.Name,
+		Auth0Sub: inp.Sub,
+		Lang:     inp.Lang,
+		Theme:    inp.Theme,
+		UserID:   inp.UserID,
+		TeamID:   inp.TeamID,
+	})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -152,6 +163,16 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 }
 
 func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operator *usecase.Operator) (u *user.User, err error) {
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+
+	if p.Password != nil {
+		if p.PasswordConfirmation == nil || *p.Password != *p.PasswordConfirmation {
+			return nil, interfaces.ErrUserInvalidPasswordConfirmation
+		}
+	}
+
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -161,10 +182,6 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 	}()
 
 	var team *user.Team
-
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
 
 	u, err = i.userRepo.FindByID(ctx, operator.User)
 	if err != nil {
@@ -191,20 +208,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		u.UpdateEmail(*p.Email)
 	}
 	if p.Lang != nil {
-		if *p.Lang == "" {
-			u.UpdateLang(language.Tag{})
-		} else {
-			l, err := language.Parse(*p.Lang)
-			if err != nil {
-				return nil, interfaces.ErrUserInvalidLang
-			}
-			u.UpdateLang(l)
-		}
-	}
-	if p.Password != nil {
-		if p.PasswordConfirmation == nil || *p.Password != *p.PasswordConfirmation {
-			return nil, interfaces.ErrUserInvalidPasswordConfirmation
-		}
+		u.UpdateLang(*p.Lang)
 	}
 	if p.Theme != nil {
 		u.UpdateTheme(*p.Theme)
@@ -241,6 +245,10 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 }
 
 func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *usecase.Operator) (u *user.User, err error) {
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -248,10 +256,6 @@ func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *
 	defer func() {
 		err = tx.End(ctx)
 	}()
-
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
 
 	u, err = i.userRepo.FindByID(ctx, operator.User)
 	if err != nil {
@@ -278,6 +282,10 @@ func (i *User) SearchUser(ctx context.Context, nameOrEmail string, operator *use
 }
 
 func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase.Operator) (err error) {
+	if operator == nil || operator.User.IsNil() || userID.IsNil() || userID != operator.User {
+		return errors.New("invalid user id")
+	}
+
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -285,10 +293,6 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 	defer func() {
 		err = tx.End(ctx)
 	}()
-
-	if operator == nil || operator.User.IsNil() || userID.IsNil() || userID != operator.User {
-		return errors.New("invalid user id")
-	}
 
 	u, err := i.userRepo.FindByID(ctx, userID)
 	if err != nil && !errors.Is(err, err1.ErrNotFound) {

@@ -48,6 +48,8 @@ func (c *UserController) Signup(ctx context.Context, ginput *SignupInput, sub st
 	}
 	u, team, err := c.usecase().Signup(ctx, interfaces.SignupParam{
 		Sub:    sub,
+		Lang:   ginput.Lang,
+		Theme:  toTheme(ginput.Theme),
 		UserID: id.UserIDFromRefID(ginput.UserID),
 		TeamID: id.TeamIDFromRefID(ginput.TeamID),
 		Secret: secret,
@@ -63,9 +65,9 @@ func (c *UserController) UpdateMe(ctx context.Context, ginput *UpdateMeInput, op
 		Name:                 ginput.Name,
 		Email:                ginput.Email,
 		Lang:                 ginput.Lang,
+		Theme:                toTheme(ginput.Theme),
 		Password:             ginput.Password,
 		PasswordConfirmation: ginput.PasswordConfirmation,
-		Theme:                toTheme(ginput.Theme),
 	}, operator)
 	if err != nil {
 		return nil, err

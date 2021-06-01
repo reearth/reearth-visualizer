@@ -33,3 +33,5 @@ models:
     model: github.com/reearth/reearth-backend/internal/adapter/graphql.PropertySchemaFieldID
   TranslatedString:
     model: github.com/reearth/reearth-backend/internal/adapter/graphql.Map
+  Lang:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.Lang

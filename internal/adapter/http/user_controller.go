@@ -20,8 +20,6 @@ func NewUserController(usecase interfaces.User) *UserController {
 type CreateUserInput struct {
 	Sub    string     `json:"sub"`
 	Secret string     `json:"secret"`
-	Name   string     `json:"name"`
-	Email  string     `json:"email"`
 	UserID *id.UserID `json:"userId"`
 	TeamID *id.TeamID `json:"teamId"`
 }
@@ -35,8 +33,6 @@ type CreateUserOutput struct {
 func (c *UserController) CreateUser(ctx context.Context, input CreateUserInput) (interface{}, error) {
 	u, _, err := c.usecase.Signup(ctx, interfaces.SignupParam{
 		Sub:    input.Sub,
-		Name:   input.Name,
-		Email:  input.Email,
 		Secret: input.Secret,
 		UserID: input.UserID,
 		TeamID: input.TeamID,

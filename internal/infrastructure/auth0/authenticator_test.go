@@ -29,15 +29,16 @@ var (
 	current2 = time.Date(2020, time.April, 1, 23, 0, 0, 0, time.UTC)
 )
 
-func TestAddPathSep(t *testing.T) {
-	assert.Equal(t, "a/", addPathSep("a"))
-	assert.Equal(t, "a/", addPathSep("a/"))
+func TestURLFromDomain(t *testing.T) {
+	assert.Equal(t, "https://a/", urlFromDomain("a"))
+	assert.Equal(t, "https://a/", urlFromDomain("a/"))
 }
 
 func TestAuth0(t *testing.T) {
 	a := New(domain, clientID, clientSecret)
 	a.client = client(t) // inject mock
 	a.current = func() time.Time { return current }
+	a.disableLogging = true
 
 	assert.True(t, a.needsFetchToken())
 	assert.NoError(t, a.updateToken())

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,14 +16,15 @@ import (
 )
 
 type Auth0 struct {
-	domain       string
-	client       *http.Client
-	clientID     string
-	clientSecret string
-	token        string
-	expireAt     time.Time
-	lock         sync.Mutex
-	current      func() time.Time
+	domain         string
+	client         *http.Client
+	clientID       string
+	clientSecret   string
+	token          string
+	expireAt       time.Time
+	lock           sync.Mutex
+	current        func() time.Time
+	disableLogging bool
 }
 
 type response struct {
@@ -56,7 +58,7 @@ func (u response) Into() gateway.AuthenticatorUser {
 
 func New(domain, clientID, clientSecret string) *Auth0 {
 	return &Auth0{
-		domain:       addPathSep(domain),
+		domain:       urlFromDomain(domain),
 		clientID:     clientID,
 		clientSecret: clientSecret,
 	}
@@ -71,7 +73,9 @@ func (a *Auth0) FetchUser(id string) (data gateway.AuthenticatorUser, err error)
 	var r response
 	r, err = a.exec(http.MethodGet, "api/v2/users/"+id, a.token, nil)
 	if err != nil {
-		log.Errorf("auth0: fetch user: %s", err)
+		if !a.disableLogging {
+			log.Errorf("auth0: fetch user: %s", err)
+		}
 		err = fmt.Errorf("failed to auth")
 		return
 	}
@@ -103,7 +107,9 @@ func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway
 	var r response
 	r, err = a.exec(http.MethodPatch, "api/v2/users/"+p.ID, a.token, payload)
 	if err != nil {
-		log.Errorf("auth0: update user: %s", err)
+		if !a.disableLogging {
+			log.Errorf("auth0: update user: %s", err)
+		}
 		err = fmt.Errorf("failed to update user")
 		return
 	}
@@ -212,9 +218,12 @@ func (a *Auth0) exec(method, path, token string, b interface{}) (r response, err
 	return
 }
 
-func addPathSep(path string) string {
+func urlFromDomain(path string) string {
 	if path == "" {
 		return path
+	}
+	if !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
+		path = "https://" + path
 	}
 	if path[len(path)-1] != '/' {
 		path += "/"
