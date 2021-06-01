@@ -42,10 +42,15 @@ func (c *UserController) Fetch(ctx context.Context, ids []id.UserID, operator *u
 }
 
 func (c *UserController) Signup(ctx context.Context, ginput *SignupInput, sub string) (*SignupPayload, error) {
+	secret := ""
+	if ginput.Secret != nil {
+		secret = *ginput.Secret
+	}
 	u, team, err := c.usecase().Signup(ctx, interfaces.SignupParam{
 		Sub:    sub,
 		UserID: id.UserIDFromRefID(ginput.UserID),
 		TeamID: id.TeamIDFromRefID(ginput.TeamID),
+		Secret: secret,
 	})
 	if err != nil {
 		return nil, err
@@ -92,5 +97,5 @@ func (c *UserController) DeleteMe(ctx context.Context, user id.ID, operator *use
 		return nil, err
 	}
 
-	return &DeleteMePayload{UserID: operator.User.ID()}, nil
+	return &DeleteMePayload{UserID: user}, nil
 }

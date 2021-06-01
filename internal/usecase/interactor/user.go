@@ -291,11 +291,8 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 	}
 
 	u, err := i.userRepo.FindByID(ctx, userID)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil || u == nil {
 		return err
-	}
-	if u == nil {
-		return nil
 	}
 
 	teams, err := i.teamRepo.FindByUser(ctx, u.ID())
