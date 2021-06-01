@@ -1,17 +1,14 @@
 package memory
 
 import (
-	"context"
-
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
 
 // InitRepos _
-func InitRepos(c *repo.Container, dummy bool) *repo.Container {
+func InitRepos(c *repo.Container) *repo.Container {
 	if c == nil {
 		c = &repo.Container{}
 	}
-	// not supported: File, PluginRepository
 	c.Asset = NewAsset()
 	c.Config = NewConfig()
 	c.DatasetSchema = NewDatasetSchema()
@@ -26,10 +23,5 @@ func InitRepos(c *repo.Container, dummy bool) *repo.Container {
 	c.User = NewUser()
 	c.SceneLock = NewSceneLock()
 	c.Transaction = NewTransaction()
-
-	if dummy {
-		generateDummyData(context.Background(), c)
-	}
-
 	return c
 }

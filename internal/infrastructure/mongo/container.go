@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databaseName string, dummy bool) error {
+func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databaseName string) error {
 	if databaseName == "" {
 		databaseName = "reearth"
 	}
@@ -32,10 +32,6 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 
 	if err := (migration.Client{Client: client}).Migrate(ctx); err != nil {
 		return err
-	}
-
-	if dummy {
-		generateDummyData(ctx, c)
 	}
 
 	return nil

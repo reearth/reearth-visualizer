@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/memory"
 	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/scene"
@@ -16,7 +15,7 @@ import (
 func TestCreateInfobox(t *testing.T) {
 	ctx := context.Background()
 
-	db := memory.InitRepos(&repo.Container{}, false)
+	db := memory.InitRepos(nil)
 	scene, _ := scene.New().NewID().Team(id.NewTeamID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewLayer(db)

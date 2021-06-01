@@ -22,8 +22,6 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	repos := &repo.Container{}
 	gateways := &gateway.Container{}
 
-	// memory.InitRepos(repos, true) // DEBUG
-
 	// Mongo
 	client, err := mongo.Connect(
 		ctx,
@@ -35,7 +33,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	if err != nil {
 		log.Fatalln(fmt.Sprintf("repo initialization error: %+v", err))
 	}
-	if err := mongorepo.InitRepos(ctx, repos, client, "reearth", debug); err != nil {
+	if err := mongorepo.InitRepos(ctx, repos, client, "reearth"); err != nil {
 		log.Fatalln(fmt.Sprintf("Failed to init mongo: %+v", err))
 	}
 

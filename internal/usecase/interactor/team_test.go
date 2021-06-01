@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/memory"
 	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/user"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,7 @@ import (
 func TestCreateTeam(t *testing.T) {
 	ctx := context.Background()
 
-	db := memory.InitRepos(&repo.Container{}, false)
+	db := memory.InitRepos(nil)
 
 	user := user.New().NewID().Team(id.NewTeamID()).MustBuild()
 
