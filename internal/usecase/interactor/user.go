@@ -288,7 +288,11 @@ func (i *User) SearchUser(ctx context.Context, nameOrEmail string, operator *use
 }
 
 func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase.Operator) (err error) {
-	if userID.IsNil() || operator != nil && !operator.User.IsNil() && userID != operator.User {
+	if operator == nil || operator.User.IsNil() {
+		return nil
+	}
+
+	if userID.IsNil() || userID != operator.User {
 		return errors.New("invalid user id")
 	}
 
