@@ -54,7 +54,14 @@ jobs:
           REEARTH_WEB_E2E_TEAM_ID: ${{ secrets.REEARTH_WEB_E2E_TEAM_ID }}
           REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
           REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
+          REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
           REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: e2etest-result
+          path: |
+            cypress/screenshots
+            cypress/videos
   slack-notification:
     if: ${{ success() || failure() }}
     name: Slack Notification
