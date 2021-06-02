@@ -3,15 +3,17 @@
     "config:base",
     ":semanticCommits",
     ":semanticCommitScopeDisabled",
-    ":automergeMinor",
-    ":automergeBranch",
     ":maintainLockFilesWeekly",
-    ":enableVulnerabilityAlertsWithLabel(security)",
-    ":preserveSemverRanges"
+    ":enableVulnerabilityAlertsWithLabel(security)"
   ],
+  "rangeStrategy": "bump",
   "enabledManagers": [
     "npm"
   ],
+  "lockFileMaintenance": {
+    "automerge": true,
+    "automergeType": "branch"
+  },
   "packageRules": [
     {
       "packagePatterns": [
