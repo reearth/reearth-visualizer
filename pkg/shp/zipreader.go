@@ -50,10 +50,11 @@ func ReadZipFrom(r io.Reader) (*ZipReader, error) {
 	if err != nil {
 		return nil, err
 	}
+	/* Note: not used
 	withoutExt := strings.TrimSuffix(shapeFiles[0].Name, ".shp")
 	// dbf is optional, so no error checking here
-	dbf, _ := openFromZIP(zr.z, withoutExt+".dbf")
-	zr.sr = SequentialReaderFromExt(shp, dbf)
+	dbf, _ := openFromZIP(zr.z, withoutExt+".dbf")*/
+	zr.sr = SequentialReaderFromExt(shp /*, dbf*/)
 	return zr, nil
 }
 
@@ -87,6 +88,7 @@ func (zr *ZipReader) Shape() (int, Shape) {
 	return zr.sr.Shape()
 }
 
+/* Note: not used
 // Attribute returns the n-th field of the last row that was read. If there
 // were any errors before, the empty string is returned.
 func (zr *ZipReader) Attribute(n int) string {
@@ -97,7 +99,7 @@ func (zr *ZipReader) Attribute(n int) string {
 // DBF table.
 func (zr *ZipReader) Fields() []Field {
 	return zr.sr.Fields()
-}
+}*/
 
 // Err returns the last non-EOF error that was encountered by this ZipReader.
 func (zr *ZipReader) Err() error {

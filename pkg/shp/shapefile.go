@@ -3,7 +3,6 @@ package shp
 import (
 	"encoding/binary"
 	"io"
-	"strings"
 )
 
 //go:generate stringer -type=ShapeType
@@ -1025,6 +1024,7 @@ type Field struct {
 	Padding   [14]byte
 }
 
+/* Note: not used
 // Returns a string representation of the Field. Currently
 // this only returns field name.
 func (f Field) String() string {
@@ -1063,4 +1063,4 @@ func DateField(name string) Field {
 	field := Field{Fieldtype: 'D', Size: 8}
 	copy(field.Name[:], []byte(name))
 	return field
-}
+}*/

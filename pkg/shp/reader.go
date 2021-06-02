@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"os"
-	"strings"
 )
 
 // Reader provides a interface for reading Shapefiles. Calls
@@ -19,17 +17,18 @@ type Reader struct {
 	bbox         Box
 	err          error
 
-	shp        io.ReadSeeker
-	shape      Shape
-	num        int32
-	filename   string
+	shp   io.ReadSeeker
+	shape Shape
+	num   int32
+	// filename   string
 	filelength int64
 
+	/* Note: not used
 	dbf             io.ReadSeeker
 	dbfFields       []Field
 	dbfNumRecords   int32
 	dbfHeaderLength int16
-	dbfRecordLength int16
+	dbfRecordLength int16*/
 }
 
 // ReadFrom read from io.Reader
@@ -101,11 +100,12 @@ func (r *Reader) Shape() (int, Shape) {
 	return int(r.num) - 1, r.shape
 }
 
+/* Note: not used
 // Attribute returns value of the n-th attribute of the most recent feature
 // that was read by a call to Next.
 func (r *Reader) Attribute(n int) string {
 	return r.ReadAttribute(int(r.num)-1, n)
-}
+}*/
 
 // newShape creates a new shape with a given type.
 func newShape(shapetype ShapeType) (Shape, error) {
@@ -202,6 +202,7 @@ func (r *Reader) Next() bool {
 	return true
 }
 
+/* Note: not used
 // Opens DBF file using r.filename + "dbf". This method
 // will parse the header and fill out all dbf* values int
 // the f object.
@@ -253,7 +254,7 @@ func (r *Reader) Fields() []Field {
 		return nil
 	}
 	return r.dbfFields
-}
+}*/
 
 // Err returns the last non-EOF error encountered.
 func (r *Reader) Err() error {
@@ -263,6 +264,7 @@ func (r *Reader) Err() error {
 	return r.err
 }
 
+/* Note: not used
 // ReadAttribute returns the attribute value at row for field in
 // the DBF table as a string. Both values starts at 0.
 func (r *Reader) ReadAttribute(row int, field int) string {
@@ -284,4 +286,4 @@ func (r *Reader) ReadAttribute(row int, field int) string {
 		return ""
 	}
 	return strings.Trim(string(buf[:]), " ")
-}
+}*/
