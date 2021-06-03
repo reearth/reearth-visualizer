@@ -47,12 +47,11 @@ type GCSConfig struct {
 }
 
 func ReadConfig(debug bool) (*Config, error) {
-	if debug {
-		// .env.local file is only available in debug environment
-		if err := godotenv.Load(".env.local"); err != nil && !os.IsNotExist(err) {
-			return nil, err
-		}
-		log.Infof("config: .env.local loaded")
+	// load .env
+	if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
+		return nil, err
+	} else if err == nil {
+		log.Infof("config: .env loaded")
 	}
 
 	var c Config
