@@ -52,6 +52,21 @@ func (b *Builder) IsArchived(isArchived bool) *Builder {
 	return b
 }
 
+func (b *Builder) IsBasicAuthActive(isBasicAuthActive bool) *Builder {
+	b.p.isBasicAuthActive = isBasicAuthActive
+	return b
+}
+
+func (b *Builder) BasicAuthUsername(basicAuthUsername string) *Builder {
+	b.p.basicAuthUsername = basicAuthUsername
+	return b
+}
+
+func (b *Builder) BasicAuthPassword(basicAuthPassword string) *Builder {
+	b.p.basicAuthPassword = basicAuthPassword
+	return b
+}
+
 func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 	b.p.updatedAt = updatedAt
 	return b

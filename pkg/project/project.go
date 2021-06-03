@@ -19,6 +19,9 @@ var (
 type Project struct {
 	id                id.ProjectID
 	isArchived        bool
+	isBasicAuthActive bool
+	basicAuthUsername string
+	basicAuthPassword string
 	updatedAt         time.Time
 	publishedAt       time.Time
 	name              string
@@ -40,6 +43,18 @@ func (p *Project) ID() id.ProjectID {
 
 func (p *Project) IsArchived() bool {
 	return p.isArchived
+}
+
+func (p *Project) IsBasicAuthActive() bool {
+	return p.isBasicAuthActive
+}
+
+func (p *Project) BasicAuthUsername() string {
+	return p.basicAuthUsername
+}
+
+func (p *Project) BasicAuthPassword() string {
+	return p.basicAuthPassword
 }
 
 func (p *Project) UpdatedAt() time.Time {
@@ -104,6 +119,18 @@ func (p *Project) Visualizer() visualizer.Visualizer {
 
 func (p *Project) SetArchived(isArchived bool) {
 	p.isArchived = isArchived
+}
+
+func (p *Project) SetIsBasicAuthActive(isBasicAuthActive bool) {
+	p.isBasicAuthActive = isBasicAuthActive
+}
+
+func (p *Project) SetBasicAuthUsername(basicAuthUsername string) {
+	p.basicAuthUsername = basicAuthUsername
+}
+
+func (p *Project) SetBasicAuthPassword(basicAuthPassword string) {
+	p.basicAuthPassword = basicAuthPassword
 }
 
 func (p *Project) SetUpdatedAt(updatedAt time.Time) {

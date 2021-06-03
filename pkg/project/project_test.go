@@ -268,3 +268,67 @@ func TestProject_PublicName(t *testing.T) {
 		})
 	}
 }
+
+func TestProject_IsBasicAuthActive(t *testing.T) {
+	tests := []struct {
+		name     string
+		p        *Project
+		expected bool
+	}{
+		{
+			name: "basic auth is inactive",
+			p: &Project{
+				isBasicAuthActive: false,
+			},
+			expected: false,
+		},
+		{
+			name: "basic auth is active",
+			p: &Project{
+				isBasicAuthActive: true,
+			},
+			expected: true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(tt *testing.T) {
+			tt.Parallel()
+			res := tc.p.IsBasicAuthActive()
+			assert.Equal(tt, tc.expected, res)
+		})
+	}
+}
+
+func TestProject_BasicAuthUsername(t *testing.T) {
+	t.Run("return basic auth username", func(t *testing.T) {
+		p := &Project{basicAuthUsername: "test1"}
+		res := p.BasicAuthUsername()
+		assert.Equal(t, "test1", res)
+	})
+}
+
+func TestProject_BasicAuthPassword(t *testing.T) {
+	t.Run("return basic auth password", func(t *testing.T) {
+		p := &Project{basicAuthPassword: "password"}
+		res := p.BasicAuthPassword()
+		assert.Equal(t, "password", res)
+	})
+}
+
+func TestProject_SetIsBasicAuthActive(t *testing.T) {
+	p := &Project{}
+	p.SetIsBasicAuthActive(true)
+	assert.Equal(t, true, p.isBasicAuthActive)
+}
+
+func TestProject_SetBasicAuthUsername(t *testing.T) {
+	p := &Project{}
+	p.SetBasicAuthUsername("username")
+	assert.Equal(t, "username", p.basicAuthUsername)
+}
+
+func TestProject_SetBasicAuthPassword(t *testing.T) {
+	p := &Project{}
+	p.SetBasicAuthPassword("password")
+	assert.Equal(t, "password", p.basicAuthPassword)
+}

@@ -132,10 +132,13 @@ func apiPublished(cfg *ServerConfig) echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"title":       title,
-			"description": description,
-			"image":       prj.PublicImage(),
-			"noindex":     prj.PublicNoIndex(),
+			"title":             title,
+			"description":       description,
+			"image":             prj.PublicImage(),
+			"noindex":           prj.PublicNoIndex(),
+			"isBasicAuthActive": prj.IsBasicAuthActive(),
+			"basicAuthUsername": prj.BasicAuthUsername(),
+			"basicAuthPassword": prj.BasicAuthPassword(),
 		})
 	}
 }

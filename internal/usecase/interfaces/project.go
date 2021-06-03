@@ -28,6 +28,9 @@ type UpdateProjectParam struct {
 	Description       *string
 	Alias             *string
 	Archived          *bool
+	IsBasicAuthActive *bool
+	BasicAuthUsername *string
+	BasicAuthPassword *string
 	ImageURL          *url.URL
 	PublicTitle       *string
 	PublicDescription *string

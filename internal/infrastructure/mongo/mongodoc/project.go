@@ -14,6 +14,9 @@ import (
 type ProjectDocument struct {
 	ID                string
 	Archived          bool
+	IsBasicAuthActive bool
+	BasicAuthUsername string
+	BasicAuthPassword string
 	UpdatedAt         time.Time
 	PublishedAt       time.Time
 	Name              string
@@ -67,6 +70,9 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 	return &ProjectDocument{
 		ID:                pid,
 		Archived:          project.IsArchived(),
+		IsBasicAuthActive: project.IsBasicAuthActive(),
+		BasicAuthUsername: project.BasicAuthUsername(),
+		BasicAuthPassword: project.BasicAuthPassword(),
 		UpdatedAt:         project.UpdatedAt(),
 		PublishedAt:       project.PublishedAt(),
 		Name:              project.Name(),
@@ -103,6 +109,9 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	return project.New().
 		ID(pid).
 		IsArchived(d.Archived).
+		IsBasicAuthActive(d.IsBasicAuthActive).
+		BasicAuthUsername(d.BasicAuthUsername).
+		BasicAuthPassword(d.BasicAuthPassword).
 		UpdatedAt(d.UpdatedAt).
 		PublishedAt(d.PublishedAt).
 		Name(d.Name).

@@ -53,6 +53,17 @@ func TestBuilder_IsArchived(t *testing.T) {
 	assert.True(t, res.IsArchived())
 }
 
+func TestBuilder_BasicAuthUsername(t *testing.T) {
+	var tb = New().NewID()
+	res := tb.BasicAuthUsername("username").MustBuild()
+	assert.Equal(t, "username", res.BasicAuthUsername())
+}
+func TestBuilder_BasicAuthPassword(t *testing.T) {
+	var tb = New().NewID()
+	res := tb.BasicAuthPassword("password").MustBuild()
+	assert.Equal(t, "password", res.BasicAuthPassword())
+}
+
 func TestBuilder_ImageURL(t *testing.T) {
 	testCases := []struct {
 		name        string
