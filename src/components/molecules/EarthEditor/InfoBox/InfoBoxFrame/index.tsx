@@ -48,24 +48,24 @@ const InfoBox: React.FC<Props> = ({
   onExited,
 }) => {
   const theme = useTheme();
-  const isExtraSmallWindow = useMedia("(max-width: 420px)");
+  const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(!isExtraSmallWindow);
+  const [open, setOpen] = useState(!isSmallWindow);
   useClickAway(ref, () => onClickAway?.());
 
   const handleOpen = useCallback(() => {
-    if (open || (noContent && isExtraSmallWindow)) return;
+    if (open || (noContent && isSmallWindow)) return;
     setOpen(true);
-  }, [open, noContent, isExtraSmallWindow]);
+  }, [open, noContent, isSmallWindow]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
 
   useEffect(() => {
-    if (isExtraSmallWindow) setOpen(false);
-  }, [infoboxKey, isExtraSmallWindow]);
+    if (isSmallWindow) setOpen(false);
+  }, [infoboxKey, isSmallWindow]);
 
   useEffect(() => {
     if (!ref2.current) return;
@@ -101,13 +101,13 @@ const InfoBox: React.FC<Props> = ({
           open={open}
           noContent={noContent}
           onClick={handleOpen}>
-          {isExtraSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
+          {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
           <Text size="m" weight="bold">
             <TitleText noContent={noContent} open={open}>
               {title || " "}
             </TitleText>
           </Text>
-          {!isExtraSmallWindow && <StyledIcon icon="arrowDown" size={24} open={open} />}
+          {!isSmallWindow && <StyledIcon icon="arrowDown" size={24} open={open} />}
         </TitleFlex>
         <CloseBtn icon="cancel" size={16} onClick={handleClose} open={open} />
         <Content ref={ref2} open={open}>
@@ -132,7 +132,7 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   align-items: stretch;
   z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
 
-  @media (max-width: 420px) {
+  @media (max-width: 624px) {
     left: 16px;
     right: 16px;
     top: auto;
@@ -148,7 +148,7 @@ const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
   flex-direction: column;
   min-height: ${({ open }) => (open ? "280px" : "100%")};
 
-  @media (max-width: 420px) {
+  @media (max-width: 624px) {
     width: auto;
   }
 `;
