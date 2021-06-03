@@ -1,0 +1,55 @@
+name: godoc
+on:
+  workflow_run:
+    workflows:
+      - main
+    types:
+      - completed
+env:
+  MOD: github.com/reearth/reearth-backend
+  REPO: github.com/reearth/reearth-backend
+  ADDR: localhost:6060
+jobs:
+  godoc:
+    name: godoc
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      BASE_PATH: ${{ github.event.workflow_run.head_branch }}
+    steps:
+      - name: set up
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+        id: go
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: install godoc
+        run: go install golang.org/x/tools/cmd/godoc
+      - name: generate docs
+        run: |
+          godoc -http=$ADDR &
+          sleep 1
+          wget -r -np -N -E -p -k http://${ADDR}/pkg/${MOD}/
+      - name: replace urls
+        run: |
+          find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i -e "s/http:\/\/${ADDR}\/src\/${MOD}/https:\/\/${REPO}\/blob\/main/"
+          find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i -e "s/http:\/\/${ADDR}/\/${BASE_PATH}/"
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./${{ env.ADDR }}
+          destination_dir: ${{ env.BASE_PATH }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs: godoc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
