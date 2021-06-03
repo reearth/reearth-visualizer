@@ -17,7 +17,7 @@ module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
   let envfile = "";
   try {
-    envfile = fs.readFileSync(`.env.local`);
+    envfile = fs.readFileSync(`.env`);
   } catch {
     // ignore
   }

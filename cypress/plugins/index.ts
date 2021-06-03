@@ -19,13 +19,7 @@ import dotenvPlugin from "cypress-dotenv";
 const pluginConfig: Cypress.PluginConfig = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  config = dotenvPlugin(
-    config,
-    {
-      path: ".env.local",
-    },
-    true,
-  );
+  config = dotenvPlugin(config, {}, true);
   config.env = {
     ...config.env,
     ...Object.fromEntries(
