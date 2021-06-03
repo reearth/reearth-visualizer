@@ -8,7 +8,7 @@ type Props = {
   header?: React.ReactNode;
   action?: React.ReactNode;
   secondaryAction?: React.ReactNode;
-  body?: string;
+  body?: React.ReactNode;
   children?: React.ReactNode;
 };
 

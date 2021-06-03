@@ -8,11 +8,40 @@ export const PROJECT = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
         alias
         publishmentStatus
+      }
+    }
+  }
+`;
+
+export const UPDATE_PROJECT_BASIC_AUTH = gql`
+  mutation updateProjectBasicAuth(
+    $projectId: ID!
+    $isBasicAuthActive: Boolean
+    $basicAuthUsername: String
+    $basicAuthPassword: String
+  ) {
+    updateProject(
+      input: {
+        projectId: $projectId
+        isBasicAuthActive: $isBasicAuthActive
+        basicAuthUsername: $basicAuthUsername
+        basicAuthPassword: $basicAuthPassword
+      }
+    ) {
+      project {
+        id
+        name
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
       }
     }
   }
@@ -26,6 +55,9 @@ export const UPDATE_PROJECT_NAME = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
@@ -44,6 +76,9 @@ export const UPDATE_PROJECT_DESCRIPTION = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
@@ -62,6 +97,9 @@ export const UPDATE_PROJECT_IMAGE_URL = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
@@ -80,6 +118,9 @@ export const UPDATE_PROJECT_PUBLIC_TITLE = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
@@ -98,6 +139,9 @@ export const UPDATE_PROJECT_PUBLIC_DESCRIPTION = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl
@@ -116,6 +160,9 @@ export const ARCHIVE_PROJECT = gql`
         name
         description
         isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
         publicTitle
         publicDescription
         imageUrl

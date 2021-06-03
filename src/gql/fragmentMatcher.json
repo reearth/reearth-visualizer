@@ -4,16 +4,12 @@
       "Asset",
       "Scene",
       "DatasetSchemaField",
+      "Project",
       "Property",
-      "User",
-      "DatasetSchema",
       "Team",
       "Dataset",
-      "Project"
-    ],
-    "Layers": [
-      "LayerItem",
-      "LayerGroup"
+      "DatasetSchema",
+      "User"
     ],
     "PropertyItem": [
       "PropertyGroup",
@@ -22,6 +18,10 @@
     "Layer": [
       "LayerGroup",
       "LayerItem"
+    ],
+    "Layers": [
+      "LayerItem",
+      "LayerGroup"
     ]
   }
 }

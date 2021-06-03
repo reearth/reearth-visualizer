@@ -9,6 +9,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
+  useUpdateProjectBasicAuthMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
@@ -43,6 +44,9 @@ export default ({ projectId }: Params) => {
             publicTitle: rawProject.publicTitle,
             publicDescription: rawProject.publicDescription,
             isArchived: rawProject.isArchived,
+            isBasicAuthActive: rawProject.isBasicAuthActive,
+            basicAuthUsername: rawProject.basicAuthUsername,
+            basicAuthPassword: rawProject.basicAuthPassword,
             imageUrl: rawProject.imageUrl,
             alias: rawProject.alias,
             publishmentStatus: rawProject.publishmentStatus,
@@ -52,6 +56,7 @@ export default ({ projectId }: Params) => {
   );
 
   // Project Updating
+  const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProjectNameMutation] = useUpdateProjectNameMutation();
   const [updateProjectDescriptionMutation] = useUpdateProjectDescriptionMutation();
   const [updateProjectImageUrlMutation] = useUpdateProjectImageUrlMutation();
@@ -70,6 +75,16 @@ export default ({ projectId }: Params) => {
   const deleteProject = useCallback(() => {
     projectId && deleteProjectMutation({ variables: { projectId } });
   }, [projectId, deleteProjectMutation]);
+
+  const updateProjectBasicAuth = useCallback(
+    (isBasicAuthActive?: boolean, basicAuthUsername?: string, basicAuthPassword?: string) => {
+      projectId &&
+        updateProjectBasicAuthMutation({
+          variables: { projectId, isBasicAuthActive, basicAuthUsername, basicAuthPassword },
+        });
+    },
+    [projectId, updateProjectBasicAuthMutation],
+  );
 
   const updateProjectDescription = useCallback(
     (description: string) => {
@@ -145,6 +160,7 @@ export default ({ projectId }: Params) => {
     project,
     projectId,
     currentTeam,
+    updateProjectBasicAuth,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,

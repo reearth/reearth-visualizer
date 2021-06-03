@@ -8,6 +8,7 @@ import ProfileSection from "@reearth/components/molecules/Settings/Project/Profi
 import PublishSection from "@reearth/components/molecules/Settings/Project/PublishSection";
 import DangerSection from "@reearth/components/molecules/Settings/Project/DangerSection";
 import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
 
 type Props = {
   projectId: string;
@@ -17,6 +18,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
   const {
     project,
     currentTeam,
+    updateProjectBasicAuth,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,
@@ -37,6 +39,12 @@ const Project: React.FC<Props> = ({ projectId }) => {
       {!project?.isArchived && (
         <>
           <StatusSection projectStatus={projectStatus} />
+          <BasicAuthSection
+            onSave={updateProjectBasicAuth}
+            isBasicAuthActive={project?.isBasicAuthActive}
+            basicAuthUsername={project?.basicAuthUsername ?? ""}
+            basicAuthPassword={project?.basicAuthPassword ?? ""}
+          />
           <ProfileSection
             currentProject={project}
             updateProjectName={updateProjectName}
