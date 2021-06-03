@@ -29,7 +29,7 @@ jobs:
       - name: generate docs
         run: |
           godoc -http=$ADDR &
-          sleep 1
+          sleep 5
           wget -r -np -N -E -p -k http://${ADDR}/pkg/${MOD}/
       - name: replace urls
         run: |
