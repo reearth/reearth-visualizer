@@ -22,19 +22,19 @@ export default (alias?: string) => {
     changeSelectedLayerId(id);
   }, []);
 
-  const googleAnalitcsData: { enableGA: boolean; trackingId: string } = useMemo(
+  const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
     () => ({
-      enableGA: data?.property.googleAnalytics.enableGA,
-      trackingId: data?.property.googleAnalitcs.trackingId,
+      enableGA: data?.property.googleAnalytics?.enableGA,
+      trackingId: data?.property.googleAnalitcs?.trackingId,
     }),
-    [data?.property.googleAnalitcs.trackingId, data?.property.googleAnalytics.enableGA],
+    [data?.property.googleAnalitcs?.trackingId, data?.property.googleAnalytics?.enableGA],
   );
 
   useEffect(() => {
-    if (!googleAnalitcsData.enableGA || !googleAnalitcsData.trackingId) return;
-    ReactGA.initialize(googleAnalitcsData.trackingId);
+    if (!googleAnalyticsData.enableGA || !googleAnalyticsData.trackingId) return;
+    ReactGA.initialize(googleAnalyticsData.trackingId);
     ReactGA.pageview(window.location.pathname);
-  }, [googleAnalitcsData]);
+  }, [googleAnalyticsData]);
 
   const layers = useMemo<Layer[] | undefined>(
     () =>
