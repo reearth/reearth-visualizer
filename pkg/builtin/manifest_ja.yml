@@ -76,6 +76,16 @@ extensions:
             title: 色相
           surturation_shift:
             title: 彩度
+      googleAnalytics:
+        title: Google Analytics
+        description: Google Analyticsを有効にすることで、公開ページがどのように閲覧されているかを分析することが可能です。
+        fields:
+          enableGA:
+            title: 有効
+            description: Google Analyticsを有効にします。
+          trackingCode:
+            title: トラッキングID
+            description: ここにグーグルアナリティクスのトラッキングIDを貼り付けることで、公開プロジェクトにこのコードが埋め込まれます。
   infobox:
     title: インフォボックス
     description: 閲覧者が地図上のレイヤーをクリックした時に表示されるボックスです。テキストや画像、動画などのコンテンツを表示することができます。

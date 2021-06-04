@@ -139,6 +139,19 @@ extensions:
               description: "Set saturation of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
+        - id: googleAnalytics
+          title: Google Analytics
+          description: Set your Google Analytics tracking ID and analyze how your published project is being viewed.
+          fields:
+            - id: enableGA
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable Google Analytics
+            - id: trackingId
+              type: string
+              title: Tracking ID
+              description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
   - id: infobox
     title: Infobox
     visualizer: cesium
