@@ -29,8 +29,8 @@ jobs:
       - name: generate docs
         run: |
           godoc -http=$ADDR &
-          sleep 5
-          wget -r -np -N -E -p -k http://${ADDR}/pkg/${MOD}/
+          sleep 10
+          wget -c 10 --retry-connrefused -r -np -N -E -p -k http://${ADDR}/pkg/${MOD}/
       - name: replace urls
         run: |
           find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i -e "s/http:\/\/${ADDR}\/src\/${MOD}/https:\/\/${REPO}\/blob\/main/"
