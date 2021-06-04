@@ -4,12 +4,14 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import SelectField from "@reearth/components/molecules/Settings/SelectField";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled, colors } from "@reearth/theme";
+import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 
 export type Props = {
   className?: string;
   title?: React.ReactNode;
   body?: string;
   dropdown?: boolean;
+  isImage?: boolean;
   dropdownItems?:
     | {
         key: string;
@@ -18,11 +20,13 @@ export type Props = {
       }[]
     | undefined;
   currentItem?: string;
-  image?: string;
+  imageSrc?: string;
   icon?: string;
   iHeight?: string;
   multilineTextBox?: boolean;
   onSubmit?: (body: string) => void;
+  onEditStart?: () => void;
+  onEditCancel?: () => void;
 };
 
 const EditableItem: React.FC<Props> = ({
@@ -30,19 +34,34 @@ const EditableItem: React.FC<Props> = ({
   title,
   body = "",
   dropdown,
+  isImage,
   dropdownItems,
   currentItem,
   multilineTextBox,
-  image,
+  imageSrc,
   icon,
   iHeight,
   onSubmit,
+  onEditStart,
+  onEditCancel,
 }) => {
   const [isEditting, setIsEditting] = useState(false);
   const [inputState, setInputState] = useState(body || currentItem);
 
-  const startEdit = useCallback(() => setIsEditting(true), [setIsEditting]);
-  const cancelEdit = useCallback(() => setIsEditting(false), [setIsEditting]);
+  const startEdit = useCallback(() => {
+    if (onEditStart) {
+      onEditStart();
+    } else {
+      setIsEditting(true);
+    }
+  }, [setIsEditting, onEditStart]);
+  const cancelEdit = useCallback(() => {
+    if (onEditCancel) {
+      onEditCancel();
+    } else {
+      setIsEditting(false);
+    }
+  }, [setIsEditting, onEditCancel]);
 
   const saveEdit = useCallback(() => {
     inputState && onSubmit?.(inputState);
@@ -88,10 +107,15 @@ const EditableItem: React.FC<Props> = ({
       className={className}
       header={title}
       body={body}
-      action={<StyledIcon icon="edit" size={20} onClick={startEdit} />}>
-      {image ? (
+      action={
+        <ButtonWrapper>
+          {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.("")} />}
+          <StyledIcon icon="edit" size={20} onClick={startEdit} />
+        </ButtonWrapper>
+      }>
+      {imageSrc || isImage ? (
         <div>
-          <Image src={image} height={iHeight} />
+          <Image src={imageSrc || defaultProjectImage} height={iHeight} />
         </div>
       ) : (
         icon && (

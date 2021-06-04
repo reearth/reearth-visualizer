@@ -10,10 +10,15 @@ import {
   useArchiveProjectMutation,
   useDeleteProjectMutation,
   useUpdateProjectBasicAuthMutation,
+  useCreateAssetMutation,
+  AssetsQuery,
+  useAssetsQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
+
+export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 type Params = {
   projectId: string;
@@ -156,6 +161,26 @@ export default ({ projectId }: Params) => {
     setProjectAlias(project?.alias);
   }, [project]);
 
+  const [createAssetMutation] = useCreateAssetMutation();
+  const createAssets = useCallback(
+    (file: File) =>
+      (async () => {
+        if (teamId) {
+          await createAssetMutation({
+            variables: { teamId, file },
+            refetchQueries: ["Assets"],
+          });
+        }
+      })(),
+    [createAssetMutation, teamId],
+  );
+
+  const { data: assetsData } = useAssetsQuery({
+    variables: { teamId: teamId ?? "" },
+    skip: !teamId,
+  });
+  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+
   return {
     project,
     projectId,
@@ -173,6 +198,8 @@ export default ({ projectId }: Params) => {
     validAlias,
     checkProjectAlias,
     validatingAlias,
+    createAssets,
+    assets,
   };
 };
 

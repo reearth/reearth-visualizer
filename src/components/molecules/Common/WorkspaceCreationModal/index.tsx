@@ -58,6 +58,7 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
           large
           buttonType="primary"
           text={intl.formatMessage({ defaultMessage: "Create" })}
+          disabled={!formik.values.name}
           onClick={formik.submitForm}
         />
       }

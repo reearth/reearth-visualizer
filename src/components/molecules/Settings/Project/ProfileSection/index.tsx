@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Section from "@reearth/components/molecules/Settings/Section";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
 import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+
+export type Asset = AssetType;
 
 export type Props = {
   currentProject?: {
@@ -14,6 +17,8 @@ export type Props = {
   updateProjectName?: (name: string) => void;
   updateProjectDescription?: (description: string) => void;
   updateProjectImageUrl?: (imageUrl: string | null) => void;
+  assets?: Asset[];
+  createAssets?: (file: File) => Promise<void>;
 };
 
 const ProfileSection: React.FC<Props> = ({
@@ -21,14 +26,19 @@ const ProfileSection: React.FC<Props> = ({
   updateProjectName,
   updateProjectDescription,
   updateProjectImageUrl,
+  assets,
+  createAssets,
 }) => {
   const intl = useIntl();
+  const [isAssetModalOpen, setAssetModalOpen] = useState(false);
+  const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
+  const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Profile" })}>
+      <Section title={intl.formatMessage({ defaultMessage: "Project Info" })}>
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Project name" })}
+          title={intl.formatMessage({ defaultMessage: "Name" })}
           body={currentProject?.name}
           onSubmit={updateProjectName}
         />
@@ -41,9 +51,21 @@ const ProfileSection: React.FC<Props> = ({
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Thumbnail" })}
           onSubmit={updateProjectImageUrl}
-          image={currentProject?.imageUrl as string}
+          imageSrc={currentProject?.imageUrl as string}
+          isImage
+          onEditStart={() => openAssetModal()}
+          onEditCancel={() => closeAssetModal()}
         />
       </Section>
+      <AssetModal
+        isOpen={isAssetModalOpen}
+        onClose={closeAssetModal}
+        assets={assets}
+        fileType="image"
+        onCreateAsset={createAssets}
+        onSelect={updateProjectImageUrl}
+        value={currentProject?.imageUrl as string | undefined}
+      />
     </Wrapper>
   );
 };

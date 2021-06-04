@@ -13,15 +13,12 @@ export type Props = {
     name: string;
     isArchived: boolean;
   };
-  team?: {
-    id: string;
-    name: string;
-  };
+  teamId?: string;
   archiveProject?: (archived: boolean) => void;
   deleteProject?: () => void;
 };
 
-const DangerSection: React.FC<Props> = ({ project, team, archiveProject, deleteProject }) => {
+const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, deleteProject }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [actionType, setActionType] = useState<ActionType>("archive");
 
@@ -94,7 +91,7 @@ const DangerSection: React.FC<Props> = ({ project, team, archiveProject, deleteP
       <Modal
         actionType={actionType}
         project={project}
-        team={team}
+        teamId={teamId}
         isVisible={isOpen}
         archiveProject={archiveProject}
         deleteProject={deleteProject}

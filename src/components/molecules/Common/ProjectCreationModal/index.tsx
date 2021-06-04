@@ -48,9 +48,8 @@ const ProjectCreationModal: React.FC<Props> = ({
     onSubmit: useCallback(
       async (data: FormValues) => {
         await onSubmit?.(data);
-        onClose?.(true);
       },
-      [onClose, onSubmit],
+      [onSubmit],
     ),
   });
 
@@ -67,6 +66,12 @@ const ProjectCreationModal: React.FC<Props> = ({
     },
     [formik],
   );
+
+  const handleCreate = useCallback(async () => {
+    await formik.submitForm();
+    handleClose();
+  }, [formik, handleClose]);
+
   const theme = useTheme();
 
   return (
@@ -79,7 +84,8 @@ const ProjectCreationModal: React.FC<Props> = ({
           large
           buttonType="primary"
           text={intl.formatMessage({ defaultMessage: "Create" })}
-          onClick={formik.submitForm}
+          disabled={!formik.values.name}
+          onClick={handleCreate}
         />
       }
       button2={

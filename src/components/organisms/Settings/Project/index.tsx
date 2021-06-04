@@ -31,6 +31,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
     validAlias,
     checkProjectAlias,
     validatingAlias,
+    createAssets,
+    assets,
   } = useHooks({ projectId });
 
   return (
@@ -50,6 +52,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
             updateProjectName={updateProjectName}
             updateProjectDescription={updateProjectDescription}
             updateProjectImageUrl={updateProjectImageUrl}
+            assets={assets}
+            createAssets={createAssets}
           />
           <PublishSection
             loading={loading}
@@ -65,7 +69,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
       {project?.isArchived && <ArchivedMessage />}
       <DangerSection
         project={project}
-        team={currentTeam}
+        teamId={currentTeam?.id}
         archiveProject={archiveProject}
         deleteProject={deleteProject}
       />

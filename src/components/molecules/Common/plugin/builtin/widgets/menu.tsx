@@ -77,16 +77,20 @@ const Menu: WidgetComponent<Property, PluginProperty> = ({ property }) => {
   const handleClick = useCallback(
     (b: Button | MenuItem) => () => {
       const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
-      if (t === "link") {
-        const link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
-        window.open(link, "_blank", "noopener");
-      } else if (t === "menu") {
+      if (t === "menu") {
         setVisibleMenuButton(v => (v === b.id ? undefined : b.id));
         return;
       } else if (t === "camera") {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         setCamera(camera);
+      } else {
+        let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
+        const splitLink = link?.split("/");
+        if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
+          link = "https://" + link;
+        }
+        window.open(link, "_blank", "noopener");
       }
       setVisibleMenuButton(undefined);
     },
