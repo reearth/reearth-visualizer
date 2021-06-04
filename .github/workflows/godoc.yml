@@ -8,7 +8,7 @@ on:
 env:
   MOD: github.com/reearth/reearth-backend
   REPO: github.com/reearth/reearth-backend
-  GODOC_ADDR: '127.0.0.1:6060'
+  ADDR: '127.0.0.1:6060'
 jobs:
   godoc:
     name: godoc
