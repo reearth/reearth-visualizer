@@ -25,9 +25,9 @@ export default (alias?: string) => {
   const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
     () => ({
       enableGA: data?.property.googleAnalytics?.enableGA,
-      trackingId: data?.property.googleAnalitcs?.trackingId,
+      trackingId: data?.property.googleAnalytcs?.trackingId,
     }),
-    [data?.property.googleAnalitcs?.trackingId, data?.property.googleAnalytics?.enableGA],
+    [data?.property.googleAnalytcs?.trackingId, data?.property.googleAnalytics?.enableGA],
   );
 
   useEffect(() => {
