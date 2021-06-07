@@ -91,9 +91,9 @@ const AssetModal: React.FC<Props> = ({
 
   const filteredAssets = useMemo(() => {
     if (!assets) return;
-    return assets.filter(a =>
-      a.url.match(fileType === "file" ? /\.kml$/ : /\.(jpg|jpeg|png|gif)$/),
-    );
+    return assets
+      .filter(a => a.url.match(fileType === "file" ? /\.kml$/ : /\.(jpg|jpeg|png|gif)$/))
+      .reverse(); // reversed to show newest at the top
   }, [assets, fileType]);
 
   return fileType === "video" ? (

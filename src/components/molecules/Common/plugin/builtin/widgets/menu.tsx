@@ -117,8 +117,9 @@ const Menu: WidgetComponent<Property, PluginProperty> = ({ property }) => {
                 key={b.id}
                 button={b}
                 pos={p}
-                menuItems={menuItems}
                 menuVisible={visibleMenuButton === b.id}
+                menuItems={menuItems}
+                itemOnClick={handleClick}
                 onClick={handleClick(b)}
                 onClose={closeMenu}
               />
@@ -134,10 +135,11 @@ const MenuButton: React.FC<{
   button: Button;
   menuVisible?: boolean;
   menuItems?: MenuItem[];
+  itemOnClick?: (b: Button | MenuItem) => () => void;
   pos: Position;
   onClick?: () => void;
   onClose?: () => void;
-}> = ({ button: b, menuVisible, menuItems, onClick, onClose, pos }) => {
+}> = ({ button: b, menuVisible, menuItems, itemOnClick, pos, onClick, onClose }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
   const menuElement = useRef<HTMLDivElement>(null);
@@ -184,7 +186,7 @@ const MenuButton: React.FC<{
         {menuVisible && (
           <MenuWrapper ref={menuElement}>
             {menuItems?.map(i => (
-              <MenuItem tabIndex={0} key={i.id} item={i} onClick={onClick}>
+              <MenuItem tabIndex={0} key={i.id} item={i} onClick={itemOnClick?.(i)}>
                 {i.menuType !== "border" && i.menuTitle}
               </MenuItem>
             ))}
