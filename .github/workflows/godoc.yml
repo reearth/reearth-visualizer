@@ -8,14 +8,14 @@ on:
 env:
   MOD: github.com/reearth/reearth-backend
   REPO: github.com/reearth/reearth-backend
-  ADDR: 'localhost:6060'
+  ADDR: 'localhost:8080'
 jobs:
   godoc:
     name: godoc
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
-      BASE_PATH: ${{ github.event.workflow_run.head_branch }}
+      DIR: ${{ github.event.workflow_run.head_branch }}
     steps:
       - name: set up
         uses: actions/setup-go@v2
@@ -24,14 +24,21 @@ jobs:
         id: go
       - name: checkout
         uses: actions/checkout@v2
+      - name: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - run: go mod download
       - name: install godoc
         run: go install golang.org/x/tools/cmd/godoc@latest
       - name: generate docs
-        id: godoc
         continue-on-error: true
         run: |
           godoc -http="$ADDR" &
-          sleep 10
+          sleep 15
           wget -r -np -N -E -p -k "http://${ADDR}/pkg/${MOD}/"
       - name: replace urls
         run: |

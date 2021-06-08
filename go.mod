@@ -1,6 +1,5 @@
 module github.com/reearth/reearth-backend
 
-// +heroku install golang.org/x/tools/cmd/godoc
 require (
 	cloud.google.com/go v0.80.0
 	cloud.google.com/go/storage v1.14.0
