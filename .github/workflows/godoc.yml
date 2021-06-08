@@ -48,7 +48,7 @@ jobs:
             -e "s@http://${ADDR}/src/${MOD}@https://${REPO}/blob/main@" \
             -e "s@\"http://${ADDR}/pkg/\"@\"/${REPO_NAME}/${DIR}/pkg/${REPO}/\"@" \
             -e 's@<form @<form style="display:none" @' \
-            -e "s@http://${ADDR}@/${DIR}@"
+            -e "s@http://${ADDR}@/${REPO_NAME}/${DIR}@"
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
