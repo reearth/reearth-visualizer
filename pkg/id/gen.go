@@ -9,5 +9,22 @@
 //go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id.tmpl --output=widget_gen.go --name=Widget
 //go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id.tmpl --output=team_gen.go --name=Team
 //go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id.tmpl --output=user_gen.go --name=User
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id.tmpl --output=dataset_schema_field_gen.go --name=DatasetSchemaField
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id.tmpl --output=infobox_field_gen.go --name=InfoboxField
+
+// Testing
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=asset_gen_test.go --name=Asset
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=dataset_gen_test.go --name=Dataset
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=dataset_schema_gen_test.go --name=DatasetSchema
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=layer_gen_test.go --name=Layer
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=project_gen_test.go --name=Project
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=property_gen_test.go --name=Property
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=property_item_gen_test.go --name=PropertyItem
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=scene_gen_test.go --name=Scene
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=widget_gen_test.go --name=Widget
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=team_gen_test.go --name=Team
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=user_gen_test.go --name=User
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=dataset_schema_field_gen_test.go --name=DatasetSchemaField
+//go:generate go run github.com/reearth/reearth-backend/tools/cmd/gen --template=id_test.tmpl --output=infobox_field_gen_test.go --name=InfoboxField
 
 package id
