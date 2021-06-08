@@ -8,7 +8,7 @@ on:
 env:
   MOD: github.com/reearth/reearth-backend
   REPO: github.com/reearth/reearth-backend
-  ADDR: '127.0.0.1:6060'
+  ADDR: 'localhost:6060'
 jobs:
   godoc:
     name: godoc
@@ -25,22 +25,28 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: install godoc
-        run: go install golang.org/x/tools/cmd/godoc
+        run: go install golang.org/x/tools/cmd/godoc@latest
       - name: generate docs
+        id: godoc
+        continue-on-error: true
         run: |
           godoc -http="$ADDR" &
           sleep 10
           wget -r -np -N -E -p -k "http://${ADDR}/pkg/${MOD}/"
       - name: replace urls
         run: |
-          find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i -e "s/http:\/\/${ADDR}\/src\/${MOD}/https:\/\/${REPO}\/blob\/main/"
-          find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i -e "s/http:\/\/${ADDR}/\/${BASE_PATH}/"
+          [ `find . -name "*.html" -type f | wc -l` -eq 0 ] && exit 1
+          find ./${ADDR}/ -name "*.html" -print0 | xargs -0 sed -i \
+            -e "s@http://${ADDR}/src/${MOD}@https://${REPO}/blob/main@" \
+            -e "s@\"http://${ADDR}/pkg/\"@\"/${DIR}/pkg/${REPO}/\"@" \
+            -e 's@<form @<form style="display:none" @' \
+            -e "s@http://${ADDR}@/${DIR}@"
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./${{ env.ADDR }}
-          destination_dir: ${{ env.BASE_PATH }}
+          destination_dir: ${{ env.DIR }}
   slack-notification:
     if: always()
     name: Slack Notification
