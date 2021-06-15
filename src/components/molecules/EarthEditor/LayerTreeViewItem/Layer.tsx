@@ -37,6 +37,7 @@ export type Props = {
   disabled?: boolean;
   expanded?: boolean;
   selected?: boolean;
+  childSelected?: boolean;
   dropType?: DropType;
   allSiblingsDoesNotHaveChildren?: boolean;
   onClick: () => void;
@@ -71,6 +72,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     },
     expanded,
     selected,
+    childSelected,
     dropType,
     allSiblingsDoesNotHaveChildren,
     onVisibilityChange,
@@ -178,6 +180,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       onDoubleClick={handleDoubleClick}
       dropType={dropType}
       selected={selected}
+      childSelected={childSelected}
       disabled={deactivated}
       underlined={underlined}
       type={type}
@@ -284,6 +287,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
 
 const Wrapper = styled.div<{
   selected?: boolean;
+  childSelected?: boolean;
   dropType?: DropType;
   hover?: boolean;
   disabled?: boolean;
@@ -323,6 +327,8 @@ const Wrapper = styled.div<{
       : "transparent"};
   border-bottom-color: ${({ underlined, theme }) => underlined && theme.colors.outline.weakest};
   font-size: ${fonts.sizes.xs}px;
+  border-right: ${({ childSelected, theme }) =>
+    childSelected ? `2px solid ${theme.colors.brand.main}` : undefined};
 `;
 
 const ArrowIconWrapper = styled.div<{ allSiblingsDoesNotHaveChildren?: boolean }>`

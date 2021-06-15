@@ -6,6 +6,7 @@ export type ItemProps<T = unknown> = {
   item: Item<T>;
   index: number[];
   selected: boolean;
+  childSelected: boolean;
   expanded: boolean;
   multiple: boolean;
   depth: number;

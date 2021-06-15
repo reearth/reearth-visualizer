@@ -167,6 +167,8 @@ export default function Item<T = unknown, R extends Element = Element>({
     />
   ) : null;
 
+  const childSelected = !!item.children?.find(c => selectedIds?.has(c?.id));
+
   return (
     <ItemComponent
       {...props}
@@ -188,7 +190,8 @@ export default function Item<T = unknown, R extends Element = Element>({
       draggable={draggable}
       droppable={droppable}
       shown={!!shown}
-      siblings={parentItem.children}>
+      siblings={parentItem.children}
+      childSelected={childSelected}>
       {children}
     </ItemComponent>
   );

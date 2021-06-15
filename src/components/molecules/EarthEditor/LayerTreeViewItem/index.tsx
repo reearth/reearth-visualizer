@@ -27,6 +27,7 @@ function LayerTreeViewItem<T = unknown>(
     shown,
     item,
     selected,
+    childSelected,
     expanded,
     dropType,
     canDrop,
@@ -79,6 +80,7 @@ function LayerTreeViewItem<T = unknown>(
         onRemove={onRemove}
         onGroupCreate={onGroupCreate}
         onImport={onImport}
+        childSelected={childSelected}
       />
       {children && (
         <Children expanded={expanded} dropType={canDrop ? dropType : undefined}>

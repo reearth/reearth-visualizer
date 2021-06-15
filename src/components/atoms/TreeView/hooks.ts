@@ -99,9 +99,6 @@ export default function <T = unknown>({
   useShallowCompareEffect(() => {
     if (!Array.isArray(expanded)) return;
 
-    expandedItems.current.clear();
-    expandedIds.current.clear();
-
     if (item?.children?.length) {
       const items = searchItems(item.children, expanded).filter(
         (i): i is [Item<T>, number[]] => !!i,
