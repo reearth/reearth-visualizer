@@ -23,6 +23,7 @@ func toUser(user *user.User) *User {
 		Name:     user.Name(),
 		Email:    user.Email(),
 		Lang:     user.Lang(),
+		Theme:    Theme(user.Theme()),
 		MyTeamID: user.Team().ID(),
 		Auths:    authsgql,
 	}
