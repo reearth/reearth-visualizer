@@ -5,5 +5,6 @@ type Container struct {
 	Mailer           Mailer
 	PluginRepository PluginRepository
 	DataSource       DataSource
+	PluginRegistry   PluginRegistry
 	File             File
 }

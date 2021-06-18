@@ -578,6 +578,12 @@ type PluginExtension struct {
 	TranslatedDescription    string               `json:"translatedDescription"`
 }
 
+type PluginMetadata struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
+
 type Project struct {
 	ID                id.ID             `json:"id"`
 	IsArchived        bool              `json:"isArchived"`

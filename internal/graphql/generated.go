@@ -522,6 +522,12 @@ type ComplexityRoot struct {
 		Visualizer               func(childComplexity int) int
 	}
 
+	PluginMetadata struct {
+		CreatedAt   func(childComplexity int) int
+		Description func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
+
 	Project struct {
 		Alias             func(childComplexity int) int
 		BasicAuthPassword func(childComplexity int) int
@@ -698,6 +704,7 @@ type ComplexityRoot struct {
 		DatasetSchemas        func(childComplexity int, sceneID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
 		Datasets              func(childComplexity int, datasetSchemaID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
 		DynamicDatasetSchemas func(childComplexity int, sceneID id.ID) int
+		InstallablePlugins    func(childComplexity int) int
 		Layer                 func(childComplexity int, id id.ID) int
 		Me                    func(childComplexity int) int
 		Node                  func(childComplexity int, id id.ID, typeArg graphql1.NodeType) int
@@ -1096,6 +1103,7 @@ type QueryResolver interface {
 	DynamicDatasetSchemas(ctx context.Context, sceneID id.ID) ([]*graphql1.DatasetSchema, error)
 	SearchUser(ctx context.Context, nameOrEmail string) (*graphql1.SearchedUser, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*graphql1.CheckProjectAliasPayload, error)
+	InstallablePlugins(ctx context.Context) ([]*graphql1.PluginMetadata, error)
 }
 type SceneResolver interface {
 	Project(ctx context.Context, obj *graphql1.Scene) (*graphql1.Project, error)
@@ -3509,6 +3517,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.Visualizer(childComplexity), true
 
+	case "PluginMetadata.createdAt":
+		if e.complexity.PluginMetadata.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PluginMetadata.CreatedAt(childComplexity), true
+
+	case "PluginMetadata.description":
+		if e.complexity.PluginMetadata.Description == nil {
+			break
+		}
+
+		return e.complexity.PluginMetadata.Description(childComplexity), true
+
+	case "PluginMetadata.name":
+		if e.complexity.PluginMetadata.Name == nil {
+			break
+		}
+
+		return e.complexity.PluginMetadata.Name(childComplexity), true
+
 	case "Project.alias":
 		if e.complexity.Project.Alias == nil {
 			break
@@ -4431,6 +4460,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.DynamicDatasetSchemas(childComplexity, args["sceneId"].(id.ID)), true
+
+	case "Query.installablePlugins":
+		if e.complexity.Query.InstallablePlugins == nil {
+			break
+		}
+
+		return e.complexity.Query.InstallablePlugins(childComplexity), true
 
 	case "Query.layer":
 		if e.complexity.Query.Layer == nil {
@@ -5512,6 +5548,12 @@ type Plugin {
     propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
+type PluginMetadata{
+    name: String!
+    description: String!
+    createdAt: DateTime!
+}
+
 enum PluginExtensionType {
     PRIMITIVE
     WIDGET
@@ -6591,6 +6633,7 @@ type Query {
     dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
     searchUser(nameOrEmail: String!): SearchedUser
     checkProjectAlias(alias: String!): CheckProjectAliasPayload!
+    installablePlugins: [PluginMetadata!]!
 }
 
 # Mutation
@@ -18581,6 +18624,111 @@ func (ec *executionContext) _PluginExtension_translatedDescription(ctx context.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PluginMetadata_name(ctx context.Context, field graphql.CollectedField, obj *graphql1.PluginMetadata) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginMetadata",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PluginMetadata_description(ctx context.Context, field graphql.CollectedField, obj *graphql1.PluginMetadata) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginMetadata",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PluginMetadata_createdAt(ctx context.Context, field graphql.CollectedField, obj *graphql1.PluginMetadata) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginMetadata",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_id(ctx context.Context, field graphql.CollectedField, obj *graphql1.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23313,6 +23461,41 @@ func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field 
 	res := resTmp.(*graphql1.CheckProjectAliasPayload)
 	fc.Result = res
 	return ec.marshalNCheckProjectAliasPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐCheckProjectAliasPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_installablePlugins(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().InstallablePlugins(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*graphql1.PluginMetadata)
+	fc.Result = res
+	return ec.marshalNPluginMetadata2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPluginMetadataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -32672,6 +32855,43 @@ func (ec *executionContext) _PluginExtension(ctx context.Context, sel ast.Select
 	return out
 }
 
+var pluginMetadataImplementors = []string{"PluginMetadata"}
+
+func (ec *executionContext) _PluginMetadata(ctx context.Context, sel ast.SelectionSet, obj *graphql1.PluginMetadata) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pluginMetadataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PluginMetadata")
+		case "name":
+			out.Values[i] = ec._PluginMetadata_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._PluginMetadata_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._PluginMetadata_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var projectImplementors = []string{"Project", "Node"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *graphql1.Project) graphql.Marshaler {
@@ -33952,6 +34172,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_checkProjectAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "installablePlugins":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_installablePlugins(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -36708,6 +36942,53 @@ func (ec *executionContext) marshalNPluginID2ᚖgithubᚗcomᚋreearthᚋreearth
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNPluginMetadata2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPluginMetadataᚄ(ctx context.Context, sel ast.SelectionSet, v []*graphql1.PluginMetadata) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPluginMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPluginMetadata(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPluginMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPluginMetadata(ctx context.Context, sel ast.SelectionSet, v *graphql1.PluginMetadata) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PluginMetadata(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐProject(ctx context.Context, sel ast.SelectionSet, v []*graphql1.Project) graphql.Marshaler {

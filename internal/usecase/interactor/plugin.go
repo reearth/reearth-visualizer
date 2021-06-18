@@ -20,6 +20,7 @@ type Plugin struct {
 	file               gateway.File
 	pluginRepository   gateway.PluginRepository
 	transaction        repo.Transaction
+	pluginRegistry     gateway.PluginRegistry
 }
 
 func NewPlugin(r *repo.Container, gr *gateway.Container) interfaces.Plugin {
@@ -29,6 +30,7 @@ func NewPlugin(r *repo.Container, gr *gateway.Container) interfaces.Plugin {
 		transaction:        r.Transaction,
 		pluginRepository:   gr.PluginRepository,
 		file:               gr.File,
+		pluginRegistry:     gr.PluginRegistry,
 	}
 }
 
@@ -58,4 +60,17 @@ func (i *Plugin) Upload(ctx context.Context, r io.Reader, operator *usecase.Oper
 
 	tx.Commit()
 	return nil, errors.New("not implemented")
+}
+
+func (i *Plugin) FetchPluginMetadata(ctx context.Context, operator *usecase.Operator) ([]*plugin.Metadata, error) {
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, err
+	}
+
+	res, err := i.pluginRegistry.FetchMetadata(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

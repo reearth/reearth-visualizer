@@ -317,3 +317,10 @@ func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*g
 
 	return r.config.Controllers.ProjectController.CheckAlias(ctx, alias)
 }
+
+func (r *queryResolver) InstallablePlugins(ctx context.Context) ([]*graphql1.PluginMetadata, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	return r.config.Controllers.PluginController.FetchPluginMetadata(ctx, getOperator(ctx))
+}

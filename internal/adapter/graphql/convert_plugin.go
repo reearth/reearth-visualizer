@@ -56,3 +56,15 @@ func toPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	}
 	return PluginExtensionType("")
 }
+
+func toPluginMetadata(t *plugin.Metadata) (*PluginMetadata, error) {
+	if t == nil {
+		return nil, nil
+	}
+
+	return &PluginMetadata{
+		Name:        t.Name,
+		Description: t.Description,
+		CreatedAt:   t.CreatedAt,
+	}, nil
+}

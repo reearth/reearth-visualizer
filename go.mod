@@ -16,6 +16,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/iancoleman/strcase v0.1.3
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
+	github.com/jarcoal/httpmock v1.0.8
 	github.com/joho/godotenv v1.3.0
 	github.com/jonas-p/go-shp v0.1.1
 	github.com/kelseyhightower/envconfig v1.4.0
