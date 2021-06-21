@@ -4,6 +4,8 @@ export type Config = {
   auth0ClientId?: string;
   auth0Domain?: string;
   auth0Audience?: string;
+  sentryDsn?: string;
+  sentryEnv?: string;
 };
 
 declare global {

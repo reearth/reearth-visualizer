@@ -4,8 +4,10 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { createUploadLink } from "apollo-upload-client";
 import { useAuth0 } from "@auth0/auth0-react";
+import { SentryLink } from "apollo-link-sentry";
 
 import { store, localSlice } from "@reearth/state";
+import { reportError } from "@reearth/sentry";
 import fragmentMatcher from "./fragmentMatcher.json";
 
 const Provider: React.FC = ({ children }) => {
@@ -34,7 +36,10 @@ const Provider: React.FC = ({ children }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
     store.dispatch(localSlice.actions.set({ error }));
+    if (error) reportError(error);
   });
+
+  const sentryLink = new SentryLink({ uri: endpoint });
 
   const cache = new InMemoryCache({
     possibleTypes: fragmentMatcher.possibleTypes,
@@ -51,7 +56,7 @@ const Provider: React.FC = ({ children }) => {
 
   const client = new ApolloClient({
     uri: endpoint,
-    link: ApolloLink.from([errorLink, authLink, uploadLink]),
+    link: ApolloLink.from([errorLink, sentryLink, authLink, uploadLink]),
     cache,
     connectToDevTools: process.env.NODE_ENV === "development",
   });
