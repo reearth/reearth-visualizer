@@ -10,7 +10,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/reearth/reearth">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="./public/reearth-logo.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Re:Earth</h3>
@@ -65,20 +65,24 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![スクショ][スクショ]](スクショ)
+[![reearth-ui][./public/reearth-ui.png]](https://reearth.io)
+![reearth-ui](./public/reearth-ui.png))
 
 ## Features
 🔌 Higy extensible with plugins system
 💻 Super handy with running on the browser
+💪 Support standard GIS data formats(CSV, KML, CZML, GeoJSON, shapefile)
+📢 Easily make the project public
+✨ Freely style
 
 
-### Built With
+## Built With
 
-* [React]()
-* [TypeScript]()
-* [Golang]()
-* [GraphQL]()
-* [WASM]()
+* [React](https://github.com/facebook/react)
+* [TypeScript](https://github.com/microsoft/TypeScript)
+* [Golang](https://github.com/golang/go)
+* [GraphQL](https://github.com/graphql)
+* [WASM](https://webassembly.org/)
 
 
 
@@ -120,14 +124,14 @@ For developers
 ## Usage
 
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://docs.reearth.io)_
 
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/reearth/reearth/issues) for a list of proposed features (and known issues).
+See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
 
 
 
@@ -149,7 +153,7 @@ Contributions are what make the open source community such an amazing place to b
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-
+## Code of Conduct
 
 <!-- CONTACT -->
 ## Contact
