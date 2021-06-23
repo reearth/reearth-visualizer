@@ -579,9 +579,11 @@ type PluginExtension struct {
 }
 
 type PluginMetadata struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"createdAt"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description"`
+	Author       string    `json:"author"`
+	ThumbnailURL string    `json:"thumbnailUrl"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 type Project struct {

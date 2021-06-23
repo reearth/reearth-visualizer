@@ -63,8 +63,10 @@ func toPluginMetadata(t *plugin.Metadata) (*PluginMetadata, error) {
 	}
 
 	return &PluginMetadata{
-		Name:        t.Name,
-		Description: t.Description,
-		CreatedAt:   t.CreatedAt,
+		Name:         t.Name,
+		Description:  t.Description,
+		ThumbnailURL: t.ThumbnailUrl,
+		Author:       t.Author,
+		CreatedAt:    t.CreatedAt,
 	}, nil
 }

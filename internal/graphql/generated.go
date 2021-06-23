@@ -523,9 +523,11 @@ type ComplexityRoot struct {
 	}
 
 	PluginMetadata struct {
-		CreatedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		Name        func(childComplexity int) int
+		Author       func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		Description  func(childComplexity int) int
+		Name         func(childComplexity int) int
+		ThumbnailURL func(childComplexity int) int
 	}
 
 	Project struct {
@@ -3517,6 +3519,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.Visualizer(childComplexity), true
 
+	case "PluginMetadata.author":
+		if e.complexity.PluginMetadata.Author == nil {
+			break
+		}
+
+		return e.complexity.PluginMetadata.Author(childComplexity), true
+
 	case "PluginMetadata.createdAt":
 		if e.complexity.PluginMetadata.CreatedAt == nil {
 			break
@@ -3537,6 +3546,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PluginMetadata.Name(childComplexity), true
+
+	case "PluginMetadata.thumbnailUrl":
+		if e.complexity.PluginMetadata.ThumbnailURL == nil {
+			break
+		}
+
+		return e.complexity.PluginMetadata.ThumbnailURL(childComplexity), true
 
 	case "Project.alias":
 		if e.complexity.Project.Alias == nil {
@@ -5321,15 +5337,15 @@ var sources = []*ast.Source{
 scalar Upload
 scalar Any
 
-directive @goModel(model: String, models: [String!]) on OBJECT
-    | INPUT_OBJECT
-    | SCALAR
-    | ENUM
-    | INTERFACE
-    | UNION
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
-directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
-    | FIELD_DEFINITION
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
 # Basic types
 
@@ -5345,1377 +5361,1441 @@ scalar PropertySchemaFieldID
 scalar TranslatedString
 
 type LatLng {
-    lat: Float!
-    lng: Float!
+  lat: Float!
+  lng: Float!
 }
 
 type LatLngHeight {
-    lat: Float!
-    lng: Float!
-    height: Float!
+  lat: Float!
+  lng: Float!
+  height: Float!
 }
 
 type Camera {
-    lat: Float!
-    lng: Float!
-    altitude: Float!
-    heading: Float!
-    pitch: Float!
-    roll: Float!
-    fov: Float!
+  lat: Float!
+  lng: Float!
+  altitude: Float!
+  heading: Float!
+  pitch: Float!
+  roll: Float!
+  fov: Float!
 }
 
 type Typography {
-    fontFamily: String
-    fontWeight: String
-    fontSize: Int
-    color: String
-    textAlign: TextAlign
-    bold: Boolean
-    italic: Boolean
-    underline: Boolean
+  fontFamily: String
+  fontWeight: String
+  fontSize: Int
+  color: String
+  textAlign: TextAlign
+  bold: Boolean
+  italic: Boolean
+  underline: Boolean
 }
 
 type Rect {
-    west: Float!
-    south: Float!
-    east: Float!
-    north: Float!
+  west: Float!
+  south: Float!
+  east: Float!
+  north: Float!
 }
 
 enum TextAlign {
-    LEFT
-    CENTER
-    RIGHT
-    JUSTIFY
-    JUSTIFY_ALL
+  LEFT
+  CENTER
+  RIGHT
+  JUSTIFY
+  JUSTIFY_ALL
 }
 
 enum ValueType {
-    BOOL
-    NUMBER
-    STRING
-    REF
-    URL
-    LATLNG
-    LATLNGHEIGHT
-    CAMERA
-    TYPOGRAPHY
-    COORDINATES
-    POLYGON
-    RECT
+  BOOL
+  NUMBER
+  STRING
+  REF
+  URL
+  LATLNG
+  LATLNGHEIGHT
+  CAMERA
+  TYPOGRAPHY
+  COORDINATES
+  POLYGON
+  RECT
 }
 
 enum ListOperation {
-    ADD,
-    MOVE,
-    REMOVE
+  ADD
+  MOVE
+  REMOVE
 }
 
 enum Theme {
-    DEFAULT
-    LIGHT
-    DARK
+  DEFAULT
+  LIGHT
+  DARK
 }
 
 # Meta Type
 
 interface Node {
-    id: ID!
+  id: ID!
 }
 
 type PageInfo {
-    startCursor: Cursor
-    endCursor: Cursor
-    hasNextPage: Boolean!
-    hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }
 
 # Asset
 
 type Asset implements Node {
-    id: ID!
-    createdAt: DateTime!
-    teamId: ID!
-    name: String!
-    size: FileSize!
-    url: String!
-    contentType: String!
-    team: Team @goField(forceResolver: true)
+  id: ID!
+  createdAt: DateTime!
+  teamId: ID!
+  name: String!
+  size: FileSize!
+  url: String!
+  contentType: String!
+  team: Team @goField(forceResolver: true)
 }
 
 # User
 
 type User implements Node {
-    id: ID!
-    name: String!
-    email: String!
-    lang: Lang!
-    theme: Theme!
-    myTeamId: ID!
-    auths: [String!]!
-    teams: [Team!]! @goField(forceResolver: true)
-    myTeam: Team! @goField(forceResolver: true)
+  id: ID!
+  name: String!
+  email: String!
+  lang: Lang!
+  theme: Theme!
+  myTeamId: ID!
+  auths: [String!]!
+  teams: [Team!]! @goField(forceResolver: true)
+  myTeam: Team! @goField(forceResolver: true)
 }
 
 type SearchedUser {
-    userId: ID!
-    userName: String!
-    userEmail: String!
+  userId: ID!
+  userName: String!
+  userEmail: String!
 }
 
 type CheckProjectAliasPayload {
-    alias: String!
-    available: Boolean!
+  alias: String!
+  available: Boolean!
 }
 
 type Team implements Node {
-    id: ID!
-    name: String!
-    members: [TeamMember!]!
-    personal: Boolean!
-    assets(first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection! @goField(forceResolver: true)
-    projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection! @goField(forceResolver: true)
+  id: ID!
+  name: String!
+  members: [TeamMember!]!
+  personal: Boolean!
+  assets(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): AssetConnection! @goField(forceResolver: true)
+  projects(
+    includeArchived: Boolean
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): ProjectConnection! @goField(forceResolver: true)
 }
 
 type TeamMember {
-    userId: ID!
-    role: Role!
-    user: User @goField(forceResolver: true)
+  userId: ID!
+  role: Role!
+  user: User @goField(forceResolver: true)
 }
 
 enum Role {
-    # a role who can read project
-    READER
-    # a role who can read and write project
-    WRITER
-    # a eole who can have full controll of project
-    OWNER
+  # a role who can read project
+  READER
+  # a role who can read and write project
+  WRITER
+  # a eole who can have full controll of project
+  OWNER
 }
 
 # Project
 
 type Project implements Node {
-    id: ID!
-    isArchived: Boolean!
-    isBasicAuthActive: Boolean!
-    basicAuthUsername: String!
-    basicAuthPassword: String!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    publishedAt: DateTime
-    name: String!
-    description: String!
-    alias: String!
-    publicTitle: String!
-    publicDescription: String!
-    publicImage: String!
-    publicNoIndex: Boolean!
-    imageUrl: URL
-    teamId: ID!
-    visualizer: Visualizer!
-    publishmentStatus: PublishmentStatus!
-    team: Team @goField(forceResolver: true)
-    scene: Scene @goField(forceResolver: true)
+  id: ID!
+  isArchived: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+  name: String!
+  description: String!
+  alias: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+  imageUrl: URL
+  teamId: ID!
+  visualizer: Visualizer!
+  publishmentStatus: PublishmentStatus!
+  team: Team @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
 }
 
 enum Visualizer {
-    CESIUM
+  CESIUM
 }
 
 enum PublishmentStatus {
-    PUBLIC
-    LIMITED
-    PRIVATE
+  PUBLIC
+  LIMITED
+  PRIVATE
 }
 
 # Plugin
 
 type Plugin {
-    id: PluginID!
-    name: String!
-    version: String!
-    description: String!
-    author: String!
-    repositoryUrl: String!
-    propertySchemaId: PropertySchemaID
-    extensions: [PluginExtension!]!
-    scenePlugin(sceneId: ID!): ScenePlugin
-    allTranslatedDescription: TranslatedString
-    allTranslatedName: TranslatedString
-    translatedName(lang: String): String!
-    translatedDescription(lang: String): String!
-    propertySchema: PropertySchema @goField(forceResolver: true)
+  id: PluginID!
+  name: String!
+  version: String!
+  description: String!
+  author: String!
+  repositoryUrl: String!
+  propertySchemaId: PropertySchemaID
+  extensions: [PluginExtension!]!
+  scenePlugin(sceneId: ID!): ScenePlugin
+  allTranslatedDescription: TranslatedString
+  allTranslatedName: TranslatedString
+  translatedName(lang: String): String!
+  translatedDescription(lang: String): String!
+  propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
-type PluginMetadata{
-    name: String!
-    description: String!
-    createdAt: DateTime!
+type PluginMetadata {
+  name: String!
+  description: String!
+  author: String!
+  thumbnailUrl: String!
+  createdAt: DateTime!
 }
 
 enum PluginExtensionType {
-    PRIMITIVE
-    WIDGET
-    BLOCK
-    VISUALIZER
-    INFOBOX
+  PRIMITIVE
+  WIDGET
+  BLOCK
+  VISUALIZER
+  INFOBOX
 }
 
 type PluginExtension {
-    extensionId: PluginExtensionID!
-    pluginId: PluginID!
-    type: PluginExtensionType!
-    name: String!
-    description: String!
-    icon: String!
-    visualizer: Visualizer!
-    propertySchemaId: PropertySchemaID!
-    allTranslatedName: TranslatedString
-    allTranslatedDescription: TranslatedString
-    plugin: Plugin @goField(forceResolver: true)
-    sceneWidget(sceneId: ID!): SceneWidget @goField(forceResolver: true)
-    propertySchema: PropertySchema @goField(forceResolver: true)
-    translatedName(lang: String): String! @goField(forceResolver: true)
-    translatedDescription(lang: String): String! @goField(forceResolver: true)
+  extensionId: PluginExtensionID!
+  pluginId: PluginID!
+  type: PluginExtensionType!
+  name: String!
+  description: String!
+  icon: String!
+  visualizer: Visualizer!
+  propertySchemaId: PropertySchemaID!
+  allTranslatedName: TranslatedString
+  allTranslatedDescription: TranslatedString
+  plugin: Plugin @goField(forceResolver: true)
+  sceneWidget(sceneId: ID!): SceneWidget @goField(forceResolver: true)
+  propertySchema: PropertySchema @goField(forceResolver: true)
+  translatedName(lang: String): String! @goField(forceResolver: true)
+  translatedDescription(lang: String): String! @goField(forceResolver: true)
 }
 
 # Scene
 
 type Scene implements Node {
-    id: ID!
-    projectId: ID!
-    teamId: ID!
-    propertyId: ID!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    rootLayerId: ID!
-    widgets: [SceneWidget!]!
-    plugins: [ScenePlugin!]!
-    dynamicDatasetSchemas: [DatasetSchema!]!
-    project: Project @goField(forceResolver: true)
-    team: Team @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
-    rootLayer: LayerGroup @goField(forceResolver: true)
-    lockMode: SceneLockMode! @goField(forceResolver: true)
-    datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection! @goField(forceResolver: true)
+  id: ID!
+  projectId: ID!
+  teamId: ID!
+  propertyId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  rootLayerId: ID!
+  widgets: [SceneWidget!]!
+  plugins: [ScenePlugin!]!
+  dynamicDatasetSchemas: [DatasetSchema!]!
+  project: Project @goField(forceResolver: true)
+  team: Team @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  rootLayer: LayerGroup @goField(forceResolver: true)
+  lockMode: SceneLockMode! @goField(forceResolver: true)
+  datasetSchemas(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetSchemaConnection! @goField(forceResolver: true)
 }
 
 enum SceneLockMode {
-    FREE
-    PENDING
-    DATASET_SYNCING
-    PLUGIN_UPGRADING
-    PUBLISHING
+  FREE
+  PENDING
+  DATASET_SYNCING
+  PLUGIN_UPGRADING
+  PUBLISHING
 }
 
 type SceneWidget {
-    id: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    propertyId: ID!
-    enabled: Boolean!
-    plugin: Plugin @goField(forceResolver: true)
-    extension: PluginExtension @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
+  id: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  propertyId: ID!
+  enabled: Boolean!
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
 }
 
 type ScenePlugin {
-    pluginId: PluginID!
-    propertyId: ID
-    plugin: Plugin @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
+  pluginId: PluginID!
+  propertyId: ID
+  plugin: Plugin @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
 }
 
 # Property
 
 type PropertySchema {
-    id: PropertySchemaID!
-    groups: [PropertySchemaGroup!]!
-    linkableFields: PropertyLinkableFields!
+  id: PropertySchemaID!
+  groups: [PropertySchemaGroup!]!
+  linkableFields: PropertyLinkableFields!
 }
 
 type PropertyLinkableFields {
-    schemaId: PropertySchemaID!
-    latlng: PropertySchemaFieldID
-    url: PropertySchemaFieldID
-    latlngField: PropertySchemaField @goField(forceResolver: true)
-    urlField: PropertySchemaField @goField(forceResolver: true)
-    schema: PropertySchema @goField(forceResolver: true)
+  schemaId: PropertySchemaID!
+  latlng: PropertySchemaFieldID
+  url: PropertySchemaFieldID
+  latlngField: PropertySchemaField @goField(forceResolver: true)
+  urlField: PropertySchemaField @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
 }
 
 type PropertySchemaGroup {
-    schemaGroupId: PropertySchemaFieldID!
-    schemaId: PropertySchemaID!
-    fields: [PropertySchemaField!]!
-    isList: Boolean!
-    isAvailableIf: PropertyCondition
-    title: String
-    allTranslatedTitle: TranslatedString
-    # For compatibility: "name" field will be removed in the futrue
-    name: PropertySchemaFieldID
-    representativeFieldId: PropertySchemaFieldID
-    representativeField: PropertySchemaField
-    schema: PropertySchema @goField(forceResolver: true)
-    translatedTitle(lang: String): String! @goField(forceResolver: true)
+  schemaGroupId: PropertySchemaFieldID!
+  schemaId: PropertySchemaID!
+  fields: [PropertySchemaField!]!
+  isList: Boolean!
+  isAvailableIf: PropertyCondition
+  title: String
+  allTranslatedTitle: TranslatedString
+  # For compatibility: "name" field will be removed in the futrue
+  name: PropertySchemaFieldID
+  representativeFieldId: PropertySchemaFieldID
+  representativeField: PropertySchemaField
+  schema: PropertySchema @goField(forceResolver: true)
+  translatedTitle(lang: String): String! @goField(forceResolver: true)
 }
 
 type PropertySchemaField {
-    fieldId: PropertySchemaFieldID!
-    type: ValueType!
-    title: String!
-    # For compatibility: "name" field will be removed in the futrue
-    name: String!
-    description: String!
-    prefix: String
-    suffix: String
-    defaultValue: Any
-    ui: PropertySchemaFieldUI
-    min: Float
-    max: Float
-    choices: [PropertySchemaFieldChoice!]
-    isAvailableIf: PropertyCondition
-    allTranslatedTitle: TranslatedString
-    # For compatibility: "allTranslatedName" field will be removed in the futrue
-    allTranslatedName: TranslatedString
-    allTranslatedDescription: TranslatedString
-    translatedTitle(lang: String): String! @goField(forceResolver: true)
-    # For compatibility: "translatedName" field will be removed in the futrue
-    translatedName(lang: String): String! @goField(forceResolver: true)
-    translatedDescription(lang: String): String! @goField(forceResolver: true)
+  fieldId: PropertySchemaFieldID!
+  type: ValueType!
+  title: String!
+  # For compatibility: "name" field will be removed in the futrue
+  name: String!
+  description: String!
+  prefix: String
+  suffix: String
+  defaultValue: Any
+  ui: PropertySchemaFieldUI
+  min: Float
+  max: Float
+  choices: [PropertySchemaFieldChoice!]
+  isAvailableIf: PropertyCondition
+  allTranslatedTitle: TranslatedString
+  # For compatibility: "allTranslatedName" field will be removed in the futrue
+  allTranslatedName: TranslatedString
+  allTranslatedDescription: TranslatedString
+  translatedTitle(lang: String): String! @goField(forceResolver: true)
+  # For compatibility: "translatedName" field will be removed in the futrue
+  translatedName(lang: String): String! @goField(forceResolver: true)
+  translatedDescription(lang: String): String! @goField(forceResolver: true)
 }
 
 enum PropertySchemaFieldUI {
-    LAYER
-    MULTILINE
-    SELECTION
-    COLOR
-    RANGE
-    IMAGE
-    VIDEO
-    FILE
-    CAMERA_POSE
+  LAYER
+  MULTILINE
+  SELECTION
+  COLOR
+  RANGE
+  IMAGE
+  VIDEO
+  FILE
+  CAMERA_POSE
 }
 
 type PropertySchemaFieldChoice {
-    key: String!
-    title: String!
-    # For compatibility: "label" field will be removed in the futrue
-    label: String!
-    icon: String
-    allTranslatedTitle: TranslatedString
-    # For compatibility: "allTranslatedLabel" field will be removed in the futrue
-    allTranslatedLabel: TranslatedString
-    translatedTitle(lang: String): String! @goField(forceResolver: true)
-    # For compatibility: "translatedLabel" field will be removed in the futrue
-    translatedLabel(lang: String): String! @goField(forceResolver: true)
+  key: String!
+  title: String!
+  # For compatibility: "label" field will be removed in the futrue
+  label: String!
+  icon: String
+  allTranslatedTitle: TranslatedString
+  # For compatibility: "allTranslatedLabel" field will be removed in the futrue
+  allTranslatedLabel: TranslatedString
+  translatedTitle(lang: String): String! @goField(forceResolver: true)
+  # For compatibility: "translatedLabel" field will be removed in the futrue
+  translatedLabel(lang: String): String! @goField(forceResolver: true)
 }
 
 type PropertyCondition {
-    fieldId: PropertySchemaFieldID!
-    type: ValueType!
-    value: Any
+  fieldId: PropertySchemaFieldID!
+  type: ValueType!
+  value: Any
 }
 
 type Property implements Node {
-    id: ID!
-    schemaId: PropertySchemaID!
-    items: [PropertyItem!]!
-    schema: PropertySchema @goField(forceResolver: true)
-    layer: Layer @goField(forceResolver: true)
-    merged: MergedProperty @goField(forceResolver: true)
+  id: ID!
+  schemaId: PropertySchemaID!
+  items: [PropertyItem!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  layer: Layer @goField(forceResolver: true)
+  merged: MergedProperty @goField(forceResolver: true)
 }
 
 union PropertyItem = PropertyGroup | PropertyGroupList
 
 type PropertyGroup {
-    id: ID!
-    schemaId: PropertySchemaID!
-    schemaGroupId: PropertySchemaFieldID!
-    fields: [PropertyField!]!
-    schema: PropertySchema @goField(forceResolver: true)
-    schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
+  id: ID!
+  schemaId: PropertySchemaID!
+  schemaGroupId: PropertySchemaFieldID!
+  fields: [PropertyField!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
 }
 
 type PropertyGroupList {
-    id: ID!
-    schemaId: PropertySchemaID!
-    schemaGroupId: PropertySchemaFieldID!
-    groups: [PropertyGroup!]!
-    schema: PropertySchema @goField(forceResolver: true)
-    schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
+  id: ID!
+  schemaId: PropertySchemaID!
+  schemaGroupId: PropertySchemaFieldID!
+  groups: [PropertyGroup!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
 }
 
 type PropertyField {
-    id: PropertySchemaFieldID!
-    parentId: ID!
-    schemaId: PropertySchemaID!
-    fieldId: PropertySchemaFieldID!
-    links: [PropertyFieldLink!]
-    type: ValueType!
-    value: Any
-    parent: Property @goField(forceResolver: true)
-    schema: PropertySchema @goField(forceResolver: true)
-    field: PropertySchemaField @goField(forceResolver: true)
-    actualValue: Any @goField(forceResolver: true)
+  id: PropertySchemaFieldID!
+  parentId: ID!
+  schemaId: PropertySchemaID!
+  fieldId: PropertySchemaFieldID!
+  links: [PropertyFieldLink!]
+  type: ValueType!
+  value: Any
+  parent: Property @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  field: PropertySchemaField @goField(forceResolver: true)
+  actualValue: Any @goField(forceResolver: true)
 }
 
 type PropertyFieldLink {
-    datasetId: ID
-    datasetSchemaId: ID!
-    datasetSchemaFieldId: ID!
-    dataset: Dataset @goField(forceResolver: true)
-    datasetField: DatasetField @goField(forceResolver: true)
-    datasetSchema: DatasetSchema @goField(forceResolver: true)
-    datasetSchemaField: DatasetSchemaField @goField(forceResolver: true)
+  datasetId: ID
+  datasetSchemaId: ID!
+  datasetSchemaFieldId: ID!
+  dataset: Dataset @goField(forceResolver: true)
+  datasetField: DatasetField @goField(forceResolver: true)
+  datasetSchema: DatasetSchema @goField(forceResolver: true)
+  datasetSchemaField: DatasetSchemaField @goField(forceResolver: true)
 }
 
 type MergedProperty {
-    originalId: ID
-    parentId: ID
-    # note: schemaId will not always be set
-    schemaId: PropertySchemaID
-    linkedDatasetId: ID
-    original: Property @goField(forceResolver: true)
-    parent: Property @goField(forceResolver: true)
-    schema: PropertySchema @goField(forceResolver: true)
-    linkedDataset: Dataset @goField(forceResolver: true)
-    groups: [MergedPropertyGroup!]! @goField(forceResolver: true)
+  originalId: ID
+  parentId: ID
+  # note: schemaId will not always be set
+  schemaId: PropertySchemaID
+  linkedDatasetId: ID
+  original: Property @goField(forceResolver: true)
+  parent: Property @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  groups: [MergedPropertyGroup!]! @goField(forceResolver: true)
 }
 
 type MergedPropertyGroup {
-    originalPropertyId: ID
-    parentPropertyId: ID
-    originalId: ID
-    parentId: ID
-    schemaGroupId: PropertySchemaFieldID!
-    # note: schemaId will not always be set
-    schemaId: PropertySchemaID
-    linkedDatasetId: ID
-    fields: [MergedPropertyField!]!
-    groups: [MergedPropertyGroup!]!
-    originalProperty: Property @goField(forceResolver: true)
-    parentProperty: Property @goField(forceResolver: true)
-    original: PropertyGroup @goField(forceResolver: true)
-    parent: PropertyGroup @goField(forceResolver: true)
-    schema: PropertySchema @goField(forceResolver: true)
-    linkedDataset: Dataset @goField(forceResolver: true)
+  originalPropertyId: ID
+  parentPropertyId: ID
+  originalId: ID
+  parentId: ID
+  schemaGroupId: PropertySchemaFieldID!
+  # note: schemaId will not always be set
+  schemaId: PropertySchemaID
+  linkedDatasetId: ID
+  fields: [MergedPropertyField!]!
+  groups: [MergedPropertyGroup!]!
+  originalProperty: Property @goField(forceResolver: true)
+  parentProperty: Property @goField(forceResolver: true)
+  original: PropertyGroup @goField(forceResolver: true)
+  parent: PropertyGroup @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
 }
 
 type MergedPropertyField {
-    schemaId: PropertySchemaID!
-    fieldId: PropertySchemaFieldID!
-    value: Any
-    type: ValueType!
-    links: [PropertyFieldLink!]
-    overridden: Boolean!
-    schema: PropertySchema @goField(forceResolver: true)
-    field: PropertySchemaField @goField(forceResolver: true)
-    actualValue: Any @goField(forceResolver: true)
+  schemaId: PropertySchemaID!
+  fieldId: PropertySchemaFieldID!
+  value: Any
+  type: ValueType!
+  links: [PropertyFieldLink!]
+  overridden: Boolean!
+  schema: PropertySchema @goField(forceResolver: true)
+  field: PropertySchemaField @goField(forceResolver: true)
+  actualValue: Any @goField(forceResolver: true)
 }
 
 # Dataset
 
 type DatasetSchema implements Node {
-    id: ID!
-    source: String!
-    name: String!
-    sceneId: ID!
-    fields: [DatasetSchemaField!]!
-    representativeFieldId: ID
-    dynamic: Boolean
-    datasets(first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection! @goField(forceResolver: true)
-    scene: Scene @goField(forceResolver: true)
-    representativeField: DatasetSchemaField @goField(forceResolver: true)
+  id: ID!
+  source: String!
+  name: String!
+  sceneId: ID!
+  fields: [DatasetSchemaField!]!
+  representativeFieldId: ID
+  dynamic: Boolean
+  datasets(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetConnection! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  representativeField: DatasetSchemaField @goField(forceResolver: true)
 }
 
 type DatasetSchemaField implements Node {
-    id: ID!
-    source: String!
-    name: String!
-    type: ValueType!
-    schemaId: ID!
-    refId: ID
-    schema: DatasetSchema @goField(forceResolver: true)
-    ref: DatasetSchema @goField(forceResolver: true)
+  id: ID!
+  source: String!
+  name: String!
+  type: ValueType!
+  schemaId: ID!
+  refId: ID
+  schema: DatasetSchema @goField(forceResolver: true)
+  ref: DatasetSchema @goField(forceResolver: true)
 }
 
 type Dataset implements Node {
-    id: ID!
-    source: String!
-    schemaId: ID!
-    fields: [DatasetField!]!
-    schema: DatasetSchema @goField(forceResolver: true)
-    name: String @goField(forceResolver: true)
+  id: ID!
+  source: String!
+  schemaId: ID!
+  fields: [DatasetField!]!
+  schema: DatasetSchema @goField(forceResolver: true)
+  name: String @goField(forceResolver: true)
 }
 
 type DatasetField {
-    fieldId: ID!
-    schemaId: ID!
-    source: String!
-    type: ValueType!
-    value: Any
-    schema: DatasetSchema @goField(forceResolver: true)
-    field: DatasetSchemaField @goField(forceResolver: true)
-    valueRef: Dataset @goField(forceResolver: true)
+  fieldId: ID!
+  schemaId: ID!
+  source: String!
+  type: ValueType!
+  value: Any
+  schema: DatasetSchema @goField(forceResolver: true)
+  field: DatasetSchemaField @goField(forceResolver: true)
+  valueRef: Dataset @goField(forceResolver: true)
 }
 
 # Layer
 
 interface Layer {
-    id: ID!
-    name: String!
-    isVisible: Boolean!
-    propertyId: ID
-    pluginId: PluginID
-    extensionId: PluginExtensionID
-    infobox: Infobox
-    # parentId will not be always set
-    parentId: ID
-    parent: LayerGroup
-    property: Property
-    plugin: Plugin
-    extension: PluginExtension
+  id: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: PluginID
+  extensionId: PluginExtensionID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  parent: LayerGroup
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
 }
 
 union Layers = LayerItem | LayerGroup
 
 enum LayerEncodingFormat {
-    KML
-    CZML
-    GEOJSON
-    SHAPE
-    REEARTH
+  KML
+  CZML
+  GEOJSON
+  SHAPE
+  REEARTH
 }
 
 type LayerItem implements Layer {
-    id: ID!
-    name: String!
-    isVisible: Boolean!
-    propertyId: ID
-    pluginId: PluginID
-    extensionId: PluginExtensionID
-    infobox: Infobox
-    # parentId will not be always set
-    parentId: ID
-    linkedDatasetId: ID
-    parent: LayerGroup @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
-    plugin: Plugin @goField(forceResolver: true)
-    extension: PluginExtension @goField(forceResolver: true)
-    linkedDataset: Dataset @goField(forceResolver: true)
-    merged: MergedLayer @goField(forceResolver: true)
+  id: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: PluginID
+  extensionId: PluginExtensionID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetId: ID
+  parent: LayerGroup @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedLayer @goField(forceResolver: true)
 }
 
 type LayerGroup implements Layer {
-    id: ID!
-    name: String!
-    isVisible: Boolean!
-    propertyId: ID
-    pluginId: PluginID
-    extensionId: PluginExtensionID
-    infobox: Infobox
-    # parentId will not be always set
-    parentId: ID
-    linkedDatasetSchemaId: ID
-    root: Boolean!
-    layerIds: [ID!]!
-    parent: LayerGroup @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
-    plugin: Plugin @goField(forceResolver: true)
-    extension: PluginExtension @goField(forceResolver: true)
-    linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
-    layers: [Layer]! @goField(forceResolver: true)
+  id: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: PluginID
+  extensionId: PluginExtensionID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetSchemaId: ID
+  root: Boolean!
+  layerIds: [ID!]!
+  parent: LayerGroup @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
+  layers: [Layer]! @goField(forceResolver: true)
 }
 
 type Infobox {
-    layerId: ID!
-    propertyId: ID!
-    fields: [InfoboxField!]!
-    linkedDatasetId: ID
-    layer: Layer! @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
-    linkedDataset: Dataset @goField(forceResolver: true)
-    merged: MergedInfobox @goField(forceResolver: true)
+  layerId: ID!
+  propertyId: ID!
+  fields: [InfoboxField!]!
+  linkedDatasetId: ID
+  layer: Layer! @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedInfobox @goField(forceResolver: true)
 }
 
 type InfoboxField {
-    id: ID!
-    layerId: ID!
-    propertyId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    linkedDatasetId: ID
-    layer: Layer! @goField(forceResolver: true)
-    infobox: Infobox! @goField(forceResolver: true)
-    property: Property @goField(forceResolver: true)
-    plugin: Plugin @goField(forceResolver: true)
-    extension: PluginExtension @goField(forceResolver: true)
-    linkedDataset: Dataset @goField(forceResolver: true)
-    merged: MergedInfoboxField @goField(forceResolver: true)
+  id: ID!
+  layerId: ID!
+  propertyId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  linkedDatasetId: ID
+  layer: Layer! @goField(forceResolver: true)
+  infobox: Infobox! @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedInfoboxField @goField(forceResolver: true)
 }
 
 type MergedLayer {
-    originalId: ID!
-    parentId: ID
-    property: MergedProperty
-    infobox: MergedInfobox
-    original: LayerItem @goField(forceResolver: true)
-    parent: LayerGroup @goField(forceResolver: true)
+  originalId: ID!
+  parentId: ID
+  property: MergedProperty
+  infobox: MergedInfobox
+  original: LayerItem @goField(forceResolver: true)
+  parent: LayerGroup @goField(forceResolver: true)
 }
 
 type MergedInfobox {
-    property: MergedProperty
-    fields: [MergedInfoboxField!]!
+  property: MergedProperty
+  fields: [MergedInfoboxField!]!
 }
 
 type MergedInfoboxField {
-    originalId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    property: MergedProperty
-    plugin: Plugin @goField(forceResolver: true)
-    extension: PluginExtension @goField(forceResolver: true)
+  originalId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  property: MergedProperty
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
 }
-
 
 # InputType
 input CreateAssetInput {
-    teamId: ID!
-    file: Upload!
+  teamId: ID!
+  file: Upload!
 }
 
 input RemoveAssetInput {
-    assetId: ID!
+  assetId: ID!
 }
 
 input SignupInput {
-    lang: Lang
-    theme: Theme
-    userId: ID
-    teamId: ID
-    secret: String
+  lang: Lang
+  theme: Theme
+  userId: ID
+  teamId: ID
+  secret: String
 }
 
 input UpdateMeInput {
-    name: String
-    email: String
-    lang: Lang
-    theme: Theme
-    password: String
-    passwordConfirmation: String
+  name: String
+  email: String
+  lang: Lang
+  theme: Theme
+  password: String
+  passwordConfirmation: String
 }
 
 input RemoveMyAuthInput {
-    auth: String!
+  auth: String!
 }
 
 input DeleteMeInput {
-    userId: ID!
+  userId: ID!
 }
 
 input CreateTeamInput {
-    name: String!
+  name: String!
 }
 
 input UpdateTeamInput {
-    teamId: ID!
-    name: String!
+  teamId: ID!
+  name: String!
 }
 
 input AddMemberToTeamInput {
-    teamId: ID!
-    userId: ID!
-    role: Role!
+  teamId: ID!
+  userId: ID!
+  role: Role!
 }
 
 input RemoveMemberFromTeamInput {
-    teamId: ID!
-    userId: ID!
+  teamId: ID!
+  userId: ID!
 }
 
 input UpdateMemberOfTeamInput {
-    teamId: ID!
-    userId: ID!
-    role: Role!
+  teamId: ID!
+  userId: ID!
+  role: Role!
 }
 
 input DeleteTeamInput {
-    teamId: ID!
+  teamId: ID!
 }
 
 input CreateProjectInput {
-    teamId: ID!
-    visualizer: Visualizer!
-    name: String
-    description: String
-    imageUrl: URL
-    alias: String
-    archived: Boolean
+  teamId: ID!
+  visualizer: Visualizer!
+  name: String
+  description: String
+  imageUrl: URL
+  alias: String
+  archived: Boolean
 }
 
 input UpdateProjectInput {
-    projectId: ID!
-    name: String
-    description: String
-    archived: Boolean
-    isBasicAuthActive: Boolean
-    basicAuthUsername: String
-    basicAuthPassword: String
-    alias: String
-    imageUrl: URL
-    publicTitle: String
-    publicDescription: String
-    publicImage: Upload
-    publicNoIndex: Boolean
-    deleteImageUrl: Boolean
-    deletePublicImage: Boolean
+  projectId: ID!
+  name: String
+  description: String
+  archived: Boolean
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  imageUrl: URL
+  publicTitle: String
+  publicDescription: String
+  publicImage: Upload
+  publicNoIndex: Boolean
+  deleteImageUrl: Boolean
+  deletePublicImage: Boolean
 }
 
 input UploadPluginInput {
-    file: Upload!
+  file: Upload!
 }
 
 input CreateSceneInput {
-    projectId: ID!
+  projectId: ID!
 }
 
 input PublishProjectInput {
-    projectId: ID!
-    alias: String
-    status: PublishmentStatus!
+  projectId: ID!
+  alias: String
+  status: PublishmentStatus!
 }
 
 input DeleteProjectInput {
-    projectId: ID!
+  projectId: ID!
 }
 
 input AddWidgetInput {
-    sceneId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
+  sceneId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
 }
 
 input UpdateWidgetInput {
-    sceneId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    enabled: Boolean
+  sceneId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  enabled: Boolean
 }
 
 input RemoveWidgetInput {
-    sceneId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
+  sceneId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
 }
 
 input InstallPluginInput {
-    sceneId: ID!
-    pluginId: PluginID!
+  sceneId: ID!
+  pluginId: PluginID!
 }
 
 input UninstallPluginInput {
-    sceneId: ID!
-    pluginId: PluginID!
+  sceneId: ID!
+  pluginId: PluginID!
 }
 
 input UpgradePluginInput {
-    sceneId: ID!
-    pluginId: PluginID!
-    toPluginId: PluginID!
+  sceneId: ID!
+  pluginId: PluginID!
+  toPluginId: PluginID!
 }
 
 input SyncDatasetInput {
-    sceneId: ID!
-    url: String!
+  sceneId: ID!
+  url: String!
 }
 
 input UpdatePropertyValueInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    value: Any
-    type: ValueType!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  value: Any
+  type: ValueType!
 }
 
 input UpdatePropertyValueLatLngInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    lat: Float!
-    lng: Float!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  lat: Float!
+  lng: Float!
 }
 
 input UpdatePropertyValueLatLngHeightInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    lat: Float!
-    lng: Float!
-    height: Float!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  lat: Float!
+  lng: Float!
+  height: Float!
 }
 
 input UpdatePropertyValueCameraInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    lat: Float!
-    lng: Float!
-    altitude: Float!
-    heading: Float!
-    pitch: Float!
-    roll: Float!
-    fov: Float!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  lat: Float!
+  lng: Float!
+  altitude: Float!
+  heading: Float!
+  pitch: Float!
+  roll: Float!
+  fov: Float!
 }
 
 input UpdatePropertyValueTypographyInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    fontFamily: String
-    fontWeight: String
-    fontSize: Int
-    color: String
-    textAlign: TextAlign
-    bold: Boolean
-    italic: Boolean
-    underline: Boolean
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  fontFamily: String
+  fontWeight: String
+  fontSize: Int
+  color: String
+  textAlign: TextAlign
+  bold: Boolean
+  italic: Boolean
+  underline: Boolean
 }
 
 input RemovePropertyFieldInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
 }
 
 input UploadFileToPropertyInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    file: Upload!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  file: Upload!
 }
 
 input LinkDatasetToPropertyValueInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
-    datasetSchemaIds: [ID!]!
-    datasetSchemaFieldIds: [ID!]!
-    datasetIds: [ID!]
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
+  datasetSchemaIds: [ID!]!
+  datasetSchemaFieldIds: [ID!]!
+  datasetIds: [ID!]
 }
 
 input UnlinkPropertyValueInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID
-    itemId: ID
-    fieldId: PropertySchemaFieldID!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID
+  itemId: ID
+  fieldId: PropertySchemaFieldID!
 }
 
 input AddPropertyItemInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID!
-    index: Int
-    nameFieldValue: Any
-    nameFieldType: ValueType
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID!
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
 }
 
 input MovePropertyItemInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID!
-    itemId: ID!
-    index: Int!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID!
+  itemId: ID!
+  index: Int!
 }
 
 input RemovePropertyItemInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID!
-    itemId: ID!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID!
+  itemId: ID!
 }
 
 input UpdatePropertyItemInput {
-    propertyId: ID!
-    schemaItemId: PropertySchemaFieldID!
-    operations: [UpdatePropertyItemOperationInput!]!
+  propertyId: ID!
+  schemaItemId: PropertySchemaFieldID!
+  operations: [UpdatePropertyItemOperationInput!]!
 }
 
 input UpdatePropertyItemOperationInput {
-    operation: ListOperation!
-    itemId: ID
-    index: Int
-    nameFieldValue: Any
-    nameFieldType: ValueType
+  operation: ListOperation!
+  itemId: ID
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
 }
 
 input AddLayerItemInput {
-    parentLayerId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    index: Int
-    name: String
-    lat: Float
-    lng: Float
+  parentLayerId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  index: Int
+  name: String
+  lat: Float
+  lng: Float
 }
 
 input AddLayerGroupInput {
-    parentLayerId: ID!
-    pluginId: PluginID
-    extensionId: PluginExtensionID
-    index: Int
-    linkedDatasetSchemaID: ID
-    name: String
+  parentLayerId: ID!
+  pluginId: PluginID
+  extensionId: PluginExtensionID
+  index: Int
+  linkedDatasetSchemaID: ID
+  name: String
 }
 
 input RemoveLayerInput {
-    layerId: ID!
+  layerId: ID!
 }
 
 input UpdateLayerInput {
-    layerId: ID!
-    name: String
-    visible: Boolean
+  layerId: ID!
+  name: String
+  visible: Boolean
 }
 
 input MoveLayerInput {
-    layerId: ID!
-    destLayerId: ID
-    index: Int
+  layerId: ID!
+  destLayerId: ID
+  index: Int
 }
 
 input CreateInfoboxInput {
-    layerId: ID!
+  layerId: ID!
 }
 
 input RemoveInfoboxInput {
-    layerId: ID!
+  layerId: ID!
 }
 
 input AddInfoboxFieldInput {
-    layerId: ID!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
-    index: Int
+  layerId: ID!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
+  index: Int
 }
 
 input MoveInfoboxFieldInput {
-    layerId: ID!
-    infoboxFieldId: ID!
-    index: Int!
+  layerId: ID!
+  infoboxFieldId: ID!
+  index: Int!
 }
 
 input RemoveInfoboxFieldInput {
-    layerId: ID!
-    infoboxFieldId: ID!
+  layerId: ID!
+  infoboxFieldId: ID!
 }
 
 input UpdateDatasetSchemaInput {
-    schemaId: ID!
-    name: String!
+  schemaId: ID!
+  name: String!
 }
 
 input AddDynamicDatasetSchemaInput {
-    sceneId: ID!
+  sceneId: ID!
 }
 
 input AddDynamicDatasetInput {
-    datasetSchemaId: ID!
-    author: String!
-    content: String!
-    lat: Float
-    lng: Float
-    target: String
+  datasetSchemaId: ID!
+  author: String!
+  content: String!
+  lat: Float
+  lng: Float
+  target: String
 }
 
 input RemoveDatasetSchemaInput {
-    schemaId: ID!
-    force: Boolean
+  schemaId: ID!
+  force: Boolean
 }
 
 input ImportLayerInput {
-    layerId: ID!
-    file: Upload!
-    format: LayerEncodingFormat!
+  layerId: ID!
+  file: Upload!
+  format: LayerEncodingFormat!
 }
 
 input ImportDatasetInput {
-    file: Upload!
-    sceneId: ID!
-    datasetSchemaId: ID
+  file: Upload!
+  sceneId: ID!
+  datasetSchemaId: ID
 }
 
 input AddDatasetSchemaInput {
-    sceneId: ID!
-    name: String!
-    representativefield: ID
+  sceneId: ID!
+  name: String!
+  representativefield: ID
 }
 
 # Payload
 type CreateAssetPayload {
-    asset: Asset!
+  asset: Asset!
 }
 
 type RemoveAssetPayload {
-    assetId: ID!
+  assetId: ID!
 }
 
 type SignupPayload {
-    user: User!
-    team: Team!
+  user: User!
+  team: Team!
 }
 
 type UpdateMePayload {
-    user: User!
+  user: User!
 }
 
 type DeleteMePayload {
-    userId: ID!
+  userId: ID!
 }
 
 type CreateTeamPayload {
-    team: Team!
+  team: Team!
 }
 
 type UpdateTeamPayload {
-    team: Team!
+  team: Team!
 }
 
 type AddMemberToTeamPayload {
-    team: Team!
+  team: Team!
 }
 
 type RemoveMemberFromTeamPayload {
-    team: Team!
+  team: Team!
 }
 
 type UpdateMemberOfTeamPayload {
-    team: Team!
+  team: Team!
 }
 
 type DeleteTeamPayload {
-    teamId: ID!
+  teamId: ID!
 }
 
 type ProjectPayload {
-    project: Project!
+  project: Project!
 }
 
 type DeleteProjectPayload {
-    projectId: ID!
+  projectId: ID!
 }
 
 type UploadPluginPayload {
-    plugin: Plugin!
+  plugin: Plugin!
 }
 
 type CreateScenePayload {
-    scene: Scene!
+  scene: Scene!
 }
 
 type AddWidgetPayload {
-    scene: Scene!
-    sceneWidget: SceneWidget!
+  scene: Scene!
+  sceneWidget: SceneWidget!
 }
 
 type UpdateWidgetPayload {
-    scene: Scene!
-    sceneWidget: SceneWidget!
+  scene: Scene!
+  sceneWidget: SceneWidget!
 }
 
 type RemoveWidgetPayload {
-    scene: Scene!
-    pluginId: PluginID!
-    extensionId: PluginExtensionID!
+  scene: Scene!
+  pluginId: PluginID!
+  extensionId: PluginExtensionID!
 }
 
 type InstallPluginPayload {
-    scene: Scene!
-    scenePlugin: ScenePlugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
 }
 
 type UninstallPluginPayload {
-    scene: Scene!
-    scenePlugin: ScenePlugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
 }
 
 type UpgradePluginPayload {
-    scene: Scene!
-    scenePlugin: ScenePlugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
 }
 
 type SyncDatasetPayload {
-    sceneId: ID!
-    url: String!
-    datasetSchema: [DatasetSchema!]!
-    dataset: [Dataset!]!
+  sceneId: ID!
+  url: String!
+  datasetSchema: [DatasetSchema!]!
+  dataset: [Dataset!]!
 }
 
 type PropertyFieldPayload {
-    property: Property!
-    propertyField: PropertyField
+  property: Property!
+  propertyField: PropertyField
 }
 
 type PropertyItemPayload {
-    property: Property!
-    propertyItem: PropertyItem
+  property: Property!
+  propertyItem: PropertyItem
 }
 
 type AddLayerItemPayload {
-    layer: LayerItem!
-    parentLayer: LayerGroup!
-    index: Int
+  layer: LayerItem!
+  parentLayer: LayerGroup!
+  index: Int
 }
 
 type AddLayerGroupPayload {
-    layer: LayerGroup!
-    parentLayer: LayerGroup!
-    index: Int
+  layer: LayerGroup!
+  parentLayer: LayerGroup!
+  index: Int
 }
 
 type RemoveLayerPayload {
-    layerId: ID!
-    parentLayer: LayerGroup!
+  layerId: ID!
+  parentLayer: LayerGroup!
 }
 
 type UpdateLayerPayload {
-    layer: Layer!
+  layer: Layer!
 }
 
 type MoveLayerPayload {
-    layerId: ID!
-    fromParentLayer: LayerGroup!
-    toParentLayer: LayerGroup!
-    index: Int!
+  layerId: ID!
+  fromParentLayer: LayerGroup!
+  toParentLayer: LayerGroup!
+  index: Int!
 }
 
 type CreateInfoboxPayload {
-    layer: Layer!
+  layer: Layer!
 }
 
 type RemoveInfoboxPayload {
-    layer: Layer!
+  layer: Layer!
 }
 
 type AddInfoboxFieldPayload {
-    infoboxField: InfoboxField!
-    layer: Layer!
+  infoboxField: InfoboxField!
+  layer: Layer!
 }
 
 type MoveInfoboxFieldPayload {
-    infoboxFieldId: ID!
-    layer: Layer!
-    index: Int!
+  infoboxFieldId: ID!
+  layer: Layer!
+  index: Int!
 }
 
 type RemoveInfoboxFieldPayload {
-    infoboxFieldId: ID!
-    layer: Layer!
+  infoboxFieldId: ID!
+  layer: Layer!
 }
 
 type UpdateDatasetSchemaPayload {
-    datasetSchema: DatasetSchema
+  datasetSchema: DatasetSchema
 }
 
 type RemoveDatasetSchemaPayload {
-    schemaId: ID!
+  schemaId: ID!
 }
 
 type AddDynamicDatasetSchemaPayload {
-    datasetSchema: DatasetSchema
+  datasetSchema: DatasetSchema
 }
 
 type AddDynamicDatasetPayload {
-    datasetSchema: DatasetSchema
-    dataset: Dataset
+  datasetSchema: DatasetSchema
+  dataset: Dataset
 }
 
 type ImportLayerPayload {
-    layers: [Layer!]!
-    parentLayer: LayerGroup!
+  layers: [Layer!]!
+  parentLayer: LayerGroup!
 }
 
 type ImportDatasetPayload {
-    datasetSchema: DatasetSchema!
+  datasetSchema: DatasetSchema!
 }
 
 type AddDatasetSchemaPayload {
-    datasetSchema: DatasetSchema
+  datasetSchema: DatasetSchema
 }
 
 # Connection
 
 enum NodeType {
-    USER
-    TEAM
-    PROJECT
-    PLUGIN
-    SCENE
-    PROPERTY_SCHEMA
-    PROPERTY
-    DATASET_SCHEMA
-    DATASET
-    LAYER_GROUP
-    LAYER_ITEM
+  USER
+  TEAM
+  PROJECT
+  PLUGIN
+  SCENE
+  PROPERTY_SCHEMA
+  PROPERTY
+  DATASET_SCHEMA
+  DATASET
+  LAYER_GROUP
+  LAYER_ITEM
 }
 
 type AssetConnection {
-    edges: [AssetEdge!]!
-    nodes: [Asset]!
-    pageInfo: PageInfo!
-    totalCount: Int!
+  edges: [AssetEdge!]!
+  nodes: [Asset]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type AssetEdge {
-    cursor: Cursor!
-    node: Asset
+  cursor: Cursor!
+  node: Asset
 }
 
 type ProjectConnection {
-    edges: [ProjectEdge!]!
-    nodes: [Project]!
-    pageInfo: PageInfo!
-    totalCount: Int!
+  edges: [ProjectEdge!]!
+  nodes: [Project]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type ProjectEdge {
-    cursor: Cursor!
-    node: Project
+  cursor: Cursor!
+  node: Project
 }
 
 type DatasetSchemaConnection {
-    edges: [DatasetSchemaEdge!]!
-    nodes: [DatasetSchema]!
-    pageInfo: PageInfo!
-    totalCount: Int!
+  edges: [DatasetSchemaEdge!]!
+  nodes: [DatasetSchema]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type DatasetSchemaEdge {
-    cursor: Cursor!
-    node: DatasetSchema
+  cursor: Cursor!
+  node: DatasetSchema
 }
 
 type DatasetConnection {
-    edges: [DatasetEdge!]!
-    nodes: [Dataset]!
-    pageInfo: PageInfo!
-    totalCount: Int!
+  edges: [DatasetEdge!]!
+  nodes: [Dataset]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type DatasetEdge {
-    cursor: Cursor!
-    node: Dataset
+  cursor: Cursor!
+  node: Dataset
 }
-
 
 # Query
 
 type Query {
-    me: User
-    node(id: ID!, type: NodeType!): Node
-    nodes(id: [ID!]!, type: NodeType!): [Node]!
-    propertySchema(id: PropertySchemaID!): PropertySchema
-    propertySchemas(id: [PropertySchemaID!]!): [PropertySchema!]!
-    plugin(id: PluginID!): Plugin
-    plugins(id: [PluginID!]!): [Plugin!]!
-    layer(id: ID!): Layer
-    scene(projectId: ID!): Scene
-    assets(teamId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
-    projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
-    datasetSchemas(sceneId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
-    datasets(datasetSchemaId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
-    sceneLock(sceneId: ID!): SceneLockMode
-    dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
-    searchUser(nameOrEmail: String!): SearchedUser
-    checkProjectAlias(alias: String!): CheckProjectAliasPayload!
-    installablePlugins: [PluginMetadata!]!
+  me: User
+  node(id: ID!, type: NodeType!): Node
+  nodes(id: [ID!]!, type: NodeType!): [Node]!
+  propertySchema(id: PropertySchemaID!): PropertySchema
+  propertySchemas(id: [PropertySchemaID!]!): [PropertySchema!]!
+  plugin(id: PluginID!): Plugin
+  plugins(id: [PluginID!]!): [Plugin!]!
+  layer(id: ID!): Layer
+  scene(projectId: ID!): Scene
+  assets(
+    teamId: ID!
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): AssetConnection!
+  projects(
+    teamId: ID!
+    includeArchived: Boolean
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): ProjectConnection!
+  datasetSchemas(
+    sceneId: ID!
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetSchemaConnection!
+  datasets(
+    datasetSchemaId: ID!
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetConnection!
+  sceneLock(sceneId: ID!): SceneLockMode
+  dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
+  searchUser(nameOrEmail: String!): SearchedUser
+  checkProjectAlias(alias: String!): CheckProjectAliasPayload!
+  installablePlugins: [PluginMetadata!]!
 }
 
 # Mutation
 
 type Mutation {
-    # Asset
-    createAsset(input: CreateAssetInput!): CreateAssetPayload
-    removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
+  # Asset
+  createAsset(input: CreateAssetInput!): CreateAssetPayload
+  removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
 
-    # User
-    signup(input: SignupInput!): SignupPayload
-    updateMe(input: UpdateMeInput!): UpdateMePayload
-    removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
-    deleteMe(input: DeleteMeInput!): DeleteMePayload
+  # User
+  signup(input: SignupInput!): SignupPayload
+  updateMe(input: UpdateMeInput!): UpdateMePayload
+  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
+  deleteMe(input: DeleteMeInput!): DeleteMePayload
 
-    # Team
-    createTeam(input: CreateTeamInput!): CreateTeamPayload
-    deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
-    updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
-    addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-    removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
-    updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+  # Team
+  createTeam(input: CreateTeamInput!): CreateTeamPayload
+  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
+  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
+  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
+  removeMemberFromTeam(
+    input: RemoveMemberFromTeamInput!
+  ): RemoveMemberFromTeamPayload
+  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
 
-    # Project
-    createProject(input: CreateProjectInput!): ProjectPayload
-    updateProject(input: UpdateProjectInput!): ProjectPayload
-    publishProject(input: PublishProjectInput!): ProjectPayload
-    deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+  # Project
+  createProject(input: CreateProjectInput!): ProjectPayload
+  updateProject(input: UpdateProjectInput!): ProjectPayload
+  publishProject(input: PublishProjectInput!): ProjectPayload
+  deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
 
-    # Plugin
-    uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
+  # Plugin
+  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
 
-    # Scene
-    createScene(input: CreateSceneInput!): CreateScenePayload
-    addWidget(input: AddWidgetInput!): AddWidgetPayload
-    updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-    removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
-    installPlugin(input: InstallPluginInput!): InstallPluginPayload
-    uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
-    upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
+  # Scene
+  createScene(input: CreateSceneInput!): CreateScenePayload
+  addWidget(input: AddWidgetInput!): AddWidgetPayload
+  updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+  removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
+  installPlugin(input: InstallPluginInput!): InstallPluginPayload
+  uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+  upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
 
-    # Dataset
-    updateDatasetSchema(input:UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload
-    syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
-    addDynamicDatasetSchema(input:AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload
-    addDynamicDataset(input:AddDynamicDatasetInput!): AddDynamicDatasetPayload
-    removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload
-    importDataset(input: ImportDatasetInput!): ImportDatasetPayload
-    addDatasetSchema(input:AddDatasetSchemaInput!): AddDatasetSchemaPayload
+  # Dataset
+  updateDatasetSchema(
+    input: UpdateDatasetSchemaInput!
+  ): UpdateDatasetSchemaPayload
+  syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
+  addDynamicDatasetSchema(
+    input: AddDynamicDatasetSchemaInput!
+  ): AddDynamicDatasetSchemaPayload
+  addDynamicDataset(input: AddDynamicDatasetInput!): AddDynamicDatasetPayload
+  removeDatasetSchema(
+    input: RemoveDatasetSchemaInput!
+  ): RemoveDatasetSchemaPayload
+  importDataset(input: ImportDatasetInput!): ImportDatasetPayload
+  addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
 
-    # Property
-    updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
-    updatePropertyValueLatLng(input: UpdatePropertyValueLatLngInput!): PropertyFieldPayload
-    updatePropertyValueLatLngHeight(input: UpdatePropertyValueLatLngHeightInput!): PropertyFieldPayload
-    updatePropertyValueCamera(input: UpdatePropertyValueCameraInput!): PropertyFieldPayload
-    updatePropertyValueTypography(input: UpdatePropertyValueTypographyInput!): PropertyFieldPayload
-    removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
-    uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-    linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
-    unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
-    addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
-    movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
-    removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
-    updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
+  # Property
+  updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
+  updatePropertyValueLatLng(
+    input: UpdatePropertyValueLatLngInput!
+  ): PropertyFieldPayload
+  updatePropertyValueLatLngHeight(
+    input: UpdatePropertyValueLatLngHeightInput!
+  ): PropertyFieldPayload
+  updatePropertyValueCamera(
+    input: UpdatePropertyValueCameraInput!
+  ): PropertyFieldPayload
+  updatePropertyValueTypography(
+    input: UpdatePropertyValueTypographyInput!
+  ): PropertyFieldPayload
+  removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
+  uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(
+    input: LinkDatasetToPropertyValueInput!
+  ): PropertyFieldPayload
+  unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
+  addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
+  movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
+  removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
+  updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
 
-    # Layer
-    addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
-    addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
-    removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
-    updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
-    moveLayer(input: MoveLayerInput!): MoveLayerPayload
-    createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
-    removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
-    addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
-    moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
-    removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
-    importLayer(input:ImportLayerInput!): ImportLayerPayload
+  # Layer
+  addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
+  addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
+  removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
+  updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
+  moveLayer(input: MoveLayerInput!): MoveLayerPayload
+  createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
+  removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
+  addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
+  moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
+  removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
+  importLayer(input: ImportLayerInput!): ImportLayerPayload
 }
 
 schema {
-    query: Query
-    mutation: Mutation
+  query: Query
+  mutation: Mutation
 }
 `, BuiltIn: false},
 }
@@ -18678,6 +18758,76 @@ func (ec *executionContext) _PluginMetadata_description(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PluginMetadata_author(ctx context.Context, field graphql.CollectedField, obj *graphql1.PluginMetadata) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginMetadata",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Author, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PluginMetadata_thumbnailUrl(ctx context.Context, field graphql.CollectedField, obj *graphql1.PluginMetadata) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginMetadata",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ThumbnailURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32873,6 +33023,16 @@ func (ec *executionContext) _PluginMetadata(ctx context.Context, sel ast.Selecti
 			}
 		case "description":
 			out.Values[i] = ec._PluginMetadata_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "author":
+			out.Values[i] = ec._PluginMetadata_author(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "thumbnailUrl":
+			out.Values[i] = ec._PluginMetadata_thumbnailUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
