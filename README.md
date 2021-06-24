@@ -33,7 +33,7 @@
   </p>
 </p>
 
-
+Re:Earth consist with 2 repositories. Don't forget to check our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend)👍
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
