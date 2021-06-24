@@ -82,7 +82,7 @@ export default (alias?: string) => {
   }, [selectedLayerId]);
 
   useEffect(() => {
-    const url = "/data.json";
+    const url = "data.json";
     (async () => {
       try {
         const d = (await fetch(url, {}).then(r => r.json())) as PublishedData | undefined;
