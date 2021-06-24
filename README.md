@@ -1,7 +1,7 @@
-
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
+[![Front-end Contributors][contributors-shield]][https://github.com/reearth/reearth-web/graphs/contributors]
+[![Back-end Contributors][contributors-shield]][https://github.com/reearth/reearth-backend/graphs/contributors]
+[![Forks][forks-shield]][https://github.com/reearth/reearth/network/members]
+[![Stargazers][stars-shield]][https://github.com/reearth/reearth/stargazers]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
@@ -11,18 +11,15 @@
 <p align="center">
 <!-- TODO: change this link later -->
   <a href="https://github.com/reearth/reearth">
-    <img src="./public/reearth-logo.svg" alt="Logo" width="80" height="80">
+    <img src="./public/reearth-logo.svg" alt="Logo" width="300" height="300">
   </a>
 
-  <h3 align="center">Re:Earth</h3>
-
   <p align="center">
-    Re:Earth is ...
+    Re:Earth is a state-of-the-art WebGIS with expandability through plug-ins and the ease of running in a browser.
     <br />
-    <a href="https://docs.reearth.io/"><strong>Documents >></strong></a>
-    <br />
+    <a  href="https://docs.reearth.io/"><strong>Documents >></strong></a>
+    &emsp;&emsp;&emsp;&emsp;
     <a href="https://docs.reearth.io/oss"><strong>OSS Webpage >></strong></a>
-    <br />
     <br />
     <!-- TODO: here -->
     <a href="">View Demo</a>
@@ -33,42 +30,11 @@
   </p>
 </p>
 
-Re:Earth consist with 2 repositories. Don't forget to check our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend)👍
-
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
-  </ol>
-</details>
-
-
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
+Re:Earth consist with 2 repositories. Don't forget to check our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories👍
 
 [![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
 
+<!-- ABOUT THE PROJECT -->
 ## Features
 🔌 Higy extensible with plugins system
 
@@ -84,22 +50,13 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 ## Built With
 * [React](https://github.com/facebook/react)
 * [TypeScript](https://github.com/microsoft/TypeScript)
-* [Golang](https://github.com/golang/go)
+* [Go](https://github.com/golang/go)
 * [GraphQL](https://github.com/graphql)
-* [WASM](https://webassembly.org/)
+* [MongoDB](https://www.mongodb.com/)
+* [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
 
 
 
-<!-- GETTING STARTED -->
-## Getting Started
-For the person who just run Re:Earth locally and easily, just use docker!
-
-```
-git clone https://github.com/reearth/reearth
-docker-compose up
-```
-
-For developers
 
 ### Prerequisites
 
@@ -109,20 +66,6 @@ For developers
 **Back-end**
 * Golang +1.16
 * Docker
-
-
-### Installation
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/reearth/reearth.git
-   ```
-2. Install NPM packages
-   ```sh
-   npm install
-   ```
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
