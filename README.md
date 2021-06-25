@@ -1,9 +1,18 @@
-[![Front-end Contributors][contributors-shield]][https://github.com/reearth/reearth-web/graphs/contributors]
-[![Back-end Contributors][contributors-shield]][https://github.com/reearth/reearth-backend/graphs/contributors]
-[![Forks][forks-shield]][https://github.com/reearth/reearth/network/members]
-[![Stargazers][stars-shield]][https://github.com/reearth/reearth/stargazers]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+
+[![stars](https://img.shields.io/github/stars/reearth/reearth)](https://img.shields.io/github/stars/reearth/reearth)
+[![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
+[![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
+[![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
+[![](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
+[![front-end contributers](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
+[![GitHub release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
+[![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://GitHub.com/reearth/reearth.js/tags/)
+[![Github all releases](https://img.shields.io/github/downloads/reearth/reearth.js/total.svg)](https://GitHub.com/reearth/reearth.js/releases/)
+[![GitHub contributors](https://img.shields.io/github/contributors/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/graphs/contributors/)
+[![](https://img.shields.io/github/contributors/reearth/reearth-web?label=front-end%20contributors)](https://GitHub.com/reearth/reearth-web/graphs/contributors/)
+[![](https://img.shields.io/github/contributors/reearth/reearth-backend?label=back-end%20contributors)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/)
+[![Generic badge](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
 
 
 <!-- PROJECT LOGO -->
@@ -54,8 +63,6 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 * [GraphQL](https://github.com/graphql)
 * [MongoDB](https://www.mongodb.com/)
 * [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
-
-
 
 
 ### Prerequisites
