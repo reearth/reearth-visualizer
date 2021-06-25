@@ -12,6 +12,8 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/graphs/contributors/)
 [![](https://img.shields.io/github/contributors/reearth/reearth-web?label=front-end%20contributors)](https://GitHub.com/reearth/reearth-web/graphs/contributors/)
 [![](https://img.shields.io/github/contributors/reearth/reearth-backend?label=back-end%20contributors)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/)
+[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-web/main?label=frontend-test)](https://github.com/reearth/reearth-web/actions/workflows/main/badge.svg)
+[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main/badge.svg)
 [![Generic badge](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
 
 
