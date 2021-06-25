@@ -1,49 +1,23 @@
 package app
 
 import (
-	"errors"
+	"context"
+	"crypto/subtle"
 	"fmt"
 	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	http1 "github.com/reearth/reearth-backend/internal/adapter/http"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interactor"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-type inputJSON struct {
-	DatasetSchemaID string   `json:"datasetSchemaId"`
-	Author          string   `json:"author"`
-	Content         string   `json:"content"`
-	Target          *string  `json:"target"`
-	Lat             *float64 `json:"lat"`
-	Lng             *float64 `json:"lng"`
-}
-
-func toResponseValue(v *dataset.Value) interface{} {
-	if v == nil {
-		return nil
-	}
-	switch v2 := v.Value().(type) {
-	case float64:
-		return v2
-	case string:
-		return v2
-	case dataset.LatLng:
-		return map[string]float64{
-			"lat": v2.Lat,
-			"lng": v2.Lng,
-		}
-	}
-	return nil
-}
-
-func publicRoute(
+func publicAPI(
 	ec *echo.Echo,
 	r *echo.Group,
 	conf *Config,
@@ -51,46 +25,10 @@ func publicRoute(
 	gateways *gateway.Container,
 ) {
 	controller := http1.NewUserController(interactor.NewUser(repos, gateways, conf.SignupSecret))
+	publishedController := http1.NewPublishedController(interactor.NewPublished(repos.Project, gateways.File, ""))
 
-	// TODO: move to adapter and usecase layer
-	r.POST("/comments", func(c echo.Context) error {
-		var inp inputJSON
-		if err := c.Bind(&inp); err != nil {
-			return &echo.HTTPError{Code: http.StatusBadRequest, Message: err}
-		}
-
-		dssid, err := id.DatasetSchemaIDFrom(inp.DatasetSchemaID)
-		if err != nil {
-			return &echo.HTTPError{Code: http.StatusNotFound, Message: err1.ErrNotFound}
-		}
-		if inp.Author == "" {
-			return &echo.HTTPError{Code: http.StatusBadRequest, Message: errors.New("require author value")}
-		}
-		if inp.Content == "" {
-			return &echo.HTTPError{Code: http.StatusBadRequest, Message: errors.New("require content value")}
-		}
-		interactor := interactor.NewDataset(repos, gateways)
-		dss, ds, err := interactor.AddDynamicDataset(c.Request().Context(), interfaces.AddDynamicDatasetParam{
-			SchemaId: dssid,
-			Author:   inp.Author,
-			Content:  inp.Content,
-			Lat:      inp.Lat,
-			Lng:      inp.Lng,
-			Target:   inp.Target,
-		})
-
-		if err != nil {
-			if errors.Is(err1.ErrNotFound, err) {
-				return &echo.HTTPError{Code: http.StatusNotFound, Message: err}
-			}
-			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
-		}
-		response := make(map[string]interface{})
-		response["id"] = ds.ID().String()
-		for _, f := range dss.Fields() {
-			response[f.Name()] = toResponseValue(ds.Field(f.ID()).Value())
-		}
-		return c.JSON(http.StatusOK, response)
+	r.GET("/ping", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "pong")
 	})
 
 	r.POST("/signup", func(c echo.Context) error {
@@ -106,4 +44,103 @@ func publicRoute(
 
 		return c.JSON(http.StatusOK, output)
 	})
+
+	r.GET("/published/:name", func(c echo.Context) error {
+		name := c.Param("string")
+		if name == "" {
+			return echo.ErrNotFound
+		}
+
+		res, err := publishedController.Metadata(c.Request().Context(), name)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, res)
+	})
+
+	r.GET("/published_data/:name", func(c echo.Context) error {
+		name := c.Param("string")
+		if name == "" {
+			return echo.ErrNotFound
+		}
+
+		r, err := publishedController.Data(c.Request().Context(), name)
+		if err != nil {
+			return err
+		}
+
+		return c.Stream(http.StatusOK, "application/json", r)
+	})
+}
+
+func publishedRoute(
+	ec *echo.Echo,
+	r *echo.Group,
+	conf *Config,
+	repos *repo.Container,
+	gateways *gateway.Container,
+) {
+	var i interfaces.Published
+	if conf.Published.IndexURL == nil || conf.Published.IndexURL.String() == "" {
+		html, err := os.ReadFile("web/published.html")
+		if err == nil {
+			i = interactor.NewPublished(repos.Project, gateways.File, string(html))
+		} else {
+			i = interactor.NewPublished(repos.Project, gateways.File, "")
+		}
+	} else {
+		i = interactor.NewPublishedWithURL(repos.Project, gateways.File, conf.Published.IndexURL)
+	}
+	contr := http1.NewPublishedController(i)
+
+	key := struct{}{}
+	auth := middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
+		Validator: func(user string, password string, c echo.Context) (bool, error) {
+			md, ok := c.Request().Context().Value(key).(interfaces.ProjectPublishedMetadata)
+			if !ok {
+				return true, echo.ErrNotFound
+			}
+			return !md.IsBasicAuthActive || subtle.ConstantTimeCompare([]byte(user), []byte(md.BasicAuthUsername)) == 1 && subtle.ConstantTimeCompare([]byte(password), []byte(md.BasicAuthPassword)) == 1, nil
+		},
+		Skipper: func(c echo.Context) bool {
+			name := c.Param("name")
+			if name == "" {
+				return true
+			}
+
+			md, err := contr.Metadata(c.Request().Context(), name)
+			if err != nil {
+				return true
+			}
+
+			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), key, md)))
+			return !md.IsBasicAuthActive
+		},
+	})
+
+	r.GET("/:name/data.json", func(c echo.Context) error {
+		r, err := contr.Data(c.Request().Context(), c.Param("name"))
+		if err != nil {
+			return err
+		}
+
+		return c.Stream(http.StatusOK, "application/json", r)
+	}, auth)
+
+	r.GET("/:name/", func(c echo.Context) error {
+		index, err := contr.Index(c.Request().Context(), c.Param("name"), &url.URL{
+			Scheme: "http",
+			Host:   c.Request().Host,
+			Path:   c.Request().URL.Path,
+		})
+		if err != nil {
+			return err
+		}
+		if index == "" {
+			return echo.ErrNotFound
+		}
+
+		return c.HTML(http.StatusOK, index)
+	}, auth)
 }

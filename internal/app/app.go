@@ -9,55 +9,24 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth-backend/internal/adapter/graphql"
 	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/log"
+	echotracer "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo"
 )
 
-func initAppEcho(cfg *ServerConfig) *echo.Echo {
-	e := newEcho(cfg)
-
-	controllers := graphql.NewContainer(cfg.Repos, cfg.Gateways, graphql.ContainerConfig{
-		SignupSecret: cfg.Config.SignupSecret,
-	})
-
-	e.HTTPErrorHandler = func(err error, c echo.Context) {
-		if c.Response().Committed {
-			return
-		}
-
-		code := http.StatusBadRequest
-		msg := err.Error()
-
-		if err2, ok := err.(*echo.HTTPError); ok {
-			code = err2.Code
-			if msg2, ok := err2.Message.(string); ok {
-				msg = msg2
-			} else if msg2, ok := err2.Message.(error); ok {
-				msg = msg2.Error()
-			} else {
-				msg = "error"
-			}
-			if err2.Internal != nil {
-				c.Logger().Errorf("echo internal err: %+v", err2)
-			}
-		} else if errors.Is(err, err1.ErrNotFound) {
-			code = http.StatusNotFound
-			msg = "not found"
-		} else {
-			var ierr *err1.ErrInternal
-			if errors.As(err, &ierr) {
-				if err2 := ierr.Unwrap(); err2 != nil {
-					c.Logger().Errorf("internal err: %+v", err2)
-				}
-				code = http.StatusInternalServerError
-				msg = "internal server error"
-			}
-		}
-
-		if err := c.JSON(code, map[string]string{
-			"error": msg,
-		}); err != nil {
-			e.DefaultHTTPErrorHandler(err, c)
-		}
+func initEcho(cfg *ServerConfig) *echo.Echo {
+	if cfg.Config == nil {
+		log.Fatalln("ServerConfig.Config is nil")
 	}
+
+	e := echo.New()
+	e.Debug = cfg.Debug
+	e.HideBanner = true
+	e.HidePort = true
+
+	logger := GetEchoLogger()
+	e.Logger = logger
+	e.Use(logger.Hook())
+	e.Use(middleware.Recover(), echotracer.Middleware("reearth-backend"))
 
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
@@ -68,9 +37,25 @@ func initAppEcho(cfg *ServerConfig) *echo.Echo {
 		)
 	}
 
-	e.GET("/api/ping", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "pong")
-	})
+	if e.Debug {
+		// enable pprof
+		e.GET("/debug/pprof/*", echo.WrapHandler(http.DefaultServeMux))
+	}
+
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		if c.Response().Committed {
+			return
+		}
+
+		code, msg := errorMessage(err, func(f string, args ...interface{}) {
+			c.Echo().Logger.Errorf(f, args...)
+		})
+		if err := c.JSON(code, map[string]string{
+			"error": msg,
+		}); err != nil {
+			e.DefaultHTTPErrorHandler(err, c)
+		}
+	}
 
 	if cfg.Debug || cfg.Config.Dev {
 		// GraphQL Playground without auth
@@ -79,17 +64,18 @@ func initAppEcho(cfg *ServerConfig) *echo.Echo {
 		))
 	}
 
-	e.GET("/api/published/:name", apiPublished(cfg))
-	e.GET("/api/published_data/:name", apiPublishedData(cfg))
 	api := e.Group("/api")
-
-	privateApi := api.Group("")
+	publicAPI(e, api, cfg.Config, cfg.Repos, cfg.Gateways)
 	jwks := &JwksSyncOnce{}
+	privateApi := api.Group("")
 	authRequired(privateApi, jwks, cfg)
+	graphqlAPI(e, privateApi, cfg, graphql.NewContainer(cfg.Repos, cfg.Gateways, graphql.ContainerConfig{
+		SignupSecret: cfg.Config.SignupSecret,
+	}))
+	privateAPI(e, privateApi, cfg.Repos)
 
-	publicRoute(e, api, cfg.Config, cfg.Repos, cfg.Gateways)
-	graphqlRoute(e, privateApi, cfg, controllers)
-	userRoute(e, privateApi, cfg.Repos)
+	published := e.Group("/p")
+	publishedRoute(e, published, cfg.Config, cfg.Repos, cfg.Gateways)
 
 	serveFiles(e, cfg.Gateways.File)
 	web(e, cfg.Config.Web, cfg.Config.Auth0)
@@ -114,48 +100,35 @@ func allowedOrigins(cfg *ServerConfig) []string {
 	return origins
 }
 
-func apiPublished(cfg *ServerConfig) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		name := c.Param("name")
-		prj, err := cfg.Repos.Project.FindByPublicName(c.Request().Context(), name)
-		if err != nil || prj == nil {
-			return echo.ErrNotFound
-		}
+func errorMessage(err error, log func(string, ...interface{})) (int, string) {
+	code := http.StatusBadRequest
+	msg := err.Error()
 
-		title := prj.PublicTitle()
-		description := prj.PublicDescription()
-		if title == "" {
-			title = prj.Name()
+	if err2, ok := err.(*echo.HTTPError); ok {
+		code = err2.Code
+		if msg2, ok := err2.Message.(string); ok {
+			msg = msg2
+		} else if msg2, ok := err2.Message.(error); ok {
+			msg = msg2.Error()
+		} else {
+			msg = "error"
 		}
-		if description == "" {
-			description = prj.Description()
+		if err2.Internal != nil {
+			log("echo internal err: %+v", err2)
 		}
-
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"title":             title,
-			"description":       description,
-			"image":             prj.PublicImage(),
-			"noindex":           prj.PublicNoIndex(),
-			"isBasicAuthActive": prj.IsBasicAuthActive(),
-			"basicAuthUsername": prj.BasicAuthUsername(),
-			"basicAuthPassword": prj.BasicAuthPassword(),
-		})
+	} else if errors.Is(err, err1.ErrNotFound) {
+		code = http.StatusNotFound
+		msg = "not found"
+	} else {
+		var ierr *err1.ErrInternal
+		if errors.As(err, &ierr) {
+			if err2 := ierr.Unwrap(); err2 != nil {
+				log("internal err: %+v", err2)
+			}
+			code = http.StatusInternalServerError
+			msg = "internal server error"
+		}
 	}
-}
 
-func apiPublishedData(cfg *ServerConfig) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		name := c.Param("name")
-		prj, err := cfg.Repos.Project.FindByPublicName(c.Request().Context(), name)
-		if err != nil || prj == nil {
-			return echo.ErrNotFound
-		}
-
-		r, err := cfg.Gateways.File.ReadBuiltSceneFile(c.Request().Context(), prj.PublicName())
-		if err != nil {
-			return err
-		}
-
-		return c.Stream(http.StatusOK, echo.MIMEApplicationJSON, r)
-	}
+	return code, msg
 }

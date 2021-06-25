@@ -68,7 +68,6 @@ func (i *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagin
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -118,7 +117,6 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -351,7 +349,6 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 }
 
 func (i *Project) createAsset(ctx context.Context, f *file.File, t id.TeamID) (_ *asset.Asset, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -388,7 +385,6 @@ func (i *Project) createAsset(ctx context.Context, f *file.File, t id.TeamID) (_
 }
 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return

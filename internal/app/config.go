@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 
@@ -18,6 +19,7 @@ type Config struct {
 	DB           string `default:"mongodb://localhost"`
 	Auth0        Auth0Config
 	GraphQL      GraphQLConfig
+	Published    PublishedConfig
 	GCPProject   string `envconfig:"GOOGLE_CLOUD_PROJECT"`
 	Profiler     string
 	Tracer       string
@@ -39,6 +41,10 @@ type Auth0Config struct {
 
 type GraphQLConfig struct {
 	ComplexityLimit int `default:"4000"`
+}
+
+type PublishedConfig struct {
+	IndexURL *url.URL
 }
 
 type GCSConfig struct {

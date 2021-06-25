@@ -68,7 +68,7 @@ func tracerMiddleware(enabled bool) echo.MiddlewareFunc {
 	}
 }
 
-func graphqlRoute(
+func graphqlAPI(
 	ec *echo.Echo,
 	r *echo.Group,
 	conf *ServerConfig,

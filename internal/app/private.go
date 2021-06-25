@@ -52,7 +52,8 @@ func getEncoder(w io.Writer, ext string) (encoding.Encoder, string) {
 	}
 	return nil, ""
 }
-func userRoute(
+
+func privateAPI(
 	ec *echo.Echo,
 	r *echo.Group,
 	repos *repo.Container,
