@@ -113,16 +113,18 @@ const Menu: WidgetComponent<Property, PluginProperty> = ({ property }) => {
         <Wrapper key={p} position={p}>
           {buttons?.[p].map(b =>
             !b.buttonInvisible ? (
-              <MenuButton
-                key={b.id}
-                button={b}
-                pos={p}
-                menuVisible={visibleMenuButton === b.id}
-                menuItems={menuItems}
-                itemOnClick={handleClick}
-                onClick={handleClick(b)}
-                onClose={closeMenu}
-              />
+              <div style={{ position: "relative" }}>
+                <MenuButton
+                  key={b.id}
+                  button={b}
+                  pos={p}
+                  menuVisible={visibleMenuButton === b.id}
+                  menuItems={menuItems}
+                  itemOnClick={handleClick}
+                  onClick={handleClick(b)}
+                  onClose={closeMenu}
+                />
+              </div>
             ) : null,
           )}
         </Wrapper>
@@ -181,7 +183,12 @@ const MenuButton: React.FC<{
       </Button>
       <div
         ref={popperElement}
-        style={{ ...styles.popper, display: menuVisible ? styles.popper.display : "none" }}
+        style={{
+          minWidth: "200px",
+          width: "100%",
+          position: "absolute",
+          display: menuVisible ? styles.popper.display : "none",
+        }}
         {...attributes}>
         {menuVisible && (
           <MenuWrapper ref={menuElement}>
@@ -234,6 +241,7 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
 `;
 
 const MenuWrapper = styled.div<{ visible?: boolean }>`
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;
