@@ -47,7 +47,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 ## Features
 🔌 Highly extensible thanks to the robust plugin system
 
-💻 Super handy with running on the browser
+💻 Super handy being browser-based
 
 💪 Support standard GIS data formats(CSV, KML, CZML, GeoJSON, shapefile)
 
