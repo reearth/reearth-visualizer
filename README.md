@@ -68,7 +68,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 ### Necessities
 
 **Front-end**
-* Node.js: Latest version of LTS
+* Node.js: Latest LTS version
 
 **Back-end**
 * Golang +1.16
