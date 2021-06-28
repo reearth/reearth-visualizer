@@ -1,11 +1,10 @@
 
-[![stars](https://img.shields.io/github/stars/reearth/reearth)](https://img.shields.io/github/stars/reearth/reearth)
+
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
 [![](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
-[![front-end contributers](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)]
 [![GitHub release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://GitHub.com/reearth/reearth.js/tags/)
 [![Github all releases](https://img.shields.io/github/downloads/reearth/reearth.js/total.svg)](https://GitHub.com/reearth/reearth.js/releases/)
@@ -84,11 +83,17 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 
 _For examples and more, please refer to the [Documentation](https://docs.reearth.io)_
 
-## Browser Support
+## Environment
+### OS
 
+| Windows10 | Apple macOS 10.12(macOS Sierra)+ | ChromeOS | iOS 11+ | Android 10+ | Linux(which installed browsers blow) |
+| --------- | --------- | --------- | --------- | --------- | --------- |
+| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+### Browser
 | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
 | --------- | --------- | --------- | --------- | --------- | --------- |
-| Edge [1, 2]| last 2 versions| last 2 versions| last 2 versions| not fully supported [3] | not fully supported [3]
+| 91+ | 57+| 58+| 11+ | last 2 versions] | last 2 versions
 
 
 <!-- ROADMAP -->
@@ -108,7 +113,7 @@ Read our [contributing guide]() to learn about our development process, how to p
 Re:Earth has adopted a Code of Conduct that we expect project participants to follow to. Please read [the full](./CODE_OF_CONDUCT.md) text so that you can understand what actions will and will not be tolerated.
 
 ### Good for First Issues
-To help you get your feet wet and get you familiar with our contribution process, we have a list of good first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
+To help you get your feet wet and get you familiar with our contribution process, we have [a list of good](https://github.com/reearth/reearth/projects/1#column-14917909) first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
 
 
 <!-- LICENSE -->
