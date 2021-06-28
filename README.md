@@ -45,6 +45,8 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 
 [![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
 
+---
+
 <!-- ABOUT THE PROJECT -->
 ## Features
 🔌 Higy extensible with plugins system
@@ -82,32 +84,37 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 
 _For more examples, please refer to the [Documentation](https://docs.reearth.io)_
 
+## Browser Support
+
+| ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
+| --------- | --------- | --------- | --------- | --------- | --------- |
+| Edge [1, 2]| last 2 versions| last 2 versions| last 2 versions| not fully supported [3] | not fully supported [3]
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
+Re:Earth is still baby and need to grew more with awesome additional features we are planning to develop. See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
 If your have any requests for the features, we are welcome! Just create issues [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with `feature request` tag.
 
 
 
 <!-- CONTRIBUTING -->
 ## Contributing
-### Contributing Guide
+### Contribution Guide
 <!-- TODO: add link later -->
-Read our [contributing guide]() to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to React.
+Read our [contributing guide]() to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
 ### Code of Conduct
-Re:Earth has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full](./CODE_OF_CONDUCT.md) text so that you can understand what actions will and will not be tolerated.
+Re:Earth has adopted a Code of Conduct that we expect project participants to follow to. Please read [the full](./CODE_OF_CONDUCT.md) text so that you can understand what actions will and will not be tolerated.
 
-### Good First Issues
+### Good for First Issues
 To help you get your feet wet and get you familiar with our contribution process, we have a list of good first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
 
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the Apache-2.0 License. See `LICENSE` for more information.
 
 <!-- CONTACT -->
 ## Contact
