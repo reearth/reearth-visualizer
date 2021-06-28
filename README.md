@@ -65,7 +65,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 * [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
 
 
-### Prerequisites
+### Necessities
 
 **Front-end**
 * Node.js: Latest version of LTS
