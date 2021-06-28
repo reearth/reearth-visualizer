@@ -86,7 +86,7 @@ _For examples and more, please refer to the [Documentation](https://docs.reearth
 ## Roadmap
 
 See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
-If your have any requests for the features, we are welcome! Just create issues [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with `feature request` tag.
+If your have any requests for features, they are more than welcome! Just create an issue [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with the `feature request` tag.
 
 
 
