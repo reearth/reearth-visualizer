@@ -51,7 +51,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 
 💪 Supports standard GIS data formats (CSV, KML, CZML, GeoJSON and shapefile)
 
-📢 Easily make the project public
+📢 Easily make a project public
 
 ✨ Freely style the map
 
