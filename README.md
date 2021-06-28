@@ -39,7 +39,7 @@
   </p>
 </p>
 
-Re:Earth consist with 2 repositories. Don't forget to check our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories👍
+Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
 [![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
 
