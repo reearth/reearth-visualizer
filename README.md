@@ -45,7 +45,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 
 <!-- ABOUT THE PROJECT -->
 ## Features
-🔌 Higy extensible with plugins system
+🔌 Highly extensible thanks to the robust plugin system
 
 💻 Super handy with running on the browser
 
