@@ -26,7 +26,7 @@
   </a>
 
   <p align="center">
-    Re:Earth is a state-of-the-art WebGIS with expandability through plug-ins and the ease of running in a browser.
+    Re:Earth is a state-of-the-art WebGIS platform with expandability through plug-ins and has the ease of running in the browser.
     <br />
     <a  href="https://docs.reearth.io/"><strong>Documents >></strong></a>
     &emsp;&emsp;&emsp;&emsp;
@@ -41,7 +41,7 @@
   </p>
 </p>
 
-Re:Earth consist with 2 repositories. Don't forget to check our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories👍
+Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
 [![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
 
@@ -49,13 +49,13 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 
 <!-- ABOUT THE PROJECT -->
 ## Features
-🔌 Higy extensible with plugins system
+🔌 Highly extensible thanks to the robust plugin system
 
-💻 Super handy with running on the browser
+💻 Super handy being browser-based
 
-💪 Support standard GIS data formats(CSV, KML, CZML, GeoJSON, shapefile)
+💪 Supports standard GIS data formats (CSV, KML, CZML, GeoJSON and shapefile)
 
-📢 Easily make the project public
+📢 Easily make a project public
 
 ✨ Freely style the map
 
@@ -69,10 +69,10 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 * [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
 
 
-### Prerequisites
+### Necessities
 
 **Front-end**
-* Node.js: Latest version of LTS
+* Node.js: Latest LTS version
 
 **Back-end**
 * Golang +1.16
@@ -82,7 +82,7 @@ Re:Earth consist with 2 repositories. Don't forget to check our [front-end](http
 ## Usage
 
 
-_For more examples, please refer to the [Documentation](https://docs.reearth.io)_
+_For examples and more, please refer to the [Documentation](https://docs.reearth.io)_
 
 ## Browser Support
 
@@ -94,8 +94,8 @@ _For more examples, please refer to the [Documentation](https://docs.reearth.io)
 <!-- ROADMAP -->
 ## Roadmap
 
-Re:Earth is still baby and need to grew more with awesome additional features we are planning to develop. See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
-If your have any requests for the features, we are welcome! Just create issues [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with `feature request` tag.
+See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
+If your have any requests for features, they are more than welcome! Just create an issue [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with the `feature request` tag.
 
 
 
@@ -122,4 +122,4 @@ Distributed under the Apache-2.0 License. See `LICENSE` for more information.
 Re:Earth team - info@reearth.dev
 
 <!-- TODO: replace here -->
-Project Link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
+Project link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
