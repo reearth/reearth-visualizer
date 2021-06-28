@@ -24,7 +24,7 @@
   </a>
 
   <p align="center">
-    Re:Earth is a state-of-the-art WebGIS with expandability through plug-ins and the ease of running in a browser.
+    Re:Earth is a state-of-the-art WebGIS platform with expandability through plug-ins and has the ease of running in the browser.
     <br />
     <a  href="https://docs.reearth.io/"><strong>Documents >></strong></a>
     &emsp;&emsp;&emsp;&emsp;
