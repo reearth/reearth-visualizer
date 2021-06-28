@@ -113,4 +113,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 Re:Earth team - info@reearth.dev
 
 <!-- TODO: replace here -->
-Project Link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
+Project link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
