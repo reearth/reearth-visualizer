@@ -78,7 +78,7 @@ Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](ht
 ## Usage
 
 
-_For more examples, please refer to the [Documentation](https://docs.reearth.io)_
+_For examples and more, please refer to the [Documentation](https://docs.reearth.io)_
 
 
 
