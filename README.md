@@ -1,9 +1,17 @@
 
 
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+<!-- TODO: change this link later -->
+  <a href="https://github.com/reearth/reearth">
+    <img src="./public/reearth-logo.svg" alt="Logo" width="300" height="300">
+  </a>
+
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
-[![](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
+[![license](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
 [![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)]
 [![GitHub release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://GitHub.com/reearth/reearth.js/tags/)
@@ -14,15 +22,6 @@
 [![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-web/main?label=frontend-test)](https://github.com/reearth/reearth-web/actions/workflows/main/badge.svg)
 [![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main/badge.svg)
 [![Generic badge](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
-
-
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-<!-- TODO: change this link later -->
-  <a href="https://github.com/reearth/reearth">
-    <img src="./public/reearth-logo.svg" alt="Logo" width="300" height="300">
-  </a>
 
   <p align="center">
     Re:Earth is a state-of-the-art WebGIS platform with expandability through plug-ins and has the ease of running in the browser.
@@ -42,7 +41,7 @@
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
-[![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
+![reearth-demo](./public/demo.gif)
 
 ---
 
