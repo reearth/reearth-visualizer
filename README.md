@@ -41,7 +41,10 @@
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
-![reearth-demo](./public/demo.gif)
+
+https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
+
+
 
 ---
 
