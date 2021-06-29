@@ -1,5 +1,3 @@
-
-
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
@@ -43,6 +41,11 @@
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
 [![reearth-ui](./public/reearth-ui.png)](https://reearth.io)
+
+
+https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
+
+
 
 ---
 
