@@ -12,7 +12,7 @@
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
-[![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)]
+[![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://GitHub.com/reearth/reearth.js/tags/)
 [![Github all releases](https://img.shields.io/github/downloads/reearth/reearth.js/total.svg)](https://GitHub.com/reearth/reearth.js/releases/)
