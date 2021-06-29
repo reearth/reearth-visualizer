@@ -10,17 +10,17 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
-[![forks](https://img.shields.io/github/forks/reearth/reearth)](https://img.shields.io/github/forks/reearth/reearth)
-[![license](https://img.shields.io/github/license/reearth/reearth)](https://img.shields.io/github/license/reearth/reearth)
+[![forks](https://img.shields.io/github/forks/reearth/reearth)](https://github.com/reearth/reearth/network/members)
+[![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
 [![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
-[![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://GitHub.com/reearth/reearth.js/tags/)
-[![Github all releases](https://img.shields.io/github/downloads/reearth/reearth.js/total.svg)](https://GitHub.com/reearth/reearth.js/releases/)
+[![GitHub tag](https://img.shields.io/github/tag/reearth/reearth.js.svg)](https://github.com/reearth/reearth/tags)
+[![Github all releases](https://img.shields.io/github/downloads/reearth/reearth/total.svg)](https://github.com/reearth/reearth/archive/refs/heads/main.zip/)
 [![GitHub contributors](https://img.shields.io/github/contributors/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/graphs/contributors/)
 [![](https://img.shields.io/github/contributors/reearth/reearth-web?label=front-end%20contributors)](https://GitHub.com/reearth/reearth-web/graphs/contributors/)
 [![](https://img.shields.io/github/contributors/reearth/reearth-backend?label=back-end%20contributors)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/)
-[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-web/main?label=frontend-test)](https://github.com/reearth/reearth-web/actions/workflows/main/badge.svg)
-[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main/badge.svg)
+[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-web/main?label=frontend-test)](https://github.com/reearth/reearth-web/actions/workflows/main.yml)
+[![workflow](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main.yml)
 [![Generic badge](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
 
   <p align="center">
