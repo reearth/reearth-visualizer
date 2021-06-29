@@ -26,13 +26,10 @@
   <p align="center">
     Re:Earth is a state-of-the-art WebGIS platform with expandability through plug-ins and has the ease of running in the browser.
     <br />
-    <a  href="https://docs.reearth.io/"><strong>Documents >></strong></a>
+    <a  href="https://docs.reearth.io/oss/introduction"><strong>Documents >></strong></a>
     &emsp;&emsp;&emsp;&emsp;
     <a href="https://docs.reearth.io/oss"><strong>OSS Webpage >></strong></a>
     <br />
-    <!-- TODO: here -->
-    <a href="">View Demo</a>
-    ·
     <a href="https://github.com/reearth/reearth/issues">Report Bug</a>
     ·
     <a href="https://github.com/reearth/reearth/discussions">Request Feature</a>
@@ -83,7 +80,7 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 ## Usage
 
 
-_For examples and more, please refer to the [Documentation](https://docs.reearth.io)_
+_For examples and more, please refer to the [Documentation](https://docs.reearth.io/)_
 
 ## Environment
 ### OS
@@ -110,7 +107,7 @@ If your have any requests for features, they are more than welcome! Just create 
 ## Contributing
 ### Contribution Guide
 <!-- TODO: add link later -->
-Read our [contributing guide]() to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
+Read our [contributing guide](https://docs.reearth.io/oss/introduction/contributing-guide) to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
 ### Code of Conduct
 Re:Earth has adopted a Code of Conduct that we expect project participants to follow to. Please read [the full](./CODE_OF_CONDUCT.md) text so that you can understand what actions will and will not be tolerated.
 
