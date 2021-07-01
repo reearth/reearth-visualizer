@@ -5,7 +5,7 @@ import useHooks from "./hooks";
 // Components
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import PluginSection from "@reearth/components/molecules/Settings/Workspace/Plugin/PluginSection";
+import PluginSection from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 
 type Props = {
   projectId: string;

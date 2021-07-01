@@ -11,5 +11,5 @@ export default {
 } as Meta;
 
 export const Default = () => <Icon icon="layer" alt="icon" size={20} />;
-export const Image = () => <Icon icon="/sample.svg" alt="icon" size={20} />;
+export const Image = () => <Icon icon="textIcon.png" alt="icon" size={20} />;
 export const Svg = () => <Icon icon={icon} alt="icon" size={20} />;

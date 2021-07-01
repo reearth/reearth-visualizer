@@ -1,7 +1,7 @@
 import React from "react";
-import Field from "@reearth/components/molecules/Settings/Field";
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   title?: string;
@@ -11,15 +11,11 @@ export type Props = {
 const Section: React.FC<Props> = ({ title, actions, children }) => {
   const theme = useTheme();
   return (
-    <Wrapper>
+    <div>
       {title && (
         <>
           <SectionHeader>
-            <Text
-              size="l"
-              weight="normal"
-              color={theme.main.strongText}
-              otherProperties={{ flex: 1 }}>
+            <Text size="l" weight="normal" color={theme.main.strongText}>
               {title}
             </Text>
             {actions}
@@ -27,35 +23,25 @@ const Section: React.FC<Props> = ({ title, actions, children }) => {
           <Divider />
         </>
       )}
-      <SectionItem>
-        <Field>{children}</Field>
-      </SectionItem>
-    </Wrapper>
+      <SectionItem>{children}</SectionItem>
+    </div>
   );
 };
 
-const Wrapper = styled.div`
-  max-width: 100%;
-`;
-
-const SectionHeader = styled.h4`
-  padding: 30px;
+const SectionHeader = styled.div`
+  padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  justify-content: space-between;
 `;
 
 const SectionItem = styled.div`
-  padding: 30px;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 `;
 
 const Divider = styled.div`
-  width: 100%;
-  border-bottom: 1px solid #3f3d45;
+  border-bottom: ${props => `solid 1px ${props.theme.colors.outline.weak}`};
 `;
 
 export default Section;

@@ -25,12 +25,18 @@ export type Props = {
   onCheck?: (checked: boolean) => void;
 };
 
-const AssetListItem: React.FC<Props> = ({ asset, selected, checked, isImage, onCheck }) => {
+const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) => {
   const theme = useTheme();
   return (
     <ListItem key={asset.id} align="center" selected={selected} onClick={() => onCheck?.(!check)}>
       <Icon
-        icon={checked ? "checkCircle" : isImage ? "image" : "file"}
+        icon={
+          checked
+            ? "checkCircle"
+            : /\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(asset.url)
+            ? "image"
+            : "file"
+        }
         size={16}
         color={checked ? theme.assetCard.highlight : theme.assetCard.text}
       />
@@ -52,9 +58,10 @@ const ListItem = styled(Flex)<{ selected?: boolean }>`
   border: 1px solid
     ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
-  margin-bottom: ${metricsSizes["l"]}px;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.text.main};
+  height: 46px;
+  box-sizing: border-box;
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};

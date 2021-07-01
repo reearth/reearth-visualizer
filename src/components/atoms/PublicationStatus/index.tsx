@@ -52,7 +52,6 @@ const PublicationStatus: React.FC<PublishStatusProps> = ({
 const StyledStatus = styled.div`
   display: flex;
   align-items: center;
-  line-height: 0;
 `;
 
 const StatusCircle = styled.div<PublishStatusProps>`
@@ -67,7 +66,7 @@ const StatusCircle = styled.div<PublishStatusProps>`
       ? props.theme.publishStatus.building
       : null};
   border-radius: 50px;
-  margin-right: ${metricsSizes["s"]}px;
+  margin: auto ${metricsSizes["s"]}px auto 0;
 `;
 
 const PublishLink = styled.a`

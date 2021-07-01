@@ -3,6 +3,9 @@ import { useIntl } from "react-intl";
 import NavigationItem from "@reearth/components/molecules/Settings/NavigationItem";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
+import Divider from "@reearth/components/atoms/Divider";
+import Icon from "@reearth/components/atoms/Icon";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 type Team = {
   id?: string;
@@ -24,14 +27,18 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
 
   return (
     <Wrapper>
+      <LogoWrapper>
+        <Icon icon="logo" size="100px" />
+      </LogoWrapper>
       <NavigationList>
         <NavigationItem
           to="/settings/account"
           name={intl.formatMessage({ defaultMessage: "Account" })}
         />
+        <Divider margin="0" />
         <NavigationItem
           to={`/settings/workspaces`}
-          name={intl.formatMessage({ defaultMessage: "Workspaces" })}>
+          name={intl.formatMessage({ defaultMessage: "Workspace List" })}>
           {team && (
             <NavigationItem
               to={`/settings/workspace/${team.id}`}
@@ -44,9 +51,10 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
             </NavigationItem>
           )}
         </NavigationItem>
+        <Divider margin="0" />
         <NavigationItem
           to={`/settings/workspace/${team?.id}/projects`}
-          name={intl.formatMessage({ defaultMessage: "Projects list" })}>
+          name={intl.formatMessage({ defaultMessage: "Project List" })}>
           {project && (
             <NavigationItem to={`/settings/project/${project.id}`} name={project.name as string}>
               <NavigationItem
@@ -66,21 +74,30 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
 };
 
 const Wrapper = styled.div`
-  width: 250px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0;
-  margin-left: 10px;
-  margin-right: 80px;
+  padding: ${metricsSizes["4xl"]}px;
+  box-sizing: border-box;
+`;
+
+const LogoWrapper = styled.div`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${props => props.theme.main.text};
+  margin-bottom: ${metricsSizes["4xl"]}px;
 `;
 
 const NavigationList = styled.ul`
   width: 100%;
   margin: 0;
   padding: 0;
-  font-size: ${fonts.sizes.l}px;
-  font-weight: bold;
+  font-size: ${fonts.sizes.m}px;
 `;
 
 export default Navigation;

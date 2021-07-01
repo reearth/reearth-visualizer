@@ -1,6 +1,7 @@
 import React from "react";
-import { styled, fonts } from "@reearth/theme";
+import { styled, fonts, useTheme } from "@reearth/theme";
 import { Link } from "@reach/router";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   name: string;
@@ -8,11 +9,16 @@ export type Props = {
 };
 
 const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
+  const theme = useTheme();
   return (
     <>
       <LinkItem
         to={to}
-        getProps={({ isCurrent }) => isCurrent && { style: { background: "#2B2A2F" } }}>
+        getProps={({ isCurrent }) =>
+          isCurrent && {
+            style: { background: theme.colors.functional.select, color: theme.colors.text.strong },
+          }
+        }>
         {name}
       </LinkItem>
       {children && <NavigationList>{children}</NavigationList>}
@@ -22,10 +28,9 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
 
 const LinkItem = styled(Link)`
   display: flex;
-  padding: 16px;
-  color: #ffffff;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
+  color: ${({ theme }) => theme.colors.text.main};
   text-decoration: none;
-  border-radius: 20px;
 
   &:hover {
     text-decoration: none;
@@ -33,11 +38,8 @@ const LinkItem = styled(Link)`
 `;
 
 const NavigationList = styled.ul`
-  width: 100%;
-  margin-left: 30px;
-  padding: 0;
+  padding-left: ${metricsSizes["m"]}px;
   font-size: ${fonts.sizes.m}px;
-  font-weight: bold;
 `;
 
 export default NavigationItem;

@@ -121,7 +121,8 @@ export type Theme = {
     bg: string;
     border: string;
     shadow: string;
-    text: string;
+    title: string;
+    description: string;
   };
   assetCard: {
     bg: string;
@@ -190,6 +191,8 @@ export type Theme = {
     loading: number;
     notificationBar: number;
     splashScreen: number;
+    settingHeader: number;
+    menuForDevice: number;
   };
   descriptionBalloon: {
     bg: string;

@@ -163,13 +163,14 @@ export default ({ projectId }: Params) => {
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
-    (file: File) =>
+    (files: FileList) =>
       (async () => {
         if (teamId) {
-          await createAssetMutation({
-            variables: { teamId, file },
-            refetchQueries: ["Assets"],
-          });
+          await Promise.all(
+            Array.from(files).map(file =>
+              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
+            ),
+          );
         }
       })(),
     [createAssetMutation, teamId],

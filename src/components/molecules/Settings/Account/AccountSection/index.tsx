@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import Section from "@reearth/components/molecules/Settings/Section";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import Field from "@reearth/components/molecules/Settings/Field";
 import Icon from "@reearth/components/atoms/Icon";
-import { styled, useTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
-import Text from "@reearth/components/atoms/Text";
 
 export type Props = {
   email?: string;
@@ -34,24 +34,16 @@ const ProfileSection: React.FC<Props> = ({
     const lang = items.find(item => item.key === intl.locale);
     setCurrentLang(lang?.label);
   }, [intl.locale]);
-  const theme = useTheme();
 
   return (
     <Wrapper>
       <Section title={intl.formatMessage({ defaultMessage: "Account" })}>
-        <Item>
-          <Header size="m" color={theme.main.text}>
-            {intl.formatMessage({ defaultMessage: "Email address" })}
-          </Header>
-          <Content>{email}</Content>
-        </Item>
-        <Item>
-          <Header size="m" color={theme.main.text}>
-            {intl.formatMessage({ defaultMessage: "Password" })}
-          </Header>
-          <Content>**********</Content>
-          <StyledIcon icon="edit" size={20} onClick={() => setIsOpen(!isOpen)} />
-        </Item>
+        <Field header={intl.formatMessage({ defaultMessage: "Email address" })} body={email} />
+        <Field
+          header={intl.formatMessage({ defaultMessage: "Password" })}
+          body={"**********"}
+          action={<StyledIcon icon="edit" size={20} onClick={() => setIsOpen(!isOpen)} />}
+        />
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Service language" })}
           dropdown
@@ -72,31 +64,15 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  width: 100%;
-  background-color: ${props => props.theme.colors.bg[3]};
-  margin-bottom: 64px;
-`;
-
-const Item = styled.div`
-  width: 100%;
-  &:not(:last-child) {
-    margin-bottom: 40px;
-  }
-`;
-
-const Header = styled(Text)`
-  width: 225px;
-  display: inline-block;
-`;
-
-const Content = styled.div`
-  display: inline-block;
+  background-color: ${({ theme }) => theme.colors.bg[3]};
 `;
 
 const StyledIcon = styled(Icon)`
-  display: inline;
-  float: right;
   cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.text.strong};
+  }
 `;
 
 export default ProfileSection;

@@ -13,7 +13,7 @@ export type Props = FieldProps<string> & {
   onRemoveFile?: () => void;
   fileType?: "image" | "video" | "file";
   assets?: Asset[];
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
 };
 
 const URLField: React.FC<Props> = ({

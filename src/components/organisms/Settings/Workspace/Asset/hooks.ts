@@ -45,19 +45,23 @@ export default (params: Params) => {
           await refetch();
         }
       })(),
-    [teamId, createAssetMutation, refetch],
+    [createAssetMutation, refetch, teamId],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
 
   const removeAsset = useCallback(
-    (assetId: string) =>
+    (assetIds: string[]) =>
       (async () => {
-        await removeAssetMutation({ variables: { assetId } });
-
-        await refetch();
+        if (teamId) {
+          await Promise.all(
+            assetIds.map(assetId => {
+              removeAssetMutation({ variables: { assetId }, refetchQueries: ["Assets"] });
+            }),
+          );
+        }
       })(),
-    [removeAssetMutation, refetch],
+    [removeAssetMutation, teamId],
   );
 
   return {

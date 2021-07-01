@@ -28,9 +28,7 @@ export default () => {
   const openModal = useCallback(() => setModalShown(true), []);
 
   const { data, loading, refetch } = useMeQuery();
-  const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["Project"],
-  });
+  const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation();
 
   const teamId = currentTeam?.id;
@@ -101,6 +99,7 @@ export default () => {
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
+        refetchQueries: ["Me"],
       });
       if (scene.errors || !scene.data) {
         throw new Error("プロジェクトの作成に失敗しました。"); // TODO: translate

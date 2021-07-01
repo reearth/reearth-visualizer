@@ -38,9 +38,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   );
 };
 
-const StyledSelect = styled(Select as React.ComponentType<SelectProps<string>>)`
-  height: 40px;
-`;
+const StyledSelect = styled(Select as React.ComponentType<SelectProps<string>>)``;
 
 const OptionCheck = styled(Text)`
   display: flex;

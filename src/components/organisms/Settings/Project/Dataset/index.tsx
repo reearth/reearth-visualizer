@@ -1,7 +1,7 @@
 import React from "react";
 import useHooks from "./hooks";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import DatasetSection from "@reearth/components/molecules/Settings/Workspace/Dataset/DatasetSection";
+import DatasetSection from "@reearth/components/molecules/Settings/Project/Dataset/DatasetSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import { useIntl } from "react-intl";
 

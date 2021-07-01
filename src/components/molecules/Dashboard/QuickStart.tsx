@@ -20,7 +20,7 @@ export interface Props {
     imageUrl: string;
   }) => Promise<void>;
   assets?: Asset[];
-  createAssets?: (file: File) => Promise<void>;
+  createAssets?: (files: FileList) => Promise<void>;
 }
 
 const QuickStart: React.FC<Props> = ({

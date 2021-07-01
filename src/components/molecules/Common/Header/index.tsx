@@ -114,6 +114,7 @@ const Content = styled.div`
   padding: 0 20px;
   width: calc(100% - 40px);
   height: 100%;
+  align-items: center;
 `;
 
 const itemStyle = css`

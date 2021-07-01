@@ -25,7 +25,7 @@ export interface Props {
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
   assets?: Asset[];
-  createAssets?: (file: File) => Promise<void>;
+  createAssets?: (files: FileList) => Promise<void>;
 }
 
 const initialValues: FormValues = {

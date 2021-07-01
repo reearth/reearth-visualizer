@@ -29,7 +29,7 @@ const WorkspaceList: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage teamId={teamId}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Workspaces list" })} />
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Workspace List" })} />
       <MoleculeWorkspaceList
         currentTeam={currentTeam}
         teams={teams}

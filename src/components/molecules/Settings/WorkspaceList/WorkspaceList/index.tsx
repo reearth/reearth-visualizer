@@ -42,11 +42,7 @@ const WorkspaceList: React.FC<Props> = ({
   return (
     <>
       <SubHeader>
-        <Text
-          size="m"
-          color={theme.main.strongText}
-          weight="bold"
-          otherProperties={{ margin: "14px 0" }}>
+        <Text size="m" color={theme.main.text} weight="normal">
           {title ||
             `${intl.formatMessage({ defaultMessage: "All workspaces" })} (${
               filteredWorkspaces?.length || 0
@@ -86,17 +82,19 @@ const SubHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: solid 1px #3f3d45;
-  margin: 20px 0;
+  border-bottom: solid 1px ${({ theme }) => theme.colors.outline.weakest};
 `;
 
 const StyledListView = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  > * {
+    margin-bottom: 32px;
+  }
 `;
 
 const StyledWorkspaceCell = styled(WorkspaceCell)`
-  border: ${props => `1px solid ${props.theme.colors.brand.main}`};
+  border: ${props => `2px solid ${props.theme.colors.functional.select}`};
 `;
 
 export default WorkspaceList;

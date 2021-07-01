@@ -29,6 +29,7 @@ src:
             '2854191800': Time
             '2906553848': Alphabetical
             '3057159632': Upload image
+            '3645414921': Delete
             '3715622784': >-
               You haven't uploaded any image assets yet. Click the upload button
               above and select an image from your computer.
@@ -232,10 +233,10 @@ src:
             '2131015997': Profile picture
         Navigation:
           '165162143': Assets
+          '541301752': Workspace List
           '2057458630': Plugins
-          '2611517824': Workspaces
           '3198092477': Account
-          '3503703629': Projects list
+          '3336263640': Project List
           '3833270271': Dataset
         Project:
           ArchivedMessage:
@@ -243,6 +244,11 @@ src:
             '4112013314': >-
               Most project settings are hidden for archived repositories. This
               project mus be unarchived to make changes to them.
+          BasicAuthSection:
+            '256145410': Enable basic authorization
+            '2237029987': Password
+            '2663586870': Username
+            '3076470241': Basic Authorization
           ChangeSiteNameModal:
             '551846905': >-
               You are about to change the site name for your project. Only
@@ -279,9 +285,34 @@ src:
             '4078297214': Mark this project as archived and read-only
             '4235968010': Unarchive this project to become editable again.
             '4258544441': Delete this project
+          Dataset:
+            DatasetItem:
+              '2065124393': Delete this dataset
+              '3112669357': Are you sure you want to delete it?
+              '3528672691': Cancel
+              '3645414921': Delete
+            DatasetSection:
+              '293739158': Add Dataset
+              '3833270271': Dataset
+          Plugin:
+            PluginAccordion:
+              PluginAccordionItem:
+                '31593394': Uninstall
+                '730907263': Installed
+                '3480550112': Install
+            PluginSection:
+              '3060204202': Under Construction. Coming Soon.
+              PluginInstall:
+                '149186996': Uploaded plugin
+                '311550959': Private GitHub repository
+                '1361263844': Public GitHub repository
+                '1889877734': Plugins lists
+                '3129492077': Zip file from PC
+              PluginList:
+                '1933254449': Advanced options
           ProfileSection:
-            '583832611': Project name
-            '1534468327': Profile
+            '636461959': Name
+            '1513791786': Project Info
             '2015762758': Thumbnail
             '3374163063': Description
           PublishSection:
@@ -310,10 +341,6 @@ src:
             '2914740708': Input an email address or a user name
             '3099331554': Add
             '3528672691': Cancel
-          Asset:
-            AssetSection:
-              '1047600431': Add Asset
-              '3458626630': All Assets
           DangerSection:
             '181468144': This action cannot be undone.
             '636677879': Danger Zone
@@ -327,15 +354,6 @@ src:
               projects, assets and datasets for all team members.
             '3399326760': I am sure I want to delete this workspace.
             '4086722238': Please type your workspace name to continue.
-          Dataset:
-            DatasetItem:
-              '2065124393': Delete this dataset
-              '3112669357': Are you sure you want to delete it?
-              '3528672691': Cancel
-              '3645414921': Delete
-            DatasetSection:
-              '293739158': Add Dataset
-              '3833270271': Dataset
           MemberListItem:
             '1068157859': Writer
             '1954432048': Reader
@@ -343,29 +361,14 @@ src:
           MembersSection:
             '721495104': New member
             '2734377620': Members
-          Plugin:
-            PluginAccordion:
-              PluginAccordionItem:
-                '31593394': Uninstall
-                '730907263': Installed
-                '3480550112': Install
-            PluginSection:
-              '3060204202': Under Construction. Coming Soon.
-              PluginInstall:
-                '149186996': Uploaded plugin
-                '311550959': Private GitHub repository
-                '1361263844': Public GitHub repository
-                '1889877734': Plugins lists
-                '3129492077': Zip file from PC
-              PluginList:
-                '1933254449': Advanced options
           ProfileSection:
             '2999985900': Workspace name
         WorkspaceList:
           WorkspaceCell:
-            '293600023': 'Team Members:'
-            '2968463849': This is your personal account
-            '3038786653': No Title Project
+            '808766300': No Title Workspace
+            '974692228': >-
+              This is your personal workspace. Your projects and resources will be managed in this workspace.
+            '3230245813': 'Members:'
           WorkspaceList:
             '3435539653': All workspaces
             '3828443189': New Workspace
@@ -393,12 +396,12 @@ src:
           Plugin:
             '2057458630': Plugins
         ProjectList:
-          '2927642235': Projects List
+          '3336263640': Project List
         Workspace:
           Asset:
             '165162143': Assets
         WorkspaceList:
-          '2840189105': Workspaces list
+          '541301752': Workspace List
     pages:
       TopPage:
         '802859307': Sign in error

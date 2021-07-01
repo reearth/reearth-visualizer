@@ -26,7 +26,7 @@ export default ({
   assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
   initialAsset?: Asset;
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
@@ -89,7 +89,7 @@ export default ({
         );
   };
 
-  const handleFileSelect = useFileInput(files => onCreateAsset?.(files[0]), {
+  const handleFileSelect = useFileInput(files => onCreateAsset?.(files), {
     accept,
     multiple: isMultipleSelectable,
   });

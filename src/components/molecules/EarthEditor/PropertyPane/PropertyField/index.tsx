@@ -101,7 +101,7 @@ export type Props<T extends ValueType = ValueType> = {
   onUnlink?: (id: string) => void;
   onUploadFile?: (id: string, file: File) => void;
   onRemoveFile?: (id: string) => void;
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   onCameraChange?: (camera: Partial<Camera>) => void;
 } & Pick<PropertyTitleProps, "datasetSchemas" | "onDatasetPickerOpen">;

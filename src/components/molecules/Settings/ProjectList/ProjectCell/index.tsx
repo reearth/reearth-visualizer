@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useIntl } from "react-intl";
 
 // Components
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/components/atoms/PublicationStatus";
-
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
+
+import defaultProjectImage from "./defaultProjectImage.jpg";
 
 export type Status = StatusType;
 
@@ -29,47 +31,76 @@ export type Props = {
 const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
   const intl = useIntl();
   const theme = useTheme();
+  const [isHover, setHover] = useState(false);
 
   return (
-    <Wrapper project={project} onClick={() => onSelect?.(project)}>
-      <Title size="xl" color={theme.projectCell.text}>
-        {project.name ? project.name : intl.formatMessage({ defaultMessage: "No Title Project" })}
-      </Title>
-      <Desc size="s" color={theme.projectCell.text}>
-        {project.description
-          ? project.description
-          : intl.formatMessage({ defaultMessage: "No Description..." })}
-      </Desc>
-      <PublicationStatus status={project.status} />
-    </Wrapper>
+    <StyledWrapper project={project}>
+      <Wrapper
+        onClick={() => onSelect?.(project)}
+        isHover={isHover}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        <Title size="l" color={theme.projectCell.title}>
+          {project.name ? project.name : intl.formatMessage({ defaultMessage: "No Title Project" })}
+        </Title>
+        {isHover && (
+          <DescriptionWrapper>
+            <Desc size="s" color={theme.projectCell.description} isParagraph={true}>
+              {project.description
+                ? project.description
+                : intl.formatMessage({ defaultMessage: "No Description..." })}
+            </Desc>
+          </DescriptionWrapper>
+        )}
+        <Public status={project.status} />
+      </Wrapper>
+    </StyledWrapper>
   );
 };
 
-const Wrapper = styled.div<{ project: Project }>`
+const StyledWrapper = styled.div<{ project: Project }>`
   background: ${props =>
-    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.bg[4]};
-  background-size: cover;
-  color: ${props => props.theme.projectCell.text};
-  padding: 10px;
+    props.project.imageUrl ? `url(${props.project.imageUrl})` : `url(${defaultProjectImage})`};
+  background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
+  background-position: center;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
-  margin: 10px 0;
-  padding: 28px;
-  // position: relative;
-  width: 100%;
-  height: 223px;
+  height: 240px;
+`;
+
+const Wrapper = styled.div<{ isHover?: boolean }>`
+  box-sizing: border-box;
+  padding: ${metricsSizes["2xl"]}px ${metricsSizes["l"]}px;
   cursor: pointer;
+  height: 100%;
+  background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const Title = styled(Text)`
   text-align: left;
-  margin-bottom: 130px;
   user-select: none;
+`;
+
+const DescriptionWrapper = styled.div`
+  margin-top: ${metricsSizes["2xl"]}px;
+  flex: 1;
+  width: 90%;
 `;
 
 const Desc = styled(Text)`
   text-align: left;
   user-select: none;
-  margin-bottom: 35px;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  display: -webkit-inline-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Public = styled(PublicationStatus)`
+  color: ${props => props.theme.projectCell.description};
 `;
 
 export default ProjectCell;

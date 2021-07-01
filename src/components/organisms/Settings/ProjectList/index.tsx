@@ -30,7 +30,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage teamId={teamId}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Projects List" })} />
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
       <MoleculeProjectList
         projects={currentProjects}
         onProjectSelect={selectProject}

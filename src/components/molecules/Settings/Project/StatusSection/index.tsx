@@ -3,6 +3,8 @@ import PublicationStatus, { Status } from "@reearth/components/atoms/Publication
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { useIntl } from "react-intl";
+import Section from "@reearth/components/molecules/Settings/Section";
+import Field from "@reearth/components/molecules/Settings/Field";
 
 export type Props = {
   projectStatus?: Status;
@@ -26,21 +28,18 @@ const StatusSection: React.FC<Props> = ({ projectStatus }) => {
 
   return (
     <Wrapper>
-      <PublicationStatus status={projectStatus} size="lg" color={theme.main.strongText} />
-      <PublicationMessage size="m">{Message}</PublicationMessage>
+      <Section>
+        <Field
+          body={<PublicationStatus status={projectStatus} size="lg" color={theme.main.text} />}
+        />
+        <Field body={<Text size="m">{Message}</Text>} />
+      </Section>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   background-color: ${props => props.theme.colors.bg[3]};
-  margin-bottom: 64px;
-  height: 90px;
-  padding: 30px;
-`;
-
-const PublicationMessage = styled(Text)`
-  margin-top: 30px; // This hardcode falls outside of the design's current metric system, so is permitted as an exception.
 `;
 
 export default StatusSection;

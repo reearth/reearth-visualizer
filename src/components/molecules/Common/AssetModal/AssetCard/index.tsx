@@ -11,7 +11,6 @@ export type Props = {
   className?: string;
   name: string;
   url: string;
-  isImage?: boolean;
   cardSize?: CardSize;
   checked?: boolean;
   selected?: boolean;
@@ -22,7 +21,6 @@ const AssetCard: React.FC<Props> = ({
   className,
   name,
   url,
-  isImage,
   cardSize,
   checked,
   selected,
@@ -35,8 +33,12 @@ const AssetCard: React.FC<Props> = ({
       selected={selected}
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
-      <ImgWrapper cardSize={cardSize} url={url}>
-        {!isImage && <Icon icon="file" />}
+      <ImgWrapper cardSize={cardSize}>
+        {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(url) ? (
+          <PreviewImage url={url} />
+        ) : (
+          <Icon icon="file" />
+        )}
       </ImgWrapper>
       <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>
         {name}
@@ -57,16 +59,16 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
   border: 1px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
-  margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")};
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};
   width: ${({ cardSize }) =>
-    cardSize === "small" ? "104px" : cardSize === "medium" ? "163px" : "218px"};
+    cardSize === "small" ? "104px" : cardSize === "medium" ? "192px" : "274px"};
   height: ${({ cardSize }) =>
-    cardSize === "small" ? "104px" : cardSize === "medium" ? "168px" : "234px"};
+    cardSize === "small" ? "104px" : cardSize === "medium" ? "186px" : "257px"};
   position: relative;
   cursor: pointer;
   color: ${({ theme }) => theme.assetCard.text};
+  box-sizing: border-box;
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
@@ -81,6 +83,11 @@ const ImgWrapper = styled.div<{ cardSize?: CardSize; url?: string }>`
   justify-content: center;
   height: ${({ cardSize }) =>
     cardSize === "small" ? "77px" : cardSize === "medium" ? "126px" : "175px"};
+`;
+
+const PreviewImage = styled.div<{ url?: string }>`
+  width: 100%;
+  height: 100%;
   background-image: ${props => `url(${props.url})`};
   background-size: cover;
   background-position: center;

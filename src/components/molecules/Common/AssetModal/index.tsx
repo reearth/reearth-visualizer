@@ -21,7 +21,7 @@ export type Props = {
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
   onSelect?: (value: string | null) => void;
   value?: string;
   fileType?: "image" | "video" | "file";

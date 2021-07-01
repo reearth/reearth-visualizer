@@ -73,7 +73,8 @@ const darkTheme: Theme = {
     border: colors.brand.main,
     bg: colors.bg[2],
     shadow: colors.bg[1],
-    text: colors.text.strong,
+    title: colors.text.strong,
+    description: colors.text.main,
   },
   assetCard: {
     bg: colors.bg[4],

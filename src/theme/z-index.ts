@@ -9,6 +9,8 @@ const zIndexes = {
   loading: 800,
   notificationBar: 1000,
   splashScreen: 700,
+  settingHeader: 300,
+  menuForDevice: 200,
 };
 
 export default zIndexes;

@@ -7,7 +7,7 @@ import Button from "@reearth/components/atoms/Button";
 import Section from "@reearth/components/molecules/Settings/Section";
 import DatasetList, {
   Item,
-} from "@reearth/components/molecules/Settings/Workspace/Dataset/DatasetList";
+} from "@reearth/components/molecules/Settings/Project/Dataset/DatasetList";
 
 type Props = {
   datasetSchemas: Item[];
