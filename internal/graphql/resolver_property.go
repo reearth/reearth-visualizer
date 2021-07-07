@@ -142,7 +142,7 @@ func (r *propertyFieldResolver) ActualValue(ctx context.Context, obj *graphql1.P
 	defer exit()
 
 	datasetLoader := dataloader.DataLoadersFromContext(ctx).Dataset
-	return actualValue(datasetLoader, obj.Value, obj.Links)
+	return actualValue(datasetLoader, obj.Value, obj.Links, false)
 }
 
 func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *graphql1.PropertySchemaField, lang *string) (string, error) {
@@ -422,7 +422,7 @@ func (r *mergedPropertyFieldResolver) ActualValue(ctx context.Context, obj *grap
 	defer exit()
 
 	datasetLoader := dataloader.DataLoadersFromContext(ctx).Dataset
-	return actualValue(datasetLoader, obj.Value, obj.Links)
+	return actualValue(datasetLoader, obj.Value, obj.Links, obj.Overridden)
 }
 
 type propertyGroupListResolver struct{ *Resolver }
@@ -465,8 +465,8 @@ func (*propertyGroupResolver) SchemaGroup(ctx context.Context, obj *graphql1.Pro
 	return s.Group(obj.SchemaGroupID), nil
 }
 
-func actualValue(datasetLoader dataloader.DatasetDataLoader, value interface{}, links []*graphql1.PropertyFieldLink) (interface{}, error) {
-	if len(links) == 0 {
+func actualValue(datasetLoader dataloader.DatasetDataLoader, value interface{}, links []*graphql1.PropertyFieldLink, overridden bool) (interface{}, error) {
+	if len(links) == 0 || overridden {
 		return &value, nil
 	}
 	// 先頭のリンクにしかDatasetが割り当てられていない→先頭から順々に辿っていく
