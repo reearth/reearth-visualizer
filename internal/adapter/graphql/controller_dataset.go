@@ -78,6 +78,21 @@ func (c *DatasetController) ImportDataset(ctx context.Context, i *ImportDatasetI
 	return &ImportDatasetPayload{DatasetSchema: toDatasetSchema(res)}, nil
 }
 
+func (c *DatasetController) ImportDatasetFromGoogleSheet(ctx context.Context, i *ImportDatasetFromGoogleSheetInput, o *usecase.Operator) (*ImportDatasetPayload, error) {
+	res, err := c.usecase().ImportDatasetFromGoogleSheet(ctx, interfaces.ImportDatasetFromGoogleSheetParam{
+		Token:     i.AccessToken,
+		FileID:    i.FileID,
+		SheetName: i.SheetName,
+		SceneId:   id.SceneID(i.SceneID),
+		SchemaId:  id.DatasetSchemaIDFromRefID(i.DatasetSchemaID),
+	}, o)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ImportDatasetPayload{DatasetSchema: toDatasetSchema(res)}, nil
+}
+
 func (c *DatasetController) GraphFetchSchema(ctx context.Context, i id.ID, depth int, operator *usecase.Operator) ([]*DatasetSchema, []error) {
 	res, err := c.usecase().GraphFetchSchema(ctx, id.DatasetSchemaID(i), depth, operator)
 	if err != nil {

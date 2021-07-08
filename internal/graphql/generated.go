@@ -441,6 +441,7 @@ type ComplexityRoot struct {
 		DeleteProject                   func(childComplexity int, input graphql1.DeleteProjectInput) int
 		DeleteTeam                      func(childComplexity int, input graphql1.DeleteTeamInput) int
 		ImportDataset                   func(childComplexity int, input graphql1.ImportDatasetInput) int
+		ImportDatasetFromGoogleSheet    func(childComplexity int, input graphql1.ImportDatasetFromGoogleSheetInput) int
 		ImportLayer                     func(childComplexity int, input graphql1.ImportLayerInput) int
 		InstallPlugin                   func(childComplexity int, input graphql1.InstallPluginInput) int
 		LinkDatasetToPropertyValue      func(childComplexity int, input graphql1.LinkDatasetToPropertyValueInput) int
@@ -1004,6 +1005,7 @@ type MutationResolver interface {
 	AddDynamicDataset(ctx context.Context, input graphql1.AddDynamicDatasetInput) (*graphql1.AddDynamicDatasetPayload, error)
 	RemoveDatasetSchema(ctx context.Context, input graphql1.RemoveDatasetSchemaInput) (*graphql1.RemoveDatasetSchemaPayload, error)
 	ImportDataset(ctx context.Context, input graphql1.ImportDatasetInput) (*graphql1.ImportDatasetPayload, error)
+	ImportDatasetFromGoogleSheet(ctx context.Context, input graphql1.ImportDatasetFromGoogleSheetInput) (*graphql1.ImportDatasetPayload, error)
 	AddDatasetSchema(ctx context.Context, input graphql1.AddDatasetSchemaInput) (*graphql1.AddDatasetSchemaPayload, error)
 	UpdatePropertyValue(ctx context.Context, input graphql1.UpdatePropertyValueInput) (*graphql1.PropertyFieldPayload, error)
 	UpdatePropertyValueLatLng(ctx context.Context, input graphql1.UpdatePropertyValueLatLngInput) (*graphql1.PropertyFieldPayload, error)
@@ -2813,6 +2815,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ImportDataset(childComplexity, args["input"].(graphql1.ImportDatasetInput)), true
+
+	case "Mutation.importDatasetFromGoogleSheet":
+		if e.complexity.Mutation.ImportDatasetFromGoogleSheet == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_importDatasetFromGoogleSheet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ImportDatasetFromGoogleSheet(childComplexity, args["input"].(graphql1.ImportDatasetFromGoogleSheetInput)), true
 
 	case "Mutation.importLayer":
 		if e.complexity.Mutation.ImportLayer == nil {
@@ -6388,6 +6402,14 @@ input ImportDatasetInput {
   datasetSchemaId: ID
 }
 
+input ImportDatasetFromGoogleSheetInput {
+    accessToken: String!
+    fileId: String!
+    sheetName: String!
+    sceneId: ID!
+    datasetSchemaId: ID
+}
+
 input AddDatasetSchemaInput {
   sceneId: ID!
   name: String!
@@ -6752,6 +6774,7 @@ type Mutation {
     input: RemoveDatasetSchemaInput!
   ): RemoveDatasetSchemaPayload
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
+  importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
 
   # Property
@@ -7094,6 +7117,21 @@ func (ec *executionContext) field_Mutation_deleteTeam_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNDeleteTeamInput2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐDeleteTeamInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_importDatasetFromGoogleSheet_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 graphql1.ImportDatasetFromGoogleSheetInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNImportDatasetFromGoogleSheetInput2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐImportDatasetFromGoogleSheetInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -16555,6 +16593,45 @@ func (ec *executionContext) _Mutation_importDataset(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().ImportDataset(rctx, args["input"].(graphql1.ImportDatasetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*graphql1.ImportDatasetPayload)
+	fc.Result = res
+	return ec.marshalOImportDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐImportDatasetPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_importDatasetFromGoogleSheet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_importDatasetFromGoogleSheet_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ImportDatasetFromGoogleSheet(rctx, args["input"].(graphql1.ImportDatasetFromGoogleSheetInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28545,6 +28622,58 @@ func (ec *executionContext) unmarshalInputDeleteTeamInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputImportDatasetFromGoogleSheetInput(ctx context.Context, obj interface{}) (graphql1.ImportDatasetFromGoogleSheetInput, error) {
+	var it graphql1.ImportDatasetFromGoogleSheetInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "accessToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accessToken"))
+			it.AccessToken, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "fileId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
+			it.FileID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sheetName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sheetName"))
+			it.SheetName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "datasetSchemaId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaId"))
+			it.DatasetSchemaID, err = ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputImportDatasetInput(ctx context.Context, obj interface{}) (graphql1.ImportDatasetInput, error) {
 	var it graphql1.ImportDatasetInput
 	var asMap = obj.(map[string]interface{})
@@ -32695,6 +32824,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_removeDatasetSchema(ctx, field)
 		case "importDataset":
 			out.Values[i] = ec._Mutation_importDataset(ctx, field)
+		case "importDatasetFromGoogleSheet":
+			out.Values[i] = ec._Mutation_importDatasetFromGoogleSheet(ctx, field)
 		case "addDatasetSchema":
 			out.Values[i] = ec._Mutation_addDatasetSchema(ctx, field)
 		case "updatePropertyValue":
@@ -36469,6 +36600,11 @@ func (ec *executionContext) marshalNID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbac
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNImportDatasetFromGoogleSheetInput2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐImportDatasetFromGoogleSheetInput(ctx context.Context, v interface{}) (graphql1.ImportDatasetFromGoogleSheetInput, error) {
+	res, err := ec.unmarshalInputImportDatasetFromGoogleSheetInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNImportDatasetInput2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐImportDatasetInput(ctx context.Context, v interface{}) (graphql1.ImportDatasetInput, error) {

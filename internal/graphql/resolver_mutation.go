@@ -425,3 +425,10 @@ func (r *mutationResolver) ImportDataset(ctx context.Context, input graphql1.Imp
 
 	return r.config.Controllers.DatasetController.ImportDataset(ctx, &input, getOperator(ctx))
 }
+
+func (r *mutationResolver) ImportDatasetFromGoogleSheet(ctx context.Context, input graphql1.ImportDatasetFromGoogleSheetInput) (*graphql1.ImportDatasetPayload, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	return r.config.Controllers.DatasetController.ImportDatasetFromGoogleSheet(ctx, &input, getOperator(ctx))
+}

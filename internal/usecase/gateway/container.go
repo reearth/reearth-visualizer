@@ -7,4 +7,5 @@ type Container struct {
 	DataSource       DataSource
 	PluginRegistry   PluginRegistry
 	File             File
+	Google           Google
 }

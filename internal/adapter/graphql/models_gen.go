@@ -316,6 +316,14 @@ type DeleteTeamPayload struct {
 	TeamID id.ID `json:"teamId"`
 }
 
+type ImportDatasetFromGoogleSheetInput struct {
+	AccessToken     string `json:"accessToken"`
+	FileID          string `json:"fileId"`
+	SheetName       string `json:"sheetName"`
+	SceneID         id.ID  `json:"sceneId"`
+	DatasetSchemaID *id.ID `json:"datasetSchemaId"`
+}
+
 type ImportDatasetInput struct {
 	File            graphql.Upload `json:"file"`
 	SceneID         id.ID          `json:"sceneId"`

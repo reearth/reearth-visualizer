@@ -35,6 +35,14 @@ type ImportDatasetParam struct {
 	SchemaId *id.DatasetSchemaID
 }
 
+type ImportDatasetFromGoogleSheetParam struct {
+	Token     string
+	FileID    string
+	SheetName string
+	SceneId   id.SceneID
+	SchemaId  *id.DatasetSchemaID
+}
+
 type RemoveDatasetSchemaParam struct {
 	SchemaId id.DatasetSchemaID
 	Force    *bool
@@ -56,6 +64,7 @@ type Dataset interface {
 	GraphFetch(context.Context, id.DatasetID, int, *usecase.Operator) (dataset.List, error)
 	FetchSchema(context.Context, []id.DatasetSchemaID, *usecase.Operator) (dataset.SchemaList, error)
 	ImportDataset(context.Context, ImportDatasetParam, *usecase.Operator) (*dataset.Schema, error)
+	ImportDatasetFromGoogleSheet(context.Context, ImportDatasetFromGoogleSheetParam, *usecase.Operator) (*dataset.Schema, error)
 	GraphFetchSchema(context.Context, id.DatasetSchemaID, int, *usecase.Operator) (dataset.SchemaList, error)
 	AddDynamicDatasetSchema(context.Context, AddDynamicDatasetSchemaParam) (*dataset.Schema, error)
 	AddDynamicDataset(context.Context, AddDynamicDatasetParam) (*dataset.Schema, *dataset.Dataset, error)

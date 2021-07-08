@@ -6,6 +6,11 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/github"
+	"github.com/reearth/reearth-backend/internal/infrastructure/google"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	mongotrace "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver"
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/adapter"
 	"github.com/reearth/reearth-backend/internal/infrastructure/auth0"
@@ -15,9 +20,6 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/log"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	mongotrace "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver"
 )
 
 func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.Container, *gateway.Container) {
@@ -76,6 +78,9 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 
 	// github
 	gateways.PluginRegistry = github.NewPluginRegistry()
+
+	// google
+	gateways.Google = google.NewGoogle()
 
 	// release lock of all scenes
 	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
