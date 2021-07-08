@@ -37,6 +37,7 @@ export type Pane = {
   title?: string;
   items?: Item[];
   enabled?: boolean;
+  group?: boolean;
 };
 
 const linkableType: ValueType[] = ["bool", "string", "number", "latlng", "url"];
@@ -59,50 +60,46 @@ const toItem = (
   item?: PropertyItemFragmentFragment,
   merged?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment,
 ): Item | undefined => {
-  const common: Pick<
-    Item,
-    "id" | "schemaGroup" | "title" | "only" | "schemaFields" | "nameField"
-  > = {
-    id: item?.id,
-    schemaGroup: schemaGroup.schemaGroupId,
-    title: schemaGroup.translatedTitle,
-    only: toCond(schemaGroup.isAvailableIf),
-    nameField: schemaGroup.name ?? undefined,
-    schemaFields: schemaGroup.fields
-      .map((f): SchemaField | undefined => {
-        const t = valueTypeFromGQL(f.type);
-        if (!t) return undefined;
-        return {
-          id: f.fieldId,
-          type: t,
-          defaultValue: f.defaultValue,
-          suffix: f.suffix ?? undefined,
-          name: f.translatedName,
-          description: f.translatedDescription,
-          only: toCond(f.isAvailableIf),
-          choices: f.choices?.map(c => ({
-            key: c.key,
-            label: c.translatedLabel,
-          })),
-          ui: toUi(f.ui),
-          min: f.min ?? undefined,
-          max: f.max ?? undefined,
-          notLinkable: !linkableType.includes(t),
-        };
-      })
-      .filter((f): f is SchemaField => !!f),
-  };
+  const common: Pick<Item, "id" | "schemaGroup" | "title" | "only" | "schemaFields" | "nameField"> =
+    {
+      id: item?.id,
+      schemaGroup: schemaGroup.schemaGroupId,
+      title: schemaGroup.translatedTitle,
+      only: toCond(schemaGroup.isAvailableIf),
+      nameField: schemaGroup.name ?? undefined,
+      schemaFields: schemaGroup.fields
+        .map((f): SchemaField | undefined => {
+          const t = valueTypeFromGQL(f.type);
+          if (!t) return undefined;
+          return {
+            id: f.fieldId,
+            type: t,
+            defaultValue: f.defaultValue,
+            suffix: f.suffix ?? undefined,
+            name: f.translatedName,
+            description: f.translatedDescription,
+            only: toCond(f.isAvailableIf),
+            choices: f.choices?.map(c => ({
+              key: c.key,
+              label: c.translatedLabel,
+            })),
+            ui: toUi(f.ui),
+            min: f.min ?? undefined,
+            max: f.max ?? undefined,
+            isLinkable: linkableType.includes(t),
+          };
+        })
+        .filter((f): f is SchemaField => !!f),
+    };
 
   if (schemaGroup.isList) {
-    const items = (item && "groups" in item ? item.groups : []).map(
-      (item2, i): GroupListItem => {
-        const mergedGroup = merged && "groups" in merged ? merged.groups[i] : undefined;
-        return {
-          id: item2.id,
-          fields: toFields(schemaGroup, item2, mergedGroup),
-        };
-      },
-    );
+    const items = (item && "groups" in item ? item.groups : []).map((item2, i): GroupListItem => {
+      const mergedGroup = merged && "groups" in merged ? merged.groups[i] : undefined;
+      return {
+        id: item2.id,
+        fields: toFields(schemaGroup, item2, mergedGroup),
+      };
+    });
     return {
       ...common,
       items,
@@ -218,9 +215,9 @@ const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] =
 export const convertLinkableDatasets = (
   data?: GetLinkableDatasetsQuery,
 ): DatasetSchema[] | undefined => {
-  return (data?.datasetSchemas?.nodes as
-    | GetLinkableDatasetsQuery["datasetSchemas"]["nodes"]
-    | undefined)
+  return (
+    data?.datasetSchemas?.nodes as GetLinkableDatasetsQuery["datasetSchemas"]["nodes"] | undefined
+  )
     ?.map((s): DatasetSchema | undefined => {
       return s
         ? {

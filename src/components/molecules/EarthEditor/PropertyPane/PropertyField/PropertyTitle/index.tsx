@@ -11,43 +11,30 @@ export { Dataset, DatasetField, DatasetSchema, Type } from "./PropertyLinkPanel"
 
 export type Props = {
   className?: string;
-  disabled?: boolean;
   isLinked?: boolean;
+  isTemplate?: boolean;
+  linkedFieldName?: string;
   title?: string;
   description?: string;
 } & Pick<
   PropertyLinkPanelProps,
   | "onClear"
-  | "onUnlink"
   | "onLink"
   | "onDatasetPickerOpen"
-  | "isDatasetLinkable"
+  | "isLinkable"
   | "isOverridden"
   | "linkedDataset"
-  | "linkDisabled"
   | "linkableType"
   | "datasetSchemas"
   | "fixedDatasetSchemaId"
   | "fixedDatasetId"
 >;
 
-const titleColor = (params: Pick<Props, "isLinked" | "isOverridden">): string => {
-  const { isLinked, isOverridden } = params;
-
-  if (isOverridden) {
-    return colors.danger.main;
-  } else if (isLinked) {
-    return colors.primary.main;
-  } else {
-    return colors.text.main;
-  }
-};
-
-// eslint-disable-next-line react/display-name
 const PropertyTitle: React.FC<Props> = ({
   className,
   isLinked,
-  disabled,
+  isTemplate,
+  linkedFieldName,
   isOverridden,
   title,
   description,
@@ -74,9 +61,8 @@ const PropertyTitle: React.FC<Props> = ({
   });
 
   const handleClick = useCallback(() => {
-    if (disabled) return;
     setVisible(!visible);
-  }, [disabled, visible]);
+  }, [visible]);
   const handleClose = useCallback(() => {
     if (visible) {
       setVisible(false);
@@ -96,7 +82,6 @@ const PropertyTitle: React.FC<Props> = ({
           className={className}
           ref={referenceRef}
           onClick={handleClick}
-          disabled={disabled}
           isLinked={isLinked}
           isOverridden={isOverridden}>
           {title}
@@ -107,7 +92,13 @@ const PropertyTitle: React.FC<Props> = ({
         visible={visible}
         style={styles.popper}
         {...attributes.popper}>
-        <PropertyLinkPanel isOverridden={isOverridden} {...props} />
+        <PropertyLinkPanel
+          isOverridden={isOverridden}
+          isLinked={isLinked}
+          isTemplate={isTemplate}
+          linkedFieldName={linkedFieldName}
+          {...props}
+        />
       </PropertyLinkPanelWrapper>
     </Wrapper>
   );
@@ -117,13 +108,14 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
-const Title = styled.div<{ disabled?: boolean; isLinked?: boolean; isOverridden?: boolean }>`
+const Title = styled.div<{ isLinked?: boolean; isOverridden?: boolean }>`
   display: flex;
   height: 100%;
   font-size: ${fonts.sizes.xs}px;
-  color: ${props => titleColor(props)};
+  color: ${({ isLinked, isOverridden }) =>
+    isOverridden ? colors.functional.attention : isLinked ? colors.primary.main : colors.text.main};
   align-items: center;
-  cursor: ${props => (props.disabled ? "default" : "pointer")};
+  cursor: pointer;
 `;
 
 const PropertyLinkPanelWrapper = styled.div<{ visible: boolean }>`

@@ -1,6 +1,8 @@
 import React from "react";
 
 import Wrapper from "@reearth/components/atoms/PropertyPane";
+import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
+import Text from "@reearth/components/atoms/Text";
 import Button from "@reearth/components/atoms/Button";
 import { partitionObject } from "@reearth/util/util";
 import { ExtendedFuncProps } from "@reearth/types";
@@ -21,9 +23,10 @@ import PropertyItem, {
   DatasetType as ItemDatasetType,
   Layer as LayerType,
   Asset as AssetType,
+  Mode as ModeType,
 } from "./PropertyItem";
 import WidgetToggleButton from "./WidgetToggleSwitch";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { useIntl } from "react-intl";
 
 export type Item = ItemItem;
@@ -40,19 +43,19 @@ export type DatasetField = ItemDatasetField;
 export type DatasetType = ItemDatasetType;
 export type Layer = LayerType;
 export type Asset = AssetType;
+export type Mode = ModeType;
 
 export type Widget = {
   enabled: boolean;
 };
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
-
 export type Props = {
   className?: string;
   propertyId?: string;
-  mode: Mode;
+  mode: ModeType;
   items?: ItemItem[];
   title?: string;
+  isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
   onCreateAsset?: (files: FileList) => void;
@@ -62,7 +65,6 @@ export type Props = {
   onWidgetActivate?: (enabled: boolean) => Promise<void>;
 } & Pick<
   PropertyItemProps,
-  | "isDatasetLinkable"
   | "datasetSchemas"
   | "linkedDatasetSchemaId"
   | "linkedDatasetId"
@@ -70,7 +72,7 @@ export type Props = {
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
-  | "notLinkable"
+  | "isLinkable"
   | "onDatasetPickerOpen"
   | "defaultItemName"
   | "layers"
@@ -81,7 +83,6 @@ export type Props = {
       | "onChange"
       | "onRemove"
       | "onLink"
-      | "onUnlink"
       | "onUploadFile"
       | "onRemoveFile"
       | "onItemAdd"
@@ -104,6 +105,7 @@ const PropertyPane: React.FC<Props> = ({
   onWidgetActivate,
   ...props
 }) => {
+  const theme = useTheme();
   const intl = useIntl();
   const visibleItems = items?.filter(i => {
     if (!i.only) return true;
@@ -117,7 +119,6 @@ const PropertyPane: React.FC<Props> = ({
     "onChange",
     "onRemove",
     "onLink",
-    "onUnlink",
     "onUploadFile",
     "onRemoveFile",
     "onItemAdd",
@@ -144,11 +145,21 @@ const PropertyPane: React.FC<Props> = ({
               onClick={onCreateInfobox}
             />
           )}
+          {mode === "layer" && props.isTemplate && (
+            <GroupWrapper
+              className={className}
+              name={intl.formatMessage({ defaultMessage: "Dataset" })}>
+              <Text size="xs" color={theme.colors.text.strong}>
+                {props.title}
+              </Text>
+            </GroupWrapper>
+          )}
           {visibleItems?.map(item => (
             <PropertyItem
               key={`${propertyId}/${item.id || item.schemaGroup}`}
               item={item}
               onRemovePane={onRemovePane}
+              mode={mode}
               {...events}
               {...otherProps}
             />

@@ -8,6 +8,8 @@ src:
       PublicationStatus:
         '739063002': Unpublished
         '3640454975': Published
+      Select:
+        '395965578': not set
     molecules:
       Common:
         AssetModal:
@@ -125,6 +127,7 @@ src:
           '2793623359': Widgets
         PropertyPane:
           '3453457092': Create Infobox
+          '3833270271': Dataset
           PropertyField:
             CameraField:
               '129313613': Position Set
@@ -144,6 +147,7 @@ src:
               '4211710217': Capture
             ColorField:
               '1115770113': Save
+              '1533357798': Not set
               '3528672691': Cancel
             LocationField:
               '2222144661': Latitude
@@ -154,16 +158,20 @@ src:
               '3724530840': This field is not editable currently.
             PropertyTitle:
               PropertyLinkPanel:
+                '70866805': Link to dataset
+                '579507252': Parent.
                 '773082751': Clear this field
                 '910188724': No selectable items
-                '1055097961': Link to other datasets
+                '1518809512': From
                 '1592005573': Overridden
-                '1793784174': This field cannot be linked to any dataset
-                '1848096251': Unlink the dataset
-                '2426906682': Linked Dataset
-                '2737916394': Link to datasets
-                '2945406747': No linked dataset
                 '3068746276': Reset this field
+                '3457675054': No linked data
+                '3889579101': Linkable data
+            TypographyField:
+              FontFamilyField:
+                '3834040466': Font family
+              FontSizeField:
+                '3704724012': Font size
             URLField:
               '1533357798': Not set
           PropertyItem:
@@ -171,9 +179,11 @@ src:
               You are deleting the infobox and all its contents. Are you sure
               you want to do that?
             '660592555': OK
+            '2719744159': template
             '3528672691': Cancel
             '3645414921': Delete
             '3682158234': Basic
+            '3908299371': Template
           PropertyList:
             '179601186': List
           WidgetToggleSwitch:
@@ -367,7 +377,8 @@ src:
           WorkspaceCell:
             '808766300': No Title Workspace
             '974692228': >-
-              This is your personal workspace. Your projects and resources will be managed in this workspace.
+              This is your personal workspace, your projects and resource will
+              be managed in this workspace.
             '3230245813': 'Members:'
           WorkspaceList:
             '3435539653': All workspaces

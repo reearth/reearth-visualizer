@@ -37,9 +37,10 @@ const SelectField = <Value extends string | number = string>({
       value={selected}
       inactive={disabled}
       onChange={onChange}
-      fullWidth>
+      fullWidth
+      color={color}>
       {items.map(({ key, label, icon }) => (
-        <Option key={key} textColor={color} value={key} label={label}>
+        <Option key={key} value={key} label={label}>
           <OptionCheck size="xs">{key === selected && <Icon icon="check" size={12} />}</OptionCheck>
           {hasIcon && <OptionIcon size="xs">{icon && <Icon icon={icon} />}</OptionIcon>}
           {label}
@@ -67,14 +68,13 @@ const OptionIcon = styled(Text)`
 
 const Option = styled.li<{
   focused?: boolean;
-  textColor?: string;
   label?: string;
 }>`
   display: flex;
   list-style: none;
   padding: 6px;
   font-size: ${fonts.sizes["2xs"]}px;
-  color: ${({ textColor, theme }) => textColor || theme.main.text};
+  color: ${({ theme }) => theme.main.text};
   background: ${({ focused, theme }) => (focused ? "transparent" : theme.properties.bg)};
   cursor: pointer;
 `;

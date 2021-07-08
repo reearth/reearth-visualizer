@@ -32,7 +32,7 @@ export const useBind3 = <
   P extends { [key in string]?: (a: A, b: B, ...args: any) => any },
   A,
   B,
-  C
+  C,
 >(
   p: P,
   a?: A,

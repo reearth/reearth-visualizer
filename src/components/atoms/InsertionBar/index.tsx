@@ -22,24 +22,24 @@ const InsertionBar: React.FC<Props> = ({
 }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
-  const { styles, attributes, update: updatePopper } = usePopper(
-    referenceElement.current,
-    popperElement.current,
-    {
-      placement: "bottom",
-      strategy: "fixed",
-      modifiers: [
-        {
-          name: "eventListeners",
-          enabled: false,
-          options: {
-            scroll: false,
-            resize: false,
-          },
+  const {
+    styles,
+    attributes,
+    update: updatePopper,
+  } = usePopper(referenceElement.current, popperElement.current, {
+    placement: "bottom",
+    strategy: "fixed",
+    modifiers: [
+      {
+        name: "eventListeners",
+        enabled: false,
+        options: {
+          scroll: false,
+          resize: false,
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   const handleClick = useCallback(() => {
     if (mode !== "visible") return;

@@ -36,25 +36,24 @@ export default (
   }, []);
 
   const handleCopyToClipBoard = useCallback(
-    (key: keyof CopiedItemKey, value: string | undefined) => (
-      _: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    ) => {
-      if (!value) return;
-      setCopiedKey(prevState => ({
-        ...prevState,
-        [key]: true,
-      }));
-      navigator.clipboard.writeText(value);
-      onNotify?.(
-        "info",
-        `${
-          key === "embedCode"
-            ? intl.formatMessage({ defaultMessage: "Embed code was successfully copied!" })
-            : intl.formatMessage({ defaultMessage: "URL was successfully copied!" })
-        }`,
-      );
-      resetCopiedWithDelay(key);
-    },
+    (key: keyof CopiedItemKey, value: string | undefined) =>
+      (_: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+        if (!value) return;
+        setCopiedKey(prevState => ({
+          ...prevState,
+          [key]: true,
+        }));
+        navigator.clipboard.writeText(value);
+        onNotify?.(
+          "info",
+          `${
+            key === "embedCode"
+              ? intl.formatMessage({ defaultMessage: "Embed code was successfully copied!" })
+              : intl.formatMessage({ defaultMessage: "URL was successfully copied!" })
+          }`,
+        );
+        resetCopiedWithDelay(key);
+      },
     [onNotify, resetCopiedWithDelay, intl],
   );
 

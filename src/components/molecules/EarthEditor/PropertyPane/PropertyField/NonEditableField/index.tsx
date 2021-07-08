@@ -14,7 +14,10 @@ const NonEditableField: React.FC<Props> = ({ className, linkedDatasetFieldName }
   const intl = useIntl();
   const theme = useTheme();
   return (
-    <Wrapper size="2xs" color={theme.layers.smallText} className={className}>
+    <Wrapper
+      size="2xs"
+      color={linkedDatasetFieldName ? theme.colors.primary.main : theme.layers.smallText}
+      className={className}>
       {linkedDatasetFieldName
         ? intl.formatMessage(
             {

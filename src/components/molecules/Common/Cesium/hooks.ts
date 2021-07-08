@@ -130,9 +130,8 @@ export default ({
     }
   }, [cameraState, onCameraChange]);
 
-  const [imageryLayers, setImageryLayers] = useState<
-    [string, ImageryProvider, number | undefined, number | undefined][]
-  >();
+  const [imageryLayers, setImageryLayers] =
+    useState<[string, ImageryProvider, number | undefined, number | undefined][]>();
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
@@ -226,9 +225,11 @@ const getCamera = (viewer: CesiumViewer) => {
   if (!(camera.frustum instanceof PerspectiveFrustum)) return;
 
   const ellipsoid = viewer.scene.globe.ellipsoid;
-  const { latitude, longitude, height: altitude } = ellipsoid.cartesianToCartographic(
-    camera.position,
-  );
+  const {
+    latitude,
+    longitude,
+    height: altitude,
+  } = ellipsoid.cartesianToCartographic(camera.position);
   const lat = CesiumMath.toDegrees(latitude);
   const lng = CesiumMath.toDegrees(longitude);
   const { heading, pitch, roll } = camera;

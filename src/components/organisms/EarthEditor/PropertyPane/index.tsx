@@ -26,7 +26,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     changeValue,
     removeField,
     link,
-    unlink,
     uploadFile,
     createAssets,
     removeFile,
@@ -50,11 +49,11 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           mode={pane.mode}
           title={pane.title}
           items={pane.items}
+          isTemplate={pane.group}
           isInfoboxCreatable={isInfoboxCreatable}
           isCapturing={isCapturing}
           camera={camera}
-          notLinkable={mode === "scene" || mode === "widget"}
-          isDatasetLinkable={!isLayerGroup}
+          isLinkable={isLayerGroup && !!linkedDatasetSchemaId}
           linkedDatasetSchemaId={linkedDatasetSchemaId}
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
@@ -65,7 +64,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onChange={changeValue}
           onRemove={removeField}
           onLink={link}
-          onUnlink={unlink}
           onUploadFile={uploadFile}
           onCreateAsset={createAssets}
           onRemoveFile={removeFile}

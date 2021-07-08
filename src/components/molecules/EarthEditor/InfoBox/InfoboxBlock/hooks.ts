@@ -14,7 +14,11 @@ export default ({
   const isHoveredRef = useRef<"top" | "bottom">();
   const [isHovered, setHovered] = useState<"top" | "bottom">();
 
-  const { ref: dragRef, isDragging, previewRef } = useDrag<"block">(
+  const {
+    ref: dragRef,
+    isDragging,
+    previewRef,
+  } = useDrag<"block">(
     blockId && typeof index === "number"
       ? {
           type: "block",

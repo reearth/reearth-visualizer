@@ -21,10 +21,10 @@ export default ({ onIsCapturingChange, camera, onFovChange }: Params) => {
     return !popups.some(element => element.contains(target));
   }, []);
 
-  const handleClickAway = useCallback((e: Event) => isAwayTarget(e) && finishCapture(), [
-    isAwayTarget,
-    finishCapture,
-  ]);
+  const handleClickAway = useCallback(
+    (e: Event) => isAwayTarget(e) && finishCapture(),
+    [isAwayTarget, finishCapture],
+  );
 
   return { camera, updateFov, handleClickAway };
 };

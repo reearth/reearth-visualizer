@@ -1,9 +1,8 @@
 import { useState, useCallback } from "react";
 
 export default (onBlockInsert?: (bi: number, i: number, p?: "top" | "bottom") => void) => {
-  const [insertionPopUpPosition, setInsertionPopUpPosition] = useState<
-    [number, "top" | "bottom" | undefined]
-  >();
+  const [insertionPopUpPosition, setInsertionPopUpPosition] =
+    useState<[number, "top" | "bottom" | undefined]>();
 
   const onInsertionButtonClick = useCallback((i: number, p?: "top" | "bottom") => {
     setInsertionPopUpPosition(p ? [i, p] : [i, undefined]);

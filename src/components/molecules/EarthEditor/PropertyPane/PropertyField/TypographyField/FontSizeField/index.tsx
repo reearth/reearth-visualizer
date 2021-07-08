@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -16,30 +17,22 @@ type Props = {
   className?: string;
   value?: FontSize;
   items?: { key: string; label: string; icon?: string }[];
-  linked?: boolean;
-  overridden?: boolean;
-  disabled?: boolean;
+  color?: string;
   onChange?: (value: FontSize) => void;
 };
 
-const FontSizeField: React.FC<Props> = ({
-  className,
-  value: selectedKey,
-  linked,
-  overridden,
-  disabled,
-  onChange,
-}) => {
-  const inactive = !!linked || !!overridden || !!disabled;
+const FontSizeField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
+  const intl = useIntl();
 
   return (
     <Select<FontSize>
       className={className}
       value={selectedKey}
-      inactive={inactive}
-      onChange={onChange}>
+      onChange={onChange}
+      placeholder={intl.formatMessage({ defaultMessage: "Font size" })}
+      color={color}>
       {sizeItems.map(({ key, label }) => (
-        <Option key={key} linked={linked} overridden={overridden} value={key} label={String(label)}>
+        <Option key={key} value={key} label={String(label)}>
           <OptionCheck size="xs">
             {key === selectedKey && <Icon icon="check" size={10} />}
           </OptionCheck>

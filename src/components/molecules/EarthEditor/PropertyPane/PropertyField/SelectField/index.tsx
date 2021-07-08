@@ -16,17 +16,15 @@ const SelectField = <Value extends string | number = string>({
   items = [],
   linked,
   overridden,
-  disabled,
   onChange,
 }: Props<Value>) => {
-  const color = textColor({ disabled, linked, overridden });
+  const color = textColor({ linked, overridden });
 
   return (
     <SelectBox<Value>
       className={className}
       selected={selected}
       items={items}
-      disabled={disabled}
       color={color}
       onChange={onChange}
     />

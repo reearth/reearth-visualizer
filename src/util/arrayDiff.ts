@@ -41,9 +41,7 @@ export default function arrayDiff<T>(oldList: T[], newList: T[]): [T, number, nu
         ),
     )
     .sort(([, , newIndex], [, , newIndex2]) => newIndex - newIndex2)
-    .concat(
-      removed.map<[T, number, number]>(([element, oldIndex]) => [element, oldIndex, -1]),
-    );
+    .concat(removed.map<[T, number, number]>(([element, oldIndex]) => [element, oldIndex, -1]));
 }
 
 function mergeArrays<T>(array1: T[], array2: [T, number][]): T[] {

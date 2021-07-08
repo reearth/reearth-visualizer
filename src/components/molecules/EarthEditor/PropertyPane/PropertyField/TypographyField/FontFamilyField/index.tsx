@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
 
 import Select from "@reearth/components/atoms/Select";
@@ -28,32 +29,22 @@ const safeFontItems = Object.entries(safeFonts).map(([name, { displayName }]) =>
 type Props = {
   className?: string;
   value?: SafeFontFamilies;
-  linked?: boolean;
-  overridden?: boolean;
-  disabled?: boolean;
+  color?: string;
   onChange?: (value: SafeFontFamilies) => void;
 };
 
-const FontFamilyField: React.FC<Props> = ({
-  className,
-  value: selectedKey,
-  linked,
-  overridden,
-  disabled,
-  onChange,
-}) => {
-  const inactive = !!linked || !!overridden || !!disabled;
+const FontFamilyField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
+  const intl = useIntl();
 
   return (
-    <Select className={className} value={selectedKey} inactive={inactive} onChange={onChange}>
+    <Select
+      className={className}
+      value={selectedKey}
+      onChange={onChange}
+      placeholder={intl.formatMessage({ defaultMessage: "Font family" })}
+      color={color}>
       {safeFontItems.map(({ key, label }) => (
-        <StyledOption
-          key={key}
-          linked={linked}
-          overridden={overridden}
-          fontFamily={key}
-          value={key}
-          label={label}>
+        <StyledOption key={key} fontFamily={key} value={key} label={label}>
           <OptionCheck size="xs">
             {key === selectedKey && <Icon icon="check" size={10} />}
           </OptionCheck>

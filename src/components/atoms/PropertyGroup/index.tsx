@@ -36,7 +36,6 @@ const PropertyTitle = styled.div`
   background-color: ${props => props.theme.properties.bg};
   padding: 8px 16px;
   text-align: left;
-  cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;

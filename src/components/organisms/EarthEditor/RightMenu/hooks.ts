@@ -4,15 +4,13 @@ import { useLocalState } from "@reearth/state";
 export type Tab = "layer" | "scene" | "widget" | "infobox" | "export";
 
 export default () => {
-  const [
-    { selectedLayerType, isCapturing, selectedLayerId, selectedBlock },
-    setLocalState,
-  ] = useLocalState(s => ({
-    selectedLayerType: s.selectedType,
-    selectedLayerId: s.selectedLayer,
-    isCapturing: s.isCapturing,
-    selectedBlock: s.selectedBlock,
-  }));
+  const [{ selectedLayerType, isCapturing, selectedLayerId, selectedBlock }, setLocalState] =
+    useLocalState(s => ({
+      selectedLayerType: s.selectedType,
+      selectedLayerId: s.selectedLayer,
+      isCapturing: s.isCapturing,
+      selectedBlock: s.selectedBlock,
+    }));
 
   const [selectedTab, setSelectedTab] = useState<Tab>();
 

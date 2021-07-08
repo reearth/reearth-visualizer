@@ -25,8 +25,14 @@ const Polygon: PrimitiveComponent<Property, PluginProperty> = ({
   onClick,
   property,
 }) => {
-  const { polygon, fill = true, stroke, fillColor, strokeColor, strokeWidth = 1 } =
-    property?.default ?? {};
+  const {
+    polygon,
+    fill = true,
+    stroke,
+    fillColor,
+    strokeColor,
+    strokeWidth = 1,
+  } = property?.default ?? {};
 
   const hierarchy = useMemo(
     () =>
@@ -44,15 +50,15 @@ const Polygon: PrimitiveComponent<Property, PluginProperty> = ({
     [polygon],
   );
 
-  const memoStrokeColor = useMemo(() => (stroke ? toColor(strokeColor) : undefined), [
-    stroke,
-    strokeColor,
-  ]);
+  const memoStrokeColor = useMemo(
+    () => (stroke ? toColor(strokeColor) : undefined),
+    [stroke, strokeColor],
+  );
 
-  const memoFillColor = useMemo(() => (fill && fillColor ? toColor(fillColor) : undefined), [
-    fill,
-    fillColor,
-  ]);
+  const memoFillColor = useMemo(
+    () => (fill && fillColor ? toColor(fillColor) : undefined),
+    [fill, fillColor],
+  );
 
   return !isVisible ? null : (
     <Entity id={id} onClick={onClick}>

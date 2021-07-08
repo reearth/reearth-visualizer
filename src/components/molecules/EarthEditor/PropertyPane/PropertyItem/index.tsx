@@ -24,6 +24,8 @@ import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
 import { metricsSizes } from "@reearth/theme/metrics";
 
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+
 export type {
   Dataset,
   DatasetSchema,
@@ -76,6 +78,9 @@ export type Item = Group | GroupList;
 export type Props = {
   className?: string;
   item?: Item;
+  title?: string;
+  isTemplate?: boolean;
+  mode?: Mode;
   defaultItemName?: string;
   onItemAdd?: (schemaGroupId: string) => void;
   onItemMove?: (schemaGroupId: string, itemId: string, from: number, to: number) => void;
@@ -93,24 +98,20 @@ export type Props = {
 } & Pick<
   FieldProps,
   | "datasetSchemas"
-  | "isDatasetLinkable"
   | "linkedDatasetSchemaId"
   | "linkedDatasetId"
   | "isCapturing"
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
-  | "notLinkable"
+  | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"
   | "assets"
   | "onCreateAsset"
 > &
   ExtendedFuncProps2<
-    Pick<
-      FieldProps,
-      "onChange" | "onRemove" | "onLink" | "onUnlink" | "onUploadFile" | "onRemoveFile"
-    >,
+    Pick<FieldProps, "onChange" | "onRemove" | "onLink" | "onUploadFile" | "onRemoveFile">,
     string,
     string | undefined
   >;
@@ -118,6 +119,9 @@ export type Props = {
 const PropertyItem: React.FC<Props> = ({
   className,
   item,
+  title,
+  isTemplate,
+  mode,
   defaultItemName,
   onItemAdd,
   onItemMove,
@@ -130,7 +134,6 @@ const PropertyItem: React.FC<Props> = ({
     "onChange",
     "onRemove",
     "onLink",
-    "onUnlink",
     "onUploadFile",
     "onRemoveFile",
   ]);
@@ -184,14 +187,18 @@ const PropertyItem: React.FC<Props> = ({
     () =>
       selectedItem
         ? item?.schemaFields.map(f => {
-            const events = mapValues(eventProps, f => (...args: any[]) =>
-              f?.(item.schemaGroup, selectedItem.id, ...args),
+            const events = mapValues(
+              eventProps,
+              f =>
+                (...args: any[]) =>
+                  f?.(item.schemaGroup, selectedItem.id, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
             const condsf = f.only && item.schemaFields.find(f2 => f2.id === f.only?.field);
             const condv =
               condf?.value ??
+              condf?.mergedValue ??
               condsf?.defaultValue ??
               (condsf?.type ? zeroValues[condsf.type] : undefined);
             return {
@@ -239,7 +246,15 @@ const PropertyItem: React.FC<Props> = ({
   }, [item, onRemovePane, intl]);
 
   return (
-    <GroupWrapper className={className} name={item?.title}>
+    <GroupWrapper
+      className={className}
+      name={
+        mode === "layer" && isTemplate
+          ? intl.formatMessage({ defaultMessage: "Template" })
+          : isTemplate
+          ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
+          : title || item?.title
+      }>
       {isList && !!item && (
         <StyledPropertyList
           name={item.title || (item.id === "default" ? defaultItemName : "")}
@@ -257,13 +272,13 @@ const PropertyItem: React.FC<Props> = ({
       {!!item &&
         schemaFields?.map(f => {
           if (layerMode && f.schemaField.id === item.nameField) return null;
-
           return (
             <PropertyField
               key={f.schemaField.id}
               field={f.field}
               schema={f.schemaField}
               hidden={f.hidden}
+              isTemplate={isTemplate}
               {...f.events}
               {...otherProps}
             />

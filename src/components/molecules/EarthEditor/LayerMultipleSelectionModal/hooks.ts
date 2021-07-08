@@ -67,10 +67,10 @@ export default function ({
     selectRightLayerIds(layers.map(l => l.id));
   }, []);
 
-  const ok = useCallback(() => onSelect?.(rightLayers.children?.map(l => l.content) ?? []), [
-    onSelect,
-    rightLayers.children,
-  ]);
+  const ok = useCallback(
+    () => onSelect?.(rightLayers.children?.map(l => l.content) ?? []),
+    [onSelect, rightLayers.children],
+  );
 
   const addLayers = useCallback(() => {
     const layers = uniqBy(flattenLayers(selectedLeftLayers.current), l => l.id);

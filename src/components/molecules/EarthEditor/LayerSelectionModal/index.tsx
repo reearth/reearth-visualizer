@@ -38,10 +38,10 @@ const LayerSelectionModal: React.FC<Props> = ({
 
   const [selectedLayer, selectLayer] = useState<string[]>(selected ? [selected] : []);
 
-  const ok = useCallback(() => (selectedLayer?.length ? onSelect?.(selectedLayer[0]) : undefined), [
-    onSelect,
-    selectedLayer,
-  ]);
+  const ok = useCallback(
+    () => (selectedLayer?.length ? onSelect?.(selectedLayer[0]) : undefined),
+    [onSelect, selectedLayer],
+  );
 
   const select = useCallback((s: Item<LayerType>[]) => {
     if (s.length) {

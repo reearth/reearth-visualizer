@@ -19,10 +19,10 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
 
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const handleRemoveDatasetSchema = useCallback(() => removeDatasetSchema?.(id), [
-    id,
-    removeDatasetSchema,
-  ]);
+  const handleRemoveDatasetSchema = useCallback(
+    () => removeDatasetSchema?.(id),
+    [id, removeDatasetSchema],
+  );
 
   const onClose = useCallback(() => {
     setIsVisible(false);

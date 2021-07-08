@@ -64,33 +64,26 @@ const OutlinePane: React.FC<Props> = ({
   onDrop,
   loading,
 }) => {
-  const {
-    sceneWidgetsItem,
-    layersItem,
-    select,
-    drop,
-    dropExternals,
-    TreeViewItem,
-    selected,
-  } = useHooks({
-    rootLayerId,
-    layers,
-    widgets,
-    sceneDescription,
-    selectedLayerId,
-    selectedWidgetId,
-    selectedType,
-    onLayerSelect,
-    onLayerImport,
-    onLayerRemove,
-    onSceneSelect,
-    onWidgetSelect,
-    onLayerMove,
-    onLayerRename,
-    onLayerVisibilityChange,
-    onDrop,
-    onLayerGroupCreate,
-  });
+  const { sceneWidgetsItem, layersItem, select, drop, dropExternals, TreeViewItem, selected } =
+    useHooks({
+      rootLayerId,
+      layers,
+      widgets,
+      sceneDescription,
+      selectedLayerId,
+      selectedWidgetId,
+      selectedType,
+      onLayerSelect,
+      onLayerImport,
+      onLayerRemove,
+      onSceneSelect,
+      onWidgetSelect,
+      onLayerMove,
+      onLayerRename,
+      onLayerVisibilityChange,
+      onDrop,
+      onLayerGroupCreate,
+    });
 
   return (
     <Wrapper className={className}>

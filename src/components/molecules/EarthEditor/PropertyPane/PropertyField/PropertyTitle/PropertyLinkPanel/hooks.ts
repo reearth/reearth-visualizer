@@ -6,13 +6,12 @@ export default ({
   onDatasetPickerOpen,
   onClose,
   onLink,
-  onUnlink,
   onClear,
   linkableType,
   datasetSchemas,
   fixedDatasetSchemaId,
   fixedDatasetId,
-  isDatasetLinkable,
+  isLinkable,
 }: {
   linkedDataset?: {
     schema: string;
@@ -25,13 +24,12 @@ export default ({
   onDatasetPickerOpen?: () => void;
   onClose?: () => void;
   onLink?: (ds: string, s: string | undefined, f: string) => void;
-  onUnlink?: () => void;
   onClear?: () => void;
   linkableType?: Type;
   datasetSchemas?: DatasetSchema[];
   fixedDatasetSchemaId?: string;
   fixedDatasetId?: string;
-  isDatasetLinkable?: boolean;
+  isLinkable?: boolean;
 }) => {
   const [selected, select] = useState<{
     source?: string;
@@ -103,11 +101,6 @@ export default ({
     onClose?.();
   }, [onClear, onClose]);
 
-  const unlink = useCallback(() => {
-    onUnlink?.();
-    onClose?.();
-  }, [onClose, onUnlink]);
-
   useEffect(() => {
     select({
       schema: fixedDatasetSchemaId ?? linkedDataset?.schema,
@@ -118,7 +111,7 @@ export default ({
 
   useEffect(() => {
     setPos(0);
-  }, [isDatasetLinkable, fixedDatasetSchemaId]);
+  }, [isLinkable, fixedDatasetSchemaId]);
 
   return {
     selected,
@@ -131,6 +124,5 @@ export default ({
     selectedSchema,
     selectedDatasetPath,
     clear,
-    unlink,
   };
 };

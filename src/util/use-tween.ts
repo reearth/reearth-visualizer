@@ -6,11 +6,12 @@ export type Easing = keyof IEasingMap;
 const useTween = (e: Easing | ((t: number) => number), duration: number, dep: any) => {
   const first = useRef(false);
   const [v, setV] = useState(0);
-  const data = useRef<{
-    fn: (t: number) => number;
-    startedAt: number;
-    duration: number;
-  }>();
+  const data =
+    useRef<{
+      fn: (t: number) => number;
+      startedAt: number;
+      duration: number;
+    }>();
   const timeout = useRef<number>();
 
   const cb = useCallback(() => {

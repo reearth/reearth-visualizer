@@ -45,7 +45,8 @@ export type SchemaField<T extends ValueType = ValueType> = {
   suffix?: string;
   name?: string;
   description?: string;
-  notLinkable?: boolean;
+  isLinkable?: boolean;
+  isTemplate?: boolean;
   ui?:
     | "color"
     | "multiline"
@@ -88,9 +89,9 @@ export type Props<T extends ValueType = ValueType> = {
   schema?: SchemaField;
   linkedDatasetSchemaId?: string;
   linkedDatasetId?: string;
-  isDatasetLinkable?: boolean;
   hidden?: boolean;
-  notLinkable?: boolean;
+  isLinkable?: boolean;
+  isTemplate?: boolean;
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
@@ -98,7 +99,6 @@ export type Props<T extends ValueType = ValueType> = {
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
-  onUnlink?: (id: string) => void;
   onUploadFile?: (id: string, file: File) => void;
   onRemoveFile?: (id: string) => void;
   onCreateAsset?: (files: FileList) => void;
@@ -120,9 +120,9 @@ const PropertyField: React.FC<Props> = ({
   camera,
   onCameraChange,
   onLink,
-  onUnlink,
   datasetSchemas,
-  isDatasetLinkable,
+  isLinkable,
+  isTemplate,
   onDatasetPickerOpen,
   linkedDatasetSchemaId,
   linkedDatasetId,
@@ -135,14 +135,14 @@ const PropertyField: React.FC<Props> = ({
       onUploadFile,
       onRemoveFile,
       onLink,
-      onUnlink,
     },
     schema?.id,
   );
 
   const commonProps: FieldProps<any> = {
-    linked: !!field?.link,
-    disabled: !!field?.link && !field?.link.inherited,
+    linked:
+      !!field?.link || (isTemplate && !!field?.value) || (!!field?.mergedValue && !field?.value),
+    linkedFieldName: field?.id,
     overridden: !!field?.overridden,
     value: field?.mergedValue ?? field?.value ?? schema?.defaultValue,
     onChange: useCallback(
@@ -164,17 +164,18 @@ const PropertyField: React.FC<Props> = ({
     <FormItemWrapper
       schema={schema}
       direction={schema?.ui === "multiline" ? "column" : "row"}
-      align={schema?.ui === "multiline" ? "flex-start" : "center"}>
+      align={schema?.ui === "multiline" || schema?.type === "typography" ? "flex-start" : "center"}>
       <StyledPropertyTitleWrapper>
         <PropertyTitle
           title={schema?.name || schema?.id || field?.id || ""}
           description={schema?.description}
-          isDatasetLinkable={isDatasetLinkable}
           isLinked={commonProps.linked}
+          isTemplate={isTemplate}
+          linkedFieldName={commonProps.linkedFieldName}
           isOverridden={commonProps.overridden}
+          isLinkable={isLinkable ?? schema?.isLinkable}
           linkedDataset={field?.link}
           datasetSchemas={datasetSchemas}
-          linkDisabled={!schema || schema?.notLinkable}
           linkableType={schema?.type}
           onDatasetPickerOpen={onDatasetPickerOpen}
           fixedDatasetSchemaId={linkedDatasetSchemaId}
@@ -252,7 +253,6 @@ const FormItemWrapper = styled(Flex)<{ schema?: SchemaField }>`
 const StyledPropertyTitleWrapper = styled.div`
   flex: 1;
   font-size: 12px;
-  line-height: 110%;
   margin-right: ${metricsSizes.s}px;
 `;
 

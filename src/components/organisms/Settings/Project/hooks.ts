@@ -35,10 +35,10 @@ export default ({ projectId }: Params) => {
     skip: !teamId,
   });
 
-  const rawProject = useMemo(() => data?.projects.nodes.find(p => p?.id === projectId), [
-    data,
-    projectId,
-  ]);
+  const rawProject = useMemo(
+    () => data?.projects.nodes.find(p => p?.id === projectId),
+    [data, projectId],
+  );
   const project = useMemo(
     () =>
       rawProject?.id
@@ -132,10 +132,8 @@ export default ({ projectId }: Params) => {
   );
 
   const [validAlias, setValidAlias] = useState(false);
-  const [
-    checkProjectAliasQuery,
-    { loading: validatingAlias, data: checkProjectAliasData },
-  ] = useCheckProjectAliasLazyQuery();
+  const [checkProjectAliasQuery, { loading: validatingAlias, data: checkProjectAliasData }] =
+    useCheckProjectAliasLazyQuery();
   const checkProjectAlias = useCallback(
     (alias: string) => {
       if (project?.alias && project.alias === alias) {

@@ -42,18 +42,16 @@ type GQLLayer = {
 
 export default () => {
   const intl = useIntl();
-  const [
-    { selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId },
-    setLocalState,
-  ] = useLocalState(s => ({
-    selectedType: s.selectedType,
-    rootLayerId: s.rootLayerId,
-    selectedLayerId: s.selectedLayer,
-    sceneId: s.sceneId,
-    selectedWidgetId: s.selectedWidget
-      ? `${s.selectedWidget.pluginId}/${s.selectedWidget.extensionId}`
-      : undefined,
-  }));
+  const [{ selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId }, setLocalState] =
+    useLocalState(s => ({
+      selectedType: s.selectedType,
+      rootLayerId: s.rootLayerId,
+      selectedLayerId: s.selectedLayer,
+      sceneId: s.sceneId,
+      selectedWidgetId: s.selectedWidget
+        ? `${s.selectedWidget.pluginId}/${s.selectedWidget.extensionId}`
+        : undefined,
+    }));
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },
@@ -80,22 +78,20 @@ export default () => {
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map(
-            (e): Widget => {
-              const pluginId = plugin.id;
-              const extensionId = e.extensionId;
-              const enabled = scene?.widgets.find(
-                w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
-              )?.enabled;
-              return {
-                id: `${plugin.id}/${e.extensionId}`,
-                enabled,
-                title: e.translatedName,
-                description: e.translatedDescription,
-                icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
-              };
-            },
-          )
+          .map((e): Widget => {
+            const pluginId = plugin.id;
+            const extensionId = e.extensionId;
+            const enabled = scene?.widgets.find(
+              w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
+            )?.enabled;
+            return {
+              id: `${plugin.id}/${e.extensionId}`,
+              enabled,
+              title: e.translatedName,
+              description: e.translatedDescription,
+              icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
+            };
+          })
           .filter((w): w is Widget => !!w);
       })
       .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);

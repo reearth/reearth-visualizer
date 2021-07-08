@@ -2,9 +2,10 @@ import React, { useState, useRef, useCallback, useLayoutEffect } from "react";
 import { useClickAway } from "react-use";
 import { usePopper } from "react-popper";
 import { useMergeRefs } from "use-callback-ref";
+import { useIntl } from "react-intl";
+
 import { styled, css, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import colors from "@reearth/theme/colors";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 
@@ -26,7 +27,9 @@ type OptionElement<Value extends string | number> = React.ReactElement<OptionPro
 export type Props<Value extends string | number> = {
   className?: string;
   value?: Value;
+  placeholder?: string;
   inactive?: boolean;
+  color?: string;
   fullWidth?: boolean;
   onChange?: (value: Value) => void;
   children?: OptionElement<Value>[];
@@ -41,49 +44,52 @@ const Select = <Value extends string | number>(
   {
     className,
     value: selectedValue,
+    placeholder,
     inactive = false,
+    color,
     fullWidth = false,
     onChange,
     children,
   }: Props<Value>,
   ref: React.Ref<HTMLDivElement>,
 ) => {
+  const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [focusedValue, setFocusedValue] = useState(selectedValue);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const mergedRef = useMergeRefs(ref ? [ref, wrapperRef] : [wrapperRef]);
-  const { styles, attributes, update: updatePopper } = usePopper(
-    wrapperRef.current,
-    listRef.current,
-    {
-      placement: "bottom",
-      modifiers: [
-        {
-          name: "flip",
-          enabled: true,
-          options: {
-            fallbackPlacements: ["top"],
-          },
+  const {
+    styles,
+    attributes,
+    update: updatePopper,
+  } = usePopper(wrapperRef.current, listRef.current, {
+    placement: "bottom",
+    modifiers: [
+      {
+        name: "flip",
+        enabled: true,
+        options: {
+          fallbackPlacements: ["top"],
         },
-        {
-          name: "offset",
-          options: {
-            offset: [0, 4],
-          },
+      },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 4],
         },
-        {
-          name: "eventListeners",
-          enabled: !open,
-          options: {
-            scroll: false,
-            resize: false,
-          },
+      },
+      {
+        name: "eventListeners",
+        enabled: !open,
+        options: {
+          scroll: false,
+          resize: false,
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   const isValidElement = (object: {} | null | undefined): object is OptionElement<Value> =>
     React.isValidElement(object);
@@ -219,8 +225,8 @@ const Select = <Value extends string | number>(
         <Selected
           inactive={inactive}
           size="xs"
-          color={inactive ? "" : theme.properties.contentsText}>
-          {selectedLabel}
+          color={!selectedValue ? theme.colors.text.weak : color}>
+          {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
       </SelectWrapper>
@@ -277,8 +283,6 @@ const SelectWrapper = styled.div`
 const Selected = styled(Text)<{ inactive: boolean }>`
   flex: 1;
   padding: 3px;
-  color: ${({ inactive, theme }) =>
-    inactive ? colors.outline.main : theme.properties.contentsText};
 `;
 
 const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`
