@@ -25,10 +25,9 @@ const Markdown: React.FC<Props> = ({
   onClick,
   onDoubleClick,
 }) => {
-  const dark = useMemo(
-    () => (backgroundColor ? isDark(backgroundColor) : false),
-    [backgroundColor],
-  );
+  const dark = useMemo(() => (backgroundColor ? isDark(backgroundColor) : false), [
+    backgroundColor,
+  ]);
 
   return (
     <Wrapper

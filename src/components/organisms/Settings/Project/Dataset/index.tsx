@@ -11,8 +11,13 @@ type Props = {
 
 const Dataset: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentTeam, currentProject, datasetSchemas, importDataset, removeDatasetSchema } =
-    useHooks(projectId);
+  const {
+    currentTeam,
+    currentProject,
+    datasetSchemas,
+    importDataset,
+    removeDatasetSchema,
+  } = useHooks(projectId);
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={projectId}>

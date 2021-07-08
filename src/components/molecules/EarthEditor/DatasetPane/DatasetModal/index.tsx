@@ -13,6 +13,7 @@ import Text from "@reearth/components/atoms/Text";
 
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import useHooks from "./hooks";
+import Gdrive from "./Gdrive";
 
 interface Props {
   className?: string;
@@ -20,6 +21,12 @@ interface Props {
   syncLoading: boolean;
   onClose?: () => void;
   handleDatasetAdd?: (url: string | File, schemeId: string | null) => Promise<void>;
+  handleGoogleSheetDatasetAdd?: (
+    accessToken: string,
+    fileId: string,
+    sheetName: string,
+    schemeId: string | null,
+  ) => Promise<void>;
   onNotify?: (type: NotificationType, text: string) => void;
 }
 
@@ -28,13 +35,21 @@ const DatasetModal: React.FC<Props> = ({
   syncLoading,
   onClose,
   handleDatasetAdd,
+  handleGoogleSheetDatasetAdd,
   onNotify,
 }) => {
   const intl = useIntl();
-  const { csv, dataType, disabled, onSelectCsvFile, onReturn, handleImport } = useHooks(
-    handleDatasetAdd,
-    onNotify,
-  );
+  const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
+  const {
+    csv,
+    dataType,
+    disabled,
+    onSelectCsvFile,
+    onReturn,
+    onSheetSelect,
+    handleImport,
+    handleClick,
+  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onNotify);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
@@ -81,11 +96,26 @@ const DatasetModal: React.FC<Props> = ({
               borderColor={colors.outline.weak}
               onClick={onSelectCsvFile}
             />
+            {googleApiKey && (
+              <Card
+                id="gdrive"
+                icon="googleDrive"
+                iconSize="50px"
+                text={intl.formatMessage({ defaultMessage: "Google Drive" })}
+                margin={56}
+                border="dashed"
+                borderColor={colors.outline.weak}
+                onClick={handleClick}
+              />
+            )}
           </Content>
         </ConnectSection>
       ) : (
         <InputSection>
-          {dataType === "csv" ? (
+          {dataType === "gdrive" && (
+            <Gdrive onReturn={onReturn} onSheetSelect={onSheetSelect} syncLoading={syncLoading} />
+          )}
+          {dataType === "csv" && (
             <>
               <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
               <Subtitle
@@ -103,7 +133,8 @@ const DatasetModal: React.FC<Props> = ({
                 )}
               </Content>
             </>
-          ) : (
+          )}
+          {!dataType && (
             <>
               <Button onClick={onReturn}>
                 <Icon icon={"arrowLongLeft"} size={24} />

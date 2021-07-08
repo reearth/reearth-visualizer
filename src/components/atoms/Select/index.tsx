@@ -60,36 +60,36 @@ const Select = <Value extends string | number>(
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const mergedRef = useMergeRefs(ref ? [ref, wrapperRef] : [wrapperRef]);
-  const {
-    styles,
-    attributes,
-    update: updatePopper,
-  } = usePopper(wrapperRef.current, listRef.current, {
-    placement: "bottom",
-    modifiers: [
-      {
-        name: "flip",
-        enabled: true,
-        options: {
-          fallbackPlacements: ["top"],
+  const { styles, attributes, update: updatePopper } = usePopper(
+    wrapperRef.current,
+    listRef.current,
+    {
+      placement: "bottom",
+      modifiers: [
+        {
+          name: "flip",
+          enabled: true,
+          options: {
+            fallbackPlacements: ["top"],
+          },
         },
-      },
-      {
-        name: "offset",
-        options: {
-          offset: [0, 4],
+        {
+          name: "offset",
+          options: {
+            offset: [0, 4],
+          },
         },
-      },
-      {
-        name: "eventListeners",
-        enabled: !open,
-        options: {
-          scroll: false,
-          resize: false,
+        {
+          name: "eventListeners",
+          enabled: !open,
+          options: {
+            scroll: false,
+            resize: false,
+          },
         },
-      },
-    ],
-  });
+      ],
+    },
+  );
 
   const isValidElement = (object: {} | null | undefined): object is OptionElement<Value> =>
     React.isValidElement(object);

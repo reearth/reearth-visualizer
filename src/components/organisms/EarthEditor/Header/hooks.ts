@@ -23,14 +23,16 @@ export default () => {
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const [{ error, sceneId, currentTeam, currentProject, notification }, setLocalState] =
-    useLocalState(s => ({
-      error: s.error,
-      sceneId: s.sceneId,
-      currentTeam: s.currentTeam,
-      currentProject: s.currentProject,
-      notification: s.notification,
-    }));
+  const [
+    { error, sceneId, currentTeam, currentProject, notification },
+    setLocalState,
+  ] = useLocalState(s => ({
+    error: s.error,
+    sceneId: s.sceneId,
+    currentTeam: s.currentTeam,
+    currentProject: s.currentProject,
+    notification: s.notification,
+  }));
 
   const navigate = useNavigate();
 
@@ -60,8 +62,10 @@ export default () => {
   };
 
   const [validAlias, setValidAlias] = useState(false);
-  const [checkProjectAliasQuery, { loading: validatingAlias, data: checkProjectAliasData }] =
-    useCheckProjectAliasLazyQuery();
+  const [
+    checkProjectAliasQuery,
+    { loading: validatingAlias, data: checkProjectAliasData },
+  ] = useCheckProjectAliasLazyQuery();
 
   const checkProjectAlias = useCallback(
     (alias: string) => {
@@ -115,8 +119,10 @@ export default () => {
     setSearchIndex(!searchIndex);
   }, [searchIndex]);
 
-  const [publishProjectMutation, { loading: publicationModalLoading }] =
-    usePublishProjectMutation();
+  const [
+    publishProjectMutation,
+    { loading: publicationModalLoading },
+  ] = usePublishProjectMutation();
 
   const openPublicationModal = useCallback((p: publishingType) => {
     setPublishing(p);

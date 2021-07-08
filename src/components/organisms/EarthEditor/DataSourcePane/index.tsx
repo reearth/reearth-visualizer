@@ -14,6 +14,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     datasetSchemas,
     handleDatasetSync,
     handleDatasetImport,
+    handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
     onNotify,
@@ -24,6 +25,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       className={className}
       datasetSchemas={datasetSchemas}
       onDatasetSync={handleDatasetSync}
+      onGoogleSheetDatasetImport={handleGoogleSheetDatasetImport}
       onDatasetImport={handleDatasetImport}
       onRemoveDataset={handleRemoveDataset}
       loading={loading}

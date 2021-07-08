@@ -10,18 +10,17 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Asset = {
   id: string;
-  teamId: string;
+  teamId?: string;
   name: string;
-  size: number;
-  url: string;
-  contentType: string;
+  size?: number;
+  url?: string;
+  contentType?: string;
 };
 
 export type Props = {
   asset: Asset;
   selected?: boolean;
   checked?: boolean;
-  isImage?: boolean;
   onCheck?: (checked: boolean) => void;
 };
 
@@ -33,7 +32,8 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) =
         icon={
           checked
             ? "checkCircle"
-            : /\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(asset.url)
+            : asset.url &&
+              /\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(asset.url)
             ? "image"
             : "file"
         }
@@ -43,9 +43,11 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) =
       <ListItemName size="m" customColor>
         {asset.name}
       </ListItemName>
-      <ListItemSize size="m" customColor>
-        {parseFloat((asset.size / 1000).toFixed(2))} KB
-      </ListItemSize>
+      {asset.size && (
+        <ListItemSize size="m" customColor>
+          {parseFloat((asset.size / 1000).toFixed(2))} KB
+        </ListItemSize>
+      )}
     </ListItem>
   );
 };

@@ -31,6 +31,12 @@ export type Props = {
   datasetSchemas?: DatasetSchema[];
   onDatasetSync?: (url: string) => void | Promise<void>;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
+  onGoogleSheetDatasetImport?: (
+    accessToken: string,
+    fileId: string,
+    sheetName: string,
+    datasetSchemaId: string | null,
+  ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
   onNotify?: (type: NotificationType, text: string) => void;
@@ -41,6 +47,7 @@ const DatasetPane: React.FC<Props> = ({
   datasetSchemas,
   onDatasetSync,
   onDatasetImport,
+  onGoogleSheetDatasetImport,
   onRemoveDataset,
   loading,
   onNotify,
@@ -54,6 +61,19 @@ const DatasetPane: React.FC<Props> = ({
     openDatasetModal,
     closeDatasetModal,
   } = useHooks();
+
+  const handleGoogleSheetDatasetAdd = useCallback(
+    async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
+      setDatasetSyncLoading(true);
+      try {
+        await onGoogleSheetDatasetImport?.(accessToken, fileId, sheetName, schemeId);
+      } finally {
+        setDatasetSyncLoading(false);
+      }
+      setDatasetSyncOpen(false);
+    },
+    [onGoogleSheetDatasetImport, setDatasetSyncLoading, setDatasetSyncOpen],
+  );
 
   const handleDatasetAdd = useCallback(
     async (data: string | File, schemeId: string | null) => {
@@ -127,6 +147,7 @@ const DatasetPane: React.FC<Props> = ({
         isVisible={datasetSyncOpen}
         syncLoading={datasetSyncLoading}
         onClose={closeDatasetModal}
+        handleGoogleSheetDatasetAdd={handleGoogleSheetDatasetAdd}
         handleDatasetAdd={handleDatasetAdd}
         onNotify={onNotify}
       />

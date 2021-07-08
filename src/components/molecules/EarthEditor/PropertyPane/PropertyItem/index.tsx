@@ -187,11 +187,8 @@ const PropertyItem: React.FC<Props> = ({
     () =>
       selectedItem
         ? item?.schemaFields.map(f => {
-            const events = mapValues(
-              eventProps,
-              f =>
-                (...args: any[]) =>
-                  f?.(item.schemaGroup, selectedItem.id, ...args),
+            const events = mapValues(eventProps, f => (...args: any[]) =>
+              f?.(item.schemaGroup, selectedItem.id, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);

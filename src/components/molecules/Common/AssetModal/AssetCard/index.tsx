@@ -10,7 +10,9 @@ type CardSize = "small" | "medium" | "large";
 export type Props = {
   className?: string;
   name: string;
-  url: string;
+  url?: string;
+  icon?: string;
+  iconSize?: string;
   cardSize?: CardSize;
   checked?: boolean;
   selected?: boolean;
@@ -21,6 +23,8 @@ const AssetCard: React.FC<Props> = ({
   className,
   name,
   url,
+  icon,
+  iconSize,
   cardSize,
   checked,
   selected,
@@ -34,10 +38,10 @@ const AssetCard: React.FC<Props> = ({
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
       <ImgWrapper cardSize={cardSize}>
-        {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(url) ? (
+        {url && /\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(url) ? (
           <PreviewImage url={url} />
         ) : (
-          <Icon icon="file" />
+          <Icon icon={icon} size={iconSize} />
         )}
       </ImgWrapper>
       <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>

@@ -6,6 +6,7 @@ import {
   useAddLayerGroupFromDatasetSchemaMutation,
   useSyncDatasetMutation,
   useImportDatasetMutation,
+  useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
@@ -92,6 +93,26 @@ export default () => {
     [client, importData, sceneId],
   );
 
+  const [importGoogleSheetData] = useImportGoogleSheetDatasetMutation();
+
+  const handleGoogleSheetDatasetImport = useCallback(
+    async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
+      if (!sceneId) return;
+      await importGoogleSheetData({
+        variables: {
+          accessToken,
+          fileId,
+          sheetName,
+          sceneId,
+          datasetSchemaId: schemeId,
+        },
+      });
+      // re-render
+      await client.resetStore();
+    },
+    [client, importGoogleSheetData, sceneId],
+  );
+
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
     async (schemaId: string) => {
@@ -124,6 +145,7 @@ export default () => {
     datasetSchemas,
     handleDatasetSync,
     handleDatasetImport,
+    handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
     onNotify,

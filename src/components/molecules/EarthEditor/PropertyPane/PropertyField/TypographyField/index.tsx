@@ -51,10 +51,9 @@ const TypographyField: React.FC<Props> = ({
     [updateTypography],
   );
 
-  const handleChangeSize = useCallback(
-    (value: FontSize) => updateTypography({ fontSize: value }),
-    [updateTypography],
-  );
+  const handleChangeSize = useCallback((value: FontSize) => updateTypography({ fontSize: value }), [
+    updateTypography,
+  ]);
 
   const handleChangeColor = useCallback(
     (hex: string | null) => updateTypography({ color: hex ?? undefined }),

@@ -36,6 +36,31 @@ export const SYNC_DATASET = gql`
   }
 `;
 
+export const IMPORT_GOOGLE_SHEET_DATASET = gql`
+  mutation importGoogleSheetDataset(
+    $accessToken: String!
+    $fileId: String!
+    $sheetName: String!
+    $sceneId: ID!
+    $datasetSchemaId: ID
+  ) {
+    importDatasetFromGoogleSheet(
+      input: {
+        accessToken: $accessToken
+        fileId: $fileId
+        sheetName: $sheetName
+        sceneId: $sceneId
+        datasetSchemaId: $datasetSchemaId
+      }
+    ) {
+      datasetSchema {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const IMPORT_DATASET = gql`
   mutation importDataset($file: Upload!, $sceneId: ID!, $datasetSchemaId: ID) {
     importDataset(input: { file: $file, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId }) {

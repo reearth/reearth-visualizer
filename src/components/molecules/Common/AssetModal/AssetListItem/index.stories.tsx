@@ -33,7 +33,6 @@ export const CheckedAndSelected: Story<Props> = args => <Component {...args} />;
 Image.args = {
   checked: false,
   asset: imageAsset,
-  isImage: true,
 };
 
 File.args = {
@@ -44,6 +43,5 @@ File.args = {
 CheckedAndSelected.args = {
   checked: true,
   asset: imageAsset,
-  isImage: true,
   selected: true,
 };

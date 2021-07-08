@@ -23,6 +23,8 @@ import Dataset from "./Icons/datasetIcon.svg";
 import DatasetAdd from "./Icons/datasetAdd.svg";
 import File from "./Icons/fileIcon.svg";
 import PcIcon from "./Icons/pcIcon.svg";
+import GoogleDriveIcon from "./Icons/googleDriveIcon.svg";
+import SheetFileIcon from "./Icons/sheet-file.svg";
 
 // Asset
 import AssetGrid from "./Icons/assetGrid.svg";
@@ -132,6 +134,8 @@ export default {
   dataset: Dataset,
   datasetAdd: DatasetAdd,
   file: File,
+  googleDrive: GoogleDriveIcon,
+  sheetFile: SheetFileIcon,
   computer: PcIcon,
   assetGrid: AssetGrid,
   assetGridSmall: AssetGridSmall,
