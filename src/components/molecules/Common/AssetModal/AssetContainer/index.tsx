@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -13,6 +13,7 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
+import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
 
@@ -58,6 +59,9 @@ const AssetContainer: React.FC<Props> = ({
     handleUploadToAsset,
     handleReverse,
     handleSearch,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    handleRemove,
   } = useHooks({
     assets,
     isMultipleSelectable,
@@ -66,6 +70,7 @@ const AssetContainer: React.FC<Props> = ({
     initialAsset,
     selectAsset,
     selectedAssets,
+    onRemove,
   });
 
   const filterOptions: { key: FilterTypes; label: string }[] = [
@@ -73,13 +78,6 @@ const AssetContainer: React.FC<Props> = ({
     { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
     { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
-
-  const handleRemove = useCallback(() => {
-    if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
-    }
-  }, [onRemove, selectAsset, selectedAssets]);
 
   return (
     <Wrapper>
@@ -103,7 +101,8 @@ const AssetContainer: React.FC<Props> = ({
             icon="bin"
             type="button"
             buttonType="secondary"
-            onClick={handleRemove}
+            disabled={selectedAssets?.length ? false : true}
+            onClick={() => setDeleteModalVisible(true)}
           />
         )}
       </Flex>
@@ -179,6 +178,11 @@ const AssetContainer: React.FC<Props> = ({
         )}
         <Divider margin="0" />
       </AssetWrapper>
+      <AssetDeleteModal
+        isVisible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        handleRemove={handleRemove}
+      />
     </Wrapper>
   );
 };

@@ -22,6 +22,7 @@ export default ({
   initialAsset,
   selectAsset,
   selectedAssets,
+  onRemove,
 }: {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
@@ -30,6 +31,7 @@ export default ({
   initialAsset?: Asset;
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
+  onRemove?: (assetIds: string[]) => void;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
   const [currentSaved, setCurrentSaved] = useState(initialAsset);
@@ -39,6 +41,16 @@ export default ({
   const [filterSelected, selectFilter] = useState<FilterTypes>("time");
 
   const [filteredAssets, setAssets] = useState(assets);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+  const handleRemove = useCallback(() => {
+    if (selectedAssets?.length) {
+      onRemove?.(selectedAssets.map(a => a.id));
+      selectAsset?.([]);
+      setDeleteModalVisible(false);
+    }
+  }, [onRemove, selectAsset, selectedAssets]);
 
   const iconChoice =
     filterSelected === "name"
@@ -129,5 +141,8 @@ export default ({
     handleUploadToAsset,
     handleReverse,
     handleSearch,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    handleRemove,
   };
 };

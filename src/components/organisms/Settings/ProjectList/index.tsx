@@ -26,6 +26,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     createProject,
     selectProject,
     assets,
+    createAssets,
   } = useHooks();
 
   return (
@@ -42,6 +43,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         onClose={handleModalClose}
         onSubmit={createProject}
         assets={assets}
+        createAssets={createAssets}
       />
       {loading && <Loading portal overlay />}
     </SettingPage>

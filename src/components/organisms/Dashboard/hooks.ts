@@ -145,7 +145,9 @@ export default (teamId?: string) => {
       .filter((project): project is Project => !!project);
   }, [team?.projects.nodes]);
 
-  const [createNewProject] = useCreateProjectMutation();
+  const [createNewProject] = useCreateProjectMutation({
+    refetchQueries: ["Project"],
+  });
   const [createScene] = useCreateSceneMutation();
   const createProject = useCallback(
     async (data: { name: string; description: string; imageUrl: string | null }) => {
