@@ -569,6 +569,7 @@ type DatasetField {
 
 interface Layer {
   id: ID!
+  sceneId: ID!
   name: String!
   isVisible: Boolean!
   propertyId: ID
@@ -581,6 +582,7 @@ interface Layer {
   property: Property
   plugin: Plugin
   extension: PluginExtension
+  scenePlugin: ScenePlugin
 }
 
 union Layers = LayerItem | LayerGroup
@@ -595,6 +597,7 @@ enum LayerEncodingFormat {
 
 type LayerItem implements Layer {
   id: ID!
+  sceneId: ID!
   name: String!
   isVisible: Boolean!
   propertyId: ID
@@ -610,10 +613,13 @@ type LayerItem implements Layer {
   extension: PluginExtension @goField(forceResolver: true)
   linkedDataset: Dataset @goField(forceResolver: true)
   merged: MergedLayer @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
 }
 
 type LayerGroup implements Layer {
   id: ID!
+  sceneId: ID!
   name: String!
   isVisible: Boolean!
   propertyId: ID
@@ -631,9 +637,12 @@ type LayerGroup implements Layer {
   extension: PluginExtension @goField(forceResolver: true)
   linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
   layers: [Layer]! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
 }
 
 type Infobox {
+  sceneId: ID!
   layerId: ID!
   propertyId: ID!
   fields: [InfoboxField!]!
@@ -642,10 +651,12 @@ type Infobox {
   property: Property @goField(forceResolver: true)
   linkedDataset: Dataset @goField(forceResolver: true)
   merged: MergedInfobox @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
 }
 
 type InfoboxField {
   id: ID!
+  sceneId: ID!
   layerId: ID!
   propertyId: ID!
   pluginId: PluginID!
@@ -658,29 +669,38 @@ type InfoboxField {
   extension: PluginExtension @goField(forceResolver: true)
   linkedDataset: Dataset @goField(forceResolver: true)
   merged: MergedInfoboxField @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
 }
 
 type MergedLayer {
   originalId: ID!
   parentId: ID
+  sceneID: ID!
   property: MergedProperty
   infobox: MergedInfobox
   original: LayerItem @goField(forceResolver: true)
   parent: LayerGroup @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
 }
 
 type MergedInfobox {
+  sceneID: ID!
   property: MergedProperty
   fields: [MergedInfoboxField!]!
+  scene: Scene @goField(forceResolver: true)
 }
 
 type MergedInfoboxField {
   originalId: ID!
+  sceneID: ID!
   pluginId: PluginID!
   extensionId: PluginExtensionID!
   property: MergedProperty
   plugin: Plugin @goField(forceResolver: true)
   extension: PluginExtension @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
 }
 
 # InputType

@@ -147,7 +147,7 @@ func (c *LayerController) AddInfoboxField(ctx context.Context, ginput *AddInfobo
 	}
 
 	return &AddInfoboxFieldPayload{
-		InfoboxField: toInfoboxField(infoboxField, nil),
+		InfoboxField: toInfoboxField(infoboxField, layer.Scene(), nil),
 		Layer:        toLayer(layer, nil),
 	}, nil
 }
