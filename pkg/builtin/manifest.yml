@@ -117,26 +117,26 @@ extensions:
               type: number
               title: Fog density
               defaultValue: 2.0e-4
-              description: "Set a thickness to the fog. Min: 0 Max: 1"
+              description: 'Set a thickness to the fog. Min: 0 Max: 1'
               min: 0
               max: 1
             - id: brightness_shift
               type: number
               title: Fog Brightness
               defaultValue: 0.03
-              description: "Set brightness of the fog. Min: -1 Max: 1"
+              description: 'Set brightness of the fog. Min: -1 Max: 1'
               min: -1
               max: 1
             - id: hue_shift
               type: number
               title: Fog Hue
-              description: "Set hue of the fog. Min: -1 Max: 1"
+              description: 'Set hue of the fog. Min: -1 Max: 1'
               min: -1
               max: 1
             - id: surturation_shift
               type: number
               title: Fog Saturation
-              description: "Set saturation of the fog. Min: -1 Max: 1"
+              description: 'Set saturation of the fog. Min: -1 Max: 1'
               min: -1
               max: 1
         - id: googleAnalytics
@@ -339,6 +339,23 @@ extensions:
             - id: labelText
               type: string
               title: Label text
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelPosition
+              type: string
+              title: Label position
+              defaultValue: left
+              choices:
+                - key: left
+                  label: Left
+                - key: right
+                  label: Right
+                - key: top
+                  label: Top
+                - key: bottom
+                  label: Bottom
               availableIf:
                 field: label
                 type: bool
@@ -967,9 +984,11 @@ extensions:
             - id: overlayImageW
               type: number
               title: Image width
+              suffix: px
             - id: overlayImageH
               type: number
               title: Image height
+              suffix: px
             - id: overlayBgcolor
               type: string
               title: Background color
