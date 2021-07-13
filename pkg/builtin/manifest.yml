@@ -346,7 +346,7 @@ extensions:
             - id: labelPosition
               type: string
               title: Label position
-              defaultValue: left
+              defaultValue: right
               choices:
                 - key: left
                   label: Left
