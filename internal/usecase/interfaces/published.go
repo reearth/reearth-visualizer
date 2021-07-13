@@ -19,23 +19,10 @@ type ProjectPublishedMetadata struct {
 }
 
 func ProjectPublishedMetadataFrom(prj *project.Project) ProjectPublishedMetadata {
-	title := prj.PublicTitle()
-	description := prj.PublicDescription()
-	image := prj.PublicImage()
-	if title == "" {
-		title = prj.Name()
-	}
-	if description == "" {
-		description = prj.Description()
-	}
-	if image == "" {
-		image = prj.ImageURL().String()
-	}
-
 	return ProjectPublishedMetadata{
-		Title:             title,
-		Description:       description,
-		Image:             image,
+		Title:             prj.PublicTitle(),
+		Description:       prj.PublicDescription(),
+		Image:             prj.PublicImage(),
 		Noindex:           prj.PublicNoIndex(),
 		IsBasicAuthActive: prj.IsBasicAuthActive(),
 		BasicAuthUsername: prj.BasicAuthUsername(),

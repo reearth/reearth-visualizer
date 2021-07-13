@@ -46,7 +46,7 @@ func publicAPI(
 	})
 
 	r.GET("/published/:name", func(c echo.Context) error {
-		name := c.Param("name")
+		name := c.Param("string")
 		if name == "" {
 			return echo.ErrNotFound
 		}
@@ -60,7 +60,7 @@ func publicAPI(
 	})
 
 	r.GET("/published_data/:name", func(c echo.Context) error {
-		name := c.Param("name")
+		name := c.Param("string")
 		if name == "" {
 			return echo.ErrNotFound
 		}
