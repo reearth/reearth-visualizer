@@ -40,7 +40,7 @@ type Auth0Config struct {
 }
 
 type GraphQLConfig struct {
-	ComplexityLimit int `default:"4000"`
+	ComplexityLimit int `default:"6000"`
 }
 
 type PublishedConfig struct {
