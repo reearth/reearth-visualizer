@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"strings"
 
 	"github.com/reearth/reearth-backend/pkg/id"
 )
@@ -87,7 +88,7 @@ func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
 		if h == "lng" {
 			haslng = true
 		}
-		if h != "lng" && h != "lat" {
+		if h != "lng" && h != "lat" && strings.TrimSpace(h) != "" {
 			t := p.getRecord(p.firstline[k]).Type()
 			field, _ := NewSchemaField().NewID().Name(h).Type(t).Build()
 			schemafields = append(schemafields, field)
