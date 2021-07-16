@@ -56,7 +56,7 @@ export const UPDATE_PROJECT = gql`
     $imageUrl: URL
     $publicTitle: String
     $publicDescription: String
-    $publicImage: Upload
+    $publicImage: String
   ) {
     updateProject(
       input: {

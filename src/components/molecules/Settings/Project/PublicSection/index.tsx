@@ -12,12 +12,12 @@ export type Props = {
     id: string;
     publicTitle: string;
     publicDescription: string;
-    publicImageUrl?: string;
+    publicImage?: string;
   };
+  assets?: Asset[];
   updatePublicTitle?: (title: string) => void;
   updatePublicDescription?: (description: string) => void;
   updatePublicImage?: (imageUrl: string | null) => void;
-  assets?: Asset[];
   createAssets?: (files: FileList) => Promise<void>;
 };
 
@@ -56,7 +56,7 @@ const PublicSection: React.FC<Props> = ({
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Thumbnail" })}
           onSubmit={updatePublicImage}
-          imageSrc={currentProject?.publicImageUrl as string}
+          imageSrc={currentProject?.publicImage}
           isImage
           onEditStart={() => openAssetModal()}
           onEditCancel={() => closeAssetModal()}
@@ -69,7 +69,7 @@ const PublicSection: React.FC<Props> = ({
         fileType="image"
         onCreateAsset={createAssets}
         onSelect={updatePublicImage}
-        value={currentProject?.publicImageUrl as string | undefined}
+        value={currentProject?.publicImage}
       />
     </Wrapper>
   );

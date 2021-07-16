@@ -14172,7 +14172,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Upload",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,

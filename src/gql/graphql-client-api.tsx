@@ -1784,7 +1784,7 @@ export type UpdateProjectInput = {
   imageUrl?: Maybe<Scalars['URL']>;
   publicTitle?: Maybe<Scalars['String']>;
   publicDescription?: Maybe<Scalars['String']>;
-  publicImage?: Maybe<Scalars['Upload']>;
+  publicImage?: Maybe<Scalars['String']>;
   publicNoIndex?: Maybe<Scalars['Boolean']>;
   deleteImageUrl?: Maybe<Scalars['Boolean']>;
   deletePublicImage?: Maybe<Scalars['Boolean']>;
@@ -3750,7 +3750,7 @@ export type UpdateProjectMutationVariables = Exact<{
   imageUrl?: Maybe<Scalars['URL']>;
   publicTitle?: Maybe<Scalars['String']>;
   publicDescription?: Maybe<Scalars['String']>;
-  publicImage?: Maybe<Scalars['Upload']>;
+  publicImage?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -7498,7 +7498,7 @@ export type UpdateProjectBasicAuthMutationHookResult = ReturnType<typeof useUpda
 export type UpdateProjectBasicAuthMutationResult = Apollo.MutationResult<UpdateProjectBasicAuthMutation>;
 export type UpdateProjectBasicAuthMutationOptions = Apollo.BaseMutationOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
 export const UpdateProjectDocument = gql`
-    mutation updateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: Upload) {
+    mutation updateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: String) {
   updateProject(
     input: {projectId: $projectId, name: $name, description: $description, imageUrl: $imageUrl, publicTitle: $publicTitle, publicDescription: $publicDescription, publicImage: $publicImage}
   ) {
