@@ -119,7 +119,6 @@ export type Props = {
 const PropertyItem: React.FC<Props> = ({
   className,
   item,
-  title,
   isTemplate,
   mode,
   defaultItemName,
@@ -187,8 +186,11 @@ const PropertyItem: React.FC<Props> = ({
     () =>
       selectedItem
         ? item?.schemaFields.map(f => {
-            const events = mapValues(eventProps, f => (...args: any[]) =>
-              f?.(item.schemaGroup, selectedItem.id, ...args),
+            const events = mapValues(
+              eventProps,
+              f =>
+                (...args: any[]) =>
+                  f?.(item.schemaGroup, selectedItem.id, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
@@ -250,7 +252,7 @@ const PropertyItem: React.FC<Props> = ({
           ? intl.formatMessage({ defaultMessage: "Template" })
           : isTemplate
           ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
-          : title || item?.title
+          : item?.title
       }>
       {isList && !!item && (
         <StyledPropertyList
