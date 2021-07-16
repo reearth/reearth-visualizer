@@ -30,7 +30,7 @@ export default (params: Params) => {
   const teamId = currentTeam?.id;
 
   const { data, refetch } = useAssetsQuery({ variables: { teamId: teamId ?? "" }, skip: !teamId });
-  const assets = data?.assets.nodes.filter(Boolean) as AssetNodes;
+  const assets = data?.assets.nodes.filter(Boolean).reverse() as AssetNodes;
 
   const [createAssetMutation] = useCreateAssetMutation();
 
