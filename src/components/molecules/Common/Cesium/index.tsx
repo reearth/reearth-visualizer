@@ -9,15 +9,18 @@ import {
   Scene,
   CameraFlyTo,
   SkyBox,
+  ScreenSpaceEventHandler,
+  ScreenSpaceEvent,
 } from "resium";
+import { ScreenSpaceEventType } from "cesium";
 
 import { styled } from "@reearth/theme";
 import { SceneProperty, Camera } from "@reearth/util/value";
+import Loading from "@reearth/components/atoms/Loading";
 import PluginPrimitive from "../plugin/PluginPrimitive";
 import PluginWidget from "../plugin/PluginWidget";
 import { Provider } from "./api";
 import useHooks, { Ref as RefType } from "./hooks";
-import Loading from "@reearth/components/atoms/Loading";
 
 export type Layer = {
   id: string;
@@ -118,6 +121,11 @@ const Cesium: React.ForwardRefRenderFunction<Ref, Props> = (
       small={small}
       onClick={selectViewerEntity}>
       <Provider layers={layers} onEntitySelect={selectEntity}>
+        <ScreenSpaceEventHandler useDefault>
+          {/* Disable default events */}
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
+        </ScreenSpaceEventHandler>
         {cameraDest && cameraOrientation && (
           <CameraFlyTo destination={cameraDest} orientation={cameraOrientation} duration={0} once />
         )}
