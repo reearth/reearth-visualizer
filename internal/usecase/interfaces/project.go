@@ -6,7 +6,6 @@ import (
 	"net/url"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
@@ -34,7 +33,7 @@ type UpdateProjectParam struct {
 	ImageURL          *url.URL
 	PublicTitle       *string
 	PublicDescription *string
-	PublicImage       *file.File
+	PublicImage       *string
 	PublicNoIndex     *bool
 	DeletePublicImage bool
 	DeleteImageURL    bool

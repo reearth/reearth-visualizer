@@ -10,9 +10,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/asset"
 	err1 "github.com/reearth/reearth-backend/pkg/error"
-	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
 	"github.com/reearth/reearth-backend/pkg/scene"
@@ -156,11 +154,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		}
 	}
 
-	if p.ImageURL != nil && !p.DeleteImageURL {
-		prj.SetImageURL(p.ImageURL)
-	}
 	if p.DeleteImageURL {
 		prj.SetImageURL(nil)
+	} else if p.ImageURL != nil {
+		prj.SetImageURL(p.ImageURL)
 	}
 
 	if p.Archived != nil {
@@ -187,24 +184,17 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicDescription(*p.PublicDescription)
 	}
 
-	if p.PublicImage != nil && !p.DeletePublicImage {
-		asset, err := i.createAsset(ctx, p.PublicImage, prj.Team())
-		if err != nil {
-			return nil, err
-		}
-		prj.UpdatePublicImage(asset.URL())
+	if p.DeletePublicImage {
+		prj.UpdatePublicImage("")
+	} else if p.PublicImage != nil {
+		prj.UpdatePublicImage(*p.PublicImage)
 	}
 
 	if p.PublicNoIndex != nil {
 		prj.UpdatePublicNoIndex(*p.PublicNoIndex)
 	}
 
-	if p.DeletePublicImage {
-		prj.UpdatePublicImage("")
-	}
-
-	err = i.projectRepo.Save(ctx, prj)
-	if err != nil {
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
 	}
 
@@ -346,42 +336,6 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	tx.Commit()
 	return prj, nil
-}
-
-func (i *Project) createAsset(ctx context.Context, f *file.File, t id.TeamID) (_ *asset.Asset, err error) {
-	tx, err := i.transaction.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	url, err := i.file.UploadAsset(ctx, f)
-	if err != nil {
-		return nil, err
-	}
-
-	asset, err := asset.New().
-		NewID().
-		Team(t).
-		Name(f.Name).
-		Size(f.Size).
-		URL(url.String()).
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
-	err = i.assetRepo.Save(ctx, asset)
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
-	return asset, nil
 }
 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {

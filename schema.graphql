@@ -790,7 +790,7 @@ input UpdateProjectInput {
   imageUrl: URL
   publicTitle: String
   publicDescription: String
-  publicImage: Upload
+  publicImage: String
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean

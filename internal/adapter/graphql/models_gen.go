@@ -1043,21 +1043,21 @@ type UpdateMemberOfTeamPayload struct {
 }
 
 type UpdateProjectInput struct {
-	ProjectID         id.ID           `json:"projectId"`
-	Name              *string         `json:"name"`
-	Description       *string         `json:"description"`
-	Archived          *bool           `json:"archived"`
-	IsBasicAuthActive *bool           `json:"isBasicAuthActive"`
-	BasicAuthUsername *string         `json:"basicAuthUsername"`
-	BasicAuthPassword *string         `json:"basicAuthPassword"`
-	Alias             *string         `json:"alias"`
-	ImageURL          *url.URL        `json:"imageUrl"`
-	PublicTitle       *string         `json:"publicTitle"`
-	PublicDescription *string         `json:"publicDescription"`
-	PublicImage       *graphql.Upload `json:"publicImage"`
-	PublicNoIndex     *bool           `json:"publicNoIndex"`
-	DeleteImageURL    *bool           `json:"deleteImageUrl"`
-	DeletePublicImage *bool           `json:"deletePublicImage"`
+	ProjectID         id.ID    `json:"projectId"`
+	Name              *string  `json:"name"`
+	Description       *string  `json:"description"`
+	Archived          *bool    `json:"archived"`
+	IsBasicAuthActive *bool    `json:"isBasicAuthActive"`
+	BasicAuthUsername *string  `json:"basicAuthUsername"`
+	BasicAuthPassword *string  `json:"basicAuthPassword"`
+	Alias             *string  `json:"alias"`
+	ImageURL          *url.URL `json:"imageUrl"`
+	PublicTitle       *string  `json:"publicTitle"`
+	PublicDescription *string  `json:"publicDescription"`
+	PublicImage       *string  `json:"publicImage"`
+	PublicNoIndex     *bool    `json:"publicNoIndex"`
+	DeleteImageURL    *bool    `json:"deleteImageUrl"`
+	DeletePublicImage *bool    `json:"deletePublicImage"`
 }
 
 type UpdatePropertyItemInput struct {

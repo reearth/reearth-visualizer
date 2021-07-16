@@ -68,7 +68,7 @@ func (c *ProjectController) Update(ctx context.Context, ginput *UpdateProjectInp
 		BasicAuthPassword: ginput.BasicAuthPassword,
 		PublicTitle:       ginput.PublicTitle,
 		PublicDescription: ginput.PublicDescription,
-		PublicImage:       fromFile(ginput.PublicImage),
+		PublicImage:       ginput.PublicImage,
 		PublicNoIndex:     ginput.PublicNoIndex,
 		DeletePublicImage: deletePublicImage,
 		DeleteImageURL:    deleteImageURL,
