@@ -51,7 +51,7 @@ func coordinatesToLatLngHeight(c string) (*property.LatLng, float64, error) {
 
 func coordinatesToLatLngHeightList(c string) ([]property.LatLngHeight, error) {
 	var LatLngHeighList []property.LatLngHeight
-	coords := strings.Split(c, "\n")
+	coords := strings.Fields(c)
 	for _, llh := range coords {
 		reg, err := regexp.Compile(`\s+`)
 		if err != nil {
