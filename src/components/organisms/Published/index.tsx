@@ -12,6 +12,7 @@ export interface Props {
 
 const Published: React.FC<Props> = ({ alias }) => {
   const {
+    error,
     sceneProperty,
     selectedLayerId,
     selectLayer,
@@ -22,7 +23,22 @@ const Published: React.FC<Props> = ({ alias }) => {
     initialLoaded,
   } = useHooks(alias);
 
-  return (
+  return error ? (
+    <div
+      style={{
+        position: "absolute",
+        top: "0",
+        left: "0",
+        right: "0",
+        bottom: "0",
+        background: "#000",
+        color: "#ccc",
+        fontSize: "14px",
+        padding: "10px",
+      }}>
+      Error!
+    </div>
+  ) : (
     <>
       <Earth
         sceneProperty={sceneProperty}

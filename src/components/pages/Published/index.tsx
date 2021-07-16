@@ -1,13 +1,13 @@
 import React from "react";
 
-import PublishedEarth from "@reearth/components/organisms/Published/PublishedEarth";
+import Published from "@reearth/components/organisms/Published";
 
 const PublishedPage: React.FC<{
   path?: string;
   default?: boolean;
   alias?: string;
 }> = ({ alias }) => {
-  return <PublishedEarth alias={alias} />;
+  return <Published alias={alias} />;
 };
 
 export default PublishedPage;

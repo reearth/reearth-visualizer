@@ -1,5 +1,4 @@
 import React from "react";
-import { LocationProvider } from "@reach/router";
 
 import { Provider as ThemeProvider } from "./theme";
 import { Provider as LocalStateProvider } from "./state";
@@ -11,11 +10,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <LocalStateProvider>
-        <LocationProvider>
-          <IntlProvider>
-            <PublishedPage />
-          </IntlProvider>
-        </LocationProvider>
+        <IntlProvider>
+          <PublishedPage />
+        </IntlProvider>
       </LocalStateProvider>
     </ThemeProvider>
   );

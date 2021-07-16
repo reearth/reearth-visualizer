@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import ReactGA from "react-ga";
+
 import { EarthLayer, EarthWidget } from "@reearth/components/molecules/EarthEditor/Earth";
 import { Block } from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
 import { PublishedData } from "./types";
@@ -17,24 +18,18 @@ export default (alias?: string) => {
   const [initialLoaded, setInitialLoaded] = useState(false);
   const [selectedLayerId, changeSelectedLayerId] = useState<string>();
   const [infoBoxVisible, setInfoBoxVisible] = useState(true);
+  const [error, setError] = useState(false);
 
   const selectLayer = useCallback((id?: string) => {
     changeSelectedLayerId(id);
   }, []);
 
-  const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
-    () => ({
-      enableGA: data?.property.googleAnalytics?.enableGA,
-      trackingId: data?.property.googleAnalytics?.trackingId,
-    }),
-    [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics?.trackingId],
-  );
-
   useEffect(() => {
-    if (!googleAnalyticsData.enableGA || !googleAnalyticsData.trackingId) return;
-    ReactGA.initialize(googleAnalyticsData.trackingId);
+    if (!data?.property?.googleAnalytics?.enableGA || !data?.property?.googleAnalytics?.trackingId)
+      return;
+    ReactGA.initialize(data.property.googleAnalytics.trackingId);
     ReactGA.pageview(window.location.pathname);
-  }, [googleAnalyticsData]);
+  }, [data?.property?.googleAnalytics]);
 
   const layers = useMemo<Layer[] | undefined>(
     () =>
@@ -62,7 +57,7 @@ export default (alias?: string) => {
 
   const widgets = useMemo<EarthWidget[] | undefined>(
     () =>
-      data?.widgets.map(w => ({
+      data?.widgets?.map(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
@@ -81,13 +76,25 @@ export default (alias?: string) => {
     setInfoBoxVisible(!!selectedLayerId);
   }, [selectedLayerId]);
 
+  const actualAlias = useMemo(
+    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
+    [alias],
+  );
+
   useEffect(() => {
-    const url = "data.json";
+    const url = dataUrl(actualAlias);
     (async () => {
       try {
-        const d = (await fetch(url, {}).then(r => r.json())) as PublishedData | undefined;
+        const res = await fetch(url, {});
+        if (res.status >= 300) {
+          setError(true);
+          return;
+        }
+
+        const d = (await res.json()) as PublishedData | undefined;
         if (d?.schemaVersion !== 1) {
           // TODO: not supported version
+          setError(true);
           return;
         }
 
@@ -104,15 +111,16 @@ export default (alias?: string) => {
 
         setData(d);
       } catch (e) {
-        // TODO: display error for users
+        setError(true);
         console.error(e);
       } finally {
         setInitialLoaded(true);
       }
     })();
-  }, [alias]);
+  }, [actualAlias]);
 
   return {
+    error,
     sceneProperty: data?.property,
     selectedLayerId,
     selectLayer,
@@ -123,3 +131,10 @@ export default (alias?: string) => {
     initialLoaded,
   };
 };
+
+function dataUrl(alias?: string): string {
+  if (alias && window.location.hostname === "localhost" && window.REEARTH_CONFIG?.api) {
+    return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
+  }
+  return "data.json";
+}
