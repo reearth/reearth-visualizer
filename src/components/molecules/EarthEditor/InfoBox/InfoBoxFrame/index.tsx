@@ -100,7 +100,7 @@ const InfoBox: React.FC<Props> = ({
           direction="column"
           onClick={handleOpen}>
           {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
-          <Text size="m" weight="bold">
+          <Text size="m" weight="bold" color="inherit">
             <TitleText>{title || " "}</TitleText>
           </Text>
           {!isSmallWindow && <StyledIcon icon="arrowDown" size={24} open={open} />}

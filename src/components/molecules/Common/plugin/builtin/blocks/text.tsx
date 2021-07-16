@@ -95,7 +95,7 @@ const TextBlock: BlockComponent<Property, PluginProperty> = ({
         </Template>
       ) : (
         <>
-          {property?.default?.title && <Title>{property.default.title}</Title>}
+          {property?.default?.title && <Title styles={typography}>{property.default.title}</Title>}
           {isEditing ? (
             <InputField
               ref={ref}
@@ -146,7 +146,10 @@ const Wrapper = styled.div<{
   border-radius: 6px;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ styles?: Typography }>`
+  ${({ styles }) => typographyStyles(styles)}
+  padding: 5px;
+  min-height: 15px;
   font-size: 12px;
 `;
 
