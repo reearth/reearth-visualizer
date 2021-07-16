@@ -62,8 +62,13 @@ const Marker: PrimitiveComponent<Property, PluginProperty> = ({
     location,
     height = 0,
     extrude,
-    pointSize = 10,
     style,
+    pointSize = 10,
+    pointColor,
+    label,
+    labelText,
+    labelPosition = "right",
+    labelTypography,
     image = marker,
     imageSize = 1,
     imageHorizontalOrigin: horizontalOrigin,
@@ -80,15 +85,16 @@ const Marker: PrimitiveComponent<Property, PluginProperty> = ({
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
   }, [location?.lat, location?.lng, height]);
 
-  const extrudePoints = useMemo(() => {
-    const location = extrude ? property?.default?.location : undefined;
-    return location
-      ? [
-          Cartesian3.fromDegrees(location.lng, location.lat, height),
-          Cartesian3.fromDegrees(location.lng, location.lat, 0),
-        ]
-      : undefined;
-  }, [location?.lat, location?.lng, height, extrude]);
+  const extrudePoints = useMemo(
+    () =>
+      location && extrude
+        ? [
+            Cartesian3.fromDegrees(location.lng, location.lat, height),
+            Cartesian3.fromDegrees(location.lng, location.lat, 0),
+          ]
+        : undefined,
+    [location?.lat, location?.lng, height, extrude],
+  );
 
   const [canvas, img] = useIcon({
     image,
@@ -101,21 +107,20 @@ const Marker: PrimitiveComponent<Property, PluginProperty> = ({
     shadowOffsetY,
   });
 
-  const labelPos = property?.default?.labelPosition ?? "left";
-  const labelLeft = labelPos === "left";
-  const labelRight = labelPos === "right";
-  const labelTop = labelPos === "top";
-  const labelBottom = labelPos === "bottom";
+  const labelLeft = labelPosition === "left";
+  const labelRight = labelPosition === "right";
+  const labelTop = labelPosition === "top";
+  const labelBottom = labelPosition === "bottom";
   const labelHorizontal = labelLeft || labelRight;
   const labelVertical = labelTop || labelBottom;
 
   const pixelOffset = useMemo(() => {
-    const padding = 10;
+    const padding = 15;
     const x = (img?.width && style == "image" ? img.width * imageSize : pointSize) / 2 + padding;
     const y = (img?.height && style == "image" ? img.height * imageSize : pointSize) / 2 + padding;
     return new Cartesian2(
-      labelHorizontal ? x * (labelRight ? -1 : 1) : 0,
-      labelVertical ? y * (labelBottom ? -1 : 1) : 0,
+      labelHorizontal ? x * (labelLeft ? -1 : 1) : 0,
+      labelVertical ? y * (labelTop ? -1 : 1) : 0,
     );
   }, [img, imageSize, pointSize, labelHorizontal, labelRight, labelVertical, labelBottom, style]);
 
@@ -143,8 +148,8 @@ const Marker: PrimitiveComponent<Property, PluginProperty> = ({
         </Entity>
       )}
       <Entity id={id} position={pos} onClick={onClick}>
-        {property?.default?.style === "point" ? (
-          <PointGraphics pixelSize={pointSize} color={toColor(property?.default?.pointColor)} />
+        {style === "point" ? (
+          <PointGraphics pixelSize={pointSize} color={toColor(pointColor)} />
         ) : (
           <BillboardGraphics
             image={canvas}
@@ -152,26 +157,26 @@ const Marker: PrimitiveComponent<Property, PluginProperty> = ({
             verticalOrigin={vo(verticalOrigin)}
           />
         )}
-        {property?.default?.label && (
+        {label && (
           <LabelGraphics
             horizontalOrigin={
-              labelLeft
+              labelRight
                 ? HorizontalOrigin.LEFT
-                : labelRight
+                : labelLeft
                 ? HorizontalOrigin.RIGHT
                 : HorizontalOrigin.CENTER
             }
             verticalOrigin={
-              labelTop
+              labelBottom
                 ? VerticalOrigin.TOP
-                : labelBottom
+                : labelTop
                 ? VerticalOrigin.BOTTOM
                 : VerticalOrigin.CENTER
             }
             pixelOffset={pixelOffset}
-            fillColor={toColor(property?.default?.labelTypography?.color)}
-            font={toCSSFont(property?.default?.labelTypography, { fontSize: 30 })}
-            text={property?.default?.labelText}
+            fillColor={toColor(labelTypography?.color)}
+            font={toCSSFont(labelTypography, { fontSize: 30 })}
+            text={labelText}
           />
         )}
       </Entity>
