@@ -9,7 +9,7 @@ export type Icons = keyof typeof Icons;
 
 export type Props = {
   className?: string;
-  icon?: string | Icons;
+  icon?: string;
   size?: string | number;
   alt?: string;
   color?: string;
@@ -19,21 +19,24 @@ export type Props = {
 const Icon: React.FC<Props> = ({ className, icon, color, size, alt, onClick }) => {
   if (!icon) return null;
 
-  if (typeof icon === "string") {
-    const LocalIconComponent = Icons[icon as Icons];
-    if (LocalIconComponent) {
-      return (
-        <IconComponent
-          className={className}
-          src={LocalIconComponent}
-          color={color}
-          size={size}
-          onClick={onClick}
-          alt={alt}
-        />
-      );
-    }
+  const LocalIconComponent = Icons[icon as Icons];
+  if (LocalIconComponent) {
+    return (
+      <IconComponent
+        className={className}
+        src={LocalIconComponent}
+        color={color}
+        size={size}
+        onClick={onClick}
+        alt={alt}
+      />
+    );
   }
+
+  if (icon.split(".").pop() !== "svg") {
+    return <ImageIconComponent src={icon} size={size} />;
+  }
+
   return (
     <IconComponent
       className={className}
@@ -65,6 +68,11 @@ const IconComponent = styled(ReactSVGComponent)<{ color?: string; size?: string 
     width: ${props => (typeof props.size === "number" ? `${props.size}px` : props.size)};
     height: ${props => (typeof props.size === "number" ? `${props.size}px` : props.size)};
   }
+`;
+
+const ImageIconComponent = styled.img<{ size?: string | number }>`
+  width: ${({ size }) => size + "px"};
+  height: ${({ size }) => size + "px"};
 `;
 
 export default Icon;

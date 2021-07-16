@@ -25,9 +25,10 @@ const Markdown: React.FC<Props> = ({
   onClick,
   onDoubleClick,
 }) => {
-  const dark = useMemo(() => (backgroundColor ? isDark(backgroundColor) : false), [
-    backgroundColor,
-  ]);
+  const dark = useMemo(
+    () => (backgroundColor ? isDark(backgroundColor) : false),
+    [backgroundColor],
+  );
 
   return (
     <Wrapper
@@ -75,7 +76,7 @@ const Wrapper = styled.div<{ styles?: Typography; dark: boolean }>`
     border-top-color: ${({ dark }) => color(dark ? "#272c32" : "#c6cbd1", 0.1, dark)};
   }
 
-  table tr:nth-child(2n) {
+  table tr:nth-of-type(2n) {
     background-color: ${({ dark }) => color(dark ? "#161b22" : "#f6f8fa", 0.1, dark)};
   }
 

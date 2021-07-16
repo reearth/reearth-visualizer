@@ -61,6 +61,11 @@ const property: Property = {
       buttonPosition: "bottomleft",
       buttonStyle: "texticon",
     },
+    {
+      id: "emptyurl",
+      buttonType: "link",
+      buttonTitle: "Empty URL",
+    },
   ],
   menu: [
     {
