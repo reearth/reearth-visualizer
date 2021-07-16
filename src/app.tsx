@@ -20,6 +20,7 @@ import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import ProjectSettings from "@reearth/components/pages/Settings/Project";
 import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList";
 import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
+import PublicSettings from "@reearth/components/pages/Settings/Project/Public";
 import DatasetSettings from "@reearth/components/pages/Settings/Project/Dataset";
 import PluginSettings from "@reearth/components/pages/Settings/Project/Plugin";
 import Preview from "./components/pages/Preview";
@@ -62,6 +63,7 @@ const App: React.FC = () => {
                       <SettingsProjectList path="/settings/workspace/:teamId/projects" />
                       <AssetSettings path="/settings/workspace/:teamId/asset" />
                       <ProjectSettings path="/settings/project/:projectId" />
+                      <PublicSettings path="/settings/project/:projectId/public" />
                       <DatasetSettings path="/settings/project/:projectId/dataset" />
                       <PluginSettings path="/settings/project/:projectId/plugins" />
                       <NotFound default />

@@ -20,7 +20,7 @@ export type LocalState = {
     projects?: any;
     personal?: boolean;
   };
-  currentProject?: { id: string; name: string; sceneId?: string };
+  currentProject?: { id: string; name: string; sceneId?: string; isArchived?: boolean };
   notification?: { type: "error" | "warning" | "info"; text: string };
 };
 

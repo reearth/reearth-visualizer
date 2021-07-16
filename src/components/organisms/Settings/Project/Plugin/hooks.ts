@@ -1,8 +1,7 @@
 import { useLocalState } from "@reearth/state";
 
 export default () => {
-  const [{ currentTeam, currentProject }] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
+  const [{ currentProject }] = useLocalState(s => ({
     currentProject: s.currentProject,
   }));
 
@@ -24,5 +23,5 @@ export default () => {
     },
   ];
 
-  return { currentTeam, currentProject, plugins: samplePlugins };
+  return { currentProject, plugins: samplePlugins };
 };

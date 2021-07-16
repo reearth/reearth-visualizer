@@ -7,6 +7,7 @@ import {
   useImportDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
+import { useApolloClient } from "@apollo/client";
 
 type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 
@@ -25,7 +26,7 @@ export default (projectId: string) => {
 
   const sceneId = sceneData?.scene?.id;
 
-  const { data, refetch } = useDatasetSchemasQuery({
+  const { data } = useDatasetSchemasQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
@@ -33,25 +34,47 @@ export default (projectId: string) => {
   const nodes = data?.scene?.datasetSchemas.nodes ?? [];
 
   const datasetSchemas = nodes.filter(Boolean) as DatasetSchemas;
+  const client = useApolloClient();
 
-  const [importDatasetMutation] = useImportDatasetMutation();
-
-  const importDataset = useCallback(
-    (file: FileList) => {
-      sceneId && importDatasetMutation({ variables: { file, sceneId } });
-    },
-    [sceneId, importDatasetMutation],
-  );
-
-  const [removeDatasetSchemaMutation] = useRemoveDatasetMutation();
-
-  const removeDatasetSchema = useCallback(
+  const [removeDatasetSchema] = useRemoveDatasetMutation();
+  const handleRemoveDataset = useCallback(
     async (schemaId: string) => {
-      await removeDatasetSchemaMutation({ variables: { schemaId } });
-      await refetch();
+      await removeDatasetSchema({
+        variables: {
+          schemaId,
+          force: true,
+        },
+      });
+      // re-render
+      await client.resetStore();
     },
-    [removeDatasetSchemaMutation, refetch],
+    [client, removeDatasetSchema],
   );
 
-  return { currentTeam, currentProject, datasetSchemas, importDataset, removeDatasetSchema };
+  // Add
+  const [importData] = useImportDatasetMutation();
+
+  const handleDatasetImport = useCallback(
+    async (file: File, schemeId: string | null) => {
+      if (!sceneId) return;
+      await importData({
+        variables: {
+          file,
+          sceneId,
+          datasetSchemaId: schemeId,
+        },
+      });
+      // re-render
+      await client.resetStore();
+    },
+    [client, importData, sceneId],
+  );
+
+  return {
+    currentTeam,
+    currentProject,
+    datasetSchemas,
+    handleDatasetImport,
+    handleRemoveDataset,
+  };
 };

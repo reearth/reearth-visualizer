@@ -12,7 +12,7 @@ const ArchivedMessage: React.FC = () => {
         <Description>
           {intl.formatMessage({
             defaultMessage:
-              "Most project settings are hidden for archived repositories. This project mus be unarchived to make changes to them.",
+              "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.",
           })}
         </Description>
       </Section>

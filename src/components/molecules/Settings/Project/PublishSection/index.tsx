@@ -34,7 +34,6 @@ const PublishSection: React.FC<Props> = ({
 }) => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
 
-  // const [customUrlState, setCustomUrlState] = useState("");
   const [showDModal, setDModal] = useState(false);
   const intl = useIntl();
   const theme = useTheme();
@@ -76,10 +75,14 @@ const PublishSection: React.FC<Props> = ({
             {intl.formatMessage({ defaultMessage: "Site name" })}
           </StyledText>
           <Text size="s">
-            {intl.formatMessage({
-              defaultMessage:
-                "By default, once published your project will be accessible via the URL below.",
-            })}
+            {alias
+              ? intl.formatMessage({
+                  defaultMessage: "Access your project, copy or edit the URL below.",
+                })
+              : intl.formatMessage({
+                  defaultMessage:
+                    "Once your project is published from the editor page the URL details will be shown here.",
+                })}
           </Text>
           {alias && (
             <StyledItem

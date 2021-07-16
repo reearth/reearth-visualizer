@@ -29,7 +29,7 @@ const DangerSection: React.FC<Props> = ({ team, deleteTeam }) => {
           action={
             <Button
               large
-              text={intl.formatMessage({ defaultMessage: "Delete this workspace" })}
+              text={intl.formatMessage({ defaultMessage: "Delete workspace" })}
               buttonType="danger"
               onClick={() => setIsOpen(true)}
             />

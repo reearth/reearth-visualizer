@@ -36,6 +36,15 @@ src:
               You haven't uploaded any image assets yet. Click the upload button
               above and select an image from your computer.
             '3863945965': Upload file
+          AssetDeleteModal:
+            '2868137144': >-
+              Please make sure no selected assets are in use. This cannot be
+              undone.
+            '3528672691': Cancel
+            '3645414921': Delete
+            '3911655130': >-
+              You are about to delete one or more assets from the current
+              workspace.
         Header:
           '248888005': Account Settings
           '2355459246': Logout
@@ -61,10 +70,6 @@ src:
           '2523193532': Workspace Name
           '3528672691': Cancel
           '4120989039': Create
-        plugin:
-          builtin:
-            blocks:
-              '463005216': Double click here to write.
       Dashboard:
         '499824730': >-
           You have no projects in your workspace. Click the button above in the
@@ -80,6 +85,7 @@ src:
           '2446409280': No Dataset is here
           '3786358103': Other Source
           DatasetModal:
+            '142299937': Google Drive
             '293739158': Add Dataset
             '489401013': sending...
             '2280307158': 'Sorry, that service is unavailable at this time.'
@@ -88,22 +94,21 @@ src:
             '3528672691': Cancel
             '3980428931': Upload CSV file
             '4064435443': 'Supports CSV, JSON, GIS files'
-        Earth:
-          FovSlider:
-            '3017293479': Narrow
-            '3291465140': Angle
-            '3723856417': Wide
+            Gdrive:
+              '734499794': Connect with Google Drive
+              '1359825936': 'Re:Earth supports uploading Google Sheets and CSV files.'
         ExportPane:
           '3590336714': Export
           '3977973714': Export type
+        FovSlider:
+          '3017293479': Narrow
+          '3291465140': Angle
+          '3723856417': Wide
         Header:
           '1458938618': Update
           '1547167026': Publish
           '2237014112': Unpublish
           '3637715635': Preview
-        InfoBox:
-          InfoBox:
-            '3037025019': Move mouse here and click "+" to add content
         LayerMultipleSelectionModal:
           '1115770113': Save
           '2221959784': Selectable Layers
@@ -222,8 +227,11 @@ src:
       Settings:
         Account:
           AccountSection:
+            '819371392': Light theme
             '1049124733': Service language
+            '1658146436': Color theme
             '1766832403': Email address
+            '1840107345': Dark theme
             '2237029987': Password
             '3198092477': Account
           PasswordModal:
@@ -245,15 +253,16 @@ src:
           '165162143': Assets
           '541301752': Workspace List
           '2057458630': Plugins
+          '3135366329': Public
           '3198092477': Account
           '3336263640': Project List
           '3833270271': Dataset
         Project:
           ArchivedMessage:
+            '1250737101': >-
+              Most project settings are hidden when the project is archived.
+              Please unarchive the project to view and edit these settings.
             '1354606874': Notice
-            '4112013314': >-
-              Most project settings are hidden for archived repositories. This
-              project mus be unarchived to make changes to them.
           BasicAuthSection:
             '256145410': Enable basic authorization
             '2237029987': Password
@@ -287,10 +296,8 @@ src:
             '3084110538': I am sure I want to delete this project.
             '3221869035': I am sure I want to archive this project.
             '3314090612': Archive project
+            '3536297264': 'Once you delete a project, there is no going back. Please be sure.'
             '3557712431': Delete project
-            '3640758950': >-
-              Once you delete a project, there is no going back. Please be
-              certain.
             '3912825707': 'Once archived, you can unarchive the repository at any time.'
             '4078297214': Mark this project as archived and read-only
             '4235968010': Unarchive this project to become editable again.
@@ -325,12 +332,21 @@ src:
             '1513791786': Project Info
             '2015762758': Thumbnail
             '3374163063': Description
+          PublicSection:
+            '1124600214': Title
+            '2015762758': Thumbnail
+            '2966836163': >-
+              (These fields will be used for OGP as well as metadata for the
+              public project)
+            '3374163063': Description
+            '3825437586': Public Info
           PublishSection:
-            '784802132': Site settings
-            '1485704502': >-
-              By default, once published your project will be accessible via the
-              URL below.
-            '3572249962': Site name
+            '2934907641': >-
+              Once your project is published from the Editor page the URL
+              details will be shown here.
+            '3057121245': Domain Settings
+            '3352828776': 'Access your project, copy or edit the URL below.'
+            '3505773623': Default Domain
           StatusSection:
             '2025719264': This project is published with search engine indexing disabled.
             '3306960224': This project is not published.
@@ -385,6 +401,12 @@ src:
             '3828443189': New Workspace
       TopPage:
         '1405865627': Sign in
+      Visualizer:
+        Block:
+          Text:
+            '463005216': Double click here to write.
+        Infobox:
+          '3037025019': Move mouse here and click "+" to add content
     organisms:
       EarthEditor:
         LeftMenu:
@@ -406,6 +428,8 @@ src:
             '3833270271': Dataset
           Plugin:
             '2057458630': Plugins
+          Public:
+            '3135366329': Public
         ProjectList:
           '3336263640': Project List
         Workspace:

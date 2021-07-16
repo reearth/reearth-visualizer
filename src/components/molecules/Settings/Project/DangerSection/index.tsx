@@ -48,7 +48,13 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
           }
         />
         <Divider /> */}
-        <Field header={intl.formatMessage({ defaultMessage: "Archive this project" })} />
+        <Field
+          header={
+            project?.isArchived
+              ? intl.formatMessage({ defaultMessage: "Unarchive this project" })
+              : intl.formatMessage({ defaultMessage: "Archive this project" })
+          }
+        />
         <Field
           body={
             project?.isArchived
@@ -64,8 +70,8 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
               large
               text={
                 project?.isArchived
-                  ? intl.formatMessage({ defaultMessage: "Unarchive this project" })
-                  : intl.formatMessage({ defaultMessage: "Archive this project" })
+                  ? intl.formatMessage({ defaultMessage: "Unarchive project" })
+                  : intl.formatMessage({ defaultMessage: "Archive project" })
               }
               onClick={() => openModal(project?.isArchived ? "unarchive" : "archive")}
               buttonType="danger"
@@ -76,12 +82,12 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
         <Field header={intl.formatMessage({ defaultMessage: "Delete this project" })} />
         <Field
           body={intl.formatMessage({
-            defaultMessage: `Once you delete a project, there is no going back. Please be certain.`,
+            defaultMessage: `Once you delete a project, there is no going back. Please be sure.`,
           })}
           action={
             <Button
               large
-              text={intl.formatMessage({ defaultMessage: "Delete this project" })}
+              text={intl.formatMessage({ defaultMessage: "Delete project" })}
               buttonType="danger"
               onClick={() => openModal("delete")}
             />

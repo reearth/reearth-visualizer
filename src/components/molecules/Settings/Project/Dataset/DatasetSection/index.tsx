@@ -11,17 +11,17 @@ import DatasetList, {
 
 type Props = {
   datasetSchemas: Item[];
-  importDataset: (file: FileList) => void;
   removeDatasetSchema: (schemaId: string) => void;
+  onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
 };
 
 const DatasetSection: React.FC<Props> = ({
   datasetSchemas,
-  importDataset,
   removeDatasetSchema,
+  onDatasetImport,
 }) => {
   const intl = useIntl();
-  const handleFileSelect = useFileInput(files => importDataset?.(files), {
+  const handleFileSelect = useFileInput(files => onDatasetImport?.(files[0], null), {
     multiple: false,
     accept: "text/csv",
   });
