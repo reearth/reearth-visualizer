@@ -56,13 +56,10 @@ const Storytelling: WidgetComponent<Property, PluginProperty> = ({ property }) =
       property?.stories
         ?.map(story => {
           const title = layers.find(l => l?.id === story.layer)?.title;
-          if (title) {
-            return {
-              ...story,
-              title,
-            };
-          }
-          return undefined;
+          return {
+            ...story,
+            title: title || story.title,
+          };
         })
         .filter((s): s is Story => !!s)
     );
