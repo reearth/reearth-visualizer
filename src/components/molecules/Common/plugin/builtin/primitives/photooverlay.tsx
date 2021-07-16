@@ -99,7 +99,7 @@ const PhotoOverlay: PrimitiveComponent<Property, PluginProperty> = ({
   useEffect(() => {
     const c = viewer?.camera;
 
-    if (prevMode > 0 && mode === 0 && c && prevCamera.current) {
+    if (prevMode > 0 && mode === 0 && c && prevCamera.current && isSelected) {
       c.flyTo({
         destination: Cartesian3.fromDegrees(
           prevCamera.current.lng,
