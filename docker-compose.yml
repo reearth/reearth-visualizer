@@ -4,17 +4,16 @@ services:
     image: reearth/reearth:nightly
     environment:
       REEARTH_DB: mongodb://reearth-mongo
-      # REEARTH_AUTH0_AUDIENCE:
-      # REEARTH_AUTH0_CLIENTID:
-      # REEARTH_AUTH0_CLIENTSECRET:
-      # REEARTH_AUTH0_DOMAIN:
-      # REEARTH_AUTH0_WEBCLIENTID:
+    env_file:
+      - .env
     ports:
       - 8080:8080
     links:
       - reearth-mongo
     depends_on:
       - reearth-mongo
+    volumes:
+      - ./data:/reearth/data
   reearth-mongo:
     image: mongo:4.2.0-bionic
     ports:

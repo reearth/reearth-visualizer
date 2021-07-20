@@ -1,4 +1,5 @@
 /mongo
+/data
 /web
 /.env
-/.env.local
+/.env.*
