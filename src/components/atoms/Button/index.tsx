@@ -1,6 +1,6 @@
 import React from "react";
 import Icon from "@reearth/components/atoms/Icon";
-
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -58,7 +58,15 @@ const Button: React.FC<Props> = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}>
       {!iconRight && WrappedIcon}
-      <Text large={large}>{text}</Text>
+      {large ? (
+        <Text size="m" weight="bold" customColor>
+          {text}
+        </Text>
+      ) : (
+        <Text size="xs" customColor>
+          {text}
+        </Text>
+      )}
       {children}
       {iconRight && WrappedIcon}
     </StyledButton>
@@ -135,12 +143,6 @@ const StyledButton = styled.button<ButtonProps>`
         ? theme.buttonPrimary.disabled
         : theme.buttonPrimary.colorHover};
   }
-`;
-
-const Text = styled.p<{ large?: boolean }>`
-  font-size: ${({ large }) => (large ? "16px" : "12px")};
-  font-weight: ${({ large }) => (large ? "bold" : "regular")};
-  line-height: ${({ large }) => (large ? "16px" : "12px")};
 `;
 
 const IconWrapper = styled.span<{ text: boolean; iconRight?: boolean; large?: boolean }>`

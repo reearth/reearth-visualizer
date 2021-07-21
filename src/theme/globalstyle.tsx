@@ -12,7 +12,8 @@ export const styles = css`
     width: 100%;
     height: 100%;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystem, sans-serif;
+    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
+      sans-serif;
     background-color: #000;
     color: #fff;
   }
@@ -22,6 +23,8 @@ export const styles = css`
   input {
     margin: 0;
     padding: 0;
+    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
+      sans-serif;
   }
 
   button {
@@ -34,7 +37,8 @@ export const styles = css`
   }
 
   textarea {
-    font-family: -apple-system, BlinkMacSystem, sans-serif;
+    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
+      sans-serif;
   }
 
   /* Split Pane Styles */

@@ -1,6 +1,7 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
+import Text from "@reearth/components/atoms/Text";
 import {
   MenuListItemLabel,
   MenuList,
@@ -16,11 +17,16 @@ type Props = {
 
 const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
   const intl = useIntl();
+  const theme = useTheme();
 
   return (
     <Wrapper>
       <Dropdown
-        label={<MenuTitle>{currentProject?.name}</MenuTitle>}
+        label={
+          <Text size="m" weight="bold" color={theme.colors.text.strong}>
+            {currentProject?.name}
+          </Text>
+        }
         noHoverStyle
         centered
         hasIcon
@@ -77,11 +83,6 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
 const Wrapper = styled.div`
   min-width: 200px;
   height: 100%;
-`;
-
-const MenuTitle = styled.p`
-  color: ${props => props.theme.main.strongText};
-  padding: 8px;
 `;
 
 const DropdownInner = styled.div`

@@ -6,6 +6,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { Team as TeamType } from "../WorkspaceList";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes } from "@reearth/theme/metrics";
+import Flex from "@reearth/components/atoms/Flex";
 
 export type Team = TeamType;
 
@@ -22,12 +23,14 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
   const theme = useTheme();
 
   return (
-    <Wrapper className={className} team={team} onClick={() => onSelect?.(team)}>
-      <TopWrapper>
-        <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
-          {team.name ? team.name : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
-        </Text>
-      </TopWrapper>
+    <Wrapper
+      className={className}
+      direction="column"
+      justify="space-between"
+      onClick={() => onSelect?.(team)}>
+      <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
+        {team.name ? team.name : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
+      </Text>
       {personal ? (
         <Text size="m" color={theme.colors.text.weak}>
           {intl.formatMessage({
@@ -36,34 +39,34 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
           })}
         </Text>
       ) : (
-        <BottomWrapper>
-          <Text size="m" color={theme.main.text}>
+        <Flex>
+          <Text
+            size="m"
+            color={theme.main.text}
+            otherProperties={{ margin: `${metricsSizes["s"]}px 0` }}>
             {intl.formatMessage({ defaultMessage: "Members:" })}
           </Text>
-          <StyledList>
+          <Flex wrap="wrap">
             {teamMembers.map(member => (
-              <StyledListItem key={member.userId}>
+              <StyledItem key={member.userId}>
                 <Text size="m" color={theme.main.text}>
                   {member?.user?.name}
                 </Text>
-              </StyledListItem>
+              </StyledItem>
             ))}
-          </StyledList>
-        </BottomWrapper>
+          </Flex>
+        </Flex>
       )}
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div<{ team: Team }>`
+const Wrapper = styled(Flex)`
   background: ${props => props.theme.colors.bg[3]};
   box-sizing: border-box;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
   padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   height: 240px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   cursor: pointer;
 
   &:hover {
@@ -71,24 +74,7 @@ const Wrapper = styled.div<{ team: Team }>`
   }
 `;
 
-const TopWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const BottomWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const StyledList = styled.ul`
-  margin: 0;
-  padding: 0;
-`;
-
-const StyledListItem = styled.li`
-  list-style-type: none;
+const StyledItem = styled.div`
   margin: ${metricsSizes["s"]}px;
 `;
 

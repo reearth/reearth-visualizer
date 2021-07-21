@@ -1,9 +1,7 @@
 import { styled } from "./styled";
 
 const type = {
-  base: '"SF Pro Text", -apple-system, BlinkMacSystem, sans-serif',
-  bold: "Avenir-Black, -apple-system, BlinkMacSystem, sans-serif",
-  emphasis: "HelveticaNeue-Italic, -apple-system, BlinkMacSystem, sans-serif",
+  base: '"Noto Sans", "hiragino sans", "hiragino kaku gothic proN", -apple-system, BlinkMacSystem, sans-serif',
 };
 
 const fontSizes = {
@@ -13,11 +11,6 @@ const fontSizes = {
   s: 14,
   xs: 12,
   "2xs": 10,
-};
-
-const paragraphLineHeights = {
-  m: 24,
-  s: 21,
 };
 
 const weight = {
@@ -62,7 +55,7 @@ export const MRegular = styled.p`
 `;
 
 export const MParagraph = styled(MRegular)`
-  line-height: ${paragraphLineHeights.m}px;
+  line-height: 1.5;
 `;
 
 export const SBold = styled.p`
@@ -78,7 +71,7 @@ export const SRegular = styled.p`
 `;
 
 export const SParagraph = styled(SRegular)`
-  line-height: ${paragraphLineHeights.s}px;
+  line-height: 1.5;
 `;
 
 export const XSBold = styled.p`
