@@ -10,12 +10,7 @@ export default function useAuth() {
     isAuthenticated: !!window.REEARTH_E2E_ACCESS_TOKEN || (isAuthenticated && !error),
     isLoading,
     error: error?.message,
-    login: () =>
-      loginWithRedirect({
-        redirectUri: `${window.location.pathname === "/" ? "" : window.location.pathname}${
-          window.location.search
-        }`,
-      }),
+    login: () => loginWithRedirect(),
     logout: () =>
       logout({
         returnTo: error
