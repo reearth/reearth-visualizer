@@ -88,7 +88,7 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
 	if err != nil || prj == nil {
-		return "", err1.ErrNotFound
+		return "", err
 	}
 
 	md := interfaces.ProjectPublishedMetadataFrom(prj)
