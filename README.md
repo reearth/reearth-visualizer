@@ -57,7 +57,7 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 
 ## Usage
 
-_For examples and more, please refer to the [Documentation](https://docs.reearth.io/)_
+For examples and more, please refer to the [Documentation](https://docs.reearth.io/)
 
 ## Environment
 
