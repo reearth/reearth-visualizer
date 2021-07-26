@@ -22,13 +22,13 @@
 [![backend-end test](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main.yml)
 
   <p align="center">
-    <a href="https://docs.reearth.io/oss">Website</a>
+    <a href="https://community.reearth.io">Website</a>
     ·
-    <a href="https://docs.reearth.io/ja/developer-guide">Documentation</a>
+    <a href="https://docs.reearth.io/developer-guide">Documentation</a>
     ·
     <a href="https://github.com/reearth/reearth/issues">Issues</a>
     ·
-    <a href="https://github.com/reearth/reearth/discussions">Discussion</a>
+    <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
   </p>
 </p>
 
