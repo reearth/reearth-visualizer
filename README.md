@@ -24,7 +24,7 @@
   <p align="center">
     <a href="https://docs.reearth.io/oss">Website</a>
     ·
-    <a href="https://docs.reearth.io/oss/introduction">Documentation</a>
+    <a href="https://docs.reearth.io/ja/developer-guide">Documentation</a>
     ·
     <a href="https://github.com/reearth/reearth/issues">Issues</a>
     ·
