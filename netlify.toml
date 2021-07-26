@@ -1,6 +1,6 @@
 [build]
-  publish = "storybook-static"
-  command = "yarn storybook:build"
+  publish = "build"
+  command = "yarn build && (cd build && curl -O https://test.reearth.dev/reearth_config.json)"
 
 [[redirects]]
   from = "/*"
