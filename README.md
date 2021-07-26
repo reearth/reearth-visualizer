@@ -102,5 +102,5 @@ Distributed under the Apache-2.0 License. See `LICENSE` for more information.
 
 ## Contact
 
-- Re:Earth core team: info@reearth.dev
+- Re:Earth core team: community@reearth.io
 - Project link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
