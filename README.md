@@ -75,7 +75,7 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 
 | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
 | --------- | --------- | --------- | --------- | --------- | --------- |
-| 91+ | 57+| 58+| 11+ | last 2 versions] | last 2 versions
+| 91+ | 57+| 58+| 11+ | last 2 versions | last 2 versions
 
 ## Roadmap
 
