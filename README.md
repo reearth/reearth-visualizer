@@ -59,6 +59,10 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 
 For examples and more, please refer to the [Documentation](https://docs.reearth.io/)
 
+## Cloud Service
+
+We also maintain a cloud service [here](https://reearth.io/), which can help you start your Re:Earth journey quicker.
+
 ## Environment
 
 ### OS
