@@ -55,9 +55,9 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 * [MongoDB](https://www.mongodb.com/)
 * [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
 
-## Usage
+## Getting Started
 
-For examples and more, please refer to the [Documentation](https://docs.reearth.io/)
+Refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/getting-started)
 
 ## Cloud Service
 
@@ -90,7 +90,7 @@ For additional help, check [discussions](https://github.com/reearth/reearth/disc
 
 ### Contribution Guide
 
-Read our [contributing guide](https://docs.reearth.io/oss/introduction/contributing-guide) to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
+Read our [contributing guide](https://docs.reearth.io/developer-guide/contribution) to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
 
 ### Code of Conduct
 
