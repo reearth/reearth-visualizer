@@ -25,6 +25,7 @@ scalar PluginExtensionID
 scalar PropertySchemaID
 scalar PropertySchemaFieldID
 scalar TranslatedString
+scalar DatasetSchemaFieldID
 
 type LatLng {
   lat: Float!
@@ -995,6 +996,7 @@ input AddLayerGroupInput {
   index: Int
   linkedDatasetSchemaID: ID
   name: String
+  representativeFieldId: DatasetSchemaFieldID
 }
 
 input RemoveLayerInput {

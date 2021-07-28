@@ -5531,6 +5531,7 @@ scalar PluginExtensionID
 scalar PropertySchemaID
 scalar PropertySchemaFieldID
 scalar TranslatedString
+scalar DatasetSchemaFieldID
 
 type LatLng {
   lat: Float!
@@ -6501,6 +6502,7 @@ input AddLayerGroupInput {
   index: Int
   linkedDatasetSchemaID: ID
   name: String
+  representativeFieldId: DatasetSchemaFieldID
 }
 
 input RemoveLayerInput {
@@ -28983,6 +28985,14 @@ func (ec *executionContext) unmarshalInputAddLayerGroupInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "representativeFieldId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("representativeFieldId"))
+			it.RepresentativeFieldID, err = ec.unmarshalODatasetSchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐDatasetSchemaFieldID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -39642,6 +39652,21 @@ func (ec *executionContext) marshalODatasetSchemaField2ᚖgithubᚗcomᚋreearth
 		return graphql.Null
 	}
 	return ec._DatasetSchemaField(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODatasetSchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐDatasetSchemaFieldID(ctx context.Context, v interface{}) (*id.DatasetSchemaFieldID, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql1.UnmarshalDatasetSchemaFieldID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODatasetSchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐDatasetSchemaFieldID(ctx context.Context, sel ast.SelectionSet, v *id.DatasetSchemaFieldID) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql1.MarshalDatasetSchemaFieldID(*v)
 }
 
 func (ec *executionContext) unmarshalODateTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {

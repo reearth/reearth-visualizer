@@ -31,6 +31,8 @@ models:
     model: github.com/reearth/reearth-backend/internal/adapter/graphql.PropertySchemaID
   PropertySchemaFieldID:
     model: github.com/reearth/reearth-backend/internal/adapter/graphql.PropertySchemaFieldID
+  DatasetSchemaFieldID:
+    model: github.com/reearth/reearth-backend/internal/adapter/graphql.DatasetSchemaFieldID
   TranslatedString:
     model: github.com/reearth/reearth-backend/internal/adapter/graphql.Map
   Lang:

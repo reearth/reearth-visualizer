@@ -129,6 +129,19 @@ func UnmarshalPropertySchemaFieldID(v interface{}) (id.PropertySchemaFieldID, er
 	return id.PropertySchemaFieldID(""), errors.New("invalid ID")
 }
 
+func MarshalDatasetSchemaFieldID(t id.DatasetSchemaFieldID) graphql1.Marshaler {
+	return graphql1.WriterFunc(func(w io.Writer) {
+		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+	})
+}
+
+func UnmarshalDatasetSchemaFieldID(v interface{}) (id.DatasetSchemaFieldID, error) {
+	if tmpStr, ok := v.(string); ok {
+		return id.DatasetSchemaFieldIDFrom(tmpStr)
+	}
+	return id.NewDatasetSchemaFieldID(), errors.New("invalid ID")
+}
+
 func MarshalMap(val map[string]string) graphql1.Marshaler {
 	return graphql1.WriterFunc(func(w io.Writer) {
 		_ = json.NewEncoder(w).Encode(val)

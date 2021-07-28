@@ -56,6 +56,7 @@ func (c *LayerController) AddGroup(ctx context.Context, ginput *AddLayerGroupInp
 		Index:                 ginput.Index,
 		Name:                  refToString(ginput.Name),
 		LinkedDatasetSchemaID: id.DatasetSchemaIDFromRefID(ginput.LinkedDatasetSchemaID),
+		RepresentativeFieldId: ginput.RepresentativeFieldID,
 	}, operator)
 	if err != nil {
 		return nil, err

@@ -76,12 +76,13 @@ type AddInfoboxFieldPayload struct {
 }
 
 type AddLayerGroupInput struct {
-	ParentLayerID         id.ID                 `json:"parentLayerId"`
-	PluginID              *id.PluginID          `json:"pluginId"`
-	ExtensionID           *id.PluginExtensionID `json:"extensionId"`
-	Index                 *int                  `json:"index"`
-	LinkedDatasetSchemaID *id.ID                `json:"linkedDatasetSchemaID"`
-	Name                  *string               `json:"name"`
+	ParentLayerID         id.ID                    `json:"parentLayerId"`
+	PluginID              *id.PluginID             `json:"pluginId"`
+	ExtensionID           *id.PluginExtensionID    `json:"extensionId"`
+	Index                 *int                     `json:"index"`
+	LinkedDatasetSchemaID *id.ID                   `json:"linkedDatasetSchemaID"`
+	Name                  *string                  `json:"name"`
+	RepresentativeFieldID *id.DatasetSchemaFieldID `json:"representativeFieldId"`
 }
 
 type AddLayerGroupPayload struct {
