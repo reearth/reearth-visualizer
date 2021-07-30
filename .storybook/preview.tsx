@@ -30,14 +30,14 @@ export const parameters = {
 
 export const decorators = [
   (storyFn: () => ReactElement) => (
-    <ThemeProvider>
-      <LocalStateProvider>
-        <ApolloProvider client={mockClient}>
+    <ApolloProvider client={mockClient}>
+      <ThemeProvider>
+        <LocalStateProvider>
           <IntlProvider>
             <DndProvider>{storyFn()}</DndProvider>
           </IntlProvider>
-        </ApolloProvider>
-      </LocalStateProvider>
-    </ThemeProvider>
+        </LocalStateProvider>
+      </ThemeProvider>
+    </ApolloProvider>
   ),
 ];
