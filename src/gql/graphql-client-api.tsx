@@ -13,14 +13,15 @@ export type Scalars = {
   Float: number;
   Any: any;
   Cursor: string;
+  DatasetSchemaFieldID: string;
   DateTime: Date;
   FileSize: number;
-  Lang: any;
+  Lang: string;
   PluginExtensionID: string;
   PluginID: string;
   PropertySchemaFieldID: string;
   PropertySchemaID: string;
-  TranslatedString: any;
+  TranslatedString: { [lang in string]?: string } | null;
   URL: string;
   Upload: any;
 };
@@ -82,6 +83,7 @@ export type AddLayerGroupInput = {
   index?: Maybe<Scalars['Int']>;
   linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  representativeFieldId?: Maybe<Scalars['DatasetSchemaFieldID']>;
 };
 
 export type AddLayerGroupPayload = {
@@ -314,6 +316,7 @@ export type DatasetSchemaField = Node & {
   schema?: Maybe<DatasetSchema>;
   ref?: Maybe<DatasetSchema>;
 };
+
 
 
 export type DeleteMeInput = {
