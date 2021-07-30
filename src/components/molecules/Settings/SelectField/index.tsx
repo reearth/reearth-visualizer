@@ -30,7 +30,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           <OptionCheck size="xs">
             {key === selectedKey && <Icon icon="check" size={14} />}
           </OptionCheck>
-          {hasIcon && <OptionIcon size="xs">{icon && <img src={icon} />}</OptionIcon>}
+          {hasIcon && <OptionIcon size="xs">{icon && <Icon icon={icon} size={14} />}</OptionIcon>}
           {label}
         </Option>
       ))}

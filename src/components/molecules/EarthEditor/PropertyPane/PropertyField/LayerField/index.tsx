@@ -79,9 +79,9 @@ const Title = styled.div<{ selected?: boolean; linked?: boolean; overridden?: bo
   color: ${({ selected, overridden, linked, theme }) =>
     selected
       ? overridden
-        ? theme.colors.danger.main
+        ? theme.main.danger
         : linked
-        ? theme.colors.primary.main
+        ? theme.main.accent
         : theme.main.text
       : theme.main.paleBg};
 `;

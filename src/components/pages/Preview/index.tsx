@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 
+import { PublishedAppProvider as ThemeProvider } from "../../../theme";
 import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
 import { useLocalState } from "@reearth/state";
@@ -17,9 +18,11 @@ const PreviewPage: React.FC<Props> = ({ sceneId }) => {
   }, [sceneId, setLocalState]);
 
   return sceneId2 ? (
-    <AuthenticationRequiredPage>
-      <CanvasArea isBuilt />
-    </AuthenticationRequiredPage>
+    <ThemeProvider>
+      <AuthenticationRequiredPage>
+        <CanvasArea isBuilt />
+      </AuthenticationRequiredPage>
+    </ThemeProvider>
   ) : null;
 };
 

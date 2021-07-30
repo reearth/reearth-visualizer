@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
-import { styled, colors, useTheme } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 
 import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
@@ -93,7 +93,7 @@ const DatasetModal: React.FC<Props> = ({
               subtext={intl.formatMessage({ defaultMessage: "Supports CSV, JSON, GIS files" })}
               margin={56}
               border="dashed"
-              borderColor={colors.outline.weak}
+              borderColor={theme.main.border}
               onClick={onSelectCsvFile}
             />
             {googleApiKey && (
@@ -104,7 +104,7 @@ const DatasetModal: React.FC<Props> = ({
                 text={intl.formatMessage({ defaultMessage: "Google Drive" })}
                 margin={56}
                 border="dashed"
-                borderColor={colors.outline.weak}
+                borderColor={theme.main.border}
                 onClick={handleClick}
               />
             )}
@@ -161,7 +161,7 @@ const ConnectSection = styled.div`
     // margin-right: 40px;
     &:hover {
       cursor: pointer;
-      background: ${props => props.theme.colors.bg[3]};
+      background: ${props => props.theme.main.lighterBg};
     }
   }
 `;

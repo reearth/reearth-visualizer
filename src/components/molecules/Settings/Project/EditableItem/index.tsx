@@ -3,7 +3,7 @@ import Field from "@reearth/components/molecules/Settings/Field";
 import TextBox from "@reearth/components/atoms/TextBox";
 import SelectField from "@reearth/components/molecules/Settings/SelectField";
 import Icon from "@reearth/components/atoms/Icon";
-import { styled, colors } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 
@@ -133,9 +133,8 @@ const StyledIcon = styled(Icon)`
   padding: 0;
   margin-left: ${metricsSizes["l"]}px;
   cursor: pointer;
-
   &:hover {
-    color: ${colors.text.strong};
+    color: ${({ theme }) => theme.main.strongText};
   }
 `;
 

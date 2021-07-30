@@ -1,6 +1,5 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import Icon from "@reearth/components/atoms/Icon";
 import { useClickAway } from "react-use";
 
@@ -90,7 +89,7 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
     ${props =>
       !props.noHover &&
       `
-      background-color: ${colors.bg[5]};
+      background-color: ${props.theme.main.bg};
       `}
     }
     `;

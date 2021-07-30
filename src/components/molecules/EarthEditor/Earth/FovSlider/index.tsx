@@ -67,7 +67,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 220px;
-  background: #1e1e1e;
+  background: ${({ theme }) => theme.slider.background};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   padding: 10px;

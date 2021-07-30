@@ -88,12 +88,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isOverridden && isLinkable && (
             <>
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
-                <Text size="xs" color={theme.colors.primary.main}>
+                <Text size="xs" color={theme.main.accent}>
                   {linkedDataset
                     ? intl.formatMessage({ defaultMessage: "Linkable data" })
                     : intl.formatMessage({ defaultMessage: "Link to dataset" })}
                 </Text>
-                <Icon icon="arrowRight" size={16} color={theme.colors.primary.main} />
+                <Icon icon="arrowRight" size={16} color={theme.main.accent} />
               </Link>
               <Divider margin="0" />
             </>
@@ -101,7 +101,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isLinkable && ((!isOverridden && !isLinked) || (!linkedDataset && isTemplate)) && (
             <Text
               size="xs"
-              color={theme.colors.text.weak}
+              color={theme.main.weak}
               otherProperties={{ padding: `${metricsSizes["s"]}px` }}>
               {intl.formatMessage({ defaultMessage: "No linked data" })}
             </Text>
@@ -109,7 +109,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isLinkable && isLinked && !isOverridden && !isTemplate && (
             <Text
               size="xs"
-              color={theme.colors.text.strong}
+              color={theme.main.strongText}
               otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
               {intl.formatMessage({ defaultMessage: "From" })}
             </Text>
@@ -118,14 +118,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
             {!isLinkable && linkedFieldName ? (
               <LinkedDataDetailContent>
                 {isOverridden && (
-                  <Text size="xs" color={theme.colors.functional.attention}>
+                  <Text size="xs" color={theme.main.warning}>
                     {intl.formatMessage({ defaultMessage: "Overridden" })}
                   </Text>
                 )}
                 {((isLinked && !linkedDataset && !isTemplate) || isOverridden) && (
-                  <Text
-                    size="xs"
-                    color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
+                  <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.accent}>
                     {intl.formatMessage({ defaultMessage: "Parent." })}
                     {linkedFieldName}
                   </Text>
@@ -134,7 +132,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                   <>
                     <Text
                       size="xs"
-                      color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}
+                      color={isOverridden ? theme.main.weak : theme.main.accent}
                       otherProperties={{
                         textDecoration: "underline",
                         overflow: "hidden",
@@ -143,9 +141,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                       }}>
                       {selectedDatasetPath.join("/")}
                     </Text>
-                    <Text
-                      size="xs"
-                      color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
+                    <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.accent}>
                       {selectedDatasetPath[selectedDatasetPath.length - 1]}
                     </Text>
                   </>
@@ -155,12 +151,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
           </LinkedData>
           <Divider margin="0" />
           <Link align="center" justify="space-between" onClick={clear}>
-            <Text size="xs" color={theme.colors.danger.main}>
+            <Text size="xs" color={theme.main.danger}>
               {isOverridden
                 ? intl.formatMessage({ defaultMessage: "Reset this field" })
                 : intl.formatMessage({ defaultMessage: "Clear this field" })}
             </Text>
-            <Icon icon="fieldClear" size={16} color={theme.colors.danger.main} />
+            <Icon icon="fieldClear" size={16} color={theme.main.danger} />
           </Link>
         </FirstSlidePage>
         {!fixedDatasetSchemaId && (
@@ -188,7 +184,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.bg["3"]};
+  background-color: ${({ theme }) => theme.main.lighterBg};
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   width: 200px;
@@ -219,7 +215,6 @@ const LinkedData = styled.div`
 
 const LinkedDataDetailContent = styled.div`
   width: 135px;
-
   * {
     margin: 4px 0;
   }

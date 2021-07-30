@@ -12,7 +12,7 @@ import { publishingType } from "@reearth/components/molecules/EarthEditor/Header
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import InputField from "./InputField";
 
-import { styled, useTheme, colors } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import useHooks from "./hooks";
 
@@ -309,7 +309,7 @@ const OptionsToggle = styled.div`
   display: flex;
   align-items: center;
   margin: ${`0 0 ${metricsSizes["m"]}px 0`};
-  color: ${colors.text.main};
+  color: ${({ theme }) => theme.main.text};
   cursor: pointer;
   user-select: none;
 `;

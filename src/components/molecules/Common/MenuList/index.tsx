@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "@reach/router";
-import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
+import { styled, useTheme } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 
@@ -14,10 +13,11 @@ export const MenuListItemLabel: React.FC<{
   color?: string;
   center?: boolean;
 }> = ({ icon, text, linkTo, onClick, disabled, color, center }) => {
+  const theme = useTheme();
   const content = (
     <MenuItemWrapper
       size="m"
-      color={(disabled && colors.text.weak) || color || colors.text.main}
+      color={(disabled && theme.properties.text) || color || theme.main.text}
       onClick={onClick}
       disabled={disabled}>
       {icon ? <StyledIcon icon={icon} size={20} color={color} disabled={disabled} /> : null}
@@ -44,7 +44,7 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
     ${props =>
       !props.noHover &&
       `
-      background-color: ${colors.bg[5]};
+      background-color: ${props.theme.main.bg};
     `}
   }
 `;
@@ -76,6 +76,6 @@ const StyledLinkButton = styled(Link)`
 
 const StyledIcon = styled(Icon)<{ color?: string; disabled?: boolean }>`
   margin-right: 10px;
-  color: ${({ disabled, color }) =>
-    disabled ? colors.text.weak : color ? color : colors.text.main};
+  color: ${({ disabled, color, theme }) =>
+    disabled ? theme.properties.text : color ? color : theme.main.text};
 `;

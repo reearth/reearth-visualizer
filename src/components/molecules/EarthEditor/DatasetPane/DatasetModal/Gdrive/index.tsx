@@ -81,7 +81,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
           <>
             <Text
               size="m"
-              color={theme.colors.text.weak}
+              color={theme.infoBox.weakText}
               otherProperties={{ marginBottom: metricsSizes["m"] + "px" }}>
               {intl.formatMessage({
                 defaultMessage: "Re:Earth supports uploading Google Sheets and CSV files.",

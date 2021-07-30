@@ -19,10 +19,10 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
 
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const handleRemoveDatasetSchema = useCallback(() => removeDatasetSchema?.(id), [
-    id,
-    removeDatasetSchema,
-  ]);
+  const handleRemoveDatasetSchema = useCallback(
+    () => removeDatasetSchema?.(id),
+    [id, removeDatasetSchema],
+  );
 
   const onClose = useCallback(() => {
     setIsVisible(false);
@@ -84,7 +84,7 @@ const Wrapper = styled.div`
 const StyledIcon = styled(Icon)`
   width: 25px;
   height: 25px;
-  color: ${props => props.theme.colors.text.main};
+  color: ${props => props.theme.main.text};
 `;
 
 const Preview = styled.div`

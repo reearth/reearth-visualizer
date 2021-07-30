@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "@reach/router";
 
-import { styled, metrics, css, colors } from "@reearth/theme";
+import { styled, metrics, css } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 
 // Components
@@ -143,17 +143,15 @@ const StyledIcon = styled(Icon)`
   margin-right: 8px;
   border-radius: 5px;
   padding: 5px;
-  color: ${colors.text.main};
-
+  color: ${props => props.theme.main.text};
   &:hover {
-    background: ${colors.bg[5]};
+    background: ${props => props.theme.main.bg};
   }
 `;
 
 const StyledLink = styled(Link)`
   color: ${props => props.theme.main.text};
   text-decoration: none;
-
   &:hover {
     text-decoration: none;
   }

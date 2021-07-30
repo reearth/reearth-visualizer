@@ -4,7 +4,6 @@ import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
 
 import { styled, css } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export interface Props {
@@ -52,12 +51,11 @@ const StyledText = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   user-select: none;
   transition: background-color 0.1s ease;
   color: ${({ disabled, theme, selected }) =>
-    disabled ? theme.text.pale : selected ? theme.colors.text.strong : theme.text.default};
-  background-color: ${({ selected }) => (selected ? colors.primary.main : null)};
+    disabled ? theme.text.pale : selected ? theme.main.strongText : theme.text.default};
+  background-color: ${({ selected, theme }) => (selected ? theme.main.accent : null)};
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-
   ${({ disabled, selected }) =>
     disabled || selected
       ? null

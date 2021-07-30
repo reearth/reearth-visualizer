@@ -38,7 +38,7 @@ const PropertyListItem: React.ForwardRefRenderFunction<HTMLDivElement, Props> = 
 const Wrapper = styled.div<{ dropType?: DropType; selected?: boolean }>`
   display: flex;
   padding: 10px;
-  background: ${({ selected, theme }) => (selected ? theme.colors.brand.main : "transparent")};
+  background: ${({ selected, theme }) => (selected ? theme.main.select : "transparent")};
   color: ${({ selected, theme }) =>
     selected ? theme.properties.titleText : theme.properties.contentsText};
   align-items: center;
@@ -46,20 +46,11 @@ const Wrapper = styled.div<{ dropType?: DropType; selected?: boolean }>`
   user-select: none;
   border: 2px solid transparent;
   border-top-color: ${({ dropType, selected, theme }) =>
-    dropType === "top"
-      ? theme.colors.danger.main
-      : selected
-      ? theme.layers.selectedLayer
-      : "transparent"};
+    dropType === "top" ? theme.main.danger : selected ? theme.layers.selectedLayer : "transparent"};
   border-bottom-color: ${({ dropType, selected, theme }) =>
-    dropType === "bottom"
-      ? theme.colors.functional.error
-      : selected
-      ? theme.colors.brand.main
-      : "transparent"};
-
+    dropType === "bottom" ? theme.main.alert : selected ? theme.main.select : "transparent"};
   &:hover {
-    background: ${({ selected, theme }) => (selected ? null : theme.colors.bg[4])};
+    background: ${({ selected, theme }) => (selected ? null : theme.main.paleBg)};
   }
 `;
 

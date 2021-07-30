@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { styled, useTheme } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
 import Button from "@reearth/components/atoms/Button";
@@ -104,7 +103,7 @@ const AddMemberModal: React.FC<Props> = ({
           <UserListItem key={userId}>
             <UserIdentity>
               <Text size="m">{userName}</Text>
-              <Text size="s" color={theme.colors.text.weak}>
+              <Text size="s" color={theme.infoBox.weakText}>
                 {userEmail}
               </Text>
             </UserIdentity>
@@ -128,7 +127,6 @@ const UserList = styled.ul`
 const UserListItem = styled.li`
   display: flex;
   align-items: center;
-
   &:not(:first-of-type) {
     margin-top: 8px;
   }
@@ -141,7 +139,7 @@ const UserIdentity = styled.div`
 `;
 
 const RemoveIcon = styled(Icon)`
-  color: ${colors.danger.main};
+  color: ${({ theme }) => theme.main.danger};
   cursor: pointer;
 `;
 

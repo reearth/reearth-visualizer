@@ -71,7 +71,7 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.main.lighterBg};
 `;
 
 export default ProfileSection;

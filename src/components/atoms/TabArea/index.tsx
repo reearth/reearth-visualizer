@@ -104,7 +104,7 @@ const IconWrapper = styled.div<{ selected?: boolean; expanded?: boolean }>`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.colors.text.strong};
+  color: ${props => props.theme.main.strongText};
 `;
 
 const IconTitle = styled(Text)`

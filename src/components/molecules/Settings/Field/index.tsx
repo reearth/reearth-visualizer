@@ -1,6 +1,6 @@
 import React from "react";
 
-import { styled, colors } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -35,8 +35,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   justify-items: center;
-  color: ${colors.text.main};
-
+  color: ${props => props.theme.main.text};
   &:not(:last-child) {
     margin-bottom: ${metricsSizes["2xl"]}px;
   }

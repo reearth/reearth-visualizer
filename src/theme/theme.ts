@@ -7,9 +7,9 @@ export const commonTheme = {
   colors,
   metrics: metricsSizes,
   publishStatus: {
-    published: colors.primary.main,
-    building: colors.outline.main,
-    unpublished: colors.secondary.weakest,
+    published: colors.dark.primary.main,
+    building: colors.dark.outline.main,
+    unpublished: colors.dark.secondary.weakest,
   },
 };
 
@@ -20,8 +20,10 @@ export type Theme = {
     accent: string;
     alert: string;
     bg: string;
+    lighterBg: string;
     paleBg: string;
     deepBg: string;
+    deepestBg: string;
     border: string;
     highlighted: string;
     transparentBg: string;
@@ -29,6 +31,9 @@ export type Theme = {
     text: string;
     strongText: string;
     warning: string;
+    danger: string;
+    weak: string;
+    select: string;
   };
   dashboard: {
     bg: string;
@@ -115,12 +120,15 @@ export type Theme = {
       bottomBorder: string;
       bg: string;
       color: string;
+      hoverBg: string;
     };
   };
   projectCell: {
     bg: string;
     border: string;
     shadow: string;
+    text: string;
+    divider: string;
     title: string;
     description: string;
   };
@@ -146,6 +154,7 @@ export type Theme = {
     text: string;
   };
   slider: {
+    background: string;
     border: string;
     handle: string;
     track: string;
@@ -171,6 +180,7 @@ export type Theme = {
     textColor: string;
     selectedTextColor: string;
     disableTextColor: string;
+    bottomBorder: string;
   };
   toggleButton: {
     bg: string;
@@ -198,6 +208,9 @@ export type Theme = {
     bg: string;
     textColor: string;
     shadowColor: string;
+  };
+  other: {
+    black: string;
   };
   pluginList: {
     bg: string;

@@ -17,14 +17,14 @@ export const Selected = () => (
 export const Linked = () => (
   <FontFamilyField
     value="Comic Sans MS"
-    color={colors.primary.main}
+    color={colors.dark.primary.main}
     onChange={action("onchange")}
   />
 );
 export const Overridden = () => (
   <FontFamilyField
     value="Tahoma"
-    color={colors.functional.attention}
+    color={colors.dark.functional.attention}
     onChange={action("onchange")}
   />
 );

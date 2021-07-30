@@ -52,13 +52,13 @@ const StyledResizable = styled.div<Pick<Props, "direction" | "size">>`
 const Wrapper = styled.div`
   width: calc(100% - 6px);
   padding: 6px 0;
-  background: ${props => props.theme.colors.bg[1]};
+  background: ${props => props.theme.main.deepestBg};
 `;
 
 const Gutter = styled.div`
   background: #000000;
   user-select: none;
-  background: ${props => props.theme.colors.bg[1]};
+  background: ${props => props.theme.main.deepestBg};
 `;
 
 const HorizontalGutter = styled(Gutter)`

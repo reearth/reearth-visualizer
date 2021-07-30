@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Provider as ThemeProvider } from "./theme";
+import { PublishedAppProvider as ThemeProvider } from "./theme";
 import { Provider as LocalStateProvider } from "./state";
 import { PublishedProvider as IntlProvider } from "./locale";
 

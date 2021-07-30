@@ -74,7 +74,7 @@ const StyledLink = styled(Link)`
 
   &:hover {
     text-decoration: none;
-    background: ${props => props.theme.colors.bg[5]};
+    background: ${props => props.theme.main.bg};
   }
 `;
 

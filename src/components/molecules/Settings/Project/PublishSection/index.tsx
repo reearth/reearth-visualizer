@@ -110,7 +110,7 @@ const PublishSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.main.lighterBg};
   position: relative;
 `;
 

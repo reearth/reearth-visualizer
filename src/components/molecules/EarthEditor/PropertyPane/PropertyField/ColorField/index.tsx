@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Button from "@reearth/components/atoms/Button";
-import { styled, css, colors, useTheme } from "@reearth/theme";
+import { styled, css, useTheme } from "@reearth/theme";
 import "./styles.css";
 
 import tinycolor, { ColorInput } from "tinycolor2";
@@ -288,20 +288,21 @@ const layerStyle = css`
   height: 100%;
 `;
 
-const check = ` 
-  linear-gradient(
-    45deg, 
-    ${colors.outline.main} 25%, 
-    transparent 25%, 
-    transparent 75%, 
-    ${colors.outline.main} 25%, 
-    ${colors.outline.main}
-  ) 
+const check = (color: string) => ` 
+linear-gradient(
+  45deg, 
+  ${color} 25%, 
+  transparent 25%, 
+  transparent 75%, 
+  ${color} 25%, 
+  ${color} 
+) 
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${({ theme }) => theme.colors.outline.weak};
-  background-image: ${check}, ${check};
+  background-color: ${({ theme }) => theme.main.border};
+  background-image: ${({ theme }) => check(theme.toggleButton.bg)},
+    ${({ theme }) => check(theme.toggleButton.bg)};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;
   ${layerStyle};
@@ -353,22 +354,15 @@ const Input = styled.input<{ type?: string; overridden?: boolean; linked?: boole
   background: ${props => props.theme.properties.bg};
   box-sizing: border-box;
   color: ${({ linked, overridden, theme }) =>
-    overridden
-      ? colors.functional.attention
-      : linked
-      ? colors.primary.main
-      : theme.properties.contentsText};
+    overridden ? theme.main.warning : linked ? theme.main.accent : theme.properties.contentsText};
   outline: none;
   border: 1px solid ${({ theme }) => theme.properties.border};
-
   &:focus {
     border-color: ${({ theme }) => theme.properties.focusBorder};
   }
-
   ::placeholder {
     color: ${({ theme }) => theme.properties.text};
   }
-
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;

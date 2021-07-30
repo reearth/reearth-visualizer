@@ -93,7 +93,7 @@ const ContentButton = styled.div`
 
   &:hover {
     border-radius: 6px;
-    border: solid 0.5px ${props => props.theme.infoBox.accent2};
+    border: solid 0.5px ${props => props.theme.main.select};
   }
 `;
 

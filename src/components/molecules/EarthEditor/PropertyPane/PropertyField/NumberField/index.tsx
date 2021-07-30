@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { styled, metrics } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
@@ -128,13 +127,12 @@ const FormWrapper = styled(Flex)<FormProps>`
   padding-right: ${metricsSizes.s}px;
   color: ${({ inactive, linked, overridden, theme }) =>
     overridden
-      ? colors.functional.attention
+      ? theme.main.warning
       : linked
-      ? colors.primary.main
+      ? theme.main.accent
       : inactive
-      ? colors.outline.main
+      ? theme.text.pale
       : theme.properties.contentsText};
-
   &:focus-within {
     border-color: ${({ theme }) => theme.properties.contentsText};
   }
@@ -146,9 +144,7 @@ const StyledInput = styled.input`
   background: ${props => props.theme.properties.bg};
   outline: none;
   color: inherit;
-
   width: 100%;
-
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;

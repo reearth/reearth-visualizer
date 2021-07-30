@@ -22,9 +22,9 @@ export const textColor = ({
   overridden?: boolean;
 }) =>
   overridden
-    ? colors.functional.attention
+    ? colors.dark.functional.attention
     : linked
-    ? colors.primary.main
+    ? colors.dark.primary.main
     : disabled
-    ? colors.outline.main
+    ? colors.dark.outline.main
     : undefined;

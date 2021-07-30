@@ -130,7 +130,7 @@ const LongBannerButton = styled(Flex)`
   height: 70px;
 
   &:hover {
-    background: ${props => props.theme.colors.bg[5]};
+    background: ${props => props.theme.main.bg};
     color: ${props => props.theme.main.strongText};
   }
 
@@ -147,7 +147,7 @@ const BannerButton = styled(Flex)`
   height: 114px;
 
   &:hover {
-    background: ${props => props.theme.colors.bg[5]};
+    background: ${props => props.theme.main.bg};
     color: ${props => props.theme.main.strongText};
   }
 
@@ -158,14 +158,14 @@ const BannerButton = styled(Flex)`
 
 const GreenBannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.colors.brand.weak};
+  background: ${props => props.theme.main.highlighted};
   color: ${props => props.theme.main.text};
   padding: 120px auto;
   width: 48%;
   height: 114px;
 
   &:hover {
-    background: ${props => props.theme.colors.brand.main};
+    background: ${props => props.theme.main.highlighted};
     color: ${props => props.theme.main.strongText};
   }
 

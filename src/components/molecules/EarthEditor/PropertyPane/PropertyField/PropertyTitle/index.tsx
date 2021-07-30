@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from "react";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
-import { styled, colors, css } from "@reearth/theme";
+import { styled, css } from "@reearth/theme";
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import fonts from "@reearth/theme/fonts";
@@ -112,8 +112,8 @@ const Title = styled.div<{ isLinked?: boolean; isOverridden?: boolean }>`
   display: flex;
   height: 100%;
   font-size: ${fonts.sizes.xs}px;
-  color: ${({ isLinked, isOverridden }) =>
-    isOverridden ? colors.functional.attention : isLinked ? colors.primary.main : colors.text.main};
+  color: ${({ isLinked, isOverridden, theme }) =>
+    isOverridden ? theme.main.warning : isLinked ? theme.main.accent : theme.main.text};
   align-items: center;
   cursor: pointer;
 `;

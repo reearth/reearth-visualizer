@@ -141,7 +141,7 @@ const Wrapper = styled.div<{
         : isHovered
         ? theme.infoBox.border
         : isSelected
-        ? theme.infoBox.accent2
+        ? theme.main.select
         : theme.infoBox.weakText};
   border-radius: 6px;
 `;
@@ -187,7 +187,7 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.infoBox.accent2 : theme.infoBox.weakText};
+    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
@@ -195,7 +195,7 @@ const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
     props.isHovered
       ? props.theme.infoBox.border
       : props.isSelected
-      ? props.theme.infoBox.accent2
+      ? props.theme.main.select
       : props.theme.infoBox.weakText};
 `;
 

@@ -149,7 +149,7 @@ const PropertyPane: React.FC<Props> = ({
             <GroupWrapper
               className={className}
               name={intl.formatMessage({ defaultMessage: "Dataset" })}>
-              <Text size="xs" color={theme.colors.text.strong}>
+              <Text size="xs" color={theme.main.strongText}>
                 {props.title}
               </Text>
             </GroupWrapper>

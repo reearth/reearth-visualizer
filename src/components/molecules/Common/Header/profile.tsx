@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useIntl } from "react-intl";
 import Icon from "@reearth/components/atoms/Icon";
 
-import { styled, colors, useTheme } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import {
   MenuList,
@@ -35,10 +35,10 @@ const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, curre
         </Avatar>
       </LabelLeft>
       <LabelRight>
-        <LabelUserName size="m" weight="bold" color={theme.colors.text.strong}>
+        <LabelUserName size="m" weight="bold" color={theme.main.strongText}>
           {user.name}
         </LabelUserName>
-        <LabelTeamName size="xs" color={theme.colors.text.strong}>
+        <LabelTeamName size="xs" color={theme.main.strongText}>
           {currentTeam.name}
         </LabelTeamName>
       </LabelRight>
@@ -147,7 +147,7 @@ const Avatar = styled.div<{ avatar?: string }>`
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: ${({ avatar }) => (avatar ? `url(${avatar});` : colors.brand.main)};
+  background: ${({ theme, avatar }) => (avatar ? `url(${avatar});` : theme.main.highlighted)};
   display: flex;
   align-items: center;
   justify-content: center;

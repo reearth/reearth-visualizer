@@ -5,7 +5,7 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import Icon from "@reearth/components/atoms/Icon";
-import { colors, styled } from "@reearth/theme";
+import { useTheme, styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue, flyTo, fromCamera } from "@reearth/util/value";
 import { WidgetComponent } from "../../PluginWidget";
@@ -47,7 +47,7 @@ const Storytelling: WidgetComponent<Property, PluginProperty> = ({ property }) =
   const storyIds: string[] | undefined = property?.stories?.map(s => s.layer as string);
   const duration = property?.default?.duration ?? defaultDuration;
   const autoStart = property?.default?.autoStart;
-
+  const theme = useTheme();
   const stories = useMemo(() => {
     const layers = storyIds && api?.getLayers(storyIds);
 
@@ -164,11 +164,11 @@ const Storytelling: WidgetComponent<Property, PluginProperty> = ({ property }) =
             <StyledIcon
               icon="marker"
               size={16}
-              color={selectedLayer?.id === story.layer ? colors.text.strong : colors.text.main}
+              color={selectedLayer?.id === story.layer ? theme.main.strongText : theme.main.text}
             />
             <Text
               size="m"
-              color={selectedLayer?.id === story.layer ? colors.text.strong : colors.text.main}
+              color={selectedLayer?.id === story.layer ? theme.main.strongText : theme.main.text}
               otherProperties={{
                 textOverflow: "ellipsis",
                 overflow: "hidden",
@@ -208,7 +208,7 @@ const Storytelling: WidgetComponent<Property, PluginProperty> = ({ property }) =
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.main.paleBg};
   color: ${props => props.theme.main.text};
   z-index: ${props => props.theme.zIndexes.infoBox};
   position: absolute;
@@ -237,7 +237,7 @@ const Wrapper = styled.div`
 `;
 
 const ArrowButton = styled.button`
-  background-color: ${props => props.theme.colors.bg[4]};
+  background-color: ${props => props.theme.main.paleBg};
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -281,12 +281,12 @@ const Title = styled(Text)`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${colors.text.main};
+  color: ${props => props.theme.main.text};
   margin-right: ${metricsSizes["l"]}px;
 `;
 
 const MenuIcon = styled(Icon)<{ menuOpen?: boolean }>`
-  background: ${props => (props.menuOpen ? props.theme.colors.bg[5] : props.theme.colors.bg[3])};
+  background: ${props => (props.menuOpen ? props.theme.main.bg : props.theme.main.paleBg)};
   border-radius: 25px;
   padding: ${metricsSizes["xs"]}px;
   margin-right: ${metricsSizes["xs"]}px;
@@ -295,7 +295,7 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean }>`
 `;
 
 const Menu = styled.div<{ menuOpen?: boolean }>`
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.main.paleBg};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
   bottom: 168px;
@@ -328,12 +328,12 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
 const MenuItem = styled(Flex)<{ selected?: boolean }>`
   border-radius: ${metricsSizes["m"]}px;
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  background: ${({ selected }) => (selected ? colors.brand.main : "inherit")};
+  background: ${({ theme, selected }) => (selected ? theme.main.highlighted : "inherit")};
   cursor: pointer;
   user-select: none;
 
   &:hover {
-    background: ${props => !props.selected && props.theme.colors.bg[5]};
+    background: ${props => !props.selected && props.theme.main.bg};
   }
 `;
 

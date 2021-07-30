@@ -5,6 +5,7 @@ export const UPDATE_ME = gql`
     $name: String
     $email: String
     $lang: Lang
+    $theme: Theme
     $password: String
     $passwordConfirmation: String
   ) {
@@ -13,6 +14,7 @@ export const UPDATE_ME = gql`
         name: $name
         email: $email
         lang: $lang
+        theme: $theme
         password: $password
         passwordConfirmation: $passwordConfirmation
       }
@@ -22,6 +24,7 @@ export const UPDATE_ME = gql`
         name
         email
         lang
+        theme
         myTeam {
           id
           name
@@ -38,6 +41,7 @@ export const PROFILE = gql`
       name
       email
       lang
+      theme
       myTeam {
         id
         name

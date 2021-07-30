@@ -28,7 +28,7 @@ const PluginList: React.FC<Props> = ({ className, plugins, onMoveNextPage }) => 
               {intl.formatMessage({ defaultMessage: "Advanced options" })}
             </Text>
           </Box>
-          <Icon icon="arrowLongRight" size={20} color={theme.colors.text.main} />
+          <Icon icon="arrowLongRight" size={20} color={theme.main.text} />
         </StyledFlex>
       </Flex>
       <PluginAccordion items={plugins} />

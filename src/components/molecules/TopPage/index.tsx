@@ -46,7 +46,7 @@ const LeftWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: ${props => props.theme.colors.bg[3]};
+  background: ${props => props.theme.main.lighterBg};
   width: 25vh;
 `;
 
@@ -54,7 +54,7 @@ const CenterWrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 0 auto;
-  color: ${props => props.theme.colors.text.weak};
+  color: ${props => props.theme.main.weak};
 `;
 
 const StyledIcon = styled(Icon)`

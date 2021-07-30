@@ -103,7 +103,7 @@ const ProjectListContainner = styled.div`
 `;
 
 const StyledFlex = styled(Flex)`
-  border-bottom: solid 1px ${({ theme }) => theme.colors.outline.weakest};
+  border-bottom: solid 1px ${({ theme }) => theme.projectCell.divider};
   cursor: pointer;
 `;
 

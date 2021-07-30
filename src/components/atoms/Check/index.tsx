@@ -1,5 +1,4 @@
 import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import fonts from "@reearth/theme/fonts";
 
 type Props = {
@@ -20,11 +19,11 @@ const Check = styled.li<Props>`
   font-size: ${fonts.sizes.m}px;
   color: ${({ linked, overridden, selected, inactive, theme }) =>
     selected && linked
-      ? colors.primary.main
+      ? theme.main.accent
       : selected && overridden
-      ? colors.danger.main
+      ? theme.main.danger
       : inactive
-      ? colors.outline.main
+      ? theme.text.pale
       : theme.properties.contentsText};
   background: ${({ selected, theme }) => (selected ? theme.main.bg : "none")};
   cursor: pointer;

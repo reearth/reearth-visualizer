@@ -21,15 +21,15 @@ const SearchBar: React.FC<Props> = ({
 }) => {
   const theme = useTheme();
   return (
-    <Box border={`solid 1px ${theme.colors.outline.weak}`} ph="m">
+    <Box border={`solid 1px ${theme.main.border}`} ph="m">
       <Flex className={className} align="center">
-        {iconPos === "left" && <Icon icon="search" size={20} color={theme.colors.text.main} />}
+        {iconPos === "left" && <Icon icon="search" size={20} color={theme.main.text} />}
         <StyledInput
           placeholder={placeHolder}
           value={value}
           onChange={e => onChange?.(e.currentTarget.value)}
         />
-        {iconPos === "right" && <Icon icon="search" size={20} />}
+        {iconPos === "right" && <Icon icon="search" color={theme.main.text} size={20} />}
       </Flex>
     </Box>
   );
@@ -40,14 +40,14 @@ const StyledInput = styled.input`
   font-size: ${fonts.sizes.m}px;
   padding: ${({ theme }) => `${theme.metrics.s}px ${theme.metrics["2xs"]}px`};
   background-color: inherit;
-  color: ${({ theme }) => theme.colors.text.main};
+  color: ${({ theme }) => theme.main.text};
   &:focus {
     border: none;
     outline: none;
   }
 
   ::placeholder {
-    color: ${({ theme }) => theme.colors.text.weak};
+    color: ${({ theme }) => theme.main.weak};
   }
 `;
 

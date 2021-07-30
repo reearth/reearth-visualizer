@@ -6,7 +6,6 @@ import {
   MenuList,
   MenuListItem,
 } from "@reearth/components/molecules/Common/MenuList";
-import { colors } from "@reearth/theme";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import { Team } from "@reearth/components/molecules/Common/Header";
 import Text from "@reearth/components/atoms/Text";
@@ -91,7 +90,7 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   margin-left: auto;
   order: 2;
-  background-color: ${colors.brand.main};
+  background-color: ${({ theme }) => theme.main.highlighted};
 `;
 
 export default TeamMenu;

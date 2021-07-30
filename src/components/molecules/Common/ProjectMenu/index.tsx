@@ -23,7 +23,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
     <Wrapper>
       <Dropdown
         label={
-          <Text size="m" weight="bold" color={theme.colors.text.strong}>
+          <Text size="m" weight="bold" color={theme.main.strongText}>
             {currentProject?.name}
           </Text>
         }

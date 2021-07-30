@@ -1,6 +1,5 @@
 import React from "react";
-import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
+import { styled, useTheme } from "@reearth/theme";
 
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
@@ -28,7 +27,8 @@ const TextField: React.FC<Props> = ({
   onChange,
   onClick,
 }) => {
-  const color = overridden ? colors.functional.attention : linked ? colors.primary.main : undefined;
+  const theme = useTheme();
+  const color = overridden ? theme.main.warning : linked ? theme.main.accent : undefined;
 
   return (
     <Wrapper className={className} onClick={onClick}>

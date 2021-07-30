@@ -9,10 +9,12 @@ import { useIntl } from "react-intl";
 
 export type Props = {
   email?: string;
+  appTheme?: string;
   lang?: string;
   hasPassword: boolean;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
+  updateTheme?: (theme: string) => void;
 };
 
 const items = [
@@ -22,18 +24,30 @@ const items = [
 
 const ProfileSection: React.FC<Props> = ({
   email,
+  appTheme,
   hasPassword,
   updatePassword,
   updateLanguage,
+  updateTheme,
 }) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState<string>();
-
+  const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
+  type Theme = "DARK" | "LIGHT";
+  const themeItems: { key: Theme; label: string; icon: string }[] = [
+    { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
+    { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+  ];
   useEffect(() => {
     const lang = items.find(item => item.key === intl.locale);
     setCurrentLang(lang?.label);
   }, [intl.locale]);
+
+  useEffect(() => {
+    const label = themeItems.find(themeItem => themeItem.key === appTheme)?.label;
+    setCurrentThemeLabel(label);
+  }, [appTheme]);
 
   return (
     <Wrapper>
@@ -52,6 +66,14 @@ const ProfileSection: React.FC<Props> = ({
           body={currentLang}
           onSubmit={updateLanguage}
         />
+        <EditableItem
+          title={intl.formatMessage({ defaultMessage: "Color theme" })}
+          dropdown
+          dropdownItems={themeItems}
+          currentItem={appTheme}
+          body={currentThemeLabel}
+          onSubmit={updateTheme}
+        />
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
@@ -64,14 +86,13 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.bg[3]};
+  background-color: ${({ theme }) => theme.main.paleBg};
 `;
 
 const StyledIcon = styled(Icon)`
   cursor: pointer;
-
   &:hover {
-    color: ${({ theme }) => theme.colors.text.strong};
+    color: ${({ theme }) => theme.main.strongText};
   }
 `;
 

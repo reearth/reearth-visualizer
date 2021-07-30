@@ -51,6 +51,7 @@ export default function TabularModal<Tab extends string = string>({
 
 const Tabs = styled.div`
   display: flex;
+  color: ${({ theme }) => theme.main.strongText};
 `;
 
 const Tab = styled.p<{ selected?: boolean }>`

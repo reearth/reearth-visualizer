@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, colors } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 
 export type Props = {
   color?: string;
@@ -15,7 +15,7 @@ const StyledDivider = styled.div<{ color?: string; margin?: string; spaceOnly?: 
   width: 100%;
   margin: ${props => (props.margin ? props.margin : "35px")} auto;
   border-bottom: ${props =>
-    props.spaceOnly ? "none" : `1px solid ${props.color ? props.color : colors.outline.weak}`};
+    props.spaceOnly ? "none" : `1px solid ${props.color ? props.color : props.theme.main.border}`};
 `;
 
 export default Divider;

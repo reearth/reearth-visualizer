@@ -1,5 +1,4 @@
 import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import fonts from "@reearth/theme/fonts";
 
 type Props = {
@@ -20,17 +19,16 @@ const Radio = styled.li<Props>`
   font-size: ${fonts.sizes.m}px;
   color: ${({ linked, overridden, selected, inactive, theme }) =>
     selected && linked
-      ? colors.primary.main
+      ? theme.main.accent
       : selected && overridden
-      ? colors.danger.main
+      ? theme.main.danger
       : inactive
-      ? colors.outline.main
+      ? theme.toggleButton.toggle
       : theme.properties.contentsText};
   background: ${({ selected, theme }) => (selected ? theme.main.bg : "none")};
   cursor: pointer;
   box-sizing: border-box;
   border-radius: 2px;
-
   :not(:last-child) {
     margin-right: 1px;
   }

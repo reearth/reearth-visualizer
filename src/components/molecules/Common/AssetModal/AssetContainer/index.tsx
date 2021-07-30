@@ -240,13 +240,13 @@ const StyledIcon = styled(Icon)<{ selected?: boolean }>`
   margin-left: ${metricsSizes["m"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
-  color: ${({ theme }) => theme.colors.text.main};
+  color: ${({ theme }) => theme.main.text};
   cursor: pointer;
-  ${({ selected, theme }) => selected && `background: ${theme.colors.bg[5]};`}
+  ${({ selected, theme }) => selected && `background: ${theme.main.bg};`}
 
   &:hover {
-    background: ${({ theme }) => theme.colors.bg[5]};
-    color: ${({ theme }) => theme.colors.text.strong};
+    background: ${({ theme }) => theme.main.bg};
+    color: ${({ theme }) => theme.main.strongText};
   }
 `;
 

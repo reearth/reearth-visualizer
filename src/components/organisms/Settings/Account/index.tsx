@@ -18,6 +18,7 @@ const Account: React.FC<Props> = () => {
     updateName,
     updatePassword,
     updateLanguage,
+    updateTheme,
   } = useHooks();
 
   return (
@@ -27,9 +28,11 @@ const Account: React.FC<Props> = () => {
       <AccountSection
         email={me?.email}
         lang={me?.lang}
+        appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
         hasPassword={hasPassword}
         updatePassword={updatePassword}
         updateLanguage={updateLanguage}
+        updateTheme={updateTheme}
       />
     </SettingPage>
   );

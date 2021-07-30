@@ -12,7 +12,8 @@ const Option = styled.li<Props>`
   padding: 6px;
   font-size: ${fonts.sizes.xs}px;
   color: ${({ theme }) => theme.properties.contentsText};
-  background: ${({ focused }) => (focused ? "#222222" : "transparent")};
+  background: ${({ focused, theme }) =>
+    focused ? theme.selectList.option.hoverBg : "transparent"};
   cursor: pointer;
 `;
 

@@ -16,7 +16,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
         to={to}
         getProps={({ isCurrent }) =>
           isCurrent && {
-            style: { background: theme.colors.functional.select, color: theme.colors.text.strong },
+            style: { background: theme.main.select, color: theme.main.strongText },
           }
         }>
         {name}
@@ -29,7 +29,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
 const LinkItem = styled(Link)`
   display: flex;
   padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
-  color: ${({ theme }) => theme.colors.text.main};
+  color: ${({ theme }) => theme.main.text};
   text-decoration: none;
 
   &:hover {

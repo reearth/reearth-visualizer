@@ -277,7 +277,7 @@ const Input = styled.input`
   display: block;
   border: solid 1px ${props => props.theme.properties.border};
   border-radius: 3px;
-  background: #363636;
+  background: ${({ theme }) => theme.main.deepBg};
   outline: none;
   color: ${({ theme }) => theme.properties.contentsText};
   width: 100%;

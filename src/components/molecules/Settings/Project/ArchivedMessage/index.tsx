@@ -22,7 +22,7 @@ const ArchivedMessage: React.FC = () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.main.lighterBg};
 `;
 
 const Description = styled.p``;

@@ -82,7 +82,7 @@ const SubHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: solid 1px ${({ theme }) => theme.colors.outline.weakest};
+  border-bottom: solid 1px ${({ theme }) => theme.projectCell.divider};
 `;
 
 const StyledListView = styled.div`
@@ -94,7 +94,7 @@ const StyledListView = styled.div`
 `;
 
 const StyledWorkspaceCell = styled(WorkspaceCell)`
-  border: ${props => `2px solid ${props.theme.colors.functional.select}`};
+  border: ${props => `2px solid ${props.theme.main.select}`};
 `;
 
 export default WorkspaceList;

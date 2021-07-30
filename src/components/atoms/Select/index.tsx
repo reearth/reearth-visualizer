@@ -60,36 +60,36 @@ const Select = <Value extends string | number>(
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const mergedRef = useMergeRefs(ref ? [ref, wrapperRef] : [wrapperRef]);
-  const { styles, attributes, update: updatePopper } = usePopper(
-    wrapperRef.current,
-    listRef.current,
-    {
-      placement: "bottom",
-      modifiers: [
-        {
-          name: "flip",
-          enabled: true,
-          options: {
-            fallbackPlacements: ["top"],
-          },
+  const {
+    styles,
+    attributes,
+    update: updatePopper,
+  } = usePopper(wrapperRef.current, listRef.current, {
+    placement: "bottom",
+    modifiers: [
+      {
+        name: "flip",
+        enabled: true,
+        options: {
+          fallbackPlacements: ["top"],
         },
-        {
-          name: "offset",
-          options: {
-            offset: [0, 4],
-          },
+      },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 4],
         },
-        {
-          name: "eventListeners",
-          enabled: !open,
-          options: {
-            scroll: false,
-            resize: false,
-          },
+      },
+      {
+        name: "eventListeners",
+        enabled: !open,
+        options: {
+          scroll: false,
+          resize: false,
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   const isValidElement = (object: {} | null | undefined): object is OptionElement<Value> =>
     React.isValidElement(object);
@@ -222,10 +222,7 @@ const Select = <Value extends string | number>(
       onKeyDown={handleKeyDown}
       tabIndex={0}>
       <SelectWrapper>
-        <Selected
-          inactive={inactive}
-          size="xs"
-          color={!selectedValue ? theme.colors.text.weak : color}>
+        <Selected inactive={inactive} size="xs" color={!selectedValue ? theme.main.weak : color}>
           {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
@@ -304,7 +301,7 @@ const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`
   padding: 0;
   border: solid 1px ${props => props.theme.properties.border};
   border-radius: 3px;
-  background: #363636;
+  background: ${({ theme }) => theme.selectList.option.bg};
   box-sizing: border-box;
   overflow: hidden;
   z-index: ${props => props.theme.zIndexes.dropDown};

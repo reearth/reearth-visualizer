@@ -55,7 +55,7 @@ const StyledContainer = styled.div<{
   width: 193px;
   margin: ${props => props.margin}px;
   border: 1px ${props => props.border || "solid"}
-    ${props => (props.borderColor ? props.borderColor : props.theme.colors.brand.main)};
+    ${props => (props.borderColor ? props.borderColor : props.theme.assetCard.highlight)};
   display: flex;
   justify-content: center;
   align-items: center;
