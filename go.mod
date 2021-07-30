@@ -38,8 +38,6 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.2.1-0.20190515034641-a19b9a6e7c9e
 	github.com/vektah/gqlparser/v2 v2.1.0
-	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
-	github.com/xeipuuv/gojsonschema v1.2.0
 	go.mongodb.org/mongo-driver v1.5.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo v0.0.0-20200707171851-ae0d272a2deb
 	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver v0.7.0
@@ -50,7 +48,7 @@ require (
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.1.0
 	gopkg.in/go-playground/colors.v1 v1.2.0
-	gopkg.in/h2non/gock.v1 v1.1.0 // indirect
+	gopkg.in/h2non/gock.v1 v1.1.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

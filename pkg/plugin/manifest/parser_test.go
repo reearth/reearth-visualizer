@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	"errors"
 	"io"
 	"strings"
 	"testing"
@@ -9,7 +10,6 @@ import (
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/stretchr/testify/assert"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 func TestParse(t *testing.T) {
@@ -51,6 +51,7 @@ func TestParse(t *testing.T) {
 			err:      ErrSystemManifest,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
@@ -67,7 +68,7 @@ func TestParse(t *testing.T) {
 
 }
 
-func TestParseSystemFromStaticJSON(t *testing.T) {
+func TestParseSystemFromBytes(t *testing.T) {
 	testCases := []struct {
 		name, input string
 		expected    *Manifest
@@ -88,29 +89,29 @@ func TestParseSystemFromStaticJSON(t *testing.T) {
 			err: nil,
 		},
 		{
-			name:     "fail not valid JSON",
-			input:    "",
+			name:     "fail not valid YAML",
+			input:    "--",
 			expected: nil,
 			err:      ErrFailedToParseManifest,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			m, err := ParseSystemFromStaticJSON(tc.input)
+			m, err := ParseSystemFromBytes([]byte(tc.input))
 			if err == nil {
 				assert.Equal(t, tc.expected.Plugin.ID(), m.Plugin.ID())
 				assert.Equal(t, m.Plugin.Name(), m.Plugin.Name())
 			} else {
-				assert.Equal(t, tc.err, err)
+				assert.True(t, errors.Is(tc.err, err))
 			}
 		})
 	}
-
 }
 
-func TestMustParseSystemFromStaticJSON(t *testing.T) {
+func TestMustParseSystemFromBytes(t *testing.T) {
 	testCases := []struct {
 		name, input string
 		expected    *Manifest
@@ -132,71 +133,27 @@ func TestMustParseSystemFromStaticJSON(t *testing.T) {
 		},
 		{
 			name:     "fail not valid JSON",
-			input:    "",
+			input:    "--",
 			expected: nil,
 			err:      ErrFailedToParseManifest,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			var m *Manifest
-			defer func() {
-				if r := recover(); r == nil {
-					assert.Equal(t, tc.expected.Plugin.ID(), m.Plugin.ID())
-					assert.Equal(t, m.Plugin.Name(), m.Plugin.Name())
-				}
-			}()
-			m = MustParseSystemFromStaticJSON(tc.input)
 
-		})
-	}
-
-}
-
-func TestValidate(t *testing.T) {
-	testCases := []struct {
-		name, input string
-		err         bool
-	}{
-		{
-			name: "success create manifest",
-			input: `{
-						"id": "aaa",
-						"title": "bbb",
-						"version": "1.1.1"
-									}`,
-
-			err: false,
-		},
-		{
-			name:  "fail not valid JSON",
-			input: "",
-			err:   true,
-		},
-		{
-			name: "fail invalid name type",
-			input: `{
-						"id": "aaa",
-						"title": 123,
-						"version": "1.1.1"
-									}`,
-
-			err: true,
-		},
-	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			err := validate(gojsonschema.NewBytesLoader([]byte(tc.input)))
-			if tc.err {
-				assert.Error(tt, err)
-			} else {
-				assert.NoError(tt, err)
+			if tc.err != nil {
+				assert.PanicsWithError(tt, tc.err.Error(), func() {
+					_ = MustParseSystemFromBytes([]byte(tc.input))
+				})
+				return
 			}
+
+			m := MustParseSystemFromBytes([]byte(tc.input))
+			assert.Equal(tt, tc.expected.Plugin.ID(), m.Plugin.ID())
+			assert.Equal(tt, m.Plugin.Name(), m.Plugin.Name())
 		})
 	}
-
 }

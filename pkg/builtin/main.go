@@ -1,8 +1,8 @@
-//go:generate go run github.com/reearth/reearth-backend/tools/cmd/embed -all -n pluginManifestJSON -i manifest.yml -yaml2json
-
 package builtin
 
 import (
+	_ "embed"
+
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
@@ -10,8 +10,14 @@ import (
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
-var pluginTranslationList = map[string]*manifest.TranslationRoot{"ja": manifest.MustParseTransSystemFromStaticJSON(pluginManifestJSON_ja)}
-var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromStaticJSON(pluginManifestJSON), pluginTranslationList)
+//go:embed manifest.yml
+var pluginManifestJSON []byte
+
+//go:embed manifest_ja.yml
+var pluginManifestJSON_ja []byte
+
+var pluginTranslationList = map[string]*manifest.TranslationRoot{"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja)}
+var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromBytes(pluginManifestJSON), pluginTranslationList)
 
 // MUST NOT CHANGE
 var PropertySchemaIDVisualizerCesium = id.MustPropertySchemaID("reearth/cesium")
