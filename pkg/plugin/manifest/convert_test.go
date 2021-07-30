@@ -88,7 +88,7 @@ func TestManifest(t *testing.T) {
 		{
 			name: "success empty name",
 			root: &Root{
-				Title:  "",
+				Title:  "reearth",
 				ID:     "reearth",
 				System: true,
 			},

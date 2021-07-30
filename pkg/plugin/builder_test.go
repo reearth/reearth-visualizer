@@ -125,12 +125,11 @@ func TestBuilder_Build(t *testing.T) {
 				Schema(tc.schema).
 				Author(tc.author).
 				Build()
-			if err == nil {
+			if tc.err == nil {
 				assert.Equal(tt, tc.expected, p)
 			} else {
 				assert.True(tt, errors.As(tc.err, &err))
 			}
-
 		})
 	}
 }
@@ -186,7 +185,6 @@ func TestBuilder_MustBuild(t *testing.T) {
 				Author(tc.author).
 				MustBuild()
 			assert.Equal(tt, tc.expected, p)
-
 		})
 	}
 }

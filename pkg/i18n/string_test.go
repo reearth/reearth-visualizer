@@ -67,6 +67,7 @@ func TestStringTranslated(t *testing.T) {
 
 func TestStringFrom(t *testing.T) {
 	assert.Equal(t, String{"en": "foo"}, StringFrom("foo"))
+	assert.Nil(t, String(nil), StringFrom(""))
 }
 
 func TestStringCopy(t *testing.T) {
@@ -82,12 +83,19 @@ func TestStringCopy(t *testing.T) {
 			Name:         "empty String",
 			SourceString: String{},
 		},
+		{
+			Name:         "nil",
+			SourceString: nil,
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
 			assert.True(tt, reflect.DeepEqual(tc.SourceString, tc.SourceString.Copy()))
+			if tc.SourceString == nil {
+				assert.Nil(tt, tc.SourceString.Copy())
+			}
 		})
 	}
 }

@@ -3,6 +3,9 @@ package i18n
 type String map[string]string // key should use BCP 47 representation
 
 func StringFrom(s string) String {
+	if s == "" {
+		return nil
+	}
 	return String{"en": s}
 }
 
@@ -19,6 +22,9 @@ func (s String) Translated(lang ...string) string {
 }
 
 func (s String) Copy() String {
+	if s == nil {
+		return nil
+	}
 	s2 := make(String, len(s))
 	for k, v := range s {
 		s2[k] = v

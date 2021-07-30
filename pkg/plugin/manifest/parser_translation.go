@@ -7,9 +7,9 @@ import (
 	"errors"
 	"io"
 
+	"github.com/goccy/go-yaml"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
-	"gopkg.in/yaml.v2"
 )
 
 var (

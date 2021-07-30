@@ -73,11 +73,6 @@ func (b *SchemaGroupBuilder) Title(title i18n.String) *SchemaGroupBuilder {
 }
 
 func (b *SchemaGroupBuilder) RepresentativeField(representativeField *id.PropertySchemaFieldID) *SchemaGroupBuilder {
-	if representativeField == nil {
-		b.p.representativeField = nil
-		return b
-	}
-	representativeField2 := *representativeField
-	b.p.representativeField = &representativeField2
+	b.p.representativeField = representativeField.CopyRef()
 	return b
 }

@@ -22,10 +22,6 @@ func (i *Root) manifest() (*Manifest, error) {
 		}
 	}
 
-	if i.Title == "" {
-		i.Title = string(i.ID)
-	}
-
 	var pluginSchema *property.Schema
 	if i.Schema != nil {
 		schema, err := i.Schema.schema(pid, "@")
@@ -193,8 +189,7 @@ func (i PropertySchemaGroup) schemaGroup(sid id.PropertySchemaID) (*property.Sch
 	title := i.Title
 	var representativeField *id.PropertySchemaFieldID
 	if i.RepresentativeField != nil {
-		representativeField2 := id.PropertySchemaFieldID(*i.RepresentativeField)
-		representativeField = &representativeField2
+		representativeField = id.PropertySchemaFieldID(*i.RepresentativeField).Ref()
 	}
 
 	// fields

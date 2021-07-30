@@ -277,9 +277,29 @@ func (t ValueType) ValueFrom(v interface{}) (*Value, bool) {
 			if v3, err := v2.Float64(); err == nil {
 				return &Value{v: v3, t: ValueTypeNumber}, true
 			}
+		} else if v2, ok := v.(float32); ok {
+			return &Value{v: v2, t: ValueTypeNumber}, true
 		} else if v2, ok := v.(float64); ok {
 			return &Value{v: v2, t: ValueTypeNumber}, true
 		} else if v2, ok := v.(int); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(int8); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(int16); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(int32); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(int64); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(uint); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(uint8); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(uint16); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(uint32); ok {
+			return &Value{v: float64(v2), t: ValueTypeNumber}, true
+		} else if v2, ok := v.(uint64); ok {
 			return &Value{v: float64(v2), t: ValueTypeNumber}, true
 		}
 	case ValueTypeString:

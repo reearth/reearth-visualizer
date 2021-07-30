@@ -52,6 +52,12 @@ func (b *Builder) RepositoryURL(repositoryURL string) *Builder {
 }
 
 func (b *Builder) Extensions(extensions []*Extension) *Builder {
+	if len(extensions) == 0 {
+		b.p.extensions = nil
+		b.p.extensionOrder = nil
+		return b
+	}
+
 	b.p.extensions = make(map[id.PluginExtensionID]*Extension, len(extensions))
 	b.p.extensionOrder = make([]id.PluginExtensionID, 0, len(extensions))
 	for _, e := range extensions {

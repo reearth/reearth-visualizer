@@ -48,7 +48,7 @@ func TestSchemaGroup(t *testing.T) {
 				GID:    scid,
 				SID:    sid,
 				Fields: []*SchemaField{sf},
-				Title:  make(i18n.String),
+				Title:  nil,
 			},
 		},
 	}
