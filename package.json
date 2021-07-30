@@ -65,6 +65,8 @@
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@storybook/addon-essentials": "^6.1.17",
         "@storybook/addons": "^6.1.17",
+        "@storybook/builder-webpack5": "^6.3.6",
+        "@storybook/manager-webpack5": "^6.3.6",
         "@storybook/react": "^6.1.17",
         "@storybook/theming": "^6.1.17",
         "@testing-library/cypress": "^7.0.3",
