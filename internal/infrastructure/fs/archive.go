@@ -5,8 +5,8 @@ import (
 	"path"
 	"strings"
 
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type archive struct {
@@ -24,9 +24,9 @@ func NewArchive(p string) (file.Archive, error) {
 	files, size, err := dirwalk(bp, "", 0)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return &archive{
 		p:       bp,
@@ -46,12 +46,12 @@ func (a *archive) Next() (f *file.File, derr error) {
 	a.counter++
 	fi, err := os.Open(path.Join(a.p, next))
 	if err != nil {
-		derr = err1.ErrInternalBy(err)
+		derr = rerror.ErrInternalBy(err)
 		return
 	}
 	stat, err := fi.Stat()
 	if err != nil {
-		derr = err1.ErrInternalBy(err)
+		derr = rerror.ErrInternalBy(err)
 		return
 	}
 
@@ -68,7 +68,7 @@ func (a *archive) Next() (f *file.File, derr error) {
 func (a *archive) Close() error {
 	if a.fi != nil {
 		if err := a.fi.Close(); err != nil {
-			return err1.ErrInternalBy(err)
+			return rerror.ErrInternalBy(err)
 		}
 		a.fi = nil
 	}

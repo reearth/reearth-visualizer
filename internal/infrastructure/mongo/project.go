@@ -8,10 +8,10 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type projectRepo struct {
@@ -117,7 +117,7 @@ func (r *projectRepo) paginate(ctx context.Context, filter bson.D, pagination *u
 	var c mongodoc.ProjectConsumer
 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 	if err2 != nil {
-		return nil, nil, err1.ErrInternalBy(err2)
+		return nil, nil, rerror.ErrInternalBy(err2)
 	}
 	return c.Rows, pageInfo, nil
 }

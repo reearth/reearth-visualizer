@@ -9,12 +9,12 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/initializer"
@@ -378,7 +378,7 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, op
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.ID().IsNil() {
-			return nil, err1.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -418,7 +418,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.ID().IsNil() {
-			return nil, err1.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -575,7 +575,7 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 	}
 
 	if s == nil {
-		return inp.SchemaId, err1.ErrNotFound
+		return inp.SchemaId, rerror.ErrNotFound
 	}
 
 	datasets, err := i.datasetRepo.FindBySchemaAll(ctx, inp.SchemaId)

@@ -8,8 +8,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth-backend/internal/adapter/graphql"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	echotracer "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo"
 )
 
@@ -116,11 +116,11 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 		if err2.Internal != nil {
 			log("echo internal err: %+v", err2)
 		}
-	} else if errors.Is(err, err1.ErrNotFound) {
+	} else if errors.Is(err, rerror.ErrNotFound) {
 		code = http.StatusNotFound
 		msg = "not found"
 	} else {
-		var ierr *err1.ErrInternal
+		var ierr *rerror.ErrInternal
 		if errors.As(err, &ierr) {
 			if err2 := ierr.Unwrap(); err2 != nil {
 				log("internal err: %+v", err2)

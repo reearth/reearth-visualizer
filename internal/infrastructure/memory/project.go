@@ -7,9 +7,9 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Project struct {
@@ -76,7 +76,7 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID, filter []id.Tea
 	if ok && isTeamIncludes(p.Team(), filter) {
 		return p, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
@@ -91,7 +91,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 			return p, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Project) CountByTeam(ctx context.Context, team id.TeamID) (c int, err error) {

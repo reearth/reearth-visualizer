@@ -5,9 +5,16 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth-backend/pkg/builtin"
-	perror "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
+)
+
+var (
+	ErrInitializationInfobox      = errors.New("infobox")
+	ErrInitializationInfoboxWith  = rerror.With(ErrInitializationInfobox)
+	ErrInitializationProperty     = errors.New("property")
+	ErrInitializationPropertyWith = rerror.With(ErrInitializationProperty)
 )
 
 type InitializerResult struct {
@@ -94,7 +101,7 @@ func (i *Initializer) Layer(sid id.SceneID) (r InitializerResult, err error) {
 
 	ib, pm, err2 := i.Infobox.Infobox(sid)
 	if err2 != nil {
-		err = perror.New("infobox", err2)
+		err = ErrInitializationInfoboxWith(err2)
 		return
 	}
 	r.Properties = r.Properties.Merge(pm)
@@ -107,7 +114,7 @@ func (i *Initializer) Layer(sid id.SceneID) (r InitializerResult, err error) {
 	pid := i.PropertyID
 	lp, err2 := i.Property.Property(sid)
 	if err2 != nil {
-		err = perror.New("property", err2)
+		err = ErrInitializationPropertyWith(err2)
 		return
 	}
 	if lp != nil {
@@ -132,7 +139,7 @@ func (i *Initializer) Layer(sid id.SceneID) (r InitializerResult, err error) {
 		for i, lay2 := range i.Layers {
 			r2, err2 := lay2.Layer(sid)
 			if err2 != nil {
-				err = perror.New(fmt.Sprint(i), err2)
+				err = rerror.From(fmt.Sprint(i), err2)
 				return
 			}
 			if rootLayer := r2.RootLayer(); rootLayer != nil {
@@ -205,7 +212,7 @@ func (i *InitializerInfobox) Infobox(scene id.SceneID) (*Infobox, property.Map, 
 		for i, f := range i.Fields {
 			ibf, ibfp, err := f.InfoboxField(scene)
 			if err != nil {
-				return nil, nil, perror.New(fmt.Sprint(i), err)
+				return nil, nil, rerror.From(fmt.Sprint(i), err)
 			}
 			fields = append(fields, ibf)
 			pm = pm.Add(ibfp)
@@ -218,7 +225,7 @@ func (i *InitializerInfobox) Infobox(scene id.SceneID) (*Infobox, property.Map, 
 		var err error
 		ibp, err = i.Property.PropertyIncludingEmpty(scene, builtin.PropertySchemaIDInfobox)
 		if err != nil {
-			return nil, nil, perror.New("property", err)
+			return nil, nil, ErrInitializationPropertyWith(err)
 		}
 		if ibp != nil {
 			ibpid = ibp.IDRef()
@@ -274,7 +281,7 @@ func (i *InitializerInfoboxField) InfoboxField(scene id.SceneID) (*InfoboxField,
 	if pid == nil {
 		p, err = i.Property.PropertyIncludingEmpty(scene, psid)
 		if err != nil {
-			return nil, nil, perror.New("property", err)
+			return nil, nil, ErrInitializationPropertyWith(err)
 		}
 		if p != nil {
 			pid = p.IDRef()

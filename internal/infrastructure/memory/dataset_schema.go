@@ -7,8 +7,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type DatasetSchema struct {
@@ -30,7 +30,7 @@ func (r *DatasetSchema) FindByID(ctx context.Context, id id.DatasetSchemaID, f [
 	if ok {
 		return &p, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *DatasetSchema) FindByIDs(ctx context.Context, ids []id.DatasetSchemaID, f []id.SceneID) (dataset.SchemaList, error) {
@@ -114,7 +114,7 @@ func (r *DatasetSchema) FindDynamicByID(ctx context.Context, id id.DatasetSchema
 	if ok && p.Dynamic() {
 		return &p, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, s id.SceneID, src dataset.Source) (dataset.SchemaList, error) {

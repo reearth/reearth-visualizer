@@ -4,9 +4,9 @@ import (
 	"context"
 	"sync"
 
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
@@ -30,7 +30,7 @@ func (r *Property) FindByID(ctx context.Context, id id.PropertyID, f []id.SceneI
 	if ok && isSceneIncludes(p.Scene(), f) {
 		return &p, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Property) FindByIDs(ctx context.Context, ids []id.PropertyID, f []id.SceneID) (property.List, error) {

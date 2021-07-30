@@ -6,8 +6,8 @@ import (
 
 	graphql1 "github.com/reearth/reearth-backend/internal/adapter/graphql"
 	"github.com/reearth/reearth-backend/internal/graphql/dataloader"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 func (r *Resolver) Property() PropertyResolver {
@@ -72,7 +72,7 @@ func (r *propertyResolver) Layer(ctx context.Context, obj *graphql1.Property) (g
 	defer exit()
 
 	l, err := r.config.Controllers.LayerController.FetchByProperty(ctx, id.PropertyID(obj.ID), getOperator(ctx))
-	if err != nil || errors.Is(err, err1.ErrNotFound) {
+	if err != nil || errors.Is(err, rerror.ErrNotFound) {
 		return nil, nil
 	}
 	return l, err
@@ -84,7 +84,7 @@ func (r *propertyResolver) Merged(ctx context.Context, obj *graphql1.Property) (
 
 	l, err := r.config.Controllers.LayerController.FetchByProperty(ctx, id.PropertyID(obj.ID), getOperator(ctx))
 	if err != nil {
-		if errors.Is(err, err1.ErrNotFound) {
+		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil
 		}
 		return nil, err

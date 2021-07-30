@@ -9,9 +9,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type datasetSchemaRepo struct {
@@ -120,7 +120,7 @@ func (r *datasetSchemaRepo) RemoveByScene(ctx context.Context, sceneID id.SceneI
 	}
 	_, err := r.client.Collection().DeleteMany(ctx, filter)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -150,7 +150,7 @@ func (r *datasetSchemaRepo) paginate(ctx context.Context, filter bson.D, paginat
 	var c mongodoc.DatasetSchemaConsumer
 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 	if err2 != nil {
-		return nil, nil, err1.ErrInternalBy(err2)
+		return nil, nil, rerror.ErrInternalBy(err2)
 	}
 	return c.Rows, pageInfo, nil
 }

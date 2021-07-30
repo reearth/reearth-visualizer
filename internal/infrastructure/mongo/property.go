@@ -5,10 +5,10 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -108,7 +108,7 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	}
 	_, err := r.client.Collection().DeleteMany(ctx, filter)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -138,7 +138,7 @@ func (r *propertyRepo) findOne(ctx context.Context, filter bson.D) (*property.Pr
 // 	var c propertyConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.rows, pageInfo, nil
 // }

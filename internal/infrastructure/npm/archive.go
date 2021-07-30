@@ -7,8 +7,8 @@ import (
 	"io"
 	"strings"
 
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type archive struct {
@@ -41,7 +41,7 @@ func (a *archive) Next() (f *file.File, derr error) {
 			return
 		}
 		if err != nil {
-			derr = err1.ErrInternalBy(err)
+			derr = rerror.ErrInternalBy(err)
 			return
 		}
 		if strings.HasPrefix(head.Name, "package/") {

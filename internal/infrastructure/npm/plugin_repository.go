@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 const (
@@ -55,7 +55,7 @@ func (r *pluginRepository) Manifest(ctx context.Context, id id.PluginID) (*manif
 			break
 		}
 		if err != nil {
-			return nil, err1.ErrInternalBy(err)
+			return nil, rerror.ErrInternalBy(err)
 		}
 		if f.Fullpath == manifestFilePath {
 			manifest, err := manifest.Parse(f.Content)
@@ -88,7 +88,7 @@ func (r *pluginRepository) getNpmTarball(ctx context.Context, id id.PluginID) (f
 	res, err := http.DefaultClient.Do(req)
 	if err != nil || res.StatusCode != http.StatusOK {
 		if res.StatusCode == http.StatusNotFound {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
 		return nil, gateway.ErrFailedToFetchPluiginRepositoryData
 	}

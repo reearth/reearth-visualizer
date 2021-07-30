@@ -7,8 +7,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Dataset struct {
@@ -30,7 +30,7 @@ func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID, f []id.SceneID)
 	if ok && isSceneIncludes(p.Scene(), f) {
 		return &p, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.SceneID) (dataset.List, error) {

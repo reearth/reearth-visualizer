@@ -12,7 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +31,7 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 				BasicAuthPassword: "baar",
 			}, nil
 		}
-		return interfaces.ProjectPublishedMetadata{}, err1.ErrNotFound
+		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
 	})(func(c echo.Context) error {
 		return c.String(http.StatusOK, "test")
 	})
@@ -107,7 +107,7 @@ func TestPublishedData(t *testing.T) {
 		if name == "prj" {
 			return strings.NewReader("aaa"), nil
 		}
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	})
 
 	testCases := []struct {
@@ -117,12 +117,12 @@ func TestPublishedData(t *testing.T) {
 	}{
 		{
 			Name:  "empty",
-			Error: err1.ErrNotFound,
+			Error: rerror.ErrNotFound,
 		},
 		{
 			Name:          "not found",
 			PublishedName: "pr",
-			Error:         err1.ErrNotFound,
+			Error:         rerror.ErrNotFound,
 		},
 		{
 			Name:          "ok",
@@ -164,7 +164,7 @@ func TestPublishedIndex(t *testing.T) {
 	}{
 		{
 			Name:  "empty",
-			Error: err1.ErrNotFound,
+			Error: rerror.ErrNotFound,
 		},
 		{
 			Name:       "empty index",
@@ -174,7 +174,7 @@ func TestPublishedIndex(t *testing.T) {
 		{
 			Name:          "not found",
 			PublishedName: "pr",
-			Error:         err1.ErrNotFound,
+			Error:         rerror.ErrNotFound,
 		},
 		{
 			Name:          "ok",
@@ -203,7 +203,7 @@ func TestPublishedIndex(t *testing.T) {
 					assert.Equal("http://example.com/aaa/bbb", url.String())
 					return "index", nil
 				}
-				return "", err1.ErrNotFound
+				return "", rerror.ErrNotFound
 			})(c)
 
 			if tc.Error == nil {

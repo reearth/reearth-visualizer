@@ -108,7 +108,7 @@ func (r *teamRepo) findOne(ctx context.Context, filter bson.D) (*user.Team, erro
 // 	var c mongodoc.TeamConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.Rows, pageInfo, nil
 // }

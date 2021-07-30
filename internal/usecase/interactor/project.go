@@ -10,9 +10,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/scene/builder"
 )
@@ -201,7 +201,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate && p.Alias != nil && *p.Alias != oldAlias {
 		if err := i.file.MoveBuiltScene(ctx, oldAlias, *p.Alias); err != nil {
 			// ignore ErrNotFound
-			if !errors.Is(err, err1.ErrNotFound) {
+			if !errors.Is(err, rerror.ErrNotFound) {
 				return nil, err
 			}
 		}
@@ -217,7 +217,7 @@ func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
 	}
 
 	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
-	if prj == nil && err == nil || err != nil && errors.Is(err, err1.ErrNotFound) {
+	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
 		return true, nil
 	}
 

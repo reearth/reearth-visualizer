@@ -9,10 +9,10 @@ import (
 	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type fileRepo struct {
@@ -39,9 +39,9 @@ func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.Reader, error
 	file, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return file, nil
 }
@@ -51,9 +51,9 @@ func (f *fileRepo) ReadPluginFile(ctx context.Context, id id.PluginID, p string)
 	file, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return file, nil
 }
@@ -63,9 +63,9 @@ func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.Read
 	file, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return file, nil
 }
@@ -216,9 +216,9 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 		newfilename,
 	); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return err1.ErrNotFound
+			return rerror.ErrNotFound
 		}
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 
 	return nil
@@ -230,7 +230,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
 		}
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }

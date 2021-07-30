@@ -8,9 +8,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
@@ -97,7 +97,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 
 	// Check if user and team already exists
 	existed, err := i.userRepo.FindByAuth0Sub(ctx, inp.Sub)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return nil, nil, err
 	}
 	if existed != nil {
@@ -106,7 +106,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 
 	if inp.UserID != nil {
 		existed, err := i.userRepo.FindByID(ctx, *inp.UserID)
-		if err != nil && !errors.Is(err, err1.ErrNotFound) {
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, err
 		}
 		if existed != nil {
@@ -116,7 +116,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 
 	if inp.TeamID != nil {
 		existed, err := i.teamRepo.FindByID(ctx, *inp.TeamID)
-		if err != nil && !errors.Is(err, err1.ErrNotFound) {
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, err
 		}
 		if existed != nil {
@@ -133,7 +133,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 	// Check if user and team already exists
 	var team *user.Team
 	existed, err = i.userRepo.FindByEmail(ctx, ui.Email)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return nil, nil, err
 	}
 	if existed != nil {
@@ -197,7 +197,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		u.UpdateName(*p.Name)
 
 		team, err = i.teamRepo.FindByID(ctx, u.Team())
-		if err != nil && !errors.Is(err, err1.ErrNotFound) {
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		}
 
@@ -281,7 +281,7 @@ func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *
 
 func (i *User) SearchUser(ctx context.Context, nameOrEmail string, operator *usecase.Operator) (u *user.User, err error) {
 	u, err = i.userRepo.FindByNameOrEmail(ctx, nameOrEmail)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return nil, err
 	}
 	return u, nil
@@ -307,7 +307,7 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 	}()
 
 	u, err := i.userRepo.FindByID(ctx, userID)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return err
 	}
 	if u == nil {

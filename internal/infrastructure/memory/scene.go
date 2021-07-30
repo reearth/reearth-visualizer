@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
@@ -31,7 +31,7 @@ func (r *Scene) FindByID(ctx context.Context, id id.SceneID, f []id.TeamID) (*sc
 	if ok && isTeamIncludes(s.Team(), f) {
 		return &s, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) ([]*scene.Scene, error) {
@@ -61,7 +61,7 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID, f []id.TeamI
 			return &d, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Scene) FindIDsByTeam(ctx context.Context, teams []id.TeamID) ([]id.SceneID, error) {
@@ -83,7 +83,7 @@ func (r *Scene) HasSceneTeam(ctx context.Context, id id.SceneID, teams []id.Team
 
 	s, ok := r.data[id]
 	if !ok {
-		return false, err1.ErrNotFound
+		return false, rerror.ErrNotFound
 	}
 	return s.IsTeamIncluded(teams), nil
 }

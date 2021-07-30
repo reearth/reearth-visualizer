@@ -7,10 +7,10 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type layerRepo struct {
@@ -163,7 +163,7 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 	}
 	_, err := r.client.Collection().DeleteMany(ctx, filter)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -184,7 +184,7 @@ func (r *layerRepo) findOne(ctx context.Context, filter bson.D) (layer.Layer, er
 		return nil, err
 	}
 	if len(c.Rows) == 0 {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 	return *c.Rows[0], nil
 }
@@ -195,7 +195,7 @@ func (r *layerRepo) findItemOne(ctx context.Context, filter bson.D) (*layer.Item
 		return nil, err
 	}
 	if len(c.ItemRows) == 0 {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 	return c.ItemRows[0], nil
 }
@@ -206,7 +206,7 @@ func (r *layerRepo) findGroupOne(ctx context.Context, filter bson.D) (*layer.Gro
 		return nil, err
 	}
 	if len(c.GroupRows) == 0 {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 	return c.GroupRows[0], nil
 }
@@ -215,7 +215,7 @@ func (r *layerRepo) findGroupOne(ctx context.Context, filter bson.D) (*layer.Gro
 // 	var c mongodoc.LayerConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.Rows, pageInfo, nil
 // }
@@ -237,7 +237,7 @@ func (r *layerRepo) findItems(ctx context.Context, dst layer.ItemList, filter bs
 // 	var c mongodoc.LayerConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.ItemRows, pageInfo, nil
 // }
@@ -259,7 +259,7 @@ func (r *layerRepo) findGroups(ctx context.Context, dst layer.GroupList, filter 
 // 	var c mongodoc.LayerConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.GroupRows, pageInfo, nil
 // }

@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -39,10 +39,10 @@ func (c *Client) Collection(col string) *mongo.Collection {
 func (c *Client) Find(ctx context.Context, col string, filter interface{}, consumer Consumer) error {
 	cursor, err := c.Collection(col).Find(ctx, filter)
 	if errors.Is(err, mongo.ErrNilDocument) || errors.Is(err, mongo.ErrNoDocuments) {
-		return err1.ErrNotFound
+		return rerror.ErrNotFound
 	}
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	defer func() {
 		_ = cursor.Close(ctx)
@@ -51,18 +51,18 @@ func (c *Client) Find(ctx context.Context, col string, filter interface{}, consu
 	for {
 		c := cursor.Next(ctx)
 		if err := cursor.Err(); err != nil && !errors.Is(err, io.EOF) {
-			return err1.ErrInternalBy(err)
+			return rerror.ErrInternalBy(err)
 		}
 
 		if !c {
 			if err := consumer.Consume(nil); err != nil {
-				return err1.ErrInternalBy(err)
+				return rerror.ErrInternalBy(err)
 			}
 			break
 		}
 
 		if err := consumer.Consume(cursor.Current); err != nil {
-			return err1.ErrInternalBy(err)
+			return rerror.ErrInternalBy(err)
 		}
 	}
 	return nil
@@ -71,10 +71,10 @@ func (c *Client) Find(ctx context.Context, col string, filter interface{}, consu
 func (c *Client) FindOne(ctx context.Context, col string, filter interface{}, consumer Consumer) error {
 	raw, err := c.Collection(col).FindOne(ctx, filter).DecodeBytes()
 	if errors.Is(err, mongo.ErrNilDocument) || errors.Is(err, mongo.ErrNoDocuments) {
-		return err1.ErrNotFound
+		return rerror.ErrNotFound
 	}
 	if err := consumer.Consume(raw); err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -82,7 +82,7 @@ func (c *Client) FindOne(ctx context.Context, col string, filter interface{}, co
 func (c *Client) Count(ctx context.Context, col string, filter interface{}) (int64, error) {
 	count, err := c.Collection(col).CountDocuments(ctx, filter)
 	if err != nil {
-		return count, err1.ErrInternalBy(err)
+		return count, rerror.ErrInternalBy(err)
 	}
 	return count, nil
 }
@@ -98,7 +98,7 @@ func (c *Client) RemoveAll(ctx context.Context, col string, ids []string) error 
 	}
 	_, err := c.Collection(col).DeleteMany(ctx, filter)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func (c *Client) RemoveAll(ctx context.Context, col string, ids []string) error 
 func (c *Client) RemoveOne(ctx context.Context, col string, id string) error {
 	_, err := c.Collection(col).DeleteOne(ctx, bson.D{{Key: "id", Value: id}})
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -121,7 +121,7 @@ var (
 func (c *Client) SaveOne(ctx context.Context, col string, id string, replacement interface{}) error {
 	_, err := c.Collection(col).ReplaceOne(ctx, bson.D{{Key: "id", Value: id}}, replacement, replaceOption)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -131,7 +131,7 @@ func (c *Client) SaveAll(ctx context.Context, col string, ids []string, updates 
 		return nil
 	}
 	if len(ids) != len(updates) {
-		return err1.ErrInternalBy(errors.New("invalid save args"))
+		return rerror.ErrInternalBy(errors.New("invalid save args"))
 	}
 
 	writeModels := make([]mongo.WriteModel, 0, len(updates))
@@ -146,7 +146,7 @@ func (c *Client) SaveAll(ctx context.Context, col string, ids []string, updates 
 
 	_, err := c.Collection(col).BulkWrite(ctx, writeModels)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }

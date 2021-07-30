@@ -7,8 +7,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/asset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Asset struct {
@@ -30,7 +30,7 @@ func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, erro
 	if ok {
 		return d, nil
 	}
-	return &asset.Asset{}, err1.ErrNotFound
+	return &asset.Asset{}, rerror.ErrNotFound
 }
 
 func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {

@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/internal/graphql"
 	"github.com/reearth/reearth-backend/internal/usecase"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
@@ -46,7 +46,7 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if u == nil && userID != "" {
 				if userID2, err := id.UserIDFrom(userID); err == nil {
 					u, err = cfg.Repos.User.FindByID(ctx, userID2)
-					if err != nil && err != err1.ErrNotFound {
+					if err != nil && err != rerror.ErrNotFound {
 						return err
 					}
 				} else {
@@ -58,7 +58,7 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				var err error
 				// find user
 				u, err = cfg.Repos.User.FindByAuth0Sub(ctx, sub)
-				if err != nil && err != err1.ErrNotFound {
+				if err != nil && err != rerror.ErrNotFound {
 					return err
 				}
 
@@ -78,11 +78,11 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				// 	// }
 
 				// 	u, err = cfg.Repos.User.FindByEmail(ctx, data.Email)
-				// 	if err != nil && err != err1.ErrNotFound {
+				// 	if err != nil && err != rerror.ErrNotFound {
 				// 		return err
 				// 	}
 				// 	if u == nil {
-				// 		return err1.ErrUserNotFound
+				// 		return rerror.ErrUserNotFound
 				// 	}
 				// }
 			}

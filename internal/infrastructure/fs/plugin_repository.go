@@ -6,10 +6,10 @@ import (
 	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type pluginRepository struct {
@@ -42,7 +42,7 @@ func (r *pluginRepository) Manifest(ctx context.Context, id id.PluginID) (*manif
 			break
 		}
 		if err != nil {
-			return nil, err1.ErrInternalBy(err)
+			return nil, rerror.ErrInternalBy(err)
 		}
 		if f.Fullpath == manifestFilePath {
 			m, err := manifest.Parse(f.Content)

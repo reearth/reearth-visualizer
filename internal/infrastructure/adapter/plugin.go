@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 // TODO: ここで幅優先探索していくアルゴリズムを書いてmongoからビルトインの検索ロジックを除去する
@@ -27,7 +27,7 @@ func NewPlugin(readers []repo.Plugin, writer repo.Plugin) repo.Plugin {
 func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
 	for _, re := range r.readers {
 		if res, err := re.FindByID(ctx, id); err != nil {
-			if errors.Is(err, err1.ErrNotFound) {
+			if errors.Is(err, rerror.ErrNotFound) {
 				continue
 			} else {
 				return nil, err
@@ -36,14 +36,14 @@ func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plug
 			return res, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
 	results := make([]*plugin.Plugin, 0, len(ids))
 	for _, id := range ids {
 		res, err := r.FindByID(ctx, id)
-		if err != nil && err != err1.ErrNotFound {
+		if err != nil && err != rerror.ErrNotFound {
 			return nil, err
 		}
 		results = append(results, res)

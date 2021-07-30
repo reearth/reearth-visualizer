@@ -17,8 +17,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/cache"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Published struct {
@@ -70,7 +70,7 @@ func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *
 func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
 	if err != nil || prj == nil {
-		return interfaces.ProjectPublishedMetadata{}, err1.ErrNotFound
+		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
 	}
 
 	return interfaces.ProjectPublishedMetadataFrom(prj), nil

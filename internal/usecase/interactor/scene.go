@@ -8,11 +8,11 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/scene/sceneops"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
@@ -246,7 +246,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	ws := scene.WidgetSystem()
 	widget := ws.Widget(param.PluginID, param.ExtensionID)
 	if widget == nil {
-		return nil, nil, err1.ErrNotFound
+		return nil, nil, rerror.ErrNotFound
 	}
 
 	if param.Enabled != nil {
@@ -295,7 +295,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, pid id.PluginID
 
 	widget := ws.Widget(pid, eid)
 	if widget == nil {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 
 	ws.Remove(pid, eid)
@@ -349,7 +349,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 
 	plugin, err2 := i.pluginRepo.FindByID(ctx, pid)
 	if err2 != nil {
-		if errors.Is(err2, err1.ErrNotFound) {
+		if errors.Is(err2, rerror.ErrNotFound) {
 			//
 			// Install Plugin
 			//
@@ -594,7 +594,7 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 func (i *Scene) getPlugin(ctx context.Context, p id.PluginID, e id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
 	plugin, err2 := i.pluginRepo.FindByID(ctx, p)
 	if err2 != nil {
-		if errors.Is(err2, err1.ErrNotFound) {
+		if errors.Is(err2, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
 		}
 		return nil, nil, err2

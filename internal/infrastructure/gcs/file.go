@@ -11,11 +11,11 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 const (
@@ -65,7 +65,7 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 
 func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.Reader, error) {
 	if name == "" {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 
 	p := path.Join(gcsAssetBasePath, name)
@@ -77,16 +77,16 @@ func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.Reader, error
 	reader, err := bucket.Object(p).NewReader(ctx)
 	if err != nil {
 		if errors.Is(err, storage.ErrObjectNotExist) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return reader, nil
 }
 
 func (f *fileRepo) ReadPluginFile(ctx context.Context, plugin id.PluginID, name string) (io.Reader, error) {
 	if name == "" {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 
 	p := path.Join(gcsPluginBasePath, plugin.Name(), plugin.Version().String(), name)
@@ -98,16 +98,16 @@ func (f *fileRepo) ReadPluginFile(ctx context.Context, plugin id.PluginID, name 
 	reader, err := bucket.Object(p).NewReader(ctx)
 	if err != nil {
 		if errors.Is(err, storage.ErrObjectNotExist) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return reader, nil
 }
 
 func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.Reader, error) {
 	if name == "" {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 
 	p := path.Join(gcsMapBasePath, name+".json")
@@ -120,9 +120,9 @@ func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.Read
 	reader, err := bucket.Object(p).NewReader(ctx)
 	if err != nil {
 		if errors.Is(err, storage.ErrObjectNotExist) {
-			return nil, err1.ErrNotFound
+			return nil, rerror.ErrNotFound
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return reader, nil
 }
@@ -190,7 +190,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil
 		}
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -299,12 +299,12 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 	destObject := bucket.Object(filename)
 	if _, err := destObject.CopierFrom(object).Run(ctx); err != nil {
 		if errors.Is(err, storage.ErrObjectNotExist) {
-			return err1.ErrNotFound
+			return rerror.ErrNotFound
 		}
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	if err := object.Delete(ctx); err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -320,7 +320,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil
 		}
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }

@@ -11,10 +11,10 @@ import (
 	"github.com/reearth/reearth-backend/internal/graphql"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer/encoding"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
@@ -80,14 +80,14 @@ func privateAPI(
 		}
 		scenes, err := repos.Scene.FindIDsByTeam(ctx, op.ReadableTeams)
 		if err != nil {
-			if errors.Is(err1.ErrNotFound, err) {
+			if errors.Is(rerror.ErrNotFound, err) {
 				return &echo.HTTPError{Code: http.StatusNotFound, Message: err}
 			}
 			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
 		}
 		layer, err := repos.Layer.FindByID(ctx, lid, scenes)
 		if err != nil {
-			if errors.Is(err1.ErrNotFound, err) {
+			if errors.Is(rerror.ErrNotFound, err) {
 				return &echo.HTTPError{Code: http.StatusNotFound, Message: err}
 			}
 			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}

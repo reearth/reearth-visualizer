@@ -5,9 +5,9 @@ import (
 	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Layer struct {
@@ -29,7 +29,7 @@ func (r *Layer) FindByID(ctx context.Context, id id.LayerID, f []id.SceneID) (la
 	if ok && isSceneIncludes(res.Scene(), f) {
 		return res, nil
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Layer) FindByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.List, error) {
@@ -100,7 +100,7 @@ func (r *Layer) FindItemByID(ctx context.Context, id id.LayerID, f []id.SceneID)
 			return li, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Layer) FindGroupByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
@@ -116,7 +116,7 @@ func (r *Layer) FindGroupByID(ctx context.Context, id id.LayerID, f []id.SceneID
 			return lg, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Layer) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, s id.SceneID, ds id.DatasetSchemaID) (layer.GroupList, error) {
@@ -157,7 +157,7 @@ func (r *Layer) FindByProperty(ctx context.Context, id id.PropertyID, f []id.Sce
 			}
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
@@ -178,7 +178,7 @@ func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID, f []id.SceneI
 			}
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List, error) {

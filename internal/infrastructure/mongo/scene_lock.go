@@ -6,8 +6,8 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,7 +28,7 @@ func (r *sceneLockRepo) GetLock(ctx context.Context, sceneID id.SceneID) (scene.
 	}
 	var c mongodoc.SceneLockConsumer
 	if err2 := r.client.FindOne(ctx, filter, &c); err2 != nil {
-		if errors.Is(err2, err1.ErrNotFound) {
+		if errors.Is(err2, rerror.ErrNotFound) {
 			return scene.LockModeFree, nil
 		}
 		return scene.LockMode(""), err2
@@ -60,7 +60,7 @@ func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock s
 	}, &options.UpdateOptions{
 		Upsert: &upsert,
 	}); err2 != nil {
-		return err1.ErrInternalBy(err2)
+		return rerror.ErrInternalBy(err2)
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock s
 func (r *sceneLockRepo) ReleaseAllLock(ctx context.Context) error {
 	if _, err2 := r.client.Collection().DeleteMany(ctx, bson.D{}); err2 != nil {
 		if err2 != mongo.ErrNilDocument && err2 != mongo.ErrNoDocuments {
-			return err1.ErrInternalBy(err2)
+			return rerror.ErrInternalBy(err2)
 		}
 	}
 	return nil

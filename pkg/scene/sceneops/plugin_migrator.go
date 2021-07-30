@@ -5,11 +5,11 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
@@ -36,7 +36,7 @@ var (
 
 func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID id.PluginID) (MigratePluginsResult, error) {
 	if s == nil {
-		return MigratePluginsResult{}, err1.ErrInternalBy(errors.New("scene is nil"))
+		return MigratePluginsResult{}, rerror.ErrInternalBy(errors.New("scene is nil"))
 	}
 
 	if oldPluginID.Equal(newPluginID) || oldPluginID.Name() != newPluginID.Name() {

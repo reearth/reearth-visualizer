@@ -9,9 +9,9 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
@@ -218,7 +218,7 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 
 	// Fetch scene
 	s, err := d.Scene.FindByProject(ctx, prj.ID(), operator.WritableTeams)
-	if err != nil && !errors.Is(err, err1.ErrNotFound) {
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return err
 	}
 

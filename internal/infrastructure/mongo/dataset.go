@@ -9,9 +9,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
@@ -212,7 +212,7 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, f []id.Sc
 
 	cursor, err2 := r.client.Collection().Aggregate(ctx, pipeline)
 	if err2 != nil {
-		return nil, err1.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalBy(err2)
 	}
 	defer func() {
 		_ = cursor.Close(ctx)
@@ -220,7 +220,7 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, f []id.Sc
 
 	doc := mongodoc.DatasetExtendedDocument{}
 	if err2 := bson.Unmarshal(cursor.Current, &doc); err2 != nil {
-		return nil, err1.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalBy(err2)
 	}
 	docs := make([]*mongodoc.DatasetExtendedDocument, 0, len(fields))
 	for i := 0; i < len(fields); i++ {
@@ -239,11 +239,11 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, f []id.Sc
 	res := make(dataset.List, 0, len(docs))
 	for i, d := range docs {
 		if i > 0 && i-1 != d.Depth {
-			return nil, err1.ErrInternalBy(errors.New("invalid order"))
+			return nil, rerror.ErrInternalBy(errors.New("invalid order"))
 		}
 		ds, err2 := d.DatasetDocument.Model()
 		if err2 != nil {
-			return nil, err1.ErrInternalBy(err2)
+			return nil, rerror.ErrInternalBy(err2)
 		}
 		res = append(res, ds)
 	}
@@ -280,7 +280,7 @@ func (r *datasetRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) err
 	}
 	_, err := r.client.Collection().DeleteMany(ctx, filter)
 	if err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
@@ -289,7 +289,7 @@ func (r *datasetRepo) paginate(ctx context.Context, filter bson.D, pagination *u
 	var c mongodoc.DatasetConsumer
 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 	if err2 != nil {
-		return nil, nil, err1.ErrInternalBy(err2)
+		return nil, nil, rerror.ErrInternalBy(err2)
 	}
 	return c.Rows, pageInfo, nil
 }
@@ -299,7 +299,7 @@ func (r *datasetRepo) find(ctx context.Context, dst dataset.List, filter bson.D)
 		Rows: dst,
 	}
 	if err2 := r.client.Find(ctx, filter, &c); err2 != nil {
-		return nil, err1.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalBy(err2)
 	}
 	return c.Rows, nil
 }

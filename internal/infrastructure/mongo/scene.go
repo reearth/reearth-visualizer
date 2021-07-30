@@ -5,9 +5,9 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -83,7 +83,7 @@ func (r *sceneRepo) HasSceneTeam(ctx context.Context, sceneID id.SceneID, temaID
 	}
 	res, err2 := r.client.Collection().CountDocuments(ctx, filter)
 	if err2 != nil {
-		return false, err1.ErrInternalBy(err2)
+		return false, rerror.ErrInternalBy(err2)
 	}
 	return res == 1, nil
 }
@@ -97,13 +97,13 @@ func (r *sceneRepo) HasScenesTeam(ctx context.Context, sceneIDs []id.SceneID, te
 	})
 
 	if err2 != nil {
-		return nil, err1.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalBy(err2)
 	}
 
 	var res []struct{ ID string }
 	err2 = cursor.All(ctx, res)
 	if err2 != nil {
-		return nil, err1.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalBy(err2)
 	}
 
 	res2 := make([]bool, 0, len(sceneIDs))
@@ -155,7 +155,7 @@ func (r *sceneRepo) findOne(ctx context.Context, filter bson.D) (*scene.Scene, e
 // 	var c mongodoc.SceneConsumer
 // 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 // 	if err2 != nil {
-// 		return nil, nil, err1.ErrInternalBy(err2)
+// 		return nil, nil, rerror.ErrInternalBy(err2)
 // 	}
 // 	return c.Rows, pageInfo, nil
 // }

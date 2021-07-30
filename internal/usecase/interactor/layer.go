@@ -8,13 +8,13 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/shp"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/decoding"
@@ -170,7 +170,7 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 
 	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID, scenes)
 	if err != nil {
-		if errors.Is(err, err1.ErrNotFound) {
+		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, err
 		}
 		return nil, nil, err
@@ -486,7 +486,7 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 	}
 
 	parentLayer, err := i.layerRepo.FindParentByID(ctx, lid, scenes)
-	if err != nil && err != err1.ErrNotFound {
+	if err != nil && err != rerror.ErrNotFound {
 		return lid, nil, err
 	}
 	if parentLayer != nil {
@@ -900,7 +900,7 @@ func (i *Layer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExten
 
 	plugin, err := i.pluginRepo.FindByID(ctx, *p)
 	if err != nil {
-		if errors.Is(err, err1.ErrNotFound) {
+		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
 		}
 		return nil, nil, err

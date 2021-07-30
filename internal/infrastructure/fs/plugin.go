@@ -7,10 +7,10 @@ import (
 	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type pluginRepo struct {
@@ -30,11 +30,11 @@ func (r *pluginRepo) manifest(ctx context.Context, id id.PluginID) string {
 func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
 	filename := r.manifest(ctx, id)
 	if _, err := os.Stat(filename); err != nil {
-		return nil, err1.ErrNotFound
+		return nil, rerror.ErrNotFound
 	}
 	file, err := os.Open(filename)
 	if err != nil {
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	defer func() {
 		_ = file.Close()
@@ -42,7 +42,7 @@ func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plug
 
 	m, err := manifest.Parse(file)
 	if err != nil {
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 
 	return m.Plugin, nil
@@ -61,5 +61,5 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugi
 }
 
 func (r *pluginRepo) Save(ctx context.Context, p *plugin.Plugin) error {
-	return err1.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalBy(errors.New("read only"))
 }

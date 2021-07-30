@@ -18,7 +18,7 @@ import (
 	infra_graphql "github.com/reearth/reearth-backend/internal/graphql"
 	"github.com/reearth/reearth-backend/internal/graphql/dataloader"
 	"github.com/reearth/reearth-backend/internal/usecase"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 const enableDataLoaders = true
@@ -105,7 +105,7 @@ func graphqlAPI(
 		// show more detailed error messgage in debug mode
 		func(ctx context.Context, e error) *gqlerror.Error {
 			if conf.Debug {
-				var ierr *err1.ErrInternal
+				var ierr *rerror.ErrInternal
 				if errors.As(e, &ierr) {
 					if err2 := ierr.Unwrap(); err2 != nil {
 						// TODO: display stacktrace with xerrors

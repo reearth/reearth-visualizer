@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
@@ -57,7 +57,7 @@ func (r *Team) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
 	if ok {
 		return &d, nil
 	}
-	return &user.Team{}, err1.ErrNotFound
+	return &user.Team{}, rerror.ErrNotFound
 }
 
 func (r *Team) Save(ctx context.Context, t *user.Team) error {

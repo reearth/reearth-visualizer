@@ -5,8 +5,8 @@ import (
 
 	graphql1 "github.com/reearth/reearth-backend/internal/adapter/graphql"
 	"github.com/reearth/reearth-backend/internal/graphql/dataloader"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 func (r *Resolver) Project() ProjectResolver {
@@ -27,7 +27,7 @@ func (r *projectResolver) Scene(ctx context.Context, obj *graphql1.Project) (*gr
 	defer exit()
 
 	s, err := r.config.Controllers.SceneController.FindByProject(ctx, id.ProjectID(obj.ID), getOperator(ctx))
-	if err != nil && err != err1.ErrNotFound {
+	if err != nil && err != rerror.ErrNotFound {
 		return nil, err
 	}
 	return s, nil

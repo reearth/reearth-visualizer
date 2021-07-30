@@ -8,8 +8,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 func serveFiles(
@@ -51,7 +51,7 @@ func serveFiles(
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			pid, err := id.PluginIDFrom(ctx.Param("name") + "#" + ctx.Param("version"))
 			if err != nil {
-				return nil, "", err1.ErrNotFound
+				return nil, "", rerror.ErrNotFound
 			}
 			filename := ctx.Param("filename")
 			r, err := repo.ReadPluginFile(ctx.Request().Context(), pid, filename)

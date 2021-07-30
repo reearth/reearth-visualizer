@@ -7,9 +7,9 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type Plugin struct {
@@ -36,7 +36,7 @@ func (r *Plugin) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, 
 			return &p2, nil
 		}
 	}
-	return nil, err1.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {

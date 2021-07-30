@@ -7,8 +7,8 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/pkg/config"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,7 +27,7 @@ type Client struct {
 func (c Client) Migrate(ctx context.Context) error {
 	config, err := c.loadConfig(ctx)
 	if err != nil {
-		var ie *err1.ErrInternal
+		var ie *rerror.ErrInternal
 		if ok := errors.As(err, &ie); ok {
 			err = ie.Unwrap()
 		}
@@ -43,7 +43,7 @@ func (c Client) Migrate(ctx context.Context) error {
 		log.Infof("DB migration: %d\n", m)
 
 		if err := migrations[m](ctx, c.Client); err != nil {
-			var ie *err1.ErrInternal
+			var ie *rerror.ErrInternal
 			if ok := errors.As(err, &ie); ok {
 				err = ie.Unwrap()
 			}
@@ -52,7 +52,7 @@ func (c Client) Migrate(ctx context.Context) error {
 
 		config.Migration = m
 		if err := c.saveConfig(ctx, config); err != nil {
-			var ie *err1.ErrInternal
+			var ie *rerror.ErrInternal
 			if ok := errors.As(err, &ie); ok {
 				err = ie.Unwrap()
 			}
@@ -94,7 +94,7 @@ func (c *Client) saveConfig(ctx context.Context, cfg *config.Config) error {
 	}, &options.UpdateOptions{
 		Upsert: &upsert,
 	}); err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 
 	return nil

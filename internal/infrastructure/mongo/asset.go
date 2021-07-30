@@ -9,9 +9,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/asset"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 type assetRepo struct {
@@ -35,7 +35,7 @@ func (r *assetRepo) paginate(ctx context.Context, filter bson.D, pagination *use
 	var c mongodoc.AssetConsumer
 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
 	if err2 != nil {
-		return nil, nil, err1.ErrInternalBy(err2)
+		return nil, nil, rerror.ErrInternalBy(err2)
 	}
 	return c.Rows, pageInfo, nil
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/config"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -28,7 +28,7 @@ func (r *configRepo) Load(ctx context.Context) (*config.Config, error) {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return cfg, nil
 		}
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 	return cfg, nil
 }
@@ -40,7 +40,7 @@ func (r *configRepo) Save(ctx context.Context, cfg *config.Config) error {
 	if _, err := r.client.Collection().UpdateOne(ctx, nil, cfg, &options.UpdateOptions{
 		Upsert: &upsert,
 	}); err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }

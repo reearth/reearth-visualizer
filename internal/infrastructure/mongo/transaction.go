@@ -5,7 +5,7 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	err1 "github.com/reearth/reearth-backend/pkg/error"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,11 +23,11 @@ func NewTransaction(client *mongodoc.Client) repo.Transaction {
 func (t *Transaction) Begin() (repo.Tx, error) {
 	s, err := t.client.Session()
 	if err != nil {
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 
 	if err := s.StartTransaction(&options.TransactionOptions{}); err != nil {
-		return nil, err1.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
 
 	return &Tx{session: s, commit: false}, nil
@@ -52,10 +52,10 @@ func (t *Tx) End(ctx context.Context) error {
 
 	if t.commit {
 		if err := t.session.CommitTransaction(ctx); err != nil {
-			return err1.ErrInternalBy(err)
+			return rerror.ErrInternalBy(err)
 		}
 	} else if err := t.session.AbortTransaction(ctx); err != nil {
-		return err1.ErrInternalBy(err)
+		return rerror.ErrInternalBy(err)
 	}
 
 	t.session.EndSession(ctx)
