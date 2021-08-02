@@ -25,15 +25,17 @@ const Account: React.FC<Props> = () => {
     <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
       <SettingsHeader title={intl.formatMessage({ defaultMessage: "Account" })} />
       <ProfileSection username={me?.name} updateName={updateName} />
-      <AccountSection
-        email={me?.email}
-        lang={me?.lang}
-        appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
-        hasPassword={hasPassword}
-        updatePassword={updatePassword}
-        updateLanguage={updateLanguage}
-        updateTheme={updateTheme}
-      />
+      {me && (
+        <AccountSection
+          email={me?.email}
+          lang={me?.lang}
+          appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
+          hasPassword={hasPassword}
+          updatePassword={updatePassword}
+          updateLanguage={updateLanguage}
+          updateTheme={updateTheme}
+        />
+      )}
     </SettingPage>
   );
 };
