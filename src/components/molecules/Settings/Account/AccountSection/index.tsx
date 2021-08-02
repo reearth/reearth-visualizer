@@ -6,6 +6,8 @@ import Field from "@reearth/components/molecules/Settings/Field";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+import Text from "@reearth/components/atoms/Text";
+import Flex from "@reearth/components/atoms/Flex";
 
 export type Props = {
   email?: string;
@@ -74,6 +76,17 @@ const ProfileSection: React.FC<Props> = ({
           body={currentThemeLabel}
           onSubmit={updateTheme}
         />
+        <Notice>
+          <AlertIcon icon="alert" size={16} />
+          <Message>
+            <StyledText size="xs">
+              {intl.formatMessage({
+                defaultMessage:
+                  "Light theme is still in beta. Some UI may still not be supported (ie. public projects will not use light theme).",
+              })}
+            </StyledText>
+          </Message>
+        </Notice>
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
@@ -94,6 +107,23 @@ const StyledIcon = styled(Icon)`
   &:hover {
     color: ${({ theme }) => theme.main.strongText};
   }
+`;
+
+const AlertIcon = styled(Icon)`
+  color: ${({ theme }) => theme.colors.dark.functional.attention};
+`;
+
+const Notice = styled(Flex)`
+  margin-left: 184px;
+`;
+
+const Message = styled.div`
+  max-width: 500px;
+`;
+
+const StyledText = styled(Text)`
+  margin-left: 12px;
+  font-style: italic;
 `;
 
 export default ProfileSection;

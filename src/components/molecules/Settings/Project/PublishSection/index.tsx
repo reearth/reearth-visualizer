@@ -125,6 +125,7 @@ const StyledItem = styled(Field)`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   color: ${props => props.theme.main.text};
+  margin-left: ${`${metricsSizes["m"]}px`};
 
   &:hover {
     color: ${props => props.theme.main.strongText};

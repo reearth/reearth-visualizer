@@ -70,6 +70,10 @@ src:
           '2523193532': Workspace Name
           '3528672691': Cancel
           '4120989039': Create
+        plugin:
+          builtin:
+            blocks:
+              '463005216': Double click here to write.
       Dashboard:
         '499824730': >-
           You have no projects in your workspace. Click the button above in the
@@ -97,18 +101,22 @@ src:
             Gdrive:
               '734499794': Connect with Google Drive
               '1359825936': 'Re:Earth supports uploading Google Sheets and CSV files.'
+        Earth:
+          FovSlider:
+            '3017293479': Narrow
+            '3291465140': Angle
+            '3723856417': Wide
         ExportPane:
           '3590336714': Export
           '3977973714': Export type
-        FovSlider:
-          '3017293479': Narrow
-          '3291465140': Angle
-          '3723856417': Wide
         Header:
           '1458938618': Update
           '1547167026': Publish
           '2237014112': Unpublish
           '3637715635': Preview
+        InfoBox:
+          InfoBox:
+            '3037025019': Move mouse here and click "+" to add content
         LayerMultipleSelectionModal:
           '1115770113': Save
           '2221959784': Selectable Layers
@@ -234,6 +242,9 @@ src:
             '1840107345': Dark theme
             '2237029987': Password
             '3198092477': Account
+            '3923994153': >-
+              Light theme is still in beta. Some UI may still not be supported
+              (ie. public projects will not use light theme).
           PasswordModal:
             '539787951': Set your password now
             '740918511': New password (for confirmation)
@@ -341,12 +352,12 @@ src:
             '3374163063': Description
             '3825437586': Public Info
           PublishSection:
-            '2934907641': >-
-              Once your project is published from the Editor page the URL
+            '653686109': >-
+              Once your project is published from the editor page the URL
               details will be shown here.
-            '3057121245': Domain Settings
+            '784802132': Site settings
             '3352828776': 'Access your project, copy or edit the URL below.'
-            '3505773623': Default Domain
+            '3572249962': Site name
           StatusSection:
             '2025719264': This project is published with search engine indexing disabled.
             '3306960224': This project is not published.
@@ -401,12 +412,6 @@ src:
             '3828443189': New Workspace
       TopPage:
         '1405865627': Sign in
-      Visualizer:
-        Block:
-          Text:
-            '463005216': Double click here to write.
-        Infobox:
-          '3037025019': Move mouse here and click "+" to add content
     organisms:
       EarthEditor:
         LeftMenu:
