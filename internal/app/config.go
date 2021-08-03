@@ -25,7 +25,7 @@ type Config struct {
 	Tracer       string
 	TracerSample float64
 	GCS          GCSConfig
-	AssetBaseURL string
+	AssetBaseURL string `default:"http://localhost:8080/assets"`
 	Origins      []string
 	Web          WebConfig
 	SignupSecret string
