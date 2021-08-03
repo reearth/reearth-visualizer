@@ -33,7 +33,7 @@ export default (alias?: string) => {
 
   const layers = useMemo<Layer[] | undefined>(
     () =>
-      data?.layers.map(l => ({
+      data?.layers?.map(l => ({
         id: l.id,
         title: l.name || "",
         pluginId: l.pluginId,
@@ -133,7 +133,7 @@ export default (alias?: string) => {
 };
 
 function dataUrl(alias?: string): string {
-  if (alias && window.location.hostname === "localhost" && window.REEARTH_CONFIG?.api) {
+  if (alias && window.REEARTH_CONFIG?.api) {
     return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
   }
   return "data.json";
