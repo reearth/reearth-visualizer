@@ -6818,10 +6818,10 @@ cesium-navigation@^1.0.0:
   resolved "https://registry.yarnpkg.com/cesium-navigation/-/cesium-navigation-1.0.0.tgz#5ff47befe1fd89f87483cc2ff7013e604e9920b1"
   integrity sha512-tpQEzzpBfplTgKJWxOE5BAliWYMRIgfTd/oL6tVi/G2FPt5luca7dwi8vesiWxsS90kUHTw8949i8t02m3hgaA==
 
-cesium@^1.82.1:
-  version "1.82.1"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.82.1.tgz#ca231d4dee8bc02126dfbd57e9474b7bd65d8f40"
-  integrity sha512-BpyQ3KF6ZPPicW5L3khPJA0fKWL1ViA5cV1hFa/8zWiJ/1ix3+kyzrvaAlUdy/knn9xY70ePnNYwokIs+d2znw==
+cesium@^1.84.0:
+  version "1.84.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.84.0.tgz#b93ab6f570cf342f63192dd8104982639cda8e8d"
+  integrity sha512-rf3aBs+HKboKm1QATN0YKO+OnskV/q5T6Su1ew3gmXxFdD+k8BIxdf5fRSLQyxOIGk6ZB1LC3pCV9VG4+EzfzA==
 
 chalk@*, chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.1:
   version "4.1.1"
