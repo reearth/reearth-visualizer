@@ -8,7 +8,6 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/plugin"
 )
 
 var (
@@ -19,13 +18,14 @@ var (
 )
 
 type File interface {
-	ReadAsset(context.Context, string) (io.Reader, error)
-	ReadPluginFile(context.Context, id.PluginID, string) (io.Reader, error)
-	ReadBuiltSceneFile(context.Context, string) (io.Reader, error)
+	ReadAsset(context.Context, string) (io.ReadCloser, error)
 	UploadAsset(context.Context, *file.File) (*url.URL, error)
-	UploadAndExtractPluginFiles(context.Context, file.Archive, *plugin.Plugin) (*url.URL, error)
-	UploadBuiltScene(context.Context, io.Reader, string) error
-	MoveBuiltScene(context.Context, string, string) error
 	RemoveAsset(context.Context, *url.URL) error
+	ReadPluginFile(context.Context, id.PluginID, string) (io.ReadCloser, error)
+	UploadPluginFile(context.Context, id.PluginID, *file.File) error
+	RemovePlugin(context.Context, id.PluginID) error
+	UploadBuiltScene(context.Context, io.Reader, string) error
+	ReadBuiltSceneFile(context.Context, string) (io.ReadCloser, error)
+	MoveBuiltScene(context.Context, string, string) error
 	RemoveBuiltScene(context.Context, string) error
 }

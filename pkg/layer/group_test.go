@@ -16,7 +16,7 @@ var group = Group{
 		id:        id.MustLayerID(id.New().String()),
 		name:      "xxx",
 		visible:   false,
-		plugin:    id.MustPluginID("aaa#1.1.1").Ref(),
+		plugin:    id.MustPluginID("aaa~1.1.1").Ref(),
 		extension: id.PluginExtensionID("foo").Ref(),
 		property:  nil,
 		infobox:   nil,
@@ -41,7 +41,7 @@ func TestGroup_Name(t *testing.T) {
 
 func TestGroup_Plugin(t *testing.T) {
 	assert.NotNil(t, group.Plugin())
-	assert.True(t, id.MustPluginID("aaa#1.1.1").Equal(*group.Plugin()))
+	assert.True(t, id.MustPluginID("aaa~1.1.1").Equal(*group.Plugin()))
 }
 
 func TestGroup_IDRef(t *testing.T) {
@@ -90,9 +90,9 @@ func TestGroup_SetInfobox(t *testing.T) {
 }
 
 func TestGroup_SetPlugin(t *testing.T) {
-	group.SetPlugin(id.MustPluginID("ccc#1.1.1").Ref())
+	group.SetPlugin(id.MustPluginID("ccc~1.1.1").Ref())
 	assert.NotNil(t, group.Plugin())
-	assert.True(t, id.MustPluginID("ccc#1.1.1").Equal(*group.Plugin()))
+	assert.True(t, id.MustPluginID("ccc~1.1.1").Equal(*group.Plugin()))
 }
 
 func TestGroup_SetVisible(t *testing.T) {

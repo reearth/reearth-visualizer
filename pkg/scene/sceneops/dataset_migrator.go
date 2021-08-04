@@ -7,7 +7,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/layer/initializer"
+	"github.com/reearth/reearth-backend/pkg/layer/layerops"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -216,7 +216,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, old
 			// プラグインを取得
 			var plug *plugin.Plugin
 			if pid := lg.Plugin(); pid != nil {
-				plug2, err := srv.Plugin(ctx, *pid)
+				plug2, err := srv.Plugin(ctx, []id.PluginID{*pid}, []id.SceneID{sid})
 				if err != nil || len(plug2) < 1 {
 					return MigrateDatasetResult{}, err
 				}
@@ -232,7 +232,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, old
 					name = rf.Value().Value().(string)
 				}
 
-				layerItem, property, err := initializer.LayerItem{
+				layerItem, property, err := layerops.LayerItem{
 					SceneID:         sid,
 					ParentLayerID:   lg.ID(),
 					LinkedDatasetID: &did,

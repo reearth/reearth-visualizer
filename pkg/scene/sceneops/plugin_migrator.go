@@ -43,7 +43,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
 
-	plugins, err := s.Plugin(ctx, oldPluginID, newPluginID)
+	plugins, err := s.Plugin(ctx, []id.PluginID{oldPluginID, newPluginID}, []id.SceneID{sc.ID()})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}

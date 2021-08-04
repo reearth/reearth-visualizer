@@ -3,55 +3,34 @@ package fs
 import (
 	"context"
 	"errors"
-	"os"
-	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/spf13/afero"
 )
 
 type propertySchema struct {
-	basePath string
+	fs afero.Fs
 }
 
-func NewPropertySchema(basePath string) repo.PropertySchema {
+func NewPropertySchema(fs afero.Fs) repo.PropertySchema {
 	return &propertySchema{
-		basePath: basePath,
+		fs: fs,
 	}
-}
-
-func (r *propertySchema) manifest(id id.PluginID) string {
-	return path.Join(getPluginFilePath(r.basePath, id, manifestFilePath))
 }
 
 func (r *propertySchema) FindByID(ctx context.Context, i id.PropertySchemaID) (*property.Schema, error) {
-	pid, err := id.PluginIDFrom(i.Plugin())
+	m, err := readManifest(r.fs, i.Plugin())
 	if err != nil {
-		return nil, rerror.ErrNotFound
-	}
-	filename := r.manifest(pid)
-	if _, err := os.Stat(filename); err != nil {
-		return nil, rerror.ErrNotFound
-	}
-	file, err2 := os.Open(filename)
-	if err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
-	}
-	defer func() {
-		_ = file.Close()
-	}()
-
-	m, err := manifest.Parse(file)
-	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, err
 	}
 
 	if m.Schema != nil && m.Schema.ID() == i {
 		return m.Schema, nil
 	}
+
 	for _, ps := range m.ExtensionSchema {
 		if ps == nil {
 			continue
@@ -81,5 +60,13 @@ func (r *propertySchema) Save(ctx context.Context, p *property.Schema) error {
 }
 
 func (r *propertySchema) SaveAll(ctx context.Context, p property.SchemaList) error {
+	return rerror.ErrInternalBy(errors.New("read only"))
+}
+
+func (r *propertySchema) Remove(ctx context.Context, pid id.PropertySchemaID) error {
+	return rerror.ErrInternalBy(errors.New("read only"))
+}
+
+func (r *propertySchema) RemoveAll(ctx context.Context, pid []id.PropertySchemaID) error {
 	return rerror.ErrInternalBy(errors.New("read only"))
 }

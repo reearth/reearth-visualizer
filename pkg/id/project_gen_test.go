@@ -203,6 +203,13 @@ func TestProjectID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestProjectID_Contains(t *testing.T) {
+	id := NewProjectID()
+	id2 := NewProjectID()
+	assert.True(t, id.Contains([]ProjectID{id, id2}))
+	assert.False(t, id.Contains([]ProjectID{id2}))
+}
+
 func TestProjectID_CopyRef(t *testing.T) {
 	id := New()
 	subId := ProjectIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestProjectIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestProjectIDSet_Add(t *testing.T) {
 			},
 			expected: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestProjectIDSet_Add(t *testing.T) {
 			},
 			expected: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestProjectIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &ProjectId,
 			expected: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestProjectIDSet_Has(t *testing.T) {
 				ProjectIDSet
 				ProjectID
 			}{ProjectIDSet: ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, ProjectID: MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestProjectIDSet_Has(t *testing.T) {
 				ProjectIDSet
 				ProjectID
 			}{ProjectIDSet: ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, ProjectID: MustProjectID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestProjectIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: ProjectIDSet{
@@ -820,7 +827,7 @@ func TestProjectIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestProjectIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestProjectIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestProjectIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestProjectIDSet_Clone(t *testing.T) {
 			},
 			expected: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestProjectIDSet_Merge(t *testing.T) {
 				b *ProjectIDSet
 			}{
 				a: &ProjectIDSet{
-					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &ProjectIDSet{},
 			},
 			expected: &ProjectIDSet{
-				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestProjectIDSet_Merge(t *testing.T) {
 				b *ProjectIDSet
 			}{
 				a: &ProjectIDSet{
-					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &ProjectIDSet{
-					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[ProjectID]struct{}{MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []ProjectID{MustProjectID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &ProjectIDSet{
 				m: map[ProjectID]struct{}{
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustProjectID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []ProjectID{
 					MustProjectID("01f3zhcaq35403zdjnd6dcm0t1"),

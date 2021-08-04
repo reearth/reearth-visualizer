@@ -16,25 +16,23 @@ import (
 //go:embed testdata/minimum.yml
 var minimum string
 var minimumExpected = &Manifest{
-	Plugin:          plugin.New().ID(id.MustPluginID("aaa#1.1.1")).MustBuild(),
-	ExtensionSchema: []*property.Schema{},
-	Schema:          nil,
+	Plugin: plugin.New().ID(id.MustPluginID("aaa~1.1.1")).MustBuild(),
 }
 
 //go:embed testdata/test.yml
 var normal string
 var normalExpected = &Manifest{
-	Plugin: plugin.New().ID(id.MustPluginID("aaa#1.1.1")).Name(i18n.StringFrom("bbb")).Extensions([]*plugin.Extension{
+	Plugin: plugin.New().ID(id.MustPluginID("aaa~1.1.1")).Name(i18n.StringFrom("bbb")).Extensions([]*plugin.Extension{
 		plugin.NewExtension().ID(id.PluginExtensionID("hoge")).
 			Visualizer(visualizer.VisualizerCesium).
 			Type(plugin.ExtensionTypePrimitive).
-			Schema(id.MustPropertySchemaID("aaa#1.1.1/hoge")).
+			Schema(id.MustPropertySchemaID("aaa~1.1.1/hoge")).
 			MustBuild(),
 	}).MustBuild(),
 	ExtensionSchema: []*property.Schema{
-		property.NewSchema().ID(id.MustPropertySchemaID("aaa#1.1.1/hoge")).Groups([]*property.SchemaGroup{
+		property.NewSchema().ID(id.MustPropertySchemaID("aaa~1.1.1/hoge")).Groups([]*property.SchemaGroup{
 			property.NewSchemaGroup().ID(id.PropertySchemaFieldID("default")).
-				Schema(id.MustPropertySchemaID("aaa#1.1.1/hoge")).
+				Schema(id.MustPropertySchemaID("aaa~1.1.1/hoge")).
 				RepresentativeField(id.PropertySchemaFieldID("a").Ref()).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().ID(id.PropertySchemaFieldID("a")).
@@ -51,7 +49,6 @@ var normalExpected = &Manifest{
 				}).MustBuild(),
 		}).MustBuild(),
 	},
-	Schema: nil,
 }
 
 func TestParse(t *testing.T) {
@@ -96,7 +93,7 @@ func TestParse(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			m, err := Parse(strings.NewReader(tc.input))
+			m, err := Parse(strings.NewReader(tc.input), nil)
 			if tc.err == nil {
 				if !assert.NoError(tt, err) {
 					return
@@ -140,7 +137,7 @@ func TestParseSystemFromBytes(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			m, err := ParseSystemFromBytes([]byte(tc.input))
+			m, err := ParseSystemFromBytes([]byte(tc.input), nil)
 			if tc.err == nil {
 				if !assert.NoError(tt, err) {
 					return
@@ -186,12 +183,12 @@ func TestMustParseSystemFromBytes(t *testing.T) {
 
 			if tc.err != nil {
 				assert.PanicsWithError(tt, tc.err.Error(), func() {
-					_ = MustParseSystemFromBytes([]byte(tc.input))
+					_ = MustParseSystemFromBytes([]byte(tc.input), nil)
 				})
 				return
 			}
 
-			m := MustParseSystemFromBytes([]byte(tc.input))
+			m := MustParseSystemFromBytes([]byte(tc.input), nil)
 			assert.Equal(tt, m, tc.expected)
 		})
 	}

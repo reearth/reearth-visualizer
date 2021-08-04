@@ -203,6 +203,13 @@ func TestAssetID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestAssetID_Contains(t *testing.T) {
+	id := NewAssetID()
+	id2 := NewAssetID()
+	assert.True(t, id.Contains([]AssetID{id, id2}))
+	assert.False(t, id.Contains([]AssetID{id2}))
+}
+
 func TestAssetID_CopyRef(t *testing.T) {
 	id := New()
 	subId := AssetIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestAssetIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestAssetIDSet_Add(t *testing.T) {
 			},
 			expected: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestAssetIDSet_Add(t *testing.T) {
 			},
 			expected: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestAssetIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &AssetId,
 			expected: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestAssetIDSet_Has(t *testing.T) {
 				AssetIDSet
 				AssetID
 			}{AssetIDSet: AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, AssetID: MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestAssetIDSet_Has(t *testing.T) {
 				AssetIDSet
 				AssetID
 			}{AssetIDSet: AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, AssetID: MustAssetID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestAssetIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: AssetIDSet{
@@ -820,7 +827,7 @@ func TestAssetIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestAssetIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestAssetIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestAssetIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestAssetIDSet_Clone(t *testing.T) {
 			},
 			expected: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestAssetIDSet_Merge(t *testing.T) {
 				b *AssetIDSet
 			}{
 				a: &AssetIDSet{
-					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &AssetIDSet{},
 			},
 			expected: &AssetIDSet{
-				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestAssetIDSet_Merge(t *testing.T) {
 				b *AssetIDSet
 			}{
 				a: &AssetIDSet{
-					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &AssetIDSet{
-					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &AssetIDSet{
 				m: map[AssetID]struct{}{
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []AssetID{
 					MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),

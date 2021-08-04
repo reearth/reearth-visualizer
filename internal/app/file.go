@@ -47,9 +47,9 @@ func serveFiles(
 	)
 
 	ec.GET(
-		"/plugins/:name/:version/:filename",
+		"/plugins/:plugin/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
-			pid, err := id.PluginIDFrom(ctx.Param("name") + "#" + ctx.Param("version"))
+			pid, err := id.PluginIDFrom(ctx.Param("plugin"))
 			if err != nil {
 				return nil, "", rerror.ErrNotFound
 			}

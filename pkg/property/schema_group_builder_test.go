@@ -10,7 +10,7 @@ import (
 )
 
 func TestSchemaGroupBuilder_Build(t *testing.T) {
-	sid := id.MustPropertySchemaID("xx/aa")
+	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	gid := id.PropertySchemaFieldID("xx")
 	sf := NewSchemaField().ID("ff").Type(ValueTypeString).MustBuild()
 	testCases := []struct {

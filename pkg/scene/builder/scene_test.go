@@ -11,7 +11,7 @@ import (
 func TestScene_FindProperty(t *testing.T) {
 	p1 := id.NewPropertyID()
 	sid := id.NewSceneID()
-	scid := id.MustPropertySchemaID("xx/aa")
+	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	pl := []*property.Property{
 		property.New().NewID().Scene(sid).Schema(scid).MustBuild(),
 		property.New().ID(p1).Scene(sid).Schema(scid).MustBuild(),

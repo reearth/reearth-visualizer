@@ -1,50 +1,34 @@
 package fs
 
 import (
-	"net/url"
-	"path"
-	"strings"
+	"path/filepath"
 
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
+	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/spf13/afero"
 )
 
 const (
-	manifestFilePath = "reearth.json"
 	assetDir         = "assets"
 	pluginDir        = "plugins"
 	publishedDir     = "published"
+	manifestFilePath = "reearth.yml"
 )
 
-func getPluginFilePath(base string, pluginID id.PluginID, filename string) string {
-	return path.Join(base, pluginDir, pluginID.Name(), pluginID.Version().String(), filename)
-}
+func readManifest(fs afero.Fs, pid id.PluginID) (*manifest.Manifest, error) {
+	f, err := fs.Open(filepath.Join(pluginDir, pid.String(), manifestFilePath))
+	if err != nil {
+		return nil, rerror.ErrInternalBy(err)
+	}
+	defer func() {
+		_ = f.Close()
+	}()
 
-func getAssetFilePath(base string, filename string) string {
-	return path.Join(base, assetDir, filename)
-}
-
-func getPublishedDataFilePath(base, name string) string {
-	return path.Join(base, publishedDir, name+".json")
-}
-
-func getAssetFileURL(base *url.URL, filename string) *url.URL {
-	if base == nil {
-		return nil
+	m, err := manifest.Parse(f, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	b := *base
-	b.Path = path.Join(b.Path, filename)
-	return &b
-}
-
-func getAssetFilePathFromURL(base string, u *url.URL) string {
-	if u == nil {
-		return ""
-	}
-	p := strings.Split(u.Path, "/")
-	if len(p) == 0 {
-		return ""
-	}
-	f := p[len(p)-1]
-	return getAssetFilePath(base, f)
+	return m, nil
 }

@@ -55,7 +55,7 @@ func TestGetPlugin(t *testing.T) {
 		},
 		{
 			name:        "foo plugin",
-			pluginID:    id.MustPluginID("foo#1.1.1"),
+			pluginID:    id.MustPluginID("foo~1.1.1"),
 			expectedNil: true,
 		},
 	}
@@ -86,7 +86,7 @@ func TestGetPropertySchema(t *testing.T) {
 		},
 		{
 			name:        "unknown propertySchemaId",
-			psId:        id.MustPropertySchemaID("xxx#1.1.1/aa"),
+			psId:        id.MustPropertySchemaID("xxx~1.1.1/aa"),
 			expectedNil: true,
 		},
 	}

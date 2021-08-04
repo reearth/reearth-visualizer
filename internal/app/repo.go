@@ -7,12 +7,12 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/github"
 	"github.com/reearth/reearth-backend/internal/infrastructure/google"
+	"github.com/spf13/afero"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	mongotrace "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver"
 
-	"github.com/reearth/reearth-backend/internal/infrastructure/adapter"
 	"github.com/reearth/reearth-backend/internal/infrastructure/auth0"
 	"github.com/reearth/reearth-backend/internal/infrastructure/fs"
 	"github.com/reearth/reearth-backend/internal/infrastructure/gcs"
@@ -41,23 +41,12 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 		log.Fatalln(fmt.Sprintf("Failed to init mongo: %+v", err))
 	}
 
-	// Plugin and PropertySchema
-	if debug {
-		repos.Plugin = adapter.NewPlugin([]repo.Plugin{
-			fs.NewPlugin("data"),
-			repos.Plugin,
-		}, repos.Plugin)
-		repos.PropertySchema = adapter.NewPropertySchema([]repo.PropertySchema{
-			fs.NewPropertySchema("data"),
-			repos.PropertySchema,
-		}, repos.PropertySchema)
-	}
-
 	// File
+	datafs := afero.NewBasePathFs(afero.NewOsFs(), "data")
 	var fileRepo gateway.File
 	if conf.GCS.BucketName == "" {
 		log.Infoln("file: local storage is used")
-		fileRepo, err = fs.NewFile("data", conf.AssetBaseURL)
+		fileRepo, err = fs.NewFile(datafs, conf.AssetBaseURL)
 	} else {
 		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
 		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)

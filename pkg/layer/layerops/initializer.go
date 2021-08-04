@@ -1,4 +1,4 @@
-package initializer
+package layerops
 
 import (
 	"errors"

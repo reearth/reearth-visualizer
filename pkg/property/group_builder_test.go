@@ -10,7 +10,7 @@ import (
 
 func TestGroupBuilder_Build(t *testing.T) {
 	iid := id.NewPropertyItemID()
-	sid := id.MustPropertySchemaID("xx/aa")
+	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFromUnsafe("vvv")
 	f := NewField(sf).Value(v).MustBuild()
@@ -72,7 +72,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 
 func TestGroupBuilder_MustBuild(t *testing.T) {
 	iid := id.NewPropertyItemID()
-	sid := id.MustPropertySchemaID("xx/aa")
+	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFromUnsafe("vvv")
 	f := NewField(sf).Value(v).MustBuild()
@@ -146,7 +146,7 @@ func TestGroupBuilder_NewID(t *testing.T) {
 func TestGroupBuilder_InitGroupFrom(t *testing.T) {
 	var sg *SchemaGroup
 	assert.Nil(t, InitGroupFrom(sg))
-	sg = NewSchemaGroup().ID("a").Schema(id.MustPropertySchemaID("xx/aa")).MustBuild()
+	sg = NewSchemaGroup().ID("a").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).MustBuild()
 	g := InitGroupFrom(sg)
 	assert.Equal(t, sg.ID(), g.SchemaGroup())
 	assert.Equal(t, sg.Schema(), g.Schema())

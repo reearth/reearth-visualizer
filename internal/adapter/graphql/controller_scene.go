@@ -109,7 +109,7 @@ func (c *SceneController) UninstallPlugin(ctx context.Context, ginput *Uninstall
 		return nil, err
 	}
 
-	return &UninstallPluginPayload{Scene: toScene(scene)}, nil
+	return &UninstallPluginPayload{PluginID: ginput.PluginID, Scene: toScene(scene)}, nil
 }
 
 func (c *SceneController) UpgradePlugin(ctx context.Context, ginput *UpgradePluginInput, operator *usecase.Operator) (*UpgradePluginPayload, error) {

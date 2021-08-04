@@ -6,4 +6,4 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-type Loader func(context.Context, ...id.PluginID) ([]*Plugin, error)
+type Loader func(context.Context, []id.PluginID, []id.SceneID) ([]*Plugin, error)

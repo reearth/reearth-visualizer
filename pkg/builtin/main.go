@@ -17,7 +17,7 @@ var pluginManifestJSON []byte
 var pluginManifestJSON_ja []byte
 
 var pluginTranslationList = map[string]*manifest.TranslationRoot{"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja)}
-var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromBytes(pluginManifestJSON), pluginTranslationList)
+var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromBytes(pluginManifestJSON, nil), pluginTranslationList)
 
 // MUST NOT CHANGE
 var PropertySchemaIDVisualizerCesium = id.MustPropertySchemaID("reearth/cesium")

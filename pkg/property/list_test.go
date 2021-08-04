@@ -9,9 +9,9 @@ import (
 
 var (
 	sf = NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg = NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	p  = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
-	p2 = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	sg = NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	p  = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	p2 = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
 )
 
 func TestMap_Add(t *testing.T) {

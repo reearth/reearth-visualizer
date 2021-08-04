@@ -1,4 +1,4 @@
-package initializer
+package layerops
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ import (
 
 func TestInitialize(t *testing.T) {
 	lid := id.MustLayerID(id.New().String())
-	ps := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	eid := id.PluginExtensionID("foo")
 	eid2 := id.PluginExtensionID("foo2")
 	e := plugin.NewExtension().
@@ -29,7 +29,7 @@ func TestInitialize(t *testing.T) {
 	es := append(make([]*plugin.Extension, 0), e)
 	es = append(es, e2)
 	p := plugin.New().
-		ID(id.MustPluginID("xxx#1.1.1")).
+		ID(id.MustPluginID("xxx~1.1.1")).
 		Schema(&ps).
 		Extensions(es).
 		MustBuild()

@@ -203,6 +203,13 @@ func TestTeamID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestTeamID_Contains(t *testing.T) {
+	id := NewTeamID()
+	id2 := NewTeamID()
+	assert.True(t, id.Contains([]TeamID{id, id2}))
+	assert.False(t, id.Contains([]TeamID{id2}))
+}
+
 func TestTeamID_CopyRef(t *testing.T) {
 	id := New()
 	subId := TeamIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestTeamIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestTeamIDSet_Add(t *testing.T) {
 			},
 			expected: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestTeamIDSet_Add(t *testing.T) {
 			},
 			expected: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestTeamIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &TeamId,
 			expected: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestTeamIDSet_Has(t *testing.T) {
 				TeamIDSet
 				TeamID
 			}{TeamIDSet: TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, TeamID: MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestTeamIDSet_Has(t *testing.T) {
 				TeamIDSet
 				TeamID
 			}{TeamIDSet: TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, TeamID: MustTeamID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestTeamIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: TeamIDSet{
@@ -820,7 +827,7 @@ func TestTeamIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestTeamIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestTeamIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestTeamIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestTeamIDSet_Clone(t *testing.T) {
 			},
 			expected: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestTeamIDSet_Merge(t *testing.T) {
 				b *TeamIDSet
 			}{
 				a: &TeamIDSet{
-					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &TeamIDSet{},
 			},
 			expected: &TeamIDSet{
-				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestTeamIDSet_Merge(t *testing.T) {
 				b *TeamIDSet
 			}{
 				a: &TeamIDSet{
-					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &TeamIDSet{
-					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &TeamIDSet{
 				m: map[TeamID]struct{}{
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []TeamID{
 					MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),

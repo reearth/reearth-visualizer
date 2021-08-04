@@ -28,11 +28,27 @@ func (r *pluginResolver) PropertySchema(ctx context.Context, obj *graphql1.Plugi
 	return dataloader.DataLoadersFromContext(ctx).PropertySchema.Load(*obj.PropertySchemaID)
 }
 
-func (r *pluginResolver) ScenePlugin(ctx context.Context, obj *graphql1.Plugin, sceneID id.ID) (*graphql1.ScenePlugin, error) {
+func (r *pluginResolver) Scene(ctx context.Context, obj *graphql1.Plugin) (*graphql1.Scene, error) {
 	exit := trace(ctx)
 	defer exit()
 
-	s, err := dataloader.DataLoadersFromContext(ctx).Scene.Load(id.SceneID(sceneID))
+	if obj.SceneID == nil {
+		return nil, nil
+	}
+	return dataloader.DataLoadersFromContext(ctx).Scene.Load(id.SceneID(*obj.SceneID))
+}
+
+func (r *pluginResolver) ScenePlugin(ctx context.Context, obj *graphql1.Plugin, sceneID *id.ID) (*graphql1.ScenePlugin, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	if sceneID == nil && obj.SceneID != nil {
+		sceneID = obj.SceneID
+	}
+	if sceneID == nil {
+		return nil, nil
+	}
+	s, err := dataloader.DataLoadersFromContext(ctx).Scene.Load(id.SceneID(*sceneID))
 	return s.Plugin(obj.ID), err
 }
 

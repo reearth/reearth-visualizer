@@ -18,7 +18,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/decoding"
-	"github.com/reearth/reearth-backend/pkg/layer/initializer"
+	"github.com/reearth/reearth-backend/pkg/layer/layerops"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -152,7 +152,6 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 }
 
 func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, operator *usecase.Operator) (_ *layer.Item, _ *layer.Group, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -185,7 +184,7 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		return nil, nil, interfaces.ErrCannotAddLayerToLinkedLayerGroup
 	}
 
-	plugin, extension, err := i.getPlugin(ctx, inp.PluginID, inp.ExtensionID)
+	plugin, extension, err := i.getPlugin(ctx, parentLayer.Scene(), inp.PluginID, inp.ExtensionID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -195,7 +194,7 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		return nil, nil, err
 	}
 
-	layerItem, property, err := initializer.LayerItem{
+	layerItem, property, err := layerops.LayerItem{
 		SceneID:                parentLayer.Scene(),
 		ParentLayerID:          parentLayer.ID(),
 		Plugin:                 plugin,
@@ -238,7 +237,6 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 }
 
 func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput, operator *usecase.Operator) (_ *layer.Group, _ *layer.Group, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -273,7 +271,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	var extensionSchemaID id.PropertySchemaID
 	var propertySchema *property.Schema
 
-	plug, extension, err := i.getPlugin(ctx, inp.PluginID, inp.ExtensionID)
+	plug, extension, err := i.getPlugin(ctx, parentLayer.Scene(), inp.PluginID, inp.ExtensionID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -372,7 +370,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 			name = rf.Value().Value().(string)
 		}
 
-		layerItem, property, err := initializer.LayerItem{
+		layerItem, property, err := layerops.LayerItem{
 			SceneID:         parentLayer.Scene(),
 			ParentLayerID:   layerGroup.ID(),
 			Plugin:          plug,
@@ -733,7 +731,6 @@ func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator 
 }
 
 func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFieldParam, operator *usecase.Operator) (_ *layer.InfoboxField, _ layer.Layer, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -764,7 +761,7 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 		return nil, nil, interfaces.ErrInfoboxNotFound
 	}
 
-	_, extension, err := i.getPlugin(ctx, &inp.PluginID, &inp.ExtensionID)
+	_, extension, err := i.getPlugin(ctx, l.Scene(), &inp.PluginID, &inp.ExtensionID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -893,12 +890,12 @@ func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInf
 	return inp.InfoboxFieldID, layer, err
 }
 
-func (i *Layer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+func (i *Layer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID, e *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
 	if p == nil {
 		return nil, nil, nil
 	}
 
-	plugin, err := i.pluginRepo.FindByID(ctx, *p)
+	plugin, err := i.pluginRepo.FindByID(ctx, *p, []id.SceneID{sid})
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
@@ -960,13 +957,13 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 			return nil, nil, errors.New("file is too big")
 		}
 		var reader decoding.ShapeReader
-		if inp.File.ContentType == "application/octet-stream" && strings.HasSuffix(inp.File.Name, ".shp") {
+		if inp.File.ContentType == "application/octet-stream" && strings.HasSuffix(inp.File.Path, ".shp") {
 			reader, err = shp.ReadFrom(inp.File.Content)
 			if err != nil {
 				return nil, nil, err
 			}
 			decoder = decoding.NewShapeDecoder(reader, parent.Scene())
-		} else if inp.File.ContentType == "application/zip" && strings.HasSuffix(inp.File.Name, ".zip") {
+		} else if inp.File.ContentType == "application/zip" && strings.HasSuffix(inp.File.Path, ".zip") {
 			reader, err = shp.ReadZipFrom(inp.File.Content)
 			if err != nil {
 				return nil, nil, err

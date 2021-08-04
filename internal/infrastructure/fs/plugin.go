@@ -3,55 +3,42 @@ package fs
 import (
 	"context"
 	"errors"
-	"os"
-	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
-	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
 	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/spf13/afero"
 )
 
 type pluginRepo struct {
-	basePath string
+	fs afero.Fs
 }
 
-func NewPlugin(basePath string) repo.Plugin {
+func NewPlugin(fs afero.Fs) repo.Plugin {
 	return &pluginRepo{
-		basePath: basePath,
+		fs: fs,
 	}
 }
 
-func (r *pluginRepo) manifest(ctx context.Context, id id.PluginID) string {
-	return path.Join(getPluginFilePath(r.basePath, id, manifestFilePath))
-}
-
-func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
-	filename := r.manifest(ctx, id)
-	if _, err := os.Stat(filename); err != nil {
-		return nil, rerror.ErrNotFound
-	}
-	file, err := os.Open(filename)
+func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID, sids []id.SceneID) (*plugin.Plugin, error) {
+	m, err := readManifest(r.fs, pid)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, err
 	}
-	defer func() {
-		_ = file.Close()
-	}()
 
-	m, err := manifest.Parse(file)
-	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+	sid := m.Plugin.ID().Scene()
+	if sid != nil && !sid.Contains(sids) {
+		return nil, nil
 	}
 
 	return m.Plugin, nil
 }
 
-func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.SceneID) ([]*plugin.Plugin, error) {
 	results := make([]*plugin.Plugin, 0, len(ids))
 	for _, id := range ids {
-		res, err := r.FindByID(ctx, id)
+		res, err := r.FindByID(ctx, id, sids)
 		if err != nil {
 			return nil, err
 		}
@@ -61,5 +48,9 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugi
 }
 
 func (r *pluginRepo) Save(ctx context.Context, p *plugin.Plugin) error {
+	return rerror.ErrInternalBy(errors.New("read only"))
+}
+
+func (r *pluginRepo) Remove(ctx context.Context, pid id.PluginID) error {
 	return rerror.ErrInternalBy(errors.New("read only"))
 }

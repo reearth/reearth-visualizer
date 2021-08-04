@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/goccy/go-yaml"
+	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
@@ -15,14 +16,14 @@ var (
 	ErrSystemManifest              = errors.New("cannot build system manifest")
 )
 
-func Parse(source io.Reader) (*Manifest, error) {
+func Parse(source io.Reader, scene *id.SceneID) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.NewDecoder(source).Decode(&root); err != nil {
 		return nil, ErrFailedToParseManifest
 		// return nil, fmt.Errorf("failed to parse plugin manifest: %w", err)
 	}
 
-	manifest, err := root.manifest()
+	manifest, err := root.manifest(scene)
 	if err != nil {
 		return nil, err
 	}
@@ -33,14 +34,14 @@ func Parse(source io.Reader) (*Manifest, error) {
 	return manifest, nil
 }
 
-func ParseSystemFromBytes(source []byte) (*Manifest, error) {
+func ParseSystemFromBytes(source []byte, scene *id.SceneID) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.Unmarshal(source, &root); err != nil {
 		return nil, ErrFailedToParseManifest
 		// return nil, fmt.Errorf("failed to parse plugin manifest: %w", err)
 	}
 
-	manifest, err := root.manifest()
+	manifest, err := root.manifest(scene)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +49,8 @@ func ParseSystemFromBytes(source []byte) (*Manifest, error) {
 	return manifest, nil
 }
 
-func MustParseSystemFromBytes(source []byte) *Manifest {
-	m, err := ParseSystemFromBytes(source)
+func MustParseSystemFromBytes(source []byte, scene *id.SceneID) *Manifest {
+	m, err := ParseSystemFromBytes(source, scene)
 	if err != nil {
 		panic(err)
 	}

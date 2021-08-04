@@ -7,26 +7,30 @@ import (
 
 const schemaSystemIDPrefix = "reearth"
 
-var schemaNameRe = regexp.MustCompile("^[a-zA-Z0-9._-]+$")
+var schemaNameRe = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
 
 // PropertySchemaID is an ID for PropertySchema.
 type PropertySchemaID struct {
-	plugin string
+	plugin PluginID
 	id     string
 }
 
 // PropertySchemaIDFrom generates a new PropertySchemaID from a string.
 func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
-	ids := strings.Split(id, "/")
+	ids := strings.SplitN(id, "/", 2)
 	if len(ids) < 2 || !schemaNameRe.MatchString(ids[len(ids)-1]) {
 		return PropertySchemaID{}, ErrInvalidID
 	}
-	return PropertySchemaID{plugin: strings.Join(ids[:len(ids)-1], "/"), id: ids[len(ids)-1]}, nil
+	pid, err := PluginIDFrom(ids[0])
+	if err != nil {
+		return PropertySchemaID{}, ErrInvalidID
+	}
+	return PropertySchemaID{plugin: pid, id: ids[1]}, nil
 }
 
 // PropertySchemaIDFromExtension generates a new PropertySchemaID from a plugin ID and an extension ID.
 func PropertySchemaIDFromExtension(p PluginID, e PluginExtensionID) (PropertySchemaID, error) {
-	return PropertySchemaID{plugin: p.String(), id: e.String()}, nil
+	return PropertySchemaID{plugin: p, id: e.String()}, nil
 }
 
 // MustPropertySchemaID generates a new PropertySchemaID from a string, but panics if the string cannot be parsed.
@@ -65,7 +69,7 @@ func (d PropertySchemaID) ID() string {
 }
 
 // Plugin returns a fragment of plugin ID.
-func (d PropertySchemaID) Plugin() string {
+func (d PropertySchemaID) Plugin() PluginID {
 	return d.plugin
 }
 
@@ -76,10 +80,7 @@ func (d PropertySchemaID) System() bool {
 
 // String returns a string representation.
 func (d PropertySchemaID) String() string {
-	if d.plugin == "" {
-		return d.id
-	}
-	return d.plugin + "/" + d.id
+	return d.plugin.String() + "/" + d.id
 }
 
 // Ref returns a reference.
@@ -99,7 +100,7 @@ func (d *PropertySchemaID) CopyRef() *PropertySchemaID {
 
 // IsNil checks if ID is empty or not.
 func (d PropertySchemaID) IsNil() bool {
-	return d.plugin == "" && d.id == ""
+	return d.plugin == PluginID{} && d.id == ""
 }
 
 // StringRef returns a reference of a string representation.

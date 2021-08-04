@@ -2,12 +2,15 @@ package layer
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type Loader func(context.Context, ...id.LayerID) (List, error)
 type LoaderByScene func(context.Context, id.SceneID) (List, error)
+
+var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
 
 func LoaderFrom(data []Layer) Loader {
 	return func(ctx context.Context, ids ...id.LayerID) (List, error) {
@@ -41,4 +44,28 @@ func LoaderFromMap(data map[id.LayerID]Layer) Loader {
 		}
 		return res, nil
 	}
+}
+
+func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, init []id.LayerID) error {
+	var walk func(ids []id.LayerID, parents GroupList) error
+	walk = func(ids []id.LayerID, parents GroupList) error {
+		loaded, err := l(ctx, ids...)
+		if err != nil {
+			return err
+		}
+		for _, l := range loaded.Deref() {
+			if err := walker(l, parents); err == WalkerSkipChildren {
+				continue
+			} else if err != nil {
+				return err
+			}
+			if lg := ToLayerGroup(l); lg != nil && lg.Layers().LayerCount() > 0 {
+				if err := walk(lg.Layers().Layers(), append(parents, lg)); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+	return walk(init, nil)
 }

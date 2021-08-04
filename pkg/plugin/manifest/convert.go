@@ -10,13 +10,13 @@ import (
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
-func (i *Root) manifest() (*Manifest, error) {
+func (i *Root) manifest(sid *id.SceneID) (*Manifest, error) {
 	var pid id.PluginID
 	var err error
 	if i.System && string(i.ID) == id.OfficialPluginID.Name() {
 		pid = id.OfficialPluginID
 	} else {
-		pid, err = id.PluginIDFrom(string(i.ID) + "#" + i.Version)
+		pid, err = id.NewPluginID(string(i.ID), i.Version, sid)
 		if err != nil {
 			return nil, ErrInvalidManifest
 		}
@@ -31,8 +31,13 @@ func (i *Root) manifest() (*Manifest, error) {
 		pluginSchema = schema
 	}
 
-	extensions := make([]*plugin.Extension, 0, len(i.Extensions))
-	extensionSchemas := make([]*property.Schema, 0, len(i.Extensions))
+	var extensions []*plugin.Extension
+	var extensionSchemas []*property.Schema
+	if l := len(i.Extensions); l > 0 {
+		extensions = make([]*plugin.Extension, 0, l)
+		extensionSchemas = make([]*property.Schema, 0, l)
+	}
+
 	for _, e := range i.Extensions {
 		extension, extensionSchema, err2 := e.extension(pid, i.System)
 		if err2 != nil {

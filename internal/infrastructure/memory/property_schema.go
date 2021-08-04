@@ -78,3 +78,21 @@ func (r *PropertySchema) SaveAll(ctx context.Context, p property.SchemaList) err
 	}
 	return nil
 }
+
+func (r *PropertySchema) Remove(ctx context.Context, id id.PropertySchemaID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	delete(r.data, id)
+	return nil
+}
+
+func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, id := range ids {
+		delete(r.data, id)
+	}
+	return nil
+}

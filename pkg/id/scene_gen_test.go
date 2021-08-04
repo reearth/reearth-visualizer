@@ -203,6 +203,13 @@ func TestSceneID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestSceneID_Contains(t *testing.T) {
+	id := NewSceneID()
+	id2 := NewSceneID()
+	assert.True(t, id.Contains([]SceneID{id, id2}))
+	assert.False(t, id.Contains([]SceneID{id2}))
+}
+
 func TestSceneID_CopyRef(t *testing.T) {
 	id := New()
 	subId := SceneIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestSceneIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestSceneIDSet_Add(t *testing.T) {
 			},
 			expected: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestSceneIDSet_Add(t *testing.T) {
 			},
 			expected: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestSceneIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &SceneId,
 			expected: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestSceneIDSet_Has(t *testing.T) {
 				SceneIDSet
 				SceneID
 			}{SceneIDSet: SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, SceneID: MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestSceneIDSet_Has(t *testing.T) {
 				SceneIDSet
 				SceneID
 			}{SceneIDSet: SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, SceneID: MustSceneID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestSceneIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: SceneIDSet{
@@ -820,7 +827,7 @@ func TestSceneIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestSceneIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestSceneIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestSceneIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestSceneIDSet_Clone(t *testing.T) {
 			},
 			expected: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestSceneIDSet_Merge(t *testing.T) {
 				b *SceneIDSet
 			}{
 				a: &SceneIDSet{
-					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &SceneIDSet{},
 			},
 			expected: &SceneIDSet{
-				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestSceneIDSet_Merge(t *testing.T) {
 				b *SceneIDSet
 			}{
 				a: &SceneIDSet{
-					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &SceneIDSet{
-					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &SceneIDSet{
 				m: map[SceneID]struct{}{
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []SceneID{
 					MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),

@@ -8,6 +8,13 @@ import (
 
 type List []*Layer
 
+func (ll List) Last() *Layer {
+	if len(ll) == 0 {
+		return nil
+	}
+	return ll[len(ll)-1]
+}
+
 func (ll List) Pick(il *IDList) List {
 	if il == nil {
 		return nil
@@ -104,6 +111,32 @@ func (ll List) Map() Map {
 	return m
 }
 
+func (ll List) Remove(lids ...id.LayerID) List {
+	if ll == nil {
+		return nil
+	}
+
+	res := make(List, 0, len(ll))
+
+	for _, l := range ll {
+		if l == nil {
+			continue
+		}
+		hit := false
+		for _, lid := range lids {
+			if (*l).ID() == lid {
+				hit = true
+				break
+			}
+		}
+		if !hit {
+			res = append(res, l)
+		}
+	}
+
+	return res
+}
+
 type ItemList []*Item
 
 func (ll ItemList) FindByDataset(ds id.DatasetID) *Item {
@@ -125,6 +158,13 @@ func (ll ItemList) ToLayerList() List {
 	return res
 }
 
+func (ll ItemList) Last() *Item {
+	if len(ll) == 0 {
+		return nil
+	}
+	return ll[len(ll)-1]
+}
+
 type GroupList []*Group
 
 func (ll GroupList) ToLayerList() List {
@@ -134,6 +174,13 @@ func (ll GroupList) ToLayerList() List {
 		res = append(res, &layer)
 	}
 	return res
+}
+
+func (ll GroupList) Last() *Group {
+	if len(ll) == 0 {
+		return nil
+	}
+	return ll[len(ll)-1]
 }
 
 type Map map[id.LayerID]*Layer

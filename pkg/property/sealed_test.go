@@ -16,7 +16,7 @@ var (
 	d      = id.NewDatasetID()
 	opid   = id.NewPropertyID()
 	ppid   = id.NewPropertyID()
-	psid   = id.MustPropertySchemaID("hoge#0.1.0/fff")
+	psid   = id.MustPropertySchemaID("hoge~0.1.0/fff")
 	psiid1 = id.PropertySchemaFieldID("x")
 	psiid2 = id.PropertySchemaFieldID("y")
 	i1id   = id.NewPropertyItemID()
@@ -168,7 +168,7 @@ func TestSeal(t *testing.T) {
 
 func TestSealProperty(t *testing.T) {
 	pid := id.NewPropertyID()
-	ps := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	testCases := []struct {
 		Name     string
 		Input    *Property

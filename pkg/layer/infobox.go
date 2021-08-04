@@ -125,6 +125,22 @@ func (i *Infobox) Remove(field id.InfoboxFieldID) {
 	}
 }
 
+func (i *Infobox) RemoveAllByPlugin(pid id.PluginID) []id.PropertyID {
+	if i == nil {
+		return nil
+	}
+
+	var properties []id.PropertyID
+	for j := 0; j < len(i.fields); j++ {
+		if i.fields[j].plugin.Equal(pid) {
+			properties = append(properties, i.fields[j].Property())
+			i.fields = append(i.fields[:j], i.fields[j+1:]...)
+			j--
+		}
+	}
+	return properties
+}
+
 func (i *Infobox) RemoveAt(index int) {
 	l := len(i.fields)
 	if index < 0 || l <= index {

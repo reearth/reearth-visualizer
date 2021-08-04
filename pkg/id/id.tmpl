@@ -78,6 +78,16 @@ func (d {{$name}}ID) Ref() *{{$name}}ID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d {{$name}}ID) Contains(ids []{{$name}}ID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *{{$name}}ID) CopyRef() *{{$name}}ID {
 	if d == nil {

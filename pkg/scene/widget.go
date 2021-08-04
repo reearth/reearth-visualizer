@@ -12,17 +12,13 @@ type Widget struct {
 	enabled   bool
 }
 
-func NewWidget(wid *id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) (*Widget, error) {
+func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || id.ID(property).IsNil() {
 		return nil, id.ErrInvalidID
 	}
 
-	if wid == nil || (*wid).IsNil() {
-		wid = id.NewWidgetID().Ref()
-	}
-
 	return &Widget{
-		id:        *wid,
+		id:        wid,
 		plugin:    plugin,
 		extension: extension,
 		property:  property,
@@ -30,7 +26,7 @@ func NewWidget(wid *id.WidgetID, plugin id.PluginID, extension id.PluginExtensio
 	}, nil
 }
 
-func MustNewWidget(wid *id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) *Widget {
+func MustNewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) *Widget {
 	w, err := NewWidget(wid, plugin, extension, property, enabled)
 	if err != nil {
 		panic(err)

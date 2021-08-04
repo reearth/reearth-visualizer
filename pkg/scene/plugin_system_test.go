@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewPluginSystem(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
@@ -65,7 +65,7 @@ func TestNewPluginSystem(t *testing.T) {
 }
 
 func TestPluginSystem_Property(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
@@ -80,9 +80,15 @@ func TestPluginSystem_Property(t *testing.T) {
 			Expected: pr,
 		},
 		{
+			Name:     "property is nil",
+			Input:    pid,
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(pid, nil)}),
+			Expected: nil,
+		},
+		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz#1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: nil,
 		},
 	}
@@ -97,7 +103,7 @@ func TestPluginSystem_Property(t *testing.T) {
 }
 
 func TestPluginSystem_Plugin(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
@@ -114,7 +120,7 @@ func TestPluginSystem_Plugin(t *testing.T) {
 		{
 			Name:     "plugin is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz#1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: nil,
 		},
 	}
@@ -144,8 +150,8 @@ func TestPluginSystem_Properties(t *testing.T) {
 		{
 			Name: "get properties",
 			PS: NewPluginSystem([]*Plugin{
-				NewPlugin(id.MustPluginID("zzz#1.1.1"), pr),
-				NewPlugin(id.MustPluginID("xxx#1.1.1"), pr2),
+				NewPlugin(id.MustPluginID("zzz~1.1.1"), pr),
+				NewPlugin(id.MustPluginID("xxx~1.1.1"), pr2),
 			}),
 			Expected: []id.PropertyID{*pr, *pr2},
 		},
@@ -161,7 +167,7 @@ func TestPluginSystem_Properties(t *testing.T) {
 }
 
 func TestPluginSystem_Has(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
@@ -178,7 +184,7 @@ func TestPluginSystem_Has(t *testing.T) {
 		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz#1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: false,
 		},
 	}
@@ -193,7 +199,7 @@ func TestPluginSystem_Has(t *testing.T) {
 }
 
 func TestPluginSystem_HasPlugin(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
@@ -210,7 +216,7 @@ func TestPluginSystem_HasPlugin(t *testing.T) {
 		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz#1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: false,
 		},
 	}
@@ -225,7 +231,7 @@ func TestPluginSystem_HasPlugin(t *testing.T) {
 }
 
 func TestPluginSystem_Add(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string
@@ -268,7 +274,7 @@ func TestPluginSystem_Add(t *testing.T) {
 }
 
 func TestPluginSystem_Remove(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string
@@ -299,8 +305,8 @@ func TestPluginSystem_Remove(t *testing.T) {
 }
 
 func TestPluginSystem_Upgrade(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
-	nid := id.MustPluginID("zzz#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
+	nid := id.MustPluginID("zzz~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string

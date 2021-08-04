@@ -50,3 +50,19 @@ func TestInfobox(t *testing.T) {
 	assert.Equal(t, f3, infobox.FieldAt(1))
 	assert.Equal(t, f4, infobox.FieldAt(2))
 }
+
+func TestInfobox_RemoveAllByPlugin(t *testing.T) {
+	pid1 := id.MustPluginID("xxx~1.1.1")
+	pid2 := id.MustPluginID("xxy~1.1.1")
+	f1 := &InfoboxField{id: id.NewInfoboxFieldID(), plugin: pid1, extension: "a", property: id.NewPropertyID()}
+	f2 := &InfoboxField{id: id.NewInfoboxFieldID(), plugin: pid2, extension: "b", property: id.NewPropertyID()}
+	f3 := &InfoboxField{id: id.NewInfoboxFieldID(), plugin: pid1, extension: "c", property: id.NewPropertyID()}
+	infobox := NewInfobox([]*InfoboxField{f1, f2, f3}, id.NewPropertyID())
+
+	assert.Equal(t, []id.PropertyID(nil), (*Infobox)(nil).RemoveAllByPlugin(pid1))
+	assert.Equal(t, []*InfoboxField{f1, f2, f3}, infobox.fields)
+	assert.Equal(t, []id.PropertyID{f1.Property(), f3.Property()}, infobox.RemoveAllByPlugin(pid1))
+	assert.Equal(t, []*InfoboxField{f2}, infobox.fields)
+	assert.Equal(t, []id.PropertyID(nil), infobox.RemoveAllByPlugin(pid1))
+	assert.Equal(t, []*InfoboxField{f2}, infobox.fields)
+}

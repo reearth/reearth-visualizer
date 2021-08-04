@@ -518,7 +518,9 @@ type ComplexityRoot struct {
 		PropertySchema           func(childComplexity int) int
 		PropertySchemaID         func(childComplexity int) int
 		RepositoryURL            func(childComplexity int) int
-		ScenePlugin              func(childComplexity int, sceneID id.ID) int
+		Scene                    func(childComplexity int) int
+		SceneID                  func(childComplexity int) int
+		ScenePlugin              func(childComplexity int, sceneID *id.ID) int
 		TranslatedDescription    func(childComplexity int, lang *string) int
 		TranslatedName           func(childComplexity int, lang *string) int
 		Version                  func(childComplexity int) int
@@ -862,8 +864,8 @@ type ComplexityRoot struct {
 	}
 
 	UninstallPluginPayload struct {
-		Scene       func(childComplexity int) int
-		ScenePlugin func(childComplexity int) int
+		PluginID func(childComplexity int) int
+		Scene    func(childComplexity int) int
 	}
 
 	UpdateDatasetSchemaPayload struct {
@@ -897,7 +899,9 @@ type ComplexityRoot struct {
 	}
 
 	UploadPluginPayload struct {
-		Plugin func(childComplexity int) int
+		Plugin      func(childComplexity int) int
+		Scene       func(childComplexity int) int
+		ScenePlugin func(childComplexity int) int
 	}
 
 	User struct {
@@ -1065,6 +1069,8 @@ type MutationResolver interface {
 	ImportLayer(ctx context.Context, input graphql1.ImportLayerInput) (*graphql1.ImportLayerPayload, error)
 }
 type PluginResolver interface {
+	Scene(ctx context.Context, obj *graphql1.Plugin) (*graphql1.Scene, error)
+
 	PropertySchema(ctx context.Context, obj *graphql1.Plugin) (*graphql1.PropertySchema, error)
 }
 type PluginExtensionResolver interface {
@@ -3528,6 +3534,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Plugin.RepositoryURL(childComplexity), true
 
+	case "Plugin.scene":
+		if e.complexity.Plugin.Scene == nil {
+			break
+		}
+
+		return e.complexity.Plugin.Scene(childComplexity), true
+
+	case "Plugin.sceneId":
+		if e.complexity.Plugin.SceneID == nil {
+			break
+		}
+
+		return e.complexity.Plugin.SceneID(childComplexity), true
+
 	case "Plugin.scenePlugin":
 		if e.complexity.Plugin.ScenePlugin == nil {
 			break
@@ -3538,7 +3558,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Plugin.ScenePlugin(childComplexity, args["sceneId"].(id.ID)), true
+		return e.complexity.Plugin.ScenePlugin(childComplexity, args["sceneId"].(*id.ID)), true
 
 	case "Plugin.translatedDescription":
 		if e.complexity.Plugin.TranslatedDescription == nil {
@@ -5293,19 +5313,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Typography.Underline(childComplexity), true
 
+	case "UninstallPluginPayload.pluginId":
+		if e.complexity.UninstallPluginPayload.PluginID == nil {
+			break
+		}
+
+		return e.complexity.UninstallPluginPayload.PluginID(childComplexity), true
+
 	case "UninstallPluginPayload.scene":
 		if e.complexity.UninstallPluginPayload.Scene == nil {
 			break
 		}
 
 		return e.complexity.UninstallPluginPayload.Scene(childComplexity), true
-
-	case "UninstallPluginPayload.scenePlugin":
-		if e.complexity.UninstallPluginPayload.ScenePlugin == nil {
-			break
-		}
-
-		return e.complexity.UninstallPluginPayload.ScenePlugin(childComplexity), true
 
 	case "UpdateDatasetSchemaPayload.datasetSchema":
 		if e.complexity.UpdateDatasetSchemaPayload.DatasetSchema == nil {
@@ -5376,6 +5396,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UploadPluginPayload.Plugin(childComplexity), true
+
+	case "UploadPluginPayload.scene":
+		if e.complexity.UploadPluginPayload.Scene == nil {
+			break
+		}
+
+		return e.complexity.UploadPluginPayload.Scene(childComplexity), true
+
+	case "UploadPluginPayload.scenePlugin":
+		if e.complexity.UploadPluginPayload.ScenePlugin == nil {
+			break
+		}
+
+		return e.complexity.UploadPluginPayload.ScenePlugin(childComplexity), true
 
 	case "User.auths":
 		if e.complexity.User.Auths == nil {
@@ -5733,6 +5767,7 @@ enum PublishmentStatus {
 
 type Plugin {
   id: PluginID!
+  sceneId: ID
   name: String!
   version: String!
   description: String!
@@ -5740,7 +5775,8 @@ type Plugin {
   repositoryUrl: String!
   propertySchemaId: PropertySchemaID
   extensions: [PluginExtension!]!
-  scenePlugin(sceneId: ID!): ScenePlugin
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin(sceneId: ID): ScenePlugin
   allTranslatedDescription: TranslatedString
   allTranslatedName: TranslatedString
   translatedName(lang: String): String!
@@ -6304,7 +6340,9 @@ input UpdateProjectInput {
 }
 
 input UploadPluginInput {
-  file: Upload!
+  sceneId: ID!
+  file: Upload
+  url: URL
 }
 
 input CreateSceneInput {
@@ -6652,6 +6690,8 @@ type DeleteProjectPayload {
 
 type UploadPluginPayload {
   plugin: Plugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
 }
 
 type CreateScenePayload {
@@ -6680,8 +6720,8 @@ type InstallPluginPayload {
 }
 
 type UninstallPluginPayload {
+  pluginId: PluginID!
   scene: Scene!
-  scenePlugin: ScenePlugin!
 }
 
 type UpgradePluginPayload {
@@ -7938,10 +7978,10 @@ func (ec *executionContext) field_PluginExtension_translatedName_args(ctx contex
 func (ec *executionContext) field_Plugin_scenePlugin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 id.ID
+	var arg0 *id.ID
 	if tmp, ok := rawArgs["sceneId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
-		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, tmp)
+		arg0, err = ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -18566,6 +18606,38 @@ func (ec *executionContext) _Plugin_id(ctx context.Context, field graphql.Collec
 	return ec.marshalNPluginID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPluginID(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Plugin_sceneId(ctx context.Context, field graphql.CollectedField, obj *graphql1.Plugin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Plugin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SceneID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*id.ID)
+	fc.Result = res
+	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Plugin_name(ctx context.Context, field graphql.CollectedField, obj *graphql1.Plugin) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18806,6 +18878,38 @@ func (ec *executionContext) _Plugin_extensions(ctx context.Context, field graphq
 	res := resTmp.([]*graphql1.PluginExtension)
 	fc.Result = res
 	return ec.marshalNPluginExtension2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPluginExtensionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Plugin_scene(ctx context.Context, field graphql.CollectedField, obj *graphql1.Plugin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Plugin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Plugin().Scene(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*graphql1.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐScene(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Plugin_scenePlugin(ctx context.Context, field graphql.CollectedField, obj *graphql1.Plugin) (ret graphql.Marshaler) {
@@ -26952,6 +27056,41 @@ func (ec *executionContext) _Typography_underline(ctx context.Context, field gra
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _UninstallPluginPayload_pluginId(ctx context.Context, field graphql.CollectedField, obj *graphql1.UninstallPluginPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UninstallPluginPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PluginID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(id.PluginID)
+	fc.Result = res
+	return ec.marshalNPluginID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPluginID(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _UninstallPluginPayload_scene(ctx context.Context, field graphql.CollectedField, obj *graphql1.UninstallPluginPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -26985,41 +27124,6 @@ func (ec *executionContext) _UninstallPluginPayload_scene(ctx context.Context, f
 	res := resTmp.(*graphql1.Scene)
 	fc.Result = res
 	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _UninstallPluginPayload_scenePlugin(ctx context.Context, field graphql.CollectedField, obj *graphql1.UninstallPluginPayload) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "UninstallPluginPayload",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ScenePlugin, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*graphql1.ScenePlugin)
-	fc.Result = res
-	return ec.marshalNScenePlugin2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐScenePlugin(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _UpdateDatasetSchemaPayload_datasetSchema(ctx context.Context, field graphql.CollectedField, obj *graphql1.UpdateDatasetSchemaPayload) (ret graphql.Marshaler) {
@@ -27367,6 +27471,76 @@ func (ec *executionContext) _UploadPluginPayload_plugin(ctx context.Context, fie
 	res := resTmp.(*graphql1.Plugin)
 	fc.Result = res
 	return ec.marshalNPlugin2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐPlugin(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UploadPluginPayload_scene(ctx context.Context, field graphql.CollectedField, obj *graphql1.UploadPluginPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UploadPluginPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scene, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*graphql1.Scene)
+	fc.Result = res
+	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UploadPluginPayload_scenePlugin(ctx context.Context, field graphql.CollectedField, obj *graphql1.UploadPluginPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UploadPluginPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScenePlugin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*graphql1.ScenePlugin)
+	fc.Result = res
+	return ec.marshalNScenePlugin2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐScenePlugin(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *graphql1.User) (ret graphql.Marshaler) {
@@ -31153,11 +31327,27 @@ func (ec *executionContext) unmarshalInputUploadPluginInput(ctx context.Context,
 
 	for k, v := range asMap {
 		switch k {
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "file":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
-			it.File, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			it.File, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalOURL2ᚖnetᚋurlᚐURL(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33880,6 +34070,8 @@ func (ec *executionContext) _Plugin(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "sceneId":
+			out.Values[i] = ec._Plugin_sceneId(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._Plugin_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -33912,6 +34104,17 @@ func (ec *executionContext) _Plugin(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "scene":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Plugin_scene(ctx, field, obj)
+				return res
+			})
 		case "scenePlugin":
 			out.Values[i] = ec._Plugin_scenePlugin(ctx, field, obj)
 		case "allTranslatedDescription":
@@ -36237,13 +36440,13 @@ func (ec *executionContext) _UninstallPluginPayload(ctx context.Context, sel ast
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UninstallPluginPayload")
-		case "scene":
-			out.Values[i] = ec._UninstallPluginPayload_scene(ctx, field, obj)
+		case "pluginId":
+			out.Values[i] = ec._UninstallPluginPayload_pluginId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "scenePlugin":
-			out.Values[i] = ec._UninstallPluginPayload_scenePlugin(ctx, field, obj)
+		case "scene":
+			out.Values[i] = ec._UninstallPluginPayload_scene(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -36467,6 +36670,16 @@ func (ec *executionContext) _UploadPluginPayload(ctx context.Context, sel ast.Se
 			out.Values[i] = graphql.MarshalString("UploadPluginPayload")
 		case "plugin":
 			out.Values[i] = ec._UploadPluginPayload_plugin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "scene":
+			out.Values[i] = ec._UploadPluginPayload_scene(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "scenePlugin":
+			out.Values[i] = ec._UploadPluginPayload_scenePlugin(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -40443,6 +40656,21 @@ func (ec *executionContext) marshalOUpgradePluginPayload2ᚖgithubᚗcomᚋreear
 		return graphql.Null
 	}
 	return ec._UpgradePluginPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (*graphql.Upload, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalUpload(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v *graphql.Upload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalUpload(*v)
 }
 
 func (ec *executionContext) marshalOUploadPluginPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgraphqlᚐUploadPluginPayload(ctx context.Context, sel ast.SelectionSet, v *graphql1.UploadPluginPayload) graphql.Marshaler {

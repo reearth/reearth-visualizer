@@ -14,8 +14,8 @@ func TestMergeLayer(t *testing.T) {
 	// ids
 	scene := id.NewSceneID()
 	dataset1 := id.NewDatasetID()
-	ps := id.MustPropertySchemaID("xxx#1.1.1/aa")
-	p := id.MustPluginID("xxx#1.1.1")
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	p := id.MustPluginID("xxx~1.1.1")
 	e := id.PluginExtensionID("foo")
 	itemProperty := id.NewPropertyID()
 	groupProperty := id.NewPropertyID()

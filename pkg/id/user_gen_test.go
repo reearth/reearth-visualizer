@@ -203,6 +203,13 @@ func TestUserID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestUserID_Contains(t *testing.T) {
+	id := NewUserID()
+	id2 := NewUserID()
+	assert.True(t, id.Contains([]UserID{id, id2}))
+	assert.False(t, id.Contains([]UserID{id2}))
+}
+
 func TestUserID_CopyRef(t *testing.T) {
 	id := New()
 	subId := UserIDFromRefID(&id)
@@ -210,7 +217,7 @@ func TestUserID_CopyRef(t *testing.T) {
 	subIdCopyRef := subId.CopyRef()
 
 	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.False(t, subId == subIdCopyRef)
+	assert.NotSame(t, subId, subIdCopyRef)
 }
 
 func TestUserID_IDRef(t *testing.T) {
@@ -612,7 +619,7 @@ func TestUserIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestUserIDSet_Add(t *testing.T) {
 			},
 			expected: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestUserIDSet_Add(t *testing.T) {
 			},
 			expected: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestUserIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &UserId,
 			expected: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestUserIDSet_Has(t *testing.T) {
 				UserIDSet
 				UserID
 			}{UserIDSet: UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, UserID: MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestUserIDSet_Has(t *testing.T) {
 				UserIDSet
 				UserID
 			}{UserIDSet: UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, UserID: MustUserID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestUserIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: UserIDSet{
@@ -820,7 +827,7 @@ func TestUserIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestUserIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestUserIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestUserIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestUserIDSet_Clone(t *testing.T) {
 			},
 			expected: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestUserIDSet_Merge(t *testing.T) {
 				b *UserIDSet
 			}{
 				a: &UserIDSet{
-					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &UserIDSet{},
 			},
 			expected: &UserIDSet{
-				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestUserIDSet_Merge(t *testing.T) {
 				b *UserIDSet
 			}{
 				a: &UserIDSet{
-					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &UserIDSet{
-					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[UserID]struct{}{MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []UserID{MustUserID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &UserIDSet{
 				m: map[UserID]struct{}{
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustUserID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []UserID{
 					MustUserID("01f3zhcaq35403zdjnd6dcm0t1"),

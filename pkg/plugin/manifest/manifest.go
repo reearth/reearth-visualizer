@@ -10,3 +10,10 @@ type Manifest struct {
 	ExtensionSchema []*property.Schema
 	Schema          *property.Schema
 }
+
+func (m Manifest) PropertySchemas() []*property.Schema {
+	if m.Schema == nil {
+		return append([]*property.Schema{}, m.ExtensionSchema...)
+	}
+	return append(m.ExtensionSchema, m.Schema)
+}

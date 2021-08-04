@@ -12,6 +12,8 @@ type PropertySchema interface {
 	FindByIDs(context.Context, []id.PropertySchemaID) (property.SchemaList, error)
 	Save(context.Context, *property.Schema) error
 	SaveAll(context.Context, property.SchemaList) error
+	Remove(context.Context, id.PropertySchemaID) error
+	RemoveAll(context.Context, []id.PropertySchemaID) error
 }
 
 func PropertySchemaLoaderFrom(r PropertySchema) property.SchemaLoader {

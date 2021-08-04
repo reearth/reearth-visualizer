@@ -78,6 +78,16 @@ func (d LayerID) Ref() *LayerID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d LayerID) Contains(ids []LayerID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *LayerID) CopyRef() *LayerID {
 	if d == nil {

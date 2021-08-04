@@ -78,6 +78,16 @@ func (d DatasetSchemaID) Ref() *DatasetSchemaID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d DatasetSchemaID) Contains(ids []DatasetSchemaID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *DatasetSchemaID) CopyRef() *DatasetSchemaID {
 	if d == nil {

@@ -81,12 +81,26 @@ func (w *WidgetSystem) Remove(p id.PluginID, e id.PluginExtensionID) {
 	if w == nil {
 		return
 	}
-	for i, ww := range w.widgets {
-		if ww.plugin.Equal(p) && ww.extension == e {
+	for i := 0; i < len(w.widgets); i++ {
+		if w.widgets[i].plugin.Equal(p) && w.widgets[i].extension == e {
 			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
-			return
+			i--
 		}
 	}
+}
+
+func (w *WidgetSystem) RemoveAllByPlugin(p id.PluginID) (res []id.PropertyID) {
+	if w == nil {
+		return nil
+	}
+	for i := 0; i < len(w.widgets); i++ {
+		if w.widgets[i].plugin.Equal(p) {
+			res = append(res, w.widgets[i].Property())
+			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
+			i--
+		}
+	}
+	return res
 }
 
 func (w *WidgetSystem) Replace(oldp, newp id.PluginID) {

@@ -12,8 +12,8 @@ import (
 
 func TestPropertyMigrateSchema(t *testing.T) {
 	sceneID := id.NewSceneID()
-	oldSchema, _ := id.PropertySchemaIDFrom("hoge/test")
-	newSchema, _ := id.PropertySchemaIDFrom("hoge/test2")
+	oldSchema, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
+	newSchema, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test2")
 	schemaField1ID := id.PropertySchemaFieldID("a")
 	schemaField2ID := id.PropertySchemaFieldID("b")
 	schemaField3ID := id.PropertySchemaFieldID("c")
@@ -116,7 +116,7 @@ func TestPropertyMigrateSchema(t *testing.T) {
 
 func TestGetOrCreateItem(t *testing.T) {
 	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge/test")
+	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
 	sf1id := id.PropertySchemaFieldID("a")
 	sf2id := id.PropertySchemaFieldID("b")
 	sg1id := id.PropertySchemaFieldID("c")
@@ -166,7 +166,7 @@ func TestGetOrCreateItem(t *testing.T) {
 
 func TestGetOrCreateField(t *testing.T) {
 	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge/test")
+	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
 	sf1id := id.PropertySchemaFieldID("a")
 	sf2id := id.PropertySchemaFieldID("b")
 	sg1id := id.PropertySchemaFieldID("c")
@@ -218,7 +218,7 @@ func TestGetOrCreateField(t *testing.T) {
 
 func TestAddListItem(t *testing.T) {
 	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge/test")
+	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
 	sfid := id.PropertySchemaFieldID("a")
 	sgid := id.PropertySchemaFieldID("b")
 	sf := NewSchemaField().ID(sfid).Type(ValueTypeString).MustBuild()
@@ -240,7 +240,7 @@ func TestAddListItem(t *testing.T) {
 
 func TestMoveListItem(t *testing.T) {
 	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge/test")
+	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
 	sgid := id.PropertySchemaFieldID("b")
 	g1 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	g2 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
@@ -255,7 +255,7 @@ func TestMoveListItem(t *testing.T) {
 
 func TestRemoveListItem(t *testing.T) {
 	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge/test")
+	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
 	sgid := id.PropertySchemaFieldID("b")
 	g1 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	g2 := NewGroup().NewID().Schema(sid, sgid).MustBuild()

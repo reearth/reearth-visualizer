@@ -1,6 +1,8 @@
 package graphql
 
 import (
+	"io"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
@@ -68,8 +70,8 @@ func fromFile(f *graphql.Upload) *file.File {
 		return nil
 	}
 	return &file.File{
-		Content:     f.File,
-		Name:        f.Filename,
+		Content:     io.NopCloser(f.File),
+		Path:        f.Filename,
 		Size:        f.Size,
 		ContentType: f.ContentType,
 	}

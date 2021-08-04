@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"net/url"
+	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
@@ -56,7 +57,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	result, err = asset.New().
 		NewID().
 		Team(inp.TeamID).
-		Name(inp.File.Name).
+		Name(path.Base(inp.File.Path)).
 		Size(inp.File.Size).
 		URL(url.String()).
 		Build()

@@ -78,6 +78,16 @@ func (d PropertyItemID) Ref() *PropertyItemID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d PropertyItemID) Contains(ids []PropertyItemID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *PropertyItemID) CopyRef() *PropertyItemID {
 	if d == nil {

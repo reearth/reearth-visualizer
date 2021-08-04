@@ -203,6 +203,13 @@ func TestDatasetSchemaFieldID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestDatasetSchemaFieldID_Contains(t *testing.T) {
+	id := NewDatasetSchemaFieldID()
+	id2 := NewDatasetSchemaFieldID()
+	assert.True(t, id.Contains([]DatasetSchemaFieldID{id, id2}))
+	assert.False(t, id.Contains([]DatasetSchemaFieldID{id2}))
+}
+
 func TestDatasetSchemaFieldID_CopyRef(t *testing.T) {
 	id := New()
 	subId := DatasetSchemaFieldIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestDatasetSchemaFieldIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestDatasetSchemaFieldIDSet_Add(t *testing.T) {
 			},
 			expected: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestDatasetSchemaFieldIDSet_Add(t *testing.T) {
 			},
 			expected: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestDatasetSchemaFieldIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &DatasetSchemaFieldId,
 			expected: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestDatasetSchemaFieldIDSet_Has(t *testing.T) {
 				DatasetSchemaFieldIDSet
 				DatasetSchemaFieldID
 			}{DatasetSchemaFieldIDSet: DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, DatasetSchemaFieldID: MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestDatasetSchemaFieldIDSet_Has(t *testing.T) {
 				DatasetSchemaFieldIDSet
 				DatasetSchemaFieldID
 			}{DatasetSchemaFieldIDSet: DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, DatasetSchemaFieldID: MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestDatasetSchemaFieldIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: DatasetSchemaFieldIDSet{
@@ -820,7 +827,7 @@ func TestDatasetSchemaFieldIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestDatasetSchemaFieldIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestDatasetSchemaFieldIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestDatasetSchemaFieldIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestDatasetSchemaFieldIDSet_Clone(t *testing.T) {
 			},
 			expected: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestDatasetSchemaFieldIDSet_Merge(t *testing.T) {
 				b *DatasetSchemaFieldIDSet
 			}{
 				a: &DatasetSchemaFieldIDSet{
-					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &DatasetSchemaFieldIDSet{},
 			},
 			expected: &DatasetSchemaFieldIDSet{
-				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestDatasetSchemaFieldIDSet_Merge(t *testing.T) {
 				b *DatasetSchemaFieldIDSet
 			}{
 				a: &DatasetSchemaFieldIDSet{
-					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &DatasetSchemaFieldIDSet{
-					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[DatasetSchemaFieldID]struct{}{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []DatasetSchemaFieldID{MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &DatasetSchemaFieldIDSet{
 				m: map[DatasetSchemaFieldID]struct{}{
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []DatasetSchemaFieldID{
 					MustDatasetSchemaFieldID("01f3zhcaq35403zdjnd6dcm0t1"),

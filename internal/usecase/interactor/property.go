@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"path"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
@@ -225,7 +226,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 	asset, err := asset.New().
 		NewID().
 		Team(propertyScene.Team()).
-		Name(inp.File.Name).
+		Name(path.Base(inp.File.Path)).
 		Size(inp.File.Size).
 		URL(url.String()).
 		Build()

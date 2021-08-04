@@ -203,6 +203,13 @@ func TestWidgetID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestWidgetID_Contains(t *testing.T) {
+	id := NewWidgetID()
+	id2 := NewWidgetID()
+	assert.True(t, id.Contains([]WidgetID{id, id2}))
+	assert.False(t, id.Contains([]WidgetID{id2}))
+}
+
 func TestWidgetID_CopyRef(t *testing.T) {
 	id := New()
 	subId := WidgetIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestWidgetIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestWidgetIDSet_Add(t *testing.T) {
 			},
 			expected: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestWidgetIDSet_Add(t *testing.T) {
 			},
 			expected: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestWidgetIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &WidgetId,
 			expected: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestWidgetIDSet_Has(t *testing.T) {
 				WidgetIDSet
 				WidgetID
 			}{WidgetIDSet: WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, WidgetID: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestWidgetIDSet_Has(t *testing.T) {
 				WidgetIDSet
 				WidgetID
 			}{WidgetIDSet: WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, WidgetID: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestWidgetIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: WidgetIDSet{
@@ -820,7 +827,7 @@ func TestWidgetIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestWidgetIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestWidgetIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestWidgetIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestWidgetIDSet_Clone(t *testing.T) {
 			},
 			expected: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestWidgetIDSet_Merge(t *testing.T) {
 				b *WidgetIDSet
 			}{
 				a: &WidgetIDSet{
-					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &WidgetIDSet{},
 			},
 			expected: &WidgetIDSet{
-				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestWidgetIDSet_Merge(t *testing.T) {
 				b *WidgetIDSet
 			}{
 				a: &WidgetIDSet{
-					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &WidgetIDSet{
-					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &WidgetIDSet{
 				m: map[WidgetID]struct{}{
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []WidgetID{
 					MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),

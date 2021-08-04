@@ -7,26 +7,51 @@ import (
 	"github.com/blang/semver"
 )
 
-// MUST NOT CHANGE
-const officialPluginIDStr = "reearth"
-
-// OfficialPluginID _
-var OfficialPluginID = PluginID{name: officialPluginIDStr, sys: true}
-
 // PluginID is an ID for Plugin.
 type PluginID struct {
 	name    string
 	version string
 	sys     bool
+	scene   *SceneID
 }
 
-var pluginNameRe = regexp.MustCompile("^[a-zA-Z0-9._-]+$")
+// MUST NOT CHANGE
+const (
+	officialPluginIDStr = "reearth"
+	sepPluginID         = "~"
+)
+
+var (
+	OfficialPluginID = PluginID{name: officialPluginIDStr, sys: true}
+	pluginNameRe     = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
+)
 
 func validatePluginName(s string) bool {
 	if len(s) == 0 || len(s) > 100 || s == "reearth" || strings.Contains(s, "/") {
 		return false
 	}
 	return pluginNameRe.MatchString(s)
+}
+
+func NewPluginID(name string, version string, scene *SceneID) (PluginID, error) {
+	if name == officialPluginIDStr {
+		// official plugin
+		return PluginID{name: name, sys: true}, nil
+	}
+
+	if !validatePluginName(name) {
+		return PluginID{}, ErrInvalidID
+	}
+
+	if _, err := semver.Parse(version); err != nil {
+		return PluginID{}, ErrInvalidID
+	}
+
+	return PluginID{
+		name:    name,
+		version: version,
+		scene:   scene.CopyRef(),
+	}, nil
 }
 
 // PluginIDFrom generates a new id.PluginID from a string.
@@ -36,15 +61,27 @@ func PluginIDFrom(id string) (PluginID, error) {
 		return PluginID{name: id, sys: true}, nil
 	}
 
-	ids := strings.Split(id, "#")
-	if len(ids) != 2 || !validatePluginName(ids[0]) {
+	var name, version string
+	var sceneID *SceneID
+
+	ids := strings.SplitN(id, sepPluginID, 3)
+	switch len(ids) {
+	case 2:
+		name = ids[0]
+		version = ids[1]
+	case 3:
+		sceneID2, err := SceneIDFrom(ids[0])
+		if err != nil {
+			return PluginID{}, ErrInvalidID
+		}
+		sceneID = &sceneID2
+		name = ids[1]
+		version = ids[2]
+	default:
 		return PluginID{}, ErrInvalidID
 	}
-	v, err2 := semver.Parse(ids[1])
-	if err2 != nil {
-		return PluginID{}, ErrInvalidID
-	}
-	return PluginID{name: ids[0], version: v.String()}, nil
+
+	return NewPluginID(name, version, sceneID)
 }
 
 // MustPluginID generates a new id.PluginID from a string, but panics if the string cannot be parsed.
@@ -90,6 +127,11 @@ func (d PluginID) System() bool {
 	return d.sys
 }
 
+// Scene returns a scene ID of the plugin. It indicates this plugin is private and available for only the specific scene.
+func (d PluginID) Scene() *SceneID {
+	return d.scene.CopyRef()
+}
+
 // Validate returns true if id is valid.
 func (d PluginID) Validate() bool {
 	if d.sys {
@@ -99,11 +141,15 @@ func (d PluginID) Validate() bool {
 }
 
 // String returns a string representation.
-func (d PluginID) String() string {
+func (d PluginID) String() (s string) {
 	if d.sys {
 		return d.name
 	}
-	return d.name + "#" + d.version
+	if d.scene != nil {
+		s = d.scene.String() + sepPluginID
+	}
+	s += d.name + sepPluginID + d.version
+	return
 }
 
 // Ref returns a reference.
@@ -132,6 +178,14 @@ func (d *PluginID) StringRef() *string {
 
 // Equal returns if two IDs are quivarent.
 func (d PluginID) Equal(d2 PluginID) bool {
+	if d.sys {
+		return d2.sys
+	}
+	if d.scene != nil {
+		if d2.scene == nil || *d.scene != *d2.scene {
+			return false
+		}
+	}
 	return d.name == d2.name && d.version == d2.version
 }
 

@@ -142,7 +142,7 @@ func TestManifest(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			m, err := tc.root.manifest()
+			m, err := tc.root.manifest(nil)
 			if err == nil {
 				assert.Equal(tt, tc.expected.Plugin.ID(), m.Plugin.ID())
 				assert.Equal(tt, tc.expected.Plugin.Name(), m.Plugin.Name())
@@ -446,7 +446,7 @@ func TestSchema(t *testing.T) {
 				Linkable: nil,
 				Version:  0,
 			},
-			pid:      id.MustPluginID("aaa#1.1.1"),
+			pid:      id.MustPluginID("aaa~1.1.1"),
 			expected: nil,
 			err:      id.ErrInvalidID,
 		},

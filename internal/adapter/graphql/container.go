@@ -70,7 +70,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, conf ContainerConfig)
 		SceneController: NewSceneController(
 			SceneControllerConfig{
 				SceneInput: func() interfaces.Scene {
-					return interactor.NewScene(r)
+					return interactor.NewScene(r, g)
 				},
 			},
 		),

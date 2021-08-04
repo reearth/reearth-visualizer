@@ -15,5 +15,5 @@ var (
 
 type PluginRepository interface {
 	Manifest(context.Context, id.PluginID) (*manifest.Manifest, error)
-	Data(context.Context, id.PluginID) (file.Archive, error)
+	Data(context.Context, id.PluginID) (file.Iterator, error)
 }

@@ -205,6 +205,13 @@ func Test{{$name}}ID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func Test{{$name}}ID_Contains(t *testing.T) {
+	id := New{{$name}}ID()
+	id2 := New{{$name}}ID()
+	assert.True(t, id.Contains([]{{$name}}ID{id, id2}))
+	assert.False(t, id.Contains([]{{$name}}ID{id2}))
+}
+
 func Test{{$name}}ID_CopyRef(t *testing.T) {
 	id := New()
 	subId := {{$name}}IDFromRefID(&id)
@@ -614,7 +621,7 @@ func Test{{$name}}IDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -627,9 +634,9 @@ func Test{{$name}}IDSet_Add(t *testing.T) {
 			},
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -647,8 +654,8 @@ func Test{{$name}}IDSet_Add(t *testing.T) {
 			},
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -692,7 +699,7 @@ func Test{{$name}}IDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &{{$name}}Id,
 			expected: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -735,7 +742,7 @@ func Test{{$name}}IDSet_Has(t *testing.T) {
 				{{$name}}IDSet
 				{{$name}}ID
 			}{ {{$name}}IDSet: {{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, {{$name}}ID: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -746,7 +753,7 @@ func Test{{$name}}IDSet_Has(t *testing.T) {
 				{{$name}}IDSet
 				{{$name}}ID
 			}{ {{$name}}IDSet: {{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, {{$name}}ID: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -781,7 +788,7 @@ func Test{{$name}}IDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: {{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: {{$name}}IDSet{
@@ -822,7 +829,7 @@ func Test{{$name}}IDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -831,9 +838,9 @@ func Test{{$name}}IDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -880,11 +887,11 @@ func Test{{$name}}IDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -892,9 +899,9 @@ func Test{{$name}}IDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -904,9 +911,9 @@ func Test{{$name}}IDSet_Clone(t *testing.T) {
 			},
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -957,13 +964,13 @@ func Test{{$name}}IDSet_Merge(t *testing.T) {
 				b *{{$name}}IDSet
 			}{
 				a: &{{$name}}IDSet{
-					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &{{$name}}IDSet{},
 			},
 			expected: &{{$name}}IDSet{
-				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -974,18 +981,18 @@ func Test{{$name}}IDSet_Merge(t *testing.T) {
 				b *{{$name}}IDSet
 			}{
 				a: &{{$name}}IDSet{
-					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &{{$name}}IDSet{
-					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []{{$name}}ID{
 					Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),

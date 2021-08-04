@@ -1,7 +1,6 @@
 package scene
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -9,12 +8,12 @@ import (
 )
 
 func TestNewWidget(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
 	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name      string
-		Id        *id.WidgetID
+		ID        id.WidgetID
 		Plugin    id.PluginID
 		Extension id.PluginExtensionID
 		Property  id.PropertyID
@@ -30,29 +29,7 @@ func TestNewWidget(t *testing.T) {
 	}{
 		{
 			Name:      "success new widget",
-			Id:        wid.Ref(),
-			Plugin:    pid,
-			Extension: "eee",
-			Property:  pr,
-			Enabled:   true,
-			Expected: struct {
-				Id        id.WidgetID
-				Plugin    id.PluginID
-				Extension id.PluginExtensionID
-				Property  id.PropertyID
-				Enabled   bool
-			}{
-				Id:        wid,
-				Plugin:    pid,
-				Extension: "eee",
-				Property:  pr,
-				Enabled:   true,
-			},
-			err: nil,
-		},
-		{
-			Name:      "success nil id",
-			Id:        nil,
+			ID:        wid,
 			Plugin:    pid,
 			Extension: "eee",
 			Property:  pr,
@@ -74,7 +51,7 @@ func TestNewWidget(t *testing.T) {
 		},
 		{
 			Name:      "fail empty extension",
-			Id:        wid.Ref(),
+			ID:        wid,
 			Plugin:    pid,
 			Extension: "",
 			Property:  pr,
@@ -87,30 +64,26 @@ func TestNewWidget(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			res, err := NewWidget(tc.Id, tc.Plugin, tc.Extension, tc.Property, tc.Enabled)
+			res, err := NewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled)
 			if err == nil {
-				if tc.Id == nil {
-					assert.NotNil(tt, res.ID())
-				} else {
-					assert.Equal(tt, tc.Expected.Id, res.ID())
-				}
+				assert.Equal(tt, tc.Expected.Id, res.ID())
 				assert.Equal(tt, tc.Expected.Property, res.Property())
 				assert.Equal(tt, tc.Expected.Extension, res.Extension())
 				assert.Equal(tt, tc.Expected.Enabled, res.Enabled())
 				assert.Equal(tt, tc.Expected.Plugin, res.Plugin())
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.ErrorIs(tt, err, tc.err)
 			}
 		})
 	}
 }
 func TestMustNewWidget(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
 	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name      string
-		Id        *id.WidgetID
+		ID        id.WidgetID
 		Plugin    id.PluginID
 		Extension id.PluginExtensionID
 		Property  id.PropertyID
@@ -126,29 +99,7 @@ func TestMustNewWidget(t *testing.T) {
 	}{
 		{
 			Name:      "success new widget",
-			Id:        wid.Ref(),
-			Plugin:    pid,
-			Extension: "eee",
-			Property:  pr,
-			Enabled:   true,
-			Expected: struct {
-				Id        id.WidgetID
-				Plugin    id.PluginID
-				Extension id.PluginExtensionID
-				Property  id.PropertyID
-				Enabled   bool
-			}{
-				Id:        wid,
-				Plugin:    pid,
-				Extension: "eee",
-				Property:  pr,
-				Enabled:   true,
-			},
-			err: nil,
-		},
-		{
-			Name:      "success nil id",
-			Id:        nil,
+			ID:        wid,
 			Plugin:    pid,
 			Extension: "eee",
 			Property:  pr,
@@ -170,7 +121,7 @@ func TestMustNewWidget(t *testing.T) {
 		},
 		{
 			Name:      "fail empty extension",
-			Id:        wid.Ref(),
+			ID:        wid,
 			Plugin:    pid,
 			Extension: "",
 			Property:  pr,
@@ -186,25 +137,20 @@ func TestMustNewWidget(t *testing.T) {
 			var res *Widget
 			defer func() {
 				if r := recover(); r == nil {
-					if tc.Id == nil {
-						assert.NotNil(tt, res.ID())
-					} else {
-						assert.Equal(tt, tc.Expected.Id, res.ID())
-					}
+					assert.Equal(tt, tc.Expected.Id, res.ID())
 					assert.Equal(tt, tc.Expected.Property, res.Property())
 					assert.Equal(tt, tc.Expected.Extension, res.Extension())
 					assert.Equal(tt, tc.Expected.Enabled, res.Enabled())
 					assert.Equal(tt, tc.Expected.Plugin, res.Plugin())
 				}
 			}()
-			res = MustNewWidget(tc.Id, tc.Plugin, tc.Extension, tc.Property, tc.Enabled)
-
+			res = MustNewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled)
 		})
 	}
 }
 
 func TestWidget_SetEnabled(t *testing.T) {
-	res := MustNewWidget(id.NewWidgetID().Ref(), id.MustPluginID("xxx#1.1.1"), "eee", id.NewPropertyID(), false)
+	res := MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false)
 	res.SetEnabled(true)
 	assert.True(t, res.Enabled())
 }

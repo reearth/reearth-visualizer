@@ -203,6 +203,13 @@ func TestLayerID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestLayerID_Contains(t *testing.T) {
+	id := NewLayerID()
+	id2 := NewLayerID()
+	assert.True(t, id.Contains([]LayerID{id, id2}))
+	assert.False(t, id.Contains([]LayerID{id2}))
+}
+
 func TestLayerID_CopyRef(t *testing.T) {
 	id := New()
 	subId := LayerIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestLayerIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestLayerIDSet_Add(t *testing.T) {
 			},
 			expected: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestLayerIDSet_Add(t *testing.T) {
 			},
 			expected: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestLayerIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &LayerId,
 			expected: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestLayerIDSet_Has(t *testing.T) {
 				LayerIDSet
 				LayerID
 			}{LayerIDSet: LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, LayerID: MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestLayerIDSet_Has(t *testing.T) {
 				LayerIDSet
 				LayerID
 			}{LayerIDSet: LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, LayerID: MustLayerID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestLayerIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: LayerIDSet{
@@ -820,7 +827,7 @@ func TestLayerIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestLayerIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestLayerIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestLayerIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestLayerIDSet_Clone(t *testing.T) {
 			},
 			expected: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestLayerIDSet_Merge(t *testing.T) {
 				b *LayerIDSet
 			}{
 				a: &LayerIDSet{
-					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &LayerIDSet{},
 			},
 			expected: &LayerIDSet{
-				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestLayerIDSet_Merge(t *testing.T) {
 				b *LayerIDSet
 			}{
 				a: &LayerIDSet{
-					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &LayerIDSet{
-					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &LayerIDSet{
 				m: map[LayerID]struct{}{
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []LayerID{
 					MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),

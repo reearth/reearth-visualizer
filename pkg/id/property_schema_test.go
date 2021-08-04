@@ -23,13 +23,13 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 	}{
 		{
 			name:  "success:valid name",
-			input: "test/Test_Test-01",
+			input: "test~1.0.0/Test_Test-01",
 			expected: struct {
 				result PropertySchemaID
 				err    error
 			}{
 				result: PropertySchemaID{
-					plugin: "test",
+					plugin: MustPluginID("test~1.0.0"),
 					id:     "Test_Test-01",
 				},
 				err: nil,
@@ -78,14 +78,13 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 }
 
 func TestPropertySchemaIDFromExtension(t *testing.T) {
-	pluginID := MustPluginID("test#2.0.0")
+	pluginID := MustPluginID("test~2.0.0")
 	pluginExtensionID := PluginExtensionID("test2")
-
 	propertySchemaID, err := PropertySchemaIDFromExtension(pluginID, pluginExtensionID)
 
 	assert.NotNil(t, propertySchemaID)
 	assert.Equal(t, PropertySchemaID{
-		plugin: "test#2.0.0",
+		plugin: MustPluginID("test~2.0.0"),
 		id:     "test2",
 	}, propertySchemaID)
 	assert.Nil(t, err)
@@ -103,13 +102,13 @@ func TestMustPropertySchemaID(t *testing.T) {
 	}{
 		{
 			name:  "success:valid name",
-			input: "test/Test_Test-01",
+			input: "test~1.0.0/Test_Test-01",
 			expected: struct {
 				result PropertySchemaID
 				err    error
 			}{
 				result: PropertySchemaID{
-					plugin: "test",
+					plugin: MustPluginID("test~1.0.0"),
 					id:     "Test_Test-01",
 				},
 				err: nil,
@@ -159,50 +158,50 @@ func TestMustPropertySchemaID(t *testing.T) {
 }
 
 func TestMustPropertySchemaIDFromExtension(t *testing.T) {
-	pluginID := MustPluginID("test#2.0.0")
+	pluginID := MustPluginID("test~2.0.0")
 	pluginExtensionID := PluginExtensionID("test2")
 
 	propertySchemaID := MustPropertySchemaIDFromExtension(pluginID, pluginExtensionID)
 
 	assert.NotNil(t, propertySchemaID)
 	assert.Equal(t, PropertySchemaID{
-		plugin: "test#2.0.0",
+		plugin: MustPluginID("test~2.0.0"),
 		id:     "test2",
 	}, propertySchemaID)
 }
 
 func TestPropertySchemaIDFromRef(t *testing.T) {
-	t.Parallel()
-	input1 := "test/Test_Test-01"
-	input2 := "Test"
-	input3 := "Test/+dsad"
-	input4 := "Test/dsa d"
 	testCases := []struct {
 		name     string
-		input    *string
+		input    string
 		expected *PropertySchemaID
 	}{
 		{
 			name:  "success:valid name",
-			input: &input1,
+			input: "test~1.0.0/Test_Test-01",
 			expected: &PropertySchemaID{
-				plugin: "test",
+				plugin: MustPluginID("test~1.0.0"),
 				id:     "Test_Test-01",
 			},
 		},
 		{
-			name:     "fail:invalid name",
-			input:    &input2,
+			name:     "fail:invalid name 1",
+			input:    "Test~1.0.0",
 			expected: nil,
 		},
 		{
-			name:     "fail:invalid name",
-			input:    &input3,
+			name:     "fail:invalid name 2",
+			input:    "Test~1.0.0/+dsad",
 			expected: nil,
 		},
 		{
-			name:     "fail:invalid name",
-			input:    &input4,
+			name:     "fail:invalid name 3",
+			input:    "Test~1.0.0/dsa d",
+			expected: nil,
+		},
+		{
+			name:     "fail:invalid name 4",
+			input:    "Test/dsa",
 			expected: nil,
 		},
 	}
@@ -211,53 +210,52 @@ func TestPropertySchemaIDFromRef(t *testing.T) {
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
 
-			result := PropertySchemaIDFromRef(tc.input)
+			result := PropertySchemaIDFromRef(&tc.input)
 			assert.Equal(tt, tc.expected, result)
 		})
 	}
 }
 
 func TestPropertySchemaID_ID(t *testing.T) {
-	propertySchemaID := MustPropertySchemaID("Test#2.0.0/test")
+	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
 
 	assert.Equal(t, propertySchemaID.ID(), "test")
 }
 
 func TestPropertySchemaID_Plugin(t *testing.T) {
-	propertySchemaID := MustPropertySchemaID("Test#2.0.0/test")
-
-	assert.Equal(t, propertySchemaID.Plugin(), "Test#2.0.0")
+	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
+	assert.Equal(t, MustPluginID("Test~2.0.0"), propertySchemaID.Plugin())
 }
 
 func TestPropertySchemaID_System(t *testing.T) {
-	propertySchemaID := MustPropertySchemaID("Test#2.0.0/test")
+	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
 
 	assert.False(t, propertySchemaID.System())
 
 	extinctionName := schemaSystemIDPrefix
-	propertySchemaID = MustPropertySchemaIDFromExtension(MustPluginID("test#2.0.0"), *PluginExtensionIDFromRef(&extinctionName))
+	propertySchemaID = MustPropertySchemaIDFromExtension(MustPluginID("test~2.0.0"), *PluginExtensionIDFromRef(&extinctionName))
 
 	assert.True(t, propertySchemaID.System())
 
-	propertySchemaID = MustPropertySchemaID("Test#2.0.0/" + schemaSystemIDPrefix)
+	propertySchemaID = MustPropertySchemaID("Test~2.0.0/" + schemaSystemIDPrefix)
 
 	assert.True(t, propertySchemaID.System())
 }
 
 func TestPropertySchemaID_String(t *testing.T) {
-	propertySchemaID := MustPropertySchemaID("Test#2.0.0/test")
+	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
 
-	assert.Equal(t, propertySchemaID.String(), "Test#2.0.0/test")
+	assert.Equal(t, propertySchemaID.String(), "Test~2.0.0/test")
 }
 
 func TestPropertySchemaID_Ref(t *testing.T) {
-	propertySchemaID, _ := PropertySchemaIDFrom("test#2.0.0/test")
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 
 	assert.Equal(t, &propertySchemaID, propertySchemaID.Ref())
 }
 
 func TestPropertySchemaID_CopyRef(t *testing.T) {
-	propertySchemaID, _ := PropertySchemaIDFrom("test#2.0.0/test")
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 
 	assert.Equal(t, propertySchemaID, *propertySchemaID.CopyRef())
 
@@ -265,7 +263,7 @@ func TestPropertySchemaID_CopyRef(t *testing.T) {
 }
 
 func TestPropertySchemaID_IsNil(t *testing.T) {
-	propertySchemaID, _ := PropertySchemaIDFrom("test#2.0.0/test")
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 
 	assert.False(t, propertySchemaID.IsNil())
 
@@ -275,7 +273,7 @@ func TestPropertySchemaID_IsNil(t *testing.T) {
 }
 
 func TestPropertySchemaID_StringRef(t *testing.T) {
-	propertySchemaID, _ := PropertySchemaIDFrom("test#2.0.0/test")
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 
 	ref := &propertySchemaID
 
@@ -283,23 +281,23 @@ func TestPropertySchemaID_StringRef(t *testing.T) {
 }
 
 func TestPropertySchemaID_MarshalText(t *testing.T) {
-	propertySchemaID, _ := PropertySchemaIDFrom("test#2.0.0/test")
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 
 	res, err := propertySchemaID.MarshalText()
 
 	assert.Nil(t, err)
-	assert.Equal(t, []byte("test#2.0.0/test"), res)
+	assert.Equal(t, []byte("test~2.0.0/test"), res)
 }
 
 func TestPropertySchemaID_UnmarshalText(t *testing.T) {
-	text := []byte("test#2.0.0/test")
+	text := []byte("test~2.0.0/test")
 
 	propertySchemaID := &PropertySchemaID{}
 
 	err := propertySchemaID.UnmarshalText(text)
 
 	assert.Nil(t, err)
-	assert.Equal(t, "test#2.0.0/test", propertySchemaID.String())
+	assert.Equal(t, "test~2.0.0/test", propertySchemaID.String())
 }
 
 func TestPropertySchemaIDToKeys(t *testing.T) {
@@ -316,20 +314,20 @@ func TestPropertySchemaIDToKeys(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []PropertySchemaID{MustPropertySchemaID("test#2.0.0/test")},
-			expected: []string{"test#2.0.0/test"},
+			input:    []PropertySchemaID{MustPropertySchemaID("test~2.0.0/test")},
+			expected: []string{"test~2.0.0/test"},
 		},
 		{
 			name: "multiple elements",
 			input: []PropertySchemaID{
-				MustPropertySchemaID("Test#1.0.0/test"),
-				MustPropertySchemaID("Test#1.0.1/test"),
-				MustPropertySchemaID("Test#1.0.2/test"),
+				MustPropertySchemaID("Test~1.0.0/test"),
+				MustPropertySchemaID("Test~1.0.1/test"),
+				MustPropertySchemaID("Test~1.0.2/test"),
 			},
 			expected: []string{
-				"Test#1.0.0/test",
-				"Test#1.0.1/test",
-				"Test#1.0.2/test",
+				"Test~1.0.0/test",
+				"Test~1.0.1/test",
+				"Test~1.0.2/test",
 			},
 		},
 	}
@@ -367,30 +365,30 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: []string{"Test#1.0.0/test"},
+			input: []string{"Test~1.0.0/test"},
 			expected: struct {
 				res []PropertySchemaID
 				err error
 			}{
-				res: []PropertySchemaID{MustPropertySchemaID("Test#1.0.0/test")},
+				res: []PropertySchemaID{MustPropertySchemaID("Test~1.0.0/test")},
 				err: nil,
 			},
 		},
 		{
 			name: "multiple elements",
 			input: []string{
-				"Test#1.0.0/test",
-				"Test#1.0.1/test",
-				"Test#1.0.2/test",
+				"Test~1.0.0/test",
+				"Test~1.0.1/test",
+				"Test~1.0.2/test",
 			},
 			expected: struct {
 				res []PropertySchemaID
 				err error
 			}{
 				res: []PropertySchemaID{
-					MustPropertySchemaID("Test#1.0.0/test"),
-					MustPropertySchemaID("Test#1.0.1/test"),
-					MustPropertySchemaID("Test#1.0.2/test"),
+					MustPropertySchemaID("Test~1.0.0/test"),
+					MustPropertySchemaID("Test~1.0.1/test"),
+					MustPropertySchemaID("Test~1.0.2/test"),
 				},
 				err: nil,
 			},
@@ -398,9 +396,9 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 		{
 			name: "multiple elements",
 			input: []string{
-				"Test#1.0.0/test",
-				"Test#1.0.1/test",
-				"Test#1.0.2/test",
+				"Test~1.0.0/test",
+				"Test~1.0.1/test",
+				"Test~1.0.2/test",
 			},
 			expected: struct {
 				res []PropertySchemaID

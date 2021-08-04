@@ -143,6 +143,10 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	ps := make([]*scene.Plugin, 0, len(d.Plugins))
 
 	for _, w := range d.Widgets {
+		wid, err := id.WidgetIDFrom(w.ID)
+		if err != nil {
+			return nil, err
+		}
 		pid, err := id.PluginIDFrom(w.Plugin)
 		if err != nil {
 			return nil, err
@@ -152,7 +156,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 			return nil, err
 		}
 		sw, err := scene.NewWidget(
-			id.WidgetIDFromRef(&w.ID),
+			wid,
 			pid,
 			id.PluginExtensionID(w.Extension),
 			prid,

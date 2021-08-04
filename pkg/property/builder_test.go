@@ -15,29 +15,29 @@ func TestBuilder_New(t *testing.T) {
 
 func TestBuilder_ID(t *testing.T) {
 	pid := id.NewPropertyID()
-	p := New().ID(pid).Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx#1.1.1/aa")).MustBuild()
+	p := New().ID(pid).Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, pid, p.ID())
 }
 
 func TestBuilder_NewID(t *testing.T) {
-	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx#1.1.1/aa")).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.False(t, p.ID().IsNil())
 }
 
 func TestBuilder_Schema(t *testing.T) {
-	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx#1.1.1/aa")).MustBuild()
-	assert.Equal(t, id.MustPropertySchemaID("xxx#1.1.1/aa"), p.Schema())
+	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
+	assert.Equal(t, id.MustPropertySchemaID("xxx~1.1.1/aa"), p.Schema())
 }
 
 func TestBuilder_Scene(t *testing.T) {
 	sid := id.NewSceneID()
-	p := New().NewID().Scene(sid).Schema(id.MustPropertySchemaID("xxx#1.1.1/aa")).MustBuild()
+	p := New().NewID().Scene(sid).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, sid, p.Scene())
 }
 
 func TestBuilder_Items(t *testing.T) {
 	iid := id.NewPropertyItemID()
-	propertySchemaID := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	propertySchemaID := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	propertySchemaField1ID := id.PropertySchemaFieldID("a")
 	propertySchemaGroup1ID := id.PropertySchemaFieldID("A")
 
@@ -87,7 +87,7 @@ func TestBuilder_Items(t *testing.T) {
 			tt.Parallel()
 			res := New().NewID().
 				Scene(id.NewSceneID()).
-				Schema(id.MustPropertySchemaID("xxx#1.1.1/aa")).
+				Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).
 				Items(tc.Input).
 				MustBuild()
 			assert.Equal(tt, tc.Expected, res.Items())
@@ -98,7 +98,7 @@ func TestBuilder_Items(t *testing.T) {
 func TestBuilder_Build(t *testing.T) {
 	pid := id.NewPropertyID()
 	sid := id.NewSceneID()
-	scid := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	scid := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	iid := id.NewPropertyItemID()
 	propertySchemaField1ID := id.PropertySchemaFieldID("a")
 	propertySchemaGroup1ID := id.PropertySchemaFieldID("A")
@@ -176,7 +176,7 @@ func TestBuilder_Build(t *testing.T) {
 			Scene:  sid,
 			Schema: scid,
 			Items: []Item{
-				NewGroup().ID(iid).Schema(id.MustPropertySchemaID("zzz#1.1.1/aa"), propertySchemaGroup1ID).
+				NewGroup().ID(iid).Schema(id.MustPropertySchemaID("zzz~1.1.1/aa"), propertySchemaGroup1ID).
 					Fields([]*Field{
 						NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).

@@ -203,6 +203,13 @@ func TestInfoboxFieldID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestInfoboxFieldID_Contains(t *testing.T) {
+	id := NewInfoboxFieldID()
+	id2 := NewInfoboxFieldID()
+	assert.True(t, id.Contains([]InfoboxFieldID{id, id2}))
+	assert.False(t, id.Contains([]InfoboxFieldID{id2}))
+}
+
 func TestInfoboxFieldID_CopyRef(t *testing.T) {
 	id := New()
 	subId := InfoboxFieldIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestInfoboxFieldIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestInfoboxFieldIDSet_Add(t *testing.T) {
 			},
 			expected: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestInfoboxFieldIDSet_Add(t *testing.T) {
 			},
 			expected: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestInfoboxFieldIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &InfoboxFieldId,
 			expected: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestInfoboxFieldIDSet_Has(t *testing.T) {
 				InfoboxFieldIDSet
 				InfoboxFieldID
 			}{InfoboxFieldIDSet: InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, InfoboxFieldID: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestInfoboxFieldIDSet_Has(t *testing.T) {
 				InfoboxFieldIDSet
 				InfoboxFieldID
 			}{InfoboxFieldIDSet: InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, InfoboxFieldID: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestInfoboxFieldIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: InfoboxFieldIDSet{
@@ -820,7 +827,7 @@ func TestInfoboxFieldIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestInfoboxFieldIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestInfoboxFieldIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestInfoboxFieldIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestInfoboxFieldIDSet_Clone(t *testing.T) {
 			},
 			expected: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestInfoboxFieldIDSet_Merge(t *testing.T) {
 				b *InfoboxFieldIDSet
 			}{
 				a: &InfoboxFieldIDSet{
-					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &InfoboxFieldIDSet{},
 			},
 			expected: &InfoboxFieldIDSet{
-				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestInfoboxFieldIDSet_Merge(t *testing.T) {
 				b *InfoboxFieldIDSet
 			}{
 				a: &InfoboxFieldIDSet{
-					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &InfoboxFieldIDSet{
-					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []InfoboxFieldID{
 					MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),

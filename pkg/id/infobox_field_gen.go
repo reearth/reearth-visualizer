@@ -78,6 +78,16 @@ func (d InfoboxFieldID) Ref() *InfoboxFieldID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d InfoboxFieldID) Contains(ids []InfoboxFieldID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *InfoboxFieldID) CopyRef() *InfoboxFieldID {
 	if d == nil {

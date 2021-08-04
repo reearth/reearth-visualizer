@@ -8,9 +8,9 @@ import (
 )
 
 func TestNewWidgetSystem(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
 		Input    []*Widget
@@ -30,7 +30,7 @@ func TestNewWidgetSystem(t *testing.T) {
 			Name: "widget list with matched values",
 			Input: []*Widget{
 				{
-					id:        *wid,
+					id:        wid,
 					plugin:    pid,
 					extension: "eee",
 					property:  pr,
@@ -45,14 +45,14 @@ func TestNewWidgetSystem(t *testing.T) {
 			Name: "widget list with matched values",
 			Input: []*Widget{
 				{
-					id:        *wid,
+					id:        wid,
 					plugin:    pid,
 					extension: "eee",
 					property:  pr,
 					enabled:   true,
 				},
 				{
-					id:        *wid,
+					id:        wid,
 					plugin:    pid,
 					extension: "eee",
 					property:  pr,
@@ -75,9 +75,9 @@ func TestNewWidgetSystem(t *testing.T) {
 }
 
 func TestWidgetSystem_Add(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name         string
 		Input        *Widget
@@ -86,7 +86,7 @@ func TestWidgetSystem_Add(t *testing.T) {
 		{
 			Name: "add new widget",
 			Input: &Widget{
-				id:        *wid,
+				id:        wid,
 				plugin:    pid,
 				extension: "eee",
 				property:  pr,
@@ -104,7 +104,7 @@ func TestWidgetSystem_Add(t *testing.T) {
 		{
 			Name: "add to nil widgetSystem",
 			Input: &Widget{
-				id:        *wid,
+				id:        wid,
 				plugin:    pid,
 				extension: "eee",
 				property:  pr,
@@ -116,7 +116,7 @@ func TestWidgetSystem_Add(t *testing.T) {
 		{
 			Name: "add existing widget",
 			Input: &Widget{
-				id:        *wid,
+				id:        wid,
 				plugin:    pid,
 				extension: "eee",
 				property:  pr,
@@ -137,9 +137,14 @@ func TestWidgetSystem_Add(t *testing.T) {
 }
 
 func TestWidgetSystem_Remove(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
+	pid2 := id.MustPluginID("xxx~1.1.2")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	w1 := MustNewWidget(id.NewWidgetID(), pid, "e1", pr, true)
+	w2 := MustNewWidget(id.NewWidgetID(), pid, "e1", pr, true)
+	w3 := MustNewWidget(id.NewWidgetID(), pid, "e2", pr, true)
+	w4 := MustNewWidget(id.NewWidgetID(), pid2, "e1", pr, true)
+
 	testCases := []struct {
 		Name         string
 		PID          id.PluginID
@@ -149,9 +154,9 @@ func TestWidgetSystem_Remove(t *testing.T) {
 		{
 			Name:     "remove a widget",
 			PID:      pid,
-			EID:      "eee",
-			WS:       NewWidgetSystem([]*Widget{MustNewWidget(wid, pid, "eee", pr, true)}),
-			Expected: NewWidgetSystem([]*Widget{}),
+			EID:      "e1",
+			WS:       NewWidgetSystem([]*Widget{w1, w2, w3, w4}),
+			Expected: NewWidgetSystem([]*Widget{w3, w4}),
 		},
 		{
 			Name:     "remove from nil widgetSystem",
@@ -169,11 +174,48 @@ func TestWidgetSystem_Remove(t *testing.T) {
 	}
 }
 
+func TestWidgetSystem_RemoveAllByPlugin(t *testing.T) {
+	pid := id.MustPluginID("xxx~1.1.1")
+	pid2 := id.MustPluginID("xxx~1.1.2")
+	w1 := MustNewWidget(id.NewWidgetID(), pid, "e1", id.NewPropertyID(), true)
+	w2 := MustNewWidget(id.NewWidgetID(), pid, "e2", id.NewPropertyID(), true)
+	w3 := MustNewWidget(id.NewWidgetID(), pid2, "e1", id.NewPropertyID(), true)
+
+	testCases := []struct {
+		Name           string
+		PID            id.PluginID
+		WS, Expected   *WidgetSystem
+		ExpectedResult []id.PropertyID
+	}{
+		{
+			Name:           "remove widgets",
+			PID:            pid,
+			WS:             NewWidgetSystem([]*Widget{w1, w2, w3}),
+			Expected:       NewWidgetSystem([]*Widget{w3}),
+			ExpectedResult: []id.PropertyID{w1.Property(), w2.Property()},
+		},
+		{
+			Name:           "remove from nil widgetSystem",
+			WS:             nil,
+			Expected:       nil,
+			ExpectedResult: nil,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.Name, func(tt *testing.T) {
+			tt.Parallel()
+			assert.Equal(tt, tc.ExpectedResult, tc.WS.RemoveAllByPlugin(tc.PID))
+			assert.Equal(tt, tc.Expected, tc.WS)
+		})
+	}
+}
+
 func TestWidgetSystem_Replace(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
-	pid2 := id.MustPluginID("zzz#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
+	pid2 := id.MustPluginID("zzz~1.1.1")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name         string
 		PID, NewID   id.PluginID
@@ -209,11 +251,11 @@ func TestWidgetSystem_Replace(t *testing.T) {
 }
 
 func TestWidgetSystem_Properties(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
 	pr2 := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
-	wid2 := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
+	wid2 := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
 		WS       *WidgetSystem
@@ -244,11 +286,11 @@ func TestWidgetSystem_Properties(t *testing.T) {
 }
 
 func TestWidgetSystem_Widgets(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
 	pr2 := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
-	wid2 := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
+	wid2 := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
 		WS       *WidgetSystem
@@ -282,9 +324,9 @@ func TestWidgetSystem_Widgets(t *testing.T) {
 }
 
 func TestWidgetSystem_Widget(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
 		PID      id.PluginID
@@ -323,9 +365,9 @@ func TestWidgetSystem_Widget(t *testing.T) {
 }
 
 func TestWidgetSystem_Has(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID()
-	wid := id.NewWidgetID().Ref()
+	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
 		PID      id.PluginID

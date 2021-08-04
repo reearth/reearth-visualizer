@@ -112,6 +112,17 @@ func (r *propertySchemaRepo) SaveAll(ctx context.Context, m property.SchemaList)
 	return r.client.SaveAll(ctx, ids, docs)
 }
 
+func (r *propertySchemaRepo) Remove(ctx context.Context, id id.PropertySchemaID) error {
+	return r.client.RemoveOne(ctx, id.String())
+}
+
+func (r *propertySchemaRepo) RemoveAll(ctx context.Context, ids []id.PropertySchemaID) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	return r.client.RemoveAll(ctx, id.PropertySchemaIDToKeys(ids))
+}
+
 func (r *propertySchemaRepo) find(ctx context.Context, dst property.SchemaList, filter bson.D) (property.SchemaList, error) {
 	c := mongodoc.PropertySchemaConsumer{
 		Rows: dst,

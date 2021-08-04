@@ -203,6 +203,13 @@ func TestPropertyItemID_Ref(t *testing.T) {
 	assert.Equal(t, *subId, *subIdRef)
 }
 
+func TestPropertyItemID_Contains(t *testing.T) {
+	id := NewPropertyItemID()
+	id2 := NewPropertyItemID()
+	assert.True(t, id.Contains([]PropertyItemID{id, id2}))
+	assert.False(t, id.Contains([]PropertyItemID{id2}))
+}
+
 func TestPropertyItemID_CopyRef(t *testing.T) {
 	id := New()
 	subId := PropertyItemIDFromRefID(&id)
@@ -612,7 +619,7 @@ func TestPropertyItemIDSet_Add(t *testing.T) {
 			name:  "1 element",
 			input: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -625,9 +632,9 @@ func TestPropertyItemIDSet_Add(t *testing.T) {
 			},
 			expected: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -645,8 +652,8 @@ func TestPropertyItemIDSet_Add(t *testing.T) {
 			},
 			expected: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -690,7 +697,7 @@ func TestPropertyItemIDSet_AddRef(t *testing.T) {
 			name:  "1 element",
 			input: &PropertyItemId,
 			expected: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -733,7 +740,7 @@ func TestPropertyItemIDSet_Has(t *testing.T) {
 				PropertyItemIDSet
 				PropertyItemID
 			}{PropertyItemIDSet: PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, PropertyItemID: MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: true,
@@ -744,7 +751,7 @@ func TestPropertyItemIDSet_Has(t *testing.T) {
 				PropertyItemIDSet
 				PropertyItemID
 			}{PropertyItemIDSet: PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			}, PropertyItemID: MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2")},
 			expected: false,
@@ -779,7 +786,7 @@ func TestPropertyItemIDSet_Clear(t *testing.T) {
 		{
 			name: "Set Contains the element",
 			input: PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: PropertyItemIDSet{
@@ -820,7 +827,7 @@ func TestPropertyItemIDSet_All(t *testing.T) {
 		{
 			name: "1 element",
 			input: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -829,9 +836,9 @@ func TestPropertyItemIDSet_All(t *testing.T) {
 			name: "multiple elements",
 			input: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -878,11 +885,11 @@ func TestPropertyItemIDSet_Clone(t *testing.T) {
 		{
 			name: "1 element",
 			input: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 			expected: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -890,9 +897,9 @@ func TestPropertyItemIDSet_Clone(t *testing.T) {
 			name: "multiple elements",
 			input: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -902,9 +909,9 @@ func TestPropertyItemIDSet_Clone(t *testing.T) {
 			},
 			expected: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t3"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -955,13 +962,13 @@ func TestPropertyItemIDSet_Merge(t *testing.T) {
 				b *PropertyItemIDSet
 			}{
 				a: &PropertyItemIDSet{
-					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &PropertyItemIDSet{},
 			},
 			expected: &PropertyItemIDSet{
-				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+				m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
 		},
@@ -972,18 +979,18 @@ func TestPropertyItemIDSet_Merge(t *testing.T) {
 				b *PropertyItemIDSet
 			}{
 				a: &PropertyItemIDSet{
-					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{}},
+					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 					s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1")},
 				},
 				b: &PropertyItemIDSet{
-					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{}},
+					m: map[PropertyItemID]struct{}{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {}},
 					s: []PropertyItemID{MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2")},
 				},
 			},
 			expected: &PropertyItemIDSet{
 				m: map[PropertyItemID]struct{}{
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): struct{}{},
-					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): struct{}{},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"): {},
+					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t2"): {},
 				},
 				s: []PropertyItemID{
 					MustPropertyItemID("01f3zhcaq35403zdjnd6dcm0t1"),

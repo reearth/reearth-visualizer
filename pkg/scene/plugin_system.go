@@ -43,8 +43,7 @@ func (p *PluginSystem) Plugins() []*Plugin {
 func (p *PluginSystem) Property(id id.PluginID) *id.PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
-			p2 := *p.property
-			return &p2
+			return p.property.CopyRef()
 		}
 	}
 	return nil

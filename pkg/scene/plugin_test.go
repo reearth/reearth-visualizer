@@ -8,7 +8,7 @@ import (
 )
 
 func TestPlugin(t *testing.T) {
-	pid := id.MustPluginID("xxx#1.1.1")
+	pid := id.MustPluginID("xxx~1.1.1")
 	pr := id.NewPropertyID().Ref()
 	res := NewPlugin(pid, pr)
 	p := Plugin{

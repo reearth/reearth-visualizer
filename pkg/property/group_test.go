@@ -21,7 +21,7 @@ func TestGroup_SchemaGroup(t *testing.T) {
 	assert.Nil(t, g.SchemaGroupRef())
 	assert.Equal(t, id.PropertySchemaFieldID(""), g.SchemaGroup())
 	pfid := id.PropertySchemaFieldID("aa")
-	g = NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), pfid).MustBuild()
+	g = NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())
 }
@@ -245,7 +245,7 @@ func TestGroup_Prune(t *testing.T) {
 func TestGroup_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	f := NewField(sf).MustBuild()
-	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	testCases := []struct {
 		Name     string
 		Group    *Group
@@ -261,17 +261,17 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		},
 		{
 			Name:  "nil ps",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
 		},
 		{
 			Name:  "group schema doesn't equal to ps",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xxx/aaa"), "aa").MustBuild(),
-			PS:    NewSchema().ID(id.MustPropertySchemaID("xx/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aaa"), "aa").MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 		},
 		{
 			Name:  "create field",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").MustBuild(),
-			PS:    NewSchema().ID(id.MustPropertySchemaID("xx/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
@@ -283,8 +283,8 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		},
 		{
 			Name:  "get field",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").Fields([]*Field{f}).MustBuild(),
-			PS:    NewSchema().ID(id.MustPropertySchemaID("xx/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").Fields([]*Field{f}).MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
@@ -415,8 +415,8 @@ func TestGroup_Field(t *testing.T) {
 func TestGroup_UpdateNameFieldValue(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	//f := NewField(sf).MustBuild()
-	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	sg2 := NewSchemaGroup().ID("bb").Schema(id.MustPropertySchemaID("xx/bb")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg2 := NewSchemaGroup().ID("bb").Schema(id.MustPropertySchemaID("xx~1.0.0/bb")).Fields([]*SchemaField{sf}).MustBuild()
 	testCases := []struct {
 		Name     string
 		Group    *Group
@@ -431,25 +431,25 @@ func TestGroup_UpdateNameFieldValue(t *testing.T) {
 		},
 		{
 			Name:  "nil ps",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
 		},
 		{
 			Name:  "group schema doesn't equal to ps",
-			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xxx/aaa"), "aa").MustBuild(),
-			PS:    NewSchema().ID(id.MustPropertySchemaID("xx/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Group: NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aaa"), "aa").MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 		},
 		{
 			Name:     "update value",
-			Group:    NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").MustBuild(),
-			PS:       NewSchema().ID(id.MustPropertySchemaID("xx/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Group:    NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			PS:       NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 			Value:    ValueTypeString.ValueFromUnsafe("abc"),
 			FID:      "aa",
 			Expected: NewField(sf).Value(ValueTypeString.ValueFromUnsafe("abc")).MustBuild(),
 		},
 		{
 			Name:     "invalid property field",
-			Group:    NewGroup().NewID().Schema(id.MustPropertySchemaID("xx/aa"), "aa").MustBuild(),
-			PS:       NewSchema().ID(id.MustPropertySchemaID("xx/bb")).Groups([]*SchemaGroup{sg2}).MustBuild(),
+			Group:    NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			PS:       NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/bb")).Groups([]*SchemaGroup{sg2}).MustBuild(),
 			Value:    ValueTypeString.ValueFromUnsafe("abc"),
 			FID:      "aa",
 			Expected: nil,

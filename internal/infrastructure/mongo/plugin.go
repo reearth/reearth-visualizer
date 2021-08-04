@@ -31,17 +31,36 @@ func (r *pluginRepo) init() {
 	}
 }
 
-func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
-	if p := builtin.GetPlugin(id); p != nil {
+func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID, sids []id.SceneID) (*plugin.Plugin, error) {
+	// TODO: separate built-in plugins to another repository
+	if p := builtin.GetPlugin(pid); p != nil {
 		return p, nil
 	}
-	filter := bson.D{
-		{Key: "id", Value: id.String()},
+
+	pids := pid.String()
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"id":    pids,
+				"scene": nil,
+			},
+			{
+				"id":    pids,
+				"scene": "",
+			},
+			{
+				"id": pids,
+				"scene": bson.M{
+					"$in": id.SceneIDToKeys(sids),
+				},
+			},
+		},
 	}
 	return r.findOne(ctx, filter)
 }
 
-func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.SceneID) ([]*plugin.Plugin, error) {
+	// TODO: separate built-in plugins to another repository
 	// exclude built-in
 	b := map[string]*plugin.Plugin{}
 	ids2 := make([]id.PluginID, 0, len(ids))
@@ -57,10 +76,24 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugi
 	var err error
 
 	if len(ids2) > 0 {
-		filter := bson.D{
-			{Key: "id", Value: bson.D{
-				{Key: "$in", Value: id.PluginIDToKeys(ids2)},
-			}},
+		keys := id.PluginIDToKeys(ids2)
+		filter := bson.M{
+			"$or": []bson.M{
+				{
+					"id":    bson.M{"$in": keys},
+					"scene": nil,
+				},
+				{
+					"id":    bson.M{"$in": keys},
+					"scene": "",
+				},
+				{
+					"id": bson.M{"$in": keys},
+					"scene": bson.M{
+						"$in": id.SceneIDToKeys(sids),
+					},
+				},
+			},
 		}
 		dst := make([]*plugin.Plugin, 0, len(ids2))
 		res, err = r.find(ctx, dst, filter)
@@ -100,7 +133,11 @@ func (r *pluginRepo) Save(ctx context.Context, plugin *plugin.Plugin) error {
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *pluginRepo) find(ctx context.Context, dst []*plugin.Plugin, filter bson.D) ([]*plugin.Plugin, error) {
+func (r *pluginRepo) Remove(ctx context.Context, id id.PluginID) error {
+	return r.client.RemoveOne(ctx, id.String())
+}
+
+func (r *pluginRepo) find(ctx context.Context, dst []*plugin.Plugin, filter interface{}) ([]*plugin.Plugin, error) {
 	c := mongodoc.PluginConsumer{
 		Rows: dst,
 	}
@@ -110,7 +147,7 @@ func (r *pluginRepo) find(ctx context.Context, dst []*plugin.Plugin, filter bson
 	return c.Rows, nil
 }
 
-func (r *pluginRepo) findOne(ctx context.Context, filter bson.D) (*plugin.Plugin, error) {
+func (r *pluginRepo) findOne(ctx context.Context, filter interface{}) (*plugin.Plugin, error) {
 	dst := make([]*plugin.Plugin, 0, 1)
 	c := mongodoc.PluginConsumer{
 		Rows: dst,

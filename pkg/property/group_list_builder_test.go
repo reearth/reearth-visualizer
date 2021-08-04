@@ -10,7 +10,7 @@ import (
 
 func TestGroupListBuilder_Build(t *testing.T) {
 	pid := id.NewPropertyItemID()
-	scid := id.MustPropertySchemaID("xx/aa")
+	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
 		Name        string
@@ -73,7 +73,7 @@ func TestGroupListBuilder_NewID(t *testing.T) {
 
 func TestGroupListBuilder_MustBuild(t *testing.T) {
 	pid := id.NewPropertyItemID()
-	scid := id.MustPropertySchemaID("xx/aa")
+	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
 		Name        string
@@ -148,9 +148,9 @@ func TestInitGroupListFrom(t *testing.T) {
 		},
 		{
 			Name:           "success",
-			SchemaGroup:    NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx/aa")).MustBuild(),
+			SchemaGroup:    NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).MustBuild(),
 			ExpectedSG:     "aa",
-			ExpectedSchema: id.MustPropertySchemaID("xx/aa"),
+			ExpectedSchema: id.MustPropertySchemaID("xx~1.0.0/aa"),
 		},
 	}
 

@@ -10,7 +10,7 @@ import (
 
 func TestLoaderFrom(t *testing.T) {
 	scene := id.NewSceneID()
-	ps := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	pid1 := id.NewPropertyID()
 	pid2 := id.NewPropertyID()
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
@@ -28,7 +28,7 @@ func TestLoaderFrom(t *testing.T) {
 
 func TestLoaderFromMap(t *testing.T) {
 	scene := id.NewSceneID()
-	ps := id.MustPropertySchemaID("xxx#1.1.1/aa")
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	pid1 := id.NewPropertyID()
 	pid2 := id.NewPropertyID()
 	pid3 := id.NewPropertyID()

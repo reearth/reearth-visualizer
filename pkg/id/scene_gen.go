@@ -78,6 +78,16 @@ func (d SceneID) Ref() *SceneID {
 	return &d2
 }
 
+// Contains returns whether the id is contained in the slice.
+func (d SceneID) Contains(ids []SceneID) bool {
+	for _, i := range ids {
+		if d.ID().Equal(i.ID()) {
+			return true
+		}
+	}
+	return false
+}
+
 // CopyRef returns a copy of a reference.
 func (d *SceneID) CopyRef() *SceneID {
 	if d == nil {

@@ -11,8 +11,8 @@ import (
 
 func TestSchemaBuilder_Build(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	sg2 := NewSchemaGroup().ID("daa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg2 := NewSchemaGroup().ID("daa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	testCases := []struct {
 		Name     string
 		Id       id.PropertySchemaID
@@ -33,19 +33,19 @@ func TestSchemaBuilder_Build(t *testing.T) {
 		},
 		{
 			Name:     "fail: invalid linkable field",
-			Id:       id.MustPropertySchemaID("xx/aa"),
+			Id:       id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Linkable: LinkableFields{LatLng: NewPointer(nil, nil, id.PropertySchemaFieldID("xx").Ref())},
 			Err:      ErrInvalidPropertyLinkableField,
 		},
 		{
 			Name:   "fail: duplicated field",
-			Id:     id.MustPropertySchemaID("xx/aa"),
+			Id:     id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Groups: []*SchemaGroup{sg, sg2},
-			Err:    fmt.Errorf("%s: %s %s", ErrDuplicatedField, id.MustPropertySchemaID("xx/aa"), []id.PropertySchemaFieldID{"aa"}),
+			Err:    fmt.Errorf("%s: %s %s", ErrDuplicatedField, id.MustPropertySchemaID("xx~1.0.0/aa"), []id.PropertySchemaFieldID{"aa"}),
 		},
 		{
 			Name:    "success",
-			Id:      id.MustPropertySchemaID("xx/aa"),
+			Id:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Groups:  []*SchemaGroup{sg},
 			Version: 1,
 			Expected: struct {
@@ -53,7 +53,7 @@ func TestSchemaBuilder_Build(t *testing.T) {
 				Version  int
 				Groups   []*SchemaGroup
 				Linkable LinkableFields
-			}{Id: id.MustPropertySchemaID("xx/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
+			}{Id: id.MustPropertySchemaID("xx~1.0.0/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
 		},
 	}
 
@@ -81,8 +81,8 @@ func TestSchemaBuilder_Build(t *testing.T) {
 
 func TestSchemaBuilder_MustBuild(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	sg2 := NewSchemaGroup().ID("daa").Schema(id.MustPropertySchemaID("xx/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg2 := NewSchemaGroup().ID("daa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	testCases := []struct {
 		Name     string
 		Fails    bool
@@ -103,19 +103,19 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 		},
 		{
 			Name:     "fail: invalid linkable field",
-			Id:       id.MustPropertySchemaID("xx/aa"),
+			Id:       id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Linkable: LinkableFields{LatLng: NewPointer(nil, nil, id.PropertySchemaFieldID("xx").Ref())},
 			Fails:    true,
 		},
 		{
 			Name:   "fail: duplicated field",
-			Id:     id.MustPropertySchemaID("xx/aa"),
+			Id:     id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Groups: []*SchemaGroup{sg, sg2},
 			Fails:  true,
 		},
 		{
 			Name:    "success",
-			Id:      id.MustPropertySchemaID("xx/aa"),
+			Id:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 			Groups:  []*SchemaGroup{sg},
 			Version: 1,
 			Expected: struct {
@@ -123,7 +123,7 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 				Version  int
 				Groups   []*SchemaGroup
 				Linkable LinkableFields
-			}{Id: id.MustPropertySchemaID("xx/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
+			}{Id: id.MustPropertySchemaID("xx~1.0.0/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
 		},
 	}
 

@@ -11,7 +11,7 @@ import (
 func TestMerge(t *testing.T) {
 	scene := id.NewSceneID()
 	dataset1 := id.NewDatasetID()
-	p := id.MustPluginID("xxx#1.1.1")
+	p := id.MustPluginID("xxx~1.1.1")
 	e := id.PluginExtensionID("foo")
 
 	itemProperty := id.NewPropertyID()
