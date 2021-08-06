@@ -53,16 +53,29 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 	case "marker":
 		latlng := property.LatLng{}
 		var height float64
-		if li.Property.Field("location") != nil {
-			latlng, ok = li.Property.Field("location").PropertyValue.ValueLatLng()
+		if f := li.Property.Field("location"); f != nil {
+			latlng, ok = f.PropertyValue.ValueLatLng()
 			if !ok {
-				return nil, errors.New("invalid value type")
+				dsll := f.DatasetValue.ValueLatLng()
+				if dsll != nil {
+					latlng = property.LatLng{
+						Lat: dsll.Lat,
+						Lng: dsll.Lng,
+					}
+				} else {
+					return nil, errors.New("invalid value type")
+				}
 			}
 
-			if li.Property.Field("height") != nil {
-				height, ok = li.Property.Field("height").PropertyValue.ValueNumber()
+			if f := li.Property.Field("height"); f != nil {
+				height, ok = f.PropertyValue.ValueNumber()
 				if !ok {
-					return nil, errors.New("invalid value type")
+					dsHeight := f.DatasetValue.ValueNumber()
+					if dsHeight != nil {
+						height = *dsHeight
+					} else {
+						return nil, errors.New("invalid value type")
+					}
 				}
 				position := czml.Position{
 					CartographicDegrees: []float64{latlng.Lng, latlng.Lat, height},
@@ -75,14 +88,14 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 				feature.Position = &position
 			}
 		}
-		if li.Property.Field("pointColor") != nil {
-			pointColor, ok = li.Property.Field("pointColor").PropertyValue.ValueString()
+		if f := li.Property.Field("pointColor"); f != nil {
+			pointColor, ok = f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
 		}
-		if li.Property.Field("pointSize") != nil {
-			pointSize, ok = li.Property.Field("pointSize").PropertyValue.ValueNumber()
+		if f := li.Property.Field("pointSize"); f != nil {
+			pointSize, ok = f.PropertyValue.ValueNumber()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -100,8 +113,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 		var fill, stroke bool
 		var fillColor, strokeColor *czml.Color
 		var strokeWidth float64
-		if li.Property.Field("polygon") != nil {
-			polygon, ok = li.Property.Field("polygon").PropertyValue.ValuePolygon()
+		if f := li.Property.Field("polygon"); f != nil {
+			polygon, ok = f.PropertyValue.ValuePolygon()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -111,20 +124,20 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 				}
 			}
 		}
-		if li.Property.Field("fill") != nil {
-			fill, ok = li.Property.Field("fill").PropertyValue.ValueBool()
+		if f := li.Property.Field("fill"); f != nil {
+			fill, ok = f.PropertyValue.ValueBool()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
 		}
-		if li.Property.Field("stroke") != nil {
-			stroke, ok = li.Property.Field("stroke").PropertyValue.ValueBool()
+		if f := li.Property.Field("stroke"); f != nil {
+			stroke, ok = f.PropertyValue.ValueBool()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
 		}
-		if li.Property.Field("fillColor") != nil {
-			fillStr, ok := li.Property.Field("fillColor").PropertyValue.ValueString()
+		if f := li.Property.Field("fillColor"); f != nil {
+			fillStr, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -133,8 +146,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 				return nil, err
 			}
 		}
-		if li.Property.Field("strokeColor") != nil {
-			strokeStr, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+		if f := li.Property.Field("strokeColor"); f != nil {
+			strokeStr, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -143,8 +156,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 				return nil, err
 			}
 		}
-		if li.Property.Field("strokeWidth") != nil {
-			strokeWidth, ok = li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+		if f := li.Property.Field("strokeWidth"); f != nil {
+			strokeWidth, ok = f.PropertyValue.ValueNumber()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -163,8 +176,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 		position := czml.Position{}
 		var strokeColor *czml.Color
 		var strokeWidth float64
-		if li.Property.Field("coordinates") != nil {
-			polyline, ok = li.Property.Field("coordinates").PropertyValue.ValueCoordinates()
+		if f := li.Property.Field("coordinates"); f != nil {
+			polyline, ok = f.PropertyValue.ValueCoordinates()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -173,8 +186,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 			}
 		}
 
-		if li.Property.Field("strokeColor") != nil {
-			strokeStr, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+		if f := li.Property.Field("strokeColor"); f != nil {
+			strokeStr, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -183,8 +196,8 @@ func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feat
 				return nil, err
 			}
 		}
-		if li.Property.Field("strokeWidth") != nil {
-			strokeWidth, ok = li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+		if f := li.Property.Field("strokeWidth"); f != nil {
+			strokeWidth, ok = f.PropertyValue.ValueNumber()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}

@@ -51,15 +51,28 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 	case "marker":
 		latlng := property.LatLng{}
 		var height float64
-		if li.Property.Field("location") != nil {
-			latlng, ok = li.Property.Field("location").PropertyValue.ValueLatLng()
+		if f := li.Property.Field("location"); f != nil {
+			latlng, ok = f.PropertyValue.ValueLatLng()
 			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if li.Property.Field("height") != nil {
-				height, ok = li.Property.Field("height").PropertyValue.ValueNumber()
-				if !ok {
+				dsll := f.DatasetValue.ValueLatLng()
+				if dsll != nil {
+					latlng = property.LatLng{
+						Lat: dsll.Lat,
+						Lng: dsll.Lng,
+					}
+				} else {
 					return nil, errors.New("invalid value type")
+				}
+			}
+			if f := li.Property.Field("height"); f != nil {
+				height, ok = f.PropertyValue.ValueNumber()
+				if !ok {
+					dsHeight := f.DatasetValue.ValueNumber()
+					if dsHeight != nil {
+						height = *dsHeight
+					} else {
+						return nil, errors.New("invalid value type")
+					}
 				}
 				geo = geojson.NewPointGeometry([]float64{latlng.Lng, latlng.Lat, height})
 			} else {
@@ -68,8 +81,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 			res = geojson.NewFeature(geo)
 			res.SetProperty("name", li.Name)
 		}
-		if li.Property.Field("pointColor") != nil {
-			pointColor, ok := li.Property.Field("pointColor").PropertyValue.ValueString()
+		if f := li.Property.Field("pointColor"); f != nil {
+			pointColor, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -79,8 +92,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 		}
 	case "polygon":
 		var polygon property.Polygon
-		if li.Property.Field("polygon") != nil {
-			polygon, ok = li.Property.Field("polygon").PropertyValue.ValuePolygon()
+		if f := li.Property.Field("polygon"); f != nil {
+			polygon, ok = f.PropertyValue.ValuePolygon()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -90,8 +103,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 			res = geojson.NewFeature(geo)
 			res.SetProperty("name", li.Name)
 		}
-		if li.Property.Field("fillColor") != nil {
-			fillColor, ok := li.Property.Field("fillColor").PropertyValue.ValueString()
+		if f := li.Property.Field("fillColor"); f != nil {
+			fillColor, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -99,8 +112,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 				res.SetProperty("fill", fillColor)
 			}
 		}
-		if li.Property.Field("strokeColor") != nil {
-			strokeColor, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+		if f := li.Property.Field("strokeColor"); f != nil {
+			strokeColor, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -108,8 +121,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 				res.SetProperty("stroke", strokeColor)
 			}
 		}
-		if li.Property.Field("strokeWidth") != nil {
-			strokeWidth, ok := li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+		if f := li.Property.Field("strokeWidth"); f != nil {
+			strokeWidth, ok := f.PropertyValue.ValueNumber()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -119,8 +132,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 		}
 	case "polyline":
 		var polyline property.Coordinates
-		if li.Property.Field("coordinates") != nil {
-			polyline, ok = li.Property.Field("coordinates").PropertyValue.ValueCoordinates()
+		if f := li.Property.Field("coordinates"); f != nil {
+			polyline, ok = f.PropertyValue.ValueCoordinates()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -129,8 +142,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 			res = geojson.NewFeature(geo)
 			res.SetProperty("name", li.Name)
 		}
-		if li.Property.Field("strokeColor") != nil {
-			strokeColor, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+		if f := li.Property.Field("strokeColor"); f != nil {
+			strokeColor, ok := f.PropertyValue.ValueString()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -138,8 +151,8 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 				res.SetProperty("stroke", strokeColor)
 			}
 		}
-		if li.Property.Field("strokeWidth") != nil {
-			strokeWidth, ok := li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+		if f := li.Property.Field("strokeWidth"); f != nil {
+			strokeWidth, ok := f.PropertyValue.ValueNumber()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}

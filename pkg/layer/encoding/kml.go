@@ -56,9 +56,9 @@ func (e *KMLEncoder) encodePointStyle(li *merging.SealedLayerItem) (*kml.SharedE
 	var ok bool
 	var imageSize float64
 	var pointColor color.Color
-	if li.Property.Field("image") != nil {
-		if li.Property.Field("image").PropertyValue != nil {
-			image, ok = li.Property.Field("image").PropertyValue.ValueURL()
+	if f := li.Property.Field("image"); f != nil {
+		if f.PropertyValue != nil {
+			image, ok = f.PropertyValue.ValueURL()
 			if !ok {
 				return nil, "", errors.New("invalid value type")
 			}
@@ -67,14 +67,14 @@ func (e *KMLEncoder) encodePointStyle(li *merging.SealedLayerItem) (*kml.SharedE
 			}
 		}
 	}
-	if li.Property.Field("imageSize") != nil {
-		imageSize, ok = li.Property.Field("imageSize").PropertyValue.ValueNumber()
+	if f := li.Property.Field("imageSize"); f != nil {
+		imageSize, ok = f.PropertyValue.ValueNumber()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
 	}
-	if li.Property.Field("pointColor") != nil {
-		colorStr, ok := li.Property.Field("pointColor").PropertyValue.ValueString()
+	if f := li.Property.Field("pointColor"); f != nil {
+		colorStr, ok := f.PropertyValue.ValueString()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -111,21 +111,21 @@ func (e *KMLEncoder) encodePolygonStyle(li *merging.SealedLayerItem) (*kml.Share
 	var strokeWidth float64
 	var err error
 	var ok bool
-	if li.Property.Field("fill") != nil {
-		fill, ok = li.Property.Field("fill").PropertyValue.ValueBool()
+	if f := li.Property.Field("fill"); f != nil {
+		fill, ok = f.PropertyValue.ValueBool()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
 	}
-	if li.Property.Field("stroke") != nil {
-		stroke, ok = li.Property.Field("stroke").PropertyValue.ValueBool()
+	if f := li.Property.Field("stroke"); f != nil {
+		stroke, ok = f.PropertyValue.ValueBool()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
 	}
 
-	if li.Property.Field("fillColor") != nil {
-		colorStr, ok := li.Property.Field("fillColor").PropertyValue.ValueString()
+	if f := li.Property.Field("fillColor"); f != nil {
+		colorStr, ok := f.PropertyValue.ValueString()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -134,8 +134,8 @@ func (e *KMLEncoder) encodePolygonStyle(li *merging.SealedLayerItem) (*kml.Share
 			return nil, "", err
 		}
 	}
-	if li.Property.Field("strokeColor") != nil {
-		colorStr, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+	if f := li.Property.Field("strokeColor"); f != nil {
+		colorStr, ok := f.PropertyValue.ValueString()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -144,8 +144,8 @@ func (e *KMLEncoder) encodePolygonStyle(li *merging.SealedLayerItem) (*kml.Share
 			return nil, "", err
 		}
 	}
-	if li.Property.Field("strokeWidth") != nil {
-		strokeWidth, ok = li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+	if f := li.Property.Field("strokeWidth"); f != nil {
+		strokeWidth, ok = f.PropertyValue.ValueNumber()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -192,8 +192,8 @@ func (e *KMLEncoder) encodePolylineStyle(li *merging.SealedLayerItem) (*kml.Shar
 	var err error
 	var ok bool
 
-	if li.Property.Field("strokeColor") != nil {
-		colorStr, ok := li.Property.Field("strokeColor").PropertyValue.ValueString()
+	if f := li.Property.Field("strokeColor"); f != nil {
+		colorStr, ok := f.PropertyValue.ValueString()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -202,8 +202,8 @@ func (e *KMLEncoder) encodePolylineStyle(li *merging.SealedLayerItem) (*kml.Shar
 			return nil, "", err
 		}
 	}
-	if li.Property.Field("strokeWidth") != nil {
-		strokeWidth, ok = li.Property.Field("strokeWidth").PropertyValue.ValueNumber()
+	if f := li.Property.Field("strokeWidth"); f != nil {
+		strokeWidth, ok = f.PropertyValue.ValueNumber()
 		if !ok {
 			return nil, "", errors.New("invalid value type")
 		}
@@ -254,16 +254,29 @@ func (e *KMLEncoder) encodeLayerTag(li *merging.SealedLayerItem) (*kml.CompoundE
 		layerTag = kml.Point()
 		latlng := property.LatLng{}
 		var height float64
-		if li.Property.Field("location") != nil {
-			latlng, ok = li.Property.Field("location").PropertyValue.ValueLatLng()
+		if f := li.Property.Field("location"); f != nil {
+			latlng, ok = f.PropertyValue.ValueLatLng()
 			if !ok {
-				return nil, errors.New("invalid value type")
+				dsll := f.DatasetValue.ValueLatLng()
+				if dsll != nil {
+					latlng = property.LatLng{
+						Lat: dsll.Lat,
+						Lng: dsll.Lng,
+					}
+				} else {
+					return nil, errors.New("invalid value type")
+				}
 			}
 		}
-		if li.Property.Field("height") != nil {
-			height, ok = li.Property.Field("height").PropertyValue.ValueNumber()
+		if f := li.Property.Field("height"); f != nil {
+			height, ok = f.PropertyValue.ValueNumber()
 			if !ok {
-				return nil, errors.New("invalid value type")
+				dsHeight := f.DatasetValue.ValueNumber()
+				if dsHeight != nil {
+					height = *dsHeight
+				} else {
+					return nil, errors.New("invalid value type")
+				}
 			}
 		}
 		layerTag = layerTag.Add(
@@ -276,8 +289,8 @@ func (e *KMLEncoder) encodeLayerTag(li *merging.SealedLayerItem) (*kml.CompoundE
 	case "polygon":
 		layerTag = kml.Polygon()
 		polygon := property.Polygon{}
-		if li.Property.Field("polygon") != nil {
-			polygon, ok = li.Property.Field("polygon").PropertyValue.ValuePolygon()
+		if f := li.Property.Field("polygon"); f != nil {
+			polygon, ok = f.PropertyValue.ValuePolygon()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}
@@ -309,8 +322,8 @@ func (e *KMLEncoder) encodeLayerTag(li *merging.SealedLayerItem) (*kml.CompoundE
 	case "polyline":
 		layerTag = kml.LineString()
 		polyline := property.Coordinates{}
-		if li.Property.Field("coordinates") != nil {
-			polyline, ok = li.Property.Field("coordinates").PropertyValue.ValueCoordinates()
+		if f := li.Property.Field("coordinates"); f != nil {
+			polyline, ok = f.PropertyValue.ValueCoordinates()
 			if !ok {
 				return nil, errors.New("invalid value type")
 			}

@@ -86,10 +86,18 @@ func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (shp.Shape, shp.Sh
 	case "marker":
 		shapeType = shp.POINT
 		latlng := property.LatLng{}
-		if li.Property.Field("location") != nil {
-			latlng, ok = li.Property.Field("location").PropertyValue.ValueLatLng()
+		if f := li.Property.Field("location"); f != nil {
+			latlng, ok = f.PropertyValue.ValueLatLng()
 			if !ok {
-				return nil, 0, errors.New("invalid value type")
+				dsll := f.DatasetValue.ValueLatLng()
+				if dsll != nil {
+					latlng = property.LatLng{
+						Lat: dsll.Lat,
+						Lng: dsll.Lng,
+					}
+				} else {
+					return nil, 0, errors.New("invalid value type")
+				}
 			}
 			sh = &shp.Point{
 				X: latlng.Lng,
@@ -100,8 +108,8 @@ func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (shp.Shape, shp.Sh
 	case "polygon":
 		shapeType = shp.POLYGON
 		polygon := property.Polygon{}
-		if li.Property.Field("polygon") != nil {
-			polygon, ok = li.Property.Field("polygon").PropertyValue.ValuePolygon()
+		if f := li.Property.Field("polygon"); f != nil {
+			polygon, ok = f.PropertyValue.ValuePolygon()
 			if !ok {
 				return nil, 0, errors.New("invalid value type")
 			}
@@ -114,8 +122,8 @@ func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (shp.Shape, shp.Sh
 	case "polyline":
 		shapeType = shp.POLYLINE
 		polyline := property.Coordinates{}
-		if li.Property.Field("coordinates") != nil {
-			polyline, ok = li.Property.Field("coordinates").PropertyValue.ValueCoordinates()
+		if f := li.Property.Field("coordinates"); f != nil {
+			polyline, ok = f.PropertyValue.ValueCoordinates()
 			if !ok {
 				return nil, 0, errors.New("invalid value type")
 			}
