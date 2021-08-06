@@ -21,7 +21,7 @@ export type LocalState = {
     personal?: boolean;
   };
   currentProject?: { id: string; name: string; sceneId?: string; isArchived?: boolean };
-  notification?: { type: "error" | "warning" | "info"; text: string };
+  notification?: { type: "error" | "warning" | "info" | "success"; text: string };
 };
 
 const localInitialState: LocalState = {

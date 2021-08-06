@@ -113,7 +113,7 @@ const Title = styled.div<{ isLinked?: boolean; isOverridden?: boolean }>`
   height: 100%;
   font-size: ${fonts.sizes.xs}px;
   color: ${({ isLinked, isOverridden, theme }) =>
-    isOverridden ? theme.main.warning : isLinked ? theme.main.accent : theme.main.text};
+    isOverridden ? theme.main.warning : isLinked ? theme.main.link : theme.main.text};
   align-items: center;
   cursor: pointer;
 `;

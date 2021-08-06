@@ -7,7 +7,7 @@ import Text from "@reearth/components/atoms/Text";
 // Theme
 import { styled, useTheme } from "@reearth/theme";
 
-export type Type = "error" | "warning" | "info";
+export type Type = "error" | "warning" | "info" | "success";
 
 interface NotificationBarProps {
   text?: string;
@@ -33,7 +33,7 @@ const NotificationBar: React.FC<NotificationBarProps> = ({
     <StyledNotificationBar type={type}>
       <Text
         size="m"
-        color={theme.main.strongText}
+        color={theme.notification.text}
         weight="bold"
         otherProperties={{ padding: "10px" }}>
         {text || children}
@@ -58,13 +58,15 @@ const StyledNotificationBar = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${props =>
-    props.type === "error"
-      ? props.theme.main.alert
-      : props.type === "warning"
-      ? props.theme.main.warning
-      : props.theme.main.highlighted};
-  color: ${props => props.theme.main.strongText};
+  background-color: ${({ type, theme }) =>
+    type === "error"
+      ? theme.notification.errorBg
+      : type === "warning"
+      ? theme.notification.warningBg
+      : type === "success"
+      ? theme.notification.successBg
+      : theme.notification.infoBg};
+  color: ${({ theme }) => theme.notification.text};
   position: absolute;
   top: 0;
   z-index: ${props => props.theme.zIndexes.notificationBar};

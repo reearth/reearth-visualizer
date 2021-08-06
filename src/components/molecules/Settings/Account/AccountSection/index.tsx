@@ -110,7 +110,7 @@ const StyledIcon = styled(Icon)`
 `;
 
 const AlertIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.dark.functional.attention};
+  color: ${({ theme }) => theme.main.warning};
 `;
 
 const Notice = styled(Flex)`

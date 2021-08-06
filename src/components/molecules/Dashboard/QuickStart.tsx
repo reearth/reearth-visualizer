@@ -10,7 +10,6 @@ import { useMedia } from "react-use";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
 import { metricsSizes } from "@reearth/theme/metrics";
-
 export interface Props {
   className?: string;
   onCreateTeam?: (data: { name: string }) => Promise<void>;
@@ -41,7 +40,7 @@ const QuickStart: React.FC<Props> = ({
   return (
     <StyledDashboardBlock className={className} grow={4}>
       <Content direction="column" justify="space-around">
-        <Text size={isSmallWindow ? "m" : "l"} color={theme.dashboard.itemTitle} weight="bold">
+        <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
           {intl.formatMessage({ defaultMessage: "Quick Start" })}
         </Text>
         <LongBannerButton
@@ -54,7 +53,7 @@ const QuickStart: React.FC<Props> = ({
           </Text>
         </LongBannerButton>
         <Flex justify="space-between">
-          <GreenBannerButton
+          <HeroBannerButton
             direction="column"
             align="center"
             justify="center"
@@ -63,7 +62,7 @@ const QuickStart: React.FC<Props> = ({
             <Text size="m" weight="bold" customColor>
               {intl.formatMessage({ defaultMessage: "New project" })}
             </Text>
-          </GreenBannerButton>
+          </HeroBannerButton>
           <BannerButton
             direction="column"
             align="center"
@@ -156,17 +155,20 @@ const BannerButton = styled(Flex)`
   }
 `;
 
-const GreenBannerButton = styled(Flex)`
+const HeroBannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.main.highlighted};
-  color: ${props => props.theme.main.text};
+  background: ${({ theme }) =>
+    `linear-gradient(60deg, ${theme.main.brandRed} 10%, ${theme.main.brandBlue} 50%)`};
+  background-size: cover;
+  background-position: top;
+  color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
   padding: 120px auto;
   width: 48%;
   height: 114px;
 
   &:hover {
-    background: ${props => props.theme.main.highlighted};
-    color: ${props => props.theme.main.strongText};
+    background: ${({ theme }) =>
+      `linear-gradient(60deg, ${theme.main.brandRed} 30%, ${theme.main.brandBlue} 70%)`};
   }
 
   @media only screen and (max-width: 1024px) {
@@ -177,9 +179,6 @@ const GreenBannerButton = styled(Flex)`
 const StyledIcon = styled(Icon)`
   margin-top: -10px;
 
-  &:hover {
-    color: ${props => props.theme.main.strongText};
-  }
   @media only screen and (max-width: 1024px) {
     display: none;
   }

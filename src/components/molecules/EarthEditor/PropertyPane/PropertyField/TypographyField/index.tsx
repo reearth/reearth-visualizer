@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { difference } from "lodash-es";
 
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { Typography } from "@reearth/util/value";
 
 import FontFamilyField, { SafeFontFamilies } from "./FontFamilyField";
@@ -9,7 +9,7 @@ import FontSizeField, { FontSize } from "./FontSizeField";
 import ColorField from "../ColorField";
 import RadioField from "../RadioField";
 import FontFormatField, { FontFormatKey } from "./FontFormatField";
-import { FieldProps, textColor } from "../types";
+import { FieldProps } from "../types";
 
 type Props = FieldProps<Typography> & {
   className?: string;
@@ -39,7 +39,8 @@ const TypographyField: React.FC<Props> = ({
   disabled,
 }) => {
   const { fontFamily, fontSize, color, textAlign, bold, italic, underline } = value ?? {};
-  const tColor = textColor({ linked, overridden });
+  const theme = useTheme();
+  const tColor = overridden ? theme.main.warning : linked ? theme.main.link : undefined;
 
   const updateTypography = useCallback(
     (typography: Partial<Typography>) => onChange?.({ ...(value ?? {}), ...typography }),
@@ -51,9 +52,10 @@ const TypographyField: React.FC<Props> = ({
     [updateTypography],
   );
 
-  const handleChangeSize = useCallback((value: FontSize) => updateTypography({ fontSize: value }), [
-    updateTypography,
-  ]);
+  const handleChangeSize = useCallback(
+    (value: FontSize) => updateTypography({ fontSize: value }),
+    [updateTypography],
+  );
 
   const handleChangeColor = useCallback(
     (hex: string | null) => updateTypography({ color: hex ?? undefined }),

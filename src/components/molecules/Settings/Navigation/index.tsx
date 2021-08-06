@@ -4,8 +4,8 @@ import NavigationItem from "@reearth/components/molecules/Settings/NavigationIte
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import Divider from "@reearth/components/atoms/Divider";
-import Icon from "@reearth/components/atoms/Icon";
 import { metricsSizes } from "@reearth/theme/metrics";
+import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
 
 type Team = {
   id?: string;
@@ -29,7 +29,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
   return (
     <Wrapper>
       <LogoWrapper>
-        <Icon icon="logo" size="100px" />
+        <StyledImg src={logoColorful} alt="Re:Earth Logo" />
       </LogoWrapper>
       <NavigationList>
         <NavigationItem
@@ -96,6 +96,10 @@ const LogoWrapper = styled.div`
   justify-content: center;
   color: ${props => props.theme.main.text};
   margin-bottom: ${metricsSizes["4xl"]}px;
+`;
+
+const StyledImg = styled.img`
+  width: 100px;
 `;
 
 const NavigationList = styled.ul`

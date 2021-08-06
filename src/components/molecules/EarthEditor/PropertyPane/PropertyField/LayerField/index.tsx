@@ -81,7 +81,7 @@ const Title = styled.div<{ selected?: boolean; linked?: boolean; overridden?: bo
       ? overridden
         ? theme.main.danger
         : linked
-        ? theme.main.accent
+        ? theme.main.link
         : theme.main.text
       : theme.main.paleBg};
 `;

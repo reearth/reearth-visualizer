@@ -35,7 +35,7 @@ const Card: React.FC<Props> = ({
       margin={margin}
       onClick={onClick && (() => onClick(id))}>
       <Content>
-        <StyledIcon icon={icon} size={iconSize} />
+        <StyledIcon icon={icon} size={iconSize} color={theme.main.text} />
         <Text size="xs">{text}</Text>
         <Text size="2xs" color={theme.main.text}>
           {subtext}
@@ -54,6 +54,7 @@ const StyledContainer = styled.div<{
   height: 192px;
   width: 193px;
   margin: ${props => props.margin}px;
+  background-color: ${({ theme }) => theme.main.lighterBg};
   border: 1px ${props => props.border || "solid"}
     ${props => (props.borderColor ? props.borderColor : props.theme.assetCard.highlight)};
   display: flex;

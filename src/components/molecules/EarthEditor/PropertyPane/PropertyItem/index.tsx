@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 import { mapValues } from "lodash-es";
 
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps2 } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 import { partitionObject } from "@reearth/util/util";
@@ -22,6 +22,7 @@ import PropertyField, {
 import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
@@ -137,6 +138,8 @@ const PropertyItem: React.FC<Props> = ({
     "onRemoveFile",
   ]);
   const intl = useIntl();
+
+  const theme = useTheme();
 
   const [selected, select] = useState(-1);
   const [openModal, setModal] = useState(false);
@@ -310,12 +313,15 @@ const PropertyItem: React.FC<Props> = ({
         isVisible={openModal}
         onClose={() => setModal(false)}>
         <StyledIcon icon="alert" size={24} />
-        <ModalText>
+        <Text
+          size="m"
+          color={theme.main.text}
+          otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
           {intl.formatMessage({
             defaultMessage:
               "You are deleting the infobox and all its contents. Are you sure you want to do that?",
           })}
-        </ModalText>
+        </Text>
       </Modal>
     </GroupWrapper>
   );
@@ -335,10 +341,6 @@ const TrashIcon = styled(Icon)`
 
 const StyledIcon = styled(Icon)`
   color: ${props => props.theme.main.alert};
-`;
-
-const ModalText = styled.p`
-  margin-top: 12px;
 `;
 
 const valueToString = (v: ValueTypesType[ValueTypeType] | undefined): string | undefined => {

@@ -28,7 +28,7 @@ export default (
       if (!sheet || !handleGoogleSheetDatasetAdd) return;
       await handleGoogleSheetDatasetAdd(sheet.accessToken, sheet.fileId, sheet.sheetName, null);
       onNotify?.(
-        "info",
+        "success",
         intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
       );
     }
@@ -36,7 +36,7 @@ export default (
     if (!data || !handleDatasetAdd) return;
     await handleDatasetAdd(data, null);
     onNotify?.(
-      "info",
+      "success",
       intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
     );
   }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd, intl, onNotify]);

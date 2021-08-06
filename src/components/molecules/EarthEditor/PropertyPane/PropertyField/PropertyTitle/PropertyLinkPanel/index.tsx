@@ -88,12 +88,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isOverridden && isLinkable && (
             <>
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
-                <Text size="xs" color={theme.main.accent}>
+                <Text size="xs" color={theme.main.link}>
                   {linkedDataset
                     ? intl.formatMessage({ defaultMessage: "Linkable data" })
                     : intl.formatMessage({ defaultMessage: "Link to dataset" })}
                 </Text>
-                <Icon icon="arrowRight" size={16} color={theme.main.accent} />
+                <Icon icon="arrowRight" size={16} color={theme.main.link} />
               </Link>
               <Divider margin="0" />
             </>
@@ -123,7 +123,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                   </Text>
                 )}
                 {((isLinked && !linkedDataset && !isTemplate) || isOverridden) && (
-                  <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.accent}>
+                  <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.link}>
                     {intl.formatMessage({ defaultMessage: "Parent." })}
                     {linkedFieldName}
                   </Text>
@@ -132,7 +132,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                   <>
                     <Text
                       size="xs"
-                      color={isOverridden ? theme.main.weak : theme.main.accent}
+                      color={isOverridden ? theme.main.weak : theme.main.link}
                       otherProperties={{
                         textDecoration: "underline",
                         overflow: "hidden",
@@ -141,7 +141,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                       }}>
                       {selectedDatasetPath.join("/")}
                     </Text>
-                    <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.accent}>
+                    <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.link}>
                       {selectedDatasetPath[selectedDatasetPath.length - 1]}
                     </Text>
                   </>

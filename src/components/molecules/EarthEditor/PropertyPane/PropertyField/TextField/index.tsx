@@ -28,7 +28,7 @@ const TextField: React.FC<Props> = ({
   onClick,
 }) => {
   const theme = useTheme();
-  const color = overridden ? theme.main.warning : linked ? theme.main.accent : undefined;
+  const color = overridden ? theme.main.warning : linked ? theme.main.link : undefined;
 
   return (
     <Wrapper className={className} onClick={onClick}>

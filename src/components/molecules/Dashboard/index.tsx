@@ -16,7 +16,7 @@ const Dashboard: React.FC<Props> = ({ className, header, children }) => {
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.dashboard.bg};
+  background: ${({ theme }) => theme.dashboard.bg};
   height: 100%;
   overflow: auto;
 `;

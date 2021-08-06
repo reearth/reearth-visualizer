@@ -42,7 +42,7 @@ const InputField: React.FC<Props> = ({
           {actioned ? <Icon icon="check" size={15} /> : button2}
         </InputLinkButton>
       </InputContent>
-      <SubMessage size="2xs" color={theme.text.pale}>
+      <SubMessage size="2xs" color={theme.main.weak}>
         {subMessage}
       </SubMessage>
     </Wrapper>

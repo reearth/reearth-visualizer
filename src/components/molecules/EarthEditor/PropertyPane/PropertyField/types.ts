@@ -1,5 +1,3 @@
-import { colors } from "@reearth/theme";
-
 export type FieldProps<T> = {
   value?: T;
   onChange?: (value: T | null) => void;
@@ -11,20 +9,3 @@ export type FieldProps<T> = {
   overridden?: boolean;
   disabled?: boolean;
 };
-
-export const textColor = ({
-  disabled,
-  linked,
-  overridden,
-}: {
-  disabled?: boolean;
-  linked?: boolean;
-  overridden?: boolean;
-}) =>
-  overridden
-    ? colors.dark.functional.attention
-    : linked
-    ? colors.dark.primary.main
-    : disabled
-    ? colors.dark.outline.main
-    : undefined;

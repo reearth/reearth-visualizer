@@ -36,7 +36,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
 
   return (
     <>
-      <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
+      <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} color={theme.main.text} />
       {syncLoading && <Loading />}
       <Flex justify="center" direction="column" align="center">
         <Flex justify="center" align="center">
@@ -55,7 +55,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
               iconSize="50px"
               onCheck={() => handleAuthClick()}
             />
-            <Divider margin="24px" />
+            <Divider />
             <AssetWrapper direction="column" justify="space-between">
               <AssetList wrap="nowrap" direction="column" justify="space-between">
                 {pickedFileSheets?.map((sheetItem: GoogleSheet) => (
@@ -73,7 +73,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
                 ))}
               </AssetList>
             </AssetWrapper>
-            <Divider margin="24px" />
+            <Divider />
           </>
         )}
 
@@ -115,7 +115,7 @@ const StyledIcon = styled(Icon)`
 
 const AssetList = styled(Flex)`
   width: 100%;
-  max-height: 458px;
+  max-height: 196px;
   overflow-y: scroll;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -126,10 +126,13 @@ const AssetList = styled(Flex)`
     content: "";
     flex: "0 33%";
   }
+
+  * {
+    margin: 4px 0;
+  }
 `;
 
 const AssetWrapper = styled(Flex)`
-  height: 425px;
   width: 100%;
 `;
 

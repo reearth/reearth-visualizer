@@ -328,7 +328,7 @@ const Wrapper = styled.div<{
   border-bottom-color: ${({ underlined, theme }) => underlined && theme.layers.bottomBorder};
   font-size: ${fonts.sizes.xs}px;
   border-right: ${({ childSelected, theme }) =>
-    childSelected ? `2px solid ${theme.main.highlighted}` : undefined};
+    childSelected ? `2px solid ${theme.main.select}` : undefined};
 `;
 
 const ArrowIconWrapper = styled.div<{ allSiblingsDoesNotHaveChildren?: boolean }>`

@@ -117,7 +117,12 @@ const DatasetModal: React.FC<Props> = ({
           )}
           {dataType === "csv" && (
             <>
-              <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
+              <StyledIcon
+                icon={"arrowLongLeft"}
+                size={24}
+                onClick={onReturn}
+                color={theme.main.text}
+              />
               <Subtitle
                 size="m"
                 color={theme.main.strongText}
@@ -137,7 +142,7 @@ const DatasetModal: React.FC<Props> = ({
           {!dataType && (
             <>
               <Button onClick={onReturn}>
-                <Icon icon={"arrowLongLeft"} size={24} />
+                <Icon icon={"arrowLongLeft"} size={24} color={theme.main.text} />
               </Button>
 
               <Subtitle size="m" color={theme.main.strongText}>
@@ -161,7 +166,7 @@ const ConnectSection = styled.div`
     // margin-right: 40px;
     &:hover {
       cursor: pointer;
-      background: ${props => props.theme.main.lighterBg};
+      background: ${props => props.theme.main.paleBg};
     }
   }
 `;

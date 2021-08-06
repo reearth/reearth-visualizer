@@ -1,5 +1,5 @@
 import React from "react";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 
 export type Props = {
@@ -9,9 +9,10 @@ export type Props = {
 };
 
 const Header: React.FC<Props> = ({ className, title, onBack }) => {
+  const theme = useTheme();
   return (
     <Wrapper className={className}>
-      <StyledIcon icon="arrowLeft" size={16} onClick={onBack} />
+      <StyledIcon icon="arrowLeft" size={16} onClick={onBack} color={theme.main.text} />
       <Title>{title}</Title>
     </Wrapper>
   );

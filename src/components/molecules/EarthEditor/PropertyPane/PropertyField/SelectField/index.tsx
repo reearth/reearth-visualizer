@@ -1,7 +1,7 @@
 import React from "react";
-
+import { useTheme } from "@reearth/theme";
 import SelectBox, { Item as ItemType } from "@reearth/components/atoms/SelectBox";
-import { FieldProps, textColor } from "../types";
+import { FieldProps } from "../types";
 
 export type Item<Value extends string | number = string> = ItemType<Value>;
 
@@ -18,7 +18,8 @@ const SelectField = <Value extends string | number = string>({
   overridden,
   onChange,
 }: Props<Value>) => {
-  const color = textColor({ linked, overridden });
+  const theme = useTheme();
+  const color = overridden ? theme.main.warning : linked ? theme.main.link : undefined;
 
   return (
     <SelectBox<Value>

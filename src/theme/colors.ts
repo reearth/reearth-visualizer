@@ -3,7 +3,7 @@ const colors = {
     bg: {
       1: "#070707",
       2: "#171618",
-      3: "#232226" /* Untested/Unused */,
+      3: "#232226",
       4: "#2B2A2F",
       5: "#3F3D45",
     },
@@ -13,38 +13,34 @@ const colors = {
       weak: "#4A4A4A",
     },
     outline: {
-      strong: "#D7D7D7" /* Untested/Unused */,
+      strong: "#D7D7D7",
       main: "#A0A0A0",
       weak: "#4A4A4A",
-      weakest: "#383838" /* Untested/Unused */,
+      weakest: "#383838",
     },
     primary: {
       strong: "#2AADE9",
       main: "#00A0E8",
       weak: "#008AC8",
-      weakest: "#004260" /* Untested/Unused */,
+      weakest: "#004260",
     },
     secondary: {
-      main: "#888686" /* Untested/Unused */,
-      weak: "#4C4C4C" /* Untested/Unused */,
+      main: "#888686",
+      weak: "#4C4C4C",
       weakest: "#3B383F",
     },
     danger: {
       main: "#FF3C53",
-      weak: "#B02838" /* Untested/unused */,
-      weakest: "#841C28" /* Untested/unused */,
+      weak: "#B02838",
+      weakest: "#841C28",
     },
     functional: {
-      link: "#3592FF" /* Untested/Unused */,
-      success: "#00D1A2" /* Unused */,
+      link: "#3592FF",
+      success: "#00D1A2",
       attention: "#D6C71C",
       error: "#FF3C53",
-      select: "#0EB28E" /* Untested/Unused */,
-      selectOutline: "#0B9F7E" /* Untested/Unused */,
-    },
-    brand: {
-      main: "#00D1A2",
-      weak: "#00755B",
+      select: "#3B3CD0",
+      notice: "#6E9CD2",
     },
     other: {
       black: "#000000",
@@ -61,18 +57,18 @@ const colors = {
     },
     text: {
       strong: "#272727",
-      main: "#5F5F5F",
+      main: "#434343",
       weak: "#727070",
     },
     outline: {
-      strong: "#D7D7D7",
-      main: "#A0A0A0",
+      strong: "#0D0D0D",
+      main: "#727272",
       weak: "#8B8B8B",
       weakest: "#AAAAAA",
     },
     primary: {
-      strong: "#2AADE9",
-      main: "#079BDA",
+      strong: "#005F94",
+      main: "#007CC1",
       weak: "#008AC8",
       weakest: "#74A8BE",
     },
@@ -89,14 +85,10 @@ const colors = {
     functional: {
       link: "#0063D8",
       success: "#00D1A2",
-      attention: "#D6C71C",
+      attention: "#E17A00",
       error: "#FF3C53",
       select: "#F57C4B",
-      selectOutline: "#0B9F7E" /* Does not exist on light theme */,
-    },
-    brand: {
-      main: "#00D1A2",
-      weak: "#00755B",
+      notice: "#6E9CD2",
     },
     other: {
       black: "#000000",
@@ -108,6 +100,10 @@ const colors = {
     transparent: "transparent",
     transparentLight: "rgba(0,0,0,0.4)",
     transparentBlack: "rgba(0,0,0,0.7)",
+  },
+  brand: {
+    ReearthBlue: "#1e2086",
+    ReearthRed: "#df3013",
   },
 };
 

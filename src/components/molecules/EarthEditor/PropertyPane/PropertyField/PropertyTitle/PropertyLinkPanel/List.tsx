@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
 
-import { styled, css } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export interface Props {
@@ -47,23 +47,17 @@ const Wrapper = styled.div`
 
 const StyledText = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   padding: ${metricsSizes["s"]}px;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  cursor: pointer;
   user-select: none;
   transition: background-color 0.1s ease;
-  color: ${({ disabled, theme, selected }) =>
-    disabled ? theme.text.pale : selected ? theme.main.strongText : theme.text.default};
-  background-color: ${({ selected, theme }) => (selected ? theme.main.accent : null)};
+  color: ${({ theme, selected }) => (selected ? theme.main.strongText : theme.text.default)};
+  background-color: ${({ selected, theme }) => (selected ? theme.main.select : null)};
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  ${({ disabled, selected }) =>
-    disabled || selected
-      ? null
-      : css`
-          &:hover {
-            background-color: #ffffff10;
-          }
-        `};
+  &:hover {
+    background-color: ${({ theme, selected }) => (selected ? "" : theme.main.bg)};
+  }
 `;
 
 const NoContent = styled.div`

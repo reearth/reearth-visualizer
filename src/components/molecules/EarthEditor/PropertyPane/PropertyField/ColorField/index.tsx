@@ -354,7 +354,7 @@ const Input = styled.input<{ type?: string; overridden?: boolean; linked?: boole
   background: ${props => props.theme.properties.bg};
   box-sizing: border-box;
   color: ${({ linked, overridden, theme }) =>
-    overridden ? theme.main.warning : linked ? theme.main.accent : theme.properties.contentsText};
+    overridden ? theme.main.warning : linked ? theme.main.link : theme.properties.contentsText};
   outline: none;
   border: 1px solid ${({ theme }) => theme.properties.border};
   &:focus {

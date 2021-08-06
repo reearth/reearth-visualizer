@@ -59,9 +59,9 @@ const AssetCard: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
-  background: ${props => props.theme.assetCard.bg};
+  background: ${({ selected, theme }) => (selected ? theme.assetCard.bgHover : theme.assetCard.bg)};
   box-shadow: 0 6px 6px -6px ${props => props.theme.other.black};
-  border: 1px solid
+  border: 2px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};

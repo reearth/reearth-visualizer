@@ -55,7 +55,7 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) =
 export default AssetListItem;
 
 const ListItem = styled(Flex)<{ selected?: boolean }>`
-  background: ${({ theme }) => theme.assetCard.bg};
+  background: ${({ selected, theme }) => (selected ? theme.assetCard.bgHover : theme.assetCard.bg)};
   box-shadow: 0 6px 6px -8px ${props => props.theme.other.black};
   border: 1px solid
     ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};

@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 `;
 
 const HostName = styled.h3`
-  color: ${props => props.theme.leftMenu.text};
+  color: ${({ theme }) => theme.leftMenu.text};
   font-size: 0.8rem;
   margin: 0;
 `;

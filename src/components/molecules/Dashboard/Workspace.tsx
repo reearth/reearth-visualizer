@@ -24,14 +24,14 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
   return (
     <StyledDashboardBlock className={className} grow={5}>
       <Content direction="column" justify="space-between">
-        <Text size={isSmallWindow ? "m" : "l"} color={theme.dashboard.itemTitle} weight="bold">
+        <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
           {team?.name}
           {intl.formatMessage({ defaultMessage: "'s workspace" })}
         </Text>
         <Flex>
           <TeamWrapper flex={4}>
             {team?.members?.map((member, i) => (
-              <Text key={i} size="m" color={theme.dashboard.itemTitle}>
+              <Text key={i} size="m" color={theme.main.text}>
                 {member?.user.name}
               </Text>
             ))}
@@ -57,7 +57,7 @@ const Content = styled(Flex)`
   min-width: ${metrics.dashboardWorkspaceMinWidth}px;
   height: ${metrics.dashboardContentHeight}px;
   padding: ${metricsSizes.xl}px;
-  color: ${props => props.theme.main.text};
+  color: ${({ theme }) => theme.main.text};
 
   @media only screen and (max-width: 1024px) {
     order: 3;
@@ -66,7 +66,7 @@ const Content = styled(Flex)`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.main.text};
+  color: ${({ theme }) => theme.main.text};
   text-decoration: none;
   padding: ${metricsSizes["2xs"]}px;
   border-radius: ${metricsSizes.xs}px;
@@ -74,7 +74,7 @@ const StyledLink = styled(Link)`
 
   &:hover {
     text-decoration: none;
-    background: ${props => props.theme.main.bg};
+    background: ${({ theme }) => theme.main.bg};
   }
 `;
 

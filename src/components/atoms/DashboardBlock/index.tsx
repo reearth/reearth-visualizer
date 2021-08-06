@@ -15,13 +15,13 @@ const DashboardBlock: React.FC<Props> = ({ className, children, grow }) => {
 };
 
 const StyledWrapper = styled.div<{ grow?: number }>`
-  flex-grow: ${props => (props.grow ? props.grow : 1)};
+  flex-grow: ${({ grow }) => (grow ? grow : 1)};
 `;
 
 const Block = styled.div`
   border-radius: 12px;
   margin: 14px;
-  background-color: ${props => props.theme.dashboard.itemBg};
+  background-color: ${({ theme }) => theme.dashboard.itemBg};
 `;
 
 export default DashboardBlock;

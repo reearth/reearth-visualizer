@@ -129,7 +129,7 @@ const FormWrapper = styled(Flex)<FormProps>`
     overridden
       ? theme.main.warning
       : linked
-      ? theme.main.accent
+      ? theme.main.link
       : inactive
       ? theme.text.pale
       : theme.properties.contentsText};

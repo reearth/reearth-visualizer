@@ -1,6 +1,7 @@
 import React from "react";
-import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
+import Flex from "@reearth/components/atoms/Flex";
+import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
 
 export interface Props {
   className?: string;
@@ -8,19 +9,15 @@ export interface Props {
 
 const Logo: React.FC<Props> = ({ className }) => {
   return (
-    <Wrapper className={className}>
-      <Icon icon="logo" />
+    <Wrapper align="center" justify="center" className={className}>
+      <StyledImg src={logoColorful} alt="Re:Earth Logo" />
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled(Flex)`
   min-width: 155px;
   flex-grow: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${props => props.theme.main.text};
   margin: 14px;
 
   @media only screen and (max-width: 1024px) {
@@ -29,6 +26,10 @@ const Wrapper = styled.div`
     height: 180px;
     min-width: 180px;
   }
+`;
+
+const StyledImg = styled.img`
+  width: 110px;
 `;
 
 export default Logo;
