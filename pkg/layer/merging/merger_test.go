@@ -55,23 +55,13 @@ func TestMergeLayer(t *testing.T) {
 			MustBuild(),
 	})
 
-	// assert
-	expectedInfoboxField := layer.MergedInfoboxField{
-		ID:        l1if1,
-		Plugin:    p,
-		Extension: e,
-		Property: &property.MergedMetadata{
-			Original:      &fpr,
-			LinkedDataset: &dataset1,
-		},
-	}
 	expectedInfobox := layer.MergedInfobox{
 		Property: &property.MergedMetadata{
 			Original:      &ib1pr,
 			Parent:        &ib2pr,
 			LinkedDataset: &dataset1,
 		},
-		Fields: []*layer.MergedInfoboxField{&expectedInfoboxField},
+		Fields: []*layer.MergedInfoboxField{},
 	}
 	expectedInfoboxField2 := layer.MergedInfoboxField{
 		ID:        l1if1,
@@ -141,16 +131,7 @@ func TestMergeLayer(t *testing.T) {
 							Schema:        ps,
 							LinkedDataset: &dataset1,
 						},
-						Fields: []*MergedInfoboxField{
-							{
-								MergedInfoboxField: expectedInfoboxField,
-								Property: &property.Merged{
-									Original:      &fpr,
-									Schema:        ps,
-									LinkedDataset: &dataset1,
-								},
-							},
-						},
+						Fields: []*MergedInfoboxField{},
 					},
 					Property: &property.Merged{
 						Original:      &itemProperty,

@@ -60,7 +60,7 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *id.DatasetID) *MergedInfobox {
 	}
 
 	var ibf []*InfoboxField
-	if o != nil && o.Count() > 0 {
+	if o != nil {
 		ibf = o.Fields()
 	} else if p != nil {
 		ibf = p.Fields()

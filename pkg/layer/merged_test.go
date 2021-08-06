@@ -292,28 +292,7 @@ func TestMerge(t *testing.T) {
 				Parent:        &ib2pr,
 				LinkedDataset: &dataset1,
 			},
-			Fields: []*MergedInfoboxField{
-				{
-					ID:        f2.ID(),
-					Plugin:    p,
-					Extension: e,
-					Property: &property.MergedMetadata{
-						Original:      &f2pr,
-						Parent:        nil,
-						LinkedDataset: &dataset1,
-					},
-				},
-				{
-					ID:        f3.ID(),
-					Plugin:    p,
-					Extension: e,
-					Property: &property.MergedMetadata{
-						Original:      &f3pr,
-						Parent:        nil,
-						LinkedDataset: &dataset1,
-					},
-				},
-			},
+			Fields: []*MergedInfoboxField{},
 		},
 	}
 
