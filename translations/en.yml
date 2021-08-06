@@ -1,6 +1,9 @@
 src:
   components:
     atoms:
+      ConfirmationModal:
+        '3528672691': Cancel
+        '3645414921': Delete
       DropHolder:
         '2563828564': Drop here
       NotFound:
@@ -327,15 +330,21 @@ src:
               PluginAccordionItem:
                 '31593394': Uninstall
                 '730907263': Installed
+                '2073226243': please check it before uninstalling.
+                '2892316131': >-
+                  You are uninstalling selected plugin. The datas which are used
+                  by this plugin may also be deleted .
                 '3480550112': Install
             PluginSection:
-              '3060204202': Under Construction. Coming Soon.
               PluginInstall:
-                '149186996': Uploaded plugin
-                '311550959': Private GitHub repository
+                '1113831405': Installed plugins
                 '1361263844': Public GitHub repository
-                '1889877734': Plugins lists
                 '3129492077': Zip file from PC
+                PublicRepo:
+                  '470394436': Import GitHub repository
+                  '3528672691': Cancel
+                  '3640052215': Continue
+                  '4215513768': 'Repository url:'
               PluginList:
                 '1933254449': Advanced options
           ProfileSection:

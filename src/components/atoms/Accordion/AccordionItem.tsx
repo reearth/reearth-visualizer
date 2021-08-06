@@ -1,4 +1,3 @@
-import { styled } from "@reearth/theme";
 import React from "react";
 import {
   AccordionItem as AccordionItemComponent,
@@ -10,6 +9,7 @@ import {
 import Box from "../Box";
 import Flex from "../Flex";
 import Icon from "../Icon";
+import { styled, useTheme } from "@reearth/theme";
 
 export type Props = {
   className?: string;
@@ -20,6 +20,7 @@ export type Props = {
 };
 
 const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg }) => {
+  const theme = useTheme();
   return (
     <Box m="2xl" key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
       <AccordionItemComponent>
@@ -30,7 +31,12 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
                 <AccordionItemState>
                   {({ expanded }) => (
                     <>
-                      <StyledIcon icon="arrowToggle" size={16} open={!!expanded} />
+                      <StyledIcon
+                        color={theme.main.text}
+                        icon="arrowToggle"
+                        size={16}
+                        open={!!expanded}
+                      />
                       {heading}
                     </>
                   )}

@@ -1,61 +1,46 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/theme";
 import Loading from "@reearth/components/atoms/Loading";
-import Text from "@reearth/components/atoms/Text";
-import { useIntl } from "react-intl";
-// import PluginList from "./PluginList";
-// import PluginInstall from "./PluginInstall";
+import { PluginItem as PluginItemType } from "@reearth/components/molecules/Settings/Project/Plugin/PluginAccordion";
+import PluginInstall from "./PluginInstall";
+
+export type PluginItem = PluginItemType;
 
 export type Props = {
   title?: string;
-  plugins?: any[]; //FIXME:When back-end API is ready
+  plugins?: PluginItem[];
   loading?: boolean;
+  installedPlugins?: PluginItem[];
+  installFromPublicRepo: (repoUrl: string) => void;
+  installByUploadingZipFile: (files: FileList) => void;
+  uninstallPlugin: (pluginId: string) => void;
 };
 
-export type PluginPageMode =
-  | "list"
-  | "install-way"
-  | "install-zip"
-  | "install-public-repo"
-  | "install-private-repo";
+export type PluginPageMode = "list" | "install-way" | PluginInstallWay;
 
-const PluginSection: React.FC<Props> = ({ loading }) => {
-  // const [pageMode, setPageMode] = useState<PluginPageMode>("list");
-  // const handleMovePageMode = (mode: PluginPageMode) => {
-  //   setPageMode(mode);
-  // };
+export type PluginInstallWay = "install-zip" | "install-public-repo" | "install-private-repo";
 
-  const intl = useIntl();
-  const theme = useTheme();
-
+const PluginSection: React.FC<Props> = ({
+  loading,
+  installedPlugins,
+  installByUploadingZipFile,
+  installFromPublicRepo,
+  uninstallPlugin,
+}) => {
   return (
     <>
-      <SubHeader>
-        <Text size="l" weight="bold" color={theme.main.text} otherProperties={{ margin: "30px 0" }}>
-          {intl.formatMessage({ defaultMessage: "Under Construction. Coming Soon." })}
-        </Text>
-      </SubHeader>
-      {loading && <Loading />}
-      {/* {loading ? (
+      {loading ? (
         <Loading />
-      ) : pageMode === "list" ? (
-        <PluginList onMoveNextPage={() => handleMovePageMode("install-way")} plugins={plugins} />
       ) : (
         <PluginInstall
-          onMovePrevPage={() => handleMovePageMode("list")}
-          onMovePage={handleMovePageMode}
+          installedPlugins={installedPlugins}
+          installFromPublicRepo={installFromPublicRepo}
+          installByUploadingZipFile={installByUploadingZipFile}
+          uninstallPlugin={uninstallPlugin}
         />
-      )} */}
+      )}
     </>
   );
 };
-
-const SubHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 0;
-`;
 
 export default PluginSection;

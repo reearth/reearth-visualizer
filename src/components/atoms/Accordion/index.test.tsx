@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@reearth/test/utils";
 
 import Accordion, { AccordionItemType } from "./index";
 

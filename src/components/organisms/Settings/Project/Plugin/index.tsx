@@ -14,7 +14,14 @@ type Props = {
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentProject, plugins } = useHooks();
+  const {
+    currentProject,
+    installedPlugins,
+    loading,
+    installFromPublicRepo,
+    installByUploadingZipFile,
+    uninstallPlugin,
+  } = useHooks(projectId);
 
   return (
     <SettingPage projectId={projectId}>
@@ -24,11 +31,11 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       />
       {!currentProject?.isArchived ? (
         <PluginSection
-          plugins={plugins}
-          // projects={currentProjects}
-          // filterQuery={query}
-          // onProjectSelect={selectProject}
-          // onCreationButtonClick={openModal}
+          loading={loading}
+          installedPlugins={installedPlugins}
+          installFromPublicRepo={installFromPublicRepo}
+          installByUploadingZipFile={installByUploadingZipFile}
+          uninstallPlugin={uninstallPlugin}
         />
       ) : (
         <ArchivedMessage />

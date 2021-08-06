@@ -16,24 +16,23 @@ import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from 
 import { valueTypeToGQL, ValueType, ValueTypes, Camera } from "@reearth/util/value";
 
 export default (isBuilt?: boolean) => {
-  const [
-    { sceneId, selectedLayer, selectedBlock, isCapturing, camera },
-    setLocalState,
-  ] = useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
-    sceneId,
-    selectedLayer,
-    selectedBlock,
-    isCapturing,
-    camera,
-  }));
+  const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
+    useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
+      sceneId,
+      selectedLayer,
+      selectedBlock,
+      isCapturing,
+      camera,
+    }));
 
   const selectLayer = useCallback(
     (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
     [setLocalState],
   );
-  const selectBlock = useCallback((id?: string) => setLocalState({ selectedBlock: id }), [
-    setLocalState,
-  ]);
+  const selectBlock = useCallback(
+    (id?: string) => setLocalState({ selectedBlock: id }),
+    [setLocalState],
+  );
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -132,10 +131,10 @@ export default (isBuilt?: boolean) => {
     [setLocalState, camera],
   );
 
-  const onFovChange = useCallback((fov: number) => camera && onCameraChange({ ...camera, fov }), [
-    camera,
-    onCameraChange,
-  ]);
+  const onFovChange = useCallback(
+    (fov: number) => camera && onCameraChange({ ...camera, fov }),
+    [camera, onCameraChange],
+  );
 
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();

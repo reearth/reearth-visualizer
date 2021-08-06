@@ -19,6 +19,7 @@ export type Props = {
   backgroundColor?: string;
   borderColor?: string;
   floatedTextColor?: string;
+  doesChangeEveryTime?: boolean;
 };
 
 const TextBox: React.FC<Props> = ({
@@ -36,6 +37,7 @@ const TextBox: React.FC<Props> = ({
   backgroundColor,
   borderColor,
   floatedTextColor,
+  doesChangeEveryTime = false,
 }) => {
   const isDirty = useRef(false);
   const [innerValue, setInnerValue] = useState(value);
@@ -47,6 +49,7 @@ const TextBox: React.FC<Props> = ({
       const newValue = e.currentTarget.value;
       isDirty.current = value !== newValue;
       setInnerValue(newValue);
+      doesChangeEveryTime && onChange?.(newValue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [value],
