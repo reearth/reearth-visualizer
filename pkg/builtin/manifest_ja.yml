@@ -14,6 +14,9 @@ extensions:
           terrain:
             title: 地形
             description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          depthTestAgainstTerrain:
+            title: 地形の下を非表示
+            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。
@@ -64,6 +67,9 @@ extensions:
           sky_atmosphere:
             title: 上空の大気
             description: 地球を覆う大気圏のON/OFFを切り替えます。
+          shadows:
+            title: 影
+            description: オブジェクトが落とす影を表示します。併せて各レイヤーの影の設定をそれぞれ有効にする必要があります。
           fog:
             title: 霧
             description: 霧のON/OFFを切り替えます。
@@ -76,6 +82,12 @@ extensions:
             title: 色相
           surturation_shift:
             title: 彩度
+      timeline:
+        title: タイムライン
+        fields:
+          animation:
+            title: アニメーション
+            description: アニメーションを有効にします。3Dモデルのアニメーションが再生されるようになります。
       googleAnalytics:
         title: Google Analytics
         description: Google Analyticsを有効にすることで、公開ページがどのように閲覧されているかを分析することが可能です。
@@ -106,7 +118,7 @@ extensions:
             title: フォント
   marker:
     title: マーカー
-    description: ドラッグ&ドロップすることで、地図上にマーカーを追加します。マーカーにはテキストや画像を紐づけることができ、閲覧者はマーカーをクリックすることでそれらのコンテンツを見ることができます。
+    description: マーカーにはテキストや画像を紐づけることができ、閲覧者はマーカーをクリックすることでコンテンツを見ることができます。
     propertySchema:
       default:
         title: マーカー
@@ -115,45 +127,83 @@ extensions:
             title: 位置
           height:
             title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
           style:
             title: 表示方法
             choices:
-              point: ポイント
+              point: 点
               image: アイコン
           pointColor:
-            title: ポイント色
+            title: 点の色
           pointSize:
-            title: ポイントサイズ
+            title: 点の大きさ
+          pointOutlineColor:
+            title: 点の線の色
+          pointOutlineWidth:
+            title: 点の線の幅
           image:
             title: 画像URL
           imageSize:
             title: 画像サイズ
+          imageColor:
+            title: 画像の色
           imageCrop:
             title: 切り抜き
             choices:
               none: なし
               circle: 円形
+          imageHorizontalOrigin:
+            title: 画像の中心横
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imageVerticalOrigin:
+            title: 画像の中心縦
+            choices:
+              top: 上
+              center: 中央
+              baseline: ベースライン
+              bottom: 下
           imageShadow:
-            title: シャドウ
+            title: 画像の影
           imageShadowColor:
-            title: シャドウ色
+            title: 画像の影色
           imageShadowBlur:
-            title: シャドウ半径
+            title: 画像の影半径
           imageShadowPositionX:
-            title: シャドウX
+            title: 画像の影X
           imageShadowPositionY:
-            title: シャドウY
+            title: 画像の影Y
           label:
             title: ラベル
           labelText:
-            title: ラベル文字
+            title: ラベルの文字
+          labelPosition:
+            title: ラベルの位置
+            choices:
+              right: 右
+              left: 左
+              top: 上
+              bottom: 下
+              righttop: 右上
+              rightbottom: 右下
+              lefttop: 左上
+              leftbottom: 左下
           labelTypography:
             title: ラベルフォント
+          labelBackground:
+            title: ラベルの背景
           extrude:
             title: 地面から線を伸ばす
   polyline:
     title: 直線
-    description: Polyline primitive
     propertySchema:
       default:
         title: 直線
@@ -166,7 +216,6 @@ extensions:
             title: 線幅
   polygon:
     title: ポリゴン
-    description: Polygon primitive
     propertySchema:
       default:
         title: ポリゴン
@@ -185,7 +234,6 @@ extensions:
             title: 線幅
   rect:
     title: 長方形
-    description: Rectangle primitive
     propertySchema:
       default:
         title: 長方形
@@ -194,6 +242,13 @@ extensions:
             title: 長方形
           height:
             title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
           extrudedHeight:
             title: 高さ
           style:
@@ -205,9 +260,21 @@ extensions:
             title: 塗り色
           image:
             title: 画像URL
+          outlineColor:
+            title: 線の色
+          outlineWidth:
+            title: 線の幅
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
   photooverlay:
     title: フォトオーバーレイ
-    description: 地図上に追加されたフォトオーバーレイを選択すると、設定した画像をモーダル形式で表示することができます。
+    description: フォトオーバーレイを選択すると、設定した画像をモーダル形式で画面上に被せて表示することができます。
     propertySchema:
       default:
         title: フォトオーバーレイ
@@ -216,6 +283,13 @@ extensions:
             title: 位置
           height:
             title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
           camera:
             title: カメラ
             description: クリックされたときに移動するカメラの設定をします。
@@ -223,41 +297,158 @@ extensions:
             title: アイコン
           imageSize:
             title: アイコンサイズ
+          imageHorizontalOrigin:
+            title: アイコンの中心横
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imageVerticalOrigin:
+            title: アイコンの中心縦
+            choices:
+              top: 上
+              center: 中央
+              baseline: ベースライン
+              bottom: 下
           imageCrop:
             title: 切り抜き
             choices:
               none: なし
               circle: 円形
           imageShadow:
-            title: アイコンシャドウ
+            title: アイコンの影
           imageShadowColor:
-            title: シャドウ色
+            title: 影色
           imageShadowBlur:
-            title: シャドウ半径
+            title: 影半径
           imageShadowPositionX:
-            title: シャドウX
+            title: 影X
           imageShadowPositionY:
-            title: シャドウY
+            title: 影Y
           photoOverlayImage:
             title: オーバレイ画像
+          photoOverlayDescription:
+            title: オーバレイ画像の説明
   ellipsoid:
-    title: 球体ツール
-    description: 楕円形ツールを地図上にドラッグ&ドロップすることで追加できます。楕円形ツールによって立体的なオブジェクトを地図上に表示できます。
+    title: 球体
+    description: 立体的な球体を地図上に表示できます。
     propertySchema:
       default:
-        title: 球体ツール
+        title: 球体
         fields:
           position:
             title: 位置
           height:
             title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
           radius:
             title: 半径
           fillColor:
             title: 塗り色
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+  model:
+    title: 3Dモデル
+    description: glTF形式の3Dモデルを読み込んで表示することができます。地図上に追加後、URLを指定することで読み込まれます。
+    propertySchema:
+      default:
+        title: 3Dモデル
+        fields:
+          model:
+            title: URL
+            description: glTF形式のみ対応しています。
+          location:
+            title: 位置
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          heading:
+            title: ヘッディング
+          pitch:
+            title: ピッチ
+          roll:
+            title: ロール
+          scale:
+            title: 大きさ
+          maximumScale:
+            title: 最大の大きさ
+          minimumPixelSize:
+            title: 最小の大きさ
+          animation:
+            title: アニメーション
+            description: アニメーションを有効にします。必ずシーンのアニメーションの設定も有効にしてください。
+      appearance:
+        title: 外観
+        fields:
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+          colorBlend:
+            title: 色のブレンド
+            choices:
+              none: 無効
+              highlight: ハイライト
+              replace: 置き換え
+              mix: 混合
+          color:
+            title: 色
+          colorBlendAmount:
+            title: 色の混合量
+          lightColor:
+            title: 照明色
+          silhouette:
+            title: シルエット
+          silhouetteColor:
+            title: シルエット色
+          silhouetteSize:
+            title: シルエットサイズ
+  tileset:
+    title: 3Dタイル
+    description: 3D Tiles形式の3Dタイルを表示することができます。
+    propertySchema:
+      default:
+        title: 3Dタイル
+        fields:
+          tileset:
+            title: タイルセットURL
+            description: 3Dタイルデータ内の tileset.json のURL
+          styleUrl:
+            title: スタイルURL
+            description: 3D Tiles styles が記述されたJSONのURL。スタイルを適用することができます。設定は任意です。
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
   resource:
     title: ファイル
-    description: 外部からデータ（形式何？？？）をインポートすることができます。地図上に追加後、URLを指定することで外部データが読み込まれます。
+    description: 外部からデータをインポートすることができます。地図上に追加後、URLを指定することで外部データが読み込まれます。
     propertySchema:
       default:
         title: ファイル
@@ -451,9 +642,9 @@ extensions:
           cameraPosition:
             title: カメラ位置
           cameraDuration:
-            title: カメラ開始時間
-          cameraDelay:
             title: カメラ移動時間
+          cameraDelay:
+            title: カメラ待機時間
   storytelling:
     title: ストーリーテリング
     description: ストーリーテリング機能を使えば、データ間の繋がりや時系列をもとに、順番に資料を閲覧してもらうことが可能です。使用するには、右パネルから地球上のレイヤーに順番を付与します。
