@@ -18,20 +18,8 @@ func (r *Resolver) PropertyField() PropertyFieldResolver {
 	return &propertyFieldResolver{r}
 }
 
-func (r *Resolver) PropertySchemaField() PropertySchemaFieldResolver {
-	return &propertySchemaFieldResolver{r}
-}
-
-func (r *Resolver) PropertySchemaFieldChoice() PropertySchemaFieldChoiceResolver {
-	return &propertySchemaFieldChoiceResolver{r}
-}
-
 func (r *Resolver) PropertyFieldLink() PropertyFieldLinkResolver {
 	return &propertyFieldLinkResolver{r}
-}
-
-func (r *Resolver) PropertyLinkableFields() PropertyLinkableFieldsResolver {
-	return &propertyLinkableFieldsResolver{r}
 }
 
 func (r *Resolver) MergedProperty() MergedPropertyResolver {
@@ -52,10 +40,6 @@ func (r *Resolver) PropertyGroupList() PropertyGroupListResolver {
 
 func (r *Resolver) PropertyGroup() PropertyGroupResolver {
 	return &propertyGroupResolver{r}
-}
-
-func (r *Resolver) PropertySchemaGroup() PropertySchemaGroupResolver {
-	return &propertySchemaGroupResolver{r}
 }
 
 type propertyResolver struct{ *Resolver }
@@ -109,8 +93,6 @@ func (r *propertyResolver) Merged(ctx context.Context, obj *graphql1.Property) (
 }
 
 type propertyFieldResolver struct{ *Resolver }
-type propertySchemaFieldResolver struct{ *Resolver }
-type propertySchemaFieldChoiceResolver struct{ *Resolver }
 
 func (r *propertyFieldResolver) Parent(ctx context.Context, obj *graphql1.PropertyField) (*graphql1.Property, error) {
 	exit := trace(ctx)
@@ -143,37 +125,6 @@ func (r *propertyFieldResolver) ActualValue(ctx context.Context, obj *graphql1.P
 
 	datasetLoader := dataloader.DataLoadersFromContext(ctx).Dataset
 	return actualValue(datasetLoader, obj.Value, obj.Links, false)
-}
-
-func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *graphql1.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Name, nil
-}
-
-// deprecated
-func (r *propertySchemaFieldResolver) TranslatedName(ctx context.Context, obj *graphql1.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if s, ok := obj.AllTranslatedName[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Name, nil
-}
-
-func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context, obj *graphql1.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if s, ok := obj.AllTranslatedDescription[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Description, nil
 }
 
 type propertyFieldLinkResolver struct{ *Resolver }
@@ -215,37 +166,6 @@ func (r *propertyFieldLinkResolver) DatasetSchemaField(ctx context.Context, obj 
 
 	ds, err := dataloader.DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.DatasetSchemaID))
 	return ds.Field(obj.DatasetSchemaFieldID), err
-}
-
-type propertyLinkableFieldsResolver struct{ *Resolver }
-
-func (r *propertyLinkableFieldsResolver) Schema(ctx context.Context, obj *graphql1.PropertyLinkableFields) (*graphql1.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return dataloader.DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
-}
-
-func (r *propertyLinkableFieldsResolver) LatlngField(ctx context.Context, obj *graphql1.PropertyLinkableFields) (*graphql1.PropertySchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if obj.Latlng == nil {
-		return nil, nil
-	}
-	ps, err := dataloader.DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
-	return ps.Field(*obj.Latlng), err
-}
-
-func (r *propertyLinkableFieldsResolver) URLField(ctx context.Context, obj *graphql1.PropertyLinkableFields) (*graphql1.PropertySchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if obj.URL == nil {
-		return nil, nil
-	}
-	ps, err := dataloader.DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
-	return ps.Field(*obj.URL), err
 }
 
 type mergedPropertyResolver struct{ *Resolver }
@@ -507,36 +427,4 @@ func actualValue(datasetLoader dataloader.DatasetDataLoader, value interface{}, 
 		}
 	}
 	return nil, nil
-}
-
-type propertySchemaGroupResolver struct{ *Resolver }
-
-func (r *propertySchemaGroupResolver) Schema(ctx context.Context, obj *graphql1.PropertySchemaGroup) (*graphql1.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return dataloader.DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
-}
-
-func (r *propertySchemaGroupResolver) TranslatedTitle(ctx context.Context, obj *graphql1.PropertySchemaGroup, lang *string) (string, error) {
-	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	t := obj.Title
-	return *t, nil
-}
-
-func (r *propertySchemaFieldChoiceResolver) TranslatedTitle(ctx context.Context, obj *graphql1.PropertySchemaFieldChoice, lang *string) (string, error) {
-	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Label, nil
-}
-
-// deprecated
-func (r *propertySchemaFieldChoiceResolver) TranslatedLabel(ctx context.Context, obj *graphql1.PropertySchemaFieldChoice, lang *string) (string, error) {
-	if s, ok := obj.AllTranslatedLabel[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Label, nil
 }
