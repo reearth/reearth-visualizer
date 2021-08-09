@@ -5,6 +5,7 @@ import { PolygonHierarchy, Cartesian3 } from "cesium";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
+import { heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -16,6 +17,8 @@ export type Property = {
     stroke?: boolean;
     strokeColor?: string;
     strokeWidth?: number;
+    heightReference?: "none" | "clamp" | "relative";
+    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   };
 };
 
@@ -28,6 +31,8 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     fillColor,
     strokeColor,
     strokeWidth = 1,
+    heightReference: hr,
+    shadows,
   } = (property as Property | undefined)?.default ?? {};
 
   const hierarchy = useMemo(
@@ -50,11 +55,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     () => (stroke ? toColor(strokeColor) : undefined),
     [stroke, strokeColor],
   );
-
-  const memoFillColor = useMemo(
-    () => (fill && fillColor ? toColor(fillColor) : undefined),
-    [fill, fillColor],
-  );
+  const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
 
   return !isVisible ? null : (
     <Entity id={id}>
@@ -65,6 +66,8 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
         outline={!!memoStrokeColor}
         outlineColor={memoStrokeColor}
         outlineWidth={strokeWidth}
+        heightReference={heightReference(hr)}
+        shadows={shadowMode(shadows)}
       />
     </Entity>
   );

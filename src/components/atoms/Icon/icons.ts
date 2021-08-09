@@ -5,6 +5,9 @@ import PrimMarker from "./Icons/primMarkerIcon.svg";
 import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg";
 import PrimResource from "./Icons/primResourceIcon.svg";
 import PrimSphere from "./Icons/primSphereIcon.svg";
+import PrimRect from "./Icons/primRect.svg";
+import PrimModel from "./Icons/primModel.svg";
+import PrimTileset from "./Icons/primTileset.svg";
 
 // Built-in Widgets
 import Widgets from "./Icons/widgetsIcon.svg";
@@ -125,6 +128,9 @@ export default {
   photooverlay: PrimPhotoOverlay,
   resource: PrimResource,
   ellipsoid: PrimSphere,
+  rect: PrimRect,
+  model: PrimModel,
+  tileset: PrimTileset,
   widget: Widgets,
   menu: WidgetMenu,
   storytelling: WidgetStory,

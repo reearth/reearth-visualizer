@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { GlobalThis, Camera, Primitive } from "@reearth/plugin";
+import type { GlobalThis, Camera, Primitive, OverriddenInfobox } from "@reearth/plugin";
 import type { Ref as EngineRef } from "./Engine";
 
 export type { GlobalThis } from "@reearth/plugin";
@@ -21,6 +21,7 @@ export type VisualizerContext = {
   primitives?: Primitive[];
   selectedPrimitive?: Primitive;
   primitiveSelectionReason?: string;
+  primitiveOverridenInfobox?: OverriddenInfobox;
   pluginAPI?: CommonGlobalThis;
 };
 

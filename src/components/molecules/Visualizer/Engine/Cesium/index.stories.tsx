@@ -26,6 +26,7 @@ Default.args = {
   property: {
     default: {
       terrain: true,
+      terrainExaggeration: 10,
       bgcolor: "#ff0",
       skybox: false,
     },

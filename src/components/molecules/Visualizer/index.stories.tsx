@@ -65,6 +65,28 @@ const primitives: Primitive[] = [
       },
     },
   },
+  {
+    id: "3",
+    pluginId: "reearth",
+    extensionId: "tileset",
+    title: "tiles",
+    isVisible: true,
+    property: {
+      default: {
+        tileset: `https://plateau.reearth.io/13109_shinagawa-ku/tileset.json`,
+      },
+    },
+    infobox: {
+      property: {
+        default: {
+          bgcolor: "#ccc",
+          typography: {
+            color: "#000",
+          },
+        },
+      },
+    },
+  },
 ];
 
 const widgets: Widget[] = [

@@ -9,7 +9,7 @@ import Text from "@reearth/components/atoms/Text";
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useIcon, ho, vo } from "../common";
+import { useIcon, ho, vo, heightReference } from "../common";
 import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
 
 export type Props = PrimitiveProps<Property>;
@@ -18,6 +18,7 @@ export type Property = {
   default?: {
     location?: LatLng;
     height?: number;
+    heightReference?: "none" | "clamp" | "relative";
     camera?: Camera; // You may also update the field name in storytelling widget
     image?: string;
     imageSize?: number;
@@ -49,6 +50,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
     imageShadowPositionY,
     location,
     height,
+    heightReference: hr,
     camera,
     photoOverlayImage,
     photoOverlayDescription,
@@ -83,6 +85,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}
           verticalOrigin={vo(imageVerticalOrigin)}
+          heightReference={heightReference(hr)}
         />
       </Entity>
       {photoOverlayImageTransiton === "unmounted" ? null : (

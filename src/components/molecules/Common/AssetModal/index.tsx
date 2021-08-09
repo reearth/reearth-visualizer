@@ -24,7 +24,7 @@ export type Props = {
   onCreateAsset?: (files: FileList) => void;
   onSelect?: (value: string | null) => void;
   value?: string;
-  fileType?: "image" | "video" | "file";
+  fileType?: "image" | "video";
 };
 
 type Tabs = "assets" | "url";
@@ -92,7 +92,11 @@ const AssetModal: React.FC<Props> = ({
   const filteredAssets = useMemo(() => {
     if (!assets) return;
     return assets
-      .filter(a => a.url.match(fileType === "file" ? /\.kml$/ : /\.(jpg|jpeg|png|gif)$/))
+      .filter(
+        a =>
+          !fileType ||
+          a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
+      )
       .reverse(); // reversed to show newest at the top
   }, [assets, fileType]);
 

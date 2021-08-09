@@ -5,7 +5,13 @@ import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
 import { VisualizerContext } from "./context";
 import api from "./api";
-import type { Ref as EngineRef, SceneProperty } from "./Engine";
+import type {
+  OverriddenInfobox,
+  Ref as EngineRef,
+  SceneProperty,
+  SelectPrimitiveOptions,
+} from "./Engine";
+import type { Props as InfoboxProps, Block } from "./Infobox";
 import type { Primitive } from ".";
 
 export default ({
@@ -62,12 +68,18 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const { selectedPrimitive, selectedPrimitiveId, primitiveSelectionReason, selectPrimitive } =
-    usePrimitiveSelection({
-      primitives,
-      selectedPrimitiveId: outerSelectedPrimitiveId,
-      onPrimitiveSelect,
-    });
+  const {
+    selectedPrimitive,
+    selectedPrimitiveId,
+    primitiveSelectionReason,
+    primitiveOverridenInfobox,
+    infobox,
+    selectPrimitive,
+  } = usePrimitiveSelection({
+    primitives,
+    selectedPrimitiveId: outerSelectedPrimitiveId,
+    onPrimitiveSelect,
+  });
 
   const [selectedBlockId, selectBlock] = useInnerState<string>(outerSelectedBlockId, onBlockSelect);
 
@@ -128,6 +140,7 @@ export default ({
     camera: innerCamera,
     selectedPrimitive,
     primitiveSelectionReason,
+    primitiveOverridenInfobox,
     selectPrimitive,
     showPrimitive,
     hidePrimitive,
@@ -151,6 +164,7 @@ export default ({
     selectedPrimitive,
     selectedBlockId,
     innerCamera,
+    infobox,
     selectPrimitive,
     selectBlock,
     updateCamera,
@@ -164,10 +178,16 @@ function usePrimitiveSelection({
 }: {
   primitives?: Primitive[];
   selectedPrimitiveId?: string;
-  onPrimitiveSelect?: (id?: string) => void;
+  infobox?: Pick<
+    InfoboxProps,
+    "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
+  >;
+  primitiveOverridenInfobox?: OverriddenInfobox;
+  onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
 }) {
   const [selectedPrimitiveId, innerSelectPrimitive] = useState<string | undefined>();
   const [primitiveSelectionReason, setSelectionReason] = useState<string | undefined>();
+  const [primitiveOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
 
   const selectedPrimitive = useMemo(
     () => (selectedPrimitiveId ? primitives?.find(p => p.id === selectedPrimitiveId) : undefined),
@@ -175,23 +195,54 @@ function usePrimitiveSelection({
   );
 
   const selectPrimitive = useCallback(
-    (id?: string, { reason }: { reason?: string } = {}) => {
+    (id?: string, { reason, overriddenInfobox }: SelectPrimitiveOptions = {}) => {
       innerSelectPrimitive(id);
       onPrimitiveSelect?.(id);
       setSelectionReason(reason);
+      setPrimitiveOverridenInfobox(overriddenInfobox);
     },
     [onPrimitiveSelect],
+  );
+
+  const blocks = useMemo(
+    (): Block[] | undefined => overridenInfoboxBlocks(primitiveOverridenInfobox),
+    [primitiveOverridenInfobox],
+  );
+
+  const infobox = useMemo<
+    | Pick<
+        InfoboxProps,
+        "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
+      >
+    | undefined
+  >(
+    () =>
+      selectedPrimitive
+        ? {
+            infoboxKey: selectedPrimitive.id,
+            title: primitiveOverridenInfobox?.title || selectedPrimitive.title,
+            isEditable: !primitiveOverridenInfobox && selectedPrimitive.infoboxEditable,
+            visible: !!selectedPrimitive?.infobox,
+            property: selectedPrimitive?.infobox?.property,
+            primitive: selectedPrimitive,
+            blocks: blocks ?? selectedPrimitive.infobox?.blocks,
+          }
+        : undefined,
+    [selectedPrimitive, primitiveOverridenInfobox, blocks],
   );
 
   useEffect(() => {
     innerSelectPrimitive(outerSelectedPrimitiveId);
     setSelectionReason(undefined);
+    setPrimitiveOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
   return {
     selectedPrimitive,
     selectedPrimitiveId,
     primitiveSelectionReason,
+    infobox,
+    primitiveOverridenInfobox,
     selectPrimitive,
   };
 }
@@ -223,6 +274,7 @@ function useVisualizerContext({
   primitives = [],
   selectedPrimitive,
   primitiveSelectionReason,
+  primitiveOverridenInfobox,
   showPrimitive,
   hidePrimitive,
   selectPrimitive,
@@ -232,6 +284,7 @@ function useVisualizerContext({
   primitives?: Primitive[];
   selectedPrimitive: Primitive | undefined;
   primitiveSelectionReason?: string;
+  primitiveOverridenInfobox?: OverriddenInfobox;
   showPrimitive: (...id: string[]) => void;
   hidePrimitive: (...id: string[]) => void;
   selectPrimitive: (id?: string, options?: { reason?: string }) => void;
@@ -254,9 +307,40 @@ function useVisualizerContext({
       primitives,
       selectedPrimitive,
       primitiveSelectionReason,
+      primitiveOverridenInfobox,
       pluginAPI,
     };
-  }, [camera, engine, pluginAPI, primitives, selectedPrimitive, primitiveSelectionReason]);
+  }, [
+    camera,
+    engine,
+    pluginAPI,
+    primitives,
+    selectedPrimitive,
+    primitiveSelectionReason,
+    primitiveOverridenInfobox,
+  ]);
 
   return ctx;
+}
+
+function overridenInfoboxBlocks(
+  overriddenInfobox: OverriddenInfobox | undefined,
+): Block[] | undefined {
+  return overriddenInfobox && Array.isArray(overriddenInfobox?.content)
+    ? [
+        {
+          id: "content",
+          pluginId: "reearth",
+          extensionId: "dlblock",
+          property: {
+            items: overriddenInfobox.content.map((c, i) => ({
+              id: i,
+              item_title: c.key,
+              item_datastr: String(c.value),
+              item_datatype: "string",
+            })),
+          },
+        },
+      ]
+    : undefined;
 }

@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 import {
   Viewer,
+  Clock,
   Globe,
   Fog,
   Sun,
@@ -68,8 +69,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         navigationHelpButton={false}
         projectionPicker={false}
         sceneModePicker={false}
-        requestRenderMode
-        maximumRenderTimeChange={Infinity}
         creditContainer={creditContainer}
         style={{
           width: small ? "300px" : "auto",
@@ -77,10 +76,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           display: ready ? undefined : "none",
           ...style,
         }}
-        onClick={selectViewerEntity}>
+        requestRenderMode={!property?.timeline?.animation}
+        maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
+        shadows={!!property?.atmosphere?.shadows}>
+        <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
-          {/* remove default click event */}
-          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} action={selectViewerEntity} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
@@ -96,11 +97,17 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
         <Globe
           terrainProvider={terrainProvider}
+          depthTestAgainstTerrain={!!property?.default?.depthTestAgainstTerrain}
           enableLighting={!!property?.atmosphere?.enable_lighting}
           showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
           atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
           atmosphereHueShift={property?.atmosphere?.hue_shift}
           atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
+          {...{
+            // TODO: update resium
+            terrainExaggeration: property?.default?.terrainExaggeration,
+            terrainExaggerationRelativeHeight: property?.default?.terrainExaggerationRelativeHeight,
+          }}
         />
         {imageryLayers?.map(([id, im, min, max]) => (
           <ImageryLayer

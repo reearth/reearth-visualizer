@@ -193,7 +193,7 @@ const PropertyItem: React.FC<Props> = ({
               eventProps,
               f =>
                 (...args: any[]) =>
-                  f?.(item.schemaGroup, selectedItem.id, ...args),
+                  f?.(item.schemaGroup, isList ? selectedItem.id : undefined, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
@@ -211,7 +211,7 @@ const PropertyItem: React.FC<Props> = ({
             };
           })
         : [],
-    [eventProps, item, selectedItem],
+    [eventProps, item, selectedItem, isList],
   );
 
   const handleItemMove = useCallback(

@@ -9,5 +9,4 @@ node_modules
 __screenshots__
 /cypress/videos
 /cypress/screenshots
-/.env
-/.env.local
+/.env*

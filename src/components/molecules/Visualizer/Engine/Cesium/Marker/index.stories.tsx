@@ -176,6 +176,27 @@ ImageWithCropAndShadow.args = {
   },
 };
 
+export const ImageWithColor = Template.bind({});
+ImageWithColor.args = {
+  ...Template.args,
+  primitive: {
+    id: "",
+    isVisible: true,
+    property: {
+      default: {
+        location,
+        height: location.height,
+        style: "image",
+        image: `${process.env.PUBLIC_URL}/sample.png`,
+        imageCrop: "circle",
+        imageShadow: true,
+        extrude: true,
+        imageColor: "red",
+      },
+    },
+  },
+};
+
 export const ImageWithRightLabel = Template.bind({});
 ImageWithRightLabel.args = {
   ...Template.args,

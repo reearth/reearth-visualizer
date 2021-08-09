@@ -10,21 +10,21 @@ import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Co
 export type Asset = AssetType;
 
 export type Props = FieldProps<string> & {
-  onRemoveFile?: () => void;
-  fileType?: "image" | "video" | "file";
+  fileType?: "image" | "video";
   assets?: Asset[];
+  onRemoveFile?: () => void;
   onCreateAsset?: (files: FileList) => void;
 };
 
 const URLField: React.FC<Props> = ({
   name,
   value,
-  onChange,
   linked,
   overridden,
-  onCreateAsset,
   fileType,
   assets,
+  onChange,
+  onCreateAsset,
 }) => {
   const intl = useIntl();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);

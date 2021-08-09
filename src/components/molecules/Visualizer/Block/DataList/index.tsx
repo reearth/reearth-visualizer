@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from "react";
 
-import { styled, fonts } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { Typography, typographyStyles } from "@reearth/util/value";
 import Icon from "@reearth/components/atoms/Icon";
 
@@ -75,9 +75,7 @@ const Wrapper = styled(Border)<{
   typography?: Typography;
 }>`
   margin: 0 8px;
-  font-size: ${fonts.sizes.s}px;
-  color: ${({ theme }) => theme.infoBox.mainText};
-  ${({ typography }) => typographyStyles(typography)}
+  ${({ typography }) => typographyStyles({ ...typography })}
   min-height: 70px;
 `;
 

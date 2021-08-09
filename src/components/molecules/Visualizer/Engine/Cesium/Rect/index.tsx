@@ -4,6 +4,7 @@ import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
+import { heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -15,13 +16,28 @@ export type Property = {
     style?: "color" | "image";
     fillColor?: string;
     image?: string;
+    outlineColor?: string;
+    outlineWidth?: number;
+    heightReference?: "none" | "clamp" | "relative";
+    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   };
 };
 
 const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
-  const { rect, image, style, fillColor, height, extrudedHeight } =
-    (property as Property | undefined)?.default ?? {};
+  const {
+    rect,
+    image,
+    style,
+    fillColor,
+    height,
+    extrudedHeight,
+    outlineColor,
+    outlineWidth,
+    heightReference: hr,
+    shadows,
+  } = (property as Property | undefined)?.default ?? {};
+
   const coordinates = useMemo(
     () =>
       rect &&
@@ -49,10 +65,14 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
             })
           : undefined
         : fillColor
-        ? Color.fromCssColorString(property.default.fillColor)
+        ? Color.fromCssColorString(fillColor)
         : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [style, image, fillColor],
+  );
+
+  const outline = useMemo(
+    () => (outlineColor ? Color.fromCssColorString(outlineColor) : undefined),
+    [outlineColor],
   );
 
   return !isVisible ? null : (
@@ -63,6 +83,11 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
         coordinates={coordinates}
         material={material}
         fill={!!material}
+        outline={!!outline}
+        outlineColor={outline}
+        outlineWidth={outlineWidth}
+        heightReference={heightReference(hr)}
+        shadows={shadowMode(shadows)}
       />
     </Entity>
   );

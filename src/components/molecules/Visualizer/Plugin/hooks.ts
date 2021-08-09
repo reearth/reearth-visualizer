@@ -108,6 +108,7 @@ export default function ({
         // "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
         // "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
         // "reearth.primitives.selectionReason": cloneDeep(ctx?.primitiveSelectionReason),
+        // "reearth.primitives.overriddenInfobox": cloneDeep(ctx?.primitiveOverriddenInfobox),
         // "reearth.plugin.property": cloneDeep(property),
         // "reearth.visualizer.camera": cloneDeep(ctx?.camera),
         // "reearth.visualizer.property": cloneDeep(sceneProperty),
@@ -119,6 +120,7 @@ export default function ({
     [
       // ctx?.selectedPrimitive,
       // ctx?.primitiveSelectionReason,
+      // ctx?.primitiveOverriddenInfobox,
       // ctx?.camera,
       // property,
       // sceneProperty,

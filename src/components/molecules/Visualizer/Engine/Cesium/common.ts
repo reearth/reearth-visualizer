@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import {
+  ColorBlendMode,
   BoundingSphere,
   HeadingPitchRange,
   HorizontalOrigin,
@@ -9,8 +10,11 @@ import {
   Scene,
   Cartesian2,
   Cartesian3,
-  Viewer,
+  CesiumWidget,
   PerspectiveFrustum,
+  Viewer,
+  HeightReference,
+  ShadowMode,
 } from "cesium";
 
 import { useCanvas, useImage } from "@reearth/util/image";
@@ -292,7 +296,7 @@ export const animateFOV = ({
   return undefined;
 };
 
-export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {
+export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {
   if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
   if (!(camera.frustum instanceof PerspectiveFrustum)) return;
@@ -306,3 +310,34 @@ export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {
 
   return { lng, lat, height, heading, pitch, roll, fov };
 };
+
+export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
+  ((
+    {
+      highlight: ColorBlendMode.HIGHLIGHT,
+      replace: ColorBlendMode.REPLACE,
+      mix: ColorBlendMode.MIX,
+    } as { [key in string]?: ColorBlendMode }
+  )[colorBlendMode || ""]);
+
+export const heightReference = (
+  heightReference?: "none" | "clamp" | "relative",
+): HeightReference | undefined =>
+  ((
+    { clamp: HeightReference.CLAMP_TO_GROUND, relative: HeightReference.RELATIVE_TO_GROUND } as {
+      [key in string]?: HeightReference;
+    }
+  )[heightReference || ""]);
+
+export const shadowMode = (
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only",
+): ShadowMode | undefined =>
+  ((
+    {
+      enabled: ShadowMode.ENABLED,
+      cast_only: ShadowMode.CAST_ONLY,
+      receive_only: ShadowMode.RECEIVE_ONLY,
+    } as {
+      [key in string]?: ShadowMode;
+    }
+  )[shadows || ""]);

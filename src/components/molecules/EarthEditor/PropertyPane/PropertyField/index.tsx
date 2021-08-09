@@ -216,11 +216,7 @@ const PropertyField: React.FC<Props> = ({
         ) : type === "url" ? (
           <URLField
             {...commonProps}
-            fileType={
-              schema.ui === "image" || schema.ui === "video" || schema.ui === "file"
-                ? schema.ui
-                : undefined
-            }
+            fileType={schema.ui === "image" || schema.ui === "video" ? schema.ui : undefined}
             assets={assets}
             onCreateAsset={onCreateAsset}
           />

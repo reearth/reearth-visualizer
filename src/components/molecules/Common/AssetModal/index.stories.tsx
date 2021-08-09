@@ -113,7 +113,6 @@ Selected.args = {
 
 File.args = {
   assets: assets,
-  fileType: "file",
 };
 
 Video.args = {

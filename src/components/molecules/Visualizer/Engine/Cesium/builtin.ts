@@ -7,6 +7,8 @@ import Rect from "./Rect";
 import Ellipsoid from "./Ellipsoid";
 import PhotoOverlay from "./PhotoOverlay";
 import Resource from "./Resource";
+import Model from "./Model";
+import Tileset from "./TIleset";
 
 const builtin: Record<string, Component> = {
   "reearth/marker": Marker,
@@ -16,6 +18,8 @@ const builtin: Record<string, Component> = {
   "reearth/ellipsoid": Ellipsoid,
   "reearth/photooverlay": PhotoOverlay,
   "reearth/resource": Resource,
+  "reearth/model": Model,
+  "reearth/tileset": Tileset,
 };
 
 export default builtin;

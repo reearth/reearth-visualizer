@@ -75,9 +75,8 @@ const InfoBox: React.FC<Props> = ({
 
   const wrapperStyles = useMemo(
     () => css`
-      color: ${theme.infoBox.mainText};
       background-color: ${styles?.bgcolor || theme.infoBox.bg};
-      ${typographyStyles(styles?.typography)}
+      ${typographyStyles({ color: theme.infoBox.mainText, ...styles?.typography })}
     `,
     [theme.infoBox.mainText, theme.infoBox.bg, styles?.bgcolor, styles?.typography],
   );

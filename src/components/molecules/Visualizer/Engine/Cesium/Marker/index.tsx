@@ -20,7 +20,7 @@ import {
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useIcon, ho, vo } from "../common";
+import { useIcon, ho, vo, heightReference } from "../common";
 import marker from "./marker.svg";
 
 export type Props = PrimitiveProps<Property>;
@@ -29,13 +29,17 @@ type Property = {
   default?: {
     location?: { lat: number; lng: number };
     height?: number;
+    heightReference?: "none" | "clamp" | "relative";
     style?: "none" | "point" | "image";
     pointSize?: number;
     pointColor?: string;
+    pointOutlineColor?: string;
+    pointOutlineWidth?: number;
     image?: string;
     imageSize?: number;
     imageHorizontalOrigin?: "left" | "center" | "right";
     imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
+    imageColor?: string;
     imageCrop?: "none" | "rounded" | "circle";
     imageShadow?: boolean;
     imageShadowColor?: string;
@@ -44,8 +48,17 @@ type Property = {
     imageShadowPositionY?: number;
     label?: boolean;
     labelText?: string;
-    labelPosition?: "left" | "right" | "top" | "bottom";
+    labelPosition?:
+      | "left"
+      | "right"
+      | "top"
+      | "bottom"
+      | "lefttop"
+      | "leftbottom"
+      | "righttop"
+      | "rightbottom";
     labelTypography?: Typography;
+    labelBackground?: boolean;
     extrude?: boolean;
   };
 };
@@ -61,20 +74,25 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     pointSize = 10,
     style,
     pointColor,
+    pointOutlineColor,
+    pointOutlineWidth,
     label,
     labelTypography,
     labelText,
     labelPosition: labelPos = "right",
+    labelBackground,
     image = marker,
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
+    imageColor,
     imageCrop: crop,
     imageShadow: shadow,
     imageShadowColor: shadowColor,
     imageShadowBlur: shadowBlur,
     imageShadowPositionX: shadowOffsetX,
     imageShadowPositionY: shadowOffsetY,
+    heightReference: hr,
   } = (property as Property | undefined)?.default ?? {};
 
   const pos = useMemo(() => {
@@ -101,13 +119,22 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     shadowOffsetY,
   });
 
+  const cesiumImageColor = useMemo(
+    () => (imageColor ? Color.fromCssColorString(imageColor) : undefined),
+    [imageColor],
+  );
+
   const pixelOffset = useMemo(() => {
     const padding = 15;
     const x = (img?.width && style == "image" ? img.width : pointSize) / 2 + padding;
     const y = (img?.height && style == "image" ? img.height : pointSize) / 2 + padding;
     return new Cartesian2(
-      labelPos === "left" || labelPos === "right" ? x * (labelPos === "left" ? -1 : 1) : 0,
-      labelPos === "top" || labelPos === "bottom" ? y * (labelPos === "top" ? -1 : 1) : 0,
+      labelPos.includes("left") || labelPos.includes("right")
+        ? x * (labelPos.includes("left") ? -1 : 1)
+        : 0,
+      labelPos.includes("top") || labelPos.includes("bottom")
+        ? y * (labelPos.includes("top") ? -1 : 1)
+        : 0,
     );
   }, [img?.width, img?.height, style, pointSize, labelPos]);
 
@@ -136,27 +163,35 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
       )}
       <Entity id={id} position={pos}>
         {style === "point" ? (
-          <PointGraphics pixelSize={pointSize} color={toColor(pointColor)} />
+          <PointGraphics
+            pixelSize={pointSize}
+            color={toColor(pointColor)}
+            outlineColor={toColor(pointOutlineColor)}
+            outlineWidth={pointOutlineWidth}
+            heightReference={heightReference(hr)}
+          />
         ) : (
           <BillboardGraphics
             image={canvas}
+            color={cesiumImageColor}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
+            heightReference={heightReference(hr)}
           />
         )}
         {label && (
           <LabelGraphics
             horizontalOrigin={
-              labelPos === "right"
+              labelPos === "right" || labelPos == "righttop" || labelPos === "rightbottom"
                 ? HorizontalOrigin.LEFT
-                : labelPos === "left"
+                : labelPos === "left" || labelPos === "lefttop" || labelPos === "leftbottom"
                 ? HorizontalOrigin.RIGHT
                 : HorizontalOrigin.CENTER
             }
             verticalOrigin={
-              labelPos === "bottom"
+              labelPos === "bottom" || labelPos === "rightbottom" || labelPos === "leftbottom"
                 ? VerticalOrigin.TOP
-                : labelPos === "top"
+                : labelPos === "top" || labelPos === "righttop" || labelPos === "lefttop"
                 ? VerticalOrigin.BOTTOM
                 : VerticalOrigin.CENTER
             }
@@ -164,6 +199,8 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
             fillColor={toColor(labelTypography?.color)}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
             text={labelText}
+            showBackground={labelBackground}
+            heightReference={heightReference(hr)}
           />
         )}
       </Entity>

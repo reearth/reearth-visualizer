@@ -1,14 +1,22 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
-import { createWorldTerrain, Color, Entity, Ion, EllipsoidTerrainProvider } from "cesium";
+import {
+  createWorldTerrain,
+  Color,
+  Entity,
+  Ion,
+  EllipsoidTerrainProvider,
+  Cesium3DTileFeature,
+  Cartesian2,
+} from "cesium";
 import { isEqual } from "lodash-es";
-import type { CesiumComponentRef, CesiumMovementEvent } from "resium";
+import type { CesiumComponentRef } from "resium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 
 import { Camera } from "@reearth/util/value";
 
-import type { Ref as EngineRef, SceneProperty } from "..";
-import tiles from "./tiles";
+import type { SelectPrimitiveOptions, Ref as EngineRef, SceneProperty } from "..";
+import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
 
@@ -24,7 +32,7 @@ export default ({
   property?: SceneProperty;
   camera?: Camera;
   selectedPrimitiveId?: string;
-  onPrimitiveSelect?: (id?: string) => void;
+  onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
   onCameraChange?: (camera: Camera) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -53,7 +61,7 @@ export default ({
       .map<[string, ImageryProvider | null, number | undefined, number | undefined]>(
         ([id, type, url, min, max]) => [
           id,
-          type ? (url ? tiles[type](url) : tiles[type]()) : null,
+          type ? (url ? imagery[type](url) : imagery[type]()) : null,
           min,
           max,
         ],
@@ -112,18 +120,36 @@ export default ({
   }, [cesium, selectedPrimitiveId]);
 
   const selectViewerEntity = useCallback(
-    (_: CesiumMovementEvent, target: any) => {
+    (ev: { position: Cartesian2 }) => {
       const viewer = cesium.current?.cesiumElement;
-      if (
-        !viewer ||
-        viewer.isDestroyed() ||
-        viewer.selectedEntity === target ||
-        (target && !selectable(target))
-      )
+      if (!viewer || viewer.isDestroyed()) return;
+
+      let target = viewer.scene.pick(ev.position);
+      if (target && target.id instanceof Entity) {
+        target = target.id;
+      }
+
+      if (target instanceof Entity && selectable(target)) {
+        onPrimitiveSelect?.(target.id);
         return;
-      onPrimitiveSelect?.(target?.id);
+      }
+
+      if (target instanceof Cesium3DTileFeature) {
+        const primitiveId = (target.primitive as any)?.__resium_primitive_id as string | undefined;
+        if (primitiveId) {
+          onPrimitiveSelect?.(primitiveId, {
+            overriddenInfobox: {
+              title: target.getProperty("name"),
+              content: tileProperties(target),
+            },
+          });
+        }
+        return;
+      }
+
+      onPrimitiveSelect?.();
     },
-    [cesium, onPrimitiveSelect],
+    [onPrimitiveSelect],
   );
 
   // E2E test
@@ -161,3 +187,12 @@ const selectable = (e: Entity | undefined) => {
   const p = e.properties;
   return !p || !p.hasProperty(tag);
 };
+
+function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
+  return t
+    .getPropertyNames()
+    .reduce<{ key: string; value: any }[]>(
+      (a, b) => [...a, { key: b, value: t.getProperty(b) }],
+      [],
+    );
+}
