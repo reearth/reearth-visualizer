@@ -60,6 +60,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
@@ -72,7 +73,6 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 				assert.Equal(tt, tc.expected.result, result)
 				assert.Nil(tt, err)
 			}
-
 		})
 	}
 }
@@ -152,7 +152,6 @@ func TestMustPropertySchemaID(t *testing.T) {
 				result := MustPropertySchemaID(tc.input)
 				assert.Equal(tt, tc.expected.result, result)
 			}
-
 		})
 	}
 }
@@ -160,7 +159,6 @@ func TestMustPropertySchemaID(t *testing.T) {
 func TestMustPropertySchemaIDFromExtension(t *testing.T) {
 	pluginID := MustPluginID("test~2.0.0")
 	pluginExtensionID := PluginExtensionID("test2")
-
 	propertySchemaID := MustPropertySchemaIDFromExtension(pluginID, pluginExtensionID)
 
 	assert.NotNil(t, propertySchemaID)
@@ -205,6 +203,7 @@ func TestPropertySchemaIDFromRef(t *testing.T) {
 			expected: nil,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
@@ -218,7 +217,6 @@ func TestPropertySchemaIDFromRef(t *testing.T) {
 
 func TestPropertySchemaID_ID(t *testing.T) {
 	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
-
 	assert.Equal(t, propertySchemaID.ID(), "test")
 }
 
@@ -229,73 +227,62 @@ func TestPropertySchemaID_Plugin(t *testing.T) {
 
 func TestPropertySchemaID_System(t *testing.T) {
 	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
-
 	assert.False(t, propertySchemaID.System())
-
 	extinctionName := schemaSystemIDPrefix
 	propertySchemaID = MustPropertySchemaIDFromExtension(MustPluginID("test~2.0.0"), *PluginExtensionIDFromRef(&extinctionName))
-
 	assert.True(t, propertySchemaID.System())
-
 	propertySchemaID = MustPropertySchemaID("Test~2.0.0/" + schemaSystemIDPrefix)
-
 	assert.True(t, propertySchemaID.System())
 }
 
 func TestPropertySchemaID_String(t *testing.T) {
 	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
-
 	assert.Equal(t, propertySchemaID.String(), "Test~2.0.0/test")
 }
 
 func TestPropertySchemaID_Ref(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
-
 	assert.Equal(t, &propertySchemaID, propertySchemaID.Ref())
 }
 
 func TestPropertySchemaID_CopyRef(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
-
 	assert.Equal(t, propertySchemaID, *propertySchemaID.CopyRef())
-
-	assert.False(t, propertySchemaID.Ref() == propertySchemaID.CopyRef())
+	assert.NotSame(t, propertySchemaID.Ref(), propertySchemaID.CopyRef())
 }
 
 func TestPropertySchemaID_IsNil(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
-
 	assert.False(t, propertySchemaID.IsNil())
-
 	propertySchemaID = PropertySchemaID{}
-
 	assert.True(t, propertySchemaID.IsNil())
+}
+
+func TestPropertySchemaID_Equal(t *testing.T) {
+	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
+	propertySchemaID2, _ := PropertySchemaIDFrom("test~2.0.0/test")
+	propertySchemaID3, _ := PropertySchemaIDFrom("test~2.0.1/test")
+	assert.True(t, propertySchemaID.Equal(propertySchemaID2))
+	assert.False(t, propertySchemaID.Equal(propertySchemaID3))
 }
 
 func TestPropertySchemaID_StringRef(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
-
 	ref := &propertySchemaID
-
 	assert.Equal(t, *ref.StringRef(), ref.String())
 }
 
 func TestPropertySchemaID_MarshalText(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
-
 	res, err := propertySchemaID.MarshalText()
-
 	assert.Nil(t, err)
 	assert.Equal(t, []byte("test~2.0.0/test"), res)
 }
 
 func TestPropertySchemaID_UnmarshalText(t *testing.T) {
 	text := []byte("test~2.0.0/test")
-
 	propertySchemaID := &PropertySchemaID{}
-
 	err := propertySchemaID.UnmarshalText(text)
-
 	assert.Nil(t, err)
 	assert.Equal(t, "test~2.0.0/test", propertySchemaID.String())
 }
@@ -423,7 +410,6 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 				assert.Equal(tt, tc.expected.res, res)
 				assert.Nil(tt, err)
 			}
-
 		})
 	}
 }

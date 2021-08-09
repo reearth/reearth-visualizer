@@ -176,7 +176,7 @@ func (d *PluginID) StringRef() *string {
 	return &id
 }
 
-// Equal returns if two IDs are quivarent.
+// Equal returns true if two IDs are equal.
 func (d PluginID) Equal(d2 PluginID) bool {
 	if d.sys {
 		return d2.sys

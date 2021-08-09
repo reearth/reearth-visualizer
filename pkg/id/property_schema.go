@@ -103,6 +103,11 @@ func (d PropertySchemaID) IsNil() bool {
 	return d.plugin == PluginID{} && d.id == ""
 }
 
+// Equal returns true if two IDs are equal.
+func (d PropertySchemaID) Equal(d2 PropertySchemaID) bool {
+	return d.plugin.Equal(d2.plugin) && d.id == d2.id
+}
+
 // StringRef returns a reference of a string representation.
 func (d *PropertySchemaID) StringRef() *string {
 	if d == nil {

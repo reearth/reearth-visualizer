@@ -14,12 +14,16 @@ import (
 
 type PropertySchema struct {
 	lock sync.Mutex
-	data map[id.PropertySchemaID]property.Schema
+	data map[string]*property.Schema
 }
 
 func NewPropertySchema() repo.PropertySchema {
-	return &PropertySchema{
-		data: map[id.PropertySchemaID]property.Schema{},
+	return &PropertySchema{}
+}
+
+func (r *PropertySchema) initMap() {
+	if r.data != nil {
+		r.data = map[string]*property.Schema{}
 	}
 }
 
@@ -30,9 +34,11 @@ func (r *PropertySchema) FindByID(ctx context.Context, id id.PropertySchemaID) (
 	if ps := builtin.GetPropertySchema(id); ps != nil {
 		return ps, nil
 	}
-	p, ok := r.data[id]
+
+	r.initMap()
+	p, ok := r.data[id.String()]
 	if ok {
-		return &p, nil
+		return p, nil
 	}
 	return nil, rerror.ErrNotFound
 }
@@ -41,14 +47,15 @@ func (r *PropertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaI
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	r.initMap()
 	result := property.SchemaList{}
 	for _, id := range ids {
 		if ps := builtin.GetPropertySchema(id); ps != nil {
 			result = append(result, ps)
 			continue
 		}
-		if d, ok := r.data[id]; ok {
-			result = append(result, &d)
+		if d, ok := r.data[id.String()]; ok {
+			result = append(result, d)
 		} else {
 			result = append(result, nil)
 		}
@@ -60,10 +67,11 @@ func (r *PropertySchema) Save(ctx context.Context, p *property.Schema) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	r.initMap()
 	if p.ID().System() {
 		return errors.New("cannnot save system property schema")
 	}
-	r.data[p.ID()] = *p
+	r.data[p.ID().String()] = p
 	return nil
 }
 
@@ -71,6 +79,7 @@ func (r *PropertySchema) SaveAll(ctx context.Context, p property.SchemaList) err
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	r.initMap()
 	for _, ps := range p {
 		if err := r.Save(ctx, ps); err != nil {
 			return err
@@ -83,7 +92,8 @@ func (r *PropertySchema) Remove(ctx context.Context, id id.PropertySchemaID) err
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	delete(r.data, id)
+	r.initMap()
+	delete(r.data, id.String())
 	return nil
 }
 
@@ -91,8 +101,9 @@ func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaI
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	r.initMap()
 	for _, id := range ids {
-		delete(r.data, id)
+		delete(r.data, id.String())
 	}
 	return nil
 }
