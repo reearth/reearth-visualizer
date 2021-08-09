@@ -61,7 +61,7 @@ const CameraField: React.FC<Props> = ({
 
   const lat = camera?.lat && Math.round(camera?.lat * 1000) / 1000;
   const lng = camera?.lng && Math.round(camera?.lng * 1000) / 1000;
-  const altitude = camera?.altitude && Math.round(camera?.altitude);
+  const height = camera?.height && Math.round(camera?.height);
   const heading = camera?.heading && Math.round(camera?.heading * 1000) / 1000;
   const pitch = camera?.pitch && Math.round(camera?.pitch * 1000) / 1000;
   const roll = camera?.roll && Math.round(camera?.roll * 1000) / 1000;
@@ -106,7 +106,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={altitude}
+                    value={height}
                     onChange={handleAltitudeChange}
                     step={10 ** 6}
                   />

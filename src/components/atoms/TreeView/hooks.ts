@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { useShallowCompareEffect, useUpdate } from "react-use";
+import { useShallowCompareEffect, useSet } from "react-use";
 
 import { Item } from "./types";
 import { searchItems } from "./util";
@@ -19,68 +19,59 @@ export default function <T = unknown>({
   onSelect?: (selected: Item<T>[], index: number[][]) => void;
   onExpand?: (expanded: Item<T>[], index: number[][]) => void;
 }) {
-  const update = useUpdate();
   const selectedItems = useRef<Map<string, [Item<T>, number[]]>>(new Map());
   const expandedItems = useRef<Map<string, [Item<T>, number[]]>>(new Map());
-  const selectedIds = useRef<Set<string>>(new Set());
-  const expandedIds = useRef<Set<string>>(new Set());
+  const [selectedIds, selectedIdsActions] = useSet<string>();
+  const [expandedIds, expandedIdsActions] = useSet<string>();
 
   const select = useCallback(
     (item: Item<T>, index: number[]) => {
       if (!multiple) {
         selectedItems.current.clear();
         selectedItems.current.set(item.id, [item, index]);
-        selectedIds.current.clear();
-        selectedIds.current.add(item.id);
+        selectedIdsActions.reset();
+        selectedIdsActions.add(item.id);
       } else if (selectedItems.current.has(item.id)) {
         selectedItems.current.delete(item.id);
-        selectedIds.current.delete(item.id);
+        selectedIdsActions.remove(item.id);
       } else {
         selectedItems.current.set(item.id, [item, index]);
-        selectedIds.current.add(item.id);
+        selectedIdsActions.add(item.id);
       }
 
       const values = Array.from(selectedItems.current.values());
-      const indexes = values.map(v => v[1]);
-
-      update();
-
       onSelect?.(
         values.map(v => v[0]),
-        indexes,
+        values.map(v => v[1]),
       );
     },
-    [onSelect, multiple, update],
+    [multiple, onSelect, selectedIdsActions],
   );
 
   const expand = useCallback(
     (item: Item<T>, index: number[], expanded: boolean) => {
       if (!expanded && expandedItems.current.has(item.id)) {
         expandedItems.current.delete(item.id);
-        expandedIds.current.delete(item.id);
+        expandedIdsActions.remove(item.id);
       } else if (expanded) {
         expandedItems.current.set(item.id, [item, index]);
-        expandedIds.current.add(item.id);
+        expandedIdsActions.add(item.id);
       }
 
       const values = Array.from(expandedItems.current.values());
-      const indexes = values.map(v => v[1]);
-
-      update();
-
       onExpand?.(
         values.map(v => v[0]),
-        indexes,
+        values.map(v => v[1]),
       );
     },
-    [onExpand, update],
+    [expandedIdsActions, onExpand],
   );
 
   useShallowCompareEffect(() => {
     if (!Array.isArray(selected)) return;
 
     selectedItems.current.clear();
-    selectedIds.current.clear();
+    selectedIdsActions.reset();
 
     if (item?.children?.length) {
       const items = searchItems(item.children, selected).filter(
@@ -89,12 +80,10 @@ export default function <T = unknown>({
       items.forEach(i => {
         if (!i || typeof i[0] === "undefined") return;
         selectedItems.current.set(i[0].id, [i[0], i[1]]);
-        selectedIds.current.add(i[0].id);
+        selectedIdsActions.add(i[0].id);
       });
     }
-
-    update();
-  }, [item, selected, update]);
+  }, [item, selected]);
 
   useShallowCompareEffect(() => {
     if (!Array.isArray(expanded)) return;
@@ -106,17 +95,15 @@ export default function <T = unknown>({
       items.forEach(i => {
         if (!i || typeof i[0] === "undefined") return;
         expandedItems.current.set(i[0].id, [i[0], i[1]]);
-        expandedIds.current.add(i[0].id);
+        expandedIdsActions.add(i[0].id);
       });
     }
-
-    update();
-  }, [item, expanded, update]);
+  }, [item, expanded]);
 
   return {
     select,
     expand,
-    selectedIds: selectedIds.current,
-    expandedIds: expandedIds.current,
+    selectedIds,
+    expandedIds,
   };
 }

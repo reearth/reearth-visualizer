@@ -1,0 +1,34 @@
+digraph a {
+  graph [
+    fontsize = 11
+    fontname = "sans-serif"
+  ]
+
+  node [
+    shape = box
+    height = 0.3
+    width = 1.2
+    fontsize = 11
+    fontname = "sans-serif"
+  ]
+
+  edge [
+    fontsize = 10
+    fontname = "sans-serif"
+    arrowsize = 0.6
+  ]
+
+  Engine -> Visualizer [label = "Expose engine API", style = "dashed"]
+  Visualizer -> Engine
+  Visualizer -> Primitive [label = "Expose context"]
+  Visualizer -> Widget [label = "Expose context"]
+  Visualizer -> Infobox [label = "Expose context"]
+
+  Infobox -> Block
+  Primitive -> Plugin
+  Widget -> Plugin
+  Block -> Plugin
+
+  {rank=min; Visualizer}
+  {rank=same; Primitive; Widget; Block}
+}

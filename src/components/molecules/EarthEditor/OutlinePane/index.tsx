@@ -98,7 +98,7 @@ const OutlinePane: React.FC<Props> = ({
             selectable
             expandable
             dragItemType="layer"
-            acceptedDragItemTypes={["primitive"]}
+            acceptedDragItemTypes={acceptedDragItemTypes}
             onSelect={select}
           />
         )}
@@ -116,7 +116,7 @@ const OutlinePane: React.FC<Props> = ({
             expandable
             expanded={rootLayerId && !selectedLayerId ? [rootLayerId] : undefined}
             dragItemType="layer"
-            acceptedDragItemTypes={["primitive"]}
+            acceptedDragItemTypes={acceptedDragItemTypes}
             onSelect={select}
             onDrop={drop}
             onDropExternals={dropExternals}
@@ -127,6 +127,8 @@ const OutlinePane: React.FC<Props> = ({
     </Wrapper>
   );
 };
+
+const acceptedDragItemTypes = ["primitive"];
 
 const Wrapper = styled.div`
   width: 100%;

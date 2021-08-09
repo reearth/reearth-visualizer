@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
+import { usePreviousDistinct } from "react-use";
 
 export type Durations =
   | [number | null | undefined, number | null | undefined][]
@@ -6,40 +7,47 @@ export type Durations =
 
 export const useDelayedCount = (durations: Durations = []) => {
   const [mode, setMode] = useState(0);
-  const prevMode = useRef(0);
+  const prevMode = usePreviousDistinct(mode);
   const exit = useRef(false);
   const timeout = useRef<number>();
 
   const advanceMode = useCallback(() => {
-    setMode(Math.max(0, Math.min(durations.length, mode + (exit.current ? -1 : 1))));
-  }, [durations.length, mode]);
+    setMode(m => Math.max(0, Math.min(durations.length + 1, m + (exit.current ? -1 : 1))));
+  }, [durations.length]);
 
-  const startTransit = useCallback(
-    (e: boolean) => {
-      if (timeout.current || e ? mode <= 0 : mode >= durations.length) return;
+  const startTransition = useCallback(
+    (e: boolean, skipAnimation?: boolean) => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+        timeout.current = undefined;
+      }
+
+      if (skipAnimation) {
+        setMode(e ? 0 : durations.length + 1);
+        return;
+      }
+
       exit.current = e;
       advanceMode();
     },
-    [advanceMode, durations.length, mode],
+    [advanceMode, durations.length],
   );
 
   useEffect(() => {
-    if (prevMode.current === mode) return;
     if (timeout.current !== undefined) {
       clearTimeout(timeout.current);
       timeout.current = undefined;
     }
-    const nextMode = durations?.[prevMode.current - (exit.current ? 1 : 0)];
-    const duration = Array.isArray(nextMode) ? nextMode[exit.current ? 1 : 0] : nextMode;
-    prevMode.current = mode;
-    if (!duration) {
-      advanceMode();
-      return;
-    }
+
+    if (mode <= 0 || mode >= durations.length + 1) return;
+
+    const next = durations?.[mode - 1];
+    const duration = Array.isArray(next) ? next[exit.current ? 1 : 0] : next;
+
     timeout.current = window.setTimeout(() => {
-      advanceMode();
       timeout.current = undefined;
-    }, duration);
+      advanceMode();
+    }, duration ?? 0);
   }, [advanceMode, durations, mode]);
 
   // clear timeout on unmount
@@ -53,5 +61,5 @@ export const useDelayedCount = (durations: Durations = []) => {
     [],
   );
 
-  return [mode, prevMode.current, startTransit] as const;
+  return [mode, prevMode, startTransition] as const;
 };

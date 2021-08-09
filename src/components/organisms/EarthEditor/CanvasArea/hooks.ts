@@ -6,14 +6,13 @@ import {
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
   useChangePropertyValueMutation,
-  useChangePropertyValueLatLngMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
-import { valueTypeToGQL, ValueType, ValueTypes, Camera } from "@reearth/util/value";
+import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
 
 export default (isBuilt?: boolean) => {
   const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
@@ -37,7 +36,6 @@ export default (isBuilt?: boolean) => {
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
   const [changePropertyValue] = useChangePropertyValueMutation();
-  const [changePropertyValueLatLng] = useChangePropertyValueLatLngMutation();
 
   const onBlockMove = useCallback(
     async (id: string, _fromIndex: number, toIndex: number) => {
@@ -74,19 +72,6 @@ export default (isBuilt?: boolean) => {
       v: ValueTypes[T],
       vt: T,
     ) => {
-      if (vt === "latlng") {
-        await changePropertyValueLatLng({
-          variables: {
-            propertyId,
-            schemaItemId,
-            fieldId: fid,
-            lat: (v as ValueTypes["latlng"]).lat,
-            lng: (v as ValueTypes["latlng"]).lng,
-          },
-        });
-        return;
-      }
-
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
@@ -95,12 +80,12 @@ export default (isBuilt?: boolean) => {
           propertyId,
           schemaItemId,
           fieldId: fid,
-          value: v,
           type: gvt,
+          value: valueToGQL(v, vt),
         },
       });
     },
-    [changePropertyValue, changePropertyValueLatLng],
+    [changePropertyValue],
   );
 
   const { data: layerData } = useGetLayersQuery({
@@ -175,7 +160,7 @@ export default (isBuilt?: boolean) => {
     blocks,
     isCapturing,
     camera,
-    initialLoaded: !isBuilt || (!!layerData && !!widgetData),
+    ready: !isBuilt || (!!layerData && !!widgetData),
     selectLayer,
     selectBlock,
     onBlockChange,

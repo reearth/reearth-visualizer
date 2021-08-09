@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 
 import {
-  useChangePropertyValueLatLngMutation,
   useChangePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
@@ -20,7 +19,7 @@ import {
   useCreateAssetMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
-import { valueTypeToGQL, Camera, toGQLSimpleValue } from "@reearth/util/value";
+import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
 import useQueries, { Mode as RawMode } from "./hooks-queries";
 
@@ -79,7 +78,6 @@ export default (mode: Mode) => {
   });
 
   const [changeValueMutation] = useChangePropertyValueMutation();
-  const [changeValueLatLngMutation] = useChangePropertyValueLatLngMutation();
   const changeValue = useCallback(
     (
       propertyId: string,
@@ -89,19 +87,6 @@ export default (mode: Mode) => {
       v: ValueTypes[ValueType] | null,
       vt: ValueType,
     ) => {
-      if (vt === "latlng" && typeof v === "object" && v && "lat" in v) {
-        changeValueLatLngMutation({
-          variables: {
-            propertyId,
-            itemId,
-            schemaItemId,
-            fieldId,
-            lat: v.lat,
-            lng: v.lng,
-          },
-        });
-        return;
-      }
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
       changeValueMutation({
@@ -110,12 +95,12 @@ export default (mode: Mode) => {
           itemId,
           schemaItemId,
           fieldId,
-          value: v,
+          value: valueToGQL(v, vt),
           type: gvt,
         },
       });
     },
-    [changeValueLatLngMutation, changeValueMutation],
+    [changeValueMutation],
   );
 
   const [linkDataset] = useLinkDatasetMutation({

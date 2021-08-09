@@ -1,44 +1,6 @@
+import { Color } from "cesium";
 import { ValueType as GQLValueType } from "@reearth/gql";
 import { css } from "@reearth/theme";
-import { Color, Cartesian3, Camera as CesiumCamera, EasingFunction } from "cesium";
-
-export type SceneProperty = {
-  default?: {
-    camera?: Camera;
-    terrain?: boolean;
-    skybox?: boolean;
-    bgcolor?: string;
-    ion?: string;
-  };
-  tiles?: {
-    id: string;
-    tile_type?:
-      | "default"
-      | "default_label"
-      | "default_road"
-      | "stamen_watercolor"
-      | "stamen_toner"
-      | "open_street_map"
-      | "esri_world_topo"
-      | "black_marble"
-      | "japan_gsi_standard"
-      | "url";
-    tile_url?: string;
-    tile_maxLevel?: number;
-    tile_minLevel?: number;
-  }[];
-  atmosphere?: {
-    enable_sun?: boolean;
-    enable_lighting?: boolean;
-    ground_atmosphere?: boolean;
-    sky_atmosphere?: boolean;
-    fog?: boolean;
-    fog_density?: number;
-    brightness_shift?: number;
-    hue_shift?: number;
-    surturation_shift?: number;
-  };
-};
 
 export type LatLng = {
   lat: number;
@@ -54,7 +16,7 @@ export type LatLngHeight = {
 export type Camera = {
   lat: number;
   lng: number;
-  altitude: number;
+  height: number;
   heading: number;
   pitch: number;
   roll: number;
@@ -124,14 +86,36 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   }
   const ok = typeof val !== "undefined" && val !== null;
   let newVal = val;
-  if (t === "typography") {
+  if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
-      ...(val ?? []),
-      ...(val?.textAlign ? { textAlign: val.textAlign.toLowerCase() } : {}),
+      ...val,
+      height: val.altitude,
+    };
+  }
+  if (
+    t === "typography" &&
+    val &&
+    typeof val === "object" &&
+    "textAlign" in val &&
+    typeof val.textAlign === "string"
+  ) {
+    newVal = {
+      ...val,
+      textAlign: val.textAlign.toLowerCase(),
     };
   }
   return { type: t, value: newVal, ok };
 };
+
+export function valueToGQL<T extends ValueType>(val: ValueTypes[T] | null, type: T): any {
+  if (type === "camera" && val && typeof val === "object" && "height" in val) {
+    return {
+      ...(val as any),
+      altitude: (val as any).height,
+    };
+  }
+  return val;
+}
 
 export const valueTypeFromGQL = (t: GQLValueType): ValueType | undefined => {
   return valueTypeMapper[t];
@@ -175,61 +159,6 @@ export const toColor = (c?: string) => {
 
   const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
   return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
-};
-
-export const fromCamera = (
-  camera?: Camera,
-):
-  | {
-      destination: Cartesian3;
-      orientation: {
-        heading: number;
-        pitch: number;
-        roll: number;
-      };
-      fov: number;
-    }
-  | undefined => {
-  if (!camera) return;
-
-  const destination = Cartesian3.fromDegrees(camera.lng, camera.lat, camera.altitude);
-  const orientation = {
-    heading: camera.heading,
-    pitch: camera.pitch,
-    roll: camera.roll,
-  };
-  const fov = camera.fov;
-  return {
-    destination,
-    orientation,
-    fov,
-  };
-};
-
-export const flyTo = (
-  c?: CesiumCamera,
-  camera?: {
-    destination: Cartesian3;
-    orientation: {
-      heading: number;
-      pitch: number;
-      roll: number;
-    };
-    fov?: number;
-  },
-  opts?: {
-    duration?: number;
-    easing?: EasingFunction.Callback;
-  },
-) => {
-  if (!c || !camera) return;
-
-  c.flyTo({
-    destination: camera.destination,
-    orientation: camera?.orientation,
-    duration: opts?.duration,
-    easingFunction: opts?.easing,
-  });
 };
 
 export const typographyStyles = (t?: Typography) => {

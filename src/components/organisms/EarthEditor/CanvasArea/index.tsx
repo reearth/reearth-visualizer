@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 
-import Filled from "@reearth/components/atoms/Filled";
-import Earth from "@reearth/components/molecules/EarthEditor/Earth";
-import InfoBox from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
+import Visualizer, { Props as VisualizerProps } from "@reearth/components/molecules/Visualizer";
 import ContentPicker from "@reearth/components/atoms/ContentPicker";
-import FovSlider from "@reearth/components/molecules/EarthEditor/Earth/FovSlider";
+import FovSlider from "@reearth/components/molecules/EarthEditor/FovSlider";
 
 import useHooks from "./hooks";
 
@@ -18,69 +16,64 @@ export type Props = {
 const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
   const {
     rootLayerId,
-    selectedLayerId,
     selectedBlockId,
-    selectLayer,
-    selectBlock,
     sceneProperty,
     layers,
     widgets,
     selectedLayer,
+    blocks,
+    isCapturing,
+    camera,
+    ready,
+    selectLayer,
+    selectBlock,
     onBlockChange,
     onBlockMove,
     onBlockRemove,
-    blocks,
     onBlockInsert,
-    isCapturing,
     onIsCapturingChange,
-    camera,
     onCameraChange,
     onFovChange,
-    initialLoaded,
   } = useHooks(isBuilt);
+  const renderInfoboxInsertionPopUp = useCallback<
+    NonNullable<VisualizerProps["renderInfoboxInsertionPopUp"]>
+  >(
+    (onSelect, onClose) => (
+      <ContentPicker items={blocks} onSelect={onSelect} onClickAway={onClose} />
+    ),
+    [blocks],
+  );
 
   return (
-    <Filled className={className}>
-      <Earth
-        layers={layers}
-        widgets={widgets}
-        sceneProperty={sceneProperty}
-        selectedLayerId={selectedLayerId}
-        onLayerSelect={selectLayer}
-        rootLayerId={rootLayerId}
-        isCapturing={isCapturing}
-        camera={camera}
-        onCameraChange={onCameraChange}
-        // small={!!small}
-        isBuilt={!!isBuilt}
-        initialLoaded={initialLoaded}
-      />
-      <InfoBox
-        infoboxKey={selectedLayer?.id}
-        visible={!!selectedLayer?.infobox}
-        name={selectedLayer?.title}
-        property={selectedLayer?.infobox?.property}
-        blocks={selectedLayer?.infobox?.fields}
-        isEditable={!isBuilt && selectedLayer?.infoboxEditable}
-        isBuilt={!!isBuilt}
-        selectedBlockId={selectedBlockId}
-        onBlockSelect={selectBlock}
-        onBlockChange={onBlockChange}
-        onBlockMove={onBlockMove}
-        onBlockDelete={onBlockRemove}
-        onBlockInsert={onBlockInsert}
-        sceneProperty={sceneProperty}
-        renderInsertionPopUp={(onSelect, onClose) => (
-          <ContentPicker items={blocks} onSelect={onSelect} onClickAway={onClose} />
-        )}
-      />
+    <Visualizer
+      className={className}
+      engine="cesium"
+      isEditable={!isBuilt}
+      isBuilt={!!isBuilt}
+      primitives={layers}
+      widgets={widgets}
+      selectedPrimitiveId={selectedLayer?.id}
+      selectedBlockId={selectedBlockId}
+      rootLayerId={rootLayerId}
+      sceneProperty={sceneProperty}
+      camera={camera}
+      ready={ready}
+      onPrimitiveSelect={selectLayer}
+      onCameraChange={onCameraChange}
+      onBlockSelect={selectBlock}
+      onBlockChange={onBlockChange}
+      onBlockMove={onBlockMove}
+      onBlockDelete={onBlockRemove}
+      onBlockInsert={onBlockInsert}
+      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
+      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
       <FovSlider
         isCapturing={isCapturing}
         onIsCapturingChange={onIsCapturingChange}
         camera={camera}
         onFovChange={onFovChange}
       />
-    </Filled>
+    </Visualizer>
   );
 };
 

@@ -15,7 +15,7 @@ const choices = [
 const camera: settings = {
   lat: 35.652832,
   lng: 139.839478,
-  altitude: 1000,
+  height: 1000,
   heading: 0,
   roll: 1,
   pitch: 1,

@@ -233,12 +233,21 @@ export default ({
     [layerTitle, rootLayerId, layers],
   );
 
+  const layerTreeViewItemOnRename = useCallback(
+    (props, name) => onLayerRename?.(props.item.id, name),
+    [onLayerRename],
+  );
+  const layerTreeViewItemOnLayerVisibilityChange = useCallback(
+    (props, visibility) => onLayerVisibilityChange?.(props.item.id, visibility),
+    [onLayerVisibilityChange],
+  );
+
   const TreeViewItem = useLayerTreeViewItem<ItemEx>({
-    onRename: (props, name) => onLayerRename?.(props.item.id, name),
-    onVisibilityChange: (props, visibility) => onLayerVisibilityChange?.(props.item.id, visibility),
-    onRemove: selectedLayerId => onLayerRemove?.(selectedLayerId),
-    onImport: (file, format) => onLayerImport?.(file, format),
-    onGroupCreate: () => onLayerGroupCreate?.(),
+    onRename: layerTreeViewItemOnRename,
+    onVisibilityChange: layerTreeViewItemOnLayerVisibilityChange,
+    onRemove: onLayerRemove,
+    onImport: onLayerImport,
+    onGroupCreate: onLayerGroupCreate,
     selectedLayerId,
     rootLayerId,
   });

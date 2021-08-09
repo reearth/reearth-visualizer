@@ -6,6 +6,12 @@ const fragments = gql`
   fragment EarthLayerItem on LayerItem {
     id
     linkedDatasetId
+    scenePlugin {
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
     merged {
       parentId
       property {
@@ -22,6 +28,12 @@ const fragments = gql`
           property {
             ...MergedPropertyFragmentWithoutSchema
           }
+          scenePlugin {
+            property {
+              id
+              ...PropertyFragment
+            }
+          }
         }
       }
     }
@@ -33,6 +45,12 @@ const fragments = gql`
     isVisible
     pluginId
     extensionId
+    scenePlugin {
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
     property {
       id
       ...PropertyFragmentWithoutSchema
@@ -48,6 +66,12 @@ const fragments = gql`
         pluginId
         extensionId
         propertyId
+        scenePlugin {
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
         property {
           id
           ...PropertyFragmentWithoutSchema

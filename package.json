@@ -24,7 +24,8 @@
         "cypress:run": "cypress run",
         "gen": "run-p gen:*",
         "gen:gql": "graphql-codegen --config codegen.yml",
-        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.tsx' --extractFromFormatMessageCall"
+        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.tsx' --extractFromFormatMessageCall",
+        "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
         "node": ">=12"
@@ -96,7 +97,7 @@
         "@types/webpack-env": "^1.16.0",
         "@typescript-eslint/eslint-plugin": "^4.15.0",
         "@typescript-eslint/parser": "^4.15.0",
-        "@welldone-software/why-did-you-render": "^6.0.5",
+        "@welldone-software/why-did-you-render": "^6.2.0",
         "babel-loader": "^8.2.2",
         "babel-plugin-react-intl-auto": "^3.1.0",
         "clean-webpack-plugin": "^3.0.0",
@@ -175,6 +176,8 @@
         "lodash-es": "^4.17.20",
         "mini-svg-data-uri": "^1.2.3",
         "parse-domain": "^3.0.3",
+        "quickjs-emscripten": "^0.13.0",
+        "quickjs-emscripten-sync": "^1.1.0",
         "rc-slider": "9.7.1",
         "react": "^17.0.1",
         "react-accessible-accordion": "^3.3.4",
@@ -192,7 +195,7 @@
         "react-popper": "^2.2.4",
         "react-redux": "^7.2.2",
         "react-spinners": "^0.10.4",
-        "react-svg": "^11.2.3",
+        "react-svg": "^14.0.7",
         "react-use": "^17.1.1",
         "redux-first-history": "^4.5.0",
         "regenerator-runtime": "^0.13.7",

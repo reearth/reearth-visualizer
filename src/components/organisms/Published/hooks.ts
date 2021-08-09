@@ -1,53 +1,36 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import ReactGA from "react-ga";
+import { useState, useMemo, useEffect } from "react";
+import { mapValues } from "lodash-es";
 
-import { EarthLayer, EarthWidget } from "@reearth/components/molecules/EarthEditor/Earth";
-import { Block } from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
+import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
 import { PublishedData } from "./types";
-
-export type Layer = EarthLayer & {
-  name?: string;
-  infobox?: {
-    property?: any;
-    blocks?: Block[];
-  };
-};
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
-  const [initialLoaded, setInitialLoaded] = useState(false);
-  const [selectedLayerId, changeSelectedLayerId] = useState<string>();
-  const [infoBoxVisible, setInfoBoxVisible] = useState(true);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
 
-  const selectLayer = useCallback((id?: string) => {
-    changeSelectedLayerId(id);
-  }, []);
+  const sceneProperty = processProperty(data?.property);
 
-  useEffect(() => {
-    if (!data?.property?.googleAnalytics?.enableGA || !data?.property?.googleAnalytics?.trackingId)
-      return;
-    ReactGA.initialize(data.property.googleAnalytics.trackingId);
-    ReactGA.pageview(window.location.pathname);
-  }, [data?.property?.googleAnalytics]);
-
-  const layers = useMemo<Layer[] | undefined>(
+  const layers = useMemo<Primitive[] | undefined>(
     () =>
-      data?.layers?.map(l => ({
+      data?.layers?.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
         pluginId: l.pluginId,
         extensionId: l.extensionId,
         isVisible: true,
-        property: l.property,
+        property: processProperty(l.property),
+        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
         infobox: l.infobox
           ? {
-              property: l.infobox.property,
-              blocks: l.infobox.fields.map(f => ({
+              property: processProperty(l.infobox.property),
+              blocks: l.infobox.fields.map<Block>(f => ({
                 id: f.id,
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
-                property: f.property,
+                property: processProperty(f.property),
+                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
+                // propertyId is not required in non-editable mode
               })),
             }
           : undefined,
@@ -55,26 +38,18 @@ export default (alias?: string) => {
     [data],
   );
 
-  const widgets = useMemo<EarthWidget[] | undefined>(
+  const widgets = useMemo<Widget[] | undefined>(
     () =>
-      data?.widgets?.map(w => ({
+      data?.widgets?.map<Widget>(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: w.property,
+        property: processProperty(w.property),
         enabled: true,
+        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
       })),
     [data],
   );
-
-  const selectedLayer = useMemo(
-    () => (selectedLayerId ? layers?.find(l => l.id === selectedLayerId) : undefined),
-    [layers, selectedLayerId],
-  );
-
-  useEffect(() => {
-    setInfoBoxVisible(!!selectedLayerId);
-  }, [selectedLayerId]);
 
   const actualAlias = useMemo(
     () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
@@ -90,11 +65,9 @@ export default (alias?: string) => {
           setError(true);
           return;
         }
-
         const d = (await res.json()) as PublishedData | undefined;
         if (d?.schemaVersion !== 1) {
           // TODO: not supported version
-          setError(true);
           return;
         }
 
@@ -111,26 +84,51 @@ export default (alias?: string) => {
 
         setData(d);
       } catch (e) {
-        setError(true);
+        // TODO: display error for users
         console.error(e);
       } finally {
-        setInitialLoaded(true);
+        setReady(true);
       }
     })();
   }, [actualAlias]);
 
   return {
-    error,
-    sceneProperty: data?.property,
-    selectedLayerId,
-    selectLayer,
+    alias: actualAlias,
+    sceneProperty,
     layers,
     widgets,
-    selectedLayer,
-    infoBoxVisible,
-    initialLoaded,
+    ready,
+    error,
   };
 };
+
+function processProperty(p: any): any {
+  if (typeof p !== "object") return p;
+  return mapValues(p, g =>
+    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
+  );
+}
+
+function processPropertyGroup(g: any): any {
+  if (typeof g !== "object") return g;
+  return mapValues(g, v => {
+    // For compability
+    if (Array.isArray(v)) {
+      return v.map(vv =>
+        typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v
+          ? { ...vv, height: vv.altitude }
+          : vv,
+      );
+    }
+    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
+      return {
+        ...v,
+        height: v.altitude,
+      };
+    }
+    return v;
+  });
+}
 
 function dataUrl(alias?: string): string {
   if (alias && window.REEARTH_CONFIG?.api) {

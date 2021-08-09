@@ -15,7 +15,7 @@ export const HasCamera: Story<Props> = args => (
     value={{
       lat: 0,
       lng: 0,
-      altitude: 10 ** 8,
+      height: 10 ** 8,
       heading: 0,
       pitch: 0,
       roll: 0,
@@ -31,7 +31,7 @@ export const OnlyPose: Story<Props> = args => (
     value={{
       lat: 0,
       lng: 0,
-      altitude: 10 ** 8,
+      height: 10 ** 8,
       heading: 0,
       pitch: 0,
       roll: 0,

@@ -42,18 +42,16 @@ type GQLLayer = {
 
 export default () => {
   const intl = useIntl();
-  const [
-    { selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId },
-    setLocalState,
-  ] = useLocalState(s => ({
-    selectedType: s.selectedType,
-    rootLayerId: s.rootLayerId,
-    selectedLayerId: s.selectedLayer,
-    sceneId: s.sceneId,
-    selectedWidgetId: s.selectedWidget
-      ? `${s.selectedWidget.pluginId}/${s.selectedWidget.extensionId}`
-      : undefined,
-  }));
+  const [{ selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId }, setLocalState] =
+    useLocalState(s => ({
+      selectedType: s.selectedType,
+      rootLayerId: s.rootLayerId,
+      selectedLayerId: s.selectedLayer,
+      sceneId: s.sceneId,
+      selectedWidgetId: s.selectedWidget
+        ? `${s.selectedWidget.pluginId}/${s.selectedWidget.extensionId}`
+        : undefined,
+    }));
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },
@@ -65,12 +63,15 @@ export default () => {
     skip: !sceneId,
   });
 
-  const sceneDescription =
-    widgetData?.node?.__typename === "Scene"
-      ? widgetData.node.plugins
-          .find(p => p.plugin?.id === "reearth")
-          ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
-      : undefined;
+  const sceneDescription = useMemo(
+    () =>
+      widgetData?.node?.__typename === "Scene"
+        ? widgetData.node.plugins
+            .find(p => p.plugin?.id === "reearth")
+            ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
+        : undefined,
+    [widgetData?.node],
+  );
 
   const widgets = useMemo(() => {
     const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
@@ -80,33 +81,33 @@ export default () => {
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map(
-            (e): Widget => {
-              const pluginId = plugin.id;
-              const extensionId = e.extensionId;
-              const enabled = scene?.widgets.find(
-                w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
-              )?.enabled;
-              return {
-                id: `${plugin.id}/${e.extensionId}`,
-                enabled,
-                title: e.translatedName,
-                description: e.translatedDescription,
-                icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
-              };
-            },
-          )
+          .map((e): Widget => {
+            const pluginId = plugin.id;
+            const extensionId = e.extensionId;
+            const enabled = scene?.widgets.find(
+              w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
+            )?.enabled;
+            return {
+              id: `${plugin.id}/${e.extensionId}`,
+              enabled,
+              title: e.translatedName,
+              description: e.translatedDescription,
+              icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
+            };
+          })
           .filter((w): w is Widget => !!w);
       })
       .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
   }, [widgetData?.node]);
 
-  // Avoid using useMemo for layer data, otherwise react-dnd will behave strangely.
-  const layers =
-    (data?.layer?.__typename === "LayerGroup" ? data.layer.layers : undefined)
-      ?.map(convertLayer)
-      .filter((l): l is Layer => !!l)
-      .reverse() ?? [];
+  const layers = useMemo(
+    () =>
+      (data?.layer?.__typename === "LayerGroup" ? data.layer.layers : undefined)
+        ?.map(convertLayer)
+        .filter((l): l is Layer => !!l)
+        .reverse() ?? [],
+    [data?.layer],
+  );
 
   const [moveLayerMutation] = useMoveLayerMutation();
   const [updateLayerMutation] = useUpdateLayerMutation();

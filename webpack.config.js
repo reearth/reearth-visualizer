@@ -12,6 +12,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const dotenv = require("dotenv");
 const { readEnv } = require("read-env");
+const pkg = require("./package.json");
 
 module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
@@ -40,6 +41,9 @@ module.exports = (env, args = {}) => {
       stats: "minimal",
       proxy: {
         "/api": {
+          target: "http://localhost:8080",
+        },
+        "/plugins": {
           target: "http://localhost:8080",
         },
       },
@@ -139,6 +143,7 @@ module.exports = (env, args = {}) => {
         : [new webpack.HotModuleReplacementPlugin(), new ReactRefreshWebpackPlugin()]),
       new webpack.DefinePlugin({
         CESIUM_BASE_URL: JSON.stringify("/cesium"),
+        REEARTH_WEB_VERSION: pkg.version,
       }),
       new CopyWebpackPlugin({
         patterns: [
@@ -163,9 +168,14 @@ module.exports = (env, args = {}) => {
       }),
     ],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
       alias: {
         "@reearth": path.resolve(__dirname, "src/"),
+      },
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
+      // For quickjs-emscripten
+      fallback: {
+        fs: false,
+        path: false,
       },
     },
   };

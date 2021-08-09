@@ -1,14 +1,19 @@
+import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
+
 export type PublishedData = {
   schemaVersion: number;
   id: string;
   publishedAt: string;
-  property: any;
-  plugins: Plugin[];
-  layers: Layer[];
-  widgets: Widget[];
+  property?: SceneProperty;
+  plugins?: Record<string, Plugin>;
+  layers?: Layer[];
+  widgets?: Widget[];
 };
 
-export type Plugin = {};
+export type Plugin = {
+  id: string;
+  property: any;
+};
 
 export type Layer = {
   id: string;
