@@ -211,7 +211,7 @@ func (l *layerBase) ValidateProperties(pm property.Map) error {
 			return errors.New("layer property does not exist")
 		}
 
-		if lp.Schema() != psid {
+		if !lp.Schema().Equal(psid) {
 			return errors.New("layer property has a invalid schema")
 		}
 	} else if l.plugin != nil || l.extension != nil {

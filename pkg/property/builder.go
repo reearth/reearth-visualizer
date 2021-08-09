@@ -33,7 +33,7 @@ func (b *Builder) Build() (*Property, error) {
 		return nil, ErrInvalidPropertySchemaID
 	}
 	for _, i := range b.p.items {
-		if i.Schema() != b.p.schema {
+		if !i.Schema().Equal(b.p.schema) {
 			return nil, ErrInvalidItem
 		}
 	}

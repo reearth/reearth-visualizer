@@ -165,7 +165,7 @@ func (i *Infobox) ValidateProperties(pm property.Map) error {
 	if lp == nil {
 		return errors.New("property does not exist")
 	}
-	if lp.Schema() != builtin.PropertySchemaIDInfobox {
+	if !lp.Schema().Equal(builtin.PropertySchemaIDInfobox) {
 		return errors.New("property has a invalid schema")
 	}
 

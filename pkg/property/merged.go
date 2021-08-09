@@ -109,7 +109,7 @@ func (f *MergedField) DatasetValue(ctx context.Context, d dataset.GraphLoader) (
 
 // Merge merges two properties
 func Merge(o *Property, p *Property, linked *id.DatasetID) *Merged {
-	if o == nil && p == nil || o != nil && p != nil && o.Schema() != p.Schema() {
+	if o == nil && p == nil || o != nil && p != nil && !o.Schema().Equal(p.Schema()) {
 		return nil
 	}
 

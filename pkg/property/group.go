@@ -163,7 +163,7 @@ func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 
 // GetOrCreateField _
 func (g *Group) GetOrCreateField(ps *Schema, fid id.PropertySchemaFieldID) (*Field, bool) {
-	if g == nil || ps == nil || g.Schema() != ps.ID() {
+	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
 		return nil, false
 	}
 	psg := ps.Group(g.SchemaGroup())
@@ -249,7 +249,7 @@ func (g *Group) MigrateDataset(q DatasetMigrationParam) {
 }
 
 func (g *Group) UpdateNameFieldValue(ps *Schema, value *Value) error {
-	if g == nil || ps == nil || g.Schema() != ps.ID() {
+	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
 		return nil
 	}
 	if psg := ps.GroupByPointer(NewPointer(&g.itemBase.SchemaGroup, nil, nil)); psg != nil {
@@ -269,7 +269,7 @@ func (p *Group) ValidateSchema(ps *SchemaGroup) error {
 	if ps == nil {
 		return errors.New("invalid schema")
 	}
-	if p.Schema() != ps.Schema() {
+	if !p.Schema().Equal(ps.Schema()) {
 		return errors.New("invalid schema id")
 	}
 	if p.SchemaGroup() != ps.ID() {

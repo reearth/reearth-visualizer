@@ -339,7 +339,7 @@ func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
 
 // CreateAndAddListItem _
 func (g *GroupList) CreateAndAddListItem(ps *Schema, index *int) *Group {
-	if g == nil || ps == nil || g.Schema() != ps.ID() {
+	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
 		return nil
 	}
 	psg := ps.Group(g.SchemaGroup())
@@ -377,7 +377,7 @@ func (p *GroupList) ValidateSchema(ps *SchemaGroup) error {
 	if ps == nil {
 		return errors.New("invalid schema")
 	}
-	if p.Schema() != ps.Schema() {
+	if !p.Schema().Equal(ps.Schema()) {
 		return errors.New("invalid schema id")
 	}
 	if p.SchemaGroup() != ps.ID() {
