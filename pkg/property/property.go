@@ -269,7 +269,7 @@ func (p *Property) UnlinkAllByDataset(s id.DatasetSchemaID, ds id.DatasetID) {
 }
 
 func (p *Property) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, *GroupList, *Group, bool) {
-	if p == nil || ps == nil || ptr == nil || ps.ID() != p.Schema() {
+	if p == nil || ps == nil || ptr == nil || !ps.ID().Equal(p.Schema()) {
 		return nil, nil, nil, false
 	}
 
@@ -289,7 +289,7 @@ func (p *Property) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, *GroupLis
 }
 
 func (p *Property) GetOrCreateItem(ps *Schema, ptr *Pointer) (Item, *GroupList) {
-	if p == nil || ps == nil || ptr == nil || ps.ID() != p.Schema() {
+	if p == nil || ps == nil || ptr == nil || !ps.ID().Equal(p.Schema()) {
 		return nil, nil
 	}
 
@@ -320,7 +320,7 @@ func (p *Property) GetOrCreateItem(ps *Schema, ptr *Pointer) (Item, *GroupList) 
 }
 
 func (p *Property) GetOrCreateGroup(ps *Schema, ptr *Pointer) (*Group, *GroupList) {
-	if p == nil || ps == nil || ptr == nil || ps.ID() != p.Schema() {
+	if p == nil || ps == nil || ptr == nil || !ps.ID().Equal(p.Schema()) {
 		return nil, nil
 	}
 
@@ -339,7 +339,7 @@ func (p *Property) GetOrCreateGroup(ps *Schema, ptr *Pointer) (*Group, *GroupLis
 }
 
 func (p *Property) GetOrCreateGroupList(ps *Schema, ptr *Pointer) *GroupList {
-	if p == nil || ps == nil || ptr == nil || ps.ID() != p.Schema() {
+	if p == nil || ps == nil || ptr == nil || !ps.ID().Equal(p.Schema()) {
 		return nil
 	}
 

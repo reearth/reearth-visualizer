@@ -35,7 +35,7 @@ func (r *propertySchema) FindByID(ctx context.Context, i id.PropertySchemaID) (*
 		if ps == nil {
 			continue
 		}
-		if ps.ID() == i {
+		if ps.ID().Equal(i) {
 			return ps, nil
 		}
 	}
