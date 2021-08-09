@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
+	"github.com/reearth/reearth-backend/pkg/log"
 )
 
 var (
@@ -22,6 +23,7 @@ type ErrInternal struct {
 }
 
 func ErrInternalBy(err error) error {
+	log.Errorf("internal error: %s", err.Error())
 	return &ErrInternal{
 		err: Error{
 			Label:  errInternal,
