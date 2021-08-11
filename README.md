@@ -7,7 +7,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
-[![maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
 [![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
 [![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
@@ -15,11 +14,13 @@
 <p align="center">
   <a href="https://community.reearth.io">Website</a>
   ·
-  <a href="https://docs.reearth.io/developer-guide">Documentation</a>
+  <a href="https://docs.reearth.io">Documentation</a>
   ·
   <a href="https://github.com/reearth/reearth/issues">Issues</a>
   ·
   <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
+  ·
+  <a href="https://discord.gg/Q6kmXnywfw">Discord</a>
 </p>
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
@@ -100,30 +101,30 @@ To help you get your feet wet and get you familiar with our contribution process
 
 ## License
 
-Distributed under the Apache-2.0 License. See [LICENSE](LICENSE.md) for more information.
+Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
 
 ## Core Comitters
 
 <table><tbody><tr>
-<td align="center" valign="top"><a href="https://github.com/rot1024">
+<td><a href="https://github.com/rot1024">
 <img src="https://github.com/rot1024.png" width="75" height="75"><br />rot1024
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/HideBa">
+<td><a href="https://github.com/HideBa">
 <img src="https://github.com/HideBa.png" width="75" height="75"><br />HideBa
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/KaWaite">
+<td><a href="https://github.com/KaWaite">
 <img src="https://github.com/KaWaite.png" width="75" height="75"><br />KaWaite
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/lavalse">
+<td><a href="https://github.com/lavalse">
 <img src="https://github.com/lavalse.png" width="75" height="75"><br />lavalse
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/issmail-basel">
+<td><a href="https://github.com/issmail-basel">
 <img src="https://github.com/issmail-basel.png" width="75" height="75"><br />issmail-basel
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/mimoham24">
+<td><a href="https://github.com/mimoham24">
 <img src="https://github.com/mimoham24.png" width="75" height="75"><br />mimoham24
 </a></td>
-<td align="center" valign="top"><a href="https://github.com/yk-eukarya">
+<td><a href="https://github.com/yk-eukarya">
 <img src="https://github.com/yk-eukarya.png" width="75" height="75"><br />yk-eukarya
 </a></td>
 </tr></tbody></table>
