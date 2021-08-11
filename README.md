@@ -1,35 +1,25 @@
-
-
-<!-- PROJECT LOGO -->
-<br />
 <p align="center">
-<!-- TODO: change this link later -->
   <a href="https://github.com/reearth/reearth">
     <img src="./public/reearth-logo.svg" alt="Logo" width="300" height="300">
   </a>
+</p>
 
 [![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
-[![forks](https://img.shields.io/github/forks/reearth/reearth)](https://github.com/reearth/reearth/network/members)
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
-[![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
-[![Release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
-[![Discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
-[![GitHub contributors](https://img.shields.io/github/contributors/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/graphs/contributors/)
-[![front-end contributors](https://img.shields.io/github/contributors/reearth/reearth-web?label=front-end%20contributors)](https://GitHub.com/reearth/reearth-web/graphs/contributors/)
-[![back-end contributors](https://img.shields.io/github/contributors/reearth/reearth-backend?label=back-end%20contributors)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/)
-[![front-end test](https://img.shields.io/github/workflow/status/reearth/reearth-web/main?label=frontend-test)](https://github.com/reearth/reearth-web/actions/workflows/main.yml)
-[![backend-end test](https://img.shields.io/github/workflow/status/reearth/reearth-backend/main?label=backend-test)](https://github.com/reearth/reearth-backend/actions/workflows/main.yml)
+[![maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://github.com/reearth/reearth/graphs/commit-activity)
+[![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
+[![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
+[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
 
-  <p align="center">
-    <a href="https://community.reearth.io">Website</a>
-    ·
-    <a href="https://docs.reearth.io/developer-guide">Documentation</a>
-    ·
-    <a href="https://github.com/reearth/reearth/issues">Issues</a>
-    ·
-    <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
-  </p>
+<p align="center">
+  <a href="https://community.reearth.io">Website</a>
+  ·
+  <a href="https://docs.reearth.io/developer-guide">Documentation</a>
+  ·
+  <a href="https://github.com/reearth/reearth/issues">Issues</a>
+  ·
+  <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
 </p>
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
@@ -45,6 +35,13 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 - 💪 Supports standard GIS data formats (CSV, KML, CZML, GeoJSON and shapefile)
 - 📢 Easily make a project public
 - ✨ Freely style the map
+
+## Repositories
+
+| Name | Status | Coverage | Contributors | 
+| --------- | --------- | --------- | --------- |
+| [reearth-web](https://github.com/reearth/reearth-web) | [![main](https://github.com/reearth/reearth-web/actions/workflows/main.yml/badge.svg)](https://github.com/reearth/reearth-web/actions/workflows/main.yml) | [![codecov](https://codecov.io/gh/reearth/reearth-web/branch/main/graph/badge.svg?token=ZFLXJY1WLW)](https://codecov.io/gh/reearth/reearth-web) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth-web)](https://GitHub.com/reearth/reearth-web/graphs/contributors/) |
+| [reearth-backend](https://github.com/reearth/reearth-web) | [![main](https://github.com/reearth/reearth-backend/actions/workflows/main.yml/badge.svg)](https://github.com/reearth/reearth-backend/actions/workflows/main.yml) | [![codecov](https://codecov.io/gh/reearth/reearth-backend/branch/main/graph/badge.svg?token=4UV79645UP)](https://codecov.io/gh/reearth/reearth-backend) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth-backend)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/) |
 
 ## Built With
 
@@ -84,7 +81,8 @@ If your have any requests for features, they are more than welcome! Just create 
 
 ## Community
 
-For additional help, check [discussions](https://github.com/reearth/reearth/discussions).
+- [Discussions](https://github.com/reearth/reearth/discussions)
+- [Discord](https://discord.gg/Q6kmXnywfw): Please feel free to come in!
 
 ## Contributing
 
@@ -102,9 +100,35 @@ To help you get your feet wet and get you familiar with our contribution process
 
 ## License
 
-Distributed under the Apache-2.0 License. See `LICENSE` for more information.
+Distributed under the Apache-2.0 License. See [LICENSE](LICENSE.md) for more information.
+
+## Core Comitters
+
+<table><tbody><tr>
+<td align="center" valign="top"><a href="https://github.com/rot1024">
+<img src="https://github.com/rot1024.png" width="75" height="75"><br />rot1024
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/HideBa">
+<img src="https://github.com/HideBa.png" width="75" height="75"><br />HideBa
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/KaWaite">
+<img src="https://github.com/KaWaite.png" width="75" height="75"><br />KaWaite
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/lavalse">
+<img src="https://github.com/lavalse.png" width="75" height="75"><br />lavalse
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/issmail-basel">
+<img src="https://github.com/issmail-basel.png" width="75" height="75"><br />issmail-basel
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/mimoham24">
+<img src="https://github.com/mimoham24.png" width="75" height="75"><br />mimoham24
+</a></td>
+<td align="center" valign="top"><a href="https://github.com/yk-eukarya">
+<img src="https://github.com/yk-eukarya.png" width="75" height="75"><br />yk-eukarya
+</a></td>
+</tr></tbody></table>
 
 ## Contact
 
-- Re:Earth core team: community@reearth.io
+- Re:Earth core comitters: [community@reearth.io](mailto:community@reearth.io)
 - Project link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
