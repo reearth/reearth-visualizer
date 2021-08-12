@@ -1,5 +1,6 @@
-import React, { ComponentProps, memo } from "react";
+import React, { ComponentProps, CSSProperties, memo, useMemo } from "react";
 import { ReactSVG } from "react-svg";
+import svgToMiniDataURI from "mini-svg-data-uri";
 
 import { styled } from "@reearth/theme";
 
@@ -13,26 +14,31 @@ export type Props = {
   size?: string | number;
   alt?: string;
   color?: string;
+  style?: CSSProperties;
   onClick?: () => void;
 };
 
-const Icon: React.FC<Props> = ({ className, icon, color, size, alt, onClick }) => {
+const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, onClick }) => {
+  const src = useMemo(
+    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
+    [icon],
+  );
   if (!icon) return null;
 
   const sizeStr = typeof size === "number" ? `${size}px` : size;
-  const builtin = Icons[icon as Icons];
-  if (!builtin) {
-    return <StyledImg src={icon} alt={alt} size={sizeStr} onClick={onClick} />;
+  if (!src) {
+    return <StyledImg src={icon} alt={alt} style={style} size={sizeStr} onClick={onClick} />;
   }
 
   return (
     <StyledSvg
       className={className}
-      src={builtin}
+      src={src}
       color={color}
+      style={style}
+      alt={alt}
       size={sizeStr}
       onClick={onClick}
-      alt={alt}
     />
   );
 };
@@ -43,7 +49,7 @@ const StyledImg = styled.img<{ size?: string }>`
 `;
 
 const SVG: React.FC<
-  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt">
+  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style">
 > = props => {
   return <ReactSVG {...props} wrapper="span" />;
 };
@@ -51,6 +57,8 @@ const SVG: React.FC<
 const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
   font-size: 0;
   color: ${({ color }) => color};
+  display: inline-block;
+
   svg {
     width: ${({ size }) => size};
     height: ${({ size }) => size};

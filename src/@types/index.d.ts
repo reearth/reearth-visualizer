@@ -19,8 +19,3 @@ declare module "*.jpg" {
 }
 
 declare module "*.md";
-
-declare module "mini-svg-data-uri" {
-  const svgToMiniDataURI: (svg: string) => string;
-  export default svgToMiniDataURI;
-}
