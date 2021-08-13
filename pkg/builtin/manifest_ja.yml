@@ -387,11 +387,12 @@ extensions:
           roll:
             title: ロール
           scale:
-            title: 大きさ
+            title: スケール
+            description: 3Dモデルを設定値分等倍して表示します。
           maximumScale:
-            title: 最大の大きさ
+            title: 最大スケール
           minimumPixelSize:
-            title: 最小の大きさ
+            title: 最小表示サイズ
           animation:
             title: アニメーション
             description: アニメーションを有効にします。必ずシーンのアニメーションの設定も有効にしてください。

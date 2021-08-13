@@ -891,6 +891,7 @@ extensions:
             - id: scale
               type: number
               title: Scale
+              description: Displays the 3D model equally multiplied by the set value.
               prefix: x
               defaultValue: 1
             - id: maximumScale
