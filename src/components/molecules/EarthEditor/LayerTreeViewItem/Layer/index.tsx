@@ -173,7 +173,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {visibilityShown && (
+          {visibilityShown && typeof visible === "boolean" && (
             <Visibility
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>
