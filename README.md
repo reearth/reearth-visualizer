@@ -9,7 +9,7 @@
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
 [![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
-[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
+[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/XJhYkQQDAu)
 
 <p align="center">
   <a href="https://community.reearth.io">Website</a>
@@ -20,7 +20,7 @@
   ·
   <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
   ·
-  <a href="https://discord.gg/Q6kmXnywfw">Discord</a>
+  <a href="https://discord.gg/XJhYkQQDAu">Discord</a>
 </p>
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
