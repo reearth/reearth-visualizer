@@ -21,7 +21,7 @@ declare global {
 export const defaultConfig: Config = {
   api: "/api",
   plugins: "/plugins",
-  published: window.origin + "/p/{}",
+  published: window.origin + "/p/{}/",
 };
 
 export default async function loadConfig() {

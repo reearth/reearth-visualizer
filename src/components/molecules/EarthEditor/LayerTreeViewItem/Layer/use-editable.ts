@@ -58,7 +58,7 @@ export default function ({
   }, [resetEditing]);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  useClickAway(inputRef, cancelEditing);
+  useClickAway(inputRef, finishEditing);
 
   return {
     editing,
