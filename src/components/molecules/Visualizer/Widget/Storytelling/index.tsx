@@ -32,13 +32,14 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const { camera, duration, autoStart, range } =
     (widget?.property as Property | undefined)?.default ?? {};
 
-  const { stories, menuOpen, selected, handleNext, handlePrev, selectAt, openMenu } = useHooks({
-    camera,
-    autoStart,
-    range,
-    duration,
-    stories: storiesData,
-  });
+  const { stories, menuOpen, selected, handleNext, handlePrev, selectAt, openMenu, toggleMenu } =
+    useHooks({
+      camera,
+      autoStart,
+      range,
+      duration,
+      stories: storiesData,
+    });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   useClickAway(wrapperRef, () => {
@@ -81,7 +82,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
         <Current align="center" justify="space-between">
-          <MenuIcon icon="storytellingMenu" onClick={() => openMenu(o => !o)} menuOpen={menuOpen} />
+          <MenuIcon icon="storytellingMenu" onClick={toggleMenu} menuOpen={menuOpen} />
           <Title size="m" weight="bold">
             {selected?.story.title}
           </Title>

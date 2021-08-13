@@ -191,12 +191,12 @@ export const convertLayers = (data: GetLayersQuery | undefined, selectedLayerId?
 
 const flattenLayers = (l?: Layer[]): Primitive[] => {
   return (
-    l?.reduce<Primitive[]>((a, b) => {
+    l?.reduce<Primitive[]>((a, { layers, ...b }) => {
       if (!b || !b.isVisible) {
         return a;
       }
-      if (b.layers?.length) {
-        return [...a, ...flattenLayers(b.layers)];
+      if (layers?.length) {
+        return [...a, { ...b, hiddden: true }, ...flattenLayers(layers)];
       }
       if (!b.pluginId || !b.extensionId) return a;
       return [...a, b];

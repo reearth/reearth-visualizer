@@ -40,6 +40,8 @@ export default function ({
   stories?: Story[];
 }) {
   const [menuOpen, openMenu] = useState(false);
+  const toggleMenu = useCallback(() => openMenu(o => !o), []);
+
   const [selected, select] =
     useState<{
       index: number;
@@ -139,10 +141,12 @@ export default function ({
       return;
     }
 
+    const p = selected.primitive?.property?.default;
+
     const position = {
-      lat: selected.primitive?.property?.default?.location?.lat as number | undefined,
-      lng: selected.primitive?.property?.default?.location?.lng as number | undefined,
-      height: (selected.primitive?.property?.default?.height as number | undefined) ?? 0,
+      lat: (p?.location?.lat ?? p?.position?.lat) as number | undefined,
+      lng: (p?.location?.lng ?? p?.position?.lng) as number | undefined,
+      height: (p?.height as number | undefined) ?? 0,
     };
 
     if (typeof position.lat !== "number" && typeof position.lng !== "number") return;
@@ -174,6 +178,7 @@ export default function ({
     handlePrev,
     selectAt,
     openMenu,
+    toggleMenu,
   };
 }
 

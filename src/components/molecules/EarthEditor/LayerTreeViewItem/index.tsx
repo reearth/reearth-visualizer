@@ -1,9 +1,8 @@
 import React, { forwardRef, PropsWithChildren, Ref, useCallback, useMemo } from "react";
 
-import type { ItemProps, DropType } from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
-import Layer, { Layer as LayerType } from "./Layer";
-import { Format } from "./LayerActions/hooks";
+import type { ItemProps, DropType, Item } from "@reearth/components/atoms/TreeView";
+import Layer, { Layer as LayerType, Format } from "./Layer";
 
 export type Layer<T = unknown> = LayerType<T>;
 
@@ -11,6 +10,7 @@ export type Props<T = unknown> = ItemProps<Layer<T>> & {
   className?: string;
   rootLayerId?: string;
   selectedLayerId?: string;
+  visibilityShown?: boolean;
   onVisibilityChange?: (isVisible: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
@@ -33,6 +33,7 @@ function LayerTreeViewItem<T = unknown>(
     canDrop,
     selectable,
     siblings,
+    visibilityShown,
     onSelect,
     onExpand,
     onVisibilityChange,
@@ -73,6 +74,7 @@ function LayerTreeViewItem<T = unknown>(
             : undefined
         }
         allSiblingsDoesNotHaveChildren={allSiblingsDoesNotHaveChildren}
+        visibilityShown={visibilityShown}
         onClick={handleClick}
         onExpand={onExpand}
         onVisibilityChange={onVisibilityChange}
@@ -115,6 +117,7 @@ export function useLayerTreeViewItem<T>({
   rootLayerId,
   selectedLayerId,
   className,
+  visibilityShown,
   onVisibilityChange,
   onRename,
   onRemove,
@@ -124,38 +127,51 @@ export function useLayerTreeViewItem<T>({
   rootLayerId?: string;
   selectedLayerId?: string;
   className?: string;
-  onVisibilityChange?: (props: Props<T>, isVisible: boolean) => void;
-  onRename?: (props: Props<T>, name: string) => void;
+  visibilityShown?: boolean;
+  onVisibilityChange?: (element: Item<Layer<T>>, isVisible: boolean) => void;
+  onRename?: (element: Item<Layer<T>>, name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
 } = {}) {
   return useMemo(() => {
     function InnerLayerTreeViewItem(props: Props<T>, ref: Ref<HTMLDivElement>) {
+      const item = props?.item;
+      const events = useMemo(
+        () => ({
+          onVisibilityChange: item
+            ? (isVisible: boolean) => onVisibilityChange?.(item, isVisible)
+            : undefined,
+          onRename: item ? (name: string) => onRename?.(item, name) : undefined,
+        }),
+        [item],
+      );
+
       return LayerTreeViewItem<T>(
         {
           ...props,
           rootLayerId,
           selectedLayerId,
           className,
-          onVisibilityChange: (isVisible: boolean) => onVisibilityChange?.(props, isVisible),
-          onRename: (name: string) => onRename?.(props, name),
-          onRemove: (selectedLayerId: string) => onRemove?.(selectedLayerId),
-          onImport: (file: File, format: Format) => onImport?.(file, format),
-          onGroupCreate: () => onGroupCreate?.(),
+          visibilityShown,
+          onRemove,
+          onGroupCreate,
+          onImport,
+          ...events,
         },
         ref,
       );
     }
     return forwardRef(InnerLayerTreeViewItem);
   }, [
+    rootLayerId,
+    selectedLayerId,
     className,
-    onVisibilityChange,
-    onRename,
+    visibilityShown,
     onRemove,
     onGroupCreate,
     onImport,
-    rootLayerId,
-    selectedLayerId,
+    onVisibilityChange,
+    onRename,
   ]);
 }

@@ -21,6 +21,7 @@ export type Infobox = {
 export type Primitive = PrimitiveType & {
   infoboxEditable?: boolean;
   pluginProperty?: any;
+  hidden?: boolean;
 };
 
 export type Widget = WidgetType & {
@@ -110,19 +111,21 @@ export default function Visualizer({
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}>
-          {primitives?.map(primitive => (
-            <P
-              key={primitive.id}
-              primitive={primitive}
-              sceneProperty={sceneProperty}
-              pluginProperty={primitive.pluginProperty}
-              isHidden={hiddenPrimitives.includes(primitive.id)}
-              isEditable={props.isEditable}
-              isBuilt={props.isBuilt}
-              isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
-              pluginBaseUrl={pluginBaseUrl}
-            />
-          ))}
+          {primitives?.map(primitive =>
+            primitive.hidden ? null : (
+              <P
+                key={primitive.id}
+                primitive={primitive}
+                sceneProperty={sceneProperty}
+                pluginProperty={primitive.pluginProperty}
+                isHidden={hiddenPrimitives.includes(primitive.id)}
+                isEditable={props.isEditable}
+                isBuilt={props.isBuilt}
+                isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
+                pluginBaseUrl={pluginBaseUrl}
+              />
+            ),
+          )}
           {widgets?.map(widget => (
             <W
               key={widget.id}

@@ -5,10 +5,9 @@ import { mapValues } from "lodash-es";
 import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps2 } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
-import { partitionObject } from "@reearth/util/util";
 import { zeroValues } from "@reearth/util/value";
 
-import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
+import GroupWrapper from "../PropertyGroup";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 import PropertyField, {
   Props as FieldProps,
@@ -128,15 +127,13 @@ const PropertyItem: React.FC<Props> = ({
   onItemRemove,
   onItemsUpdate,
   onRemovePane,
+  onChange,
+  onRemove,
+  onLink,
+  onUploadFile,
+  onRemoveFile,
   ...props
 }) => {
-  const [eventProps, otherProps] = partitionObject(props, [
-    "onChange",
-    "onRemove",
-    "onLink",
-    "onUploadFile",
-    "onRemoveFile",
-  ]);
   const intl = useIntl();
 
   const theme = useTheme();
@@ -157,6 +154,7 @@ const PropertyItem: React.FC<Props> = ({
   );
 
   const selectedItem = isList ? groups[selected] : groups[0];
+  const selectedItemId = isList ? selectedItem?.id : undefined;
   const propertyListItems = useMemo(
     () =>
       groups
@@ -190,10 +188,10 @@ const PropertyItem: React.FC<Props> = ({
       selectedItem
         ? item?.schemaFields.map(f => {
             const events = mapValues(
-              eventProps,
+              { onChange, onRemove, onLink, onUploadFile, onRemoveFile },
               f =>
                 (...args: any[]) =>
-                  f?.(item.schemaGroup, isList ? selectedItem.id : undefined, ...args),
+                  f?.(item.schemaGroup, selectedItemId, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
@@ -211,7 +209,17 @@ const PropertyItem: React.FC<Props> = ({
             };
           })
         : [],
-    [eventProps, item, selectedItem, isList],
+    [
+      item?.schemaFields,
+      item?.schemaGroup,
+      onChange,
+      onLink,
+      onRemove,
+      onRemoveFile,
+      onUploadFile,
+      selectedItem,
+      selectedItemId,
+    ],
   );
 
   const handleItemMove = useCallback(
@@ -232,20 +240,22 @@ const PropertyItem: React.FC<Props> = ({
     },
     [item?.schemaGroup, onItemRemove, propertyListItems],
   );
-  const { onItemsUpdate: handleItemUpdate } = useBind({ onItemsUpdate }, item?.schemaGroup);
+  const events = useMemo(() => ({ onItemsUpdate }), [onItemsUpdate]);
+  const { onItemsUpdate: handleItemUpdate } = useBind(events, item?.schemaGroup);
 
   const handleItemAdd = useCallback(() => {
-    if (item) [onItemAdd?.(item.schemaGroup)];
+    if (item) onItemAdd?.(item.schemaGroup);
   }, [onItemAdd, item]);
 
+  const itemTitle = intl.formatMessage({ defaultMessage: "Basic" });
   const handleDelete = useCallback(() => {
     if (!onRemovePane || !item?.title) return;
-    if (item?.title === intl.formatMessage({ defaultMessage: "Basic" })) {
+    if (item?.title === itemTitle) {
       setModal(true);
     } else {
       onRemovePane();
     }
-  }, [item, onRemovePane, intl]);
+  }, [item, onRemovePane, itemTitle]);
 
   return (
     <GroupWrapper
@@ -282,7 +292,7 @@ const PropertyItem: React.FC<Props> = ({
               hidden={f.hidden}
               isTemplate={isTemplate}
               {...f.events}
-              {...otherProps}
+              {...props}
             />
           );
         })}

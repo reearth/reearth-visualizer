@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { styled } from "@reearth/theme";
 import PropertyTitle, {
@@ -129,15 +129,16 @@ const PropertyField: React.FC<Props> = ({
   layers,
   assets,
 }) => {
-  const events = useBind(
-    {
+  const rawEvents = useMemo(
+    () => ({
       onClear,
       onUploadFile,
       onRemoveFile,
       onLink,
-    },
-    schema?.id,
+    }),
+    [onClear, onUploadFile, onRemoveFile, onLink],
   );
+  const events = useBind(rawEvents, schema?.id);
 
   const commonProps: FieldProps<any> = {
     linked:

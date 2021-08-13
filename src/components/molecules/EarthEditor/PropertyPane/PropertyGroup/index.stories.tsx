@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import PropertyGroup from ".";
 
 export default {
-  title: "atoms/PropertyGroup",
+  title: "molecules/EarthEditor/PropertyPane/PropertyGroup",
   component: PropertyGroup,
 } as Meta;
 

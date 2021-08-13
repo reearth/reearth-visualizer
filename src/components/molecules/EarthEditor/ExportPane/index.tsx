@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
-// TODO: 後で汎用化して PropertyPane をやめる
-import Wrapper from "@reearth/components/atoms/PropertyPane";
 import Button from "@reearth/components/atoms/Button";
 import SelectBox, { Props as SelectBoxProps } from "@reearth/components/atoms/SelectBox";
 import Text from "@reearth/components/atoms/Text";
@@ -46,6 +44,11 @@ const ExportPane: React.FC<Props> = ({ className, show = true, onExport }) => {
     </Wrapper>
   ) : null;
 };
+
+const Wrapper = styled.div`
+  background: ${props => props.theme.properties};
+  margin: 14px 0;
+`;
 
 const SelectWrapper = styled.div`
   display: flex;

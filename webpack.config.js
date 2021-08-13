@@ -51,6 +51,7 @@ module.exports = (env, args = {}) => {
         app.get("/reearth_config.json", (_req, res) => {
           res.json({
             api: "http://localhost:8080/api",
+            published: "/published.html?alias={}",
             ...Object.fromEntries(Object.entries(config).filter(([, v]) => Boolean(v))),
           });
         });

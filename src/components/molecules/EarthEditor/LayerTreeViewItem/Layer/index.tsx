@@ -1,14 +1,16 @@
-import React, { forwardRef, useState, useEffect, useRef, useCallback } from "react";
-import { useClickAway } from "react-use";
+import React, { forwardRef } from "react";
 import { styled, useTheme } from "@reearth/theme";
-import useDoubleClick from "@reearth/util/use-double-click";
 import Icon from "@reearth/components/atoms/Icon";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Text from "@reearth/components/atoms/Text";
 import fonts from "@reearth/theme/fonts";
-import LayerActions from "./LayerActions";
+import useDoubleClick from "@reearth/util/use-double-click";
 
-export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
+import LayerActions, { Format } from "../LayerActions";
+import useHooks from "./hooks";
+import useEditable from "./use-editable";
+
+export type { Format } from "../LayerActions";
 
 export type DropType = "top" | "bottom" | "bottomOfChildren";
 
@@ -40,6 +42,7 @@ export type Props = {
   childSelected?: boolean;
   dropType?: DropType;
   allSiblingsDoesNotHaveChildren?: boolean;
+  visibilityShown?: boolean;
   onClick: () => void;
   onExpand?: () => void;
   onVisibilityChange?: (isVisible: boolean) => void;
@@ -75,6 +78,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     childSelected,
     dropType,
     allSiblingsDoesNotHaveChildren,
+    visibilityShown,
     onVisibilityChange,
     onClick,
     onExpand,
@@ -85,90 +89,20 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
   },
   ref,
 ) => {
-  const [editing, setEditing] = useState(false);
-  const [editingName, setEditingName] = useState(title || "");
-  const [isHover, toggleHover] = useState(false);
-  const editingNameRef = useRef(editingName);
-  const [showHelp, setShowHelp] = useState(false);
-  const mouseEnterSec = 1100;
+  const { isHover, showHelp, handleExpand, handleVisibilityChange, toggleHover } = useHooks({
+    group,
+    visibilityChangeable,
+    visible,
+    onExpand,
+    onVisibilityChange,
+  });
 
-  const handleVisibilityChange = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (!visibilityChangeable) return;
-      event.stopPropagation();
-      onVisibilityChange?.(!visible);
-    },
-    [visible, onVisibilityChange, visibilityChangeable],
-  );
-
-  const startEditing = useCallback(() => {
-    if (!renamable) return;
-    setEditing(true);
-  }, [renamable]);
-  const finishEditing = useCallback(() => {
-    setEditing(false);
-  }, []);
-  const resetEditing = useCallback(() => {
-    editingNameRef.current = title || "";
-    setEditingName(title || "");
-  }, [title]);
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        finishEditing();
-      } else if (e.key === "Escape") {
-        resetEditing();
-        finishEditing();
-      }
-    },
-    [resetEditing, finishEditing],
-  );
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    editingNameRef.current = e.currentTarget.value;
-    setEditingName(e.currentTarget.value);
-  }, []);
-
-  useEffect(() => {
-    if (isHover) {
-      const timer = setTimeout(() => {
-        setShowHelp(true);
-      }, mouseEnterSec);
-      return () => clearTimeout(timer);
-    } else {
-      setShowHelp(false);
-      return;
-    }
-  }, [isHover]);
-
-  useEffect(() => {
-    resetEditing();
-  }, [resetEditing]);
-
-  useEffect(
-    () =>
-      editing
-        ? () => {
-            if (title !== editingNameRef.current) {
-              onRename?.(editingNameRef.current);
-            }
-            resetEditing();
-          }
-        : undefined,
-    [editing, title, onRename, resetEditing],
-  );
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  useClickAway(inputRef, finishEditing);
-
+  const { editing, editingName, startEditing, inputProps } = useEditable({
+    name: title,
+    renamable,
+    onRename,
+  });
   const [handleClick, handleDoubleClick] = useDoubleClick(onClick, startEditing);
-  const handleExpand = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (!group) return;
-      e.stopPropagation();
-      onExpand?.();
-    },
-    [onExpand, group],
-  );
 
   const theme = useTheme();
 
@@ -209,15 +143,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
         />
       </LayerIconWrapper>
       {editing ? (
-        <Input
-          ref={inputRef}
-          type="text"
-          value={editingName}
-          onClick={stopPropagation}
-          onBlur={finishEditing}
-          onKeyDown={handleKeyDown}
-          onChange={handleChange}
-        />
+        <Input type="text" {...inputProps} onClick={stopPropagation} />
       ) : (
         <>
           <LayerName
@@ -231,7 +157,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                 ? theme.layers.disableTextColor
                 : theme.layers.textColor
             }>
-            {title}
+            {editingName}
           </LayerName>
           {group && typeof childrenCount === "number" && showChildrenCount && (
             <LayerCount
@@ -247,7 +173,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {typeof visible === "boolean" && (
+          {visibilityShown && (
             <Visibility
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>
