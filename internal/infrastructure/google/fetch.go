@@ -4,11 +4,27 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
+func sheetURL(fileId string, sheetName string) string {
+	gurl := url.URL{
+		Scheme: "https",
+		Host:   "docs.google.com",
+		Path:   fmt.Sprintf("spreadsheets/d/%s/gviz/tq", fileId),
+	}
+
+	queryValues := gurl.Query()
+	queryValues.Set("tqx", "out:csv")
+	queryValues.Set("sheet", sheetName)
+	gurl.RawQuery = queryValues.Encode()
+
+	return gurl.String()
+}
+
 func fetchCSV(token string, fileId string, sheetName string) (*io.ReadCloser, error) {
-	url := fmt.Sprintf("https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx=out:csv&sheet=%s", fileId, sheetName)
-	req, err := http.NewRequest("GET", url, nil)
+	u := sheetURL(fileId, sheetName)
+	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
