@@ -100,6 +100,54 @@ extensions:
               title: Maximum zoom level
               min: 0
               max: 30
+        - id: theme
+          title: Publish Theme
+          description: Set your theme.
+          fields:
+            - id: themeType
+              type: string
+              title: Theme
+              defaultValue: dark
+              description: Select the theme.
+              choices:
+                - key: dark
+                  label: Re:Earth Dark
+                - key: light
+                  label: Re:Earth Light
+                - key: forest
+                  label: Forest
+                - key: custom
+                  label: Custom theme
+            - id: themeTextColor
+              type: string
+              ui: color
+              title: Text color
+              description: Select a color.
+              defaultValue: '#434343'
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
+            - id: themeSelectColor
+              type: string
+              ui: color
+              title: Select color
+              description: Select a color.
+              defaultValue: '#C52C63'
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
+            - id: themeBackgroundColor
+              type: string
+              ui: color
+              title: Background color
+              description: Select a color.
+              defaultValue: '#DFE5F0'
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
         - id: atmosphere
           title: Atmospheric Conditions
           description: Set the look and feel of the Earth.
