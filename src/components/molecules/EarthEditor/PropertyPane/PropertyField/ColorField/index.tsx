@@ -43,15 +43,6 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
     }
   }, [value]);
 
-  useEffect(() => {
-    if (colorState == null) return;
-    const color = getHexString(rgba);
-    if (!color) return;
-    if (color != colorState) {
-      setColor(color);
-    }
-  }, [colorState, rgba]);
-
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
     placement: "bottom-start",
     modifiers: [
