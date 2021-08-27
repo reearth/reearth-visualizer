@@ -37,6 +37,8 @@ jobs:
           context: .
           push: true
           tags: ${{ env.IMAGE }}
+          cache-from: type=registry,ref=reearth/reearth:nightly
+          cache-to: type=inline
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   slack-notification:
