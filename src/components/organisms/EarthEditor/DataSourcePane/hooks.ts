@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
+import { useApolloClient } from "@apollo/client";
 
-import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
   useGetAllDataSetsQuery,
   useAddLayerGroupFromDatasetSchemaMutation,
@@ -9,18 +9,17 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
-import { useApolloClient } from "@apollo/client";
+import { useSceneId, useNotification } from "@reearth/state";
 
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
-  const [{ sceneId }, setLocalState] = useLocalState(s => ({
-    sceneId: s.sceneId,
-  }));
+  const [sceneId] = useSceneId();
+  const [, setNotification] = useNotification();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
   const { data, loading } = useGetAllDataSetsQuery({
@@ -131,14 +130,12 @@ export default () => {
   const onNotify = useCallback(
     (type?: NotificationType, text?: string) => {
       if (!type || !text) return;
-      setLocalState({
-        notification: {
-          type: type,
-          text: text,
-        },
+      setNotification({
+        type: type,
+        text: text,
       });
     },
-    [setLocalState],
+    [setNotification],
   );
 
   return {

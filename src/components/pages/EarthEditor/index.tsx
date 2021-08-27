@@ -1,7 +1,6 @@
 import React from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 
-import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
+import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
 import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEditorPage";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
 import Header from "@reearth/components/organisms/EarthEditor/Header";

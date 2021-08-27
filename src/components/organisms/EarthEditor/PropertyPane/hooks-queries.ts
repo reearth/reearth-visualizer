@@ -169,9 +169,10 @@ export default ({
       group: layerPropertyData?.layer?.__typename === "LayerGroup",
     };
   }, [items, mode, propertyId, scene?.widgets, selectedWidgetId, layerPropertyData?.layer]);
-  const datasetSchemas = useMemo(() => convertLinkableDatasets(linkableDatasets), [
-    linkableDatasets,
-  ]);
+  const datasetSchemas = useMemo(
+    () => convertLinkableDatasets(linkableDatasets),
+    [linkableDatasets],
+  );
 
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
 

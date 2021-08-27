@@ -1,7 +1,6 @@
 import React from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 
-// Components
+import { withAuthenticationRequired } from "@reearth/auth";
 import OrganismsProjectList from "@reearth/components/organisms/Settings/ProjectList";
 
 export interface Props {

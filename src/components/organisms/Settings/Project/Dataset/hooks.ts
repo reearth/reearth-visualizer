@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useLocalState } from "@reearth/state";
 import {
   DatasetSchemasQuery,
   useSceneQuery,
@@ -9,15 +8,15 @@ import {
 } from "@reearth/gql";
 import { useApolloClient } from "@apollo/client";
 
+import { useTeam, useProject } from "@reearth/state";
+
 type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
 export default (projectId: string) => {
-  const [{ currentTeam, currentProject }] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [currentTeam] = useTeam();
+  const [currentProject] = useProject();
 
   const { data: sceneData } = useSceneQuery({
     variables: { projectId: projectId ?? "" },

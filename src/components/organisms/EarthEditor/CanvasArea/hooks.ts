@@ -9,28 +9,27 @@ import {
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import {
+  useSceneId,
+  useIsCapturing,
+  useCamera,
+  useSelected,
+  useSelectedBlock,
+} from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
-import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
+import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
 
 export default (isBuilt?: boolean) => {
-  const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
-    useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
-      sceneId,
-      selectedLayer,
-      selectedBlock,
-      isCapturing,
-      camera,
-    }));
+  const [sceneId] = useSceneId();
+  const [isCapturing, onIsCapturingChange] = useIsCapturing();
+  const [camera, onCameraChange] = useCamera();
+  const [selected, select] = useSelected();
+  const [selectedBlock, selectBlock] = useSelectedBlock();
 
   const selectLayer = useCallback(
-    (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
-    [setLocalState],
-  );
-  const selectBlock = useCallback(
-    (id?: string) => setLocalState({ selectedBlock: id }),
-    [setLocalState],
+    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
+    [select],
   );
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
@@ -39,29 +38,29 @@ export default (isBuilt?: boolean) => {
 
   const onBlockMove = useCallback(
     async (id: string, _fromIndex: number, toIndex: number) => {
-      if (!selectedLayer) return;
+      if (selected?.type !== "layer") return;
       await moveInfoboxField({
         variables: {
-          layerId: selectedLayer,
+          layerId: selected.layerId,
           infoboxFieldId: id,
           index: toIndex,
         },
       });
     },
-    [moveInfoboxField, selectedLayer],
+    [moveInfoboxField, selected],
   );
 
   const onBlockRemove = useCallback(
     async (id: string) => {
-      if (!selectedLayer) return;
+      if (selected?.type !== "layer") return;
       await removeInfoboxField({
         variables: {
-          layerId: selectedLayer,
+          layerId: selected.layerId,
           infoboxFieldId: id,
         },
       });
     },
-    [removeInfoboxField, selectedLayer],
+    [removeInfoboxField, selected],
   );
 
   const onBlockChange = useCallback(
@@ -102,19 +101,12 @@ export default (isBuilt?: boolean) => {
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
   // convert data
-  const layers = useMemo(() => convertLayers(layerData, selectedLayer), [layerData, selectedLayer]);
+  const layers = useMemo(
+    () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
+    [layerData, selected],
+  );
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
-
-  const onIsCapturingChange = useCallback(
-    (isCapturing: boolean) => setLocalState({ isCapturing }),
-    [setLocalState],
-  );
-
-  const onCameraChange = useCallback(
-    (value: Camera) => setLocalState({ camera: { ...camera, ...value } }),
-    [setLocalState, camera],
-  );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
@@ -130,10 +122,10 @@ export default (isBuilt?: boolean) => {
   const blocks = useMemo(() => convertToBlocks(blockData), [blockData]);
   const onBlockInsert = (bi: number, i: number, p?: "top" | "bottom") => {
     const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
+    if (b?.pluginId && b?.extensionId && selected?.type === "layer") {
       addInfoboxField({
         variables: {
-          layerId: selectedLayer,
+          layerId: selected.layerId,
           pluginId: b.pluginId,
           extensionId: b.extensionId,
           index: p ? i + (p === "bottom" ? 1 : 0) : undefined,
@@ -151,7 +143,7 @@ export default (isBuilt?: boolean) => {
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId: selectedLayer,
+    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
     selectedBlockId: selectedBlock,
     sceneProperty,
     widgets,

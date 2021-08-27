@@ -1,9 +1,7 @@
-import { useLocalState } from "@reearth/state";
+import { useIsCapturing } from "@reearth/state";
 
 export default () => {
-  const [{ isCapturing }] = useLocalState(s => ({
-    isCapturing: s.isCapturing,
-  }));
+  const [isCapturing] = useIsCapturing();
 
   return {
     isCapturing,

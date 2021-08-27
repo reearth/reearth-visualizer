@@ -10,7 +10,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useError, useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
@@ -23,14 +23,11 @@ export default () => {
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const [{ error, sceneId, currentTeam, currentProject, notification }, setLocalState] =
-    useLocalState(s => ({
-      error: s.error,
-      sceneId: s.sceneId,
-      currentTeam: s.currentTeam,
-      currentProject: s.currentProject,
-      notification: s.notification,
-    }));
+  const [error, setError] = useError();
+  const [sceneId] = useSceneId();
+  const [currentTeam, setTeam] = useTeam();
+  const [currentProject, setProject] = useProject();
+  const [notification, setNotification] = useNotification();
 
   const navigate = useNavigate();
 
@@ -88,23 +85,20 @@ export default () => {
     if (currentTeam) return;
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
-    setLocalState({
-      currentTeam: {
-        id: team.id,
-        name: team.name,
-      },
+
+    setTeam({
+      id: team.id,
+      name: team.name,
     });
-  }, [teams, currentTeam, setLocalState, teamId]);
+  }, [teams, currentTeam, teamId, setTeam]);
 
   useEffect(() => {
     if (currentProject || !project) return;
-    setLocalState({
-      currentProject: {
-        id: project.id,
-        name: project.name,
-      },
+    setProject({
+      id: project.id,
+      name: project.name,
     });
-  }, [project, currentProject, setLocalState]);
+  }, [project, currentProject, setProject]);
 
   // publication modal
   useEffect(() => {
@@ -130,14 +124,12 @@ export default () => {
   const notify = useCallback(
     (type?: NotificationType, text?: string) => {
       if (!type || !text) return;
-      setLocalState({
-        notification: {
-          type: type,
-          text: text,
-        },
+      setNotification({
+        type: type,
+        text: text,
       });
     },
-    [setLocalState],
+    [setNotification],
   );
 
   const publishProject = useCallback(
@@ -171,11 +163,11 @@ export default () => {
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
       if (team && teamId !== currentTeam?.id) {
-        setLocalState({ currentTeam: team });
+        setTeam(team);
         navigate(`/dashboard/${teamId}`);
       }
     },
-    [teams, currentTeam, setLocalState, navigate],
+    [teams, currentTeam?.id, setTeam, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -186,11 +178,11 @@ export default () => {
         refetchQueries: ["teams"],
       });
       if (results.data?.createTeam) {
-        setLocalState({ currentTeam: results.data.createTeam.team });
+        setTeam(results.data.createTeam.team);
         navigate("/");
       }
     },
-    [createTeamMutation, setLocalState, navigate],
+    [createTeamMutation, setTeam, navigate],
   );
 
   useEffect(() => {
@@ -202,23 +194,21 @@ export default () => {
 
   useEffect(() => {
     if (!error) return;
-    setLocalState({
-      notification: {
-        type: "error",
-        text: error,
-      },
+    setNotification({
+      type: "error",
+      text: error,
     });
     const timerID = setTimeout(() => {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [error, setLocalState]);
+  }, [error, setError, setNotification]);
 
   const closeNotification = useCallback(() => {
     if (error) {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }
-  }, [error, setLocalState]);
+  }, [error, setError]);
 
   const openPreview = useCallback(() => {
     window.open(location.pathname + "/preview", "_blank");
@@ -226,15 +216,9 @@ export default () => {
 
   useEffect(() => {
     if (!notification?.text) return;
-    const timerID = setTimeout(
-      () =>
-        setLocalState({
-          notification: undefined,
-        }),
-      notificationTimeout,
-    );
+    const timerID = setTimeout(() => setNotification(undefined), notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [notification, setLocalState]);
+  }, [notification?.text, setNotification]);
 
   return {
     teams,

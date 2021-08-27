@@ -6,7 +6,7 @@ import {
   useCreateAssetMutation,
   useRemoveAssetMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useTeam, useProject } from "@reearth/state";
 
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -15,10 +15,8 @@ type Params = {
 };
 
 export default (params: Params) => {
-  const [{ currentTeam, currentProject }] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [currentTeam] = useTeam();
+  const [currentProject] = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {

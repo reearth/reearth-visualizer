@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { useLocalState } from "@reearth/state";
+
+import { useTeam, useProject } from "@reearth/state";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 
 export enum Theme {
@@ -9,10 +10,8 @@ export enum Theme {
 }
 
 export default () => {
-  const [{ currentTeam, currentProject }] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [currentTeam] = useTeam();
+  const [currentProject] = useProject();
 
   const { data: profileData } = useProfileQuery();
   const me = profileData?.me;

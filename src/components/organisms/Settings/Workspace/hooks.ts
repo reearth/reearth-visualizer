@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "@reach/router";
-import { useLocalState } from "@reearth/state";
+import { useTeam, useProject } from "@reearth/state";
 import {
   useTeamsQuery,
   useSearchUserLazyQuery,
@@ -20,10 +20,9 @@ type Params = {
 };
 
 export default (params: Params) => {
-  const [{ currentTeam, currentProject }, setLocalState] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [currentTeam, setTeam] = useTeam();
+  const [currentProject] = useProject();
+
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -67,11 +66,11 @@ export default (params: Params) => {
       });
       const team = results.data?.createTeam?.team;
       if (results) {
-        setLocalState({ currentTeam: team });
+        setTeam(team);
       }
       setModalShown(false);
     },
-    [createTeamMutation, setLocalState],
+    [createTeamMutation, setTeam],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -85,9 +84,11 @@ export default (params: Params) => {
     refetchQueries: ["teams"],
   });
   const deleteTeam = useCallback(async () => {
-    teamId && (await deleteTeamMutation({ variables: { teamId } }));
-    setLocalState({ currentTeam: teams[0] });
-  }, [teamId, deleteTeamMutation, setLocalState, teams]);
+    if (teamId) {
+      await deleteTeamMutation({ variables: { teamId } });
+    }
+    setTeam(teams[0]);
+  }, [teamId, setTeam, teams, deleteTeamMutation]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
@@ -139,11 +140,11 @@ export default (params: Params) => {
   const selectWorkspace = useCallback(
     (team: Team) => {
       if (team.id) {
-        setLocalState({ currentTeam: team });
+        setTeam(team);
         navigate(`/settings/workspace/${team.id}`);
       }
     },
-    [navigate, setLocalState],
+    [navigate, setTeam],
   );
 
   return {

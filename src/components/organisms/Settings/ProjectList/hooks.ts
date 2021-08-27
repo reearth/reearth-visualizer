@@ -11,7 +11,7 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useTeam, useProject } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
 
@@ -23,7 +23,8 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
-  const [currentTeam, setLocalState] = useLocalState(s => s.currentTeam);
+  const [currentTeam, setTeam] = useTeam();
+  const [, setProject] = useProject();
   const navigate = useNavigate();
   const intl = useIntl();
 
@@ -42,9 +43,9 @@ export default () => {
 
   useEffect(() => {
     if (team?.id && !currentTeam?.id) {
-      setLocalState({ currentTeam: team });
+      setTeam(team);
     }
-  }, [currentTeam, team, setLocalState]);
+  }, [currentTeam, team, setTeam]);
 
   const currentProjects = (team?.projects.nodes ?? [])
     .map<Project | undefined>(project =>
@@ -119,11 +120,11 @@ export default () => {
   const selectProject = useCallback(
     (project: Project) => {
       if (project.id) {
-        setLocalState({ currentProject: project });
+        setProject(project);
         navigate(`/settings/project/${project.id}`);
       }
     },
-    [navigate, setLocalState],
+    [navigate, setProject],
   );
 
   const { data: assetsData } = useAssetsQuery({

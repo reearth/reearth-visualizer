@@ -1,17 +1,13 @@
 import { useMemo } from "react";
 import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useSceneId, useSelected } from "@reearth/state";
 
 // ポリゴンやポリラインは現在編集できないため、それらを新規レイヤーとして追加しても何も表示されない
-const hiddenExtensions = [
-  "reearth/polyline",
-  "reearth/polygon",
-  "reearth/rect",
-  "reearth/navigator",
-];
+const hiddenExtensions = ["reearth/polyline", "reearth/polygon", "reearth/rect"];
 
 export default () => {
-  const [sceneId, setLocalState] = useLocalState(s => s.sceneId);
+  const [sceneId] = useSceneId();
+  const [, select] = useSelected();
 
   const { loading, data } = useGetPrimitivesQuery({
     variables: { sceneId: sceneId ?? "" },
@@ -67,11 +63,11 @@ export default () => {
 
             const selectedLayer = data?.addLayerItem?.layer.id;
             if (selectedLayer) {
-              setLocalState({ selectedLayer });
+              select({ type: "layer", layerId: selectedLayer });
             }
           },
         })),
-    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, setLocalState],
+    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select],
   );
 
   return {

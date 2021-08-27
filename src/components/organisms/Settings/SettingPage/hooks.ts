@@ -1,4 +1,6 @@
 import { useEffect, useCallback, useMemo, useState } from "react";
+import { useNavigate } from "@reach/router";
+
 import {
   useMeQuery,
   useSceneQuery,
@@ -6,9 +8,8 @@ import {
   useProjectQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useError, useTeam, useProject } from "@reearth/state";
 import { User } from "@reearth/components/molecules/Common/Header";
-import { useNavigate } from "@reach/router";
 
 type Params = {
   teamId?: string;
@@ -18,11 +19,9 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [{ error, currentTeam, currentProject }, setLocalState] = useLocalState(s => ({
-    error: s.error,
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [error, setError] = useError();
+  const [currentTeam, setTeam] = useTeam();
+  const [currentProject, setProject] = useProject();
 
   const { refetch } = useMeQuery();
 
@@ -61,27 +60,27 @@ export default (params: Params) => {
         ? teams?.find(t => t.id === teamId) ?? {}
         : teamsData.me.myTeam;
       if (id) {
-        setLocalState({ currentTeam: { id, name } });
+        setTeam({ id, name });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTeam, team, setLocalState, teams, teamsData?.me]);
+  }, [currentTeam, team, setTeam, teams, teamsData?.me]);
 
   // update team name
   useEffect(() => {
     if (currentTeam?.id && teams) {
       const { name = "" } = teams?.find(t => t.id === currentTeam.id) ?? {};
       if (currentTeam.name != name) {
-        setLocalState({ currentTeam: { id: currentTeam.id, name } });
+        setTeam({ id: currentTeam.id, name });
       }
     }
-  }, [currentTeam, setLocalState, teams]);
+  }, [currentTeam, setTeam, teams]);
 
   useEffect(() => {
     if (team?.id && !currentTeam?.id) {
-      setLocalState({ currentTeam: team });
+      setTeam(team);
     }
-  }, [currentTeam, team, setLocalState]);
+  }, [currentTeam, team, setTeam]);
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "" },
@@ -93,23 +92,23 @@ export default (params: Params) => {
     const project = data?.projects.nodes.find(node => node?.id === params.projectId) ?? undefined;
 
     if (project?.id !== currentProject?.id) {
-      setLocalState({ currentProject: project });
+      setProject(project);
     }
-  }, [data, params, currentProject, setLocalState]);
+  }, [data, params, currentProject, setProject]);
 
   const changeTeam = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
 
       if (team) {
-        setLocalState({ currentTeam: team });
+        setTeam(team);
 
         if (params.projectId) {
           navigate("/settings/account");
         }
       }
     },
-    [teams, setLocalState, params, navigate],
+    [teams, setTeam, params.projectId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -121,10 +120,10 @@ export default (params: Params) => {
       });
       const team = results.data?.createTeam?.team;
       if (results) {
-        setLocalState({ currentTeam: team });
+        setTeam(team);
       }
     },
-    [createTeamMutation, setLocalState],
+    [createTeamMutation, setTeam],
   );
 
   const notificationTimeout = 5000;
@@ -136,16 +135,16 @@ export default (params: Params) => {
   useEffect(() => {
     if (!error) return;
     const timerID = setTimeout(() => {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [error, setLocalState]);
+  }, [error, setError]);
 
   const onNotificationClose = useCallback(() => {
     if (error) {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }
-  }, [error, setLocalState]);
+  }, [error, setError]);
 
   const back = useCallback(() => navigate(-1), [navigate]);
 

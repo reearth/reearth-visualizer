@@ -6,9 +6,9 @@ import useHooks from "./hooks";
 type Props = {};
 
 const ExportPane: React.FC<Props> = () => {
-  const { selectedLayer, onExport } = useHooks();
+  const { onExport } = useHooks();
 
-  return <Wrapper show={!!selectedLayer} onExport={onExport} />;
+  return <Wrapper onExport={onExport} />;
 };
 
 export default ExportPane;

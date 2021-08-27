@@ -1,10 +1,12 @@
 import React from "react";
 import { styled } from "@reearth/theme";
 
-export interface Props {
+export * from "./types";
+
+export type Props = {
   className?: string;
   header?: React.ReactNode;
-}
+};
 
 const Dashboard: React.FC<Props> = ({ className, header, children }) => {
   return (

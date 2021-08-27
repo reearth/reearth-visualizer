@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { useLocalState } from "@reearth/state";
+import { useSceneId, useSelected, useSelectedBlock, useRootLayerId } from "@reearth/state";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -42,16 +42,10 @@ type GQLLayer = {
 
 export default () => {
   const intl = useIntl();
-  const [{ selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId }, setLocalState] =
-    useLocalState(s => ({
-      selectedType: s.selectedType,
-      rootLayerId: s.rootLayerId,
-      selectedLayerId: s.selectedLayer,
-      sceneId: s.sceneId,
-      selectedWidgetId: s.selectedWidget
-        ? `${s.selectedWidget.pluginId}/${s.selectedWidget.extensionId}`
-        : undefined,
-    }));
+  const [sceneId] = useSceneId();
+  const [selected, select] = useSelected();
+  const [, selectBlock] = useSelectedBlock();
+  const [rootLayerId] = useRootLayerId();
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },
@@ -117,38 +111,23 @@ export default () => {
 
   const selectLayer = useCallback(
     (id: string) => {
-      setLocalState({
-        selectedType: "layer",
-        selectedLayer: id,
-        selectedWidget: undefined,
-        selectedBlock: undefined,
-      });
+      select({ type: "layer", layerId: id });
+      selectBlock(undefined);
     },
-    [setLocalState],
+    [select, selectBlock],
   );
 
   const selectScene = useCallback(() => {
-    setLocalState({
-      selectedType: "scene",
-      selectedLayer: undefined,
-      selectedWidget: undefined,
-      selectedBlock: undefined,
-    });
-  }, [setLocalState]);
+    select({ type: "scene" });
+    selectBlock(undefined);
+  }, [select, selectBlock]);
 
   const selectWidget = useCallback(
     (id: string) => {
-      const [pluginId, extensionId] = id.split("/");
-      if (!pluginId || !extensionId) return;
-
-      setLocalState({
-        selectedType: "widget",
-        selectedLayer: undefined,
-        selectedBlock: undefined,
-        selectedWidget: { pluginId, extensionId },
-      });
+      select({ type: "widget", widgetId: id });
+      selectBlock(undefined);
     },
-    [setLocalState],
+    [select, selectBlock],
   );
 
   const moveLayer = useCallback(
@@ -203,9 +182,9 @@ export default () => {
         },
         refetchQueries: ["GetLayers"],
       });
-      setLocalState({ selectedLayer: undefined, selectedType: undefined });
+      select(undefined);
     },
-    [removeLayerMutation, setLocalState],
+    [removeLayerMutation, select],
   );
 
   const importLayer = useCallback(
@@ -232,9 +211,10 @@ export default () => {
       data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
     const children = (l: Maybe<GQLLayer>) => (l?.__typename == "LayerGroup" ? l.layers : undefined);
 
-    const layerIndex = selectedLayerId
-      ? deepFind(layers, l => l?.id === selectedLayerId, children)[1]
-      : undefined;
+    const layerIndex =
+      selected?.type === "layer"
+        ? deepFind(layers, l => l?.id === selected.layerId, children)[1]
+        : undefined;
     const parentLayer = layerIndex?.length
       ? deepGet(layers, layerIndex.slice(0, -1), children)
       : undefined;
@@ -247,7 +227,7 @@ export default () => {
         name: intl.formatMessage({ defaultMessage: "Folder" }),
       },
     });
-  }, [intl, addLayerGroupMutation, data?.layer, rootLayerId, selectedLayerId]);
+  }, [rootLayerId, data?.layer, selected, addLayerGroupMutation, intl]);
 
   const handleDrop = useCallback(
     (layerId: string, index: number, childrenCount: number) => ({
@@ -263,9 +243,9 @@ export default () => {
     layers,
     widgets,
     sceneDescription,
-    selectedType,
-    selectedLayerId,
-    selectedWidgetId,
+    selectedType: selected?.type,
+    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedWidgetId: selected?.type === "widget" ? selected.widgetId : undefined,
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,

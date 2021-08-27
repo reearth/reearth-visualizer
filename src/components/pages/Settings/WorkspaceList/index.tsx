@@ -1,12 +1,12 @@
 import React from "react";
 
-import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
+import { AuthenticationRequiredPage } from "@reearth/auth";
 import OrganismsWorkspaceList from "@reearth/components/organisms/Settings/WorkspaceList";
 
-export interface Props {
+export type Props = {
   path?: string;
   teamId?: string;
-}
+};
 
 const WorkspaceList: React.FC<Props> = ({ teamId = "" }) => (
   <AuthenticationRequiredPage>

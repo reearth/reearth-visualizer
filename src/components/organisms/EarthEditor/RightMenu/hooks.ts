@@ -1,36 +1,38 @@
-import { useCallback, useState } from "react";
-import { useLocalState } from "@reearth/state";
+import { useCallback, useEffect, useState } from "react";
+import { useSelected, useSelectedBlock, useIsCapturing } from "@reearth/state";
 
 export type Tab = "layer" | "scene" | "widget" | "infobox" | "export";
 
 export default () => {
-  const [
-    { selectedLayerType, isCapturing, selectedLayerId, selectedBlock },
-    setLocalState,
-  ] = useLocalState(s => ({
-    selectedLayerType: s.selectedType,
-    selectedLayerId: s.selectedLayer,
-    isCapturing: s.isCapturing,
-    selectedBlock: s.selectedBlock,
-  }));
+  const [selected] = useSelected();
+  const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [isCapturing] = useIsCapturing();
 
   const [selectedTab, setSelectedTab] = useState<Tab>();
 
   const reset = useCallback(
     (t: Tab) => {
       setSelectedTab(t);
-      setLocalState({ selectedBlock: undefined });
+      selectBlock(undefined);
     },
-    [setLocalState],
+    [selectBlock],
   );
+
+  useEffect(() => {
+    setSelectedTab(selected?.type);
+  }, [selected?.type, setSelectedTab]);
+
+  useEffect(() => {
+    if (!selectedBlock) return;
+    setSelectedTab("infobox");
+  }, [selectedBlock, setSelectedTab]);
 
   return {
     selectedTab,
-    setSelectedTab,
-    reset,
-    selectedLayerType,
-    selectedLayerId,
+    selected: selected?.type || "scene",
     isCapturing,
     selectedBlock,
+    setSelectedTab,
+    reset,
   };
 };

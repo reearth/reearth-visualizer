@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useLocalState } from "@reearth/state";
+
+import { useTeam, useProject } from "@reearth/state";
 import {
   useProjectQuery,
   useAssetsQuery,
@@ -19,14 +20,13 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
+  const [currentTeam] = useTeam();
+  const [currentProject] = useProject();
+
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProject] = useUpdateProjectMutation();
   const [createAssetMutation] = useCreateAssetMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
-  const [{ currentTeam, currentProject }] = useLocalState(s => ({
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
   const [validAlias, setValidAlias] = useState(false);
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
   const teamId = currentTeam?.id;

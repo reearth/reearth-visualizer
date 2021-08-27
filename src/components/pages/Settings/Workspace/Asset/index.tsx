@@ -1,7 +1,7 @@
 import React from "react";
 
+import { AuthenticationRequiredPage } from "@reearth/auth";
 import Asset from "@reearth/components/organisms/Settings/Workspace/Asset";
-import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
 
 export type Props = {
   path?: string;

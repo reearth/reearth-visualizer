@@ -8,7 +8,7 @@ import {
   AssetsQuery,
   useAssetsQuery,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
+import { useTeam } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -17,7 +17,7 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const [currentTeam] = useLocalState(s => s.currentTeam);
+  const [currentTeam] = useTeam();
 
   const teamId = currentTeam?.id;
 

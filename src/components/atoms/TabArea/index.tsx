@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import _ from "lodash";
 
 import { styled, useTheme } from "@reearth/theme";
 import Overlay from "@reearth/components/atoms/Overlay";
-import Icon from "../Icon";
 import Text from "@reearth/components/atoms/Text";
+import Icon from "@reearth/components/atoms/Icon";
 
 export type MenuAlignment = "left" | "top";
 
@@ -35,11 +34,7 @@ const TabArea = <T extends string>({
   onlyIcon,
   labels,
 }: Props<T>) => {
-  const tabs: T[] | undefined = Object.keys(
-    _.pickBy(children, value => {
-      return !!value;
-    }),
-  ) as T[];
+  const tabs: T[] = (Object.keys(children || {}) as T[]).filter(k => !!children?.[k]);
   const [selectedTab, select] = useState<T | undefined>(initialSelectedMode ?? tabs?.[0]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React from "react";
 
-import AuthenticationRequiredPage from "../Common/AuthenticationRequiredPage";
+import { AuthenticationRequiredPage } from "@reearth/auth";
 import Dashboard from "@reearth/components/organisms/Dashboard";
 
 export type Props = {

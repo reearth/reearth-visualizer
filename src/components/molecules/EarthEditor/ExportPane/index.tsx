@@ -15,13 +15,13 @@ type Props = {
   onExport: (format: Format) => void;
 };
 
-const ExportPane: React.FC<Props> = ({ className, show = true, onExport }) => {
+const ExportPane: React.FC<Props> = ({ className, onExport }) => {
   const intl = useIntl();
   const [format, setFormat] = useState<Format>(defaultFormat);
 
   const handleExport = useCallback(() => onExport(format), [format, onExport]);
 
-  return show ? (
+  return (
     <Wrapper className={className}>
       <SelectWrapper>
         <Label size="s">{intl.formatMessage({ defaultMessage: "Export type" })}</Label>
@@ -42,7 +42,7 @@ const ExportPane: React.FC<Props> = ({ className, show = true, onExport }) => {
         onClick={handleExport}
       />
     </Wrapper>
-  ) : null;
+  );
 };
 
 const Wrapper = styled.div`
