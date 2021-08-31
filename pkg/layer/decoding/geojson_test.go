@@ -19,12 +19,15 @@ const geojsonmock = `{
       "name": "EPSG:3857"
     }
   },
-    "features": [
+  "features": [
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [102.0, 0.5]
+        "coordinates": [
+          102.0,
+          0.5
+        ]
       },
       "properties": {
         "marker-color": "red"
@@ -35,11 +38,22 @@ const geojsonmock = `{
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [102.0, 0.0], [103.0, 1.0], [104.0, 0.0]
+          [
+            102.0,
+            0.0
+          ],
+          [
+            103.0,
+            1.0
+          ],
+          [
+            104.0,
+            0.0
+          ]
         ]
       },
       "properties": {
- 				"stroke": "#b55e5e",
+        "stroke": "#b55e5e",
         "stroke-width": 1.6,
         "prop0": "value0",
         "prop1": 0.0
@@ -51,19 +65,82 @@ const geojsonmock = `{
         "type": "Polygon",
         "coordinates": [
           [
-            [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-            [100.0, 1.0], [100.0, 0.0]
+            [
+              100.0,
+              0.0
+            ],
+            [
+              101.0,
+              0.0
+            ],
+            [
+              101.0,
+              1.0
+            ],
+            [
+              100.0,
+              1.0
+            ],
+            [
+              100.0,
+              0.0
+            ]
           ]
         ]
       },
       "properties": {
-				"stroke": "#ffffff",
+        "stroke": "#ffffff",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "fill": "#7c3b3b",
         "fill-opacity": 0.5,
         "prop0": "value0",
-        "prop1": { "this": "that" }
+        "prop1": {
+          "this": "that"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                100.0,
+                0.0
+              ],
+              [
+                101.0,
+                0.0
+              ],
+              [
+                101.0,
+                1.0
+              ],
+              [
+                100.0,
+                1.0
+              ],
+              [
+                100.0,
+                0.0
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "stroke": "#ffffff",
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "fill": "#7c3b3b",
+        "fill-opacity": 0.5,
+        "prop0": "value0",
+        "prop1": {
+          "this": "that"
+        }
       }
     }
   ]
@@ -75,13 +152,13 @@ func TestGeoJSONDecoder_Decode(t *testing.T) {
 	p := NewGeoJSONDecoder(r, s)
 	result, err := p.Decode()
 	assert.NoError(t, err)
-	assert.Equal(t, 4, len(result.Layers))
-	assert.Equal(t, 3, len(result.Properties))
+	assert.Equal(t, 5, len(result.Layers))
+	assert.Equal(t, 4, len(result.Properties))
 
 	// Root layer
 	rootLayer := result.RootLayers().ToLayerGroupList()[0]
 	assert.NotNil(t, rootLayer)
-	assert.Equal(t, 3, rootLayer.Layers().LayerCount())
+	assert.Equal(t, 4, rootLayer.Layers().LayerCount())
 
 	// marker
 	prop := result.Properties[*result.Layers.Layer(rootLayer.Layers().LayerAt(0)).Property()]
@@ -126,4 +203,22 @@ func TestGeoJSONDecoder_Decode(t *testing.T) {
 	strokeWidth2, _, _ := prop.Field(property.PointFieldBySchemaGroup(item, "strokeWidth"))
 	assert.Equal(t, plist, f2.Value().Value())
 	assert.Equal(t, 2.0, strokeWidth2.Value().Value())
+
+	// MultiPolygon
+	prop = result.Properties[*result.Layers.Layer(rootLayer.Layers().LayerAt(2)).Property()]
+	items4 := prop.Items()
+	assert.NotEqual(t, 0, len(items4))
+	field4 := propertyFields["Polygon"]
+	f4, _, _ := prop.Field(property.PointFieldBySchemaGroup(item, field4))
+	plist3 := property.Polygon{property.Coordinates{property.LatLngHeight{Lng: 100, Lat: 0, Height: 0}, property.LatLngHeight{Lng: 101, Lat: 0, Height: 0}, property.LatLngHeight{Lng: 101, Lat: 1, Height: 0}, property.LatLngHeight{Lng: 100, Lat: 1, Height: 0}, property.LatLngHeight{Lng: 100, Lat: 0, Height: 0}}}
+	assert.Equal(t, f4.Value().Value(), plist3)
+	fillColor2, _, _ := prop.Field(property.PointFieldBySchemaGroup(item, "fillColor"))
+	assert.Equal(t, plist3, f3.Value().Value())
+	assert.Equal(t, "#7c3b3b", fillColor2.Value().Value())
+	strokeColor3, _, _ := prop.Field(property.PointFieldBySchemaGroup(item, "strokeColor"))
+	assert.Equal(t, plist3, f3.Value().Value())
+	assert.Equal(t, "#ffffff", strokeColor3.Value().Value())
+	strokeWidth3, _, _ := prop.Field(property.PointFieldBySchemaGroup(item, "strokeWidth"))
+	assert.Equal(t, plist3, f3.Value().Value())
+	assert.Equal(t, 2.0, strokeWidth3.Value().Value())
 }

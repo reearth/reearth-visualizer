@@ -2,6 +2,7 @@ package decoding
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
 	geojson "github.com/paulmach/go.geojson"
@@ -30,6 +31,25 @@ func NewGeoJSONDecoder(r io.Reader, s id.SceneID) *GeoJSONDecoder {
 	}
 }
 
+func disassembleMultipolygon(fc []*geojson.Feature) []*geojson.Feature {
+	var res []*geojson.Feature
+	for _, f := range fc {
+		if f.Geometry.Type == geojson.GeometryMultiPolygon {
+			for _, p := range f.Geometry.MultiPolygon {
+				nf := geojson.NewPolygonFeature(p)
+				for k, v := range f.Properties {
+					nf.SetProperty(k, v)
+				}
+				res = append(res, nf)
+			}
+		} else {
+			res = append(res, f)
+		}
+	}
+
+	return res
+}
+
 func (d *GeoJSONDecoder) Decode() (Result, error) {
 	lg, err := layer.NewGroup().NewID().Scene(d.sceneId).Name("GeoJSON").Build()
 	if err != nil {
@@ -45,10 +65,10 @@ func (d *GeoJSONDecoder) Decode() (Result, error) {
 	if err != nil {
 		return Result{}, errors.New("unable to parse file content")
 	}
-
+	fl := disassembleMultipolygon(fc.Features)
 	// if feature collection > append it to features list, else try to decode a single feature (layer)
 	if len(fc.Features) > 0 {
-		d.features = fc.Features
+		d.features = fl
 	} else {
 		f, err := geojson.UnmarshalFeature(con)
 		if err != nil {
@@ -203,6 +223,8 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		}
 
 		layerName = "Polygon"
+	default:
+		return nil, nil, fmt.Errorf("unsupported type %s", feat.Geometry.Type)
 	}
 
 	if feat.Properties["name"] != nil {
