@@ -6,7 +6,7 @@ import (
 
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	"github.com/99designs/gqlgen-contrib/gqlopentracing"
-	graphql1 "github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
@@ -14,38 +14,20 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 
-	"github.com/reearth/reearth-backend/internal/adapter/graphql"
-	infra_graphql "github.com/reearth/reearth-backend/internal/graphql"
-	"github.com/reearth/reearth-backend/internal/graphql/dataloader"
-	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/internal/adapter/gql"
+	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 const enableDataLoaders = true
 
-func getOperator(ctx context.Context) *usecase.Operator {
-	if v := ctx.Value(infra_graphql.ContextOperator); v != nil {
-		if v2, ok := v.(*usecase.Operator); ok {
-			return v2
-		}
-	}
-	return nil
-}
-
-func dataLoaderMiddleware(container *graphql.Container) echo.MiddlewareFunc {
+func dataLoaderMiddleware(container gql.Loaders) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(echoCtx echo.Context) error {
 			req := echoCtx.Request()
 			ctx := req.Context()
 
-			var dl *dataloader.DataLoaders
-			if enableDataLoaders {
-				dl = dataloader.NewDataLoaders(ctx, container, getOperator(ctx))
-			} else {
-				dl = dataloader.NewOrdinaryDataLoaders(ctx, container, getOperator(ctx))
-			}
-
-			ctx = context.WithValue(ctx, dataloader.DataLoadersKey(), dl)
+			ctx = context.WithValue(ctx, gql.DataLoadersKey(), container.DataLoadersWith(ctx, enableDataLoaders))
 			echoCtx.SetRequest(req.WithContext(ctx))
 			return next(echoCtx)
 		}
@@ -60,8 +42,8 @@ func tracerMiddleware(enabled bool) echo.MiddlewareFunc {
 			}
 			req := echoCtx.Request()
 			ctx := req.Context()
-			t := &infra_graphql.Tracer{}
-			echoCtx.SetRequest(req.WithContext(infra_graphql.AttachTracer(ctx, t)))
+			t := &gql.Tracer{}
+			echoCtx.SetRequest(req.WithContext(gql.AttachTracer(ctx, t)))
 			defer t.Print()
 			return next(echoCtx)
 		}
@@ -72,9 +54,10 @@ func graphqlAPI(
 	ec *echo.Echo,
 	r *echo.Group,
 	conf *ServerConfig,
-	controllers *graphql.Container,
+	usecases interfaces.Container,
 ) {
 	playgroundEnabled := conf.Debug || conf.Config.Dev
+	controllers := gql.NewLoaders(usecases)
 
 	if playgroundEnabled {
 		r.GET("/graphql", echo.WrapHandler(
@@ -82,11 +65,8 @@ func graphqlAPI(
 		))
 	}
 
-	schema := infra_graphql.NewExecutableSchema(infra_graphql.Config{
-		Resolvers: infra_graphql.NewResolver(infra_graphql.ResolverConfig{
-			Controllers: controllers,
-			Debug:       conf.Debug,
-		}),
+	schema := gql.NewExecutableSchema(gql.Config{
+		Resolvers: gql.NewResolver(controllers, conf.Debug),
 	})
 
 	srv := handler.NewDefaultServer(schema)
@@ -112,9 +92,9 @@ func graphqlAPI(
 						ec.Logger.Errorf("%+v", err2)
 					}
 				}
-				return gqlerror.ErrorPathf(graphql1.GetFieldContext(ctx).Path(), e.Error())
+				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), e.Error())
 			}
-			return graphql1.DefaultErrorPresenter(ctx, e)
+			return graphql.DefaultErrorPresenter(ctx, e)
 		},
 	)
 

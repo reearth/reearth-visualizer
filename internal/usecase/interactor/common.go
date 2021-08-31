@@ -15,6 +15,24 @@ import (
 	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
+type ContainerConfig struct {
+	SignupSecret string
+}
+
+func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfig) interfaces.Container {
+	return interfaces.Container{
+		Asset:    NewAsset(r, g),
+		Dataset:  NewDataset(r, g),
+		Layer:    NewLayer(r),
+		Plugin:   NewPlugin(r, g),
+		Project:  NewProject(r, g),
+		Property: NewProperty(r, g),
+		Scene:    NewScene(r, g),
+		Team:     NewTeam(r),
+		User:     NewUser(r, g, config.SignupSecret),
+	}
+}
+
 type common struct{}
 
 func (common) OnlyOperator(op *usecase.Operator) error {

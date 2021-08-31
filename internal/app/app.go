@@ -7,7 +7,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/reearth/reearth-backend/internal/adapter/graphql"
+	"github.com/reearth/reearth-backend/internal/usecase/interactor"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	echotracer "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo"
@@ -64,14 +64,16 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 		))
 	}
 
+	usecases := interactor.NewContainer(cfg.Repos, cfg.Gateways, interactor.ContainerConfig{
+		SignupSecret: cfg.Config.SignupSecret,
+	})
+
 	api := e.Group("/api")
 	publicAPI(e, api, cfg.Config, cfg.Repos, cfg.Gateways)
 	jwks := &JwksSyncOnce{}
 	privateApi := api.Group("")
 	authRequired(privateApi, jwks, cfg)
-	graphqlAPI(e, privateApi, cfg, graphql.NewContainer(cfg.Repos, cfg.Gateways, graphql.ContainerConfig{
-		SignupSecret: cfg.Config.SignupSecret,
-	}))
+	graphqlAPI(e, privateApi, cfg, usecases)
 	privateAPI(e, privateApi, cfg.Repos)
 
 	published := e.Group("/p")

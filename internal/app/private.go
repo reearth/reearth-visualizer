@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/graphql"
+	"github.com/reearth/reearth-backend/internal/adapter/gql"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -60,11 +60,11 @@ func privateAPI(
 ) {
 	r.GET("/layers/:param", func(c echo.Context) error {
 		ctx := c.Request().Context()
-		user := c.Request().Context().Value(graphql.ContextUser).(*user.User)
+		user := c.Request().Context().Value(gql.ContextUser).(*user.User)
 		if user == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrUnauthorized}
 		}
-		op := c.Request().Context().Value(graphql.ContextOperator).(*usecase.Operator)
+		op := c.Request().Context().Value(gql.ContextOperator).(*usecase.Operator)
 		if op == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
 		}

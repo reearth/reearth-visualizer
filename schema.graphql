@@ -868,54 +868,6 @@ input UpdatePropertyValueInput {
   type: ValueType!
 }
 
-input UpdatePropertyValueLatLngInput {
-  propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
-  itemId: ID
-  fieldId: PropertySchemaFieldID!
-  lat: Float!
-  lng: Float!
-}
-
-input UpdatePropertyValueLatLngHeightInput {
-  propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
-  itemId: ID
-  fieldId: PropertySchemaFieldID!
-  lat: Float!
-  lng: Float!
-  height: Float!
-}
-
-input UpdatePropertyValueCameraInput {
-  propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
-  itemId: ID
-  fieldId: PropertySchemaFieldID!
-  lat: Float!
-  lng: Float!
-  altitude: Float!
-  heading: Float!
-  pitch: Float!
-  roll: Float!
-  fov: Float!
-}
-
-input UpdatePropertyValueTypographyInput {
-  propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
-  itemId: ID
-  fieldId: PropertySchemaFieldID!
-  fontFamily: String
-  fontWeight: String
-  fontSize: Int
-  color: String
-  textAlign: TextAlign
-  bold: Boolean
-  italic: Boolean
-  underline: Boolean
-}
-
 input RemovePropertyFieldInput {
   propertyId: ID!
   schemaItemId: PropertySchemaFieldID
@@ -1291,6 +1243,7 @@ type AddDatasetSchemaPayload {
 # Connection
 
 enum NodeType {
+  ASSET
   USER
   TEAM
   PROJECT
@@ -1429,9 +1382,6 @@ type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
 
-  # Plugin
-  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
-
   # Scene
   createScene(input: CreateSceneInput!): CreateScenePayload
   addWidget(input: AddWidgetInput!): AddWidgetPayload
@@ -1439,6 +1389,7 @@ type Mutation {
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
   installPlugin(input: InstallPluginInput!): InstallPluginPayload
   uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
   upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
 
   # Dataset
@@ -1459,18 +1410,6 @@ type Mutation {
 
   # Property
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
-  updatePropertyValueLatLng(
-    input: UpdatePropertyValueLatLngInput!
-  ): PropertyFieldPayload
-  updatePropertyValueLatLngHeight(
-    input: UpdatePropertyValueLatLngHeightInput!
-  ): PropertyFieldPayload
-  updatePropertyValueCamera(
-    input: UpdatePropertyValueCameraInput!
-  ): PropertyFieldPayload
-  updatePropertyValueTypography(
-    input: UpdatePropertyValueTypographyInput!
-  ): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
   linkDatasetToPropertyValue(

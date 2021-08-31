@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/graphql"
+	"github.com/reearth/reearth-backend/internal/adapter/gql"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/rerror"
@@ -29,7 +29,7 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			}
 
 			// attach sub
-			ctx = context.WithValue(ctx, graphql.ContextSub, sub)
+			ctx = context.WithValue(ctx, gql.ContextSub, sub)
 
 			// debug mode
 			if cfg.Debug {
@@ -99,10 +99,10 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if err != nil {
 				return err
 			}
-			ctx = context.WithValue(ctx, graphql.ContextOperator, op)
+			ctx = context.WithValue(ctx, gql.ContextOperator, op)
 
 			// attach user
-			ctx = context.WithValue(ctx, graphql.ContextUser, u)
+			ctx = context.WithValue(ctx, gql.ContextUser, u)
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)

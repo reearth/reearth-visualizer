@@ -22,7 +22,7 @@ func NewAsset() repo.Asset {
 	}
 }
 
-func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, error) {
+func (r *Asset) FindByID(ctx context.Context, id id.AssetID, teams []id.TeamID) (*asset.Asset, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -31,6 +31,23 @@ func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, erro
 		return d, nil
 	}
 	return &asset.Asset{}, rerror.ErrNotFound
+}
+
+func (r *Asset) FindByIDs(ctx context.Context, ids []id.AssetID, teams []id.TeamID) ([]*asset.Asset, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	result := []*asset.Asset{}
+	for _, id := range ids {
+		if d, ok := r.data[id]; ok {
+			if isTeamIncludes(d.Team(), teams) {
+				result = append(result, d)
+				continue
+			}
+		}
+		result = append(result, nil)
+	}
+	return result, nil
 }
 
 func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {

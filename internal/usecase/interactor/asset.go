@@ -30,6 +30,18 @@ func NewAsset(r *repo.Container, gr *gateway.Container) interfaces.Asset {
 	}
 }
 
+func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecase.Operator) ([]*asset.Asset, error) {
+	return i.assetRepo.FindByIDs(ctx, assets, operator.ReadableTeams)
+}
+
+func (i *Asset) FindByTeam(ctx context.Context, tid id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
+	if err := i.CanReadTeam(tid, operator); err != nil {
+		return nil, nil, err
+	}
+
+	return i.assetRepo.FindByTeam(ctx, tid, p)
+}
+
 func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, operator *usecase.Operator) (result *asset.Asset, err error) {
 	if err := i.CanWriteTeam(inp.TeamID, operator); err != nil {
 		return nil, err
@@ -74,12 +86,8 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 }
 
 func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Operator) (result id.AssetID, err error) {
-	asset, err := i.assetRepo.FindByID(ctx, aid)
+	asset, err := i.assetRepo.FindByID(ctx, aid, operator.WritableTeams)
 	if err != nil {
-		return aid, err
-	}
-
-	if err := i.CanWriteTeam(asset.Team(), operator); err != nil {
 		return aid, err
 	}
 
@@ -114,12 +122,4 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 
 	tx.Commit()
 	return aid, nil
-}
-
-func (i *Asset) FindByTeam(ctx context.Context, tid id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
-	if err := i.CanReadTeam(tid, operator); err != nil {
-		return nil, nil, err
-	}
-
-	return i.assetRepo.FindByTeam(ctx, tid, p)
 }
