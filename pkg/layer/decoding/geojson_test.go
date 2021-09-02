@@ -100,6 +100,17 @@ const geojsonmock = `{
         }
       }
     },
+{
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "N03_001": "愛知県",
+                "N03_002": null,
+                "N03_003": null,
+                "N03_004": "豊橋市",
+                "N03_007": "23201"
+            }
+        },
     {
       "type": "Feature",
       "geometry": {
