@@ -21,6 +21,9 @@ import DatasetSettings from "@reearth/components/pages/Settings/Project/Dataset"
 import PluginSettings from "@reearth/components/pages/Settings/Project/Plugin";
 import Preview from "./components/pages/Preview";
 
+const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
+const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
+const GraphQLPlayground = React.lazy(() => import("@reearth/components/pages/GraphQLPlayground"));
 const enableWhyDidYouRender = false;
 
 if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
@@ -30,9 +33,6 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
     trackAllPureComponents: true,
   });
 }
-
-const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
-const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
 
 const App: React.FC = () => {
   return (
@@ -57,6 +57,7 @@ const App: React.FC = () => {
                   <PublicSettings path="/settings/project/:projectId/public" />
                   <DatasetSettings path="/settings/project/:projectId/dataset" />
                   <PluginSettings path="/settings/project/:projectId/plugins" />
+                  {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
                   <NotFound default />
                 </StyledRouter>
               </Suspense>
