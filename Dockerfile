@@ -2,7 +2,7 @@ FROM golang:1.16-alpine AS build
 ARG TAG=release
 ARG VERSION
 
-RUN apk add --update --no-cache git ca-certificates build-base upx
+RUN apk add --update --no-cache git ca-certificates build-base
 
 COPY go.mod go.sum main.go /reearth/
 WORKDIR /reearth
@@ -12,7 +12,7 @@ COPY cmd/ /reearth/cmd/
 COPY pkg/ /reearth/pkg/
 COPY internal/ /reearth/internal/
 
-RUN CGO_ENABLED=0 go build -tags "${TAG}" "-ldflags=-X main.version=${VERSION} -s -buildid=" -trimpath ./cmd/reearth && upx reearth
+RUN CGO_ENABLED=0 go build -tags "${TAG}" "-ldflags=-X main.version=${VERSION} -s -buildid=" -trimpath ./cmd/reearth
 
 FROM scratch
 
