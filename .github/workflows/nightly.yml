@@ -33,8 +33,9 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          build-args: REEARTH_BACKEND_IMAGE=${{ env.IMAGE_BASE }}
           context: .
+          platforms: linux/amd64,linux/arm64
+          build-args: REEARTH_BACKEND_IMAGE=${{ env.IMAGE_BASE }}
           push: true
           tags: ${{ env.IMAGE }}
           cache-from: type=registry,ref=reearth/reearth:nightly
