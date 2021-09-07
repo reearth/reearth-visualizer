@@ -147,19 +147,18 @@ func TestWidgetSystem_Remove(t *testing.T) {
 
 	testCases := []struct {
 		Name         string
-		PID          id.PluginID
-		EID          id.PluginExtensionID
+		ID           id.WidgetID
 		WS, Expected *WidgetSystem
 	}{
 		{
 			Name:     "remove a widget",
-			PID:      pid,
-			EID:      "e1",
+			ID:       w1.ID(),
 			WS:       NewWidgetSystem([]*Widget{w1, w2, w3, w4}),
-			Expected: NewWidgetSystem([]*Widget{w3, w4}),
+			Expected: NewWidgetSystem([]*Widget{w2, w3, w4}),
 		},
 		{
 			Name:     "remove from nil widgetSystem",
+			ID:       w1.ID(),
 			WS:       nil,
 			Expected: nil,
 		},
@@ -168,7 +167,7 @@ func TestWidgetSystem_Remove(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			tc.WS.Remove(tc.PID, tc.EID)
+			tc.WS.Remove(tc.ID)
 			assert.Equal(tt, tc.Expected, tc.WS)
 		})
 	}
@@ -211,7 +210,49 @@ func TestWidgetSystem_RemoveAllByPlugin(t *testing.T) {
 	}
 }
 
-func TestWidgetSystem_Replace(t *testing.T) {
+func TestWidgetSystem_RemoveAllByExtension(t *testing.T) {
+	pid := id.MustPluginID("xxx~1.1.1")
+	pid2 := id.MustPluginID("xxx~1.1.2")
+	w1 := MustNewWidget(id.NewWidgetID(), pid, "e1", id.NewPropertyID(), true)
+	w2 := MustNewWidget(id.NewWidgetID(), pid, "e2", id.NewPropertyID(), true)
+	w3 := MustNewWidget(id.NewWidgetID(), pid, "e1", id.NewPropertyID(), true)
+	w4 := MustNewWidget(id.NewWidgetID(), pid2, "e1", id.NewPropertyID(), true)
+
+	testCases := []struct {
+		Name           string
+		PID            id.PluginID
+		EID            id.PluginExtensionID
+		WS, Expected   *WidgetSystem
+		ExpectedResult []id.PropertyID
+	}{
+		{
+			Name:           "remove widgets",
+			PID:            pid,
+			EID:            id.PluginExtensionID("e1"),
+			WS:             NewWidgetSystem([]*Widget{w1, w2, w3, w4}),
+			Expected:       NewWidgetSystem([]*Widget{w2, w4}),
+			ExpectedResult: []id.PropertyID{w1.Property(), w3.Property()},
+		},
+		{
+			Name:           "remove widgets from nil widget system",
+			PID:            pid,
+			EID:            id.PluginExtensionID("e1"),
+			WS:             nil,
+			Expected:       nil,
+			ExpectedResult: nil,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.Name, func(tt *testing.T) {
+			tt.Parallel()
+			assert.Equal(tt, tc.ExpectedResult, tc.WS.RemoveAllByExtension(tc.PID, tc.EID))
+			assert.Equal(tt, tc.Expected, tc.WS)
+		})
+	}
+}
+
+func TestWidgetSystem_ReplacePlugin(t *testing.T) {
 	pid := id.MustPluginID("xxx~1.1.1")
 	pid2 := id.MustPluginID("zzz~1.1.1")
 	pr := id.NewPropertyID()
@@ -244,7 +285,7 @@ func TestWidgetSystem_Replace(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			tc.WS.Replace(tc.PID, tc.NewID)
+			tc.WS.ReplacePlugin(tc.PID, tc.NewID)
 			assert.Equal(tt, tc.Expected, tc.WS)
 		})
 	}
@@ -329,27 +370,25 @@ func TestWidgetSystem_Widget(t *testing.T) {
 	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
-		PID      id.PluginID
-		EID      id.PluginExtensionID
+		ID       id.WidgetID
 		WS       *WidgetSystem
 		Expected *Widget
 	}{
 		{
 			Name:     "get a widget",
-			PID:      pid,
-			EID:      "eee",
+			ID:       wid,
 			WS:       NewWidgetSystem([]*Widget{MustNewWidget(wid, pid, "eee", pr, true)}),
 			Expected: MustNewWidget(wid, pid, "eee", pr, true),
 		},
 		{
 			Name:     "dont has the widget",
-			PID:      pid,
-			EID:      "eee",
+			ID:       wid,
 			WS:       NewWidgetSystem([]*Widget{}),
 			Expected: nil,
 		},
 		{
 			Name:     "get widget from nil widgetSystem",
+			ID:       wid,
 			WS:       nil,
 			Expected: nil,
 		},
@@ -358,7 +397,7 @@ func TestWidgetSystem_Widget(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			res := tc.WS.Widget(tc.PID, tc.EID)
+			res := tc.WS.Widget(tc.ID)
 			assert.Equal(tt, tc.Expected, res)
 		})
 	}
@@ -370,27 +409,25 @@ func TestWidgetSystem_Has(t *testing.T) {
 	wid := id.NewWidgetID()
 	testCases := []struct {
 		Name     string
-		PID      id.PluginID
-		EID      id.PluginExtensionID
+		ID       id.WidgetID
 		WS       *WidgetSystem
 		Expected bool
 	}{
 		{
 			Name:     "has a widget",
-			PID:      pid,
-			EID:      "eee",
+			ID:       wid,
 			WS:       NewWidgetSystem([]*Widget{MustNewWidget(wid, pid, "eee", pr, true)}),
 			Expected: true,
 		},
 		{
 			Name:     "dont has a widget",
-			PID:      pid,
-			EID:      "eee",
+			ID:       wid,
 			WS:       NewWidgetSystem([]*Widget{}),
 			Expected: false,
 		},
 		{
 			Name:     "has from nil widgetSystem",
+			ID:       wid,
 			WS:       nil,
 			Expected: false,
 		},
@@ -399,7 +436,7 @@ func TestWidgetSystem_Has(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
-			res := tc.WS.Has(tc.PID, tc.EID)
+			res := tc.WS.Has(tc.ID)
 			assert.Equal(tt, tc.Expected, res)
 		})
 	}

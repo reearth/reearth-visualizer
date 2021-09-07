@@ -43,6 +43,10 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
 
+	if !sc.PluginSystem().Has(oldPluginID) {
+		return MigratePluginsResult{}, ErrPluginNotInstalled
+	}
+
 	plugins, err := s.Plugin(ctx, []id.PluginID{oldPluginID, newPluginID}, []id.SceneID{sc.ID()})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
@@ -50,10 +54,6 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 
 	oldPlugin := plugins[0]
 	newPlugin := plugins[1]
-
-	if !sc.PluginSystem().Has(oldPluginID) {
-		return MigratePluginsResult{}, ErrPluginNotInstalled
-	}
 
 	// 全レイヤーの取得
 	layers, err := s.Layer(ctx, sc.ID())
@@ -109,11 +109,11 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// シーンのウィジェット
-	sc.WidgetSystem().Replace(oldPluginID, newPluginID)
+	sc.WidgetSystem().ReplacePlugin(oldPluginID, newPluginID)
 	for _, w := range sc.WidgetSystem().Widgets() {
 		if w.Plugin().Equal(newPluginID) {
 			if newPlugin.Extension(w.Extension()) == nil {
-				sc.WidgetSystem().Remove(oldPluginID, w.Extension())
+				sc.WidgetSystem().RemoveAllByExtension(oldPluginID, w.Extension())
 			} else {
 				propertyIDs = append(propertyIDs, w.Property())
 			}

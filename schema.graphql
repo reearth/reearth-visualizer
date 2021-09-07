@@ -13,9 +13,38 @@ directive @goField(
   name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
-# Basic types
+# Meta Type
 
 scalar Cursor
+
+interface Node {
+  id: ID!
+}
+
+enum NodeType {
+  ASSET
+  USER
+  TEAM
+  PROJECT
+  PLUGIN
+  SCENE
+  PROPERTY_SCHEMA
+  PROPERTY
+  DATASET_SCHEMA
+  DATASET
+  LAYER_GROUP
+  LAYER_ITEM
+}
+
+type PageInfo {
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+# Basic types
+
 scalar DateTime
 scalar URL
 scalar Lang
@@ -24,8 +53,8 @@ scalar PluginID
 scalar PluginExtensionID
 scalar PropertySchemaID
 scalar PropertySchemaFieldID
-scalar TranslatedString
 scalar DatasetSchemaFieldID
+scalar TranslatedString
 
 type LatLng {
   lat: Float!
@@ -101,19 +130,6 @@ enum Theme {
   DARK
 }
 
-# Meta Type
-
-interface Node {
-  id: ID!
-}
-
-type PageInfo {
-  startCursor: Cursor
-  endCursor: Cursor
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
 # Asset
 
 type Asset implements Node {
@@ -147,7 +163,7 @@ type SearchedUser {
   userEmail: String!
 }
 
-type CheckProjectAliasPayload {
+type ProjectAliasAvailability {
   alias: String!
   available: Boolean!
 }
@@ -355,8 +371,6 @@ type PropertySchemaGroup {
   isAvailableIf: PropertyCondition
   title: String
   allTranslatedTitle: TranslatedString
-  # For compatibility: "name" field will be removed in the futrue
-  name: PropertySchemaFieldID
   representativeFieldId: PropertySchemaFieldID
   representativeField: PropertySchemaField
   schema: PropertySchema @goField(forceResolver: true)
@@ -367,8 +381,6 @@ type PropertySchemaField {
   fieldId: PropertySchemaFieldID!
   type: ValueType!
   title: String!
-  # For compatibility: "name" field will be removed in the futrue
-  name: String!
   description: String!
   prefix: String
   suffix: String
@@ -379,12 +391,8 @@ type PropertySchemaField {
   choices: [PropertySchemaFieldChoice!]
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
-  # For compatibility: "allTranslatedName" field will be removed in the futrue
-  allTranslatedName: TranslatedString
   allTranslatedDescription: TranslatedString
   translatedTitle(lang: String): String! @goField(forceResolver: true)
-  # For compatibility: "translatedName" field will be removed in the futrue
-  translatedName(lang: String): String! @goField(forceResolver: true)
   translatedDescription(lang: String): String! @goField(forceResolver: true)
 }
 
@@ -403,15 +411,9 @@ enum PropertySchemaFieldUI {
 type PropertySchemaFieldChoice {
   key: String!
   title: String!
-  # For compatibility: "label" field will be removed in the futrue
-  label: String!
   icon: String
   allTranslatedTitle: TranslatedString
-  # For compatibility: "allTranslatedLabel" field will be removed in the futrue
-  allTranslatedLabel: TranslatedString
   translatedTitle(lang: String): String! @goField(forceResolver: true)
-  # For compatibility: "translatedLabel" field will be removed in the futrue
-  translatedLabel(lang: String): String! @goField(forceResolver: true)
 }
 
 type PropertyCondition {
@@ -707,6 +709,7 @@ type MergedInfoboxField {
 }
 
 # InputType
+
 input CreateAssetInput {
   teamId: ID!
   file: Upload!
@@ -827,15 +830,13 @@ input AddWidgetInput {
 
 input UpdateWidgetInput {
   sceneId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  widgetId: ID!
   enabled: Boolean
 }
 
 input RemoveWidgetInput {
   sceneId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  widgetId: ID!
 }
 
 input InstallPluginInput {
@@ -1047,6 +1048,7 @@ input AddDatasetSchemaInput {
 }
 
 # Payload
+
 type CreateAssetPayload {
   asset: Asset!
 }
@@ -1122,8 +1124,7 @@ type UpdateWidgetPayload {
 
 type RemoveWidgetPayload {
   scene: Scene!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  widgetId: ID!
 }
 
 type InstallPluginPayload {
@@ -1242,21 +1243,6 @@ type AddDatasetSchemaPayload {
 
 # Connection
 
-enum NodeType {
-  ASSET
-  USER
-  TEAM
-  PROJECT
-  PLUGIN
-  SCENE
-  PROPERTY_SCHEMA
-  PROPERTY
-  DATASET_SCHEMA
-  DATASET
-  LAYER_GROUP
-  LAYER_ITEM
-}
-
 type AssetConnection {
   edges: [AssetEdge!]!
   nodes: [Asset]!
@@ -1349,7 +1335,7 @@ type Query {
   sceneLock(sceneId: ID!): SceneLockMode
   dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
   searchUser(nameOrEmail: String!): SearchedUser
-  checkProjectAlias(alias: String!): CheckProjectAliasPayload!
+  checkProjectAlias(alias: String!): ProjectAliasAvailability!
   installablePlugins: [PluginMetadata!]!
 }
 

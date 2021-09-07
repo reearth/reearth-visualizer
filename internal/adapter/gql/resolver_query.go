@@ -326,7 +326,7 @@ func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gq
 	return r.loaders.User.SearchUser(ctx, nameOrEmail)
 }
 
-func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.CheckProjectAliasPayload, error) {
+func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
 	exit := trace(ctx)
 	defer exit()
 

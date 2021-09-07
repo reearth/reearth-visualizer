@@ -57,13 +57,13 @@ func (c *ProjectLoader) FindByTeam(ctx context.Context, teamID id.TeamID, first 
 	}, nil
 }
 
-func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string) (*gqlmodel.CheckProjectAliasPayload, error) {
+func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
 	ok, err := c.usecase.CheckAlias(ctx, alias)
 	if err != nil {
 		return nil, err
 	}
 
-	return &gqlmodel.CheckProjectAliasPayload{Alias: alias, Available: ok}, nil
+	return &gqlmodel.ProjectAliasAvailability{Alias: alias, Available: ok}, nil
 }
 
 // data loaders

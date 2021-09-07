@@ -394,9 +394,7 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 			choices = append(choices, &PropertySchemaFieldChoice{
 				Key:                k.Key,
 				Title:              k.Title.String(),
-				Label:              k.Title.String(), // deprecated
 				AllTranslatedTitle: k.Title,
-				AllTranslatedLabel: k.Title, // deprecated
 				Icon:               stringToRef(k.Icon),
 			})
 		}
@@ -406,7 +404,6 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 		FieldID:                  f.ID(),
 		Type:                     ToPropertyValueType(f.Type()),
 		Title:                    f.Title().String(),
-		Name:                     f.Title().String(), // deprecated
 		Description:              f.Description().String(),
 		Prefix:                   stringToRef(f.Prefix()),
 		Suffix:                   stringToRef(f.Suffix()),
@@ -417,7 +414,6 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 		Choices:                  choices,
 		IsAvailableIf:            ToPropertyConditon(f.IsAvailableIf()),
 		AllTranslatedTitle:       f.Title(),
-		AllTranslatedName:        f.Title(), // deprecated
 		AllTranslatedDescription: f.Description(),
 	}
 }
@@ -542,7 +538,6 @@ func ToPropertySchemaGroup(g *property.SchemaGroup) *PropertySchemaGroup {
 		IsList:                g.IsList(),
 		Title:                 g.Title().StringRef(),
 		Fields:                fields,
-		Name:                  representativeFieldID, // deprecated
 		RepresentativeFieldID: representativeFieldID,
 		RepresentativeField:   representativeField,
 		AllTranslatedTitle:    g.Title(),

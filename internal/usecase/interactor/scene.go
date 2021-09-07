@@ -68,7 +68,6 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 }
 
 func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -218,7 +217,6 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 }
 
 func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetParam, operator *usecase.Operator) (_ *scene.Scene, _ *scene.Widget, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -247,7 +245,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	}
 
 	ws := scene.WidgetSystem()
-	widget := ws.Widget(param.PluginID, param.ExtensionID)
+	widget := ws.Widget(param.WidgetID)
 	if widget == nil {
 		return nil, nil, rerror.ErrNotFound
 	}
@@ -265,7 +263,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	return scene, widget, nil
 }
 
-func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, err error) {
+func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
 
 	tx, err := i.transaction.Begin()
 	if err != nil {
@@ -296,12 +294,12 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, pid id.PluginID
 
 	ws := scene.WidgetSystem()
 
-	widget := ws.Widget(pid, eid)
+	widget := ws.Widget(wid)
 	if widget == nil {
 		return nil, rerror.ErrNotFound
 	}
 
-	ws.Remove(pid, eid)
+	ws.Remove(wid)
 
 	err2 = i.propertyRepo.Remove(ctx, widget.Property())
 	if err2 != nil {

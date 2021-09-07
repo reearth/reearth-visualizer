@@ -171,11 +171,6 @@ type Camera struct {
 	Fov      float64 `json:"fov"`
 }
 
-type CheckProjectAliasPayload struct {
-	Alias     string `json:"alias"`
-	Available bool   `json:"available"`
-}
-
 type CreateAssetInput struct {
 	TeamID id.ID          `json:"teamId"`
 	File   graphql.Upload `json:"file"`
@@ -641,6 +636,11 @@ type Project struct {
 
 func (Project) IsNode() {}
 
+type ProjectAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
+
 type ProjectConnection struct {
 	Edges      []*ProjectEdge `json:"edges"`
 	Nodes      []*Project     `json:"nodes"`
@@ -749,7 +749,6 @@ type PropertySchemaField struct {
 	FieldID                  id.PropertySchemaFieldID     `json:"fieldId"`
 	Type                     ValueType                    `json:"type"`
 	Title                    string                       `json:"title"`
-	Name                     string                       `json:"name"`
 	Description              string                       `json:"description"`
 	Prefix                   *string                      `json:"prefix"`
 	Suffix                   *string                      `json:"suffix"`
@@ -760,22 +759,17 @@ type PropertySchemaField struct {
 	Choices                  []*PropertySchemaFieldChoice `json:"choices"`
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle"`
-	AllTranslatedName        map[string]string            `json:"allTranslatedName"`
 	AllTranslatedDescription map[string]string            `json:"allTranslatedDescription"`
 	TranslatedTitle          string                       `json:"translatedTitle"`
-	TranslatedName           string                       `json:"translatedName"`
 	TranslatedDescription    string                       `json:"translatedDescription"`
 }
 
 type PropertySchemaFieldChoice struct {
 	Key                string            `json:"key"`
 	Title              string            `json:"title"`
-	Label              string            `json:"label"`
 	Icon               *string           `json:"icon"`
 	AllTranslatedTitle map[string]string `json:"allTranslatedTitle"`
-	AllTranslatedLabel map[string]string `json:"allTranslatedLabel"`
 	TranslatedTitle    string            `json:"translatedTitle"`
-	TranslatedLabel    string            `json:"translatedLabel"`
 }
 
 type PropertySchemaGroup struct {
@@ -786,7 +780,6 @@ type PropertySchemaGroup struct {
 	IsAvailableIf         *PropertyCondition        `json:"isAvailableIf"`
 	Title                 *string                   `json:"title"`
 	AllTranslatedTitle    map[string]string         `json:"allTranslatedTitle"`
-	Name                  *id.PropertySchemaFieldID `json:"name"`
 	RepresentativeFieldID *id.PropertySchemaFieldID `json:"representativeFieldId"`
 	RepresentativeField   *PropertySchemaField      `json:"representativeField"`
 	Schema                *PropertySchema           `json:"schema"`
@@ -877,15 +870,13 @@ type RemovePropertyItemInput struct {
 }
 
 type RemoveWidgetInput struct {
-	SceneID     id.ID                `json:"sceneId"`
-	PluginID    id.PluginID          `json:"pluginId"`
-	ExtensionID id.PluginExtensionID `json:"extensionId"`
+	SceneID  id.ID `json:"sceneId"`
+	WidgetID id.ID `json:"widgetId"`
 }
 
 type RemoveWidgetPayload struct {
-	Scene       *Scene               `json:"scene"`
-	PluginID    id.PluginID          `json:"pluginId"`
-	ExtensionID id.PluginExtensionID `json:"extensionId"`
+	Scene    *Scene `json:"scene"`
+	WidgetID id.ID  `json:"widgetId"`
 }
 
 type Scene struct {
@@ -1096,10 +1087,9 @@ type UpdateTeamPayload struct {
 }
 
 type UpdateWidgetInput struct {
-	SceneID     id.ID                `json:"sceneId"`
-	PluginID    id.PluginID          `json:"pluginId"`
-	ExtensionID id.PluginExtensionID `json:"extensionId"`
-	Enabled     *bool                `json:"enabled"`
+	SceneID  id.ID `json:"sceneId"`
+	WidgetID id.ID `json:"widgetId"`
+	Enabled  *bool `json:"enabled"`
 }
 
 type UpdateWidgetPayload struct {

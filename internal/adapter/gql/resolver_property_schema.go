@@ -31,18 +31,7 @@ func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
-	return obj.Name, nil
-}
-
-// deprecated
-func (r *propertySchemaFieldResolver) TranslatedName(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if s, ok := obj.AllTranslatedName[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Name, nil
+	return obj.Title, nil
 }
 
 func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
@@ -112,13 +101,5 @@ func (r *propertySchemaFieldChoiceResolver) TranslatedTitle(ctx context.Context,
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
-	return obj.Label, nil
-}
-
-// deprecated
-func (r *propertySchemaFieldChoiceResolver) TranslatedLabel(ctx context.Context, obj *gqlmodel.PropertySchemaFieldChoice, lang *string) (string, error) {
-	if s, ok := obj.AllTranslatedLabel[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Label, nil
+	return obj.Title, nil
 }

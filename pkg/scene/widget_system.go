@@ -45,24 +45,24 @@ func (w *WidgetSystem) Widgets() []*Widget {
 	return append([]*Widget{}, w.widgets...)
 }
 
-func (w *WidgetSystem) Widget(p id.PluginID, e id.PluginExtensionID) *Widget {
+func (w *WidgetSystem) Widget(wid id.WidgetID) *Widget {
 	if w == nil {
 		return nil
 	}
 	for _, ww := range w.widgets {
-		if ww.plugin.Equal(p) && ww.extension == e {
+		if ww.ID() == wid {
 			return ww
 		}
 	}
 	return nil
 }
 
-func (w *WidgetSystem) Has(p id.PluginID, e id.PluginExtensionID) bool {
+func (w *WidgetSystem) Has(wid id.WidgetID) bool {
 	if w == nil {
 		return false
 	}
 	for _, w2 := range w.widgets {
-		if w2.plugin.Equal(p) && w2.extension == e {
+		if w2.ID() == wid {
 			return true
 		}
 	}
@@ -70,21 +70,21 @@ func (w *WidgetSystem) Has(p id.PluginID, e id.PluginExtensionID) bool {
 }
 
 func (w *WidgetSystem) Add(sw *Widget) {
-	if w == nil || sw == nil || w.Has(sw.plugin, sw.extension) {
+	if w == nil || sw == nil || w.Has(sw.ID()) {
 		return
 	}
 	sw2 := *sw
 	w.widgets = append(w.widgets, &sw2)
 }
 
-func (w *WidgetSystem) Remove(p id.PluginID, e id.PluginExtensionID) {
+func (w *WidgetSystem) Remove(wid id.WidgetID) {
 	if w == nil {
 		return
 	}
 	for i := 0; i < len(w.widgets); i++ {
-		if w.widgets[i].plugin.Equal(p) && w.widgets[i].extension == e {
+		if w.widgets[i].ID() == wid {
 			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
-			i--
+			return
 		}
 	}
 }
@@ -103,7 +103,21 @@ func (w *WidgetSystem) RemoveAllByPlugin(p id.PluginID) (res []id.PropertyID) {
 	return res
 }
 
-func (w *WidgetSystem) Replace(oldp, newp id.PluginID) {
+func (w *WidgetSystem) RemoveAllByExtension(p id.PluginID, e id.PluginExtensionID) (res []id.PropertyID) {
+	if w == nil {
+		return nil
+	}
+	for i := 0; i < len(w.widgets); i++ {
+		if w.widgets[i].Plugin().Equal(p) && w.widgets[i].Extension() == e {
+			res = append(res, w.widgets[i].Property())
+			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
+			i--
+		}
+	}
+	return res
+}
+
+func (w *WidgetSystem) ReplacePlugin(oldp, newp id.PluginID) {
 	if w == nil || w.widgets == nil {
 		return
 	}
