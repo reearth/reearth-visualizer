@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import {
   useChangePropertyValueMutation,
@@ -39,20 +39,13 @@ export type FieldPointer = {
 };
 
 export default (mode: Mode) => {
-  const [selected] = useSelected();
+  const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
   const [team] = useTeam();
   const [sceneId] = useSceneId();
-
-  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
-  const selectedWidgetId = useMemo(() => {
-    const wid = selected?.type === "widget" ? selected.widgetId : undefined;
-    const wids = wid?.split("/");
-    return wids?.length === 2 ? { pluginId: wids[0], extensionId: wids[1] } : undefined;
-  }, [selected]);
 
   const {
     loading,
@@ -63,7 +56,6 @@ export default (mode: Mode) => {
     linkedDatasetId,
     isInfoboxCreatable,
     datasetSchemas,
-    scene,
     layers,
     assets,
     selectedWidget,
@@ -72,8 +64,7 @@ export default (mode: Mode) => {
     sceneId,
     rootLayerId,
     selectedBlock,
-    selectedLayer: selected?.type === "layer" ? selected.layerId : undefined,
-    selectedWidgetId: selectedWidgetId,
+    selected,
     teamId: team?.id,
   });
 
@@ -196,28 +187,28 @@ export default (mode: Mode) => {
 
   const [createInfoboxMutation] = useCreateInfoboxMutation();
   const createInfobox = useCallback(() => {
-    if (!selectedLayerId) return;
+    if (selected?.type !== "layer") return;
     return createInfoboxMutation({
-      variables: { layerId: selectedLayerId },
+      variables: { layerId: selected.layerId },
     });
-  }, [createInfoboxMutation, selectedLayerId]);
+  }, [createInfoboxMutation, selected]);
 
   const [removeInfoboxMutation] = useRemoveInfoboxMutation();
   const removeInfobox = useCallback(() => {
-    if (!selectedLayerId) return;
+    if (selected?.type !== "layer") return;
     return removeInfoboxMutation({
-      variables: { layerId: selectedLayerId },
+      variables: { layerId: selected.layerId },
     });
-  }, [removeInfoboxMutation, selectedLayerId]);
+  }, [removeInfoboxMutation, selected]);
 
   const [removeInfoboxFieldMutation] = useRemoveInfoboxFieldMutation();
   const removeInfoboxField = useCallback(() => {
-    if (!selectedBlock || !selectedLayerId) return;
+    if (!selectedBlock || selected?.type !== "layer") return;
     selectBlock(undefined);
     return removeInfoboxFieldMutation({
-      variables: { layerId: selectedLayerId, infoboxFieldId: selectedBlock },
+      variables: { layerId: selected.layerId, infoboxFieldId: selectedBlock },
     });
-  }, [removeInfoboxFieldMutation, selectBlock, selectedBlock, selectedLayerId]);
+  }, [removeInfoboxFieldMutation, selectBlock, selectedBlock, selected]);
 
   const onCameraChange = useCallback(
     (value: Partial<Camera>) => {
@@ -280,45 +271,46 @@ export default (mode: Mode) => {
 
   const onWidgetActivate = useCallback(
     async (enabled: boolean) => {
-      if (!sceneId || !selectedWidgetId) return;
+      if (!sceneId || selected?.type !== "widget") return;
       if (!enabled) {
+        if (!selected.widgetId) return;
         await updateWidgetMutation({
           variables: {
             sceneId,
-            pluginId: selectedWidgetId.pluginId,
-            extensionId: selectedWidgetId.extensionId,
+            widgetId: selected.widgetId,
             enabled: false,
           },
           refetchQueries: ["GetEarthWidgets"],
         });
-      } else if (
-        scene?.widgets.some(
-          w =>
-            w.pluginId === selectedWidgetId.pluginId &&
-            w.extensionId === selectedWidgetId.extensionId,
-        )
-      ) {
+      } else if (selected.widgetId) {
         await updateWidgetMutation({
           variables: {
             sceneId,
-            pluginId: selectedWidgetId.pluginId,
-            extensionId: selectedWidgetId.extensionId,
+            widgetId: selected.widgetId,
             enabled: true,
           },
           refetchQueries: ["GetEarthWidgets"],
         });
       } else {
-        await addWidgetMutation({
+        const { data } = await addWidgetMutation({
           variables: {
             sceneId,
-            pluginId: selectedWidgetId.pluginId,
-            extensionId: selectedWidgetId.extensionId,
+            pluginId: selected.pluginId,
+            extensionId: selected.extensionId,
           },
-          refetchQueries: ["GetEarthWidgets"],
+          refetchQueries: ["GetEarthWidgets", "GetWidgets"],
         });
+        if (data?.addWidget?.sceneWidget) {
+          select({
+            type: "widget",
+            widgetId: data.addWidget.sceneWidget.id,
+            pluginId: data.addWidget.sceneWidget.pluginId,
+            extensionId: data.addWidget.sceneWidget.extensionId,
+          });
+        }
       }
     },
-    [addWidgetMutation, scene?.widgets, sceneId, selectedWidgetId, updateWidgetMutation],
+    [addWidgetMutation, sceneId, select, selected, updateWidgetMutation],
   );
 
   const [updatePropertyItemsMutation] = useUpdatePropertyItemsMutation();

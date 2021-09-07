@@ -6,7 +6,7 @@ const propertyFragment = gql`
     title
     translatedTitle
     isList
-    name
+    representativeFieldId
     isAvailableIf {
       fieldId
       type
@@ -14,9 +14,9 @@ const propertyFragment = gql`
     }
     fields {
       fieldId
-      name
+      title
       description
-      translatedName
+      translatedTitle
       translatedDescription
       prefix
       suffix
@@ -27,9 +27,9 @@ const propertyFragment = gql`
       max
       choices {
         key
-        # icon
-        label
-        translatedLabel
+        icon
+        title
+        translatedTitle
       }
       isAvailableIf {
         fieldId

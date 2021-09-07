@@ -30,7 +30,7 @@ export type Props = {
   onLayerRemove?: (id: string) => void;
   onLayerSelect?: (layerId: string, ...i: number[]) => void;
   onSceneSelect?: () => void;
-  onWidgetSelect?: (id: string) => void;
+  onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onLayerMove?: (
     layer: string,
     destLayer: string,
@@ -111,7 +111,6 @@ const OutlinePane: React.FC<Props> = ({
           />
         )}
       </OutlineItemsWrapper>
-
       <LayersItemWrapper>
         {layersItem && (
           <TreeView<TreeViewItem, HTMLDivElement>

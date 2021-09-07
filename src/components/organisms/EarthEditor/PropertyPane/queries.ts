@@ -392,13 +392,19 @@ export const ADD_WIDGET = gql`
           }
         }
       }
+      sceneWidget {
+        id
+        enabled
+        pluginId
+        extensionId
+      }
     }
   }
 `;
 
 export const REMOVE_WIDGET = gql`
-  mutation removeWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!) {
-    removeWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
+  mutation removeWidget($sceneId: ID!, $widgetId: ID!) {
+    removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
       scene {
         id
         widgets {
@@ -414,20 +420,8 @@ export const REMOVE_WIDGET = gql`
 `;
 
 export const UPDATE_WIDGET = gql`
-  mutation updateWidget(
-    $sceneId: ID!
-    $pluginId: PluginID!
-    $extensionId: PluginExtensionID!
-    $enabled: Boolean
-  ) {
-    updateWidget(
-      input: {
-        sceneId: $sceneId
-        pluginId: $pluginId
-        extensionId: $extensionId
-        enabled: $enabled
-      }
-    ) {
+  mutation updateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean) {
+    updateWidget(input: { sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled }) {
       scene {
         id
         widgets {

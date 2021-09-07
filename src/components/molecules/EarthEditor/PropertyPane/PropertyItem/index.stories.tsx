@@ -87,7 +87,7 @@ export const NamedList = () => (
     item={{
       id: "foo",
       schemaGroup: "foo",
-      nameField: "bar",
+      representativeField: "bar",
       schemaFields: [
         {
           id: "bar",
@@ -130,7 +130,7 @@ export const LayerMode = () => (
     item={{
       id: "foo",
       schemaGroup: "foo",
-      nameField: "foo",
+      representativeField: "foo",
       schemaFields: [
         {
           id: "foo",

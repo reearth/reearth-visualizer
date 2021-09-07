@@ -24,6 +24,8 @@ export default {
 const widgets: Widget[] = [
   {
     id: "Widget1",
+    pluginId: "xxx",
+    extensionId: "yyy",
     title: "Widget1",
     enabled: true,
   },

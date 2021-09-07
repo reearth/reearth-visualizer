@@ -78,12 +78,15 @@ export default () => {
           .map((e): Widget => {
             const pluginId = plugin.id;
             const extensionId = e.extensionId;
-            const enabled = scene?.widgets.find(
+            // note: multiple widget is not supported now
+            const widget = scene?.widgets.find(
               w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
-            )?.enabled;
+            );
             return {
-              id: `${plugin.id}/${e.extensionId}`,
-              enabled,
+              id: widget?.id,
+              pluginId,
+              extensionId: e.extensionId,
+              enabled: !!widget?.enabled,
               title: e.translatedName,
               description: e.translatedDescription,
               icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
@@ -123,8 +126,13 @@ export default () => {
   }, [select, selectBlock]);
 
   const selectWidget = useCallback(
-    (id: string) => {
-      select({ type: "widget", widgetId: id });
+    (widgetId: string | undefined, pluginId: string, extensionId: string) => {
+      select({
+        type: "widget",
+        widgetId,
+        pluginId,
+        extensionId,
+      });
       selectBlock(undefined);
     },
     [select, selectBlock],
@@ -245,7 +253,8 @@ export default () => {
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
-    selectedWidgetId: selected?.type === "widget" ? selected.widgetId : undefined,
+    selectedWidgetId:
+      selected?.type === "widget" ? `${selected.pluginId}/${selected.extensionId}` : undefined,
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,

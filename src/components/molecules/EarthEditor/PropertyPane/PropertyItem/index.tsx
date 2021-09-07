@@ -53,7 +53,7 @@ export type ItemCommon = {
   schemaGroup: string;
   title?: string;
   schemaFields: SchemaField[];
-  nameField?: string;
+  representativeField?: string;
   only?: {
     field: string;
     value: string | boolean;
@@ -143,10 +143,10 @@ const PropertyItem: React.FC<Props> = ({
 
   const isList = item && "items" in item;
   const layerMode = useMemo(() => {
-    if (!isList || !item?.nameField) return false;
-    const sf = item.schemaFields.find(f => f.id === item.nameField);
+    if (!isList || !item?.representativeField) return false;
+    const sf = item.schemaFields.find(f => f.id === item.representativeField);
     return sf?.type === "ref" && sf.ui === "layer";
-  }, [isList, item?.nameField, item?.schemaFields]);
+  }, [isList, item?.representativeField, item?.schemaFields]);
 
   const groups = useMemo<(GroupListItem | Group)[]>(
     () => (item && "items" in item ? item.items : item ? [item] : []),
@@ -161,12 +161,14 @@ const PropertyItem: React.FC<Props> = ({
         .map<PropertyListItem | undefined>(i => {
           if (!i.id) return;
 
-          const nameField = item?.nameField
-            ? i.fields.find(f => f.id === item.nameField)
+          const representativeField = item?.representativeField
+            ? i.fields.find(f => f.id === item.representativeField)
             : undefined;
-          const nameSchemaField = item?.schemaFields?.find(sf => sf.id === item.nameField);
+          const nameSchemaField = item?.schemaFields?.find(
+            sf => sf.id === item.representativeField,
+          );
 
-          const value = nameField?.value || nameSchemaField?.defaultValue;
+          const value = representativeField?.value || nameSchemaField?.defaultValue;
 
           const choice = nameSchemaField?.choices
             ? nameSchemaField?.choices?.find(c => c.key === value)?.label
@@ -283,7 +285,7 @@ const PropertyItem: React.FC<Props> = ({
       )}
       {!!item &&
         schemaFields?.map(f => {
-          if (layerMode && f.schemaField.id === item.nameField) return null;
+          if (layerMode && f.schemaField.id === item.representativeField) return null;
           return (
             <PropertyField
               key={f.schemaField.id}

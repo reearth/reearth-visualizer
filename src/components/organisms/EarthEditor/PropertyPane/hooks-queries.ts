@@ -8,6 +8,7 @@ import {
   useAssetsQuery,
 } from "@reearth/gql";
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
+import { Selected } from "@reearth/state";
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
 
@@ -16,17 +17,15 @@ export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 export default ({
   sceneId,
   rootLayerId,
-  selectedLayer,
+  selected,
   selectedBlock,
-  selectedWidgetId,
   teamId,
   mode,
 }: {
   sceneId?: string;
   rootLayerId?: string;
-  selectedLayer?: string;
+  selected?: Selected;
   selectedBlock?: string;
-  selectedWidgetId?: { pluginId: string; extensionId: string };
   teamId?: string;
   mode: Mode;
 }) => {
@@ -53,8 +52,9 @@ export default ({
     error: layerPropertyError,
     data: layerPropertyData,
   } = useGetLayerPropertyQuery({
-    variables: { layerId: selectedLayer || "" },
-    skip: !selectedLayer || (mode !== "layer" && mode !== "block" && mode !== "infobox"),
+    variables: { layerId: selected?.type === "layer" ? selected.layerId : "" },
+    skip:
+      selected?.type !== "layer" || (mode !== "layer" && mode !== "block" && mode !== "infobox"),
   });
 
   const { data: linkableDatasets } = useGetLinkableDatasetsQuery({
@@ -119,17 +119,13 @@ export default ({
       ? layerPropertyData.layer.linkedDatasetId ?? undefined
       : undefined;
   const isInfoboxCreatable =
-    !!selectedLayer && mode === "infobox" && !layerPropertyData?.layer?.infobox;
+    selected?.type === "layer" && mode === "infobox" && !layerPropertyData?.layer?.infobox;
   const selectedWidget = useMemo(
     () =>
-      selectedWidgetId
-        ? scene?.widgets.find(
-            w =>
-              selectedWidgetId.pluginId === w.pluginId &&
-              selectedWidgetId.extensionId === w.extensionId,
-          )
+      selected?.type === "widget"
+        ? scene?.widgets.find(w => selected.widgetId === w.id)
         : undefined,
-    [scene?.widgets, selectedWidgetId],
+    [scene?.widgets, selected],
   );
 
   const pane = useMemo<Pane | undefined>(() => {
@@ -144,14 +140,14 @@ export default ({
     }
 
     if (mode === "widget") {
-      if (!selectedWidgetId) return undefined;
-      const w = scene?.widgets.find(
-        w =>
-          w.pluginId === selectedWidgetId.pluginId &&
-          w.extensionId === selectedWidgetId.extensionId,
-      );
+      if (selected?.type !== "widget") return;
+      const w = selected.widgetId
+        ? scene?.widgets.find(w => selected.widgetId === w.id)
+        : undefined;
       return {
-        id: selectedWidgetId.pluginId + "/" + selectedWidgetId.extensionId,
+        id: selected.widgetId || `${selected.pluginId}/${selected.extensionId}`,
+        pluginId: selected.pluginId,
+        extensionId: selected.extensionId,
         mode: "widget",
         propertyId: w?.property?.id,
         items: convert(w?.property, null),
@@ -168,7 +164,15 @@ export default ({
       title: layerPropertyData?.layer?.name,
       group: layerPropertyData?.layer?.__typename === "LayerGroup",
     };
-  }, [items, mode, propertyId, scene?.widgets, selectedWidgetId, layerPropertyData?.layer]);
+  }, [
+    mode,
+    propertyId,
+    items,
+    layerPropertyData?.layer?.name,
+    layerPropertyData?.layer?.__typename,
+    selected,
+    scene?.widgets,
+  ]);
   const datasetSchemas = useMemo(
     () => convertLinkableDatasets(linkableDatasets),
     [linkableDatasets],
@@ -185,7 +189,6 @@ export default ({
     linkedDatasetSchemaId,
     isInfoboxCreatable,
     datasetSchemas,
-    scene,
     layers,
     assets,
     selectedWidget,
