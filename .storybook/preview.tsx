@@ -10,7 +10,6 @@ import {
 import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as IntlProvider } from "../src/locale";
 import { Provider as DndProvider } from "../src/util/use-dnd";
-import { Provider as LocalStateProvider } from "../src/state";
 
 // apollo client that does nothing
 const mockClient = new ApolloClient({
@@ -32,11 +31,9 @@ export const decorators = [
   (storyFn: () => ReactElement) => (
     <ApolloProvider client={mockClient}>
       <ThemeProvider>
-        <LocalStateProvider>
-          <IntlProvider>
-            <DndProvider>{storyFn()}</DndProvider>
-          </IntlProvider>
-        </LocalStateProvider>
+        <IntlProvider>
+          <DndProvider>{storyFn()}</DndProvider>
+        </IntlProvider>
       </ThemeProvider>
     </ApolloProvider>
   ),
