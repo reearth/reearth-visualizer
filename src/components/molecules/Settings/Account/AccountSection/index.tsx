@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import Section from "@reearth/components/molecules/Settings/Section";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
@@ -8,6 +8,8 @@ import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
+
+export type Theme = "DARK" | "LIGHT";
 
 export type Props = {
   email?: string;
@@ -34,22 +36,32 @@ const ProfileSection: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState<string>();
-  const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
-  type Theme = "DARK" | "LIGHT";
-  const themeItems: { key: Theme; label: string; icon: string }[] = [
-    { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
-    { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
-  ];
-  useEffect(() => {
-    const lang = items.find(item => item.key === intl.locale);
-    setCurrentLang(lang?.label);
-  }, [intl.locale]);
 
-  useEffect(() => {
-    const label = themeItems.find(themeItem => themeItem.key === appTheme)?.label;
-    setCurrentThemeLabel(label);
-  }, [appTheme]);
+  const themeItems: { key: Theme; label: string; icon: string }[] = useMemo(
+    () => [
+      { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
+      { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+    ],
+    [intl],
+  );
+
+  const currentThemeLabel = useMemo(
+    () => themeItems.find(themeItem => themeItem.key === appTheme)?.label,
+    [appTheme, themeItems],
+  );
+
+  const currentLang = useMemo(
+    () => items.find(item => item.key === intl.locale)?.label,
+    [intl.locale],
+  );
+
+  const handleUpdatePassword = useCallback(
+    (password: string, passwordConfirmation: string) => {
+      updatePassword?.(password, passwordConfirmation);
+      setIsOpen(false);
+    },
+    [updatePassword],
+  );
 
   return (
     <Wrapper>
@@ -90,7 +102,7 @@ const ProfileSection: React.FC<Props> = ({
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
-        updatePassword={updatePassword}
+        updatePassword={handleUpdatePassword}
         isVisible={isOpen}
         onClose={() => setIsOpen(false)}
       />

@@ -9,6 +9,7 @@ export type Props = {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  type?: "text" | "password";
   multiline?: boolean;
   prefix?: string;
   suffix?: string;
@@ -25,9 +26,10 @@ export type Props = {
 const TextBox: React.FC<Props> = ({
   className,
   value,
-  multiline,
-  disabled,
   onChange,
+  disabled,
+  type = "text",
+  multiline,
   prefix,
   suffix,
   placeholder,
@@ -125,6 +127,7 @@ const TextBox: React.FC<Props> = ({
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}
           color={color}
+          type={type}
           backgroundColor={backgroundColor}
           disabled={disabled}
           placeholder={placeholder}

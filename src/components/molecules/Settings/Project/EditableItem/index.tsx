@@ -47,7 +47,7 @@ const EditableItem: React.FC<Props> = ({
   onEditCancel,
 }) => {
   const [isEditting, setIsEditting] = useState(false);
-  const [inputState, setInputState] = useState(body || currentItem);
+  const [inputState, setInputState] = useState(currentItem || body);
 
   const startEdit = useCallback(() => {
     if (onEditStart) {
@@ -56,6 +56,7 @@ const EditableItem: React.FC<Props> = ({
       setIsEditting(true);
     }
   }, [setIsEditting, onEditStart]);
+
   const cancelEdit = useCallback(() => {
     if (onEditCancel) {
       onEditCancel();

@@ -27,17 +27,24 @@ type Props = {
 
 const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updatePassword }) => {
   const intl = useIntl();
+  const theme = useTheme();
 
-  const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [disabled, setDisabled] = useState(true);
 
+  const handleClose = useCallback(() => {
+    setPassword("");
+    setPasswordConfirmation("");
+    onClose?.();
+  }, [onClose]);
+
   const save = useCallback(() => {
     if (password === passwordConfirmation) {
-      updatePassword?.(currentPassword, passwordConfirmation);
+      updatePassword?.(password, passwordConfirmation);
+      handleClose();
     }
-  }, [updatePassword, password, currentPassword, passwordConfirmation]);
+  }, [updatePassword, handleClose, password, passwordConfirmation]);
 
   useEffect(() => {
     if (password !== passwordConfirmation || password === "" || passwordConfirmation === "") {
@@ -46,14 +53,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
       setDisabled(false);
     }
   }, [password, passwordConfirmation]);
-
-  const handleClose = useCallback(() => {
-    setCurrentPassword("");
-    setPassword("");
-    setPasswordConfirmation("");
-    onClose?.();
-  }, [onClose]);
-  const theme = useTheme();
 
   return (
     <Modal
@@ -95,12 +94,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
               </li>
             </StyledList>
           </Text>
-          <Label size="s">{intl.formatMessage({ defaultMessage: "Old password" })}</Label>
-          <StyledTextBox
-            borderColor={"#3f3d45"}
-            value={currentPassword}
-            onChange={setCurrentPassword}
-          />
           <Label size="s">
             {intl.formatMessage({ defaultMessage: "New password" })}
             {/* {intl.formatMessage({
@@ -108,11 +101,17 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
                   "8 characters or more, 2 types or more from numbers, lowercase letters, uppercase letters",
               })} */}
           </Label>
-          <StyledTextBox borderColor={"#3f3d45"} value={password} onChange={setPassword} />
+          <StyledTextBox
+            type="password"
+            borderColor={"#3f3d45"}
+            value={password}
+            onChange={setPassword}
+          />
           <Label size="s">
             {intl.formatMessage({ defaultMessage: "New password (for confirmation)" })}
           </Label>
           <StyledTextBox
+            type="password"
             borderColor={"#3f3d45"}
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
@@ -122,6 +121,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
         <div>
           <Label size="s">{intl.formatMessage({ defaultMessage: "New password" })}</Label>
           <StyledTextBox
+            type="password"
             borderColor={"#3f3d45"}
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
