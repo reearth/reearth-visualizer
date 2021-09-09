@@ -1,5 +1,6 @@
 const zIndexes = {
   base: 1,
+  hidden: -1,
   form: 100,
   infoBox: 300,
   propertyFieldPopup: 500,

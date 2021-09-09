@@ -157,18 +157,32 @@ const BannerButton = styled(Flex)`
 
 const HeroBannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${({ theme }) =>
-    `linear-gradient(60deg, ${theme.main.brandRed} 10%, ${theme.main.brandBlue} 50%)`};
-  background-size: cover;
-  background-position: top;
+  position: relative;
+  z-index: ${({ theme }) => theme.zIndexes.base};
+  overflow: hidden;
+
   color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
   padding: 120px auto;
   width: 48%;
   height: 114px;
 
-  &:hover {
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
     background: ${({ theme }) =>
-      `linear-gradient(60deg, ${theme.main.brandRed} 30%, ${theme.main.brandBlue} 70%)`};
+      `linear-gradient(140deg, ${theme.main.brandRed} 20%, ${theme.main.brandBlue} 60%)`};
+    background-size: cover;
+    background-position: top;
+    transition: transform 0.4s;
+    z-index: ${({ theme }) => theme.zIndexes.hidden};
+  }
+
+  &:hover: :before {
+    transform: translateY(-50%);
   }
 
   @media only screen and (max-width: 1024px) {
