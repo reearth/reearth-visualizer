@@ -11,6 +11,7 @@ import PluginBlock, { Block as BlockType, Primitive } from "../Block";
 import Frame from "./Frame";
 import Field from "./Field";
 import useHooks from "./hooks";
+import { SceneProperty } from "../Engine";
 
 export type { Primitive } from "../Block";
 
@@ -32,7 +33,7 @@ export type Props = {
   className?: string;
   infoboxKey?: string;
   property?: InfoboxProperty;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
   primitive?: Primitive;
   blocks?: Block[];
   title?: string;
@@ -88,6 +89,7 @@ const Infobox: React.FC<Props> = ({
     <Frame
       className={className}
       infoboxKey={infoboxKey}
+      sceneProperty={sceneProperty}
       title={property?.default?.title || name}
       size={property?.default?.size}
       visible={visible}

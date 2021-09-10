@@ -5,9 +5,10 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
 import { Camera } from "@reearth/util/value";
-import { fonts, styled } from "@reearth/theme";
+import { fonts, styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 import { useVisualizerContext } from "../../context";
+import { SceneProperty } from "../../Engine";
 
 export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
 
@@ -38,10 +39,12 @@ export type Props = {
   button: Button;
   menuItems?: MenuItem[];
   pos: Position;
+  sceneProperty?: SceneProperty;
 };
 
-export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
+export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
   const ctx = useVisualizerContext();
+  const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
   const flyTo = ctx?.engine?.flyTo;
 
@@ -110,7 +113,12 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
           action={() => setVisibleMenuButton(undefined)}
         />
       </ScreenSpaceEventHandler>
-      <Button tabIndex={0} button={b} onClick={handleClick(b)} ref={referenceElement}>
+      <Button
+        publishedTheme={publishedTheme}
+        tabIndex={0}
+        button={b}
+        onClick={handleClick(b)}
+        ref={referenceElement}>
         {(b.buttonStyle === "icon" || b.buttonStyle === "texticon") && b.buttonIcon && (
           <StyledIcon icon={b.buttonIcon} size={25} margin={!!b.buttonTitle} />
         )}
@@ -126,9 +134,14 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
         }}
         {...attributes}>
         {visibleMenuButton && (
-          <MenuWrapper>
+          <MenuWrapper background={publishedTheme.background}>
             {menuItems?.map(i => (
-              <MenuItem tabIndex={0} key={i.id} item={i} onClick={handleClick(i)}>
+              <MenuItem
+                color={publishedTheme.mainText}
+                tabIndex={0}
+                key={i.id}
+                item={i}
+                onClick={handleClick(i)}>
                 {i.menuType !== "border" && i.menuTitle}
               </MenuItem>
             ))}
@@ -153,18 +166,18 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
   margin-right: ${({ margin }) => (margin ? "5px" : null)};
 `;
 
-const MenuWrapper = styled.div<{ visible?: boolean }>`
+const MenuWrapper = styled.div<{ background: string }>`
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #2b2a2f;
+  background-color: ${({ background }) => background};
   border-radius: 3px;
   overflow-wrap: break-word;
   hyphens: auto;
 `;
 
-const MenuItem = styled.a<{ item?: MenuItem }>`
+const MenuItem = styled.a<{ item?: MenuItem; color: string }>`
   display: block;
   font-size: ${fonts.sizes.xs}px;
   margin: ${({ item }) => (item?.menuType === "border" ? "0 5px" : null)};
@@ -172,9 +185,10 @@ const MenuItem = styled.a<{ item?: MenuItem }>`
   cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
   border-top: ${({ item }) => (item?.menuType === "border" ? "1px solid #fff" : null)};
   opacity: ${({ item }) => (item?.menuType === "border" ? "0.5" : null)};
+  color: ${({ color }) => color};
 `;
 
-const Button = styled.div<{ button?: Button }>`
+const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
   display: flex;
   border-radius: 3px;
   min-width: 32px;
@@ -183,8 +197,9 @@ const Button = styled.div<{ button?: Button }>`
   font-size: ${fonts.sizes["2xs"]}px;
   line-height: 32px;
   box-sizing: border-box;
-  background-color: ${({ button }) => button?.buttonBgcolor || "#2B2A2F"};
-  color: ${({ button }) => button?.buttonColor || "#fff"};
+  background-color: ${({ button, publishedTheme }) =>
+    button?.buttonBgcolor || publishedTheme.background};
+  color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme.mainText};
   cursor: pointer;
   align-items: center;
   user-select: none;

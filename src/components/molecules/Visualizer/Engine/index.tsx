@@ -53,6 +53,12 @@ export type SceneProperty = {
     enableGA?: boolean;
     trackingId?: string;
   };
+  theme?: {
+    themeType?: "light" | "dark" | "forest" | "custom";
+    themeTextColor?: string;
+    themeSelectColor?: string;
+    themeBackgroundColor?: string;
+  };
 };
 
 export type EngineProps = {

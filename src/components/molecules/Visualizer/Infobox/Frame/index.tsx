@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, css, useTheme } from "@reearth/theme";
+import { styled, css, usePublishTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
@@ -9,6 +9,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { SceneProperty } from "../../Engine";
 
 export type InfoboxStyles = {
   typography?: Typography;
@@ -18,6 +19,7 @@ export type InfoboxStyles = {
 export type Props = {
   className?: string;
   infoboxKey?: string;
+  sceneProperty?: SceneProperty;
   title?: string;
   size?: "small" | "large";
   visible?: boolean;
@@ -34,6 +36,7 @@ export type Props = {
 const InfoBox: React.FC<Props> = ({
   className,
   infoboxKey,
+  sceneProperty,
   title,
   size,
   visible,
@@ -47,7 +50,7 @@ const InfoBox: React.FC<Props> = ({
   onExit,
   onExited,
 }) => {
-  const theme = useTheme();
+  const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
@@ -75,10 +78,10 @@ const InfoBox: React.FC<Props> = ({
 
   const wrapperStyles = useMemo(
     () => css`
-      background-color: ${styles?.bgcolor || theme.infoBox.bg};
-      ${typographyStyles({ color: theme.infoBox.mainText, ...styles?.typography })}
+      background-color: ${styles?.bgcolor || publishedTheme?.background};
+      ${typographyStyles({ color: publishedTheme?.mainText, ...styles?.typography })}
     `,
-    [theme.infoBox.mainText, theme.infoBox.bg, styles?.bgcolor, styles?.typography],
+    [publishedTheme, styles?.bgcolor, styles?.typography],
   );
 
   return (
@@ -98,13 +101,23 @@ const InfoBox: React.FC<Props> = ({
           justify={open ? "flex-start" : "space-evenly"}
           direction="column"
           onClick={handleOpen}>
-          {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
+          {isSmallWindow && !noContent && (
+            <StyledIcon color={publishedTheme.mainIcon} icon="arrowUp" size={24} open={open} />
+          )}
           <Text size="m" weight="bold" customColor>
             <TitleText>{title || " "}</TitleText>
           </Text>
-          {!isSmallWindow && <StyledIcon icon="arrowDown" size={24} open={open} />}
+          {!isSmallWindow && (
+            <StyledIcon color={publishedTheme.mainIcon} icon="arrowDown" size={24} open={open} />
+          )}
         </TitleFlex>
-        <CloseBtn icon="cancel" size={16} onClick={handleClose} open={open} />
+        <CloseBtn
+          color={publishedTheme.mainIcon}
+          icon="cancel"
+          size={16}
+          onClick={handleClose}
+          open={open}
+        />
         <Content ref={ref2} open={open}>
           {children}
         </Content>
@@ -156,20 +169,21 @@ const TitleFlex = styled(Flex)`
   width: 75%;
 `;
 
-const StyledIcon = styled(Icon)<{ open?: boolean }>`
+const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
   display: ${({ open }) => (open ? "none" : "block")};
+  color: ${({ color }) => color};
 `;
 
 const TitleText = styled.span`
   line-height: ${metricsSizes["2xl"]}px;
 `;
 
-const CloseBtn = styled(Icon)<{ open?: boolean }>`
+const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
   position: absolute;
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: ${props => props.theme.main.text};
+  color: ${({ color }) => color};
   display: ${({ open }) => (open ? "block" : "none")};
 `;
 
