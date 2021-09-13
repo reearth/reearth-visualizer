@@ -1,8 +1,8 @@
-import type { Component } from ".";
-
 import Menu from "./Menu";
 import SplashScreen from "./SplashScreen";
 import Storytelling from "./Storytelling";
+
+import type { Component } from ".";
 
 const builtin: Record<string, Component> = {
   "reearth/menu": Menu,

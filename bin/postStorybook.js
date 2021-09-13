@@ -1,5 +1,6 @@
-const { promisify } = require("util");
 const { exec } = require("child_process");
+const { promisify } = require("util");
+
 const axios = require("axios");
 
 const { GITHUB_TOKEN, GITHUB_PR_COMMENTS_URL, GITHUB_PR_NUMBER, GITHUB_BRANCH_NAME } = process.env;

@@ -1,11 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
 import Option from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
+import { styled } from "@reearth/theme";
 
 const sizes = [6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 21, 24, 36, 48, 60, 72] as const;
 

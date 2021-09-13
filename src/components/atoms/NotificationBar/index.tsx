@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-// Components
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-
-// Theme
 import { styled, useTheme } from "@reearth/theme";
 
 export type Type = "error" | "warning" | "info" | "success";

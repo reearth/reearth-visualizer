@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Player from "react-player";
 
-import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
+import { styled } from "@reearth/theme";
 
-import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
+import { Border, Title } from "../common";
 
 export type Props = BlockProps<Property>;
 

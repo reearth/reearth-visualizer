@@ -1,6 +1,6 @@
+import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 
-import { Meta, Story } from "@storybook/react";
 import Component, { Props, Asset } from ".";
 
 export default {

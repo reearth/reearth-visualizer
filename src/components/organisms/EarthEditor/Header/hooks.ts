@@ -1,7 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "@reach/router";
+import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
+import { useAuth } from "@reearth/auth";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { Status } from "@reearth/components/atoms/PublicationStatus";
+import { User } from "@reearth/components/molecules/EarthEditor/Header";
+import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import {
   useTeamsQuery,
   useGetProjectQuery,
@@ -11,12 +16,6 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useError, useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
-import { useAuth } from "@reearth/auth";
-
-import { Status } from "@reearth/components/atoms/PublicationStatus";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
-import { User } from "@reearth/components/molecules/EarthEditor/Header";
-import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");

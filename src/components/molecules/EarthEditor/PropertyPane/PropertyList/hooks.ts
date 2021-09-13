@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import deepFind from "@reearth/util/deepFind";
-import arrayDiff from "@reearth/util/arrayDiff";
 import type { Item as TreeViewItem } from "@reearth/components/atoms/TreeView";
-import type { Item as ItemType } from "./item";
+import arrayDiff from "@reearth/util/arrayDiff";
+import deepFind from "@reearth/util/deepFind";
+
 import type { Layer as LayerType } from "../PropertyItem";
+
+import type { Item as ItemType } from "./item";
 
 export type Item = ItemType & { layerId?: string };
 export type Layer = LayerType;

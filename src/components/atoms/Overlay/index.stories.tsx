@@ -1,5 +1,6 @@
-import React from "react";
 import { Meta } from "@storybook/react";
+import React from "react";
+
 import Overlay from ".";
 
 const Container: React.FC = ({ children }) => (

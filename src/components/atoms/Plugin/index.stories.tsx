@@ -1,6 +1,6 @@
-import React from "react";
-import { Meta, Story } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
+import { Meta, Story } from "@storybook/react";
+import React from "react";
 
 import Component, { Props } from ".";
 

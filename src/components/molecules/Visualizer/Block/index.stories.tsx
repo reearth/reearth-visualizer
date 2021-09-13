@@ -1,9 +1,10 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
 
-import Component, { Props } from ".";
 import { Provider } from "../context";
 import { context } from "../storybook";
+
+import Component, { Props } from ".";
 
 export default {
   title: "molecules/Visualizer/Block",

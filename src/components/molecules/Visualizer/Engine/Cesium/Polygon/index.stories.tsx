@@ -1,6 +1,8 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
+
 import { V, location } from "../storybook";
+
 import Polygon, { Props } from ".";
 
 export default {

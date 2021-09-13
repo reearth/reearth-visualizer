@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { useNavigate } from "@reach/router";
+import { useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
-import { useTeam } from "@reearth/state";
 import { useTeamsQuery } from "@reearth/gql";
+import { useTeam } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 

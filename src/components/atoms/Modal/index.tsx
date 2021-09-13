@@ -1,7 +1,7 @@
 import React from "react";
+
 import Wrapper from "@reearth/components/atoms/Modal/ModalFrame";
 import Text from "@reearth/components/atoms/Text";
-
 import { styled, useTheme } from "@reearth/theme";
 
 interface Props {

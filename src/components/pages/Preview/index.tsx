@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
-import { useSceneId } from "@reearth/state";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
+import { useSceneId } from "@reearth/state";
+
 import { PublishedAppProvider as ThemeProvider } from "../../../theme";
 
 export type Props = {

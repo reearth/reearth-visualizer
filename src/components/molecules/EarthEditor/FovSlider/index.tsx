@@ -1,15 +1,13 @@
 import React from "react";
-
 import { useIntl } from "react-intl";
-import { styled, useTheme } from "@reearth/theme";
-
-import { Camera } from "@reearth/util/value";
 
 import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
 import Slider from "@reearth/components/atoms/Slider";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
+import { Camera } from "@reearth/util/value";
 
 import useHooks from "./hooks";
-import Text from "@reearth/components/atoms/Text";
 
 type Props = {
   isCapturing?: boolean;

@@ -6,10 +6,12 @@ import {
   AccordionItemPanel,
   AccordionItemState,
 } from "react-accessible-accordion";
+
+import { styled, useTheme } from "@reearth/theme";
+
 import Box from "../Box";
 import Flex from "../Flex";
 import Icon from "../Icon";
-import { styled, useTheme } from "@reearth/theme";
 
 export type Props = {
   className?: string;

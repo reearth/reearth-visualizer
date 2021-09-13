@@ -1,7 +1,9 @@
-import React from "react";
-import { Meta } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
+import { Meta } from "@storybook/react";
+import React from "react";
+
 import { styled } from "@reearth/theme";
+
 import CheckGroup from ".";
 
 const items: { value: string; label: string }[] = [

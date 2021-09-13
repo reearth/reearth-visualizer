@@ -1,19 +1,16 @@
 import React, { useCallback } from "react";
 import { useIntl } from "react-intl";
+
+import Button from "@reearth/components/atoms/Button";
+import Loading from "@reearth/components/atoms/Loading";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
-// Components
-import Button from "@reearth/components/atoms/Button";
-import DatasetSchemaCell from "./DatasetSchemaCell";
 import DatasetHeader from "./DatasetHeader";
 import DatasetModal from "./DatasetModal";
-import Loading from "@reearth/components/atoms/Loading";
-import Text from "@reearth/components/atoms/Text";
-
-// Theme
-import { styled, useTheme } from "@reearth/theme";
-
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import DatasetSchemaCell from "./DatasetSchemaCell";
 import useHooks from "./hooks";
 
 export type DataSource = RawDataSource;

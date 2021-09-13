@@ -1,6 +1,6 @@
+import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 const filterOptions: { key: string; label: string }[] = [

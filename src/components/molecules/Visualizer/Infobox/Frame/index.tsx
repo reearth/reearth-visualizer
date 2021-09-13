@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, css, usePublishTheme } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
-import { metricsSizes } from "@reearth/theme/metrics";
-import { Typography, typographyStyles } from "@reearth/util/value";
 import Flex from "@reearth/components/atoms/Flex";
 import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { styled, css, usePublishTheme } from "@reearth/theme";
+import fonts from "@reearth/theme/fonts";
+import { metricsSizes } from "@reearth/theme/metrics";
+import { Typography, typographyStyles } from "@reearth/util/value";
+
 import { SceneProperty } from "../../Engine";
 
 export type InfoboxStyles = {

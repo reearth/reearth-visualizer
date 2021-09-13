@@ -1,5 +1,6 @@
 // import { writeFileSync } from "fs";
 import * as ts from "typescript";
+
 import tsconfig from "../tsconfig.json";
 
 const files = ["./src/plugin/api.ts"];

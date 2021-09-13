@@ -1,13 +1,13 @@
 import type { Component } from "../../Primitive";
 
-import Marker from "./Marker";
-import Polyline from "./Polyline";
-import Polygon from "./Polygon";
-import Rect from "./Rect";
 import Ellipsoid from "./Ellipsoid";
-import PhotoOverlay from "./PhotoOverlay";
-import Resource from "./Resource";
+import Marker from "./Marker";
 import Model from "./Model";
+import PhotoOverlay from "./PhotoOverlay";
+import Polygon from "./Polygon";
+import Polyline from "./Polyline";
+import Rect from "./Rect";
+import Resource from "./Resource";
 import Tileset from "./TIleset";
 
 const builtin: Record<string, Component> = {

@@ -1,9 +1,10 @@
 import React from "react";
-import Section from "@reearth/components/molecules/Settings/Section";
-import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
-import Field from "@reearth/components/molecules/Settings/Field";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+
+import Field from "@reearth/components/molecules/Settings/Field";
+import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
 
 export type Props = {
   currentTeam?: {

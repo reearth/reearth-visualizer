@@ -1,9 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import useHooks from "./hooks";
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import AssetSection from "@reearth/components/molecules/Settings/Workspace/Asset/AssetSection";
+
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import AssetSection from "@reearth/components/molecules/Settings/Workspace/Asset/AssetSection";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
+import useHooks from "./hooks";
 
 type Props = {
   teamId: string;

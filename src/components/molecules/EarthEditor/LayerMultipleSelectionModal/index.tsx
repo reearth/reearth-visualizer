@@ -1,13 +1,14 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import { styled } from "@reearth/theme";
-import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
-import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
-import useHooks, { Layer as LayerType } from "./hooks";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
+import useHooks, { Layer as LayerType } from "./hooks";
 
 export type Layer = LayerType;
 

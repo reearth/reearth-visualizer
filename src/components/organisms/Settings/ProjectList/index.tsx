@@ -1,14 +1,15 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import useHooks from "./hooks";
-
-// Components
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import Loading from "@reearth/components/atoms/Loading";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import Loading from "@reearth/components/atoms/Loading";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
+import useHooks from "./hooks";
+
+// Components
 
 type Props = {
   teamId: string;

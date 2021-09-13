@@ -1,5 +1,5 @@
-import { easing, IEasingMap } from "ts-easing";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { easing, IEasingMap } from "ts-easing";
 
 export type Easing = keyof IEasingMap;
 

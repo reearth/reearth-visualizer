@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import { useTeam, useProject } from "@reearth/state";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
+import { useTeam, useProject } from "@reearth/state";
 
 export enum Theme {
   Default = "DEFAULT",

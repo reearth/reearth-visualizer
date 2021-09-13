@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
-import { Border, Title } from "../common";
+import { styled } from "@reearth/theme";
+
 import { Props as BlockProps } from "..";
+import { Border, Title } from "../common";
 
 export type Props = BlockProps<Property>;
 

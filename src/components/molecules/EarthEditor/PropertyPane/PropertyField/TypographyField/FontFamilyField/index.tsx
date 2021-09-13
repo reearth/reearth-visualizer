@@ -1,11 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled } from "@reearth/theme";
 
-import Select from "@reearth/components/atoms/Select";
 import Icon from "@reearth/components/atoms/Icon";
+import Select from "@reearth/components/atoms/Select";
 import Option, { Props as OptionProps } from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
+import { styled } from "@reearth/theme";
 
 const safeFonts = {
   Arial: { displayName: "Arial" } as const,

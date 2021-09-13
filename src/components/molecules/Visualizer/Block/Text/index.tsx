@@ -8,8 +8,8 @@ import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
-import { Border } from "../common";
 import { Props as BlockProps } from "..";
+import { Border } from "../common";
 
 export type Props = BlockProps<Property>;
 

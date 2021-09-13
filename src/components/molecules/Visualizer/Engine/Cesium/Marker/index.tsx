@@ -1,12 +1,3 @@
-import React, { useMemo, useRef, useEffect } from "react";
-import {
-  Entity,
-  BillboardGraphics,
-  PointGraphics,
-  LabelGraphics,
-  PolylineGraphics,
-  CesiumComponentRef,
-} from "resium";
 import {
   Entity as CesiumEntity,
   Cartesian3,
@@ -16,11 +7,21 @@ import {
   Cartesian2,
   PropertyBag,
 } from "cesium";
+import React, { useMemo, useRef, useEffect } from "react";
+import {
+  Entity,
+  BillboardGraphics,
+  PointGraphics,
+  LabelGraphics,
+  PolylineGraphics,
+  CesiumComponentRef,
+} from "resium";
 
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo, heightReference } from "../common";
+
 import marker from "./marker.svg";
 
 export type Props = PrimitiveProps<Property>;

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
-import { styled, useTheme } from "@reearth/theme";
+import Button from "@reearth/components/atoms/Button";
+import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
+import Text from "@reearth/components/atoms/Text";
 import ProjectCell, {
   Project as ProjectType,
 } from "@reearth/components/molecules/Settings/ProjectList/ProjectCell";
-import Icon from "@reearth/components/atoms/Icon";
-import Button from "@reearth/components/atoms/Button";
-import Loading from "@reearth/components/atoms/Loading";
-import Text from "@reearth/components/atoms/Text";
-import Flex from "@reearth/components/atoms/Flex";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Project = ProjectType;

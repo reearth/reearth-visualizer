@@ -1,14 +1,17 @@
+import { mapValues } from "lodash-es";
 import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { mapValues } from "lodash-es";
 
+import Button from "@reearth/components/atoms/Button";
+import Icon from "@reearth/components/atoms/Icon";
+import Modal from "@reearth/components/atoms/Modal";
+import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 import { ExtendedFuncProps2 } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 import { zeroValues } from "@reearth/util/value";
 
-import GroupWrapper from "../PropertyGroup";
-import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 import PropertyField, {
   Props as FieldProps,
   Field as FieldType,
@@ -18,11 +21,8 @@ import PropertyField, {
   SchemaField as SchemaFieldType,
   Asset as AssetType,
 } from "../PropertyField";
-import Button from "@reearth/components/atoms/Button";
-import Modal from "@reearth/components/atoms/Modal";
-import Icon from "@reearth/components/atoms/Icon";
-import Text from "@reearth/components/atoms/Text";
-import { metricsSizes } from "@reearth/theme/metrics";
+import GroupWrapper from "../PropertyGroup";
+import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
 

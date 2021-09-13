@@ -1,12 +1,14 @@
 import React, { forwardRef } from "react";
-import { styled, useTheme } from "@reearth/theme";
-import Icon from "@reearth/components/atoms/Icon";
+
 import HelpButton from "@reearth/components/atoms/HelpButton";
+import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
 import LayerActions, { Format } from "../LayerActions";
+
 import useHooks from "./hooks";
 import useEditable from "./use-editable";
 

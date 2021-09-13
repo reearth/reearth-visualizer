@@ -1,5 +1,7 @@
 import { action } from "@storybook/addon-actions";
+
 import type { VisualizerContext, GlobalThis } from "./context";
+
 import type { Primitive } from ".";
 
 const primitives: Primitive[] = [

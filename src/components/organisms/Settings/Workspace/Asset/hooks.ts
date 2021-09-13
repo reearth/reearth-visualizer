@@ -1,5 +1,6 @@
-import { useCallback, useEffect } from "react";
 import { useNavigate } from "@reach/router";
+import { useCallback, useEffect } from "react";
+
 import {
   AssetsQuery,
   useAssetsQuery,

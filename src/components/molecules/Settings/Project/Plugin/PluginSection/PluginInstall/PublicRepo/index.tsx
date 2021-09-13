@@ -1,15 +1,17 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
+import Box from "@reearth/components/atoms/Box";
 import Button from "@reearth/components/atoms/Button";
 import { Icons } from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
-import { useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
-import PluginInstallCardButton from "../PluginInstallCardButton";
 import TextBox from "@reearth/components/atoms/TextBox";
-import Box from "@reearth/components/atoms/Box";
+import { useTheme } from "@reearth/theme";
+
+import PluginInstallCardButton from "../PluginInstallCardButton";
+
 import useHooks from "./hooks";
 
 export type Props = {

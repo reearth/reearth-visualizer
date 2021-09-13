@@ -1,11 +1,12 @@
-import React from "react";
 import { ThemeProvider } from "@emotion/react";
+import React from "react";
+
+import { useAuth } from "@reearth/auth";
+import { Theme, useThemeQuery } from "@reearth/gql";
 
 import darkTheme from "./darkTheme";
-import lightTheme from "./lightheme";
 import GlobalStyle from "./globalstyle";
-import { Theme, useThemeQuery } from "@reearth/gql";
-import { useAuth } from "@reearth/auth";
+import lightTheme from "./lightheme";
 
 const Provider: React.FC = ({ children }) => {
   const { isAuthenticated } = useAuth();

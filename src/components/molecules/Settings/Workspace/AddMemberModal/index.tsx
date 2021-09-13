@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { styled, useTheme } from "@reearth/theme";
-import Modal from "@reearth/components/atoms/Modal";
-import Icon from "@reearth/components/atoms/Icon";
+
 import Button from "@reearth/components/atoms/Button";
-import TextBox from "@reearth/components/atoms/TextBox";
+import Icon from "@reearth/components/atoms/Icon";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import TextBox from "@reearth/components/atoms/TextBox";
+import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   active: boolean;

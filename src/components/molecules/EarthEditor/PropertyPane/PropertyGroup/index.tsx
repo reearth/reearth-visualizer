@@ -1,6 +1,8 @@
 import React from "react";
-import { styled, useTheme } from "@reearth/theme";
+
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
+
 export interface Props {
   className?: string;
   name?: string;

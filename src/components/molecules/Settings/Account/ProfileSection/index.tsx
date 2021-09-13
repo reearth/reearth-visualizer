@@ -1,8 +1,9 @@
 import React from "react";
-import Section from "@reearth/components/molecules/Settings/Section";
-import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+
+import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
 
 export type Props = {
   username?: string;

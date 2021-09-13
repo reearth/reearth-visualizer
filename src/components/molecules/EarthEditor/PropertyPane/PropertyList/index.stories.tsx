@@ -1,5 +1,6 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
+
 import PropertyList, { Props, Layer } from ".";
 
 const Wrapper: React.FC = ({ children }) => <div style={{ width: 300 }}>{children}</div>;

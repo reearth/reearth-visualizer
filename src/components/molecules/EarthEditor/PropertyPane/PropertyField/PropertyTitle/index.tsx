@@ -2,10 +2,11 @@ import React, { useState, useCallback, useRef } from "react";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
-import { styled, css } from "@reearth/theme";
-import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 import HelpButton from "@reearth/components/atoms/HelpButton";
+import { styled, css } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
+
+import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 
 export { Dataset, DatasetField, DatasetSchema, Type } from "./PropertyLinkPanel";
 

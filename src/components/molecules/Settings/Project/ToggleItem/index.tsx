@@ -1,5 +1,7 @@
-import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import React from "react";
+
+import ToggleButton from "@reearth/components/atoms/ToggleButton";
+
 import Field from "../../Field";
 
 export type Props = {

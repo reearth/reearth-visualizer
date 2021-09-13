@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
-import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
+import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
+import { styled } from "@reearth/theme";
+
 import TextField from "../TextField";
 import { FieldProps } from "../types";
-import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
 
 export type Asset = AssetType;
 

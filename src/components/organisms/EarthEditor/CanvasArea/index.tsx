@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 
-import Visualizer, { Props as VisualizerProps } from "@reearth/components/molecules/Visualizer";
 import ContentPicker from "@reearth/components/atoms/ContentPicker";
 import FovSlider from "@reearth/components/molecules/EarthEditor/FovSlider";
+import Visualizer, { Props as VisualizerProps } from "@reearth/components/molecules/Visualizer";
 
 import useHooks from "./hooks";
 

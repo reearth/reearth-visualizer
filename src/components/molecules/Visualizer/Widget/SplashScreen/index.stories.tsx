@@ -1,10 +1,11 @@
-import React from "react";
-import { Math as CesiumMath } from "cesium";
 import { Meta, Story } from "@storybook/react";
+import { Math as CesiumMath } from "cesium";
+import React from "react";
 
-import SplashScreen, { Props } from ".";
 import { Provider } from "../../context";
 import { context } from "../../storybook";
+
+import SplashScreen, { Props } from ".";
 
 export default {
   title: "molecules/Visualizer/Widget/SplashScreen",

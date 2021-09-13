@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from "react";
-import Section from "@reearth/components/molecules/Settings/Section";
-import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
-import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+
+import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
+import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
 
 export type Asset = AssetType;
 

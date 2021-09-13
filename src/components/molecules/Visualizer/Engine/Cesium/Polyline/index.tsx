@@ -1,8 +1,9 @@
+import { Cartesian3 } from "cesium";
 import React, { useMemo } from "react";
 import { PolylineGraphics, Entity } from "resium";
-import { Cartesian3 } from "cesium";
 
 import { Coordinates, toColor } from "@reearth/util/value";
+
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode } from "../common";
 

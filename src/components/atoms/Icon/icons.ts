@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+
 // Primitives
 import Layer from "./Icons/layerIcon.svg";
 import LayerAdd from "./Icons/layerAddIcon.svg";

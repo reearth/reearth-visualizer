@@ -1,10 +1,11 @@
 import React, { CSSProperties } from "react";
 
-export type { Primitive, Block, Widget } from "@reearth/plugin";
-import { Primitive, Widget, Block } from "@reearth/plugin";
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
+import { Primitive, Widget, Block } from "@reearth/plugin";
 
 import useHooks from "./hooks";
+
+export type { Primitive, Block, Widget } from "@reearth/plugin";
 
 export type Props = {
   className?: string;

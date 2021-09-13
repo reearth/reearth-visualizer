@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useState } from "react";
 
-import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 import InsertionBar from "@reearth/components/atoms/InsertionBar";
+import { styled } from "@reearth/theme";
 
 import useHooks from "./hooks";
 

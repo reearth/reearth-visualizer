@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
-import { styled, useTheme } from "@reearth/theme";
-import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
-import TextBox from "@reearth/components/atoms/TextBox";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import TextBox from "@reearth/components/atoms/TextBox";
+import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   className?: string;

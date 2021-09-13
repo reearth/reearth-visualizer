@@ -1,5 +1,6 @@
 import React from "react";
 import { Accordion as AccordionComponent } from "react-accessible-accordion";
+
 import AccordionItem from "./AccordionItem";
 
 export type Props = {

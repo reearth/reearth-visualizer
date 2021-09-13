@@ -1,8 +1,9 @@
 import React from "react";
 
-import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
-import useHooks, { Mode as RawMode } from "./hooks";
 import Loading from "@reearth/components/atoms/Loading";
+import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
+
+import useHooks, { Mode as RawMode } from "./hooks";
 
 export type Mode = RawMode;
 export interface Props {

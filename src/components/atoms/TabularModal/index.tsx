@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
-import Modal from "@reearth/components/atoms/Modal";
 
+import Modal from "@reearth/components/atoms/Modal";
 import { styled } from "@reearth/theme";
 
 export type Props<Tab extends string = string> = {

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 
-import type { Item as ItemType, InnerProps } from "./types";
 import Item from "./Item";
+import type { Item as ItemType, InnerProps } from "./types";
 
 export type Props<T = unknown, R extends Element = Element> = InnerProps<T, R> & {
   item?: ItemType<T>;

@@ -1,13 +1,12 @@
+import { useFormik } from "formik";
 import React, { useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useFormik } from "formik";
 
-import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
-
-import { styled, useTheme } from "@reearth/theme";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
 export interface FormValues {

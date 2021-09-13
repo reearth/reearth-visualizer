@@ -1,8 +1,9 @@
+import { isEqual } from "lodash-es";
 import { useEffect, useRef } from "react";
 import { useCesium } from "resium";
-import { isEqual } from "lodash-es";
 
 import { Camera } from "@reearth/util/value";
+
 import { flyTo } from "./common";
 
 export type Props = {

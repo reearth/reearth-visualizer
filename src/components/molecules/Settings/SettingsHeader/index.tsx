@@ -1,7 +1,8 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled, useTheme } from "@reearth/theme";
+
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {

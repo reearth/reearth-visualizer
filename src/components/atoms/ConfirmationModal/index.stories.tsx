@@ -1,6 +1,6 @@
+import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 
-import { Meta, Story } from "@storybook/react";
 import ConfirmationModal, { Props } from ".";
 
 export default {

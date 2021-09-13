@@ -1,14 +1,15 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled, useTheme } from "@reearth/theme";
+
+import Dropdown from "@reearth/components/atoms/Dropdown";
 import Text from "@reearth/components/atoms/Text";
+import { Project } from "@reearth/components/molecules/Common/Header";
 import {
   MenuListItemLabel,
   MenuList,
   MenuListItem,
 } from "@reearth/components/molecules/Common/MenuList";
-import Dropdown from "@reearth/components/atoms/Dropdown";
-import { Project } from "@reearth/components/molecules/Common/Header";
+import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   currentProject: Project;

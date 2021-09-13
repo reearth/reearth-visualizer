@@ -1,20 +1,20 @@
 import React, { useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import Modal from "@reearth/components/atoms/Modal";
-import Text from "@reearth/components/atoms/Text";
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
-import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import Modal from "@reearth/components/atoms/Modal";
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
-import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
-import InputField from "./InputField";
-
+import Text from "@reearth/components/atoms/Text";
+import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
 import useHooks from "./hooks";
+import InputField from "./InputField";
 
 interface Props {
   className?: string;

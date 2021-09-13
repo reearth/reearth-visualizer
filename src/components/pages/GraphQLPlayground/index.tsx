@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import GraphiQL from "graphiql";
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
+import GraphiQL from "graphiql";
+import React, { useEffect, useState } from "react";
 import "graphiql/graphiql.min.css";
 
 import { useAuth } from "@reearth/auth";

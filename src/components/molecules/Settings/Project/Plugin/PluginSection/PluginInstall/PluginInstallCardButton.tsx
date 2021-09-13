@@ -1,6 +1,7 @@
+import React from "react";
+
 import Flex from "@reearth/components/atoms/Flex";
 import Icon, { Icons } from "@reearth/components/atoms/Icon";
-import React from "react";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";

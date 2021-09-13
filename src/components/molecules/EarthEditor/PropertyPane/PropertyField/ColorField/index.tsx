@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import tinycolor, { ColorInput } from "tinycolor2";
+import { RgbaColorPicker } from "react-colorful";
 import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
-import { RgbaColorPicker } from "react-colorful";
+import tinycolor, { ColorInput } from "tinycolor2";
 
 import Button from "@reearth/components/atoms/Button";
-import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
+
 import { FieldProps } from "../types";
 import "./styles.css";
 

@@ -1,8 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
-import { styled } from "@reearth/theme";
-import { usePopper } from "react-popper";
-import Balloon from "../Balloon";
 import { Placement as PopperPlacement } from "@popperjs/core";
+import React, { useRef, useState, useEffect } from "react";
+import { usePopper } from "react-popper";
+
+import { styled } from "@reearth/theme";
+
+import Balloon from "../Balloon";
+
 export type Placement = PopperPlacement;
 
 export type Props = {

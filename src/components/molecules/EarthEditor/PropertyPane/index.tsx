@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
+import Button from "@reearth/components/atoms/Button";
+import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
-import Text from "@reearth/components/atoms/Text";
-import Button from "@reearth/components/atoms/Button";
-import WidgetToggleButton from "./WidgetToggleSwitch";
+
 import GroupWrapper from "./PropertyGroup";
 import PropertyItem, {
   Props as PropertyItemProps,
@@ -26,6 +26,7 @@ import PropertyItem, {
   Asset as AssetType,
   Mode as ModeType,
 } from "./PropertyItem";
+import WidgetToggleButton from "./WidgetToggleSwitch";
 
 export type Item = ItemItem;
 export type SchemaField = ItemSchemaField;

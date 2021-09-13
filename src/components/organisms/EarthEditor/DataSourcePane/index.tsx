@@ -1,9 +1,10 @@
 import React from "react";
 
+import DatasetPane from "@reearth/components/molecules/EarthEditor/DatasetPane";
+
 import useHooks from "./hooks";
 
 // Components
-import DatasetPane from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 interface Props {
   className?: string;

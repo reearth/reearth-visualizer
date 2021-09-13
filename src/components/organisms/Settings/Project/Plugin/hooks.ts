@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 
-import { useTeam, useProject } from "@reearth/state";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useInstallablePluginsQuery,
@@ -8,6 +7,7 @@ import {
   useUninstallPluginMutation,
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
+import { useTeam, useProject } from "@reearth/state";
 
 export default (projectId: string) => {
   const [currentTeam] = useTeam();

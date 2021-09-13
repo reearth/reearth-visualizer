@@ -1,6 +1,8 @@
-import { OmitFunc, OmitFunc2, OmitFunc3 } from "@reearth/types";
 import { mapValues } from "lodash-es";
 import { useMemo } from "react";
+
+import { OmitFunc, OmitFunc2, OmitFunc3 } from "@reearth/types";
+
 import { isPresent } from "./util";
 
 export const useBind = <P extends { [key in string]?: (a: A, ...args: any) => any }, A>(

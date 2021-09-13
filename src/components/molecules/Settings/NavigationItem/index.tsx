@@ -1,6 +1,7 @@
-import React from "react";
-import { styled, fonts, useTheme } from "@reearth/theme";
 import { Link } from "@reach/router";
+import React from "react";
+
+import { styled, fonts, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {

@@ -1,7 +1,9 @@
-import { Icons } from "@reearth/components/atoms/Icon";
-import Loading from "@reearth/components/atoms/Loading";
 import React from "react";
 import useFileInput from "use-file-input";
+
+import { Icons } from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
+
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 export type Props = {

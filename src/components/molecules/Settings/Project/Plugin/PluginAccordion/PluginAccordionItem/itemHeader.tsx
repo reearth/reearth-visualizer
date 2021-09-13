@@ -1,10 +1,12 @@
+import React, { useState } from "react";
+import { useIntl } from "react-intl";
+
 import Box from "@reearth/components/atoms/Box";
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import { fonts, styled } from "@reearth/theme";
-import React, { useState } from "react";
-import { useIntl } from "react-intl";
+
 import DeleteModal from "./deleteModal";
 
 export type PluginItemProps = {

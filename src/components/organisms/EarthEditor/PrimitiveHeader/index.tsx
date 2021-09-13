@@ -1,9 +1,10 @@
 import React from "react";
 
+import PrimitiveHeader from "@reearth/components/molecules/EarthEditor/PrimitiveHeader";
+
 import useHooks from "./hooks";
 
 // Components
-import PrimitiveHeader from "@reearth/components/molecules/EarthEditor/PrimitiveHeader";
 
 interface PrimitivesWidgetsSystemProps {
   className?: string;

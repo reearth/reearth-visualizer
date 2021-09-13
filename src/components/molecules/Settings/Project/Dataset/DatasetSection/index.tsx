@@ -2,12 +2,12 @@ import React from "react";
 import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
-import { styled } from "@reearth/theme";
 import Button from "@reearth/components/atoms/Button";
-import Section from "@reearth/components/molecules/Settings/Section";
 import DatasetList, {
   Item,
 } from "@reearth/components/molecules/Settings/Project/Dataset/DatasetList";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
 
 type Props = {
   datasetSchemas: Item[];

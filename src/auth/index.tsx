@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from "react";
+
 import { useAuthenticationRequired } from "./hooks";
 
 export { default as Provider } from "./provider";

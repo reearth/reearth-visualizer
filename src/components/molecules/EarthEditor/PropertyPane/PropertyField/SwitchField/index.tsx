@@ -1,7 +1,8 @@
 import React from "react";
-import { styled } from "@reearth/theme";
 
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import { styled } from "@reearth/theme";
+
 import { FieldProps } from "../types";
 
 export type Props = FieldProps<boolean>;

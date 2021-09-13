@@ -1,10 +1,11 @@
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
-import ReactGA from "react-ga";
+import { initialize, pageview } from "react-ga";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
-import { VisualizerContext } from "./context";
+
 import api from "./api";
+import { VisualizerContext } from "./context";
 import type {
   OverriddenInfobox,
   Ref as EngineRef,
@@ -12,6 +13,7 @@ import type {
   SelectPrimitiveOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
+
 import type { Primitive } from ".";
 
 export default ({
@@ -130,8 +132,8 @@ export default ({
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
   useEffect(() => {
     if (!isPublished || !enableGA || !trackingId) return;
-    ReactGA.initialize(trackingId);
-    ReactGA.pageview(window.location.pathname);
+    initialize(trackingId);
+    pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
   const visualizerContext = useVisualizerContext({

@@ -1,10 +1,11 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
+import React from "react";
 
-import Menu, { Props } from ".";
 import { Provider } from "../../context";
 import { context } from "../../storybook";
+
+import Menu, { Props } from ".";
 
 export default {
   title: "molecules/Visualizer/Widget/Menu",

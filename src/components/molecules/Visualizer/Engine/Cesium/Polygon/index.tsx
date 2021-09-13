@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { PolygonHierarchy, Cartesian3 } from "cesium";
 import React, { useMemo } from "react";
 import { PolygonGraphics, Entity } from "resium";
-import { PolygonHierarchy, Cartesian3 } from "cesium";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
+
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { heightReference, shadowMode } from "../common";
 

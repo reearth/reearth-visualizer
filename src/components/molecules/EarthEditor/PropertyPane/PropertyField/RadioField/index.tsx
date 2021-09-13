@@ -1,9 +1,10 @@
 import React from "react";
 
 // Components
-import RadioGroup from "@reearth/components/atoms/RadioGroup";
-import Radio from "@reearth/components/atoms/Radio";
 import Icon from "@reearth/components/atoms/Icon";
+import Radio from "@reearth/components/atoms/Radio";
+import RadioGroup from "@reearth/components/atoms/RadioGroup";
+
 import { FieldProps } from "../types";
 
 export type Props = FieldProps<string> & {

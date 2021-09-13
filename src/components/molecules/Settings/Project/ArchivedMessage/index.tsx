@@ -1,7 +1,8 @@
 import React from "react";
+import { useIntl } from "react-intl";
+
 import Section from "@reearth/components/molecules/Settings/Section";
 import { styled } from "@reearth/theme";
-import { useIntl } from "react-intl";
 
 const ArchivedMessage: React.FC = () => {
   const intl = useIntl();

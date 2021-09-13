@@ -5,8 +5,8 @@ import { useIntl } from "react-intl";
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/components/atoms/PublicationStatus";
-import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 import defaultProjectImage from "./defaultProjectImage.jpg";

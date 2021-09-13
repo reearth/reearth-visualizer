@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import useHooks from "./hooks";
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import MembersSection from "@reearth/components/molecules/Settings/Workspace/MembersSection";
+
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import ProfileSection from "@reearth/components/molecules/Settings/Workspace/ProfileSection";
 import DangerSection from "@reearth/components/molecules/Settings/Workspace/DangerSection";
+import MembersSection from "@reearth/components/molecules/Settings/Workspace/MembersSection";
+import ProfileSection from "@reearth/components/molecules/Settings/Workspace/ProfileSection";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
+import useHooks from "./hooks";
 
 type Props = {
   teamId: string;

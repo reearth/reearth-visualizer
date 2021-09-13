@@ -1,4 +1,3 @@
-import React, { ReactElement } from "react";
 import {
   ApolloProvider,
   ApolloClient,
@@ -6,9 +5,10 @@ import {
   ApolloLink,
   Observable,
 } from "@apollo/client";
+import React, { ReactElement } from "react";
 
-import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as IntlProvider } from "../src/locale";
+import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as DndProvider } from "../src/util/use-dnd";
 
 // apollo client that does nothing

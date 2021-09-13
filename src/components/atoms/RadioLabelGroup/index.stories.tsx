@@ -1,8 +1,10 @@
-import React from "react";
-import { Meta } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
-import RadioLabelGroup from ".";
+import { Meta } from "@storybook/react";
+import React from "react";
+
 import RadioLabel, { RadioLabelProps } from "../RadioLabel";
+
+import RadioLabelGroup from ".";
 
 const items: RadioLabelProps[] = [
   { label: "default", value: "default" },

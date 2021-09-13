@@ -1,6 +1,8 @@
-import { useMemo, useCallback } from "react";
 import { useApolloClient } from "@apollo/client";
+import { useMemo, useCallback } from "react";
 
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
   useGetAllDataSetsQuery,
   useAddLayerGroupFromDatasetSchemaMutation,
@@ -10,9 +12,6 @@ import {
   useRemoveDatasetMutation,
 } from "@reearth/gql";
 import { useSceneId, useNotification } from "@reearth/state";
-
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
-import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 const pluginId = "reearth";
 const extensionId = "marker";

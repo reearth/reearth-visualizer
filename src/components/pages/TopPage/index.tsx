@@ -1,9 +1,9 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import MoleculeTopPage from "@reearth/components/molecules/TopPage";
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBar from "@reearth/components/atoms/NotificationBar";
+import MoleculeTopPage from "@reearth/components/molecules/TopPage";
 
 import useHooks from "./hooks";
 

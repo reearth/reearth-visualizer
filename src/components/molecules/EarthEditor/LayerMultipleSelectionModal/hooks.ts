@@ -1,9 +1,10 @@
+import arrayMove from "array-move";
+import { uniqBy } from "lodash-es";
 import { useCallback, useRef, useMemo, useState, useEffect } from "react";
 import { useShallowCompareEffect } from "react-use";
-import { uniqBy } from "lodash-es";
-import arrayMove from "array-move";
 
 import { Item, searchItems } from "@reearth/components/atoms/TreeView";
+
 import { Layer as LayerType, useLayerTreeViewItem } from "../LayerTreeViewItem";
 
 export type ItemEx = {

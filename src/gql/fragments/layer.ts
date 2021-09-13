@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+
 import infoboxFragment from "./infobox";
 
 export const layerFragment = gql`

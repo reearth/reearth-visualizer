@@ -1,8 +1,9 @@
 import React, { useRef, useCallback, useEffect } from "react";
 import { usePopper } from "react-popper";
 
-import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
+import { styled } from "@reearth/theme";
+
 import Portal from "../Portal";
 
 export interface Props {
@@ -15,24 +16,24 @@ export interface Props {
 const AdditionButton: React.FC<Props> = ({ className, children, disabled, onClick }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
-  const { styles, attributes, update: updatePopper } = usePopper(
-    referenceElement.current,
-    popperElement.current,
-    {
-      placement: "bottom",
-      strategy: "fixed",
-      modifiers: [
-        {
-          name: "eventListeners",
-          enabled: false,
-          options: {
-            scroll: false,
-            resize: false,
-          },
+  const {
+    styles,
+    attributes,
+    update: updatePopper,
+  } = usePopper(referenceElement.current, popperElement.current, {
+    placement: "bottom",
+    strategy: "fixed",
+    modifiers: [
+      {
+        name: "eventListeners",
+        enabled: false,
+        options: {
+          scroll: false,
+          resize: false,
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   const handleClick = useCallback(() => {
     if (disabled) return;

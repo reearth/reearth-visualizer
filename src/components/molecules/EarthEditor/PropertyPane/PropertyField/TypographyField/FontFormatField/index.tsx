@@ -1,8 +1,8 @@
 import React from "react";
 
-import Icon from "@reearth/components/atoms/Icon";
-import CheckGroup from "@reearth/components/atoms/CheckGroup";
 import Check from "@reearth/components/atoms/Check";
+import CheckGroup from "@reearth/components/atoms/CheckGroup";
+import Icon from "@reearth/components/atoms/Icon";
 
 const formatItems = [
   { key: "bold", icon: "bold" } as const,

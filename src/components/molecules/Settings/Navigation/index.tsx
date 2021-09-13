@@ -1,11 +1,12 @@
 import React from "react";
 import { useIntl } from "react-intl";
+
+import Divider from "@reearth/components/atoms/Divider";
+import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
 import NavigationItem from "@reearth/components/molecules/Settings/NavigationItem";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
-import Divider from "@reearth/components/atoms/Divider";
 import { metricsSizes } from "@reearth/theme/metrics";
-import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
 
 type Team = {
   id?: string;

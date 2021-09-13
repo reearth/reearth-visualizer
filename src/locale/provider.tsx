@@ -1,8 +1,9 @@
 import React, { PropsWithChildren } from "react";
 import { IntlProvider } from "react-intl";
 
-import { useLanguageQuery } from "@reearth/gql";
 import { useAuth } from "@reearth/auth";
+import { useLanguageQuery } from "@reearth/gql";
+
 import { Locale, defaultLocale, locales, messages } from "./locale";
 
 export default function Provider({ children }: PropsWithChildren<{}>) {

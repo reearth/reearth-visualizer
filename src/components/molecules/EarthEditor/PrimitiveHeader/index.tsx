@@ -1,6 +1,8 @@
+import React from "react";
+
 import Loading from "@reearth/components/atoms/Loading";
 import { metrics, styled } from "@reearth/theme";
-import React from "react";
+
 import PrimitiveCell from "./PrimitiveCell";
 
 export type Props = {

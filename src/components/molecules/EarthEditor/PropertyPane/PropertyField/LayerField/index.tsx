@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { styled } from "@reearth/theme";
-import deepFind from "@reearth/util/deepFind";
 import Button from "@reearth/components/atoms/Button";
 import LayerSelectionModal, {
   Layer as LayerType,
 } from "@reearth/components/molecules/EarthEditor/LayerSelectionModal";
+import { styled } from "@reearth/theme";
+import deepFind from "@reearth/util/deepFind";
+
 import { FieldProps } from "../types";
 
 export type Layer = LayerType;

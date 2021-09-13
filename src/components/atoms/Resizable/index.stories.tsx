@@ -1,5 +1,6 @@
-import React, { CSSProperties } from "react";
 import { Meta } from "@storybook/react";
+import React, { CSSProperties } from "react";
+
 import Resizable from ".";
 
 const Container: React.FC<{ style?: CSSProperties }> = ({ children, style }) => (

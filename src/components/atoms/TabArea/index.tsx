@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import { styled, useTheme } from "@reearth/theme";
+import Icon from "@reearth/components/atoms/Icon";
 import Overlay from "@reearth/components/atoms/Overlay";
 import Text from "@reearth/components/atoms/Text";
-import Icon from "@reearth/components/atoms/Icon";
+import { styled, useTheme } from "@reearth/theme";
 
 export type MenuAlignment = "left" | "top";
 

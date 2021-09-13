@@ -1,15 +1,16 @@
-import React, { useMemo, useCallback } from "react";
 import { difference } from "lodash-es";
+import React, { useMemo, useCallback } from "react";
 
 import { styled, useTheme } from "@reearth/theme";
 import { Typography } from "@reearth/util/value";
 
-import FontFamilyField, { SafeFontFamilies } from "./FontFamilyField";
-import FontSizeField, { FontSize } from "./FontSizeField";
 import ColorField from "../ColorField";
 import RadioField from "../RadioField";
-import FontFormatField, { FontFormatKey } from "./FontFormatField";
 import { FieldProps } from "../types";
+
+import FontFamilyField, { SafeFontFamilies } from "./FontFamilyField";
+import FontFormatField, { FontFormatKey } from "./FontFormatField";
+import FontSizeField, { FontSize } from "./FontSizeField";
 
 type Props = FieldProps<Typography> & {
   className?: string;

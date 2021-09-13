@@ -1,8 +1,8 @@
 import React from "react";
 
 // Components
-import RadioLabelGroup from "@reearth/components/atoms/RadioLabelGroup";
 import RadioLabel, { RadioLabelProps } from "@reearth/components/atoms/RadioLabel";
+import RadioLabelGroup from "@reearth/components/atoms/RadioLabelGroup";
 
 export type RadioLabelFieldProps = {
   className?: string;

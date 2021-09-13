@@ -1,10 +1,11 @@
-import React, { useState } from "react";
 import { Link } from "@reach/router";
-import { styled } from "@reearth/theme";
-import Navigation from "@reearth/components/molecules/Settings/Navigation";
+import React, { useState } from "react";
+
+import Icon from "@reearth/components/atoms/Icon";
 import Header, { Props as HeaderProps } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
-import Icon from "@reearth/components/atoms/Icon";
+import Navigation from "@reearth/components/molecules/Settings/Navigation";
+import { styled } from "@reearth/theme";
 
 type Props = {} & HeaderProps;
 

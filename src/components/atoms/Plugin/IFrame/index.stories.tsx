@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
 import { Meta, Story } from "@storybook/react";
+import React, { useRef } from "react";
 
 import Component, { Props, Ref } from ".";
 

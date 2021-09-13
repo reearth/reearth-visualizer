@@ -1,11 +1,12 @@
 import React from "react";
-import useHooks from "./hooks";
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 
-import ProfileSection from "@reearth/components/molecules/Settings/Project/ProfileSection";
-import DangerSection from "@reearth/components/molecules/Settings/Project/DangerSection";
 import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import DangerSection from "@reearth/components/molecules/Settings/Project/DangerSection";
+import ProfileSection from "@reearth/components/molecules/Settings/Project/ProfileSection";
+import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
+import useHooks from "./hooks";
 
 type Props = {
   projectId: string;

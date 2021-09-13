@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
+import { useIntl } from "react-intl";
+
 import PublicationStatus, { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
-import { styled, useTheme } from "@reearth/theme";
-import { useIntl } from "react-intl";
-import Section from "@reearth/components/molecules/Settings/Section";
 import Field from "@reearth/components/molecules/Settings/Field";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled, useTheme } from "@reearth/theme";
 
 export type Props = {
   projectStatus?: Status;

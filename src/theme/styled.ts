@@ -1,9 +1,10 @@
-import { useContext } from "react";
 import { ThemeContext } from "@emotion/react";
 import rawStyled from "@emotion/styled";
-export { css, keyframes } from "@emotion/react";
+import { useContext } from "react";
 
 import { Theme } from "./theme";
+
+export { css, keyframes } from "@emotion/react";
 
 export const styled = rawStyled;
 export const useTheme = () => useContext(ThemeContext) as Theme;

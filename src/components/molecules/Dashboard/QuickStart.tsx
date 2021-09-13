@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
+import { useMedia } from "react-use";
+
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
+import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
+import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
-import Icon from "@reearth/components/atoms/Icon";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 import { styled, useTheme, metrics, css } from "@reearth/theme";
-import { useMedia } from "react-use";
-import Text from "@reearth/components/atoms/Text";
-import Flex from "@reearth/components/atoms/Flex";
 import { metricsSizes } from "@reearth/theme/metrics";
+
 export interface Props {
   className?: string;
   onCreateTeam?: (data: { name: string }) => Promise<void>;

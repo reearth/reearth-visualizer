@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import Section from "@reearth/components/molecules/Settings/Section";
-import Field from "@reearth/components/molecules/Settings/Field";
+import { useIntl } from "react-intl";
+
 import Button from "@reearth/components/atoms/Button";
-import Modal, { ActionType } from "./Modal";
+import Field from "@reearth/components/molecules/Settings/Field";
+import Section from "@reearth/components/molecules/Settings/Section";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import { useIntl } from "react-intl";
+
+import Modal, { ActionType } from "./Modal";
 
 export type Props = {
   project?: {

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
 import { Meta } from "@storybook/react";
-import Slide from ".";
+import React, { useState } from "react";
+
 import { styled } from "@reearth/theme";
+
+import Slide from ".";
 
 const Wrapper = styled.div`
   width: 200px;

@@ -1,12 +1,14 @@
 import React from "react";
+
+import { useAuth } from "@reearth/auth";
 import MoleculeHeader from "@reearth/components/molecules/Common/Header";
 import MoleculeDashboard from "@reearth/components/molecules/Dashboard";
-import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
-import QuickStart from "@reearth/components/molecules/Dashboard/QuickStart";
 import Logo from "@reearth/components/molecules/Dashboard/Logo";
 import ProjectList from "@reearth/components/molecules/Dashboard/ProjectList";
+import QuickStart from "@reearth/components/molecules/Dashboard/QuickStart";
+import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
+
 import useHooks from "./hooks";
-import { useAuth } from "@reearth/auth";
 
 export type Props = {
   teamId?: string;

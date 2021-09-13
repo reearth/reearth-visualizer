@@ -1,13 +1,15 @@
 import React from "react";
-import { styled, css, useTheme } from "@reearth/theme";
-import useHooks from "./hooks";
 import { useIntl } from "react-intl";
 
-import Icon from "@reearth/components/atoms/Icon";
 import Button from "@reearth/components/atoms/Button";
-import { Camera } from "@reearth/util/value";
-import { FieldProps } from "../types";
+import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { styled, css, useTheme } from "@reearth/theme";
+import { Camera } from "@reearth/util/value";
+
+import { FieldProps } from "../types";
+
+import useHooks from "./hooks";
 
 export type Props = FieldProps<Camera> & {
   onDelete?: () => void;

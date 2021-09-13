@@ -1,8 +1,9 @@
-import React from "react";
 import { check } from "prettier";
+import React from "react";
+
+import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
 type CardSize = "small" | "medium" | "large";

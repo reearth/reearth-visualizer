@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { getQuickJS } from "quickjs-emscripten";
 import Arena from "quickjs-emscripten-sync";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 
 import type { Ref as IFrameRef } from "./IFrame";
-import { useMemo } from "react";
 
 export type IFrameAPI = {
   render: (html: string, options?: { visible?: boolean }) => void;

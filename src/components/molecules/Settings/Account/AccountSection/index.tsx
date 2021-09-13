@@ -1,13 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
-import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
-import Section from "@reearth/components/molecules/Settings/Section";
-import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
-import Field from "@reearth/components/molecules/Settings/Field";
-import Icon from "@reearth/components/atoms/Icon";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
-import Text from "@reearth/components/atoms/Text";
+
 import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
+import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
+import Field from "@reearth/components/molecules/Settings/Field";
+import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
 
 export type Theme = "DARK" | "LIGHT";
 

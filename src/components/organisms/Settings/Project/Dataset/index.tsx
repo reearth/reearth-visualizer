@@ -1,9 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
+import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 import DatasetSection from "@reearth/components/molecules/Settings/Project/Dataset/DatasetSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
 import useHooks from "./hooks";
 
 type Props = {

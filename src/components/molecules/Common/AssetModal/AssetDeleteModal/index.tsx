@@ -1,11 +1,10 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import Text from "@reearth/components/atoms/Text";
-import Modal from "@reearth/components/atoms/Modal";
-import Divider from "@reearth/components/atoms/Divider";
 import Button from "@reearth/components/atoms/Button";
-
+import Divider from "@reearth/components/atoms/Divider";
+import Modal from "@reearth/components/atoms/Modal";
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 

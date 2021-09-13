@@ -1,14 +1,15 @@
 import React, { useCallback, useRef } from "react";
 import { useIntl } from "react-intl";
-import { styled, useTheme } from "@reearth/theme";
+
+import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
+import Text from "@reearth/components/atoms/Text";
+import { Team } from "@reearth/components/molecules/Common/Header";
 import {
   MenuListItemLabel,
   MenuList,
   MenuListItem,
 } from "@reearth/components/molecules/Common/MenuList";
-import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
-import { Team } from "@reearth/components/molecules/Common/Header";
-import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   currentTeam: Team;

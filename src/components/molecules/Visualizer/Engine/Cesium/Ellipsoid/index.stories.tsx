@@ -1,8 +1,9 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
+
+import { V, location } from "../storybook";
 
 import Ellipsoid, { Props } from ".";
-import { V, location } from "../storybook";
 
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Ellipsoid",

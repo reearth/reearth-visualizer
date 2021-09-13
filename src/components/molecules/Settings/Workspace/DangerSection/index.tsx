@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import Section from "@reearth/components/molecules/Settings/Section";
-import Field from "@reearth/components/molecules/Settings/Field";
-import Button from "@reearth/components/atoms/Button";
-import Modal from "./Modal";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
+
+import Button from "@reearth/components/atoms/Button";
+import Field from "@reearth/components/molecules/Settings/Field";
+import Section from "@reearth/components/molecules/Settings/Section";
+import { styled } from "@reearth/theme";
+
+import Modal from "./Modal";
 
 export type Props = {
   team?: {

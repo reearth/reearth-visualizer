@@ -3,8 +3,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import App from "./publishedapp";
 import loadConfig from "./config";
+import App from "./publishedapp";
 
 loadConfig().finally(() => {
   ReactDOM.render(<App />, document.getElementById("root"));

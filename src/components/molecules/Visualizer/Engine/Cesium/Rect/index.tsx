@@ -1,8 +1,9 @@
+import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 import React, { useMemo } from "react";
 import { RectangleGraphics, Entity } from "resium";
-import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 
 import { Rect as RectValue } from "@reearth/util/value";
+
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { heightReference, shadowMode } from "../common";
 

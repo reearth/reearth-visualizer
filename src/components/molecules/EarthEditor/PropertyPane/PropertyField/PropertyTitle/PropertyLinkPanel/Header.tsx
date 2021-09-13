@@ -1,6 +1,7 @@
 import React from "react";
-import { styled, useTheme } from "@reearth/theme";
+
 import Icon from "@reearth/components/atoms/Icon";
+import { styled, useTheme } from "@reearth/theme";
 
 export type Props = {
   className?: string;

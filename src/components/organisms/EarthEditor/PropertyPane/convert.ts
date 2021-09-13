@@ -1,4 +1,15 @@
 import {
+  SchemaField,
+  Field,
+  Item,
+  Mode as RawMode,
+  DatasetSchema,
+  Dataset,
+  DatasetField,
+  GroupListItem,
+  Layer,
+} from "@reearth/components/molecules/EarthEditor/PropertyPane";
+import {
   ValueType as GQLValueType,
   PropertyFragmentFragment,
   PropertyItemFragmentFragment,
@@ -16,17 +27,6 @@ import {
   Maybe,
 } from "@reearth/gql";
 import { valueTypeFromGQL, valueFromGQL, ValueType } from "@reearth/util/value";
-import {
-  SchemaField,
-  Field,
-  Item,
-  Mode as RawMode,
-  DatasetSchema,
-  Dataset,
-  DatasetField,
-  GroupListItem,
-  Layer,
-} from "@reearth/components/molecules/EarthEditor/PropertyPane";
 
 export type Mode = RawMode;
 

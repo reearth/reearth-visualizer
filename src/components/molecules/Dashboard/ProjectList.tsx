@@ -1,11 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
+
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Icon from "@reearth/components/atoms/Icon";
 import Project from "@reearth/components/molecules/Dashboard/Project";
-import { styled } from "@reearth/theme";
-
 import { Project as ProjectType } from "@reearth/components/molecules/Dashboard/types";
+import { styled } from "@reearth/theme";
 
 export interface Props {
   className?: string;

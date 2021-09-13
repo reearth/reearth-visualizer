@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { styled, metrics } from "@reearth/theme";
 
-import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
+import { styled, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
 import { FieldProps } from "../types";
 
 export type Props = FieldProps<number> & {

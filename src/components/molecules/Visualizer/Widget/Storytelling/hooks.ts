@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
 import { Math as CesiumMath } from "cesium";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 import { Camera as CameraValue } from "@reearth/util/value";
-import { useVisualizerContext } from "../../context";
 
+import { useVisualizerContext } from "../../context";
 import type { Primitive } from "../../Primitive";
 
 export type Story = {
@@ -42,16 +42,15 @@ export default function ({
   const [menuOpen, openMenu] = useState(false);
   const toggleMenu = useCallback(() => openMenu(o => !o), []);
 
-  const [selected, select] =
-    useState<{
-      index: number;
-      story: Story;
-      primitive?: Primitive;
-      duration: number;
-      camera: CameraValue;
-      range: number;
-      noCameraFlight?: boolean;
-    }>();
+  const [selected, select] = useState<{
+    index: number;
+    story: Story;
+    primitive?: Primitive;
+    duration: number;
+    camera: CameraValue;
+    range: number;
+    noCameraFlight?: boolean;
+  }>();
 
   const ctx = useVisualizerContext();
   const { flyTo, lookAt } = ctx?.engine ?? {};

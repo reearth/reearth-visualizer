@@ -1,4 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
+
 import { useDelayedCount } from "./use-delayed-count";
 
 test("normal", async () => {

@@ -2,6 +2,7 @@ import React from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import { PluginItem as PluginItemType } from "@reearth/components/molecules/Settings/Project/Plugin/PluginAccordion";
+
 import PluginInstall from "./PluginInstall";
 
 export type PluginItem = PluginItemType;

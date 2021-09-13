@@ -1,9 +1,9 @@
+import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import React, { useRef, useCallback } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
-import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 
-import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
+import { styled } from "@reearth/theme";
 
 export type Props = {
   title?: string;

@@ -1,6 +1,6 @@
+import svgToMiniDataURI from "mini-svg-data-uri";
 import React, { ComponentProps, CSSProperties, memo, useMemo } from "react";
 import { ReactSVG } from "react-svg";
-import svgToMiniDataURI from "mini-svg-data-uri";
 
 import { styled } from "@reearth/theme";
 

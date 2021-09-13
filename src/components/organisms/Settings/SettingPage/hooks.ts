@@ -1,6 +1,7 @@
-import { useEffect, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@reach/router";
+import { useEffect, useCallback, useMemo, useState } from "react";
 
+import { User } from "@reearth/components/molecules/Common/Header";
 import {
   useMeQuery,
   useSceneQuery,
@@ -9,7 +10,6 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useError, useTeam, useProject } from "@reearth/state";
-import { User } from "@reearth/components/molecules/Common/Header";
 
 type Params = {
   teamId?: string;

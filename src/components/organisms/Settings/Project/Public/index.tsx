@@ -1,13 +1,14 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 
-import StatusSection from "@reearth/components/molecules/Settings/Project/StatusSection";
+import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
 import PublicSection from "@reearth/components/molecules/Settings/Project/PublicSection";
 import PublishSection from "@reearth/components/molecules/Settings/Project/PublishSection";
-import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
-import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import StatusSection from "@reearth/components/molecules/Settings/Project/StatusSection";
+import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
 import useHooks from "./hooks";
 
 type Props = {

@@ -1,8 +1,9 @@
 import React from "react";
-import { styled, useTheme } from "@reearth/theme";
-import Text from "@reearth/components/atoms/Text";
-import Flex from "@reearth/components/atoms/Flex";
+
 import Divider from "@reearth/components/atoms/Divider";
+import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {

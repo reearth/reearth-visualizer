@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import generateRandomString from "@reearth/util/generate-random-string";
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import generateRandomString from "@reearth/util/generate-random-string";
 
 export type Validation = "too short" | "not match";
 export type CopiedItemKey = {

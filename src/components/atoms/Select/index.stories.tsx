@@ -1,6 +1,7 @@
-import React from "react";
-import { Meta } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
+import { Meta } from "@storybook/react";
+import React from "react";
+
 import Select from ".";
 
 const items: { value: string; label: string }[] = [

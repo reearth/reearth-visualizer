@@ -1,15 +1,16 @@
-import React, { useMemo } from "react";
-import { Entity, BillboardGraphics } from "resium";
 import { Cartesian3 } from "cesium";
+import React, { useMemo } from "react";
 import nl2br from "react-nl2br";
+import { Entity, BillboardGraphics } from "resium";
 
+import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
+import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
-import Text from "@reearth/components/atoms/Text";
-import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo, heightReference } from "../common";
+
 import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
 
 export type Props = PrimitiveProps<Property>;

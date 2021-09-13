@@ -1,5 +1,6 @@
-import React, { Component } from "react";
 import { Story, Meta } from "@storybook/react";
+import React, { Component } from "react";
+
 import AdditionButton, { Props } from ".";
 
 export default {

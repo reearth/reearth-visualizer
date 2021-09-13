@@ -1,8 +1,7 @@
-import React from "react";
-import { useTheme } from "@reearth/theme";
+import React, { CSSProperties } from "react";
 
+import { useTheme } from "@reearth/theme";
 import { FontWeight, typography, TypographySize } from "@reearth/theme/fonts";
-import { CSSProperties } from "react";
 
 type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
 

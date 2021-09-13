@@ -1,17 +1,18 @@
 import React, { useRef } from "react";
 import { useIntl } from "react-intl";
-import Icon from "@reearth/components/atoms/Icon";
 
-import { styled, useTheme } from "@reearth/theme";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
+import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
 import {
   MenuList,
   MenuListItem,
   MenuListItemLabel,
 } from "@reearth/components/molecules/Common/MenuList";
 import TeamMenu from "@reearth/components/molecules/Common/TeamMenu";
+import { styled, useTheme } from "@reearth/theme";
+
 import { User, Team, Project } from "./types";
-import Text from "@reearth/components/atoms/Text";
 
 export interface LoginProps {
   user: User;

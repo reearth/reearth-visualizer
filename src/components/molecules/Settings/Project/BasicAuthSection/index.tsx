@@ -1,6 +1,8 @@
-import { styled } from "@reearth/theme";
 import React from "react";
 import { useIntl } from "react-intl";
+
+import { styled } from "@reearth/theme";
+
 import Section from "../../Section";
 import EditableItem from "../EditableItem";
 import ToggleItem from "../ToggleItem";

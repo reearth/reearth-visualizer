@@ -1,15 +1,16 @@
 import React from "react";
 
-import { styled } from "@reearth/theme";
 import Loading from "@reearth/components/atoms/Loading";
 import TreeView from "@reearth/components/atoms/TreeView";
+import { styled } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
+
 import useHooks, {
   Layer as LayerType,
   Widget as WidgetType,
   Format as FormatType,
   TreeViewItem,
 } from "./hooks";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Layer = LayerType;
 export type Widget = WidgetType;

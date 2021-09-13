@@ -2,8 +2,10 @@ import React, { ComponentType } from "react";
 
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
-import builtin from "./builtin";
+
 import Plugin, { Block, Primitive } from "../Plugin";
+
+import builtin from "./builtin";
 
 export type { Primitive, Block } from "../Plugin";
 

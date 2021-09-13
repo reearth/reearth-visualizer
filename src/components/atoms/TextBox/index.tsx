@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import fonts from "@reearth/theme/fonts";
-import { styled, metrics } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
+
 import Flex from "@reearth/components/atoms/Flex";
+import { styled, metrics } from "@reearth/theme";
+import fonts from "@reearth/theme/fonts";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   className?: string;

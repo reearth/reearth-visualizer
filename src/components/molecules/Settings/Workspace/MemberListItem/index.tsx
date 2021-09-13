@@ -1,14 +1,13 @@
 import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
-import Avatar from "@reearth/components/molecules/Settings/Avatar";
-import Field from "@reearth/components/molecules/Settings/Field";
 import Icon from "@reearth/components/atoms/Icon";
 import Select, { Props as SelectProps } from "@reearth/components/atoms/Select";
 import Option from "@reearth/components/atoms/SelectOption";
-
-import { styled } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import Avatar from "@reearth/components/molecules/Settings/Avatar";
+import Field from "@reearth/components/molecules/Settings/Field";
+import { styled } from "@reearth/theme";
 
 export type Role = "READER" | "WRITER" | "OWNER";
 

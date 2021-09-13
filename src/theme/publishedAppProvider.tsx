@@ -1,5 +1,5 @@
-import React from "react";
 import { ThemeProvider } from "@emotion/react";
+import React from "react";
 
 import theme from "./darkTheme";
 import GlobalStyle from "./globalstyle";

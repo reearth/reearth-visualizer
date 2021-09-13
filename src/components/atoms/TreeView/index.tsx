@@ -1,9 +1,10 @@
 import React, { PropsWithChildren, ReactElement } from "react";
 
-import type { Item, InnerProps } from "./types";
 import Scroll from "../Scroll";
-import Items from "./Items";
+
 import useHooks from "./hooks";
+import Items from "./Items";
+import type { Item, InnerProps } from "./types";
 
 export type { Item, ItemProps, DropType } from "./types";
 

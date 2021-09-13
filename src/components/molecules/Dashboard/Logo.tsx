@@ -1,7 +1,8 @@
 import React from "react";
-import { styled } from "@reearth/theme";
+
 import Flex from "@reearth/components/atoms/Flex";
 import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
+import { styled } from "@reearth/theme";
 
 export interface Props {
   className?: string;

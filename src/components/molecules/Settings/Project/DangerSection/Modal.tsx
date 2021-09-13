@@ -1,13 +1,13 @@
+import { useNavigate } from "@reach/router";
 import React, { useEffect, useState, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useNavigate } from "@reach/router";
 
-import Modal from "@reearth/components/atoms/Modal";
-import { fonts, styled, useTheme } from "@reearth/theme";
 import Button from "@reearth/components/atoms/Button";
-import TextBox from "@reearth/components/atoms/TextBox";
 import Divider from "@reearth/components/atoms/Divider";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import TextBox from "@reearth/components/atoms/TextBox";
+import { fonts, styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type ActionType = "archive" | "unarchive" | "delete";

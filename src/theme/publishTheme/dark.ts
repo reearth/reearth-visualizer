@@ -1,4 +1,5 @@
 import colors from "../colors";
+
 import type { PublishTheme } from ".";
 
 export const dark: PublishTheme = {

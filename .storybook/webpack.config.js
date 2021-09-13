@@ -1,6 +1,8 @@
-const webpack = require("webpack");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
+
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
+
 const pkg = require("../package.json");
 
 module.exports = ({ config }) => {

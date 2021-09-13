@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
 import {
   useChangePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
@@ -28,7 +29,7 @@ import {
   useSelectedBlock,
 } from "@reearth/state";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
-import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
+
 import useQueries, { Mode as RawMode } from "./hooks-queries";
 
 export type Mode = RawMode;

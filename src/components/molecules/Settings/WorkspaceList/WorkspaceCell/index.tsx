@@ -2,11 +2,12 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 // Components
-import { styled, useTheme } from "@reearth/theme";
-import { Team as TeamType } from "../WorkspaceList";
-import Text from "@reearth/components/atoms/Text";
-import { metricsSizes } from "@reearth/theme/metrics";
 import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
+
+import { Team as TeamType } from "../WorkspaceList";
 
 export type Team = TeamType;
 

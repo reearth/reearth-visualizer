@@ -1,8 +1,8 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import Icon from "@reearth/components/atoms/Icon";
 import Button from "@reearth/components/atoms/Button";
+import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 export type Props = {

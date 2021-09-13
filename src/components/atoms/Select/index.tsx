@@ -1,13 +1,13 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from "react";
-import { useClickAway } from "react-use";
-import { usePopper } from "react-popper";
-import { useMergeRefs } from "use-callback-ref";
 import { useIntl } from "react-intl";
+import { usePopper } from "react-popper";
+import { useClickAway } from "react-use";
+import { useMergeRefs } from "use-callback-ref";
 
-import { styled, css, useTheme, metrics } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { styled, css, useTheme, metrics } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 // Components
 

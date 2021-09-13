@@ -1,12 +1,14 @@
 import React from "react";
 import { useIntl } from "react-intl";
+
+import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
+import PluginSection from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
+import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+
 import useHooks from "./hooks";
 
 // Components
-import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import PluginSection from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
-import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 
 type Props = {
   projectId: string;

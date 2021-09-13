@@ -1,8 +1,8 @@
 import React, { useCallback, useState, ReactElement, useRef, useEffect } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-import type { Item as ItemType, InnerProps, DropType } from "./types";
 import Items from "./Items";
+import type { Item as ItemType, InnerProps, DropType } from "./types";
 import { arrayEquals, calcPosition, getDestIndex, getDropType, isAncestor } from "./util";
 
 export type Props<T = unknown, R extends Element = Element> = InnerProps<T, R> & {

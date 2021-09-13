@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
 import Text from "@reearth/components/atoms/Text";
+import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
 export type Item<Value extends string | number = string> = {

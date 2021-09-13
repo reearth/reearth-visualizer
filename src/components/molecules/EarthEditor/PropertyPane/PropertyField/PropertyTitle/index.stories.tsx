@@ -1,5 +1,6 @@
-import React from "react";
 import { Meta } from "@storybook/react";
+import React from "react";
+
 import PropertyTitle from ".";
 
 const Wrapper: React.FC = ({ children }) => <div style={{ padding: "32px" }}>{children}</div>;

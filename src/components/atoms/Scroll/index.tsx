@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import { detect } from "detect-browser";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { styled } from "@reearth/theme";
 

@@ -1,5 +1,5 @@
-import { isAncestor, searchItems } from "./util";
 import { Item } from "./types";
+import { isAncestor, searchItems } from "./util";
 
 const items: Item<null>[] = [
   { id: "x", content: null },

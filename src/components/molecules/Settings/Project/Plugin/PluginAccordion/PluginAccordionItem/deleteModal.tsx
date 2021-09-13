@@ -1,10 +1,11 @@
+import React from "react";
+import { useIntl } from "react-intl";
+
 import Box from "@reearth/components/atoms/Box";
 import ConfirmationModal from "@reearth/components/atoms/ConfirmationModal";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { useTheme } from "@reearth/theme";
-import React from "react";
-import { useIntl } from "react-intl";
 
 export type Props = {
   onCancel: () => void;

@@ -1,7 +1,8 @@
 import React from "react";
-import { styled, useTheme } from "@reearth/theme";
+
 import RadioButton, { RadioButtonProps } from "@reearth/components/atoms/RadioButton";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 
 export type RadioLabelProps = RadioButtonProps & {
   label: string;

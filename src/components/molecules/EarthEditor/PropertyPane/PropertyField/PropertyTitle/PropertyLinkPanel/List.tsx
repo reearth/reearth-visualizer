@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import { useIntl } from "react-intl";
-import Text from "@reearth/components/atoms/Text";
-import Divider from "@reearth/components/atoms/Divider";
 
+import Divider from "@reearth/components/atoms/Divider";
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 

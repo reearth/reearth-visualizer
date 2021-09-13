@@ -1,14 +1,16 @@
 import React from "react";
-
-import { styled } from "@reearth/theme";
-import Icon from "@reearth/components/atoms/Icon";
-import type { Layer as LayerType } from "../PropertyItem";
-import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
-import PropertyListItem, { Item as ItemType } from "./item";
-import LayerMultipleSelectionModal from "../../LayerMultipleSelectionModal";
-import useHooks from "./hooks";
 import { useIntl } from "react-intl";
+
+import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { styled } from "@reearth/theme";
+
+import LayerMultipleSelectionModal from "../../LayerMultipleSelectionModal";
+import type { Layer as LayerType } from "../PropertyItem";
+
+import useHooks from "./hooks";
+import PropertyListItem, { Item as ItemType } from "./item";
 
 export type Item = ItemType & { layerId?: string };
 export type Layer = LayerType;

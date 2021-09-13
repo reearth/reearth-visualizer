@@ -2,9 +2,9 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 // Theme
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import Text from "@reearth/components/atoms/Text";
 
 export type Status = "published" | "limited" | "unpublished";
 

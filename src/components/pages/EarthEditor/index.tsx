@@ -5,8 +5,9 @@ import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEdit
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
 import Header from "@reearth/components/organisms/EarthEditor/Header";
 import LeftMenu from "@reearth/components/organisms/EarthEditor/LeftMenu";
-import RightMenu from "@reearth/components/organisms/EarthEditor/RightMenu";
 import PrimitiveHeader from "@reearth/components/organisms/EarthEditor/PrimitiveHeader";
+import RightMenu from "@reearth/components/organisms/EarthEditor/RightMenu";
+
 import useHooks from "./hooks";
 
 export type Props = {

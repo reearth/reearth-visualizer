@@ -1,8 +1,9 @@
 import React from "react";
-import { styled, useTheme } from "@reearth/theme";
 
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { styled, useTheme } from "@reearth/theme";
+
 import { FieldProps } from "../types";
 
 export type Props = FieldProps<string> & {

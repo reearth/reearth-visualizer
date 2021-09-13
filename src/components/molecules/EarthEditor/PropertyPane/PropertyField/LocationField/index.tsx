@@ -1,9 +1,10 @@
 import React from "react";
-import { styled } from "@reearth/theme";
 import { useIntl } from "react-intl";
 
-import { FieldProps } from "../types";
+import { styled } from "@reearth/theme";
+
 import NumberField from "../NumberField";
+import { FieldProps } from "../types";
 
 export type Location = {
   lat: number;

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import { Item as TreeViewItemType } from "@reearth/components/atoms/TreeView";
-import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "../LayerTreeViewItem";
 import { arrayEquals } from "@reearth/components/atoms/TreeView/util";
+
+import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "../LayerTreeViewItem";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 

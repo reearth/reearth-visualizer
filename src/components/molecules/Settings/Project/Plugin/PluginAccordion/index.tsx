@@ -1,6 +1,8 @@
+import React from "react";
+
 import Accordion from "@reearth/components/atoms/Accordion";
 import { useTheme } from "@reearth/theme";
-import React from "react";
+
 import PluginAccordionItemBody from "./PluginAccordionItem/itemBody";
 import PluginAccordionItemHeader from "./PluginAccordionItem/itemHeader";
 

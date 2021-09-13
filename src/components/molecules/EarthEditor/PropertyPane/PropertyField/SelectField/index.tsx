@@ -1,6 +1,8 @@
 import React from "react";
-import { useTheme } from "@reearth/theme";
+
 import SelectBox, { Item as ItemType } from "@reearth/components/atoms/SelectBox";
+import { useTheme } from "@reearth/theme";
+
 import { FieldProps } from "../types";
 
 export type Item<Value extends string | number = string> = ItemType<Value>;

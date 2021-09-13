@@ -1,9 +1,9 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import { styled } from "@reearth/theme";
-import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import Text from "@reearth/components/atoms/Text";
+import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import { styled } from "@reearth/theme";
 
 export type Props = {
   checked?: boolean;

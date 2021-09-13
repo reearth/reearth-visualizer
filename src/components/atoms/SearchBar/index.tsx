@@ -1,5 +1,7 @@
-import { fonts, styled, useTheme } from "@reearth/theme";
 import React from "react";
+
+import { fonts, styled, useTheme } from "@reearth/theme";
+
 import Box from "../Box";
 import Flex from "../Flex";
 import Icon from "../Icon";

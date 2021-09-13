@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo } from "react";
 import { cloneDeep } from "lodash-es";
+import { useCallback, useEffect, useMemo } from "react";
 
-import type { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
 import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
+import type { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
 import events from "@reearth/util/event";
+
 import { useVisualizerContext } from "../context";
 
 export default function ({

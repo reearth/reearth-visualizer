@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
-import { styled } from "@reearth/theme";
-import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
+import Modal from "@reearth/components/atoms/Modal";
 import TreeView, { Item, Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { styled } from "@reearth/theme";
+
 import LayerTreeViewItem, { Layer as LayerType } from "../LayerTreeViewItem";
 
 export type Layer = LayerType<{
@@ -38,10 +39,10 @@ const LayerSelectionModal: React.FC<Props> = ({
 
   const [selectedLayer, selectLayer] = useState<string[]>(selected ? [selected] : []);
 
-  const ok = useCallback(() => (selectedLayer?.length ? onSelect?.(selectedLayer[0]) : undefined), [
-    onSelect,
-    selectedLayer,
-  ]);
+  const ok = useCallback(
+    () => (selectedLayer?.length ? onSelect?.(selectedLayer[0]) : undefined),
+    [onSelect, selectedLayer],
+  );
 
   const select = useCallback((s: Item<LayerType>[]) => {
     if (s.length) {

@@ -1,15 +1,15 @@
+import { Link } from "@reach/router";
 import React from "react";
 import { useIntl } from "react-intl";
-import { Link } from "@reach/router";
-import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
-import Icon from "@reearth/components/atoms/Icon";
-import { styled, useTheme, metrics } from "@reearth/theme";
-import Text from "@reearth/components/atoms/Text";
 import { useMedia } from "react-use";
-import Flex from "@reearth/components/atoms/Flex";
-import { metricsSizes } from "@reearth/theme/metrics";
 
+import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
+import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
 import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types";
+import { styled, useTheme, metrics } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export interface Props {
   className?: string;

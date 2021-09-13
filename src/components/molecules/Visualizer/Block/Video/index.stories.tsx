@@ -1,5 +1,6 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
+
 import Video, { Props } from ".";
 
 export default {

@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
-import { styled } from "@reearth/theme";
+
 import Icon from "@reearth/components/atoms/Icon";
+import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
 import useHooks from "./hooks";

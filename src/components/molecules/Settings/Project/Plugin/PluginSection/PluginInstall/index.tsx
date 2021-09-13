@@ -1,12 +1,15 @@
+import React from "react";
+import { useIntl } from "react-intl";
+
 import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { Icons } from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
-import React from "react";
-import { useIntl } from "react-intl";
+
 import { PluginInstallWay } from "..";
 import PluginAccordion, { PluginItem } from "../../PluginAccordion";
+
 import PublicRepo from "./PublicRepo";
 import ZipUpload from "./ZipUpload";
 

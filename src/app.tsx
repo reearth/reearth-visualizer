@@ -1,25 +1,25 @@
-import React, { Suspense } from "react";
 import { Router, Redirect } from "@reach/router";
+import React, { Suspense } from "react";
 
-import { Provider as IntlProvider } from "@reearth/locale";
-import { Provider as ThemeProvider, styled } from "./theme";
-import { Provider as GqlProvider } from "./gql";
-import { Provider as DndProvider } from "./util/use-dnd";
-import { Provider as Auth0Provider } from "./auth";
-
-import NotFound from "@reearth/components/pages/NotFound";
 import Loading from "@reearth/components/atoms/Loading";
-import TopPage from "@reearth/components/pages/TopPage";
+import NotFound from "@reearth/components/pages/NotFound";
 import AccountSettings from "@reearth/components/pages/Settings/Account";
-import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
-import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import ProjectSettings from "@reearth/components/pages/Settings/Project";
-import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList";
-import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
-import PublicSettings from "@reearth/components/pages/Settings/Project/Public";
 import DatasetSettings from "@reearth/components/pages/Settings/Project/Dataset";
 import PluginSettings from "@reearth/components/pages/Settings/Project/Plugin";
+import PublicSettings from "@reearth/components/pages/Settings/Project/Public";
+import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList";
+import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
+import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
+import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
+import TopPage from "@reearth/components/pages/TopPage";
+import { Provider as IntlProvider } from "@reearth/locale";
+
+import { Provider as Auth0Provider } from "./auth";
 import Preview from "./components/pages/Preview";
+import { Provider as GqlProvider } from "./gql";
+import { Provider as ThemeProvider, styled } from "./theme";
+import { Provider as DndProvider } from "./util/use-dnd";
 
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));

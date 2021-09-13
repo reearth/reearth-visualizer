@@ -1,7 +1,8 @@
+import React from "react";
+
 import Box from "@reearth/components/atoms/Box";
 import Markdown from "@reearth/components/atoms/Markdown";
 import { useTheme } from "@reearth/theme";
-import React from "react";
 
 export type Props = {
   children?: string;
