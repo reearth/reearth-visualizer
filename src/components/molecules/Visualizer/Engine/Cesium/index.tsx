@@ -103,11 +103,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
           atmosphereHueShift={property?.atmosphere?.hue_shift}
           atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
-          {...{
-            // TODO: update resium
-            terrainExaggeration: property?.default?.terrainExaggeration,
-            terrainExaggerationRelativeHeight: property?.default?.terrainExaggerationRelativeHeight,
-          }}
+          terrainExaggeration={property?.default?.terrainExaggeration}
+          terrainExaggerationRelativeHeight={property?.default?.terrainExaggerationRelativeHeight}
         />
         {imageryLayers?.map(([id, im, min, max]) => (
           <ImageryLayer

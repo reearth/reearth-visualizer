@@ -120,9 +120,9 @@ export default ({
   }, [cesium, selectedPrimitiveId]);
 
   const selectViewerEntity = useCallback(
-    (ev: { position: Cartesian2 }) => {
+    (ev: { position: Cartesian2 } | { startPosition: Cartesian2; endPosition: Cartesian2 }) => {
       const viewer = cesium.current?.cesiumElement;
-      if (!viewer || viewer.isDestroyed()) return;
+      if (!viewer || viewer.isDestroyed() || !("position" in ev)) return;
 
       let target = viewer.scene.pick(ev.position);
       if (target && target.id instanceof Entity) {
