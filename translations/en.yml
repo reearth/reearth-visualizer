@@ -73,10 +73,6 @@ src:
           '2523193532': Workspace Name
           '3528672691': Cancel
           '4120989039': Create
-        plugin:
-          builtin:
-            blocks:
-              '463005216': Double click here to write.
       Dashboard:
         '499824730': >-
           You have no projects in your workspace. Click the button above in the
@@ -104,22 +100,18 @@ src:
             Gdrive:
               '734499794': Connect with Google Drive
               '1359825936': 'Re:Earth supports uploading Google Sheets and CSV files.'
-        Earth:
-          FovSlider:
-            '3017293479': Narrow
-            '3291465140': Angle
-            '3723856417': Wide
         ExportPane:
           '3590336714': Export
           '3977973714': Export type
+        FovSlider:
+          '3017293479': Narrow
+          '3291465140': Angle
+          '3723856417': Wide
         Header:
           '1458938618': Update
           '1547167026': Publish
           '2237014112': Unpublish
           '3637715635': Preview
-        InfoBox:
-          InfoBox:
-            '3037025019': Move mouse here and click "+" to add content
         LayerMultipleSelectionModal:
           '1115770113': Save
           '2221959784': Selectable Layers
@@ -257,7 +249,6 @@ src:
             '2039038750': New password
             '2521568990': Change Password
             '3546326308': Use lowercase and uppercase letters
-            '3850603475': Old password
             '4270021428': At least 2 different numbers
           ProfileSection:
             '636461959': Name
@@ -345,8 +336,6 @@ src:
                   '3528672691': Cancel
                   '3640052215': Continue
                   '4215513768': 'Repository url:'
-              PluginList:
-                '1933254449': Advanced options
           ProfileSection:
             '636461959': Name
             '1513791786': Project Info
@@ -421,6 +410,12 @@ src:
             '3828443189': New Workspace
       TopPage:
         '1405865627': Sign in
+      Visualizer:
+        Block:
+          Text:
+            '463005216': Double click here to write.
+        Infobox:
+          '3037025019': Move mouse here and click "+" to add content
     organisms:
       EarthEditor:
         LeftMenu:

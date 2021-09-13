@@ -149,7 +149,9 @@ const ButtonWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  max-height: 240px;
+  max-height: 800px;
+  max-width: 480px;
+  width: 75%;
 `;
 
 export default EditableItem;
