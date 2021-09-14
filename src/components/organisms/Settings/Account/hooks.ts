@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
@@ -10,6 +11,7 @@ export enum Theme {
 }
 
 export default () => {
+  const client = useApolloClient();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
@@ -35,10 +37,11 @@ export default () => {
   );
 
   const updateLanguage = useCallback(
-    (lang: string) => {
-      updateMeMutation({ variables: { lang } });
+    async (lang: string) => {
+      await updateMeMutation({ variables: { lang } });
+      await client.resetStore();
     },
-    [updateMeMutation],
+    [updateMeMutation, client],
   );
 
   const updateTheme = useCallback(
