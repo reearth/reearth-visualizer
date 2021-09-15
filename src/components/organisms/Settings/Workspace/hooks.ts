@@ -77,8 +77,13 @@ export default (params: Params) => {
   const [updateTeamMutation] = useUpdateTeamMutation();
 
   const updateName = useCallback(
-    (name: string) => teamId && updateTeamMutation({ variables: { teamId, name } }),
-    [teamId, updateTeamMutation],
+    async (name: string) => {
+      if (teamId) {
+        const results = await updateTeamMutation({ variables: { teamId, name } });
+        setTeam(results.data?.updateTeam?.team);
+      }
+    },
+    [teamId, updateTeamMutation, setTeam],
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({

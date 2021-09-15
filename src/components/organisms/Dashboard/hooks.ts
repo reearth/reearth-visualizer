@@ -44,12 +44,16 @@ export default (teamId?: string) => {
 
   const teams = data?.me?.teams;
   const team = teams?.find(team => team.id === teamId);
+  const personal = teamId === data?.me?.myTeam.id;
 
   useEffect(() => {
     if (team?.id && team.id !== currentTeam?.id) {
-      setCurrentTeam(team);
+      setCurrentTeam({
+        personal,
+        ...team,
+      });
     }
-  }, [currentTeam, team, setCurrentTeam]);
+  }, [currentTeam, team, setCurrentTeam, personal]);
 
   const changeTeam = useCallback(
     (teamId: string) => {

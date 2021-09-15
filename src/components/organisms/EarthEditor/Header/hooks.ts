@@ -85,10 +85,7 @@ export default () => {
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
 
-    setTeam({
-      id: team.id,
-      name: team.name,
-    });
+    setTeam(team);
   }, [teams, currentTeam, teamId, setTeam]);
 
   useEffect(() => {
