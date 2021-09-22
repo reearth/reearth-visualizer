@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
@@ -36,7 +35,6 @@ export type Props = {
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
-  onNotify?: (type: NotificationType, text: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -47,7 +45,6 @@ const DatasetPane: React.FC<Props> = ({
   onGoogleSheetDatasetImport,
   onRemoveDataset,
   loading,
-  onNotify,
 }) => {
   const intl = useIntl();
   const {
@@ -87,13 +84,6 @@ const DatasetPane: React.FC<Props> = ({
     [onDatasetImport, onDatasetSync, setDatasetSyncLoading, setDatasetSyncOpen],
   );
 
-  const handleDatasetRemove = useCallback(
-    async (schemeId: string) => {
-      await onRemoveDataset?.(schemeId);
-    },
-    [onRemoveDataset],
-  );
-
   const byHost = (datasetSchemas || []).reduce((acc, ac) => {
     const host = parseHost(ac.source);
     const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
@@ -125,7 +115,7 @@ const DatasetPane: React.FC<Props> = ({
                   name={ds.name}
                   totalCount={ds.totalCount}
                   onDrop={ds.onDrop}
-                  onRemove={handleDatasetRemove}
+                  onRemove={onRemoveDataset}
                 />
               ))}
             </div>
@@ -146,7 +136,6 @@ const DatasetPane: React.FC<Props> = ({
         onClose={closeDatasetModal}
         handleGoogleSheetDatasetAdd={handleGoogleSheetDatasetAdd}
         handleDatasetAdd={handleDatasetAdd}
-        onNotify={onNotify}
       />
     </Wrapper>
   );

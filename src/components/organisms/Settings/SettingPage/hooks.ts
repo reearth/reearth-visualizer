@@ -1,5 +1,5 @@
 import { useNavigate } from "@reach/router";
-import { useEffect, useCallback, useMemo, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
@@ -9,7 +9,7 @@ import {
   useProjectQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useError, useTeam, useProject } from "@reearth/state";
+import { useTeam, useProject } from "@reearth/state";
 
 type Params = {
   teamId?: string;
@@ -19,7 +19,6 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [error, setError] = useError();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
@@ -104,26 +103,6 @@ export default (params: Params) => {
     [createTeamMutation, setTeam],
   );
 
-  const notificationTimeout = 5000;
-
-  const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
-    return error ? { type: "error", text: error } : undefined;
-  }, [error]);
-
-  useEffect(() => {
-    if (!error) return;
-    const timerID = setTimeout(() => {
-      setError(undefined);
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setError]);
-
-  const onNotificationClose = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
-
   const back = useCallback(() => navigate(-1), [navigate]);
 
   return {
@@ -138,7 +117,5 @@ export default (params: Params) => {
     openModal,
     handleModalClose,
     back,
-    notification,
-    onNotificationClose,
   };
 };

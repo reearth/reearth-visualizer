@@ -36,8 +36,8 @@ const colors = {
     },
     functional: {
       link: "#3592FF",
-      success: "#00D1A2",
-      attention: "#D6C71C",
+      success: "#07B28C",
+      attention: "#CFBF01",
       error: "#FF3C53",
       select: "#3B3CD0",
       notice: "#6E9CD2",
@@ -84,7 +84,7 @@ const colors = {
     },
     functional: {
       link: "#0063D8",
-      success: "#00D1A2",
+      success: "#00B68D",
       attention: "#E17A00",
       error: "#FF3C53",
       select: "#F57C4B",

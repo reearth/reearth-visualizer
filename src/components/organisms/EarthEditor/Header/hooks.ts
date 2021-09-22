@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import { User } from "@reearth/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
@@ -15,18 +14,17 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useError, useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
+import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const [error, setError] = useError();
+  const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
-  const [notification, setNotification] = useNotification();
 
   const navigate = useNavigate();
 
@@ -117,17 +115,6 @@ export default () => {
     setPublicationModalVisible(false);
   }, [project?.publishmentStatus]);
 
-  const notify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type: type,
-        text: text,
-      });
-    },
-    [setNotification],
-  );
-
   const publishProject = useCallback(
     async (alias: string | undefined, s: Status) => {
       if (!project) return;
@@ -137,22 +124,34 @@ export default () => {
           : s == "published"
           ? PublishmentStatus.Public
           : PublishmentStatus.Private;
-      await publishProjectMutation({
+      const result = await publishProjectMutation({
         variables: { projectId: project.id, alias, status: gqlStatus },
       });
 
-      notify(
-        s === "limited" ? "success" : s == "published" ? "success" : "info",
-        s === "limited"
-          ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
-          : s == "published"
-          ? intl.formatMessage({
-              defaultMessage: "Successfully published your project with search engine indexing!",
-            })
-          : intl.formatMessage({ defaultMessage: "Successfully unpublished your project!" }),
-      );
+      if (result.errors) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to publish your project." }),
+        });
+      } else {
+        setNotification({
+          type: s === "limited" ? "success" : s == "published" ? "success" : "info",
+          text:
+            s === "limited"
+              ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
+              : s == "published"
+              ? intl.formatMessage({
+                  defaultMessage:
+                    "Successfully published your project with search engine indexing!",
+                })
+              : intl.formatMessage({
+                  defaultMessage:
+                    "Successfully unpublished your project. Now nobody can access your project.",
+                }),
+        });
+      }
     },
-    [project, publishProjectMutation, notify, intl],
+    [project, publishProjectMutation, intl, setNotification],
   );
 
   const changeTeam = useCallback(
@@ -186,35 +185,16 @@ export default () => {
     setProjectAlias(project?.alias);
   }, [project]);
 
-  const notificationTimeout = 5000;
-
-  useEffect(() => {
-    if (!error) return;
-    setNotification({
-      type: "error",
-      text: error,
-    });
-    const timerID = setTimeout(() => {
-      setError(undefined);
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setError, setNotification]);
-
-  const closeNotification = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
-
   const openPreview = useCallback(() => {
     window.open(location.pathname + "/preview", "_blank");
   }, []);
 
-  useEffect(() => {
-    if (!notification?.text) return;
-    const timerID = setTimeout(() => setNotification(undefined), notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [notification?.text, setNotification]);
+  const handleCopyToClipBoard = useCallback(() => {
+    setNotification({
+      type: "info",
+      text: intl.formatMessage({ defaultMessage: "Successfully copied to clipboard!" }),
+    });
+  }, [intl, setNotification]);
 
   return {
     teams,
@@ -231,7 +211,6 @@ export default () => {
     user,
     currentTeam,
     currentProject,
-    notification,
     validAlias,
     validatingAlias,
     url,
@@ -240,11 +219,10 @@ export default () => {
     closePublicationModal,
     openWorkspaceModal,
     closeWorkspaceModal,
+    handleCopyToClipBoard,
     publishProject,
     logout,
-    notify,
     checkProjectAlias,
-    closeNotification,
     createTeam,
     openPreview,
   };

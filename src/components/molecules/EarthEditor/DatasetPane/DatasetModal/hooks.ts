@@ -1,8 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
-
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 
 import { SheetParameter } from "./Gdrive";
 
@@ -16,9 +13,7 @@ export default (
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>,
-  onNotify?: (type: NotificationType, text: string) => void,
 ) => {
-  const intl = useIntl();
   const [url, onUrlChange] = useState<string>();
   const [csv, changeCsv] = useState<File>();
   const [sheet, changeSheet] = useState<SheetParameter>();
@@ -29,19 +24,11 @@ export default (
     if (dataType === "gdrive") {
       if (!sheet || !handleGoogleSheetDatasetAdd) return;
       await handleGoogleSheetDatasetAdd(sheet.accessToken, sheet.fileId, sheet.sheetName, null);
-      onNotify?.(
-        "success",
-        intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
-      );
     }
     const data = dataType === "csv" ? csv : url;
     if (!data || !handleDatasetAdd) return;
     await handleDatasetAdd(data, null);
-    onNotify?.(
-      "success",
-      intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
-    );
-  }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd, intl, onNotify]);
+  }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd]);
 
   const onSelectCsvFile = useFileInput(
     (files: FileList) => {

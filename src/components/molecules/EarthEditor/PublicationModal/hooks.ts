@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useIntl } from "react-intl";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { Status } from "@reearth/components/atoms/PublicationStatus";
+import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import generateRandomString from "@reearth/util/generate-random-string";
 
 export type Validation = "too short" | "not match";
@@ -11,12 +11,14 @@ export type CopiedItemKey = {
 };
 
 export default (
+  publishing?: publishingType,
   defaultAlias?: string,
+  searchIndex?: boolean,
+  onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>,
   onClose?: () => void,
-  onNotify?: (type: NotificationType, text: string) => void,
   onAliasValidate?: (alias: string) => void,
+  onCopyToClipBoard?: () => void,
 ) => {
-  const intl = useIntl();
   const [copiedKey, setCopiedKey] = useState<CopiedItemKey>();
   const [alias, changeAlias] = useState(defaultAlias);
   const [validation, changeValidation] = useState<Validation>();
@@ -44,17 +46,10 @@ export default (
           [key]: true,
         }));
         navigator.clipboard.writeText(value);
-        onNotify?.(
-          "info",
-          `${
-            key === "embedCode"
-              ? intl.formatMessage({ defaultMessage: "Embed code was successfully copied!" })
-              : intl.formatMessage({ defaultMessage: "URL was successfully copied!" })
-          }`,
-        );
+        onCopyToClipBoard?.();
         resetCopiedWithDelay(key);
       },
-    [onNotify, resetCopiedWithDelay, intl],
+    [resetCopiedWithDelay, onCopyToClipBoard],
   );
 
   const validate = useCallback(
@@ -101,7 +96,21 @@ export default (
     onAliasChange(defaultAlias);
   }, [defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handlePublish = useCallback(async () => {
+    if (!publishing) return;
+    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
+    const mode =
+      publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
+    await onPublish?.(a, mode);
+    if (publishing === "unpublishing") {
+      handleClose?.();
+    } else {
+      setStatusChange(true);
+    }
+  }, [alias, onPublish, publishing, searchIndex, setStatusChange, generateAlias, handleClose]);
+
   return {
+    handlePublish,
     handleClose,
     statusChanged,
     setStatusChange,

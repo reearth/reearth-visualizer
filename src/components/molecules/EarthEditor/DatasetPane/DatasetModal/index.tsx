@@ -7,7 +7,6 @@ import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 
@@ -26,7 +25,6 @@ interface Props {
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>;
-  onNotify?: (type: NotificationType, text: string) => void;
 }
 
 const DatasetModal: React.FC<Props> = ({
@@ -35,7 +33,6 @@ const DatasetModal: React.FC<Props> = ({
   onClose,
   handleDatasetAdd,
   handleGoogleSheetDatasetAdd,
-  onNotify,
 }) => {
   const intl = useIntl();
   const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
@@ -48,7 +45,7 @@ const DatasetModal: React.FC<Props> = ({
     onSheetSelect,
     handleImport,
     handleClick,
-  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onNotify);
+  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {

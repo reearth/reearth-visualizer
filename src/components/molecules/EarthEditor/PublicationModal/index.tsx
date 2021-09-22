@@ -1,11 +1,10 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
@@ -29,7 +28,7 @@ interface Props {
   searchIndex?: boolean;
   publishing?: publishingType;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
-  onNotify?: (type: NotificationType, text: string) => void;
+  onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
   url?: string[];
@@ -45,7 +44,7 @@ const PublicationModal: React.FC<Props> = ({
   publicationStatus,
   onPublish,
   projectAlias,
-  onNotify,
+  onCopyToClipBoard,
   validAlias,
   onAliasValidate,
   validatingAlias,
@@ -54,17 +53,24 @@ const PublicationModal: React.FC<Props> = ({
   const intl = useIntl();
   const theme = useTheme();
   const {
+    handlePublish,
     handleClose,
     statusChanged,
-    setStatusChange,
     alias,
     validation,
-    generateAlias,
     copiedKey,
     handleCopyToClipBoard,
     showOptions,
     setOptions,
-  } = useHooks(projectAlias, onClose, onNotify, onAliasValidate);
+  } = useHooks(
+    publishing,
+    projectAlias,
+    searchIndex,
+    onPublish,
+    onClose,
+    onAliasValidate,
+    onCopyToClipBoard,
+  );
 
   const purl = useMemo(() => {
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
@@ -80,20 +86,6 @@ const PublicationModal: React.FC<Props> = ({
     (publishing === "unpublishing" && publicationStatus === "unpublished") ||
     ((publishing === "publishing" || publishing === "updating") &&
       (!alias || !!validation || validatingAlias || !validAlias));
-
-  const handlePublish = useCallback(async () => {
-    if (!publishing) return;
-    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
-    // const p = !searchIndex && publishing !== "unpublishing" ? alias || generateAlias() : undefined;
-    const mode =
-      publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
-    await onPublish?.(a, mode);
-    if (publishing === "unpublishing") {
-      handleClose?.();
-    } else {
-      setStatusChange(true);
-    }
-  }, [alias, onPublish, publishing, searchIndex, setStatusChange, generateAlias, handleClose]);
 
   const modalTitleText = useMemo(() => {
     return statusChanged

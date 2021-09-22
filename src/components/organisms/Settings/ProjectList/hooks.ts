@@ -13,7 +13,7 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
 } from "@reearth/gql";
-import { useTeam, useProject } from "@reearth/state";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -23,6 +23,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
+  const [, setNotification] = useNotification();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();
@@ -103,18 +104,32 @@ export default () => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
+        setModalShown(false);
+        return;
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
       if (scene.errors || !scene.data?.createScene) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
+        setModalShown(false);
+        return;
       }
+      setNotification({
+        type: "success",
+        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+      });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, teamId],
+    [createNewProject, createScene, intl, refetch, setNotification, teamId],
   );
 
   const selectProject = useCallback(

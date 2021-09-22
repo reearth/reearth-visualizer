@@ -1,8 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import { styled } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
+import { styled, fonts } from "@reearth/theme";
+
+import DatasetDeleteModal from "../DatasetDeleteModal";
 
 import useHooks from "./hooks";
 
@@ -26,18 +27,21 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   selected,
 }) => {
   const ref = useHooks(onDrop);
-  const handleRemove = useCallback(() => {
-    if (!id || !window.confirm("Are you sure to remove this dataset?")) return;
-    onRemove?.(id);
-  }, [id, onRemove]);
+  const [showDeleteModal, setDeleteModal] = useState(false);
+
   return (
     <Wrapper className={className} ref={ref} selected={selected}>
       <StyledIcon icon="dataset" size={16} />
       <Name>{name}</Name>
       <Count>({totalCount ?? ""})</Count>
-      <div onClick={handleRemove}>
+      <div onClick={() => setDeleteModal(!showDeleteModal)}>
         <RemoveButton icon="bin" size={14} />
       </div>
+      <DatasetDeleteModal
+        onRemove={() => id && onRemove?.(id)}
+        openModal={showDeleteModal}
+        setModal={(show: boolean) => setDeleteModal(show)}
+      />
     </Wrapper>
   );
 };

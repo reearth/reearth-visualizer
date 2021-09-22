@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useIntl } from "react-intl";
 
 import {
   useProjectQuery,
@@ -9,7 +10,7 @@ import {
   AssetsQuery,
   useAssetsQuery,
 } from "@reearth/gql";
-import { useTeam } from "@reearth/state";
+import { useTeam, useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -18,6 +19,8 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
+  const intl = useIntl();
+  const [, setNotification] = useNotification();
   const [currentTeam] = useTeam();
 
   const teamId = currentTeam?.id;
@@ -66,10 +69,6 @@ export default ({ projectId }: Params) => {
     [projectId, updateProjectMutation],
   );
 
-  const deleteProject = useCallback(() => {
-    projectId && deleteProjectMutation({ variables: { projectId } });
-  }, [projectId, deleteProjectMutation]);
-
   const updateProjectDescription = useCallback(
     (description: string) => {
       projectId && updateProjectMutation({ variables: { projectId, description } });
@@ -85,11 +84,48 @@ export default ({ projectId }: Params) => {
   );
 
   const archiveProject = useCallback(
-    (archived: boolean) => {
-      projectId && archiveProjectMutation({ variables: { projectId, archived } });
+    async (archived: boolean) => {
+      if (!projectId) return;
+      const results = await archiveProjectMutation({ variables: { projectId, archived } });
+      if (results.errors) {
+        setNotification({
+          type: "error",
+          text: archived
+            ? intl.formatMessage({
+                defaultMessage: "Failed to archive project.",
+              })
+            : intl.formatMessage({ defaultMessage: "Failed to unarchive project." }),
+        });
+      } else {
+        setNotification({
+          type: "info",
+          text: archived
+            ? intl.formatMessage({ defaultMessage: "Successfully archived the project." })
+            : intl.formatMessage({
+                defaultMessage:
+                  "Successfully unarchived the project. You can now edit this project.",
+              }),
+        });
+      }
     },
-    [projectId, archiveProjectMutation],
+    [projectId, intl, setNotification, archiveProjectMutation],
   );
+
+  const deleteProject = useCallback(async () => {
+    if (!projectId) return;
+    const results = await deleteProjectMutation({ variables: { projectId } });
+    if (results.errors) {
+      setNotification({
+        type: "error",
+        text: intl.formatMessage({ defaultMessage: "Failed to delete project." }),
+      });
+    } else {
+      setNotification({
+        type: "info",
+        text: intl.formatMessage({ defaultMessage: "Project was successfully deleted." }),
+      });
+    }
+  }, [projectId, intl, setNotification, deleteProjectMutation]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(

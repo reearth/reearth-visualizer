@@ -87,6 +87,15 @@ src:
           '293739158': Add Dataset
           '2446409280': No Dataset is here
           '3786358103': Other Source
+          DatasetDeleteModal:
+            '660592555': OK
+            '709595739': >-
+              Please make sure your project doesn't rely on this dataset before
+              proceeding.
+            '3057145766': >-
+              You are deleting a dataset. Layers that are linked to this dataset
+              might show errors.
+            '3528672691': Cancel
           DatasetModal:
             '142299937': Google Drive
             '293739158': Add Dataset
@@ -417,7 +426,24 @@ src:
         Infobox:
           '3037025019': Move mouse here and click "+" to add content
     organisms:
+      Dashboard:
+        '118901803': Successfully created project!
+        '1043376506': Failed to create project.
+        '1573629237': Successfully created workspace!
       EarthEditor:
+        DataSourcePane:
+          '8458775': Successfully deleted the dataset!
+          '373918798': Failed to delete the dataset.
+          '517189107': Successfully added the dataset!
+          '1235836640': Failed to add the dataset.
+        Header:
+          '329817781': >-
+            Successfully unpublished your project. Now nobody can access your
+            project.
+          '393928859': Successfully published your project!
+          '1300930556': Successfully published your project with search engine indexing!
+          '1754679519': Successfully copied to clipboard!
+          '3374937831': Failed to publish your project.
         LeftMenu:
           '3127270027': Outline
           '3833270271': Dataset
@@ -429,23 +455,58 @@ src:
           '1676374721': Widget
           '1884622259': Infobox
           '3590336714': Export
+      Notification:
+        '687096634': Warning
+        '1354606874': Notice
+        '2845142593': Error
+        '3620760668': Something went wrong. Please try again later.
       Settings:
         Account:
+          '536986583': Failed to change language.
+          '1420361838': Failed to update password.
+          '1443501844': Failed to change theme.
           '3198092477': Account
+          '3937010984': Failed to update account name.
+          '4233838386': Successfully updated password!
         Project:
+          '159368865': Failed to delete project.
+          '458538859': Successfully archived the project.
+          '1212782674': Failed to archive project.
+          '2614602809': Successfully unarchived the project. You can now edit this project.
+          '2666836613': Failed to unarchive project.
+          '2767494453': Project was successfully deleted.
           Dataset:
+            '94263160': Failed to delete dataset.
+            '1218000428': Dataset was successfully deleted.
             '3833270271': Dataset
           Plugin:
+            '1179803049': Successfully installed plugin!
+            '1442994697': Failed to install plugin.
+            '1961603541': Failed to uninstall plugin.
+            '1991459155': Successfully removed plugin.
             '2057458630': Plugins
           Public:
             '3135366329': Public
         ProjectList:
+          '118901803': Successfully created project!
+          '1043376506': Failed to create project.
           '3336263640': Project List
         Workspace:
+          '905470392': Failed to delete member from the workspace.
+          '1979109196': Failed to create workspace.
+          '2491404296': Sucessfully created a workspace!
+          '2536720333': Successfully removed member from the workspace.
+          '2541564604': Failed to update workspace name.
+          '2578195155': Failed to delete workspace.
+          '2877996676': Workspace was successfully deleted.
+          '3360288793': Successfully added member(s) to the workspace!
+          '3996792911': Failed to add one or more members.
+          '4038320151': You have changed the workspace's name.
           Asset:
             '165162143': Assets
+            '325979456': Failed to add one or more assets.
+            '2700226140': Successfully added one or more assets.
+            '3402808678': Failed to delete one or more assets.
+            '4222118896': One or more assets were successfully deleted.
         WorkspaceList:
           '541301752': Workspace List
-    pages:
-      TopPage:
-        '802859307': Sign in error

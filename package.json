@@ -24,7 +24,7 @@
         "cypress:run": "cypress run",
         "gen": "run-p gen:*",
         "gen:gql": "graphql-codegen --config codegen.yml",
-        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.tsx' --extractFromFormatMessageCall",
+        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.ts*' --extractFromFormatMessageCall",
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {

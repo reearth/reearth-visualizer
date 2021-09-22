@@ -2,7 +2,6 @@ import { Link } from "@reach/router";
 import React from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import NotificationBar, { Type } from "@reearth/components/atoms/NotificationBar";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import { styled, metrics, css } from "@reearth/theme";
 
@@ -10,8 +9,6 @@ import Profile from "./profile";
 import { User, Team, Project } from "./types";
 
 export * from "./types";
-
-export type NotificationType = Type;
 
 export interface Props {
   className?: string;
@@ -31,11 +28,6 @@ export interface Props {
   modalShown?: boolean;
   openModal?: () => void;
   handleModalClose?: (r?: boolean | undefined) => void;
-  notification?: {
-    type?: NotificationType;
-    text: string;
-  };
-  onNotificationClose?: () => void;
   dashboard?: boolean;
 }
 
@@ -54,50 +46,39 @@ const Header: React.FC<Props> = ({
   modalShown,
   openModal,
   handleModalClose,
-  notification,
-  onNotificationClose,
   dashboard,
 }) => {
   return (
-    <>
-      <Wrapper className={className}>
-        <Content>
-          <LeftArea>
-            <StyledLink to={`/dashboard/${currentTeam?.id}`}>
-              {!dashboard && <StyledIcon icon="dashboard" size={24} />}
-            </StyledLink>
-            {icon}
-            {onSignOut && onChangeTeam && (
-              <>
-                <Profile
-                  user={user}
-                  currentTeam={currentTeam}
-                  currentProject={currentProject}
-                  teams={teams}
-                  onSignOut={onSignOut}
-                  onChangeTeam={onChangeTeam}
-                  openModal={openModal}
-                />
-                <WorkspaceCreationModal
-                  open={modalShown}
-                  onClose={handleModalClose}
-                  onSubmit={onCreateTeam}
-                />
-              </>
-            )}
-          </LeftArea>
-          <CenterArea>{center}</CenterArea>
-          <RightArea>{right}</RightArea>
-        </Content>
-      </Wrapper>
-      {notification && (
-        <NotificationBar
-          text={notification.text}
-          type={notification.type}
-          onClose={onNotificationClose}
-        />
-      )}
-    </>
+    <Wrapper className={className}>
+      <Content>
+        <LeftArea>
+          <StyledLink to={`/dashboard/${currentTeam?.id}`}>
+            {!dashboard && <StyledIcon icon="dashboard" size={24} />}
+          </StyledLink>
+          {icon}
+          {onSignOut && onChangeTeam && (
+            <>
+              <Profile
+                user={user}
+                currentTeam={currentTeam}
+                currentProject={currentProject}
+                teams={teams}
+                onSignOut={onSignOut}
+                onChangeTeam={onChangeTeam}
+                openModal={openModal}
+              />
+              <WorkspaceCreationModal
+                open={modalShown}
+                onClose={handleModalClose}
+                onSubmit={onCreateTeam}
+              />
+            </>
+          )}
+        </LeftArea>
+        <CenterArea>{center}</CenterArea>
+        <RightArea>{right}</RightArea>
+      </Content>
+    </Wrapper>
   );
 };
 

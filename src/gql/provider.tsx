@@ -37,8 +37,10 @@ const Provider: React.FC = ({ children }) => {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
-    setError(error);
-    if (error) reportError(error);
+    if (error) {
+      setError(error);
+      reportError(error);
+    }
   });
 
   const sentryLink = new SentryLink({ uri: endpoint });

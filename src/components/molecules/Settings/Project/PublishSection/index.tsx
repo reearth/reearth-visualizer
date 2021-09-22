@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import Field from "@reearth/components/molecules/Settings/Field";
@@ -22,7 +21,6 @@ interface Props {
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
-  onNotify?: (type: NotificationType, text: string) => void;
 }
 
 const PublishSection: React.FC<Props> = ({
