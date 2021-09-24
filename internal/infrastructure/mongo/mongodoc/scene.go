@@ -16,6 +16,7 @@ type SceneWidgetDocument struct {
 	Extension string
 	Property  string
 	Enabled   bool
+	Extended  bool
 }
 
 type ScenePluginDocument struct {
@@ -24,14 +25,15 @@ type ScenePluginDocument struct {
 }
 
 type SceneDocument struct {
-	ID        string
-	Project   string
-	Team      string
-	RootLayer string
-	Widgets   []SceneWidgetDocument
-	Plugins   []ScenePluginDocument
-	UpdateAt  time.Time
-	Property  string
+	ID          string
+	Project     string
+	Team        string
+	RootLayer   string
+	Widgets     []SceneWidgetDocument
+	AlignSystem *WidgetAlignSystemDocument
+	Plugins     []ScenePluginDocument
+	UpdateAt    time.Time
+	Property    string
 }
 
 type SceneConsumer struct {
@@ -94,6 +96,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 			Extension: string(w.Extension()),
 			Property:  w.Property().String(),
 			Enabled:   w.Enabled(),
+			Extended:  w.Extended(),
 		})
 	}
 
@@ -106,14 +109,15 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 
 	id := scene.ID().String()
 	return &SceneDocument{
-		ID:        id,
-		Project:   scene.Project().String(),
-		Team:      scene.Team().String(),
-		RootLayer: scene.RootLayer().String(),
-		Widgets:   widgetsDoc,
-		Plugins:   pluginsDoc,
-		UpdateAt:  scene.UpdatedAt(),
-		Property:  scene.Property().String(),
+		ID:          id,
+		Project:     scene.Project().String(),
+		Team:        scene.Team().String(),
+		RootLayer:   scene.RootLayer().String(),
+		Widgets:     widgetsDoc,
+		Plugins:     pluginsDoc,
+		AlignSystem: NewWidgetAlignSystem(scene.WidgetAlignSystem()),
+		UpdateAt:    scene.UpdatedAt(),
+		Property:    scene.Property().String(),
 	}, id
 }
 
@@ -161,6 +165,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 			id.PluginExtensionID(w.Extension),
 			prid,
 			w.Enabled,
+			w.Extended,
 		)
 		if err != nil {
 			return nil, err
@@ -182,6 +187,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		Team(tid).
 		RootLayer(lid).
 		WidgetSystem(scene.NewWidgetSystem(ws)).
+		WidgetAlignSystem(d.AlignSystem.Model()).
 		PluginSystem(scene.NewPluginSystem(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).

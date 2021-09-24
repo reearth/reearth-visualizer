@@ -110,3 +110,25 @@ type infoboxFieldJSON struct {
 }
 
 type propertyJSON = map[string]interface{}
+
+type widgetAlignSystemJSON struct {
+	Inner *widgetZoneJSON `json:"inner"`
+	Outer *widgetZoneJSON `json:"outer"`
+}
+
+type widgetZoneJSON struct {
+	Left   *widgetSectionJSON `json:"left"`
+	Center *widgetSectionJSON `json:"center"`
+	Right  *widgetSectionJSON `json:"right"`
+}
+
+type widgetSectionJSON struct {
+	Top    *widgetAreaJSON `json:"top"`
+	Middle *widgetAreaJSON `json:"middle"`
+	Bottom *widgetAreaJSON `json:"bottom"`
+}
+
+type widgetAreaJSON struct {
+	WidgetIDs []string `json:"widgetIds"`
+	Align     string   `json:"align"`
+}

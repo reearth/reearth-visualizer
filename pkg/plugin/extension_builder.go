@@ -83,6 +83,12 @@ func (b *ExtensionBuilder) Visualizer(visualizer visualizer.Visualizer) *Extensi
 	return b
 }
 
+// WidgetLayout _
+func (b *ExtensionBuilder) WidgetLayout(widgetLayout *WidgetLayout) *ExtensionBuilder {
+	b.p.widgetLayout = widgetLayout
+	return b
+}
+
 // System _
 func (b *ExtensionBuilder) System(s bool) *ExtensionBuilder {
 	b.s = s

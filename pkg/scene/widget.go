@@ -10,9 +10,10 @@ type Widget struct {
 	extension id.PluginExtensionID
 	property  id.PropertyID
 	enabled   bool
+	extended  bool
 }
 
-func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) (*Widget, error) {
+func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled, extended bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || id.ID(property).IsNil() {
 		return nil, id.ErrInvalidID
 	}
@@ -23,11 +24,12 @@ func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtension
 		extension: extension,
 		property:  property,
 		enabled:   enabled,
+		extended:  extended,
 	}, nil
 }
 
-func MustNewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool) *Widget {
-	w, err := NewWidget(wid, plugin, extension, property, enabled)
+func MustNewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool, extended bool) *Widget {
+	w, err := NewWidget(wid, plugin, extension, property, enabled, extended)
 	if err != nil {
 		panic(err)
 	}
@@ -51,9 +53,29 @@ func (w *Widget) Property() id.PropertyID {
 }
 
 func (w *Widget) Enabled() bool {
+	if w == nil {
+		return false
+	}
 	return w.enabled
 }
 
+func (w *Widget) Extended() bool {
+	if w == nil {
+		return false
+	}
+	return w.extended
+}
+
 func (w *Widget) SetEnabled(enabled bool) {
+	if w == nil {
+		return
+	}
 	w.enabled = enabled
+}
+
+func (w *Widget) SetExtended(extended bool) {
+	if w == nil {
+		return
+	}
+	w.extended = extended
 }

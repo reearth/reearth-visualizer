@@ -26,6 +26,7 @@ var normalExpected = &Manifest{
 		plugin.NewExtension().ID(id.PluginExtensionID("hoge")).
 			Visualizer(visualizer.VisualizerCesium).
 			Type(plugin.ExtensionTypePrimitive).
+			WidgetLayout(nil).
 			Schema(id.MustPropertySchemaID("aaa~1.1.1/hoge")).
 			MustBuild(),
 	}).MustBuild(),

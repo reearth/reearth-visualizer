@@ -195,12 +195,36 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	widget, err = scene.NewWidget(id.NewWidgetID(), pid, eid, property.ID(), true)
+	extended := false
+	floating := false
+	var location *plugin.WidgetLocation
+	if widgetLayout := extension.WidgetLayout(); widgetLayout != nil {
+		extended = widgetLayout.Extended()
+		floating = widgetLayout.Floating()
+		location = widgetLayout.DefaultLocation()
+	}
+
+	widget, err = scene.NewWidget(
+		id.NewWidgetID(),
+		pid,
+		eid,
+		property.ID(),
+		true,
+		extended,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	s.WidgetSystem().Add(widget)
+
+	if !floating && location != nil {
+		s.WidgetAlignSystem().Area(scene.WidgetLocation{
+			Zone:    scene.WidgetZoneType(location.Zone),
+			Section: scene.WidgetSectionType(location.Section),
+			Area:    scene.WidgetAreaType(location.Area),
+		}).Add(widget.ID(), -1)
+	}
 
 	err = i.propertyRepo.Save(ctx, property)
 	if err != nil {
@@ -244,14 +268,41 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		return nil, nil, err
 	}
 
-	ws := scene.WidgetSystem()
-	widget := ws.Widget(param.WidgetID)
+	widget := scene.WidgetSystem().Widget(param.WidgetID)
 	if widget == nil {
 		return nil, nil, rerror.ErrNotFound
+	}
+	_, location := scene.WidgetAlignSystem().Find(param.WidgetID)
+
+	_, extension, err := i.getPlugin(ctx, scene.ID(), widget.Plugin(), widget.Extension())
+	if err != nil {
+		return nil, nil, err
+	}
+	if extension.Type() != plugin.ExtensionTypeWidget {
+		return nil, nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 
 	if param.Enabled != nil {
 		widget.SetEnabled(*param.Enabled)
+	}
+
+	if param.Location != nil || param.Index != nil {
+		if param.Location != nil {
+			location = *param.Location
+		}
+		index := -1
+		if param.Index != nil {
+			index = *param.Index
+		}
+		scene.WidgetAlignSystem().Move(widget.ID(), location, index)
+	}
+
+	if param.Extended != nil {
+		if layout := extension.WidgetLayout(); layout != nil {
+			if layout.HorizontallyExtendable() && location.Horizontal() || layout.VerticallyExtendable() && location.Vertical() {
+				widget.SetExtended(*param.Extended)
+			}
+		}
 	}
 
 	err2 = i.sceneRepo.Save(ctx, scene)
@@ -263,8 +314,53 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	return scene, widget, nil
 }
 
-func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
+func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.UpdateWidgetAlignSystemParam, operator *usecase.Operator) (_ *scene.Scene, err error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
+		return nil, err
+	}
+
+	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.WritableTeams)
+	if err2 != nil {
+		return nil, err2
+	}
+	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+		return nil, err
+	}
+
+	area := scene.WidgetAlignSystem().Area(param.Location)
+
+	if area == nil {
+		return nil, errors.New("invalid location")
+	}
+
+	if param.Align != nil {
+		area.SetAlignment(*param.Align)
+	}
+
+	if err = i.sceneRepo.Save(ctx, scene); err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return scene, nil
+}
+
+func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -300,6 +396,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	}
 
 	ws.Remove(wid)
+	scene.WidgetAlignSystem().Remove(wid)
 
 	err2 = i.propertyRepo.Remove(ctx, widget.Property())
 	if err2 != nil {

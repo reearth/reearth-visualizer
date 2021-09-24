@@ -268,6 +268,47 @@ type PluginMetadata {
   createdAt: DateTime!
 }
 
+enum WidgetAreaAlign {
+  START
+  CENTERED
+  END
+}
+
+enum WidgetZoneType {
+  INNER
+  OUTER
+}
+
+enum WidgetSectionType {
+  LEFT
+  CENTER
+  RIGHT
+}
+
+enum WidgetAreaType {
+  TOP
+  MIDDLE
+  BOTTOM
+}
+
+type WidgetLocation {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+type WidgetExtendable {
+  vertically: Boolean!
+  horizontally: Boolean!
+}
+
+type WidgetLayout {
+  extendable: WidgetExtendable!
+  extended: Boolean!
+  floating: Boolean!
+  defaultLocation: WidgetLocation
+}
+
 enum PluginExtensionType {
   PRIMITIVE
   WIDGET
@@ -276,6 +317,7 @@ enum PluginExtensionType {
   INFOBOX
 }
 
+
 type PluginExtension {
   extensionId: PluginExtensionID!
   pluginId: PluginID!
@@ -283,6 +325,7 @@ type PluginExtension {
   name: String!
   description: String!
   icon: String!
+  widgetLayout: WidgetLayout
   visualizer: Visualizer!
   propertySchemaId: PropertySchemaID!
   allTranslatedName: TranslatedString
@@ -306,6 +349,7 @@ type Scene implements Node {
   rootLayerId: ID!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
+  widgetAlignSystem: WidgetAlignSystem
   dynamicDatasetSchemas: [DatasetSchema!]!
   project: Project @goField(forceResolver: true)
   team: Team @goField(forceResolver: true)
@@ -334,6 +378,7 @@ type SceneWidget {
   extensionId: PluginExtensionID!
   propertyId: ID!
   enabled: Boolean!
+  extended: Boolean!
   plugin: Plugin @goField(forceResolver: true)
   extension: PluginExtension @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
@@ -344,6 +389,28 @@ type ScenePlugin {
   propertyId: ID
   plugin: Plugin @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
+}
+
+type WidgetAlignSystem {
+  inner: WidgetZone
+  outer: WidgetZone
+}
+
+type WidgetZone {
+  left: WidgetSection
+  center: WidgetSection
+  right: WidgetSection
+}
+
+type WidgetSection {
+  top: WidgetArea
+  middle: WidgetArea
+  bottom: WidgetArea
+}
+
+type WidgetArea {
+  widgetIds: [ID!]!
+  align: WidgetAreaAlign!
 }
 
 # Property
@@ -822,6 +889,12 @@ input DeleteProjectInput {
   projectId: ID!
 }
 
+input WidgetLocationInput {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
 input AddWidgetInput {
   sceneId: ID!
   pluginId: PluginID!
@@ -832,6 +905,15 @@ input UpdateWidgetInput {
   sceneId: ID!
   widgetId: ID!
   enabled: Boolean
+  location: WidgetLocationInput
+  extended: Boolean
+  index: Int
+}
+
+input UpdateWidgetAlignSystemInput {
+  sceneId: ID!
+  location: WidgetLocationInput!
+  align: WidgetAreaAlign
 }
 
 input RemoveWidgetInput {
@@ -1122,6 +1204,10 @@ type UpdateWidgetPayload {
   sceneWidget: SceneWidget!
 }
 
+type UpdateWidgetAlignSystemPayload {
+  scene: Scene!
+}
+
 type RemoveWidgetPayload {
   scene: Scene!
   widgetId: ID!
@@ -1372,6 +1458,7 @@ type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
   installPlugin(input: InstallPluginInput!): InstallPluginPayload
   uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload

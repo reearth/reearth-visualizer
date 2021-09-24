@@ -6,16 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type PluginExtensionDocument struct {
-	ID          string
-	Type        string
-	Name        map[string]string
-	Description map[string]string
-	Icon        string
-	Schema      string
-	Visualizer  string
-}
-
 type PluginDocument struct {
 	ID            string
 	Name          map[string]string
@@ -25,6 +15,35 @@ type PluginDocument struct {
 	Extensions    []PluginExtensionDocument
 	Schema        *string
 	Scene         *string `bson:",omitempty"`
+}
+
+type PluginExtensionDocument struct {
+	ID           string
+	Type         string
+	Name         map[string]string
+	Description  map[string]string
+	Icon         string
+	Schema       string
+	Visualizer   string
+	WidgetLayout *WidgetLayoutDocument
+}
+
+type WidgetLayoutDocument struct {
+	Extendable      *WidgetExtendableDocument
+	Extended        bool
+	Floating        bool
+	DefaultLocation *WidgetLocationDocument
+}
+
+type WidgetExtendableDocument struct {
+	Vertically   bool
+	Horizontally bool
+}
+
+type WidgetLocationDocument struct {
+	Zone    string
+	Section string
+	Area    string
 }
 
 type PluginConsumer struct {
@@ -53,13 +72,14 @@ func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {
 	extensionsDoc := make([]PluginExtensionDocument, 0, len(extensions))
 	for _, e := range extensions {
 		extensionsDoc = append(extensionsDoc, PluginExtensionDocument{
-			ID:          string(e.ID()),
-			Type:        string(e.Type()),
-			Name:        e.Name(),
-			Description: e.Description(),
-			Icon:        e.Icon(),
-			Schema:      e.Schema().String(),
-			Visualizer:  string(e.Visualizer()),
+			ID:           string(e.ID()),
+			Type:         string(e.Type()),
+			Name:         e.Name(),
+			Description:  e.Description(),
+			Icon:         e.Icon(),
+			Schema:       e.Schema().String(),
+			Visualizer:   string(e.Visualizer()),
+			WidgetLayout: NewWidgetLayout(e.WidgetLayout()),
 		})
 	}
 
@@ -94,6 +114,7 @@ func (d *PluginDocument) Model() (*plugin.Plugin, error) {
 			Name(d.Name).
 			Description(d.Description).
 			Icon(e.Icon).
+			WidgetLayout(e.WidgetLayout.Model()).
 			Schema(psid).
 			Build()
 		if err != nil {
@@ -111,4 +132,43 @@ func (d *PluginDocument) Model() (*plugin.Plugin, error) {
 		Extensions(extensions).
 		Schema(id.PropertySchemaIDFromRef(d.Schema)).
 		Build()
+}
+
+func NewWidgetLayout(l *plugin.WidgetLayout) *WidgetLayoutDocument {
+	return &WidgetLayoutDocument{
+		Extendable: &WidgetExtendableDocument{
+			Vertically:   l.VerticallyExtendable(),
+			Horizontally: l.HorizontallyExtendable(),
+		},
+		Extended: l.Extended(),
+		Floating: l.Floating(),
+		DefaultLocation: &WidgetLocationDocument{
+			Zone:    string(l.DefaultLocation().Zone),
+			Section: string(l.DefaultLocation().Section),
+			Area:    string(l.DefaultLocation().Area),
+		},
+	}
+}
+
+func (d *WidgetLayoutDocument) Model() *plugin.WidgetLayout {
+	if d == nil {
+		return nil
+	}
+
+	var loc *plugin.WidgetLocation
+	if d.DefaultLocation != nil {
+		loc = &plugin.WidgetLocation{
+			Zone:    plugin.WidgetZoneType(d.DefaultLocation.Zone),
+			Section: plugin.WidgetSectionType(d.DefaultLocation.Section),
+			Area:    plugin.WidgetAreaType(d.DefaultLocation.Area),
+		}
+	}
+
+	return plugin.NewWidgetLayout(
+		d.Extendable.Horizontally,
+		d.Extendable.Vertically,
+		d.Extended,
+		d.Floating,
+		loc,
+	).Ref()
 }

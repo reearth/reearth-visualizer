@@ -63,13 +63,22 @@ func TestScene_SetUpdatedAt(t *testing.T) {
 func TestScene_Properties(t *testing.T) {
 	pid1 := id.NewPropertyID()
 	pid2 := id.NewPropertyID()
-	s := New().NewID().Team(id.NewTeamID()).RootLayer(id.NewLayerID()).Property(pid1).WidgetSystem(
-		NewWidgetSystem([]*Widget{
-			MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", pid2, true),
-		})).MustBuild()
+	s := New().
+		NewID().
+		Team(id.NewTeamID()).
+		RootLayer(id.NewLayerID()).
+		Property(pid1).
+		WidgetSystem(
+			NewWidgetSystem(
+				[]*Widget{
+					MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+				},
+			),
+		).
+		WidgetAlignSystem(NewWidgetAlignSystem()).
+		MustBuild()
 
 	assert.Equal(t, []id.PropertyID{pid1, pid2}, s.Properties())
-
 }
 
 func TestSceneNil(t *testing.T) {
@@ -77,6 +86,7 @@ func TestSceneNil(t *testing.T) {
 	assert.Nil(t, s.Properties())
 	assert.True(t, s.ID().IsNil())
 	assert.Nil(t, s.WidgetSystem())
+	assert.Nil(t, s.WidgetAlignSystem())
 	assert.True(t, s.Project().IsNil())
 	assert.True(t, s.Team().IsNil())
 	assert.True(t, s.RootLayer().IsNil())

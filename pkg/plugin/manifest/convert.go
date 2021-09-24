@@ -123,6 +123,7 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 		Description(i18n.StringFrom(desc)).
 		Visualizer(viz).
 		Type(typ).
+		WidgetLayout(i.WidgetLayout.layout()).
 		Icon(icon).
 		Schema(schema.ID()).
 		System(sys).
@@ -132,6 +133,37 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 		return nil, nil, err
 	}
 	return ext, schema, nil
+}
+
+func (l *WidgetLayout) layout() *plugin.WidgetLayout {
+	if l == nil {
+		return nil
+	}
+
+	horizontallyExtendable := false
+	verticallyExtendable := false
+	extended := false
+
+	if l.Extendable != nil && l.Extendable.Horizontally != nil && *l.Extendable.Horizontally {
+		horizontallyExtendable = true
+	}
+	if l.Extendable != nil && l.Extendable.Vertically != nil && *l.Extendable.Vertically {
+		verticallyExtendable = true
+	}
+	if l.Extended != nil && *l.Extended {
+		extended = false
+	}
+
+	var dl *plugin.WidgetLocation
+	if l.DefaultLocation != nil {
+		dl = &plugin.WidgetLocation{
+			Zone:    plugin.WidgetZoneType(l.DefaultLocation.Zone),
+			Section: plugin.WidgetSectionType(l.DefaultLocation.Section),
+			Area:    plugin.WidgetAreaType(l.DefaultLocation.Area),
+		}
+	}
+
+	return plugin.NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, l.Floating, dl).Ref()
 }
 
 func (i *PropertySchema) schema(pluginID id.PluginID, idstr string) (*property.Schema, error) {

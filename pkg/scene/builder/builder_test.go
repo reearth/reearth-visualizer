@@ -380,8 +380,20 @@ func TestSceneBuilder(t *testing.T) {
 
 	sceneWidgetID1 := id.NewWidgetID()
 	sceneWidgetID2 := id.NewWidgetID()
-	sceneWidget1 := scene.MustNewWidget(sceneWidgetID1, pluginID, pluginExtension1ID, scenePropertyID, false)
-	sceneWidget2 := scene.MustNewWidget(sceneWidgetID2, pluginID, pluginExtension2ID, scenePropertyID, true)
+	sceneWidget1 := scene.MustNewWidget(
+		sceneWidgetID1,
+		pluginID,
+		pluginExtension1ID,
+		scenePropertyID,
+		false,
+		true)
+	sceneWidget2 := scene.MustNewWidget(
+		sceneWidgetID2,
+		pluginID,
+		pluginExtension2ID,
+		scenePropertyID,
+		true,
+		false)
 	scenePlugin1 := scene.NewPlugin(pluginID, &scenePropertyID)
 
 	assert.Equal(t, sceneWidgetID1, sceneWidget1.ID())

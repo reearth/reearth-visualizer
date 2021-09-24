@@ -249,6 +249,38 @@
       },
       "additionalProperties": false
     },
+    "location": {
+      "$id": "#location",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "zone": {
+          "type": "string",
+          "enum": [
+            "inner",
+            "outer"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "top",
+            "middle",
+            "bottom"
+          ]
+        }
+      }
+    },
     "extension": {
       "$id": "#extension",
       "type": "object",
@@ -286,6 +318,46 @@
             "visualizer",
             "infobox"
           ]
+        },
+        "widgetLayout": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "extendable": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "vertically": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "horizontally": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "extended": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "floating": {
+              "type": "boolean"
+            },
+            "defaultLocation": {
+              "$ref": "#/definitions/location"
+            }
+          }
         },
         "schema": {
           "$ref": "#/definitions/propertySchema"

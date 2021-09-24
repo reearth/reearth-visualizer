@@ -15,6 +15,7 @@ func ToSceneWidget(w *scene.Widget) *SceneWidget {
 		ExtensionID: w.Extension(),
 		PropertyID:  w.Property().ID(),
 		Enabled:     w.Enabled(),
+		Extended:    w.Extended(),
 	}
 }
 
@@ -47,15 +48,16 @@ func ToScene(scene *scene.Scene) *Scene {
 	}
 
 	return &Scene{
-		ID:          scene.ID().ID(),
-		ProjectID:   scene.Project().ID(),
-		PropertyID:  scene.Property().ID(),
-		TeamID:      scene.Team().ID(),
-		RootLayerID: scene.RootLayer().ID(),
-		CreatedAt:   scene.CreatedAt(),
-		UpdatedAt:   scene.UpdatedAt(),
-		Widgets:     widgets,
-		Plugins:     plugins,
+		ID:                scene.ID().ID(),
+		ProjectID:         scene.Project().ID(),
+		PropertyID:        scene.Property().ID(),
+		TeamID:            scene.Team().ID(),
+		RootLayerID:       scene.RootLayer().ID(),
+		CreatedAt:         scene.CreatedAt(),
+		UpdatedAt:         scene.UpdatedAt(),
+		Widgets:           widgets,
+		WidgetAlignSystem: ToWidgetAlignSystem(scene.WidgetAlignSystem()),
+		Plugins:           plugins,
 	}
 }
 

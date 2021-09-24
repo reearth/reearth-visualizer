@@ -60,8 +60,11 @@ func (p *Plugin) Extensions() []*Extension {
 	return list
 }
 
-// Extension _
 func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
+	if p == nil {
+		return nil
+	}
+
 	e, ok := p.extensions[id]
 	if ok {
 		return e

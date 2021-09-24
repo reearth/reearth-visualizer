@@ -579,8 +579,12 @@ extensions:
           item_datanum:
             title: データ(数字)
   menu:
-    title: メニュー
-    description: シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。\n・リンク：ボタン自体が外部サイトへのリンクになります。\n・メニュー：追加したメニューを開きます\n・カメラアクション：クリック時にカメラを移動します。
+    title: メニュー (廃止予定)
+    description: |
+      シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
+      ・リンク：ボタン自体が外部サイトへのリンクになります。
+      ・メニュー：追加したメニューを開きます。
+      ・カメラアクション：クリック時にカメラを移動します。
     propertySchema:
       buttons:
         title: ボタン
@@ -596,6 +600,58 @@ extensions:
               topright: 上右
               bottomleft: 下左
               bottomright: 下右
+          buttonStyle:
+            title: 表示方法
+            choices:
+              text: テキストのみ
+              icon: アイコンのみ
+              texticon: テキスト＋アイコン
+          buttonIcon:
+            title: アイコン
+          buttonColor:
+            title: テキスト色
+          buttonBgcolor:
+            title: 背景色
+          buttonType:
+            title: アクション
+            choices:
+              link: リンク
+              menu: メニュー開閉
+              camera: カメラ移動
+          buttonLink:
+            title: リンク
+          buttonCamera:
+            title: カメラ
+      menu:
+        title: メニュー
+        fields:
+          menuTitle:
+            title: タイトル
+          menuIcon:
+            title: アイコン
+          menuType:
+            title: アクション
+            choices:
+              link: リンク
+              camera: カメラ移動
+              border: 区切り線
+          menuLink:
+            title: リンク
+          menuCamera:
+            title: カメラ
+  button:
+    title: ボタン
+    description: |
+      シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
+      　・リンク：ボタン自体が外部サイトへのリンクになります。
+      　・メニュー：追加したメニューを開きます。
+      　・カメラアクション：クリック時にカメラを移動します。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          buttonTitle:
+            title: タイトル
           buttonStyle:
             title: 表示方法
             choices:

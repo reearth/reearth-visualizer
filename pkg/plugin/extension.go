@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
-// ExtensionType _
 type ExtensionType string
 
 var (
@@ -26,7 +25,6 @@ var (
 	ExtensionTypeInfobox ExtensionType = "infobox"
 )
 
-// Extension _
 type Extension struct {
 	id            id.PluginExtensionID
 	extensionType ExtensionType
@@ -35,50 +33,126 @@ type Extension struct {
 	icon          string
 	schema        id.PropertySchemaID
 	visualizer    visualizer.Visualizer
+	widgetLayout  *WidgetLayout
 }
 
-// ID _
 func (w *Extension) ID() id.PluginExtensionID {
 	return w.id
 }
 
-// Type _
 func (w *Extension) Type() ExtensionType {
 	return w.extensionType
 }
 
-// Name _
 func (w *Extension) Name() i18n.String {
 	return w.name.Copy()
 }
 
-// Description _
 func (w *Extension) Description() i18n.String {
 	return w.description.Copy()
 }
 
-// Icon _
 func (w *Extension) Icon() string {
 	return w.icon
 }
 
-// Schema _
 func (w *Extension) Schema() id.PropertySchemaID {
 	return w.schema
 }
 
-// Visualizer _
 func (w *Extension) Visualizer() visualizer.Visualizer {
 	return w.visualizer
 }
 
-// Rename _
+func (w *Extension) WidgetLayout() *WidgetLayout {
+	if w == nil {
+		return nil
+	}
+	return w.widgetLayout
+}
+
 func (w *Extension) Rename(name i18n.String) {
 	w.name = name.Copy()
 
 }
 
-// SetDescription _
 func (w *Extension) SetDescription(des i18n.String) {
 	w.description = des.Copy()
 }
+
+type WidgetLayout struct {
+	horizontallyExtendable bool
+	verticallyExtendable   bool
+	extended               bool
+	floating               bool
+	defaultLocation        *WidgetLocation
+}
+
+func NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, floating bool, defaultLocation *WidgetLocation) WidgetLayout {
+	return WidgetLayout{
+		horizontallyExtendable: horizontallyExtendable,
+		verticallyExtendable:   verticallyExtendable,
+		extended:               extended,
+		floating:               floating,
+		defaultLocation:        defaultLocation.CopyRef(),
+	}
+}
+
+func (l WidgetLayout) Ref() *WidgetLayout {
+	return &l
+}
+
+func (l WidgetLayout) HorizontallyExtendable() bool {
+	return l.horizontallyExtendable
+}
+
+func (l WidgetLayout) VerticallyExtendable() bool {
+	return l.verticallyExtendable
+}
+
+func (l WidgetLayout) Extended() bool {
+	return l.extended
+}
+
+func (l WidgetLayout) Floating() bool {
+	return l.floating
+}
+
+func (l WidgetLayout) DefaultLocation() *WidgetLocation {
+	if l.defaultLocation == nil {
+		return nil
+	}
+	return l.defaultLocation.CopyRef()
+}
+
+type WidgetLocation struct {
+	Zone    WidgetZoneType
+	Section WidgetSectionType
+	Area    WidgetAreaType
+}
+
+func (l *WidgetLocation) CopyRef() *WidgetLocation {
+	if l == nil {
+		return nil
+	}
+	return &WidgetLocation{
+		Zone:    l.Zone,
+		Section: l.Section,
+		Area:    l.Area,
+	}
+}
+
+type WidgetZoneType string
+type WidgetSectionType string
+type WidgetAreaType string
+
+const (
+	WidgetZoneInner     WidgetZoneType    = "inner"
+	WidgetZoneOuter     WidgetZoneType    = "outer"
+	WidgetSectionLeft   WidgetSectionType = "left"
+	WidgetSectionCenter WidgetSectionType = "center"
+	WidgetSectionRight  WidgetSectionType = "right"
+	WidgetAreaTop       WidgetAreaType    = "top"
+	WidgetAreaMiddle    WidgetAreaType    = "middle"
+	WidgetAreaBottom    WidgetAreaType    = "bottom"
+)

@@ -753,3 +753,57 @@ func TestSchemaField(t *testing.T) {
 		})
 	}
 }
+
+func TestLayout(t *testing.T) {
+	tr := true
+
+	testCases := []struct {
+		name         string
+		widgetLayout WidgetLayout
+		expected     *plugin.WidgetLayout
+	}{
+		{
+			name: "convert manifest widget layout to scene widget layout",
+			widgetLayout: WidgetLayout{
+				Extendable: &Extendable{
+					Horizontally: &tr,
+					Vertically:   nil,
+				},
+				Extended: nil,
+				Floating: true,
+				DefaultLocation: &Location{
+					Zone:    "outer",
+					Section: "left",
+					Area:    "top",
+				},
+			},
+			expected: plugin.NewWidgetLayout(true, false, false, true, &plugin.WidgetLocation{
+				Zone:    plugin.WidgetZoneOuter,
+				Section: plugin.WidgetSectionLeft,
+				Area:    plugin.WidgetAreaTop,
+			}).Ref(),
+		},
+		{
+			name: "nil default location",
+			widgetLayout: WidgetLayout{
+				Extendable: &Extendable{
+					Horizontally: nil,
+					Vertically:   &tr,
+				},
+				Extended:        nil,
+				Floating:        false,
+				DefaultLocation: nil,
+			},
+			expected: plugin.NewWidgetLayout(false, true, false, false, nil).Ref(),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(tt *testing.T) {
+			tt.Parallel()
+			res := tc.widgetLayout.layout()
+			assert.Equal(tt, tc.expected, res)
+		})
+	}
+}

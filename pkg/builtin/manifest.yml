@@ -123,7 +123,7 @@ extensions:
               ui: color
               title: Text color
               description: Select a color.
-              defaultValue: '#434343'
+              defaultValue: "#434343"
               availableIf:
                 field: themeType
                 type: string
@@ -133,7 +133,7 @@ extensions:
               ui: color
               title: Select color
               description: Select a color.
-              defaultValue: '#C52C63'
+              defaultValue: "#C52C63"
               availableIf:
                 field: themeType
                 type: string
@@ -143,7 +143,7 @@ extensions:
               ui: color
               title: Background color
               description: Select a color.
-              defaultValue: '#DFE5F0'
+              defaultValue: "#DFE5F0"
               availableIf:
                 field: themeType
                 type: string
@@ -185,26 +185,26 @@ extensions:
               type: number
               title: Fog density
               defaultValue: 2.0e-4
-              description: 'Set a thickness to the fog. Min: 0 Max: 1'
+              description: "Set a thickness to the fog. Min: 0 Max: 1"
               min: 0
               max: 1
             - id: brightness_shift
               type: number
               title: Fog Brightness
               defaultValue: 0.03
-              description: 'Set brightness of the fog. Min: -1 Max: 1'
+              description: "Set brightness of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
             - id: hue_shift
               type: number
               title: Fog Hue
-              description: 'Set hue of the fog. Min: -1 Max: 1'
+              description: "Set hue of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
             - id: surturation_shift
               type: number
               title: Fog Saturation
-              description: 'Set saturation of the fog. Min: -1 Max: 1'
+              description: "Set saturation of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
         - id: timeline
@@ -1258,8 +1258,10 @@ extensions:
   - id: menu
     visualizer: cesium
     type: widget
-    title: Menu
+    title: Menu (legacy)
     description: Menu widgets
+    widgetLayout:
+      floating: true
     schema:
       groups:
         - id: buttons
@@ -1368,11 +1370,118 @@ extensions:
                 field: menuType
                 type: string
                 value: camera
+  - id: button
+    visualizer: cesium
+    type: widget
+    title: Button
+    description: Button widget
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: top
+    schema:
+      groups:
+        - id: default
+          title: Button
+          fields:
+            - id: buttonTitle
+              type: string
+              title: Title
+            - id: buttonStyle
+              type: string
+              title: Style
+              defaultValue: text
+              choices:
+                - key: text
+                  label: Text only
+                - key: icon
+                  label: Icon only
+                - key: texticon
+                  label: Text and icon
+            - id: buttonIcon
+              type: url
+              title: Icon
+              ui: image
+            - id: buttonColor
+              type: string
+              title: Text color
+              ui: color
+            - id: buttonBgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: buttonType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: menu
+                  label: Menu
+                - key: camera
+                  label: Camera flight
+            - id: buttonLink
+              type: url
+              title: Link
+              availableIf:
+                field: buttonType
+                type: string
+                value: link
+            - id: buttonCamera
+              type: camera
+              title: Camera flight
+              availableIf:
+                field: buttonType
+                type: string
+                value: camera
+        - id: menu
+          title: Menu
+          list: true
+          availableIf:
+            field: buttonType
+            type: string
+            value: menu
+          fields:
+            - id: menuTitle
+              type: string
+              title: Title
+            - id: menuIcon
+              type: url
+              title: Icon
+            - id: menuType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: camera
+                  label: Camera
+                - key: border
+                  label: Break
+            - id: menuLink
+              type: url
+              title: Link
+              availableIf:
+                field: menuType
+                type: string
+                value: link
+            - id: menuCamera
+              type: camera
+              title: Camera
+              availableIf:
+                field: menuType
+                type: string
+                value: camera
   - id: splashscreen
     visualizer: cesium
     type: widget
     title: Splash screen
     description: A unique start screen that will display on load of your archive(ex. display the archive's title).
+    widgetLayout:
+      floating: true
     schema:
       groups:
         - id: overlay
@@ -1434,6 +1543,13 @@ extensions:
     type: widget
     title: Storytelling
     description: SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.
+    widgetLayout:
+      extendable:
+        horizontally: true
+      defaultLocation:
+        zone: outer
+        section: left
+        area: bottom
     schema:
       groups:
         - id: default

@@ -27,6 +27,12 @@ func TestPlugin_Extension(t *testing.T) {
 			plugin:   New().Extensions([]*Extension{NewExtension().ID("xxx").MustBuild(), NewExtension().ID("yyy").MustBuild()}).MustBuild(),
 			expected: nil,
 		},
+		{
+			name:     "nil",
+			key:      "zzz",
+			plugin:   nil,
+			expected: nil,
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
