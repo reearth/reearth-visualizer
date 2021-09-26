@@ -298,10 +298,18 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	}
 
 	if param.Extended != nil {
-		if layout := extension.WidgetLayout(); layout != nil {
-			if layout.HorizontallyExtendable() && location.Horizontal() || layout.VerticallyExtendable() && location.Vertical() {
-				widget.SetExtended(*param.Extended)
-			}
+		widget.SetExtended(*param.Extended)
+	}
+
+	// check extendable
+	if layout := extension.WidgetLayout(); layout != nil {
+		extendable := layout.Extendable(plugin.WidgetLocation{
+			Zone:    plugin.WidgetZoneType(location.Zone),
+			Section: plugin.WidgetSectionType(location.Section),
+			Area:    plugin.WidgetAreaType(location.Area),
+		})
+		if extendable && widget.Extended() {
+			widget.SetExtended(*param.Extended)
 		}
 	}
 

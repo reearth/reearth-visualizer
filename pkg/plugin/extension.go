@@ -88,6 +88,10 @@ type WidgetLayout struct {
 	defaultLocation        *WidgetLocation
 }
 
+func (l WidgetLayout) Extendable(loc WidgetLocation) bool {
+	return l.HorizontallyExtendable() && loc.Horizontal() || l.VerticallyExtendable() && loc.Vertical()
+}
+
 func NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, floating bool, defaultLocation *WidgetLocation) WidgetLayout {
 	return WidgetLayout{
 		horizontallyExtendable: horizontallyExtendable,
@@ -129,6 +133,14 @@ type WidgetLocation struct {
 	Zone    WidgetZoneType
 	Section WidgetSectionType
 	Area    WidgetAreaType
+}
+
+func (l WidgetLocation) Horizontal() bool {
+	return l.Section == WidgetSectionCenter
+}
+
+func (l WidgetLocation) Vertical() bool {
+	return l.Area == WidgetAreaMiddle
 }
 
 func (l *WidgetLocation) CopyRef() *WidgetLocation {
