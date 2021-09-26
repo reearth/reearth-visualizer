@@ -218,12 +218,22 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 
 	s.WidgetSystem().Add(widget)
 
-	if !floating && location != nil {
-		s.WidgetAlignSystem().Area(scene.WidgetLocation{
-			Zone:    scene.WidgetZoneType(location.Zone),
-			Section: scene.WidgetSectionType(location.Section),
-			Area:    scene.WidgetAreaType(location.Area),
-		}).Add(widget.ID(), -1)
+	if !floating {
+		var loc scene.WidgetLocation
+		if location != nil {
+			loc = scene.WidgetLocation{
+				Zone:    scene.WidgetZoneType(location.Zone),
+				Section: scene.WidgetSectionType(location.Section),
+				Area:    scene.WidgetAreaType(location.Area),
+			}
+		} else {
+			loc = scene.WidgetLocation{
+				Zone:    scene.WidgetZoneInner,
+				Section: scene.WidgetSectionLeft,
+				Area:    scene.WidgetAreaTop,
+			}
+		}
+		s.WidgetAlignSystem().Area(loc).Add(widget.ID(), -1)
 	}
 
 	err = i.propertyRepo.Save(ctx, property)
