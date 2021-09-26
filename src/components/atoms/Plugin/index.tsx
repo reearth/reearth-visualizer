@@ -12,13 +12,14 @@ export type Props = {
   style?: CSSProperties;
   src?: string;
   sourceCode?: string;
-  exposed?: { [key: string]: any };
   renderPlaceholder?: ReactNode;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
-  isMarshalable?: (target: any) => boolean;
-  staticExposed?: (api: IFrameAPI) => any;
+  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
+  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
   onMessage?: (message: any) => void;
+  onPreInit?: () => void;
   onError?: (err: any) => void;
+  onDispose?: () => void;
 };
 
 const Plugin: React.FC<Props> = ({
@@ -28,23 +29,25 @@ const Plugin: React.FC<Props> = ({
   style,
   src,
   sourceCode,
-  exposed,
   renderPlaceholder,
   iFrameProps,
   isMarshalable,
-  staticExposed,
+  exposed,
   onMessage,
+  onPreInit,
   onError,
+  onDispose,
 }) => {
   const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
     skip,
     src,
     sourceCode,
-    exposed,
     isMarshalable,
-    staticExposed,
+    exposed,
+    onPreInit,
     onError,
+    onDispose,
   });
 
   return iFrameHtml ? (

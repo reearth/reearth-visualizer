@@ -26,9 +26,9 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-const Resource: React.FC<Props> = ({ primitive }) => {
-  const { isVisible, property } = primitive ?? {};
-  const { url, type } = (property as Property | undefined)?.default ?? {};
+const Resource: React.FC<Props> = ({ layer }) => {
+  const { isVisible, property } = layer ?? {};
+  const { url, type } = property?.default ?? {};
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],

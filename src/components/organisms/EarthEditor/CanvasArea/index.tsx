@@ -18,14 +18,14 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     rootLayerId,
     selectedBlockId,
     sceneProperty,
+    pluginProperty,
     layers,
     widgets,
-    selectedLayer,
+    selectedLayerId,
     blocks,
     isCapturing,
     camera,
-    ready,
-    widgetAlignEditor,
+    widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -53,16 +53,17 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
-      primitives={layers}
+      layers={layers}
       widgets={widgets}
-      selectedPrimitiveId={selectedLayer?.id}
+      selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
+      pluginProperty={pluginProperty}
       camera={camera}
-      ready={ready}
-      widgetAlignEditorActivated={widgetAlignEditor}
-      onPrimitiveSelect={selectLayer}
+      ready={isBuilt || (!!layers && !!widgets)}
+      onLayerSelect={selectLayer}
+      widgetAlignEditorActivated={widgetAlignEditorActivated}
       onCameraChange={onCameraChange}
       onWidgetUpdate={onWidgetUpdate}
       onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}

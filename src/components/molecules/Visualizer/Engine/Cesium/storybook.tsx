@@ -3,9 +3,8 @@ import { BoundingSphere, Cartesian3 } from "cesium";
 import React from "react";
 import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
-import { SceneProperty } from "..";
-import { Provider } from "../../context";
-import { context } from "../../storybook";
+import type { SceneProperty } from "..";
+import { Provider } from "../../storybook";
 
 import CesiumEngine from ".";
 
@@ -20,14 +19,14 @@ export const V: React.FC<{
   property?: SceneProperty;
 }> = ({ children, location: l = location, lookAt, property }) => {
   return (
-    <Provider value={context}>
+    <Provider>
       <CesiumEngine
         ready
         property={{
           ...property,
           tiles: property?.tiles ?? [{ id: "default", tile_type: "default" }],
         }}
-        onPrimitiveSelect={action("Cesium: onLayerSelect")}>
+        onLayerSelect={action("Cesium: onLayerSelect")}>
         {lookAt ? (
           <CameraFlyToBoundingSphere
             boundingSphere={

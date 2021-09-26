@@ -10,7 +10,7 @@ export default {
   component: Component,
   argTypes: {
     onCameraChange: { action: "onCameraChange" },
-    onPrimitiveSelect: { action: "onPrimitiveSelect" },
+    onLayerSelect: { action: "onLayerSelect" },
   },
 } as Meta;
 
@@ -22,7 +22,7 @@ Default.args = {
   isEditable: false,
   small: false,
   ready: true,
-  selectedPrimitiveId: undefined,
+  selectedLayerId: undefined,
   property: {
     default: {
       terrain: true,
@@ -51,7 +51,7 @@ Selected.args = {
       selected
     />
   ),
-  selectedPrimitiveId: "a",
+  selectedLayerId: "a",
 };
 
 export const DefaultCamera = Template.bind({});

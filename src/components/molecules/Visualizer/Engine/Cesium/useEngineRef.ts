@@ -1,19 +1,42 @@
-import { Viewer } from "cesium";
+import * as Cesium from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo } from "react";
 import type { CesiumComponentRef } from "resium";
+
+import { delayedObject, merge } from "@reearth/util/object";
 
 import type { Ref as EngineRef } from "..";
 
 import builtinPrimitives from "./builtin";
 import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
 
+const exposed = delayedObject(Cesium);
+const exposedFunctions = Object.values(Cesium).filter(
+  (e): e is (...args: any[]) => any => typeof e === "function",
+);
+
+const isMarshalable = (t: any): boolean | "json" => {
+  return exposedFunctions.some(v => t instanceof v);
+};
+
 export default function useEngineRef(
   ref: Ref<EngineRef>,
-  cesium: RefObject<CesiumComponentRef<Viewer>>,
+  cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
 ): EngineRef {
-  const e = useMemo(
-    (): EngineRef => ({
+  const e = useMemo((): EngineRef => {
+    const api = merge(exposed, {
+      get viewer(): Cesium.Viewer | undefined {
+        return cesium.current?.cesiumElement;
+      },
+    });
+
+    return {
       name: "cesium",
+      pluginApi: {
+        get Cesium() {
+          return api;
+        },
+      },
+      isMarshalable,
       requestRender: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
@@ -50,9 +73,8 @@ export default function useEngineRef(
         viewer?.scene?.camera.zoomOut(amount);
       },
       builtinPrimitives,
-    }),
-    [cesium],
-  );
+    };
+  }, [cesium]);
 
   useImperativeHandle(ref, () => e, [e]);
 

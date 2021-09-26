@@ -21,7 +21,7 @@ const Template: Story<Props> = args => {
 export const Default = Template.bind({});
 Default.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

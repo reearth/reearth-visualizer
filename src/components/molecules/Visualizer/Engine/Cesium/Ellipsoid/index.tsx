@@ -21,14 +21,9 @@ export type Property = {
   };
 };
 
-const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
-  const { id, isVisible, property } = primitive ?? {};
-  const {
-    heightReference: hr,
-    shadows,
-    radius = 1000,
-    fillColor,
-  } = (property as Property | undefined)?.default ?? {};
+const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
+  const { id, isVisible, property } = layer ?? {};
+  const { heightReference: hr, shadows, radius = 1000, fillColor } = property?.default ?? {};
 
   const position = useMemo(() => {
     const { position, height } = property?.default ?? {};

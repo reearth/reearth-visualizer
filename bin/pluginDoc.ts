@@ -3,7 +3,7 @@ import * as ts from "typescript";
 
 import tsconfig from "../tsconfig.json";
 
-const files = ["./src/plugin/api.ts"];
+const files = ["./src/components/molecules/Visualizer/Plugin/types.ts"];
 const program = ts.createProgram(files, tsconfig as any);
 const tc = program.getTypeChecker();
 

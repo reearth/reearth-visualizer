@@ -37,12 +37,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [widgetAlignEditor] = useWidgetAlignEditorActivated();
-
-  const selectLayer = useCallback(
-    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
-    [select],
-  );
+  const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -75,30 +70,6 @@ export default (isBuilt?: boolean) => {
     [removeInfoboxField, selected],
   );
 
-  const onBlockChange = useCallback(
-    async <T extends ValueType>(
-      propertyId: string,
-      schemaItemId: string,
-      fid: string,
-      v: ValueTypes[T],
-      vt: T,
-    ) => {
-      const gvt = valueTypeToGQL(vt);
-      if (!gvt) return;
-
-      await changePropertyValue({
-        variables: {
-          propertyId,
-          schemaItemId,
-          fieldId: fid,
-          type: gvt,
-          value: valueToGQL(v, vt),
-        },
-      });
-    },
-    [changePropertyValue],
-  );
-
   const { data: layerData } = useGetLayersQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
@@ -113,13 +84,53 @@ export default (isBuilt?: boolean) => {
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
   // convert data
-  const layers = useMemo(
-    () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
-    [layerData, selected],
-  );
-
+  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const layers = useMemo(() => convertLayers(layerData), [layerData]);
+  const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  const selectLayer = useCallback(
+    (id?: string) =>
+      select(id && !!layers?.findById(id) ? { layerId: id, type: "layer" } : undefined),
+    [layers, select],
+  );
+
+  const onBlockChange = useCallback(
+    async <T extends ValueType>(
+      blockId: string,
+      schemaItemId: string,
+      fid: string,
+      v: ValueTypes[T],
+      vt: T,
+    ) => {
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
+      if (!propertyId) return;
+
+      const gvt = valueTypeToGQL(vt);
+      if (!gvt) return;
+
+      await changePropertyValue({
+        variables: {
+          propertyId,
+          schemaItemId,
+          fieldId: fid,
+          type: gvt,
+          value: valueToGQL(v, vt),
+        },
+      });
+    },
+    [changePropertyValue, selectedLayer?.infobox?.blocks],
+  );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
@@ -202,17 +213,17 @@ export default (isBuilt?: boolean) => {
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
+    pluginProperty,
     widgets,
-    layers: layers?.layers,
-    selectedLayer: layers?.selectedLayer,
+    layers,
+    selectedLayer,
     blocks,
     isCapturing,
     camera,
-    ready: !isBuilt || (!!layerData && !!widgetData),
-    widgetAlignEditor,
+    widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
     onBlockChange,

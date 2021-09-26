@@ -35,8 +35,8 @@ export type Property = {
   };
 };
 
-export default function Model({ primitive }: PrimitiveProps<Property>) {
-  const { id, isVisible, property } = primitive ?? {};
+export default function Model({ layer }: PrimitiveProps<Property>) {
+  const { id, isVisible, property } = layer ?? {};
   const {
     model,
     location,
@@ -59,7 +59,7 @@ export default function Model({ primitive }: PrimitiveProps<Property>) {
     silhouette,
     silhouetteColor,
     silhouetteSize = 1,
-  } = (property as Property | undefined)?.appearance ?? {};
+  } = property?.appearance ?? {};
 
   const position = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;

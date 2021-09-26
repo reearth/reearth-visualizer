@@ -5,6 +5,8 @@ import { Widget as WidgetType } from "../Widget";
 
 export type { Alignment } from "react-align";
 
+export type Widget = Omit<WidgetType, "layout">;
+
 export type Location = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
@@ -13,28 +15,24 @@ export type Location = {
 
 export type WidgetArea = {
   align: Alignment;
-  widgets?: (Widget | undefined)[];
+  widgets?: Widget[];
 };
 
 export type WidgetSection = {
-  top: WidgetArea;
-  middle: WidgetArea;
-  bottom: WidgetArea;
+  top?: WidgetArea;
+  middle?: WidgetArea;
+  bottom?: WidgetArea;
 };
 
 export type WidgetZone = {
-  left: WidgetSection;
-  center: WidgetSection;
-  right: WidgetSection;
+  left?: WidgetSection;
+  center?: WidgetSection;
+  right?: WidgetSection;
 };
 
 export type WidgetAlignSystem = {
-  outer: WidgetZone;
-  inner: WidgetZone;
-};
-
-export type Widget = WidgetType & {
-  pluginProperty?: any;
+  outer?: WidgetZone;
+  inner?: WidgetZone;
 };
 
 export type WidgetLayout = {

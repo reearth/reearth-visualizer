@@ -24,7 +24,7 @@ Default.args = {
       animation: true,
     },
   },
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -46,7 +46,7 @@ Appearance.args = {
       enable_shadows: true,
     },
   },
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

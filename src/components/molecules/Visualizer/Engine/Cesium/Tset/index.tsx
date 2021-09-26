@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { shadowMode } from "../common";
+import { shadowMode, layerIdField } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -15,9 +15,9 @@ export type Property = {
   };
 };
 
-export default function Tileset({ primitive }: PrimitiveProps<Property>): JSX.Element | null {
+export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Element | null {
   const { viewer } = useCesium();
-  const { isVisible, property } = primitive ?? {};
+  const { isVisible, property } = layer ?? {};
   const { tileset, styleUrl, shadows } = (property as Property | undefined)?.default ?? {};
   const style = useMemo<Cesium3DTileStyle | undefined>(
     () => (styleUrl ? new Cesium3DTileStyle(styleUrl) : undefined),
@@ -26,10 +26,10 @@ export default function Tileset({ primitive }: PrimitiveProps<Property>): JSX.El
   const ref = useCallback(
     (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
       if (tileset?.cesiumElement) {
-        (tileset?.cesiumElement as any).__resium_primitive_id = primitive?.id;
+        (tileset?.cesiumElement as any)[layerIdField] = layer?.id;
       }
     },
-    [primitive],
+    [layer?.id],
   );
 
   return !isVisible || !tileset ? null : (

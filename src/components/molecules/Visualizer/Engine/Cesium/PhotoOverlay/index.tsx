@@ -36,8 +36,8 @@ export type Property = {
   };
 };
 
-const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
-  const { id, isVisible, property } = primitive ?? {};
+const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected }) => {
+  const { id, isVisible, property } = layer ?? {};
   const {
     image,
     imageSize,
@@ -55,7 +55,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
     camera,
     photoOverlayImage,
     photoOverlayDescription,
-  } = (property as Property | undefined)?.default ?? {};
+  } = property?.default ?? {};
 
   const [canvas] = useIcon({
     image: image || defaultImage,

@@ -22,7 +22,7 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

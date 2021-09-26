@@ -2366,34 +2366,36 @@ export type GetEarthWidgetsQuery = (
       { __typename?: 'Property' }
       & Pick<Property, 'id'>
       & PropertyFragmentFragment
+    )>, plugins: Array<(
+      { __typename?: 'ScenePlugin' }
+      & Pick<ScenePlugin, 'pluginId'>
+      & { property?: Maybe<(
+        { __typename?: 'Property' }
+        & Pick<Property, 'id'>
+        & PropertyFragmentFragment
+      )>, plugin?: Maybe<(
+        { __typename?: 'Plugin' }
+        & Pick<Plugin, 'id'>
+        & { extensions: Array<(
+          { __typename?: 'PluginExtension' }
+          & Pick<PluginExtension, 'extensionId' | 'type'>
+          & { widgetLayout?: Maybe<(
+            { __typename?: 'WidgetLayout' }
+            & Pick<WidgetLayout, 'floating' | 'extended'>
+            & { extendable: (
+              { __typename?: 'WidgetExtendable' }
+              & Pick<WidgetExtendable, 'vertically' | 'horizontally'>
+            ), defaultLocation?: Maybe<(
+              { __typename?: 'WidgetLocation' }
+              & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
+            )> }
+          )> }
+        )> }
+      )> }
     )>, widgets: Array<(
       { __typename?: 'SceneWidget' }
       & Pick<SceneWidget, 'id' | 'enabled' | 'extended' | 'pluginId' | 'extensionId'>
-      & { plugin?: Maybe<(
-        { __typename?: 'Plugin' }
-        & Pick<Plugin, 'id'>
-        & { scenePlugin?: Maybe<(
-          { __typename?: 'ScenePlugin' }
-          & { property?: Maybe<(
-            { __typename?: 'Property' }
-            & Pick<Property, 'id'>
-            & PropertyFragmentFragment
-          )> }
-        )> }
-      )>, extension?: Maybe<(
-        { __typename?: 'PluginExtension' }
-        & { widgetLayout?: Maybe<(
-          { __typename?: 'WidgetLayout' }
-          & Pick<WidgetLayout, 'floating' | 'extended'>
-          & { extendable: (
-            { __typename?: 'WidgetExtendable' }
-            & Pick<WidgetExtendable, 'vertically' | 'horizontally'>
-          ), defaultLocation?: Maybe<(
-            { __typename?: 'WidgetLocation' }
-            & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
-          )> }
-        )> }
-      )>, property?: Maybe<(
+      & { property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentFragment
@@ -5574,36 +5576,39 @@ export const GetEarthWidgetsDocument = gql`
         id
         ...PropertyFragment
       }
+      plugins {
+        property {
+          id
+          ...PropertyFragment
+        }
+        pluginId
+        plugin {
+          id
+          extensions {
+            extensionId
+            type
+            widgetLayout {
+              floating
+              extendable {
+                vertically
+                horizontally
+              }
+              extended
+              defaultLocation {
+                zone
+                section
+                area
+              }
+            }
+          }
+        }
+      }
       widgets {
         id
         enabled
         extended
         pluginId
         extensionId
-        plugin {
-          id
-          scenePlugin(sceneId: $sceneId) {
-            property {
-              id
-              ...PropertyFragment
-            }
-          }
-        }
-        extension {
-          widgetLayout {
-            floating
-            extendable {
-              vertically
-              horizontally
-            }
-            extended
-            defaultLocation {
-              zone
-              section
-              area
-            }
-          }
-        }
         property {
           id
           ...PropertyFragment

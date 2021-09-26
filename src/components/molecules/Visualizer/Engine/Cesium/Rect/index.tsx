@@ -24,8 +24,8 @@ export type Property = {
   };
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
-  const { id, isVisible, property } = primitive ?? {};
+const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
+  const { id, isVisible, property } = layer ?? {};
   const {
     rect,
     image,
@@ -37,7 +37,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     outlineWidth,
     heightReference: hr,
     shadows,
-  } = (property as Property | undefined)?.default ?? {};
+  } = property?.default ?? {};
 
   const coordinates = useMemo(
     () =>

@@ -1,55 +1,48 @@
-import { cloneDeep } from "lodash-es";
-import { useCallback, useEffect, useMemo } from "react";
+import { Options } from "quickjs-emscripten-sync";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
-import type { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
-import events from "@reearth/util/event";
+import { IFrameAPI } from "@reearth/components/atoms/Plugin/hooks";
+import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
-import { useVisualizerContext } from "../context";
+import { exposed } from "./api";
+import { useGet, useContext } from "./context";
+import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
   pluginId,
   extensionId,
-  sourceCode,
   pluginBaseUrl,
   extensionType,
   block,
-}: // primitive,
-// widget,
-// property,
-// sceneProperty,
-{
+  layer,
+  widget,
+  pluginProperty,
+}: {
   pluginId?: string;
   extensionId?: string;
-  sourceCode?: string;
   pluginBaseUrl?: string;
   extensionType?: string;
-  primitive?: Primitive;
+  layer?: Layer;
   widget?: Widget;
   block?: Block;
-  property?: any;
-  sceneProperty?: any;
+  pluginProperty?: any;
 }) {
-  const ctx = useVisualizerContext();
+  const { staticExposed, isMarshalable, onPreInit, onDispose, onMessage } =
+    useAPI({
+      extensionId,
+      extensionType,
+      pluginId,
+      block,
+      layer,
+      widget,
+      pluginProperty,
+    }) ?? [];
 
-  const [reearthEvents, emitReearthEvent] = useMemo(() => {
-    const [ev, emit] = events();
-    return [ev, emit] as const;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pluginId, extensionId, sourceCode, pluginBaseUrl]);
-
-  const handleError = useCallback(
+  const onError = useCallback(
     (err: any) => {
       console.error(`plugin error from ${pluginId}/${extensionId}: `, err);
     },
     [pluginId, extensionId],
-  );
-
-  const handleMessage = useCallback(
-    (msg: any) => {
-      emitReearthEvent("message", msg);
-    },
-    [emitReearthEvent],
   );
 
   const src =
@@ -57,107 +50,116 @@ export default function ({
       ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
       : undefined;
 
-  const staticExposed = useCallback(
-    ({ render, postMessage }: IFrameAPI): GlobalThis | undefined => {
-      const pluginAPI = ctx?.pluginAPI;
-      if (!pluginAPI) return;
+  return {
+    skip: !staticExposed,
+    src,
+    isMarshalable,
+    exposed: staticExposed,
+    onError,
+    onMessage,
+    onPreInit,
+    onDispose,
+  };
+}
 
-      // TODO: quickjs-emscripten throws "Lifetime not alive" error when iFrameApi funcs are wrapped with another function
-      const ui = {
-        show: (
-          html: string,
-          options?:
-            | {
-                visible?: boolean | undefined;
-              }
-            | undefined,
-        ) => {
-          render(html, options);
-        },
-        postMessage,
+export function useAPI({
+  pluginId = "",
+  extensionId = "",
+  extensionType = "",
+  pluginProperty,
+  layer,
+  block,
+  widget,
+}: {
+  pluginId: string | undefined;
+  extensionId: string | undefined;
+  extensionType: string | undefined;
+  pluginProperty: any;
+  layer: Layer | undefined;
+  block: Block | undefined;
+  widget: Widget | undefined;
+}): {
+  staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
+  isMarshalable: Options["isMarshalable"] | undefined;
+  onMessage: (message: any) => void;
+  onPreInit: () => void;
+  onDispose: () => void;
+} {
+  const ctx = useContext();
+  const getLayer = useGet(layer);
+  const getBlock = useGet(block);
+  const getWidget = useGet(widget);
+
+  const event =
+    useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
+
+  const onPreInit = useCallback(() => {
+    const e = events<ReearthEventType>();
+    let cancel: (() => void) | undefined;
+
+    if (ctx?.reearth.on && ctx.reearth.off && ctx.reearth.once) {
+      const source: Events<ReearthEventType> = {
+        on: ctx.reearth.on,
+        off: ctx.reearth.off,
+        once: ctx.reearth.once,
       };
-
-      return {
-        ...pluginAPI,
-        // ...((extensionType === "primitive" && ctx?.engine?.pluginApi) || {}), // TODO: fix "Lifetime not alive" error
-        reearth: {
-          ...pluginAPI.reearth,
-          ui,
-          plugin: {
-            get id() {
-              return pluginId || "";
-            },
-            get extensionType() {
-              return extensionType || "";
-            },
-            get extensionId() {
-              return extensionId || "";
-            },
-          },
-          ...(reearthEvents as any),
-        },
-      };
-    },
-    [ctx?.pluginAPI, extensionId, extensionType, pluginId, reearthEvents],
-  );
-
-  const exposed = useMemo(
-    // TODO: object must be cloned to prevent "already registered" error from qes
-    () => {
-      return {
-        // TODO: called several times, very heavy
-        // "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
-        // "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
-        // "reearth.primitives.selectionReason": cloneDeep(ctx?.primitiveSelectionReason),
-        // "reearth.primitives.overriddenInfobox": cloneDeep(ctx?.primitiveOverriddenInfobox),
-        // "reearth.plugin.property": cloneDeep(property),
-        // "reearth.visualizer.camera": cloneDeep(ctx?.camera),
-        // "reearth.visualizer.property": cloneDeep(sceneProperty),
-        // "reearth.primitive": cloneDeep(primitive),
-        // "reearth.widget": cloneDeep(widget),
-        "reearth.block": cloneDeep(block),
-      };
-    },
-    [
-      // ctx?.selectedPrimitive,
-      // ctx?.primitiveSelectionReason,
-      // ctx?.primitiveOverriddenInfobox,
-      // ctx?.camera,
-      // property,
-      // sceneProperty,
-      // primitive,
-      // widget,
-      block,
-    ],
-  );
-
-  useEffect(() => {
-    return () => {
-      emitReearthEvent("close");
-    };
-  }, [emitReearthEvent]);
-
-  useEffect(() => {
-    emitReearthEvent("update");
-  }, [exposed, emitReearthEvent]);
-
-  useEffect(() => {
-    emitReearthEvent("select", cloneDeep(ctx?.selectedPrimitive));
-  }, [ctx?.selectedPrimitive, emitReearthEvent]);
-
-  useEffect(() => {
-    if (ctx?.camera) {
-      emitReearthEvent("cameramove", cloneDeep(ctx.camera));
+      cancel = mergeEvents(source, e[1], ["cameramove", "select"]);
     }
-  }, [ctx?.camera, emitReearthEvent]);
+
+    event.current = [e[0], e[1], cancel];
+  }, [ctx?.reearth.on, ctx?.reearth.off, ctx?.reearth.once]);
+
+  const onDispose = useCallback(() => {
+    event.current?.[1]("close");
+    event.current?.[2]?.();
+    event.current = undefined;
+  }, []);
+
+  const onMessage = useCallback((msg: any) => {
+    event.current?.[1]("message", msg);
+  }, []);
+
+  const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
+    if (!ctx?.reearth) return;
+    return ({ postMessage, render }: IFrameAPI) => {
+      return exposed({
+        engineAPI: ctx.engine.api,
+        commonReearth: ctx.reearth,
+        events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
+        plugin: {
+          id: pluginId,
+          extensionType,
+          extensionId,
+          property: pluginProperty,
+        },
+        block: getBlock,
+        layer: getLayer,
+        widget: getWidget,
+        postMessage,
+        render,
+      });
+    };
+  }, [
+    ctx?.engine.api,
+    ctx?.reearth,
+    extensionId,
+    extensionType,
+    pluginId,
+    pluginProperty,
+    getBlock,
+    getLayer,
+    getWidget,
+  ]);
+
+  useEffect(() => {
+    event.current?.[1]("update");
+  }, [block, layer, widget]);
 
   return {
-    skip: !ctx,
-    src,
-    exposed,
-    isMarshalable: ctx?.engine?.isMarshalable,
     staticExposed,
-    handleError,
-    handleMessage,
+    isMarshalable: ctx?.engine.isMarshalable,
+    onMessage,
+    onPreInit,
+    onDispose,
   };
 }

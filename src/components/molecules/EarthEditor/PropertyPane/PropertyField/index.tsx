@@ -28,7 +28,7 @@ import { FieldProps } from "./types";
 import TypographyField from "./TypographyField";
 import URLField, { Asset as AssetType } from "./URLField";
 
-export { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
+export type { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
 
 export type ValueType = ValueTypeType;
 export type ValueTypes = ValueTypesType;

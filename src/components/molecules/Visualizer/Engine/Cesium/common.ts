@@ -21,6 +21,8 @@ import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
 
+export const layerIdField = `__reearth_layer_id`;
+
 const defaultImageSize = 50;
 
 export const drawIcon = (

@@ -176,7 +176,7 @@
         "mini-svg-data-uri": "^1.2.3",
         "parse-domain": "^3.0.3",
         "quickjs-emscripten": "^0.13.0",
-        "quickjs-emscripten-sync": "^1.1.0",
+        "quickjs-emscripten-sync": "^1.2.0",
         "rc-slider": "9.7.1",
         "react": "^17.0.2",
         "react-accessible-accordion": "^3.3.4",

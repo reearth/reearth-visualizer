@@ -23,8 +23,8 @@ export type Property = {
   };
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
-  const { id, isVisible, property } = primitive ?? {};
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
+  const { id, isVisible, property } = layer ?? {};
   const {
     polygon,
     fill = true,
@@ -34,7 +34,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     strokeWidth = 1,
     heightReference: hr,
     shadows,
-  } = (property as Property | undefined)?.default ?? {};
+  } = property?.default ?? {};
 
   const hierarchy = useMemo(
     () =>

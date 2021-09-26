@@ -8,7 +8,7 @@ import fonts from "@reearth/theme/fonts";
 
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 
-export { Dataset, DatasetField, DatasetSchema, Type } from "./PropertyLinkPanel";
+export type { Dataset, DatasetField, DatasetSchema, Type } from "./PropertyLinkPanel";
 
 export type Props = {
   className?: string;

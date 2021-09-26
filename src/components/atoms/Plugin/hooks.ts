@@ -1,5 +1,5 @@
 import { getQuickJS } from "quickjs-emscripten";
-import Arena from "quickjs-emscripten-sync";
+import { Arena } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 
 import type { Ref as IFrameRef } from "./IFrame";
@@ -9,15 +9,16 @@ export type IFrameAPI = {
   postMessage: (message: any) => void;
 };
 
-export type Options<T> = {
+export type Options = {
   src?: string;
   sourceCode?: string;
   skip?: boolean;
   iframeCanBeVisible?: boolean;
-  exposed?: { [key: string]: any };
-  isMarshalable?: (obj: any) => boolean;
+  isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   onError?: (err: any) => void;
-  staticExposed?: (api: IFrameAPI) => T;
+  onPreInit?: () => void;
+  onDispose?: () => void;
+  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
 };
 
 // restrict any classes
@@ -34,19 +35,21 @@ const defaultOnError = (err: any) => {
   console.error("plugin error", err?.message || err);
 };
 
-export default function useHook<T>({
+export default function useHook({
   src,
   sourceCode,
   skip,
   iframeCanBeVisible,
-  exposed,
   isMarshalable,
+  onPreInit,
   onError = defaultOnError,
-  staticExposed,
-}: Options<T> = {}) {
+  onDispose,
+  exposed,
+}: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
+  const [code, setCode] = useState("");
   const iFrameRef = useRef<IFrameRef>(null);
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
     [string, { visible?: boolean } | undefined]
@@ -93,30 +96,40 @@ export default function useHook<T>({
     [iframeCanBeVisible],
   );
 
-  const staticExpose = useCallback(() => {
-    if (!arena.current) return;
-    const exposed = staticExposed?.(iFrameApi);
-    if (exposed) {
-      arena.current.expose(exposed);
-    }
-  }, [iFrameApi, staticExposed]);
+  useEffect(() => {
+    (async () => {
+      const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
+      setCode(code);
+    })();
+  }, [sourceCode, src]);
 
   // init and dispose of vm
   useEffect(() => {
-    if (skip) return;
+    if (skip || !code) return;
+
+    onPreInit?.();
 
     (async () => {
       const vm = (await getQuickJS()).createVm();
       arena.current = new Arena(vm, {
-        isMarshalable: target => defaultIsMarshalable(target) || !!isMarshalable?.(target),
+        isMarshalable: target =>
+          defaultIsMarshalable(target) ||
+          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
-      staticExpose();
+
+      const e = typeof exposed === "function" ? exposed(iFrameApi) : exposed;
+      if (e) {
+        arena.current.expose(e);
+      }
+
+      evalCode(code);
       setLoaded(true);
     })();
 
     return () => {
+      onDispose?.();
+      setIFrameState(["", undefined]);
       if (typeof eventLoop.current === "number") {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         window.clearTimeout(eventLoop.current);
       }
       if (arena.current) {
@@ -131,45 +144,7 @@ export default function useHook<T>({
         }
       }
     };
-  }, [isMarshalable, onError, skip, src, sourceCode, staticExpose]);
-
-  const exposer = useMemo(() => {
-    if (!arena.current || !loaded) return;
-    return arena.current.evalCode<(keys: string[], value: any) => void>(`(keys, value) => {
-      if (!keys.length) return;
-      let o = globalThis;
-      for (const k of keys.slice(0, -1)) {
-        if (typeof o !== "object") break;
-        if (typeof o?.[k] !== "object") {
-          o[k] = {};
-        }
-        o = o[k];
-      }
-      if (typeof o !== "object") return;
-      o[keys[keys.length - 1]] = value;
-    }`);
-  }, [loaded]);
-
-  useEffect(() => {
-    if (!arena.current || !exposer || !exposed) return;
-    for (const [k, v] of Object.entries(exposed)) {
-      const keys = k.split(".");
-      exposer(keys, v);
-    }
-  }, [exposed, exposer]);
-
-  useEffect(() => {
-    if (!arena.current || !loaded || (!src && !sourceCode)) return;
-
-    setIFrameState(s => (!s[0] && !s[1] ? s : ["", undefined]));
-    // load JS
-    (async () => {
-      if (!arena.current) return;
-      const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
-      evalCode(code);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src, sourceCode, loaded]); // ignore evalCode
+  }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
 
   return {
     iFrameHtml,

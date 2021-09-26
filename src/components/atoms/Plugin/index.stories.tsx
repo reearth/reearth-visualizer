@@ -22,10 +22,10 @@ Default.args = {
     height: "300px",
     backgroundColor: "#fff",
   },
-  exposed: {
-    "console.log": action("console.log"),
-  },
-  staticExposed: ({ render, postMessage }) => ({
+  exposed: ({ render, postMessage }) => ({
+    console: {
+      log: action("console.log"),
+    },
     reearth: {
       on(type: string, value: (message: any) => void | undefined) {
         if (type === "message") {
@@ -54,10 +54,10 @@ HiddenIFrame.args = {
     height: "300px",
     backgroundColor: "#fff",
   },
-  exposed: {
-    "console.log": action("console.log"),
-  },
-  staticExposed: ({ render, postMessage }) => ({
+  exposed: ({ render, postMessage }) => ({
+    console: {
+      log: action("console.log"),
+    },
     reearth: {
       on(type: string, value: (message: any) => void | undefined) {
         if (type === "message") {
@@ -81,6 +81,8 @@ export const SourceCode: Story<Props> = args => <Component {...args} />;
 SourceCode.args = {
   sourceCode: `console.log("Hello")`,
   exposed: {
-    "console.log": action("console.log"),
+    console: {
+      log: action("console.log"),
+    },
   },
 };

@@ -19,15 +19,15 @@ export type Property = {
   };
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
-  const { id, isVisible, property } = primitive ?? {};
+const Polyline: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
+  const { id, isVisible, property } = layer ?? {};
   const {
     coordinates,
     clampToGround,
     strokeColor,
     strokeWidth = 1,
     shadows,
-  } = (property as Property | undefined)?.default ?? {};
+  } = property?.default ?? {};
 
   const positions = useMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),

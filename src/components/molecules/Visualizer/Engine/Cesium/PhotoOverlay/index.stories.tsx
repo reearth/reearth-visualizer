@@ -19,7 +19,7 @@ const Template: Story<Props> = args => (
 
 export const Default = Template.bind({});
 Default.args = {
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -43,7 +43,7 @@ Default.args = {
 
 export const Selected = Template.bind({});
 Selected.args = {
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

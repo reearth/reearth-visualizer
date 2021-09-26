@@ -24,6 +24,7 @@ import { Provider as ThemeProvider, styled } from "./theme";
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
 const GraphQLPlayground = React.lazy(() => import("@reearth/components/pages/GraphQLPlayground"));
+
 const enableWhyDidYouRender = false;
 
 if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {

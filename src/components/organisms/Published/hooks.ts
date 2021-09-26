@@ -1,13 +1,14 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import {
-  Primitive,
+import type {
+  Layer,
   Widget,
   Block,
   WidgetAlignSystem,
   Alignment,
 } from "@reearth/components/molecules/Visualizer";
+import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
 import { PublishedData, WidgetZone, WidgetSection, WidgetArea } from "./types";
 
@@ -17,31 +18,35 @@ export default (alias?: string) => {
   const [error, setError] = useState(false);
 
   const sceneProperty = processProperty(data?.property);
+  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+    (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+    {},
+  );
 
-  const layers = useMemo<Primitive[] | undefined>(
+  const layers = useMemo<LayerStore | undefined>(
     () =>
-      data?.layers?.map<Primitive>(l => ({
-        id: l.id,
-        title: l.name || "",
-        pluginId: l.pluginId,
-        extensionId: l.extensionId,
-        isVisible: true,
-        property: processProperty(l.property),
-        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
-        infobox: l.infobox
-          ? {
-              property: processProperty(l.infobox.property),
-              blocks: l.infobox.fields.map<Block>(f => ({
-                id: f.id,
-                pluginId: f.pluginId,
-                extensionId: f.extensionId,
-                property: processProperty(f.property),
-                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
-                // propertyId is not required in non-editable mode
-              })),
-            }
-          : undefined,
-      })),
+      new LayerStore({
+        id: "",
+        children: data?.layers?.map<Layer>(l => ({
+          id: l.id,
+          title: l.name || "",
+          pluginId: l.pluginId,
+          extensionId: l.extensionId,
+          isVisible: true,
+          property: processProperty(l.property),
+          infobox: l.infobox
+            ? {
+                property: processProperty(l.infobox.property),
+                blocks: l.infobox.fields.map<Block>(f => ({
+                  id: f.id,
+                  pluginId: f.pluginId,
+                  extensionId: f.extensionId,
+                  property: processProperty(f.property),
+                })),
+              }
+            : undefined,
+        })),
+      }),
     [data],
   );
 
@@ -72,7 +77,6 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-          pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
         }),
       );
 
@@ -85,7 +89,6 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-          pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
         }),
       );
 
@@ -170,6 +173,7 @@ export default (alias?: string) => {
   return {
     alias: actualAlias,
     sceneProperty,
+    pluginProperty,
     layers,
     widgets: widgetSystem,
     ready,

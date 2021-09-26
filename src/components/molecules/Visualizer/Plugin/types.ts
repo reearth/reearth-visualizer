@@ -1,4 +1,5 @@
-export type globalThis = {
+export type GlobalThis = {
+  Cesium?: Cesium;
   reearth: Reearth;
   console: {
     readonly log: (...args: any[]) => void;
@@ -10,11 +11,11 @@ export type globalThis = {
 export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
-  readonly plugin: Plugin;
-  readonly primitives: Primitives;
-  readonly ui: UI;
   readonly visualizer: Visualizer;
-  readonly primitive?: Primitive;
+  readonly ui: UI;
+  readonly plugin: Plugin;
+  readonly layers: Layers;
+  readonly layer?: Layer;
   readonly widget?: Widget;
   readonly block?: Block;
   readonly on: <T extends keyof ReearthEventType>(
@@ -29,14 +30,13 @@ export type Reearth = {
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
   ) => void;
-  onupdate?: () => void;
 };
 
 export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: Camera];
-  select: [target?: Primitive];
+  select: [layerId: string | undefined];
   message: [message: any];
 };
 
@@ -48,19 +48,21 @@ export type Plugin = {
   readonly property?: any;
 };
 
-/** You can operate and get data about primitives. */
-export type Primitives = {
-  readonly primitives: Primitive[];
-  readonly selected?: Primitive;
+/** You can operate and get data about layers. */
+export type Layers = {
+  readonly layers: Layer[];
+  readonly selected?: Layer;
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
-  /** Selects the primitive with the specified ID; if the ID is undefined, the currently selected primitive will be deselected. */
-  readonly select: (id?: string, options?: SelectPrimitiveOptions) => void;
+  /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
+  readonly findById: (id: string) => Layer | undefined;
+  readonly findByIds: (...id: string[]) => (Layer | undefined)[];
 };
 
-export type SelectPrimitiveOptions = {
+export type SelectLayerOptions = {
   reason?: string;
   overriddenInfobox?: OverriddenInfobox;
 };
@@ -70,35 +72,54 @@ export type OverriddenInfobox = {
   content: { key: string; value: string }[];
 };
 
-/** Primitive is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
-export type Primitive = {
+/** Layer is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
+export type Layer<P = any, IBP = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
   title?: string;
-  property?: any;
-  infobox?: Infobox;
+  property?: P;
+  infobox?: Infobox<IBP>;
   isVisible?: boolean;
+  propertyId?: string;
+  readonly children?: Layer<P, IBP>[];
 };
 
-export type Infobox = {
-  property?: any;
-  blocks?: Block[];
+export type Infobox<BP = any> = {
+  property?: InfoboxProperty;
+  blocks?: Block<BP>[];
 };
 
-export type Block = {
+export type InfoboxProperty = {
+  default?: {
+    title?: string;
+    size?: "small" | "large";
+    typography?: Typography;
+    bgcolor?: string;
+  };
+};
+
+export type Block<P = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
-  property?: any;
+  property?: P;
+  propertyId?: string;
 };
 
-export type Widget = {
+export type Widget<P = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
-  property?: any;
+  property?: P;
+  propertyId?: string;
   extended: boolean;
+  layout?: WidgetLayout;
+};
+
+export type WidgetLayout = {
+  location: WidgetLocation;
+  align: WidgetAlignment;
 };
 
 export type WidgetLocation = {
@@ -165,6 +186,17 @@ export type Camera = {
   fov: number;
 };
 
+export type Typography = {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  color?: string;
+  textAlign?: "left" | "center" | "right" | "justify" | "justify_all";
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+};
+
 /**
  * Undefined fields are assumed to be the same as the current camera position.
  */
@@ -211,3 +243,6 @@ export type CameraOptions = {
   /** Easing function. */
   easing?: (time: number) => number;
 };
+
+/** Cesium API: available only when the plugin is a primitive */
+export type Cesium = {};

@@ -12,10 +12,11 @@ type Props = {
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
-  widgets?: (Widget | undefined)[];
+  widgets?: Widget[];
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
   onReorder?: (id: string, hoverIndex: number) => void;
@@ -33,6 +34,7 @@ export default function WidgetAreaComponent({
   align,
   widgets,
   sceneProperty,
+  pluginProperty,
   pluginBaseUrl,
   isEditable,
   isBuilt,
@@ -76,7 +78,7 @@ export default function WidgetAreaComponent({
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets?.map((widget, i) => {
         const constraint =
-          widget?.pluginId && widget.extensionId
+          widget.pluginId && widget.extensionId
             ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
             : undefined;
         const extendable =
@@ -85,26 +87,28 @@ export default function WidgetAreaComponent({
         const loc = { zone: zone, section: section, area: area };
         return (
           <GridItem
-            key={widget?.id + "container"}
-            id={widget?.id as string}
+            key={widget.id}
+            id={widget.id}
             location={loc}
             index={i}
             onReorder={handleReorder}
             onMoveArea={onMove || nop}
-            extended={widget?.extended}
+            extended={widget.extended}
             extendable={extendable}
             onExtend={onExtend}
             styles={{ pointerEvents: "auto" }}>
             <W
-              key={widget?.id}
               widget={widget}
               sceneProperty={sceneProperty}
-              pluginProperty={widget?.pluginProperty}
+              pluginProperty={
+                widget.pluginId && widget.extensionId
+                  ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                  : undefined
+              }
               isEditable={isEditable}
               isBuilt={isBuilt}
               pluginBaseUrl={pluginBaseUrl}
               widgetLayout={{
-                floating: false,
                 location: loc,
                 align,
               }}

@@ -5,7 +5,7 @@ import { OmitFunc, OmitFunc2, OmitFunc3 } from "@reearth/types";
 
 import { isPresent } from "./util";
 
-export const useBind = <P extends { [key in string]?: (a: A, ...args: any) => any }, A>(
+export const useBind = <P extends { [key in string]?: (a: A, ...args: any[]) => any }, A>(
   p: P,
   a?: A,
 ): { [K in keyof P]?: OmitFunc<NonNullable<P[K]>> } => {
@@ -18,7 +18,7 @@ export const useBind = <P extends { [key in string]?: (a: A, ...args: any) => an
   );
 };
 
-export const useBind2 = <P extends { [key in string]?: (a: A, b: B, ...args: any) => any }, A, B>(
+export const useBind2 = <P extends { [key in string]?: (a: A, b: B, ...args: any[]) => any }, A, B>(
   p: P,
   a?: A,
   b?: B,
@@ -33,7 +33,7 @@ export const useBind2 = <P extends { [key in string]?: (a: A, b: B, ...args: any
 };
 
 export const useBind3 = <
-  P extends { [key in string]?: (a: A, b: B, ...args: any) => any },
+  P extends { [key in string]?: (a: A, b: B, ...args: any[]) => any },
   A,
   B,
   C,

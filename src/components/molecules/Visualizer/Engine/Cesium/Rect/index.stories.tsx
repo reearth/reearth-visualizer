@@ -22,7 +22,7 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -47,7 +47,7 @@ export const Image: Story<Props> = args => (
 );
 
 Image.args = {
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

@@ -8,7 +8,7 @@ import Polygon from "./Polygon";
 import Polyline from "./Polyline";
 import Rect from "./Rect";
 import Resource from "./Resource";
-import Tileset from "./TIleset";
+import Tileset from "./Tset";
 
 const builtin: Record<string, Component> = {
   "reearth/marker": Marker,

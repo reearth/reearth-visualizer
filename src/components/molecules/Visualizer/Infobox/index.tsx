@@ -5,37 +5,23 @@ import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
-import { ValueTypes, ValueType, Typography } from "@reearth/util/value";
+import { ValueTypes, ValueType } from "@reearth/util/value";
 
-import PluginBlock, { Block as BlockType, Primitive } from "../Block";
-import { SceneProperty } from "../Engine";
+import PluginBlock, { Layer, Block } from "../Block";
+import type { SceneProperty } from "../Engine";
 
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
 
-export type { Primitive } from "../Block";
-
-export type Block = BlockType & {
-  propertyId?: string;
-  pluginProperty?: any;
-};
-
-export type InfoboxProperty = {
-  default?: {
-    title?: string;
-    size?: "small" | "large";
-    typography?: Typography;
-    bgcolor?: string;
-  };
-};
+export type { Block, Layer } from "../Block";
+export type { InfoboxProperty } from "../Plugin";
 
 export type Props = {
   className?: string;
   infoboxKey?: string;
-  property?: InfoboxProperty;
   sceneProperty?: SceneProperty;
-  primitive?: Primitive;
+  layer?: Layer;
   blocks?: Block[];
   title?: string;
   isEditable?: boolean;
@@ -43,9 +29,10 @@ export type Props = {
   selectedBlockId?: string;
   visible?: boolean;
   pluginBaseUrl?: string;
+  pluginProperty?: { [key: string]: any };
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
-    propertyId: string,
+    blockId: string,
     schemaItemId: string,
     fieldId: string,
     value: ValueTypes[T],
@@ -60,16 +47,16 @@ export type Props = {
 const Infobox: React.FC<Props> = ({
   className,
   infoboxKey,
-  property,
   sceneProperty,
-  primitive,
-  blocks,
-  title: name,
+  layer,
+  blocks: overridenBlocks,
+  title,
   isEditable,
   isBuilt,
   selectedBlockId,
   visible,
   pluginBaseUrl,
+  pluginProperty,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
@@ -85,13 +72,15 @@ const Infobox: React.FC<Props> = ({
   const theme = useTheme();
   const intl = useIntl();
   const [isReadyToRender, setIsReadyToRender] = useState(false);
+  const blocks = overridenBlocks ?? layer?.infobox?.blocks;
+  const property = layer?.infobox?.property;
 
   return (
     <Frame
       className={className}
       infoboxKey={infoboxKey}
       sceneProperty={sceneProperty}
-      title={property?.default?.title || name}
+      title={property?.default?.title || title}
       size={property?.default?.size}
       visible={visible}
       noContent={!blocks?.length}
@@ -123,17 +112,18 @@ const Infobox: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             infoboxProperty={property}
-            pluginProperty={b.pluginProperty}
-            sceneProperty={sceneProperty}
-            onChange={(...args) =>
-              b.propertyId ? onBlockChange?.(b.propertyId, ...args) : undefined
+            pluginProperty={
+              b.pluginId && b.extensionId
+                ? pluginProperty?.[`${b.pluginId}/${b.extensionId}`]
+                : undefined
             }
+            onChange={(...args) => onBlockChange?.(b.id, ...args)}
             onClick={() => {
               if (b.id && selectedBlockId !== b.id) {
                 onBlockSelect?.(b.id);
               }
             }}
-            primitive={primitive}
+            layer={layer}
             pluginBaseUrl={pluginBaseUrl}
           />
         </Field>

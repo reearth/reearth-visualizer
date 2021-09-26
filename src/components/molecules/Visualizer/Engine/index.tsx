@@ -9,13 +9,14 @@ import React, {
   forwardRef,
 } from "react";
 
-import { SelectPrimitiveOptions } from "@reearth/plugin";
 import type { Camera } from "@reearth/util/value";
+
+import { SelectLayerOptions } from "../Plugin/types";
 
 import Cesium from "./Cesium";
 import type { EngineRef } from "./ref";
 
-export type { OverriddenInfobox, SelectPrimitiveOptions } from "@reearth/plugin";
+export type { OverriddenInfobox, SelectLayerOptions } from "../Plugin/types";
 
 export type SceneProperty = {
   default?: {
@@ -72,9 +73,9 @@ export type EngineProps = {
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
-  selectedPrimitiveId?: string;
-  primitiveSelectionReason?: string;
-  onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
+  selectedLayerId?: string;
+  layerSelectionReason?: string;
+  onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
 };
 

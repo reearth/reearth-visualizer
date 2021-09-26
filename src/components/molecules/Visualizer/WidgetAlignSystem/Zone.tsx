@@ -5,7 +5,7 @@ import Area from "./Area";
 import type { WidgetZone, Location, Alignment, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
-  zone: WidgetZone;
+  zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   onReorder?: (id: string, hoverIndex: number) => void;
@@ -15,6 +15,7 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
 };
 
@@ -26,6 +27,7 @@ export default function Zone({
   zoneName,
   layoutConstraint,
   sceneProperty,
+  pluginProperty,
   pluginBaseUrl,
   isEditable,
   isBuilt,
@@ -50,14 +52,15 @@ export default function Zone({
                 zone={zoneName}
                 section={s}
                 area={a}
-                widgets={zone[s][a].widgets}
-                align={zone[s][a].align}
+                widgets={zone?.[s]?.[a]?.widgets}
+                align={zone?.[s]?.[a]?.align ?? "start"}
                 layoutConstraint={layoutConstraint}
                 onReorder={onReorder}
                 onMove={onMove}
                 onAlignChange={onAlignChange}
                 onExtend={onExtend}
                 sceneProperty={sceneProperty}
+                pluginProperty={pluginProperty}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}

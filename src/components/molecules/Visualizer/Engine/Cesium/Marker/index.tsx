@@ -66,8 +66,8 @@ type Property = {
 
 const tag = "reearth_unselectable";
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
-  const { id, isVisible, property } = primitive ?? {};
+const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
+  const { id, isVisible, property } = layer ?? {};
   const {
     location,
     height = 0,
@@ -94,7 +94,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     imageShadowPositionX: shadowOffsetX,
     imageShadowPositionY: shadowOffsetY,
     heightReference: hr,
-  } = (property as Property | undefined)?.default ?? {};
+  } = property?.default ?? {};
 
   const pos = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;

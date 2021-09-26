@@ -174,36 +174,39 @@ export const GET_EARTH_WIDGETS = gql`
           id
           ...PropertyFragment
         }
+        plugins {
+          property {
+            id
+            ...PropertyFragment
+          }
+          pluginId
+          plugin {
+            id
+            extensions {
+              extensionId
+              type
+              widgetLayout {
+                floating
+                extendable {
+                  vertically
+                  horizontally
+                }
+                extended
+                defaultLocation {
+                  zone
+                  section
+                  area
+                }
+              }
+            }
+          }
+        }
         widgets {
           id
           enabled
           extended
           pluginId
           extensionId
-          plugin {
-            id
-            scenePlugin(sceneId: $sceneId) {
-              property {
-                id
-                ...PropertyFragment
-              }
-            }
-          }
-          extension {
-            widgetLayout {
-              floating
-              extendable {
-                vertically
-                horizontally
-              }
-              extended
-              defaultLocation {
-                zone
-                section
-                area
-              }
-            }
-          }
           property {
             id
             ...PropertyFragment

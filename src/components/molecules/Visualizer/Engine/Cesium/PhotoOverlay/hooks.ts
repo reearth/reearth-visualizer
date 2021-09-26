@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDelayedCount, Durations } from "@reearth/util/use-delayed-count";
 import { Camera } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../../context";
+import { useContext } from "../../../Plugin";
 
 export type { TransitionStatus } from "@rot1024/use-transition";
 
@@ -27,15 +27,16 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
   photoOverlayImageTransiton: TransitionStatus;
   exitPhotoOverlay: () => void;
 } {
-  const ctx = useVisualizerContext();
-  const { flyTo, getCamera } = ctx?.engine ?? {};
+  const ctx = useContext();
+  const flyTo = ctx?.reearth.visualizer.flyTo;
+  const getCamera = useCallback(() => ctx?.reearth.visualizer.camera, [ctx?.reearth.visualizer]);
 
   // mode 0 = idle, 1 = idle<->fly, 2 = fly<->fov, 3 = fov<->photo, 4 = photo
   const [mode, prevMode, startTransition] = useDelayedCount(durations);
   const cameraRef = useRef(camera);
   cameraRef.current = camera;
   const storytelling = useRef(false);
-  storytelling.current = ctx?.primitiveSelectionReason === "storytelling";
+  storytelling.current = ctx?.reearth.layers.selectionReason === "storytelling";
   const prevCamera = useRef<Camera>();
 
   // camera flight
@@ -75,7 +76,7 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
       const fov = prevCamera.current?.fov ?? defaultFOV;
       flyTo?.({ fov }, { duration: 0 });
     }
-    // skip camera flight when selected primitive was changed by storytelling widget
+    // skip camera flight when selected layer was changed by storytelling widget
     startTransition(!isSelected, storytelling.current ? !isSelected : !cameraRef.current);
   }, [flyTo, startTransition, isSelected]);
 

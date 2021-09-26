@@ -6,9 +6,9 @@ import WorkspaceCreationModal from "@reearth/components/molecules/Common/Workspa
 import { styled, metrics, css } from "@reearth/theme";
 
 import Profile from "./profile";
-import { User, Team, Project } from "./types";
+import type { User, Team, Project } from "./types";
 
-export * from "./types";
+export type { User, Team, Project } from "./types";
 
 export interface Props {
   className?: string;

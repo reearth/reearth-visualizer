@@ -1,8 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Provider } from "../context";
-import { context } from "../storybook";
+import { Provider } from "../storybook";
 
 import Component, { Props } from ".";
 
@@ -26,7 +25,7 @@ Default.args = {
 };
 
 export const Plugin: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider>
     <div style={{ background: "#fff" }}>
       <Component {...args} />
     </div>

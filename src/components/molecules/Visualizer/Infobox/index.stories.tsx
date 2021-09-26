@@ -16,7 +16,6 @@ Template.args = {
       id: "a",
       pluginId: "reearth",
       extensionId: "textblock",
-      propertyId: "propertya",
       property: {
         default: {
           text: "# Hello",
@@ -28,7 +27,6 @@ Template.args = {
       id: "b",
       pluginId: "reearth",
       extensionId: "textblock",
-      propertyId: "propertya",
       property: {
         default: {
           text: "# World!",
@@ -37,10 +35,13 @@ Template.args = {
       },
     },
   ],
-  property: {
-    default: {
-      title: "Hoge",
-      size: "small",
+  layer: {
+    id: "z",
+    property: {
+      default: {
+        title: "Hoge",
+        size: "small",
+      },
     },
   },
   selectedBlockId: undefined,
@@ -59,11 +60,14 @@ Default.args = {
 export const Large = Template.bind({});
 Large.args = {
   ...Template.args,
-  property: {
-    ...Template.args.property,
-    default: {
-      ...Template.args.property?.default,
-      size: "large",
+  layer: {
+    id: "z",
+    property: {
+      ...Template.args.layer?.property,
+      default: {
+        ...Template.args.layer?.property?.default,
+        size: "large",
+      },
     },
   },
 };

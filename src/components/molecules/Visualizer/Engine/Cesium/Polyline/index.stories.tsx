@@ -17,7 +17,7 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  primitive: {
+  layer: {
     id: "",
     property: {
       default: {

@@ -1,8 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Provider } from "../../context";
-import { context } from "../../storybook";
+import { Provider } from "../../storybook";
 
 import Component, { Props } from ".";
 
@@ -13,7 +12,7 @@ export default {
 } as Meta;
 
 const Template: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider>
     <Component {...args} />
   </Provider>
 );

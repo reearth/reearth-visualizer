@@ -12,9 +12,9 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import Header from "./Header";
 import useHooks from "./hooks";
 import List from "./List";
-import { DatasetSchema, Type } from "./types";
+import type { DatasetSchema, Type } from "./types";
 
-export { DatasetSchema, Dataset, DatasetField, Type } from "./types";
+export type { DatasetSchema, Dataset, DatasetField, Type } from "./types";
 
 export type Props = {
   className?: string;

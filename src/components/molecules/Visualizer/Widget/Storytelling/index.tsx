@@ -93,7 +93,7 @@ const Storytelling = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Eleme
       <Wrapper
         publishedTheme={publishedTheme}
         extended={widget?.extended}
-        floating={widgetLayout?.floating}>
+        floating={!widget?.layout}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}

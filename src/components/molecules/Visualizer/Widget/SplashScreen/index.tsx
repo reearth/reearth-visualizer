@@ -5,7 +5,7 @@ import { useTimeoutFn } from "react-use";
 import { styled } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../context";
+import { useContext } from "../../Plugin";
 import { Props as WidgetProps } from "../../Widget";
 
 export type Props = WidgetProps<Property>;
@@ -30,7 +30,7 @@ export type Property = {
 };
 
 const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
-  const ctx = useVisualizerContext();
+  const ctx = useContext();
   const { property } = widget ?? {};
   const {
     overlayEnabled: enabled,
@@ -50,7 +50,7 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
   const currentCamera = camera?.[cameraSequence];
   const delayedCurrentCamera = camera?.[delayedCameraSequence];
 
-  const flyTo = ctx?.engine?.flyTo;
+  const flyTo = ctx?.reearth?.visualizer.flyTo;
   useEffect(() => {
     if (!flyTo) return;
     const { cameraPosition, cameraDuration, cameraDelay } = delayedCurrentCamera ?? {};

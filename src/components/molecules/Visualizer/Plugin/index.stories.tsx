@@ -1,8 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Provider } from "../context";
-import { context } from "../storybook";
+import { Provider } from "../storybook";
 
 import Component, { Props } from ".";
 
@@ -13,7 +12,7 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider>
     <div style={{ background: "#fff" }}>
       <Component {...args} />
     </div>
@@ -28,7 +27,7 @@ Default.args = {
 };
 
 export const Headless: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider>
     <Component {...args} />
   </Provider>
 );

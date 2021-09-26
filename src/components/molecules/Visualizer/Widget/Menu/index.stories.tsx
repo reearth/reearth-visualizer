@@ -2,8 +2,7 @@ import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 import React from "react";
 
-import { Provider } from "../../context";
-import { context } from "../../storybook";
+import { Provider } from "../../storybook";
 
 import Menu, { Props } from ".";
 
@@ -14,7 +13,7 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider>
     <Menu {...args} />
   </Provider>
 );

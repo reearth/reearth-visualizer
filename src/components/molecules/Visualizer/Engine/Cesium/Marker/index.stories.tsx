@@ -19,7 +19,7 @@ const Template: Story<Props> = args => (
 export const Point = Template.bind({});
 Point.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -37,7 +37,7 @@ Point.args = {
 export const PointWithLabelAndExcluded = Template.bind({});
 PointWithLabelAndExcluded.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -58,7 +58,7 @@ PointWithLabelAndExcluded.args = {
 export const PointWithRightLabel = Template.bind({});
 PointWithRightLabel.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -84,7 +84,7 @@ PointWithRightLabel.args = {
 export const PointWithTopLabel = Template.bind({});
 PointWithTopLabel.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -106,7 +106,7 @@ PointWithTopLabel.args = {
 export const PointWithBottomLabel = Template.bind({});
 PointWithBottomLabel.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -125,7 +125,7 @@ PointWithBottomLabel.args = {
 export const Image = Template.bind({});
 Image.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -142,7 +142,7 @@ Image.args = {
 export const ImageWithShadow = Template.bind({});
 ImageWithShadow.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -160,7 +160,7 @@ ImageWithShadow.args = {
 export const ImageWithCropAndShadow = Template.bind({});
 ImageWithCropAndShadow.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -180,7 +180,7 @@ ImageWithCropAndShadow.args = {
 export const ImageWithColor = Template.bind({});
 ImageWithColor.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {
@@ -201,7 +201,7 @@ ImageWithColor.args = {
 export const ImageWithRightLabel = Template.bind({});
 ImageWithRightLabel.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "",
     isVisible: true,
     property: {

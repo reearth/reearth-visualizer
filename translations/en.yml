@@ -205,6 +205,7 @@ src:
             '179601186': List
           WidgetToggleSwitch:
             '2224658704': Enable
+            '2313839684': Enable Editor Mode
         PublicationModal:
           '383867403': Copy
           '562103780': '**Warning**: This includes websites where this project is embedded.'
@@ -454,6 +455,7 @@ src:
           '1538011248': Scene
           '1676374721': Widget
           '1884622259': Infobox
+          '2793623359': Widgets
           '3590336714': Export
       Notification:
         '687096634': Warning
