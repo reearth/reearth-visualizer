@@ -16,15 +16,18 @@ const sampleContents: AccordionItemType[] = [
     content: <div>This is content2</div>,
   },
 ];
+
 test("Accordion component should be rendered", () => {
   render(<Accordion items={sampleContents} />);
 });
+
 test("Accordion component should display items header", () => {
   render(<Accordion items={sampleContents} />);
   expect(screen.getByTestId("atoms-accordion")).toBeInTheDocument();
   expect(screen.getByText(/heading1/)).toBeInTheDocument();
   expect(screen.getByText(/heading2/)).toBeInTheDocument();
 });
+
 test("Accordion component should display items content", () => {
   render(<Accordion items={sampleContents} />);
   expect(screen.getByText(/content1/)).toBeInTheDocument();

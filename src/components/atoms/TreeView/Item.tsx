@@ -48,6 +48,7 @@ export default function Item<T = unknown, R extends Element = Element>({
   const wrapperRef = useRef<R>(null);
 
   const [{ isDragging }, dragRef] = useDrag<DnDItem<T>, unknown, { isDragging: boolean }>({
+    type: props.dragItemType ?? "",
     item: { type: props.dragItemType ?? "", item, index, parentItem },
     canDrag: draggable,
     collect: monitor => ({

@@ -32,14 +32,10 @@ module.exports = (env, args = {}) => {
 
   return {
     devServer: {
-      clientLogLevel: "none",
-      contentBase: path.join(__dirname, "build"),
-      // disableHostCheck: true,
       historyApiFallback: true,
       hot: true,
       open: true,
       port: 3000,
-      stats: "minimal",
       proxy: {
         "/api": {
           target: "http://localhost:8080",
@@ -48,8 +44,10 @@ module.exports = (env, args = {}) => {
           target: "http://localhost:8080",
         },
       },
-      before(app) {
-        app.get("/reearth_config.json", (_req, res) => {
+      onBeforeSetupMiddleware(devServer) {
+        if (!devServer) return;
+
+        devServer.app.get("/reearth_config.json", (_req, res) => {
           res.json({
             api: "http://localhost:8080/api",
             published: "/published.html?alias={}",

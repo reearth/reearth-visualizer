@@ -1,11 +1,15 @@
 import { interval, intervalDuring, tweenInterval } from "./raf";
 
 beforeEach(() => {
-  window.requestAnimationFrame = jest.fn(window.requestAnimationFrame);
-  window.cancelAnimationFrame = jest.fn(window.cancelAnimationFrame);
+  jest.spyOn(window, "setTimeout");
+  jest.spyOn(window, "requestAnimationFrame");
+  jest.spyOn(window, "cancelAnimationFrame");
 });
 
 afterEach(() => {
+  (window.setTimeout as any).mockRestore();
+  (window.requestAnimationFrame as any).mockRestore();
+  (window.cancelAnimationFrame as any).mockRestore();
   jest.useRealTimers();
 });
 
@@ -54,6 +58,9 @@ describe("interval", () => {
 
   test("delay", () => {
     jest.useFakeTimers();
+    jest.spyOn(window, "setTimeout");
+    jest.spyOn(window, "requestAnimationFrame");
+    jest.spyOn(window, "cancelAnimationFrame");
 
     const cb = jest.fn();
     interval(cb, 500);

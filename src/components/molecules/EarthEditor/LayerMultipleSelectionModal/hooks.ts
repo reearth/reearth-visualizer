@@ -1,4 +1,4 @@
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import { uniqBy } from "lodash-es";
 import { useCallback, useRef, useMemo, useState, useEffect } from "react";
 import { useShallowCompareEffect } from "react-use";
@@ -95,7 +95,7 @@ export default function ({
     (_src: any, dest: Item<LayerType>, srcIndex: number[], destIndex: number[]) => {
       setRightLayers(r => {
         if (dest !== r || !r.children) return r; // dest must be the root layer
-        return { ...r, children: arrayMove(r.children, srcIndex[0], destIndex[0]) };
+        return { ...r, children: arrayMoveImmutable(r.children, srcIndex[0], destIndex[0]) };
       });
     },
     [],

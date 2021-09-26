@@ -1,6 +1,6 @@
 import L, { LeafletMouseEvent } from "leaflet";
-import React, { useCallback, useRef, useState } from "react";
-import { Map, TileLayer, Marker } from "react-leaflet";
+import React, { useMemo, useCallback, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
@@ -31,15 +31,16 @@ export default function LocationBlock({
   onClick,
   onChange,
 }: Props): JSX.Element {
-  const map = useRef<Map>(null);
-
   const { location, title, fullSize } = (block?.property as Property | undefined)?.default ?? {};
   const { size: infoboxSize } = infoboxProperty?.default ?? {};
 
-  const handleChange = ({ lat, lng }: { lat: number; lng: number }) => {
-    if (isBuilt || !isEditable) return;
-    onChange?.("default", "location", { lat, lng }, "latlng");
-  };
+  const handleChange = useCallback(
+    ({ lat, lng }: { lat: number; lng: number }) => {
+      if (isBuilt || !isEditable) return;
+      onChange?.("default", "location", { lat, lng }, "latlng");
+    },
+    [isBuilt, isEditable, onChange],
+  );
 
   const [isHovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => setHovered(true), []);
@@ -52,6 +53,19 @@ export default function LocationBlock({
     [onClick],
   );
 
+  const markerRef = useRef<L.Marker<any>>(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker) {
+          handleChange(marker.getLatLng());
+        }
+      },
+    }),
+    [handleChange],
+  );
+
   return (
     <Wrapper
       fullSize={fullSize}
@@ -62,7 +76,7 @@ export default function LocationBlock({
       isEditable={isEditable}
       isSelected={isSelected}>
       {title && <Title infoboxProperty={infoboxProperty}>{title}</Title>}
-      <Map
+      <MapContainer
         style={{
           height: infoboxSize === "large" ? (title ? "236px" : "250px") : title ? "232px" : "250px",
           overflow: "hidden",
@@ -70,7 +84,6 @@ export default function LocationBlock({
         }}
         center={location ?? defaultCenter}
         zoom={13}
-        ref={map}
         onclick={(e: LeafletMouseEvent) => handleChange(e.latlng)}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -81,10 +94,11 @@ export default function LocationBlock({
             icon={icon}
             position={location}
             draggable={!isBuilt && isEditable}
-            ondragend={e => handleChange(e.target?.getLatLng())}
+            eventHandlers={eventHandlers}
+            ref={markerRef}
           />
         )}
-      </Map>
+      </MapContainer>
     </Wrapper>
   );
 }
