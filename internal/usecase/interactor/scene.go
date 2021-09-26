@@ -308,8 +308,8 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 			Section: plugin.WidgetSectionType(location.Section),
 			Area:    plugin.WidgetAreaType(location.Area),
 		})
-		if extendable && widget.Extended() {
-			widget.SetExtended(*param.Extended)
+		if e := widget.Extended(); !extendable && e {
+			widget.SetExtended(false)
 		}
 	}
 
