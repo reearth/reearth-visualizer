@@ -68,6 +68,10 @@ func (c *PluginConsumer) Consume(raw bson.Raw) error {
 }
 
 func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {
+	if plugin == nil {
+		return nil, ""
+	}
+
 	extensions := plugin.Extensions()
 	extensionsDoc := make([]PluginExtensionDocument, 0, len(extensions))
 	for _, e := range extensions {
@@ -97,6 +101,10 @@ func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {
 }
 
 func (d *PluginDocument) Model() (*plugin.Plugin, error) {
+	if d == nil {
+		return nil, nil
+	}
+
 	pid, err := id.PluginIDFrom(d.ID)
 	if err != nil {
 		return nil, err
@@ -135,6 +143,10 @@ func (d *PluginDocument) Model() (*plugin.Plugin, error) {
 }
 
 func NewWidgetLayout(l *plugin.WidgetLayout) *WidgetLayoutDocument {
+	if l == nil {
+		return nil
+	}
+
 	return &WidgetLayoutDocument{
 		Extendable: &WidgetExtendableDocument{
 			Vertically:   l.VerticallyExtendable(),
