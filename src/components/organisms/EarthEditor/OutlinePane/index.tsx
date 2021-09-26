@@ -25,6 +25,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     updateLayerVisibility,
     importLayer,
     selectScene,
+    selectWidgets,
     selectWidget,
     addLayerGroup,
     handleDrop,
@@ -49,6 +50,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onLayerSelect={selectLayer}
       onLayerGroupCreate={addLayerGroup}
       onSceneSelect={selectScene}
+      onWidgetsSelect={selectWidgets}
       onWidgetSelect={selectWidget}
       onDrop={handleDrop}
     />

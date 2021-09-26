@@ -5,17 +5,17 @@ import React from "react";
 import { Provider } from "../../context";
 import { context } from "../../storybook";
 
-import Menu, { Props } from ".";
+import Button, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Widget/Menu",
-  component: Menu,
+  title: "molecules/Visualizer/Widget/Button",
+  component: Button,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
 export const Default: Story<Props> = args => (
   <Provider value={context}>
-    <Menu {...args} />
+    <Button {...args} />
   </Provider>
 );
 

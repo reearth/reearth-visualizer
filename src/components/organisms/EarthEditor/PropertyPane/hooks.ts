@@ -27,6 +27,7 @@ import {
   useTeam,
   useSceneId,
   useSelectedBlock,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 
@@ -47,6 +48,8 @@ export default (mode: Mode) => {
   const [camera, setCamera] = useCamera();
   const [team] = useTeam();
   const [sceneId] = useSceneId();
+  const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
+    useWidgetAlignEditorActivated();
 
   const {
     loading,
@@ -314,6 +317,13 @@ export default (mode: Mode) => {
     [addWidgetMutation, sceneId, select, selected, updateWidgetMutation],
   );
 
+  const onWidgetEditorActivate = useCallback(
+    (enabled: boolean) => {
+      setWidgetAlignEditorActivated(enabled);
+    },
+    [setWidgetAlignEditorActivated],
+  );
+
   const [updatePropertyItemsMutation] = useUpdatePropertyItemsMutation();
   const updatePropertyItems = useCallback(
     async (
@@ -373,6 +383,8 @@ export default (mode: Mode) => {
     movePropertyItem,
     removePropertyItem,
     onWidgetActivate,
+    onWidgetAlignEditorActivate: onWidgetEditorActivate,
+    widgetAlignEditorActivated: widgetAlignEditorActivated,
     selectedWidget,
     updatePropertyItems,
     datasetSchemas,

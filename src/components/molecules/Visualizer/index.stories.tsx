@@ -1,6 +1,8 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useMemo, useState } from "react";
 
+import { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+
 import Component, { Primitive, Widget, Props } from ".";
 
 export default {
@@ -90,24 +92,131 @@ const primitives: Primitive[] = [
   },
 ];
 
-const widgets: Widget[] = [
-  {
-    id: "a",
-    pluginId: "reearth",
-    extensionId: "splashscreen",
-    property: {
-      overlay: {
-        overlayEnabled: true,
-        overlayDuration: 2,
-        overlayTransitionDuration: 1,
-        overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
-        overlayImageW: 648,
-        overlayImageH: 432,
-        overlayBgcolor: "#fff8",
+const widgets: { floatingWidgets: Widget[]; alignSystem?: WidgetAlignSystem } = {
+  floatingWidgets: [
+    {
+      id: "a",
+      pluginId: "reearth",
+      extensionId: "splashscreen",
+      extended: false,
+      property: {
+        overlay: {
+          overlayEnabled: true,
+          overlayDuration: 2,
+          overlayTransitionDuration: 1,
+          overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+          overlayImageW: 648,
+          overlayImageH: 432,
+          overlayBgcolor: "#fff8",
+        },
+      },
+    },
+  ],
+  alignSystem: {
+    inner: {
+      left: {
+        top: {
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+              extended: false,
+            },
+          ],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      center: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      right: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+    },
+    outer: {
+      left: {
+        top: {
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+              extended: false,
+            },
+          ],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      center: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      right: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
       },
     },
   },
-];
+};
 
 const Template: Story<Props> = args => <Component {...args} />;
 
@@ -156,16 +265,18 @@ export const Plugin: Story<Props> = args => {
   const args2 = useMemo<Props>(() => {
     return {
       ...args,
-      widgets: [
-        ...(mode === "widget"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-              },
-            ]
-          : []),
-      ],
+      widgets: {
+        floatingWidgets:
+          mode === "widget"
+            ? [
+                {
+                  id: "xxx",
+                  __REEARTH_SOURCECODE: sourceCode,
+                  extended: false,
+                } as any,
+              ]
+            : [],
+      },
       primitives: [
         ...(args.primitives ?? []),
         {

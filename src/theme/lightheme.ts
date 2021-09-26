@@ -22,8 +22,8 @@ const lightheme: Theme = {
     weak: colors.light.text.weak,
     select: colors.light.functional.select,
     link: colors.light.functional.link,
-    brandBlue: colors.brand.ReearthBlue,
-    brandRed: colors.brand.ReearthRed,
+    brandBlue: colors.brand.bg[1],
+    brandRed: colors.brand.bg[2],
   },
   dashboard: {
     bg: colors.light.bg[2],
@@ -197,6 +197,12 @@ const lightheme: Theme = {
     infoBg: colors.light.functional.notice,
     successBg: colors.light.functional.success,
     text: colors.dark.text.strong,
+  },
+  alignSystem: {
+    blueBg: colors.brand.blue.strongest50,
+    blueHighlight: colors.brand.blue.strongest,
+    orangeBg: colors.brand.orange.main50,
+    orangeHighlight: colors.brand.orange.main,
   },
 };
 

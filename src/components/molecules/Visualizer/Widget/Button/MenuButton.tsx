@@ -1,24 +1,17 @@
-import { ScreenSpaceEventType } from "cesium";
 import React, { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
-import { useClickAway } from "react-use";
-import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
 
 import Icon from "@reearth/components/atoms/Icon";
-import { fonts, styled, usePublishTheme, PublishTheme } from "@reearth/theme";
+import { fonts, styled, useTheme, usePublishTheme, PublishTheme } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
 import { useVisualizerContext } from "../../context";
 import { SceneProperty } from "../../Engine";
 
-export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
-
 export type Button = {
   id: string;
-  buttonInvisible?: boolean;
   buttonType?: "menu" | "link" | "camera";
   buttonTitle?: string;
-  buttonPosition?: Position;
   buttonStyle?: "text" | "icon" | "texticon";
   buttonIcon?: string;
   buttonLink?: string;
@@ -39,13 +32,24 @@ export type MenuItem = {
 export type Props = {
   button: Button;
   menuItems?: MenuItem[];
-  pos: Position;
+  location?: {
+    section?: "left" | "right" | "center";
+    area?: "top" | "middle" | "bottom";
+  };
+  align?: "end" | "start" | "centered";
   sceneProperty?: SceneProperty;
 };
 
-export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
+export default function ({
+  button: b,
+  menuItems,
+  location: position,
+  align,
+  sceneProperty,
+}: Props): JSX.Element {
   const ctx = useVisualizerContext();
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
+  const theme = useTheme();
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
   const flyTo = ctx?.engine?.flyTo;
 
@@ -53,14 +57,21 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
   const popperElement = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(referenceElement.current, popperElement.current, {
     placement:
-      pos === "topleft"
-        ? "bottom-start"
-        : pos === "topright"
+      position?.area === "bottom"
+        ? position?.section === "left" || (position?.section === "center" && align !== "end")
+          ? "top-start"
+          : "top-end"
+        : position?.area === "middle"
+        ? position?.section === "left"
+          ? align === "end"
+            ? "top-start"
+            : "bottom-start"
+          : align === "end"
+          ? "top-end"
+          : "bottom-end"
+        : position?.section === "right" || align === "end"
         ? "bottom-end"
-        : pos === "bottomleft"
-        ? "top-start"
-        : "top-end",
-    strategy: "fixed",
+        : "bottom-start",
     modifiers: [
       {
         name: "eventListeners",
@@ -103,17 +114,8 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
     [flyTo],
   );
 
-  const wrappperRef = useRef<HTMLDivElement>(null);
-  useClickAway(wrappperRef, () => setVisibleMenuButton(undefined));
-
   return (
-    <Wrapper ref={wrappperRef}>
-      <ScreenSpaceEventHandler>
-        <ScreenSpaceEvent
-          type={ScreenSpaceEventType.LEFT_CLICK}
-          action={() => setVisibleMenuButton(undefined)}
-        />
-      </ScreenSpaceEventHandler>
+    <Wrapper>
       <Button
         publishedTheme={publishedTheme}
         tabIndex={0}
@@ -128,12 +130,10 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
       <div
         ref={popperElement}
         style={{
-          minWidth: "200px",
-          width: "100%",
-          position: "absolute",
-          display: visibleMenuButton ? styles.popper.display : "none",
+          zIndex: theme.zIndexes.dropDown,
+          ...styles.popper,
         }}
-        {...attributes}>
+        {...attributes.popper}>
         {visibleMenuButton && (
           <MenuWrapper background={publishedTheme.background}>
             {menuItems?.map(i => (
@@ -154,8 +154,8 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
 }
 
 const Wrapper = styled.div`
-  position: relative;
   margin-left: 5px;
+
   &:first-of-type {
     margin-left: 0;
   }
@@ -168,9 +168,6 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
 
 const MenuWrapper = styled.div<{ background: string }>`
   width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   background-color: ${({ background }) => background};
   border-radius: 3px;
   overflow-wrap: break-word;

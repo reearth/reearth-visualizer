@@ -226,4 +226,10 @@ export type Theme = {
     successBg: string;
     text: string;
   };
+  alignSystem: {
+    blueBg: string;
+    orangeBg: string;
+    blueHighlight: string;
+    orangeHighlight: string;
+  };
 };

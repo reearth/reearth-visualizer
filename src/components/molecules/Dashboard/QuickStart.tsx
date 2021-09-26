@@ -186,7 +186,6 @@ const HeroBannerButton = styled(Flex)`
   &:hover: :before {
     transform: translateY(-50%);
   }
-
   @media only screen and (max-width: 1024px) {
     height: 60px;
   }

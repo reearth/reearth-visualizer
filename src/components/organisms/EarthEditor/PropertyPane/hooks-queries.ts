@@ -12,7 +12,7 @@ import { Selected } from "@reearth/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 

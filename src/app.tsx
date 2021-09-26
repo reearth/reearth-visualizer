@@ -20,7 +20,6 @@ import { Provider as Auth0Provider } from "./auth";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
-import { Provider as DndProvider } from "./util/use-dnd";
 
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
@@ -40,31 +39,29 @@ const App: React.FC = () => {
     <Auth0Provider>
       <GqlProvider>
         <ThemeProvider>
-          <DndProvider>
-            <IntlProvider>
-              <Suspense fallback={<Loading />}>
-                <NotificationBanner />
-                <StyledRouter>
-                  <TopPage path="/" />
-                  <Dashboard path="/dashboard/:teamId" />
-                  <EarthEditor path="/edit/:sceneId" />
-                  <Preview path="/edit/:sceneId/preview" />
-                  <Redirect from="/settings" to="/settings/account" />
-                  <AccountSettings path="/settings/account" />
-                  <WorkspaceList path="/settings/workspaces" />
-                  <WorkspaceSettings path="/settings/workspace/:teamId" />
-                  <SettingsProjectList path="/settings/workspace/:teamId/projects" />
-                  <AssetSettings path="/settings/workspace/:teamId/asset" />
-                  <ProjectSettings path="/settings/project/:projectId" />
-                  <PublicSettings path="/settings/project/:projectId/public" />
-                  <DatasetSettings path="/settings/project/:projectId/dataset" />
-                  <PluginSettings path="/settings/project/:projectId/plugins" />
-                  {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
-                  <NotFound default />
-                </StyledRouter>
-              </Suspense>
-            </IntlProvider>
-          </DndProvider>
+          <IntlProvider>
+            <Suspense fallback={<Loading />}>
+              <NotificationBanner />
+              <StyledRouter>
+                <TopPage path="/" />
+                <Dashboard path="/dashboard/:teamId" />
+                <EarthEditor path="/edit/:sceneId" />
+                <Preview path="/edit/:sceneId/preview" />
+                <Redirect from="/settings" to="/settings/account" />
+                <AccountSettings path="/settings/account" />
+                <WorkspaceList path="/settings/workspaces" />
+                <WorkspaceSettings path="/settings/workspace/:teamId" />
+                <SettingsProjectList path="/settings/workspace/:teamId/projects" />
+                <AssetSettings path="/settings/workspace/:teamId/asset" />
+                <ProjectSettings path="/settings/project/:projectId" />
+                <PublicSettings path="/settings/project/:projectId/public" />
+                <DatasetSettings path="/settings/project/:projectId/dataset" />
+                <PluginSettings path="/settings/project/:projectId/plugins" />
+                {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
+                <NotFound default />
+              </StyledRouter>
+            </Suspense>
+          </IntlProvider>
         </ThemeProvider>
       </GqlProvider>
     </Auth0Provider>

@@ -62,6 +62,8 @@ export type Props = {
   assets?: Asset[];
   selectedWidget?: Widget;
   onWidgetActivate?: (enabled: boolean) => Promise<void>;
+  onWidgetAlignEditorActivate?: (enabled: boolean) => void;
+  widgetAlignEditorActivated?: boolean;
 } & Pick<
   PropertyItemProps,
   | "datasetSchemas"
@@ -102,6 +104,8 @@ const PropertyPane: React.FC<Props> = ({
   onRemovePane,
   selectedWidget,
   onWidgetActivate,
+  onWidgetAlignEditorActivate,
+  widgetAlignEditorActivated,
   onChange,
   onRemove,
   onLink,
@@ -151,10 +155,15 @@ const PropertyPane: React.FC<Props> = ({
 
   return (
     <>
-      {mode === "widget" && (
+      {(mode === "widget" || mode === "widgets") && (
         <WidgetToggleButton
-          checked={!!selectedWidget?.enabled}
-          onChange={() => onWidgetActivate?.(!selectedWidget?.enabled)}
+          mode={mode}
+          checked={mode === "widgets" ? widgetAlignEditorActivated : !!selectedWidget?.enabled}
+          onChange={() =>
+            mode === "widgets"
+              ? onWidgetAlignEditorActivate?.(!widgetAlignEditorActivated)
+              : onWidgetActivate?.(!selectedWidget?.enabled)
+          }
         />
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||

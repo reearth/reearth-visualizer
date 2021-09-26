@@ -22,8 +22,8 @@ const darkTheme: Theme = {
     weak: colors.dark.text.weak,
     select: colors.dark.functional.select,
     link: colors.dark.functional.link,
-    brandBlue: colors.brand.ReearthBlue,
-    brandRed: colors.brand.ReearthRed,
+    brandBlue: colors.brand.bg[1],
+    brandRed: colors.brand.bg[2],
   },
   dashboard: {
     bg: colors.dark.bg[2],
@@ -197,6 +197,12 @@ const darkTheme: Theme = {
     infoBg: colors.dark.functional.notice,
     successBg: colors.dark.functional.success,
     text: colors.dark.text.strong,
+  },
+  alignSystem: {
+    blueBg: colors.brand.blue.strongest50,
+    blueHighlight: colors.brand.blue.strongest,
+    orangeBg: colors.brand.orange.main50,
+    orangeHighlight: colors.brand.orange.main,
   },
 };
 

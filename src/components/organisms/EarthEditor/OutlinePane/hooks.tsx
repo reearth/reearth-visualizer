@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import { Format, Layer, Widget } from "@reearth/components/molecules/EarthEditor/OutlinePane";
@@ -14,7 +14,13 @@ import {
   useGetWidgetsQuery,
   PluginExtensionType,
 } from "@reearth/gql";
-import { useSceneId, useSelected, useSelectedBlock, useRootLayerId } from "@reearth/state";
+import {
+  useSceneId,
+  useSelected,
+  useSelectedBlock,
+  useRootLayerId,
+  useWidgetAlignEditorActivated,
+} from "@reearth/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
 
@@ -46,6 +52,7 @@ export default () => {
   const [selected, select] = useSelected();
   const [, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
+  const [, toggleWidgetAlignEditor] = useWidgetAlignEditorActivated();
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },
@@ -137,6 +144,17 @@ export default () => {
     },
     [select, selectBlock],
   );
+
+  const selectWidgets = useCallback(() => {
+    select({ type: "widgets" });
+    selectBlock(undefined);
+  }, [select, selectBlock]);
+
+  useEffect(() => {
+    if (selected?.type !== "widgets") {
+      toggleWidgetAlignEditor(false);
+    }
+  }, [selected?.type, toggleWidgetAlignEditor]);
 
   const moveLayer = useCallback(
     async (
@@ -258,6 +276,7 @@ export default () => {
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,
+    selectWidgets,
     selectWidget,
     moveLayer,
     renameLayer,

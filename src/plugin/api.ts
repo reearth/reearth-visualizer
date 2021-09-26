@@ -98,7 +98,16 @@ export type Widget = {
   pluginId?: string;
   extensionId?: string;
   property?: any;
+  extended: boolean;
 };
+
+export type WidgetLocation = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+};
+
+export type WidgetAlignment = "start" | "centered" | "end";
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
 export type UI = {

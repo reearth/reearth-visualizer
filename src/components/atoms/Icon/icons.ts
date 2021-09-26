@@ -14,6 +14,7 @@ import PrimTileset from "./Icons/primTileset.svg";
 // Built-in Widgets
 import Widgets from "./Icons/widgetsIcon.svg";
 import WidgetMenu from "./Icons/widgetMenu.svg";
+import WidgetButton from "./Icons/widgetButton.svg";
 import WidgetStory from "./Icons/widgetStorytelling.svg";
 import StorytellingMenu from "./Icons/storytellingMenu.svg";
 import WidgetSplash from "./Icons/widgetSplashscreen.svg";
@@ -134,7 +135,9 @@ export default {
   model: PrimModel,
   tileset: PrimTileset,
   widget: Widgets,
+  widgets: Widgets,
   menu: WidgetMenu,
+  button: WidgetButton,
   storytelling: WidgetStory,
   storytellingMenu: StorytellingMenu,
   splashscreen: WidgetSplash,

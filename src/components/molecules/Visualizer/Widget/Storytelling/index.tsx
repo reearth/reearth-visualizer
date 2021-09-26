@@ -4,7 +4,7 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 
@@ -25,7 +25,7 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+const Storytelling = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -50,8 +50,13 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
 
   return stories?.length > 0 ? (
     <>
-      <Menu publishedTheme={publishedTheme} ref={wrapperRef} menuOpen={menuOpen}>
-        {stories?.map((story, i) => (
+      <Menu
+        publishedTheme={publishedTheme}
+        ref={wrapperRef}
+        menuOpen={menuOpen}
+        area={widgetLayout?.location?.area}
+        align={widgetLayout?.align}>
+        {stories.map((story, i) => (
           <MenuItem
             publishedTheme={publishedTheme}
             key={story.layer}
@@ -85,7 +90,10 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper publishedTheme={publishedTheme}>
+      <Wrapper
+        publishedTheme={publishedTheme}
+        extended={widget?.extended}
+        floating={widgetLayout?.floating}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}
@@ -121,31 +129,35 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   ) : null;
 };
 
-const Wrapper = styled.div<{ publishedTheme: PublishTheme }>`
+const Wrapper = styled.div<{
+  publishedTheme: PublishTheme;
+  extended?: boolean;
+  floating?: boolean;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   color: ${({ publishedTheme }) => publishedTheme.mainText};
-  z-index: ${props => props.theme.zIndexes.infoBox};
-  position: absolute;
-  bottom: 80px;
-  left: 80px;
   display: flex;
   align-items: stretch;
   border-radius: ${metricsSizes["s"]}px;
   overflow: hidden;
   height: 80px;
-  width: 500px;
+  width: ${({ extended }) => (extended ? "100%" : "500px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
 
-  @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 30px;
-  }
+  ${({ floating }) =>
+    floating
+      ? css`
+          position: absolute;
+          bottom: 80px;
+          left: 80px;
+        `
+      : null}
 
   @media (max-width: 560px) {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
+    display: flex;
+    width: 90vw;
+    margin: 0 auto;
     height: 56px;
   }
 `;
@@ -210,12 +222,15 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme
   color: ${({ publishedTheme }) => publishedTheme.mainIcon};
 `;
 
-const Menu = styled.div<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
+const Menu = styled.div<{
+  menuOpen?: boolean;
+  publishedTheme: PublishTheme;
+  area?: string;
+  align?: string;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
-  bottom: 168px;
-  left: 80px;
   width: 324px;
   max-height: 500px;
   overflow: auto;
@@ -223,16 +238,13 @@ const Menu = styled.div<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-
-  @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 118px;
-  }
+  transform: translate(
+    0,
+    ${({ area, align }) =>
+      area === "top" || (area === "middle" && align === "start") ? "55%" : "-105%"}
+  );
 
   @media (max-width: 560px) {
-    right: 16px;
-    left: 16px;
-    bottom: 80px;
     border: 1px solid ${props => props.theme.main.text};
   }
 

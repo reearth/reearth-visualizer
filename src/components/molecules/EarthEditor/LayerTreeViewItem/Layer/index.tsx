@@ -307,11 +307,9 @@ const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
 
 const LayerCount = styled(Text)<{ selected?: boolean }>`
   margin-right: 10px;
-
   &::before {
     content: "(";
   }
-
   &::after {
     content: ")";
   }

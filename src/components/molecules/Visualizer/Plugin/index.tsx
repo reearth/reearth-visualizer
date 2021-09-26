@@ -1,11 +1,17 @@
 import React, { CSSProperties } from "react";
 
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
-import { Primitive, Widget, Block } from "@reearth/plugin";
+import { Primitive, Widget, Block, WidgetLocation, WidgetAlignment } from "@reearth/plugin";
 
 import useHooks from "./hooks";
 
-export type { Primitive, Block, Widget } from "@reearth/plugin";
+export type { Primitive, Block, Widget, WidgetLocation, WidgetAlignment } from "@reearth/plugin";
+
+export type WidgetLayout = {
+  floating: boolean;
+  location?: WidgetLocation;
+  align?: WidgetAlignment;
+};
 
 export type Props = {
   className?: string;
@@ -22,6 +28,7 @@ export type Props = {
   primitive?: Primitive;
   widget?: Widget;
   block?: Block;
+  widgetLayout?: WidgetLayout; // TODO
 };
 
 export default function Plugin({
@@ -70,6 +77,4 @@ export default function Plugin({
       onMessage={handleMessage}
     />
   ) : null;
-
-  return null;
 }

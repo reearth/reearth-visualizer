@@ -24,7 +24,7 @@ import PropertyField, {
 import GroupWrapper from "../PropertyGroup";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
 
 export type {
   Dataset,

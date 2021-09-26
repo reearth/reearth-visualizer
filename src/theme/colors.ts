@@ -154,8 +154,23 @@ const colors = {
     transparentBlack: "rgba(0,0,0,0.7)",
   },
   brand: {
-    ReearthBlue: "#1e2086",
-    ReearthRed: "#df3013",
+    blue: {
+      weak: "#161650" /* Note used, not tested */,
+      main: "#212288" /* Note used, not tested */,
+      strong: "#3B3CD0" /* Note used, not tested */,
+      strongest: "#4770FF",
+      strongest50: "#4770FF80",
+    },
+    orange: {
+      weak: "#812702" /* Note used, not tested */,
+      main: "#E95518",
+      main50: "#E9551880",
+      strong: "#F57C4B" /* Note used, not tested */,
+    },
+    bg: {
+      1: "#1e2086",
+      2: "#df3013",
+    },
   },
 };
 

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",
@@ -7,6 +8,7 @@
       "esnext",
       "dom"
     ],
+    "noEmit": true,
     "module": "esnext",
     "moduleResolution": "node",
     "noImplicitReturns": true,

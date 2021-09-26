@@ -1,6 +1,6 @@
 import React, { ComponentType } from "react";
 
-import { Widget } from "../Plugin";
+import { Widget, WidgetLayout } from "../Plugin";
 
 // import Plugins, { Widget } from "../Plugin";
 import builtin from "./builtin";
@@ -14,6 +14,7 @@ export type Props<PP = any, SP = any> = {
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
+  widgetLayout?: WidgetLayout;
 };
 
 export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
@@ -39,5 +40,6 @@ export default function WidgetComponent<PP = any, SP = any>({
   //   property={props.pluginProperty}
   //   sceneProperty={props.sceneProperty}
   //   widget={props.widget}
+  //   widgetLayout={props.layout}
   // />
 }

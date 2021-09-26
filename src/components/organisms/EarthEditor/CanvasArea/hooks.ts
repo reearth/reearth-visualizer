@@ -1,6 +1,10 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import {
+  Location,
+  Alignment,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
@@ -8,6 +12,12 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
+  useUpdateWidgetMutation,
+  useUpdateWidgetAlignSystemMutation,
+  WidgetZoneType,
+  WidgetSectionType,
+  WidgetAreaType,
+  WidgetAreaAlign,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -15,6 +25,7 @@ import {
   useCamera,
   useSelected,
   useSelectedBlock,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
 
@@ -26,6 +37,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [widgetAlignEditor] = useWidgetAlignEditorActivated();
 
   const selectLayer = useCallback(
     (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
@@ -105,6 +117,7 @@ export default (isBuilt?: boolean) => {
     () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
     [layerData, selected],
   );
+
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
 
@@ -140,6 +153,52 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const onWidgetUpdate = useCallback(
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      if (!sceneId) return;
+
+      await updateWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId: id,
+          enabled: true,
+          location: update.location
+            ? {
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
+            : undefined,
+          extended: update.extended,
+          index: update.index,
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, updateWidgetMutation],
+  );
+
+  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const onWidgetAlignSystemUpdate = useCallback(
+    async (location: Location, align: Alignment) => {
+      if (!sceneId) return;
+
+      updateWidgetAlignSystemMutation({
+        variables: {
+          sceneId,
+          location: {
+            zone: location.zone.toUpperCase() as WidgetZoneType,
+            section: location.section.toUpperCase() as WidgetSectionType,
+            area: location.area.toUpperCase() as WidgetAreaType,
+          },
+          align: align?.toUpperCase() as WidgetAreaAlign,
+        },
+      });
+    },
+    [sceneId, updateWidgetAlignSystemMutation],
+  );
+
   return {
     sceneId,
     rootLayerId,
@@ -153,12 +212,15 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     camera,
     ready: !isBuilt || (!!layerData && !!widgetData),
+    widgetAlignEditor,
     selectLayer,
     selectBlock,
     onBlockChange,
     onBlockMove,
     onBlockRemove,
     onBlockInsert,
+    onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,

@@ -1,6 +1,11 @@
 import { gql } from "@apollo/client";
 
-import { propertyFragment, infoboxFragment, layerFragment } from "@reearth/gql/fragments";
+import {
+  propertyFragment,
+  infoboxFragment,
+  layerFragment,
+  widgetAlignSysFragment,
+} from "@reearth/gql/fragments";
 
 // Mutations
 
@@ -420,13 +425,30 @@ export const REMOVE_WIDGET = gql`
 `;
 
 export const UPDATE_WIDGET = gql`
-  mutation updateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean) {
-    updateWidget(input: { sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled }) {
+  mutation updateWidget(
+    $sceneId: ID!
+    $widgetId: ID!
+    $enabled: Boolean
+    $location: WidgetLocationInput
+    $extended: Boolean
+    $index: Int
+  ) {
+    updateWidget(
+      input: {
+        sceneId: $sceneId
+        widgetId: $widgetId
+        enabled: $enabled
+        location: $location
+        extended: $extended
+        index: $index
+      }
+    ) {
       scene {
         id
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           propertyId
@@ -434,4 +456,6 @@ export const UPDATE_WIDGET = gql`
       }
     }
   }
+
+  ${widgetAlignSysFragment}
 `;

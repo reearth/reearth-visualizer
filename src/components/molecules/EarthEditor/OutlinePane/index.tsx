@@ -24,13 +24,14 @@ export type Props = {
   layers?: Layer[];
   widgets?: Widget[];
   sceneDescription?: string;
-  selectedType?: "scene" | "layer" | "widget";
+  selectedType?: "scene" | "layer" | "widgets" | "widget";
   loading?: boolean;
   onLayerRename?: (id: string, name: string) => void;
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
   onLayerRemove?: (id: string) => void;
   onLayerSelect?: (layerId: string, ...i: number[]) => void;
   onSceneSelect?: () => void;
+  onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onLayerMove?: (
     layer: string,
@@ -58,6 +59,7 @@ const OutlinePane: React.FC<Props> = ({
   onLayerRemove,
   onLayerSelect,
   onSceneSelect,
+  onWidgetsSelect,
   onWidgetSelect,
   onLayerMove,
   onLayerImport,
@@ -86,6 +88,7 @@ const OutlinePane: React.FC<Props> = ({
     onLayerImport,
     onLayerRemove,
     onSceneSelect,
+    onWidgetsSelect,
     onWidgetSelect,
     onLayerMove,
     onLayerRename,
