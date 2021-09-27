@@ -14,7 +14,7 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Element | null => {
+const Menu = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
 
   return button ? (
@@ -23,8 +23,8 @@ const Menu = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Element | nul
         sceneProperty={sceneProperty}
         key={button?.id}
         button={button}
-        location={widgetLayout?.location}
-        align={widgetLayout?.align}
+        location={widget?.layout?.location}
+        align={widget?.layout?.align}
         menuItems={menuItems}
       />
     </Wrapper>
