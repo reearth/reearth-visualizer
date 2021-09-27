@@ -58,7 +58,7 @@ export default function WidgetAreaComponent({
     [onReorder],
   );
 
-  return (
+  return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea<Location>
       key={area}
       vertical={area === "middle"}
@@ -117,5 +117,5 @@ export default function WidgetAreaComponent({
         );
       })}
     </GridArea>
-  );
+  ) : null;
 }
