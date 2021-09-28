@@ -14,6 +14,7 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+import webpackPreprocessor from "@cypress/webpack-preprocessor";
 import dotenvPlugin from "cypress-dotenv";
 
 const pluginConfig: Cypress.PluginConfig = (on, config) => {
@@ -34,6 +35,27 @@ const pluginConfig: Cypress.PluginConfig = (on, config) => {
       return null;
     },
   });
+
+  on(
+    "file:preprocessor",
+    webpackPreprocessor({
+      webpackOptions: {
+        mode: "development",
+        module: {
+          rules: [
+            {
+              test: /\.[jt]sx?$/,
+              exclude: /node_modules/,
+              use: "babel-loader",
+            },
+          ],
+        },
+        resolve: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
+      },
+    }),
+  );
 
   return config;
 };
