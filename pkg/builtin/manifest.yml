@@ -1,11 +1,11 @@
 id: reearth
 system: true
-title: Re:Earth Official Plugin
+name: Re:Earth Official Plugin
 description: Official Plugin
 author: Re:Earth
 extensions:
   - id: cesium
-    title: Cesium
+    name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
     visualizer: cesium
     type: visualizer
@@ -229,8 +229,7 @@ extensions:
               title: Tracking ID
               description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
   - id: infobox
-    title: Infobox
-    visualizer: cesium
+    name: Infobox
     type: infobox
     description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
     schema:
@@ -260,7 +259,7 @@ extensions:
   - id: marker
     visualizer: cesium
     type: primitive
-    title: Marker
+    name: Marker
     description: A standard map marker.
     schema:
       groups:
@@ -506,7 +505,7 @@ extensions:
   - id: polyline
     visualizer: cesium
     type: primitive
-    title: Polyline
+    name: Polyline
     description: Polyline primitive
     schema:
       groups:
@@ -529,7 +528,7 @@ extensions:
   - id: polygon
     visualizer: cesium
     type: primitive
-    title: Polygon
+    name: Polygon
     description: Polygon primitive
     schema:
       groups:
@@ -575,7 +574,7 @@ extensions:
   - id: rect
     visualizer: cesium
     type: primitive
-    title: Rectangle
+    name: Rectangle
     description: Rectangle primitive
     schema:
       groups:
@@ -623,7 +622,7 @@ extensions:
   - id: photooverlay
     visualizer: cesium
     type: primitive
-    title: Photo overlay
+    name: Photo overlay
     description: An Icon marker that allows you to set a photo that will appear after reaching its location.
     schema:
       groups:
@@ -749,7 +748,7 @@ extensions:
   # - id: rect
   #   visualizer: cesium
   #   type: primitive
-  #   title: Rectangle
+  #   name: Rectangle
   #   description: A rectangle
   #   schema:
   #     groups:
@@ -830,7 +829,7 @@ extensions:
   - id: ellipsoid
     visualizer: cesium
     type: primitive
-    title: Sphere
+    name: Sphere
     description: A 3D ellipsoid
     schema:
       groups:
@@ -889,7 +888,7 @@ extensions:
   - id: model
     visualizer: cesium
     type: primitive
-    title: 3D Model
+    name: 3D Model
     description: A 3D model
     schema:
       groups:
@@ -1031,7 +1030,7 @@ extensions:
   - id: tileset
     visualizer: cesium
     type: primitive
-    title: 3D Tiles
+    name: 3D Tiles
     description: 3D tiles in "3D Tiles" format
     schema:
       groups:
@@ -1063,7 +1062,7 @@ extensions:
   - id: resource
     visualizer: cesium
     type: primitive
-    title: File
+    name: File
     description: Import your own primitives to be used instead of Re:Earth's built in ones.
     schema:
       groups:
@@ -1088,9 +1087,8 @@ extensions:
                 - key: czml
                   label: CZML
   - id: textblock
-    visualizer: cesium
     type: block
-    title: Text
+    name: Text
     description: Text block
     schema:
       groups:
@@ -1111,9 +1109,8 @@ extensions:
               type: typography
               title: Font
   - id: imageblock
-    visualizer: cesium
     type: block
-    title: Image
+    name: Image
     description: Image block
     schema:
       groups:
@@ -1166,9 +1163,8 @@ extensions:
           schemaGroupId: default
           fieldId: image
   - id: videoblock
-    visualizer: cesium
     type: block
-    title: Video
+    name: Video
     description: Video block
     schema:
       groups:
@@ -1186,9 +1182,8 @@ extensions:
               type: bool
               title: Full size
   - id: locationblock
-    visualizer: cesium
     type: block
-    title: Location
+    name: Location
     description: Location block
     schema:
       groups:
@@ -1205,9 +1200,8 @@ extensions:
               type: bool
               title: Full size
   - id: dlblock
-    visualizer: cesium
     type: block
-    title: Table
+    name: Table
     description: Table block
     schema:
       groups:
@@ -1251,14 +1245,12 @@ extensions:
                 type: string
                 value: number
   # - id: navigator
-  #   visualizer: cesium
   #   type: widget
   #   title: Navigator
   #   description: Navigator widget
   - id: menu
-    visualizer: cesium
     type: widget
-    title: Menu (legacy)
+    name: Menu (legacy)
     description: Menu widgets
     widgetLayout:
       floating: true
@@ -1371,9 +1363,8 @@ extensions:
                 type: string
                 value: camera
   - id: button
-    visualizer: cesium
     type: widget
-    title: Button
+    name: Button
     description: Button widget
     widgetLayout:
       defaultLocation:
@@ -1476,9 +1467,8 @@ extensions:
                 type: string
                 value: camera
   - id: splashscreen
-    visualizer: cesium
     type: widget
-    title: Splash screen
+    name: Splash screen
     description: A unique start screen that will display on load of your archive(ex. display the archive's title).
     widgetLayout:
       floating: true
@@ -1539,9 +1529,8 @@ extensions:
               suffix: s
               min: 0
   - id: storytelling
-    visualizer: cesium
     type: widget
-    title: Storytelling
+    name: Storytelling
     description: SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.
     widgetLayout:
       extendable:

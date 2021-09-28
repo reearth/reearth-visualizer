@@ -1,8 +1,8 @@
-title: Re:Earth公式プラグイン
+name: Re:Earth公式プラグイン
 description: 公式プラグイン
 extensions:
   cesium:
-    title: Cesium
+    name: Cesium
     description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
     propertySchema:
       default:
@@ -120,7 +120,7 @@ extensions:
             title: 背景色
             description: 背景色を設定します。
   infobox:
-    title: インフォボックス
+    name: インフォボックス
     description: 閲覧者が地図上のレイヤーをクリックした時に表示されるボックスです。テキストや画像、動画などのコンテンツを表示することができます。
     propertySchema:
       default:
@@ -138,7 +138,7 @@ extensions:
           typography:
             title: フォント
   marker:
-    title: マーカー
+    name: マーカー
     description: マーカーにはテキストや画像を紐づけることができ、閲覧者はマーカーをクリックすることでコンテンツを見ることができます。
     propertySchema:
       default:
@@ -224,7 +224,7 @@ extensions:
           extrude:
             title: 地面から線を伸ばす
   polyline:
-    title: 直線
+    name: 直線
     propertySchema:
       default:
         title: 直線
@@ -236,7 +236,7 @@ extensions:
           strokeWidth:
             title: 線幅
   polygon:
-    title: ポリゴン
+    name: ポリゴン
     propertySchema:
       default:
         title: ポリゴン
@@ -254,7 +254,7 @@ extensions:
           strokeWidth:
             title: 線幅
   rect:
-    title: 長方形
+    name: 長方形
     propertySchema:
       default:
         title: 長方形
@@ -294,7 +294,7 @@ extensions:
               cast_only: 影を落とすだけ
               receive_only: 影を落とされるだけ
   photooverlay:
-    title: フォトオーバーレイ
+    name: フォトオーバーレイ
     description: フォトオーバーレイを選択すると、設定した画像をモーダル形式で画面上に被せて表示することができます。
     propertySchema:
       default:
@@ -351,7 +351,7 @@ extensions:
           photoOverlayDescription:
             title: オーバレイ画像の説明
   ellipsoid:
-    title: 球体
+    name: 球体
     description: 立体的な球体を地図上に表示できます。
     propertySchema:
       default:
@@ -381,7 +381,7 @@ extensions:
               cast_only: 影を落とすだけ
               receive_only: 影を落とされるだけ
   model:
-    title: 3Dモデル
+    name: 3Dモデル
     description: glTF形式の3Dモデルを読み込んで表示することができます。地図上に追加後、URLを指定することで読み込まれます。
     propertySchema:
       default:
@@ -448,7 +448,7 @@ extensions:
           silhouetteSize:
             title: シルエットサイズ
   tileset:
-    title: 3Dタイル
+    name: 3Dタイル
     description: 3D Tiles形式の3Dタイルを表示することができます。
     propertySchema:
       default:
@@ -469,7 +469,7 @@ extensions:
               cast_only: 影を落とすだけ
               receive_only: 影を落とされるだけ
   resource:
-    title: ファイル
+    name: ファイル
     description: 外部からデータをインポートすることができます。地図上に追加後、URLを指定することで外部データが読み込まれます。
     propertySchema:
       default:
@@ -483,7 +483,7 @@ extensions:
               geojson: GeoJSON / TopoJSON
               czml: CZML
   textblock:
-    title: テキスト
+    name: テキスト
     description: Text block
     propertySchema:
       default:
@@ -498,7 +498,7 @@ extensions:
           typography:
             title: フォント
   imageblock:
-    title: 画像
+    name: 画像
     description: 画像ブロック
     propertySchema:
       default:
@@ -528,7 +528,7 @@ extensions:
               center: 中央
               bottom: 下
   videoblock:
-    title: 動画
+    name: 動画
     description: 動画ブロック
     propertySchema:
       default:
@@ -541,7 +541,7 @@ extensions:
           fullSize:
             title: フルサイズ
   locationblock:
-    title: 位置情報
+    name: 位置情報
     description: 位置情報ブロック
     propertySchema:
       default:
@@ -554,7 +554,7 @@ extensions:
           fullSize:
             title: フルサイズ
   dlblock:
-    title: 表
+    name: 表
     description: 表ブロック
     propertySchema:
       default:
@@ -579,7 +579,7 @@ extensions:
           item_datanum:
             title: データ(数字)
   menu:
-    title: メニュー (廃止予定)
+    name: メニュー (廃止予定)
     description: |
       シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
       ・リンク：ボタン自体が外部サイトへのリンクになります。
@@ -640,7 +640,7 @@ extensions:
           menuCamera:
             title: カメラ
   button:
-    title: ボタン
+    name: ボタン
     description: |
       シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
       　・リンク：ボタン自体が外部サイトへのリンクになります。
@@ -692,7 +692,7 @@ extensions:
           menuCamera:
             title: カメラ
   splashscreen:
-    title: スプラッシュスクリーン
+    name: スプラッシュスクリーン
     description: ページロード後、最初に表示される演出を設定できます。例えば、プロジェクトのタイトルを閲覧者に見せたり、カメラを移動させることができます。
     propertySchema:
       overlay:
@@ -724,7 +724,7 @@ extensions:
           cameraDelay:
             title: カメラ待機時間
   storytelling:
-    title: ストーリーテリング
+    name: ストーリーテリング
     description: ストーリーテリング機能を使えば、データ間の繋がりや時系列をもとに、順番に資料を閲覧してもらうことが可能です。使用するには、右パネルから地球上のレイヤーに順番を付与します。
     propertySchema:
       default:

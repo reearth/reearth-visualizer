@@ -42,13 +42,17 @@ func (i *Plugin) Upload(ctx context.Context, r io.Reader, sid id.SceneID, operat
 
 	p, err := pluginpack.PackageFromZip(r, &sid, pluginPackageSizeLimit)
 	if err != nil {
-		return nil, nil, interfaces.ErrInvalidPluginPackage
+		return nil, nil, &rerror.Error{
+			Label:    interfaces.ErrInvalidPluginPackage,
+			Err:      err,
+			Separate: true,
+		}
 	}
 
 	for {
 		f, err := p.Files.Next()
 		if err != nil {
-			return nil, nil, interfaces.ErrInvalidPluginPackage
+			return nil, nil, rerror.ErrInternalBy(err)
 		}
 		if f == nil {
 			break
@@ -60,15 +64,15 @@ func (i *Plugin) Upload(ctx context.Context, r io.Reader, sid id.SceneID, operat
 
 	if ps := p.Manifest.PropertySchemas(); len(ps) > 0 {
 		if err := i.propertySchemaRepo.SaveAll(ctx, ps); err != nil {
-			return nil, nil, err
+			return nil, nil, rerror.ErrInternalBy(err)
 		}
 	}
 	if err := i.pluginRepo.Save(ctx, p.Manifest.Plugin); err != nil {
-		return nil, nil, err
+		return nil, nil, rerror.ErrInternalBy(err)
 	}
 
 	if err := i.installPlugin(ctx, p, s); err != nil {
-		return nil, nil, err
+		return nil, nil, rerror.ErrInternalBy(err)
 	}
 
 	tx.Commit()

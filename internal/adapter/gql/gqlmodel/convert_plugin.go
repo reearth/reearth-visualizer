@@ -17,7 +17,7 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 			ExtensionID:              pe.ID(),
 			PluginID:                 pid,
 			Type:                     ToPluginExtensionType(pe.Type()),
-			Visualizer:               ToVisualizer(pe.Visualizer()),
+			Visualizer:               ToVisualizerRef(pe.Visualizer()),
 			Name:                     pe.Name().String(),
 			Description:              pe.Description().String(),
 			Icon:                     pe.Icon(),

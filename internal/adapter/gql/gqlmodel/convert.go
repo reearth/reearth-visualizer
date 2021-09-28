@@ -51,6 +51,14 @@ func ToVisualizer(v visualizer.Visualizer) Visualizer {
 	return Visualizer("")
 }
 
+func ToVisualizerRef(v visualizer.Visualizer) *Visualizer {
+	if v == "" {
+		return nil
+	}
+	v2 := ToVisualizer(v)
+	return &v2
+}
+
 func FromFile(f *graphql.Upload) *file.File {
 	if f == nil {
 		return nil

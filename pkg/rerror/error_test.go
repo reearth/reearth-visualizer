@@ -45,6 +45,9 @@ func TestError(t *testing.T) {
 	var nilerr *Error
 	assert.Equal(t, "", nilerr.Error())
 	assert.Nil(t, nilerr.Unwrap())
+
+	err6 := &Error{Label: errors.New("d"), Err: &Error{Label: errors.New("e"), Err: &Error{Label: errors.New("f"), Err: errors.New("g")}}, Separate: true}
+	assert.Equal(t, "d: e.f: g", err6.Error())
 }
 
 func TestFrom(t *testing.T) {
@@ -53,6 +56,15 @@ func TestFrom(t *testing.T) {
 	assert.Equal(t, "label", err.Label.Error())
 	assert.Same(t, werr, err.Err)
 	assert.False(t, err.Hidden)
+}
+
+func TestFromSep(t *testing.T) {
+	werr := &Error{Label: errors.New("wrapped"), Err: errors.New("wrapped2")}
+	err := FromSep("label", werr)
+	assert.Equal(t, "label", err.Label.Error())
+	assert.Same(t, werr, err.Err)
+	assert.False(t, err.Hidden)
+	assert.True(t, err.Separate)
 }
 
 func TestGet(t *testing.T) {
@@ -124,16 +136,18 @@ func TestWith(t *testing.T) {
 	label := errors.New("label")
 	err := With(label)(werr)
 	assert.Equal(t, &Error{
-		Label: label,
-		Err:   werr,
+		Label:    label,
+		Err:      werr,
+		Separate: true,
 	}, err)
 	assert.Same(t, label, err.Label)
 	assert.Same(t, werr, err.Err)
 
 	err = With(label)(nil)
 	assert.Equal(t, &Error{
-		Label: label,
-		Err:   nil,
+		Label:    label,
+		Err:      nil,
+		Separate: true,
 	}, err)
 	assert.Same(t, label, err.Label)
 	assert.Nil(t, err.Err)

@@ -2,7 +2,7 @@ package manifest
 
 type TranslationExtension struct {
 	Description    *string                   `json:"description,omitempty"`
-	Title          *string                   `json:"title,omitempty"`
+	Name           *string                   `json:"name,omitempty"`
 	PropertySchema TranslationPropertySchema `json:"propertySchema,omitempty"`
 }
 
@@ -23,6 +23,6 @@ type TranslationPropertySchemaGroup struct {
 type TranslationRoot struct {
 	Description *string                         `json:"description,omitempty"`
 	Extensions  map[string]TranslationExtension `json:"extensions,omitempty"`
-	Title       *string                         `json:"title,omitempty"`
+	Name        *string                         `json:"name,omitempty"`
 	Schema      TranslationPropertySchema       `json:"schema,omitempty"`
 }

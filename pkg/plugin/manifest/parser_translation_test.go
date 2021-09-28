@@ -16,7 +16,7 @@ var expected = &TranslationRoot{
 	Description: sr("test plugin desc"),
 	Extensions: map[string]TranslationExtension{
 		"test_ext": {
-			Title: sr("test ext name"),
+			Name: sr("test ext name"),
 			PropertySchema: TranslationPropertySchema{
 				"test_ps": TranslationPropertySchemaGroup{
 					Description: sr("test ps desc"),
@@ -33,7 +33,7 @@ var expected = &TranslationRoot{
 			},
 		},
 	},
-	Title:  sr("test plugin name"),
+	Name:   sr("test plugin name"),
 	Schema: nil,
 }
 

@@ -5956,7 +5956,7 @@ type PluginExtension {
   description: String!
   icon: String!
   widgetLayout: WidgetLayout
-  visualizer: Visualizer!
+  visualizer: Visualizer
   propertySchemaId: PropertySchemaID!
   allTranslatedName: TranslatedString
   allTranslatedDescription: TranslatedString
@@ -19238,14 +19238,11 @@ func (ec *executionContext) _PluginExtension_visualizer(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(gqlmodel.Visualizer)
+	res := resTmp.(*gqlmodel.Visualizer)
 	fc.Result = res
-	return ec.marshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
+	return ec.marshalOVisualizer2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PluginExtension_propertySchemaId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PluginExtension) (ret graphql.Marshaler) {
@@ -34501,9 +34498,6 @@ func (ec *executionContext) _PluginExtension(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._PluginExtension_widgetLayout(ctx, field, obj)
 		case "visualizer":
 			out.Values[i] = ec._PluginExtension_visualizer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "propertySchemaId":
 			out.Values[i] = ec._PluginExtension_propertySchemaId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -41559,6 +41553,22 @@ func (ec *executionContext) unmarshalOValueType2ᚖgithubᚗcomᚋreearthᚋreea
 }
 
 func (ec *executionContext) marshalOValueType2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐValueType(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ValueType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOVisualizer2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx context.Context, v interface{}) (*gqlmodel.Visualizer, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.Visualizer)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOVisualizer2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Visualizer) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

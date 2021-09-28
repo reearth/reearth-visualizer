@@ -288,7 +288,7 @@
         "id": {
           "$ref": "#/definitions/id"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {
@@ -304,7 +304,10 @@
           ]
         },
         "visualizer": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "enum": [
             "cesium"
           ]
@@ -365,8 +368,7 @@
       },
       "required": [
         "id",
-        "title",
-        "visualizer",
+        "name",
         "type"
       ],
       "additionalProperties": false
@@ -378,7 +380,7 @@
         "id": {
           "$ref": "#/definitions/id"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "system": {
@@ -423,7 +425,7 @@
       },
       "required": [
         "id",
-        "title"
+        "name"
       ],
       "additionalProperties": false
     }

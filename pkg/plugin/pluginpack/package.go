@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 )
 
 const manfiestFilePath = "reearth.yml"
@@ -22,18 +23,18 @@ type Package struct {
 func PackageFromZip(r io.Reader, scene *id.SceneID, sizeLimit int64) (*Package, error) {
 	b, err := io.ReadAll(io.LimitReader(r, sizeLimit))
 	if err != nil {
-		return nil, err
+		return nil, rerror.From("zip read error", err)
 	}
 
 	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
 	if err != nil {
-		return nil, err
+		return nil, rerror.From("zip open error", err)
 	}
 
 	basePath := file.ZipBasePath(zr)
 	f, err := zr.Open(path.Join(basePath, manfiestFilePath))
 	if err != nil {
-		return nil, err
+		return nil, rerror.From("manifest open error", err)
 	}
 	defer func() {
 		_ = f.Close()
@@ -41,7 +42,7 @@ func PackageFromZip(r io.Reader, scene *id.SceneID, sizeLimit int64) (*Package, 
 
 	m, err := manifest.Parse(f, scene)
 	if err != nil {
-		return nil, err
+		return nil, rerror.From("invalid manifest", err)
 	}
 
 	return &Package{

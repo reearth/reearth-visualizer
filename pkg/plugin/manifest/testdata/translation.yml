@@ -1,24 +1,24 @@
 {
-  'description': 'test plugin desc',
-  'title': 'test plugin name',
-  'extensions':
+  "description": "test plugin desc",
+  "name": "test plugin name",
+  "extensions":
     {
-      'test_ext':
+      "test_ext":
         {
-          'title': 'test ext name',
-          'propertySchema':
+          "name": "test ext name",
+          "propertySchema":
             {
-              'test_ps':
+              "test_ps":
                 {
-                  'description': 'test ps desc',
-                  'title': 'test ps title',
-                  'fields':
+                  "description": "test ps desc",
+                  "title": "test ps title",
+                  "fields":
                     {
-                      'test_field':
+                      "test_field":
                         {
-                          'title': 'test field name',
-                          'description': 'test field desc',
-                          'choices': { 'test_key': 'test choice value' },
+                          "title": "test field name",
+                          "description": "test field desc",
+                          "choices": { "test_key": "test choice value" },
                         },
                     },
                 },

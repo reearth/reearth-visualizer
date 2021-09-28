@@ -1,5 +1,5 @@
 id: aaa
-title: bbb
+name: bbb
 version: 1.1.1
 extensions:
   - id: hoge

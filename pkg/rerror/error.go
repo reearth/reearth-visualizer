@@ -45,14 +45,20 @@ func (e *ErrInternal) Unwrap() error {
 // This is useful for displaying a hierarchical error message cleanly and searching by label later to retrieve a wrapped error.
 // Currently, Go standard error library does not support these use cases. That's why we need our own error type.
 type Error struct {
-	Label  error
-	Err    error
-	Hidden bool
+	Label    error
+	Err      error
+	Hidden   bool
+	Separate bool
 }
 
 // From creates an Error with string label.
 func From(label string, err error) *Error {
 	return &Error{Label: errors.New(label), Err: err}
+}
+
+// From creates an Error with string label, but separated from wrapped error message when the error is printed.
+func FromSep(label string, err error) *Error {
+	return &Error{Label: errors.New(label), Err: err, Separate: true}
 }
 
 // Error implements error interface.
@@ -63,8 +69,10 @@ func (e *Error) Error() string {
 	if e.Hidden {
 		return e.Label.Error()
 	}
-	if e2, ok := e.Err.(*Error); ok {
-		return fmt.Sprintf("%s.%s", e.Label, e2)
+	if !e.Separate {
+		if e2, ok := e.Err.(*Error); ok {
+			return fmt.Sprintf("%s.%s", e.Label, e2)
+		}
 	}
 	return fmt.Sprintf("%s: %s", e.Label, e.Err)
 }
@@ -126,8 +134,9 @@ func As(err error, label error) error {
 func With(label error) func(error) *Error {
 	return func(err error) *Error {
 		return &Error{
-			Label: label,
-			Err:   err,
+			Label:    label,
+			Err:      err,
+			Separate: true,
 		}
 	}
 }

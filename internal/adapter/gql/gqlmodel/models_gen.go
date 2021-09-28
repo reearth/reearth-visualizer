@@ -592,7 +592,7 @@ type PluginExtension struct {
 	Description              string               `json:"description"`
 	Icon                     string               `json:"icon"`
 	WidgetLayout             *WidgetLayout        `json:"widgetLayout"`
-	Visualizer               Visualizer           `json:"visualizer"`
+	Visualizer               *Visualizer          `json:"visualizer"`
 	PropertySchemaID         id.PropertySchemaID  `json:"propertySchemaId"`
 	AllTranslatedName        map[string]string    `json:"allTranslatedName"`
 	AllTranslatedDescription map[string]string    `json:"allTranslatedDescription"`

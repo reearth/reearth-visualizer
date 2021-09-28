@@ -326,7 +326,7 @@ type PluginExtension {
   description: String!
   icon: String!
   widgetLayout: WidgetLayout
-  visualizer: Visualizer!
+  visualizer: Visualizer
   propertySchemaId: PropertySchemaID!
   allTranslatedName: TranslatedString
   allTranslatedDescription: TranslatedString

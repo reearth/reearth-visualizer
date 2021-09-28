@@ -50,9 +50,9 @@ func MergeManifestTranslation(m *Manifest, tl map[string]*TranslationRoot) *Mani
 			continue
 		}
 
-		if t.Title != nil {
+		if t.Name != nil {
 			name := m.Plugin.Name()
-			name[lang] = *t.Title
+			name[lang] = *t.Name
 			m.Plugin.Rename(name)
 		}
 
@@ -68,9 +68,9 @@ func MergeManifestTranslation(m *Manifest, tl map[string]*TranslationRoot) *Mani
 				continue
 			}
 
-			if te.Title != nil {
+			if te.Name != nil {
 				name := ext.Name()
-				name[lang] = *te.Title
+				name[lang] = *te.Name
 				ext.Rename(name)
 			}
 
