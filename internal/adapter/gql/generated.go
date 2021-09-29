@@ -1103,7 +1103,8 @@ type MutationResolver interface {
 }
 type PluginResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Plugin) (*gqlmodel.Scene, error)
-
+	TranslatedName(ctx context.Context, obj *gqlmodel.Plugin, lang *string) (string, error)
+	TranslatedDescription(ctx context.Context, obj *gqlmodel.Plugin, lang *string) (string, error)
 	PropertySchema(ctx context.Context, obj *gqlmodel.Plugin) (*gqlmodel.PropertySchema, error)
 }
 type PluginExtensionResolver interface {
@@ -5881,12 +5882,12 @@ type Plugin {
   repositoryUrl: String!
   propertySchemaId: PropertySchemaID
   extensions: [PluginExtension!]!
-  scene: Scene @goField(forceResolver: true)
   scenePlugin(sceneId: ID): ScenePlugin
   allTranslatedDescription: TranslatedString
   allTranslatedName: TranslatedString
-  translatedName(lang: String): String!
-  translatedDescription(lang: String): String!
+  scene: Scene @goField(forceResolver: true)
+  translatedName(lang: String): String! @goField(forceResolver: true)
+  translatedDescription(lang: String): String! @goField(forceResolver: true)
   propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
@@ -18720,38 +18721,6 @@ func (ec *executionContext) _Plugin_extensions(ctx context.Context, field graphq
 	return ec.marshalNPluginExtension2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPluginExtensionᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Plugin_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Plugin) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Plugin",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plugin().Scene(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Plugin_scenePlugin(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Plugin) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18855,6 +18824,38 @@ func (ec *executionContext) _Plugin_allTranslatedName(ctx context.Context, field
 	return ec.marshalOTranslatedString2map(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Plugin_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Plugin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Plugin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Plugin().Scene(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Plugin_translatedName(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Plugin) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18866,8 +18867,8 @@ func (ec *executionContext) _Plugin_translatedName(ctx context.Context, field gr
 		Object:     "Plugin",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -18880,7 +18881,7 @@ func (ec *executionContext) _Plugin_translatedName(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TranslatedName, nil
+		return ec.resolvers.Plugin().TranslatedName(rctx, obj, args["lang"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18908,8 +18909,8 @@ func (ec *executionContext) _Plugin_translatedDescription(ctx context.Context, f
 		Object:     "Plugin",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -18922,7 +18923,7 @@ func (ec *executionContext) _Plugin_translatedDescription(ctx context.Context, f
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TranslatedDescription, nil
+		return ec.resolvers.Plugin().TranslatedDescription(rctx, obj, args["lang"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34404,6 +34405,12 @@ func (ec *executionContext) _Plugin(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "scenePlugin":
+			out.Values[i] = ec._Plugin_scenePlugin(ctx, field, obj)
+		case "allTranslatedDescription":
+			out.Values[i] = ec._Plugin_allTranslatedDescription(ctx, field, obj)
+		case "allTranslatedName":
+			out.Values[i] = ec._Plugin_allTranslatedName(ctx, field, obj)
 		case "scene":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -34415,22 +34422,34 @@ func (ec *executionContext) _Plugin(ctx context.Context, sel ast.SelectionSet, o
 				res = ec._Plugin_scene(ctx, field, obj)
 				return res
 			})
-		case "scenePlugin":
-			out.Values[i] = ec._Plugin_scenePlugin(ctx, field, obj)
-		case "allTranslatedDescription":
-			out.Values[i] = ec._Plugin_allTranslatedDescription(ctx, field, obj)
-		case "allTranslatedName":
-			out.Values[i] = ec._Plugin_allTranslatedName(ctx, field, obj)
 		case "translatedName":
-			out.Values[i] = ec._Plugin_translatedName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Plugin_translatedName(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "translatedDescription":
-			out.Values[i] = ec._Plugin_translatedDescription(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Plugin_translatedDescription(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "propertySchema":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

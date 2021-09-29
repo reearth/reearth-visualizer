@@ -575,10 +575,10 @@ type Plugin struct {
 	RepositoryURL            string               `json:"repositoryUrl"`
 	PropertySchemaID         *id.PropertySchemaID `json:"propertySchemaId"`
 	Extensions               []*PluginExtension   `json:"extensions"`
-	Scene                    *Scene               `json:"scene"`
 	ScenePlugin              *ScenePlugin         `json:"scenePlugin"`
 	AllTranslatedDescription map[string]string    `json:"allTranslatedDescription"`
 	AllTranslatedName        map[string]string    `json:"allTranslatedName"`
+	Scene                    *Scene               `json:"scene"`
 	TranslatedName           string               `json:"translatedName"`
 	TranslatedDescription    string               `json:"translatedDescription"`
 	PropertySchema           *PropertySchema      `json:"propertySchema"`

@@ -81,19 +81,22 @@ func (r *pluginExtensionResolver) PropertySchema(ctx context.Context, obj *gqlmo
 	return DataLoadersFromContext(ctx).PropertySchema.Load(obj.PropertySchemaID)
 }
 
-func (r *pluginExtensionResolver) TranslatedName(ctx context.Context, obj *gqlmodel.PluginExtension, lang *string) (string, error) {
-	if s, ok := obj.AllTranslatedName[getLang(ctx, lang)]; ok {
-		return s, nil
-	}
-	return obj.Name, nil
-}
-
 func (r *pluginExtensionResolver) SceneWidget(ctx context.Context, obj *gqlmodel.PluginExtension, sceneID id.ID) (*gqlmodel.SceneWidget, error) {
 	exit := trace(ctx)
 	defer exit()
 
 	s, err := DataLoadersFromContext(ctx).Scene.Load(id.SceneID(sceneID))
 	return s.Widget(obj.PluginID, obj.ExtensionID), err
+}
+
+func (r *pluginExtensionResolver) TranslatedName(ctx context.Context, obj *gqlmodel.PluginExtension, lang *string) (string, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	if s, ok := obj.AllTranslatedName[getLang(ctx, lang)]; ok {
+		return s, nil
+	}
+	return obj.Name, nil
 }
 
 func (r *pluginExtensionResolver) TranslatedDescription(ctx context.Context, obj *gqlmodel.PluginExtension, lang *string) (string, error) {

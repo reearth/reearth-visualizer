@@ -251,12 +251,12 @@ type Plugin {
   repositoryUrl: String!
   propertySchemaId: PropertySchemaID
   extensions: [PluginExtension!]!
-  scene: Scene @goField(forceResolver: true)
   scenePlugin(sceneId: ID): ScenePlugin
   allTranslatedDescription: TranslatedString
   allTranslatedName: TranslatedString
-  translatedName(lang: String): String!
-  translatedDescription(lang: String): String!
+  scene: Scene @goField(forceResolver: true)
+  translatedName(lang: String): String! @goField(forceResolver: true)
+  translatedDescription(lang: String): String! @goField(forceResolver: true)
   propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
