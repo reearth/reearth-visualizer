@@ -63,7 +63,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      filled={!!widget?.extended}
+      filled={!!widget?.extended?.horizontally || !!widget?.extended?.vertically}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}

@@ -53,7 +53,7 @@ export default function ({
   }>();
 
   const { reearth } = useContext() ?? {};
-  const { lookAt, flyTo } = reearth?.visualizer ?? {};
+  const { lookAt, flyTo } = reearth?.visualizer.camera ?? {};
   const {
     findById: findLayerById,
     selected: selectedLayer,

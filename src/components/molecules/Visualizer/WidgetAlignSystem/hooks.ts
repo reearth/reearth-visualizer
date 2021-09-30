@@ -3,6 +3,8 @@ import type { Alignment } from "react-align";
 
 import type { Widget } from "../Widget";
 
+import { getLocationFromId } from "./Area";
+
 export type { Alignment } from "react-align";
 
 export type { Widget } from "../Widget";
@@ -44,34 +46,39 @@ export type WidgetLayout = {
 
 export default function ({
   onWidgetUpdate,
+  onWidgetAlignSystemUpdate,
 }: {
   onWidgetUpdate?: (
     id: string,
     update: { location?: Location; extended?: boolean; index?: number },
   ) => void;
+  onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
 }) {
-  const onReorder = useCallback(
-    (id: string, index: number) => {
-      onWidgetUpdate?.(id, { index });
+  const handleMove = useCallback(
+    (id: string, area: string, index: number, prevArea: string, _prevIndex: number) => {
+      const location = area !== prevArea ? getLocationFromId(area) : undefined;
+      onWidgetUpdate?.(id, { index, location });
     },
     [onWidgetUpdate],
   );
 
-  const onMove = useCallback(
-    (currentItem: string, location: Location) => {
-      onWidgetUpdate?.(currentItem, { location });
+  const handleExtend = useCallback(
+    (id: string, extended: boolean) => {
+      onWidgetUpdate?.(id, { extended });
     },
     [onWidgetUpdate],
   );
 
-  const onExtend = useCallback(
-    (currentItem: string, extended: boolean) => {
-      onWidgetUpdate?.(currentItem, { extended });
+  const handleAlignmentChange = useCallback(
+    (id: string, a: Alignment) => {
+      const l = getLocationFromId(id);
+      if (!l) return;
+      onWidgetAlignSystemUpdate?.(l, a);
     },
-    [onWidgetUpdate],
+    [onWidgetAlignSystemUpdate],
   );
 
-  return { onReorder, onMove, onExtend };
+  return { handleMove, handleExtend, handleAlignmentChange };
 }
 
 export type WidgetLayoutConstraint = {

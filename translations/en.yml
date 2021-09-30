@@ -3,7 +3,7 @@ src:
     atoms:
       ConfirmationModal:
         '3528672691': Cancel
-        '3645414921': Delete
+        '3640052215': Continue
       DropHolder:
         '2563828564': Drop here
       NotFound:
@@ -331,11 +331,11 @@ src:
               PluginAccordionItem:
                 '31593394': Uninstall
                 '730907263': Installed
-                '2073226243': please check it before uninstalling.
-                '2892316131': >-
-                  You are uninstalling selected plugin. The datas which are used
-                  by this plugin may also be deleted .
+                '1769892225': >-
+                  You are uninstalling the selected plugin. The data used by
+                  this plugin may also be deleted.
                 '3480550112': Install
+                '4081365712': Please be sure before uninstalling.
             PluginSection:
               PluginInstall:
                 '1113831405': Installed plugins

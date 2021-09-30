@@ -26,7 +26,7 @@ export type {
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
-  enabled?: boolean;
+  editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -46,7 +46,7 @@ export type Props = {
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
-  enabled,
+  editing,
   sceneProperty,
   pluginProperty,
   pluginBaseUrl,
@@ -56,20 +56,21 @@ const WidgetAlignSystem: React.FC<Props> = ({
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
 }) => {
-  const { onReorder, onMove, onExtend } = useHooks({
+  const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
   });
 
   return (
-    <WidetAlignSystemWrapper editorMode={enabled}>
-      <GridWrapper enabled={enabled}>
+    <WidetAlignSystemWrapper editorMode={editing}>
+      <GridWrapper
+        editing={editing}
+        onMove={handleMove}
+        onAlignmentChange={handleAlignmentChange}
+        onExtend={handleExtend}>
         <ZoneComponent
           zoneName="outer"
           zone={alignSystem?.outer}
-          onReorder={onReorder}
-          onMove={onMove}
-          onAlignChange={onWidgetAlignSystemUpdate}
-          onExtend={onExtend}
           sceneProperty={sceneProperty}
           pluginProperty={pluginProperty}
           pluginBaseUrl={pluginBaseUrl}
@@ -79,10 +80,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
           <ZoneComponent
             zoneName="inner"
             zone={alignSystem?.inner}
-            onReorder={onReorder}
-            onMove={onMove}
-            onAlignChange={onWidgetAlignSystemUpdate}
-            onExtend={onExtend}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
             pluginBaseUrl={pluginBaseUrl}

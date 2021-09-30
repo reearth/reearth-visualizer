@@ -1,11 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useMemo } from "react";
 import { GridArea, GridItem } from "react-align";
 
 import { useTheme } from "@reearth/theme";
 
 import W from "../Widget";
 
-import type { Widget, Alignment, Location, WidgetLayoutConstraint } from "./hooks";
+import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
 
 type Props = {
   zone: "inner" | "outer";
@@ -19,13 +19,7 @@ type Props = {
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
-  onReorder?: (id: string, hoverIndex: number) => void;
-  onMove?: (currentItem: string, dropLocation: Location, originalLocation: Location) => void;
-  onAlignChange?: (location: Location, align: Alignment) => void;
-  onExtend?: (currentItem: string, extended: boolean) => void;
 };
-
-const nop = () => {};
 
 export default function WidgetAreaComponent({
   zone,
@@ -39,36 +33,26 @@ export default function WidgetAreaComponent({
   isEditable,
   isBuilt,
   layoutConstraint,
-  onReorder,
-  onMove,
-  onAlignChange,
-  onExtend,
 }: Props) {
   const theme = useTheme();
-
-  const handleAlignChange = useCallback(
-    (align: Alignment) => {
-      onAlignChange?.({ zone, section, area }, align);
-    },
-    [area, onAlignChange, section, zone],
-  );
-
-  const handleReorder = useCallback(
-    (id: string, _l: Location, _i: number, hoverIndex: number) => onReorder?.(id, hoverIndex),
-    [onReorder],
+  const widgetLayout = useMemo(
+    () => ({
+      location: { zone, section, area },
+      align,
+    }),
+    [align, area, section, zone],
   );
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
-    <GridArea<Location>
+    <GridArea
       key={area}
+      id={`${zone}/${section}/${area}`}
       vertical={area === "middle"}
       stretch={area === "middle"}
-      reverse={area !== "middle" && section === "right"}
+      // reverse={area !== "middle" && section === "right"}
       end={section === "right" || area === "bottom"}
       align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
-      onAlignChange={handleAlignChange}
-      location={{ zone: zone, section: section, area: area }}
-      editorStyles={{
+      editorStyle={{
         background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
         border:
           area === "middle"
@@ -84,38 +68,46 @@ export default function WidgetAreaComponent({
         const extendable =
           (section === "center" && constraint?.extendable?.horizontally) ||
           (area === "middle" && constraint?.extendable?.vertically);
-        const loc = { zone: zone, section: section, area: area };
         return (
           <GridItem
             key={widget.id}
             id={widget.id}
-            location={loc}
             index={i}
-            onReorder={handleReorder}
-            onMoveArea={onMove || nop}
             extended={widget.extended}
             extendable={extendable}
-            onExtend={onExtend}
-            styles={{ pointerEvents: "auto" }}>
-            <W
-              widget={widget}
-              sceneProperty={sceneProperty}
-              pluginProperty={
-                widget.pluginId && widget.extensionId
-                  ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                  : undefined
-              }
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              pluginBaseUrl={pluginBaseUrl}
-              widgetLayout={{
-                location: loc,
-                align,
-              }}
-            />
+            style={{ pointerEvents: "auto" }}>
+            {({ editing }) => (
+              <W
+                widget={widget}
+                sceneProperty={sceneProperty}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
+                isEditable={isEditable}
+                isBuilt={isBuilt}
+                pluginBaseUrl={pluginBaseUrl}
+                widgetLayout={widgetLayout}
+                widgetAlignSystemState={{ editing }}
+              />
+            )}
           </GridItem>
         );
       })}
     </GridArea>
   ) : null;
+}
+
+export function getLocationFromId(id: string): Location | undefined {
+  const [z, s, a] = id.split("/");
+  return (z === "inner" || z === "outer") &&
+    (s === "left" || s === "center" || s === "right") &&
+    (a === "top" || a === "middle" || a === "bottom")
+    ? {
+        zone: z,
+        section: s,
+        area: a,
+      }
+    : undefined;
 }

@@ -17,7 +17,7 @@ import type { Component as PrimitiveComponent } from "../Primitive";
 import type { CommonReearth } from "./api";
 import { commonReearth } from "./api";
 import type {
-  Camera,
+  CameraPosition,
   Layer,
   OverriddenInfobox,
   ReearthEventType,
@@ -35,7 +35,7 @@ export type Props = {
   engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
-  camera?: Camera;
+  camera?: CameraPosition;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;

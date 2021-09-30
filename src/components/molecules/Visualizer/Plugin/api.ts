@@ -116,29 +116,31 @@ export function commonReearth({
   events: Events<ReearthEventType>;
   layers: () => LayerStore;
   sceneProperty: () => any;
-  camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
+  camera: () => GlobalThis["reearth"]["visualizer"]["camera"]["position"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
-  flyTo: GlobalThis["reearth"]["visualizer"]["flyTo"];
-  lookAt: GlobalThis["reearth"]["visualizer"]["lookAt"];
-  zoomIn: GlobalThis["reearth"]["visualizer"]["zoomIn"];
-  zoomOut: GlobalThis["reearth"]["visualizer"]["zoomOut"];
+  flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
+  lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
+  zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
+  zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
     apiVersion: 1,
     visualizer: {
       engine: engineName,
-      flyTo,
-      lookAt,
-      zoomIn,
-      zoomOut,
-      get camera() {
-        return camera();
+      camera: {
+        flyTo,
+        lookAt,
+        zoomIn,
+        zoomOut,
+        get position() {
+          return camera();
+        },
       },
       get property() {
         return sceneProperty();

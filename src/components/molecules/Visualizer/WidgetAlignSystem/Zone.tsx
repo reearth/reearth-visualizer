@@ -2,16 +2,12 @@ import React, { PropsWithChildren } from "react";
 import { GridSection } from "react-align";
 
 import Area from "./Area";
-import type { WidgetZone, Location, Alignment, WidgetLayoutConstraint } from "./hooks";
+import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  onReorder?: (id: string, hoverIndex: number) => void;
-  onMove?: (currentItem: string, dropLocation: Location, originalLocation?: Location) => void;
-  onAlignChange?: (location: Location, align: Alignment) => void;
-  onExtend?: (currentItem: string, extended: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -32,10 +28,6 @@ export default function Zone({
   isEditable,
   isBuilt,
   children,
-  onReorder,
-  onMove,
-  onAlignChange,
-  onExtend,
 }: PropsWithChildren<Props>) {
   return (
     <>
@@ -55,10 +47,6 @@ export default function Zone({
                 widgets={zone?.[s]?.[a]?.widgets}
                 align={zone?.[s]?.[a]?.align ?? "start"}
                 layoutConstraint={layoutConstraint}
-                onReorder={onReorder}
-                onMove={onMove}
-                onAlignChange={onAlignChange}
-                onExtend={onExtend}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
                 pluginBaseUrl={pluginBaseUrl}

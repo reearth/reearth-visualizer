@@ -50,7 +50,7 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
   const currentCamera = camera?.[cameraSequence];
   const delayedCurrentCamera = camera?.[delayedCameraSequence];
 
-  const flyTo = ctx?.reearth?.visualizer.flyTo;
+  const flyTo = ctx?.reearth?.visualizer.camera.flyTo;
   useEffect(() => {
     if (!flyTo) return;
     const { cameraPosition, cameraDuration, cameraDelay } = delayedCurrentCamera ?? {};

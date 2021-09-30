@@ -122,7 +122,7 @@ export default function Visualizer({
         {ready && widgets?.alignSystem && (
           <WidgetAlignSystem
             alignSystem={widgets.alignSystem}
-            enabled={widgetAlignEditorActivated}
+            editing={widgetAlignEditorActivated}
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
             sceneProperty={sceneProperty}

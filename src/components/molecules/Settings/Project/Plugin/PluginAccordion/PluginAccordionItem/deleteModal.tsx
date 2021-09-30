@@ -19,20 +19,22 @@ const DeleteModal: React.FC<Props> = ({ onCancel, onProceed, onClose, isOpen }) 
   const theme = useTheme();
   return (
     <ConfirmationModal
-      title=""
+      buttonAction={intl.formatMessage({ defaultMessage: "Uninstall" })}
       body={
         <>
           <Icon icon="alert" size={24} color={theme.main.danger} />
-          <Box mt={"2xl"}>
+          <Box mt={"2xl"} mb={"m"}>
             <Text size="m">
               {intl.formatMessage({
                 defaultMessage:
-                  "You are uninstalling selected plugin. The datas which are used by this plugin may also be deleted .",
+                  "You are uninstalling the selected plugin. The data used by this plugin may also be deleted.",
               })}
             </Text>
           </Box>
           <Text size="m">
-            {intl.formatMessage({ defaultMessage: "please check it before uninstalling." })}
+            {intl.formatMessage({
+              defaultMessage: "Please be sure before uninstalling.",
+            })}
           </Text>
         </>
       }

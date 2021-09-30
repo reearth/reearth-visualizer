@@ -16,6 +16,11 @@ export type Props<PP = any, SP = any> = {
   pluginProperty?: PP;
   pluginBaseUrl?: string;
   widgetLayout?: WidgetLayout;
+  widgetAlignSystemState?: AlignSystemState;
+};
+
+export type AlignSystemState = {
+  editing: boolean;
 };
 
 export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {

@@ -25,7 +25,11 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+const Storytelling = ({
+  widget,
+  sceneProperty,
+  widgetAlignSystemState,
+}: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -49,11 +53,12 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   });
 
   return stories?.length > 0 ? (
-    <>
+    <div>
       <Menu
         publishedTheme={publishedTheme}
         ref={wrapperRef}
         menuOpen={menuOpen}
+        extended={!!widget?.extended?.horizontally}
         area={widget?.layout?.location?.area}
         align={widget?.layout?.align}>
         {stories.map((story, i) => (
@@ -90,14 +95,16 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper
+      <Widget
         publishedTheme={publishedTheme}
         extended={!!widget.extended?.horizontally}
         floating={!widget.layout}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}
-          onClick={handlePrev}>
+          onClick={handlePrev}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
         <Current align="center" justify="space-between">
@@ -121,15 +128,17 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={selected?.index === stories.length - 1}
-          onClick={handleNext}>
+          onClick={handleNext}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
-      </Wrapper>
-    </>
+      </Widget>
+    </div>
   ) : null;
 };
 
-const Wrapper = styled.div<{
+const Widget = styled.div<{
   publishedTheme: PublishTheme;
   extended?: boolean;
   floating?: boolean;
@@ -156,7 +165,7 @@ const Wrapper = styled.div<{
 
   @media (max-width: 560px) {
     display: flex;
-    width: 90vw;
+    width: ${({ extended }) => (extended ? "100%" : "90vw")};
     margin: 0 auto;
     height: 56px;
   }
@@ -225,31 +234,32 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme
 const Menu = styled.div<{
   menuOpen?: boolean;
   publishedTheme: PublishTheme;
+  extended?: boolean;
   area?: string;
   align?: string;
 }>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
+  ${({ area, align }) =>
+    area === "top" || (area === "middle" && align === "start") ? "top: 90px" : "bottom: 90px"};
   width: 324px;
-  max-height: 500px;
+  max-height: ${({ area, align }) =>
+    area === "middle" && align === "centered" ? "200px" : "500px"};
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  transform: translate(
-    0,
-    ${({ area, align }) =>
-      area === "top" || (area === "middle" && align === "start") ? "55%" : "-105%"}
-  );
 
   @media (max-width: 560px) {
+    width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
+    max-height: ${({ area, align }) =>
+      area === "middle" && align === "centered" ? "30vh" : "70vh"};
     border: 1px solid ${props => props.theme.main.text};
-  }
-
-  @media (max-width: 420px) {
-    width: auto;
+    top: ${({ area, align }) =>
+      area === "top" || (area === "middle" && align === "start") ? "60px" : null};
+    bottom: ${({ area, align }) => (area !== "top" && align !== "start" ? "60px" : null)};
   }
 `;
 

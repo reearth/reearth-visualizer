@@ -47,7 +47,7 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
   const ctx = useContext();
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
-  const flyTo = ctx?.reearth.visualizer.flyTo;
+  const flyTo = ctx?.reearth.visualizer.camera.flyTo;
 
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
@@ -155,7 +155,7 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
 
 const Wrapper = styled.div`
   position: relative;
-  margin-left: 5px;
+  padding: 2.5px;
   &:first-of-type {
     margin-left: 0;
   }

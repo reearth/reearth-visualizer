@@ -5,7 +5,8 @@ import Button from "../Button";
 import Modal from "../Modal";
 
 export type Props = {
-  title: string;
+  title?: string;
+  buttonAction?: string;
   body: React.ReactNode;
   onCancel: () => void;
   onProceed: () => void;
@@ -15,6 +16,7 @@ export type Props = {
 
 const ConfirmationModal: React.FC<Props> = ({
   title,
+  buttonAction,
   body,
   onCancel,
   onProceed,
@@ -30,7 +32,7 @@ const ConfirmationModal: React.FC<Props> = ({
       onClose={onClose}
       button1={
         <Button
-          text={intl.formatMessage({ defaultMessage: "Delete" })}
+          text={buttonAction || intl.formatMessage({ defaultMessage: "Continue" })}
           onClick={onProceed}
           buttonType="danger"
         />
