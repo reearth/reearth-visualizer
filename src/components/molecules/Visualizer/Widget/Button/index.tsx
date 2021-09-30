@@ -2,7 +2,7 @@ import React from "react";
 
 import { styled } from "@reearth/theme";
 
-import { Props as WidgetProps } from "../../Widget";
+import { ComponentProps as WidgetProps } from "../../Widget";
 
 import MenuButton, { Button as ButtonType, MenuItem as MenuItemType } from "./MenuButton";
 

@@ -21,7 +21,6 @@ export const Default = Template.bind({});
 
 Default.args = {
   widget: {
-    extended: false,
     id: "",
     property: {
       stories: [
@@ -39,7 +38,6 @@ export const AutoStart = Template.bind({});
 
 AutoStart.args = {
   widget: {
-    extended: false,
     id: "",
     property: {
       stories: [

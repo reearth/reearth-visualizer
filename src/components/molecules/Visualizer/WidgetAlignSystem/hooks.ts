@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import type { Alignment } from "react-align";
 
-import { Widget as WidgetType } from "../Widget";
+import type { Widget } from "../Widget";
 
 export type { Alignment } from "react-align";
 
-export type Widget = Omit<WidgetType, "layout">;
+export type { Widget } from "../Widget";
 
 export type Location = {
   zone: "inner" | "outer";

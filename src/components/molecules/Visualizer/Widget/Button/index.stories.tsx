@@ -21,7 +21,6 @@ export const Default: Story<Props> = args => (
 Default.args = {
   widget: {
     id: "",
-    extended: false,
     property: {
       buttons: [
         {

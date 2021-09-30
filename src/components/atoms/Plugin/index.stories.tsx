@@ -17,10 +17,12 @@ let cb: (message: any) => void | undefined;
 Default.args = {
   src: `${process.env.PUBLIC_URL}/plugins/plugin.js`,
   canBeVisible: true,
-  style: {
-    width: "300px",
-    height: "300px",
-    backgroundColor: "#fff",
+  iFrameProps: {
+    style: {
+      width: "300px",
+      height: "300px",
+      backgroundColor: "#fff",
+    },
   },
   exposed: ({ render, postMessage }) => ({
     console: {
@@ -49,10 +51,12 @@ export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
 HiddenIFrame.args = {
   src: `${process.env.PUBLIC_URL}/plugins/hidden.js`,
   canBeVisible: true,
-  style: {
-    width: "300px",
-    height: "300px",
-    backgroundColor: "#fff",
+  iFrameProps: {
+    style: {
+      width: "300px",
+      height: "300px",
+      backgroundColor: "#fff",
+    },
   },
   exposed: ({ render, postMessage }) => ({
     console: {

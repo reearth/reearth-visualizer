@@ -1,7 +1,7 @@
 import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { IFrameAPI } from "@reearth/components/atoms/Plugin/hooks";
+import { IFrameAPI } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
 import { exposed } from "./api";

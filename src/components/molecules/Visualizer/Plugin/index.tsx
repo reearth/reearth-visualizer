@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React from "react";
 
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
@@ -19,7 +19,6 @@ export type { Props as ProviderProps, Context } from "./context";
 
 export type Props = {
   className?: string;
-  style?: CSSProperties;
   sourceCode?: string;
   pluginId?: string;
   extensionId?: string;
@@ -36,7 +35,6 @@ export type Props = {
 
 export default function Plugin({
   className,
-  style,
   sourceCode,
   pluginId,
   extensionId,
@@ -63,9 +61,9 @@ export default function Plugin({
   return !skip && (src || sourceCode) ? (
     <P
       className={className}
-      style={style}
       src={src}
       sourceCode={sourceCode}
+      filled={!!widget?.extended}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}

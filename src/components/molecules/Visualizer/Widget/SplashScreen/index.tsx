@@ -6,7 +6,7 @@ import { styled } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
 import { useContext } from "../../Plugin";
-import { Props as WidgetProps } from "../../Widget";
+import { ComponentProps as WidgetProps } from "../../Widget";
 
 export type Props = WidgetProps<Property>;
 

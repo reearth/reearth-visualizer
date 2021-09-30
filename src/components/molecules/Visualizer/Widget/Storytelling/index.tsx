@@ -8,7 +8,7 @@ import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 
-import { Props as WidgetProps } from "../../Widget";
+import { ComponentProps as WidgetProps } from "../../Widget";
 
 import useHooks, { Story as StoryType } from "./hooks";
 
@@ -92,8 +92,8 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
       </Menu>
       <Wrapper
         publishedTheme={publishedTheme}
-        extended={widget?.extended}
-        floating={!widget?.layout}>
+        extended={!!widget.extended?.horizontally}
+        floating={!widget.layout}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}

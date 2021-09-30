@@ -1,4 +1,4 @@
-import React, { CSSProperties, IframeHTMLAttributes, ReactNode } from "react";
+import React, { IframeHTMLAttributes, ReactNode } from "react";
 
 import useHook, { IFrameAPI as IFrameAPIType } from "./hooks";
 import IFrame from "./IFrame";
@@ -9,10 +9,10 @@ export type Props = {
   className?: string;
   canBeVisible?: boolean;
   skip?: boolean;
-  style?: CSSProperties;
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
+  filled?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
@@ -26,10 +26,10 @@ const Plugin: React.FC<Props> = ({
   className,
   canBeVisible,
   skip,
-  style,
   src,
   sourceCode,
   renderPlaceholder,
+  filled,
   iFrameProps,
   isMarshalable,
   exposed,
@@ -52,9 +52,8 @@ const Plugin: React.FC<Props> = ({
 
   return iFrameHtml ? (
     <IFrame
-      autoResize
+      autoResize={!filled}
       className={className}
-      style={style}
       html={iFrameHtml}
       ref={iFrameRef}
       visible={iFrameVisible}

@@ -1,9 +1,11 @@
 import {
+  IframeHTMLAttributes,
   Ref,
   RefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -17,6 +19,8 @@ export default function useHook({
   html,
   ref,
   autoResize,
+  visible,
+  iFrameProps,
   onLoad,
   onMessage,
 }: {
@@ -24,13 +28,14 @@ export default function useHook({
   html?: string;
   ref?: Ref<RefType>;
   autoResize?: boolean;
+  visible?: boolean;
+  iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
 } = {}): {
   ref: RefObject<HTMLIFrameElement>;
+  props: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
-  width?: string;
-  height?: string;
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
@@ -86,7 +91,7 @@ export default function useHook({
             horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
             verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
             const resize = {
-              width: el.offsetWidth + horizontalMargin, 
+              width: el.offsetWidth + horizontalMargin,
               height: el.offsetHeight + verticalMargin,
             };
             parent.postMessage({
@@ -126,10 +131,23 @@ export default function useHook({
     onLoad?.();
   }, [autoResizeMessageKey, html, onLoad]);
 
+  const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
+    () => ({
+      style: {
+        display: visible ? undefined : "none",
+        width: visible ? (autoResize ? iFrameSize?.[0] : "100%") : "0px",
+        height: visible ? (autoResize ? iFrameSize?.[1] : "100%") : "0px",
+        minWidth: "100%",
+        ...iFrameProps?.style,
+      },
+      ...iFrameProps,
+    }),
+    [autoResize, iFrameProps, iFrameSize, visible],
+  );
+
   return {
     ref: iFrameRef,
-    width: iFrameSize?.[0],
-    height: iFrameSize?.[1],
+    props,
     onLoad: onIframeLoad,
   };
 }

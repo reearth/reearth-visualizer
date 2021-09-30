@@ -113,7 +113,10 @@ export type Widget<P = any> = {
   extensionId?: string;
   property?: P;
   propertyId?: string;
-  extended: boolean;
+  extended?: {
+    horizontally: boolean;
+    vertically: boolean;
+  };
   layout?: WidgetLayout;
 };
 
@@ -238,7 +241,7 @@ export type LookAtDestination = {
 };
 
 export type CameraOptions = {
-  /** Expressed in milliseconds. Default is zero. */
+  /** Expressed in seconds. Default is zero. */
   duration?: number;
   /** Easing function. */
   easing?: (time: number) => number;

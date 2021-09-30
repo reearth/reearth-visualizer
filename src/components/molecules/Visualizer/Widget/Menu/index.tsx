@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 
 import { styled } from "@reearth/theme";
 
-import { Props as WidgetProps } from "../../Widget";
+import { ComponentProps as WidgetProps } from "../../Widget";
 
 import MenuButton, {
   Button as ButtonType,

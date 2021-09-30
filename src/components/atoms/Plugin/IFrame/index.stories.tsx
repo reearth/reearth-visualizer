@@ -31,9 +31,11 @@ export const Default: Story<Props> = args => {
 Default.args = {
   autoResize: false,
   visible: true,
-  style: {
-    width: "400px",
-    height: "300px",
+  iFrameProps: {
+    style: {
+      width: "400px",
+      height: "300px",
+    },
   },
   html: `<h1>iframe</h1><script>
   window.addEventListener("message", ev => {
