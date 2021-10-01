@@ -1,3 +1,4 @@
+import { merge, cloneDeep } from "lodash-es";
 import React, { ComponentType, useMemo } from "react";
 
 import { useContext } from "../Plugin";
@@ -14,6 +15,7 @@ export type Props<P = any, PP = any, SP = any> = {
   pluginProperty?: PP;
   sceneProperty?: SP;
   pluginBaseUrl?: string;
+  overriddenProperties?: { [id in string]: any };
 };
 
 export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;
@@ -21,9 +23,25 @@ export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, 
 export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   isHidden,
   pluginBaseUrl: _pluginBaseUrl,
+  overriddenProperties,
   ...props
 }: Props<P, PP, SP>) {
   const ctx = useContext();
+  const overridenProperty = useMemo(
+    () =>
+      props.layer && overriddenProperties?.[props.layer.id]
+        ? merge(cloneDeep(props.layer.property), overriddenProperties[props.layer.id])
+        : undefined,
+    [overriddenProperties, props.layer],
+  );
+  const actualLayer = useMemo(
+    () =>
+      props.layer && overridenProperty
+        ? { ...props.layer, property: overridenProperty }
+        : props.layer,
+    [overridenProperty, props.layer],
+  );
+
   const Builtin = useMemo(() => {
     const builtin = ctx?.engine?.builtinPrimitives;
     return props.layer?.pluginId && props.layer.extensionId
@@ -31,7 +49,9 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
       : undefined;
   }, [ctx, props.layer?.extensionId, props.layer?.pluginId]);
 
-  return isHidden || !props.layer?.isVisible ? null : Builtin ? <Builtin {...props} /> : null;
+  return isHidden || !props.layer?.isVisible ? null : Builtin ? (
+    <Builtin {...props} layer={actualLayer} />
+  ) : null;
   // <Plugin
   //   pluginId={props.layer?.pluginId}
   //   extensionId={props.layer?.extensionId}

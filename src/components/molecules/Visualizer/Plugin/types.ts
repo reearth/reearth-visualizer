@@ -60,6 +60,7 @@ export type Layers = {
   readonly hide: (...id: string[]) => void;
   readonly findById: (id: string) => Layer | undefined;
   readonly findByIds: (...id: string[]) => (Layer | undefined)[];
+  readonly overrideProperty: (id: string, property: any) => void;
 };
 
 export type SelectLayerOptions = {

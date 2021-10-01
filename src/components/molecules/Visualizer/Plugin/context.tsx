@@ -11,7 +11,7 @@ import React, {
 
 import events from "@reearth/util/event";
 
-import type { LayerStore } from "../Layer";
+import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 
 import type { CommonReearth } from "./api";
@@ -43,6 +43,7 @@ export type Props = {
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
+  overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -75,6 +76,7 @@ export function Provider({
   showLayer,
   hideLayer,
   selectLayer,
+  overrideLayerProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -113,6 +115,7 @@ export function Provider({
         showLayer,
         hideLayer,
         selectLayer,
+        overrideLayerProperty,
         flyTo,
         lookAt,
         zoomIn,
@@ -134,6 +137,7 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
+      overrideLayerProperty,
       flyTo,
       lookAt,
       zoomIn,
