@@ -228,7 +228,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 			}
 		} else {
 			loc = scene.WidgetLocation{
-				Zone:    scene.WidgetZoneInner,
+				Zone:    scene.WidgetZoneOuter,
 				Section: scene.WidgetSectionLeft,
 				Area:    scene.WidgetAreaTop,
 			}
