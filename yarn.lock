@@ -6693,10 +6693,10 @@ ccount@^2.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-2.0.0.tgz#3d6fb55803832766a24c6f339abc507297eb5d25"
   integrity sha512-VOR0NWFYX65n9gELQdcpqsie5L5ihBXuZGAgaPEp/U7IOSjnPMEH6geE+2f6lcekaNEfWzAHS45mPvSo5bqsUA==
 
-cesium@^1.85.0:
-  version "1.85.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.85.0.tgz#00d983648710f13a925c20504548879eac38e902"
-  integrity sha512-GqcEkcG5owC7rDroZzy3ic9d5oCrpqmpLZ9kWVnVBgvtjL/aAS+eUZ2wz8vCYAcYW77wYnIWeBRbMbaqdAH2XQ==
+cesium@^1.86.0:
+  version "1.86.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.86.0.tgz#8ce53d5684aa6c4255971dec2a672dacc5dc345d"
+  integrity sha512-F3asFdI49opQhoAO7XY2yF0xuVDKdfqEHlBveEX5ioX63iWikOP/H4ih04wbm1ijqBYCljOp01yXUf4tztWFbw==
 
 chalk@*, chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.1:
   version "4.1.2"
