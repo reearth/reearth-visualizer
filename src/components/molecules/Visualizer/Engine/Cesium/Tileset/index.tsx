@@ -25,8 +25,8 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
   );
   const ref = useCallback(
     (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
-      if (tileset?.cesiumElement) {
-        (tileset?.cesiumElement as any)[layerIdField] = layer?.id;
+      if (layer?.id && tileset?.cesiumElement) {
+        (tileset?.cesiumElement as any)[layerIdField] = layer.id;
       }
     },
     [layer?.id],
@@ -36,8 +36,8 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
     <Cesium3DTileset
       ref={ref}
       url={tileset}
-      shadows={shadowMode(shadows)}
       style={style}
+      shadows={shadowMode(shadows)}
       onReady={_debugFlight ? t => viewer?.zoomTo(t) : undefined}
     />
   );

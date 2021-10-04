@@ -177,6 +177,7 @@ export default function Visualizer({
             infoboxKey={infobox?.infoboxKey}
             visible={!!infobox?.visible}
             sceneProperty={sceneProperty}
+            blocks={infobox?.blocks}
             layer={infobox?.layer}
             selectedBlockId={selectedBlockId}
             pluginProperty={pluginProperty}
