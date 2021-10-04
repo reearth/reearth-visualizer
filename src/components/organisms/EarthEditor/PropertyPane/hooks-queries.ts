@@ -23,6 +23,7 @@ export default ({
   selectedBlock,
   teamId,
   mode,
+  locale,
 }: {
   sceneId?: string;
   rootLayerId?: string;
@@ -30,6 +31,7 @@ export default ({
   selectedBlock?: string;
   teamId?: string;
   mode: Mode;
+  locale: string;
 }) => {
   const {
     loading: layerLoading,
@@ -45,7 +47,7 @@ export default ({
     error: scenePropertyError,
     data: scenePropertyData,
   } = useGetScenePropertyQuery({
-    variables: { sceneId: sceneId || "" },
+    variables: { sceneId: sceneId || "", lang: locale },
     skip: !sceneId || (mode !== "scene" && mode != "widget"),
   });
 
@@ -54,7 +56,7 @@ export default ({
     error: layerPropertyError,
     data: layerPropertyData,
   } = useGetLayerPropertyQuery({
-    variables: { layerId: selected?.type === "layer" ? selected.layerId : "" },
+    variables: { layerId: selected?.type === "layer" ? selected.layerId : "", lang: locale },
     skip:
       selected?.type !== "layer" || (mode !== "layer" && mode !== "block" && mode !== "infobox"),
   });

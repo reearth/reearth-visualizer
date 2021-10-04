@@ -60,7 +60,7 @@ export default () => {
   });
 
   const { loading: WidgetLoading, data: widgetData } = useGetWidgetsQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 

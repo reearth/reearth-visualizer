@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useIntl } from "react-intl";
 
 import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/gql";
 import { useSceneId, useSelected } from "@reearth/state";
@@ -7,11 +8,12 @@ import { useSceneId, useSelected } from "@reearth/state";
 const hiddenExtensions = ["reearth/polyline", "reearth/polygon", "reearth/rect"];
 
 export default () => {
+  const intl = useIntl();
   const [sceneId] = useSceneId();
   const [, select] = useSelected();
 
   const { loading, data } = useGetPrimitivesQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 
@@ -58,6 +60,7 @@ export default () => {
                       lng: location.lng,
                     }
                   : {}),
+                lang: intl.locale,
               },
               refetchQueries: ["GetLayers"],
             });
@@ -68,7 +71,7 @@ export default () => {
             }
           },
         })),
-    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select],
+    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, intl.locale],
   );
 
   return {

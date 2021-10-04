@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import { layerFragment } from "@reearth/gql/fragments";
@@ -87,6 +88,7 @@ export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
     $extensionId: PluginExtensionID
     $datasetSchemaId: ID
     $index: Int
+    $lang: String
   ) {
     addLayerGroup(
       input: {

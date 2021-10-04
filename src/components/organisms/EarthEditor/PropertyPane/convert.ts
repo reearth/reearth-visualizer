@@ -131,10 +131,26 @@ const toFields = (
     .map(f => toField(f[0], f[1], f[2]))
     .filter((f): f is Field => !!f);
 
+type Links = Maybe<
+  {
+    schema?: Maybe<string>;
+    datasetSchemaId?: Maybe<string>;
+    datasetId?: Maybe<string>;
+    datasetSchemaFieldId?: Maybe<string>;
+    dataset?: Maybe<{ name?: Maybe<string> }>;
+    datasetSchema?: Maybe<{ name?: Maybe<string> }>;
+    datasetSchemaField?: Maybe<{ name?: Maybe<string> }>;
+  }[]
+>;
+
 const toField = (
   schemaField: Pick<PropertySchemaField, "fieldId" | "type">,
-  field?: Pick<PropertyField, "fieldId" | "value" | "links">,
-  merged?: Pick<MergedPropertyField, "fieldId" | "actualValue" | "links" | "overridden">,
+  field?: Pick<PropertyField, "fieldId" | "value"> & {
+    links?: Links;
+  },
+  merged?: Pick<MergedPropertyField, "fieldId" | "actualValue" | "overridden"> & {
+    links?: Links;
+  },
 ): Field | undefined => {
   if (
     (!field && !merged) ||
@@ -163,9 +179,9 @@ const toField = (
             schema: links[0].datasetSchemaId,
             dataset: links[0].datasetId ?? undefined,
             field: links[0].datasetSchemaFieldId,
-            schemaName: links[0].datasetSchema?.name,
+            schemaName: links[0].datasetSchema?.name ?? undefined,
             datasetName: links[0].dataset?.name ?? undefined,
-            fieldName: links[0].datasetSchemaField?.name,
+            fieldName: links[0].datasetSchemaField?.name ?? undefined,
           }
         : undefined,
   };

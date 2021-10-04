@@ -5,6 +5,11 @@ import ja from "../../translations/ja.yml";
 
 export const locales = ["en", "ja"] as const;
 
+export const localesWithLabel: { [l in typeof locales[number]]: string } = {
+  en: "English",
+  ja: "日本語",
+};
+
 export type Locale = typeof locales[number];
 
 export const locale = navigator.language.split("_")[0];

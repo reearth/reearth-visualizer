@@ -1,5 +1,5 @@
 /* eslint-disable testing-library/await-async-query */
-import LayerStore from "./store";
+import { LayerStore } from "./store";
 
 test("findById", () => {
   const root = {

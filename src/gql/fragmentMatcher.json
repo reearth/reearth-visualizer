@@ -5,8 +5,8 @@
       "LayerItem"
     ],
     "Layers": [
-      "LayerItem",
-      "LayerGroup"
+      "LayerGroup",
+      "LayerItem"
     ],
     "Node": [
       "Asset",

@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
@@ -12,6 +13,7 @@ import { useTeam, useProject, useNotification } from "@reearth/state";
 
 export default (projectId: string) => {
   const intl = useIntl();
+  const client = useApolloClient();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
@@ -23,9 +25,9 @@ export default (projectId: string) => {
   const {
     data: rawSceneData,
     loading: sceneLoading,
-    refetch: refetchInstalledPlugins,
+    // refetch: refetchInstalledPlugins,
   } = useInstalledPluginsQuery({
-    variables: { projectId: projectId ?? "" },
+    variables: { projectId: projectId ?? "", lang: intl.locale },
     skip: !projectId,
   });
 
@@ -34,8 +36,8 @@ export default (projectId: string) => {
       ? rawSceneData?.scene?.plugins
           .filter(p => p.plugin?.id !== "reearth")
           .map<PluginItem>(p => ({
-            title: p.plugin?.name ?? "",
-            bodyMarkdown: p.plugin?.description ?? "",
+            title: p.plugin?.translatedName ?? "",
+            bodyMarkdown: p.plugin?.translatedDescription ?? "",
             author: p.plugin?.author ?? "",
             // thumbnailUrl: p.plugin?.thumbnailUrl,
             isInstalled: true,
@@ -55,20 +57,22 @@ export default (projectId: string) => {
           }),
         ),
       );
-      if (results) {
-        setNotification({
-          type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
-        });
-        await refetchInstalledPlugins();
-      } else {
+      if (!results || results.some(r => r.errors)) {
+        await client.resetStore();
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to install plugin." }),
         });
+      } else {
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
+        });
+        // await refetchInstalledPlugins();
+        client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, setNotification, intl],
+    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, intl, client],
   );
 
   const installFromPublicRepo = useCallback(
@@ -88,10 +92,11 @@ export default (projectId: string) => {
           type: "success",
           text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
         });
-        await refetchInstalledPlugins();
+        // await refetchInstalledPlugins();
+        await client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, setNotification, intl],
+    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, intl, client],
   );
 
   const uninstallPlugin = useCallback(
@@ -111,16 +116,11 @@ export default (projectId: string) => {
           type: "info",
           text: intl.formatMessage({ defaultMessage: "Successfully removed plugin." }),
         });
-        await refetchInstalledPlugins();
+        await client.resetStore();
+        // await refetchInstalledPlugins();
       }
     },
-    [
-      rawSceneData?.scene?.id,
-      refetchInstalledPlugins,
-      uninstallPluginMutation,
-      setNotification,
-      intl,
-    ],
+    [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, intl, client],
   );
 
   const loading = sceneLoading || pluginLoading;

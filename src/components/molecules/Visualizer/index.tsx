@@ -20,7 +20,6 @@ import WidgetAlignSystem, {
 export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Layer } from "./Layers";
-export { LayerStore } from "./Layers";
 export type {
   Widget,
   Alignment,
@@ -32,6 +31,7 @@ export type {
   WidgetZone,
   WidgetLayoutConstraint,
 } from "./WidgetAlignSystem";
+export { LayerStore };
 
 export type Props = PropsWithChildren<
   {

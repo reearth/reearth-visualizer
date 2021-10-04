@@ -2,7 +2,7 @@ import React from "react";
 
 import P from "../Primitive";
 
-import LayerStore from "./store";
+import { LayerStore } from "./store";
 
 export type { Layer } from "../Primitive";
 
@@ -18,7 +18,7 @@ export type Props = {
   isLayerHidden?: (id: string) => boolean;
 };
 
-export { default as LayerStore, empty as emptyLayerStore } from "./store";
+export { LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
   pluginProperty,

@@ -5,7 +5,7 @@ import type { Layer } from "../Primitive";
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
 
-export default class LayerStore {
+export class LayerStore {
   constructor(root: Layer) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;

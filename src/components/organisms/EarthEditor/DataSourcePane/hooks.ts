@@ -59,6 +59,7 @@ export default () => {
                           pluginId,
                           extensionId,
                           index,
+                          lang: intl.locale,
                         },
                         refetchQueries: ["GetLayers"],
                       });
@@ -68,7 +69,7 @@ export default () => {
             )
             .filter((e): e is DatasetSchema => !!e)
         : [],
-    [addLayerGroupFromDatasetSchemaMutation, data],
+    [addLayerGroupFromDatasetSchemaMutation, data, intl.locale],
   );
 
   // dataset sync

@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import {
@@ -17,6 +18,7 @@ export const CHANGE_PROPERTY_VALUE = gql`
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $type: ValueType!
+    $lang: String
   ) {
     updatePropertyValue(
       input: {
@@ -51,6 +53,7 @@ export const LINK_DATASET = gql`
     $datasetSchemaIds: [ID!]!
     $datasetIds: [ID!]
     $datasetFieldIds: [ID!]!
+    $lang: String
   ) {
     linkDatasetToPropertyValue(
       input: {
@@ -77,6 +80,7 @@ export const UNLINK_DATASET = gql`
     $schemaItemId: PropertySchemaFieldID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
+    $lang: String
   ) {
     unlinkPropertyValue(
       input: {
@@ -101,7 +105,7 @@ export const UNLINK_DATASET = gql`
 `;
 
 export const CREATE_INFOBOX = gql`
-  mutation createInfobox($layerId: ID!) {
+  mutation createInfobox($layerId: ID!, $lang: String) {
     createInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -123,7 +127,7 @@ export const CREATE_INFOBOX = gql`
 `;
 
 export const REMOVE_INFOBOX = gql`
-  mutation removeInfobox($layerId: ID!) {
+  mutation removeInfobox($layerId: ID!, $lang: String) {
     removeInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -151,6 +155,7 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $file: Upload!
+    $lang: String
   ) {
     uploadFileToProperty(
       input: {
@@ -181,6 +186,7 @@ export const REMOVE_FIELD = gql`
     $schemaItemId: PropertySchemaFieldID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
+    $lang: String
   ) {
     removePropertyField(
       input: {
@@ -211,6 +217,7 @@ export const ADD_PROPERTY_ITEM = gql`
     $index: Int
     $nameFieldValue: Any
     $nameFieldType: ValueType
+    $lang: String
   ) {
     addPropertyItem(
       input: {
@@ -241,6 +248,7 @@ export const MOVE_PROPERTY_ITEM = gql`
     $schemaItemId: PropertySchemaFieldID!
     $itemId: ID!
     $index: Int!
+    $lang: String
   ) {
     movePropertyItem(
       input: {
@@ -269,6 +277,7 @@ export const REMOVE_PROPERTY_ITEM = gql`
     $propertyId: ID!
     $schemaItemId: PropertySchemaFieldID!
     $itemId: ID!
+    $lang: String
   ) {
     removePropertyItem(
       input: { propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId }
@@ -292,6 +301,7 @@ export const UPDATE_PROPERTY_ITEMS = gql`
     $propertyId: ID!
     $schemaItemId: PropertySchemaFieldID!
     $operations: [UpdatePropertyItemOperationInput!]!
+    $lang: String
   ) {
     updatePropertyItems(
       input: { propertyId: $propertyId, schemaItemId: $schemaItemId, operations: $operations }
@@ -313,7 +323,7 @@ export const UPDATE_PROPERTY_ITEMS = gql`
 // Queries
 
 export const GET_LAYER_PROPERTY = gql`
-  query GetLayerProperty($layerId: ID!) {
+  query GetLayerProperty($layerId: ID!, $lang: String) {
     layer(id: $layerId) {
       id
       ...Layer1Fragment
@@ -324,7 +334,7 @@ export const GET_LAYER_PROPERTY = gql`
 `;
 
 export const GET_SCENE_PROPERTY = gql`
-  query GetSceneProperty($sceneId: ID!) {
+  query GetSceneProperty($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -381,7 +391,12 @@ export const GET_LINKABLE_DATASETS = gql`
 `;
 
 export const ADD_WIDGET = gql`
-  mutation addWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!) {
+  mutation addWidget(
+    $sceneId: ID!
+    $pluginId: PluginID!
+    $extensionId: PluginExtensionID!
+    $lang: String
+  ) {
     addWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
       scene {
         id

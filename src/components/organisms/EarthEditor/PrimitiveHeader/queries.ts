@@ -1,9 +1,10 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import { layerFragment } from "@reearth/gql/fragments";
 
 export const GET_PRIMITIVES = gql`
-  query GetPrimitives($sceneId: ID!) {
+  query GetPrimitives($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -12,8 +13,8 @@ export const GET_PRIMITIVES = gql`
             id
             extensions {
               extensionId
-              translatedDescription
-              translatedName
+              translatedDescription(lang: $lang)
+              translatedName(lang: $lang)
               icon
               type
             }
@@ -33,6 +34,7 @@ export const ADD_LAYER_ITEM_FROM_PRIMITIVE = gql`
     $lat: Float
     $lng: Float
     $index: Int
+    $lang: String
   ) {
     addLayerItem(
       input: {

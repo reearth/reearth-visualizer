@@ -4,7 +4,7 @@ const propertyFragment = gql`
   fragment PropertySchemaItemFragment on PropertySchemaGroup {
     schemaGroupId
     title
-    translatedTitle
+    translatedTitle(lang: $lang)
     isList
     representativeFieldId
     isAvailableIf {
@@ -16,8 +16,8 @@ const propertyFragment = gql`
       fieldId
       title
       description
-      translatedTitle
-      translatedDescription
+      translatedTitle(lang: $lang)
+      translatedDescription(lang: $lang)
       prefix
       suffix
       type
@@ -29,7 +29,7 @@ const propertyFragment = gql`
         key
         icon
         title
-        translatedTitle
+        translatedTitle(lang: $lang)
       }
       isAvailableIf {
         fieldId

@@ -13,15 +13,17 @@ export const INSTALLABLE_PLUGINS = gql`
 `;
 
 export const INSTALLED_PLUGINS = gql`
-  query InstalledPlugins($projectId: ID!) {
+  query InstalledPlugins($projectId: ID!, $lang: String) {
     scene(projectId: $projectId) {
       id
       plugins {
         plugin {
           id
-          name
           version
+          name
           description
+          translatedName(lang: $lang)
+          translatedDescription(lang: $lang)
           author
           repositoryUrl
         }

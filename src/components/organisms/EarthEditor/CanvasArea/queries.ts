@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import { layerFragment, propertyFragment, widgetAlignSysFragment } from "@reearth/gql/fragments";
@@ -146,7 +147,7 @@ const fragments = gql`
 `;
 
 export const GET_LAYERS = gql`
-  query GetLayers($sceneId: ID!) {
+  query GetLayers($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -162,7 +163,7 @@ export const GET_LAYERS = gql`
 `;
 
 export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!) {
+  query GetEarthWidgets($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -249,7 +250,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
 `;
 
 export const MOVE_INFOBOX_FIELD = gql`
-  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!) {
+  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: String) {
     moveInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId, index: $index }) {
       layer {
         id
@@ -262,7 +263,7 @@ export const MOVE_INFOBOX_FIELD = gql`
 `;
 
 export const REMOVE_INFOBOX_FIELD = gql`
-  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!) {
+  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: String) {
     removeInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId }) {
       layer {
         id
@@ -275,7 +276,7 @@ export const REMOVE_INFOBOX_FIELD = gql`
 `;
 
 export const GET_BLOCKS = gql`
-  query getBlocks($sceneId: ID!) {
+  query getBlocks($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -287,6 +288,8 @@ export const GET_BLOCKS = gql`
               type
               name
               description
+              translatedName(lang: $lang)
+              translatedDescription(lang: $lang)
               icon
             }
           }
@@ -302,6 +305,7 @@ export const ADD_INFOBOX_FIELD = gql`
     $pluginId: PluginID!
     $extensionId: PluginExtensionID!
     $index: Int
+    $lang: String
   ) {
     addInfoboxField(
       input: { layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index }
