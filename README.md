@@ -16,6 +16,8 @@
   ·
   <a href="https://docs.reearth.io">Documentation</a>
   ·
+  <a href="https://www.figma.com/community/file/1027048965458642686">Figma</a>
+  ·
   <a href="https://github.com/reearth/reearth/issues">Issues</a>
   ·
   <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
@@ -51,7 +53,8 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 * [Go](https://github.com/golang/go)
 * [GraphQL](https://github.com/graphql)
 * [MongoDB](https://www.mongodb.com/)
-* [WebAssembly](https://webassembly.org/) + [QuickJS](https://github.com/bellard/quickjs)
+* [WebAssembly](https://webassembly.org/) (Plug-in execution)
+* [OpenID Connect](https://openid.net/connect/)
 
 ## Getting Started
 
