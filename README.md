@@ -9,7 +9,7 @@
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
 [![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
 [![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
-[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/XJhYkQQDAu)
+[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
 
 <p align="center">
   <a href="https://community.reearth.io">Website</a>
@@ -83,7 +83,7 @@ If your have any requests for features, they are more than welcome! Just create 
 ## Community
 
 - [Discussions](https://github.com/reearth/reearth/discussions)
-- [Discord](https://discord.gg/Q6kmXnywfw): Please feel free to come in!
+- [Discord](https://discord.gg/Q6kmXnywfw): Feel free to come in!
 
 ## Contributing
 
