@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { useImperativeHandle, Ref, RefObject, useMemo } from "react";
+import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
 import { delayedObject, merge } from "@reearth/util/object";
@@ -22,6 +22,7 @@ export default function useEngineRef(
   ref: Ref<EngineRef>,
   cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
 ): EngineRef {
+  const cancelCameraFlight = useRef<() => void>();
   const e = useMemo((): EngineRef => {
     const api = merge(exposed, {
       get viewer(): Cesium.Viewer | undefined {
@@ -55,12 +56,22 @@ export default function useEngineRef(
       flyTo: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        flyTo(viewer.scene?.camera, { ...getCamera(viewer), ...camera }, options);
+        cancelCameraFlight.current?.();
+        cancelCameraFlight.current = flyTo(
+          viewer.scene?.camera,
+          { ...getCamera(viewer), ...camera },
+          options,
+        );
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        lookAt(viewer.scene?.camera, { ...getCamera(viewer), ...camera }, options);
+        cancelCameraFlight.current?.();
+        cancelCameraFlight.current = lookAt(
+          viewer.scene?.camera,
+          { ...getCamera(viewer), ...camera },
+          options,
+        );
       },
       zoomIn: amount => {
         const viewer = cesium.current?.cesiumElement;

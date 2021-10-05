@@ -1,10 +1,11 @@
 import { Math as CesiumMath } from "cesium";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
 import { Camera as CameraValue } from "@reearth/util/value";
 
 import { useContext } from "../../Plugin";
 import type { Layer } from "../../Plugin";
+import type { CommonReearth } from "../../Plugin/api";
 
 export type Story = {
   title: string;
@@ -53,12 +54,40 @@ export default function ({
   }>();
 
   const { reearth } = useContext() ?? {};
-  const { lookAt, flyTo } = reearth?.visualizer.camera ?? {};
   const {
     findById: findLayerById,
     selected: selectedLayer,
     select: selectLayer,
   } = reearth?.layers ?? {};
+
+  const timeout = useRef<number>();
+
+  const flyTo = useCallback(
+    (...args: Parameters<CommonReearth["visualizer"]["camera"]["lookAt"]>) => {
+      // Prioritize camera flight by the photo overlay
+      timeout.current = window.setTimeout(() => {
+        reearth?.visualizer.camera.flyTo(...args);
+      }, 100);
+    },
+    [reearth?.visualizer.camera],
+  );
+
+  const lookAt = useCallback(
+    (...args: Parameters<CommonReearth["visualizer"]["camera"]["lookAt"]>) => {
+      // Prioritize camera flight by the photo overlay
+      timeout.current = window.setTimeout(() => {
+        reearth?.visualizer.camera.lookAt(...args);
+      }, 100);
+    },
+    [reearth?.visualizer.camera],
+  );
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeout.current);
+    },
+    [],
+  );
 
   const stories = useMemo<Story[]>(() => {
     if (!storiesData || !findLayerById) return [];
@@ -133,7 +162,7 @@ export default function ({
     }
 
     if (selected.story.layerCamera) {
-      flyTo?.(selected.story.layerCamera, {
+      flyTo(selected.story.layerCamera, {
         duration: selected.story.layerDuration ?? selected.duration,
       });
       return;
@@ -149,7 +178,7 @@ export default function ({
 
     if (typeof position.lat !== "number" && typeof position.lng !== "number") return;
 
-    lookAt?.(
+    lookAt(
       {
         ...position,
         heading: selected.camera.heading,
