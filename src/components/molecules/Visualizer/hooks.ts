@@ -138,14 +138,6 @@ export default ({
   );
 
   useEffect(() => {
-    const c = engineRef.current?.getCamera();
-    if (c) {
-      setInnerCamera(c);
-    }
-  }, [engineType]);
-
-  // update cesium
-  useEffect(() => {
     engineRef.current?.requestRender();
   });
 

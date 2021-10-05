@@ -85,20 +85,24 @@ export default ({
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
 
-  useEffect(() => {
-    if (!property?.default?.camera || initialCameraFlight.current) return;
+  const handleMount = useCallback(() => {
+    if (initialCameraFlight.current) return;
     initialCameraFlight.current = true;
-    engineAPI.flyTo(property.default.camera, { duration: 0 });
-  }, [engineAPI, property?.default?.camera]);
-
-  useEffect(() => {
-    if (initialCameraFlight.current && !property) {
-      initialCameraFlight.current = false;
+    if (property?.default?.camera) {
+      engineAPI.flyTo(property.default.camera, { duration: 0 });
     }
-  }, [property]);
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    if (camera) {
+      onCameraChange?.(camera);
+    }
+  }, [engineAPI, onCameraChange, property?.default?.camera]);
+
+  const handleUnmount = useCallback(() => {
+    initialCameraFlight.current = false;
+  }, []);
 
   // call onCameraChange event after moving camera
-  const onCameraMoveEnd = useCallback(() => {
+  const handleCameraMoveEnd = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
@@ -107,6 +111,13 @@ export default ({
       onCameraChange?.(c);
     }
   }, [onCameraChange, camera]);
+
+  // camera
+  useEffect(() => {
+    if (camera) {
+      engineAPI.flyTo(camera, { duration: 0 });
+    }
+  }, [camera, engineAPI]);
 
   // manage layer selection
   useEffect(() => {
@@ -119,7 +130,7 @@ export default ({
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
 
-  const onClick = useCallback(
+  const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
@@ -171,8 +182,10 @@ export default ({
     backgroundColor,
     imageryLayers,
     cesium,
-    onClick,
-    onCameraMoveEnd,
+    handleMount,
+    handleUnmount,
+    handleClick,
+    handleCameraMoveEnd,
   };
 };
 

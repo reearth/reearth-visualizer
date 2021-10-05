@@ -14,10 +14,10 @@ import useHooks from "./hooks";
 export type Props = FieldProps<Camera> & {
   onDelete?: () => void;
   isCapturing?: boolean;
-  onIsCapturingChange?: (isCapturing: boolean) => void;
   camera?: Camera;
-  onCameraChange?: (camera: Partial<Camera>) => void;
   onlyPose?: boolean;
+  onIsCapturingChange?: (isCapturing: boolean) => void;
+  onCameraChange?: (camera: Partial<Camera>) => void;
 };
 
 const CameraField: React.FC<Props> = ({
@@ -61,12 +61,21 @@ const CameraField: React.FC<Props> = ({
     onlyPose,
   });
 
-  const lat = camera?.lat && Math.round(camera?.lat * 1000) / 1000;
-  const lng = camera?.lng && Math.round(camera?.lng * 1000) / 1000;
-  const height = camera?.height && Math.round(camera?.height);
-  const heading = camera?.heading && Math.round(camera?.heading * 1000) / 1000;
-  const pitch = camera?.pitch && Math.round(camera?.pitch * 1000) / 1000;
-  const roll = camera?.roll && Math.round(camera?.roll * 1000) / 1000;
+  const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
+  const lng = typeof camera?.lng === "number" ? Math.round(camera?.lng * 1000) / 1000 : "";
+  const height = typeof camera?.height === "number" ? Math.round(camera?.height) : "";
+  const heading =
+    typeof camera?.heading === "number"
+      ? Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const pitch =
+    typeof camera?.pitch === "number"
+      ? Math.round(((camera?.pitch * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const roll =
+    typeof camera?.roll === "number"
+      ? Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000
+      : "";
   const theme = useTheme();
   return (
     <Wrapper ref={wrapperRef} onClick={value ? undefined : startCapture} data-camera-popup>
@@ -94,13 +103,25 @@ const CameraField: React.FC<Props> = ({
             <FormFieldGroup>
               <FormFieldRow>
                 <FormWrapper>
-                  <Input type="number" value={lat} onChange={handleLatChange} />
+                  <Input
+                    type="number"
+                    value={lat}
+                    step={0.01}
+                    readOnly={!isCapturing}
+                    onChange={handleLatChange}
+                  />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Latitude" })}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
-                  <Input type="number" value={lng} onChange={handleLngChange} />
+                  <Input
+                    type="number"
+                    value={lng}
+                    step={0.01}
+                    readOnly={!isCapturing}
+                    onChange={handleLngChange}
+                  />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Longtitude" })}
                   </FloatText>
@@ -109,8 +130,9 @@ const CameraField: React.FC<Props> = ({
                   <Input
                     type="number"
                     value={height}
+                    step={1000}
+                    readOnly={!isCapturing}
                     onChange={handleAltitudeChange}
-                    step={10 ** 6}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Altitude" })}
@@ -125,19 +147,37 @@ const CameraField: React.FC<Props> = ({
           <FormFieldGroup>
             <FormFieldRow>
               <FormWrapper>
-                <Input type="number" value={heading} onChange={handleHeadingChange} step="0.01" />
+                <Input
+                  type="number"
+                  value={heading}
+                  step={1}
+                  readOnly={!isCapturing}
+                  onChange={handleHeadingChange}
+                />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Heading" })}
                 </FloatText>
               </FormWrapper>
               <FormWrapper>
-                <Input type="number" value={pitch} onChange={handlePitchChange} step="0.01" />
+                <Input
+                  type="number"
+                  value={pitch}
+                  step={1}
+                  readOnly={!isCapturing}
+                  onChange={handlePitchChange}
+                />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Pitch" })}
                 </FloatText>
               </FormWrapper>
               <FormWrapper>
-                <Input type="number" value={roll} onChange={handleRollChange} step="0.01" />
+                <Input
+                  type="number"
+                  value={roll}
+                  step={1}
+                  readOnly={!isCapturing}
+                  onChange={handleRollChange}
+                />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Roll" })}
                 </FloatText>

@@ -6,24 +6,24 @@ import { Camera } from "@reearth/util/value";
 
 type Params = {
   cameraValue: Camera | undefined;
-  onSubmit?: (value: Camera) => void;
   isCapturing?: boolean;
-  onIsCapturingChange?: (isCapturing: boolean) => void;
   cameraState?: Camera;
-  onCameraChange?: (camera: Partial<Camera>) => void;
   disabled?: boolean;
   onlyPose?: boolean;
+  onSubmit?: (value: Camera) => void;
+  onIsCapturingChange?: (isCapturing: boolean) => void;
+  onCameraChange?: (camera: Partial<Camera>) => void;
 };
 
 export default ({
   cameraValue,
-  onSubmit,
   isCapturing,
-  onIsCapturingChange,
   cameraState,
-  onCameraChange,
   disabled,
   onlyPose,
+  onSubmit,
+  onIsCapturingChange,
+  onCameraChange,
 }: Params) => {
   const camera = isCapturing ? cameraState : cameraValue;
   const [open, setOpen] = useState(false);
@@ -32,6 +32,7 @@ export default ({
   const closePopup = useCallback(() => setOpen(false), [setOpen]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const initCamera = useRef<Camera>();
   const cameraWrapperRef = useRef<HTMLDivElement>(null);
   const popperRef = useRef<HTMLUListElement>(null);
   const { styles, attributes } = usePopper(cameraWrapperRef.current, popperRef.current, {
@@ -60,13 +61,15 @@ export default ({
 
   const startCapture = useCallback(() => {
     if (disabled) return;
+    initCamera.current = cameraState;
     openPopup();
     onIsCapturingChange?.(true);
-  }, [disabled, onIsCapturingChange, openPopup]);
+  }, [cameraState, disabled, onIsCapturingChange, openPopup]);
 
   const finishCapture = useCallback(() => {
     closePopup();
     onIsCapturingChange?.(false);
+    initCamera.current = undefined;
   }, [closePopup, onIsCapturingChange]);
 
   const updateCamera = useCallback(
@@ -75,8 +78,11 @@ export default ({
   );
 
   const cancelCapture = useCallback(() => {
+    if (initCamera.current) {
+      updateCamera(initCamera.current);
+    }
     finishCapture();
-  }, [finishCapture]);
+  }, [finishCapture, updateCamera]);
 
   const submitCapture = useCallback(() => {
     if (disabled) return;
@@ -108,17 +114,20 @@ export default ({
   );
 
   const handleHeadingChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateCamera({ heading: Number(e.target.value) }),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      updateCamera({ heading: (Number(e.target.value) * Math.PI) / 180 }),
     [updateCamera],
   );
 
   const handlePitchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateCamera({ pitch: Number(e.target.value) }),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      updateCamera({ pitch: (Number(e.target.value) * Math.PI) / 180 }),
     [updateCamera],
   );
 
   const handleRollChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateCamera({ roll: Number(e.target.value) }),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      updateCamera({ roll: (Number(e.target.value) * Math.PI) / 180 }),
     [updateCamera],
   );
 

@@ -17,6 +17,7 @@ import {
 
 import type { EngineProps, Ref as EngineRef } from "..";
 
+import Event from "./Event";
 import useHooks from "./hooks";
 
 export type { EngineProps as Props } from "..";
@@ -36,15 +37,23 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   },
   ref,
 ) => {
-  const { terrainProvider, backgroundColor, imageryLayers, cesium, onClick, onCameraMoveEnd } =
-    useHooks({
-      ref,
-      property,
-      camera,
-      selectedLayerId,
-      onLayerSelect,
-      onCameraChange,
-    });
+  const {
+    terrainProvider,
+    backgroundColor,
+    imageryLayers,
+    cesium,
+    handleMount,
+    handleUnmount,
+    handleClick,
+    handleCameraMoveEnd,
+  } = useHooks({
+    ref,
+    property,
+    camera,
+    selectedLayerId,
+    onLayerSelect,
+    onCameraChange,
+  });
 
   return (
     <>
@@ -72,13 +81,14 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         requestRenderMode={!property?.timeline?.animation}
         maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
         shadows={!!property?.atmosphere?.shadows}
-        onClick={onClick}>
+        onClick={handleClick}>
+        <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <Camera onChange={onCameraMoveEnd} />
+        <Camera onChange={handleCameraMoveEnd} />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
