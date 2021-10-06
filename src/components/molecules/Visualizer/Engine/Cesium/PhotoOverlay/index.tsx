@@ -25,7 +25,7 @@ export type Property = {
     imageSize?: number;
     imageHorizontalOrigin?: "left" | "center" | "right";
     imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
-    imageClop?: "none" | "rounded" | "circle";
+    imageCrop?: "none" | "rounded" | "circle";
     imageShadow?: boolean;
     imageShadowColor?: string;
     imageShadowBlur?: number;
@@ -43,7 +43,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
     imageSize,
     imageHorizontalOrigin,
     imageVerticalOrigin,
-    imageClop,
+    imageCrop,
     imageShadow,
     imageShadowColor,
     imageShadowBlur,
@@ -60,7 +60,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
   const [canvas] = useIcon({
     image: image || defaultImage,
     imageSize: image ? imageSize : undefined,
-    crop: image ? imageClop : undefined,
+    crop: image ? imageCrop : undefined,
     shadow: image ? imageShadow : undefined,
     shadowColor: image ? imageShadowColor : undefined,
     shadowBlur: image ? imageShadowBlur : undefined,
