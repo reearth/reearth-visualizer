@@ -73,13 +73,11 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
-        export:
-          selected === "layer" ||
-          (selected === "scene" && (
-            <>
-              <ExportPane />
-            </>
-          )),
+        export: (selected === "layer" || selected === "scene") && (
+          <>
+            <ExportPane />
+          </>
+        ),
       }}
     </TabArea>
   );
