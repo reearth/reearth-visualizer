@@ -136,6 +136,9 @@ Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more inform
 <td><a href="https://github.com/yk-eukarya">
 <img src="https://github.com/yk-eukarya.png" width="75" height="75"><br />yk-eukarya
 </a></td>
+<td><a href="https://github.com/kurohune538">
+<img src="https://github.com/kurohune538.png" width="75" height="75"><br />kurohune538
+</a></td>
 </tr></tbody></table>
 
 ## Contact
