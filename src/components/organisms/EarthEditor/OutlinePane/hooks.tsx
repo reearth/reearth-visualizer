@@ -96,7 +96,7 @@ export default () => {
               enabled: !!widget?.enabled,
               title: e.translatedName,
               description: e.translatedDescription,
-              icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
+              icon: e.icon || (pluginId === "reearth" && extensionId) || "plugin",
             };
           })
           .filter((w): w is Widget => !!w);

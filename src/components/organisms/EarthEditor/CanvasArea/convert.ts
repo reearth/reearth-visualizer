@@ -271,9 +271,8 @@ export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined 
                 icon:
                   extension.icon ||
                   // for official plugin
-                  (plugin.plugin.id === "reearth"
-                    ? extension.extensionId.replace(/block$/, "")
-                    : ""),
+                  (plugin.plugin.id === "reearth" && extension.extensionId.replace(/block$/, "")) ||
+                  "plugin",
                 name: extension.name,
                 description: extension.description,
                 pluginId: plugin.plugin.id,

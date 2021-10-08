@@ -118,7 +118,8 @@ import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
 
-// Plugi-ins
+// Plug-ins
+import Plugin from "./Icons/plugin.svg";
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
@@ -228,4 +229,5 @@ export default {
   privateGitHubRepo: PrivateGitHubRepo,
   publicGitHubRepo: PublicGitHubRepo,
   menuForDevice: MenuForDevice,
+  plugin: Plugin,
 };
