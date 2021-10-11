@@ -25,6 +25,7 @@ type PluginExtensionDocument struct {
 	Icon         string
 	Schema       string
 	Visualizer   string `bson:",omitempty"`
+	SingleOnly   bool
 	WidgetLayout *WidgetLayoutDocument
 }
 
@@ -83,6 +84,7 @@ func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {
 			Icon:         e.Icon(),
 			Schema:       e.Schema().String(),
 			Visualizer:   string(e.Visualizer()),
+			SingleOnly:   e.SingleOnly(),
 			WidgetLayout: NewWidgetLayout(e.WidgetLayout()),
 		})
 	}
@@ -122,6 +124,7 @@ func (d *PluginDocument) Model() (*plugin.Plugin, error) {
 			Name(e.Name).
 			Description(e.Description).
 			Icon(e.Icon).
+			SingleOnly(e.SingleOnly).
 			WidgetLayout(e.WidgetLayout.Model()).
 			Schema(psid).
 			Build()

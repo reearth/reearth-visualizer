@@ -591,6 +591,7 @@ type PluginExtension struct {
 	Name                     string               `json:"name"`
 	Description              string               `json:"description"`
 	Icon                     string               `json:"icon"`
+	SingleOnly               *bool                `json:"singleOnly"`
 	WidgetLayout             *WidgetLayout        `json:"widgetLayout"`
 	Visualizer               *Visualizer          `json:"visualizer"`
 	PropertySchemaID         id.PropertySchemaID  `json:"propertySchemaId"`

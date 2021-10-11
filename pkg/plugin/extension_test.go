@@ -18,6 +18,7 @@ func TestExtension(t *testing.T) {
 		Icon         string
 		Schema       id.PropertySchemaID
 		Visualizer   visualizer.Visualizer
+		SingleOnly   bool
 		WidgetLayout *WidgetLayout
 	}{
 		ID:           "xxx",
@@ -27,6 +28,7 @@ func TestExtension(t *testing.T) {
 		Icon:         "test",
 		Schema:       id.MustPropertySchemaID("hoge~0.1.0/fff"),
 		Visualizer:   "vvv",
+		SingleOnly:   true,
 		WidgetLayout: NewWidgetLayout(false, false, true, false, nil).Ref(),
 	}
 
@@ -38,6 +40,7 @@ func TestExtension(t *testing.T) {
 		Icon("test").
 		WidgetLayout(NewWidgetLayout(false, false, true, false, nil).Ref()).
 		Visualizer("vvv").
+		SingleOnly(true).
 		Type(ExtensionTypePrimitive).
 		MustBuild()
 
@@ -46,6 +49,7 @@ func TestExtension(t *testing.T) {
 	assert.Equal(t, expected.Description, actual.Description())
 	assert.Equal(t, expected.Name, actual.Name())
 	assert.Equal(t, expected.Icon, actual.Icon())
+	assert.Equal(t, expected.SingleOnly, actual.SingleOnly())
 	assert.Equal(t, expected.WidgetLayout, actual.WidgetLayout())
 	assert.Equal(t, expected.Schema, actual.Schema())
 	assert.Equal(t, expected.ID, actual.ID())

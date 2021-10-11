@@ -159,6 +159,7 @@ func TestExtension(t *testing.T) {
 	cesium := "cesium"
 	d := "ddd"
 	i := "xx:/aa.bb"
+	tr := true
 	testCases := []struct {
 		name       string
 		ext        Extension
@@ -207,10 +208,11 @@ func TestExtension(t *testing.T) {
 				Name:        "Cesium",
 				Schema:      nil,
 				Type:        "widget",
+				SingleOnly:  &tr,
 			},
 			sys:        true,
 			pid:        id.OfficialPluginID,
-			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("").Type(plugin.ExtensionTypeWidget).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
+			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("").Type(plugin.ExtensionTypeWidget).System(true).Description(i18n.StringFrom("ddd")).SingleOnly(true).MustBuild(),
 			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
 		},
 		{

@@ -530,6 +530,7 @@ type ComplexityRoot struct {
 		PropertySchema           func(childComplexity int) int
 		PropertySchemaID         func(childComplexity int) int
 		SceneWidget              func(childComplexity int, sceneID id.ID) int
+		SingleOnly               func(childComplexity int) int
 		TranslatedDescription    func(childComplexity int, lang *string) int
 		TranslatedName           func(childComplexity int, lang *string) int
 		Type                     func(childComplexity int) int
@@ -3655,6 +3656,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.SceneWidget(childComplexity, args["sceneId"].(id.ID)), true
 
+	case "PluginExtension.singleOnly":
+		if e.complexity.PluginExtension.SingleOnly == nil {
+			break
+		}
+
+		return e.complexity.PluginExtension.SingleOnly(childComplexity), true
+
 	case "PluginExtension.translatedDescription":
 		if e.complexity.PluginExtension.TranslatedDescription == nil {
 			break
@@ -5956,6 +5964,7 @@ type PluginExtension {
   name: String!
   description: String!
   icon: String!
+  singleOnly: Boolean
   widgetLayout: WidgetLayout
   visualizer: Visualizer
   propertySchemaId: PropertySchemaID!
@@ -19180,6 +19189,38 @@ func (ec *executionContext) _PluginExtension_icon(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PluginExtension_singleOnly(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PluginExtension) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PluginExtension",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SingleOnly, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PluginExtension_widgetLayout(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PluginExtension) (ret graphql.Marshaler) {
@@ -34513,6 +34554,8 @@ func (ec *executionContext) _PluginExtension(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "singleOnly":
+			out.Values[i] = ec._PluginExtension_singleOnly(ctx, field, obj)
 		case "widgetLayout":
 			out.Values[i] = ec._PluginExtension_widgetLayout(ctx, field, obj)
 		case "visualizer":

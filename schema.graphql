@@ -325,6 +325,7 @@ type PluginExtension {
   name: String!
   description: String!
   icon: String!
+  singleOnly: Boolean
   widgetLayout: WidgetLayout
   visualizer: Visualizer
   propertySchemaId: PropertySchemaID!

@@ -72,6 +72,11 @@ func (b *ExtensionBuilder) Visualizer(visualizer visualizer.Visualizer) *Extensi
 	return b
 }
 
+func (b *ExtensionBuilder) SingleOnly(singleOnly bool) *ExtensionBuilder {
+	b.p.singleOnly = singleOnly
+	return b
+}
+
 func (b *ExtensionBuilder) WidgetLayout(widgetLayout *WidgetLayout) *ExtensionBuilder {
 	b.p.widgetLayout = widgetLayout
 	return b

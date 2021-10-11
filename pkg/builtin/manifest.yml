@@ -1252,6 +1252,7 @@ extensions:
     type: widget
     name: Menu (legacy)
     description: Menu widgets
+    singleOnly: true
     widgetLayout:
       floating: true
     schema:
@@ -1470,6 +1471,7 @@ extensions:
     type: widget
     name: Splash screen
     description: A unique start screen that will display on load of your archive(ex. display the archive's title).
+    singleOnly: true
     widgetLayout:
       floating: true
     schema:
@@ -1532,6 +1534,7 @@ extensions:
     type: widget
     name: Storytelling
     description: SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.
+    singleOnly: true
     widgetLayout:
       extendable:
         horizontally: true

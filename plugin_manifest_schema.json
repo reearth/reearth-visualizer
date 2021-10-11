@@ -322,6 +322,12 @@
             "infobox"
           ]
         },
+        "singleOnly": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "widgetLayout": {
           "type": [
             "object",

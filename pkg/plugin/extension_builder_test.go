@@ -39,6 +39,12 @@ func TestExtensionBuilder_Icon(t *testing.T) {
 	assert.Equal(t, "ccc", res.Icon())
 }
 
+func TestExtensionBuilder_SingleOnly(t *testing.T) {
+	var b = NewExtension()
+	res := b.ID("xxx").SingleOnly(true).MustBuild()
+	assert.Equal(t, true, res.SingleOnly())
+}
+
 func TestExtensionBuilder_Schema(t *testing.T) {
 	var b = NewExtension()
 	res := b.ID("xxx").Schema(id.MustPropertySchemaID("hoge~0.1.0/fff")).MustBuild()
@@ -160,6 +166,7 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 		schema        id.PropertySchemaID
 		visualizer    visualizer.Visualizer
 		widgetLayout  *WidgetLayout
+		singleOnly    bool
 		expected      *Extension
 	}{
 		{
@@ -172,6 +179,7 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 			description:   i18n.StringFrom("ddd"),
 			schema:        id.MustPropertySchemaID("foo~1.1.1/hhh"),
 			visualizer:    "vvv",
+			singleOnly:    true,
 			widgetLayout: NewWidgetLayout(
 				false, false, true, false, &WidgetLocation{
 					Zone:    WidgetZoneOuter,
@@ -186,6 +194,7 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 				icon:          "ttt",
 				schema:        id.MustPropertySchemaID("foo~1.1.1/hhh"),
 				visualizer:    "vvv",
+				singleOnly:    true,
 				widgetLayout: NewWidgetLayout(
 					false, false, true, false, &WidgetLocation{
 						Zone:    WidgetZoneOuter,
@@ -226,6 +235,7 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 				Description(tc.description).
 				Name(tc.ename).
 				Icon(tc.icon).
+				SingleOnly(tc.singleOnly).
 				WidgetLayout(tc.widgetLayout).
 				MustBuild()
 		})

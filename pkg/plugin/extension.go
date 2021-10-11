@@ -33,6 +33,7 @@ type Extension struct {
 	icon          string
 	schema        id.PropertySchemaID
 	visualizer    visualizer.Visualizer
+	singleOnly    bool
 	widgetLayout  *WidgetLayout
 }
 
@@ -62,6 +63,10 @@ func (w *Extension) Schema() id.PropertySchemaID {
 
 func (w *Extension) Visualizer() visualizer.Visualizer {
 	return w.visualizer
+}
+
+func (w *Extension) SingleOnly() bool {
+	return w.singleOnly
 }
 
 func (w *Extension) WidgetLayout() *WidgetLayout {

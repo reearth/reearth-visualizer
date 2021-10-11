@@ -122,11 +122,15 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 	}
 
 	var desc, icon string
+	var singleOnly bool
 	if i.Description != nil {
 		desc = *i.Description
 	}
 	if i.Icon != nil {
 		icon = *i.Icon
+	}
+	if i.SingleOnly != nil {
+		singleOnly = *i.SingleOnly
 	}
 
 	ext, err := plugin.NewExtension().
@@ -135,6 +139,7 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 		Description(i18n.StringFrom(desc)).
 		Visualizer(viz).
 		Type(typ).
+		SingleOnly(singleOnly).
 		WidgetLayout(i.WidgetLayout.layout()).
 		Icon(icon).
 		Schema(schema.ID()).

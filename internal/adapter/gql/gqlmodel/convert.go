@@ -31,6 +31,10 @@ func stringToRef(s string) *string {
 	return &s
 }
 
+func BoolToRef(b bool) *bool {
+	return &b
+}
+
 func ToPageInfo(p *usecase.PageInfo) *PageInfo {
 	if p == nil {
 		return &PageInfo{}
