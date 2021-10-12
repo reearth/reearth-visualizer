@@ -13,6 +13,7 @@ export default (
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>,
+  onClose?: () => void,
 ) => {
   const [url, onUrlChange] = useState<string>();
   const [csv, changeCsv] = useState<File>();
@@ -44,6 +45,14 @@ export default (
     setDataType(type);
   }, []);
 
+  const handleClose = useCallback(() => {
+    changeCsv(undefined);
+    changeSheet(undefined);
+    onUrlChange(undefined);
+    setDataType(undefined);
+    onClose?.();
+  }, [onClose]);
+
   const onSheetSelect = useCallback(sheet => {
     changeSheet(sheet);
   }, []);
@@ -70,5 +79,6 @@ export default (
     onReturn,
     onSheetSelect,
     handleImport,
+    handleClose,
   };
 };

@@ -10,25 +10,24 @@ export type Props = WidgetProps<Property>;
 export type Button = ButtonType;
 export type MenuItem = MenuItemType;
 export type Property = {
-  default: Button;
+  default?: Button;
   menu?: MenuItem[];
 };
 
 const Menu = ({ widget, sceneProperty }: Props): JSX.Element | null => {
-  const { default: button, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
+  const { default: button, menu: menuItems } = (widget.property as Property) ?? {};
 
-  return button ? (
+  return (
     <Wrapper>
       <MenuButton
         sceneProperty={sceneProperty}
-        key={button?.id}
         button={button}
-        location={widget?.layout?.location}
-        align={widget?.layout?.align}
+        location={widget.layout?.location}
+        align={widget.layout?.align}
         menuItems={menuItems}
       />
     </Wrapper>
-  ) : null;
+  );
 };
 
 const Wrapper = styled.div`

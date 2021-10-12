@@ -29,13 +29,12 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
   const intl = useIntl();
   const formik = useFormik({
     initialValues,
-    onSubmit: useCallback(
-      async (data: FormValues) => {
-        await onSubmit?.(data);
-        onClose?.(true);
-      },
-      [onClose, onSubmit],
-    ),
+    onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
+      await onSubmit?.(data);
+      onClose?.(true);
+      resetForm({});
+      setStatus({ success: true });
+    },
   });
 
   const handleClose = useCallback(() => {

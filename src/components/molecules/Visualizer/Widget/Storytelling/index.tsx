@@ -52,7 +52,7 @@ const Storytelling = ({
     openMenu(false);
   });
 
-  return stories?.length > 0 ? (
+  return (
     <div>
       <Menu
         publishedTheme={publishedTheme}
@@ -122,7 +122,8 @@ const Storytelling = ({
             size={isExtraSmallWindow ? "xs" : "m"}
             weight="bold"
             otherProperties={{ userSelect: "none" }}>
-            {typeof selected === "undefined" ? "-" : selected.index + 1} / {stories.length}
+            {typeof selected === "undefined" ? "-" : selected.index + 1} /{" "}
+            {stories.length > 0 ? stories.length : "-"}
           </Text>
         </Current>
         <ArrowButton
@@ -135,7 +136,7 @@ const Storytelling = ({
         </ArrowButton>
       </Widget>
     </div>
-  ) : null;
+  );
 };
 
 const Widget = styled.div<{

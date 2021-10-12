@@ -30,7 +30,7 @@ export type MenuItem = {
 };
 
 export type Props = {
-  button: Button;
+  button?: Button;
   menuItems?: MenuItem[];
   location?: {
     section?: "left" | "right" | "center";
@@ -81,6 +81,12 @@ export default function ({
           resize: false,
         },
       },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 2],
+        },
+      },
     ],
   });
 
@@ -120,18 +126,17 @@ export default function ({
         publishedTheme={publishedTheme}
         tabIndex={0}
         button={b}
-        onClick={handleClick(b)}
+        onClick={b && handleClick(b)}
         ref={referenceElement}>
-        {(b.buttonStyle === "icon" || b.buttonStyle === "texticon") && b.buttonIcon && (
-          <StyledIcon icon={b.buttonIcon} size={25} margin={!!b.buttonTitle} />
+        {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") && b?.buttonIcon && (
+          <StyledIcon icon={b?.buttonIcon} size={25} margin={!!b?.buttonTitle} />
         )}
-        {b.buttonStyle !== "icon" && b.buttonTitle}
+        {b?.buttonStyle !== "icon" && b?.buttonTitle}
       </Button>
       <div
         ref={popperElement}
         style={{
           zIndex: theme.zIndexes.dropDown,
-          margin: "2.5px auto",
           ...styles.popper,
         }}
         {...attributes.popper}>

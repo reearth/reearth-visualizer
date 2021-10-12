@@ -45,7 +45,8 @@ const DatasetModal: React.FC<Props> = ({
     onSheetSelect,
     handleImport,
     handleClick,
-  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd);
+    handleClose,
+  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
@@ -60,7 +61,7 @@ const DatasetModal: React.FC<Props> = ({
     <Modal
       title={intl.formatMessage({ defaultMessage: "Add dataset" })}
       isVisible={isVisible}
-      onClose={onClose}
+      onClose={handleClose}
       button1={
         <Button
           large
@@ -74,7 +75,7 @@ const DatasetModal: React.FC<Props> = ({
         <Button
           large
           text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={onClose}
+          onClick={handleClose}
           buttonType="secondary"
         />
       }>

@@ -137,6 +137,7 @@ export default (params: Params) => {
           if (!teamId) return;
           const result = await addMemberToTeamMutation({
             variables: { userId, teamId, role: Role.Reader },
+            refetchQueries: ["teams"],
           });
           if (result.errors || !result.data?.addMemberToTeam) {
             setNotification({
@@ -184,7 +185,10 @@ export default (params: Params) => {
   const removeMemberFromTeam = useCallback(
     async (userId: string) => {
       if (!teamId) return;
-      const result = await removeMemberFromTeamMutation({ variables: { teamId, userId } });
+      const result = await removeMemberFromTeamMutation({
+        variables: { teamId, userId },
+        refetchQueries: ["teams"],
+      });
       if (result.errors || !result.data?.removeMemberFromTeam) {
         setNotification({
           type: "error",

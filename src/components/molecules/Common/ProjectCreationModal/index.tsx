@@ -44,12 +44,12 @@ const ProjectCreationModal: React.FC<Props> = ({
   const [openAssets, setOpenAssets] = useState(false);
   const formik = useFormik({
     initialValues,
-    onSubmit: useCallback(
-      async (data: FormValues) => {
-        await onSubmit?.(data);
-      },
-      [onSubmit],
-    ),
+    onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
+      await onSubmit?.(data);
+      onClose?.();
+      resetForm({});
+      setStatus({ success: true });
+    },
   });
 
   const handleClose = useCallback(() => {
