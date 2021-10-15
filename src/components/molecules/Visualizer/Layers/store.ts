@@ -73,7 +73,14 @@ export class LayerStore {
 
 function flattenLayers(layers: Layer[] | undefined): Layer[] {
   return (
-    layers?.reduce<Layer[]>((a, b) => [...a, b, ...(b.isVisible ? b.children ?? [] : [])], []) ?? []
+    layers?.reduce<Layer[]>(
+      (a: Layer[], b: Layer): Layer[] => [
+        ...a,
+        b,
+        ...(b.isVisible ? flattenLayers(b.children) ?? [] : []),
+      ],
+      [],
+    ) ?? []
   );
 }
 
