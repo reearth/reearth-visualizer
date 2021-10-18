@@ -46,12 +46,6 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
                 text={intl.formatMessage({ defaultMessage: "Datasets" })}
               />
             </MenuListItem>
-            {/* <MenuListItem>
-              <MenuListItemLabel
-                linkTo={`/settings/project/${currentProject.id}/plugins`}
-                text={intl.formatMessage({ defaultMessage: "Plugins" })}
-              />
-            </MenuListItem> */}
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
@@ -62,15 +56,8 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
-                icon="dashboard"
-                linkTo={`/dashboard/${teamId}`}
-                text={intl.formatMessage({ defaultMessage: "Top page" })}
-              />
-            </MenuListItem>
-            <MenuListItem>
-              <MenuListItemLabel
                 icon="help"
-                linkTo="/projects"
+                onClick={() => window.open("http://docs.reearth.io", "_blank", "noopener")}
                 text={intl.formatMessage({ defaultMessage: "Help" })}
               />
             </MenuListItem>

@@ -103,44 +103,46 @@ const TextBox: React.FC<Props> = ({
   }, [innerValue, onChange, throttle, throttleTimeout]);
 
   return (
-    <FormWrapper className={className} align="center">
-      {prefix && (
-        <FloatedText floatedTextColor={floatedTextColor} color={color}>
-          {prefix}
-        </FloatedText>
-      )}
-      {multiline ? (
-        <StyledTextarea
-          ref={textAreaRef}
-          value={innerValue ?? ""}
-          onChange={handleChangeTextArea}
-          onBlur={handleBlur}
-          color={color}
-          backgroundColor={backgroundColor}
-          disabled={disabled}
-          placeholder={placeholder}
-          rows={rows}
-        />
-      ) : (
-        <StyledInput
-          value={innerValue ?? ""}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-          onBlur={handleBlur}
-          color={color}
-          type={type}
-          backgroundColor={backgroundColor}
-          disabled={disabled}
-          placeholder={placeholder}
-          borderColor={borderColor}
-        />
-      )}
-      {suffix && (
-        <FloatedText floatedTextColor={floatedTextColor} color={color}>
-          {suffix}
-        </FloatedText>
-      )}
-    </FormWrapper>
+    <div className={className}>
+      <FormWrapper align="center">
+        {prefix && (
+          <FloatedText floatedTextColor={floatedTextColor} color={color}>
+            {prefix}
+          </FloatedText>
+        )}
+        {multiline ? (
+          <StyledTextarea
+            ref={textAreaRef}
+            value={innerValue ?? ""}
+            onChange={handleChangeTextArea}
+            onBlur={handleBlur}
+            color={color}
+            backgroundColor={backgroundColor}
+            disabled={disabled}
+            placeholder={placeholder}
+            rows={rows}
+          />
+        ) : (
+          <StyledInput
+            value={innerValue ?? ""}
+            onChange={handleChange}
+            onKeyPress={handleKeyPress}
+            onBlur={handleBlur}
+            color={color}
+            type={type}
+            backgroundColor={backgroundColor}
+            disabled={disabled}
+            placeholder={placeholder}
+            borderColor={borderColor}
+          />
+        )}
+        {suffix && (
+          <FloatedText floatedTextColor={floatedTextColor} color={color}>
+            {suffix}
+          </FloatedText>
+        )}
+      </FormWrapper>
+    </div>
   );
 };
 

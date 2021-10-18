@@ -36,7 +36,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
         <Text size="m" color={theme.main.weak}>
           {intl.formatMessage({
             defaultMessage:
-              "This is your personal workspace, your projects and resource will be managed in this workspace.",
+              "This is your personal workspace. Your projects and resources will be managed in this workspace.",
           })}
         </Text>
       ) : (

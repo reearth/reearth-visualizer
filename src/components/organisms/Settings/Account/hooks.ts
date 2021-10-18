@@ -22,6 +22,7 @@ export default () => {
   const me = profileData?.me;
   const auths = profileData?.me?.auths;
   const hasPassword = auths?.includes("auth0") ?? false;
+  const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
   const [updateMeMutation] = useUpdateMeMutation();
 
@@ -89,6 +90,7 @@ export default () => {
     currentProject,
     me,
     hasPassword,
+    passwordPolicy,
     updateName,
     updatePassword,
     updateLanguage,

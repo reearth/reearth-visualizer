@@ -59,7 +59,6 @@ src:
           '3528672691': Cancel
           '4120989039': Create
         ProjectMenu:
-          '1936593459': Top page
           '2222696742': Help
           '2661706411': Datasets
           '3029638665': Project settings
@@ -252,15 +251,21 @@ src:
               Light theme is still in beta. Some UI may still not be supported
               (ie. public projects will not use light theme).
           PasswordModal:
+            '264517228': That password is better.
+            '324893002': No whitespace is allowed.
             '539787951': Set your password now
+            '619506016': That password is okay.
             '740918511': New password (for confirmation)
-            '1000887516': 'In order to protect your account, make sure your password:'
-            '1068339636': Change your password now
-            '1515529938': Is Longer than 8 characters
+            '1234886189': >-
+              In order to protect your account, make sure your password is
+              unique and strong.
             '2039038750': New password
             '2521568990': Change Password
-            '3546326308': Use lowercase and uppercase letters
-            '4270021428': At least 2 different numbers
+            '3497016136': Too short.
+            '3627357388': That password is great!
+            '3907506757': 'That password confuses me, but might be okay.'
+            '4066780408': That is terribly long.
+            '4188749693': Change password
           ProfileSection:
             '636461959': Name
             '1534468327': Profile
@@ -412,15 +417,15 @@ src:
         WorkspaceList:
           WorkspaceCell:
             '808766300': No Title Workspace
-            '974692228': >-
-              This is your personal workspace, your projects and resource will
-              be managed in this workspace.
             '3230245813': 'Members:'
+            '4106929473': >-
+              This is your personal workspace. Your projects and resources will
+              be managed in this workspace.
           WorkspaceList:
             '3435539653': All workspaces
             '3828443189': New Workspace
       TopPage:
-        '1405865627': Sign in
+        '1135777802': Log in
       Visualizer:
         Block:
           Text:

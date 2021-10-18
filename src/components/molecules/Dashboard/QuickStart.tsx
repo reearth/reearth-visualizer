@@ -48,7 +48,7 @@ const QuickStart: React.FC<Props> = ({
         <LongBannerButton
           align="center"
           justify="center"
-          onClick={() => window.location.assign("http://docs.reearth.io")}>
+          onClick={() => window.open("http://docs.reearth.io")}>
           <MapIcon icon="map" />
           <Text size="m" weight="bold" customColor>
             {intl.formatMessage({ defaultMessage: "User guide" })}

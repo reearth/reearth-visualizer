@@ -17,6 +17,7 @@ const Account: React.FC<Props> = () => {
     currentProject,
     me,
     hasPassword,
+    passwordPolicy,
     updateName,
     updatePassword,
     updateLanguage,
@@ -33,6 +34,7 @@ const Account: React.FC<Props> = () => {
           lang={me?.lang}
           appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
           hasPassword={hasPassword}
+          passwordPolicy={passwordPolicy}
           updatePassword={updatePassword}
           updateLanguage={updateLanguage}
           updateTheme={updateTheme}

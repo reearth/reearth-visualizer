@@ -22,7 +22,7 @@ const TopPage: React.FC<Props> = ({ children, login }) => {
           large
           buttonType="secondary"
           onClick={login}
-          text={intl.formatMessage({ defaultMessage: "Sign in" })}
+          text={intl.formatMessage({ defaultMessage: "Log in" })}
           margin="40px"
         />
       </LeftWrapper>

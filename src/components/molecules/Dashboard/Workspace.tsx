@@ -71,6 +71,7 @@ const StyledLink = styled(Link)`
   padding: ${metricsSizes["2xs"]}px;
   border-radius: ${metricsSizes.xs}px;
   align-self: flex-end;
+  display: flex;
 
   &:hover {
     text-decoration: none;
