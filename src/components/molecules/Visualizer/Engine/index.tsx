@@ -9,7 +9,7 @@ import React, {
   forwardRef,
 } from "react";
 
-import type { Camera } from "@reearth/util/value";
+import type { Camera, LatLng } from "@reearth/util/value";
 
 import { SelectLayerOptions } from "../Plugin/types";
 
@@ -77,6 +77,10 @@ export type EngineProps = {
   layerSelectionReason?: string;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
+  isLayerDraggable?: boolean;
+  onLayerDrag?: (layerId: string, position: LatLng) => void;
+  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  isLayerDragging?: boolean;
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;
@@ -91,7 +95,6 @@ const engines = {
 
 const Engine: ForwardRefRenderFunction<Ref, Props> = ({ engine, children, ...props }, ref) => {
   const Engine: Component | undefined = engine ? engines[engine] : undefined;
-
   return Engine ? (
     <Engine {...props} ref={ref}>
       {children}

@@ -1,11 +1,17 @@
-import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Transforms } from "cesium";
-import React, { useMemo } from "react";
-import { ModelGraphics, Entity } from "resium";
+import {
+  Cartesian3,
+  HeadingPitchRoll,
+  Math as CesiumMath,
+  Transforms,
+  Entity as CesiumEntity,
+} from "cesium";
+import React, { useEffect, useMemo, useRef } from "react";
+import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
 
 import { toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { colorBlendMode, heightReference, shadowMode } from "../common";
+import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -82,8 +88,13 @@ export default function Model({ layer }: PrimitiveProps<Property>) {
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
 
+  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
+  useEffect(() => {
+    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
+  }, [isVisible, model, position]);
+
   return !isVisible || !model || !position ? null : (
-    <Entity id={id} position={position} orientation={orientation as any}>
+    <Entity id={id} position={position} orientation={orientation as any} ref={e}>
       <ModelGraphics
         uri={model}
         scale={scale}

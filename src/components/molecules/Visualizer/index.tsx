@@ -4,6 +4,7 @@ import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
+import { LatLng } from "@reearth/util/value";
 
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
@@ -53,7 +54,8 @@ export type Props = PropsWithChildren<
     onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onLayerSelect?: (id?: string) => void;
-  } & Omit<EngineProps, "children" | "property" | "onLayerSelect"> &
+    onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
+  } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
     Pick<
       InfoboxProps,
       "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
@@ -82,6 +84,7 @@ export default function Visualizer({
   onBlockMove,
   onBlockInsert,
   onBlockSelect,
+  onLayerDrop,
   ...props
 }: Props): JSX.Element {
   const {
@@ -100,6 +103,9 @@ export default function Visualizer({
     selectLayer,
     selectBlock,
     updateCamera,
+    handleLayerDrag,
+    handleLayerDrop,
+    isLayerDragging,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -114,8 +120,8 @@ export default function Visualizer({
     onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,
+    onLayerDrop,
   });
-
   return (
     <Provider {...providerProps}>
       <Filled ref={wrapperRef}>
@@ -139,11 +145,15 @@ export default function Visualizer({
           property={sceneProperty}
           selectedLayerId={selectedLayer?.id}
           layerSelectionReason={layerSelectionReason}
-          onLayerSelect={selectLayer}
           ready={ready}
-          {...props}
           camera={innerCamera}
-          onCameraChange={updateCamera}>
+          isLayerDragging={isLayerDragging}
+          isLayerDraggable={props.isEditable}
+          onLayerSelect={selectLayer}
+          onCameraChange={updateCamera}
+          onLayerDrop={handleLayerDrop}
+          onLayerDrag={handleLayerDrag}
+          {...props}>
           <Layers
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}

@@ -5,7 +5,6 @@ import {
   HorizontalOrigin,
   VerticalOrigin,
   Cartesian2,
-  PropertyBag,
 } from "cesium";
 import React, { useMemo, useRef, useEffect } from "react";
 import {
@@ -20,7 +19,15 @@ import {
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useIcon, ho, vo, heightReference } from "../common";
+import {
+  useIcon,
+  ho,
+  vo,
+  heightReference,
+  unselectableTag,
+  draggableTag,
+  attachTag,
+} from "../common";
 
 import marker from "./marker.svg";
 
@@ -63,8 +70,6 @@ type Property = {
     extrude?: boolean;
   };
 };
-
-const tag = "reearth_unselectable";
 
 const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
   const { id, isVisible, property } = layer ?? {};
@@ -141,20 +146,20 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
+    // draggable
+    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
+  }, [pos, isVisible]);
+
+  const ep = useRef<CesiumComponentRef<CesiumEntity>>(null);
+  useEffect(() => {
     // disable selecting polyline
-    const ent = e.current?.cesiumElement;
-    if (!ent) return;
-    if (!ent.properties) {
-      ent.properties = new PropertyBag({ [tag]: true });
-    } else if (!ent.properties.hasProperty(tag)) {
-      ent.properties.addProperty(tag, true);
-    }
-  }, [extrudePoints]);
+    attachTag(ep.current?.cesiumElement, unselectableTag, true);
+  }, [pos, isVisible, extrudePoints]);
 
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
-        <Entity ref={e}>
+        <Entity ref={ep}>
           <PolylineGraphics
             positions={extrudePoints}
             material={Color.WHITE.withAlpha(0.4)}
@@ -162,7 +167,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
           />
         </Entity>
       )}
-      <Entity id={id} position={pos}>
+      <Entity id={id} position={pos} ref={e}>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}

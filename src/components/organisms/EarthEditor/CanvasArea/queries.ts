@@ -52,6 +52,7 @@ const fragments = gql`
         ...PropertyFragment
       }
     }
+    propertyId
     property {
       id
       ...PropertyFragmentWithoutSchema

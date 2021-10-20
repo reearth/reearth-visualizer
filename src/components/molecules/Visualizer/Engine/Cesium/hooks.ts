@@ -5,20 +5,23 @@ import {
   Ion,
   EllipsoidTerrainProvider,
   Cesium3DTileFeature,
+  Cartesian3,
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
+import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 
-import { Camera } from "@reearth/util/value";
+import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 
-import { getCamera, layerIdField } from "./common";
+import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
 import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
+import { convertCartesian3ToPosition } from "./utils";
 
 export default ({
   ref,
@@ -27,6 +30,9 @@ export default ({
   selectedLayerId,
   onLayerSelect,
   onCameraChange,
+  isLayerDraggable,
+  onLayerDrag,
+  onLayerDrop,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -34,6 +40,9 @@ export default ({
   selectedLayerId?: string;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
+  isLayerDraggable?: boolean;
+  onLayerDrag?: (layerId: string, position: LatLng) => void;
+  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
@@ -128,7 +137,7 @@ export default ({
     if (!viewer || viewer.isDestroyed()) return;
 
     const entity = selectedLayerId ? viewer.entities.getById(selectedLayerId) : undefined;
-    if (viewer.selectedEntity === entity || (entity && !selectable(entity))) return;
+    if (viewer.selectedEntity === entity || (entity && !isSelectable(entity))) return;
 
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
@@ -138,7 +147,7 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      if (target && "id" in target && target.id instanceof Entity && selectable(target.id)) {
+      if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         onLayerSelect?.(target.id.id);
         return;
       }
@@ -176,9 +185,52 @@ export default ({
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-
     viewer.scene.requestRender();
   });
+
+  // enable Drag and Drop Layers
+  const handleLayerDrag = useCallback(
+    (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
+      const viewer = cesium.current?.cesiumElement;
+      if (!viewer || viewer.isDestroyed() || !isSelectable(e) || !isDraggable(e)) return false;
+
+      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
+      if (!pos) return false;
+
+      onLayerDrag?.(e.id, pos);
+    },
+    [onLayerDrag],
+  );
+
+  const handleLayerDrop = useCallback(
+    (e: Entity, position: Cartesian3 | undefined): boolean | void => {
+      const viewer = cesium.current?.cesiumElement;
+      if (!viewer || viewer.isDestroyed()) return false;
+
+      const key = isDraggable(e);
+      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
+      onLayerDrop?.(e.id, key || "", pos);
+
+      return false; // let apollo-client handle optimistic updates
+    },
+    [onLayerDrop],
+  );
+
+  const cesiumDnD = useRef<CesiumDnD>();
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    cesiumDnD.current = new CesiumDnD(viewer, {
+      onDrag: handleLayerDrag,
+      onDrop: handleLayerDrop,
+      dragDelay: 1000,
+      initialDisabled: !isLayerDraggable,
+    });
+    return () => {
+      if (!viewer || viewer.isDestroyed()) return;
+      cesiumDnD.current?.disable();
+    };
+  }, [handleLayerDrag, handleLayerDrop, isLayerDraggable]);
 
   return {
     terrainProvider,
@@ -190,13 +242,6 @@ export default ({
     handleClick,
     handleCameraMoveEnd,
   };
-};
-
-const tag = "reearth_unselectable";
-const selectable = (e: Entity | undefined) => {
-  if (!e) return false;
-  const p = e.properties;
-  return !p || !p.hasProperty(tag);
 };
 
 function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {

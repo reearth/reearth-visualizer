@@ -187,7 +187,6 @@ const ArrowButton = styled.button<{ publishedTheme: PublishTheme }>`
     color: ${({ publishedTheme }) => publishedTheme.weakIcon};
     cursor: auto;
   }
-
   @media (max-width: 420px) {
     padding: ${metricsSizes["2xs"]}px;
   }
@@ -196,7 +195,6 @@ const ArrowButton = styled.button<{ publishedTheme: PublishTheme }>`
 const Current = styled(Flex)`
   width: 100%;
   padding: ${metricsSizes["2xl"]}px;
-
   @media (max-width: 420px) {
     padding: ${metricsSizes["s"]}px;
   }
@@ -211,7 +209,6 @@ const Title = styled(Text)<{ color: string }>`
   margin: 0 auto;
   max-width: 250px;
   text-align: center;
-
   @media (max-width: 420px) {
     max-width: 190px;
   }
@@ -252,7 +249,6 @@ const Menu = styled.div<{
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-
   @media (max-width: 560px) {
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
     max-height: ${({ area, align }) =>

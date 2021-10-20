@@ -1,7 +1,7 @@
-import { Cartesian3 } from "cesium";
-import React, { useMemo } from "react";
+import { Cartesian3, Entity as CesiumEntity } from "cesium";
+import React, { useEffect, useMemo, useRef } from "react";
 import nl2br from "react-nl2br";
-import { Entity, BillboardGraphics } from "resium";
+import { Entity, BillboardGraphics, CesiumComponentRef } from "resium";
 
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 import Text from "@reearth/components/atoms/Text";
@@ -9,7 +9,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useIcon, ho, vo, heightReference } from "../common";
+import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../common";
 
 import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
 
@@ -79,9 +79,14 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
     isSelected: isSelected && !!photoOverlayImage,
   });
 
+  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
+  useEffect(() => {
+    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
+  }, [isVisible]);
+
   return !isVisible ? null : (
     <>
-      <Entity id={id} position={pos}>
+      <Entity id={id} position={pos} ref={e}>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}

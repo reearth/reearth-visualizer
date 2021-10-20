@@ -19,6 +19,7 @@ import {
   WidgetSectionType,
   WidgetAreaType,
   WidgetAreaAlign,
+  ValueType,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -28,7 +29,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
 } from "@reearth/state";
-import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
@@ -109,7 +110,7 @@ export default (isBuilt?: boolean) => {
   );
 
   const onBlockChange = useCallback(
-    async <T extends ValueType>(
+    async <T extends keyof ValueTypes>(
       blockId: string,
       schemaItemId: string,
       fid: string,
@@ -169,6 +170,31 @@ export default (isBuilt?: boolean) => {
     if (!isBuilt || !title) return;
     document.title = title;
   }, [isBuilt, title]);
+
+  const handleDropLayer = useCallback(
+    async (layerId: string, propertyKey: string, position: LatLng) => {
+      const layer = layers?.findById(layerId);
+      const propertyId = layer?.propertyId;
+      if (!propertyId) return;
+
+      // propertyKey will be "default.location" for example
+      const [schemaItemId, fieldId] = propertyKey.split(".", 2);
+
+      await changePropertyValue({
+        variables: {
+          propertyId,
+          schemaItemId,
+          fieldId,
+          type: ValueType.Latlng,
+          value: {
+            lat: position.lat,
+            lng: position.lng,
+          },
+        },
+      });
+    },
+    [changePropertyValue, layers],
+  );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const onWidgetUpdate = useCallback(
@@ -241,5 +267,6 @@ export default (isBuilt?: boolean) => {
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
+    handleDropLayer,
   };
 };

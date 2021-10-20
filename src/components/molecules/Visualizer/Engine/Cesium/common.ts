@@ -14,6 +14,8 @@ import {
   Viewer,
   HeightReference,
   ShadowMode,
+  Entity,
+  PropertyBag,
 } from "cesium";
 import { useCallback } from "react";
 
@@ -343,3 +345,25 @@ export const shadowMode = (
       [key in string]?: ShadowMode;
     }
   )[shadows || ""]);
+
+export const unselectableTag = "reearth_unselectable";
+export const draggableTag = "reearth_draggable";
+
+export function isSelectable(e: Entity | undefined): boolean {
+  return !e?.properties?.hasProperty(unselectableTag);
+}
+
+export function isDraggable(e: Entity): string | undefined {
+  return e.properties?.getValue(undefined as any)?.[draggableTag];
+}
+
+export function attachTag(entity: Entity | undefined, tag: string, value: any) {
+  if (!entity) return;
+  if (typeof value !== "undefined" && !entity.properties) {
+    entity.properties = new PropertyBag({ [tag]: value });
+  } else if (typeof value === "undefined") {
+    entity.properties?.removeProperty(tag);
+  } else {
+    entity.properties?.addProperty(tag, value);
+  }
+}
