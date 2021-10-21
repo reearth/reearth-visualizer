@@ -17,18 +17,18 @@ const pkg = require("./package.json");
 
 module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
-  let envfile = "";
-  try {
-    envfile = fs.readFileSync(`.env`);
-  } catch {
-    // ignore
-  }
-  const config = readEnv("REEARTH_WEB", {
-    source: {
-      ...dotenv.parse(envfile),
-      ...process.env,
-    },
-  });
+  const envfile = loadEnv(Object.keys(env || {}).find(k => !k.startsWith("WEBPACK_")));
+  const config = {
+    api: "http://localhost:8080/api",
+    published: "/published.html?alias={}",
+    ...readEnv("REEARTH_WEB", {
+      source: {
+        // When --env local is specified, .env.local will be loaded
+        ...(envfile ? dotenv.parse(envfile) : {}),
+        ...process.env,
+      },
+    }),
+  };
 
   return {
     devServer: {
@@ -46,13 +46,8 @@ module.exports = (env, args = {}) => {
       },
       onBeforeSetupMiddleware(devServer) {
         if (!devServer) return;
-
         devServer.app.get("/reearth_config.json", (_req, res) => {
-          res.json({
-            api: "http://localhost:8080/api",
-            published: "/published.html?alias={}",
-            ...Object.fromEntries(Object.entries(config).filter(([, v]) => Boolean(v))),
-          });
+          res.json(config);
         });
       },
     },
@@ -91,15 +86,15 @@ module.exports = (env, args = {}) => {
           use: ["style-loader", "css-loader"],
         },
         {
+          test: /\.ya?ml$/,
+          use: [{ loader: "json-loader" }, { loader: "yaml-flat-loader" }],
+        },
+        {
           exclude: [/\.(jsx?|m?js|html?|json|tsx?|css|ya?ml)$/],
           loader: "file-loader",
           options: {
             name: "assets/[name].[contenthash:8].[ext]",
           },
-        },
-        {
-          test: /\.ya?ml$/,
-          use: [{ loader: "json-loader" }, { loader: "yaml-flat-loader" }],
         },
       ],
     },
@@ -180,3 +175,11 @@ module.exports = (env, args = {}) => {
     },
   };
 };
+
+function loadEnv(env) {
+  try {
+    return fs.readFileSync(`.env${env ? `.${env}` : ""}`);
+  } catch {
+    // ignore
+  }
+}
