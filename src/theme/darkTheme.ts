@@ -190,6 +190,7 @@ const darkTheme: Theme = {
   },
   other: {
     black: colors.dark.other.black,
+    white: colors.dark.other.white,
   },
   pluginList: {
     bg: colors.dark.bg[3],

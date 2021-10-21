@@ -190,6 +190,7 @@ const lightheme: Theme = {
   },
   other: {
     black: colors.light.other.black,
+    white: colors.light.other.white,
   },
   pluginList: {
     bg: colors.light.bg[3],

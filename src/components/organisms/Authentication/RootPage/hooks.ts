@@ -18,10 +18,14 @@ export default () => {
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {
-    if (!isAuthenticated || currentTeam || !data || !teamId) return;
-    setTeam(data.me?.myTeam);
-    navigate(`/dashboard/${teamId}`);
-  }, [isAuthenticated, navigate, currentTeam, setTeam, data, teamId]);
+    if (!isAuthenticated && !isLoading) {
+      login();
+    } else {
+      if (currentTeam || !data || !teamId) return;
+      setTeam(data.me?.myTeam);
+      navigate(`/dashboard/${teamId}`);
+    }
+  }, [isAuthenticated, login, isLoading, navigate, currentTeam, setTeam, data, teamId]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {
@@ -39,6 +43,5 @@ export default () => {
   return {
     isLoading,
     isAuthenticated,
-    login,
   };
 };

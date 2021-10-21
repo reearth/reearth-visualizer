@@ -218,6 +218,7 @@ export type Theme = {
   };
   other: {
     black: string;
+    white: string;
   };
   pluginList: {
     bg: string;

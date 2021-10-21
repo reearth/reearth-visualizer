@@ -102,6 +102,7 @@ import FieldLinked from "./Icons/fieldLinked.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
+import LogoColorful from "./Icons/reearthLogoColorful.svg";
 import Camera from "./Icons/camera.svg";
 import Help from "./Icons/helpIcon.svg";
 import Alert from "./Icons/alert.svg";
@@ -113,7 +114,6 @@ import Avatar from "./Icons/avatar.svg";
 import Scale from "./Icons/scale.svg";
 import MapIcon from "./Icons/map.svg";
 import NoProjects from "./Icons/noProjects.svg";
-import TopPage from "./Icons/topPage.svg";
 import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
@@ -213,6 +213,7 @@ export default {
   search: Search,
   scale: Scale,
   logo: Logo,
+  logoColorful: LogoColorful,
   newProject: NewProject,
   newWorkspace: NewWorkspace,
   preview: Preview,
@@ -223,7 +224,6 @@ export default {
   noProjects: NoProjects,
   moon: Moon,
   sun: Sun,
-  topPage: TopPage,
   install: Install,
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,

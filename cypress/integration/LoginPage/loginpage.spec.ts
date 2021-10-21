@@ -4,9 +4,9 @@ beforeEach(() => {
   cy.init();
 });
 
-context("TopPage", () => {
+context("LoginPage", () => {
   it("should display a log in button", () => {
-    cy.visit("/");
+    cy.visit("/login");
     cy.findByRole("button").should("is.visible");
   });
 });
