@@ -76,21 +76,22 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+  width: 100%;
 `;
 
 const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
   position: relative;
-  min-height: 36px;
+  height: inherit;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: ${props => props.centered && `center;`}
   background-color: ${props => props.theme.header.bg};
   &:hover {
-    ${props =>
-      !props.noHover &&
+    ${({ noHover, theme }) =>
+      !noHover &&
       `
-      background-color: ${props.theme.main.bg};
+      background-color: ${theme.main.bg};
       `}
     }
     `;
@@ -98,30 +99,34 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
 const Label = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
+  width: 100%;
 `;
 
 const childTransform = (direction: Direction) => {
   switch (direction) {
     case "down":
-      return "translate(0, 100%)";
+      return "translateY(100%)";
     case "right":
     case "none":
-      return "translate(100%, 0)";
+      return "translateX(100%)";
     default:
-      return "translate(0, 100%)";
+      return "translateY(100%)";
   }
 };
 
 const Child = styled.div<{ direction: Direction }>`
   position: absolute;
+  background-color: ${props => props.theme.header.bg};
+  max-width: 230px;
+  margin: 0 auto;
   left: 0;
-  bottom: ${({ direction }) => (direction === "down" ? "0" : "auto")};
-  min-width: 100%;
+  right: 0;
   top: ${({ direction }) => (direction === "down" ? "auto" : "0")};
+  bottom: ${({ direction }) => (direction === "down" ? "0" : "auto")};
   transform: ${({ direction }) => childTransform(direction)};
   box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
-  background-color: ${props => props.theme.header.bg};
   z-index: ${props => props.theme.zIndexes.dropDown};
 `;
 

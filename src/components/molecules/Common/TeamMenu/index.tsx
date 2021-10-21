@@ -2,6 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { useIntl } from "react-intl";
 
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
+import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import { Team } from "@reearth/components/molecules/Common/Header";
 import {
@@ -30,9 +31,7 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
     [onChangeTeam],
   );
 
-  const label = (
-    <MenuListItemLabel text={intl.formatMessage({ defaultMessage: "Switch Workspace" })} />
-  );
+  const label = <MenuListItemLabel text={intl.formatMessage({ defaultMessage: "Workspaces" })} />;
   const theme = useTheme();
 
   return (
@@ -41,16 +40,21 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
         <MenuList>
           {teams.map(team => (
             <MenuListItem key={team.id} onClick={() => team.id && handleTeamChange(team.id)}>
-              {team.id === currentTeam.id ? (
-                <TeamStatus>
-                  <Text size="m" color={theme.main.text}>
-                    {currentTeam.name}
-                  </Text>
-                  <TeamStatusIcon isActive />
-                </TeamStatus>
-              ) : (
-                <MenuListItemLabel text={team.name} />
-              )}
+              <TeamStatus align="center" justify="space-between">
+                <Text
+                  size="m"
+                  color={theme.main.text}
+                  otherProperties={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    minWidth: 0,
+                    flex: 1,
+                  }}>
+                  {team.name}
+                </Text>
+                {team.id === currentTeam.id && <TeamStatusIcon isActive />}
+              </TeamStatus>
             </MenuListItem>
           ))}
           <MenuListItem>
@@ -75,12 +79,11 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
 
 const DropdownInner = styled.div`
   padding: 0;
+  max-width: 230px;
 `;
 
-const TeamStatus = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
+const TeamStatus = styled(Flex)`
+  width: calc(100% - 32px);
   height: 52px;
   padding: 0 16px;
 `;
@@ -89,7 +92,7 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-left: auto;
+  margin-left: 4px;
   order: 2;
   background-color: ${({ theme }) => theme.main.highlighted};
 `;

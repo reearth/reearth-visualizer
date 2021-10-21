@@ -26,6 +26,7 @@ export type Props = {
   icon?: string;
   iHeight?: string;
   multilineTextBox?: boolean;
+  disabled?: boolean;
   onSubmit?: (body: string) => void;
   onEditStart?: () => void;
   onEditCancel?: () => void;
@@ -43,6 +44,7 @@ const EditableItem: React.FC<Props> = ({
   imageSrc,
   icon,
   iHeight,
+  disabled,
   onSubmit,
   onEditStart,
   onEditCancel,
@@ -71,7 +73,7 @@ const EditableItem: React.FC<Props> = ({
     setIsEditting(false);
   }, [inputState, onSubmit, setIsEditting]);
 
-  return isEditting ? (
+  return isEditting && !disabled ? (
     dropdown ? (
       <Field
         className={className}
@@ -111,10 +113,12 @@ const EditableItem: React.FC<Props> = ({
       header={title}
       body={body}
       action={
-        <ButtonWrapper>
-          {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.("")} />}
-          <StyledIcon icon="edit" size={20} onClick={startEdit} />
-        </ButtonWrapper>
+        !disabled && (
+          <ButtonWrapper>
+            {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.("")} />}
+            <StyledIcon icon="edit" size={20} onClick={startEdit} />
+          </ButtonWrapper>
+        )
       }>
       {imageSrc || isImage ? (
         <div>

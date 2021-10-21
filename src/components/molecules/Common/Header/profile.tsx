@@ -65,34 +65,33 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
         ref={dropDownRef}
         openOnClick
         noHoverStyle
+        direction="down"
         hasIcon
         label={<Label user={user} currentTeam={currentTeam} />}>
         <ChildrenWrapper>
-          <Section>
-            <MenuList>
-              <MenuListItem>
-                <MenuListItemLabel
-                  linkTo={`/settings/account`}
-                  text={intl.formatMessage({ defaultMessage: "Account Settings" })}
-                />
-              </MenuListItem>
-              <MenuListItem noHover>
-                <TeamMenu
-                  currentTeam={currentTeam}
-                  teams={teams}
-                  onChangeTeam={onChangeTeam}
-                  openModal={openModal}
-                />
-              </MenuListItem>
-              <MenuListItem>
-                <MenuListItemLabel
-                  icon="logout"
-                  onClick={onSignOut}
-                  text={intl.formatMessage({ defaultMessage: "Logout" })}
-                />
-              </MenuListItem>
-            </MenuList>
-          </Section>
+          <MenuList>
+            <MenuListItem>
+              <MenuListItemLabel
+                linkTo={`/settings/account`}
+                text={intl.formatMessage({ defaultMessage: "Account Settings" })}
+              />
+            </MenuListItem>
+            <MenuListItem noHover>
+              <TeamMenu
+                currentTeam={currentTeam}
+                teams={teams}
+                onChangeTeam={onChangeTeam}
+                openModal={openModal}
+              />
+            </MenuListItem>
+            <MenuListItem>
+              <MenuListItemLabel
+                icon="logout"
+                onClick={onSignOut}
+                text={intl.formatMessage({ defaultMessage: "Log out" })}
+              />
+            </MenuListItem>
+          </MenuList>
         </ChildrenWrapper>
       </StyledDropdown>
     </Wrapper>
@@ -101,15 +100,17 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
 
 const Wrapper = styled.div`
   cursor: pointer;
+  height: 100%;
 `;
 
 const StyledDropdown = styled(Dropdown)`
-  height: 100%;
   padding: 0 24px;
 `;
 
 const ChildrenWrapper = styled.div`
   width: 230px;
+  background-color: ${({ theme }) => theme.header.bg};
+  padding: 0;
 `;
 
 const LabelWrapper = styled.div`
@@ -137,10 +138,6 @@ const LabelTeamName = styled(Text)`
 
 const LabelUserName = styled(Text)`
   margin-bottom: 2px;
-`;
-
-const Section = styled.div`
-  padding: 0;
 `;
 
 // need to setup avatars with users

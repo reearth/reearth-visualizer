@@ -58,7 +58,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
               <MenuListItemLabel
                 icon="help"
                 onClick={() => window.open("http://docs.reearth.io", "_blank", "noopener")}
-                text={intl.formatMessage({ defaultMessage: "Help" })}
+                text={intl.formatMessage({ defaultMessage: "Documentation" })}
               />
             </MenuListItem>
           </MenuList>

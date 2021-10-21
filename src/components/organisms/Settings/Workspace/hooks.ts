@@ -28,6 +28,11 @@ export default (params: Params) => {
   const [, setNotification] = useNotification();
 
   const navigate = useNavigate();
+  const [searchedUser, changeSearchedUser] = useState<{
+    userId: string;
+    userName: string;
+    userEmail: string;
+  }>();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
 
@@ -54,7 +59,10 @@ export default (params: Params) => {
   const teamId = currentTeam?.id;
 
   const [searchUserQuery, { data: searchUserData }] = useSearchUserLazyQuery();
-  const searchedUser = searchUserData?.searchUser ?? undefined;
+
+  useEffect(() => {
+    changeSearchedUser(searchUserData?.searchUser ?? undefined);
+  }, [searchUserData?.searchUser]);
 
   const searchUser = useCallback(
     (nameOrEmail: string) => nameOrEmail && searchUserQuery({ variables: { nameOrEmail } }),
@@ -224,6 +232,7 @@ export default (params: Params) => {
     currentTeam,
     currentProject,
     searchedUser,
+    changeSearchedUser,
     createTeam,
     updateName,
     deleteTeam,

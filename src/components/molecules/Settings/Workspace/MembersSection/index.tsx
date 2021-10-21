@@ -35,6 +35,9 @@ type Props = {
   };
   personal?: boolean;
   searchUser: (nameOrEmail: string) => void;
+  changeSearchedUser: (
+    user: { userId: string; userName: string; userEmail: string } | undefined,
+  ) => void;
   addMembersToTeam: (userIds: string[]) => Promise<void>;
   updateMemberOfTeam: (userId: string, role: Role) => void;
   removeMemberFromTeam: (userId: string) => void;
@@ -47,6 +50,7 @@ const MembersSection: React.FC<Props> = ({
   searchedUser,
   personal,
   searchUser,
+  changeSearchedUser,
   addMembersToTeam,
   updateMemberOfTeam,
   removeMemberFromTeam,
@@ -95,6 +99,7 @@ const MembersSection: React.FC<Props> = ({
             close={stopAdd}
             searchedUser={searchedUser}
             searchUser={searchUser}
+            changeSearchedUser={changeSearchedUser}
             addMembersToTeam={addMembersToTeam}
           />
         )}

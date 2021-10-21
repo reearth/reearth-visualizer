@@ -18,6 +18,7 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
     currentTeam,
     currentProject,
     searchedUser,
+    changeSearchedUser,
     deleteTeam,
     updateName,
     searchUser,
@@ -55,6 +56,7 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
             owner={owner}
             members={members}
             searchedUser={searchedUser}
+            changeSearchedUser={changeSearchedUser}
             searchUser={searchUser}
             addMembersToTeam={addMembersToTeam}
             updateMemberOfTeam={updateMemberOfTeam}

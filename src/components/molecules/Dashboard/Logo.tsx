@@ -1,7 +1,7 @@
 import React from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
-import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
+import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 export interface Props {
@@ -11,7 +11,7 @@ export interface Props {
 const Logo: React.FC<Props> = ({ className }) => {
   return (
     <Wrapper align="center" justify="center" className={className}>
-      <StyledImg src={logoColorful} alt="Re:Earth Logo" />
+      <Icon icon="logoColorful" size={122} />
     </Wrapper>
   );
 };
@@ -27,10 +27,6 @@ const Wrapper = styled(Flex)`
     height: 180px;
     min-width: 180px;
   }
-`;
-
-const StyledImg = styled.img`
-  width: 110px;
 `;
 
 export default Logo;

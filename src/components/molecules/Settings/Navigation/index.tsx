@@ -2,7 +2,8 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 import Divider from "@reearth/components/atoms/Divider";
-import logoColorful from "@reearth/components/atoms/Logo/reearthLogoColorful.svg";
+import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
 import NavigationItem from "@reearth/components/molecules/Settings/NavigationItem";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
@@ -30,7 +31,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
   return (
     <Wrapper>
       <LogoWrapper>
-        <StyledImg src={logoColorful} alt="Re:Earth Logo" />
+        <Icon icon="logoColorful" size={110} />
       </LogoWrapper>
       <NavigationList>
         <NavigationItem
@@ -43,10 +44,12 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           name={intl.formatMessage({ defaultMessage: "Workspace List" })}>
           {team && (
             <NavigationItem
+              level={2}
               to={`/settings/workspace/${team.id}`}
               key={team.id}
               name={team.name as string}>
               <NavigationItem
+                level={3}
                 to={`/settings/workspace/${team.id}/asset`}
                 name={intl.formatMessage({ defaultMessage: "Assets" })}
               />
@@ -58,16 +61,22 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           to={`/settings/workspace/${team?.id}/projects`}
           name={intl.formatMessage({ defaultMessage: "Project List" })}>
           {project && !project.isArchived && (
-            <NavigationItem to={`/settings/project/${project.id}`} name={project.name as string}>
+            <NavigationItem
+              level={2}
+              to={`/settings/project/${project.id}`}
+              name={project.name as string}>
               <NavigationItem
+                level={3}
                 to={`/settings/project/${project.id}/public`}
                 name={intl.formatMessage({ defaultMessage: "Public" })}
               />
               <NavigationItem
+                level={3}
                 to={`/settings/project/${project.id}/dataset`}
                 name={intl.formatMessage({ defaultMessage: "Dataset" })}
               />
               <NavigationItem
+                level={3}
                 to={`/settings/project/${project.id}/plugins`}
                 name={intl.formatMessage({ defaultMessage: "Plugins" })}
               />
@@ -89,18 +98,13 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const LogoWrapper = styled.div`
+const LogoWrapper = styled(Flex)`
   width: 100%;
   height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.theme.main.text};
   margin-bottom: ${metricsSizes["4xl"]}px;
-`;
-
-const StyledImg = styled.img`
-  width: 100px;
 `;
 
 const NavigationList = styled.ul`

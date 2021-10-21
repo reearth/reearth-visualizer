@@ -17,6 +17,9 @@ type Props = {
     userEmail: string;
   };
   searchUser: (nameOrEmail: string) => void;
+  changeSearchedUser: (
+    user: { userId: string; userName: string; userEmail: string } | undefined,
+  ) => void;
   addMembersToTeam?: (userIds: string[]) => Promise<void>;
 };
 
@@ -25,6 +28,7 @@ const AddMemberModal: React.FC<Props> = ({
   close,
   searchedUser,
   searchUser,
+  changeSearchedUser,
   addMembersToTeam,
 }) => {
   const intl = useIntl();
@@ -50,24 +54,27 @@ const AddMemberModal: React.FC<Props> = ({
   }, [searchedUser, setUsers, users, searchUser]);
 
   const removeUser = useCallback(
-    (userId: string) => setUsers(users.filter(user => user.userId !== userId)),
-    [setUsers, users],
+    (userId: string) => {
+      changeSearchedUser(undefined);
+      setUsers(users => users.filter(user => user.userId !== userId));
+    },
+    [setUsers, changeSearchedUser],
   );
 
   const handleClose = useCallback(() => {
+    changeSearchedUser(undefined);
     setUsers([]);
     setNameOrEmail("");
-    searchUser("");
     close();
-  }, [setUsers, setNameOrEmail, searchUser, close]);
+  }, [setUsers, setNameOrEmail, changeSearchedUser, close]);
 
   const add = useCallback(async () => {
     await addMembersToTeam?.(users.map(({ userId }) => userId));
+    changeSearchedUser(undefined);
     setUsers([]);
     setNameOrEmail("");
-    searchUser("");
     close();
-  }, [addMembersToTeam, users, setUsers, setNameOrEmail, searchUser, close]);
+  }, [addMembersToTeam, users, setUsers, setNameOrEmail, changeSearchedUser, close]);
 
   return (
     <Modal
