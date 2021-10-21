@@ -14,6 +14,7 @@ const lightheme: Theme = {
     transparentBg: colors.general.transparentBlack,
     lightTransparentBg: colors.general.transparentLight,
     border: colors.light.outline.weak,
+    borderStrong: colors.light.outline.main,
     highlighted: colors.light.functional.select,
     text: colors.light.text.main,
     strongText: colors.light.text.strong,
@@ -170,6 +171,7 @@ const lightheme: Theme = {
     textColor: colors.light.text.main,
     selectedTextColor: colors.light.text.strong,
     disableTextColor: colors.light.text.weak,
+    highlight: colors.light.outline.main,
     bottomBorder: colors.light.outline.weakest,
   },
   toggleButton: {
@@ -179,6 +181,7 @@ const lightheme: Theme = {
     activeBg: colors.light.bg[4],
     activeBgBorder: colors.light.outline.main,
     activeToggle: colors.light.outline.main,
+    highlight: colors.light.outline.strong,
   },
   descriptionBalloon: {
     bg: colors.light.bg[5],

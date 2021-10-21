@@ -68,35 +68,31 @@ const HelpButton: React.FC<Props> = ({
   }, [isMouseEnter]);
 
   return (
-    <>
-      {descriptionTitle || description ? (
-        <div ref={wrapperRef} className={className}>
-          <div ref={referenceRef}>
-            <HelpArea
-              onMouseEnter={() => {
-                setIsMouseEnter(true);
-              }}
-              onMouseLeave={() => setIsMouseEnter(false)}>
-              {children}
-            </HelpArea>
-          </div>
-          <BalloonWrapper
-            ref={popperRef}
-            visible={visible}
-            direction={balloonDirection}
-            style={styles.popper}
-            {...attributes.popper}>
-            <BalloonArrow
-              ref={arrowRef}
-              style={styles.arrow}
-              className="arrow"
-              data-placement={balloonDirection}
-            />
-            <Balloon title={descriptionTitle} description={description} img={img} />
-          </BalloonWrapper>
-        </div>
-      ) : undefined}
-    </>
+    <div ref={wrapperRef} className={className}>
+      <div ref={referenceRef}>
+        <HelpArea
+          onMouseEnter={() => {
+            setIsMouseEnter(true);
+          }}
+          onMouseLeave={() => setIsMouseEnter(false)}>
+          {children}
+        </HelpArea>
+      </div>
+      <BalloonWrapper
+        ref={popperRef}
+        visible={visible}
+        direction={balloonDirection}
+        style={styles.popper}
+        {...attributes.popper}>
+        <BalloonArrow
+          ref={arrowRef}
+          style={styles.arrow}
+          className="arrow"
+          data-placement={balloonDirection}
+        />
+        <Balloon title={descriptionTitle} description={description} img={img} />
+      </BalloonWrapper>
+    </div>
   );
 };
 

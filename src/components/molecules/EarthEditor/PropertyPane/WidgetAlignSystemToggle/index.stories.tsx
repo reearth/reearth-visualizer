@@ -4,7 +4,7 @@ import React from "react";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/WidgetToggleSwitch",
+  title: "molecules/EarthEditor/PropertyPane/WidgetAlignSystemToggle",
   component: Component,
 } as Meta;
 

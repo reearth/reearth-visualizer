@@ -4,14 +4,18 @@ export default function ({
   group,
   visible,
   visibilityChangeable,
+  deactivated,
   onExpand,
   onVisibilityChange,
+  onActivationChange,
 }: {
   group?: boolean;
   visible?: boolean;
+  deactivated?: boolean;
   visibilityChangeable?: boolean;
   onExpand?: () => void;
   onVisibilityChange?: (visible: boolean) => void;
+  onActivationChange?: (active: boolean) => void;
 }) {
   const [isHover, toggleHover] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -24,6 +28,16 @@ export default function ({
       onVisibilityChange?.(!visible);
     },
     [visible, onVisibilityChange, visibilityChangeable],
+  );
+
+  const handleActivationChange = useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (!!deactivated === false) {
+        event.stopPropagation();
+      }
+      onActivationChange?.(!!deactivated);
+    },
+    [deactivated, onActivationChange],
   );
 
   const handleExpand = useCallback(
@@ -51,6 +65,7 @@ export default function ({
     showHelp,
     toggleHover,
     handleVisibilityChange,
+    handleActivationChange,
     handleExpand,
   };
 }

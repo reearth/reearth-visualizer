@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { Format, Layer, Widget } from "@reearth/components/molecules/EarthEditor/OutlinePane";
+import {
+  Format,
+  Layer,
+  Widget,
+  WidgetType,
+} from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -9,6 +14,9 @@ import {
   useRemoveLayerMutation,
   useImportLayerMutation,
   useAddLayerGroupMutation,
+  useAddWidgetMutation,
+  useRemoveWidgetMutation,
+  useUpdateWidgetMutation,
   LayerEncodingFormat,
   Maybe,
   useGetWidgetsQuery,
@@ -74,35 +82,45 @@ export default () => {
     [widgetData?.node],
   );
 
-  const widgets = useMemo(() => {
-    const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+
+  const widgetTypes = useMemo(() => {
     return scene?.plugins
       ?.map(p => {
         const plugin = p.plugin;
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map((e): Widget => {
-            const pluginId = plugin.id;
-            const extensionId = e.extensionId;
-            // note: multiple widget is not supported now
-            const widget = scene?.widgets.find(
-              w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
-            );
+          .map((e): WidgetType => {
             return {
-              id: widget?.id,
-              pluginId,
+              pluginId: plugin.id,
               extensionId: e.extensionId,
-              enabled: !!widget?.enabled,
               title: e.translatedName,
-              description: e.translatedDescription,
-              icon: e.icon || (pluginId === "reearth" && extensionId) || "plugin",
+              icon: e.icon || (plugin.id === "reearth" && e.extensionId) || "plugin",
+              disabled:
+                (e.singleOnly && !!scene?.widgets?.find(w => w.extensionId === e.extensionId)) ??
+                undefined,
             };
           })
           .filter((w): w is Widget => !!w);
       })
       .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
-  }, [widgetData?.node]);
+  }, [scene]);
+
+  const widgets = useMemo(() => {
+    return scene?.widgets?.map((w): Widget => {
+      const e = widgetTypes?.find(e => e.extensionId === w.extensionId);
+      return {
+        id: w.id,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        enabled: !!w.enabled,
+        title: e?.title || "",
+        description: e?.description,
+        icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
+      };
+    });
+  }, [widgetTypes, scene?.widgets]);
 
   const layers = useMemo(
     () =>
@@ -118,6 +136,9 @@ export default () => {
   const [removeLayerMutation] = useRemoveLayerMutation();
   const [importLayerMutation] = useImportLayerMutation();
   const [addLayerGroupMutation] = useAddLayerGroupMutation();
+  const [addWidgetMutation] = useAddWidgetMutation();
+  const [removeWidgetMutation] = useRemoveWidgetMutation();
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
 
   const selectLayer = useCallback(
     (id: string) => {
@@ -264,15 +285,75 @@ export default () => {
     [],
   );
 
+  const addWidget = useCallback(
+    async (id?: string) => {
+      if (!sceneId || !id) return;
+      const [pluginId, extensionId] = id.split("/");
+
+      const { data } = await addWidgetMutation({
+        variables: {
+          sceneId,
+          pluginId,
+          extensionId,
+          lang: intl.locale,
+        },
+        refetchQueries: ["GetEarthWidgets", "GetWidgets"],
+      });
+      if (data?.addWidget?.sceneWidget) {
+        select({
+          type: "widget",
+          widgetId: data.addWidget.sceneWidget.id,
+          pluginId: data.addWidget.sceneWidget.pluginId,
+          extensionId: data.addWidget.sceneWidget.extensionId,
+        });
+      }
+    },
+    [addWidgetMutation, intl.locale, sceneId, select],
+  );
+
+  const removeWidget = useCallback(
+    async (ids: string) => {
+      if (!sceneId) return;
+      const [, , widgetId] = ids.split("/");
+      await removeWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId,
+        },
+        refetchQueries: ["GetEarthWidgets", "GetWidgets"],
+      });
+      select(undefined);
+    },
+    [sceneId, select, removeWidgetMutation],
+  );
+
+  const activateWidget = useCallback(
+    async (widgetId: string, enabled: boolean) => {
+      if (!sceneId) return;
+      await updateWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId,
+          enabled,
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, updateWidgetMutation],
+  );
+
   return {
     rootLayerId,
     layers,
     widgets,
+    widgetTypes,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
     selectedWidgetId:
-      selected?.type === "widget" ? `${selected.pluginId}/${selected.extensionId}` : undefined,
+      selected?.type === "widget"
+        ? `${selected.pluginId}/${selected.extensionId}/${selected.widgetId}`
+        : undefined,
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,
@@ -285,6 +366,9 @@ export default () => {
     importLayer,
     addLayerGroup,
     handleDrop,
+    addWidget,
+    removeWidget,
+    activateWidget,
   };
 };
 

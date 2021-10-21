@@ -6,19 +6,16 @@ import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import { styled } from "@reearth/theme";
 
 export type Props = {
-  mode?: "widgets" | "widget";
   checked?: boolean;
   onChange?: () => Promise<void> | void;
 };
 
-const WidgetToggleButton: React.FC<Props> = ({ mode, checked, onChange }) => {
+const WidgetAlignSystemToggle: React.FC<Props> = ({ checked, onChange }) => {
   const intl = useIntl();
   return (
     <ToggleWrapper>
       <Text size="xs" otherProperties={{ userSelect: "none" }}>
-        {mode === "widgets"
-          ? intl.formatMessage({ defaultMessage: "Enable Editor Mode" })
-          : intl.formatMessage({ defaultMessage: "Enable" })}
+        {intl.formatMessage({ defaultMessage: "Enable Editor Mode" })}
       </Text>
       <ToggleButton checked={checked} onChange={onChange} />
     </ToggleWrapper>
@@ -32,4 +29,4 @@ const ToggleWrapper = styled.div`
   justify-content: space-between;
 `;
 
-export default WidgetToggleButton;
+export default WidgetAlignSystemToggle;

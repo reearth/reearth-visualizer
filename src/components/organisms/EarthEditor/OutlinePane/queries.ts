@@ -175,6 +175,7 @@ export const GET_WIDGETS = gql`
               translatedDescription(lang: $lang)
               translatedName(lang: $lang)
               icon
+              singleOnly
               type
               widgetLayout {
                 extendable {

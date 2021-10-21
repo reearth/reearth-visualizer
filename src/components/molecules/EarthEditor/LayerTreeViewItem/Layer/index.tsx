@@ -1,13 +1,16 @@
 import React, { forwardRef } from "react";
 
+import Flex from "@reearth/components/atoms/Flex";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, useTheme } from "@reearth/theme";
+import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import { metricsSizes, styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
 import LayerActions, { Format } from "../LayerActions";
+import LayerActionsList from "../LayerActionsList";
 
 import useHooks from "./hooks";
 import useEditable from "./use-editable";
@@ -17,6 +20,7 @@ export type { Format } from "../LayerActions";
 export type DropType = "top" | "bottom" | "bottomOfChildren";
 
 export type Layer<T = unknown> = {
+  id?: string;
   title?: string;
   description?: string;
   icon?: string;
@@ -25,11 +29,13 @@ export type Layer<T = unknown> = {
   childrenCount?: number;
   linked?: boolean;
   deactivated?: boolean;
+  disabled?: boolean;
   visible?: boolean;
   renamable?: boolean;
   visibilityChangeable?: boolean;
   showChildrenCount?: boolean;
   showLayerActions?: boolean;
+  actionItems?: Layer<T>[];
   underlined?: boolean;
 } & T;
 
@@ -47,9 +53,12 @@ export type Props = {
   visibilityShown?: boolean;
   onClick: () => void;
   onExpand?: () => void;
+  onWarning?: (show: boolean) => void;
   onVisibilityChange?: (isVisible: boolean) => void;
+  onActivationChange?: (isActive: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
+  onAdd?: (id?: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
 };
@@ -73,6 +82,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       deactivated,
       showChildrenCount,
       showLayerActions,
+      actionItems,
       underlined,
     },
     expanded,
@@ -82,21 +92,33 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     allSiblingsDoesNotHaveChildren,
     visibilityShown,
     onVisibilityChange,
+    onActivationChange,
+    onWarning,
     onClick,
     onExpand,
     onRename,
     onRemove,
+    onAdd,
     onGroupCreate,
     onImport,
   },
   ref,
 ) => {
-  const { isHover, showHelp, handleExpand, handleVisibilityChange, toggleHover } = useHooks({
+  const {
+    isHover,
+    showHelp,
+    handleExpand,
+    handleVisibilityChange,
+    handleActivationChange,
+    toggleHover,
+  } = useHooks({
     group,
     visibilityChangeable,
     visible,
+    deactivated,
     onExpand,
     onVisibilityChange,
+    onActivationChange,
   });
 
   const { editing, editingName, startEditing, inputProps } = useEditable({
@@ -120,7 +142,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       disabled={deactivated}
       underlined={underlined}
       type={type}
-      onMouseEnter={() => toggleHover(true)}
+      onMouseOver={() => toggleHover(true)}
       onMouseLeave={() => toggleHover(false)}
       hover={isHover}>
       <ArrowIconWrapper
@@ -128,7 +150,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
         onClick={handleExpand}>
         {group && <ArrowIcon open={expanded} icon="arrowToggle" size={10} />}
       </ArrowIconWrapper>
-      <LayerIconWrapper>
+      <Flex>
         <LayerIcon
           selected={selected}
           disabled={deactivated}
@@ -139,11 +161,13 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             selected
               ? theme.layers.selectedTextColor
               : deactivated
-              ? theme.layers.disableTextColor
+              ? isHover
+                ? theme.layers.highlight
+                : theme.layers.disableTextColor
               : theme.layers.textColor
           }
         />
-      </LayerIconWrapper>
+      </Flex>
       {editing ? (
         <Input type="text" {...inputProps} onClick={stopPropagation} />
       ) : (
@@ -156,7 +180,9 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               selected
                 ? theme.layers.selectedTextColor
                 : deactivated
-                ? theme.layers.disableTextColor
+                ? isHover
+                  ? theme.layers.highlight
+                  : theme.layers.disableTextColor
                 : theme.layers.textColor
             }>
             {editingName}
@@ -175,8 +201,8 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {visibilityShown && typeof visible === "boolean" && (
-            <Visibility
+          {visibilityShown && visible !== undefined && (
+            <HideableDiv
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>
               <LayerIcon
@@ -186,7 +212,12 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                 disabled={deactivated}
                 type={type}
               />
-            </Visibility>
+            </HideableDiv>
+          )}
+          {deactivated !== undefined && (
+            <HideableDiv isVisible={isHover || selected} onClick={handleActivationChange}>
+              <ToggleButton size="sm" checked={!deactivated} parentSelected={selected} />
+            </HideableDiv>
           )}
           {showHelp && description && (
             <HelpButton
@@ -199,12 +230,23 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
           )}
           {showLayerActions && (
             <LayerActionsWrapper>
-              <LayerActions
-                rootLayerId={rootLayerId}
-                selectedLayerId={selectedLayerId}
-                onLayerImport={onImport}
-                onLayerRemove={onRemove}
-                onLayerGroupCreate={onGroupCreate}></LayerActions>
+              {actionItems ? (
+                <LayerActionsList
+                  selectedLayerId={selectedLayerId}
+                  items={actionItems}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onWarning={onWarning}
+                />
+              ) : (
+                <LayerActions
+                  rootLayerId={rootLayerId}
+                  selectedLayerId={selectedLayerId}
+                  onLayerImport={onImport}
+                  onLayerRemove={onRemove}
+                  onLayerGroupCreate={onGroupCreate}
+                />
+              )}
             </LayerActionsWrapper>
           )}
         </>
@@ -287,11 +329,6 @@ const Input = styled.input`
   overflow: hidden;
 `;
 
-const LayerIconWrapper = styled.div`
-  flex: 0 0 26px;
-  text-align: center;
-`;
-
 const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`
   margin: 0 5px;
   flex: 0 0 auto;
@@ -302,6 +339,7 @@ const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: auto;
+  margin-left: ${metricsSizes.xs}px;
   overflow: hidden;
 `;
 
@@ -315,7 +353,7 @@ const LayerCount = styled(Text)<{ selected?: boolean }>`
   }
 `;
 
-const Visibility = styled.div<{ isVisible?: boolean }>`
+const HideableDiv = styled.div<{ isVisible?: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   align-self: stretch;
   display: flex;

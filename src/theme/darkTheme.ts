@@ -14,6 +14,7 @@ const darkTheme: Theme = {
     transparentBg: colors.general.transparentBlack,
     lightTransparentBg: colors.general.transparentLight,
     border: colors.dark.outline.weak,
+    borderStrong: colors.dark.outline.strong,
     highlighted: colors.dark.functional.select,
     text: colors.dark.text.main,
     strongText: colors.dark.text.strong,
@@ -170,6 +171,7 @@ const darkTheme: Theme = {
     textColor: colors.dark.text.main,
     selectedTextColor: colors.dark.text.strong,
     disableTextColor: colors.dark.text.weak,
+    highlight: colors.dark.outline.main,
     bottomBorder: colors.dark.outline.weakest,
   },
   toggleButton: {
@@ -179,6 +181,7 @@ const darkTheme: Theme = {
     activeBg: colors.dark.bg[4],
     activeBgBorder: colors.dark.outline.main,
     activeToggle: colors.dark.outline.main,
+    highlight: colors.dark.outline.strong,
   },
   descriptionBalloon: {
     bg: colors.dark.bg[5],

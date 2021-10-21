@@ -14,8 +14,6 @@ import {
   useRemovePropertyItemMutation,
   ValueType as GQLValueType,
   useLinkDatasetMutation,
-  useAddWidgetMutation,
-  useUpdateWidgetMutation,
   useUpdatePropertyItemsMutation,
   ListOperation,
   useCreateAssetMutation,
@@ -43,7 +41,7 @@ export type FieldPointer = {
 
 export default (mode: Mode) => {
   const intl = useIntl();
-  const [selected, select] = useSelected();
+  const [selected] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
@@ -282,54 +280,6 @@ export default (mode: Mode) => {
     [intl.locale, removePropertyItemMutation],
   );
 
-  const [addWidgetMutation] = useAddWidgetMutation();
-  const [updateWidgetMutation] = useUpdateWidgetMutation();
-
-  const onWidgetActivate = useCallback(
-    async (enabled: boolean) => {
-      if (!sceneId || selected?.type !== "widget") return;
-      if (!enabled) {
-        if (!selected.widgetId) return;
-        await updateWidgetMutation({
-          variables: {
-            sceneId,
-            widgetId: selected.widgetId,
-            enabled: false,
-          },
-          refetchQueries: ["GetEarthWidgets"],
-        });
-      } else if (selected.widgetId) {
-        await updateWidgetMutation({
-          variables: {
-            sceneId,
-            widgetId: selected.widgetId,
-            enabled: true,
-          },
-          refetchQueries: ["GetEarthWidgets"],
-        });
-      } else {
-        const { data } = await addWidgetMutation({
-          variables: {
-            sceneId,
-            pluginId: selected.pluginId,
-            extensionId: selected.extensionId,
-            lang: intl.locale,
-          },
-          refetchQueries: ["GetEarthWidgets", "GetWidgets"],
-        });
-        if (data?.addWidget?.sceneWidget) {
-          select({
-            type: "widget",
-            widgetId: data.addWidget.sceneWidget.id,
-            pluginId: data.addWidget.sceneWidget.pluginId,
-            extensionId: data.addWidget.sceneWidget.extensionId,
-          });
-        }
-      }
-    },
-    [addWidgetMutation, intl.locale, sceneId, select, selected, updateWidgetMutation],
-  );
-
   const onWidgetEditorActivate = useCallback(
     (enabled: boolean) => {
       setWidgetAlignEditorActivated(enabled);
@@ -396,7 +346,6 @@ export default (mode: Mode) => {
     addPropertyItem,
     movePropertyItem,
     removePropertyItem,
-    onWidgetActivate,
     onWidgetAlignEditorActivate: onWidgetEditorActivate,
     widgetAlignEditorActivated: widgetAlignEditorActivated,
     selectedWidget,

@@ -26,7 +26,7 @@ import PropertyItem, {
   Asset as AssetType,
   Mode as ModeType,
 } from "./PropertyItem";
-import WidgetToggleButton from "./WidgetToggleSwitch";
+import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
 
 export type Item = ItemItem;
 export type SchemaField = ItemSchemaField;
@@ -61,7 +61,6 @@ export type Props = {
   onRemovePane?: () => void;
   assets?: Asset[];
   selectedWidget?: Widget;
-  onWidgetActivate?: (enabled: boolean) => Promise<void>;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;
 } & Pick<
@@ -103,7 +102,6 @@ const PropertyPane: React.FC<Props> = ({
   onCreateInfobox,
   onRemovePane,
   selectedWidget,
-  onWidgetActivate,
   onWidgetAlignEditorActivate,
   widgetAlignEditorActivated,
   onChange,
@@ -155,15 +153,10 @@ const PropertyPane: React.FC<Props> = ({
 
   return (
     <>
-      {(mode === "widget" || mode === "widgets") && (
-        <WidgetToggleButton
-          mode={mode}
-          checked={mode === "widgets" ? widgetAlignEditorActivated : !!selectedWidget?.enabled}
-          onChange={() =>
-            mode === "widgets"
-              ? onWidgetAlignEditorActivate?.(!widgetAlignEditorActivated)
-              : onWidgetActivate?.(!selectedWidget?.enabled)
-          }
+      {mode === "widgets" && (
+        <WidgetAlignSystemToggle
+          checked={widgetAlignEditorActivated}
+          onChange={() => onWidgetAlignEditorActivate?.(!widgetAlignEditorActivated)}
         />
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||

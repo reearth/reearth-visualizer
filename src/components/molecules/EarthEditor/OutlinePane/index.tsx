@@ -1,20 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import { useIntl } from "react-intl";
 
+import Box from "@reearth/components/atoms/Box";
+import ConfirmationModal from "@reearth/components/atoms/ConfirmationModal";
+import Divider from "@reearth/components/atoms/Divider";
 import Loading from "@reearth/components/atoms/Loading";
+import Text from "@reearth/components/atoms/Text";
 import TreeView from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import useHooks, {
-  Layer as LayerType,
-  Widget as WidgetType,
-  Format as FormatType,
-  TreeViewItem,
-} from "./hooks";
+import useHooks, { Format, Layer, Widget, WidgetType, TreeViewItem } from "./hooks";
 
-export type Layer = LayerType;
-export type Widget = WidgetType;
-export type Format = FormatType;
+export type { Format, Layer, Widget, WidgetType } from "./hooks";
 
 export type Props = {
   className?: string;
@@ -23,6 +21,7 @@ export type Props = {
   selectedWidgetId?: string;
   layers?: Layer[];
   widgets?: Widget[];
+  widgetTypes?: WidgetType[];
   sceneDescription?: string;
   selectedType?: "scene" | "layer" | "widgets" | "widget";
   loading?: boolean;
@@ -33,6 +32,9 @@ export type Props = {
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
+  onWidgetAdd?: (id?: string) => Promise<void>;
+  onWidgetRemove?: (widgetId: string) => Promise<void>;
+  onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
   onLayerMove?: (
     layer: string,
     destLayer: string,
@@ -53,6 +55,7 @@ const OutlinePane: React.FC<Props> = ({
   selectedType,
   layers,
   widgets,
+  widgetTypes,
   sceneDescription,
   onLayerRename,
   onLayerVisibilityChange,
@@ -61,12 +64,20 @@ const OutlinePane: React.FC<Props> = ({
   onSceneSelect,
   onWidgetsSelect,
   onWidgetSelect,
+  onWidgetAdd,
+  onWidgetRemove,
+  onWidgetActivation,
   onLayerMove,
   onLayerImport,
   onLayerGroupCreate,
   onDrop,
   loading,
 }) => {
+  const intl = useIntl();
+  const [warningOpen, setWarning] = useState(false);
+
+  const handleShowWarning = (show: boolean) => setWarning(show);
+
   const {
     sceneWidgetsItem,
     layersItem,
@@ -80,6 +91,7 @@ const OutlinePane: React.FC<Props> = ({
     rootLayerId,
     layers,
     widgets,
+    widgetTypes,
     sceneDescription,
     selectedLayerId,
     selectedWidgetId,
@@ -90,11 +102,14 @@ const OutlinePane: React.FC<Props> = ({
     onSceneSelect,
     onWidgetsSelect,
     onWidgetSelect,
+    onWidgetAdd,
+    onWidgetActivation,
     onLayerMove,
     onLayerRename,
     onLayerVisibilityChange,
     onDrop,
     onLayerGroupCreate,
+    handleShowWarning,
   });
 
   return (
@@ -135,6 +150,35 @@ const OutlinePane: React.FC<Props> = ({
         )}
         {loading && <Loading />}
       </LayersItemWrapper>
+      <ConfirmationModal
+        title={intl.formatMessage({ defaultMessage: "Delete widget" })}
+        body={
+          <>
+            <Divider margin="24px" />
+            <Box mb={"m"}>
+              <Text size="m">
+                {intl.formatMessage({
+                  defaultMessage:
+                    "You are about to delete the selected widget. You will lose all data tied to this widget.",
+                })}
+              </Text>
+            </Box>
+            <Text size="m">
+              {intl.formatMessage({
+                defaultMessage: "Are you sure you would like to delete this widget?",
+              })}
+            </Text>
+          </>
+        }
+        buttonAction={intl.formatMessage({ defaultMessage: "Delete" })}
+        isOpen={warningOpen}
+        onClose={() => handleShowWarning(false)}
+        onProceed={() => {
+          if (selectedWidgetId) {
+            onWidgetRemove?.(selectedWidgetId);
+          }
+        }}
+      />
     </Wrapper>
   );
 };

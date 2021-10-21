@@ -25,6 +25,7 @@ export type Theme = {
     deepBg: string;
     deepestBg: string;
     border: string;
+    borderStrong: string;
     highlighted: string;
     transparentBg: string;
     lightTransparentBg: string;
@@ -183,6 +184,7 @@ export type Theme = {
     textColor: string;
     selectedTextColor: string;
     disableTextColor: string;
+    highlight: string;
     bottomBorder: string;
   };
   toggleButton: {
@@ -192,6 +194,7 @@ export type Theme = {
     activeBg: string;
     activeBgBorder: string;
     activeToggle: string;
+    highlight: string;
   };
   zIndexes: {
     base: number;

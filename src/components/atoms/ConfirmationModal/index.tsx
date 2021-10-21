@@ -8,7 +8,7 @@ export type Props = {
   title?: string;
   buttonAction?: string;
   body: React.ReactNode;
-  onCancel: () => void;
+  onCancel?: () => void;
   onProceed: () => void;
   onClose: () => void;
   isOpen: boolean;
@@ -24,6 +24,12 @@ const ConfirmationModal: React.FC<Props> = ({
   onClose,
 }) => {
   const intl = useIntl();
+
+  const handleProceed = () => {
+    onProceed();
+    onCancel?.() ?? onClose();
+  };
+
   return (
     <Modal
       title={title}
@@ -33,14 +39,14 @@ const ConfirmationModal: React.FC<Props> = ({
       button1={
         <Button
           text={buttonAction || intl.formatMessage({ defaultMessage: "Continue" })}
-          onClick={onProceed}
+          onClick={handleProceed}
           buttonType="danger"
         />
       }
       button2={
         <Button
           text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={onCancel}
+          onClick={onCancel ?? onClose}
           buttonType="secondary"
         />
       }>
