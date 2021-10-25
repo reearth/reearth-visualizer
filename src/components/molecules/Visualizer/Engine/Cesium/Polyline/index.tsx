@@ -1,6 +1,8 @@
 import { Cartesian3 } from "cesium";
+import { isEqual } from "lodash";
 import React, { useMemo } from "react";
 import { PolylineGraphics, Entity } from "resium";
+import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
@@ -29,9 +31,10 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     shadows,
   } = property?.default ?? {};
 
-  const positions = useMemo(
+  const positions = useCustomCompareMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
     [coordinates],
+    isEqual,
   );
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);
 

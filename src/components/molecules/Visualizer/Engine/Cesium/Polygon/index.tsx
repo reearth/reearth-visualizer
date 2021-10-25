@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { PolygonHierarchy, Cartesian3 } from "cesium";
+import { isEqual } from "lodash";
 import React, { useMemo } from "react";
 import { PolygonGraphics, Entity } from "resium";
+import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
@@ -36,7 +38,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     shadows,
   } = property?.default ?? {};
 
-  const hierarchy = useMemo(
+  const hierarchy = useCustomCompareMemo(
     () =>
       polygon?.[0]
         ? new PolygonHierarchy(
@@ -50,6 +52,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
           )
         : undefined,
     [polygon],
+    isEqual,
   );
 
   const memoStrokeColor = useMemo(

@@ -1,6 +1,8 @@
 import { Rectangle, Color, ImageMaterialProperty } from "cesium";
+import { isEqual } from "lodash";
 import React, { useMemo } from "react";
 import { RectangleGraphics, Entity } from "resium";
+import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Rect as RectValue } from "@reearth/util/value";
 
@@ -39,7 +41,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     shadows,
   } = property?.default ?? {};
 
-  const coordinates = useMemo(
+  const coordinates = useCustomCompareMemo(
     () =>
       rect &&
       rect.west <= rect.east &&
@@ -55,6 +57,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
         ? Rectangle.fromDegrees(rect.west, rect.south, rect.east, rect.north)
         : undefined,
     [rect],
+    isEqual,
   );
 
   const material = useMemo(

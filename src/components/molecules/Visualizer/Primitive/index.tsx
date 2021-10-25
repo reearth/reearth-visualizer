@@ -1,4 +1,4 @@
-import { merge, cloneDeep } from "lodash-es";
+import { mergeWith } from "lodash";
 import React, { ComponentType, useMemo } from "react";
 
 import { useContext } from "../Plugin";
@@ -30,7 +30,7 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   const overridenProperty = useMemo(
     () =>
       props.layer && overriddenProperties?.[props.layer.id]
-        ? merge(cloneDeep(props.layer.property), overriddenProperties[props.layer.id])
+        ? mergeProperty(props.layer.property, overriddenProperties[props.layer.id])
         : undefined,
     [overriddenProperties, props.layer],
   );
@@ -52,16 +52,13 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   return isHidden || !props.layer?.isVisible ? null : Builtin ? (
     <Builtin {...props} layer={actualLayer} />
   ) : null;
-  // <Plugin
-  //   pluginId={props.layer?.pluginId}
-  //   extensionId={props.layer?.extensionId}
-  //   sourceCode={(props.layer as any)?.__REEARTH_SOURCECODE} // for debugging
-  //   extensionType="primitive"
-  //   pluginBaseUrl={pluginBaseUrl}
-  //   visible={false}
-  //   property={props.pluginProperty}
-  //   sceneProperty={props.sceneProperty}
-  //   layer={props.layer}
-  //   pluginProperty={pluginProperty}
-  // />
+}
+
+export function mergeProperty(a: any, b: any) {
+  return mergeWith(
+    { ...a },
+    b,
+    (s: any, v: any, _k: string | number | symbol, _obj: any, _src: any, stack: { size: number }) =>
+      stack.size > 0 || Array.isArray(v) ? v ?? s : undefined,
+  );
 }
