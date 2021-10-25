@@ -174,7 +174,7 @@ export default () => {
       });
       if (results.data?.createTeam) {
         setTeam(results.data.createTeam.team);
-        navigate("/");
+        navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
     [createTeamMutation, setTeam, navigate],

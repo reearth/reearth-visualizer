@@ -14,6 +14,16 @@ src:
       Select:
         '395965578': not set
     molecules:
+      Authentication:
+        Login:
+          '326989249': Don't have an account?
+          '2039506849': 'Log in to Re:Earth to continue.'
+          '2212670355': Sign up
+          '2237029987': Password
+          '2424773344': Welcome
+          '2441159578': Username or email
+          '3242928626': Forgot password?
+          '3640052215': Continue
       Common:
         AssetModal:
           '164261147': Select Image
@@ -49,8 +59,8 @@ src:
               You are about to delete one or more assets from the current
               workspace.
         Header:
+          '21332146': Log out
           '248888005': Account Settings
-          '2355459246': Logout
         ProjectCreationModal:
           '1215917108': Project Name
           '2202304674': Select thumbnail image
@@ -59,12 +69,12 @@ src:
           '3528672691': Cancel
           '4120989039': Create
         ProjectMenu:
-          '2222696742': Help
+          '1235925265': Documentation
           '2661706411': Datasets
           '3029638665': Project settings
           '3873048483': Manage projects
         TeamMenu:
-          '763237856': Switch Workspace
+          '2611517824': Workspaces
           '3828443189': New Workspace
           '4157106658': Manage Workspaces
         WorkspaceCreationModal:
@@ -137,10 +147,18 @@ src:
             '219790765': Create new folder.
             '649072858': Delete selected layer.
             '3062135486': Add Layer.
+          LayerActionsList:
+            '3805664340': Delete the selected item.
         OutlinePane:
+          '436453487': >-
+            You are about to delete the selected widget. You will lose all data
+            tied to this widget.
+          '487956354': Are you sure you would like to delete this widget?
           '1538011248': Scene
+          '1801677935': Delete widget
           '1835798571': Layers
           '2793623359': Widgets
+          '3645414921': Delete
         PropertyPane:
           '3453457092': Create Infobox
           '3833270271': Dataset
@@ -202,8 +220,7 @@ src:
             '3908299371': Template
           PropertyList:
             '179601186': List
-          WidgetToggleSwitch:
-            '2224658704': Enable
+          WidgetAlignSystemToggle:
             '2313839684': Enable Editor Mode
         PublicationModal:
           '383867403': Copy
@@ -424,8 +441,6 @@ src:
           WorkspaceList:
             '3435539653': All workspaces
             '3828443189': New Workspace
-      TopPage:
-        '1135777802': Log in
       Visualizer:
         Block:
           Text:
@@ -518,3 +533,9 @@ src:
             '4222118896': One or more assets were successfully deleted.
         WorkspaceList:
           '541301752': Workspace List
+    pages:
+      Authentication:
+        LoginPage:
+          '1704018516': >-
+            Could not log in. Please make sure you inputted the correct username
+            and password and try again.
