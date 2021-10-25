@@ -66,7 +66,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
       <GridWrapper
         editing={editing}
         onMove={handleMove}
-        onAlignmentChange={handleAlignmentChange}
+        onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}>
         <ZoneComponent
           zoneName="outer"

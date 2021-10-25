@@ -364,7 +364,6 @@ const HideableDiv = styled.div<{ isVisible?: boolean }>`
 
 const LayerActionsWrapper = styled.div``;
 
-const stopPropagation = <E extends any>(event: React.MouseEvent<E, MouseEvent>) =>
-  event.stopPropagation();
+const stopPropagation = (event: React.MouseEvent<HTMLInputElement>) => event.stopPropagation();
 
 export default forwardRef(Layer);

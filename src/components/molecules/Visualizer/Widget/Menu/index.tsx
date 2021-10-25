@@ -24,7 +24,7 @@ export type Property = {
 const Menu = ({ widget, sceneProperty }: Props): JSX.Element => {
   const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
   const buttonsByPosition = useMemo(
-    () => groupBy(buttons, v => v.buttonPosition || "topleft") as { [p in Position]: Button[] },
+    () => groupBy(buttons, v => v.buttonPosition || "topleft"),
     [buttons],
   );
 
