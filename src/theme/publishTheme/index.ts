@@ -33,6 +33,11 @@ const premade: Record<string, PublishTheme | undefined> = {
   forest,
 };
 
+export function mask(color?: string) {
+  if (!color) return;
+  return isDark(color) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)";
+}
+
 export function usePublishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
   return useMemo(() => publishTheme(sceneThemeOptions), [sceneThemeOptions]);
 }
@@ -51,7 +56,7 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
   const isBackgroundDark = isDark(options?.themeBackgroundColor);
 
   return {
-    mask: isDark(options?.themeBackgroundColor) ? "#FFFFFF0D" : "#0000001A",
+    mask: mask(options?.themeBackgroundColor) || "rgba(255, 255, 255, 0.15)",
     background: options.themeBackgroundColor,
     mainText: options.themeTextColor,
     select: options.themeSelectColor,
