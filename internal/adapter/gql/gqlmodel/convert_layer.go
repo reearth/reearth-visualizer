@@ -11,6 +11,12 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		return nil
 	}
 
+	tags := l.Tags().Tags()
+	tagIDs := make([]*id.ID, 0, len(tags))
+	for _, tid := range tags {
+		tagIDs = append(tagIDs, tid.IDRef())
+	}
+
 	return &LayerItem{
 		ID:              l.ID().ID(),
 		SceneID:         l.Scene().ID(),
@@ -22,6 +28,7 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		Infobox:         ToInfobox(l.Infobox(), l.ID(), l.Scene(), l.LinkedDataset()),
 		LinkedDatasetID: l.LinkedDataset().IDRef(),
 		ParentID:        parent.IDRef(),
+		TagIds:          tagIDs,
 	}
 }
 
@@ -34,6 +41,12 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 	layers := make([]*id.ID, 0, len(laLayers))
 	for _, lay := range laLayers {
 		layers = append(layers, lay.IDRef())
+	}
+
+	tags := l.Tags().Tags()
+	tagIDs := make([]*id.ID, 0, len(tags))
+	for _, tid := range tags {
+		tagIDs = append(tagIDs, tid.IDRef())
 	}
 
 	return &LayerGroup{
@@ -49,6 +62,7 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 		LayerIds:              layers,
 		Root:                  l.IsRoot(),
 		ParentID:              parent.IDRef(),
+		TagIds:                tagIDs,
 	}
 }
 

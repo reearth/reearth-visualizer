@@ -2,6 +2,7 @@ package layer
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 type Builder struct {
@@ -69,5 +70,10 @@ func (b *Builder) Property(p *id.PropertyID) *Builder {
 
 func (b *Builder) Infobox(infobox *Infobox) *Builder {
 	b.base.infobox = infobox
+	return b
+}
+
+func (b *Builder) Tags(tags *tag.List) *Builder {
+	b.base.tags = tags
 	return b
 }

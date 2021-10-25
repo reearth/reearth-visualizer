@@ -3,6 +3,7 @@ package layer
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 type Item struct {
@@ -148,4 +149,24 @@ func (l *Item) ValidateProperties(pm property.Map) error {
 		return nil
 	}
 	return l.layerBase.ValidateProperties(pm)
+}
+
+func (l *Item) Tags() *tag.List {
+	return l.layerBase.tags
+}
+
+func (l *Item) AttachTag(t id.TagID) error {
+	if l.layerBase.tags.Has(t) {
+		return ErrDuplicatedTag
+	}
+	l.layerBase.tags.Add(t)
+	return nil
+}
+
+func (l *Item) DetachTag(t id.TagID) error {
+	if !l.layerBase.tags.Has(t) {
+		return ErrTagNotFound
+	}
+	l.layerBase.tags.Remove(t)
+	return nil
 }

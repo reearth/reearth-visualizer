@@ -1006,3 +1006,69 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 	tx.Commit()
 	return rootLayers, parent, nil
 }
+
+func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagID, operator *usecase.Operator) (layer.Layer, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := i.layerRepo.FindByID(ctx, layerID, scenes)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := layer.AttachTag(tagID); err != nil {
+		return nil, err
+	}
+	err = i.layerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *Layer) DetachTag(ctx context.Context, layerID id.LayerID, tagID id.TagID, operator *usecase.Operator) (layer.Layer, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := i.layerRepo.FindByID(ctx, layerID, scenes)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := layer.DetachTag(tagID); err != nil {
+		return nil, err
+	}
+	err = i.layerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}

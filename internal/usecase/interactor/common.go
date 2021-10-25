@@ -28,6 +28,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 		Project:  NewProject(r, g),
 		Property: NewProperty(r, g),
 		Scene:    NewScene(r, g),
+		Tag:      NewTag(r),
 		Team:     NewTeam(r),
 		User:     NewUser(r, g, config.SignupSecret),
 	}

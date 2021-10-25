@@ -25,6 +25,7 @@ type Container struct {
 	Property  Property
 	Published Published
 	Scene     Scene
+	Tag       Tag
 	Team      Team
 	User      User
 }

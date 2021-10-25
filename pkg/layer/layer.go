@@ -6,6 +6,12 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/tag"
+)
+
+var (
+	ErrDuplicatedTag = errors.New("duplicated tag")
+	ErrTagNotFound   = errors.New("tag not found")
 )
 
 type Layer interface {
@@ -19,12 +25,15 @@ type Layer interface {
 	HasInfobox() bool
 	Infobox() *Infobox
 	Scene() id.SceneID
+	Tags() *tag.List
 	Rename(string)
 	SetVisible(bool)
 	SetInfobox(*Infobox)
 	SetPlugin(*id.PluginID)
 	Properties() []id.PropertyID
 	ValidateProperties(property.Map) error
+	AttachTag(t id.TagID) error
+	DetachTag(t id.TagID) error
 }
 
 func ToLayerGroup(l Layer) *Group {
@@ -72,6 +81,7 @@ type layerBase struct {
 	property  *id.PropertyID
 	infobox   *Infobox
 	scene     id.SceneID
+	tags      *tag.List
 }
 
 func (l *layerBase) ID() id.LayerID {

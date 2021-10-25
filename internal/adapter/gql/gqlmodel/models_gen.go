@@ -31,6 +31,14 @@ type PropertyItem interface {
 	IsPropertyItem()
 }
 
+type Tag interface {
+	IsTag()
+}
+
+type Tags interface {
+	IsTags()
+}
+
 type AddDatasetSchemaInput struct {
 	SceneID             id.ID  `json:"sceneId"`
 	Name                string `json:"name"`
@@ -161,6 +169,24 @@ type AssetEdge struct {
 	Node   *Asset         `json:"node"`
 }
 
+type AttachTagItemToGroupInput struct {
+	ItemID  id.ID `json:"itemID"`
+	GroupID id.ID `json:"groupID"`
+}
+
+type AttachTagItemToGroupPayload struct {
+	Tag *TagGroup `json:"tag"`
+}
+
+type AttachTagToLayerInput struct {
+	TagID   id.ID `json:"tagID"`
+	LayerID id.ID `json:"layerID"`
+}
+
+type AttachTagToLayerPayload struct {
+	Layer Layer `json:"layer"`
+}
+
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
@@ -204,6 +230,28 @@ type CreateSceneInput struct {
 
 type CreateScenePayload struct {
 	Scene *Scene `json:"scene"`
+}
+
+type CreateTagGroupInput struct {
+	SceneID id.ID    `json:"sceneId"`
+	Label   string   `json:"label"`
+	Tags    []*id.ID `json:"tags"`
+}
+
+type CreateTagGroupPayload struct {
+	Tag *TagGroup `json:"tag"`
+}
+
+type CreateTagItemInput struct {
+	SceneID               id.ID  `json:"sceneId"`
+	Label                 string `json:"label"`
+	LinkedDatasetSchemaID *id.ID `json:"linkedDatasetSchemaID"`
+	LinkedDatasetID       *id.ID `json:"linkedDatasetID"`
+	LinkedDatasetField    *id.ID `json:"linkedDatasetField"`
+}
+
+type CreateTagItemPayload struct {
+	Tag *TagItem `json:"tag"`
 }
 
 type CreateTeamInput struct {
@@ -312,6 +360,24 @@ type DeleteTeamPayload struct {
 	TeamID id.ID `json:"teamId"`
 }
 
+type DetachTagFromLayerInput struct {
+	TagID   id.ID `json:"tagID"`
+	LayerID id.ID `json:"layerID"`
+}
+
+type DetachTagFromLayerPayload struct {
+	Layer Layer `json:"layer"`
+}
+
+type DetachTagItemFromGroupInput struct {
+	ItemID  id.ID `json:"itemID"`
+	GroupID id.ID `json:"groupID"`
+}
+
+type DetachTagItemFromGroupPayload struct {
+	Tag *TagGroup `json:"tag"`
+}
+
 type ImportDatasetFromGoogleSheetInput struct {
 	AccessToken     string `json:"accessToken"`
 	FileID          string `json:"fileId"`
@@ -415,6 +481,8 @@ type LayerGroup struct {
 	Layers                []Layer               `json:"layers"`
 	Scene                 *Scene                `json:"scene"`
 	ScenePlugin           *ScenePlugin          `json:"scenePlugin"`
+	TagIds                []*id.ID              `json:"tagIds"`
+	Tags                  []Tag                 `json:"tags"`
 }
 
 func (LayerGroup) IsLayers() {}
@@ -439,6 +507,8 @@ type LayerItem struct {
 	Merged          *MergedLayer          `json:"merged"`
 	Scene           *Scene                `json:"scene"`
 	ScenePlugin     *ScenePlugin          `json:"scenePlugin"`
+	TagIds          []*id.ID              `json:"tagIds"`
+	Tags            []Tag                 `json:"tags"`
 }
 
 func (LayerItem) IsLayers() {}
@@ -871,6 +941,14 @@ type RemovePropertyItemInput struct {
 	ItemID       id.ID                    `json:"itemId"`
 }
 
+type RemoveTagInput struct {
+	TagID id.ID `json:"tagID"`
+}
+
+type RemoveTagPayload struct {
+	TagID id.ID `json:"tagId"`
+}
+
 type RemoveWidgetInput struct {
 	SceneID  id.ID `json:"sceneId"`
 	WidgetID id.ID `json:"widgetId"`
@@ -899,6 +977,8 @@ type Scene struct {
 	RootLayer             *LayerGroup              `json:"rootLayer"`
 	LockMode              SceneLockMode            `json:"lockMode"`
 	DatasetSchemas        *DatasetSchemaConnection `json:"datasetSchemas"`
+	TagIds                []*id.ID                 `json:"tagIds"`
+	Tags                  []Tag                    `json:"tags"`
 }
 
 func (Scene) IsNode() {}
@@ -952,6 +1032,31 @@ type SyncDatasetPayload struct {
 	DatasetSchema []*DatasetSchema `json:"datasetSchema"`
 	Dataset       []*Dataset       `json:"dataset"`
 }
+
+type TagGroup struct {
+	ID      id.ID    `json:"id"`
+	SceneID id.ID    `json:"sceneId"`
+	Label   string   `json:"label"`
+	Tags    []*id.ID `json:"tags"`
+}
+
+func (TagGroup) IsTag()  {}
+func (TagGroup) IsTags() {}
+
+type TagItem struct {
+	ID                    id.ID          `json:"id"`
+	SceneID               id.ID          `json:"sceneId"`
+	Label                 string         `json:"label"`
+	LinkedDatasetID       *id.ID         `json:"linkedDatasetID"`
+	LinkedDatasetSchemaID *id.ID         `json:"linkedDatasetSchemaID"`
+	LinkedDatasetFieldID  *id.ID         `json:"linkedDatasetFieldID"`
+	LinkedDatasetSchema   *DatasetSchema `json:"linkedDatasetSchema"`
+	LinkedDataset         *Dataset       `json:"linkedDataset"`
+	LinkedDatasetField    *DatasetField  `json:"linkedDatasetField"`
+}
+
+func (TagItem) IsTag()  {}
+func (TagItem) IsTags() {}
 
 type Team struct {
 	ID       id.ID              `json:"id"`
@@ -1079,6 +1184,16 @@ type UpdatePropertyValueInput struct {
 	FieldID      id.PropertySchemaFieldID  `json:"fieldId"`
 	Value        interface{}               `json:"value"`
 	Type         ValueType                 `json:"type"`
+}
+
+type UpdateTagInput struct {
+	TagID   id.ID   `json:"tagId"`
+	SceneID id.ID   `json:"sceneId"`
+	Label   *string `json:"label"`
+}
+
+type UpdateTagPayload struct {
+	Tag Tag `json:"tag"`
 }
 
 type UpdateTeamInput struct {

@@ -19,6 +19,7 @@ type Layer interface {
 	FindParentByID(context.Context, id.LayerID, []id.SceneID) (*layer.Group, error)
 	FindByProperty(context.Context, id.PropertyID, []id.SceneID) (layer.Layer, error)
 	FindByScene(context.Context, id.SceneID) (layer.List, error)
+	FindByTag(context.Context, id.TagID, []id.SceneID) (layer.List, error)
 	Save(context.Context, layer.Layer) error
 	SaveAll(context.Context, layer.List) error
 	Remove(context.Context, id.LayerID) error

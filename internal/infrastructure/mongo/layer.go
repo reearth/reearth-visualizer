@@ -168,6 +168,17 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 	return nil
 }
 
+func (r *layerRepo) FindByTag(ctx context.Context, tagID id.TagID, f []id.SceneID) (layer.List, error) {
+	ids := []id.TagID{tagID}
+	filter := r.sceneFilter(bson.D{
+		{Key: "tags", Value: bson.D{
+			{Key: "$in", Value: id.TagIDToKeys(ids)},
+		}},
+	}, f)
+
+	return r.find(ctx, nil, filter)
+}
+
 func (r *layerRepo) find(ctx context.Context, dst layer.List, filter bson.D) (layer.List, error) {
 	c := mongodoc.LayerConsumer{
 		Rows: dst,

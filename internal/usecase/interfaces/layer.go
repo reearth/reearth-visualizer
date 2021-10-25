@@ -102,4 +102,6 @@ type Layer interface {
 	MoveInfoboxField(context.Context, MoveInfoboxFieldParam, *usecase.Operator) (id.InfoboxFieldID, layer.Layer, int, error)
 	RemoveInfoboxField(context.Context, RemoveInfoboxFieldParam, *usecase.Operator) (id.InfoboxFieldID, layer.Layer, error)
 	ImportLayer(context.Context, ImportLayerParam, *usecase.Operator) (layer.List, *layer.Group, error)
+	AttachTag(context.Context, id.LayerID, id.TagID, *usecase.Operator) (layer.Layer, error)
+	DetachTag(context.Context, id.LayerID, id.TagID, *usecase.Operator) (layer.Layer, error)
 }

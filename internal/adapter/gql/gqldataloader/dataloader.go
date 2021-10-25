@@ -13,3 +13,6 @@ package gqldataloader
 //go:generate go run github.com/vektah/dataloaden SceneLoader github.com/reearth/reearth-backend/pkg/id.SceneID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Scene
 //go:generate go run github.com/vektah/dataloaden TeamLoader github.com/reearth/reearth-backend/pkg/id.TeamID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Team
 //go:generate go run github.com/vektah/dataloaden UserLoader github.com/reearth/reearth-backend/pkg/id.UserID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.User
+//go:generate go run github.com/vektah/dataloaden TagLoader github.com/reearth/reearth-backend/pkg/id.TagID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Tag
+//go:generate go run github.com/vektah/dataloaden TagItemLoader github.com/reearth/reearth-backend/pkg/id.TagID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.TagItem
+//go:generate go run github.com/vektah/dataloaden TagGroupLoader github.com/reearth/reearth-backend/pkg/id.TagID *github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.TagGroup

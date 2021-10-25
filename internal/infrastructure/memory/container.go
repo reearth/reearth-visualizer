@@ -19,6 +19,7 @@ func InitRepos(c *repo.Container) *repo.Container {
 	c.PropertySchema = NewPropertySchema()
 	c.Property = NewProperty()
 	c.Scene = NewScene()
+	c.Tag = NewTag()
 	c.Team = NewTeam()
 	c.User = NewUser()
 	c.SceneLock = NewSceneLock()

@@ -23,6 +23,7 @@ type Loaders struct {
 	Scene    *SceneLoader
 	Team     *TeamLoader
 	User     *UserLoader
+	Tag      *TagLoader
 }
 
 type DataLoaders struct {
@@ -39,6 +40,9 @@ type DataLoaders struct {
 	Scene          SceneDataLoader
 	Team           TeamDataLoader
 	User           UserDataLoader
+	Tag            TagDataLoader
+	TagItem        TagItemDataLoader
+	TagGroup       TagGroupDataLoader
 }
 
 func NewLoaders(usecases interfaces.Container) Loaders {
@@ -53,6 +57,7 @@ func NewLoaders(usecases interfaces.Container) Loaders {
 		Scene:    NewSceneLoader(usecases.Scene),
 		Team:     NewTeamLoader(usecases.Team),
 		User:     NewUserLoader(usecases.User),
+		Tag:      NewTagLoader(usecases.Tag),
 	}
 }
 
@@ -78,6 +83,9 @@ func (l Loaders) DataLoaders(ctx context.Context) DataLoaders {
 		Scene:          l.Scene.DataLoader(ctx),
 		Team:           l.Team.DataLoader(ctx),
 		User:           l.User.DataLoader(ctx),
+		Tag:            l.Tag.DataLoader(ctx),
+		TagItem:        l.Tag.ItemDataLoader(ctx),
+		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
 }
 
@@ -96,6 +104,9 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) DataLoaders {
 		Scene:          l.Scene.OrdinaryDataLoader(ctx),
 		Team:           l.Team.OrdinaryDataLoader(ctx),
 		User:           l.User.OrdinaryDataLoader(ctx),
+		Tag:            l.Tag.OrdinaryDataLoader(ctx),
+		TagItem:        l.Tag.ItemDataLoader(ctx),
+		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
 }
 
