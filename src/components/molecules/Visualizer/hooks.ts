@@ -75,7 +75,7 @@ export default ({
   const {
     selectedLayer,
     selectedLayerId,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
@@ -143,6 +143,7 @@ export default ({
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
+      layerOverriddenProperties,
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
@@ -164,7 +165,7 @@ export default ({
     selectedLayerId,
     selectedLayer,
     layerSelectionReason,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     selectedBlockId,
     innerCamera,
     infobox,
@@ -253,7 +254,7 @@ function useLayers({
     setPrimitiveOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
-  const [layeroverriddenProperties, setLayeroverriddenProperties] = useState<{
+  const [layerOverriddenProperties, setLayeroverriddenProperties] = useState<{
     [id in string]: any;
   }>({});
   const overrideLayerProperty = useCallback((id: string, property: any) => {
@@ -276,7 +277,7 @@ function useLayers({
     selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     infobox,
     isLayerHidden,
     selectLayer,

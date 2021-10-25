@@ -19,6 +19,7 @@ export class LayerStore {
         "property",
         "propertyId",
         "title",
+        "type",
       ],
       function (key) {
         const id = (this as any).id;
@@ -27,6 +28,16 @@ export class LayerStore {
 
         if (key === "children") {
           return target?.children?.map(c => self.#pmap.get(c.id));
+        }
+
+        if (key === "type") {
+          return target
+            ? `${
+                !target.pluginId || target.pluginId === "reearth"
+                  ? ""
+                  : `${target.pluginId.replace(/#.*?$|^.*~/g, "")}/`
+              }${target.extensionId || ""}`
+            : undefined;
         }
 
         return target?.[key];
@@ -60,6 +71,44 @@ export class LayerStore {
 
   findByIds = (...ids: string[]): (PluginLayer | undefined)[] => {
     return ids.map(id => this.findById(id));
+  };
+
+  find = (
+    fn: (layer: PluginLayer, index: number, parents: PluginLayer[]) => boolean,
+  ): PluginLayer | undefined => {
+    return this.walk((...args) => (fn(...args) ? args[0] : undefined));
+  };
+
+  findAll = (
+    fn: (layer: PluginLayer, index: number, parents: PluginLayer[]) => boolean,
+  ): PluginLayer[] => {
+    const res: PluginLayer[] = [];
+    this.walk((...args) => {
+      if (fn(...args)) res.push(args[0]);
+    });
+    return res;
+  };
+
+  walk = <T>(
+    fn: (layer: PluginLayer, index: number, parents: PluginLayer[]) => T | void,
+  ): T | undefined => {
+    function w(layers: PluginLayer[], parents: PluginLayer[]): T | undefined {
+      for (let i = 0; i < layers.length; i++) {
+        const l = layers[i];
+        const res =
+          fn(l, i, parents) ??
+          (Array.isArray(l.children) && l.children.length > 0
+            ? w(l.children, [...parents, l])
+            : undefined);
+        if (typeof res !== "undefined") {
+          return res;
+        }
+      }
+      return undefined;
+    }
+
+    if (!this.#proot.children) return;
+    return w(this.#proot.children, [this.#proot]);
   };
 
   get root(): PluginLayer {

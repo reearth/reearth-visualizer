@@ -54,12 +54,20 @@ export type Layers = {
   readonly selected?: Layer;
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
+  readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
   readonly findById: (id: string) => Layer | undefined;
   readonly findByIds: (...id: string[]) => (Layer | undefined)[];
+  readonly find: (
+    fn: (layer: Layer, index: number, parents: Layer[]) => boolean,
+  ) => Layer | undefined;
+  readonly findAll: (fn: (layer: Layer, index: number, parents: Layer[]) => boolean) => Layer[];
+  readonly walk: <T>(
+    fn: (layer: Layer, index: number, parents: Layer[]) => T | void,
+  ) => T | undefined;
   readonly overrideProperty: (id: string, property: any) => void;
 };
 
@@ -76,6 +84,7 @@ export type OverriddenInfobox = {
 /** Layer is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
 export type Layer<P = any, IBP = any> = {
   id: string;
+  type?: string;
   pluginId?: string;
   extensionId?: string;
   title?: string;

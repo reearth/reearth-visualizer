@@ -104,6 +104,7 @@ export function commonReearth({
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
+  layerOverriddenProperties,
   selectLayer,
   showLayer,
   hideLayer,
@@ -121,6 +122,7 @@ export function commonReearth({
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
+  layerOverriddenProperties: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -149,10 +151,21 @@ export function commonReearth({
       },
     },
     layers: {
-      select: selectLayer,
-      show: showLayer,
-      hide: hideLayer,
-      overrideProperty: overrideLayerProperty,
+      get select() {
+        return selectLayer;
+      },
+      get show() {
+        return showLayer;
+      },
+      get hide() {
+        return hideLayer;
+      },
+      get overriddenProperties() {
+        return layerOverriddenProperties();
+      },
+      get overrideProperty() {
+        return overrideLayerProperty;
+      },
       get layers() {
         return layers().root.children ?? [];
       },
@@ -170,6 +183,15 @@ export function commonReearth({
       },
       get findByIds() {
         return layers().findByIds;
+      },
+      get find() {
+        return layers().find;
+      },
+      get findAll() {
+        return layers().findAll;
+      },
+      get walk() {
+        return layers().walk;
       },
     },
     ...events,

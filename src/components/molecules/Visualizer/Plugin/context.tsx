@@ -40,6 +40,7 @@ export type Props = {
   selectedLayer?: Layer;
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
+  layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
@@ -73,6 +74,7 @@ export function Provider({
   selectedLayer,
   layerSelectionReason,
   layerOverridenInfobox,
+  layerOverriddenProperties,
   showLayer,
   hideLayer,
   selectLayer,
@@ -95,6 +97,7 @@ export function Provider({
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
+  const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
 
   const value = useMemo<Context>(
     () => ({
@@ -112,6 +115,7 @@ export function Provider({
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
+        layerOverriddenProperties: getLayerOverriddenProperties,
         showLayer,
         hideLayer,
         selectLayer,

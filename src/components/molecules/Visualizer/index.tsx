@@ -98,7 +98,7 @@ export default function Visualizer({
     selectedBlockId,
     innerCamera,
     infobox,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -162,7 +162,7 @@ export default function Visualizer({
             selectedLayerId={selectedLayerId}
             layers={layers}
             isLayerHidden={isLayerHidden}
-            overriddenProperties={layeroverriddenProperties}
+            overriddenProperties={layerOverriddenProperties}
           />
           {ready &&
             widgets?.floatingWidgets?.map(widget => (
