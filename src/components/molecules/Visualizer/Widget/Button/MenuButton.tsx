@@ -63,16 +63,16 @@ export default function ({
           ? "top-start"
           : "top-end"
         : position?.area === "middle"
-        ? position?.section === "left"
-          ? align === "end"
-            ? "top-start"
-            : "bottom-start"
-          : align === "end"
-          ? "top-end"
-          : "bottom-end"
-        : position?.section === "right" || align === "end"
-        ? "bottom-end"
-        : "bottom-start",
+          ? position?.section === "left"
+            ? align === "end"
+              ? "top-start"
+              : "bottom-start"
+            : align === "end"
+              ? "top-end"
+              : "bottom-end"
+          : position?.section === "right" || align === "end"
+            ? "bottom-end"
+            : "bottom-start",
     modifiers: [
       {
         name: "eventListeners",
@@ -109,8 +109,8 @@ export default function ({
           const splitLink = link?.split("/");
           if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
             link = "https://" + link;
-            window.open(link, "_blank", "noopener");
           }
+          window.open(link, "_blank", "noopener");
         }
       }
       setVisibleMenuButton(false);
@@ -193,7 +193,7 @@ const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
 
   &:hover {
     background: ${({ publishedTheme, button }) =>
-      mask(button?.buttonBgcolor) || publishedTheme.mask};
+    mask(button?.buttonBgcolor) || publishedTheme.mask};
   }
 `;
 
@@ -213,7 +213,7 @@ const MenuInnerWrapper = styled.div<{ button?: Button; publishedTheme: PublishTh
   hyphens: auto;
 `;
 
-const MenuItem = styled(Flex)<{ item?: MenuItem; button?: Button; publishedTheme: PublishTheme }>`
+const MenuItem = styled(Flex) <{ item?: MenuItem; button?: Button; publishedTheme: PublishTheme }>`
   min-height: ${({ item }) => (item?.menuType === "border" ? null : "25px")};
   border-radius: ${({ item }) => (item?.menuType === "border" ? null : "3px")};
   padding: ${({ item }) => (item?.menuType === "border" ? "0 10px" : "2px 10px")};
@@ -228,6 +228,6 @@ const MenuItem = styled(Flex)<{ item?: MenuItem; button?: Button; publishedTheme
 
   &:hover {
     background: ${({ publishedTheme, item, button }) =>
-      item?.menuType === "border" ? null : mask(button?.buttonBgcolor) || publishedTheme.mask};
+    item?.menuType === "border" ? null : mask(button?.buttonBgcolor) || publishedTheme.mask};
   }
 `;
