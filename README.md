@@ -58,7 +58,7 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 
 ## Getting Started
 
-Refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/getting-started)
+Refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/set-up-reearth-in-your-environment)
 
 ## Cloud Service
 
