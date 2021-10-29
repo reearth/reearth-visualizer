@@ -53,9 +53,9 @@ const PasswordModal: React.FC<Props> = ({
 
   const handlePasswordChange = useCallback(
     (password: string) => {
+      setPassword(password);
       switch (true) {
         case passwordPolicy?.whitespace?.test(password):
-          setPassword(password);
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "No whitespace is allowed.",
@@ -63,7 +63,6 @@ const PasswordModal: React.FC<Props> = ({
           );
           break;
         case passwordPolicy?.tooShort?.test(password):
-          setPassword(password);
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "Too short.",
@@ -71,7 +70,6 @@ const PasswordModal: React.FC<Props> = ({
           );
           break;
         case passwordPolicy?.tooLong?.test(password):
-          setPassword(password);
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "That is terribly long.",
@@ -79,19 +77,15 @@ const PasswordModal: React.FC<Props> = ({
           );
           break;
         case passwordPolicy?.highSecurity?.test(password):
-          setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
           break;
         case passwordPolicy?.medSecurity?.test(password):
-          setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
           break;
         case passwordPolicy?.lowSecurity?.test(password):
-          setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
           break;
         default:
-          setPassword(password);
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "That password confuses me, but might be okay.",
@@ -117,16 +111,12 @@ const PasswordModal: React.FC<Props> = ({
   }, [updatePassword, handleClose, password, passwordConfirmation]);
 
   useEffect(() => {
-    if (
-      password !== passwordConfirmation ||
-      passwordPolicy?.tooShort?.test(password) ||
-      passwordPolicy?.tooLong?.test(password)
-    ) {
-      setDisabled(true);
-    } else {
+    if (password === passwordConfirmation && passwordPolicy?.highSecurity?.test(password)) {
       setDisabled(false);
+    } else {
+      setDisabled(true);
     }
-  }, [password, passwordConfirmation]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [password, passwordConfirmation, passwordPolicy?.highSecurity]);
 
   return (
     <Modal
@@ -160,6 +150,7 @@ const PasswordModal: React.FC<Props> = ({
               value={password}
               onChange={handlePasswordChange}
               doesChangeEveryTime
+              autofocus
               color={
                 passwordPolicy?.whitespace?.test(password) ||
                 passwordPolicy?.tooLong?.test(password)

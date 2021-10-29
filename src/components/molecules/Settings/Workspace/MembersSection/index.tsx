@@ -83,7 +83,7 @@ const MembersSection: React.FC<Props> = ({
             user ? (
               <MemberListItem
                 key={user.id}
-                name={user.name}
+                name={user.name ?? user.email}
                 role={role}
                 owner={owner}
                 isMyself={me?.id === user.id}

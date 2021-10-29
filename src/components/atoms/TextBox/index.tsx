@@ -22,6 +22,7 @@ export type Props = {
   borderColor?: string;
   floatedTextColor?: string;
   doesChangeEveryTime?: boolean;
+  autofocus?: boolean;
 };
 
 const TextBox: React.FC<Props> = ({
@@ -41,6 +42,7 @@ const TextBox: React.FC<Props> = ({
   borderColor,
   floatedTextColor,
   doesChangeEveryTime = false,
+  autofocus = false,
 }) => {
   const isDirty = useRef(false);
   const [innerValue, setInnerValue] = useState(value);
@@ -121,6 +123,7 @@ const TextBox: React.FC<Props> = ({
             disabled={disabled}
             placeholder={placeholder}
             rows={rows}
+            autoFocus={autofocus}
           />
         ) : (
           <StyledInput
@@ -134,6 +137,7 @@ const TextBox: React.FC<Props> = ({
             disabled={disabled}
             placeholder={placeholder}
             borderColor={borderColor}
+            autoFocus={autofocus}
           />
         )}
         {suffix && (
