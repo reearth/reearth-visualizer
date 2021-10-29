@@ -15813,10 +15813,10 @@ react-accessible-accordion@^4.0.0:
   resolved "https://registry.yarnpkg.com/react-accessible-accordion/-/react-accessible-accordion-4.0.0.tgz#83bf0c3e403e7627dbf3109c628b597142923937"
   integrity sha512-MovuWj2Uweo57LSgTIPpB83IYq8BNdZJ44j4NmDKYxaHC/H0JjYiqt8OfNMt+YK+XN8qRON13ERQnLfM73vmqw==
 
-react-align@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.0.3.tgz#49010bae13253357376815bf9d1478fe2ea1b6ac"
-  integrity sha512-NbrC1zzHOl5nzRM2JmSK5cEGGZLUSM89wH/FEp+bcNPWaMDzC8aGELShOy1D4XuYclnUUHd83SC90XAm/zJACw==
+react-align@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.0.4.tgz#9af52d7e44955d5f9268aa62deb7aa021dee7fbe"
+  integrity sha512-uzDoNRt/neVLbeJSRHKaJBRYhg9jYxMwmtODy0NAuxwDpefFGbE6DtR9LUCdB7jUIn8tayubHFtlb8W+WcGcvQ==
   dependencies:
     glamor "^2.20.40"
     react-beautiful-dnd "^13.1.0"
