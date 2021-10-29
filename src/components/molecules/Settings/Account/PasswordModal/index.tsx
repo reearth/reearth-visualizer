@@ -111,12 +111,17 @@ const PasswordModal: React.FC<Props> = ({
   }, [updatePassword, handleClose, password, passwordConfirmation]);
 
   useEffect(() => {
-    if (password === passwordConfirmation && passwordPolicy?.highSecurity?.test(password)) {
-      setDisabled(false);
-    } else {
+    if (
+      password !== passwordConfirmation ||
+      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
+      passwordPolicy?.tooShort?.test(password) ||
+      passwordPolicy?.tooLong?.test(password)
+    ) {
       setDisabled(true);
+    } else {
+      setDisabled(false);
     }
-  }, [password, passwordConfirmation, passwordPolicy?.highSecurity]);
+  }, [password, passwordConfirmation, passwordPolicy]);
 
   return (
     <Modal
@@ -152,9 +157,10 @@ const PasswordModal: React.FC<Props> = ({
               doesChangeEveryTime
               autofocus
               color={
-                passwordPolicy?.whitespace?.test(password) ||
                 passwordPolicy?.tooLong?.test(password)
                   ? theme.main.danger
+                  : passwordPolicy?.highSecurity?.test(password)
+                  ? theme.main.accent
                   : undefined
               }
             />
@@ -170,6 +176,7 @@ const PasswordModal: React.FC<Props> = ({
               value={passwordConfirmation}
               onChange={setPasswordConfirmation}
               doesChangeEveryTime
+              color={password === passwordConfirmation ? theme.main.accent : undefined}
             />
           </PasswordField>
         </div>
