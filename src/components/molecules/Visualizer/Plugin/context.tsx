@@ -138,6 +138,7 @@ export function Provider({
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
+      getLayerOverriddenProperties,
       showLayer,
       hideLayer,
       selectLayer,
