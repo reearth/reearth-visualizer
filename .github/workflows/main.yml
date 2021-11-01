@@ -39,6 +39,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage.txt
+      - name: Fetch tags
+        run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
         # The tag name should be retrieved lazily, as tagging may be delayed.
@@ -120,6 +122,8 @@ jobs:
           args: release --rm-dist --snapshot
         env:
           GORELEASER_CURRENT_TAG: 0.0.0
+      - name: Rename artifacts
+        run: rename 's/^dist\/reearth-backend_0.0.0-SNAPSHOT-.+?_(.+)/dist\/reearth-backend_nightly_$1/s' dist/reearth-backend_*.*
       - name: Create GitHub release for nightly
         if: "!needs.main.outputs.new_tag"
         uses: ncipollo/release-action@v1
