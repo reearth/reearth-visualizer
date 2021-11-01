@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - main
-    if: ${{ needs.main.outputs.branch }}
+    if: 'needs.main.outputs.branch && !needs.main.outputs.new_tag'
     env:
       DEST_DIR: ${{ needs.main.outputs.branch }}
     steps:
