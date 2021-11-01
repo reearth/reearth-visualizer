@@ -123,7 +123,8 @@ jobs:
         env:
           GORELEASER_CURRENT_TAG: 0.0.0
       - name: Rename artifacts
-        run: rename 's/^dist\/reearth-backend_0.0.0-SNAPSHOT-.+?_(.+)/dist\/reearth-backend_nightly_$1/s' dist/reearth-backend_*.*
+        if: "!needs.main.outputs.new_tag"
+        run: for f in dist/reearth-backend_*.*; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_nightly/'); done
       - name: Create GitHub release for nightly
         if: "!needs.main.outputs.new_tag"
         uses: ncipollo/release-action@v1
