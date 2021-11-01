@@ -16,6 +16,7 @@
 .idea
 
 # reearth
+/dist
 /reearth
 /reearth-backend
 __debug_bin
