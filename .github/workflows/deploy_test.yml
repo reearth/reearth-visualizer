@@ -2,7 +2,7 @@ name: deploy_test
 on:
   workflow_run:
     workflows:
-      - nightly
+      - main
     types:
       - completed
 env:
@@ -10,9 +10,9 @@ env:
   GCS_DEST: gs://test.reearth.dev/
 jobs:
   deploy_test:
-    name: deploy_test
+    name: Deploy test env
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-web'
     steps:
       - uses: google-github-actions/setup-gcloud@master
         with:
