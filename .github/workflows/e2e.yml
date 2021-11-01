@@ -63,7 +63,7 @@ jobs:
             cypress/screenshots
             cypress/videos
   slack-notification:
-    if: ${{ success() || failure() }}
+    if: success() || failure()
     name: Slack Notification
     needs:
       - e2e

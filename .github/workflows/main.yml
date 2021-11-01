@@ -183,7 +183,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
   slack-notification-nightly:
-    if: always()
+    if: failure()
     name: Slack Notification
     needs:
       - nightly
@@ -196,7 +196,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
   slack-notification-release:
-    if: always()
+    if: failure()
     name: Slack Notification
     needs:
       - release
