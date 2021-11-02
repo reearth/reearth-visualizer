@@ -1,0 +1,28 @@
+name: Test
+on:
+  workflow_dispatch:
+    inputs:
+      custom_tag:
+        required: true
+        description: Specify version (e.g. v1.1.0)
+env:
+  IMAGE: reearth/reearth
+  IMAGE_BASE: reearth/reearth-backend
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Generate changelog
+        uses: actions/github-script@v5
+        env:
+          TAG: ${{ github.event.inputs.custom_tag }}
+        with:
+          script: 'require("./github/workflows/scripts/release")({ github, context, tag: process.env.TAG })'
+      - name: Show CHANGELOG_latest
+        run: cat CHANGELOG_latest.md
+      - name: Show CHANGELOG
+        run: cat CHANGELOG.md
