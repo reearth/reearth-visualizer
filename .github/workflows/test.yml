@@ -21,7 +21,7 @@ jobs:
         env:
           TAG: ${{ github.event.inputs.custom_tag }}
         with:
-          script: 'require("./github/workflows/scripts/release")({ github, context, tag: process.env.TAG })'
+          script: 'require("./.github/workflows/scripts/release")({ github, context, tag: process.env.TAG })'
       - name: Show CHANGELOG_latest
         run: cat CHANGELOG_latest.md
       - name: Show CHANGELOG
