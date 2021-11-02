@@ -81,6 +81,8 @@ jobs:
         env:
           TAG: ${{ steps.tag.outputs.new_tag }}
         run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git add CHANGELOG.md
           git commit -m $TAG
           git tag $TAG
