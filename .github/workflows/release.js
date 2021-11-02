@@ -9,24 +9,24 @@ module.exports = async ({ github, tag }) => {
   const newTag = removeVFromTag(tag);
   const versions = [[newTag, formatDate(new Date())], ...getVersions().filter(v => v[0] !== newTag)];
 
-  const releaseData = await Promise.all(Object.fromEntries(repos.map(r => github.rest.repos.getReleaseByTag({
+  const releaseData = await Promise.all(Object.fromEntries(repos).map(r => github.rest.repos.getReleaseByTag({
     owner: "reearth",
     repo: "reearth-" + r,
     tag,
-  }))));
-  const changelogData = await Promise.all(Object.fromEntries(repos.map(r => github.rest.repos.getContent({
+  })));
+  const changelogData = await Promise.all(Object.fromEntries(repos).map(r => github.rest.repos.getContent({
     owner: "reearth",
     repo: "reearth-" + r,
     path: "CHANGELOG.md",
-  }))));
-  const releases = Object.fromEntries(repos.map((r, i) => [
+  })));
+  const releases = Object.fromEntries(repos).map((r, i) => [
     r,
     releaseData[i]
-  ]));
-  const changelogs = Object.fromEntries(repos.map((r, i) => [
+  ]);
+  const changelogs = Object.fromEntries(repos).map((r, i) => [
     r,
     changelogData[i]
-  ]));
+  ]);
 
   console.log("releases", JSON.stringify(releases));
   console.log("changelogs", JSON.stringify(changelogs));
