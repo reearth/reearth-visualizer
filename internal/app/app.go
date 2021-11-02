@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"net/http"
+	"net/http/pprof"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
@@ -10,7 +11,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interactor"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/rerror"
-	echotracer "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
 func initEcho(cfg *ServerConfig) *echo.Echo {
@@ -26,8 +27,8 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 	logger := GetEchoLogger()
 	e.Logger = logger
 	e.Use(logger.Hook())
-	e.Use(middleware.Recover(), echotracer.Middleware("reearth-backend"))
 
+	e.Use(middleware.Recover(), otelecho.Middleware("reearth-backend"))
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
 		e.Use(
@@ -39,7 +40,12 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 
 	if e.Debug {
 		// enable pprof
-		e.GET("/debug/pprof/*", echo.WrapHandler(http.DefaultServeMux))
+		pprofGroup := e.Group("/debug/pprof")
+		pprofGroup.Any("/cmdline", echo.WrapHandler(http.HandlerFunc(pprof.Cmdline)))
+		pprofGroup.Any("/profile", echo.WrapHandler(http.HandlerFunc(pprof.Profile)))
+		pprofGroup.Any("/symbol", echo.WrapHandler(http.HandlerFunc(pprof.Symbol)))
+		pprofGroup.Any("/trace", echo.WrapHandler(http.HandlerFunc(pprof.Trace)))
+		pprofGroup.Any("/*", echo.WrapHandler(http.HandlerFunc(pprof.Index)))
 	}
 
 	e.HTTPErrorHandler = func(err error, c echo.Context) {

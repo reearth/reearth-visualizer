@@ -9,10 +9,6 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/google"
 	"github.com/spf13/afero"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	mongotrace "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver"
-
 	"github.com/reearth/reearth-backend/internal/infrastructure/auth0"
 	"github.com/reearth/reearth-backend/internal/infrastructure/fs"
 	"github.com/reearth/reearth-backend/internal/infrastructure/gcs"
@@ -20,6 +16,9 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.Container, *gateway.Container) {
@@ -32,7 +31,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 		options.Client().
 			ApplyURI(conf.DB).
 			SetConnectTimeout(time.Second*10).
-			SetMonitor(mongotrace.NewMonitor("reearth-backend")),
+			SetMonitor(otelmongo.NewMonitor()),
 	)
 	if err != nil {
 		log.Fatalln(fmt.Sprintf("repo initialization error: %+v", err))

@@ -27,7 +27,7 @@ func Start(debug bool, version string) {
 	initProfiler(conf.Profiler, version)
 
 	// Init tracer
-	closer := initTracer(conf)
+	closer := initTracer(ctx, conf)
 	defer func() {
 		if closer != nil {
 			if err := closer.Close(); err != nil {

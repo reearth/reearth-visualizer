@@ -4,19 +4,17 @@ import (
 	"context"
 	"errors"
 
-	"github.com/99designs/gqlgen-contrib/gqlopencensus"
-	"github.com/99designs/gqlgen-contrib/gqlopentracing"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
-	"github.com/vektah/gqlparser/v2/gqlerror"
-
+	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth-backend/internal/adapter/gql"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 const enableDataLoaders = true
@@ -70,8 +68,7 @@ func graphqlAPI(
 	})
 
 	srv := handler.NewDefaultServer(schema)
-	srv.Use(gqlopentracing.Tracer{})
-	srv.Use(gqlopencensus.Tracer{})
+	srv.Use(otelgqlgen.Middleware())
 	if conf.Config.GraphQL.ComplexityLimit > 0 {
 		srv.Use(extension.FixedComplexityLimit(conf.Config.GraphQL.ComplexityLimit))
 	}

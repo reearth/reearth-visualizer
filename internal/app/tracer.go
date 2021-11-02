@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"io"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
@@ -9,33 +10,31 @@ import (
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 	"github.com/uber/jaeger-lib/metrics"
-	"go.opentelemetry.io/otel/api/global"
+	"go.opentelemetry.io/otel"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
-func initTracer(conf *Config) io.Closer {
+func initTracer(ctx context.Context, conf *Config) io.Closer {
 	if conf.Tracer == "gcp" {
-		initGCPTracer(conf)
+		initGCPTracer(ctx, conf)
 	} else if conf.Tracer == "jaeger" {
 		return initJaegerTracer(conf)
 	}
 	return nil
 }
 
-func initGCPTracer(conf *Config) {
-	exporter, err := texporter.NewExporter(texporter.WithProjectID(conf.GCPProject))
+func initGCPTracer(ctx context.Context, conf *Config) {
+	exporter, err := texporter.New(texporter.WithProjectID(conf.GCPProject))
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	tp, err := sdktrace.NewProvider(sdktrace.WithConfig(sdktrace.Config{
-		DefaultSampler: sdktrace.ProbabilitySampler(conf.TracerSample),
-	}), sdktrace.WithSyncer(exporter))
-	if err != nil {
-		log.Fatalln(err)
-	}
+	tp := sdktrace.NewTracerProvider(sdktrace.WithSyncer(exporter), sdktrace.WithSampler(sdktrace.TraceIDRatioBased(conf.TracerSample)))
+	defer func() {
+		_ = tp.ForceFlush(ctx)
+	}()
 
-	global.SetTraceProvider(tp)
+	otel.SetTracerProvider(tp)
 
 	log.Infof("tracer: initialized cloud trace with sample fraction: %g", conf.TracerSample)
 }
