@@ -60,10 +60,11 @@ function getVersions() {
 }
 
 function devideChangelogIntoSections(body, footer) {
-  return body.split(/^## /gm).slice(1).map((b, i) => ({
-    version: b.match(/(\d\.\d\.\d.*?) - /)?.[1],
-    body: b.replace(/.*?\n/, "").replace(footer, "").trim(),
-  }));
+  return Object.fromEntries(body.split(/^## /gm).slice(1).map(b => {
+    const v = b.match(/^(\d\.\d\.\d.*?) - /);
+    if (!v) return;
+    return [v[1], b.replace(/.*?\n/, "").replace(footer, "").trim()];
+  }).filter(Boolean));
 }
 
 /**
