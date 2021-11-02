@@ -1,13 +1,17 @@
-name: nightly
+name: Nightly
 on:
   workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'
 env:
-  IMAGE: reearth/reearth:nightly
-  IMAGE_BASE: reearth/reearth-backend:nightly
+  IMAGE: reearth/reearth
+  IMAGE_BASE: reearth/reearth-backend
+  TAG: nightly
 jobs:
   nightly:
-    name: nightly
+    name: Nightly
     runs-on: ubuntu-latest
+    if: github.event.repository.full_name == 'reearth/reearth'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,11 +39,11 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          build-args: REEARTH_BACKEND_IMAGE=${{ env.IMAGE_BASE }}
+          build-args: REEARTH_BACKEND_IMAGE=${{ env.IMAGE_BASE }}:${{ env.TAG }}
           push: true
-          tags: ${{ env.IMAGE }}
-          cache-from: type=registry,ref=reearth/reearth:nightly
-          cache-to: type=inline
+          tags: ${{ env.IMAGE }}:${{ env.TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   slack-notification:
@@ -55,4 +59,3 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-
