@@ -1,0 +1,113 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      custom_tag:
+        required: false
+        description: Specify version only when you want to increment the patch and major version (e.g. 1.1.0)
+env:
+  IMAGE: reearth/reearth
+  IMAGE_BASE: reearth/reearth-backend
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs:
+      - prerelease
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GPT }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Bump tag version
+        id: tag
+        uses: mathieudutour/github-tag-action@v5.6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ github.event.inputs.custom_tag }}
+          default_bump: minor
+          dry_run: true
+      - name: Get Docker tags
+        id: tags
+        env:
+          TAG: ${{ steps.tag.outputs.new_tag }}
+        run: |
+          TAG2=${TAG#v}
+          TAGS=${IMAGE}:${TAG2}
+          if [[ ! $TAG2 =~ '-' ]]; then
+            TAGS+=,${IMAGE}:${TAG2%.*}
+            TAGS+=,${IMAGE}:${TAG2%%.*}
+            TAGS+=,${IMAGE}:latest
+          fi
+          echo "::set-output name=new_tag_short::$TAG2"
+          echo "::set-output name=tags::$TAGS"
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: reearth/reearth-web
+          version: tags/${{ steps.tag.outputs.new_tag }}
+          file: reearth-web_${{ steps.tag.outputs.new_tag }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract reearth-web
+        run: tar -xvf reearth-web_${{ steps.tag.outputs.new_tag }}.tar.gz && mv reearth-web web
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          build-args: REEARTH_BACKEND_IMAGE=${{ env.IMAGE_BASE }}:${{ steps.tags.outputs.new_tag_short }}
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Generate changelog
+        uses: actions/github-script@v5
+        env:
+          TAG: ${{ steps.tag.outputs.new_tag }}
+        with:
+          script: 'require("./github/workflows/scripts/release")({ github, context, tag: process.env.TAG })'
+      - name: Commit and push
+        env:
+          TAG: ${{ steps.tag.outputs.new_tag }}
+        run: |
+          git add CHANGELOG.md
+          git commit -m $TAG
+          git tag $TAG
+          git push
+          git push --tags
+      - name: Get current SHA
+        id: sha
+        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: ${{ steps.sha.outputs.sha }}
+          name: ${{ steps.tag.outputs.new_tag }}
+          tag: ${{ steps.tag.outputs.new_tag }}
+          bodyFile: CHANGELOG_latest.md
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

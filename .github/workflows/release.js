@@ -13,7 +13,7 @@ module.exports = async ({ github, tag }) => {
 
   // generate CHANGELOG_latest.md
   const changelogLatest = repos.flatMap((r, i) =>
-    [`## reearth-${r}`, "", releases[i].data.body, ""]
+    [`## reearth-${r}`, releases[i].data.body]
   ).join("\n");
   writeFileSync("CHANGELOG_latest.md", changelogLatest);
 
