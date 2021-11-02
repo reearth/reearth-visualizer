@@ -28,8 +28,9 @@ module.exports = async ({ github, tag }) => {
     changelogData[i]
   ]));
 
-  const changelogLatest = Object.entries(releases).map(([r, release]) =>
-    [`## reearth-${r}`, "", release.body, ""].join("\n")).reduce((a, b) => a + b, "");
+  const changelogLatest = Object.entries(releases).flatMap(([r, release]) =>
+    [`## reearth-${r}`, "", release.body, ""]
+  ).join("\n");
 
   writeFileSync("CHANGELOG_latest.md", changelogLatest);
 
@@ -47,7 +48,7 @@ module.exports = async ({ github, tag }) => {
 };
 
 function formatDate(d) {
-  return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
+  return `${d.getUTCFullYear()}-${("0" + (d.getUTCMonth() + 1)).slice(-2)}-${("0" + d.getUTCDate()).slice(-2)}`;
 }
 
 function removeVFromTag(t) {
@@ -83,7 +84,7 @@ function combineChangelogs(header, footer, versions, changes) {
     ...versions.flatMap(v => [
       `## ${v[0].replace(/^v/, "")} - ${v[1]}`,
       ...Object.entries(changes).flatMap(([key, c]) => c[v[0]] ? [
-        `### ${key}`,
+        `### reearth-${key}`,
         c[v[0]].replace(/^### /gm, "#### ")
       ] : [])
     ]),
