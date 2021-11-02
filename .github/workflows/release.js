@@ -28,16 +28,13 @@ module.exports = async ({ github, tag }) => {
     changelogData[i]
   ]));
 
-  console.log("releases", JSON.stringify(releases));
-  console.log("changelogs", JSON.stringify(changelogs));
-
   const changelogLatest = Object.entries(releases).map(([r, release]) =>
     [`## reearth-${r}`, "", release.body, ""].join("\n")).reduce((a, b) => a + b, "");
 
   writeFileSync("CHANGELOG_latest.md", changelogLatest);
 
   const changelogContents = Object.fromEntries(Object.entries(changelogs).map(
-    ([k, v]) => [k, devideChangelogIntoSections(v.content, trimFooter)]));
+    ([k, v]) => [k, devideChangelogIntoSections(Buffer.from(v.data.content, "base64").toString("utf-8"), trimFooter)]));
 
   const changelog = combineChangelogs(
     header,
