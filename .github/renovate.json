@@ -4,7 +4,8 @@
     ":semanticCommits",
     ":semanticCommitScopeDisabled",
     ":maintainLockFilesWeekly",
-    ":enableVulnerabilityAlertsWithLabel(security)"
+    ":enableVulnerabilityAlertsWithLabel(security)",
+    ":semanticCommitTypeAll(chore)"
   ],
   "rangeStrategy": "bump",
   "enabledManagers": [
