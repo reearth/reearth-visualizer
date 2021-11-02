@@ -13,7 +13,7 @@ module.exports = async ({ github, tag }) => {
   const releaseData = await Promise.all(keys.map(r => github.rest.repos.getReleaseByTag({
     owner: "reearth",
     repo: "reearth-" + r,
-    tag,
+    tag: `v${newTag}`,
   })));
   const changelogData = await Promise.all(keys.map(r => github.rest.repos.getContent({
     owner: "reearth",
