@@ -55,7 +55,7 @@ const InfoBox: React.FC<Props> = ({
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(!isSmallWindow);
+  const [open, setOpen] = useState(true);
   useClickAway(ref, () => onClickAway?.());
 
   const handleOpen = useCallback(() => {
@@ -68,14 +68,16 @@ const InfoBox: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    if (isSmallWindow) setOpen(false);
-  }, [infoboxKey, isSmallWindow]);
-
-  useEffect(() => {
     if (!ref2.current) return;
     ref2.current.scrollLeft = 0;
     ref2.current.scrollTop = 0;
   }, [infoboxKey]);
+
+  useEffect(() => {
+    if (!visible) {
+      setOpen(true);
+    }
+  }, [visible]);
 
   const wrapperStyles = useMemo(
     () => css`
@@ -89,27 +91,27 @@ const InfoBox: React.FC<Props> = ({
     <StyledFloatedPanel
       className={className}
       visible={visible}
+      open={open}
       styles={wrapperStyles}
       onClick={onClick}
       onEnter={onEnter}
       onEntered={onEntered}
       onExit={onExit}
       onExited={onExited}
+      size={size}
       floated>
-      <Wrapper ref={ref} size={size} open={open}>
-        <TitleFlex
-          flex="0 0 auto"
-          justify={open ? "flex-start" : "space-evenly"}
-          direction="column"
-          onClick={handleOpen}>
-          {isSmallWindow && !noContent && (
-            <StyledIcon color={publishedTheme.mainIcon} icon="arrowUp" size={24} open={open} />
+      <Wrapper ref={ref} open={open}>
+        <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
+          {!noContent && (
+            <IconWrapper align="center" justify="space-around">
+              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={16} open={open} />
+              <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
+            </IconWrapper>
           )}
-          <Text size="m" weight="bold" customColor>
-            <TitleText>{title || " "}</TitleText>
-          </Text>
-          {!isSmallWindow && (
-            <StyledIcon color={publishedTheme.mainIcon} icon="arrowDown" size={24} open={open} />
+          {!open ? null : (
+            <Text size="m" weight="bold" customColor>
+              <TitleText>{title || " "}</TitleText>
+            </Text>
           )}
         </TitleFlex>
         <CloseBtn
@@ -129,41 +131,53 @@ const InfoBox: React.FC<Props> = ({
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
+  open?: boolean;
+  size?: "small" | "large";
 }>`
   position: ${props => (props.floated ? "absolute" : "static")};
-  top: 50px;
-  right: 10px;
-  max-height: calc(100% - 85px);
+  top: 15%;
+  right: ${({ open }) => (open ? "30px" : "-6px")};
+  max-height: 70%;
+  width: ${({ size, open }) => (open ? (size == "large" ? "624px" : "346px") : "80px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${({ theme }) => theme.zIndexes.propertyFieldPopup};
+  transition: all 0.6s;
 
   @media (max-width: 624px) {
-    left: 16px;
-    right: 16px;
-    top: auto;
-    bottom: 80px;
+    right: ${({ open }) => (open ? "16px" : "-8px")};
+    top: 20vh;
+    bottom: auto;
+    width: ${({ open }) => (open ? "calc(100% - 33px)" : "70px")};
+    ${({ open }) => !open && "height: 40px;"}
+    max-height: 60vh;
   }
 `;
 
-const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
+const Wrapper = styled.div<{ open?: boolean }>`
   overflow: hidden;
-  width: ${props => (props.size == "large" ? "624px" : "346px")};
-  max-height: calc(100% - 85px);
   display: flex;
   flex-direction: column;
   min-height: ${({ open }) => (open ? "280px" : "100%")};
 
   @media (max-width: 624px) {
+    transition: all 0.4s;
     width: auto;
   }
 `;
 
-const TitleFlex = styled(Flex)`
-  margin: ${metricsSizes["m"]}px auto;
+const IconWrapper = styled(Flex)`
+  width: 52px;
+  @media (max-width: 624px) {
+    width: 42px;
+  }
+`;
+
+const TitleFlex = styled(Flex)<{ open?: boolean }>`
+  margin: ${({ open }) => (!open ? metricsSizes["s"] : metricsSizes["m"]) + "px auto"};
   text-align: center;
   box-sizing: border-box;
   cursor: pointer;
@@ -194,6 +208,7 @@ const Content = styled.div<{ open?: boolean }>`
   flex: auto;
   font-size: ${fonts.sizes.s}px;
   padding: 10px 0 20px 0;
+  transition: all 0.2s linear;
 
   -ms-overflow-style: none;
   scrollbar-width: none;

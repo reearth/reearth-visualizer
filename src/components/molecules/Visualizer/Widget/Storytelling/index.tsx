@@ -256,7 +256,8 @@ const Menu = styled.div<{
     border: 1px solid ${props => props.theme.main.text};
     top: ${({ area, align }) =>
       area === "top" || (area === "middle" && align === "start") ? "60px" : null};
-    bottom: ${({ area, align }) => (area !== "top" && align !== "start" ? "60px" : null)};
+    bottom: ${({ area, align }) =>
+      (area === "middle" && align !== "start") || area !== "top" ? "60px" : null};
   }
 `;
 

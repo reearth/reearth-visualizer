@@ -223,21 +223,27 @@ export const convertWidgets = (
     };
   };
 
-  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection => {
+  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | undefined => {
+    const top = widgetArea(section?.top);
+    const middle = widgetArea(section?.middle);
+    const bottom = widgetArea(section?.bottom);
+    if (!top && !middle && !bottom) return;
     return {
-      top: widgetArea(section?.top),
-      middle: widgetArea(section?.middle),
-      bottom: widgetArea(section?.bottom),
+      top,
+      middle,
+      bottom,
     };
   };
 
-  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea => {
+  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea | undefined => {
     const align = area?.align.toLowerCase() as Alignment | undefined;
+    const areaWidgets: Widget[] | undefined = area?.widgetIds
+      .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
+      .filter((w): w is Widget => !!w);
+    if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
     return {
       align: align ?? "start",
-      widgets: area?.widgetIds
-        .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
-        .filter((w): w is Widget => !!w),
+      widgets: areaWidgets,
     };
   };
 

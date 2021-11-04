@@ -39,6 +39,8 @@ const Inner = styled.div<{ pos?: number }>`
 const Page = styled.div`
   flex: 0 0 100%;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 export default Slide;

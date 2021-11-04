@@ -1,5 +1,6 @@
 import React from "react";
 import { GridWrapper } from "react-align";
+import { useMedia } from "react-use";
 
 import { styled } from "@reearth/theme";
 
@@ -10,6 +11,7 @@ import type {
   Location,
   WidgetLayoutConstraint,
 } from "./hooks";
+import MobileZone from "./MobileZone";
 import ZoneComponent from "./Zone";
 
 export type {
@@ -60,6 +62,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
   });
+  const isSmallWindow = useMedia("(max-width: 768px)");
 
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
@@ -68,26 +71,49 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}>
-        <ZoneComponent
-          zoneName="outer"
-          zone={alignSystem?.outer}
-          sceneProperty={sceneProperty}
-          pluginProperty={pluginProperty}
-          pluginBaseUrl={pluginBaseUrl}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-          layoutConstraint={layoutConstraint}>
-          <ZoneComponent
-            zoneName="inner"
-            zone={alignSystem?.inner}
+        {isSmallWindow ? (
+          <MobileZone
+            zoneName="outer"
+            zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}
-          />
-        </ZoneComponent>
+            layoutConstraint={layoutConstraint}>
+            <ZoneComponent
+              zoneName="inner"
+              zone={alignSystem?.inner}
+              sceneProperty={sceneProperty}
+              pluginProperty={pluginProperty}
+              pluginBaseUrl={pluginBaseUrl}
+              isEditable={isEditable}
+              isBuilt={isBuilt}
+              layoutConstraint={layoutConstraint}
+            />
+          </MobileZone>
+        ) : (
+          <ZoneComponent
+            zoneName="outer"
+            zone={alignSystem?.outer}
+            sceneProperty={sceneProperty}
+            pluginProperty={pluginProperty}
+            pluginBaseUrl={pluginBaseUrl}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
+            layoutConstraint={layoutConstraint}>
+            <ZoneComponent
+              zoneName="inner"
+              zone={alignSystem?.inner}
+              sceneProperty={sceneProperty}
+              pluginProperty={pluginProperty}
+              pluginBaseUrl={pluginBaseUrl}
+              isEditable={isEditable}
+              isBuilt={isBuilt}
+              layoutConstraint={layoutConstraint}
+            />
+          </ZoneComponent>
+        )}
       </GridWrapper>
     </WidetAlignSystemWrapper>
   );

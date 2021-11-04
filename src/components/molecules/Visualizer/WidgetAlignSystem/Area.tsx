@@ -19,6 +19,7 @@ type Props = {
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
+  wrapContent?: boolean;
 };
 
 export default function WidgetAreaComponent({
@@ -33,6 +34,7 @@ export default function WidgetAreaComponent({
   isEditable,
   isBuilt,
   layoutConstraint,
+  wrapContent,
 }: Props) {
   const theme = useTheme();
   const widgetLayout = useMemo(
@@ -52,6 +54,7 @@ export default function WidgetAreaComponent({
       // reverse={area !== "middle" && section === "right"}
       end={section === "right" || area === "bottom"}
       align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
+      style={{ flexWrap: wrapContent ? "wrap" : undefined }}
       editorStyle={{
         background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
         border:
