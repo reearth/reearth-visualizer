@@ -61,11 +61,12 @@ func TestSchema_Group(t *testing.T) {
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
 	testCases := []struct {
-		Name              string
-		S                 *Schema
-		PTR               *Pointer
-		Input, InputField id.PropertySchemaFieldID
-		Expected          *SchemaGroup
+		Name       string
+		S          *Schema
+		PTR        *Pointer
+		Input      id.PropertySchemaGroupID
+		InputField id.PropertySchemaFieldID
+		Expected   *SchemaGroup
 	}{
 		{
 			Name: "nil schema",
@@ -82,7 +83,7 @@ func TestSchema_Group(t *testing.T) {
 			Name:  "not found",
 			S:     NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild(),
 			PTR:   NewPointer(nil, nil, id.PropertySchemaFieldID("zz").Ref()),
-			Input: id.PropertySchemaFieldID("zz"),
+			Input: id.PropertySchemaGroupID("zz"),
 		},
 	}
 

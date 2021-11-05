@@ -7,7 +7,7 @@ import (
 
 // SchemaGroup represents a group of property that has some fields
 type SchemaGroup struct {
-	id                  id.PropertySchemaFieldID
+	id                  id.PropertySchemaGroupID
 	sid                 id.PropertySchemaID
 	fields              []*SchemaField
 	list                bool
@@ -17,14 +17,14 @@ type SchemaGroup struct {
 }
 
 // ID returns id
-func (s *SchemaGroup) ID() id.PropertySchemaFieldID {
+func (s *SchemaGroup) ID() id.PropertySchemaGroupID {
 	if s == nil {
-		return id.PropertySchemaFieldID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return s.id
 }
 
-func (s *SchemaGroup) IDRef() *id.PropertySchemaFieldID {
+func (s *SchemaGroup) IDRef() *id.PropertySchemaGroupID {
 	if s == nil {
 		return nil
 	}

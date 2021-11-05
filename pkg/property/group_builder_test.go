@@ -18,12 +18,12 @@ func TestGroupBuilder_Build(t *testing.T) {
 		Name        string
 		Id          id.PropertyItemID
 		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaFieldID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 		Expected    struct {
 			Id          id.PropertyItemID
 			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaFieldID
+			SchemaGroup id.PropertySchemaGroupID
 			Fields      []*Field
 		}
 		Err error
@@ -41,7 +41,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 			Expected: struct {
 				Id          id.PropertyItemID
 				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaFieldID
+				SchemaGroup id.PropertySchemaGroupID
 				Fields      []*Field
 			}{
 				Id:          iid,
@@ -81,12 +81,12 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 		Fail        bool
 		Id          id.PropertyItemID
 		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaFieldID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 		Expected    struct {
 			Id          id.PropertyItemID
 			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaFieldID
+			SchemaGroup id.PropertySchemaGroupID
 			Fields      []*Field
 		}
 	}{
@@ -103,7 +103,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 			Expected: struct {
 				Id          id.PropertyItemID
 				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaFieldID
+				SchemaGroup id.PropertySchemaGroupID
 				Fields      []*Field
 			}{
 				Id:          iid,

@@ -30,7 +30,7 @@ func (b *SchemaGroupBuilder) MustBuild() *SchemaGroup {
 	return p
 }
 
-func (b *SchemaGroupBuilder) ID(id id.PropertySchemaFieldID) *SchemaGroupBuilder {
+func (b *SchemaGroupBuilder) ID(id id.PropertySchemaGroupID) *SchemaGroupBuilder {
 	b.p.id = id
 	return b
 }

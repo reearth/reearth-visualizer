@@ -20,7 +20,7 @@ type Merged struct {
 type MergedGroup struct {
 	Original      *id.PropertyItemID
 	Parent        *id.PropertyItemID
-	SchemaGroup   id.PropertySchemaFieldID
+	SchemaGroup   id.PropertySchemaGroupID
 	LinkedDataset *id.DatasetID
 	Groups        []*MergedGroup
 	Fields        []*MergedField
@@ -223,7 +223,7 @@ func mergeItem(o, p Item, linked *id.DatasetID) *MergedGroup {
 	}
 
 	var oid, pid *id.PropertyItemID
-	var sg id.PropertySchemaFieldID
+	var sg id.PropertySchemaGroupID
 	if o != nil {
 		oid = o.IDRef()
 		sg = o.SchemaGroup()

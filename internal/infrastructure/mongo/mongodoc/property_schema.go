@@ -263,7 +263,7 @@ func toModelPropertySchemaGroup(d *PropertySchemaGroupDocument, sid id.PropertyS
 	}
 
 	return property.NewSchemaGroup().
-		ID(id.PropertySchemaFieldID(d.ID)).
+		ID(id.PropertySchemaGroupID(d.ID)).
 		Schema(sid).
 		IsList(d.List).
 		Title(d.Title).
@@ -294,7 +294,7 @@ func toModelPropertyPointer(p *PropertyPointerDocument) *property.Pointer {
 		return nil
 	}
 	return property.NewPointer(
-		id.PropertySchemaFieldIDFrom(p.SchemaGroupID),
+		id.PropertySchemaGroupIDFrom(p.SchemaGroupID),
 		id.PropertyItemIDFromRef(p.ItemID),
 		id.PropertySchemaFieldIDFrom(p.FieldID),
 	)

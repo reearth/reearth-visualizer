@@ -35,15 +35,15 @@ func (g *GroupList) IDRef() *id.PropertyItemID {
 }
 
 // SchemaGroup returns id of schema group
-func (g *GroupList) SchemaGroup() id.PropertySchemaFieldID {
+func (g *GroupList) SchemaGroup() id.PropertySchemaGroupID {
 	if g == nil {
-		return id.PropertySchemaFieldID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return g.itemBase.SchemaGroup
 }
 
 // SchemaGroupRef _
-func (g *GroupList) SchemaGroupRef() *id.PropertySchemaFieldID {
+func (g *GroupList) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}

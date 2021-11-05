@@ -109,7 +109,7 @@ func TestEncoder_Layers(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,

@@ -116,6 +116,19 @@ func UnmarshalPropertySchemaID(v interface{}) (id.PropertySchemaID, error) {
 	return id.PropertySchemaID{}, errors.New("invalid ID")
 }
 
+func MarshalPropertySchemaGroupID(t id.PropertySchemaGroupID) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+	})
+}
+
+func UnmarshalPropertySchemaGroupID(v interface{}) (id.PropertySchemaGroupID, error) {
+	if tmpStr, ok := v.(string); ok {
+		return id.PropertySchemaGroupID(tmpStr), nil
+	}
+	return id.PropertySchemaGroupID(""), errors.New("invalid ID")
+}
+
 func MarshalPropertySchemaFieldID(t id.PropertySchemaFieldID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		_, _ = io.WriteString(w, strconv.Quote(t.String()))

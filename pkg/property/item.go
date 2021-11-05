@@ -7,12 +7,11 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-// Item _
 type Item interface {
 	ID() id.PropertyItemID
 	IDRef() *id.PropertyItemID
-	SchemaGroup() id.PropertySchemaFieldID
-	SchemaGroupRef() *id.PropertySchemaFieldID
+	SchemaGroup() id.PropertySchemaGroupID
+	SchemaGroupRef() *id.PropertySchemaGroupID
 	Schema() id.PropertySchemaID
 	SchemaRef() *id.PropertySchemaID
 	HasLinkedField() bool
@@ -29,22 +28,19 @@ type Item interface {
 type itemBase struct {
 	ID          id.PropertyItemID
 	Schema      id.PropertySchemaID
-	SchemaGroup id.PropertySchemaFieldID
+	SchemaGroup id.PropertySchemaGroupID
 }
 
-// ToGroup _
 func ToGroup(i Item) *Group {
 	g, _ := i.(*Group)
 	return g
 }
 
-// ToGroupList _
 func ToGroupList(i Item) *GroupList {
 	g, _ := i.(*GroupList)
 	return g
 }
 
-// InitItemFrom _
 func InitItemFrom(psg *SchemaGroup) Item {
 	if psg == nil {
 		return nil

@@ -18,7 +18,7 @@ type Sealed struct {
 type SealedItem struct {
 	Original      *id.PropertyItemID
 	Parent        *id.PropertyItemID
-	SchemaGroup   id.PropertySchemaFieldID
+	SchemaGroup   id.PropertySchemaGroupID
 	LinkedDataset *id.DatasetID
 	Fields        []*SealedField
 	Groups        []*SealedItem
@@ -192,7 +192,7 @@ func (s *Sealed) ItemBy(ptr *Pointer) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaFieldID) *SealedItem {
+func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaGroupID) *SealedItem {
 	if s == nil {
 		return nil
 	}

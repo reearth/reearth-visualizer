@@ -52,11 +52,11 @@ func AddSceneDefaultTile(ctx context.Context, c DBClient) error {
 			log.Infof("migration: AddSceneDefaultTile: hit properties: %d\n", len(properties))
 
 			for _, p := range properties {
-				g := p.GetOrCreateGroupList(scenePropertySchema, property.PointItemBySchema(id.PropertySchemaFieldID("tiles")))
+				g := p.GetOrCreateGroupList(scenePropertySchema, property.PointItemBySchema(id.PropertySchemaGroupID("tiles")))
 				if g == nil || g.Count() > 0 {
 					continue
 				}
-				f := property.NewGroup().NewID().Schema(p.Schema(), id.PropertySchemaFieldID("tiles")).MustBuild()
+				f := property.NewGroup().NewID().Schema(p.Schema(), id.PropertySchemaGroupID("tiles")).MustBuild()
 				g.Add(f, -1)
 			}
 

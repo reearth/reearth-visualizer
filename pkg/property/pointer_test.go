@@ -9,7 +9,7 @@ import (
 
 func TestPointer(t *testing.T) {
 	iid := id.NewPropertyItemID()
-	sgid := id.PropertySchemaFieldID("foo")
+	sgid := id.PropertySchemaGroupID("foo")
 	fid := id.PropertySchemaFieldID("hoge")
 
 	var p *Pointer

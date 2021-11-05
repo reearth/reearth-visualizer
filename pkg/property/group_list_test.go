@@ -18,7 +18,7 @@ func TestGroupList_SchemaRef(t *testing.T) {
 	testCases := []struct {
 		Name           string
 		GL             *GroupList
-		ExpectedSG     *id.PropertySchemaFieldID
+		ExpectedSG     *id.PropertySchemaGroupID
 		ExpectedSchema *id.PropertySchemaID
 	}{
 		{
@@ -26,8 +26,8 @@ func TestGroupList_SchemaRef(t *testing.T) {
 		},
 		{
 			Name:           "success",
-			GL:             NewGroupList().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), id.PropertySchemaFieldID("xx")).MustBuild(),
-			ExpectedSG:     id.PropertySchemaFieldID("xx").Ref(),
+			GL:             NewGroupList().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), id.PropertySchemaGroupID("xx")).MustBuild(),
+			ExpectedSG:     id.PropertySchemaGroupID("xx").Ref(),
 			ExpectedSchema: id.MustPropertySchemaID("xx~1.0.0/aa").Ref(),
 		},
 	}
@@ -653,7 +653,7 @@ func TestGroupList_Remove(t *testing.T) {
 func TestGroupList_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	g := NewGroup().ID(id.NewPropertyItemID()).Schema(sg.Schema(), sf.ID()).MustBuild()
+	g := NewGroup().ID(id.NewPropertyItemID()).Schema(sg.Schema(), sg.ID()).MustBuild()
 	testCases := []struct {
 		Name     string
 		GL       *GroupList
@@ -712,7 +712,7 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 	getIntRef := func(i int) *int { return &i }
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	g := NewGroup().ID(id.NewPropertyItemID()).Schema(sg.Schema(), sf.ID()).MustBuild()
+	g := NewGroup().ID(id.NewPropertyItemID()).Schema(sg.Schema(), sg.ID()).MustBuild()
 	testCases := []struct {
 		Name     string
 		GL       *GroupList

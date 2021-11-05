@@ -8,12 +8,12 @@ import (
 )
 
 var (
-	ErrInvalidSceneID               error = errors.New("invalid scene id")
-	ErrInvalidPropertySchemaID      error = errors.New("invalid property schema id")
-	ErrInvalidValue                 error = errors.New("invalid value")
-	ErrInvalidPropertyLinkableField error = errors.New("invalid property linkable field")
-	ErrInvalidVersion               error = errors.New("invalid version")
-	ErrDuplicatedField                    = errors.New("duplicated field")
+	ErrInvalidSceneID               = errors.New("invalid scene id")
+	ErrInvalidPropertySchemaID      = errors.New("invalid property schema id")
+	ErrInvalidValue                 = errors.New("invalid value")
+	ErrInvalidPropertyLinkableField = errors.New("invalid property linkable field")
+	ErrInvalidVersion               = errors.New("invalid version")
+	ErrDuplicatedField              = errors.New("duplicated field")
 )
 
 type SchemaBuilder struct {
@@ -57,7 +57,7 @@ func (b *SchemaBuilder) Version(version int) *SchemaBuilder {
 
 func (b *SchemaBuilder) Groups(groups []*SchemaGroup) *SchemaBuilder {
 	newGroups := []*SchemaGroup{}
-	ids := map[id.PropertySchemaFieldID]struct{}{}
+	ids := map[id.PropertySchemaGroupID]struct{}{}
 	for _, f := range groups {
 		if f == nil {
 			continue

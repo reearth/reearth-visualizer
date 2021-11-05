@@ -29,6 +29,8 @@ models:
     model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.PluginExtensionID
   PropertySchemaID:
     model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.PropertySchemaID
+  PropertySchemaGroupID:
+    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.PropertySchemaGroupID
   PropertySchemaFieldID:
     model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.PropertySchemaFieldID
   DatasetSchemaFieldID:

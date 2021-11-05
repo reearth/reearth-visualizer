@@ -24,8 +24,8 @@ func TestSceneBuilder(t *testing.T) {
 	propertySchemaField1ID := id.PropertySchemaFieldID("a")
 	propertySchemaField2ID := id.PropertySchemaFieldID("b")
 	propertySchemaField3ID := id.PropertySchemaFieldID("c")
-	propertySchemaGroup1ID := id.PropertySchemaFieldID("A")
-	propertySchemaGroup2ID := id.PropertySchemaFieldID("B")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
+	propertySchemaGroup2ID := id.PropertySchemaGroupID("B")
 	propertyItemID1 := id.NewPropertyItemID()
 	propertyItemID2 := id.NewPropertyItemID()
 

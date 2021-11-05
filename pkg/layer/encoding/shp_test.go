@@ -37,7 +37,7 @@ func TestEncodeSHPMarker(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -137,7 +137,7 @@ func TestEncodeSHPPolygon(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -232,7 +232,7 @@ func TestEncodeSHPPolyline(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,

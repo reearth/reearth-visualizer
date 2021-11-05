@@ -16,12 +16,12 @@ func TestGroupListBuilder_Build(t *testing.T) {
 		Name        string
 		Id          id.PropertyItemID
 		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaFieldID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 		Expected    struct {
 			Id          id.PropertyItemID
 			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaFieldID
+			SchemaGroup id.PropertySchemaGroupID
 			Groups      []*Group
 		}
 		Err error
@@ -35,7 +35,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			Expected: struct {
 				Id          id.PropertyItemID
 				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaFieldID
+				SchemaGroup id.PropertySchemaGroupID
 				Groups      []*Group
 			}{
 				Id:          pid,
@@ -80,12 +80,12 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 		Fails       bool
 		Id          id.PropertyItemID
 		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaFieldID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 		Expected    struct {
 			Id          id.PropertyItemID
 			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaFieldID
+			SchemaGroup id.PropertySchemaGroupID
 			Groups      []*Group
 		}
 	}{
@@ -98,7 +98,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 			Expected: struct {
 				Id          id.PropertyItemID
 				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaFieldID
+				SchemaGroup id.PropertySchemaGroupID
 				Groups      []*Group
 			}{
 				Id:          pid,
@@ -140,7 +140,7 @@ func TestInitGroupListFrom(t *testing.T) {
 	testCases := []struct {
 		Name           string
 		SchemaGroup    *SchemaGroup
-		ExpectedSG     id.PropertySchemaFieldID
+		ExpectedSG     id.PropertySchemaGroupID
 		ExpectedSchema id.PropertySchemaID
 	}{
 		{

@@ -247,7 +247,7 @@ func toModelPropertyItem(f *PropertyItemDocument) (property.Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	gid := id.PropertySchemaFieldID(f.SchemaGroup)
+	gid := id.PropertySchemaGroupID(f.SchemaGroup)
 
 	if f.Type == typePropertyItemGroup {
 		fields := make([]*property.Field, 0, len(f.Fields))

@@ -608,7 +608,7 @@ func ToPropertyConditon(c *property.Condition) *PropertyCondition {
 	}
 }
 
-func FromPointer(schemaItem *id.PropertySchemaFieldID, item *id.ID, field *id.PropertySchemaFieldID) *property.Pointer {
+func FromPointer(schemaItem *id.PropertySchemaGroupID, item *id.ID, field *id.PropertySchemaFieldID) *property.Pointer {
 	i := id.PropertyItemIDFromRefID(item)
 	return property.NewPointer(schemaItem, i, field)
 }

@@ -19,8 +19,8 @@ func TestGroup_IDRef(t *testing.T) {
 func TestGroup_SchemaGroup(t *testing.T) {
 	var g *Group
 	assert.Nil(t, g.SchemaGroupRef())
-	assert.Equal(t, id.PropertySchemaFieldID(""), g.SchemaGroup())
-	pfid := id.PropertySchemaFieldID("aa")
+	assert.Equal(t, id.PropertySchemaGroupID(""), g.SchemaGroup())
+	pfid := id.PropertySchemaGroupID("aa")
 	g = NewGroup().NewID().Schema(id.MustPropertySchemaID("xx~1.0.0/aa"), pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())

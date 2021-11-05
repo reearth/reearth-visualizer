@@ -92,7 +92,7 @@ func MergeManifestTranslation(m *Manifest, tl map[string]*TranslationRoot) *Mani
 			}
 
 			for key, tsg := range te.PropertySchema {
-				psg := ps.Group(id.PropertySchemaFieldID(key))
+				psg := ps.Group(id.PropertySchemaGroupID(key))
 				if psg == nil {
 					continue
 				}

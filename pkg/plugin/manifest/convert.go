@@ -233,7 +233,7 @@ func (p *PropertyPointer) pointer() *property.Pointer {
 		return nil
 	}
 	return property.NewPointer(
-		id.PropertySchemaFieldIDFrom(&p.SchemaGroupID),
+		id.PropertySchemaGroupIDFrom(&p.SchemaGroupID),
 		nil,
 		id.PropertySchemaFieldIDFrom(&p.FieldID),
 	)
@@ -257,7 +257,7 @@ func (i PropertySchemaGroup) schemaGroup(sid id.PropertySchemaID) (*property.Sch
 	}
 
 	return property.NewSchemaGroup().
-		ID(id.PropertySchemaFieldID(i.ID)).
+		ID(id.PropertySchemaGroupID(i.ID)).
 		Schema(sid).
 		IsList(i.List).
 		Fields(fields).

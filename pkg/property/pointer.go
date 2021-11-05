@@ -2,72 +2,64 @@ package property
 
 import "github.com/reearth/reearth-backend/pkg/id"
 
-// Pointer _
+// Pointer is a pointer to a field and an item in properties and schemas
 type Pointer struct {
-	schemaGroup *id.PropertySchemaFieldID
-	item        *id.PropertyItemID
-	field       *id.PropertySchemaFieldID
+	schemaItem *id.PropertySchemaGroupID
+	item       *id.PropertyItemID
+	field      *id.PropertySchemaFieldID
 }
 
-// NewPointer _
-func NewPointer(sg *id.PropertySchemaFieldID, i *id.PropertyItemID, f *id.PropertySchemaFieldID) *Pointer {
+// NewPointer creates a new Pointer.
+func NewPointer(sg *id.PropertySchemaGroupID, i *id.PropertyItemID, f *id.PropertySchemaFieldID) *Pointer {
 	if sg == nil && i == nil && f == nil {
 		return nil
 	}
 	return &Pointer{
-		schemaGroup: sg.CopyRef(),
-		item:        i.CopyRef(),
-		field:       f.CopyRef(),
+		schemaItem: sg.CopyRef(),
+		item:       i.CopyRef(),
+		field:      f.CopyRef(),
 	}
 }
 
-// PointField _
-func PointField(sg *id.PropertySchemaFieldID, i *id.PropertyItemID, f id.PropertySchemaFieldID) *Pointer {
+// PointField creates a new Pointer pointing the field in properties.
+func PointField(sg *id.PropertySchemaGroupID, i *id.PropertyItemID, f id.PropertySchemaFieldID) *Pointer {
 	return &Pointer{
-		schemaGroup: sg.CopyRef(),
-		item:        i.CopyRef(),
-		field:       &f,
+		schemaItem: sg.CopyRef(),
+		item:       i.CopyRef(),
+		field:      &f,
 	}
 }
 
-// PointFieldOnly _
+// PointField creates a new Pointer pointing the field in property schemas.
 func PointFieldOnly(fid id.PropertySchemaFieldID) *Pointer {
 	return &Pointer{
 		field: &fid,
 	}
 }
 
-// PointItemBySchema _
-func PointItemBySchema(sg id.PropertySchemaFieldID) *Pointer {
+// PointItemBySchema creates a new Pointer pointing the schema item in property schemas.
+func PointItemBySchema(sg id.PropertySchemaGroupID) *Pointer {
 	return &Pointer{
-		schemaGroup: &sg,
+		schemaItem: &sg,
 	}
 }
 
-// PointItem _
+// PointItem creates a new Pointer pointing to the item in properties.
 func PointItem(i id.PropertyItemID) *Pointer {
 	return &Pointer{
 		item: &i,
 	}
 }
 
-// PointFieldBySchemaGroup _
-func PointFieldBySchemaGroup(sg id.PropertySchemaFieldID, f id.PropertySchemaFieldID) *Pointer {
+// PointFieldBySchemaGroup creates a new Pointer pointing to the field of the schema field in properties.
+func PointFieldBySchemaGroup(sg id.PropertySchemaGroupID, f id.PropertySchemaFieldID) *Pointer {
 	return &Pointer{
-		schemaGroup: &sg,
-		field:       &f,
+		schemaItem: &sg,
+		field:      &f,
 	}
 }
 
-// PointFieldBySchemaGroupAndItem _
-func PointFieldBySchemaGroupAndItem(sg id.PropertySchemaFieldID, i id.PropertyItemID) *Pointer {
-	return &Pointer{
-		schemaGroup: &sg,
-		item:        &i,
-	}
-}
-
-// PointFieldByItem _
+// PointFieldByItem creates a new Pointer pointing to the field of the item in properties.
 func PointFieldByItem(i id.PropertyItemID, f id.PropertySchemaFieldID) *Pointer {
 	return &Pointer{
 		item:  &i,
@@ -75,49 +67,45 @@ func PointFieldByItem(i id.PropertyItemID, f id.PropertySchemaFieldID) *Pointer 
 	}
 }
 
-// Clone _
 func (p *Pointer) Clone() *Pointer {
 	if p == nil {
 		return nil
 	}
 	return &Pointer{
-		field:       p.field.CopyRef(),
-		item:        p.item.CopyRef(),
-		schemaGroup: p.schemaGroup.CopyRef(),
+		field:      p.field.CopyRef(),
+		item:       p.item.CopyRef(),
+		schemaItem: p.schemaItem.CopyRef(),
 	}
 }
 
-// ItemBySchemaGroupAndItem _
-func (p *Pointer) ItemBySchemaGroupAndItem() (i id.PropertySchemaFieldID, i2 id.PropertyItemID, ok bool) {
-	if p == nil || p.schemaGroup == nil || p.item == nil {
+func (p *Pointer) ItemBySchemaGroupAndItem() (i id.PropertySchemaGroupID, i2 id.PropertyItemID, ok bool) {
+	if p == nil || p.schemaItem == nil || p.item == nil {
 		ok = false
 		return
 	}
-	i = *p.schemaGroup
+	i = *p.schemaItem
 	i2 = *p.item
 	ok = true
 	return
 }
 
-// ItemBySchemaGroup _
-func (p *Pointer) ItemBySchemaGroup() (i id.PropertySchemaFieldID, ok bool) {
-	if p == nil || p.schemaGroup == nil {
+func (p *Pointer) ItemBySchemaGroup() (i id.PropertySchemaGroupID, ok bool) {
+	if p == nil || p.schemaItem == nil {
 		ok = false
 		return
 	}
-	i = *p.schemaGroup
+	i = *p.schemaItem
 	ok = true
 	return
 }
 
-// SchemaGroupAndItem _
-func (p *Pointer) SchemaGroupAndItem() (i id.PropertySchemaFieldID, i2 id.PropertyItemID, ok bool) {
+func (p *Pointer) SchemaGroupAndItem() (i id.PropertySchemaGroupID, i2 id.PropertyItemID, ok bool) {
 	ok = false
 	if p == nil {
 		return
 	}
-	if p.schemaGroup != nil {
-		i = *p.schemaGroup
+	if p.schemaItem != nil {
+		i = *p.schemaItem
 		ok = true
 	}
 	if p.item != nil {
@@ -127,7 +115,6 @@ func (p *Pointer) SchemaGroupAndItem() (i id.PropertySchemaFieldID, i2 id.Proper
 	return
 }
 
-// Item _
 func (p *Pointer) Item() (i id.PropertyItemID, ok bool) {
 	if p == nil || p.item == nil {
 		ok = false
@@ -146,9 +133,8 @@ func (p *Pointer) ItemRef() *id.PropertyItemID {
 	return &f
 }
 
-// FieldByItem _
 func (p *Pointer) FieldByItem() (i id.PropertyItemID, f id.PropertySchemaFieldID, ok bool) {
-	if p == nil || p.item == nil || p.schemaGroup != nil || p.field == nil {
+	if p == nil || p.item == nil || p.schemaItem != nil || p.field == nil {
 		ok = false
 		return
 	}
@@ -158,19 +144,17 @@ func (p *Pointer) FieldByItem() (i id.PropertyItemID, f id.PropertySchemaFieldID
 	return
 }
 
-// FieldBySchemaGroup _
-func (p *Pointer) FieldBySchemaGroup() (sg id.PropertySchemaFieldID, f id.PropertySchemaFieldID, ok bool) {
-	if p == nil || p.schemaGroup == nil || p.item != nil || p.field == nil {
+func (p *Pointer) FieldBySchemaGroup() (sg id.PropertySchemaGroupID, f id.PropertySchemaFieldID, ok bool) {
+	if p == nil || p.schemaItem == nil || p.item != nil || p.field == nil {
 		ok = false
 		return
 	}
-	sg = *p.schemaGroup
+	sg = *p.schemaItem
 	f = *p.field
 	ok = true
 	return
 }
 
-// Field _
 func (p *Pointer) Field() (f id.PropertySchemaFieldID, ok bool) {
 	if p == nil || p.field == nil {
 		ok = false
@@ -189,12 +173,11 @@ func (p *Pointer) FieldRef() *id.PropertySchemaFieldID {
 	return &f
 }
 
-// GetAll _
-func (p *Pointer) GetAll() (sg *id.PropertySchemaFieldID, i *id.PropertyItemID, f *id.PropertySchemaFieldID) {
+func (p *Pointer) GetAll() (sg *id.PropertySchemaGroupID, i *id.PropertyItemID, f *id.PropertySchemaFieldID) {
 	if p == nil {
 		return
 	}
-	sg = p.schemaGroup.CopyRef()
+	sg = p.schemaItem.CopyRef()
 	i = p.item.CopyRef()
 	f = p.field.CopyRef()
 	return

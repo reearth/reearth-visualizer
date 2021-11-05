@@ -39,7 +39,7 @@ func TestBuilder_Items(t *testing.T) {
 	iid := id.NewPropertyItemID()
 	propertySchemaID := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	propertySchemaField1ID := id.PropertySchemaFieldID("a")
-	propertySchemaGroup1ID := id.PropertySchemaFieldID("A")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 
 	testCases := []struct {
 		Name            string
@@ -101,7 +101,7 @@ func TestBuilder_Build(t *testing.T) {
 	scid := id.MustPropertySchemaID("xxx~1.1.1/aa")
 	iid := id.NewPropertyItemID()
 	propertySchemaField1ID := id.PropertySchemaFieldID("a")
-	propertySchemaGroup1ID := id.PropertySchemaFieldID("A")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 
 	testCases := []struct {
 		Name     string

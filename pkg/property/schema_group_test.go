@@ -9,7 +9,7 @@ import (
 )
 
 func TestSchemaGroup(t *testing.T) {
-	scid := id.PropertySchemaFieldID("aa")
+	scid := id.PropertySchemaGroupID("aa")
 	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
@@ -17,9 +17,9 @@ func TestSchemaGroup(t *testing.T) {
 		Name     string
 		G        *SchemaGroup
 		Expected struct {
-			GIDRef        *id.PropertySchemaFieldID
+			GIDRef        *id.PropertySchemaGroupID
 			SIDRef        *id.PropertySchemaID
-			GID           id.PropertySchemaFieldID
+			GID           id.PropertySchemaGroupID
 			SID           id.PropertySchemaID
 			Fields        []*SchemaField
 			Title         i18n.String
@@ -34,9 +34,9 @@ func TestSchemaGroup(t *testing.T) {
 			Name: "success",
 			G:    NewSchemaGroup().ID(scid).Schema(sid).Fields([]*SchemaField{sf}).MustBuild(),
 			Expected: struct {
-				GIDRef        *id.PropertySchemaFieldID
+				GIDRef        *id.PropertySchemaGroupID
 				SIDRef        *id.PropertySchemaID
-				GID           id.PropertySchemaFieldID
+				GID           id.PropertySchemaGroupID
 				SID           id.PropertySchemaID
 				Fields        []*SchemaField
 				Title         i18n.String
@@ -71,7 +71,7 @@ func TestSchemaGroup(t *testing.T) {
 }
 
 func TestSchemaGroup_Field(t *testing.T) {
-	scid := id.PropertySchemaFieldID("aa")
+	scid := id.PropertySchemaGroupID("aa")
 	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
@@ -112,7 +112,7 @@ func TestSchemaGroup_Field(t *testing.T) {
 }
 
 func TestSchemaGroup_SetTitle(t *testing.T) {
-	sg := NewSchemaGroup().ID(id.PropertySchemaFieldID("aa")).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID(id.PropertySchemaGroupID("aa")).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	sg.SetTitle(i18n.StringFrom("ttt"))
 	assert.Equal(t, i18n.StringFrom("ttt"), sg.Title())
 }

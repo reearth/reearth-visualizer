@@ -39,7 +39,7 @@ func TestEncodeCZMLPoint(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -59,7 +59,7 @@ func TestEncodeCZMLPoint(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -77,7 +77,7 @@ func TestEncodeCZMLPoint(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,
@@ -95,7 +95,7 @@ func TestEncodeCZMLPoint(t *testing.T) {
 	item4 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl4,
 		Groups:        nil,
@@ -202,7 +202,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -221,7 +221,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -239,7 +239,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,
@@ -257,7 +257,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item4 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl4,
 		Groups:        nil,
@@ -275,7 +275,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item5 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl5,
 		Groups:        nil,
@@ -293,7 +293,7 @@ func TestEncodeCZMLPolygon(t *testing.T) {
 	item6 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl6,
 		Groups:        nil,
@@ -404,7 +404,7 @@ func TestEncodeCZMLPolyline(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -424,7 +424,7 @@ func TestEncodeCZMLPolyline(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -442,7 +442,7 @@ func TestEncodeCZMLPolyline(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,

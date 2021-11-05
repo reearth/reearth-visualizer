@@ -6061,6 +6061,7 @@ scalar FileSize
 scalar PluginID
 scalar PluginExtensionID
 scalar PropertySchemaID
+scalar PropertySchemaGroupID
 scalar PropertySchemaFieldID
 scalar DatasetSchemaFieldID
 scalar TranslatedString
@@ -6443,7 +6444,7 @@ type PropertyLinkableFields {
 }
 
 type PropertySchemaGroup {
-  schemaGroupId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   schemaId: PropertySchemaID!
   fields: [PropertySchemaField!]!
   isList: Boolean!
@@ -6515,7 +6516,7 @@ union PropertyItem = PropertyGroup | PropertyGroupList
 type PropertyGroup {
   id: ID!
   schemaId: PropertySchemaID!
-  schemaGroupId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   fields: [PropertyField!]!
   schema: PropertySchema @goField(forceResolver: true)
   schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
@@ -6524,7 +6525,7 @@ type PropertyGroup {
 type PropertyGroupList {
   id: ID!
   schemaId: PropertySchemaID!
-  schemaGroupId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   groups: [PropertyGroup!]!
   schema: PropertySchema @goField(forceResolver: true)
   schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
@@ -6572,7 +6573,7 @@ type MergedPropertyGroup {
   parentPropertyId: ID
   originalId: ID
   parentId: ID
-  schemaGroupId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   # note: schemaId will not always be set
   schemaId: PropertySchemaID
   linkedDatasetId: ID
@@ -6989,7 +6990,7 @@ input SyncDatasetInput {
 
 input UpdatePropertyValueInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
+  schemaGroupId: PropertySchemaGroupID
   itemId: ID
   fieldId: PropertySchemaFieldID!
   value: Any
@@ -6998,14 +6999,14 @@ input UpdatePropertyValueInput {
 
 input RemovePropertyFieldInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
+  schemaGroupId: PropertySchemaGroupID
   itemId: ID
   fieldId: PropertySchemaFieldID!
 }
 
 input UploadFileToPropertyInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
+  schemaGroupId: PropertySchemaGroupID
   itemId: ID
   fieldId: PropertySchemaFieldID!
   file: Upload!
@@ -7013,7 +7014,7 @@ input UploadFileToPropertyInput {
 
 input LinkDatasetToPropertyValueInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
+  schemaGroupId: PropertySchemaGroupID
   itemId: ID
   fieldId: PropertySchemaFieldID!
   datasetSchemaIds: [ID!]!
@@ -7023,14 +7024,14 @@ input LinkDatasetToPropertyValueInput {
 
 input UnlinkPropertyValueInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID
+  schemaGroupId: PropertySchemaGroupID
   itemId: ID
   fieldId: PropertySchemaFieldID!
 }
 
 input AddPropertyItemInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   index: Int
   nameFieldValue: Any
   nameFieldType: ValueType
@@ -7038,20 +7039,20 @@ input AddPropertyItemInput {
 
 input MovePropertyItemInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   itemId: ID!
   index: Int!
 }
 
 input RemovePropertyItemInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   itemId: ID!
 }
 
 input UpdatePropertyItemInput {
   propertyId: ID!
-  schemaItemId: PropertySchemaFieldID!
+  schemaGroupId: PropertySchemaGroupID!
   operations: [UpdatePropertyItemOperationInput!]!
 }
 
@@ -16605,9 +16606,9 @@ func (ec *executionContext) _MergedPropertyGroup_schemaGroupId(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(id.PropertySchemaFieldID)
+	res := resTmp.(id.PropertySchemaGroupID)
 	fc.Result = res
-	return ec.marshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, field.Selections, res)
+	return ec.marshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MergedPropertyGroup_schemaId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedPropertyGroup) (ret graphql.Marshaler) {
@@ -23123,9 +23124,9 @@ func (ec *executionContext) _PropertyGroup_schemaGroupId(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(id.PropertySchemaFieldID)
+	res := resTmp.(id.PropertySchemaGroupID)
 	fc.Result = res
-	return ec.marshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, field.Selections, res)
+	return ec.marshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyGroup_fields(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyGroup) (ret graphql.Marshaler) {
@@ -23327,9 +23328,9 @@ func (ec *executionContext) _PropertyGroupList_schemaGroupId(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(id.PropertySchemaFieldID)
+	res := resTmp.(id.PropertySchemaGroupID)
 	fc.Result = res
-	return ec.marshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, field.Selections, res)
+	return ec.marshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyGroupList_groups(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyGroupList) (ret graphql.Marshaler) {
@@ -24548,9 +24549,9 @@ func (ec *executionContext) _PropertySchemaGroup_schemaGroupId(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(id.PropertySchemaFieldID)
+	res := resTmp.(id.PropertySchemaGroupID)
 	fc.Result = res
-	return ec.marshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, field.Selections, res)
+	return ec.marshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertySchemaGroup_schemaId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaGroup) (ret graphql.Marshaler) {
@@ -31633,11 +31634,11 @@ func (ec *executionContext) unmarshalInputAddPropertyItemInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32349,11 +32350,11 @@ func (ec *executionContext) unmarshalInputLinkDatasetToPropertyValueInput(ctx co
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalOPropertySchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32498,11 +32499,11 @@ func (ec *executionContext) unmarshalInputMovePropertyItemInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32769,11 +32770,11 @@ func (ec *executionContext) unmarshalInputRemovePropertyFieldInput(ctx context.C
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalOPropertySchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32816,11 +32817,11 @@ func (ec *executionContext) unmarshalInputRemovePropertyItemInput(ctx context.Co
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33026,11 +33027,11 @@ func (ec *executionContext) unmarshalInputUnlinkPropertyValueInput(ctx context.C
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalOPropertySchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33380,11 +33381,11 @@ func (ec *executionContext) unmarshalInputUpdatePropertyItemInput(ctx context.Co
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33474,11 +33475,11 @@ func (ec *executionContext) unmarshalInputUpdatePropertyValueInput(ctx context.C
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalOPropertySchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33748,11 +33749,11 @@ func (ec *executionContext) unmarshalInputUploadFileToPropertyInput(ctx context.
 			if err != nil {
 				return it, err
 			}
-		case "schemaItemId":
+		case "schemaGroupId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaItemId"))
-			it.SchemaItemID, err = ec.unmarshalOPropertySchemaFieldID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
+			it.SchemaGroupID, err = ec.unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42270,6 +42271,21 @@ func (ec *executionContext) marshalNPropertySchemaGroup2ᚖgithubᚗcomᚋreeart
 	return ec._PropertySchemaGroup(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx context.Context, v interface{}) (id.PropertySchemaGroupID, error) {
+	res, err := gqlmodel.UnmarshalPropertySchemaGroupID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPropertySchemaGroupID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx context.Context, sel ast.SelectionSet, v id.PropertySchemaGroupID) graphql.Marshaler {
+	res := gqlmodel.MarshalPropertySchemaGroupID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNPropertySchemaID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaID(ctx context.Context, v interface{}) (id.PropertySchemaID, error) {
 	res, err := gqlmodel.UnmarshalPropertySchemaID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -43987,6 +44003,21 @@ func (ec *executionContext) marshalOPropertySchemaGroup2ᚖgithubᚗcomᚋreeart
 		return graphql.Null
 	}
 	return ec._PropertySchemaGroup(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx context.Context, v interface{}) (*id.PropertySchemaGroupID, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := gqlmodel.UnmarshalPropertySchemaGroupID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPropertySchemaGroupID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaGroupID(ctx context.Context, sel ast.SelectionSet, v *id.PropertySchemaGroupID) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return gqlmodel.MarshalPropertySchemaGroupID(*v)
 }
 
 func (ec *executionContext) unmarshalOPropertySchemaID2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaID(ctx context.Context, v interface{}) (*id.PropertySchemaID, error) {

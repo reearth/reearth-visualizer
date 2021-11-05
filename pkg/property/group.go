@@ -18,7 +18,6 @@ type Group struct {
 // Group implements Item interface
 var _ Item = &Group{}
 
-// ID returns id
 func (g *Group) ID() id.PropertyItemID {
 	if g == nil {
 		return id.PropertyItemID{}
@@ -26,7 +25,6 @@ func (g *Group) ID() id.PropertyItemID {
 	return g.itemBase.ID
 }
 
-// IDRef returns a reference of id
 func (g *Group) IDRef() *id.PropertyItemID {
 	if g == nil {
 		return nil
@@ -34,23 +32,20 @@ func (g *Group) IDRef() *id.PropertyItemID {
 	return g.itemBase.ID.Ref()
 }
 
-// SchemaGroup returns id of schema group
-func (g *Group) SchemaGroup() id.PropertySchemaFieldID {
+func (g *Group) SchemaGroup() id.PropertySchemaGroupID {
 	if g == nil {
-		return id.PropertySchemaFieldID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return g.itemBase.SchemaGroup
 }
 
-// SchemaGroupRef _
-func (g *Group) SchemaGroupRef() *id.PropertySchemaFieldID {
+func (g *Group) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}
 	return g.itemBase.SchemaGroup.Ref()
 }
 
-// Schema _
 func (g *Group) Schema() id.PropertySchemaID {
 	if g == nil {
 		return id.PropertySchemaID{}
@@ -66,7 +61,6 @@ func (g *Group) SchemaRef() *id.PropertySchemaID {
 	return g.itemBase.Schema.Ref()
 }
 
-// HasLinkedField _
 func (g *Group) HasLinkedField() bool {
 	if g == nil {
 		return false
@@ -79,7 +73,6 @@ func (g *Group) HasLinkedField() bool {
 	return false
 }
 
-// CollectDatasets _
 func (g *Group) CollectDatasets() []id.DatasetID {
 	if g == nil {
 		return nil
@@ -93,7 +86,6 @@ func (g *Group) CollectDatasets() []id.DatasetID {
 	return res
 }
 
-// FieldsByLinkedDataset _
 func (g *Group) FieldsByLinkedDataset(s id.DatasetSchemaID, i id.DatasetID) []*Field {
 	if g == nil {
 		return nil
@@ -107,7 +99,6 @@ func (g *Group) FieldsByLinkedDataset(s id.DatasetSchemaID, i id.DatasetID) []*F
 	return res
 }
 
-// IsDatasetLinked _
 func (g *Group) IsDatasetLinked(s id.DatasetSchemaID, i id.DatasetID) bool {
 	if g == nil {
 		return false
@@ -120,7 +111,6 @@ func (g *Group) IsDatasetLinked(s id.DatasetSchemaID, i id.DatasetID) bool {
 	return false
 }
 
-// IsEmpty _
 func (g *Group) IsEmpty() bool {
 	if g != nil {
 		for _, f := range g.fields {
@@ -132,7 +122,6 @@ func (g *Group) IsEmpty() bool {
 	return true
 }
 
-// Prune _
 func (g *Group) Prune() {
 	if g == nil {
 		return
@@ -161,7 +150,6 @@ func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 	g.Prune()
 }
 
-// GetOrCreateField _
 func (g *Group) GetOrCreateField(ps *Schema, fid id.PropertySchemaFieldID) (*Field, bool) {
 	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
 		return nil, false
@@ -192,7 +180,6 @@ func (g *Group) GetOrCreateField(ps *Schema, fid id.PropertySchemaFieldID) (*Fie
 	return field, true
 }
 
-// RemoveField _
 func (g *Group) RemoveField(fid id.PropertySchemaFieldID) {
 	if g == nil {
 		return
@@ -205,7 +192,6 @@ func (g *Group) RemoveField(fid id.PropertySchemaFieldID) {
 	}
 }
 
-// FieldIDs _
 func (g *Group) FieldIDs() []id.PropertySchemaFieldID {
 	if g == nil {
 		return nil
@@ -238,7 +224,6 @@ func (g *Group) Field(fid id.PropertySchemaFieldID) *Field {
 	return nil
 }
 
-// MigrateDataset _
 func (g *Group) MigrateDataset(q DatasetMigrationParam) {
 	if g == nil {
 		return

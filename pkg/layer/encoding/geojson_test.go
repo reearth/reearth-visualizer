@@ -37,7 +37,7 @@ func TestPointEncodeGeoJSON(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -57,7 +57,7 @@ func TestPointEncodeGeoJSON(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -75,7 +75,7 @@ func TestPointEncodeGeoJSON(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,
@@ -172,7 +172,7 @@ func TestPolygonEncodeGeoJSON(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -191,7 +191,7 @@ func TestPolygonEncodeGeoJSON(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -209,7 +209,7 @@ func TestPolygonEncodeGeoJSON(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,
@@ -227,7 +227,7 @@ func TestPolygonEncodeGeoJSON(t *testing.T) {
 	item4 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl4,
 		Groups:        nil,
@@ -326,7 +326,7 @@ func TestPolylineEncodeGeoJSON(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -346,7 +346,7 @@ func TestPolylineEncodeGeoJSON(t *testing.T) {
 	item2 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl2,
 		Groups:        nil,
@@ -364,7 +364,7 @@ func TestPolylineEncodeGeoJSON(t *testing.T) {
 	item3 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaFieldID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl3,
 		Groups:        nil,

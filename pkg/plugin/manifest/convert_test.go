@@ -340,7 +340,7 @@ func TestPointer(t *testing.T) {
 				FieldID:       "xxx",
 				SchemaGroupID: "aaa",
 			},
-			expected: property.NewPointer(id.PropertySchemaFieldIDFrom(&sg), nil, id.PropertySchemaFieldIDFrom(&f)),
+			expected: property.NewPointer(id.PropertySchemaGroupIDFrom(&sg), nil, id.PropertySchemaFieldIDFrom(&f)),
 		},
 	}
 	for _, tc := range testCases {
@@ -412,8 +412,8 @@ func TestLinkable(t *testing.T) {
 				},
 			},
 			expected: property.LinkableFields{
-				LatLng: property.NewPointer(id.PropertySchemaFieldIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&l)),
-				URL:    property.NewPointer(id.PropertySchemaFieldIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&u)),
+				LatLng: property.NewPointer(id.PropertySchemaGroupIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&l)),
+				URL:    property.NewPointer(id.PropertySchemaGroupIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&u)),
 			},
 		},
 	}

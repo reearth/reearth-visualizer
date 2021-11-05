@@ -152,7 +152,7 @@ func (d *PropertyGroup) Field(id id.PropertySchemaFieldID) *PropertyField {
 	return nil
 }
 
-func (d *PropertySchema) Group(id id.PropertySchemaFieldID) *PropertySchemaGroup {
+func (d *PropertySchema) Group(id id.PropertySchemaGroupID) *PropertySchemaGroup {
 	if d == nil || id == "" {
 		return nil
 	}

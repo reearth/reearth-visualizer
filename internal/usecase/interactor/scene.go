@@ -109,7 +109,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	}
 
 	// add default tile
-	tiles := id.PropertySchemaFieldID("tiles")
+	tiles := id.PropertySchemaGroupID("tiles")
 	g := p.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
 	g.Add(property.NewGroup().NewID().Schema(schema.ID(), tiles).MustBuild(), -1)
 
