@@ -22,6 +22,14 @@
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
+    ],
+    "Tag": [
+      "TagGroup",
+      "TagItem"
+    ],
+    "Tags": [
+      "TagGroup",
+      "TagItem"
     ]
   }
 }

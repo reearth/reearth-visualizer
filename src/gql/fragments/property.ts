@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const propertyFragment = gql`
-  fragment PropertySchemaItemFragment on PropertySchemaGroup {
+  fragment PropertySchemaGroupFragment on PropertySchemaGroup {
     schemaGroupId
     title
     translatedTitle(lang: $lang)
@@ -85,7 +85,7 @@ const propertyFragment = gql`
     schema {
       id
       groups {
-        ...PropertySchemaItemFragment
+        ...PropertySchemaGroupFragment
       }
     }
   }

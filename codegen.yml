@@ -23,6 +23,7 @@ generates:
         PluginID: string
         PluginExtensionID: string
         PropertySchemaID: string
+        PropertySchemaGroupID: string
         PropertySchemaFieldID: string
         DatasetSchemaFieldID: string
   ./src/gql/graphql.schema.json:

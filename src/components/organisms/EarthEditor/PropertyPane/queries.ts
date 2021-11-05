@@ -14,7 +14,7 @@ export const CHANGE_PROPERTY_VALUE = gql`
   mutation ChangePropertyValue(
     $value: Any
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
+    $schemaGroupId: PropertySchemaGroupID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $type: ValueType!
@@ -23,7 +23,7 @@ export const CHANGE_PROPERTY_VALUE = gql`
     updatePropertyValue(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         itemId: $itemId
         fieldId: $fieldId
         value: $value
@@ -48,7 +48,7 @@ export const LINK_DATASET = gql`
   mutation LinkDataset(
     $propertyId: ID!
     $itemId: ID
-    $schemaItemId: PropertySchemaFieldID
+    $schemaGroupId: PropertySchemaGroupID
     $fieldId: PropertySchemaFieldID!
     $datasetSchemaIds: [ID!]!
     $datasetIds: [ID!]
@@ -59,7 +59,7 @@ export const LINK_DATASET = gql`
       input: {
         propertyId: $propertyId
         itemId: $itemId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         fieldId: $fieldId
         datasetSchemaIds: $datasetSchemaIds
         datasetIds: $datasetIds
@@ -77,7 +77,7 @@ export const LINK_DATASET = gql`
 export const UNLINK_DATASET = gql`
   mutation UnlinkDataset(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
+    $schemaGroupId: PropertySchemaGroupID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $lang: String
@@ -85,7 +85,7 @@ export const UNLINK_DATASET = gql`
     unlinkPropertyValue(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         itemId: $itemId
         fieldId: $fieldId
       }
@@ -151,7 +151,7 @@ export const REMOVE_INFOBOX = gql`
 export const UPLOAD_FILE_TO_PROPERTY = gql`
   mutation UploadFileToProperty(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
+    $schemaGroupId: PropertySchemaGroupID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $file: Upload!
@@ -160,7 +160,7 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
     uploadFileToProperty(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         itemId: $itemId
         fieldId: $fieldId
         file: $file
@@ -183,7 +183,7 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
 export const REMOVE_FIELD = gql`
   mutation RemovePropertyField(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
+    $schemaGroupId: PropertySchemaGroupID
     $itemId: ID
     $fieldId: PropertySchemaFieldID!
     $lang: String
@@ -191,7 +191,7 @@ export const REMOVE_FIELD = gql`
     removePropertyField(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         itemId: $itemId
         fieldId: $fieldId
       }
@@ -213,7 +213,7 @@ export const REMOVE_FIELD = gql`
 export const ADD_PROPERTY_ITEM = gql`
   mutation addPropertyItem(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID!
+    $schemaGroupId: PropertySchemaGroupID!
     $index: Int
     $nameFieldValue: Any
     $nameFieldType: ValueType
@@ -222,7 +222,7 @@ export const ADD_PROPERTY_ITEM = gql`
     addPropertyItem(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         index: $index
         nameFieldValue: $nameFieldValue
         nameFieldType: $nameFieldType
@@ -245,7 +245,7 @@ export const ADD_PROPERTY_ITEM = gql`
 export const MOVE_PROPERTY_ITEM = gql`
   mutation movePropertyItem(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID!
+    $schemaGroupId: PropertySchemaGroupID!
     $itemId: ID!
     $index: Int!
     $lang: String
@@ -253,7 +253,7 @@ export const MOVE_PROPERTY_ITEM = gql`
     movePropertyItem(
       input: {
         propertyId: $propertyId
-        schemaItemId: $schemaItemId
+        schemaGroupId: $schemaGroupId
         itemId: $itemId
         index: $index
       }
@@ -275,12 +275,12 @@ export const MOVE_PROPERTY_ITEM = gql`
 export const REMOVE_PROPERTY_ITEM = gql`
   mutation removePropertyItem(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID!
+    $schemaGroupId: PropertySchemaGroupID!
     $itemId: ID!
     $lang: String
   ) {
     removePropertyItem(
-      input: { propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId }
+      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }
     ) {
       property {
         id
@@ -299,12 +299,12 @@ export const REMOVE_PROPERTY_ITEM = gql`
 export const UPDATE_PROPERTY_ITEMS = gql`
   mutation updatePropertyItems(
     $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID!
+    $schemaGroupId: PropertySchemaGroupID!
     $operations: [UpdatePropertyItemOperationInput!]!
     $lang: String
   ) {
     updatePropertyItems(
-      input: { propertyId: $propertyId, schemaItemId: $schemaItemId, operations: $operations }
+      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations }
     ) {
       property {
         id

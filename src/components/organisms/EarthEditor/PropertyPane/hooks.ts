@@ -77,7 +77,7 @@ export default (mode: Mode) => {
   const changeValue = useCallback(
     (
       propertyId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       itemId: string | undefined,
       fieldId: string,
       v: ValueTypes[ValueType] | null,
@@ -89,7 +89,7 @@ export default (mode: Mode) => {
         variables: {
           propertyId,
           itemId,
-          schemaItemId,
+          schemaGroupId,
           fieldId,
           value: valueToGQL(v, vt),
           type: gvt,
@@ -106,7 +106,7 @@ export default (mode: Mode) => {
   const link = useCallback(
     async (
       propertyId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       itemId: string | undefined,
       fieldId: string,
       schema: string,
@@ -118,7 +118,7 @@ export default (mode: Mode) => {
           propertyId,
           itemId,
           fieldId,
-          schemaItemId,
+          schemaGroupId,
           datasetSchemaIds: [schema],
           datasetIds: dataset ? [dataset] : null,
           datasetFieldIds: [field],
@@ -133,13 +133,13 @@ export default (mode: Mode) => {
   const uploadFile = useCallback(
     (
       propertyId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       itemId: string | undefined,
       fieldId: string,
       file: File,
     ) => {
       uploadFileMutation({
-        variables: { propertyId, itemId, schemaItemId, fieldId, file, lang: intl.locale },
+        variables: { propertyId, itemId, schemaGroupId, fieldId, file, lang: intl.locale },
       });
     },
     [intl.locale, uploadFileMutation],
@@ -164,13 +164,13 @@ export default (mode: Mode) => {
   );
 
   const removeFile = useCallback(
-    (propertyId: string, schemaItemId: string, itemId: string | undefined, fieldId: string) => {
+    (propertyId: string, schemaGroupId: string, itemId: string | undefined, fieldId: string) => {
       changeValueMutation({
         variables: {
           propertyId,
           fieldId,
           itemId,
-          schemaItemId,
+          schemaGroupId,
           type: GQLValueType.Url,
           value: null,
           lang: intl.locale,
@@ -182,13 +182,13 @@ export default (mode: Mode) => {
 
   const [removeFieldMutation] = useRemovePropertyFieldMutation();
   const removeField = useCallback(
-    (propertyId: string, schemaItemId: string, itemId: string | undefined, fieldId: string) => {
+    (propertyId: string, schemaGroupId: string, itemId: string | undefined, fieldId: string) => {
       removeFieldMutation({
         variables: {
           propertyId,
           fieldId,
           itemId,
-          schemaItemId,
+          schemaGroupId,
           lang: intl.locale,
         },
       });
@@ -232,14 +232,14 @@ export default (mode: Mode) => {
   const addPropertyItem = useCallback(
     async (
       propertyId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       value?: ValueTypes[ValueType],
       valueType?: ValueType,
     ) => {
       await addPropertyItemMutation({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           nameFieldValue: toGQLSimpleValue(value),
           nameFieldType: valueType ? valueTypeToGQL(valueType) : undefined,
           lang: intl.locale,
@@ -251,11 +251,17 @@ export default (mode: Mode) => {
 
   const [movePropertyItemMutation] = useMovePropertyItemMutation();
   const movePropertyItem = useCallback(
-    async (propertyId: string, schemaItemId: string, itemId: string, _from: number, to: number) => {
+    async (
+      propertyId: string,
+      schemaGroupId: string,
+      itemId: string,
+      _from: number,
+      to: number,
+    ) => {
       await movePropertyItemMutation({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           itemId,
           index: to,
           lang: intl.locale,
@@ -267,11 +273,11 @@ export default (mode: Mode) => {
 
   const [removePropertyItemMutation] = useRemovePropertyItemMutation();
   const removePropertyItem = useCallback(
-    async (propertyId: string, schemaItemId: string, itemId: string) => {
+    async (propertyId: string, schemaGroupId: string, itemId: string) => {
       await removePropertyItemMutation({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           itemId,
           lang: intl.locale,
         },
@@ -291,7 +297,7 @@ export default (mode: Mode) => {
   const updatePropertyItems = useCallback(
     async (
       propertyId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       items: {
         itemId?: string;
         layerId?: string;
@@ -302,7 +308,7 @@ export default (mode: Mode) => {
       await updatePropertyItemsMutation({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           operations: items.map(item => ({
             operation:
               item.from === -1

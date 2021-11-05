@@ -21,6 +21,7 @@ export type Scalars = {
   PluginExtensionID: string;
   PluginID: string;
   PropertySchemaFieldID: string;
+  PropertySchemaGroupID: string;
   PropertySchemaID: string;
   TranslatedString: { [lang in string]?: string } | null;
   URL: string;
@@ -125,7 +126,7 @@ export type AddPropertyItemInput = {
   nameFieldType?: Maybe<ValueType>;
   nameFieldValue?: Maybe<Scalars['Any']>;
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
 };
 
 export type AddWidgetInput = {
@@ -164,6 +165,26 @@ export type AssetEdge = {
   __typename?: 'AssetEdge';
   cursor: Scalars['Cursor'];
   node?: Maybe<Asset>;
+};
+
+export type AttachTagItemToGroupInput = {
+  groupID: Scalars['ID'];
+  itemID: Scalars['ID'];
+};
+
+export type AttachTagItemToGroupPayload = {
+  __typename?: 'AttachTagItemToGroupPayload';
+  tag: TagGroup;
+};
+
+export type AttachTagToLayerInput = {
+  layerID: Scalars['ID'];
+  tagID: Scalars['ID'];
+};
+
+export type AttachTagToLayerPayload = {
+  __typename?: 'AttachTagToLayerPayload';
+  layer: Layer;
 };
 
 export type Camera = {
@@ -213,6 +234,30 @@ export type CreateSceneInput = {
 export type CreateScenePayload = {
   __typename?: 'CreateScenePayload';
   scene: Scene;
+};
+
+export type CreateTagGroupInput = {
+  label: Scalars['String'];
+  sceneId: Scalars['ID'];
+  tags?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type CreateTagGroupPayload = {
+  __typename?: 'CreateTagGroupPayload';
+  tag: TagGroup;
+};
+
+export type CreateTagItemInput = {
+  label: Scalars['String'];
+  linkedDatasetField?: Maybe<Scalars['ID']>;
+  linkedDatasetID?: Maybe<Scalars['ID']>;
+  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  sceneId: Scalars['ID'];
+};
+
+export type CreateTagItemPayload = {
+  __typename?: 'CreateTagItemPayload';
+  tag: TagItem;
 };
 
 export type CreateTeamInput = {
@@ -335,6 +380,26 @@ export type DeleteTeamPayload = {
   teamId: Scalars['ID'];
 };
 
+export type DetachTagFromLayerInput = {
+  layerID: Scalars['ID'];
+  tagID: Scalars['ID'];
+};
+
+export type DetachTagFromLayerPayload = {
+  __typename?: 'DetachTagFromLayerPayload';
+  layer: Layer;
+};
+
+export type DetachTagItemFromGroupInput = {
+  groupID: Scalars['ID'];
+  itemID: Scalars['ID'];
+};
+
+export type DetachTagItemFromGroupPayload = {
+  __typename?: 'DetachTagItemFromGroupPayload';
+  tag: TagGroup;
+};
+
 export type ImportDatasetFromGoogleSheetInput = {
   accessToken: Scalars['String'];
   datasetSchemaId?: Maybe<Scalars['ID']>;
@@ -439,6 +504,8 @@ export type Layer = {
   propertyId?: Maybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
+  tagIds: Array<Scalars['ID']>;
+  tags: Array<Tag>;
 };
 
 export enum LayerEncodingFormat {
@@ -471,6 +538,8 @@ export type LayerGroup = Layer & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
+  tagIds: Array<Scalars['ID']>;
+  tags: Array<Tag>;
 };
 
 export type LayerItem = Layer & {
@@ -493,6 +562,8 @@ export type LayerItem = Layer & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
+  tagIds: Array<Scalars['ID']>;
+  tags: Array<Tag>;
 };
 
 export type Layers = LayerGroup | LayerItem;
@@ -504,7 +575,7 @@ export type LinkDatasetToPropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export enum ListOperation {
@@ -587,7 +658,7 @@ export type MergedPropertyGroup = {
   parentProperty?: Maybe<Property>;
   parentPropertyId?: Maybe<Scalars['ID']>;
   schema?: Maybe<PropertySchema>;
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   schemaId?: Maybe<Scalars['PropertySchemaID']>;
 };
 
@@ -622,7 +693,7 @@ export type MovePropertyItemInput = {
   index: Scalars['Int'];
   itemId: Scalars['ID'];
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
 };
 
 export type Mutation = {
@@ -636,14 +707,20 @@ export type Mutation = {
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
   addPropertyItem?: Maybe<PropertyItemPayload>;
   addWidget?: Maybe<AddWidgetPayload>;
+  attachTagItemToGroup?: Maybe<AttachTagItemToGroupPayload>;
+  attachTagToLayer?: Maybe<AttachTagToLayerPayload>;
   createAsset?: Maybe<CreateAssetPayload>;
   createInfobox?: Maybe<CreateInfoboxPayload>;
   createProject?: Maybe<ProjectPayload>;
   createScene?: Maybe<CreateScenePayload>;
+  createTagGroup?: Maybe<CreateTagGroupPayload>;
+  createTagItem?: Maybe<CreateTagItemPayload>;
   createTeam?: Maybe<CreateTeamPayload>;
   deleteMe?: Maybe<DeleteMePayload>;
   deleteProject?: Maybe<DeleteProjectPayload>;
   deleteTeam?: Maybe<DeleteTeamPayload>;
+  detachTagFromLayer?: Maybe<DetachTagFromLayerPayload>;
+  detachTagItemFromGroup?: Maybe<DetachTagItemFromGroupPayload>;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   importLayer?: Maybe<ImportLayerPayload>;
@@ -662,6 +739,7 @@ export type Mutation = {
   removeMyAuth?: Maybe<UpdateMePayload>;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   removePropertyItem?: Maybe<PropertyItemPayload>;
+  removeTag?: Maybe<RemoveTagPayload>;
   removeWidget?: Maybe<RemoveWidgetPayload>;
   signup?: Maybe<SignupPayload>;
   syncDataset?: Maybe<SyncDatasetPayload>;
@@ -674,6 +752,7 @@ export type Mutation = {
   updateProject?: Maybe<ProjectPayload>;
   updatePropertyItems?: Maybe<PropertyItemPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
+  updateTag?: Maybe<UpdateTagPayload>;
   updateTeam?: Maybe<UpdateTeamPayload>;
   updateWidget?: Maybe<UpdateWidgetPayload>;
   updateWidgetAlignSystem?: Maybe<UpdateWidgetAlignSystemPayload>;
@@ -728,6 +807,16 @@ export type MutationAddWidgetArgs = {
 };
 
 
+export type MutationAttachTagItemToGroupArgs = {
+  input: AttachTagItemToGroupInput;
+};
+
+
+export type MutationAttachTagToLayerArgs = {
+  input: AttachTagToLayerInput;
+};
+
+
 export type MutationCreateAssetArgs = {
   input: CreateAssetInput;
 };
@@ -748,6 +837,16 @@ export type MutationCreateSceneArgs = {
 };
 
 
+export type MutationCreateTagGroupArgs = {
+  input: CreateTagGroupInput;
+};
+
+
+export type MutationCreateTagItemArgs = {
+  input: CreateTagItemInput;
+};
+
+
 export type MutationCreateTeamArgs = {
   input: CreateTeamInput;
 };
@@ -765,6 +864,16 @@ export type MutationDeleteProjectArgs = {
 
 export type MutationDeleteTeamArgs = {
   input: DeleteTeamInput;
+};
+
+
+export type MutationDetachTagFromLayerArgs = {
+  input: DetachTagFromLayerInput;
+};
+
+
+export type MutationDetachTagItemFromGroupArgs = {
+  input: DetachTagItemFromGroupInput;
 };
 
 
@@ -858,6 +967,11 @@ export type MutationRemovePropertyItemArgs = {
 };
 
 
+export type MutationRemoveTagArgs = {
+  input: RemoveTagInput;
+};
+
+
 export type MutationRemoveWidgetArgs = {
   input: RemoveWidgetInput;
 };
@@ -915,6 +1029,11 @@ export type MutationUpdatePropertyItemsArgs = {
 
 export type MutationUpdatePropertyValueArgs = {
   input: UpdatePropertyValueInput;
+};
+
+
+export type MutationUpdateTagArgs = {
+  input: UpdateTagInput;
 };
 
 
@@ -1167,7 +1286,7 @@ export type PropertyGroup = {
   id: Scalars['ID'];
   schema?: Maybe<PropertySchema>;
   schemaGroup?: Maybe<PropertySchemaGroup>;
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   schemaId: Scalars['PropertySchemaID'];
 };
 
@@ -1177,7 +1296,7 @@ export type PropertyGroupList = {
   id: Scalars['ID'];
   schema?: Maybe<PropertySchema>;
   schemaGroup?: Maybe<PropertySchemaGroup>;
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   schemaId: Scalars['PropertySchemaID'];
 };
 
@@ -1271,7 +1390,7 @@ export type PropertySchemaGroup = {
   representativeField?: Maybe<PropertySchemaField>;
   representativeFieldId?: Maybe<Scalars['PropertySchemaFieldID']>;
   schema?: Maybe<PropertySchema>;
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   schemaId: Scalars['PropertySchemaID'];
   title?: Maybe<Scalars['String']>;
   translatedTitle: Scalars['String'];
@@ -1490,13 +1609,22 @@ export type RemovePropertyFieldInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type RemovePropertyItemInput = {
   itemId: Scalars['ID'];
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
+};
+
+export type RemoveTagInput = {
+  tagID: Scalars['ID'];
+};
+
+export type RemoveTagPayload = {
+  __typename?: 'RemoveTagPayload';
+  tagId: Scalars['ID'];
 };
 
 export type RemoveWidgetInput = {
@@ -1530,6 +1658,8 @@ export type Scene = Node & {
   propertyId: Scalars['ID'];
   rootLayer?: Maybe<LayerGroup>;
   rootLayerId: Scalars['ID'];
+  tagIds: Array<Scalars['ID']>;
+  tags: Array<Tag>;
   team?: Maybe<Team>;
   teamId: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
@@ -1608,6 +1738,35 @@ export type SyncDatasetPayload = {
   url: Scalars['String'];
 };
 
+export type Tag = {
+  id: Scalars['ID'];
+  label: Scalars['String'];
+  sceneId: Scalars['ID'];
+};
+
+export type TagGroup = Tag & {
+  __typename?: 'TagGroup';
+  id: Scalars['ID'];
+  label: Scalars['String'];
+  sceneId: Scalars['ID'];
+  tags?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type TagItem = Tag & {
+  __typename?: 'TagItem';
+  id: Scalars['ID'];
+  label: Scalars['String'];
+  linkedDataset?: Maybe<Dataset>;
+  linkedDatasetField?: Maybe<DatasetField>;
+  linkedDatasetFieldID?: Maybe<Scalars['ID']>;
+  linkedDatasetID?: Maybe<Scalars['ID']>;
+  linkedDatasetSchema?: Maybe<DatasetSchema>;
+  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  sceneId: Scalars['ID'];
+};
+
+export type Tags = TagGroup | TagItem;
+
 export type Team = Node & {
   __typename?: 'Team';
   assets: AssetConnection;
@@ -1683,7 +1842,7 @@ export type UnlinkPropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type UpdateDatasetSchemaInput = {
@@ -1753,7 +1912,7 @@ export type UpdateProjectInput = {
 export type UpdatePropertyItemInput = {
   operations: Array<UpdatePropertyItemOperationInput>;
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
 };
 
 export type UpdatePropertyItemOperationInput = {
@@ -1768,9 +1927,20 @@ export type UpdatePropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   type: ValueType;
   value?: Maybe<Scalars['Any']>;
+};
+
+export type UpdateTagInput = {
+  label?: Maybe<Scalars['String']>;
+  sceneId: Scalars['ID'];
+  tagId: Scalars['ID'];
+};
+
+export type UpdateTagPayload = {
+  __typename?: 'UpdateTagPayload';
+  tag: Tag;
 };
 
 export type UpdateTeamInput = {
@@ -1826,7 +1996,7 @@ export type UploadFileToPropertyInput = {
   file: Scalars['Upload'];
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type UploadPluginInput = {
@@ -2281,7 +2451,7 @@ export type AddLayerItemFromPrimitiveMutation = { __typename?: 'Mutation', addLa
 export type ChangePropertyValueMutationVariables = Exact<{
   value?: Maybe<Scalars['Any']>;
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   type: ValueType;
@@ -2294,7 +2464,7 @@ export type ChangePropertyValueMutation = { __typename?: 'Mutation', updatePrope
 export type LinkDatasetMutationVariables = Exact<{
   propertyId: Scalars['ID'];
   itemId?: Maybe<Scalars['ID']>;
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   datasetSchemaIds: Array<Scalars['ID']> | Scalars['ID'];
   datasetIds?: Maybe<Array<Scalars['ID']> | Scalars['ID']>;
@@ -2307,7 +2477,7 @@ export type LinkDatasetMutation = { __typename?: 'Mutation', linkDatasetToProper
 
 export type UnlinkDatasetMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   lang?: Maybe<Scalars['String']>;
@@ -2334,7 +2504,7 @@ export type RemoveInfoboxMutation = { __typename?: 'Mutation', removeInfobox?: M
 
 export type UploadFileToPropertyMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   file: Scalars['Upload'];
@@ -2346,7 +2516,7 @@ export type UploadFileToPropertyMutation = { __typename?: 'Mutation', uploadFile
 
 export type RemovePropertyFieldMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   lang?: Maybe<Scalars['String']>;
@@ -2357,7 +2527,7 @@ export type RemovePropertyFieldMutation = { __typename?: 'Mutation', removePrope
 
 export type AddPropertyItemMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   index?: Maybe<Scalars['Int']>;
   nameFieldValue?: Maybe<Scalars['Any']>;
   nameFieldType?: Maybe<ValueType>;
@@ -2369,7 +2539,7 @@ export type AddPropertyItemMutation = { __typename?: 'Mutation', addPropertyItem
 
 export type MovePropertyItemMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   itemId: Scalars['ID'];
   index: Scalars['Int'];
   lang?: Maybe<Scalars['String']>;
@@ -2380,7 +2550,7 @@ export type MovePropertyItemMutation = { __typename?: 'Mutation', movePropertyIt
 
 export type RemovePropertyItemMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   itemId: Scalars['ID'];
   lang?: Maybe<Scalars['String']>;
 }>;
@@ -2390,7 +2560,7 @@ export type RemovePropertyItemMutation = { __typename?: 'Mutation', removeProper
 
 export type UpdatePropertyItemsMutationVariables = Exact<{
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
+  schemaGroupId: Scalars['PropertySchemaGroupID'];
   operations: Array<UpdatePropertyItemOperationInput> | UpdatePropertyItemOperationInput;
   lang?: Maybe<Scalars['String']>;
 }>;
@@ -2711,7 +2881,7 @@ type Layer5Fragment_LayerItem_Fragment = { __typename?: 'LayerItem', id: string,
 
 export type Layer5FragmentFragment = Layer5Fragment_LayerGroup_Fragment | Layer5Fragment_LayerItem_Fragment;
 
-export type PropertySchemaItemFragmentFragment = { __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: Maybe<string>, translatedTitle: string, isList: boolean, representativeFieldId?: Maybe<string>, isAvailableIf?: Maybe<{ __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: Maybe<any> }>, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: Maybe<string>, suffix?: Maybe<string>, type: ValueType, defaultValue?: Maybe<any>, ui?: Maybe<PropertySchemaFieldUi>, min?: Maybe<number>, max?: Maybe<number>, choices?: Maybe<Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: Maybe<string>, title: string, translatedTitle: string }>>, isAvailableIf?: Maybe<{ __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: Maybe<any> }> }> };
+export type PropertySchemaGroupFragmentFragment = { __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: Maybe<string>, translatedTitle: string, isList: boolean, representativeFieldId?: Maybe<string>, isAvailableIf?: Maybe<{ __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: Maybe<any> }>, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: Maybe<string>, suffix?: Maybe<string>, type: ValueType, defaultValue?: Maybe<any>, ui?: Maybe<PropertySchemaFieldUi>, min?: Maybe<number>, max?: Maybe<number>, choices?: Maybe<Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: Maybe<string>, title: string, translatedTitle: string }>>, isAvailableIf?: Maybe<{ __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: Maybe<any> }> }> };
 
 type PropertyItemFragment_PropertyGroup_Fragment = { __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: Maybe<any>, links?: Maybe<Array<{ __typename?: 'PropertyFieldLink', datasetId?: Maybe<string>, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: Maybe<{ __typename?: 'DatasetSchema', id: string, name: string }>, dataset?: Maybe<{ __typename?: 'Dataset', id: string, name?: Maybe<string> }>, datasetSchemaField?: Maybe<{ __typename?: 'DatasetSchemaField', id: string, name: string }> }>> }> };
 
@@ -2825,8 +2995,8 @@ export const PropertyFragmentWithoutSchemaFragmentDoc = gql`
   }
 }
     ${PropertyItemFragmentFragmentDoc}`;
-export const PropertySchemaItemFragmentFragmentDoc = gql`
-    fragment PropertySchemaItemFragment on PropertySchemaGroup {
+export const PropertySchemaGroupFragmentFragmentDoc = gql`
+    fragment PropertySchemaGroupFragment on PropertySchemaGroup {
   schemaGroupId
   title
   translatedTitle(lang: $lang)
@@ -2871,12 +3041,12 @@ export const PropertyFragmentFragmentDoc = gql`
   schema {
     id
     groups {
-      ...PropertySchemaItemFragment
+      ...PropertySchemaGroupFragment
     }
   }
 }
     ${PropertyFragmentWithoutSchemaFragmentDoc}
-${PropertySchemaItemFragmentFragmentDoc}`;
+${PropertySchemaGroupFragmentFragmentDoc}`;
 export const MergedPropertyGroupCommonFragmentFragmentDoc = gql`
     fragment MergedPropertyGroupCommonFragment on MergedPropertyGroup {
   schemaGroupId
@@ -4753,9 +4923,9 @@ export type AddLayerItemFromPrimitiveMutationHookResult = ReturnType<typeof useA
 export type AddLayerItemFromPrimitiveMutationResult = Apollo.MutationResult<AddLayerItemFromPrimitiveMutation>;
 export type AddLayerItemFromPrimitiveMutationOptions = Apollo.BaseMutationOptions<AddLayerItemFromPrimitiveMutation, AddLayerItemFromPrimitiveMutationVariables>;
 export const ChangePropertyValueDocument = gql`
-    mutation ChangePropertyValue($value: Any, $propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $type: ValueType!, $lang: String) {
+    mutation ChangePropertyValue($value: Any, $propertyId: ID!, $schemaGroupId: PropertySchemaGroupID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $type: ValueType!, $lang: String) {
   updatePropertyValue(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type}
   ) {
     property {
       id
@@ -4786,7 +4956,7 @@ export type ChangePropertyValueMutationFn = Apollo.MutationFunction<ChangeProper
  *   variables: {
  *      value: // value for 'value'
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      type: // value for 'type'
@@ -4802,9 +4972,9 @@ export type ChangePropertyValueMutationHookResult = ReturnType<typeof useChangeP
 export type ChangePropertyValueMutationResult = Apollo.MutationResult<ChangePropertyValueMutation>;
 export type ChangePropertyValueMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueMutation, ChangePropertyValueMutationVariables>;
 export const LinkDatasetDocument = gql`
-    mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaItemId: PropertySchemaFieldID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!, $lang: String) {
+    mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaGroupId: PropertySchemaGroupID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!, $lang: String) {
   linkDatasetToPropertyValue(
-    input: {propertyId: $propertyId, itemId: $itemId, schemaItemId: $schemaItemId, fieldId: $fieldId, datasetSchemaIds: $datasetSchemaIds, datasetIds: $datasetIds, datasetSchemaFieldIds: $datasetFieldIds}
+    input: {propertyId: $propertyId, itemId: $itemId, schemaGroupId: $schemaGroupId, fieldId: $fieldId, datasetSchemaIds: $datasetSchemaIds, datasetIds: $datasetIds, datasetSchemaFieldIds: $datasetFieldIds}
   ) {
     property {
       id
@@ -4830,7 +5000,7 @@ export type LinkDatasetMutationFn = Apollo.MutationFunction<LinkDatasetMutation,
  *   variables: {
  *      propertyId: // value for 'propertyId'
  *      itemId: // value for 'itemId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      fieldId: // value for 'fieldId'
  *      datasetSchemaIds: // value for 'datasetSchemaIds'
  *      datasetIds: // value for 'datasetIds'
@@ -4847,9 +5017,9 @@ export type LinkDatasetMutationHookResult = ReturnType<typeof useLinkDatasetMuta
 export type LinkDatasetMutationResult = Apollo.MutationResult<LinkDatasetMutation>;
 export type LinkDatasetMutationOptions = Apollo.BaseMutationOptions<LinkDatasetMutation, LinkDatasetMutationVariables>;
 export const UnlinkDatasetDocument = gql`
-    mutation UnlinkDataset($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
+    mutation UnlinkDataset($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
   unlinkPropertyValue(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId}
   ) {
     property {
       id
@@ -4879,7 +5049,7 @@ export type UnlinkDatasetMutationFn = Apollo.MutationFunction<UnlinkDatasetMutat
  * const [unlinkDatasetMutation, { data, loading, error }] = useUnlinkDatasetMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      lang: // value for 'lang'
@@ -4988,9 +5158,9 @@ export type RemoveInfoboxMutationHookResult = ReturnType<typeof useRemoveInfobox
 export type RemoveInfoboxMutationResult = Apollo.MutationResult<RemoveInfoboxMutation>;
 export type RemoveInfoboxMutationOptions = Apollo.BaseMutationOptions<RemoveInfoboxMutation, RemoveInfoboxMutationVariables>;
 export const UploadFileToPropertyDocument = gql`
-    mutation UploadFileToProperty($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $file: Upload!, $lang: String) {
+    mutation UploadFileToProperty($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $file: Upload!, $lang: String) {
   uploadFileToProperty(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, file: $file}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId, file: $file}
   ) {
     property {
       id
@@ -5020,7 +5190,7 @@ export type UploadFileToPropertyMutationFn = Apollo.MutationFunction<UploadFileT
  * const [uploadFileToPropertyMutation, { data, loading, error }] = useUploadFileToPropertyMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      file: // value for 'file'
@@ -5036,9 +5206,9 @@ export type UploadFileToPropertyMutationHookResult = ReturnType<typeof useUpload
 export type UploadFileToPropertyMutationResult = Apollo.MutationResult<UploadFileToPropertyMutation>;
 export type UploadFileToPropertyMutationOptions = Apollo.BaseMutationOptions<UploadFileToPropertyMutation, UploadFileToPropertyMutationVariables>;
 export const RemovePropertyFieldDocument = gql`
-    mutation RemovePropertyField($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
+    mutation RemovePropertyField($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
   removePropertyField(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId}
   ) {
     property {
       id
@@ -5068,7 +5238,7 @@ export type RemovePropertyFieldMutationFn = Apollo.MutationFunction<RemoveProper
  * const [removePropertyFieldMutation, { data, loading, error }] = useRemovePropertyFieldMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      lang: // value for 'lang'
@@ -5083,9 +5253,9 @@ export type RemovePropertyFieldMutationHookResult = ReturnType<typeof useRemoveP
 export type RemovePropertyFieldMutationResult = Apollo.MutationResult<RemovePropertyFieldMutation>;
 export type RemovePropertyFieldMutationOptions = Apollo.BaseMutationOptions<RemovePropertyFieldMutation, RemovePropertyFieldMutationVariables>;
 export const AddPropertyItemDocument = gql`
-    mutation addPropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $index: Int, $nameFieldValue: Any, $nameFieldType: ValueType, $lang: String) {
+    mutation addPropertyItem($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID!, $index: Int, $nameFieldValue: Any, $nameFieldType: ValueType, $lang: String) {
   addPropertyItem(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, index: $index, nameFieldValue: $nameFieldValue, nameFieldType: $nameFieldType}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, index: $index, nameFieldValue: $nameFieldValue, nameFieldType: $nameFieldType}
   ) {
     property {
       id
@@ -5115,7 +5285,7 @@ export type AddPropertyItemMutationFn = Apollo.MutationFunction<AddPropertyItemM
  * const [addPropertyItemMutation, { data, loading, error }] = useAddPropertyItemMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      index: // value for 'index'
  *      nameFieldValue: // value for 'nameFieldValue'
  *      nameFieldType: // value for 'nameFieldType'
@@ -5131,9 +5301,9 @@ export type AddPropertyItemMutationHookResult = ReturnType<typeof useAddProperty
 export type AddPropertyItemMutationResult = Apollo.MutationResult<AddPropertyItemMutation>;
 export type AddPropertyItemMutationOptions = Apollo.BaseMutationOptions<AddPropertyItemMutation, AddPropertyItemMutationVariables>;
 export const MovePropertyItemDocument = gql`
-    mutation movePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!, $index: Int!, $lang: String) {
+    mutation movePropertyItem($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID!, $itemId: ID!, $index: Int!, $lang: String) {
   movePropertyItem(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, index: $index}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, index: $index}
   ) {
     property {
       id
@@ -5163,7 +5333,7 @@ export type MovePropertyItemMutationFn = Apollo.MutationFunction<MovePropertyIte
  * const [movePropertyItemMutation, { data, loading, error }] = useMovePropertyItemMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      index: // value for 'index'
  *      lang: // value for 'lang'
@@ -5178,9 +5348,9 @@ export type MovePropertyItemMutationHookResult = ReturnType<typeof useMoveProper
 export type MovePropertyItemMutationResult = Apollo.MutationResult<MovePropertyItemMutation>;
 export type MovePropertyItemMutationOptions = Apollo.BaseMutationOptions<MovePropertyItemMutation, MovePropertyItemMutationVariables>;
 export const RemovePropertyItemDocument = gql`
-    mutation removePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!, $lang: String) {
+    mutation removePropertyItem($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID!, $itemId: ID!, $lang: String) {
   removePropertyItem(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId}
   ) {
     property {
       id
@@ -5210,7 +5380,7 @@ export type RemovePropertyItemMutationFn = Apollo.MutationFunction<RemovePropert
  * const [removePropertyItemMutation, { data, loading, error }] = useRemovePropertyItemMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      itemId: // value for 'itemId'
  *      lang: // value for 'lang'
  *   },
@@ -5224,9 +5394,9 @@ export type RemovePropertyItemMutationHookResult = ReturnType<typeof useRemovePr
 export type RemovePropertyItemMutationResult = Apollo.MutationResult<RemovePropertyItemMutation>;
 export type RemovePropertyItemMutationOptions = Apollo.BaseMutationOptions<RemovePropertyItemMutation, RemovePropertyItemMutationVariables>;
 export const UpdatePropertyItemsDocument = gql`
-    mutation updatePropertyItems($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $operations: [UpdatePropertyItemOperationInput!]!, $lang: String) {
+    mutation updatePropertyItems($propertyId: ID!, $schemaGroupId: PropertySchemaGroupID!, $operations: [UpdatePropertyItemOperationInput!]!, $lang: String) {
   updatePropertyItems(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, operations: $operations}
+    input: {propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations}
   ) {
     property {
       id
@@ -5256,7 +5426,7 @@ export type UpdatePropertyItemsMutationFn = Apollo.MutationFunction<UpdateProper
  * const [updatePropertyItemsMutation, { data, loading, error }] = useUpdatePropertyItemsMutation({
  *   variables: {
  *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
+ *      schemaGroupId: // value for 'schemaGroupId'
  *      operations: // value for 'operations'
  *      lang: // value for 'lang'
  *   },

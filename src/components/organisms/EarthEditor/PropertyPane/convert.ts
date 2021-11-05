@@ -13,7 +13,7 @@ import {
   ValueType as GQLValueType,
   PropertyFragmentFragment,
   PropertyItemFragmentFragment,
-  PropertySchemaItemFragmentFragment,
+  PropertySchemaGroupFragmentFragment,
   MergedPropertyFragmentFragment,
   MergedPropertyGroupFragmentFragment,
   MergedPropertyGroupCommonFragmentFragment,
@@ -56,7 +56,7 @@ const toCond = (cond: PropertyCondition | null | undefined) => {
 };
 
 const toItem = (
-  schemaGroup: PropertySchemaItemFragmentFragment,
+  schemaGroup: PropertySchemaGroupFragmentFragment,
   item?: PropertyItemFragmentFragment,
   merged?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment,
 ): Item | undefined => {
@@ -115,7 +115,7 @@ const toItem = (
 };
 
 const toFields = (
-  schemaGroup: PropertySchemaItemFragmentFragment,
+  schemaGroup: PropertySchemaGroupFragmentFragment,
   item?: PropertyItemFragmentFragment,
   merged?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment,
 ) =>

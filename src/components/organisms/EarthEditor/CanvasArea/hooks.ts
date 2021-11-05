@@ -112,7 +112,7 @@ export default (isBuilt?: boolean) => {
   const onBlockChange = useCallback(
     async <T extends keyof ValueTypes>(
       blockId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       fid: string,
       v: ValueTypes[T],
       vt: T,
@@ -127,7 +127,7 @@ export default (isBuilt?: boolean) => {
       await changePropertyValue({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           fieldId: fid,
           type: gvt,
           value: valueToGQL(v, vt),
@@ -178,12 +178,12 @@ export default (isBuilt?: boolean) => {
       if (!propertyId) return;
 
       // propertyKey will be "default.location" for example
-      const [schemaItemId, fieldId] = propertyKey.split(".", 2);
+      const [schemaGroupId, fieldId] = propertyKey.split(".", 2);
 
       await changePropertyValue({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           fieldId,
           type: ValueType.Latlng,
           value: {
