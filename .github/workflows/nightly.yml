@@ -8,13 +8,13 @@ env:
   IMAGE_BASE: reearth/reearth-backend
   TAG: nightly
 jobs:
-  nightly_pre:
+  prenightly:
     runs-on: ubuntu-latest
+    env:
+      EV: ${{ toJSON(github.event) }}
     steps:
       - run: echo ${{ github.event.repository.full_name }}
-      - env:
-          REPO: ${{ github.event.repository }}
-        run: echo ${REPO}
+      - run: echo $EV
   nightly:
     name: Nightly
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   slack-notification:
-    if: always()
+    if: github.event.repository.full_name == 'reearth/reearth' && always()
     name: Slack Notification
     needs:
       - nightly
