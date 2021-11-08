@@ -8,6 +8,13 @@ env:
   IMAGE_BASE: reearth/reearth-backend
   TAG: nightly
 jobs:
+  nightly_pre:
+    runs-on: ubuntu-latest
+    env:
+      REPO: ${{ github.event.repository }}
+    steps:
+      - run: echo ${{ github.event.repository.full_name }}
+      - run: echo ${{ REPO }}
   nightly:
     name: Nightly
     runs-on: ubuntu-latest
