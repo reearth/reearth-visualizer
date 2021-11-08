@@ -272,6 +272,12 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
+		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+			return nil, err
+		} else if prj2 != nil && prj.ID() != prj2.ID() {
+			return nil, interfaces.ErrProjectAliasAlreadyUsed
+		}
+
 		if err := prj.UpdateAlias(*params.Alias); err != nil {
 			return nil, err
 		}

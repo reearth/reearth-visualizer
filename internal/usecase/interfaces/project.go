@@ -46,7 +46,8 @@ type PublishProjectParam struct {
 }
 
 var (
-	ErrProjectAliasIsNotSet error = errors.New("project alias is not set")
+	ErrProjectAliasIsNotSet    error = errors.New("project alias is not set")
+	ErrProjectAliasAlreadyUsed error = errors.New("project alias is already used by another project")
 )
 
 type Project interface {
