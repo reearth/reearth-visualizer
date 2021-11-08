@@ -14,7 +14,7 @@ jobs:
       - run: echo ${{ github.event.repository.full_name }}
       - env:
           REPO: ${{ github.event.repository }}
-        run: echo ${{ REPO }}
+        run: echo ${REPO}
   nightly:
     name: Nightly
     runs-on: ubuntu-latest
