@@ -27,15 +27,9 @@ type ProjectDocument struct {
 	PublicDescription string
 	PublicImage       string
 	PublicNoIndex     bool
-	Domains           []*ProjectDomainDocument
 	Team              string
 	Visualizer        string
 	PublishmentStatus string
-}
-
-type ProjectDomainDocument struct {
-	Domain string
-	Ready  bool
 }
 
 type ProjectConsumer struct {
