@@ -45,6 +45,7 @@ const Markdown: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div<{ styles?: Typography; dark: boolean }>`
+  background-color: transparent;
   color: inherit;
   font-family: inherit;
   font-size: inherit;
