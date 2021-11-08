@@ -102,7 +102,7 @@ const InfoBox: React.FC<Props> = ({
       floated>
       <Wrapper ref={ref} open={open}>
         <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-          {!noContent && (
+          {!open && (
             <IconWrapper align="center" justify="space-around">
               <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={16} open={open} />
               <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
