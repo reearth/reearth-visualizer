@@ -15,6 +15,14 @@ const webpack = require("webpack");
 
 const pkg = require("./package.json");
 
+let reearthConfig = {};
+try {
+  // eslint-disable-next-line node/no-missing-require
+  reearthConfig = require("./reearth-config.json");
+} catch {
+  // ignore
+}
+
 module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
   const envfile = loadEnv(Object.keys(env || {}).find(k => !k.startsWith("WEBPACK_")));
@@ -28,6 +36,7 @@ module.exports = (env, args = {}) => {
         ...process.env,
       },
     }),
+    ...reearthConfig,
   };
 
   return {

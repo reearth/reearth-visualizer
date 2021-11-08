@@ -10,3 +10,4 @@ __screenshots__
 /cypress/videos
 /cypress/screenshots
 /.env*
+/reearth-config.json
