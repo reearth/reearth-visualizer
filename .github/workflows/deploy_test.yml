@@ -13,7 +13,7 @@ jobs:
   deploy_test:
     name: deploy_test
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' && github.event.repostory.full_name == 'reearth/reearth-backend'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-backend'
     steps:
       - uses: google-github-actions/setup-gcloud@master
         with:
