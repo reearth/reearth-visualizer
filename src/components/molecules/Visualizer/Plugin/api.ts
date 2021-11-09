@@ -166,6 +166,9 @@ export function commonReearth({
       get overrideProperty() {
         return overrideLayerProperty;
       },
+      get isLayer() {
+        return layers().isLayer;
+      },
       get layers() {
         return layers().root.children ?? [];
       },

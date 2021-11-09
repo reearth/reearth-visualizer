@@ -22,7 +22,7 @@ export type Options = {
 };
 
 // restrict any classes
-const defaultIsMarshalable = (obj: any): boolean => {
+export const defaultIsMarshalable = (obj: any): boolean => {
   return (
     ((typeof obj !== "object" || obj === null) && typeof obj !== "function") ||
     Array.isArray(obj) ||

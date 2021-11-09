@@ -1,7 +1,8 @@
 import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { IFrameAPI } from "@reearth/components/atoms/Plugin";
+import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
+import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
 import { exposed } from "./api";
@@ -119,6 +120,18 @@ export function useAPI({
     event.current?.[1]("message", msg);
   }, []);
 
+  const isMarshalable = useCallback(
+    (target: any) => {
+      if (defaultIsMarshalable(target)) return true;
+      if (ctx?.reearth.layers.isLayer(target)) return true;
+      if (typeof ctx?.engine.isMarshalable === "function") {
+        return ctx.engine.isMarshalable(target);
+      }
+      return ctx?.engine.isMarshalable || false;
+    },
+    [ctx?.engine, ctx?.reearth.layers],
+  );
+
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
     return ({ postMessage, render }: IFrameAPI) => {
@@ -157,7 +170,7 @@ export function useAPI({
 
   return {
     staticExposed,
-    isMarshalable: ctx?.engine.isMarshalable,
+    isMarshalable,
     onMessage,
     onPreInit,
     onDispose,

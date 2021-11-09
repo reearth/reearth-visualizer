@@ -68,6 +68,7 @@ export type Layers = {
   readonly walk: <T>(
     fn: (layer: Layer, index: number, parents: Layer[]) => T | void,
   ) => T | undefined;
+  readonly isLayer: (obj: any) => obj is Layer;
   readonly overrideProperty: (id: string, property: any) => void;
 };
 

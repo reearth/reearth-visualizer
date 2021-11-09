@@ -65,6 +65,10 @@ export class LayerStore {
     return l;
   }
 
+  isLayer = (obj: any): obj is PluginLayer => {
+    return typeof obj === "object" && Object.getPrototypeOf(obj) === this.#prototype;
+  };
+
   findById = (id: string): PluginLayer | undefined => {
     return this.#pmap.get(id);
   };

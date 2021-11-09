@@ -1,9 +1,10 @@
 import React, { IframeHTMLAttributes, ReactNode } from "react";
 
-import useHook, { IFrameAPI as IFrameAPIType } from "./hooks";
+import useHook, { IFrameAPI } from "./hooks";
 import IFrame from "./IFrame";
 
-export type IFrameAPI = IFrameAPIType;
+export { defaultIsMarshalable } from "./hooks";
+export type { IFrameAPI } from "./hooks";
 
 export type Props = {
   className?: string;
