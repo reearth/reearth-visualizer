@@ -118,7 +118,7 @@ const Control = styled.div<{ leftIcon?: boolean; rightIcon?: boolean }>`
   flex: 1;
   display: flex;
   justify-content: ${({ leftIcon, rightIcon }) =>
-    leftIcon ? "start" : rightIcon ? "end" : undefined};
+    leftIcon ? "flex-start" : rightIcon ? "flex-end" : undefined};
   align-items: center;
   cursor: pointer;
   pointer-events: auto;
