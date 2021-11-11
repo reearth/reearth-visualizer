@@ -34,10 +34,10 @@ export default function MobileZone({
   children,
 }: PropsWithChildren<Props>) {
   const filteredSections = useMemo(() => {
-    return sections.filter(s => !!zone?.[s]);
-  }, [zone]);
+    return sections.filter(s => !!zone?.[s] || (s === "center" && children));
+  }, [zone, children]);
 
-  const [pos, setPos] = useState(filteredSections.indexOf("center"));
+  const [pos, setPos] = useState(filteredSections.length === 3 ? 1 : 0);
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   return (

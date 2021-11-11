@@ -215,11 +215,15 @@ export const convertWidgets = (
       }),
     );
 
-  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
+  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
+    const left = widgetSection(zone?.left);
+    const center = widgetSection(zone?.center);
+    const right = widgetSection(zone?.right);
+    if (!left && !center && !right) return;
     return {
-      left: widgetSection(zone?.left),
-      center: widgetSection(zone?.center),
-      right: widgetSection(zone?.right),
+      left,
+      center,
+      right,
     };
   };
 

@@ -81,16 +81,18 @@ const WidgetAlignSystem: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             layoutConstraint={layoutConstraint}>
-            <ZoneComponent
-              zoneName="inner"
-              zone={alignSystem?.inner}
-              sceneProperty={sceneProperty}
-              pluginProperty={pluginProperty}
-              pluginBaseUrl={pluginBaseUrl}
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              layoutConstraint={layoutConstraint}
-            />
+            {alignSystem?.inner && (
+              <ZoneComponent
+                zoneName="inner"
+                zone={alignSystem?.inner}
+                sceneProperty={sceneProperty}
+                pluginProperty={pluginProperty}
+                pluginBaseUrl={pluginBaseUrl}
+                isEditable={isEditable}
+                isBuilt={isBuilt}
+                layoutConstraint={layoutConstraint}
+              />
+            )}
           </MobileZone>
         ) : (
           <ZoneComponent
