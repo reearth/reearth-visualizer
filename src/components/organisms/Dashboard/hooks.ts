@@ -6,6 +6,7 @@ import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 import {
   useMeQuery,
+  useProjectQuery,
   useCreateTeamMutation,
   PublishmentStatus,
   useCreateProjectMutation,
@@ -103,8 +104,13 @@ export default (teamId?: string) => {
     [refetch],
   );
 
+  const { data: projectData } = useProjectQuery({
+    variables: { teamId: teamId ?? "" },
+    skip: !teamId,
+  });
+
   const projects = useMemo(() => {
-    return (team?.projects.nodes ?? [])
+    return (projectData?.projects.nodes ?? [])
       .map<Project | undefined>(project =>
         project
           ? {
@@ -119,7 +125,7 @@ export default (teamId?: string) => {
           : undefined,
       )
       .filter((project): project is Project => !!project);
-  }, [team?.projects.nodes]);
+  }, [projectData?.projects.nodes]);
 
   const [createNewProject] = useCreateProjectMutation({
     refetchQueries: ["Project"],

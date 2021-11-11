@@ -21,6 +21,7 @@ import {
   Maybe,
   useGetWidgetsQuery,
   PluginExtensionType,
+  GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -40,18 +41,6 @@ const convertFormat = (format: Format) => {
   if (format === "reearth") return LayerEncodingFormat.Reearth;
 
   return undefined;
-};
-
-type GQLLayer = {
-  __typename?: "LayerGroup" | "LayerItem";
-  id: string;
-  name: string;
-  isVisible: boolean;
-  pluginId?: string | null;
-  extensionId?: string | null;
-  linkedDatasetSchemaId?: string | null;
-  linkedDatasetId?: string | null;
-  layers?: Maybe<GQLLayer>[];
 };
 
 export default () => {
@@ -254,16 +243,21 @@ export default () => {
   const addLayerGroup = useCallback(() => {
     if (!rootLayerId) return;
 
-    const layers: Maybe<GQLLayer>[] =
+    const layers: (Maybe<GQLLayer> | undefined)[] =
       data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
-    const children = (l: Maybe<GQLLayer>) => (l?.__typename == "LayerGroup" ? l.layers : undefined);
+    const children = (l: Maybe<GQLLayer> | undefined) =>
+      l?.__typename == "LayerGroup" ? l.layers : undefined;
 
     const layerIndex =
       selected?.type === "layer"
-        ? deepFind(layers, l => l?.id === selected.layerId, children)[1]
+        ? deepFind<Maybe<GQLLayer> | undefined>(
+            layers,
+            l => l?.id === selected.layerId,
+            children,
+          )[1]
         : undefined;
     const parentLayer = layerIndex?.length
-      ? deepGet(layers, layerIndex.slice(0, -1), children)
+      ? deepGet<Maybe<GQLLayer> | undefined>(layers, layerIndex.slice(0, -1), children)
       : undefined;
     if ((layerIndex && layerIndex.length > 5) || parentLayer?.linkedDatasetSchemaId) return;
 
@@ -372,7 +366,13 @@ export default () => {
   };
 };
 
-const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
+type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
+  linkedDatasetSchemaId?: string | null;
+  linkedDatasetId?: string | null;
+  layers?: (GQLLayer | null | undefined)[];
+};
+
+const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"

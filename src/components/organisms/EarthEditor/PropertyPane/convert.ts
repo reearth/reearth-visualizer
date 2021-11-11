@@ -263,22 +263,16 @@ export const convertLinkableDatasets = (
     .filter((s): s is DatasetSchema => !!s);
 };
 
-type GQLLayer = {
-  __typename?: "LayerGroup" | "LayerItem";
-  id: string;
-  name: string;
-  isVisible: boolean;
-  pluginId?: string | null;
-  extensionId?: string | null;
+type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
   linkedDatasetSchemaId?: string | null;
   linkedDatasetId?: string | null;
-  layers?: Maybe<GQLLayer>[];
+  layers?: (GQLLayer | null | undefined)[];
 };
 
 export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Layer[] {
   const layers = data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
 
-  function mapper(layer: Maybe<GQLLayer>): Layer | undefined {
+  function mapper(layer: Maybe<GQLLayer> | undefined): Layer | undefined {
     if (!layer) return undefined;
     return {
       id: layer.id,

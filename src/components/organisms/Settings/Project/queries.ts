@@ -17,6 +17,9 @@ export const PROJECT = gql`
         publicImage
         alias
         publishmentStatus
+        scene {
+          id
+        }
       }
     }
   }
