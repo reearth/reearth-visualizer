@@ -164,7 +164,7 @@
         "apollo-upload-client": "^16.0.0",
         "array-move": "^4.0.0",
         "axios": "^0.23.0",
-        "cesium": "^1.87.0",
+        "cesium": "^1.87.1",
         "cesium-dnd": "1.0.3",
         "core-js": "^3.19.0",
         "date-fns": "^2.24.0",
