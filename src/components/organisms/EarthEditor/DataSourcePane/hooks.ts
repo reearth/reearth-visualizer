@@ -5,22 +5,18 @@ import { useIntl } from "react-intl";
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
   useGetAllDataSetsQuery,
-  useAddLayerGroupFromDatasetSchemaMutation,
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification } from "@reearth/state";
-
-const pluginId = "reearth";
-const extensionId = "marker";
+import { useSceneId, useNotification, useSelected } from "@reearth/state";
 
 export default () => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
+  const [selected, select] = useSelected();
   const [sceneId] = useSceneId();
-  const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
   const { data, loading } = useGetAllDataSetsQuery({
     variables: { sceneId: sceneId || "" },
@@ -51,25 +47,19 @@ export default () => {
                     name: n.name,
                     source: n.source as DataSource,
                     totalCount: n.datasets.totalCount,
-                    onDrop: async (layerId: string, index?: number) => {
-                      await addLayerGroupFromDatasetSchemaMutation({
-                        variables: {
-                          parentLayerId: layerId,
-                          datasetSchemaId: n.id,
-                          pluginId,
-                          extensionId,
-                          index,
-                          lang: intl.locale,
-                        },
-                        refetchQueries: ["GetLayers"],
-                      });
-                    },
                   }
                 : undefined,
             )
             .filter((e): e is DatasetSchema => !!e)
         : [],
-    [addLayerGroupFromDatasetSchemaMutation, data, intl.locale],
+    [data],
+  );
+
+  const selectDatasetSchema = useCallback(
+    (datasetSchemaId: string) => {
+      select({ type: "dataset", datasetSchemaId: datasetSchemaId });
+    },
+    [select],
   );
 
   // dataset sync
@@ -176,6 +166,9 @@ export default () => {
     ],
   );
 
+  const selectedDatasetSchemaId =
+    selected?.type === "dataset" ? selected.datasetSchemaId : undefined;
+
   return {
     datasetSchemas,
     handleDatasetSync,
@@ -183,5 +176,7 @@ export default () => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
+    selectDatasetSchema,
+    selectedDatasetSchemaId: selectedDatasetSchemaId,
   };
 };

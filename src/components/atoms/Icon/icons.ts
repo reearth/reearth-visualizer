@@ -31,6 +31,7 @@ import File from "./Icons/fileIcon.svg";
 import PcIcon from "./Icons/pcIcon.svg";
 import GoogleDriveIcon from "./Icons/googleDriveIcon.svg";
 import SheetFileIcon from "./Icons/sheet-file.svg";
+import Update from "./Icons/update.svg";
 
 // Asset
 import AssetGrid from "./Icons/assetGrid.svg";
@@ -148,6 +149,7 @@ export default {
   dataset: Dataset,
   datasetAdd: DatasetAdd,
   file: File,
+  update: Update,
   googleDrive: GoogleDriveIcon,
   sheetFile: SheetFileIcon,
   computer: PcIcon,

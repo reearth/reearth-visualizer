@@ -8,7 +8,6 @@ type Props = {};
 
 const ExportPane: React.FC<Props> = () => {
   const { onExport } = useHooks();
-
   return <Wrapper onExport={onExport} />;
 };
 

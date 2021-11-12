@@ -2,11 +2,12 @@ import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
+import DatasetInfoPane from "@reearth/components/organisms/EarthEditor/DatasetInfoPane";
 import ExportPane from "@reearth/components/organisms/EarthEditor/ExportPane";
 
 import PropertyPane from "../PropertyPane";
 
-import useHooks from "./hooks";
+import useHooks, { Tab } from "./hooks";
 
 const layerMode = ["property", "infobox", "export"];
 const widgetMode = ["property"];
@@ -35,7 +36,7 @@ const RightMenu: React.FC = () => {
   );
 
   return (
-    <TabArea<"layer" | "widget" | "widgets" | "scene" | "infobox" | "export">
+    <TabArea<Tab>
       menuAlignment="top"
       selected={
         selectedBlock || selectedTab === "infobox"
@@ -78,6 +79,7 @@ const RightMenu: React.FC = () => {
             <ExportPane />
           </>
         ),
+        dataset: selected === "dataset" && <DatasetInfoPane />,
       }}
     </TabArea>
   );

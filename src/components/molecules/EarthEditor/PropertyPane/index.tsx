@@ -7,7 +7,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 
-import GroupWrapper from "./PropertyGroup";
+import GroupWrapper from "@reearth/components/atoms/TabCard";
 import PropertyItem, {
   Props as PropertyItemProps,
   Item as ItemItem,

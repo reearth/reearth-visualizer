@@ -19,7 +19,6 @@ export type DatasetSchema = {
   name: string;
   source: DataSource;
   totalCount?: number;
-  onDrop?: (layerId: string, index?: number) => void;
 };
 
 export type Props = {
@@ -35,6 +34,8 @@ export type Props = {
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
+  selectedDatasetSchemaId?: string;
+  selectDatasetSchema?: (datasetSchemaId: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -45,6 +46,8 @@ const DatasetPane: React.FC<Props> = ({
   onGoogleSheetDatasetImport,
   onRemoveDataset,
   loading,
+  selectDatasetSchema,
+  selectedDatasetSchemaId,
 }) => {
   const intl = useIntl();
   const {
@@ -114,7 +117,8 @@ const DatasetPane: React.FC<Props> = ({
                   id={ds.id}
                   name={ds.name}
                   totalCount={ds.totalCount}
-                  onDrop={ds.onDrop}
+                  selected={selectedDatasetSchemaId === ds.id}
+                  selectDatasetSchema={selectDatasetSchema}
                   onRemove={onRemoveDataset}
                 />
               ))}

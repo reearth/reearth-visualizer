@@ -53,7 +53,7 @@ export default ({
   const { ref: dropRef, isDroppable } = useDrop(
     useMemo(
       (): DropOptions => ({
-        accept: ["primitive", "datasetSchema"],
+        accept: ["primitive"],
         drop(_item, context) {
           if (!rootLayerId || !isEditable) return;
           const loc = context.position

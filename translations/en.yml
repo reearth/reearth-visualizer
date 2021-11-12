@@ -92,6 +92,13 @@ src:
         '3662865152': New project
         '4173541988': Quick Start
       EarthEditor:
+        DatasetInfoPane:
+          '819545886': Import to scene
+          '3351123048': Data
+          DatasetProperty:
+            PropertyItem:
+              '440359455': import
+              '1159371335': Layer style
         DatasetPane:
           '293739158': Add Dataset
           '2446409280': No Dataset is here
@@ -458,6 +465,9 @@ src:
           '373918798': Failed to delete the dataset.
           '517189107': Successfully added the dataset!
           '1235836640': Failed to add the dataset.
+        DatasetInfoPane:
+          '646776720': Successfully created layer group
+          '1221302534': Failed to create layer group
         Header:
           '329817781': >-
             Successfully unpublished your project. Now nobody can access your

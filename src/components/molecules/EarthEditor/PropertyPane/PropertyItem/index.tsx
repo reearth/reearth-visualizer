@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
+import GroupWrapper from "@reearth/components/atoms/TabCard";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -21,10 +22,9 @@ import PropertyField, {
   SchemaField as SchemaFieldType,
   Asset as AssetType,
 } from "../PropertyField";
-import GroupWrapper from "../PropertyGroup";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "dataset";
 
 export type {
   Dataset,

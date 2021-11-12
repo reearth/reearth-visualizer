@@ -49,7 +49,9 @@ export type ItemEx =
   | {
       type: "widget";
       id?: string;
-    };
+    }
+  | { type: "dataset"; datasetSchemaId: string };
+
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
 export default ({

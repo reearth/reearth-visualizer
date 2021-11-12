@@ -23,7 +23,7 @@ export type Props = {
   widgets?: Widget[];
   widgetTypes?: WidgetType[];
   sceneDescription?: string;
-  selectedType?: "scene" | "layer" | "widgets" | "widget";
+  selectedType?: "scene" | "layer" | "widgets" | "widget" | "dataset";
   loading?: boolean;
   onLayerRename?: (id: string, name: string) => void;
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
@@ -42,6 +42,7 @@ export type Props = {
     destChildrenCount: number,
     parentId: string,
   ) => void;
+  onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
   onLayerGroupCreate?: () => void;
   onLayerImport?: (file: File, format: Format) => void;
   onDrop?: (layer: string, index: number, childrenCount: number) => any;

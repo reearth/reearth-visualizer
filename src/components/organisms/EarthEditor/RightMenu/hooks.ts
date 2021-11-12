@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useSelected, useSelectedBlock, useIsCapturing } from "@reearth/state";
 
-export type Tab = "layer" | "scene" | "widget" | "widgets" | "infobox" | "export";
+export type Tab = "layer" | "scene" | "widget" | "widgets" | "infobox" | "export" | "dataset";
 
 export default () => {
   const [selected] = useSelected();

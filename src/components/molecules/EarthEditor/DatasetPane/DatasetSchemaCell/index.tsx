@@ -1,36 +1,37 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import { styled, fonts } from "@reearth/theme";
 
 import DatasetDeleteModal from "../DatasetDeleteModal";
 
-import useHooks from "./hooks";
-
 export type DatasetSchemaProps = {
   className?: string;
   id?: string;
   name?: string;
   totalCount?: number;
-  onDrop?: (layerId: string, index?: number) => void;
   onRemove?: (schemaId: string) => void;
   selected?: boolean;
+  selectDatasetSchema?: (datasetSchemaId: string) => void;
 };
 
 const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   className,
   id,
-  onDrop,
   onRemove,
   name,
   totalCount,
   selected,
+  selectDatasetSchema,
 }) => {
-  const ref = useHooks(onDrop);
+  const handleSelect = useCallback(() => {
+    if (!id) return;
+    selectDatasetSchema?.(id);
+  }, [id, selectDatasetSchema]);
   const [showDeleteModal, setDeleteModal] = useState(false);
 
   return (
-    <Wrapper className={className} ref={ref} selected={selected}>
+    <Wrapper className={className} selected={selected} onClick={handleSelect}>
       <StyledIcon icon="dataset" size={16} />
       <Name>{name}</Name>
       <Count>({totalCount ?? ""})</Count>
@@ -47,8 +48,8 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
 };
 
 const Wrapper = styled.div<Pick<DatasetSchemaProps, "selected">>`
-  background-color: ${props =>
-    props.selected ? props.theme.layers.paleBg : props.theme.layers.bg};
+  background-color: ${({ selected, theme }) =>
+    selected ? theme.layers.selectedLayer : "transparent"};
   display: flex;
   align-items: center;
   font-size: ${fonts.sizes.xs}px;
@@ -58,7 +59,7 @@ const Wrapper = styled.div<Pick<DatasetSchemaProps, "selected">>`
   color: ${props => props.theme.leftMenu.text};
   user-select: none;
   &:hover {
-    background-color: ${props => props.theme.layers.hoverBg};
+    background-color: ${({ theme }) => theme.main.bg};
   }
 `;
 

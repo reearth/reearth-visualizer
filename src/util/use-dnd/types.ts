@@ -1,10 +1,4 @@
-export type ItemType =
-  | "layerItem"
-  | "layerGroup"
-  | "datasetSchema"
-  | "primitive"
-  | "block"
-  | "null";
+export type ItemType = "layerItem" | "layerGroup" | "primitive" | "block" | "null";
 
 export type Item<T extends ItemType = ItemType> = {
   null: { type: "null" };
@@ -20,7 +14,6 @@ export type Item<T extends ItemType = ItemType> = {
     parentLayerId: string;
     index: number;
   };
-  datasetSchema: { type: "datasetSchema" };
   primitive: { type: "primitive" };
   block: {
     type: "block";
