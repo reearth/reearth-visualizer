@@ -2,3 +2,11 @@ comment:
   layout: 'reach, diff, flags, files'
   behavior: default
   require_changes: false
+ignore:
+  - **/*_gen.go
+  - **/*_test.go
+  - **/doc.go
+  - **/testdata
+  - tools
+  - main.go
+  - tools.go
