@@ -2,3 +2,11 @@ comment:
   layout: 'reach, diff, flags, files'
   behavior: default
   require_changes: false
+ignore:
+  - **/*.test.ts
+  - **/*.test.tsx
+  - **/*.stories.ts
+  - **/*.stories.tsx
+  - .storybook
+  - bin
+  - src/gql/graphql-client-api.tsx
