@@ -153,16 +153,18 @@ export default () => {
         setNotification({ type: "error", text: datasetDeleteMessageFailure });
       } else {
         setNotification({ type: "info", text: datasetDeleteMessageSuccess });
+        select(undefined);
       }
       // re-render
       await client.resetStore();
     },
     [
-      client,
       removeDatasetSchema,
+      client,
+      setNotification,
       datasetDeleteMessageFailure,
       datasetDeleteMessageSuccess,
-      setNotification,
+      select,
     ],
   );
 
