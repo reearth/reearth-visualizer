@@ -9,12 +9,13 @@ import (
 	"sync"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
-	"github.com/dgrijalva/jwt-go"
+	// TODO: github.com/form3tech-oss/jwt-go is decrepated.
+	// Alternative is https://github.com/golang-jwt/jwt, but go-jwt-middleware still uses github.comform3tech-oss/jwt-go
+	// See also https://github.com/auth0/go-jwt-middleware/issues/73
+	"github.com/form3tech-oss/jwt-go"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/pkg/log"
 )
-
-// TODO: move the authentication logic to infrastructure
 
 type contextKey string
 
@@ -185,7 +186,7 @@ func urlFromDomain(path string) string {
 	return path
 }
 
-// WORKAROUND: https://github.com/dgrijalva/jwt-go/pull/308 should be merged
+// WORKAROUND: golang-jwt/jwt-go supports multiple audiences, but go-jwt-middleware still uses github.comform3tech-oss/jwt-go
 func verifyAudience(claims jwt.MapClaims, aud string) bool {
 	if aud == "" {
 		return true
