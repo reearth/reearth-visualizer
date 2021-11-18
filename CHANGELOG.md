@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2.0 - 2021-11-16
+
+### 🚀 Features
+
+- Support opentelemetry ([#68](https://github.com/reearth/reearth-backend/pull/68)) [`25c581`](https://github.com/reearth/reearth-backend/commit/25c581)
+
+### 🔧 Bug Fixes
+
+- Add an index to mongo project collection to prevent creating projects whose alias is duplicated [`10f745`](https://github.com/reearth/reearth-backend/commit/10f745)
+- Check project alias duplication on project update [`443f2c`](https://github.com/reearth/reearth-backend/commit/443f2c)
+
+### ✨ Refactor
+
+- Add PropertySchemaGroupID to pkg/id ([#70](https://github.com/reearth/reearth-backend/pull/70)) [`9ece9e`](https://github.com/reearth/reearth-backend/commit/9ece9e)
+
+### Miscellaneous Tasks
+
+- Fix typo in github actions [`4a9dc5`](https://github.com/reearth/reearth-backend/commit/4a9dc5)
+- Clean up unused code [`b5b01b`](https://github.com/reearth/reearth-backend/commit/b5b01b)
+- Update codecov.yml to add ignored files [`d54309`](https://github.com/reearth/reearth-backend/commit/d54309)
+- Ignore generated files in codecov [`9d3822`](https://github.com/reearth/reearth-backend/commit/9d3822)
+- Upgrade dependencies [`215947`](https://github.com/reearth/reearth-backend/commit/215947)
+
 ## 0.1.0 - 2021-11-01
 
 ### 🚀 Features
