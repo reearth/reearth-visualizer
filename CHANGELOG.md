@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2.0 - 2021-11-18
+
+### reearth-web
+
+### reearth-backend
+
+
 ## 0.1.0 - 2021-11-02
 
 ### reearth-web
