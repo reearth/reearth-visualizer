@@ -62,12 +62,11 @@ const Header: React.FC<Props> = ({
 
   const right = (
     <RightArea justify="flex-end" align="center">
-      <Button
+      <PreviewButton
         text={intl.formatMessage({ defaultMessage: "Preview" })}
         buttonType="secondary"
         onClick={onPreviewOpen}
-        margin="0 12px 0 0"
-      />
+        margin="0 12px 0 0"></PreviewButton>
       <Dropdown
         ref={dropDownRef}
         openOnClick
@@ -113,6 +112,10 @@ const Header: React.FC<Props> = ({
 
   return <CommonHeader {...props} center={center} right={right} />;
 };
+
+const PreviewButton = styled(Button)`
+  white-space: nowrap;
+`;
 
 const RightArea = styled(Flex)`
   height: 100%;
