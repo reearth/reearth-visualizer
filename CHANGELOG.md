@@ -3,9 +3,52 @@ All notable changes to this project will be documented in this file.
 
 ## 0.2.0 - 2021-11-18
 
-### reearth-web
+#### reearth-web
+#### 🚀 Features
+
+- Widget align system for mobile ([#115](https://github.com/reearth/reearth-web/pull/115)) [`afa4ba`](https://github.com/reearth/reearth-web/commit/afa4ba)
+- Support dataset schema preview and create layer group from selected primitive type ([#74](https://github.com/reearth/reearth-web/pull/74)) [`769b86`](https://github.com/reearth/reearth-web/commit/769b86)
+
+#### 🔧 Bug Fixes
+
+- Markdown background color is not transparent ([#123](https://github.com/reearth/reearth-web/pull/123)) [`f16706`](https://github.com/reearth/reearth-web/commit/f16706)
+- Layers would not be marshalled correctly ([#126](https://github.com/reearth/reearth-web/pull/126)) [`886302`](https://github.com/reearth/reearth-web/commit/886302)
+- Widget align system issues ([#124](https://github.com/reearth/reearth-web/pull/124)) [`3bc9fa`](https://github.com/reearth/reearth-web/commit/3bc9fa)
+- Project setting page does not display correctly after creating a new project ([#127](https://github.com/reearth/reearth-web/pull/127)) [`c120dc`](https://github.com/reearth/reearth-web/commit/c120dc)
+- Dataset info pane shows its property though after selected dataset schema is deleted ([#131](https://github.com/reearth/reearth-web/pull/131)) [`2307d8`](https://github.com/reearth/reearth-web/commit/2307d8)
+
+#### Miscellaneous Tasks
+
+- Disable storybook workflow for release commit [`80f4d2`](https://github.com/reearth/reearth-web/commit/80f4d2)
+- Change semantic commit type of renovate PRs, omit ci skip in changelog [`4a3e9e`](https://github.com/reearth/reearth-web/commit/4a3e9e)
+- Follow backend GraphQL schema update ([#120](https://github.com/reearth/reearth-web/pull/120)) [`aeee1f`](https://github.com/reearth/reearth-web/commit/aeee1f)
+- Load local reearth-config.json for debugging ([#119](https://github.com/reearth/reearth-web/pull/119)) [`6115ee`](https://github.com/reearth/reearth-web/commit/6115ee)
+- Update dependency cesium to ^1.87.0 ([#118](https://github.com/reearth/reearth-web/pull/118)) [`7c65d0`](https://github.com/reearth/reearth-web/commit/7c65d0)
+- Update dependency cesium to ^1.87.1 ([#128](https://github.com/reearth/reearth-web/pull/128)) [`a63aa7`](https://github.com/reearth/reearth-web/commit/a63aa7)
+- Update codecov.yml to add ignored files [`b72f17`](https://github.com/reearth/reearth-web/commit/b72f17)
+
 
 ### reearth-backend
+#### 🚀 Features
+
+- Support opentelemetry ([#68](https://github.com/reearth/reearth-backend/pull/68)) [`25c581`](https://github.com/reearth/reearth-backend/commit/25c581)
+
+#### 🔧 Bug Fixes
+
+- Add an index to mongo project collection to prevent creating projects whose alias is duplicated [`10f745`](https://github.com/reearth/reearth-backend/commit/10f745)
+- Check project alias duplication on project update [`443f2c`](https://github.com/reearth/reearth-backend/commit/443f2c)
+
+#### ✨ Refactor
+
+- Add PropertySchemaGroupID to pkg/id ([#70](https://github.com/reearth/reearth-backend/pull/70)) [`9ece9e`](https://github.com/reearth/reearth-backend/commit/9ece9e)
+
+#### Miscellaneous Tasks
+
+- Fix typo in github actions [`4a9dc5`](https://github.com/reearth/reearth-backend/commit/4a9dc5)
+- Clean up unused code [`b5b01b`](https://github.com/reearth/reearth-backend/commit/b5b01b)
+- Update codecov.yml to add ignored files [`d54309`](https://github.com/reearth/reearth-backend/commit/d54309)
+- Ignore generated files in codecov [`9d3822`](https://github.com/reearth/reearth-backend/commit/9d3822)
+- Upgrade dependencies [`215947`](https://github.com/reearth/reearth-backend/commit/215947)
 
 
 ## 0.1.0 - 2021-11-02
