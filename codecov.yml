@@ -3,10 +3,10 @@ comment:
   behavior: default
   require_changes: false
 ignore:
-  - **/*_gen.go
-  - **/*_test.go
-  - **/doc.go
-  - **/testdata
+  - "**/*_gen.go"
+  - "**/*_test.go"
+  - "**/doc.go"
+  - "**/testdata"
   - internal/adapter/gql/generated.go
   - tools
   - main.go
