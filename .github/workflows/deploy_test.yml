@@ -36,8 +36,8 @@ jobs:
             --platform managed \
             --quiet
   slack-notification:
-    if: always()
     name: Slack Notification
+    if: github.event.repository.full_name == 'reearth/reearth-backend' && always()
     needs:
       - deploy_test
     runs-on: ubuntu-latest

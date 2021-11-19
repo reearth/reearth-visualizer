@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - main
-    if: "needs.main.outputs.branch && !needs.main.outputs.new_tag"
+    if: github.event.repository.full_name == 'reearth/reearth-backend'
     env:
       REPO: github.com/reearth/reearth-backend
       REPO_NAME: reearth/reearth-backend
@@ -106,6 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - main
+    if: github.event.repository.full_name == 'reearth/reearth-backend'
     env:
       NAME: reearth-backend
     steps:
@@ -163,6 +164,7 @@ jobs:
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
+    if: github.event.repository.full_name == 'reearth/reearth-backend'
     needs:
       - main
     env:
@@ -216,7 +218,7 @@ jobs:
           cache-from: type=registry,ref=${IMAGE_NAME}:latest
           cache-to: type=inline
   slack-notification:
-    if: always()
+    if: github.event.workflow_run.conclusion == 'success' && always()
     name: Slack Notification
     needs:
       - main

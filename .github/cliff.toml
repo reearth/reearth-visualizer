@@ -45,8 +45,8 @@ commit_parsers = [
     { body = ".*security", group = "<!-- 8 -->🔒 Security"},
     { message = "^chore", group = "<!-- 9 -->Miscellaneous Tasks"},
     { message = "^build", group = "<!-- 9 -->Miscellaneous Tasks"},
-    { message = "^ci", group = "<!-- 9 -->Miscellaneous Tasks"},
     { message = "^deps", group = "<!-- 9 -->Miscellaneous Tasks"},
+    { message = "^ci", skip = true},
     { message = "^revert", skip = true},
     { message = "^v[0-9]+", skip = true},
 ]
