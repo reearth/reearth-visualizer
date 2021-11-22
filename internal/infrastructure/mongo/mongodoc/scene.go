@@ -24,6 +24,12 @@ type ScenePluginDocument struct {
 	Property *string
 }
 
+type SceneClusterDocument struct {
+	ID       string
+	Name     string
+	Property string
+}
+
 type SceneDocument struct {
 	ID          string
 	Project     string
@@ -34,6 +40,7 @@ type SceneDocument struct {
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
+	Clusters    []SceneClusterDocument
 }
 
 type SceneConsumer struct {
@@ -85,10 +92,11 @@ func (c *SceneIDConsumer) Consume(raw bson.Raw) error {
 func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 	widgets := scene.WidgetSystem().Widgets()
 	plugins := scene.PluginSystem().Plugins()
+	clusters := scene.Clusters().Clusters()
 
 	widgetsDoc := make([]SceneWidgetDocument, 0, len(widgets))
 	pluginsDoc := make([]ScenePluginDocument, 0, len(plugins))
-
+	clsuterDoc := make([]SceneClusterDocument, 0, len(clusters))
 	for _, w := range widgets {
 		widgetsDoc = append(widgetsDoc, SceneWidgetDocument{
 			ID:        w.ID().String(),
@@ -107,6 +115,14 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		})
 	}
 
+	for _, cl := range clusters {
+		clsuterDoc = append(clsuterDoc, SceneClusterDocument{
+			ID:       cl.ID().String(),
+			Name:     cl.Name(),
+			Property: cl.Property().String(),
+		})
+	}
+
 	id := scene.ID().String()
 	return &SceneDocument{
 		ID:          id,
@@ -118,6 +134,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		AlignSystem: NewWidgetAlignSystem(scene.WidgetAlignSystem()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
+		Clusters:    clsuterDoc,
 	}, id
 }
 
@@ -145,6 +162,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 
 	ws := make([]*scene.Widget, 0, len(d.Widgets))
 	ps := make([]*scene.Plugin, 0, len(d.Plugins))
+	clusters := make([]*scene.Cluster, 0, len(d.Clusters))
 
 	for _, w := range d.Widgets {
 		wid, err := id.WidgetIDFrom(w.ID)
@@ -181,11 +199,30 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		ps = append(ps, scene.NewPlugin(pid, id.PropertyIDFromRef(p.Property)))
 	}
 
+	for _, c := range d.Clusters {
+		cid, err := id.ClusterIDFrom(c.ID)
+		if err != nil {
+			return nil, err
+		}
+		pid, err := id.PropertyIDFrom(c.Property)
+		if err != nil {
+			return nil, err
+		}
+		cluster, err := scene.NewCluster(cid, c.Name, pid)
+		if err != nil {
+			return nil, err
+		}
+		clusters = append(clusters, cluster)
+	}
+
+	cl := scene.NewClusterListFrom(clusters)
+
 	return scene.New().
 		ID(sid).
 		Project(projectID).
 		Team(tid).
 		RootLayer(lid).
+		Clusters(cl).
 		WidgetSystem(scene.NewWidgetSystem(ws)).
 		WidgetAlignSystem(d.AlignSystem.Model()).
 		PluginSystem(scene.NewPluginSystem(ps)).

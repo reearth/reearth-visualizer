@@ -245,6 +245,21 @@ func TestExtension(t *testing.T) {
 			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
+			name: "cluster",
+			ext: Extension{
+				Description: &d,
+				ID:          "cesium",
+				Name:        "Cesium",
+				Schema:      nil,
+				Type:        "cluster",
+				Visualizer:  &cesium,
+			},
+			sys:        true,
+			pid:        id.OfficialPluginID,
+			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("cesium").Type(plugin.ExtensionTypeCluster).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
+			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+		},
+		{
 			name: "empty visualizer",
 			ext: Extension{
 				Description: &d,

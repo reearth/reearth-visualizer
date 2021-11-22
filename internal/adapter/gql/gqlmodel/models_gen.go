@@ -39,6 +39,17 @@ type Tags interface {
 	IsTags()
 }
 
+type AddClusterInput struct {
+	SceneID    id.ID  `json:"sceneId"`
+	Name       string `json:"name"`
+	PropertyID id.ID  `json:"propertyId"`
+}
+
+type AddClusterPayload struct {
+	Scene   *Scene   `json:"scene"`
+	Cluster *Cluster `json:"cluster"`
+}
+
 type AddDatasetSchemaInput struct {
 	SceneID             id.ID  `json:"sceneId"`
 	Name                string `json:"name"`
@@ -195,6 +206,12 @@ type Camera struct {
 	Pitch    float64 `json:"pitch"`
 	Roll     float64 `json:"roll"`
 	Fov      float64 `json:"fov"`
+}
+
+type Cluster struct {
+	ID       id.ID  `json:"id"`
+	Name     string `json:"name"`
+	Property id.ID  `json:"property"`
 }
 
 type CreateAssetInput struct {
@@ -879,6 +896,16 @@ type RemoveAssetPayload struct {
 	AssetID id.ID `json:"assetId"`
 }
 
+type RemoveClusterInput struct {
+	ClusterID id.ID `json:"clusterId"`
+	SceneID   id.ID `json:"sceneId"`
+}
+
+type RemoveClusterPayload struct {
+	Scene     *Scene `json:"scene"`
+	ClusterID id.ID  `json:"clusterId"`
+}
+
 type RemoveDatasetSchemaInput struct {
 	SchemaID id.ID `json:"schemaId"`
 	Force    *bool `json:"force"`
@@ -979,6 +1006,7 @@ type Scene struct {
 	DatasetSchemas        *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds                []*id.ID                 `json:"tagIds"`
 	Tags                  []Tag                    `json:"tags"`
+	Clusters              []*Cluster               `json:"clusters"`
 }
 
 func (Scene) IsNode() {}
@@ -1101,6 +1129,18 @@ type UnlinkPropertyValueInput struct {
 	SchemaGroupID *id.PropertySchemaGroupID `json:"schemaGroupId"`
 	ItemID        *id.ID                    `json:"itemId"`
 	FieldID       id.PropertySchemaFieldID  `json:"fieldId"`
+}
+
+type UpdateClusterInput struct {
+	ClusterID  id.ID   `json:"clusterId"`
+	SceneID    id.ID   `json:"sceneId"`
+	Name       *string `json:"name"`
+	PropertyID *id.ID  `json:"propertyId"`
+}
+
+type UpdateClusterPayload struct {
+	Scene   *Scene   `json:"scene"`
+	Cluster *Cluster `json:"cluster"`
 }
 
 type UpdateDatasetSchemaInput struct {

@@ -115,6 +115,8 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 		typ = plugin.ExtensionTypeVisualizer
 	case "infobox":
 		typ = plugin.ExtensionTypeInfobox
+	case "cluster":
+		typ = plugin.ExtensionTypeCluster
 	case "":
 		return nil, nil, errors.New("type missing")
 	default:

@@ -30,6 +30,14 @@ func ToScenePlugin(sp *scene.Plugin) *ScenePlugin {
 	}
 }
 
+func ToCluster(c *scene.Cluster) *Cluster {
+	return &Cluster{
+		ID:       c.ID().ID(),
+		Name:     c.Name(),
+		Property: c.Property().ID(),
+	}
+}
+
 func ToScene(scene *scene.Scene) *Scene {
 	if scene == nil {
 		return nil
@@ -39,6 +47,12 @@ func ToScene(scene *scene.Scene) *Scene {
 	widgets := make([]*SceneWidget, 0, len(sceneWidgets))
 	for _, w := range sceneWidgets {
 		widgets = append(widgets, ToSceneWidget(w))
+	}
+
+	cl := scene.Clusters().Clusters()
+	clusters := make([]*Cluster, 0, len(cl))
+	for _, c := range cl {
+		clusters = append(clusters, ToCluster(c))
 	}
 
 	scenePlugins := scene.PluginSystem().Plugins()
@@ -55,6 +69,7 @@ func ToScene(scene *scene.Scene) *Scene {
 		RootLayerID:       scene.RootLayer().ID(),
 		CreatedAt:         scene.CreatedAt(),
 		UpdatedAt:         scene.UpdatedAt(),
+		Clusters:          clusters,
 		Widgets:           widgets,
 		WidgetAlignSystem: ToWidgetAlignSystem(scene.WidgetAlignSystem()),
 		Plugins:           plugins,

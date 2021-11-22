@@ -94,3 +94,29 @@ func TestSceneNil(t *testing.T) {
 	assert.Nil(t, s.PluginSystem())
 	assert.True(t, s.Property().IsNil())
 }
+
+func TestScene_Clusters(t *testing.T) {
+	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
+
+	tests := []struct {
+		name  string
+		scene *Scene
+		want  *ClusterList
+	}{
+		{
+			name: "should return a cluster list",
+			scene: &Scene{
+				clusters: NewClusterListFrom([]*Cluster{c1}),
+			},
+			want: NewClusterListFrom([]*Cluster{c1}),
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(tt *testing.T) {
+			tt.Parallel()
+
+			assert.Equal(tt, tc.want, tc.scene.Clusters())
+		})
+	}
+}

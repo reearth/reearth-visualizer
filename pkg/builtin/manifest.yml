@@ -1584,3 +1584,76 @@ extensions:
             - id: layerCamera
               title: Camera position
               type: camera
+  - id: cluster
+    name: Cluster
+    type: cluster
+    description: Defines how layers are clustered together and displayed on earth.
+    schema:
+      groups:
+        - id: default
+          title: Cluster
+          fields:
+            - id: cluster_name
+              type: string
+              title: Name
+              description: Sets the name of the cluster.
+            - id: cluster_pixelRange
+              type: number
+              description: Sets the minimum range between layers to get clustered together.
+              title: Pixel range
+              defaultValue: 15
+              min: 1
+              max: 200
+              suffix: px
+            - id: cluster_minSize
+              type: number
+              title: Minimum cluster size
+              description: The minimum number of layers that can be clustered.
+              defaultValue: 3
+              min: 2
+              max: 20
+            - id: cluster_maxSize
+              title: Max cluster size
+              description: Sets the size of cluster entity.
+              defaultValue: 48
+              type: number
+              min: 1
+              max: 200
+            - id: cluster_shapeType
+              type: string
+              title: Shape type
+              defaultValue: pin
+              description: Sets the shape of cluster entity.
+              choices:
+                - key: pin
+                  label: Pin
+                - key: label
+                  label: Label
+            - id: cluster_textColor
+              type: string
+              title: Text color
+              description: Sets the text color of cluster entity.
+              ui: color
+              availableIf:
+                field: cluster_shapeType
+                type: string
+                value: label
+            - id: cluster_backgroundColor
+              type: string
+              ui: color
+              title: Background color
+              description: Sets the background color of cluster entity.
+            - id: cluster_image
+              type: url
+              title: Image
+              description: Sets the image of cluster entity.
+              ui: image
+        - id: layers
+          title: Layers
+          representativeField: layer
+          list: true
+          fields:
+            - id: layer
+              title: Layer
+              type: ref
+              ui: layer

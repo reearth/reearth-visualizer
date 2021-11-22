@@ -11,18 +11,13 @@ import (
 type ExtensionType string
 
 var (
-	// ErrPluginExtensionDuplicated _
-	ErrPluginExtensionDuplicated error = errors.New("plugin extension duplicated")
-	// ExtensionTypePrimitive _
-	ExtensionTypePrimitive ExtensionType = "primitive"
-	// ExtensionTypeWidget _
-	ExtensionTypeWidget ExtensionType = "widget"
-	// ExtensionTypeBlock _
-	ExtensionTypeBlock ExtensionType = "block"
-	// ExtensionTypeVisualizer _
-	ExtensionTypeVisualizer ExtensionType = "visualizer"
-	// ExtensionTypeInfobox _
-	ExtensionTypeInfobox ExtensionType = "infobox"
+	ErrPluginExtensionDuplicated error         = errors.New("plugin extension duplicated")
+	ExtensionTypePrimitive       ExtensionType = "primitive"
+	ExtensionTypeWidget          ExtensionType = "widget"
+	ExtensionTypeBlock           ExtensionType = "block"
+	ExtensionTypeVisualizer      ExtensionType = "visualizer"
+	ExtensionTypeInfobox         ExtensionType = "infobox"
+	ExtensionTypeCluster         ExtensionType = "cluster"
 )
 
 type Extension struct {

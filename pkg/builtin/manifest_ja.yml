@@ -749,3 +749,37 @@ extensions:
             title: カメラ画角
           layerCamera:
             title: カメラ
+  cluster:
+    name: クラスタ
+    description: レイヤーを自動的にまとめて表示することが可能なクラスタを設定します。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          cluster_name:
+            title: クラスタ名
+            description: クラスタの名前を指定します。
+          cluster_pixelRange:
+            title: 最小範囲
+            description: 画面上の何ピクセル分の範囲にあるレイヤーをクラスタにまとめるかを最小値で指定します。
+          cluster_minSize:
+            title: 最小サイズ
+            description: クラスタが表示される最小のレイヤー数
+          cluster_maxSize:
+            title: 最大サイズ
+            description: クラスタに属することが可能な最大レイヤー数
+          cluster_shapeType:
+            title: 表示方法
+            description: 画面上で表示されるクラスタの表示方法を指定します。
+            choices:
+              pin: ピン
+              label: ラベル
+          cluster_textColor:
+            title: 文字色
+            description: 画面上で表示されるクラスタの文字色を指定します。
+          cluster_backgroundColor:
+            title: 背景色
+            description: 画面上で表示されるクラスタの背景色を指定します。
+          cluster_image:
+            title: 画像
+            description: 画面上で表示されるクラスタの画像を指定します。

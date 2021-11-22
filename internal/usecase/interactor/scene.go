@@ -684,3 +684,119 @@ func (i *Scene) getPlugin(ctx context.Context, sid id.SceneID, p id.PluginID, e 
 
 	return plugin, extension, nil
 }
+
+func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string, propertyID id.PropertyID, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	if err := i.CheckSceneLock(ctx, sceneID); err != nil {
+		return nil, nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.WritableTeams)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	cid := id.NewClusterID()
+	cluster, err := scene.NewCluster(cid, name, propertyID)
+	if err != nil {
+		return nil, nil, err
+	}
+	s.Clusters().Add(cluster)
+	err = i.sceneRepo.Save(ctx, s)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return s, cluster, nil
+}
+
+func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateClusterParam, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
+		return nil, nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, param.SceneID, operator.WritableTeams)
+	if err != nil {
+		return nil, nil, err
+	}
+	cluster := s.Clusters().Get(param.ClusterID)
+	if cluster == nil {
+		return nil, nil, rerror.ErrNotFound
+	}
+	if param.Name != nil {
+		cluster.Rename(*param.Name)
+	}
+	if param.PropertyID != nil {
+		cluster.UpdateProperty(*param.PropertyID)
+	}
+
+	err = i.sceneRepo.Save(ctx, s)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return s, cluster, nil
+}
+
+func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID id.ClusterID, operator *usecase.Operator) (*scene.Scene, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.OnlyOperator(operator); err != nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	if err := i.CheckSceneLock(ctx, sceneID); err != nil {
+		return nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.WritableTeams)
+	if err != nil {
+		return nil, err
+	}
+	s.Clusters().Remove(clusterID)
+
+	err = i.sceneRepo.Save(ctx, s)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return s, nil
+}
