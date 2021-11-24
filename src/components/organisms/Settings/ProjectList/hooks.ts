@@ -9,6 +9,7 @@ import {
   PublishmentStatus,
   useCreateProjectMutation,
   useCreateSceneMutation,
+  useProjectQuery,
   Visualizer,
   useAssetsQuery,
   useCreateAssetMutation,
@@ -42,13 +43,18 @@ export default () => {
   const teamId = currentTeam?.id;
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
+  const { data: projectData } = useProjectQuery({
+    variables: { teamId: teamId ?? "" },
+    skip: !teamId,
+  });
+
   useEffect(() => {
     if (team?.id && !currentTeam?.id) {
       setTeam(team);
     }
   }, [currentTeam, team, setTeam]);
 
-  const currentProjects = (team?.projects.nodes ?? [])
+  const currentProjects = (projectData?.projects.nodes ?? [])
     .map<Project | undefined>(project =>
       project
         ? {
@@ -64,7 +70,7 @@ export default () => {
     )
     .filter((project): project is Project => !!project && project?.isArchived === false);
 
-  const archivedProjects = (team?.projects.nodes ?? [])
+  const archivedProjects = (projectData?.projects.nodes ?? [])
     .map<Project | undefined>(project =>
       project
         ? {
