@@ -1,6 +1,6 @@
+import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Meta, Story } from "@storybook/react";
 import Table, { Props } from ".";
 
 export default {

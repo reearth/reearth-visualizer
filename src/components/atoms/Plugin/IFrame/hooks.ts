@@ -60,7 +60,7 @@ export default function useHook({
     const cb = (ev: MessageEvent<any>) => {
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow) return;
       if (ev.data?.[autoResizeMessageKey]) {
-        const { width, height } = ev.data?.[autoResizeMessageKey];
+        const { width, height } = ev.data[autoResizeMessageKey];
         if (typeof width !== "number" || typeof height !== "number") return;
         setIFrameSize([width + "px", height + "px"]);
       } else {

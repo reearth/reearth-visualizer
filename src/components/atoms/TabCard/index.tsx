@@ -1,9 +1,10 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
-import Flex from "../Flex";
+import { styled, useTheme } from "@reearth/theme";
+
 import Box from "../Box";
+import Flex from "../Flex";
 
 export type Props = {
   className?: string;
