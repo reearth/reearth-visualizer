@@ -13,6 +13,7 @@ import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
+import { useCustomCompareCallback } from "use-custom-compare";
 
 import { Camera, LatLng } from "@reearth/util/value";
 
@@ -94,17 +95,24 @@ export default ({
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
 
-  const handleMount = useCallback(() => {
-    if (initialCameraFlight.current) return;
-    initialCameraFlight.current = true;
-    if (property?.default?.camera) {
-      engineAPI.flyTo(property.default.camera, { duration: 0 });
-    }
-    const camera = getCamera(cesium?.current?.cesiumElement);
-    if (camera) {
-      onCameraChange?.(camera);
-    }
-  }, [engineAPI, onCameraChange, property?.default?.camera]);
+  const handleMount = useCustomCompareCallback(
+    () => {
+      if (initialCameraFlight.current) return;
+      initialCameraFlight.current = true;
+      if (property?.default?.camera) {
+        engineAPI.flyTo(property.default.camera, { duration: 0 });
+      }
+      const camera = getCamera(cesium?.current?.cesiumElement);
+      if (camera) {
+        onCameraChange?.(camera);
+      }
+    },
+    [engineAPI, onCameraChange, property?.default?.camera],
+    (prevDeps, nextDeps) =>
+      prevDeps[0] === nextDeps[0] &&
+      prevDeps[1] === nextDeps[1] &&
+      isEqual(prevDeps[2], nextDeps[2]),
+  );
 
   const handleUnmount = useCallback(() => {
     initialCameraFlight.current = false;
