@@ -32,17 +32,18 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     ready,
     children,
     selectedLayerId,
+    isLayerDraggable,
+    isLayerDragging,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
-    isLayerDraggable,
-    isLayerDragging,
   },
   ref,
 ) => {
   const {
     terrainProvider,
+    terrainProperty,
     backgroundColor,
     imageryLayers,
     cesium,
@@ -108,15 +109,15 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <Sun show={property?.atmosphere?.enable_sun ?? true} />
         <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
         <Globe
-          terrainProvider={terrainProvider}
-          depthTestAgainstTerrain={!!property?.default?.depthTestAgainstTerrain}
           enableLighting={!!property?.atmosphere?.enable_lighting}
           showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
           atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
           atmosphereHueShift={property?.atmosphere?.hue_shift}
           atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
-          terrainExaggeration={property?.default?.terrainExaggeration}
-          terrainExaggerationRelativeHeight={property?.default?.terrainExaggerationRelativeHeight}
+          terrainProvider={terrainProvider}
+          depthTestAgainstTerrain={!!terrainProperty.depthTestAgainstTerrain}
+          terrainExaggerationRelativeHeight={terrainProperty.terrainExaggerationRelativeHeight}
+          terrainExaggeration={terrainProperty.terrainExaggeration}
         />
         {imageryLayers?.map(([id, im, min, max]) => (
           <ImageryLayer

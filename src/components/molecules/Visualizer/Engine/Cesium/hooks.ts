@@ -1,12 +1,4 @@
-import {
-  createWorldTerrain,
-  Color,
-  Entity,
-  Ion,
-  EllipsoidTerrainProvider,
-  Cesium3DTileFeature,
-  Cartesian3,
-} from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -21,6 +13,7 @@ import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 
 import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
 import imagery from "./imagery";
+import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
@@ -82,9 +75,40 @@ export default ({
     setImageryLayers(newTiles);
   }, [property?.tiles ?? []]);
 
+  // terrain
+  const terrainProperty = useMemo(
+    () => ({
+      terrain: property?.terrain?.terrain || property?.default?.terrain,
+      terrainType: property?.terrain?.terrainType || property?.default?.terrainType,
+      terrainExaggeration:
+        property?.terrain?.terrainExaggeration || property?.default?.terrainExaggeration,
+      terrainExaggerationRelativeHeight:
+        property?.terrain?.terrainExaggerationRelativeHeight ||
+        property?.default?.terrainExaggerationRelativeHeight,
+      depthTestAgainstTerrain:
+        property?.terrain?.depthTestAgainstTerrain || property?.default?.depthTestAgainstTerrain,
+    }),
+    [
+      property?.default?.terrain,
+      property?.default?.terrainType,
+      property?.default?.terrainExaggeration,
+      property?.default?.terrainExaggerationRelativeHeight,
+      property?.default?.depthTestAgainstTerrain,
+      property?.terrain?.terrain,
+      property?.terrain?.terrainType,
+      property?.terrain?.terrainExaggeration,
+      property?.terrain?.terrainExaggerationRelativeHeight,
+      property?.terrain?.depthTestAgainstTerrain,
+    ],
+  );
+
   const terrainProvider = useMemo((): TerrainProvider | undefined => {
-    return property?.default?.terrain ? createWorldTerrain() : new EllipsoidTerrainProvider();
-  }, [property?.default?.terrain]);
+    return terrainProperty.terrain
+      ? terrainProperty.terrainType
+        ? terrain[terrainProperty.terrainType] || terrain.default
+        : terrain.cesium
+      : terrain.default;
+  }, [terrainProperty.terrain, terrainProperty.terrainType]);
 
   const backgroundColor = useMemo(
     () =>
@@ -242,6 +266,7 @@ export default ({
 
   return {
     terrainProvider,
+    terrainProperty,
     backgroundColor,
     imageryLayers,
     cesium,
