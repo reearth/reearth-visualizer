@@ -319,7 +319,8 @@
             "widget",
             "block",
             "visualizer",
-            "infobox"
+            "infobox",
+            "cluster"
           ]
         },
         "singleOnly": {
