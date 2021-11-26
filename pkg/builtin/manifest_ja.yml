@@ -26,9 +26,6 @@ extensions:
           depthTestAgainstTerrain:
             title: 地形の下を非表示
             description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
-            choices:
-              cesium: Cesium
-              arcgis: ArcGIS
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。

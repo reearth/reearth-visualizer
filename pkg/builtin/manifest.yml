@@ -26,11 +26,12 @@ extensions:
               type: string
               title: Terrain Type
               description: Specify terrain type.
+              defaultValue: cesium
               choices:
                 - key: cesium
-                  label: Cesium
+                  label: Cesium World Terrain
                 - key: arcgis
-                  label: ArcGIS
+                  label: ArcGIS Terrain
               availableIf:
                 field: terrain
                 type: bool
