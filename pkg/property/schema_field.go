@@ -118,17 +118,11 @@ func (p *SchemaField) IsAvailableIf() *Condition {
 	return p.cond.Clone()
 }
 
-func (p *SchemaField) Validate(value *Value) bool {
-	if p == nil {
+func (p *SchemaField) Validate(value *OptionalValue) bool {
+	if p == nil || value == nil || p.propertyType != value.Type() {
 		return false
 	}
-	if value == nil {
-		return true
-	}
-	if p.propertyType != value.Type() {
-		return false
-	}
-	switch v := value.Value().(type) {
+	switch v := value.Value().Value().(type) {
 	case float64:
 		if min := p.Min(); min != nil {
 			if v < *min {

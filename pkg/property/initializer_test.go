@@ -94,7 +94,7 @@ func TestInitializerItem_Clone(t *testing.T) {
 			Fields: []*InitializerField{{
 				Field: id.PropertySchemaFieldID("name"),
 				Type:  ValueTypeString,
-				Value: ValueTypeString.ValueFromUnsafe("aaa"),
+				Value: ValueTypeString.ValueFrom("aaa"),
 				Links: []*InitializerLink{{
 					Dataset: id.NewDatasetID().Ref(),
 					Schema:  id.NewDatasetSchemaID(),
@@ -141,12 +141,12 @@ func TestInitializerItem_PropertyGroup(t *testing.T) {
 		Fields: []*InitializerField{{
 			Field: id.PropertySchemaFieldID("name"),
 			Type:  ValueTypeString,
-			Value: ValueTypeString.ValueFromUnsafe("aaa"),
+			Value: ValueTypeString.ValueFrom("aaa"),
 		}},
 	}
 
 	expected := NewItem().ID(*item.ID).Schema(parent, item.SchemaItem).Group().Fields([]*Field{
-		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).TypeUnsafe(item.Fields[0].Type).ValueUnsafe(item.Fields[0].Value).Build(),
+		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).ValueUnsafe(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).Build(),
 	}).MustBuild()
 
 	assert.Equal(t, expected, item.PropertyGroup(parent))
@@ -183,7 +183,7 @@ func TestInitializerGroup_Clone(t *testing.T) {
 		Fields: []*InitializerField{{
 			Field: id.PropertySchemaFieldID("name"),
 			Type:  ValueTypeString,
-			Value: ValueTypeString.ValueFromUnsafe("aaa"),
+			Value: ValueTypeString.ValueFrom("aaa"),
 			Links: []*InitializerLink{{
 				Dataset: id.NewDatasetID().Ref(),
 				Schema:  id.NewDatasetSchemaID(),
@@ -208,12 +208,12 @@ func TestInitializerGroup_PropertyGroup(t *testing.T) {
 		Fields: []*InitializerField{{
 			Field: id.PropertySchemaFieldID("name"),
 			Type:  ValueTypeString,
-			Value: ValueTypeString.ValueFromUnsafe("aaa"),
+			Value: ValueTypeString.ValueFrom("aaa"),
 		}},
 	}
 
 	expected := NewItem().ID(*item.ID).Schema(parent, parentItem).Group().Fields([]*Field{
-		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).TypeUnsafe(item.Fields[0].Type).ValueUnsafe(item.Fields[0].Value).Build(),
+		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).ValueUnsafe(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).Build(),
 	}).MustBuild()
 
 	p, err := item.PropertyGroup(parent, parentItem)
@@ -231,7 +231,7 @@ func TestInitializerField_Clone(t *testing.T) {
 	field := &InitializerField{
 		Field: id.PropertySchemaFieldID("name"),
 		Type:  ValueTypeString,
-		Value: ValueTypeString.ValueFromUnsafe("aaa"),
+		Value: ValueTypeString.ValueFrom("aaa"),
 		Links: []*InitializerLink{{
 			Dataset: id.NewDatasetID().Ref(),
 			Schema:  id.NewDatasetSchemaID(),
@@ -249,7 +249,7 @@ func TestInitializerField_PropertyField(t *testing.T) {
 	field := &InitializerField{
 		Field: id.PropertySchemaFieldID("name"),
 		Type:  ValueTypeString,
-		Value: ValueTypeString.ValueFromUnsafe("aaa"),
+		Value: ValueTypeString.ValueFrom("aaa"),
 		Links: []*InitializerLink{{
 			Dataset: id.NewDatasetID().Ref(),
 			Schema:  id.NewDatasetSchemaID(),
@@ -259,8 +259,7 @@ func TestInitializerField_PropertyField(t *testing.T) {
 
 	expected := NewFieldUnsafe().
 		FieldUnsafe(field.Field).
-		TypeUnsafe(field.Type).
-		ValueUnsafe(field.Value).
+		ValueUnsafe(NewOptionalValue(field.Type, field.Value)).
 		LinksUnsafe(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CopyRef(), field.Links[0].Schema, field.Links[0].Field)})).
 		Build()
 

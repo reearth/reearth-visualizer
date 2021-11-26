@@ -170,7 +170,7 @@ func ToModelPropertySchemaField(f *PropertySchemaFieldDocument) (*property.Schem
 		Description(f.Description).
 		Prefix(f.Prefix).
 		Suffix(f.Suffix).
-		DefaultValue(vt.ValueFromUnsafe(f.DefaultValue)).
+		DefaultValue(vt.ValueFrom(f.DefaultValue)).
 		UIRef(property.SchemaFieldUIFromRef(f.UI)).
 		MinRef(f.Min).
 		MaxRef(f.Max).

@@ -25,10 +25,15 @@ type SealedItem struct {
 }
 
 type SealedField struct {
-	ID            id.PropertySchemaFieldID
-	Type          ValueType
-	DatasetValue  *dataset.Value
-	PropertyValue *Value
+	ID  id.PropertySchemaFieldID
+	Val *ValueAndDatasetValue
+}
+
+func (f *SealedField) Value() *Value {
+	if f == nil {
+		return nil
+	}
+	return f.Val.Value()
 }
 
 func Seal(ctx context.Context, p *Merged, d dataset.GraphLoader) (*Sealed, error) {
@@ -102,12 +107,13 @@ func sealedGroup(ctx context.Context, fields []*MergedField, d dataset.GraphLoad
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, &SealedField{
-			ID:            f.ID,
-			Type:          f.Type,
-			PropertyValue: f.Value.Clone(),
-			DatasetValue:  dv.Clone(),
-		})
+
+		if val := NewValueAndDatasetValue(f.Type, dv.Clone(), f.Value.Clone()); val != nil {
+			res = append(res, &SealedField{
+				ID:  f.ID,
+				Val: val,
+			})
+		}
 	}
 	return res, nil
 }
@@ -152,13 +158,7 @@ func sealedFieldsInterface(fields []*SealedField) map[string]interface{} {
 	item := map[string]interface{}{}
 
 	for _, f := range fields {
-		var v interface{}
-		if f.DatasetValue != nil {
-			v = f.DatasetValue.Interface()
-		} else {
-			v = f.PropertyValue.Interface()
-		}
-		item[f.ID.String()] = v
+		item[f.ID.String()] = f.Val.Value().Interface()
 	}
 
 	return item

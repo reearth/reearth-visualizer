@@ -137,7 +137,7 @@ func TestLinks_Validate(t *testing.T) {
 			},
 			DM: dataset.Map{
 				did1: dataset.New().ID(did1).Schema(dsid1).Fields([]*dataset.Field{
-					dataset.NewField(dfid1, dataset.ValueFrom("vvv"), ""),
+					dataset.NewField(dfid1, dataset.ValueTypeString.ValueFrom("vvv"), ""),
 				}).MustBuild(),
 			},
 			Links:    NewLinks([]*Link{NewLink(did1, dsid1, dfid1)}),
@@ -416,7 +416,7 @@ func TestLink_Validate(t *testing.T) {
 		{
 			Name: "input schema id != link schema",
 			DS: dataset.New().ID(did1).Schema(dsid1).Fields([]*dataset.Field{
-				dataset.NewField(dfid1, dataset.ValueFrom("vvv"), "")}).MustBuild(),
+				dataset.NewField(dfid1, dataset.ValueTypeString.ValueFrom("vvv"), "")}).MustBuild(),
 			DSS: dataset.NewSchema().NewID().Fields([]*dataset.SchemaField{
 				dataset.NewSchemaField().
 					ID(dfid1).
@@ -452,7 +452,7 @@ func TestLink_Validate(t *testing.T) {
 		{
 			Name: "valid",
 			DS: dataset.New().ID(did1).Schema(dsid1).Fields([]*dataset.Field{
-				dataset.NewField(dfid1, dataset.ValueFrom("vvv"), "")}).MustBuild(),
+				dataset.NewField(dfid1, dataset.ValueTypeString.ValueFrom("vvv"), "")}).MustBuild(),
 			DSS: dataset.NewSchema().ID(dsid1).Fields([]*dataset.SchemaField{
 				dataset.NewSchemaField().
 					ID(dfid1).

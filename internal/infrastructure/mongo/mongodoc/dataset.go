@@ -128,13 +128,13 @@ func (doc *DatasetDocument) Model() (*dataset.Dataset, error) {
 		f := dataset.NewField(
 			fid,
 			toModelDatasetValue(field.Value, field.Type),
-			dataset.Source(field.Source),
+			field.Source,
 		)
 		fields = append(fields, f)
 	}
 	return dataset.New().
 		ID(did).
-		Source(dataset.Source(doc.Source)).
+		Source(doc.Source).
 		Fields(fields).
 		Schema(ds).
 		Scene(scene).
@@ -145,7 +145,7 @@ func NewDataset(dataset *dataset.Dataset) (*DatasetDocument, string) {
 	did := dataset.ID().String()
 	var doc DatasetDocument
 	doc.ID = did
-	doc.Source = dataset.Source().String()
+	doc.Source = dataset.Source()
 	doc.Scene = id.ID(dataset.Scene()).String()
 	doc.Schema = id.ID(dataset.Schema()).String()
 
@@ -156,7 +156,7 @@ func NewDataset(dataset *dataset.Dataset) (*DatasetDocument, string) {
 			Field:  f.Field().String(),
 			Type:   string(f.Type()),
 			Value:  f.Value().Interface(),
-			Source: f.Source().String(),
+			Source: f.Source(),
 		})
 	}
 	return &doc, did
@@ -183,9 +183,5 @@ func toModelDatasetValue(v interface{}, t string) *dataset.Value {
 	if v2, ok := v.(bson.D); ok {
 		v = v2.Map()
 	}
-	vt, ok := dataset.ValueTypeFrom(t)
-	if !ok {
-		return nil
-	}
-	return vt.ValueFrom(v)
+	return dataset.ValueTypeFrom(t).ValueFrom(v)
 }

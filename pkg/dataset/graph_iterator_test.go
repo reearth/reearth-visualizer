@@ -50,13 +50,14 @@ func TestDatasetGraphIterator(t *testing.T) {
 }
 
 func testTestDatasetGraphIteratorNext(t *testing.T, it *GraphIterator, ds List) {
+	t.Helper()
 	for i, d := range ds {
 		next, done := it.Next(d)
 		if i == len(ds)-1 {
 			assert.Equal(t, true, done)
 		} else {
+			assert.False(t, done, "next done %d", i)
 			assert.Equal(t, ds[i+1].ID(), next, "next %d", i)
-			assert.Equal(t, false, done, "next done %d", i)
 		}
 	}
 	assert.Equal(t, ds.Map(), it.Result())

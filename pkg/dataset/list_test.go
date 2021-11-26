@@ -9,9 +9,9 @@ import (
 
 func TestDatasetListDiff(t *testing.T) {
 	sid := id.SceneID(id.New())
-	source1 := Source("hogehoge/1")
-	source2 := Source("hogehoge/2")
-	source3 := Source("hogehoge/3")
+	source1 := "hogehoge/1"
+	source2 := "hogehoge/2"
+	source3 := "hogehoge/3"
 	d1, _ := New().NewID().Scene(sid).Source(source1).Build()
 	d2, _ := New().NewID().Scene(sid).Source(source2).Build()
 	d3, _ := New().NewID().Scene(sid).Source(source2).Build()

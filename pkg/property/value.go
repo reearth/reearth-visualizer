@@ -1,240 +1,216 @@
 package property
 
-type ValueInner interface {
-	Value() *Value
-}
+import (
+	"net/url"
+	"strconv"
 
-// LatLng _
-type LatLng struct {
-	Lat float64 `json:"lat" mapstructure:"lat"`
-	Lng float64 `json:"lng" mapstructure:"lng"`
-}
-
-// Clone _
-func (l *LatLng) Clone() *LatLng {
-	if l == nil {
-		return nil
-	}
-	return &LatLng{
-		Lat: l.Lat,
-		Lng: l.Lng,
-	}
-}
-
-// LatLngHeight _
-type LatLngHeight struct {
-	Lat    float64 `json:"lat" mapstructure:"lat"`
-	Lng    float64 `json:"lng" mapstructure:"lng"`
-	Height float64 `json:"height" mapstructure:"height"`
-}
-
-// Clone _
-func (l *LatLngHeight) Clone() *LatLngHeight {
-	if l == nil {
-		return nil
-	}
-	return &LatLngHeight{
-		Lat:    l.Lat,
-		Lng:    l.Lng,
-		Height: l.Height,
-	}
-}
-
-// Camera _
-type Camera struct {
-	Lat      float64 `json:"lat" mapstructure:"lat"`
-	Lng      float64 `json:"lng" mapstructure:"lng"`
-	Altitude float64 `json:"altitude" mapstructure:"altitude"`
-	Heading  float64 `json:"heading" mapstructure:"heading"`
-	Pitch    float64 `json:"pitch" mapstructure:"pitch"`
-	Roll     float64 `json:"roll" mapstructure:"roll"`
-	FOV      float64 `json:"fov" mapstructure:"fov"`
-}
-
-// Clone _
-func (c *Camera) Clone() *Camera {
-	if c == nil {
-		return nil
-	}
-	return &Camera{
-		Lat:      c.Lat,
-		Lng:      c.Lng,
-		Altitude: c.Altitude,
-		Heading:  c.Heading,
-		Pitch:    c.Pitch,
-		Roll:     c.Roll,
-		FOV:      c.FOV,
-	}
-}
-
-// Typography _
-type Typography struct {
-	FontFamily *string    `json:"fontFamily" mapstructure:"fontFamily"`
-	FontWeight *string    `json:"fontWeight" mapstructure:"fontWeight"`
-	FontSize   *int       `json:"fontSize" mapstructure:"fontSize"`
-	Color      *string    `json:"color" mapstructure:"color"`
-	TextAlign  *TextAlign `json:"textAlign" mapstructure:"textAlign"`
-	Bold       *bool      `json:"bold" mapstructure:"bold"`
-	Italic     *bool      `json:"italic" mapstructure:"italic"`
-	Underline  *bool      `json:"underline" mapstructure:"underline"`
-}
-
-// Clone _
-func (t *Typography) Clone() *Typography {
-	if t == nil {
-		return nil
-	}
-	return &Typography{
-		FontFamily: t.FontFamily,
-		FontWeight: t.FontWeight,
-		FontSize:   t.FontSize,
-		Color:      t.Color,
-		TextAlign:  t.TextAlign,
-		Bold:       t.Bold,
-		Italic:     t.Italic,
-		Underline:  t.Underline,
-	}
-}
-
-// TextAlign _
-type TextAlign string
-
-const (
-	// TextAlignLeft _
-	TextAlignLeft TextAlign = "left"
-	// TextAlignCenter _
-	TextAlignCenter TextAlign = "center"
-	// TextAlignRight _
-	TextAlignRight TextAlign = "right"
-	// TextAlignJustify _
-	TextAlignJustify TextAlign = "justify"
-	// TextAlignJustifyAll _
-	TextAlignJustifyAll TextAlign = "justify_all"
+	"github.com/reearth/reearth-backend/pkg/value"
 )
 
-// TextAlignFrom _
-func TextAlignFrom(t string) (TextAlign, bool) {
-	switch TextAlign(t) {
-	case TextAlignLeft:
-		return TextAlignLeft, true
-	case TextAlignCenter:
-		return TextAlignCenter, true
-	case TextAlignRight:
-		return TextAlignRight, true
-	case TextAlignJustify:
-		return TextAlignJustify, true
-	case TextAlignJustifyAll:
-		return TextAlignJustifyAll, true
-	}
-	return TextAlign(""), false
+type LatLng = value.LatLng
+type LatLngHeight = value.LatLngHeight
+type Coordinates = value.Coordinates
+type Rect = value.Rect
+type Polygon = value.Polygon
+
+type ValueType value.Type
+
+var (
+	ValueTypeUnknown      = ValueType(value.TypeUnknown)
+	ValueTypeBool         = ValueType(value.TypeBool)
+	ValueTypeNumber       = ValueType(value.TypeNumber)
+	ValueTypeString       = ValueType(value.TypeString)
+	ValueTypeRef          = ValueType(value.TypeRef)
+	ValueTypeURL          = ValueType(value.TypeURL)
+	ValueTypeLatLng       = ValueType(value.TypeLatLng)
+	ValueTypeLatLngHeight = ValueType(value.TypeLatLngHeight)
+	ValueTypeCoordinates  = ValueType(value.TypeCoordinates)
+	ValueTypePolygon      = ValueType(value.TypePolygon)
+	ValueTypeRect         = ValueType(value.TypeRect)
+)
+
+var types = value.TypePropertyMap{
+	value.Type(ValueTypeTypography): &typePropertyTypography{},
+	value.Type(ValueTypeCamera):     &typePropertyCamera{},
 }
 
-// TextAlignFromRef _
-func TextAlignFromRef(t *string) *TextAlign {
-	if t == nil {
+func (vt ValueType) Valid() bool {
+	if _, ok := types[value.Type(vt)]; ok {
+		return true
+	}
+	return value.Type(vt).Default()
+}
+
+func (vt ValueType) ValueFrom(i interface{}) *Value {
+	v := value.Type(vt).ValueFrom(i, types)
+	if v == nil {
 		return nil
 	}
-	var t2 TextAlign
-	switch TextAlign(*t) {
-	case TextAlignLeft:
-		t2 = TextAlignLeft
-	case TextAlignCenter:
-		t2 = TextAlignCenter
-	case TextAlignRight:
-		t2 = TextAlignRight
-	case TextAlignJustify:
-		t2 = TextAlignJustify
-	case TextAlignJustifyAll:
-		t2 = TextAlignJustifyAll
-	default:
+	return &Value{v: *v}
+}
+
+type Value struct {
+	v value.Value
+}
+
+func (v *Value) IsEmpty() bool {
+	return v == nil || v.v.IsEmpty()
+}
+
+func (v *Value) Clone() *Value {
+	if v == nil {
 		return nil
 	}
-	return &t2
-}
-
-// String _
-func (t TextAlign) String() string {
-	return string(t)
-}
-
-// StringRef _
-func (t *TextAlign) StringRef() *string {
-	if t == nil {
+	vv := v.v.Clone()
+	if vv == nil {
 		return nil
 	}
-	t2 := string(*t)
-	return &t2
+	return &Value{v: *vv}
 }
 
-// Coordinates _
-type Coordinates []LatLngHeight
+func (v *Value) Type() ValueType {
+	if v == nil {
+		return ValueType(value.TypeUnknown)
+	}
+	return ValueType(v.v.Type())
+}
 
-// CoordinatesFrom generates a new Coordinates from slice such as [lon, lat, alt, lon, lat, alt, ...]
-func CoordinatesFrom(coords []float64) Coordinates {
-	if len(coords) == 0 {
+func (v *Value) Value() interface{} {
+	if v == nil {
 		return nil
 	}
+	return v.v.Value()
+}
 
-	r := make([]LatLngHeight, 0, len(coords)/3)
-	l := LatLngHeight{}
-	for i, c := range coords {
-		switch i % 3 {
-		case 0:
-			l = LatLngHeight{}
-			l.Lng = c
-		case 1:
-			l.Lat = c
-		case 2:
-			l.Height = c
-			r = append(r, l)
-		}
+func (v *Value) Interface() interface{} {
+	if v == nil {
+		return nil
+	}
+	return v.v.Interface()
+}
+
+func (v *Value) ValueBool() *bool {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueBool()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueNumber() *float64 {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueNumber()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueString() *string {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueString()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueRef() *string {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueRef()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueURL() *url.URL {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueURL()
+	if ok {
+		return vv
+	}
+	return nil
+}
+
+func (v *Value) ValueLatLng() *LatLng {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueLatLng()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueLatLngHeight() *LatLngHeight {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueLatLngHeight()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueCoordinates() *Coordinates {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueCoordinates()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValueRect() *Rect {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValueRect()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func (v *Value) ValuePolygon() *Polygon {
+	if v == nil {
+		return nil
+	}
+	vv, ok := v.v.ValuePolygon()
+	if ok {
+		return &vv
+	}
+	return nil
+}
+
+func ValueFromStringOrNumber(s string) *Value {
+	if vint, err := strconv.Atoi(s); err == nil {
+		return ValueTypeNumber.ValueFrom(vint)
 	}
 
-	return r
-}
+	if vfloat64, err := strconv.ParseFloat(s, 64); err == nil {
+		return ValueTypeNumber.ValueFrom(vfloat64)
+	}
 
-// Polygon _
-type Polygon []Coordinates
+	if vbool, err := strconv.ParseBool(s); err == nil {
+		return ValueTypeBool.ValueFrom(vbool)
+	}
 
-// Rect _
-type Rect struct {
-	West  float64 `json:"west" mapstructure:"west"`
-	South float64 `json:"south" mapstructure:"south"`
-	East  float64 `json:"east" mapstructure:"east"`
-	North float64 `json:"north" mapstructure:"north"`
-}
-
-// Value _
-func (l LatLng) Value() *Value {
-	return ValueTypeLatLng.ValueFromUnsafe(l)
-}
-
-// Value _
-func (l LatLngHeight) Value() *Value {
-	return ValueTypeLatLngHeight.ValueFromUnsafe(l)
-}
-
-// Value _
-func (c Camera) Value() *Value {
-	return ValueTypeCamera.ValueFromUnsafe(c)
-}
-
-// Value _
-func (t Typography) Value() *Value {
-	return ValueTypeTypography.ValueFromUnsafe(t)
-}
-
-// Value _
-func (t Coordinates) Value() *Value {
-	return ValueTypeCoordinates.ValueFromUnsafe(t)
-}
-
-// Value _
-func (t Polygon) Value() *Value {
-	return ValueTypePolygon.ValueFromUnsafe(t)
-}
-
-// Value _
-func (t Rect) Value() *Value {
-	return ValueTypeRect.ValueFromUnsafe(t)
+	return ValueTypeString.ValueFrom(s)
 }

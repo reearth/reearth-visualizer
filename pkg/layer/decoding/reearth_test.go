@@ -139,7 +139,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 						{
 							Field: id.PropertySchemaFieldID("latlng"),
 							Type:  property.ValueTypeLatLng,
-							Value: property.ValueTypeLatLng.MustBeValue(property.LatLng{Lat: 1, Lng: 2}),
+							Value: property.ValueTypeLatLng.ValueFrom(property.LatLng{Lat: 1, Lng: 2}),
 						},
 					},
 				},
@@ -188,7 +188,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 								{
 									Field: id.PropertySchemaFieldID("foobar"),
 									Type:  property.ValueTypeString,
-									Value: property.ValueTypeString.MustBeValue("bar"),
+									Value: property.ValueTypeString.ValueFrom("bar"),
 								},
 							},
 						},
@@ -198,7 +198,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 								{
 									Field: id.PropertySchemaFieldID("foobar"),
 									Type:  property.ValueTypeString,
-									Value: property.ValueTypeString.MustBeValue("foo"),
+									Value: property.ValueTypeString.ValueFrom("foo"),
 								},
 							},
 						},

@@ -2,10 +2,9 @@ package dataset
 
 import "github.com/reearth/reearth-backend/pkg/id"
 
-// Schema _
 type Schema struct {
 	id                  id.DatasetSchemaID
-	source              Source
+	source              string
 	name                string
 	fields              map[id.DatasetSchemaFieldID]*SchemaField
 	order               []id.DatasetSchemaFieldID
@@ -14,7 +13,6 @@ type Schema struct {
 	dynamic             bool
 }
 
-// ID _
 func (d *Schema) ID() (i id.DatasetSchemaID) {
 	if d == nil {
 		return
@@ -22,7 +20,6 @@ func (d *Schema) ID() (i id.DatasetSchemaID) {
 	return d.id
 }
 
-// IDRef _
 func (d *Schema) IDRef() *id.DatasetSchemaID {
 	if d == nil {
 		return nil
@@ -30,7 +27,6 @@ func (d *Schema) IDRef() *id.DatasetSchemaID {
 	return d.id.Ref()
 }
 
-// Scene _
 func (d *Schema) Scene() (i id.SceneID) {
 	if d == nil {
 		return
@@ -38,15 +34,13 @@ func (d *Schema) Scene() (i id.SceneID) {
 	return d.scene
 }
 
-// Source _
-func (d *Schema) Source() (s Source) {
+func (d *Schema) Source() (s string) {
 	if d == nil {
 		return
 	}
 	return d.source
 }
 
-// Name _
 func (d *Schema) Name() string {
 	if d == nil {
 		return ""
@@ -54,7 +48,6 @@ func (d *Schema) Name() string {
 	return d.name
 }
 
-// RepresentativeFieldID _
 func (d *Schema) RepresentativeFieldID() *id.DatasetSchemaFieldID {
 	if d == nil {
 		return nil
@@ -62,7 +55,6 @@ func (d *Schema) RepresentativeFieldID() *id.DatasetSchemaFieldID {
 	return d.representativeField
 }
 
-// RepresentativeField _
 func (d *Schema) RepresentativeField() *SchemaField {
 	if d == nil || d.representativeField == nil {
 		return nil
@@ -70,7 +62,6 @@ func (d *Schema) RepresentativeField() *SchemaField {
 	return d.fields[*d.representativeField]
 }
 
-// Fields _
 func (d *Schema) Fields() []*SchemaField {
 	if d == nil || d.order == nil {
 		return nil
@@ -82,7 +73,6 @@ func (d *Schema) Fields() []*SchemaField {
 	return fields
 }
 
-// Field _
 func (d *Schema) Field(id id.DatasetSchemaFieldID) *SchemaField {
 	if d == nil {
 		return nil
@@ -90,7 +80,6 @@ func (d *Schema) Field(id id.DatasetSchemaFieldID) *SchemaField {
 	return d.fields[id]
 }
 
-// FieldRef _
 func (d *Schema) FieldRef(id *id.DatasetSchemaFieldID) *SchemaField {
 	if d == nil || id == nil {
 		return nil
@@ -98,8 +87,7 @@ func (d *Schema) FieldRef(id *id.DatasetSchemaFieldID) *SchemaField {
 	return d.fields[*id]
 }
 
-// FieldBySource _
-func (d *Schema) FieldBySource(source Source) *SchemaField {
+func (d *Schema) FieldBySource(source string) *SchemaField {
 	if d == nil {
 		return nil
 	}
@@ -111,7 +99,6 @@ func (d *Schema) FieldBySource(source Source) *SchemaField {
 	return nil
 }
 
-// FieldByType _
 func (d *Schema) FieldByType(t ValueType) *SchemaField {
 	if d == nil {
 		return nil

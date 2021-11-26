@@ -46,7 +46,7 @@ func (i LayerItem) Initialize() (*layer.Item, *property.Property, error) {
 			return nil, nil, err
 		}
 
-		p.UpdateLinkableValue(i.LinkablePropertySchema, property.ValueTypeLatLng.ValueFromUnsafe(i.LatLng))
+		p.UpdateLinkableValue(i.LinkablePropertySchema, property.ValueTypeLatLng.ValueFrom(i.LatLng))
 
 		builder.
 			Plugin(i.Plugin.ID().Ref()).

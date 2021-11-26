@@ -4,10 +4,8 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-// List _
 type List []*Dataset
 
-// First _
 func (l List) First() *Dataset {
 	if l == nil || len(l) == 0 {
 		return nil
@@ -15,7 +13,6 @@ func (l List) First() *Dataset {
 	return l[0]
 }
 
-// Last _
 func (l List) Last() *Dataset {
 	if l == nil || len(l) == 0 {
 		return nil
@@ -23,7 +20,6 @@ func (l List) Last() *Dataset {
 	return l[len(l)-1]
 }
 
-// FindDataset _
 func (l List) FindDataset(id id.DatasetID) *Dataset {
 	for _, t := range l {
 		if t.ID() == id {
@@ -33,7 +29,6 @@ func (l List) FindDataset(id id.DatasetID) *Dataset {
 	return nil
 }
 
-// ToDatasetIds _
 func (l List) ToDatasetIds() []id.DatasetID {
 	if l == nil {
 		return nil
@@ -46,8 +41,7 @@ func (l List) ToDatasetIds() []id.DatasetID {
 	return ids
 }
 
-// FindDatasetBySource _
-func (l List) FindDatasetBySource(s Source) *Dataset {
+func (l List) FindDatasetBySource(s string) *Dataset {
 	for _, t := range l {
 		if t.Source() == s {
 			return t
@@ -56,7 +50,6 @@ func (l List) FindDatasetBySource(s Source) *Dataset {
 	return nil
 }
 
-// FilterByDatasetSchema _
 func (l List) FilterByDatasetSchema(s id.DatasetSchemaID) List {
 	n := List{}
 	for _, t := range l {
@@ -67,15 +60,14 @@ func (l List) FilterByDatasetSchema(s id.DatasetSchemaID) List {
 	return n
 }
 
-// DiffBySource _
 func (l List) DiffBySource(l2 List) Diff {
 	// l is old, l2 is new
 	added := []*Dataset{}
 	removed := []*Dataset{}
-	// others := map[DatasetSource]DatasetDiffTouple{}
+	// others := map[string]DatasetDiffTouple{}
 	others2 := map[id.DatasetID]*Dataset{}
 
-	s1 := map[Source]*Dataset{}
+	s1 := map[string]*Dataset{}
 	for _, d1 := range l {
 		s1[d1.Source()] = d1
 	}
@@ -106,7 +98,6 @@ func (l List) DiffBySource(l2 List) Diff {
 	}
 }
 
-// Map _
 func (l List) Map() Map {
 	if l == nil {
 		return nil
@@ -128,10 +119,8 @@ func (l List) GraphLoader() GraphLoader {
 	return GraphLoaderFromMap(l.Map())
 }
 
-// Map _
 type Map map[id.DatasetID]*Dataset
 
-// Add _
 func (dm Map) Add(dss ...*Dataset) {
 	if dss == nil {
 		return
@@ -147,7 +136,6 @@ func (dm Map) Add(dss ...*Dataset) {
 	}
 }
 
-// Slice _
 func (dm Map) Slice() List {
 	if dm == nil {
 		return nil
@@ -159,7 +147,6 @@ func (dm Map) Slice() List {
 	return res
 }
 
-// GraphSearchByFields _
 func (dm Map) GraphSearchByFields(root id.DatasetID, fields ...id.DatasetSchemaFieldID) (List, *Field) {
 	res := make(List, 0, len(fields))
 	currentD := dm[root]
@@ -177,8 +164,12 @@ func (dm Map) GraphSearchByFields(root id.DatasetID, fields ...id.DatasetSchemaF
 		}
 		if len(fields)-1 == i {
 			return res, field
-		} else if fid := field.Value().ValueRef(); fid != nil {
-			currentD = dm[id.DatasetID(*fid)]
+		} else if fids := field.Value().ValueRef(); fids != nil {
+			if fid, err := id.DatasetIDFrom(*fids); err == nil {
+				currentD = dm[id.DatasetID(fid)]
+			} else {
+				return res, nil
+			}
 		} else {
 			return res, nil
 		}

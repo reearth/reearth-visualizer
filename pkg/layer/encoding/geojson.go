@@ -40,126 +40,67 @@ func (e *GeoJSONEncoder) coordsToFloat(c property.Coordinates) [][]float64 {
 }
 
 func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojson.Feature, error) {
-	if li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
+	if li == nil || li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, nil
 	}
 
-	var ok bool
-	var geo *geojson.Geometry
 	var res *geojson.Feature
+
 	switch li.ExtensionID.String() {
 	case "marker":
-		latlng := property.LatLng{}
-		var height float64
-		if f := li.Property.Field("location"); f != nil {
-			latlng, ok = f.PropertyValue.ValueLatLng()
-			if !ok {
-				dsll := f.DatasetValue.ValueLatLng()
-				if dsll != nil {
-					latlng = property.LatLng{
-						Lat: dsll.Lat,
-						Lng: dsll.Lng,
-					}
-				} else {
-					return nil, errors.New("invalid value type")
-				}
-			}
-			if f := li.Property.Field("height"); f != nil {
-				height, ok = f.PropertyValue.ValueNumber()
-				if !ok {
-					dsHeight := f.DatasetValue.ValueNumber()
-					if dsHeight != nil {
-						height = *dsHeight
-					} else {
-						return nil, errors.New("invalid value type")
-					}
-				}
-				geo = geojson.NewPointGeometry([]float64{latlng.Lng, latlng.Lat, height})
-			} else {
-				geo = geojson.NewPointGeometry([]float64{latlng.Lng, latlng.Lat})
-			}
-			res = geojson.NewFeature(geo)
-			res.SetProperty("name", li.Name)
+		var coords []float64
+
+		if f := li.Property.Field("location").Value().ValueLatLng(); f != nil {
+			coords = []float64{(*f).Lng, (*f).Lat}
+		} else {
+			return nil, errors.New("invalid value type")
 		}
-		if f := li.Property.Field("pointColor"); f != nil {
-			pointColor, ok := f.PropertyValue.ValueString()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("marker-color", pointColor)
-			}
+
+		if height := li.Property.Field("height").Value().ValueNumber(); height != nil {
+			coords = append(coords, *height)
+		}
+
+		res = geojson.NewFeature(geojson.NewPointGeometry(coords))
+
+		if f := li.Property.Field("pointColor").Value().ValueString(); f != nil {
+			res.SetProperty("marker-color", *f)
 		}
 	case "polygon":
-		var polygon property.Polygon
-		if f := li.Property.Field("polygon"); f != nil {
-			polygon, ok = f.PropertyValue.ValuePolygon()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			fl := e.polygonToFloat(polygon)
+		if f := li.Property.Field("polygon").Value().ValuePolygon(); f != nil {
+			res = geojson.NewFeature(geojson.NewPolygonGeometry(e.polygonToFloat(*f)))
+		} else {
+			return nil, errors.New("invalid value type")
+		}
 
-			geo = geojson.NewPolygonGeometry(fl)
-			res = geojson.NewFeature(geo)
-			res.SetProperty("name", li.Name)
+		if f := li.Property.Field("fillColor").Value().ValueString(); f != nil {
+			res.SetProperty("fill", *f)
 		}
-		if f := li.Property.Field("fillColor"); f != nil {
-			fillColor, ok := f.PropertyValue.ValueString()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("fill", fillColor)
-			}
+
+		if f := li.Property.Field("strokeColor").Value().ValueString(); f != nil {
+			res.SetProperty("stroke", *f)
 		}
-		if f := li.Property.Field("strokeColor"); f != nil {
-			strokeColor, ok := f.PropertyValue.ValueString()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("stroke", strokeColor)
-			}
-		}
-		if f := li.Property.Field("strokeWidth"); f != nil {
-			strokeWidth, ok := f.PropertyValue.ValueNumber()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("stroke-width", strokeWidth)
-			}
+
+		if f := li.Property.Field("strokeWidth").Value().ValueNumber(); f != nil {
+			res.SetProperty("stroke-width", *f)
 		}
 	case "polyline":
-		var polyline property.Coordinates
-		if f := li.Property.Field("coordinates"); f != nil {
-			polyline, ok = f.PropertyValue.ValueCoordinates()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			fl := e.coordsToFloat(polyline)
-			geo = geojson.NewLineStringGeometry(fl)
-			res = geojson.NewFeature(geo)
-			res.SetProperty("name", li.Name)
+		if f := li.Property.Field("coordinates").Value().ValueCoordinates(); f != nil {
+			res = geojson.NewFeature(geojson.NewLineStringGeometry(e.coordsToFloat(*f)))
+		} else {
+			return nil, errors.New("invalid value type")
 		}
-		if f := li.Property.Field("strokeColor"); f != nil {
-			strokeColor, ok := f.PropertyValue.ValueString()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("stroke", strokeColor)
-			}
+
+		if f := li.Property.Field("strokeColor").Value().ValueString(); f != nil {
+			res.SetProperty("stroke", *f)
 		}
-		if f := li.Property.Field("strokeWidth"); f != nil {
-			strokeWidth, ok := f.PropertyValue.ValueNumber()
-			if !ok {
-				return nil, errors.New("invalid value type")
-			}
-			if res != nil {
-				res.SetProperty("stroke-width", strokeWidth)
-			}
+
+		if f := li.Property.Field("strokeWidth").Value().ValueNumber(); f != nil {
+			res.SetProperty("stroke-width", *f)
 		}
+	}
+
+	if res != nil {
+		res.SetProperty("name", li.Name)
 	}
 	return res, nil
 }

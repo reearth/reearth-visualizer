@@ -524,7 +524,7 @@ type PropertyGroupList {
 }
 
 type PropertyField {
-  id: PropertySchemaFieldID!
+  id: String!
   parentId: ID!
   schemaId: PropertySchemaID!
   fieldId: PropertySchemaFieldID!

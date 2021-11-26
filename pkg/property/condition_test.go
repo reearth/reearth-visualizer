@@ -20,17 +20,11 @@ func TestCondition_Clone(t *testing.T) {
 			Name: "nil condition",
 			Con: &Condition{
 				Field: "a",
-				Value: &Value{
-					v: true,
-					t: ValueTypeBool,
-				},
+				Value: ValueTypeBool.ValueFrom(true),
 			},
 			Expected: &Condition{
 				Field: "a",
-				Value: &Value{
-					v: true,
-					t: ValueTypeBool,
-				},
+				Value: ValueTypeBool.ValueFrom(true),
 			},
 		},
 	}

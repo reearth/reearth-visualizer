@@ -27,25 +27,20 @@ func TestCSVParser(t *testing.T) {
 
 	assert.NotEmpty(t, schema)
 	assert.Equal(t, "hoge.csv", schema.Name())
-	assert.Equal(t, Source("file:///hoge.csv"), schema.Source())
+	assert.Equal(t, "file:///hoge.csv", schema.Source())
 
 	assert.Equal(t, 1, len(datasets))
-	sfm := make(map[string]string)
-	for _, sf := range schema.Fields() {
-		sfm[sf.ID().String()] = sf.Name()
-	}
+
 	dsfm := make(map[string]interface{})
 	for _, dsf := range datasets[0].Fields() {
-		dsfm[sfm[dsf.Field().String()]] = dsf.Value().Interface()
+		dsfm[schema.Field(dsf.Field()).Name()] = dsf.Value().Interface()
 	}
-	latlng := map[string]interface{}{"lat": 12.0, "lng": 15.0}
 	assert.Equal(t, map[string]interface{}{
 		"hoge":     1.0,
 		"foo":      "foo",
 		"bar":      "bar",
-		"location": latlng,
+		"location": LatLng{Lat: 12.0, Lng: 15.0},
 	}, dsfm)
-
 }
 
 func TestCSVParserCheckCompatible(t *testing.T) {
@@ -62,5 +57,4 @@ func TestCSVParserCheckCompatible(t *testing.T) {
 	assert.NoError(t, err)
 	result := p.CheckCompatible(ds)
 	assert.NoError(t, result)
-
 }

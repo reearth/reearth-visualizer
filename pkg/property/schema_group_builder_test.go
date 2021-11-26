@@ -45,7 +45,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 			List:   true,
 			IsAvailableIf: &Condition{
 				Field: "ff",
-				Value: ValueTypeString.ValueFromUnsafe("abc"),
+				Value: ValueTypeString.ValueFrom("abc"),
 			},
 			Title: i18n.StringFrom("tt"),
 			Expected: expected{
@@ -55,7 +55,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 				List:   true,
 				IsAvailableIf: &Condition{
 					Field: "ff",
-					Value: ValueTypeString.ValueFromUnsafe("abc"),
+					Value: ValueTypeString.ValueFrom("abc"),
 				},
 				Title: i18n.StringFrom("tt"),
 			},
@@ -68,7 +68,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 			List:   true,
 			IsAvailableIf: &Condition{
 				Field: "ff",
-				Value: ValueTypeString.ValueFromUnsafe("abc"),
+				Value: ValueTypeString.ValueFrom("abc"),
 			},
 			Title: i18n.StringFrom("tt"),
 			Expected: expected{
@@ -78,7 +78,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 				List:   true,
 				IsAvailableIf: &Condition{
 					Field: "ff",
-					Value: ValueTypeString.ValueFromUnsafe("abc"),
+					Value: ValueTypeString.ValueFrom("abc"),
 				},
 				Title: i18n.StringFrom("tt"),
 			},

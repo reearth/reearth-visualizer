@@ -57,16 +57,14 @@ func TestBuilder_Items(t *testing.T) {
 					Fields([]*Field{
 						NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(ValueTypeString).
-							ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+							ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 							Build(),
 					}).MustBuild(),
 				NewGroup().ID(iid).Schema(propertySchemaID, propertySchemaGroup1ID).
 					Fields([]*Field{
 						NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(ValueTypeString).
-							ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+							ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 							Build(),
 					}).MustBuild(),
 			},
@@ -74,8 +72,7 @@ func TestBuilder_Items(t *testing.T) {
 				Fields([]*Field{
 					NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(ValueTypeString).
-						ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+						ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 						Build(),
 				}).MustBuild()},
 		},
@@ -127,8 +124,7 @@ func TestBuilder_Build(t *testing.T) {
 					Fields([]*Field{
 						NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(ValueTypeString).
-							ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+							ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 							Build(),
 					}).MustBuild()},
 			Expected: struct {
@@ -145,8 +141,7 @@ func TestBuilder_Build(t *testing.T) {
 						Fields([]*Field{
 							NewFieldUnsafe().
 								FieldUnsafe(propertySchemaField1ID).
-								TypeUnsafe(ValueTypeString).
-								ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+								ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 								Build(),
 						}).MustBuild()},
 			},
@@ -180,8 +175,7 @@ func TestBuilder_Build(t *testing.T) {
 					Fields([]*Field{
 						NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(ValueTypeString).
-							ValueUnsafe(ValueTypeString.ValueFromUnsafe("xxx")).
+							ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("xxx"))).
 							Build(),
 					}).MustBuild()},
 			Err: ErrInvalidItem,

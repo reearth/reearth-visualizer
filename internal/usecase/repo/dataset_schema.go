@@ -13,7 +13,7 @@ type DatasetSchema interface {
 	FindByIDs(context.Context, []id.DatasetSchemaID, []id.SceneID) (dataset.SchemaList, error)
 	FindByScene(context.Context, id.SceneID, *usecase.Pagination) (dataset.SchemaList, *usecase.PageInfo, error)
 	FindBySceneAll(context.Context, id.SceneID) (dataset.SchemaList, error)
-	FindBySceneAndSource(context.Context, id.SceneID, dataset.Source) (dataset.SchemaList, error)
+	FindBySceneAndSource(context.Context, id.SceneID, string) (dataset.SchemaList, error)
 	FindDynamicByID(context.Context, id.DatasetSchemaID) (*dataset.Schema, error)
 	FindAllDynamicByScene(context.Context, id.SceneID) (dataset.SchemaList, error)
 	Save(context.Context, *dataset.Schema) error

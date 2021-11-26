@@ -44,10 +44,10 @@ func TestGroupList_SchemaRef(t *testing.T) {
 func TestGroupList_HasLinkedField(t *testing.T) {
 	pid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("vvv")
+	v := ValueTypeString.ValueFrom("vvv")
 	dsid := id.NewDatasetID()
 	dssid := id.NewDatasetSchemaID()
-	f := NewField(sf).Value(v).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
+	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
@@ -82,10 +82,10 @@ func TestGroupList_HasLinkedField(t *testing.T) {
 func TestGroupList_CollectDatasets(t *testing.T) {
 	pid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("vvv")
+	v := ValueTypeString.ValueFrom("vvv")
 	dsid := id.NewDatasetID()
 	dssid := id.NewDatasetSchemaID()
-	f := NewField(sf).Value(v).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
+	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
@@ -119,10 +119,10 @@ func TestGroupList_CollectDatasets(t *testing.T) {
 func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 	pid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("vvv")
+	v := ValueTypeString.ValueFrom("vvv")
 	dsid := id.NewDatasetID()
 	dssid := id.NewDatasetSchemaID()
-	f := NewField(sf).Value(v).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
+	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
@@ -156,10 +156,10 @@ func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 func TestGroupList_IsEmpty(t *testing.T) {
 	pid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("vvv")
+	v := ValueTypeString.ValueFrom("vvv")
 	dsid := id.NewDatasetID()
 	dssid := id.NewDatasetSchemaID()
-	f := NewField(sf).Value(v).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
+	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, id.NewDatasetSchemaFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	testCases := []struct {
 		Name     string
@@ -191,8 +191,8 @@ func TestGroupList_IsEmpty(t *testing.T) {
 
 func TestGroupList_Prune(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("vvv")
-	f := NewField(sf).Value(v).MustBuild()
+	v := ValueTypeString.ValueFrom("vvv")
+	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
 	f2 := NewField(sf).MustBuild()
 	pid := id.NewPropertyItemID()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f, f2}).MustBuild()}

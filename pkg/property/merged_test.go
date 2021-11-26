@@ -31,17 +31,17 @@ func TestMerge(t *testing.T) {
 	i8id := id.NewPropertyItemID()
 
 	fields1 := []*Field{
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(ValueTypeString.ValueFromUnsafe("a")).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("b")).ValueUnsafe(ValueTypeString.ValueFromUnsafe("b")).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("e")).TypeUnsafe(ValueTypeString).LinksUnsafe(NewLinks([]*Link{NewLink(d2, ds, df)})).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).TypeUnsafe(ValueTypeNumber).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("a"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("b")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("b"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("e")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLink(d2, ds, df)})).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeNumber, nil)).Build(),
 	}
 
 	fields2 := []*Field{
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(ValueTypeString.ValueFromUnsafe("1")).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("c")).ValueUnsafe(ValueTypeString.ValueFromUnsafe("2")).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("d")).TypeUnsafe(ValueTypeString).LinksUnsafe(NewLinks([]*Link{NewLinkFieldOnly(ds, df)})).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).TypeUnsafe(ValueTypeString).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("1"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("c")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("2"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("d")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLinkFieldOnly(ds, df)})).Build(),
+		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).Build(),
 	}
 
 	groups1 := []*Group{
@@ -90,12 +90,12 @@ func TestMerge(t *testing.T) {
 						Fields: []*MergedField{
 							{
 								ID:    id.PropertySchemaFieldID("a"),
-								Value: ValueTypeString.ValueFromUnsafe("a"),
+								Value: ValueTypeString.ValueFrom("a"),
 								Type:  ValueTypeString,
 							},
 							{
 								ID:    id.PropertySchemaFieldID("b"),
-								Value: ValueTypeString.ValueFromUnsafe("b"),
+								Value: ValueTypeString.ValueFrom("b"),
 								Type:  ValueTypeString,
 							},
 							{
@@ -119,13 +119,13 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:         id.PropertySchemaFieldID("a"),
-						Value:      ValueTypeString.ValueFromUnsafe("a"),
+						Value:      ValueTypeString.ValueFrom("a"),
 						Type:       ValueTypeString,
 						Overridden: true,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("b"),
-						Value: ValueTypeString.ValueFromUnsafe("b"),
+						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -135,7 +135,7 @@ func TestMerge(t *testing.T) {
 					},
 					{
 						ID:    id.PropertySchemaFieldID("c"),
-						Value: ValueTypeString.ValueFromUnsafe("2"),
+						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -153,12 +153,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("a"),
+						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("b"),
-						Value: ValueTypeString.ValueFromUnsafe("b"),
+						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -180,12 +180,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("1"),
+						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("c"),
-						Value: ValueTypeString.ValueFromUnsafe("2"),
+						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -223,12 +223,12 @@ func TestMerge(t *testing.T) {
 						Fields: []*MergedField{
 							{
 								ID:    id.PropertySchemaFieldID("a"),
-								Value: ValueTypeString.ValueFromUnsafe("a"),
+								Value: ValueTypeString.ValueFrom("a"),
 								Type:  ValueTypeString,
 							},
 							{
 								ID:    id.PropertySchemaFieldID("b"),
-								Value: ValueTypeString.ValueFromUnsafe("b"),
+								Value: ValueTypeString.ValueFrom("b"),
 								Type:  ValueTypeString,
 							},
 							{
@@ -252,12 +252,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("a"),
+						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("b"),
-						Value: ValueTypeString.ValueFromUnsafe("b"),
+						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -279,12 +279,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("a"),
+						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("b"),
-						Value: ValueTypeString.ValueFromUnsafe("b"),
+						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -322,12 +322,12 @@ func TestMerge(t *testing.T) {
 						Fields: []*MergedField{
 							{
 								ID:    id.PropertySchemaFieldID("a"),
-								Value: ValueTypeString.ValueFromUnsafe("1"),
+								Value: ValueTypeString.ValueFrom("1"),
 								Type:  ValueTypeString,
 							},
 							{
 								ID:    id.PropertySchemaFieldID("c"),
-								Value: ValueTypeString.ValueFromUnsafe("2"),
+								Value: ValueTypeString.ValueFrom("2"),
 								Type:  ValueTypeString,
 							},
 							{
@@ -351,12 +351,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("1"),
+						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("c"),
-						Value: ValueTypeString.ValueFromUnsafe("2"),
+						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
@@ -378,12 +378,12 @@ func TestMerge(t *testing.T) {
 				Fields: []*MergedField{
 					{
 						ID:    id.PropertySchemaFieldID("a"),
-						Value: ValueTypeString.ValueFromUnsafe("1"),
+						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
 						ID:    id.PropertySchemaFieldID("c"),
-						Value: ValueTypeString.ValueFromUnsafe("2"),
+						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{

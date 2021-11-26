@@ -106,8 +106,10 @@ func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, f []id.SceneID,
 			if f := d.Field(nextField); f != nil {
 				if f.Type() == dataset.ValueTypeRef {
 					if l := f.Value().ValueRef(); l != nil {
-						next = id.DatasetID(*l)
-						continue
+						if did, err := id.DatasetIDFrom(*l); err == nil {
+							next = did
+							continue
+						}
 					}
 				}
 			}

@@ -2,17 +2,15 @@ package dataset
 
 import "github.com/reearth/reearth-backend/pkg/id"
 
-// Dataset _
 type Dataset struct {
 	id     id.DatasetID
-	source Source
+	source string
 	schema id.DatasetSchemaID
 	fields map[id.DatasetSchemaFieldID]*Field
 	order  []id.DatasetSchemaFieldID
 	scene  id.SceneID
 }
 
-// ID _
 func (d *Dataset) ID() (i id.DatasetID) {
 	if d == nil {
 		return
@@ -20,7 +18,6 @@ func (d *Dataset) ID() (i id.DatasetID) {
 	return d.id
 }
 
-// Scene _
 func (d *Dataset) Scene() (i id.SceneID) {
 	if d == nil {
 		return
@@ -28,15 +25,13 @@ func (d *Dataset) Scene() (i id.SceneID) {
 	return d.scene
 }
 
-// Source _
-func (d *Dataset) Source() (i Source) {
+func (d *Dataset) Source() string {
 	if d == nil {
-		return
+		return ""
 	}
 	return d.source
 }
 
-// Schema _
 func (d *Dataset) Schema() (i id.DatasetSchemaID) {
 	if d == nil {
 		return
@@ -44,7 +39,6 @@ func (d *Dataset) Schema() (i id.DatasetSchemaID) {
 	return d.schema
 }
 
-// Fields _
 func (d *Dataset) Fields() []*Field {
 	if d == nil || d.order == nil {
 		return nil
@@ -56,7 +50,6 @@ func (d *Dataset) Fields() []*Field {
 	return fields
 }
 
-// Field _
 func (d *Dataset) Field(id id.DatasetSchemaFieldID) *Field {
 	if d == nil || d.fields == nil {
 		return nil
@@ -64,7 +57,6 @@ func (d *Dataset) Field(id id.DatasetSchemaFieldID) *Field {
 	return d.fields[id]
 }
 
-// FieldRef _
 func (d *Dataset) FieldRef(id *id.DatasetSchemaFieldID) *Field {
 	if d == nil || id == nil {
 		return nil
@@ -72,7 +64,6 @@ func (d *Dataset) FieldRef(id *id.DatasetSchemaFieldID) *Field {
 	return d.fields[*id]
 }
 
-// NameField _
 func (d *Dataset) NameField(ds *Schema) *Field {
 	if d == nil {
 		return nil
@@ -87,8 +78,7 @@ func (d *Dataset) NameField(ds *Schema) *Field {
 	return d.fields[f.ID()]
 }
 
-// FieldBySource _
-func (d *Dataset) FieldBySource(source Source) *Field {
+func (d *Dataset) FieldBySource(source string) *Field {
 	if d == nil {
 		return nil
 	}
@@ -100,7 +90,6 @@ func (d *Dataset) FieldBySource(source Source) *Field {
 	return nil
 }
 
-// FieldByType _
 func (d *Dataset) FieldByType(t ValueType) *Field {
 	if d == nil {
 		return nil
@@ -111,4 +100,30 @@ func (d *Dataset) FieldByType(t ValueType) *Field {
 		}
 	}
 	return nil
+}
+
+// Interface returns a simple and human-readable representation of the dataset
+func (d *Dataset) Interface(s *Schema) map[string]interface{} {
+	if d == nil || s == nil || d.Schema() != s.ID() {
+		return nil
+	}
+	m := map[string]interface{}{}
+	for _, f := range d.fields {
+		key := s.Field(f.Field()).Name()
+		m[key] = f.Value().Interface()
+	}
+	return m
+}
+
+// Interface is almost same as Interface, but keys of the map are IDs of fields.
+func (d *Dataset) InterfaceWithFieldIDs() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	m := map[string]interface{}{}
+	for _, f := range d.fields {
+		key := f.Field().String()
+		m[key] = f.Value().Interface()
+	}
+	return m
 }

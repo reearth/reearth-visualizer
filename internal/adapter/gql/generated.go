@@ -6667,7 +6667,7 @@ type PropertyGroupList {
 }
 
 type PropertyField {
-  id: PropertySchemaFieldID!
+  id: String!
   parentId: ID!
   schemaId: PropertySchemaID!
   fieldId: PropertySchemaFieldID!
@@ -22904,9 +22904,9 @@ func (ec *executionContext) _PropertyField_id(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(id.PropertySchemaFieldID)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNPropertySchemaFieldID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋpkgᚋidᚐPropertySchemaFieldID(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyField_parentId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyField) (ret graphql.Marshaler) {

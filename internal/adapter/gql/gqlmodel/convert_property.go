@@ -1,11 +1,11 @@
 package gqlmodel
 
 import (
-	"net/url"
 	"strings"
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/value"
 )
 
 func ToPropertyValue(v *property.Value) *interface{} {
@@ -14,27 +14,6 @@ func ToPropertyValue(v *property.Value) *interface{} {
 		return nil
 	}
 	switch v2 := v.Value().(type) {
-	case bool:
-		res = v2
-	case float64:
-		res = v2
-	case string:
-		res = v2
-	case id.ID:
-		res = v2.String()
-	case *url.URL:
-		res = v2.String()
-	case property.LatLng:
-		res = LatLng{
-			Lat: v2.Lat,
-			Lng: v2.Lng,
-		}
-	case property.LatLngHeight:
-		res = LatLngHeight{
-			Lat:    v2.Lat,
-			Lng:    v2.Lng,
-			Height: v2.Height,
-		}
 	case property.Camera:
 		res = Camera{
 			Lat:      v2.Lat,
@@ -56,30 +35,8 @@ func ToPropertyValue(v *property.Value) *interface{} {
 			Italic:     v2.Italic,
 			Underline:  v2.Underline,
 		}
-	case property.Coordinates:
-		res2 := make([]LatLngHeight, 0, len(v2))
-		for _, c := range v2 {
-			res2 = append(res2, LatLngHeight{
-				Lat:    c.Lat,
-				Lng:    c.Lng,
-				Height: c.Height,
-			})
-		}
-		res = res2
-	case property.Polygon:
-		res2 := make([][]LatLngHeight, 0, len(v2))
-		for _, d := range v2 {
-			coord := make([]LatLngHeight, 0, len(d))
-			for _, c := range d {
-				coord = append(coord, LatLngHeight{
-					Lat:    c.Lat,
-					Lng:    c.Lng,
-					Height: c.Height,
-				})
-			}
-			res2 = append(res2, coord)
-		}
-		res = res2
+	default:
+		res = valueInterfaceToGqlValue(v2)
 	}
 	return &res
 }
@@ -106,88 +63,8 @@ func ToTextAlign(t *property.TextAlign) *TextAlign {
 	return &t3
 }
 
-func ToPropertyValueType(t property.ValueType) ValueType {
-	switch t {
-	case property.ValueTypeBool:
-		return ValueTypeBool
-	case property.ValueTypeNumber:
-		return ValueTypeNumber
-	case property.ValueTypeString:
-		return ValueTypeString
-	case property.ValueTypeLatLng:
-		return ValueTypeLatlng
-	case property.ValueTypeLatLngHeight:
-		return ValueTypeLatlngheight
-	case property.ValueTypeURL:
-		return ValueTypeURL
-	case property.ValueTypeRef:
-		return ValueTypeRef
-	case property.ValueTypeCamera:
-		return ValueTypeCamera
-	case property.ValueTypeTypography:
-		return ValueTypeTypography
-	case property.ValueTypeCoordinates:
-		return ValueTypeCoordinates
-	case property.ValueTypePolygon:
-		return ValueTypePolygon
-	case property.ValueTypeRect:
-		return ValueTypeRect
-	}
-	return ""
-}
-
-func FromPropertyValueType(t ValueType) property.ValueType {
-	switch t {
-	case ValueTypeBool:
-		return property.ValueTypeBool
-	case ValueTypeNumber:
-		return property.ValueTypeNumber
-	case ValueTypeString:
-		return property.ValueTypeString
-	case ValueTypeLatlng:
-		return property.ValueTypeLatLng
-	case ValueTypeLatlngheight:
-		return property.ValueTypeLatLngHeight
-	case ValueTypeURL:
-		return property.ValueTypeURL
-	case ValueTypeRef:
-		return property.ValueTypeRef
-	case ValueTypeCamera:
-		return property.ValueTypeCamera
-	case ValueTypeTypography:
-		return property.ValueTypeTypography
-	case ValueTypeCoordinates:
-		return property.ValueTypeCoordinates
-	case ValueTypePolygon:
-		return property.ValueTypePolygon
-	case ValueTypeRect:
-		return property.ValueTypeRect
-	}
-	return ""
-}
-
-func FromPropertyValueAndType(v interface{}, t ValueType) (*property.Value, bool) {
+func FromPropertyValueAndType(v interface{}, t ValueType) *property.Value {
 	switch v2 := v.(type) {
-	case LatLng:
-		v = property.LatLng{
-			Lat: v2.Lat,
-			Lng: v2.Lng}
-	case LatLngHeight:
-		v = property.LatLngHeight{
-			Lat:    v2.Lat,
-			Lng:    v2.Lng,
-			Height: v2.Height}
-	case *LatLng:
-		v = property.LatLng{
-			Lat: v2.Lat,
-			Lng: v2.Lng,
-		}
-	case *LatLngHeight:
-		v = property.LatLngHeight{
-			Lat:    v2.Lat,
-			Lng:    v2.Lng,
-			Height: v2.Height,
-		}
 	case *Camera:
 		v = property.Camera{
 			Lat:      v2.Lat,
@@ -209,39 +86,10 @@ func FromPropertyValueAndType(v interface{}, t ValueType) (*property.Value, bool
 			Italic:     v2.Italic,
 			Underline:  v2.Underline,
 		}
-	case []LatLngHeight:
-		res := make([]property.LatLngHeight, 0, len(v2))
-		for _, c := range v2 {
-			res = append(res, property.LatLngHeight{
-				Lat:    c.Lat,
-				Lng:    c.Lng,
-				Height: c.Height,
-			})
-		}
-		v = res
-	case [][]LatLngHeight:
-		res := make([][]property.LatLngHeight, 0, len(v2))
-		for _, d := range v2 {
-			coord := make([]property.LatLngHeight, 0, len(d))
-			for _, c := range d {
-				coord = append(coord, property.LatLngHeight{
-					Lat:    c.Lat,
-					Lng:    c.Lng,
-					Height: c.Height,
-				})
-			}
-			res = append(res, coord)
-		}
-		v = res
-	case *Rect:
-		v = property.Rect{
-			West:  v2.West,
-			East:  v2.East,
-			North: v2.North,
-			South: v2.South,
-		}
+	default:
+		v = gqlValueToValueInterface(v2)
 	}
-	return FromPropertyValueType(t).ValueFrom(v)
+	return property.ValueType(FromValueType(t)).ValueFrom(v)
 }
 
 func fromTextAlign(t *TextAlign) *property.TextAlign {
@@ -280,13 +128,12 @@ func ToPropertyField(f *property.Field, parent *property.Property, gl *property.
 	}
 
 	return &PropertyField{
-		// TODO: PropertySchemaFieldID is mismatched
-		ID:       id.PropertySchemaFieldID(propertyFieldID(parent, gl, g, f)),
+		ID:       propertyFieldID(parent, gl, g, f),
 		ParentID: parent.ID().ID(),
 		SchemaID: parent.Schema(),
 		FieldID:  f.Field(),
 		Value:    ToPropertyValue(f.Value()),
-		Type:     ToPropertyValueType(f.Type()),
+		Type:     ToValueType(value.Type(f.Type())),
 		Links:    links,
 	}
 }
@@ -402,7 +249,7 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 
 	return &PropertySchemaField{
 		FieldID:                  f.ID(),
-		Type:                     ToPropertyValueType(f.Type()),
+		Type:                     ToValueType(value.Type(f.Type())),
 		Title:                    f.Title().String(),
 		Description:              f.Description().String(),
 		Prefix:                   stringToRef(f.Prefix()),
@@ -512,7 +359,7 @@ func ToMergedPropertyField(f *property.MergedField, s id.PropertySchemaID) *Merg
 		SchemaID:   s,
 		Links:      ToPropertyFieldLinks(f.Links),
 		Value:      ToPropertyValue(f.Value),
-		Type:       ToPropertyValueType(f.Type),
+		Type:       ToValueType(value.Type(f.Type)),
 		Overridden: f.Overridden,
 	}
 }
@@ -604,7 +451,7 @@ func ToPropertyConditon(c *property.Condition) *PropertyCondition {
 	return &PropertyCondition{
 		FieldID: c.Field,
 		Value:   ToPropertyValue(c.Value),
-		Type:    ToPropertyValueType(c.Value.Type()),
+		Type:    ToValueType(value.Type(c.Value.Type())),
 	}
 }
 
@@ -640,4 +487,13 @@ func propertyFieldID(property *property.Property, groupList *property.GroupList,
 	sb.WriteString(field.Field().String())
 
 	return sb.String()
+}
+
+func getPropertySchemaFieldIDFromGQLPropertyFieldID(i string) string {
+	const sep = "_"
+	s := strings.Split(i, sep)
+	if len(s) > 0 {
+		return s[len(s)-1]
+	}
+	return ""
 }

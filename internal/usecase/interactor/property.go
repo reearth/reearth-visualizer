@@ -239,7 +239,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return nil, nil, nil, nil, err
 	}
 
-	v := property.ValueTypeURL.ValueFromUnsafe(url)
+	v := property.ValueTypeURL.ValueFrom(url)
 	if v == nil {
 		return nil, nil, nil, nil, interfaces.ErrInvalidPropertyValue
 	}

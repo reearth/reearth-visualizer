@@ -280,8 +280,8 @@ func (o *PropertyCondition) condition() *property.Condition {
 }
 
 func (i PropertySchemaField) schemaField() (*property.SchemaField, error) {
-	t, ok := property.ValueTypeFrom(string(i.Type))
-	if !ok {
+	t := property.ValueType(i.Type)
+	if !t.Valid() {
 		return nil, fmt.Errorf("invalid value type: %s", i.Type)
 	}
 
@@ -342,9 +342,5 @@ func (c *Choice) choice() *property.SchemaFieldChoice {
 }
 
 func toValue(v interface{}, t Valuetype) *property.Value {
-	vt, ok := property.ValueTypeFrom(string(t))
-	if !ok {
-		return nil
-	}
-	return vt.ValueFromUnsafe(v)
+	return property.ValueType(t).ValueFrom(v)
 }

@@ -104,14 +104,14 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 	switch t {
 	case "Point":
 		if pf, ok := v.(property.LatLngHeight); ok {
-			v2, ok := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
-			if !ok {
+			v2 := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
+			if v2 == nil {
 				return nil, ErrFieldType
 			}
 			f.UpdateUnsafe(v2)
 
-			v3, ok := property.ValueTypeNumber.ValueFrom(pf.Height)
-			if !ok {
+			v3 := property.ValueTypeNumber.ValueFrom(pf.Height)
+			if v3 == nil {
 				return nil, ErrFieldType
 			}
 			f2, _, _, _ := p.GetOrCreateField(
@@ -121,8 +121,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 
 			f2.UpdateUnsafe(v3)
 		} else if pf, ok := v.(property.LatLng); ok {
-			v2, ok := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
-			if !ok {
+			v2 := property.ValueTypeLatLng.ValueFrom(&property.LatLng{Lat: pf.Lat, Lng: pf.Lng})
+			if v2 == nil {
 				return nil, ErrFieldType
 			}
 			f.UpdateUnsafe(v2)
@@ -135,8 +135,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					return nil, ErrFieldType
 				}
 				if s.IconStyle.Icon != nil && len(s.IconStyle.Icon.Href) > 0 {
-					imageValue, ok := property.ValueTypeURL.ValueFrom(s.IconStyle.Icon.Href)
-					if !ok {
+					imageValue := property.ValueTypeURL.ValueFrom(s.IconStyle.Icon.Href)
+					if imageValue == nil {
 						return nil, ErrFieldType
 					}
 					imageField, _, _, _ := p.GetOrCreateField(
@@ -146,8 +146,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					imageField.UpdateUnsafe(imageValue)
 				}
 				if s.IconStyle.Scale != 0 {
-					scaleValue, ok := property.ValueTypeNumber.ValueFrom(s.IconStyle.Scale)
-					if !ok {
+					scaleValue := property.ValueTypeNumber.ValueFrom(s.IconStyle.Scale)
+					if scaleValue == nil {
 						return nil, ErrFieldType
 					}
 					scaleField, _, _, _ := p.GetOrCreateField(
@@ -157,8 +157,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					scaleField.UpdateUnsafe(scaleValue)
 				}
 				if len(s.IconStyle.Color) > 0 {
-					colorValue, ok := property.ValueTypeString.ValueFrom(s.IconStyle.Color)
-					if !ok {
+					colorValue := property.ValueTypeString.ValueFrom(s.IconStyle.Color)
+					if colorValue == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -173,8 +173,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					return nil, ErrFieldType
 				}
 				if len(s) > 0 {
-					colorValue, ok := property.ValueTypeString.ValueFrom(s)
-					if !ok {
+					colorValue := property.ValueTypeString.ValueFrom(s)
+					if colorValue == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -189,8 +189,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					return nil, ErrFieldType
 				}
 				if len(s.Color) > 0 {
-					colorValue, ok := property.ValueTypeString.ValueFrom(s.Color)
-					if !ok {
+					colorValue := property.ValueTypeString.ValueFrom(s.Color)
+					if colorValue == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -200,8 +200,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					colorField.UpdateUnsafe(colorValue)
 				}
 				if s.PixelSize != 0 {
-					sizeValue, ok := property.ValueTypeNumber.ValueFrom(s.PixelSize)
-					if !ok {
+					sizeValue := property.ValueTypeNumber.ValueFrom(s.PixelSize)
+					if sizeValue == nil {
 						return nil, ErrFieldType
 					}
 					sizeField, _, _, _ := p.GetOrCreateField(
@@ -213,8 +213,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 			}
 		}
 	case "Polygon":
-		v2, ok := property.ValueTypePolygon.ValueFrom(v)
-		if !ok {
+		v2 := property.ValueTypePolygon.ValueFrom(v)
+		if v2 == nil {
 			return nil, ErrFieldType
 		}
 		f.UpdateUnsafe(v2)
@@ -226,8 +226,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					return nil, ErrFieldType
 				}
 				if s.PolyStyle.Stroke {
-					stroke, ok := property.ValueTypeBool.ValueFrom(s.PolyStyle.Stroke)
-					if !ok {
+					stroke := property.ValueTypeBool.ValueFrom(s.PolyStyle.Stroke)
+					if stroke == nil {
 						return nil, ErrFieldType
 					}
 					strokeField, _, _, _ := p.GetOrCreateField(
@@ -237,8 +237,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					strokeField.UpdateUnsafe(stroke)
 				}
 				if s.LineStyle.Width != 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -248,8 +248,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					widthField.UpdateUnsafe(width)
 				}
 				if len(s.LineStyle.Color) > 0 {
-					color, ok := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -259,8 +259,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					colorField.UpdateUnsafe(color)
 				}
 				if s.PolyStyle.Fill {
-					fill, ok := property.ValueTypeBool.ValueFrom(s.PolyStyle.Fill)
-					if !ok {
+					fill := property.ValueTypeBool.ValueFrom(s.PolyStyle.Fill)
+					if fill == nil {
 						return nil, ErrFieldType
 					}
 					fillField, _, _, _ := p.GetOrCreateField(
@@ -270,8 +270,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					fillField.UpdateUnsafe(fill)
 				}
 				if len(s.PolyStyle.Color) > 0 {
-					color, ok := property.ValueTypeString.ValueFrom(s.PolyStyle.Color)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(s.PolyStyle.Color)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -287,8 +287,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					return nil, ErrFieldType
 				}
 				if s.Stroke {
-					stroke, ok := property.ValueTypeBool.ValueFrom(s.Stroke)
-					if !ok {
+					stroke := property.ValueTypeBool.ValueFrom(s.Stroke)
+					if stroke == nil {
 						return nil, ErrFieldType
 					}
 					strokeField, _, _, _ := p.GetOrCreateField(
@@ -298,8 +298,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					strokeField.UpdateUnsafe(stroke)
 				}
 				if s.StrokeWidth != 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -323,8 +323,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 							return nil, err
 						}
 					}
-					color, ok := property.ValueTypeString.ValueFrom(colorValue)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(colorValue)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -334,8 +334,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 					colorField.UpdateUnsafe(color)
 				}
 				if s.Fill {
-					fill, ok := property.ValueTypeBool.ValueFrom(s.Fill)
-					if !ok {
+					fill := property.ValueTypeBool.ValueFrom(s.Fill)
+					if fill == nil {
 						return nil, ErrFieldType
 					}
 					fillField, _, _, _ := p.GetOrCreateField(
@@ -359,8 +359,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 							return nil, err
 						}
 					}
-					color, ok := property.ValueTypeString.ValueFrom(colorValue)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(colorValue)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -376,8 +376,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if s.StrokeWidth > 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -388,8 +388,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if len(s.FillColor) > 0 {
-					fill, ok := property.ValueTypeString.ValueFrom(s.FillColor)
-					if !ok {
+					fill := property.ValueTypeString.ValueFrom(s.FillColor)
+					if fill == nil {
 						return nil, ErrFieldType
 					}
 					fillField, _, _, _ := p.GetOrCreateField(
@@ -400,8 +400,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if len(s.StrokeColor) > 0 {
-					color, ok := property.ValueTypeString.ValueFrom(s.StrokeColor)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(s.StrokeColor)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -413,8 +413,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 			}
 		}
 	case "Polyline":
-		v2, ok := property.ValueTypeCoordinates.ValueFrom(v)
-		if !ok {
+		v2 := property.ValueTypeCoordinates.ValueFrom(v)
+		if v2 == nil {
 			return nil, ErrFieldType
 		}
 		f.UpdateUnsafe(v2)
@@ -427,8 +427,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if len(s.LineStyle.Color) > 0 {
-					color, ok := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(s.LineStyle.Color)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(
@@ -439,8 +439,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if s.LineStyle.Width != 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.LineStyle.Width)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -456,8 +456,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if s.Width != 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.Width)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.Width)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -485,8 +485,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 						}
 					}
 
-					color, ok := property.ValueTypeString.ValueFrom(colorValue)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(colorValue)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 
@@ -503,8 +503,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if s.StrokeWidth > 0 {
-					width, ok := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
-					if !ok {
+					width := property.ValueTypeNumber.ValueFrom(s.StrokeWidth)
+					if width == nil {
 						return nil, ErrFieldType
 					}
 					widthField, _, _, _ := p.GetOrCreateField(
@@ -515,8 +515,8 @@ func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem inter
 				}
 
 				if len(s.StrokeColor) > 0 {
-					color, ok := property.ValueTypeString.ValueFrom(s.StrokeColor)
-					if !ok {
+					color := property.ValueTypeString.ValueFrom(s.StrokeColor)
+					if color == nil {
 						return nil, ErrFieldType
 					}
 					colorField, _, _, _ := p.GetOrCreateField(

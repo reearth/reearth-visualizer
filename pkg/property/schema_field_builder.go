@@ -25,7 +25,7 @@ func (b *SchemaFieldBuilder) Build() (*SchemaField, error) {
 	if b.p.min != nil && b.p.max != nil && *b.p.min > *b.p.max {
 		return nil, errors.New("invalid min and max")
 	}
-	if _, ok := b.p.propertyType.Validate(); !ok {
+	if ok := b.p.propertyType.Valid(); !ok {
 		return nil, errors.New("invalid value type")
 	}
 	return b.p, nil

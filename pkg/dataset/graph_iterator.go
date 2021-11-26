@@ -2,7 +2,7 @@ package dataset
 
 import "github.com/reearth/reearth-backend/pkg/id"
 
-// GraphIterator は、データセットをグラフ探索するためのイテレータです。
+// GraphIterator is a iterator for graphically exploring a dataset.
 type GraphIterator struct {
 	m                 Map
 	ids               [][]id.DatasetID
@@ -11,7 +11,6 @@ type GraphIterator struct {
 	maxDepth          int
 }
 
-// GraphIteratorFrom _
 func GraphIteratorFrom(root id.DatasetID, depth int) *GraphIterator {
 	return &GraphIterator{
 		ids:      [][]id.DatasetID{{root}},
@@ -19,9 +18,8 @@ func GraphIteratorFrom(root id.DatasetID, depth int) *GraphIterator {
 	}
 }
 
-// Next _
 func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
-	if di == nil || di.maxDepth == 0 || di.ids == nil || len(di.ids) == 0 || d == nil {
+	if di == nil || di.maxDepth == 0 || len(di.ids) == 0 || d == nil {
 		return id.DatasetID{}, false
 	}
 	if di.currentDepthIndex >= len(di.ids) {
@@ -41,7 +39,9 @@ func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
 	currentIDs := di.ids[di.currentDepthIndex]
 	for _, f := range d.Fields() {
 		if r := f.Value().ValueRef(); r != nil {
-			nextDepthIDs = append(nextDepthIDs, id.DatasetID(*r))
+			if rid, err := id.DatasetIDFrom(*r); err == nil {
+				nextDepthIDs = append(nextDepthIDs, rid)
+			}
 		}
 	}
 	di.ids[di.currentDepthIndex+1] = nextDepthIDs
@@ -63,7 +63,6 @@ func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
 	return di.ids[di.currentDepthIndex][di.currentIndex], false
 }
 
-// Result _
 func (di *GraphIterator) Result() Map {
 	if di == nil {
 		return nil

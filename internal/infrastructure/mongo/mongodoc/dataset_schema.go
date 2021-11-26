@@ -1,8 +1,6 @@
 package mongodoc
 
 import (
-	"errors"
-
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
@@ -63,15 +61,12 @@ func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {
 		if err != nil {
 			return nil, err
 		}
-		vt, ok := dataset.ValueType(field.Type).Validate()
-		if !ok {
-			return nil, errors.New("invalid value type")
-		}
+		vt := dataset.ValueType(field.Type)
 		f, err := dataset.NewSchemaField().
 			Name(field.Name).
 			ID(fid).
 			Type(vt).
-			Source(dataset.Source(field.Source)).
+			Source(field.Source).
 			Build()
 		if err != nil {
 			return nil, err
@@ -81,7 +76,7 @@ func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {
 	b := dataset.NewSchema().
 		ID(did).
 		Name(d.Name).
-		Source(dataset.Source(d.Source)).
+		Source(d.Source).
 		Scene(scene).
 		Fields(fields)
 	if d.RepresentativeField != nil {
@@ -99,7 +94,7 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 	doc := DatasetSchemaDocument{
 		ID:                  did,
 		Name:                dataset.Name(),
-		Source:              dataset.Source().String(),
+		Source:              dataset.Source(),
 		Scene:               id.ID(dataset.Scene()).String(),
 		RepresentativeField: dataset.RepresentativeFieldID().StringRef(),
 		Dynamic:             dataset.Dynamic(),
@@ -112,7 +107,7 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 			ID:     f.ID().String(),
 			Type:   string(f.Type()),
 			Name:   f.Name(),
-			Source: f.Source().String(),
+			Source: f.Source(),
 		})
 	}
 

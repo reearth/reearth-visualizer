@@ -82,7 +82,7 @@ func (r *datasetSchemaRepo) FindAllDynamicByScene(ctx context.Context, sceneID i
 	return r.find(ctx, nil, filter)
 }
 
-func (r *datasetSchemaRepo) FindBySceneAndSource(ctx context.Context, sceneID id.SceneID, source dataset.Source) (dataset.SchemaList, error) {
+func (r *datasetSchemaRepo) FindBySceneAndSource(ctx context.Context, sceneID id.SceneID, source string) (dataset.SchemaList, error) {
 	filter := bson.D{
 		{Key: "scene", Value: sceneID.String()},
 		{Key: "source", Value: string(source)},

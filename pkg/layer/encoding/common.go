@@ -1,7 +1,6 @@
 package encoding
 
 import (
-	"errors"
 	"image/color"
 	"strconv"
 	"strings"
@@ -9,9 +8,11 @@ import (
 	"gopkg.in/go-playground/colors.v1"
 )
 
-var ErrInvalidColor = errors.New("invalid color")
+func getColor(str string) *color.RGBA {
+	if len(str) == 0 {
+		return nil
+	}
 
-func getColor(str string) (*color.RGBA, error) {
 	cs := str
 	a := ""
 
@@ -27,7 +28,7 @@ func getColor(str string) (*color.RGBA, error) {
 
 	b, err := colors.Parse(cs)
 	if err != nil || b == nil {
-		return nil, ErrInvalidColor
+		return nil
 	}
 
 	c := b.ToRGBA()
@@ -39,5 +40,5 @@ func getColor(str string) (*color.RGBA, error) {
 		alpha = uint8(c.A * 255)
 	}
 
-	return &color.RGBA{R: c.R, G: c.G, B: c.B, A: alpha}, nil
+	return &color.RGBA{R: c.R, G: c.G, B: c.B, A: alpha}
 }

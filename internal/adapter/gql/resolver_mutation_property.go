@@ -14,9 +14,12 @@ func (r *mutationResolver) UpdatePropertyValue(ctx context.Context, input gqlmod
 	exit := trace(ctx)
 	defer exit()
 
-	v, ok := gqlmodel.FromPropertyValueAndType(input.Value, input.Type)
-	if !ok {
-		return nil, errors.New("invalid value")
+	var v *property.Value
+	if input.Value != nil {
+		v = gqlmodel.FromPropertyValueAndType(input.Value, input.Type)
+		if v == nil {
+			return nil, errors.New("invalid value")
+		}
 	}
 
 	pp, pgl, pg, pf, err := r.usecases.Property.UpdateValue(ctx, interfaces.UpdatePropertyValueParam{
@@ -117,7 +120,10 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 
 	var v *property.Value
 	if input.NameFieldType != nil {
-		v, _ = gqlmodel.FromPropertyValueAndType(input.NameFieldValue, *input.NameFieldType)
+		v = gqlmodel.FromPropertyValueAndType(input.NameFieldValue, *input.NameFieldType)
+		if v == nil {
+			return nil, errors.New("invalid name field value")
+		}
 	}
 
 	p, pgl, pi, err := r.usecases.Property.AddItem(ctx, interfaces.AddPropertyItemParam{
@@ -181,7 +187,10 @@ func (r *mutationResolver) UpdatePropertyItems(ctx context.Context, input gqlmod
 	for _, o := range input.Operations {
 		var v *property.Value
 		if o.NameFieldType != nil {
-			v, _ = gqlmodel.FromPropertyValueAndType(o.NameFieldValue, *o.NameFieldType)
+			v = gqlmodel.FromPropertyValueAndType(o.NameFieldValue, *o.NameFieldType)
+			if v == nil {
+				return nil, errors.New("invalid name field value")
+			}
 		}
 
 		op = append(op, interfaces.UpdatePropertyItemsOperationParam{

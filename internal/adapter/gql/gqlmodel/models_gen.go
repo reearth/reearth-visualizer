@@ -764,7 +764,7 @@ type PropertyCondition struct {
 }
 
 type PropertyField struct {
-	ID          id.PropertySchemaFieldID `json:"id"`
+	ID          string                   `json:"id"`
 	ParentID    id.ID                    `json:"parentId"`
 	SchemaID    id.PropertySchemaID      `json:"schemaId"`
 	FieldID     id.PropertySchemaFieldID `json:"fieldId"`

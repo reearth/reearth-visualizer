@@ -24,19 +24,24 @@ func TestField_ActualValue(t *testing.T) {
 	}{
 		{
 			Name:     "nil links",
-			Field:    NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).MustBuild(),
-			Expected: ValueTypeString.ValueFromUnsafe("vvv"),
+			Field:    NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).MustBuild(),
+			Expected: ValueTypeString.ValueFrom("vvv"),
 		},
 		{
 			Name:     "nil last link",
-			Field:    NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).Link(&Links{}).MustBuild(),
+			Field:    NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).Link(&Links{}).MustBuild(),
 			Expected: nil,
 		},
 		{
-			Name:     "dataset value",
-			Field:    NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).Link(ls).MustBuild(),
-			DS:       dataset.New().ID(dsid).Schema(dssid).Fields([]*dataset.Field{dataset.NewField(dssfid, dataset.ValueFrom("xxx"), "")}).MustBuild(),
-			Expected: ValueTypeString.ValueFromUnsafe("xxx"),
+			Name:  "dataset value",
+			Field: NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).Link(ls).MustBuild(),
+			DS: dataset.New().
+				ID(dsid).Schema(dssid).
+				Fields([]*dataset.Field{
+					dataset.NewField(dssfid, dataset.ValueTypeString.ValueFrom("xxx"), "")},
+				).
+				MustBuild(),
+			Expected: ValueTypeString.ValueFrom("xxx"),
 		},
 	}
 
@@ -65,7 +70,7 @@ func TestField_CollectDatasets(t *testing.T) {
 	}{
 		{
 			Name:     "list of one datasets",
-			Field:    NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).Link(ls).MustBuild(),
+			Field:    NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).Link(ls).MustBuild(),
 			Expected: []id.DatasetID{dsid},
 		},
 		{
@@ -88,7 +93,7 @@ func TestField_Clone(t *testing.T) {
 	p := NewSchemaField().ID("A").Type(ValueTypeString).MustBuild()
 	l := NewLink(id.NewDatasetID(), id.NewDatasetSchemaID(), id.NewDatasetSchemaFieldID())
 	ls := NewLinks([]*Link{l})
-	b := NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).Link(ls).MustBuild()
+	b := NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).Link(ls).MustBuild()
 	r := b.Clone()
 	assert.Equal(t, b, r)
 }
@@ -109,8 +114,8 @@ func TestField(t *testing.T) {
 
 func TestField_Update(t *testing.T) {
 	p := NewSchemaField().ID("A").Type(ValueTypeString).MustBuild()
-	b := NewField(p).Value(ValueTypeString.ValueFromUnsafe("vvv")).MustBuild()
-	v := ValueTypeString.ValueFromUnsafe("xxx")
+	b := NewField(p).Value(OptionalValueFrom(ValueTypeString.ValueFrom("vvv"))).MustBuild()
+	v := ValueTypeString.ValueFrom("xxx")
 	b.UpdateUnsafe(v)
 	assert.Equal(t, v, b.Value())
 }

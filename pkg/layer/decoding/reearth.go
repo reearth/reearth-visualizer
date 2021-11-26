@@ -275,13 +275,8 @@ func (f *ReearthPropertyField) propertyField(key id.PropertySchemaFieldID) *prop
 		return nil
 	}
 
-	vt, ok := property.ValueTypeFrom(f.Type)
-	if !ok {
-		return nil
-	}
-
-	v, ok := vt.ValueFrom(f.Value)
-	if !ok {
+	v := property.ValueType(f.Type).ValueFrom(f.Value)
+	if v == nil {
 		return nil
 	}
 
@@ -299,7 +294,7 @@ func (f *ReearthPropertyField) propertyField(key id.PropertySchemaFieldID) *prop
 
 	return &property.InitializerField{
 		Field: key,
-		Type:  vt,
+		Type:  v.Type(),
 		Value: v,
 		Links: links,
 	}

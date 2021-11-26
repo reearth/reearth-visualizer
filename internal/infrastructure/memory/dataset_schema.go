@@ -117,7 +117,7 @@ func (r *DatasetSchema) FindDynamicByID(ctx context.Context, id id.DatasetSchema
 	return nil, rerror.ErrNotFound
 }
 
-func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, s id.SceneID, src dataset.Source) (dataset.SchemaList, error) {
+func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, s id.SceneID, src string) (dataset.SchemaList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

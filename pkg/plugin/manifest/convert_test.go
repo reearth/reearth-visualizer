@@ -14,7 +14,7 @@ import (
 func TestToValue(t *testing.T) {
 	v := property.ValueTypeBool
 	var vv *property.Value = nil
-	assert.Equal(t, toValue(false, "bool"), v.ValueFromUnsafe(false))
+	assert.Equal(t, toValue(false, "bool"), v.ValueFrom(false))
 	assert.Equal(t, toValue("xx", "xxx"), vv)
 }
 

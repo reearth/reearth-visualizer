@@ -53,28 +53,6 @@ func (p *DatasetCSVParser) validateLine(line []string) bool {
 	return len(p.headers) == len(line)
 }
 
-func (p *DatasetCSVParser) getRecord(rec string) *Value {
-	var v *Value
-	vint, err := strconv.Atoi(rec)
-	if err == nil {
-		v = ValueFrom(vint)
-		return v
-	}
-
-	vfloat64, err := strconv.ParseFloat(rec, 64)
-	if err == nil {
-		v = ValueFrom(vfloat64)
-		return v
-	}
-	vbool, err := strconv.ParseBool(rec)
-	if err == nil {
-		v = ValueFrom(vbool)
-		return v
-	}
-	v = ValueFrom(rec)
-	return v
-}
-
 func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
 	if !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
@@ -89,7 +67,7 @@ func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
 			haslng = true
 		}
 		if h != "lng" && h != "lat" && strings.TrimSpace(h) != "" {
-			t := p.getRecord(p.firstline[k]).Type()
+			t := ValueFromStringOrNumber(p.firstline[k]).Type()
 			field, _ := NewSchemaField().NewID().Name(h).Type(t).Build()
 			schemafields = append(schemafields, field)
 		}
@@ -102,7 +80,7 @@ func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
 		NewID().
 		Scene(sid).
 		Name(p.name).
-		Source(Source("file:///" + p.name)).
+		Source("file:///" + p.name).
 		Fields(schemafields).
 		Build()
 	if err != nil {
@@ -167,7 +145,7 @@ func (p *DatasetCSVParser) getFields(line []string, sfm map[string]id.DatasetSch
 	fields := []*Field{}
 	var lat, lng *float64
 	for i, record := range line {
-		value := p.getRecord(record).Value()
+		value := ValueFromStringOrNumber(record)
 		if p.headers[i] == "lng" {
 			value, err := strconv.ParseFloat(record, 64)
 			if err != nil {
@@ -184,12 +162,12 @@ func (p *DatasetCSVParser) getFields(line []string, sfm map[string]id.DatasetSch
 		}
 
 		if p.headers[i] != "lat" && p.headers[i] != "lng" {
-			fields = append(fields, NewField(sfm[p.headers[i]], ValueFrom(value), ""))
+			fields = append(fields, NewField(sfm[p.headers[i]], value, ""))
 		}
 	}
 	if lat != nil && lng != nil {
 		latlng := LatLng{Lat: *lat, Lng: *lng}
-		fields = append(fields, NewField(sfm["location"], ValueFrom(latlng), ""))
+		fields = append(fields, NewField(sfm["location"], ValueTypeLatLng.ValueFrom(latlng), ""))
 	}
 	return append([]*Field{}, fields...), nil
 }
@@ -206,8 +184,8 @@ func (p *DatasetCSVParser) CheckCompatible(s *Schema) error {
 				return ErrIncompatibleSchema
 			}
 			t := fieldsmap[h].Type()
-			v := p.getRecord(p.firstline[i])
-			if !t.ValidateValue(v) {
+			v := ValueFromStringOrNumber(p.firstline[i])
+			if v.Type() != t {
 				return ErrIncompatibleSchema
 			}
 		}

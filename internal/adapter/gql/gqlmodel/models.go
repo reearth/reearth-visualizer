@@ -51,7 +51,7 @@ func (d *Property) Field(id id.PropertySchemaFieldID) *PropertyField {
 	for _, g := range d.Items {
 		if gi, ok := g.(*PropertyGroup); ok {
 			for _, f := range gi.Fields {
-				if f.ID == id {
+				if s := getPropertySchemaFieldIDFromGQLPropertyFieldID(f.ID); s == string(id) {
 					return f
 				}
 			}
@@ -145,7 +145,7 @@ func (d *PropertyGroup) Field(id id.PropertySchemaFieldID) *PropertyField {
 		return nil
 	}
 	for _, f := range d.Fields {
-		if f.ID == id {
+		if s := getPropertySchemaFieldIDFromGQLPropertyFieldID(f.ID); s == string(id) {
 			return f
 		}
 	}

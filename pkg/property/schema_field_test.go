@@ -117,33 +117,46 @@ func TestSchemaField_Validate(t *testing.T) {
 	testCases := []struct {
 		Name     string
 		SF       *SchemaField
-		Input    *Value
+		Input    *OptionalValue
 		Expected bool
 	}{
 		{
 			Name: "nil sf",
 		},
 		{
+			Name:     "nil optional value",
+			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).MustBuild(),
+			Input:    nil,
+			Expected: false,
+		},
+		{
 			Name:     "nil value",
 			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).MustBuild(),
+			Input:    NewOptionalValue(ValueTypeNumber, nil),
 			Expected: true,
 		},
 		{
 			Name:     "property type != value type",
 			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).MustBuild(),
-			Input:    ValueTypeBool.ValueFromUnsafe(true),
+			Input:    OptionalValueFrom(ValueTypeBool.ValueFrom(true)),
+			Expected: false,
+		},
+		{
+			Name:     "property type != value type with nil value",
+			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).MustBuild(),
+			Input:    NewOptionalValue(ValueTypeBool, nil),
 			Expected: false,
 		},
 		{
 			Name:     "validate min",
 			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).Min(10).MustBuild(),
-			Input:    ValueTypeNumber.ValueFromUnsafe(9),
+			Input:    OptionalValueFrom(ValueTypeNumber.ValueFrom(9)),
 			Expected: false,
 		},
 		{
 			Name:     "validate max",
 			SF:       NewSchemaField().ID("A").Type(ValueTypeNumber).Max(10).MustBuild(),
-			Input:    ValueTypeNumber.ValueFromUnsafe(11),
+			Input:    OptionalValueFrom(ValueTypeNumber.ValueFrom(11)),
 			Expected: false,
 		},
 		{
@@ -160,7 +173,7 @@ func TestSchemaField_Validate(t *testing.T) {
 					Icon:  "",
 				},
 			}).MustBuild(),
-			Input:    ValueTypeString.ValueFromUnsafe("xxx"),
+			Input:    OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
 			Expected: true,
 		},
 		{
@@ -177,13 +190,13 @@ func TestSchemaField_Validate(t *testing.T) {
 					Icon:  "",
 				},
 			}).MustBuild(),
-			Input:    ValueTypeString.ValueFromUnsafe("aaa"),
+			Input:    OptionalValueFrom(ValueTypeString.ValueFrom("aaa")),
 			Expected: false,
 		},
 		{
 			Name:     "validate other",
 			SF:       NewSchemaField().ID("A").Type(ValueTypeLatLng).MustBuild(),
-			Input:    ValueTypeLatLng.ValueFromUnsafe(LatLng{Lat: 10, Lng: 11}),
+			Input:    OptionalValueFrom(ValueTypeLatLng.ValueFrom(LatLng{Lat: 10, Lng: 11})),
 			Expected: true,
 		},
 	}

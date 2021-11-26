@@ -2,7 +2,6 @@ package encoding
 
 import (
 	"bytes"
-	"io"
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -15,493 +14,288 @@ import (
 
 var _ Encoder = (*KMLEncoder)(nil)
 
-func TestEncodeKMLMarker(t *testing.T) {
-	lid := id.MustLayerID(id.New().String())
-	sid := id.MustSceneID(id.New().String())
-	pid := id.MustPropertyID(id.New().String())
-	ex := id.PluginExtensionID("marker")
-	iid := id.MustPropertyItemID(id.New().String())
-	v1 := property.LatLng{
-		Lat: 4.4,
-		Lng: 53.4,
-	}
+func TestKMLEncoder_Encode(t *testing.T) {
+	lid := id.MustLayerID("01fmph48ykj1nd82r8e4znh6a6")
 
-	f1 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("location"),
-		Type:          "latlng",
-		DatasetValue:  nil,
-		PropertyValue: v1.Value(),
-	}
-	fl1 := []*property.SealedField{}
-	fl1 = append(fl1, &f1)
-	item1 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl1,
-		Groups:        nil,
-	}
-	il := []*property.SealedItem{}
-	il = append(il, &item1)
-	v2 := property.ValueTypeNumber
-	f2 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("imageSize"),
-		Type:          "number",
-		DatasetValue:  nil,
-		PropertyValue: v2.ValueFromUnsafe(4),
-	}
-	fl2 := []*property.SealedField{}
-	fl2 = append(fl2, &f2)
-	item2 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl2,
-		Groups:        nil,
-	}
-	il = append(il, &item2)
-	v3 := property.ValueTypeURL
-	f3 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("image"),
-		Type:          "url",
-		DatasetValue:  nil,
-		PropertyValue: v3.ValueFromUnsafe("http://maps.google.com/mapfiles/kml/pal4/icon28.png"),
-	}
-	fl3 := []*property.SealedField{}
-	fl3 = append(fl3, &f3)
-	item3 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl3,
-		Groups:        nil,
-	}
-	il = append(il, &item3)
-	v4 := property.ValueTypeString
-	f4 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("pointColor"),
-		Type:          "string",
-		DatasetValue:  nil,
-		PropertyValue: v4.ValueFromUnsafe("#7fff00ff"),
-	}
-	fl4 := []*property.SealedField{}
-	fl4 = append(fl4, &f4)
-	item4 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl4,
-		Groups:        nil,
-	}
-	il = append(il, &item4)
-	sp := property.Sealed{
-		Original: &pid,
-		Items:    il,
-	}
-	l := merging.SealedLayerItem{
-		SealedLayerCommon: merging.SealedLayerCommon{
-			Merged: layer.Merged{
-				Original:    lid,
-				Parent:      nil,
-				Name:        "test",
-				Scene:       sid,
-				Property:    nil,
-				Infobox:     nil,
-				PluginID:    &id.OfficialPluginID,
-				ExtensionID: &ex,
+	tests := []struct {
+		name   string
+		target merging.SealedLayer
+		want   func() *kml.CompoundElement
+	}{
+		{
+			name: "marker",
+			target: &merging.SealedLayerItem{
+				SealedLayerCommon: merging.SealedLayerCommon{
+					Merged: layer.Merged{
+						Original:    lid,
+						Scene:       id.NewSceneID(),
+						Name:        "test",
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
+					},
+					Property: &property.Sealed{
+						Original: id.NewPropertyID().Ref(),
+						Items: []*property.SealedItem{
+							{
+								Original:    id.NewPropertyItemID().Ref(),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Fields: []*property.SealedField{
+									{
+										ID: id.PropertySchemaFieldID("location"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeLatLng,
+											nil,
+											property.ValueTypeLatLng.ValueFrom(property.LatLng{Lat: 4.4, Lng: 53.4}),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("height"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeNumber,
+											nil,
+											property.ValueTypeNumber.ValueFrom(100),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("imageSize"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeNumber,
+											nil,
+											property.ValueTypeNumber.ValueFrom(4),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("image"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeURL,
+											nil,
+											property.ValueTypeURL.ValueFrom("http://maps.google.com/mapfiles/kml/pal4/icon28.png"),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("pointColor"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeString,
+											nil,
+											property.ValueTypeString.ValueFrom("#7fff00ff"),
+										),
+									},
+								},
+							},
+						},
+					},
+				},
 			},
-			Property: &sp,
-			Infobox:  nil,
-		}}
-
-	reader, writer := io.Pipe()
-	en := NewKMLEncoder(writer)
-	var err error
-	go func() {
-		defer func() {
-			_ = writer.Close()
-		}()
-		err = en.Encode(&l)
-		assert.NoError(t, err)
-	}()
-
-	colorStr, _ := f4.PropertyValue.ValueString()
-	sizeFloat, _ := f2.PropertyValue.ValueNumber()
-	urlValue, _ := f3.PropertyValue.ValueURL()
-	b, _ := getColor(colorStr)
-	stid, err := en.generateStyleId(l.Original.String(), l.Name)
-	assert.NoError(t, err)
-	expected := kml.KML(kml.SharedStyle(stid, kml.IconStyle(
-		kml.Scale(sizeFloat),
-		kml.Color(b),
-		kml.Icon(
-			kml.Href(urlValue.String())))))
-	expected = expected.Add(kml.Placemark(kml.Name("test"),
-		kml.Point(kml.Coordinates(kml.Coordinate{
-			Lon: v1.Lng,
-			Lat: v1.Lat,
-		})),
-		kml.StyleURL("#"+stid)))
-	reader2, writer2 := io.Pipe()
-	go func() {
-		defer func() {
-			_ = writer2.Close()
-		}()
-		err = expected.WriteIndent(writer2, "", "  ")
-		assert.NoError(t, err)
-	}()
-
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(reader)
-	assert.NoError(t, err)
-	s := buf.String()
-	buf2 := new(bytes.Buffer)
-	_, err = buf2.ReadFrom(reader2)
-	assert.NoError(t, err)
-
-	s2 := buf2.String()
-	assert.Equal(t, s2, s)
-}
-func TestEncodeKMLPolygon(t *testing.T) {
-	lid := id.MustLayerID(id.New().String())
-	sid := id.MustSceneID(id.New().String())
-	pid := id.MustPropertyID(id.New().String())
-	ex := id.PluginExtensionID("polygon")
-	iid := id.MustPropertyItemID(id.New().String())
-	vc := property.Coordinates{
-		property.LatLngHeight{
-			Lat:    3.4,
-			Lng:    5.34,
-			Height: 100,
-		}, property.LatLngHeight{
-			Lat:    45.4,
-			Lng:    2.34,
-			Height: 100,
-		}, property.LatLngHeight{
-			Lat:    34.66,
-			Lng:    654.34,
-			Height: 100,
+			want: func() *kml.CompoundElement {
+				k := kml.KML(
+					kml.SharedStyle(
+						"01fmph48ykj1nd82r8e4znh6a6_style",
+						kml.IconStyle(
+							kml.Icon(kml.Href("http://maps.google.com/mapfiles/kml/pal4/icon28.png")),
+							kml.Scale(4),
+							kml.Color(getColor("#7fff00ff")),
+						),
+					),
+				)
+				k = k.Add(
+					kml.Placemark(
+						kml.Name("test"),
+						kml.Point(kml.Coordinates(kml.Coordinate{Lon: 53.4, Lat: 4.4, Alt: 100})),
+						kml.StyleURL("#01fmph48ykj1nd82r8e4znh6a6_style"),
+					),
+				)
+				return k
+			},
+		},
+		{
+			name: "polygon",
+			target: &merging.SealedLayerItem{
+				SealedLayerCommon: merging.SealedLayerCommon{
+					Merged: layer.Merged{
+						Original:    lid,
+						Scene:       id.NewSceneID(),
+						Name:        "test",
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
+					},
+					Property: &property.Sealed{
+						Original: id.NewPropertyID().Ref(),
+						Items: []*property.SealedItem{
+							{
+								Original:    id.NewPropertyItemID().Ref(),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Fields: []*property.SealedField{
+									{
+										ID: id.PropertySchemaFieldID("polygon"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypePolygon,
+											nil,
+											property.ValueTypePolygon.ValueFrom(property.Polygon{property.Coordinates{
+												property.LatLngHeight{Lat: 3.4, Lng: 5.34, Height: 100},
+												property.LatLngHeight{Lat: 45.4, Lng: 2.34, Height: 100},
+												property.LatLngHeight{Lat: 34.66, Lng: 654.34, Height: 100},
+											}}),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("fill"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeBool,
+											nil,
+											property.ValueTypeBool.ValueFrom(true),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("fillColor"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeString,
+											nil,
+											property.ValueTypeString.ValueFrom("#ff334353"),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("stroke"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeBool,
+											nil,
+											property.ValueTypeBool.ValueFrom(true),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("strokeColor"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeString,
+											nil,
+											property.ValueTypeString.ValueFrom("#ff554555"),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("strokeWidth"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeNumber,
+											nil,
+											property.ValueTypeNumber.ValueFrom(3),
+										),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			want: func() *kml.CompoundElement {
+				k := kml.KML(
+					kml.SharedStyle(
+						"01fmph48ykj1nd82r8e4znh6a6_style",
+						kml.PolyStyle(
+							kml.Fill(true),
+							kml.Color(getColor("#ff334353")),
+						),
+						kml.LineStyle(
+							kml.Outline(true),
+							kml.Color(getColor("#ff554555")),
+							kml.Width(3),
+						),
+					),
+				)
+				k = k.Add(
+					kml.Placemark(kml.Name("test"),
+						kml.Polygon(kml.OuterBoundaryIs(kml.LinearRing(kml.Coordinates(
+							kml.Coordinate{Lon: 5.34, Lat: 3.4, Alt: 100},
+							kml.Coordinate{Lon: 2.34, Lat: 45.4, Alt: 100},
+							kml.Coordinate{Lon: 654.34, Lat: 34.66, Alt: 100},
+						)))),
+						kml.StyleURL("#01fmph48ykj1nd82r8e4znh6a6_style"),
+					),
+				)
+				return k
+			},
+		},
+		{
+			name: "polyline",
+			target: &merging.SealedLayerItem{
+				SealedLayerCommon: merging.SealedLayerCommon{
+					Merged: layer.Merged{
+						Original:    lid,
+						Scene:       id.NewSceneID(),
+						Name:        "test",
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
+					},
+					Property: &property.Sealed{
+						Original: id.NewPropertyID().Ref(),
+						Items: []*property.SealedItem{
+							{
+								Original:    id.NewPropertyItemID().Ref(),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Fields: []*property.SealedField{
+									{
+										ID: id.PropertySchemaFieldID("coordinates"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeCoordinates,
+											nil,
+											property.ValueTypeCoordinates.ValueFrom(property.Coordinates{
+												property.LatLngHeight{Lat: 3.4, Lng: 5.34, Height: 100},
+												property.LatLngHeight{Lat: 45.4, Lng: 2.34, Height: 100},
+												property.LatLngHeight{Lat: 34.66, Lng: 654.34, Height: 100},
+											}),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("strokeColor"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeString,
+											nil,
+											property.ValueTypeString.ValueFrom("#ff224222"),
+										),
+									},
+									{
+										ID: id.PropertySchemaFieldID("strokeWidth"),
+										Val: property.NewValueAndDatasetValue(
+											property.ValueTypeNumber,
+											nil,
+											property.ValueTypeNumber.ValueFrom(3),
+										),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			want: func() *kml.CompoundElement {
+				k := kml.KML(
+					kml.SharedStyle(
+						"01fmph48ykj1nd82r8e4znh6a6_style",
+						kml.LineStyle(
+							kml.Color(getColor("#ff224222")),
+							kml.Width(3),
+						),
+					),
+				)
+				k = k.Add(
+					kml.Placemark(
+						kml.Name("test"),
+						kml.LineString(kml.Coordinates(
+							kml.Coordinate{Lon: 5.34, Lat: 3.4, Alt: 100},
+							kml.Coordinate{Lon: 2.34, Lat: 45.4, Alt: 100},
+							kml.Coordinate{Lon: 654.34, Lat: 34.66, Alt: 100},
+						)),
+						kml.StyleURL("#01fmph48ykj1nd82r8e4znh6a6_style"),
+					),
+				)
+				return k
+			},
 		},
 	}
-	v1 := property.Polygon{vc}
-	f1 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("polygon"),
-		Type:          "polygon",
-		DatasetValue:  nil,
-		PropertyValue: v1.Value(),
-	}
-	fl1 := []*property.SealedField{}
-	fl1 = append(fl1, &f1)
-	item1 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl1,
-		Groups:        nil,
-	}
-	il := []*property.SealedItem{}
-	il = append(il, &item1)
-	v2 := property.ValueTypeBool
-	f2 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("fill"),
-		Type:          "bool",
-		DatasetValue:  nil,
-		PropertyValue: v2.ValueFromUnsafe(true),
-	}
-	fl2 := []*property.SealedField{}
-	fl2 = append(fl2, &f2)
-	item2 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl2,
-		Groups:        nil,
-	}
-	il = append(il, &item2)
-	v3 := property.ValueTypeString
-	f3 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("fillColor"),
-		Type:          "string",
-		DatasetValue:  nil,
-		PropertyValue: v3.ValueFromUnsafe("#ff334353"),
-	}
-	fl3 := []*property.SealedField{}
-	fl3 = append(fl3, &f3)
-	item3 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl3,
-		Groups:        nil,
-	}
-	il = append(il, &item3)
-	v4 := property.ValueTypeBool
-	f4 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("stroke"),
-		Type:          "bool",
-		DatasetValue:  nil,
-		PropertyValue: v4.ValueFromUnsafe(true),
-	}
-	fl4 := []*property.SealedField{}
-	fl4 = append(fl4, &f4)
-	item4 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl4,
-		Groups:        nil,
-	}
-	il = append(il, &item4)
-	v5 := property.ValueTypeString
-	f5 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("strokeColor"),
-		Type:          "string",
-		DatasetValue:  nil,
-		PropertyValue: v5.ValueFromUnsafe("#ff554555"),
-	}
-	fl5 := []*property.SealedField{}
-	fl5 = append(fl5, &f5)
-	item5 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl5,
-		Groups:        nil,
-	}
-	il = append(il, &item5)
-	v6 := property.ValueTypeNumber
-	f6 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("strokeWidth"),
-		Type:          "number",
-		DatasetValue:  nil,
-		PropertyValue: v6.ValueFromUnsafe(3),
-	}
-	fl6 := []*property.SealedField{}
-	fl6 = append(fl6, &f6)
-	item6 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl6,
-		Groups:        nil,
-	}
-	il = append(il, &item6)
-	sp := property.Sealed{
-		Original: &pid,
-		Items:    il,
-	}
-	l := merging.SealedLayerItem{
-		SealedLayerCommon: merging.SealedLayerCommon{
-			Merged: layer.Merged{
-				Original:    lid,
-				Parent:      nil,
-				Name:        "test",
-				Scene:       sid,
-				Property:    nil,
-				Infobox:     nil,
-				PluginID:    &id.OfficialPluginID,
-				ExtensionID: &ex,
-			},
-			Property: &sp,
-			Infobox:  nil,
-		}}
 
-	reader, writer := io.Pipe()
-	en := NewKMLEncoder(writer)
-	var err error
-	go func() {
-		defer func() {
-			_ = writer.Close()
-		}()
-		err = en.Encode(&l)
-	}()
-	fillColorStr, _ := f3.PropertyValue.ValueString()
-	strokeColorStr, _ := f5.PropertyValue.ValueString()
-	b1, _ := getColor(fillColorStr)
-	b2, _ := getColor(strokeColorStr)
-	stid, err := en.generateStyleId(l.Original.String(), l.Name)
-	assert.NoError(t, err)
-	expected := kml.KML(kml.SharedStyle(stid,
-		kml.PolyStyle(
-			kml.Fill(true),
-			kml.Color(b1),
-		),
-		kml.LineStyle(
-			kml.Outline(true),
-			kml.Color(b2),
-			kml.Width(3),
-		)))
-	expected = expected.Add(kml.Placemark(kml.Name("test"),
-		kml.Polygon(kml.OuterBoundaryIs(kml.LinearRing(kml.Coordinates([]kml.Coordinate{
-			{Lon: 5.34, Lat: 3.4, Alt: 100},
-			{Lon: 2.34, Lat: 45.4, Alt: 100},
-			{Lon: 654.34, Lat: 34.66, Alt: 100},
-		}...)))),
-		kml.StyleURL("#"+stid)))
-	reader2, writer2 := io.Pipe()
-	go func() {
-		defer func() {
-			_ = writer2.Close()
-		}()
-		err = expected.WriteIndent(writer2, "", "  ")
-	}()
-	assert.NoError(t, err)
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(reader)
-	assert.NoError(t, err)
-	s := buf.String()
-	buf2 := new(bytes.Buffer)
-	_, err = buf2.ReadFrom(reader2)
-	assert.NoError(t, err)
-	s2 := buf2.String()
-	assert.Equal(t, s2, s)
-}
-func TestEncodeKMLPolyline(t *testing.T) {
-	lid := id.MustLayerID(id.New().String())
-	sid := id.MustSceneID(id.New().String())
-	pid := id.MustPropertyID(id.New().String())
-	ex := id.PluginExtensionID("polyline")
-	iid := id.MustPropertyItemID(id.New().String())
-	v1 := property.Coordinates{
-		property.LatLngHeight{
-			Lat:    3.4,
-			Lng:    5.34,
-			Height: 100,
-		}, property.LatLngHeight{
-			Lat:    45.4,
-			Lng:    2.34,
-			Height: 100,
-		}, property.LatLngHeight{
-			Lat:    34.66,
-			Lng:    654.34,
-			Height: 100,
-		},
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			we := bytes.Buffer{}
+			_ = tt.want().WriteIndent(&we, "", "  ")
+			wa := bytes.Buffer{}
+			assert.NoError(t, NewKMLEncoder(&wa).Encode(tt.target))
+			assert.Equal(t, we.String(), wa.String())
+		})
 	}
-	f1 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("coordinates"),
-		Type:          "coordinates",
-		DatasetValue:  nil,
-		PropertyValue: v1.Value(),
-	}
-	fl1 := []*property.SealedField{}
-	fl1 = append(fl1, &f1)
-	item1 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl1,
-		Groups:        nil,
-	}
-	il := []*property.SealedItem{}
-	il = append(il, &item1)
-
-	v2 := property.ValueTypeString
-	f2 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("strokeColor"),
-		Type:          "string",
-		DatasetValue:  nil,
-		PropertyValue: v2.ValueFromUnsafe("#ff224222"),
-	}
-	fl2 := []*property.SealedField{}
-	fl2 = append(fl2, &f2)
-	item2 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl2,
-		Groups:        nil,
-	}
-	il = append(il, &item2)
-	v3 := property.ValueTypeNumber
-	f3 := property.SealedField{
-		ID:            id.PropertySchemaFieldID("strokeWidth"),
-		Type:          "number",
-		DatasetValue:  nil,
-		PropertyValue: v3.ValueFromUnsafe(3),
-	}
-	fl3 := []*property.SealedField{}
-	fl3 = append(fl3, &f3)
-	item3 := property.SealedItem{
-		Original:      &iid,
-		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
-		LinkedDataset: nil,
-		Fields:        fl3,
-		Groups:        nil,
-	}
-	il = append(il, &item3)
-	sp := property.Sealed{
-		Original: &pid,
-		Items:    il,
-	}
-	l := merging.SealedLayerItem{
-		SealedLayerCommon: merging.SealedLayerCommon{
-			Merged: layer.Merged{
-				Original:    lid,
-				Parent:      nil,
-				Name:        "test",
-				Scene:       sid,
-				Property:    nil,
-				Infobox:     nil,
-				PluginID:    &id.OfficialPluginID,
-				ExtensionID: &ex,
-			},
-			Property: &sp,
-			Infobox:  nil,
-		}}
-
-	reader, writer := io.Pipe()
-	en := NewKMLEncoder(writer)
-	var err error
-	go func() {
-		defer func() {
-			_ = writer.Close()
-		}()
-		err = en.Encode(&l)
-	}()
-	strokeColorStr, _ := f2.PropertyValue.ValueString()
-	b1, _ := getColor(strokeColorStr)
-	stid, err := en.generateStyleId(l.Original.String(), l.Name)
-	assert.NoError(t, err)
-	expected := kml.KML(kml.SharedStyle(stid,
-		kml.LineStyle(
-			kml.Color(b1),
-			kml.Width(3),
-		)))
-	expected = expected.Add(kml.Placemark(kml.Name("test"),
-		kml.LineString(kml.Coordinates([]kml.Coordinate{
-			{Lon: 5.34, Lat: 3.4, Alt: 100},
-			{Lon: 2.34, Lat: 45.4, Alt: 100},
-			{Lon: 654.34, Lat: 34.66, Alt: 100},
-		}...)),
-		kml.StyleURL("#"+stid)))
-	reader2, writer2 := io.Pipe()
-	go func() {
-		defer func() {
-			_ = writer2.Close()
-		}()
-		err = expected.WriteIndent(writer2, "", "  ")
-	}()
-	assert.NoError(t, err)
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(reader)
-	assert.NoError(t, err)
-	s := buf.String()
-	buf2 := new(bytes.Buffer)
-	_, err = buf2.ReadFrom(reader2)
-	assert.NoError(t, err)
-	s2 := buf2.String()
-	assert.Equal(t, s2, s)
 }

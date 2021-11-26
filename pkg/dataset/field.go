@@ -2,25 +2,22 @@ package dataset
 
 import "github.com/reearth/reearth-backend/pkg/id"
 
-// Field _
 type Field struct {
 	field  id.DatasetSchemaFieldID
-	dtype  ValueType
 	value  *Value
-	source Source
+	source string
 }
 
-// NewField _
-func NewField(field id.DatasetSchemaFieldID, value *Value, source Source) *Field {
+func NewField(field id.DatasetSchemaFieldID, value *Value, source string) *Field {
+	if value == nil {
+		return nil
+	}
 	return &Field{
-		dtype:  value.Type(),
-		field:  field,
-		value:  value,
-		source: source,
+		field: field,
+		value: value,
 	}
 }
 
-// Field _
 func (d *Field) Field() (i id.DatasetSchemaFieldID) {
 	if d == nil {
 		return
@@ -28,7 +25,6 @@ func (d *Field) Field() (i id.DatasetSchemaFieldID) {
 	return d.field
 }
 
-// FieldRef _
 func (d *Field) FieldRef() *id.DatasetSchemaFieldID {
 	if d == nil {
 		return nil
@@ -36,26 +32,27 @@ func (d *Field) FieldRef() *id.DatasetSchemaFieldID {
 	return d.field.Ref()
 }
 
-// Type _
-func (d *Field) Type() (v ValueType) {
-	if d == nil {
-		return
-	}
-	return d.dtype
+func (d *Field) IsEmpty() bool {
+	return d == nil || d.field.IsNil() || d.value == nil
 }
 
-// Value _
 func (d *Field) Value() *Value {
 	if d == nil {
 		return nil
 	}
-	return d.value
+	return d.value.Clone()
 }
 
-// Source _
-func (d *Field) Source() (s Source) {
+func (d *Field) Type() ValueType {
 	if d == nil {
-		return
+		return ValueTypeUnknown
+	}
+	return d.value.Type()
+}
+
+func (d *Field) Source() string {
+	if d == nil {
+		return ""
 	}
 	return d.source
 }

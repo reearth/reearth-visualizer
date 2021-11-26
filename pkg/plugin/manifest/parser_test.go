@@ -38,10 +38,10 @@ var normalExpected = &Manifest{
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().ID(id.PropertySchemaFieldID("a")).
 						Type(property.ValueTypeBool).
-						DefaultValue(property.ValueTypeBool.MustBeValue(true)).
+						DefaultValue(property.ValueTypeBool.ValueFrom(true)).
 						IsAvailableIf(&property.Condition{
 							Field: id.PropertySchemaFieldID("b"),
-							Value: property.ValueTypeNumber.MustBeValue(1),
+							Value: property.ValueTypeNumber.ValueFrom(1),
 						}).
 						MustBuild(),
 					property.NewSchemaField().ID(id.PropertySchemaFieldID("b")).

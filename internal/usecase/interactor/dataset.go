@@ -129,7 +129,6 @@ func (i *Dataset) AddDynamicDatasetSchema(ctx context.Context, inp interfaces.Ad
 }
 
 func (i *Dataset) AddDynamicDataset(ctx context.Context, inp interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
-
 	// Begin Db transaction
 	tx, err := i.transaction.Begin()
 	if err != nil {
@@ -147,19 +146,18 @@ func (i *Dataset) AddDynamicDataset(ctx context.Context, inp interfaces.AddDynam
 		return nil, nil, err
 	}
 	for _, f := range dss.Fields() {
-
 		if f.Name() == "author" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueFrom(inp.Author), ""))
+			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Author), ""))
 		}
 		if f.Name() == "content" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueFrom(inp.Content), ""))
+			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Content), ""))
 		}
 		if inp.Target != nil && len(*inp.Target) > 0 && f.Name() == "target" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueFrom(inp.Target), ""))
+			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Target), ""))
 		}
 		if inp.Lat != nil && inp.Lng != nil && f.Name() == "location" {
 			latlng := dataset.LatLng{Lat: *inp.Lat, Lng: *inp.Lng}
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueFrom(latlng), ""))
+			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeLatLng.ValueFrom(latlng), ""))
 		}
 	}
 	ds, err := dataset.

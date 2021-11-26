@@ -31,6 +31,7 @@ func coordsToPoints(coords property.Coordinates) []shp.Point {
 	}
 	return res
 }
+
 func polygonToPoints(poly property.Polygon) ([]shp.Point, []int32) {
 	var res []shp.Point
 	parts := []int32{0}
@@ -39,25 +40,47 @@ func polygonToPoints(poly property.Polygon) ([]shp.Point, []int32) {
 		res = append(res, partPoints...)
 		if i > 0 {
 			parts = append(parts, int32(len(partPoints)-1))
-
 		}
 	}
 	return res, parts
 }
+
 func getMaxMinPoints(points []shp.Point) (shp.Point, shp.Point) {
 	var max, min shp.Point
-	max = points[0]
-	min = points[0]
-	for _, p := range points {
-		if p.X > max.X && p.Y > max.Y {
-			max = p
+	for i, p := range points {
+		if i == 0 || p.X > min.X {
+			max.X = p.X
 		}
-		if p.X < min.X && p.Y < min.Y {
-			min = p
+		if i == 0 || p.X < min.X {
+			min.X = p.X
+		}
+		if i == 0 || p.Y > max.Y {
+			max.Y = p.Y
+		}
+		if i == 0 || p.Y < min.Y {
+			min.Y = p.Y
 		}
 	}
 	return max, min
 }
+
+func coordinatesToSHP(coordinates property.Coordinates) *shp.PolyLine {
+	points := coordsToPoints(coordinates)
+	max, min := getMaxMinPoints(points)
+	return &shp.PolyLine{
+		Box: shp.Box{
+			MinX: min.X,
+			MinY: min.Y,
+			MaxX: max.X,
+			MaxY: max.Y,
+		},
+		NumParts:  1,
+		NumPoints: int32(len(points)),
+		Parts:     []int32{0},
+		Points:    points,
+	}
+}
+
 func polygonToSHP(poly property.Polygon) *shp.Polygon {
 	points, parts := polygonToPoints(poly)
 	max, min := getMaxMinPoints(points)
@@ -75,78 +98,29 @@ func polygonToSHP(poly property.Polygon) *shp.Polygon {
 	}
 	return &res
 }
-func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (shp.Shape, shp.ShapeType, error) {
+
+func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (sh shp.Shape, st shp.ShapeType, err error) {
 	if li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, 0, nil
 	}
-	var shapeType shp.ShapeType
-	var ok bool
-	var sh shp.Shape
 	switch li.ExtensionID.String() {
 	case "marker":
-		shapeType = shp.POINT
-		latlng := property.LatLng{}
-		if f := li.Property.Field("location"); f != nil {
-			latlng, ok = f.PropertyValue.ValueLatLng()
-			if !ok {
-				dsll := f.DatasetValue.ValueLatLng()
-				if dsll != nil {
-					latlng = property.LatLng{
-						Lat: dsll.Lat,
-						Lng: dsll.Lng,
-					}
-				} else {
-					return nil, 0, errors.New("invalid value type")
-				}
-			}
-			sh = &shp.Point{
-				X: latlng.Lng,
-				Y: latlng.Lat,
-			}
-
-		}
+		sh, st = e.encodeMarker(li)
 	case "polygon":
-		shapeType = shp.POLYGON
-		polygon := property.Polygon{}
-		if f := li.Property.Field("polygon"); f != nil {
-			polygon, ok = f.PropertyValue.ValuePolygon()
-			if !ok {
-				return nil, 0, errors.New("invalid value type")
-			}
-		}
-		if len(polygon) > 0 {
-			shpPoly := polygonToSHP(polygon)
-			sh = shpPoly
-		}
-
+		sh, st = e.encodePolygon(li)
 	case "polyline":
-		shapeType = shp.POLYLINE
-		polyline := property.Coordinates{}
-		if f := li.Property.Field("coordinates"); f != nil {
-			polyline, ok = f.PropertyValue.ValueCoordinates()
-			if !ok {
-				return nil, 0, errors.New("invalid value type")
-			}
-		}
-		if len(polyline) > 0 {
-			points := coordsToPoints(polyline)
-			sh = &shp.PolyLine{
-				Box:       shp.Box{MinX: 102, MinY: 0, MaxX: 104, MaxY: 0},
-				NumParts:  1,
-				NumPoints: int32(len(points)),
-				Parts:     []int32{0},
-				Points:    points,
-			}
-		}
+		sh, st = e.encodePolyline(li)
 	}
-	return sh, shapeType, nil
+	if sh == nil || st == 0 {
+		return nil, 0, errors.New("invalid value type")
+	}
+	return sh, st, nil
 }
 
 func (e *SHPEncoder) encodeLayerGroup(w *wsc.WriterSeeker, li *merging.SealedLayerGroup, shape *shp.Writer) error {
 	for _, ch := range li.Children {
 		if g, ok := ch.(*merging.SealedLayerGroup); ok {
-			err := e.encodeLayerGroup(w, g, shape)
-			if err != nil {
+			if err := e.encodeLayerGroup(w, g, shape); err != nil {
 				return err
 			}
 		} else if i, ok := ch.(*merging.SealedLayerItem); ok {
@@ -154,27 +128,28 @@ func (e *SHPEncoder) encodeLayerGroup(w *wsc.WriterSeeker, li *merging.SealedLay
 			if err != nil {
 				return err
 			}
+
 			if shape == nil {
 				shape, err = shp.CreateFrom(w, t)
+
 				if err != nil {
 					return err
 				}
+
 				defer func() {
 					err = shape.Close()
-
 				}()
-				if err != nil {
-					return err
-				}
 			}
-			_, err = shape.Write(l)
-			if err != nil {
+
+			if _, err := shape.Write(l); err != nil {
 				return err
 			}
 		}
 	}
+
 	return nil
 }
+
 func (e *SHPEncoder) Encode(layer merging.SealedLayer) error {
 	var err error
 	var w wsc.WriterSeeker
@@ -209,4 +184,31 @@ func (e *SHPEncoder) Encode(layer merging.SealedLayer) error {
 		return err
 	}
 	return nil
+}
+
+func (*SHPEncoder) encodeMarker(li *merging.SealedLayerItem) (shp.Shape, shp.ShapeType) {
+	f := li.Property.Field("location").Value().ValueLatLng()
+	if f == nil {
+		return nil, 0
+	}
+	return &shp.Point{
+		X: (*f).Lng,
+		Y: (*f).Lat,
+	}, shp.POINT
+}
+
+func (*SHPEncoder) encodePolygon(li *merging.SealedLayerItem) (shp.Shape, shp.ShapeType) {
+	f := li.Property.Field("polygon").Value().ValuePolygon()
+	if f == nil || len(*f) == 0 {
+		return nil, 0
+	}
+	return polygonToSHP(*f), shp.POLYGON
+}
+
+func (*SHPEncoder) encodePolyline(li *merging.SealedLayerItem) (shp.Shape, shp.ShapeType) {
+	f := li.Property.Field("coordinates").Value().ValueCoordinates()
+	if f == nil || len(*f) == 0 {
+		return nil, 0
+	}
+	return coordinatesToSHP(*f), shp.POLYLINE
 }

@@ -77,13 +77,11 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
-						ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("xxx")).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("xxx"))).
 						Build(),
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField2ID).
-						TypeUnsafe(property.ValueTypeNumber).
-						ValueUnsafe(property.ValueTypeNumber.ValueFromUnsafe(1)).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeNumber.ValueFrom(1))).
 						Build(),
 				}).MustBuild(),
 		}).
@@ -106,13 +104,11 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
-						ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("yyy")).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("yyy"))).
 						Build(),
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField2ID).
-						TypeUnsafe(property.ValueTypeNumber).
-						ValueUnsafe(property.ValueTypeNumber.ValueFromUnsafe(1)).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeNumber.ValueFrom(1))).
 						Build(),
 				}).MustBuild(),
 		}).
@@ -133,13 +129,11 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
-						ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("xxx")).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("xxx"))).
 						Build(),
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField3ID).
-						TypeUnsafe(property.ValueTypeString).
-						ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("test")).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("test"))).
 						Build(),
 				}).MustBuild(),
 		}).
@@ -168,7 +162,7 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
+						ValueUnsafe(property.NewOptionalValue(property.ValueTypeString, nil)).
 						LinksUnsafe(property.NewLinks([]*property.Link{
 							property.NewLink(ds2id, dss2id, ds2f1),
 							property.NewLink(ds3id, dss3id, ds3f1),
@@ -200,8 +194,7 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField2ID).
-						TypeUnsafe(property.ValueTypeNumber).
-						ValueUnsafe(property.ValueTypeNumber.ValueFromUnsafe(1)).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeNumber.ValueFrom(1))).
 						Build(),
 				}).MustBuild(),
 		}).
@@ -228,15 +221,14 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
+						ValueUnsafe(property.NewOptionalValue(property.ValueTypeString, nil)).
 						LinksUnsafe(property.NewLinks([]*property.Link{
 							property.NewLinkFieldOnly(dss3id, ds3f1),
 						})).
 						Build(),
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField3ID).
-						TypeUnsafe(property.ValueTypeString).
-						ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("xxx")).
+						ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("xxx"))).
 						Build(),
 				}).MustBuild(),
 		}).
@@ -266,7 +258,7 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
+						ValueUnsafe(property.NewOptionalValue(property.ValueTypeString, nil)).
 						LinksUnsafe(property.NewLinks([]*property.Link{
 							property.NewLinkFieldOnly(dss1id, ds1f2),
 						})).
@@ -291,7 +283,7 @@ func TestSceneBuilder(t *testing.T) {
 				Fields([]*property.Field{
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField1ID).
-						TypeUnsafe(property.ValueTypeString).
+						ValueUnsafe(property.NewOptionalValue(property.ValueTypeString, nil)).
 						LinksUnsafe(property.NewLinks([]*property.Link{
 							property.NewLinkFieldOnly(dss1id, ds1f1),
 							property.NewLinkFieldOnly(dss2id, ds2f1),
@@ -300,7 +292,7 @@ func TestSceneBuilder(t *testing.T) {
 						Build(),
 					property.NewFieldUnsafe().
 						FieldUnsafe(propertySchemaField2ID).
-						TypeUnsafe(property.ValueTypeString).
+						ValueUnsafe(property.NewOptionalValue(property.ValueTypeString, nil)).
 						LinksUnsafe(property.NewLinks([]*property.Link{
 							property.NewLinkFieldOnly(dss1id, ds1f1),
 							property.NewLinkFieldOnly(dss2id, ds2f1),
@@ -329,16 +321,14 @@ func TestSceneBuilder(t *testing.T) {
 					Fields([]*property.Field{
 						property.NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(property.ValueTypeString).
-							ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("XYZ")).
+							ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("XYZ"))).
 							Build(),
 					}).MustBuild(),
 				property.NewGroup().ID(propertyItemID2).Schema(propertySchemaID, propertySchemaGroup2ID).
 					Fields([]*property.Field{
 						property.NewFieldUnsafe().
 							FieldUnsafe(propertySchemaField1ID).
-							TypeUnsafe(property.ValueTypeString).
-							ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("ZYX")).
+							ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("ZYX"))).
 							Build(),
 					}).MustBuild(),
 			}).MustBuild(),
@@ -371,8 +361,7 @@ func TestSceneBuilder(t *testing.T) {
 			property.NewGroup().NewID().Schema(propertySchemaID, propertySchemaGroup1ID).Fields([]*property.Field{
 				property.NewFieldUnsafe().
 					FieldUnsafe(propertySchemaField1ID).
-					TypeUnsafe(property.ValueTypeString).
-					ValueUnsafe(property.ValueTypeString.ValueFromUnsafe("hogehoge")).
+					ValueUnsafe(property.OptionalValueFrom(property.ValueTypeString.ValueFrom("hogehoge"))).
 					Build(),
 			}).MustBuild(),
 		}).

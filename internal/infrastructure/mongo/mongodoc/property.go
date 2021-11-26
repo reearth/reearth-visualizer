@@ -218,11 +218,10 @@ func toModelPropertyField(f *PropertyFieldDocument) *property.Field {
 		flinks = property.NewLinks(links)
 	}
 
-	vt, _ := property.ValueTypeFrom(f.Type)
+	vt := property.ValueType(f.Type)
 	field := property.NewFieldUnsafe().
 		FieldUnsafe(id.PropertySchemaFieldID(f.Field)).
-		TypeUnsafe(vt).
-		ValueUnsafe(toModelPropertyValue(f.Value, f.Type)).
+		ValueUnsafe(property.NewOptionalValue(vt, toModelPropertyValue(f.Value, f.Type))).
 		LinksUnsafe(flinks).
 		Build()
 
@@ -318,13 +317,5 @@ func (doc *PropertyDocument) Model() (*property.Property, error) {
 }
 
 func toModelPropertyValue(v interface{}, t string) *property.Value {
-	if v == nil {
-		return nil
-	}
-	v = convertDToM(v)
-	vt, ok := property.ValueTypeFrom(t)
-	if !ok {
-		return nil
-	}
-	return vt.ValueFromUnsafe(v)
+	return property.ValueType(t).ValueFrom(convertDToM(v))
 }
