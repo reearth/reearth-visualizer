@@ -22,22 +22,47 @@ extensions:
               type: bool
               title: Terrain
               description: Show elevation when close to the surface.
-            - id: terrain
-              type: bool
-              title: Terrain
-              description: Show elevation when close to the surface.
-            # NOT SUPPORTED YET
-            # - id: terrainExaggeration
-            #   type: number
-            #   title: Terrain exaggeration
-            #   defaultValue: 1
-            # - id: terrainExaggerationRelativeHeight
-            #   type: number
-            #   title: Terrain exaggeration relative height
+            - id: terrainType
+              type: string
+              title: Terrain Type
+              description: Specify terrain type.
+              choices:
+                - key: cesium
+                  label: Cesium
+                - key: arcgis
+                  label: ArcGIS
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: terrainExaggeration
+              type: number
+              title: Terrain exaggeration
+              description: A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.
+              defaultValue: 1
+              suffix: x
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: terrainExaggerationRelativeHeight
+              type: number
+              title: Terrain exaggeration relative height
+              description: The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.
+              defaultValue: 0
+              suffix: m
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
             - id: depthTestAgainstTerrain
               type: bool
               title: Hide objects under terrain
               description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
             - id: skybox
               type: bool
               title: Sky

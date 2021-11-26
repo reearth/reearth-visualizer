@@ -14,9 +14,21 @@ extensions:
           terrain:
             title: 地形
             description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          terrainType:
+            title: 地形の種類
+            description: 地形の種類を指定します。
+          terrainExaggeration:
+            title: 地形の強調
+            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
+          terrainExaggerationRelativeHeight:
+            title: 地形の強調の基準
+            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
           depthTestAgainstTerrain:
             title: 地形の下を非表示
             description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
+            choices:
+              cesium: Cesium
+              arcgis: ArcGIS
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。
