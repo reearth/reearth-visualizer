@@ -82,15 +82,15 @@ func gqlValueToValueInterface(v interface{}) interface{} {
 		return nil
 	}
 	switch v2 := v.(type) {
-	case bool:
-		return v2
-	case float64:
-		return v2
-	case string:
-		return v2
-	case *url.URL:
-		return v2
 	case LatLng:
+		return value.LatLng{
+			Lat: v2.Lat,
+			Lng: v2.Lng,
+		}
+	case *LatLng:
+		if v2 == nil {
+			return nil
+		}
 		return value.LatLng{
 			Lat: v2.Lat,
 			Lng: v2.Lng,
@@ -101,12 +101,10 @@ func gqlValueToValueInterface(v interface{}) interface{} {
 			Lng:    v2.Lng,
 			Height: v2.Height,
 		}
-	case *LatLng:
-		return value.LatLng{
-			Lat: v2.Lat,
-			Lng: v2.Lng,
-		}
 	case *LatLngHeight:
+		if v2 == nil {
+			return nil
+		}
 		return value.LatLngHeight{
 			Lat:    v2.Lat,
 			Lng:    v2.Lng,
@@ -115,6 +113,19 @@ func gqlValueToValueInterface(v interface{}) interface{} {
 	case []LatLngHeight:
 		res := make([]value.LatLngHeight, 0, len(v2))
 		for _, c := range v2 {
+			res = append(res, value.LatLngHeight{
+				Lat:    c.Lat,
+				Lng:    c.Lng,
+				Height: c.Height,
+			})
+		}
+		return value.Coordinates(res)
+	case []*LatLngHeight:
+		res := make([]value.LatLngHeight, 0, len(v2))
+		for _, c := range v2 {
+			if c == nil {
+				continue
+			}
 			res = append(res, value.LatLngHeight{
 				Lat:    c.Lat,
 				Lng:    c.Lng,
@@ -136,6 +147,30 @@ func gqlValueToValueInterface(v interface{}) interface{} {
 			res = append(res, coord)
 		}
 		return value.Polygon(res)
+	case [][]*LatLngHeight:
+		res := make([]value.Coordinates, 0, len(v2))
+		for _, d := range v2 {
+			coord := make([]value.LatLngHeight, 0, len(d))
+			for _, c := range d {
+				if c == nil {
+					continue
+				}
+				coord = append(coord, value.LatLngHeight{
+					Lat:    c.Lat,
+					Lng:    c.Lng,
+					Height: c.Height,
+				})
+			}
+			res = append(res, coord)
+		}
+		return value.Polygon(res)
+	case Rect:
+		return value.Rect{
+			West:  v2.West,
+			East:  v2.East,
+			North: v2.North,
+			South: v2.South,
+		}
 	case *Rect:
 		return value.Rect{
 			West:  v2.West,
@@ -144,7 +179,7 @@ func gqlValueToValueInterface(v interface{}) interface{} {
 			South: v2.South,
 		}
 	}
-	return nil
+	return v
 }
 
 func ToValueType(t value.Type) ValueType {
