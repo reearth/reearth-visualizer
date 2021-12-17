@@ -166,6 +166,7 @@ src:
           '1835798571': Layers
           '2793623359': Widgets
           '3645414921': Delete
+          '4117491116': Clusters
         PropertyPane:
           '3453457092': Create Infobox
           '3833270271': Dataset
@@ -260,6 +261,13 @@ src:
             project.
           '3869801582': Embed Code
           '4062044511': Update your project
+        TagPane:
+          LayerTagPane:
+            '1950319966': Add a tag group
+          SceneTagPane:
+            '1950319966': Add a tag group
+          TagGroup:
+            '1562483899': Add a tag
       Settings:
         Account:
           AccountSection:
@@ -483,11 +491,15 @@ src:
           '24000205': Folder
         RightMenu:
           '422058490': Layer
+          '1000435983': Tag
           '1538011248': Scene
           '1676374721': Widget
           '1884622259': Infobox
           '2793623359': Widgets
           '3590336714': Export
+        TagPane:
+          '1982056879': Same label tag already exist. Please type different label.
+          '4149491408': 'Tag group has tags, you need to remove all tags under the tag group'
       Notification:
         '687096634': Warning
         '1354606874': Notice

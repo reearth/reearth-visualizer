@@ -2,9 +2,7 @@ import React, { useMemo } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
-import Text from "@reearth/components/atoms/Text";
-import { styled } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
+import { Option, OptionCheck, OptionIcon } from "@reearth/components/atoms/SelectOption";
 
 export type Item<Value extends string | number = string> = {
   key: Value;
@@ -49,34 +47,5 @@ const SelectField = <Value extends string | number = string>({
     </Select>
   );
 };
-
-const OptionCheck = styled(Text)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  margin-right: 6px;
-`;
-
-const OptionIcon = styled(Text)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  margin-right: 6px;
-`;
-
-const Option = styled.li<{
-  focused?: boolean;
-  label?: string;
-}>`
-  display: flex;
-  list-style: none;
-  padding: 6px;
-  font-size: ${fonts.sizes["2xs"]}px;
-  color: ${({ theme }) => theme.main.text};
-  background: ${({ focused, theme }) => (focused ? "transparent" : theme.properties.bg)};
-  cursor: pointer;
-`;
 
 export default SelectField;

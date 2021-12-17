@@ -1,4 +1,3 @@
-/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 export const GET_ALL_DATASETS = gql`

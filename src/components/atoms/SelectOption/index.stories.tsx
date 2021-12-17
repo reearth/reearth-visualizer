@@ -1,7 +1,7 @@
 import { Meta } from "@storybook/react";
 import React from "react";
 
-import Option from ".";
+import { Option } from ".";
 
 export default {
   title: "atoms/SelectOption",

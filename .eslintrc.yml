@@ -102,9 +102,6 @@ overrides:
     plugins:
       - graphql
     rules:
-      graphql/template-strings:
-        - error
-        - env: apollo
       graphql/capitalized-type-name:
         - error
         - env: apollo

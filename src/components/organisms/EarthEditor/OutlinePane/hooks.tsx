@@ -67,7 +67,7 @@ export default () => {
   });
 
   const { data: clusterData } = useGetClustersQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 
@@ -392,6 +392,7 @@ export default () => {
       variables: {
         sceneId,
         name,
+        lang: intl.locale,
       },
       refetchQueries: ["GetClusters"],
     });
@@ -401,7 +402,7 @@ export default () => {
         clusterId: data.addCluster.cluster.id,
       });
     }
-  }, [addClusterMutation, sceneId, select]);
+  }, [addClusterMutation, intl.locale, sceneId, select]);
 
   const removeCluster = useCallback(
     async (clusterId: string) => {

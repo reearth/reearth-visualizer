@@ -1,3 +1,4 @@
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
@@ -6,7 +7,7 @@ export type Props = {
   focused?: boolean;
 };
 
-const Option = styled.li<Props>`
+export const Option = styled.li<Props>`
   display: flex;
   list-style: none;
   padding: 6px;
@@ -17,4 +18,18 @@ const Option = styled.li<Props>`
   cursor: pointer;
 `;
 
-export default Option;
+export const OptionCheck = styled(Text)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  margin-right: 6px;
+`;
+
+export const OptionIcon = styled(Text)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  margin-right: 6px;
+`;

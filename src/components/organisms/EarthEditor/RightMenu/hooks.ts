@@ -10,6 +10,7 @@ export type Tab =
   | "infobox"
   | "export"
   | "dataset"
+  | "tag"
   | "cluster";
 
 export default () => {

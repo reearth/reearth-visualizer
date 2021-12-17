@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
-import Option from "@reearth/components/atoms/SelectOption";
+import { Option } from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 

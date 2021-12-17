@@ -4,6 +4,7 @@ export type Props = {
   className?: string;
   onClick?: () => void;
   children?: React.ReactNode;
+  testId?: string;
 } & FlexOptions;
 
 export type FlexOptions = {
@@ -22,6 +23,7 @@ const Flex: React.FC<Props> = ({
   className,
   onClick,
   children,
+  testId,
   align,
   justify,
   wrap,
@@ -45,7 +47,7 @@ const Flex: React.FC<Props> = ({
     gap: gap, // TODO: Safari doesn't support this property and please develop polyfill
   };
   return (
-    <div className={className} style={styles} onClick={onClick}>
+    <div className={className} style={styles} onClick={onClick} data-testid={testId}>
       {children}
     </div>
   );

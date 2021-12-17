@@ -121,6 +121,7 @@ import NoProjects from "./Icons/noProjects.svg";
 import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
+import Tag from "./Icons/tag.svg";
 
 // Plug-ins
 import Plugin from "./Icons/plugin.svg";
@@ -236,4 +237,5 @@ export default {
   publicGitHubRepo: PublicGitHubRepo,
   menuForDevice: MenuForDevice,
   plugin: Plugin,
+  tag: Tag,
 };
