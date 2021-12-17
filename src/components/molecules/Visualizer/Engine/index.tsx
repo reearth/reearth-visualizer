@@ -30,6 +30,13 @@ export type SceneProperty = {
     bgcolor?: string;
     ion?: string;
   };
+  cameraLimiter?: {
+    cameraLimitterEnabled?: boolean;
+    cameraLimitterShowHelper?: boolean;
+    cameraLimitterTargetArea?: Camera;
+    cameraLimitterTargetWidth: number;
+    cameraLimitterTargetLength: number;
+  };
   tiles?: {
     id: string;
     tile_type?: string;

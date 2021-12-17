@@ -1,7 +1,19 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
+import {
+  Color,
+  Entity,
+  Ion,
+  Cesium3DTileFeature,
+  Cartesian3,
+  Cartographic,
+  Camera as CesiumCamera,
+  Math,
+  EllipsoidGeodesic,
+  Rectangle,
+  PolylineDashMaterialProperty,
+} from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
-import { isEqual } from "lodash-es";
+import { isEqual, throttle } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
@@ -123,7 +135,12 @@ export default ({
     () => {
       if (initialCameraFlight.current) return;
       initialCameraFlight.current = true;
-      if (property?.default?.camera) {
+      if (
+        property?.cameraLimiter?.cameraLimitterEnabled &&
+        property?.cameraLimiter?.cameraLimitterTargetArea
+      ) {
+        engineAPI.flyTo(property?.cameraLimiter?.cameraLimitterTargetArea, { duration: 0 });
+      } else if (property?.default?.camera) {
         engineAPI.flyTo(property.default.camera, { duration: 0 });
       }
       const camera = getCamera(cesium?.current?.cesiumElement);
@@ -131,16 +148,30 @@ export default ({
         onCameraChange?.(camera);
       }
     },
-    [engineAPI, onCameraChange, property?.default?.camera],
+    [
+      engineAPI,
+      onCameraChange,
+      property?.default?.camera,
+      property?.cameraLimiter?.cameraLimitterEnabled,
+    ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
-      isEqual(prevDeps[2], nextDeps[2]),
+      isEqual(prevDeps[2], nextDeps[2]) &&
+      prevDeps[3] === nextDeps[3],
   );
 
   const handleUnmount = useCallback(() => {
     initialCameraFlight.current = false;
   }, []);
+
+  const throttledCameraChange = useMemo(
+    () =>
+      throttle((c: Camera) => {
+        onCameraChange?.(c);
+      }, 100),
+    [onCameraChange],
+  );
 
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
@@ -151,9 +182,9 @@ export default ({
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current = c;
-      onCameraChange(c);
+      throttledCameraChange(c);
     }
-  }, [onCameraChange, camera]);
+  }, [throttledCameraChange, camera, onCameraChange]);
 
   // camera
   useEffect(() => {
@@ -162,6 +193,181 @@ export default ({
       emittedCamera.current = undefined;
     }
   }, [camera, engineAPI]);
+
+  const geodsic = useMemo(():
+    | undefined
+    | { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } => {
+    const viewer = cesium.current?.cesiumElement;
+    if (
+      !viewer ||
+      !viewer.scene ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimiter ||
+      !property?.cameraLimiter.cameraLimitterTargetArea
+    )
+      return undefined;
+    const ellipsoid = viewer.scene.globe.ellipsoid;
+
+    const centerPoint = Cartesian3.fromDegrees(
+      property.cameraLimiter.cameraLimitterTargetArea.lng,
+      property.cameraLimiter.cameraLimitterTargetArea.lat,
+      0,
+    );
+
+    const cartographicCenterPoint = Cartographic.fromCartesian(centerPoint);
+    const normal = ellipsoid.geodeticSurfaceNormal(centerPoint);
+    const east = Cartesian3.normalize(
+      Cartesian3.cross(Cartesian3.UNIT_Z, normal, new Cartesian3()),
+      new Cartesian3(),
+    );
+    const north = Cartesian3.normalize(
+      Cartesian3.cross(normal, east, new Cartesian3()),
+      new Cartesian3(),
+    );
+
+    const geodesicVertical = new EllipsoidGeodesic(
+      cartographicCenterPoint,
+      Cartographic.fromCartesian(north),
+      ellipsoid,
+    );
+    const geodesicHorizontal = new EllipsoidGeodesic(
+      cartographicCenterPoint,
+      Cartographic.fromCartesian(east),
+      ellipsoid,
+    );
+    return { geodesicVertical, geodesicHorizontal };
+  }, [property?.cameraLimiter]);
+
+  // calculate inner limiter dimensions
+  const targetWidth = 1000000;
+  const targetLength = 1000000;
+  const limiterDimensions = useMemo(():
+    | undefined
+    | {
+        cartographicDimensions: {
+          rightDemention: Cartographic;
+          leftDemention: Cartographic;
+          topDemention: Cartographic;
+          bottomDemention: Cartographic;
+        };
+        cartesianArray: Cartesian3[];
+      } => {
+    const viewer = cesium.current?.cesiumElement;
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimiter ||
+      !property?.cameraLimiter.cameraLimitterTargetArea ||
+      !geodsic
+    )
+      return undefined;
+    const {
+      cameraLimitterTargetWidth: width = targetWidth,
+      cameraLimitterTargetLength: length = targetLength,
+    } = property?.cameraLimiter ?? {};
+
+    const { cartesianArray, cartographicDimensions } = calcBoundaryBox(
+      geodsic,
+      length / 2,
+      width / 2,
+    );
+
+    return {
+      cartographicDimensions,
+      cartesianArray,
+    };
+  }, [property?.cameraLimiter, geodsic]);
+
+  // calculate maximum camera view (outer boundaries)
+  const [cameraViewOuterBoundaries, setCameraViewOuterBoundaries] = useState<
+    Cartesian3[] | undefined
+  >();
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (
+      !viewer ||
+      !viewer.scene ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimiter ||
+      !property?.cameraLimiter.cameraLimitterTargetArea ||
+      !geodsic
+    )
+      return;
+
+    const camera = new CesiumCamera(viewer.scene);
+    camera.setView({
+      destination: Cartesian3.fromDegrees(
+        property.cameraLimiter.cameraLimitterTargetArea.lng,
+        property.cameraLimiter.cameraLimitterTargetArea.lat,
+        property.cameraLimiter.cameraLimitterTargetArea.height,
+      ),
+      orientation: {
+        heading: property?.cameraLimiter?.cameraLimitterTargetArea.heading,
+        pitch: property?.cameraLimiter?.cameraLimitterTargetArea.pitch,
+        roll: property?.cameraLimiter?.cameraLimitterTargetArea.roll,
+        up: camera.up,
+      },
+    });
+
+    const computedViewRectangle = camera.computeViewRectangle();
+    if (!computedViewRectangle) return;
+    const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
+    const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
+
+    const {
+      cameraLimitterTargetWidth: width = targetWidth,
+      cameraLimitterTargetLength: length = targetLength,
+    } = property?.cameraLimiter ?? {};
+
+    const { cartesianArray } = calcBoundaryBox(
+      geodsic,
+      length / 2 + rectangleHalfHeight,
+      width / 2 + rectangleHalfWidth,
+    );
+
+    setCameraViewOuterBoundaries(cartesianArray);
+  }, [property?.cameraLimiter, geodsic, camera]);
+
+  // Manage camera limiter conditions
+  useEffect(() => {
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    const viewer = cesium?.current?.cesiumElement;
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimiter?.cameraLimitterEnabled ||
+      !limiterDimensions
+    )
+      return;
+    if (camera) {
+      const cameraPosition = Cartographic.fromDegrees(camera?.lng, camera?.lat, camera?.height);
+
+      const destination = new Cartographic(
+        Math.clamp(
+          cameraPosition.longitude,
+          limiterDimensions.cartographicDimensions.leftDemention.longitude,
+          limiterDimensions.cartographicDimensions.rightDemention.longitude,
+        ),
+        Math.clamp(
+          cameraPosition.latitude,
+          limiterDimensions.cartographicDimensions.bottomDemention.latitude,
+          limiterDimensions.cartographicDimensions.topDemention.latitude,
+        ),
+        cameraPosition.height,
+      );
+
+      viewer.camera.setView({
+        destination: Cartographic.toCartesian(destination),
+        orientation: {
+          heading: viewer.camera.heading,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll,
+          up: viewer.camera.up,
+        },
+      });
+    }
+  }, [camera, property?.cameraLimiter, limiterDimensions]);
 
   // manage layer selection
   useEffect(() => {
@@ -270,12 +476,54 @@ export default ({
     backgroundColor,
     imageryLayers,
     cesium,
+    limiterDimensions,
+    cameraViewOuterBoundaries,
+    cameraViewBoundariesMaterial,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraMoveEnd,
   };
 };
+
+function calcBoundaryBox(
+  geodsic: { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic },
+  halfLength: number,
+  halfWidth: number,
+): {
+  cartographicDimensions: {
+    rightDemention: Cartographic;
+    leftDemention: Cartographic;
+    topDemention: Cartographic;
+    bottomDemention: Cartographic;
+  };
+  cartesianArray: Cartesian3[];
+} {
+  const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(halfLength);
+  const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-halfLength);
+  const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(halfWidth);
+  const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-halfWidth);
+
+  const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
+  const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
+  const rightBottom = new Cartographic(rightDemention.longitude, bottomDemention.latitude, 0);
+  const leftBottom = new Cartographic(leftDemention.longitude, bottomDemention.latitude, 0);
+  return {
+    cartographicDimensions: {
+      rightDemention,
+      leftDemention,
+      topDemention,
+      bottomDemention,
+    },
+    cartesianArray: [
+      Cartographic.toCartesian(rightTop),
+      Cartographic.toCartesian(leftTop),
+      Cartographic.toCartesian(leftBottom),
+      Cartographic.toCartesian(rightBottom),
+      Cartographic.toCartesian(rightTop),
+    ],
+  };
+}
 
 function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
   return t
@@ -285,3 +533,7 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       [],
     );
 }
+
+const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
+  color: Color.RED,
+});
