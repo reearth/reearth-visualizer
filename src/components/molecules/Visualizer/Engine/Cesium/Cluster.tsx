@@ -17,9 +17,7 @@ export type Props = {
       clusterImageHeight?: number;
       clusterImageWidth?: number;
     };
-    layers: {
-      layer?: string;
-    }[];
+    layers: { layer?: string }[];
   };
   pluginProperty?: { [key: string]: any };
   isEditable?: boolean;
@@ -60,24 +58,19 @@ const Cluster: React.FC<Props> = ({
     clusterImageHeight,
   } = property?.default ?? {};
 
-  const cluster = useMemo<EntityCluster>(() => {
+  const cluster = useMemo(() => {
     return new EntityCluster({
       enabled: true,
-      pixelRange: 15,
-      minimumClusterSize: 3,
+      pixelRange: clusterPixelRange,
+      minimumClusterSize: clusterMinSize,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
     });
-  }, []);
+  }, [clusterMinSize, clusterPixelRange]);
 
   useEffect(() => {
-    cluster.pixelRange = clusterMinSize;
-    cluster.minimumClusterSize = clusterPixelRange;
-  }, [cluster, clusterMinSize, clusterPixelRange]);
-
-  useEffect(() => {
-    return cluster.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
+    return cluster?.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
       clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
       clusterParam.label.horizontalOrigin =
         clusterLabelTypography.textAlign === "right"
@@ -95,12 +88,13 @@ const Cluster: React.FC<Props> = ({
       clusterParam.billboard.width = clusterImageHeight;
     });
   }, [
+    clusterMinSize,
+    clusterPixelRange,
     cluster,
+    clusterLabelTypography,
     clusterImage,
     clusterImageHeight,
     clusterImageWidth,
-    clusterLabelTypography,
-    property,
   ]);
 
   return cluster ? (
