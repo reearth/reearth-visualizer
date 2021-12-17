@@ -2,7 +2,6 @@ package layer
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 func ItemFromLayer(l Layer) *Item {
@@ -102,7 +101,7 @@ func (b *ItemBuilder) LinkedDataset(linkedDataset *id.DatasetID) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Tags(tags *tag.List) *ItemBuilder {
+func (b *ItemBuilder) Tags(tags *TagList) *ItemBuilder {
 	b.l.tags = tags
 	return b
 }

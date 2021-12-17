@@ -318,7 +318,6 @@ enum PluginExtensionType {
   INFOBOX
 }
 
-
 type PluginExtension {
   extensionId: PluginExtensionID!
   pluginId: PluginID!
@@ -660,11 +659,8 @@ interface Layer {
   plugin: Plugin
   extension: PluginExtension
   scenePlugin: ScenePlugin
-  tagIds: [ID!]!
-  tags: [Tag!]! @goField(forceResolver: true)
+  tags: [LayerTag!]!
 }
-
-union Layers = LayerItem | LayerGroup
 
 enum LayerEncodingFormat {
   KML
@@ -686,6 +682,7 @@ type LayerItem implements Layer {
   # parentId will not be always set
   parentId: ID
   linkedDatasetId: ID
+  tags: [LayerTag!]!
   parent: LayerGroup @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
   plugin: Plugin @goField(forceResolver: true)
@@ -694,8 +691,6 @@ type LayerItem implements Layer {
   merged: MergedLayer @goField(forceResolver: true)
   scene: Scene @goField(forceResolver: true)
   scenePlugin: ScenePlugin @goField(forceResolver: true)
-  tagIds: [ID!]!
-  tags: [Tag!]! @goField(forceResolver: true)
 }
 
 type LayerGroup implements Layer {
@@ -712,6 +707,7 @@ type LayerGroup implements Layer {
   linkedDatasetSchemaId: ID
   root: Boolean!
   layerIds: [ID!]!
+  tags: [LayerTag!]!
   parent: LayerGroup @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
   plugin: Plugin @goField(forceResolver: true)
@@ -720,8 +716,6 @@ type LayerGroup implements Layer {
   layers: [Layer]! @goField(forceResolver: true)
   scene: Scene @goField(forceResolver: true)
   scenePlugin: ScenePlugin @goField(forceResolver: true)
-  tagIds: [ID!]!
-  tags: [Tag!]! @goField(forceResolver: true)
 }
 
 type Infobox {
@@ -754,6 +748,22 @@ type InfoboxField {
   merged: MergedInfoboxField @goField(forceResolver: true)
   scene: Scene @goField(forceResolver: true)
   scenePlugin: ScenePlugin @goField(forceResolver: true)
+}
+
+interface LayerTag {
+  tagId: ID!
+  tag: Tag
+}
+
+type LayerTagItem implements LayerTag {
+  tagId: ID!
+  tag: Tag @goField(forceResolver: true)
+}
+
+type LayerTagGroup implements LayerTag {
+  tagId: ID!
+  children: [LayerTagItem!]!
+  tag: Tag @goField(forceResolver: true)
 }
 
 type MergedLayer {
@@ -790,28 +800,33 @@ interface Tag {
   id: ID!
   sceneId: ID!
   label: String!
+  layers: [Layer!]! @goField(forceResolver: true)
 }
 
 type TagItem implements Tag {
   id: ID!
   sceneId: ID!
   label: String!
+  parentId: ID
   linkedDatasetID: ID
   linkedDatasetSchemaID: ID
   linkedDatasetFieldID: ID
   linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
   linkedDataset: Dataset @goField(forceResolver: true)
   linkedDatasetField: DatasetField @goField(forceResolver: true)
+  parent: TagGroup @goField(forceResolver: true)
+  layers: [Layer!]! @goField(forceResolver: true)
 }
 
 type TagGroup implements Tag {
   id: ID!
   sceneId: ID!
   label: String!
-  tags: [ID!]
+  tagIds: [ID!]
+  tags: [TagItem!]! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  layers: [Layer!]! @goField(forceResolver: true)
 }
-
-union Tags = TagItem | TagGroup
 
 type Cluster {
   id: ID!
@@ -1176,6 +1191,7 @@ input AddDatasetSchemaInput {
 input CreateTagItemInput {
   sceneId: ID!
   label: String!
+  parent: ID
   linkedDatasetSchemaID: ID
   linkedDatasetID: ID
   linkedDatasetField: ID
@@ -1435,6 +1451,7 @@ type AddDatasetSchemaPayload {
 
 type CreateTagItemPayload {
   tag: TagItem!
+  parent: TagGroup
 }
 
 type CreateTagGroupPayload {
@@ -1453,16 +1470,17 @@ type UpdateTagPayload {
   tag: Tag!
 }
 
-type AttachTagToLayerPayload{
+type AttachTagToLayerPayload {
   layer: Layer!
 }
 
-type DetachTagFromLayerPayload{
+type DetachTagFromLayerPayload {
   layer: Layer!
 }
 
-type RemoveTagPayload{
+type RemoveTagPayload {
   tagId: ID!
+  updatedLayers: [Layer!]!
 }
 
 type AddClusterPayload {
@@ -1475,7 +1493,7 @@ type UpdateClusterPayload {
   cluster: Cluster!
 }
 
-type RemoveClusterPayload{
+type RemoveClusterPayload {
   scene: Scene!
   clusterId: ID!
 }
@@ -1611,7 +1629,9 @@ type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
+  updateWidgetAlignSystem(
+    input: UpdateWidgetAlignSystemInput!
+  ): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
   installPlugin(input: InstallPluginInput!): InstallPluginPayload
   uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
@@ -1634,7 +1654,9 @@ type Mutation {
     input: RemoveDatasetSchemaInput!
   ): RemoveDatasetSchemaPayload
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
-  importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload
+  importDatasetFromGoogleSheet(
+    input: ImportDatasetFromGoogleSheetInput!
+  ): ImportDatasetPayload
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
 
   # Property
@@ -1668,8 +1690,12 @@ type Mutation {
   # Tag
   createTagItem(input: CreateTagItemInput!): CreateTagItemPayload
   createTagGroup(input: CreateTagGroupInput!): CreateTagGroupPayload
-  attachTagItemToGroup(input: AttachTagItemToGroupInput!): AttachTagItemToGroupPayload
-  detachTagItemFromGroup(input: DetachTagItemFromGroupInput!): DetachTagItemFromGroupPayload
+  attachTagItemToGroup(
+    input: AttachTagItemToGroupInput!
+  ): AttachTagItemToGroupPayload
+  detachTagItemFromGroup(
+    input: DetachTagItemFromGroupInput!
+  ): DetachTagItemFromGroupPayload
   updateTag(input: UpdateTagInput!): UpdateTagPayload
   removeTag(input: RemoveTagInput!): RemoveTagPayload
 }

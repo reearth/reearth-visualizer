@@ -1,9 +1,6 @@
 {
   "editor.formatOnSave": true,
   "go.lintTool": "golangci-lint",
-  "go.lintFlags": [
-    "--fast"
-  ],
   "yaml.format.enable": true,
   "yaml.completion": true,
   "yaml.validate": true,

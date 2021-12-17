@@ -35,6 +35,14 @@ func (r *Resolver) MergedInfoboxField() MergedInfoboxFieldResolver {
 	return &mergedInfoboxFieldResolver{r}
 }
 
+func (r *Resolver) LayerTagItem() LayerTagItemResolver {
+	return &layerTagItemResolver{r}
+}
+
+func (r *Resolver) LayerTagGroup() LayerTagGroupResolver {
+	return &layerTagGroupResolver{r}
+}
+
 type infoboxResolver struct{ *Resolver }
 
 func (r *infoboxResolver) Property(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.Property, error) {
@@ -201,35 +209,6 @@ func (r *infoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.In
 }
 
 type layerGroupResolver struct{ *Resolver }
-
-func (r *layerGroupResolver) Tags(ctx context.Context, obj *gqlmodel.LayerGroup) ([]gqlmodel.Tag, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	ids := make([]id.TagID, 0, len(obj.TagIds))
-	for _, tid := range obj.TagIds {
-		if tid != nil {
-			ids = append(ids, id.TagID(*tid))
-		}
-	}
-
-	tags, err := DataLoadersFromContext(ctx).Tag.LoadAll(ids)
-	if len(err) > 0 {
-		for _, err1 := range err {
-			if err1 != nil {
-				return nil, err1
-			}
-		}
-	}
-
-	res := make([]gqlmodel.Tag, 0, len(tags))
-	for _, t := range tags {
-		if t != nil {
-			res = append(res, *t)
-		}
-	}
-	return res, nil
-}
 
 func (r *layerGroupResolver) Parent(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.LayerGroup, error) {
 	exit := trace(ctx)
@@ -411,35 +390,6 @@ func (r *layerItemResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.Layer
 	return s.Plugin(*obj.PluginID), nil
 }
 
-func (r *layerItemResolver) Tags(ctx context.Context, obj *gqlmodel.LayerItem) ([]gqlmodel.Tag, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	ids := make([]id.TagID, 0, len(obj.TagIds))
-	for _, tid := range obj.TagIds {
-		if tid != nil {
-			ids = append(ids, id.TagID(*tid))
-		}
-	}
-
-	tags, err := DataLoadersFromContext(ctx).Tag.LoadAll(ids)
-	if len(err) > 0 {
-		for _, err1 := range err {
-			if err1 != nil {
-				return nil, err1
-			}
-		}
-	}
-
-	res := make([]gqlmodel.Tag, 0, len(tags))
-	for _, t := range tags {
-		if t != nil {
-			res = append(res, *t)
-		}
-	}
-	return res, nil
-}
-
 type mergedLayerResolver struct{ *Resolver }
 
 func (r *mergedLayerResolver) Original(ctx context.Context, obj *gqlmodel.MergedLayer) (*gqlmodel.LayerItem, error) {
@@ -516,28 +466,28 @@ func (r *mergedInfoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmo
 	return s.Plugin(obj.PluginID), nil
 }
 
-func (r *mutationResolver) AttachTagToLayer(ctx context.Context, input gqlmodel.AttachTagToLayerInput) (*gqlmodel.AttachTagToLayerPayload, error) {
+type layerTagItemResolver struct{ *Resolver }
+
+func (r *layerTagItemResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagItem) (gqlmodel.Tag, error) {
 	exit := trace(ctx)
 	defer exit()
 
-	layer, err := r.usecases.Layer.AttachTag(ctx, id.LayerID(input.LayerID), id.TagID(input.TagID), getOperator(ctx))
+	t, err := DataLoadersFromContext(ctx).Tag.Load(id.TagID(obj.TagID))
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.AttachTagToLayerPayload{
-		Layer: gqlmodel.ToLayer(layer, nil),
-	}, nil
+	return *t, nil
 }
 
-func (r *mutationResolver) DetachTagFromLayer(ctx context.Context, input gqlmodel.DetachTagFromLayerInput) (*gqlmodel.DetachTagFromLayerPayload, error) {
+type layerTagGroupResolver struct{ *Resolver }
+
+func (r *layerTagGroupResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagGroup) (gqlmodel.Tag, error) {
 	exit := trace(ctx)
 	defer exit()
 
-	layer, err := r.usecases.Layer.DetachTag(ctx, id.LayerID(input.LayerID), id.TagID(input.TagID), getOperator(ctx))
+	t, err := DataLoadersFromContext(ctx).Tag.Load(id.TagID(obj.TagID))
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.DetachTagFromLayerPayload{
-		Layer: gqlmodel.ToLayer(layer, nil),
-	}, nil
+	return *t, nil
 }

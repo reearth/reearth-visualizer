@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 var (
@@ -25,15 +24,13 @@ type Layer interface {
 	HasInfobox() bool
 	Infobox() *Infobox
 	Scene() id.SceneID
-	Tags() *tag.List
+	Tags() *TagList
 	Rename(string)
 	SetVisible(bool)
 	SetInfobox(*Infobox)
 	SetPlugin(*id.PluginID)
 	Properties() []id.PropertyID
 	ValidateProperties(property.Map) error
-	AttachTag(t id.TagID) error
-	DetachTag(t id.TagID) error
 }
 
 func ToLayerGroup(l Layer) *Group {
@@ -81,7 +78,7 @@ type layerBase struct {
 	property  *id.PropertyID
 	infobox   *Infobox
 	scene     id.SceneID
-	tags      *tag.List
+	tags      *TagList
 }
 
 func (l *layerBase) ID() id.LayerID {

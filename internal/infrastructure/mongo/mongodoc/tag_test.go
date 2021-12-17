@@ -352,7 +352,8 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 		{
 			name: "invalid id",
 			fields: fields{
-				ID: "xxx",
+				ID:    "xxx",
+				Group: &TagGroupDocument{},
 			},
 			want:    nil,
 			wantErr: true,
@@ -362,6 +363,7 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 			fields: fields{
 				ID:    id.NewTagID().String(),
 				Scene: "xxx",
+				Group: &TagGroupDocument{},
 			},
 			want:    nil,
 			wantErr: true,
@@ -439,7 +441,8 @@ func TestTagDocument_ModelItem(t *testing.T) {
 		{
 			name: "invalid id",
 			fields: fields{
-				ID: "xxx",
+				ID:   "xxx",
+				Item: &TagItemDocument{},
 			},
 			want:    nil,
 			wantErr: true,
@@ -449,6 +452,7 @@ func TestTagDocument_ModelItem(t *testing.T) {
 			fields: fields{
 				ID:    id.NewTagID().String(),
 				Scene: "xxx",
+				Item:  &TagItemDocument{},
 			},
 			want:    nil,
 			wantErr: true,

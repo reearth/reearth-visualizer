@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/tag"
 )
@@ -30,10 +31,10 @@ func NewTag(r *repo.Container) interfaces.Tag {
 	}
 }
 
-func (i *Tag) CreateItem(ctx context.Context, inp interfaces.CreateTagItemParam, operator *usecase.Operator) (*tag.Item, error) {
+func (i *Tag) CreateItem(ctx context.Context, inp interfaces.CreateTagItemParam, operator *usecase.Operator) (*tag.Item, *tag.Group, error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -42,13 +43,22 @@ func (i *Tag) CreateItem(ctx context.Context, inp interfaces.CreateTagItemParam,
 	}()
 
 	if err := i.CanWriteScene(ctx, inp.SceneID, operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	var parent *tag.Group
+	if inp.Parent != nil {
+		parent, err = i.tagRepo.FindGroupByID(ctx, *inp.Parent, []id.SceneID{inp.SceneID})
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	builder := tag.NewItem().
 		NewID().
 		Label(inp.Label).
-		Scene(inp.SceneID)
+		Scene(inp.SceneID).
+		Parent(inp.Parent)
 	if inp.LinkedDatasetSchemaID != nil && inp.LinkedDatasetID != nil && inp.LinkedDatasetField != nil {
 		builder = builder.
 			LinkedDatasetFieldID(inp.LinkedDatasetField).
@@ -57,15 +67,25 @@ func (i *Tag) CreateItem(ctx context.Context, inp interfaces.CreateTagItemParam,
 	}
 	item, err := builder.Build()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	err = i.tagRepo.Save(ctx, item)
-	if err != nil {
-		return nil, err
+	if parent != nil {
+		parent.Tags().Add(item.ID())
 	}
+
+	itemt := tag.Tag(item)
+	tags := []*tag.Tag{&itemt}
+	if parent != nil {
+		parentt := tag.Tag(parent)
+		tags = append(tags, &parentt)
+	}
+	if err := i.tagRepo.SaveAll(ctx, tags); err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
-	return item, nil
+	return item, parent, nil
 }
 
 func (i *Tag) CreateGroup(ctx context.Context, inp interfaces.CreateTagGroupParam, operator *usecase.Operator) (*tag.Group, error) {
@@ -118,7 +138,7 @@ func (i *Tag) FetchByScene(ctx context.Context, sid id.SceneID, operator *usecas
 		return nil, err
 	}
 
-	return i.tagRepo.FindByScene(ctx, sid)
+	return i.tagRepo.FindRootsByScene(ctx, sid)
 }
 
 func (i *Tag) FetchItem(ctx context.Context, ids []id.TagID, operator *usecase.Operator) ([]*tag.Item, error) {
@@ -139,51 +159,6 @@ func (i *Tag) FetchGroup(ctx context.Context, ids []id.TagID, operator *usecase.
 	return i.tagRepo.FindGroupByIDs(ctx, ids, scenes)
 }
 
-func (i *Tag) FetchGroupsByLayer(ctx context.Context, lid id.LayerID, operator *usecase.Operator) ([]*tag.Group, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
-	if err != nil {
-		return nil, err
-	}
-
-	layer, err := i.layerRepo.FindByID(ctx, lid, scenes)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.tagRepo.FindGroupByIDs(ctx, layer.Tags().Tags(), scenes)
-}
-
-func (i *Tag) FetchGroupsByScene(ctx context.Context, sid id.SceneID, operator *usecase.Operator) ([]*tag.Group, error) {
-	err := i.CanReadScene(ctx, sid, operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.tagRepo.FindGroupByScene(ctx, sid)
-}
-
-func (i *Tag) FetchItemsByLayer(ctx context.Context, lid id.LayerID, operator *usecase.Operator) ([]*tag.Item, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
-	if err != nil {
-		return nil, err
-	}
-
-	layer, err := i.layerRepo.FindByID(ctx, lid, scenes)
-	if err != nil {
-		return nil, err
-	}
-	return i.tagRepo.FindItemByIDs(ctx, layer.Tags().Tags(), scenes)
-}
-
-func (i *Tag) FetchItemsByScene(ctx context.Context, sid id.SceneID, operator *usecase.Operator) ([]*tag.Item, error) {
-	err := i.CanReadScene(ctx, sid, operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.tagRepo.FindItemByScene(ctx, sid)
-}
-
 func (i *Tag) AttachItemToGroup(ctx context.Context, inp interfaces.AttachItemToGroupParam, operator *usecase.Operator) (*tag.Group, error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
@@ -199,25 +174,34 @@ func (i *Tag) AttachItemToGroup(ctx context.Context, inp interfaces.AttachItemTo
 	if err != nil {
 		return nil, err
 	}
+
 	// make sure item exist
-	_, err = i.tagRepo.FindItemByID(ctx, inp.ItemID, scenes)
+	ti, err := i.tagRepo.FindItemByID(ctx, inp.ItemID, scenes)
 	if err != nil {
 		return nil, err
+	}
+	if ti.Parent() != nil {
+		return nil, errors.New("tag is already added to the group")
 	}
 
 	tg, err := i.tagRepo.FindGroupByID(ctx, inp.GroupID, scenes)
 	if err != nil {
 		return nil, err
 	}
-	if !tg.Tags().Has(inp.ItemID) {
-		tg.Tags().Add(inp.ItemID)
-	} else {
+
+	if tg.Tags().Has(inp.ItemID) {
 		return nil, errors.New("tag item is already attached to the group")
 	}
-	err = i.tagRepo.Save(ctx, tg)
-	if err != nil {
+
+	tg.Tags().Add(inp.ItemID)
+	ti.SetParent(tg.ID().Ref())
+
+	tgt := tag.Tag(tg)
+	tit := tag.Tag(ti)
+	if err := i.tagRepo.SaveAll(ctx, []*tag.Tag{&tgt, &tit}); err != nil {
 		return nil, err
 	}
+
 	tx.Commit()
 	return tg, nil
 }
@@ -237,8 +221,9 @@ func (i *Tag) DetachItemFromGroup(ctx context.Context, inp interfaces.DetachItem
 	if err != nil {
 		return nil, err
 	}
+
 	// make sure item exist
-	_, err = i.tagRepo.FindItemByID(ctx, inp.ItemID, scenes)
+	ti, err := i.tagRepo.FindItemByID(ctx, inp.ItemID, scenes)
 	if err != nil {
 		return nil, err
 	}
@@ -247,14 +232,17 @@ func (i *Tag) DetachItemFromGroup(ctx context.Context, inp interfaces.DetachItem
 	if err != nil {
 		return nil, err
 	}
-	if tg.Tags().Has(inp.ItemID) {
-		tg.Tags().Remove(inp.ItemID)
-	} else {
+
+	if !tg.Tags().Has(inp.ItemID) {
 		return nil, errors.New("tag item is not attached to the group")
 	}
 
-	err = i.tagRepo.Save(ctx, tg)
-	if err != nil {
+	tg.Tags().Remove(inp.ItemID)
+	ti.SetParent(nil)
+
+	tgt := tag.Tag(tg)
+	tit := tag.Tag(ti)
+	if err := i.tagRepo.SaveAll(ctx, []*tag.Tag{&tgt, &tit}); err != nil {
 		return nil, err
 	}
 
@@ -294,11 +282,10 @@ func (i *Tag) UpdateTag(ctx context.Context, inp interfaces.UpdateTagParam, oper
 	return &tg, nil
 }
 
-func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Operator) (*id.TagID, error) {
+func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Operator) (*id.TagID, layer.List, error) {
 	tx, err := i.transaction.Begin()
-
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -308,55 +295,50 @@ func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Oper
 
 	scenes, err := i.OnlyWritableScenes(ctx, operator)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	t, err := i.tagRepo.FindByID(ctx, tagID, scenes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if group := tag.ToTagGroup(t); group != nil {
-		tags := group.Tags()
-		if len(tags.Tags()) != 0 {
-			return nil, interfaces.ErrNonemptyTagGroupCannotDelete
+		if len(group.Tags().Tags()) != 0 {
+			return nil, nil, interfaces.ErrNonemptyTagGroupCannotDelete
 		}
 	}
 
 	if item := tag.ToTagItem(t); item != nil {
 		g, err := i.tagRepo.FindGroupByItem(ctx, item.ID(), scenes)
 		if err != nil && !errors.Is(rerror.ErrNotFound, err) {
-			return nil, err
+			return nil, nil, err
 		}
 		if g != nil {
 			g.Tags().Remove(item.ID())
-
-			err = i.tagRepo.Save(ctx, g)
-			if err != nil {
-				return nil, err
+			if err := i.tagRepo.Save(ctx, g); err != nil {
+				return nil, nil, err
 			}
 		}
 	}
 
 	ls, err := i.layerRepo.FindByTag(ctx, tagID, scenes)
 	if err != nil && !errors.Is(rerror.ErrNotFound, err) {
-		return nil, err
+		return nil, nil, err
 	}
 
-	if ls != nil && len(ls) > 0 {
+	if len(ls) != 0 {
 		for _, l := range ls.Deref() {
-			err = l.DetachTag(tagID)
-			if err != nil {
-				return nil, err
-			}
+			_ = l.Tags().Delete(tagID)
 		}
 		if err := i.layerRepo.SaveAll(ctx, ls); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	if err := i.tagRepo.Remove(ctx, tagID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return &tagID, nil
+
+	return &tagID, ls, nil
 }

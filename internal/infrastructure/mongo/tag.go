@@ -93,25 +93,12 @@ func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids []id.TagID, f []id.Sce
 	return filterTagGroups(ids, res), nil
 }
 
-func (r *tagRepo) FindByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
-	filter := bson.D{
-		{Key: "scene", Value: id.String()},
+func (r *tagRepo) FindRootsByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
+	filter := bson.M{
+		"scene":       id.String(),
+		"item.parent": nil,
 	}
 	return r.find(ctx, nil, filter)
-}
-
-func (r *tagRepo) FindGroupByScene(ctx context.Context, id id.SceneID) ([]*tag.Group, error) {
-	filter := bson.D{
-		{Key: "scene", Value: id.String()},
-	}
-	return r.findGroups(ctx, nil, filter)
-}
-
-func (r *tagRepo) FindItemByScene(ctx context.Context, id id.SceneID) ([]*tag.Item, error) {
-	filter := bson.D{
-		{Key: "scene", Value: id.String()},
-	}
-	return r.findItems(ctx, nil, filter)
 }
 
 func (r *tagRepo) FindGroupByItem(ctx context.Context, tagID id.TagID, f []id.SceneID) (*tag.Group, error) {
@@ -160,7 +147,7 @@ func (r *tagRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	return nil
 }
 
-func (r *tagRepo) find(ctx context.Context, dst []*tag.Tag, filter bson.D) ([]*tag.Tag, error) {
+func (r *tagRepo) find(ctx context.Context, dst []*tag.Tag, filter interface{}) ([]*tag.Tag, error) {
 	c := mongodoc.TagConsumer{
 		Rows: dst,
 	}
@@ -170,7 +157,7 @@ func (r *tagRepo) find(ctx context.Context, dst []*tag.Tag, filter bson.D) ([]*t
 	return c.Rows, nil
 }
 
-func (r *tagRepo) findOne(ctx context.Context, filter bson.D) (tag.Tag, error) {
+func (r *tagRepo) findOne(ctx context.Context, filter interface{}) (tag.Tag, error) {
 	c := mongodoc.TagConsumer{}
 	if err := r.client.FindOne(ctx, filter, &c); err != nil {
 		return nil, err

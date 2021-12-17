@@ -261,10 +261,8 @@ func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID, s []id.SceneID) (
 	defer r.lock.Unlock()
 	var res layer.List
 	for _, layer := range r.data {
-		for _, tag := range layer.Tags().Tags() {
-			if tag == tagID {
-				res = append(res, &layer)
-			}
+		if layer.Tags().Has(tagID) {
+			res = append(res, &layer)
 		}
 	}
 

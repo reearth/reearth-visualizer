@@ -100,6 +100,24 @@ func (c *LayerLoader) FetchParentAndMerged(ctx context.Context, org id.LayerID) 
 	return gqlmodel.ToMergedLayer(res), nil
 }
 
+func (c *LayerLoader) FetchByTag(ctx context.Context, tag id.TagID) ([]gqlmodel.Layer, error) {
+	res, err2 := c.usecase.FetchByTag(ctx, tag, getOperator(ctx))
+	if err2 != nil {
+		return nil, err2
+	}
+
+	layers := make([]gqlmodel.Layer, 0, len(res))
+	for _, l := range res {
+		if l == nil {
+			layers = append(layers, nil)
+		} else {
+			layers = append(layers, gqlmodel.ToLayer(*l, nil))
+		}
+	}
+
+	return layers, nil
+}
+
 // data loader
 
 type LayerDataLoader interface {

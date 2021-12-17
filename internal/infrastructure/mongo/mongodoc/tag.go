@@ -10,6 +10,7 @@ import (
 )
 
 type TagItemDocument struct {
+	Parent                *string
 	LinkedDatasetFieldID  *string
 	LinkedDatasetID       *string
 	LinkedDatasetSchemaID *string
@@ -73,6 +74,7 @@ func NewTag(t tag.Tag) (*TagDocument, string) {
 
 	if ti := tag.ItemFrom(t); ti != nil {
 		item = &TagItemDocument{
+			Parent:                ti.Parent().StringRef(),
 			LinkedDatasetFieldID:  ti.LinkedDatasetFieldID().StringRef(),
 			LinkedDatasetID:       ti.LinkedDatasetID().StringRef(),
 			LinkedDatasetSchemaID: ti.LinkedDatasetSchemaID().StringRef(),
@@ -111,6 +113,7 @@ func (d *TagDocument) Model() (*tag.Item, *tag.Group, error) {
 		}
 		return ti, nil, nil
 	}
+
 	if d.Group != nil {
 		tg, err := d.ModelGroup()
 		if err != nil {
@@ -118,10 +121,15 @@ func (d *TagDocument) Model() (*tag.Item, *tag.Group, error) {
 		}
 		return nil, tg, nil
 	}
+
 	return nil, nil, errors.New("invalid tag")
 }
 
 func (d *TagDocument) ModelItem() (*tag.Item, error) {
+	if d.Item == nil {
+		return nil, nil
+	}
+
 	tid, err := id.TagIDFrom(d.ID)
 	if err != nil {
 		return nil, err
@@ -135,6 +143,7 @@ func (d *TagDocument) ModelItem() (*tag.Item, error) {
 		ID(tid).
 		Label(d.Label).
 		Scene(sid).
+		Parent(id.TagIDFromRef(d.Item.Parent)).
 		LinkedDatasetSchemaID(id.DatasetSchemaIDFromRef(d.Item.LinkedDatasetSchemaID)).
 		LinkedDatasetID(id.DatasetIDFromRef(d.Item.LinkedDatasetID)).
 		LinkedDatasetFieldID(id.DatasetSchemaFieldIDFromRef(d.Item.LinkedDatasetFieldID)).
@@ -142,6 +151,10 @@ func (d *TagDocument) ModelItem() (*tag.Item, error) {
 }
 
 func (d *TagDocument) ModelGroup() (*tag.Group, error) {
+	if d.Group == nil {
+		return nil, nil
+	}
+
 	tid, err := id.TagIDFrom(d.ID)
 	if err != nil {
 		return nil, err

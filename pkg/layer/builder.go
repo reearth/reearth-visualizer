@@ -2,7 +2,6 @@ package layer
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 type Builder struct {
@@ -73,7 +72,7 @@ func (b *Builder) Infobox(infobox *Infobox) *Builder {
 	return b
 }
 
-func (b *Builder) Tags(tags *tag.List) *Builder {
+func (b *Builder) Tags(tags *TagList) *Builder {
 	b.base.tags = tags
 	return b
 }

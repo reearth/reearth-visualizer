@@ -214,3 +214,29 @@ func (r *mutationResolver) ImportLayer(ctx context.Context, input gqlmodel.Impor
 		ParentLayer: gqlmodel.ToLayerGroup(l2, nil),
 	}, err
 }
+
+func (r *mutationResolver) AttachTagToLayer(ctx context.Context, input gqlmodel.AttachTagToLayerInput) (*gqlmodel.AttachTagToLayerPayload, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	layer, err := r.usecases.Layer.AttachTag(ctx, id.LayerID(input.LayerID), id.TagID(input.TagID), getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.AttachTagToLayerPayload{
+		Layer: gqlmodel.ToLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) DetachTagFromLayer(ctx context.Context, input gqlmodel.DetachTagFromLayerInput) (*gqlmodel.DetachTagFromLayerPayload, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	layer, err := r.usecases.Layer.DetachTag(ctx, id.LayerID(input.LayerID), id.TagID(input.TagID), getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.DetachTagFromLayerPayload{
+		Layer: gqlmodel.ToLayer(layer, nil),
+	}, nil
+}

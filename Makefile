@@ -17,7 +17,7 @@ gen:
 	go generate ./...
 
 gen/gql:
-	go generate ./internal/graphql
+	go generate ./internal/adapter/gql
 
 gen/builtin:
 	go generate ./pkg/builtin

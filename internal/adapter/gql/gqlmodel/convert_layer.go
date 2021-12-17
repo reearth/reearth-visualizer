@@ -11,12 +11,6 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		return nil
 	}
 
-	tags := l.Tags().Tags()
-	tagIDs := make([]*id.ID, 0, len(tags))
-	for _, tid := range tags {
-		tagIDs = append(tagIDs, tid.IDRef())
-	}
-
 	return &LayerItem{
 		ID:              l.ID().ID(),
 		SceneID:         l.Scene().ID(),
@@ -28,7 +22,7 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		Infobox:         ToInfobox(l.Infobox(), l.ID(), l.Scene(), l.LinkedDataset()),
 		LinkedDatasetID: l.LinkedDataset().IDRef(),
 		ParentID:        parent.IDRef(),
-		TagIds:          tagIDs,
+		Tags:            ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -41,12 +35,6 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 	layers := make([]*id.ID, 0, len(laLayers))
 	for _, lay := range laLayers {
 		layers = append(layers, lay.IDRef())
-	}
-
-	tags := l.Tags().Tags()
-	tagIDs := make([]*id.ID, 0, len(tags))
-	for _, tid := range tags {
-		tagIDs = append(tagIDs, tid.IDRef())
 	}
 
 	return &LayerGroup{
@@ -62,7 +50,7 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 		LayerIds:              layers,
 		Root:                  l.IsRoot(),
 		ParentID:              parent.IDRef(),
-		TagIds:                tagIDs,
+		Tags:                  ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -187,4 +175,57 @@ func FromLayerEncodingFormat(v LayerEncodingFormat) decoding.LayerEncodingFormat
 	}
 
 	return decoding.LayerEncodingFormat("")
+}
+
+func ToLayerTagList(t *layer.TagList, sid id.SceneID) []LayerTag {
+	if t.IsEmpty() {
+		return nil
+	}
+	tags := t.Tags()
+	gtags := make([]LayerTag, 0, len(tags))
+	for _, t := range tags {
+		if gt := ToLayerTag(t); gt != nil {
+			gtags = append(gtags, gt)
+		}
+	}
+	return gtags
+}
+
+func ToLayerTag(l layer.Tag) LayerTag {
+	if l == nil {
+		return nil
+	}
+	if tg := layer.TagGroupFrom(l); tg != nil {
+		return ToLayerTagGroup(tg)
+	}
+	if ti := layer.TagItemFrom(l); ti != nil {
+		return ToLayerTagItem(ti)
+	}
+	return nil
+}
+
+func ToLayerTagItem(t *layer.TagItem) *LayerTagItem {
+	if t == nil {
+		return nil
+	}
+	return &LayerTagItem{
+		TagID: t.ID().ID(),
+	}
+}
+
+func ToLayerTagGroup(t *layer.TagGroup) *LayerTagGroup {
+	if t == nil {
+		return nil
+	}
+	children := t.Children()
+	tags := make([]*LayerTagItem, 0, len(children))
+	for _, c := range children {
+		if t := ToLayerTagItem(c); t != nil {
+			tags = append(tags, t)
+		}
+	}
+	return &LayerTagGroup{
+		TagID:    t.ID().ID(),
+		Children: tags,
+	}
 }

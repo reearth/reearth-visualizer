@@ -31,14 +31,14 @@ func (r *layerRepo) init() {
 }
 
 func (r *layerRepo) FindByID(ctx context.Context, id id.LayerID, f []id.SceneID) (layer.Layer, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: id.String()},
 	}, f)
 	return r.findOne(ctx, filter)
 }
 
 func (r *layerRepo) FindByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.List, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
 			{Key: "$in", Value: id.LayerIDToKeys(ids)},
 		}},
@@ -59,14 +59,14 @@ func (r *layerRepo) FindAllByDatasetSchema(ctx context.Context, dsid id.DatasetS
 }
 
 func (r *layerRepo) FindItemByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Item, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: id.String()},
 	}, f)
 	return r.findItemOne(ctx, filter)
 }
 
 func (r *layerRepo) FindItemByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.ItemList, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
 			{Key: "$in", Value: id.LayerIDToKeys(ids)},
 		}},
@@ -80,14 +80,14 @@ func (r *layerRepo) FindItemByIDs(ctx context.Context, ids []id.LayerID, f []id.
 }
 
 func (r *layerRepo) FindGroupByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: id.String()},
 	}, f)
 	return r.findGroupOne(ctx, filter)
 }
 
 func (r *layerRepo) FindGroupByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.GroupList, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
 			{Key: "$in", Value: id.LayerIDToKeys(ids)},
 		}},
@@ -109,7 +109,7 @@ func (r *layerRepo) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, 
 }
 
 func (r *layerRepo) FindByProperty(ctx context.Context, id id.PropertyID, f []id.SceneID) (layer.Layer, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "$or", Value: []bson.D{
 			{{Key: "property", Value: id.String()}},
 			{{Key: "infobox.property", Value: id.String()}},
@@ -120,7 +120,7 @@ func (r *layerRepo) FindByProperty(ctx context.Context, id id.PropertyID, f []id
 }
 
 func (r *layerRepo) FindParentByID(ctx context.Context, id id.LayerID, f []id.SceneID) (*layer.Group, error) {
-	filter := r.sceneFilter(bson.D{
+	filter := r.sceneFilterD(bson.D{
 		{Key: "group.layers", Value: id.String()},
 	}, f)
 	return r.findGroupOne(ctx, filter)
@@ -170,16 +170,18 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 
 func (r *layerRepo) FindByTag(ctx context.Context, tagID id.TagID, f []id.SceneID) (layer.List, error) {
 	ids := []id.TagID{tagID}
-	filter := r.sceneFilter(bson.D{
-		{Key: "tags", Value: bson.D{
-			{Key: "$in", Value: id.TagIDToKeys(ids)},
-		}},
+	tags := id.TagIDToKeys(ids)
+	filter := r.sceneFilter(bson.M{
+		"$or": []bson.M{
+			{"tags.id": bson.M{"$in": tags}},
+			{"tags.tags.id": bson.M{"$in": tags}},
+		},
 	}, f)
 
 	return r.find(ctx, nil, filter)
 }
 
-func (r *layerRepo) find(ctx context.Context, dst layer.List, filter bson.D) (layer.List, error) {
+func (r *layerRepo) find(ctx context.Context, dst layer.List, filter interface{}) (layer.List, error) {
 	c := mongodoc.LayerConsumer{
 		Rows: dst,
 	}
@@ -323,7 +325,7 @@ func filterLayerGroups(ids []id.LayerID, rows []*layer.Group) []*layer.Group {
 	return res
 }
 
-func (*layerRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D {
+func (*layerRepo) sceneFilterD(filter bson.D, scenes []id.SceneID) bson.D {
 	if scenes == nil {
 		return filter
 	}
@@ -331,5 +333,13 @@ func (*layerRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D {
 		Key:   "scene",
 		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
 	})
+	return filter
+}
+
+func (*layerRepo) sceneFilter(filter bson.M, scenes []id.SceneID) bson.M {
+	if scenes == nil {
+		return filter
+	}
+	filter["scene"] = bson.M{"$in": id.SceneIDToKeys(scenes)}
 	return filter
 }

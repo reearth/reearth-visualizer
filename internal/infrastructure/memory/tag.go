@@ -112,7 +112,7 @@ func (t *Tag) FindGroupByIDs(ctx context.Context, tagIDs []id.TagID, ids []id.Sc
 	return res, nil
 }
 
-func (t *Tag) FindByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.Tag, error) {
+func (t *Tag) FindRootsByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.Tag, error) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -191,30 +191,4 @@ func (t *Tag) FindGroupByItem(ctx context.Context, tagID id.TagID, s []id.SceneI
 	}
 
 	return nil, rerror.ErrNotFound
-}
-
-func (t *Tag) FindGroupByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.Group, error) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
-	var res []*tag.Group
-	for _, tt := range t.data {
-		if group := tag.ToTagGroup(tt); tt.Scene() == sceneID && group != nil {
-			res = append(res, group)
-		}
-	}
-	return res, nil
-}
-
-func (t *Tag) FindItemByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.Item, error) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
-	var res []*tag.Item
-	for _, tt := range t.data {
-		if item := tag.ToTagItem(tt); tt.Scene() == sceneID && item != nil {
-			res = append(res, item)
-		}
-	}
-	return res, nil
 }

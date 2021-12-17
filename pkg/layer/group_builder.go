@@ -2,7 +2,6 @@ package layer
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 func GroupFromLayer(l Layer) *Group {
@@ -112,7 +111,7 @@ func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *id.DatasetSchema
 	return b
 }
 
-func (b *GroupBuilder) Tags(tags *tag.List) *GroupBuilder {
+func (b *GroupBuilder) Tags(tags *TagList) *GroupBuilder {
 	b.l.tags = tags
 	return b
 }

@@ -51,6 +51,11 @@ func (b *ItemBuilder) Scene(sid id.SceneID) *ItemBuilder {
 	return b
 }
 
+func (b *ItemBuilder) Parent(p *id.TagID) *ItemBuilder {
+	b.i.parent = p.CopyRef()
+	return b
+}
+
 func (b *ItemBuilder) LinkedDatasetFieldID(dfid *id.DatasetSchemaFieldID) *ItemBuilder {
 	b.i.linkedDatasetFieldID = dfid
 	return b
