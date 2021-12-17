@@ -5,8 +5,7 @@
     ":semanticCommitScopeDisabled",
     ":maintainLockFilesWeekly",
     ":enableVulnerabilityAlertsWithLabel(security)",
-    ":semanticCommitTypeAll(chore)",
-    "schedule:earlyMondays"
+    ":semanticCommitTypeAll(chore)"
   ],
   "enabledManagers": [
     "npm"
@@ -30,7 +29,10 @@
         "cesium"
       ],
       "groupName": "all dependencies",
-      "groupSlug": "all"
+      "groupSlug": "all",
+      "extends": [
+        "schedule:earlyMondays"
+      ]
     }
   ]
 }
