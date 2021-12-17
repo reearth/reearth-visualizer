@@ -13,10 +13,12 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     rootLayerId,
     layers,
     widgets,
+    clusters,
     widgetTypes,
     sceneDescription,
     selectedType,
     selectedLayerId,
+    selectedClusterId,
     selectedWidgetId,
     loading,
     selectLayer,
@@ -33,6 +35,10 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     activateWidget,
     addLayerGroup,
     handleDrop,
+    selectCluster,
+    addCluster,
+    renameCluster,
+    removeCluster,
   } = useHooks();
 
   return (
@@ -40,8 +46,10 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       className={className}
       rootLayerId={rootLayerId}
       selectedLayerId={selectedLayerId}
+      selectedClusterId={selectedClusterId}
       selectedWidgetId={selectedWidgetId}
       layers={layers}
+      clusters={clusters}
       widgets={widgets}
       widgetTypes={widgetTypes}
       sceneDescription={sceneDescription}
@@ -50,6 +58,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onLayerMove={moveLayer}
       onLayerVisibilityChange={updateLayerVisibility}
       onLayerRename={renameLayer}
+      onClusterRename={renameCluster}
       onLayerRemove={removeLayer}
       onLayerImport={importLayer}
       onLayerSelect={selectLayer}
@@ -59,6 +68,9 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onWidgetSelect={selectWidget}
       onWidgetAdd={addWidget}
       onWidgetRemove={removeWidget}
+      onClusterSelect={selectCluster}
+      onClusterAdd={addCluster}
+      onClusterRemove={removeCluster}
       onWidgetActivation={activateWidget}
       onDrop={handleDrop}
     />

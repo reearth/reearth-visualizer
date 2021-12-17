@@ -353,6 +353,15 @@ export const GET_SCENE_PROPERTY = gql`
             ...PropertyFragment
           }
         }
+        clusters {
+          id
+          name
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
       }
     }
   }

@@ -1,3 +1,4 @@
+import { flatMap } from "lodash";
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
@@ -21,6 +22,22 @@ export default (alias?: string) => {
   const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
+  );
+  const clusterProperty = useMemo(
+    () => data?.clusters.reduce<any[]>((a, b) => [...a, processProperty(b.property)], []),
+    [data],
+  );
+  const clusterLayers = useMemo(
+    () =>
+      data?.clusters.reduce<any[]>(
+        (a, b) =>
+          flatMap([
+            ...a,
+            processProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
+          ]).filter(item => !!item),
+        [],
+      ),
+    [data],
   );
 
   const layers = useMemo<LayerStore | undefined>(
@@ -185,6 +202,8 @@ export default (alias?: string) => {
     sceneProperty,
     pluginProperty,
     layers,
+    clusterProperty,
+    clusterLayers,
     widgets: widgetSystem,
     ready,
     error,

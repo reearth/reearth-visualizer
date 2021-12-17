@@ -24,7 +24,15 @@ import PropertyField, {
 } from "../PropertyField";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "dataset";
+export type Mode =
+  | "infobox"
+  | "scene"
+  | "layer"
+  | "block"
+  | "widgets"
+  | "widget"
+  | "dataset"
+  | "cluster";
 
 export type {
   Dataset,

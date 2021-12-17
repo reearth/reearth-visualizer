@@ -12,7 +12,7 @@ import { Selected } from "@reearth/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "cluster";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -48,7 +48,7 @@ export default ({
     data: scenePropertyData,
   } = useGetScenePropertyQuery({
     variables: { sceneId: sceneId || "", lang: locale },
-    skip: !sceneId || (mode !== "scene" && mode != "widget"),
+    skip: !sceneId || (mode !== "scene" && mode != "widget" && mode != "cluster"),
   });
 
   const {
@@ -143,11 +143,29 @@ export default ({
       };
     }
 
+    if (mode === "cluster") {
+      if (selected?.type !== "cluster") return;
+
+      const c = selected.clusterId
+        ? scene?.clusters.find(c => selected.clusterId === c.id)
+        : undefined;
+
+      return {
+        id: selected.clusterId,
+        mode: "cluster",
+        propertyId: c?.property?.id,
+        extensionId: "cluster",
+        items: convert(c?.property, null),
+        title: layerPropertyData?.layer?.name,
+      };
+    }
+
     if (mode === "widget") {
       if (selected?.type !== "widget") return;
       const w = selected.widgetId
         ? scene?.widgets.find(w => selected.widgetId === w.id)
         : undefined;
+
       return {
         id: selected.widgetId || `${selected.pluginId}/${selected.extensionId}`,
         pluginId: selected.pluginId,
@@ -176,6 +194,7 @@ export default ({
     layerPropertyData?.layer?.__typename,
     selected,
     scene?.widgets,
+    scene?.clusters,
   ]);
   const datasetSchemas = useMemo(
     () => convertLinkableDatasets(linkableDatasets),

@@ -19,6 +19,7 @@ export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }
   | { type: "widgets" }
+  | { type: "cluster"; clusterId: string }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
   | { type: "dataset"; datasetSchemaId: string };
 const selected = atom<Selected | undefined>(undefined);

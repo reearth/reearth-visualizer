@@ -11,6 +11,9 @@ import PrimRect from "./Icons/primRect.svg";
 import PrimModel from "./Icons/primModel.svg";
 import PrimTileset from "./Icons/primTileset.svg";
 
+// Cluster
+import Cluster from "./Icons/cluster.svg";
+
 // Built-in Widgets
 import Widgets from "./Icons/widgetsIcon.svg";
 import WidgetMenu from "./Icons/widgetMenu.svg";
@@ -136,6 +139,7 @@ export default {
   rect: PrimRect,
   model: PrimModel,
   tileset: PrimTileset,
+  cluster: Cluster,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,

@@ -9,6 +9,7 @@ export type PublishedData = {
   layers?: Layer[];
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
+  clusters: Cluster[];
 };
 
 export type Plugin = {
@@ -70,6 +71,12 @@ export type WidgetSection = {
 export type WidgetArea = {
   widgetIds: string[];
   align: WidgetAlignment;
+};
+
+export type Cluster = {
+  id: string;
+  name?: string;
+  property: any;
 };
 
 export type WidgetAlignment = "start" | "centered" | "end";
