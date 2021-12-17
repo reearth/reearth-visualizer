@@ -28,7 +28,7 @@ const EarthEditorPage: React.FC<Props> = ({
       {loading && <Loading />}
       {loaded && (
         <Wrapper>
-          {header}
+          {header && <div>{header}</div>}
           <Wrapper2>
             <Resizable
               direction="vertical"
@@ -66,7 +66,7 @@ const Wrapper = styled.div`
 
 const Wrapper2 = styled.div`
   display: flex;
-  flex: 1 1 auto;
+  flex: auto;
   overflow: hidden;
 `;
 
