@@ -138,11 +138,11 @@ const Infobox: React.FC<Props> = ({
           <NoContentInfo>
             <InnerWrapper size="xs" color={theme.infoBox.weakText}>
               <StyledIcon icon="arrowLong" />
-              <p>
+              <span>
                 {intl.formatMessage({
                   defaultMessage: `Move mouse here and click "+" to add content`,
                 })}
-              </p>
+              </span>
             </InnerWrapper>
           </NoContentInfo>
         </>

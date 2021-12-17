@@ -39,6 +39,7 @@ export default function Layers({
   return (
     <>
       {clusterProperty?.map((cluster: any) => (
+        // TODO: NEED REFACTORING: invalid dependency flow and duplicated codes
         <Cluster
           key={cluster.id}
           property={cluster}

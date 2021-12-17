@@ -102,6 +102,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
+          {/* remove default click event */}
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>

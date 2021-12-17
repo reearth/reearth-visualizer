@@ -287,10 +287,8 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
-      !viewer.scene ||
       viewer.isDestroyed() ||
-      !property?.cameraLimiter ||
-      !property?.cameraLimiter.cameraLimitterTargetArea ||
+      !property?.cameraLimiter?.cameraLimitterTargetArea ||
       !geodsic
     )
       return;
@@ -374,9 +372,8 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = selectedLayerId ? viewer.entities.getById(selectedLayerId) : undefined;
+    const entity = findEntity(viewer, selectedLayerId);
     if (viewer.selectedEntity === entity || (entity && !isSelectable(entity))) return;
-
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
 
@@ -537,3 +534,20 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
 const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
   color: Color.RED,
 });
+
+function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity | undefined {
+  let entity: Entity | undefined;
+  if (layerId) {
+    entity = viewer.entities.getById(layerId);
+    if (!entity) {
+      for (let i = 0; i < viewer.dataSources.length; i++) {
+        const e = viewer.dataSources.get(i).entities.getById(layerId);
+        if (e) {
+          entity = e;
+          break;
+        }
+      }
+    }
+  }
+  return entity;
+}
