@@ -102,7 +102,7 @@ export const useIcon = ({
   shadowBlur?: number;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
-}): [HTMLCanvasElement, HTMLImageElement | undefined] => {
+}): [string, HTMLImageElement | undefined] => {
   const img = useImage(image);
   const draw = useCallback(
     can =>

@@ -114,7 +114,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
       : undefined;
   }, [extrude, location, height]);
 
-  const [canvas, img] = useIcon({
+  const [icon, img] = useIcon({
     image,
     imageSize,
     crop,
@@ -178,7 +178,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
           />
         ) : (
           <BillboardGraphics
-            image={canvas}
+            image={icon}
             color={cesiumImageColor}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}

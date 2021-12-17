@@ -24,15 +24,12 @@ export const useImage = (src?: string): HTMLImageElement | undefined => {
   return img;
 };
 
-export const useCanvas = (cb: (canvas: HTMLCanvasElement) => void) => {
-  const canvas1 = useMemo(() => document.createElement("canvas"), []);
-  const canvas2 = useMemo(() => document.createElement("canvas"), []);
-  const [canvas, setCanvas] = useState(canvas1);
+export const useCanvas = (cb: (canvas: HTMLCanvasElement) => void): string => {
+  const can = useMemo(() => document.createElement("canvas"), []);
+  const [data, setData] = useState<string>("");
   useEffect(() => {
-    const can = canvas === canvas2 ? canvas1 : canvas2;
     cb(can);
-    setCanvas(can);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvas1, canvas2, cb]); // ignore canvas
-  return canvas;
+    setData(can.toDataURL());
+  }, [can, cb]);
+  return data;
 };
