@@ -782,32 +782,23 @@ extensions:
     description: レイヤーを自動的にまとめて表示することが可能なクラスタを設定します。
     propertySchema:
       default:
-        title: デフォルト
+        title: クラスタ
         fields:
-          cluster_name:
-            title: クラスタ名
-            description: クラスタの名前を指定します。
-          cluster_pixelRange:
+          clusterPixelRange:
             title: 最小範囲
             description: 画面上の何ピクセル分の範囲にあるレイヤーをクラスタにまとめるかを最小値で指定します。
-          cluster_minSize:
+          clusterMinSize:
             title: 最小サイズ
-            description: クラスタが表示される最小のレイヤー数
-          cluster_maxSize:
-            title: 最大サイズ
-            description: クラスタに属することが可能な最大レイヤー数
-          cluster_shapeType:
-            title: 表示方法
-            description: 画面上で表示されるクラスタの表示方法を指定します。
-            choices:
-              pin: ピン
-              label: ラベル
-          cluster_textColor:
-            title: 文字色
-            description: 画面上で表示されるクラスタの文字色を指定します。
-          cluster_backgroundColor:
-            title: 背景色
-            description: 画面上で表示されるクラスタの背景色を指定します。
-          cluster_image:
+            description: クラスタが表示されるのに必要な最小のレイヤー数
+          clusterImage:
             title: 画像
             description: 画面上で表示されるクラスタの画像を指定します。
+          clusterImageWidth:
+            title: 画像幅
+            description: 画像の幅をピクセルで指定します。
+          clusterImageHeight:
+            title: 画像高さ
+            description: 画像の高さをピクセルで指定します。
+          clusterLabelTypography:
+            title: ラベル
+            description: ラベルのスタイルを指定します。

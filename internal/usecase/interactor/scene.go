@@ -685,7 +685,7 @@ func (i *Scene) getPlugin(ctx context.Context, sid id.SceneID, p id.PluginID, e 
 	return plugin, extension, nil
 }
 
-func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string, propertyID id.PropertyID, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
+func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return nil, nil, err
@@ -709,12 +709,23 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
+	prop, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sceneID).Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
 	cid := id.NewClusterID()
-	cluster, err := scene.NewCluster(cid, name, propertyID)
+	cluster, err := scene.NewCluster(cid, name, prop.ID())
 	if err != nil {
 		return nil, nil, err
 	}
 	s.Clusters().Add(cluster)
+
+	err = i.propertyRepo.Save(ctx, prop)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	err = i.sceneRepo.Save(ctx, s)
 	if err != nil {
 		return nil, nil, err

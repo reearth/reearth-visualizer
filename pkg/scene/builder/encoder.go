@@ -132,3 +132,17 @@ type widgetAreaJSON struct {
 	WidgetIDs []string `json:"widgetIds"`
 	Align     string   `json:"align"`
 }
+
+type widgetJSON struct {
+	ID          string       `json:"id"`
+	PluginID    string       `json:"pluginId"`
+	ExtensionID string       `json:"extensionId"`
+	Property    propertyJSON `json:"property"`
+	Extended    bool         `json:"extended"`
+}
+
+type clusterJSON struct {
+	ID       string       `json:"id"`
+	Name     string       `json:"name"`
+	Property propertyJSON `json:"property"`
+}

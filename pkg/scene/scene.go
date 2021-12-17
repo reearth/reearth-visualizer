@@ -118,6 +118,7 @@ func (s *Scene) Properties() []id.PropertyID {
 	ids := []id.PropertyID{s.property}
 	ids = append(ids, s.pluginSystem.Properties()...)
 	ids = append(ids, s.widgetSystem.Properties()...)
+	ids = append(ids, s.clusters.Properties()...)
 	return ids
 }
 

@@ -18,14 +18,7 @@ type sceneJSON struct {
 	Layers            []*layerJSON            `json:"layers"`
 	Widgets           []*widgetJSON           `json:"widgets"`
 	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
-}
-
-type widgetJSON struct {
-	ID          string       `json:"id"`
-	PluginID    string       `json:"pluginId"`
-	ExtensionID string       `json:"extensionId"`
-	Property    propertyJSON `json:"property"`
-	Extended    bool         `json:"extended"`
+	Clusters          []*clusterJSON          `json:"clusters"`
 }
 
 func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property) *sceneJSON {
@@ -36,6 +29,7 @@ func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Ti
 		Property:          b.property(ctx, findProperty(p, s.Property())),
 		Plugins:           b.plugins(ctx, s, p),
 		Widgets:           b.widgets(ctx, s, p),
+		Clusters:          b.clusters(ctx, s, p),
 		Layers:            l,
 		WidgetAlignSystem: buildWidgetAlignSystem(s.WidgetAlignSystem()),
 	}
@@ -69,6 +63,19 @@ func (b *Builder) widgets(ctx context.Context, s *scene.Scene, p []*property.Pro
 			ExtensionID: string(w.Extension()),
 			Property:    b.property(ctx, findProperty(p, w.Property())),
 			Extended:    w.Extended(),
+		})
+	}
+	return res
+}
+
+func (b *Builder) clusters(ctx context.Context, s *scene.Scene, p []*property.Property) []*clusterJSON {
+	sceneClusters := s.Clusters().Clusters()
+	res := make([]*clusterJSON, 0, len(sceneClusters))
+	for _, c := range sceneClusters {
+		res = append(res, &clusterJSON{
+			ID:       c.ID().String(),
+			Name:     c.Name(),
+			Property: b.property(ctx, findProperty(p, c.Property())),
 		})
 	}
 	return res

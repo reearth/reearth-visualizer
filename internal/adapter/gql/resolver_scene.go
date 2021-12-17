@@ -20,6 +20,10 @@ func (r *Resolver) SceneWidget() SceneWidgetResolver {
 	return &sceneWidgetResolver{r}
 }
 
+func (r *Resolver) Cluster() ClusterResolver {
+	return &clusterResolver{r}
+}
+
 type sceneResolver struct{ *Resolver }
 
 func (r *sceneResolver) Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error) {
@@ -139,6 +143,15 @@ func (r *sceneWidgetResolver) Extension(ctx context.Context, obj *gqlmodel.Scene
 }
 
 func (r *sceneWidgetResolver) Property(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.Property, error) {
+	exit := trace(ctx)
+	defer exit()
+
+	return DataLoadersFromContext(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+}
+
+type clusterResolver struct{ *Resolver }
+
+func (r *clusterResolver) Property(ctx context.Context, obj *gqlmodel.Cluster) (*gqlmodel.Property, error) {
 	exit := trace(ctx)
 	defer exit()
 

@@ -199,7 +199,7 @@ func (r *mutationResolver) UpgradePlugin(ctx context.Context, input gqlmodel.Upg
 func (r *mutationResolver) AddCluster(ctx context.Context, input gqlmodel.AddClusterInput) (*gqlmodel.AddClusterPayload, error) {
 	exit := trace(ctx)
 	defer exit()
-	s, c, err := r.usecases.Scene.AddCluster(ctx, id.SceneID(input.SceneID), input.Name, id.PropertyID(input.PropertyID), getOperator(ctx))
+	s, c, err := r.usecases.Scene.AddCluster(ctx, id.SceneID(input.SceneID), input.Name, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

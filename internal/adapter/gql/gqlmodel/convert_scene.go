@@ -32,9 +32,9 @@ func ToScenePlugin(sp *scene.Plugin) *ScenePlugin {
 
 func ToCluster(c *scene.Cluster) *Cluster {
 	return &Cluster{
-		ID:       c.ID().ID(),
-		Name:     c.Name(),
-		Property: c.Property().ID(),
+		ID:         c.ID().ID(),
+		Name:       c.Name(),
+		PropertyID: c.Property().ID(),
 	}
 }
 

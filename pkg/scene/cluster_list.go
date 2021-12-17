@@ -65,3 +65,14 @@ func (tl *ClusterList) Remove(clusters ...id.ClusterID) {
 		}
 	}
 }
+
+func (tl *ClusterList) Properties() []id.PropertyID {
+	if tl == nil {
+		return nil
+	}
+	res := make([]id.PropertyID, 0, len(tl.clusters))
+	for _, c := range tl.clusters {
+		res = append(res, c.property)
+	}
+	return res
+}

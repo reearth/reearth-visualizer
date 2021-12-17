@@ -36,9 +36,8 @@ type Tag interface {
 }
 
 type AddClusterInput struct {
-	SceneID    id.ID  `json:"sceneId"`
-	Name       string `json:"name"`
-	PropertyID id.ID  `json:"propertyId"`
+	SceneID id.ID  `json:"sceneId"`
+	Name    string `json:"name"`
 }
 
 type AddClusterPayload struct {
@@ -205,9 +204,10 @@ type Camera struct {
 }
 
 type Cluster struct {
-	ID       id.ID  `json:"id"`
-	Name     string `json:"name"`
-	Property id.ID  `json:"property"`
+	ID         id.ID     `json:"id"`
+	Name       string    `json:"name"`
+	PropertyID id.ID     `json:"propertyId"`
+	Property   *Property `json:"property"`
 }
 
 type CreateAssetInput struct {

@@ -27,7 +27,7 @@ type Scene interface {
 	InstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, id.PluginID, *id.PropertyID, error)
 	UninstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
 	UpgradePlugin(context.Context, id.SceneID, id.PluginID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
-	AddCluster(context.Context, id.SceneID, string, id.PropertyID, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
+	AddCluster(context.Context, id.SceneID, string, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
 }
