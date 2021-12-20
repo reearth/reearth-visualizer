@@ -1,4 +1,4 @@
-import { Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
+import { Color, Cartesian3, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
@@ -82,6 +82,7 @@ const Cluster: React.FC<Props> = ({
       clusterParam.label.fillColor = Color.fromCssColorString(
         clusterLabelTypography.color ?? "#FFF",
       );
+      clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
       clusterParam.billboard.show = true;
       clusterParam.billboard.image = clusterImage;
       clusterParam.billboard.height = clusterImageWidth;
