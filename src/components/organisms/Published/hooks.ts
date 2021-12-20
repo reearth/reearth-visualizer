@@ -24,12 +24,12 @@ export default (alias?: string) => {
     {},
   );
   const clusterProperty = useMemo(
-    () => data?.clusters.reduce<any[]>((a, b) => [...a, processProperty(b.property)], []),
+    () => data?.clusters?.reduce<any[]>((a, b) => [...a, processProperty(b.property)], []),
     [data],
   );
   const clusterLayers = useMemo(
     () =>
-      data?.clusters.reduce<any[]>(
+      data?.clusters?.reduce<any[]>(
         (a, b) =>
           flatMap([
             ...a,
