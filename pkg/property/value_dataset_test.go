@@ -22,13 +22,52 @@ func TestNewValueAndDatasetValue(t *testing.T) {
 			name: "ok",
 			args: args{
 				ty: ValueTypeBool,
-				d:  dataset.ValueTypeBool.ValueFrom(false),
-				p:  ValueTypeBool.ValueFrom(true),
+				d:  dataset.ValueTypeBool.MustBeValue(false),
+				p:  ValueTypeBool.MustBeValue(true),
 			},
 			want: &ValueAndDatasetValue{
 				t: ValueTypeBool,
 				d: dataset.ValueTypeBool.ValueFrom(false),
-				p: ValueTypeBool.ValueFrom(true),
+				p: ValueTypeBool.MustBeValue(true),
+			},
+		},
+		{
+			name: "different types 1",
+			args: args{
+				ty: ValueTypeURL,
+				d:  dataset.ValueTypeString.MustBeValue("https://reearth.io"),
+				p:  nil,
+			},
+			want: &ValueAndDatasetValue{
+				t: ValueTypeURL,
+				d: dataset.ValueTypeURL.MustBeValue("https://reearth.io"),
+				p: nil,
+			},
+		},
+		{
+			name: "different types 3",
+			args: args{
+				ty: ValueTypeBool,
+				d:  dataset.ValueTypeBool.MustBeValue(false),
+				p:  ValueTypeString.MustBeValue("true"),
+			},
+			want: &ValueAndDatasetValue{
+				t: ValueTypeBool,
+				d: dataset.ValueTypeBool.ValueFrom(false),
+				p: ValueTypeBool.MustBeValue(true),
+			},
+		},
+		{
+			name: "different types 2",
+			args: args{
+				ty: ValueTypeBool,
+				d:  dataset.ValueTypeString.ValueFrom("false"),
+				p:  ValueTypeBool.MustBeValue(true),
+			},
+			want: &ValueAndDatasetValue{
+				t: ValueTypeBool,
+				d: dataset.ValueTypeBool.ValueFrom(false),
+				p: ValueTypeBool.MustBeValue(true),
 			},
 		},
 		{
@@ -36,59 +75,33 @@ func TestNewValueAndDatasetValue(t *testing.T) {
 			args: args{
 				ty: ValueType("foobar"),
 				d:  dataset.ValueTypeBool.ValueFrom(false),
-				p:  ValueTypeBool.ValueFrom(true),
+				p:  ValueTypeBool.MustBeValue(true),
 			},
 			want: nil,
-		},
-		{
-			name: "invalid dataset value",
-			args: args{
-				ty: ValueTypeBool,
-				d:  dataset.ValueTypeString.ValueFrom("false"),
-				p:  ValueTypeBool.ValueFrom(true),
-			},
-			want: &ValueAndDatasetValue{
-				t: ValueTypeBool,
-				d: nil,
-				p: ValueTypeBool.ValueFrom(true),
-			},
-		},
-		{
-			name: "invalid property value",
-			args: args{
-				ty: ValueTypeBool,
-				d:  dataset.ValueTypeBool.ValueFrom(false),
-				p:  ValueTypeString.ValueFrom("true"),
-			},
-			want: &ValueAndDatasetValue{
-				t: ValueTypeBool,
-				d: dataset.ValueTypeBool.ValueFrom(false),
-				p: nil,
-			},
 		},
 		{
 			name: "nil dataset value",
 			args: args{
 				ty: ValueTypeBool,
 				d:  nil,
-				p:  ValueTypeBool.ValueFrom(false),
+				p:  ValueTypeBool.MustBeValue(false),
 			},
 			want: &ValueAndDatasetValue{
 				t: ValueTypeBool,
 				d: nil,
-				p: ValueTypeBool.ValueFrom(false),
+				p: ValueTypeBool.MustBeValue(false),
 			},
 		},
 		{
 			name: "nil property value",
 			args: args{
 				ty: ValueTypeBool,
-				d:  dataset.ValueTypeBool.ValueFrom(false),
+				d:  dataset.ValueTypeBool.MustBeValue(false),
 				p:  nil,
 			},
 			want: &ValueAndDatasetValue{
 				t: ValueTypeBool,
-				d: dataset.ValueTypeBool.ValueFrom(false),
+				d: dataset.ValueTypeBool.MustBeValue(false),
 				p: nil,
 			},
 		},
@@ -254,26 +267,26 @@ func TestValueAndDatasetValue_Value(t *testing.T) {
 			name: "dataset only",
 			target: &ValueAndDatasetValue{
 				t: ValueTypeString,
-				d: dataset.ValueTypeString.ValueFrom("foo"),
+				d: dataset.ValueTypeString.MustBeValue("foo"),
 			},
-			want: ValueTypeString.ValueFrom("foo"),
+			want: ValueTypeString.MustBeValue("foo"),
 		},
 		{
 			name: "property only",
 			target: &ValueAndDatasetValue{
 				t: ValueTypeString,
-				p: ValueTypeString.ValueFrom("bar"),
+				p: ValueTypeString.MustBeValue("bar"),
 			},
-			want: ValueTypeString.ValueFrom("bar"),
+			want: ValueTypeString.MustBeValue("bar"),
 		},
 		{
 			name: "dataset and property",
 			target: &ValueAndDatasetValue{
 				t: ValueTypeString,
-				d: dataset.ValueTypeString.ValueFrom("foo"),
-				p: ValueTypeString.ValueFrom("bar"),
+				d: dataset.ValueTypeString.MustBeValue("foo"),
+				p: ValueTypeString.MustBeValue("bar"),
 			},
-			want: ValueTypeString.ValueFrom("foo"),
+			want: ValueTypeString.MustBeValue("foo"),
 		},
 		{
 			name:   "empty",

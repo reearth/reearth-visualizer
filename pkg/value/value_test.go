@@ -262,3 +262,59 @@ func TestValue_Interface(t *testing.T) {
 		})
 	}
 }
+
+func TestValue_Cast(t *testing.T) {
+	type args struct {
+		t Type
+		p TypePropertyMap
+	}
+	tests := []struct {
+		name   string
+		target *Value
+		args   args
+		want   *Value
+	}{
+		{
+			name:   "diff type",
+			target: &Value{t: TypeNumber, v: 1.1},
+			args:   args{t: TypeString},
+			want:   &Value{t: TypeString, v: "1.1"},
+		},
+		{
+			name:   "same type",
+			target: &Value{t: TypeNumber, v: 1.1},
+			args:   args{t: TypeNumber},
+			want:   &Value{t: TypeNumber, v: 1.1},
+		},
+		{
+			name:   "failed to cast",
+			target: &Value{t: TypeLatLng, v: LatLng{Lat: 1, Lng: 2}},
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+		{
+			name:   "invalid value",
+			target: &Value{t: TypeNumber},
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+		{
+			name:   "empty",
+			target: &Value{},
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t, tt.args.p))
+		})
+	}
+}

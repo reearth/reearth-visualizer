@@ -23,14 +23,14 @@ func TestNewNilableValue(t *testing.T) {
 				t: ValueTypeString,
 				v: ValueTypeString.ValueFrom("foo"),
 			},
-			want: &OptionalValue{ov: *value.OptionalValueFrom(value.TypeString.ValueFrom("foo", types))},
+			want: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
 		},
 		{
 			name: "nil value",
 			args: args{
 				t: ValueTypeString,
 			},
-			want: &OptionalValue{ov: *value.NewOptionalValue(value.TypeString, nil)},
+			want: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
 		},
 		{
 			name: "invalid value",
@@ -73,7 +73,7 @@ func TestOptionalValueFrom(t *testing.T) {
 			args: args{
 				v: ValueTypeString.ValueFrom("foo"),
 			},
-			want: &OptionalValue{ov: *value.NewOptionalValue(value.TypeString, value.TypeString.ValueFrom("foo", types))},
+			want: &OptionalValue{ov: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types))},
 		},
 		{
 			name: "empty value",
@@ -106,7 +106,7 @@ func TestOptionalValue_Type(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.NewOptionalValue(value.TypeBool, nil)},
+			value: &OptionalValue{ov: *value.NewOptional(value.TypeBool, nil)},
 			want:  ValueTypeBool,
 		},
 		{
@@ -138,7 +138,7 @@ func TestOptionalValue_Value(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.OptionalValueFrom(value.TypeString.ValueFrom("foobar", types))},
+			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
 			want:  ValueTypeString.ValueFrom("foobar"),
 		},
 		{
@@ -175,7 +175,7 @@ func TestOptionalValue_TypeAndValue(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.OptionalValueFrom(value.TypeString.ValueFrom("foobar", types))},
+			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
 			wantt: ValueTypeString,
 			wantv: ValueTypeString.ValueFrom("foobar"),
 		},
@@ -219,17 +219,17 @@ func TestOptionalValue_SetValue(t *testing.T) {
 	}{
 		{
 			name:  "set",
-			value: &OptionalValue{ov: *value.OptionalValueFrom(value.TypeString.ValueFrom("foo", types))},
+			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
 			args:  args{v: ValueTypeString.ValueFrom("foobar")},
 		},
 		{
 			name:  "set to nil",
-			value: &OptionalValue{ov: *value.NewOptionalValue(value.TypeString, nil)},
+			value: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
 			args:  args{v: ValueTypeString.ValueFrom("foobar")},
 		},
 		{
 			name:    "invalid value",
-			value:   &OptionalValue{ov: *value.NewOptionalValue(value.TypeString, nil)},
+			value:   &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
 			args:    args{v: ValueTypeNumber.ValueFrom(1)},
 			invalid: true,
 		},
@@ -279,7 +279,7 @@ func TestOptionalValue_Clone(t *testing.T) {
 		{
 			name: "ok",
 			target: &OptionalValue{
-				ov: *value.NewOptionalValue(value.TypeString, value.TypeString.ValueFrom("foo", types)),
+				ov: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types)),
 			},
 		},
 		{
@@ -298,6 +298,55 @@ func TestOptionalValue_Clone(t *testing.T) {
 			if tt.target != nil {
 				assert.NotSame(t, tt.target, res)
 			}
+		})
+	}
+}
+
+func TestOptionalValue_Cast(t *testing.T) {
+	type args struct {
+		t ValueType
+	}
+	tests := []struct {
+		name   string
+		target *OptionalValue
+		args   args
+		want   *OptionalValue
+	}{
+		{
+			name:   "diff type",
+			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+			args:   args{t: ValueTypeString},
+			want:   &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("1.1", types))},
+		},
+		{
+			name:   "same type",
+			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+			args:   args{t: ValueTypeNumber},
+			want:   &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+		},
+		{
+			name:   "failed to cast",
+			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, types))},
+			args:   args{t: ValueTypeString},
+			want:   &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
+		},
+		{
+			name:   "empty",
+			target: &OptionalValue{},
+			args:   args{t: ValueTypeString},
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{t: ValueTypeString},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t))
 		})
 	}
 }

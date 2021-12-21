@@ -24,6 +24,12 @@ func (*propertyURL) I2V(i interface{}) (interface{}, bool) {
 		}
 	}
 
+	if v, ok := i.(*string); ok && v != nil {
+		if u, err := url.Parse(*v); err == nil {
+			return u, true
+		}
+	}
+
 	return nil, false
 }
 

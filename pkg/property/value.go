@@ -2,7 +2,6 @@ package property
 
 import (
 	"net/url"
-	"strconv"
 
 	"github.com/reearth/reearth-backend/pkg/value"
 )
@@ -49,6 +48,13 @@ func (vt ValueType) ValueFrom(i interface{}) *Value {
 	return &Value{v: *v}
 }
 
+func (vt ValueType) MustBeValue(i interface{}) *Value {
+	if v := vt.ValueFrom(i); v != nil {
+		return v
+	}
+	panic("invalid value")
+}
+
 type Value struct {
 	v value.Value
 }
@@ -87,6 +93,17 @@ func (v *Value) Interface() interface{} {
 		return nil
 	}
 	return v.v.Interface()
+}
+
+func (v *Value) Cast(vt ValueType) *Value {
+	if v == nil {
+		return nil
+	}
+	nv := v.v.Cast(value.Type(vt), types)
+	if nv == nil {
+		return nil
+	}
+	return &Value{v: *nv}
 }
 
 func (v *Value) ValueBool() *bool {
@@ -200,16 +217,12 @@ func (v *Value) ValuePolygon() *Polygon {
 }
 
 func ValueFromStringOrNumber(s string) *Value {
-	if vint, err := strconv.Atoi(s); err == nil {
-		return ValueTypeNumber.ValueFrom(vint)
+	if s == "true" || s == "false" || s == "TRUE" || s == "FALSE" || s == "True" || s == "False" {
+		return ValueTypeBool.ValueFrom(s)
 	}
 
-	if vfloat64, err := strconv.ParseFloat(s, 64); err == nil {
-		return ValueTypeNumber.ValueFrom(vfloat64)
-	}
-
-	if vbool, err := strconv.ParseBool(s); err == nil {
-		return ValueTypeBool.ValueFrom(vbool)
+	if v := ValueTypeNumber.ValueFrom(s); v != nil {
+		return v
 	}
 
 	return ValueTypeString.ValueFrom(s)

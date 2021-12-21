@@ -22,14 +22,21 @@ var TypeLatLng Type = "latlng"
 type propertyLatLng struct{}
 
 func (*propertyLatLng) I2V(i interface{}) (interface{}, bool) {
-	if v, ok := i.(LatLng); ok {
+	switch v := i.(type) {
+	case LatLng:
 		return v, true
-	} else if v, ok := i.(*LatLng); ok {
+	case LatLngHeight:
+		return LatLng{Lat: v.Lat, Lng: v.Lng}, true
+	case *LatLng:
 		if v != nil {
 			return *v, true
 		}
-		return nil, false
+	case *LatLngHeight:
+		if v != nil {
+			return LatLng{Lat: v.Lat, Lng: v.Lng}, true
+		}
 	}
+
 	v := LatLng{}
 	if err := mapstructure.Decode(i, &v); err != nil {
 		return nil, false

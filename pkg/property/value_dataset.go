@@ -17,11 +17,11 @@ func NewValueAndDatasetValue(ty ValueType, d *dataset.Value, p *Value) *ValueAnd
 	}
 
 	if d != nil && ValueType(d.Type()) != ty {
-		d = nil
+		d = d.Cast(dataset.ValueType(ty))
 	}
 
 	if p != nil && p.Type() != ty {
-		p = nil
+		p = p.Cast(ty)
 	}
 
 	return &ValueAndDatasetValue{

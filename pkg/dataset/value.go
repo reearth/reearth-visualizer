@@ -45,6 +45,13 @@ func (t ValueType) ValueFrom(i interface{}) *Value {
 	return &Value{v: *vv}
 }
 
+func (vt ValueType) MustBeValue(i interface{}) *Value {
+	if v := vt.ValueFrom(i); v != nil {
+		return v
+	}
+	panic("invalid value")
+}
+
 type Value struct {
 	v value.Value
 }
@@ -79,6 +86,17 @@ func (v *Value) Interface() interface{} {
 		return nil
 	}
 	return v.v.Interface()
+}
+
+func (v *Value) Cast(vt ValueType) *Value {
+	if v == nil {
+		return nil
+	}
+	nv := v.v.Cast(value.Type(vt), nil)
+	if nv == nil {
+		return nil
+	}
+	return &Value{v: *nv}
 }
 
 func (v *Value) ValueBool() *bool {

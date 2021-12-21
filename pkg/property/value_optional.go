@@ -3,7 +3,7 @@ package property
 import "github.com/reearth/reearth-backend/pkg/value"
 
 type OptionalValue struct {
-	ov value.OptionalValue
+	ov value.Optional
 }
 
 func NewOptionalValue(t ValueType, v *Value) *OptionalValue {
@@ -11,7 +11,7 @@ func NewOptionalValue(t ValueType, v *Value) *OptionalValue {
 	if v != nil {
 		vv = &v.v
 	}
-	ov := value.NewOptionalValue(value.Type(t), vv)
+	ov := value.NewOptional(value.Type(t), vv)
 	if ov == nil {
 		return nil
 	}
@@ -22,7 +22,7 @@ func OptionalValueFrom(v *Value) *OptionalValue {
 	if v == nil {
 		return nil
 	}
-	ov := value.OptionalValueFrom(&v.v)
+	ov := value.OptionalFrom(&v.v)
 	if ov == nil {
 		return nil
 	}
@@ -75,4 +75,15 @@ func (ov *OptionalValue) SetValue(v *Value) {
 	} else {
 		ov.ov.SetValue(&v.v)
 	}
+}
+
+func (ov *OptionalValue) Cast(t ValueType) *OptionalValue {
+	if ov == nil {
+		return nil
+	}
+	vv := ov.ov.Cast(value.Type(t), types)
+	if vv == nil {
+		return nil
+	}
+	return &OptionalValue{ov: *vv}
 }

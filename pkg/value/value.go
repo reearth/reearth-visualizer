@@ -80,3 +80,13 @@ func (v *Value) Validate() bool {
 func (v *Value) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.Interface())
 }
+
+func (v *Value) Cast(t Type, p TypePropertyMap) *Value {
+	if v == nil || v.t == TypeUnknown {
+		return nil
+	}
+	if v.t == t {
+		return v.Clone()
+	}
+	return t.ValueFrom(v.v, p)
+}

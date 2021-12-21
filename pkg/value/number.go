@@ -1,6 +1,9 @@
 package value
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 var TypeNumber Type = "number"
 
@@ -37,6 +40,10 @@ func (*propertyNumber) I2V(i interface{}) (interface{}, bool) {
 	case json.Number:
 		if f, err := v.Float64(); err == nil {
 			return f, true
+		}
+	case string:
+		if vfloat64, err := strconv.ParseFloat(v, 64); err == nil {
+			return vfloat64, true
 		}
 	case *float64:
 		if v != nil {
@@ -94,6 +101,12 @@ func (*propertyNumber) I2V(i interface{}) (interface{}, bool) {
 		if v != nil {
 			if f, err := v.Float64(); err == nil {
 				return f, true
+			}
+		}
+	case *string:
+		if v != nil {
+			if vfloat64, err := strconv.ParseFloat(*v, 64); err == nil {
+				return vfloat64, true
 			}
 		}
 	}

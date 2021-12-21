@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewOptionalValue(t *testing.T) {
+func TestNewOptional(t *testing.T) {
 	type args struct {
 		t Type
 		v *Value
@@ -14,7 +14,7 @@ func TestNewOptionalValue(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *OptionalValue
+		want *Optional
 	}{
 		{
 			name: "default type",
@@ -22,7 +22,7 @@ func TestNewOptionalValue(t *testing.T) {
 				t: TypeString,
 				v: TypeString.ValueFrom("foo", nil),
 			},
-			want: &OptionalValue{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
+			want: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name: "custom type",
@@ -30,14 +30,14 @@ func TestNewOptionalValue(t *testing.T) {
 				t: Type("foo"),
 				v: &Value{t: Type("foo")},
 			},
-			want: &OptionalValue{t: Type("foo"), v: &Value{t: Type("foo")}},
+			want: &Optional{t: Type("foo"), v: &Value{t: Type("foo")}},
 		},
 		{
 			name: "nil value",
 			args: args{
 				t: Type("foo"),
 			},
-			want: &OptionalValue{t: Type("foo"), v: nil},
+			want: &Optional{t: Type("foo"), v: nil},
 		},
 		{
 			name: "invalid value",
@@ -61,33 +61,33 @@ func TestNewOptionalValue(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.want, NewOptionalValue(tt.args.t, tt.args.v))
+			assert.Equal(t, tt.want, NewOptional(tt.args.t, tt.args.v))
 		})
 	}
 }
 
-func TestOptionalValueFrom(t *testing.T) {
+func TestOptionalFrom(t *testing.T) {
 	type args struct {
 		v *Value
 	}
 	tests := []struct {
 		name string
 		args args
-		want *OptionalValue
+		want *Optional
 	}{
 		{
 			name: "default type",
 			args: args{
 				v: TypeString.ValueFrom("foo", nil),
 			},
-			want: &OptionalValue{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
+			want: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name: "custom type",
 			args: args{
 				v: &Value{t: Type("foo")},
 			},
-			want: &OptionalValue{t: Type("foo"), v: &Value{t: Type("foo")}},
+			want: &Optional{t: Type("foo"), v: &Value{t: Type("foo")}},
 		},
 		{
 			name: "invalid value",
@@ -107,25 +107,25 @@ func TestOptionalValueFrom(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.want, OptionalValueFrom(tt.args.v))
+			assert.Equal(t, tt.want, OptionalFrom(tt.args.v))
 		})
 	}
 }
 
-func TestOptionalValue_Type(t *testing.T) {
+func TestOptional_Type(t *testing.T) {
 	tests := []struct {
 		name  string
-		value *OptionalValue
+		value *Optional
 		want  Type
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{t: Type("foo")},
+			value: &Optional{t: Type("foo")},
 			want:  Type("foo"),
 		},
 		{
 			name:  "empty",
-			value: &OptionalValue{},
+			value: &Optional{},
 			want:  TypeUnknown,
 		},
 		{
@@ -144,20 +144,20 @@ func TestOptionalValue_Type(t *testing.T) {
 	}
 }
 
-func TestOptionalValue_Value(t *testing.T) {
+func TestOptional_Value(t *testing.T) {
 	tests := []struct {
 		name  string
-		value *OptionalValue
+		value *Optional
 		want  *Value
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
+			value: &Optional{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
 			want:  &Value{t: TypeString, v: "foobar"},
 		},
 		{
 			name:  "empty",
-			value: &OptionalValue{},
+			value: &Optional{},
 			want:  nil,
 		},
 		{
@@ -180,22 +180,22 @@ func TestOptionalValue_Value(t *testing.T) {
 	}
 }
 
-func TestOptionalValue_TypeAndValue(t *testing.T) {
+func TestOptional_TypeAndValue(t *testing.T) {
 	tests := []struct {
 		name  string
-		value *OptionalValue
+		value *Optional
 		wantt Type
 		wantv *Value
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
+			value: &Optional{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
 			wantt: TypeString,
 			wantv: &Value{t: TypeString, v: "foobar"},
 		},
 		{
 			name:  "empty",
-			value: &OptionalValue{},
+			value: &Optional{},
 			wantt: TypeUnknown,
 			wantv: nil,
 		},
@@ -221,19 +221,19 @@ func TestOptionalValue_TypeAndValue(t *testing.T) {
 	}
 }
 
-func TestOptionalValue_SetValue(t *testing.T) {
+func TestOptional_SetValue(t *testing.T) {
 	type args struct {
 		v *Value
 	}
 	tests := []struct {
 		name    string
-		value   *OptionalValue
+		value   *Optional
 		args    args
 		invalid bool
 	}{
 		{
 			name: "set",
-			value: &OptionalValue{
+			value: &Optional{
 				t: TypeString,
 				v: &Value{t: TypeString, v: "foobar"},
 			},
@@ -241,14 +241,14 @@ func TestOptionalValue_SetValue(t *testing.T) {
 		},
 		{
 			name: "set to nil",
-			value: &OptionalValue{
+			value: &Optional{
 				t: TypeString,
 			},
 			args: args{v: &Value{t: TypeString, v: "bar"}},
 		},
 		{
 			name: "invalid value",
-			value: &OptionalValue{
+			value: &Optional{
 				t: TypeNumber,
 				v: &Value{t: TypeNumber, v: 1},
 			},
@@ -257,14 +257,14 @@ func TestOptionalValue_SetValue(t *testing.T) {
 		},
 		{
 			name: "nil value",
-			value: &OptionalValue{
+			value: &Optional{
 				t: TypeNumber,
 				v: &Value{t: TypeNumber, v: 1},
 			},
 		},
 		{
 			name:    "empty",
-			value:   &OptionalValue{},
+			value:   &Optional{},
 			args:    args{v: &Value{t: TypeString, v: "bar"}},
 			invalid: true,
 		},
@@ -299,18 +299,18 @@ func TestOptionalValue_SetValue(t *testing.T) {
 	}
 }
 
-func TestOptionalValue_Clone(t *testing.T) {
+func TestOptional_Clone(t *testing.T) {
 	tests := []struct {
 		name   string
-		target *OptionalValue
+		target *Optional
 	}{
 		{
 			name:   "ok",
-			target: &OptionalValue{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
+			target: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name:   "empty",
-			target: &OptionalValue{},
+			target: &Optional{},
 		},
 		{
 			name:   "nil",
@@ -325,6 +325,62 @@ func TestOptionalValue_Clone(t *testing.T) {
 			if tt.target != nil {
 				assert.NotSame(t, tt.target, res)
 			}
+		})
+	}
+}
+
+func TestOptional_Cast(t *testing.T) {
+	type args struct {
+		t Type
+		p TypePropertyMap
+	}
+	tests := []struct {
+		name   string
+		target *Optional
+		args   args
+		want   *Optional
+	}{
+		{
+			name:   "diff type",
+			target: &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
+			args:   args{t: TypeString},
+			want:   &Optional{t: TypeString, v: TypeString.ValueFrom("1.1", nil)},
+		},
+		{
+			name:   "same type",
+			target: &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
+			args:   args{t: TypeNumber},
+			want:   &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
+		},
+		{
+			name:   "nil value",
+			target: &Optional{t: TypeNumber},
+			args:   args{t: TypeString},
+			want:   &Optional{t: TypeString},
+		},
+		{
+			name:   "failed to cast",
+			target: &Optional{t: TypeLatLng, v: TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, nil)},
+			args:   args{t: TypeString},
+			want:   &Optional{t: TypeString},
+		},
+		{
+			name:   "empty",
+			target: &Optional{},
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{t: TypeString},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t, tt.args.p))
 		})
 	}
 }
