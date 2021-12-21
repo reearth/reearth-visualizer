@@ -45,6 +45,7 @@ module.exports = (env, args = {}) => {
       hot: true,
       open: true,
       port: 3000,
+      useLocalIp: true,
       proxy: {
         "/api": {
           target: "http://localhost:8080",
