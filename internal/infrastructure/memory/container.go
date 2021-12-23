@@ -24,5 +24,6 @@ func InitRepos(c *repo.Container) *repo.Container {
 	c.User = NewUser()
 	c.SceneLock = NewSceneLock()
 	c.Transaction = NewTransaction()
+	c.Lock = NewLock()
 	return c
 }

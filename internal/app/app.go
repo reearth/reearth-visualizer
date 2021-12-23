@@ -128,11 +128,7 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 		code = http.StatusNotFound
 		msg = "not found"
 	} else {
-		var ierr *rerror.ErrInternal
-		if errors.As(err, &ierr) {
-			if err2 := ierr.Unwrap(); err2 != nil {
-				log("internal err: %+v", err2)
-			}
+		if ierr := rerror.UnwrapErrInternal(err); ierr != nil {
 			code = http.StatusInternalServerError
 			msg = "internal server error"
 		}

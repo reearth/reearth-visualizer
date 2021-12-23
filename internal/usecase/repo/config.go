@@ -7,6 +7,8 @@ import (
 )
 
 type Config interface {
-	Load(context.Context) (*config.Config, error)
+	LockAndLoad(context.Context) (*config.Config, error)
 	Save(context.Context, *config.Config) error
+	SaveAndUnlock(context.Context, *config.Config) error
+	Unlock(context.Context) error
 }

@@ -9,6 +9,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/form3tech-oss/jwt-go v3.2.2+incompatible
 	github.com/goccy/go-yaml v1.9.4
+	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
 	github.com/jarcoal/httpmock v1.0.8
@@ -25,6 +26,7 @@ require (
 	github.com/ravilushqa/otelgqlgen v0.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.6.0
+	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
 	github.com/stretchr/testify v1.7.0
 	github.com/twpayne/go-kml v1.5.2
 	github.com/uber/jaeger-client-go v2.29.1+incompatible

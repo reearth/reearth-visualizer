@@ -2,6 +2,7 @@ package rerror
 
 import (
 	"fmt"
+	"runtime/debug"
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth-backend/pkg/log"
@@ -17,28 +18,18 @@ var (
 	ErrNotImplemented = errors.New("not implemented")
 )
 
-// ErrInternal is an error struct that can hold an internal error but hides users the details.
-type ErrInternal struct {
-	err Error
-}
-
 func ErrInternalBy(err error) error {
 	log.Errorf("internal error: %s", err.Error())
-	return &ErrInternal{
-		err: Error{
-			Label:  errInternal,
-			Err:    err,
-			Hidden: true,
-		},
+	debug.PrintStack()
+	return &Error{
+		Label:  errInternal,
+		Err:    err,
+		Hidden: true,
 	}
 }
 
-func (e *ErrInternal) Error() string {
-	return e.err.Error()
-}
-
-func (e *ErrInternal) Unwrap() error {
-	return e.err.Unwrap()
+func UnwrapErrInternal(err error) error {
+	return As(err, errInternal)
 }
 
 // Error can hold an error together with label.
@@ -117,9 +108,9 @@ func As(err error, label error) error {
 		return nil
 	}
 	e := err
-	var target *Error
 	for {
-		if !errors.As(e, &target) {
+		target := Get(e)
+		if target == nil {
 			break
 		}
 		if target.Label == label {

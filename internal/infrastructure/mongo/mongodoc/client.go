@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -203,7 +204,6 @@ func (c *Client) Paginate(ctx context.Context, col string, filter interface{}, p
 			}})
 		}
 	}
-	// 更に読める要素があるのか確かめるために一つ多めに読み出す
 	// Read one more element so that we can see whether there's a further one
 	limit++
 	findOptions.Limit = &limit
@@ -229,7 +229,7 @@ func (c *Client) Paginate(ctx context.Context, col string, filter interface{}, p
 	hasMore := false
 	if len(results) == int(limit) {
 		hasMore = true
-		// 余計に1つ読んだ分を取り除く
+		// Remove the extra one reading.
 		results = results[:len(results)-1]
 	}
 
@@ -261,9 +261,6 @@ func (c *Client) Paginate(ctx context.Context, col string, filter interface{}, p
 	}
 
 	// ref: https://facebook.github.io/relay/graphql/connections.htm#sec-undefined.PageInfo.Fields
-	// firstが設定されている場合で前のpageがあるかどうかの判定は効率的に行える場合以外はfalseを返してよい
-	// lastが設定されている場合で次のpageがあるかどうかの判定は効率的に行える場合以外はfalseを返してよい
-	// 既存の実装では効率的に求めることができないので絶対にfalseを返す
 	// If first is set, false can be returned unless it can be efficiently determined whether or not a previous page exists.
 	// If last is set, false can be returned unless it can be efficiently determined whether or not a next page exists.
 	// Returning absolutely false because the existing implementation cannot determine it efficiently.
@@ -328,6 +325,44 @@ func indexes(ctx context.Context, coll *mongo.Collection) map[string]struct{} {
 	return keys
 }
 
-func (c *Client) Session() (mongo.Session, error) {
-	return c.client.StartSession()
+func (c *Client) BeginTransaction() (repo.Tx, error) {
+	s, err := c.client.StartSession()
+	if err != nil {
+		return nil, rerror.ErrInternalBy(err)
+	}
+
+	if err := s.StartTransaction(&options.TransactionOptions{}); err != nil {
+		return nil, rerror.ErrInternalBy(err)
+	}
+
+	return &Tx{session: s, commit: false}, nil
+}
+
+type Tx struct {
+	session mongo.Session
+	commit  bool
+}
+
+func (t *Tx) Commit() {
+	if t == nil {
+		return
+	}
+	t.commit = true
+}
+
+func (t *Tx) End(ctx context.Context) error {
+	if t == nil {
+		return nil
+	}
+
+	if t.commit {
+		if err := t.session.CommitTransaction(ctx); err != nil {
+			return rerror.ErrInternalBy(err)
+		}
+	} else if err := t.session.AbortTransaction(ctx); err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+
+	t.session.EndSession(ctx)
+	return nil
 }

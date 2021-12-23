@@ -16,4 +16,5 @@ type Container struct {
 	User           User
 	SceneLock      SceneLock
 	Transaction    Transaction
+	Lock           Lock
 }

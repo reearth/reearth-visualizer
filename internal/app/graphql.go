@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -13,7 +12,6 @@ import (
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth-backend/internal/adapter/gql"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -82,13 +80,6 @@ func graphqlAPI(
 		// show more detailed error messgage in debug mode
 		func(ctx context.Context, e error) *gqlerror.Error {
 			if conf.Debug {
-				var ierr *rerror.ErrInternal
-				if errors.As(e, &ierr) {
-					if err2 := ierr.Unwrap(); err2 != nil {
-						// TODO: display stacktrace with xerrors
-						ec.Logger.Errorf("%+v", err2)
-					}
-				}
 				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), e.Error())
 			}
 			return graphql.DefaultErrorPresenter(ctx, e)
