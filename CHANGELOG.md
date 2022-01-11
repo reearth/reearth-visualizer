@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.0 - 2022-01-11
+
+### 🚀 Features
+
+- Enhance terrain feature (type selection, exaggeration) ([#138](https://github.com/reearth/reearth-web/pull/138)) [`dae137`](https://github.com/reearth/reearth-web/commit/dae137)
+- Clustering layers ([#143](https://github.com/reearth/reearth-web/pull/143)) [`3439cc`](https://github.com/reearth/reearth-web/commit/3439cc)
+- Camera limiter ([#142](https://github.com/reearth/reearth-web/pull/142)) [`dec1dd`](https://github.com/reearth/reearth-web/commit/dec1dd)
+- Tagging of layers ([#144](https://github.com/reearth/reearth-web/pull/144)) [`4d0a40`](https://github.com/reearth/reearth-web/commit/4d0a40)
+
+### 🔧 Bug Fixes
+
+- Indicator is not displayed on selecting of clustered layer ([#146](https://github.com/reearth/reearth-web/pull/146)) [`e41f67`](https://github.com/reearth/reearth-web/commit/e41f67)
+- Use data URL for marker images [`576ea4`](https://github.com/reearth/reearth-web/commit/576ea4)
+- Layer clusters do not updated correctly [`ec74f6`](https://github.com/reearth/reearth-web/commit/ec74f6)
+- Position label in front of billboard ([#147](https://github.com/reearth/reearth-web/pull/147)) [`81c533`](https://github.com/reearth/reearth-web/commit/81c533)
+- Public pages do not work due to clustering feature [`48d8b3`](https://github.com/reearth/reearth-web/commit/48d8b3)
+- Photooverlay transition does not work in Android ([#154](https://github.com/reearth/reearth-web/pull/154)) [`decbfe`](https://github.com/reearth/reearth-web/commit/decbfe)
+
+### 🎨 Styling
+
+- Fix the height of the header [`9d6acc`](https://github.com/reearth/reearth-web/commit/9d6acc)
+
+### Miscellaneous Tasks
+
+- Upgrade dependencies ([#134](https://github.com/reearth/reearth-web/pull/134)) [`740821`](https://github.com/reearth/reearth-web/commit/740821)
+- Update dependency cesium to ^1.88.0 ([#139](https://github.com/reearth/reearth-web/pull/139)) [`7afdfb`](https://github.com/reearth/reearth-web/commit/7afdfb)
+- Fix webpack dev server config [`8d06fa`](https://github.com/reearth/reearth-web/commit/8d06fa)
+- Update dependency cesium to ^1.89.0 ([#156](https://github.com/reearth/reearth-web/pull/156)) [`d436ce`](https://github.com/reearth/reearth-web/commit/d436ce)
+
 ## 0.2.0 - 2021-11-18
 
 ### 🚀 Features
