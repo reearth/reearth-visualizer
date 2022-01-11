@@ -1,6 +1,67 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.0 - 2022-01-11
+
+### reearth-web
+
+#### 🚀 Features
+
+- Enhance terrain feature (type selection, exaggeration) ([#138](https://github.com/reearth/reearth-web/pull/138)) [`dae137`](https://github.com/reearth/reearth-web/commit/dae137)
+- Clustering layers ([#143](https://github.com/reearth/reearth-web/pull/143)) [`3439cc`](https://github.com/reearth/reearth-web/commit/3439cc)
+- Camera limiter ([#142](https://github.com/reearth/reearth-web/pull/142)) [`dec1dd`](https://github.com/reearth/reearth-web/commit/dec1dd)
+- Tagging of layers ([#144](https://github.com/reearth/reearth-web/pull/144)) [`4d0a40`](https://github.com/reearth/reearth-web/commit/4d0a40)
+
+#### 🔧 Bug Fixes
+
+- Indicator is not displayed on selecting of clustered layer ([#146](https://github.com/reearth/reearth-web/pull/146)) [`e41f67`](https://github.com/reearth/reearth-web/commit/e41f67)
+- Use data URL for marker images [`576ea4`](https://github.com/reearth/reearth-web/commit/576ea4)
+- Layer clusters do not updated correctly [`ec74f6`](https://github.com/reearth/reearth-web/commit/ec74f6)
+- Position label in front of billboard ([#147](https://github.com/reearth/reearth-web/pull/147)) [`81c533`](https://github.com/reearth/reearth-web/commit/81c533)
+- Public pages do not work due to clustering feature [`48d8b3`](https://github.com/reearth/reearth-web/commit/48d8b3)
+- Photooverlay transition does not work in Android ([#154](https://github.com/reearth/reearth-web/pull/154)) [`decbfe`](https://github.com/reearth/reearth-web/commit/decbfe)
+
+#### 🎨 Styling
+
+- Fix the height of the header [`9d6acc`](https://github.com/reearth/reearth-web/commit/9d6acc)
+
+#### Miscellaneous Tasks
+
+- Upgrade dependencies ([#134](https://github.com/reearth/reearth-web/pull/134)) [`740821`](https://github.com/reearth/reearth-web/commit/740821)
+- Update dependency cesium to ^1.88.0 ([#139](https://github.com/reearth/reearth-web/pull/139)) [`7afdfb`](https://github.com/reearth/reearth-web/commit/7afdfb)
+- Fix webpack dev server config [`8d06fa`](https://github.com/reearth/reearth-web/commit/8d06fa)
+- Update dependency cesium to ^1.89.0 ([#156](https://github.com/reearth/reearth-web/pull/156)) [`d436ce`](https://github.com/reearth/reearth-web/commit/d436ce)
+
+### reearth-backend
+
+#### 🚀 Features
+
+- Clusters for scenes ([#75](https://github.com/reearth/reearth-backend/pull/75)) [`3512c0`](https://github.com/reearth/reearth-backend/commit/3512c0)
+- Add fields of scene property for terrain [`8693b4`](https://github.com/reearth/reearth-backend/commit/8693b4)
+- Camera limiter  ([#87](https://github.com/reearth/reearth-backend/pull/87)) [`63c582`](https://github.com/reearth/reearth-backend/commit/63c582)
+
+#### 🔧 Bug Fixes
+
+- Terrain fields of scene property [`5e3d25`](https://github.com/reearth/reearth-backend/commit/5e3d25)
+- Numbers are not decoded from gql to value [`2ddbc8`](https://github.com/reearth/reearth-backend/commit/2ddbc8)
+- Layers have their own tags separate from the scene ([#90](https://github.com/reearth/reearth-backend/pull/90)) [`c4fb9a`](https://github.com/reearth/reearth-backend/commit/c4fb9a)
+- Return property with clusters data ([#89](https://github.com/reearth/reearth-backend/pull/89)) [`1b99c6`](https://github.com/reearth/reearth-backend/commit/1b99c6)
+- Cast values, rename value.OptionalValue ([#93](https://github.com/reearth/reearth-backend/pull/93)) [`ba4b18`](https://github.com/reearth/reearth-backend/commit/ba4b18)
+- Synchronize mongo migration ([#94](https://github.com/reearth/reearth-backend/pull/94)) [`db4cea`](https://github.com/reearth/reearth-backend/commit/db4cea)
+
+#### 📖 Documentation
+
+- Add pkg.go.dev badge to readme [`91f9b3`](https://github.com/reearth/reearth-backend/commit/91f9b3)
+
+#### ✨ Refactor
+
+- Make property.Value and dataset.Value independent in pkg/value ([#77](https://github.com/reearth/reearth-backend/pull/77)) [`73143b`](https://github.com/reearth/reearth-backend/commit/73143b)
+
+#### Miscellaneous Tasks
+
+- Fix plugin manifest JSON schema [`2b57b1`](https://github.com/reearth/reearth-backend/commit/2b57b1)
+
+
 ## 0.2.0 - 2021-11-18
 
 #### reearth-web
