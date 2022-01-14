@@ -1,21 +1,20 @@
 package user
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"golang.org/x/text/language"
 )
 
 type User struct {
-	id    id.UserID
+	id    ID
 	name  string
 	email string
-	team  id.TeamID
+	team  TeamID
 	auths []Auth
 	lang  language.Tag
 	theme Theme
 }
 
-func (u *User) ID() id.UserID {
+func (u *User) ID() ID {
 	return u.id
 }
 
@@ -27,7 +26,7 @@ func (u *User) Email() string {
 	return u.email
 }
 
-func (u *User) Team() id.TeamID {
+func (u *User) Team() TeamID {
 	return u.team
 }
 
@@ -47,7 +46,7 @@ func (u *User) UpdateEmail(email string) {
 	u.email = email
 }
 
-func (u *User) UpdateTeam(team id.TeamID) {
+func (u *User) UpdateTeam(team TeamID) {
 	u.team = team
 }
 

@@ -44,7 +44,7 @@ func PropertyItemIDFromRef(i *string) *PropertyItemID {
 
 // PropertyItemIDFromRefID generates a new PropertyItemID from a ref of a generic ID.
 func PropertyItemIDFromRefID(i *ID) *PropertyItemID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := PropertyItemID(*i)
@@ -58,28 +58,40 @@ func (d PropertyItemID) ID() ID {
 
 // String returns a string representation.
 func (d PropertyItemID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d PropertyItemID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d PropertyItemID) GoString() string {
-	return "id.PropertyItemID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d PropertyItemID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "PropertyItemID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d PropertyItemID) Ref() *PropertyItemID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d PropertyItemID) Contains(ids []PropertyItemID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d PropertyItemID) Contains(ids []PropertyItemID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *PropertyItemID) CopyRef() *PropertyItemID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *PropertyItemID) CopyRef() *PropertyItemID {
 
 // IDRef returns a reference of a domain id.
 func (d *PropertyItemID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *PropertyItemID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *PropertyItemID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *PropertyItemID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *PropertyItemID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *PropertyItemID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *PropertyItemID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *PropertyItemID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d PropertyItemID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// PropertyItemIDToKeys converts IDs into a string slice.
-func PropertyItemIDToKeys(ids []PropertyItemID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *PropertyItemID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// PropertyItemIDsToStrings converts IDs into a string slice.
+func PropertyItemIDsToStrings(ids []PropertyItemID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // PropertyItemIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *PropertyItemIDSet) Clone() *PropertyItemIDSet {
 
 // Merge returns a merged set
 func (s *PropertyItemIDSet) Merge(s2 *PropertyItemIDSet) *PropertyItemIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

@@ -44,7 +44,7 @@ func DatasetSchemaFieldIDFromRef(i *string) *DatasetSchemaFieldID {
 
 // DatasetSchemaFieldIDFromRefID generates a new DatasetSchemaFieldID from a ref of a generic ID.
 func DatasetSchemaFieldIDFromRefID(i *ID) *DatasetSchemaFieldID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := DatasetSchemaFieldID(*i)
@@ -58,28 +58,40 @@ func (d DatasetSchemaFieldID) ID() ID {
 
 // String returns a string representation.
 func (d DatasetSchemaFieldID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d DatasetSchemaFieldID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d DatasetSchemaFieldID) GoString() string {
-	return "id.DatasetSchemaFieldID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d DatasetSchemaFieldID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "DatasetSchemaFieldID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d DatasetSchemaFieldID) Ref() *DatasetSchemaFieldID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d DatasetSchemaFieldID) Contains(ids []DatasetSchemaFieldID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d DatasetSchemaFieldID) Contains(ids []DatasetSchemaFieldID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *DatasetSchemaFieldID) CopyRef() *DatasetSchemaFieldID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *DatasetSchemaFieldID) CopyRef() *DatasetSchemaFieldID {
 
 // IDRef returns a reference of a domain id.
 func (d *DatasetSchemaFieldID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *DatasetSchemaFieldID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *DatasetSchemaFieldID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *DatasetSchemaFieldID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *DatasetSchemaFieldID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *DatasetSchemaFieldID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *DatasetSchemaFieldID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *DatasetSchemaFieldID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d DatasetSchemaFieldID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// DatasetSchemaFieldIDToKeys converts IDs into a string slice.
-func DatasetSchemaFieldIDToKeys(ids []DatasetSchemaFieldID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *DatasetSchemaFieldID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// DatasetSchemaFieldIDsToStrings converts IDs into a string slice.
+func DatasetSchemaFieldIDsToStrings(ids []DatasetSchemaFieldID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // DatasetSchemaFieldIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *DatasetSchemaFieldIDSet) Clone() *DatasetSchemaFieldIDSet {
 
 // Merge returns a merged set
 func (s *DatasetSchemaFieldIDSet) Merge(s2 *DatasetSchemaFieldIDSet) *DatasetSchemaFieldIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

@@ -1,18 +1,16 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type SchemaFieldDiff struct {
 	Added    []*SchemaField
 	Removed  []*SchemaField
-	Replaced map[id.DatasetSchemaFieldID]*SchemaField
+	Replaced map[FieldID]*SchemaField
 }
 
 func (d *Schema) FieldDiffBySource(d2 *Schema) SchemaFieldDiff {
 	added := []*SchemaField{}
 	removed := []*SchemaField{}
 	// others := map[string]DatasetDiffTouple{}
-	others2 := map[id.DatasetSchemaFieldID]*SchemaField{}
+	others2 := map[FieldID]*SchemaField{}
 
 	s1 := map[string]*SchemaField{}
 	for _, d1 := range d.fields {

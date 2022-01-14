@@ -1,9 +1,5 @@
 package tag
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type GroupBuilder struct {
 	g *Group
 }
@@ -21,10 +17,10 @@ func GroupFrom(t Tag) *Group {
 }
 
 func (b *GroupBuilder) Build() (*Group, error) {
-	if id.ID(b.g.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.g.id.IsNil() {
+		return nil, ErrInvalidID
 	}
-	if id.ID(b.g.sceneId).IsNil() {
+	if b.g.sceneId.IsNil() {
 		return nil, ErrInvalidSceneID
 	}
 	if b.g.label == "" {
@@ -34,13 +30,13 @@ func (b *GroupBuilder) Build() (*Group, error) {
 	return b.g, nil
 }
 
-func (b *GroupBuilder) ID(tid id.TagID) *GroupBuilder {
+func (b *GroupBuilder) ID(tid ID) *GroupBuilder {
 	b.g.id = tid
 	return b
 }
 
 func (b *GroupBuilder) NewID() *GroupBuilder {
-	b.g.id = id.NewTagID()
+	b.g.id = NewID()
 	return b
 }
 
@@ -49,7 +45,7 @@ func (b *GroupBuilder) Label(l string) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Scene(sid id.SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(sid SceneID) *GroupBuilder {
 	b.g.sceneId = sid
 	return b
 }

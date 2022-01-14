@@ -5,17 +5,16 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/builtin"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 type ReearthDecoder struct {
 	d     *json.Decoder
-	scene id.SceneID
+	scene layer.SceneID
 }
 
-func NewReearthDecoder(d *json.Decoder, scene id.SceneID) *ReearthDecoder {
+func NewReearthDecoder(d *json.Decoder, scene layer.SceneID) *ReearthDecoder {
 	return &ReearthDecoder{d: d, scene: scene}
 }
 
@@ -43,7 +42,7 @@ type ReearthRoot struct {
 	Layers  []*ReearthLayer `json:"layers"`
 }
 
-func (r *ReearthRoot) Result(scene id.SceneID) (result Result, err error) {
+func (r *ReearthRoot) Result(scene layer.SceneID) (result Result, err error) {
 	if r == nil {
 		return
 	}
@@ -66,15 +65,15 @@ func (r *ReearthRoot) Result(scene id.SceneID) (result Result, err error) {
 }
 
 type ReearthLayer struct {
-	Plugin              *id.PluginID          `json:"plugin"`
-	Extension           *id.PluginExtensionID `json:"extension"`
-	Name                string                `json:"name"`
-	Infobox             *ReearthInfobox       `json:"infobox"`
-	Property            *ReearthProperty      `json:"property"`
-	Layers              []ReearthLayer        `json:"layers"`
-	IsVisible           *bool                 `json:"isVisible"`
-	LinkedDatasetSchema *id.DatasetSchemaID   `json:"linkedDatasetSchema"`
-	LinkedDataset       *id.DatasetID         `json:"linkedDataset"`
+	Plugin              *layer.PluginID          `json:"plugin"`
+	Extension           *layer.PluginExtensionID `json:"extension"`
+	Name                string                   `json:"name"`
+	Infobox             *ReearthInfobox          `json:"infobox"`
+	Property            *ReearthProperty         `json:"property"`
+	Layers              []ReearthLayer           `json:"layers"`
+	IsVisible           *bool                    `json:"isVisible"`
+	LinkedDatasetSchema *layer.DatasetSchemaID   `json:"linkedDatasetSchema"`
+	LinkedDataset       *layer.DatasetID         `json:"linkedDataset"`
 }
 
 func (l *ReearthLayer) layer() *layer.Initializer {
@@ -92,9 +91,9 @@ func (l *ReearthLayer) layer() *layer.Initializer {
 		}
 	}
 
-	var psid *id.PropertySchemaID
+	var psid *property.SchemaID
 	if l.Plugin != nil || l.Extension != nil {
-		psid2, err := id.PropertySchemaIDFromExtension(*l.Plugin, *l.Extension)
+		psid2, err := layer.PropertySchemaIDFromExtension(*l.Plugin, *l.Extension)
 		if err == nil {
 			// if there is an error, property schema id will be nil.
 			psid = psid2.Ref()
@@ -151,9 +150,9 @@ func (i *ReearthInfobox) infobox() *layer.InitializerInfobox {
 }
 
 type ReearthInfoboxField struct {
-	Plugin    id.PluginID          `json:"plugin"`
-	Extension id.PluginExtensionID `json:"extension"`
-	Property  *ReearthProperty     `json:"property"`
+	Plugin    layer.PluginID          `json:"plugin"`
+	Extension layer.PluginExtensionID `json:"extension"`
+	Property  *ReearthProperty        `json:"property"`
 }
 
 func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
@@ -161,9 +160,9 @@ func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
 		return nil
 	}
 
-	var psid *id.PropertySchemaID
+	var psid *property.SchemaID
 	{
-		psid2, err := id.PropertySchemaIDFromExtension(f.Plugin, f.Extension)
+		psid2, err := layer.PropertySchemaIDFromExtension(f.Plugin, f.Extension)
 		if err == nil {
 			// if there is an error, property schema id will be nil.
 			psid = psid2.Ref()
@@ -182,9 +181,9 @@ func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
 	}
 }
 
-type ReearthProperty map[id.PropertySchemaGroupID]ReearthPropertyItem
+type ReearthProperty map[property.SchemaGroupID]ReearthPropertyItem
 
-func (p ReearthProperty) property(schema *id.PropertySchemaID) *property.Initializer {
+func (p ReearthProperty) property(schema *property.SchemaID) *property.Initializer {
 	if schema == nil || p == nil {
 		return nil
 	}
@@ -206,7 +205,7 @@ type ReearthPropertyItem struct {
 	Fields ReearthPropertyGroup   `json:"fields"`
 }
 
-func (p *ReearthPropertyItem) propertyItem(key id.PropertySchemaGroupID) *property.InitializerItem {
+func (p *ReearthPropertyItem) propertyItem(key property.SchemaGroupID) *property.InitializerItem {
 	if p == nil {
 		return nil
 	}
@@ -244,7 +243,7 @@ func (p *ReearthPropertyItem) propertyItem(key id.PropertySchemaGroupID) *proper
 	}
 }
 
-type ReearthPropertyGroup map[id.PropertySchemaFieldID]*ReearthPropertyField
+type ReearthPropertyGroup map[property.FieldID]*ReearthPropertyField
 
 func (p ReearthPropertyGroup) propertyGroup() *property.InitializerGroup {
 	if p == nil || len(p) == 0 {
@@ -270,7 +269,7 @@ type ReearthPropertyField struct {
 	Value interface{}            `json:"value"`
 }
 
-func (f *ReearthPropertyField) propertyField(key id.PropertySchemaFieldID) *property.InitializerField {
+func (f *ReearthPropertyField) propertyField(key property.FieldID) *property.InitializerField {
 	if f == nil || f.Type == "" {
 		return nil
 	}
@@ -301,7 +300,7 @@ func (f *ReearthPropertyField) propertyField(key id.PropertySchemaFieldID) *prop
 }
 
 type ReearthPropertyLink struct {
-	Dataset *id.DatasetID           `json:"dataset"`
-	Schema  id.DatasetSchemaID      `json:"schema"`
-	Field   id.DatasetSchemaFieldID `json:"field"`
+	Dataset *property.DatasetID      `json:"dataset"`
+	Schema  property.DatasetSchemaID `json:"schema"`
+	Field   property.DatasetFieldID  `json:"field"`
 }

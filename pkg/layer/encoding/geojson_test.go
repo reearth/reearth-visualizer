@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -25,21 +24,21 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    id.NewLayerID(),
-						Scene:       id.NewSceneID(),
+						Original:    layer.NewID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("marker").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("location"),
+										ID: property.FieldID("location"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeLatLng,
 											nil,
@@ -47,7 +46,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("pointColor"),
+										ID: property.FieldID("pointColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -55,7 +54,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("height"),
+										ID: property.FieldID("height"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -80,21 +79,21 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    id.NewLayerID(),
-						Scene:       id.NewSceneID(),
+						Original:    layer.NewID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polygon").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("polygon"),
+										ID: property.FieldID("polygon"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypePolygon,
 											nil,
@@ -106,7 +105,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("fillColor"),
+										ID: property.FieldID("fillColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -114,7 +113,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -122,7 +121,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -130,7 +129,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -157,21 +156,21 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    id.NewLayerID(),
-						Scene:       id.NewSceneID(),
+						Original:    layer.NewID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polyline").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("coordinates"),
+										ID: property.FieldID("coordinates"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeCoordinates,
 											nil,
@@ -183,7 +182,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -191,7 +190,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,

@@ -5,18 +5,17 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/czml"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 type CZMLDecoder struct {
 	decoder   *json.Decoder
-	sceneId   id.SceneID
+	sceneId   layer.SceneID
 	groupName string
 }
 
-func NewCZMLDecoder(d *json.Decoder, s id.SceneID) *CZMLDecoder {
+func NewCZMLDecoder(d *json.Decoder, s layer.SceneID) *CZMLDecoder {
 	return &CZMLDecoder{
 		decoder:   d,
 		sceneId:   s,
@@ -76,7 +75,7 @@ func (d *CZMLDecoder) Decode() (Result, error) {
 func (d *CZMLDecoder) decodeLayer(t string, coords []float64, style interface{}, layerName string) (*layer.Item, *property.Property, error) {
 	var p *property.Property
 	var l *layer.Item
-	var ex id.PluginExtensionID
+	var ex layer.PluginExtensionID
 	var err error
 	switch t {
 	case "Point":
@@ -164,7 +163,7 @@ func (d *CZMLDecoder) decodeLayer(t string, coords []float64, style interface{},
 		Scene(d.sceneId).
 		Property(p.IDRef()).
 		Extension(&ex).
-		Plugin(&id.OfficialPluginID).
+		Plugin(&layer.OfficialPluginID).
 		Build()
 	if err != nil {
 		return nil, nil, err

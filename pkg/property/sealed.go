@@ -4,28 +4,27 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type Sealed struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	Schema        id.PropertySchemaID
-	LinkedDataset *id.DatasetID
+	Original      *ID
+	Parent        *ID
+	Schema        SchemaID
+	LinkedDataset *DatasetID
 	Items         []*SealedItem
 }
 
 type SealedItem struct {
-	Original      *id.PropertyItemID
-	Parent        *id.PropertyItemID
-	SchemaGroup   id.PropertySchemaGroupID
-	LinkedDataset *id.DatasetID
+	Original      *ItemID
+	Parent        *ItemID
+	SchemaGroup   SchemaGroupID
+	LinkedDataset *DatasetID
 	Fields        []*SealedField
 	Groups        []*SealedItem
 }
 
 type SealedField struct {
-	ID  id.PropertySchemaFieldID
+	ID  FieldID
 	Val *ValueAndDatasetValue
 }
 
@@ -164,7 +163,7 @@ func sealedFieldsInterface(fields []*SealedField) map[string]interface{} {
 	return item
 }
 
-func (s *Sealed) Item(i id.PropertyItemID) *SealedItem {
+func (s *Sealed) Item(i ItemID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -192,7 +191,7 @@ func (s *Sealed) ItemBy(ptr *Pointer) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaGroupID) *SealedItem {
+func (s *Sealed) ItemBySchemaGroup(i SchemaGroupID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -204,7 +203,7 @@ func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaGroupID) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) Field(id id.PropertySchemaFieldID) *SealedField {
+func (s *Sealed) Field(id FieldID) *SealedField {
 	if s == nil {
 		return nil
 	}
@@ -232,14 +231,14 @@ func (s *Sealed) FieldBy(ptr *Pointer) *SealedField {
 	return nil
 }
 
-func (s *SealedItem) Match(id id.PropertyItemID) bool {
+func (s *SealedItem) Match(id ItemID) bool {
 	if s == nil {
 		return false
 	}
 	return s.Original != nil && *s.Original == id || s.Parent != nil && *s.Parent == id
 }
 
-func (s *SealedItem) Group(id id.PropertyItemID) *SealedItem {
+func (s *SealedItem) Group(id ItemID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -251,7 +250,7 @@ func (s *SealedItem) Group(id id.PropertyItemID) *SealedItem {
 	return nil
 }
 
-func (s *SealedItem) Field(id id.PropertySchemaFieldID) *SealedField {
+func (s *SealedItem) Field(id FieldID) *SealedField {
 	if s == nil {
 		return nil
 	}

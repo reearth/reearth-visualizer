@@ -6,7 +6,6 @@ import (
 
 	"github.com/jonas-p/go-shp"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -25,23 +24,23 @@ func TestEncodeSHP(t *testing.T) {
 			layer: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    id.NewLayerID(),
+						Original:    layer.NewID(),
 						Parent:      nil,
-						Scene:       id.NewSceneID(),
+						Scene:       layer.NewSceneID(),
 						Property:    nil,
 						Infobox:     nil,
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polygon").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("polygon"),
+										ID: property.FieldID("polygon"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypePolygon,
 											nil,
@@ -80,24 +79,24 @@ func TestEncodeSHP(t *testing.T) {
 			layer: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    id.NewLayerID(),
+						Original:    layer.NewID(),
 						Parent:      nil,
 						Name:        "test",
-						Scene:       id.NewSceneID(),
+						Scene:       layer.NewSceneID(),
 						Property:    nil,
 						Infobox:     nil,
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polyline").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("coordinates"),
+										ID: property.FieldID("coordinates"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeCoordinates,
 											nil,

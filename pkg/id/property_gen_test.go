@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewPropertyID(t *testing.T) {
 	id := NewPropertyID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestPropertyIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestPropertyIDFrom(t *testing.T) {
 				result PropertyID
 				err    error
 			}{
-				PropertyID{},
-				ErrInvalidID,
+				result: PropertyID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestPropertyIDFrom(t *testing.T) {
 				result PropertyID
 				err    error
 			}{
-				PropertyID{},
-				ErrInvalidID,
+				result: PropertyID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestPropertyIDFrom(t *testing.T) {
 				result PropertyID
 				err    error
 			}{
-				PropertyID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: PropertyID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := PropertyIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := PropertyIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustPropertyID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustPropertyID(t *testing.T) {
 			expected:    PropertyID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustPropertyID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustPropertyID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestPropertyIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *PropertyID
@@ -139,159 +135,149 @@ func TestPropertyIDFromRef(t *testing.T) {
 			expected: &PropertyID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := PropertyIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := PropertyIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestPropertyIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := PropertyIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := PropertyIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, PropertyIDFromRefID(nil))
+	assert.Nil(t, PropertyIDFromRefID(&ID{}))
 }
 
 func TestPropertyID_ID(t *testing.T) {
 	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := PropertyIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestPropertyID_String(t *testing.T) {
 	id := New()
-	subId := PropertyIDFromRefID(&id)
+	id2 := PropertyIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", PropertyID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestPropertyID_RefString(t *testing.T) {
+	id := NewPropertyID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, PropertyID{}.RefString())
 }
 
 func TestPropertyID_GoString(t *testing.T) {
 	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.PropertyID("+id.String()+")")
-}
-
-func TestPropertyID_RefString(t *testing.T) {
-	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := PropertyIDFromRefID(&id)
+	assert.Equal(t, "PropertyID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "PropertyID()", PropertyID{}.GoString())
 }
 
 func TestPropertyID_Ref(t *testing.T) {
-	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewPropertyID()
+	assert.Equal(t, PropertyID(id), *id.Ref())
+	assert.Nil(t, (&PropertyID{}).Ref())
 }
 
 func TestPropertyID_Contains(t *testing.T) {
 	id := NewPropertyID()
 	id2 := NewPropertyID()
 	assert.True(t, id.Contains([]PropertyID{id, id2}))
+	assert.False(t, PropertyID{}.Contains([]PropertyID{id, id2, {}}))
 	assert.False(t, id.Contains([]PropertyID{id2}))
 }
 
 func TestPropertyID_CopyRef(t *testing.T) {
-	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewPropertyID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*PropertyID)(nil).CopyRef())
 }
 
 func TestPropertyID_IDRef(t *testing.T) {
 	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := PropertyIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&PropertyID{}).IDRef())
+	assert.Nil(t, (*PropertyID)(nil).IDRef())
 }
 
 func TestPropertyID_StringRef(t *testing.T) {
-	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewPropertyID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&PropertyID{}).StringRef())
+	assert.Nil(t, (*PropertyID)(nil).StringRef())
 }
 
 func TestPropertyID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewPropertyID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&PropertyID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*PropertyID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestPropertyID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &PropertyID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustPropertyID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &PropertyID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestPropertyID_MarshalText(t *testing.T) {
 	id := New()
-	subId := PropertyIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := PropertyIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&PropertyID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*PropertyID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestPropertyID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &PropertyID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &PropertyID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestPropertyID_IsNil(t *testing.T) {
-	subId := PropertyID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *PropertyIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, PropertyID{}.IsNil())
+	assert.False(t, NewPropertyID().IsNil())
 }
 
-func TestPropertyIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestPropertyID_IsNilRef(t *testing.T) {
+	assert.True(t, PropertyID{}.Ref().IsNilRef())
+	assert.True(t, (*PropertyID)(nil).IsNilRef())
+	assert.False(t, NewPropertyID().Ref().IsNilRef())
+}
+
+func TestPropertyIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []PropertyID
 		expected []string
@@ -321,19 +307,17 @@ func TestPropertyIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, PropertyIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, PropertyIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestPropertyIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestPropertyIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestPropertyIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := PropertyIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := PropertyIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := PropertyIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestPropertyIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []PropertyID
@@ -449,25 +431,22 @@ func TestPropertyIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := PropertyIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestPropertyIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []PropertyID
@@ -493,21 +472,18 @@ func TestPropertyIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := PropertyIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestPropertyIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []PropertyID
 		expected []ID
@@ -537,28 +513,25 @@ func TestPropertyIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := PropertyIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestPropertyIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustPropertyID(id1.String())
+	id21 := MustPropertyID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustPropertyID(id2.String())
+	id22 := MustPropertyID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustPropertyID(id3.String())
+	id23 := MustPropertyID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*PropertyID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestPropertyIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*PropertyID{&subId1},
+			input:    []*PropertyID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*PropertyID{&subId1, &subId2, &subId3},
+			input:    []*PropertyID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := PropertyIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewPropertyIDSet(t *testing.T) {
 	PropertyIdSet := NewPropertyIDSet()
-
 	assert.NotNil(t, PropertyIdSet)
 	assert.Empty(t, PropertyIdSet.m)
 	assert.Empty(t, PropertyIdSet.s)
 }
 
 func TestPropertyIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []PropertyID
 		expected *PropertyIDSet
@@ -663,24 +632,19 @@ func TestPropertyIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewPropertyIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestPropertyIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	PropertyId := MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *PropertyID
 		expected *PropertyIDSet
@@ -695,7 +659,7 @@ func TestPropertyIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &PropertyId,
+			input: MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &PropertyIDSet{
 				m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestPropertyIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewPropertyIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestPropertyIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			PropertyIDSet
-			PropertyID
-		}
+	tests := []struct {
+		name     string
+		target   *PropertyIDSet
+		input    PropertyID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				PropertyIDSet
-				PropertyID
-			}{PropertyIDSet: PropertyIDSet{}, PropertyID: MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &PropertyIDSet{},
+			input:    MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				PropertyIDSet
-				PropertyID
-			}{PropertyIDSet: PropertyIDSet{
+			target: &PropertyIDSet{
 				m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, PropertyID: MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				PropertyIDSet
-				PropertyID
-			}{PropertyIDSet: PropertyIDSet{
+			target: &PropertyIDSet{
 				m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, PropertyID: MustPropertyID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustPropertyID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.PropertyIDSet.Has(tc.input.PropertyID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestPropertyIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    PropertyIDSet
-		expected PropertyIDSet
+		input    *PropertyIDSet
+		expected *PropertyIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: PropertyIDSet{},
-			expected: PropertyIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &PropertyIDSet{},
+			expected: &PropertyIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: PropertyIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &PropertyIDSet{
 				m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: PropertyIDSet{
+			expected: &PropertyIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestPropertyIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *PropertyIDSet
 		expected []PropertyID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &PropertyIDSet{
 				m: map[PropertyID]struct{}{},
 				s: nil,
 			},
 			expected: make([]PropertyID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestPropertyIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestPropertyIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *PropertyIDSet
 		expected *PropertyIDSet
@@ -922,21 +873,19 @@ func TestPropertyIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestPropertyIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *PropertyIDSet
@@ -944,6 +893,23 @@ func TestPropertyIDSet_Merge(t *testing.T) {
 		}
 		expected *PropertyIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *PropertyIDSet
+				b *PropertyIDSet
+			}{
+				a: &PropertyIDSet{
+					m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &PropertyIDSet{
+				m: map[PropertyID]struct{}{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []PropertyID{MustPropertyID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestPropertyIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

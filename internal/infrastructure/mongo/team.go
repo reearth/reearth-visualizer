@@ -41,7 +41,7 @@ func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) ([]*user.Team, 
 func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) ([]*user.Team, error) {
 	filter := bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.TeamIDToKeys(ids)},
+			{Key: "$in", Value: id.TeamIDsToStrings(ids)},
 		}},
 	}
 	dst := make([]*user.Team, 0, len(ids))
@@ -80,7 +80,7 @@ func (r *teamRepo) RemoveAll(ctx context.Context, ids []id.TeamID) error {
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.TeamIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.TeamIDsToStrings(ids))
 }
 
 func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) ([]*user.Team, error) {

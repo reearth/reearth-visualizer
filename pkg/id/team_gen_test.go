@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewTeamID(t *testing.T) {
 	id := NewTeamID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestTeamIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestTeamIDFrom(t *testing.T) {
 				result TeamID
 				err    error
 			}{
-				TeamID{},
-				ErrInvalidID,
+				result: TeamID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestTeamIDFrom(t *testing.T) {
 				result TeamID
 				err    error
 			}{
-				TeamID{},
-				ErrInvalidID,
+				result: TeamID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestTeamIDFrom(t *testing.T) {
 				result TeamID
 				err    error
 			}{
-				TeamID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: TeamID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := TeamIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := TeamIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustTeamID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustTeamID(t *testing.T) {
 			expected:    TeamID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustTeamID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustTeamID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestTeamIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *TeamID
@@ -139,159 +135,149 @@ func TestTeamIDFromRef(t *testing.T) {
 			expected: &TeamID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := TeamIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := TeamIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestTeamIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := TeamIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := TeamIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, TeamIDFromRefID(nil))
+	assert.Nil(t, TeamIDFromRefID(&ID{}))
 }
 
 func TestTeamID_ID(t *testing.T) {
 	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := TeamIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestTeamID_String(t *testing.T) {
 	id := New()
-	subId := TeamIDFromRefID(&id)
+	id2 := TeamIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", TeamID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestTeamID_RefString(t *testing.T) {
+	id := NewTeamID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, TeamID{}.RefString())
 }
 
 func TestTeamID_GoString(t *testing.T) {
 	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.TeamID("+id.String()+")")
-}
-
-func TestTeamID_RefString(t *testing.T) {
-	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := TeamIDFromRefID(&id)
+	assert.Equal(t, "TeamID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "TeamID()", TeamID{}.GoString())
 }
 
 func TestTeamID_Ref(t *testing.T) {
-	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewTeamID()
+	assert.Equal(t, TeamID(id), *id.Ref())
+	assert.Nil(t, (&TeamID{}).Ref())
 }
 
 func TestTeamID_Contains(t *testing.T) {
 	id := NewTeamID()
 	id2 := NewTeamID()
 	assert.True(t, id.Contains([]TeamID{id, id2}))
+	assert.False(t, TeamID{}.Contains([]TeamID{id, id2, {}}))
 	assert.False(t, id.Contains([]TeamID{id2}))
 }
 
 func TestTeamID_CopyRef(t *testing.T) {
-	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewTeamID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*TeamID)(nil).CopyRef())
 }
 
 func TestTeamID_IDRef(t *testing.T) {
 	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := TeamIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&TeamID{}).IDRef())
+	assert.Nil(t, (*TeamID)(nil).IDRef())
 }
 
 func TestTeamID_StringRef(t *testing.T) {
-	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewTeamID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&TeamID{}).StringRef())
+	assert.Nil(t, (*TeamID)(nil).StringRef())
 }
 
 func TestTeamID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewTeamID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&TeamID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*TeamID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestTeamID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &TeamID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustTeamID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &TeamID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestTeamID_MarshalText(t *testing.T) {
 	id := New()
-	subId := TeamIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := TeamIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&TeamID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*TeamID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestTeamID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &TeamID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &TeamID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestTeamID_IsNil(t *testing.T) {
-	subId := TeamID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *TeamIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, TeamID{}.IsNil())
+	assert.False(t, NewTeamID().IsNil())
 }
 
-func TestTeamIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestTeamID_IsNilRef(t *testing.T) {
+	assert.True(t, TeamID{}.Ref().IsNilRef())
+	assert.True(t, (*TeamID)(nil).IsNilRef())
+	assert.False(t, NewTeamID().Ref().IsNilRef())
+}
+
+func TestTeamIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []TeamID
 		expected []string
@@ -321,19 +307,17 @@ func TestTeamIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, TeamIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, TeamIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestTeamIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestTeamIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestTeamIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := TeamIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := TeamIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := TeamIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestTeamIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []TeamID
@@ -449,25 +431,22 @@ func TestTeamIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TeamIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTeamIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []TeamID
@@ -493,21 +472,18 @@ func TestTeamIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TeamIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTeamIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []TeamID
 		expected []ID
@@ -537,28 +513,25 @@ func TestTeamIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TeamIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTeamIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustTeamID(id1.String())
+	id21 := MustTeamID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustTeamID(id2.String())
+	id22 := MustTeamID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustTeamID(id3.String())
+	id23 := MustTeamID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*TeamID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestTeamIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*TeamID{&subId1},
+			input:    []*TeamID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*TeamID{&subId1, &subId2, &subId3},
+			input:    []*TeamID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TeamIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewTeamIDSet(t *testing.T) {
 	TeamIdSet := NewTeamIDSet()
-
 	assert.NotNil(t, TeamIdSet)
 	assert.Empty(t, TeamIdSet.m)
 	assert.Empty(t, TeamIdSet.s)
 }
 
 func TestTeamIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []TeamID
 		expected *TeamIDSet
@@ -663,24 +632,19 @@ func TestTeamIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewTeamIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestTeamIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	TeamId := MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TeamID
 		expected *TeamIDSet
@@ -695,7 +659,7 @@ func TestTeamIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &TeamId,
+			input: MustTeamID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &TeamIDSet{
 				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestTeamIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewTeamIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestTeamIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			TeamIDSet
-			TeamID
-		}
+	tests := []struct {
+		name     string
+		target   *TeamIDSet
+		input    TeamID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				TeamIDSet
-				TeamID
-			}{TeamIDSet: TeamIDSet{}, TeamID: MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &TeamIDSet{},
+			input:    MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				TeamIDSet
-				TeamID
-			}{TeamIDSet: TeamIDSet{
+			target: &TeamIDSet{
 				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, TeamID: MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				TeamIDSet
-				TeamID
-			}{TeamIDSet: TeamIDSet{
+			target: &TeamIDSet{
 				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, TeamID: MustTeamID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustTeamID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.TeamIDSet.Has(tc.input.TeamID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestTeamIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    TeamIDSet
-		expected TeamIDSet
+		input    *TeamIDSet
+		expected *TeamIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: TeamIDSet{},
-			expected: TeamIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &TeamIDSet{},
+			expected: &TeamIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: TeamIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &TeamIDSet{
 				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: TeamIDSet{
+			expected: &TeamIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestTeamIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TeamIDSet
 		expected []TeamID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &TeamIDSet{
 				m: map[TeamID]struct{}{},
 				s: nil,
 			},
 			expected: make([]TeamID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestTeamIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestTeamIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TeamIDSet
 		expected *TeamIDSet
@@ -922,21 +873,19 @@ func TestTeamIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestTeamIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *TeamIDSet
@@ -944,6 +893,23 @@ func TestTeamIDSet_Merge(t *testing.T) {
 		}
 		expected *TeamIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *TeamIDSet
+				b *TeamIDSet
+			}{
+				a: &TeamIDSet{
+					m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &TeamIDSet{
+				m: map[TeamID]struct{}{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []TeamID{MustTeamID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestTeamIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

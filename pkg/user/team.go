@@ -1,14 +1,12 @@
 package user
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Team struct {
-	id      id.TeamID
+	id      TeamID
 	name    string
 	members Members
 }
 
-func (t *Team) ID() id.TeamID {
+func (t *Team) ID() TeamID {
 	return t.id
 }
 

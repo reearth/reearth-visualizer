@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/reearth/reearth-backend/pkg/file"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 )
@@ -20,7 +20,7 @@ type Package struct {
 	Files    file.Iterator
 }
 
-func PackageFromZip(r io.Reader, scene *id.SceneID, sizeLimit int64) (*Package, error) {
+func PackageFromZip(r io.Reader, scene *plugin.SceneID, sizeLimit int64) (*Package, error) {
 	b, err := io.ReadAll(io.LimitReader(r, sizeLimit))
 	if err != nil {
 		return nil, rerror.From("zip read error", err)

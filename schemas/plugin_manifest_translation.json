@@ -1,7 +1,7 @@
 {
-  "$id": "https://app.reearth.io/schemas/plugin-manifest-translation",
+  "$id": "https://reearth.io/schemas/plugin_manifest_translation.json",
   "$schema": "http://json-schema.org/draft-04/schema",
-  "description": "Re:Earth plugin manifest schema translation",
+  "title": "Re:Earth plugin manifest translation",
   "definitions": {
     "propertySchemaField": {
       "$id": "#propertySchemaField",

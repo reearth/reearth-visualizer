@@ -1,10 +1,8 @@
 package scene
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 // WidgetArea has the widgets and alignment information found in each part area of a section.
 type WidgetArea struct {
-	widgetIds []id.WidgetID
+	widgetIds []WidgetID
 	align     WidgetAlignType
 }
 
@@ -16,7 +14,7 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []id.WidgetID, align WidgetAlignType) *WidgetArea {
+func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
@@ -24,12 +22,12 @@ func NewWidgetArea(widgetIds []id.WidgetID, align WidgetAlignType) *WidgetArea {
 }
 
 // WidgetIds will return a slice of widget ids from a specific area.
-func (a *WidgetArea) WidgetIDs() []id.WidgetID {
+func (a *WidgetArea) WidgetIDs() []WidgetID {
 	if a == nil {
 		return nil
 	}
 
-	return append([]id.WidgetID{}, a.widgetIds...)
+	return append([]WidgetID{}, a.widgetIds...)
 }
 
 // Alignment will return the alignment of a specific area.
@@ -41,7 +39,7 @@ func (a *WidgetArea) Alignment() WidgetAlignType {
 	return a.align
 }
 
-func (a *WidgetArea) Find(wid id.WidgetID) int {
+func (a *WidgetArea) Find(wid WidgetID) int {
 	if a == nil {
 		return -1
 	}
@@ -54,7 +52,7 @@ func (a *WidgetArea) Find(wid id.WidgetID) int {
 	return -1
 }
 
-func (a *WidgetArea) Add(wid id.WidgetID, index int) {
+func (a *WidgetArea) Add(wid WidgetID, index int) {
 	if a == nil || wid.Contains(a.widgetIds) {
 		return
 	}
@@ -62,12 +60,12 @@ func (a *WidgetArea) Add(wid id.WidgetID, index int) {
 	a.widgetIds = insertWidgetID(a.widgetIds, wid, index)
 }
 
-func (a *WidgetArea) AddAll(wids []id.WidgetID) {
+func (a *WidgetArea) AddAll(wids []WidgetID) {
 	if a == nil {
 		return
 	}
 
-	widgetIds := make([]id.WidgetID, 0, len(wids))
+	widgetIds := make([]WidgetID, 0, len(wids))
 	for _, w := range wids {
 		if w.Contains(a.widgetIds) || w.Contains(widgetIds) {
 			continue
@@ -90,7 +88,7 @@ func (a *WidgetArea) SetAlignment(at WidgetAlignType) {
 	}
 }
 
-func (a *WidgetArea) Remove(wid id.WidgetID) {
+func (a *WidgetArea) Remove(wid WidgetID) {
 	if a == nil {
 		return
 	}
@@ -113,14 +111,14 @@ func (a *WidgetArea) Move(from, to int) {
 }
 
 // insertWidgetID is used in moveInt to add the widgetID to a new position(index).
-func insertWidgetID(array []id.WidgetID, value id.WidgetID, index int) []id.WidgetID {
+func insertWidgetID(array []WidgetID, value WidgetID, index int) []WidgetID {
 	if index < 0 {
 		return append(array, value)
 	}
-	return append(array[:index], append([]id.WidgetID{value}, array[index:]...)...)
+	return append(array[:index], append([]WidgetID{value}, array[index:]...)...)
 }
 
 // removeWidgetID is used in moveInt to remove the widgetID from original position(index).
-func removeWidgetID(array []id.WidgetID, index int) []id.WidgetID {
+func removeWidgetID(array []WidgetID, index int) []WidgetID {
 	return append(array[:index], array[index+1:]...)
 }

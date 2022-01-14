@@ -1,9 +1,5 @@
 package dataset
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type List []*Dataset
 
 func (l List) First() *Dataset {
@@ -20,7 +16,7 @@ func (l List) Last() *Dataset {
 	return l[len(l)-1]
 }
 
-func (l List) FindDataset(id id.DatasetID) *Dataset {
+func (l List) FindDataset(id ID) *Dataset {
 	for _, t := range l {
 		if t.ID() == id {
 			return t
@@ -29,12 +25,12 @@ func (l List) FindDataset(id id.DatasetID) *Dataset {
 	return nil
 }
 
-func (l List) ToDatasetIds() []id.DatasetID {
+func (l List) ToDatasetIds() []ID {
 	if l == nil {
 		return nil
 	}
 
-	ids := []id.DatasetID{}
+	ids := []ID{}
 	for _, t := range l {
 		ids = append(ids, t.ID())
 	}
@@ -50,7 +46,7 @@ func (l List) FindDatasetBySource(s string) *Dataset {
 	return nil
 }
 
-func (l List) FilterByDatasetSchema(s id.DatasetSchemaID) List {
+func (l List) FilterByDatasetSchema(s SchemaID) List {
 	n := List{}
 	for _, t := range l {
 		if t.Schema() == s {
@@ -65,7 +61,7 @@ func (l List) DiffBySource(l2 List) Diff {
 	added := []*Dataset{}
 	removed := []*Dataset{}
 	// others := map[string]DatasetDiffTouple{}
-	others2 := map[id.DatasetID]*Dataset{}
+	others2 := map[ID]*Dataset{}
 
 	s1 := map[string]*Dataset{}
 	for _, d1 := range l {
@@ -119,14 +115,14 @@ func (l List) GraphLoader() GraphLoader {
 	return GraphLoaderFromMap(l.Map())
 }
 
-type Map map[id.DatasetID]*Dataset
+type Map map[ID]*Dataset
 
 func (dm Map) Add(dss ...*Dataset) {
 	if dss == nil {
 		return
 	}
 	if dm == nil {
-		dm = map[id.DatasetID]*Dataset{}
+		dm = map[ID]*Dataset{}
 	}
 	for _, ds := range dss {
 		if ds == nil {
@@ -147,7 +143,7 @@ func (dm Map) Slice() List {
 	return res
 }
 
-func (dm Map) GraphSearchByFields(root id.DatasetID, fields ...id.DatasetSchemaFieldID) (List, *Field) {
+func (dm Map) GraphSearchByFields(root ID, fields ...FieldID) (List, *Field) {
 	res := make(List, 0, len(fields))
 	currentD := dm[root]
 	if currentD == nil {
@@ -165,8 +161,8 @@ func (dm Map) GraphSearchByFields(root id.DatasetID, fields ...id.DatasetSchemaF
 		if len(fields)-1 == i {
 			return res, field
 		} else if fids := field.Value().ValueRef(); fids != nil {
-			if fid, err := id.DatasetIDFrom(*fids); err == nil {
-				currentD = dm[id.DatasetID(fid)]
+			if fid, err := IDFrom(*fids); err == nil {
+				currentD = dm[ID(fid)]
 			} else {
 				return res, nil
 			}

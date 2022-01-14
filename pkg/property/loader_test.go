@@ -4,15 +4,14 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLoaderFrom(t *testing.T) {
-	scene := id.NewSceneID()
-	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
-	pid1 := id.NewPropertyID()
-	pid2 := id.NewPropertyID()
+	scene := NewSceneID()
+	ps := MustSchemaID("xxx~1.1.1/aa")
+	pid1 := NewID()
+	pid2 := NewID()
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
 	p2 := New().ID(pid2).Scene(scene).Schema(ps).MustBuild()
 	pl := LoaderFrom([]*Property{
@@ -27,15 +26,15 @@ func TestLoaderFrom(t *testing.T) {
 }
 
 func TestLoaderFromMap(t *testing.T) {
-	scene := id.NewSceneID()
-	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
-	pid1 := id.NewPropertyID()
-	pid2 := id.NewPropertyID()
-	pid3 := id.NewPropertyID()
+	scene := NewSceneID()
+	ps := MustSchemaID("xxx~1.1.1/aa")
+	pid1 := NewID()
+	pid2 := NewID()
+	pid3 := NewID()
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
 	p2 := New().ID(pid2).Scene(scene).Schema(ps).MustBuild()
 	p3 := New().ID(pid3).Scene(scene).Schema(ps).MustBuild()
-	pl := LoaderFromMap(map[id.PropertyID]*Property{
+	pl := LoaderFromMap(map[ID]*Property{
 		pid1: p1,
 		pid2: p2,
 		pid3: p3,

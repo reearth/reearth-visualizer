@@ -1,7 +1,6 @@
 package decoding
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/shp"
@@ -14,10 +13,10 @@ type ShapeReader interface {
 }
 type ShapeDecoder struct {
 	reader  ShapeReader
-	sceneId id.SceneID
+	sceneId layer.SceneID
 }
 
-func NewShapeDecoder(r ShapeReader, s id.SceneID) *ShapeDecoder {
+func NewShapeDecoder(r ShapeReader, s layer.SceneID) *ShapeDecoder {
 	return &ShapeDecoder{
 		reader:  r,
 		sceneId: s,
@@ -27,7 +26,7 @@ func NewShapeDecoder(r ShapeReader, s id.SceneID) *ShapeDecoder {
 func (shd *ShapeDecoder) getLayer(t string, coords interface{}) (*layer.Item, *property.Property, error) {
 	var p *property.Property
 	var l *layer.Item
-	var ex id.PluginExtensionID
+	var ex layer.PluginExtensionID
 	var err error
 	p, err = createProperty(t, coords, shd.sceneId, nil, "")
 	if err != nil {
@@ -40,7 +39,7 @@ func (shd *ShapeDecoder) getLayer(t string, coords interface{}) (*layer.Item, *p
 		Scene(shd.sceneId).
 		Property(p.IDRef()).
 		Extension(&ex).
-		Plugin(&id.OfficialPluginID).
+		Plugin(&layer.OfficialPluginID).
 		Build()
 	if err != nil {
 		return nil, nil, err

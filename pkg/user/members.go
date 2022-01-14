@@ -3,8 +3,6 @@ package user
 import (
 	"errors"
 	"sort"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
@@ -15,22 +13,22 @@ var (
 )
 
 type Members struct {
-	members map[id.UserID]Role
+	members map[ID]Role
 	fixed   bool
 }
 
 func NewMembers() *Members {
-	m := &Members{members: map[id.UserID]Role{}}
+	m := &Members{members: map[ID]Role{}}
 	return m
 }
 
-func NewFixedMembers(u id.UserID) *Members {
-	m := &Members{members: map[id.UserID]Role{u: RoleOwner}, fixed: true}
+func NewFixedMembers(u ID) *Members {
+	m := &Members{members: map[ID]Role{u: RoleOwner}, fixed: true}
 	return m
 }
 
-func NewMembersWith(members map[id.UserID]Role) *Members {
-	m := &Members{members: map[id.UserID]Role{}}
+func NewMembersWith(members map[ID]Role) *Members {
+	m := &Members{members: map[ID]Role{}}
 	for k, v := range members {
 		m.members[k] = v
 	}
@@ -41,15 +39,15 @@ func CopyMembers(members *Members) *Members {
 	return NewMembersWith(members.members)
 }
 
-func (m *Members) Members() map[id.UserID]Role {
-	members := make(map[id.UserID]Role)
+func (m *Members) Members() map[ID]Role {
+	members := make(map[ID]Role)
 	for k, v := range m.members {
 		members[k] = v
 	}
 	return members
 }
 
-func (m *Members) ContainsUser(u id.UserID) bool {
+func (m *Members) ContainsUser(u ID) bool {
 	for k := range m.members {
 		if k == u {
 			return true
@@ -62,11 +60,11 @@ func (m *Members) Count() int {
 	return len(m.members)
 }
 
-func (m *Members) GetRole(u id.UserID) Role {
+func (m *Members) GetRole(u ID) Role {
 	return m.members[u]
 }
 
-func (m *Members) UpdateRole(u id.UserID, role Role) error {
+func (m *Members) UpdateRole(u ID, role Role) error {
 	if m.fixed {
 		return ErrCannotModifyPersonalTeam
 	}
@@ -81,7 +79,7 @@ func (m *Members) UpdateRole(u id.UserID, role Role) error {
 	return nil
 }
 
-func (m *Members) Join(u id.UserID, role Role) error {
+func (m *Members) Join(u ID, role Role) error {
 	if m.fixed {
 		return ErrCannotModifyPersonalTeam
 	}
@@ -95,7 +93,7 @@ func (m *Members) Join(u id.UserID, role Role) error {
 	return nil
 }
 
-func (m *Members) Leave(u id.UserID) error {
+func (m *Members) Leave(u ID) error {
 	if m.fixed {
 		return ErrCannotModifyPersonalTeam
 	}
@@ -107,8 +105,8 @@ func (m *Members) Leave(u id.UserID) error {
 	return nil
 }
 
-func (m *Members) UsersByRole(role Role) []id.UserID {
-	users := make([]id.UserID, 0, len(m.members))
+func (m *Members) UsersByRole(role Role) []ID {
+	users := make([]ID, 0, len(m.members))
 	for u, r := range m.members {
 		if r == role {
 			users = append(users, u)
@@ -122,6 +120,6 @@ func (m *Members) UsersByRole(role Role) []id.UserID {
 	return users
 }
 
-func (m *Members) IsOnlyOwner(u id.UserID) bool {
+func (m *Members) IsOnlyOwner(u ID) bool {
 	return len(m.UsersByRole(RoleOwner)) == 1 && m.members[u] == RoleOwner
 }

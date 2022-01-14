@@ -6,32 +6,31 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type Property struct {
-	id     id.PropertyID
-	scene  id.SceneID
-	schema id.PropertySchemaID
+	id     ID
+	scene  SceneID
+	schema SchemaID
 	items  []Item
 }
 
-func (p *Property) ID() id.PropertyID {
+func (p *Property) ID() ID {
 	return p.id
 }
 
-func (p *Property) IDRef() *id.PropertyID {
+func (p *Property) IDRef() *ID {
 	if p == nil {
 		return nil
 	}
 	return p.id.Ref()
 }
 
-func (p *Property) Scene() id.SceneID {
+func (p *Property) Scene() SceneID {
 	return p.scene
 }
 
-func (p *Property) Schema() id.PropertySchemaID {
+func (p *Property) Schema() SchemaID {
 	return p.schema
 }
 
@@ -62,7 +61,7 @@ func (p *Property) Items() []Item {
 	return append([]Item{}, p.items...)
 }
 
-func (p *Property) Item(id id.PropertyItemID) (Item, *GroupList) {
+func (p *Property) Item(id ItemID) (Item, *GroupList) {
 	if p == nil {
 		return nil, nil
 	}
@@ -80,7 +79,7 @@ func (p *Property) Item(id id.PropertyItemID) (Item, *GroupList) {
 }
 
 // ItemBySchema returns a root item by a schema group ID.
-func (p *Property) ItemBySchema(id id.PropertySchemaGroupID) Item {
+func (p *Property) ItemBySchema(id SchemaGroupID) Item {
 	if p == nil {
 		return nil
 	}
@@ -92,7 +91,7 @@ func (p *Property) ItemBySchema(id id.PropertySchemaGroupID) Item {
 	return nil
 }
 
-func (p *Property) GroupBySchema(id id.PropertySchemaGroupID) *Group {
+func (p *Property) GroupBySchema(id SchemaGroupID) *Group {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil
@@ -103,7 +102,7 @@ func (p *Property) GroupBySchema(id id.PropertySchemaGroupID) *Group {
 	return nil
 }
 
-func (p *Property) GroupListBySchema(id id.PropertySchemaGroupID) *GroupList {
+func (p *Property) GroupListBySchema(id SchemaGroupID) *GroupList {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil
@@ -161,7 +160,7 @@ func (p *Property) HasLinkedField() bool {
 	return false
 }
 
-func (p *Property) FieldsByLinkedDataset(s id.DatasetSchemaID, i id.DatasetID) []*Field {
+func (p *Property) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Field {
 	if p == nil {
 		return nil
 	}
@@ -172,7 +171,7 @@ func (p *Property) FieldsByLinkedDataset(s id.DatasetSchemaID, i id.DatasetID) [
 	return res
 }
 
-func (p *Property) IsDatasetLinked(s id.DatasetSchemaID, i id.DatasetID) bool {
+func (p *Property) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 	if p == nil {
 		return false
 	}
@@ -184,11 +183,11 @@ func (p *Property) IsDatasetLinked(s id.DatasetSchemaID, i id.DatasetID) bool {
 	return false
 }
 
-func (p *Property) CollectDatasets() []id.DatasetID {
+func (p *Property) CollectDatasets() []DatasetID {
 	if p == nil {
 		return nil
 	}
-	res := []id.DatasetID{}
+	res := []DatasetID{}
 
 	for _, f := range p.items {
 		res = append(res, f.CollectDatasets()...)
@@ -261,7 +260,7 @@ func (p *Property) UpdateValue(ps *Schema, ptr *Pointer, v *Value) (*Field, *Gro
 	return field, gl, g, nil
 }
 
-func (p *Property) UnlinkAllByDataset(s id.DatasetSchemaID, ds id.DatasetID) {
+func (p *Property) UnlinkAllByDataset(s DatasetSchemaID, ds DatasetID) {
 	fields := p.FieldsByLinkedDataset(s, ds)
 	for _, f := range fields {
 		f.Unlink()
@@ -419,7 +418,7 @@ func (p *Property) UpdateLinkableValue(s *Schema, v *Value) {
 	}
 }
 
-func (p *Property) AutoLinkField(s *Schema, v ValueType, d id.DatasetSchemaID, df *id.DatasetSchemaFieldID, ds *id.DatasetID) {
+func (p *Property) AutoLinkField(s *Schema, v ValueType, d DatasetSchemaID, df *DatasetFieldID, ds *DatasetID) {
 	if s == nil || p == nil || df == nil {
 		return
 	}

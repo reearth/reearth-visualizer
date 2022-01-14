@@ -4,24 +4,23 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGroupListBuilder_Build(t *testing.T) {
-	pid := id.NewPropertyItemID()
-	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	pid := NewItemID()
+	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
 		Name        string
-		Id          id.PropertyItemID
-		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaGroupID
+		Id          ItemID
+		Schema      SchemaID
+		SchemaGroup SchemaGroupID
 		Groups      []*Group
 		Expected    struct {
-			Id          id.PropertyItemID
-			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaGroupID
+			Id          ItemID
+			Schema      SchemaID
+			SchemaGroup SchemaGroupID
 			Groups      []*Group
 		}
 		Err error
@@ -33,9 +32,9 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			SchemaGroup: "aa",
 			Groups:      groups,
 			Expected: struct {
-				Id          id.PropertyItemID
-				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaGroupID
+				Id          ItemID
+				Schema      SchemaID
+				SchemaGroup SchemaGroupID
 				Groups      []*Group
 			}{
 				Id:          pid,
@@ -46,7 +45,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 		},
 		{
 			Name: "fail invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  ErrInvalidID,
 		},
 	}
 	for _, tc := range testCases {
@@ -72,20 +71,20 @@ func TestGroupListBuilder_NewID(t *testing.T) {
 }
 
 func TestGroupListBuilder_MustBuild(t *testing.T) {
-	pid := id.NewPropertyItemID()
-	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	pid := NewItemID()
+	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 	testCases := []struct {
 		Name        string
 		Fails       bool
-		Id          id.PropertyItemID
-		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaGroupID
+		Id          ItemID
+		Schema      SchemaID
+		SchemaGroup SchemaGroupID
 		Groups      []*Group
 		Expected    struct {
-			Id          id.PropertyItemID
-			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaGroupID
+			Id          ItemID
+			Schema      SchemaID
+			SchemaGroup SchemaGroupID
 			Groups      []*Group
 		}
 	}{
@@ -96,9 +95,9 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 			SchemaGroup: "aa",
 			Groups:      groups,
 			Expected: struct {
-				Id          id.PropertyItemID
-				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaGroupID
+				Id          ItemID
+				Schema      SchemaID
+				SchemaGroup SchemaGroupID
 				Groups      []*Group
 			}{
 				Id:          pid,
@@ -140,17 +139,17 @@ func TestInitGroupListFrom(t *testing.T) {
 	testCases := []struct {
 		Name           string
 		SchemaGroup    *SchemaGroup
-		ExpectedSG     id.PropertySchemaGroupID
-		ExpectedSchema id.PropertySchemaID
+		ExpectedSG     SchemaGroupID
+		ExpectedSchema SchemaID
 	}{
 		{
 			Name: "nil schema group",
 		},
 		{
 			Name:           "success",
-			SchemaGroup:    NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).MustBuild(),
+			SchemaGroup:    NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).MustBuild(),
 			ExpectedSG:     "aa",
-			ExpectedSchema: id.MustPropertySchemaID("xx~1.0.0/aa"),
+			ExpectedSchema: MustSchemaID("xx~1.0.0/aa"),
 		},
 	}
 

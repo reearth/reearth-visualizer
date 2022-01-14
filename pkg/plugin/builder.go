@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type Builder struct {
@@ -26,7 +25,7 @@ func (b *Builder) MustBuild() *Plugin {
 	return p
 }
 
-func (b *Builder) ID(id id.PluginID) *Builder {
+func (b *Builder) ID(id ID) *Builder {
 	b.p.id = id
 	return b
 }
@@ -58,8 +57,8 @@ func (b *Builder) Extensions(extensions []*Extension) *Builder {
 		return b
 	}
 
-	b.p.extensions = make(map[id.PluginExtensionID]*Extension, len(extensions))
-	b.p.extensionOrder = make([]id.PluginExtensionID, 0, len(extensions))
+	b.p.extensions = make(map[ExtensionID]*Extension, len(extensions))
+	b.p.extensionOrder = make([]ExtensionID, 0, len(extensions))
 	for _, e := range extensions {
 		b.p.extensions[e.ID()] = e
 		b.p.extensionOrder = append(b.p.extensionOrder, e.ID())
@@ -67,7 +66,7 @@ func (b *Builder) Extensions(extensions []*Extension) *Builder {
 	return b
 }
 
-func (b *Builder) Schema(schema *id.PropertySchemaID) *Builder {
+func (b *Builder) Schema(schema *PropertySchemaID) *Builder {
 	if schema == nil {
 		b.p.schema = nil
 	} else {

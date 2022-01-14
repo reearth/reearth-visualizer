@@ -3,7 +3,6 @@ package merging
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -57,7 +56,7 @@ func (m *Merger) MergeLayer(ctx context.Context, l layer.Layer, parent *layer.Gr
 	return nil, nil
 }
 
-func (m *Merger) MergeLayerFromID(ctx context.Context, i id.LayerID, parent *layer.Group) (MergedLayer, error) {
+func (m *Merger) MergeLayerFromID(ctx context.Context, i layer.ID, parent *layer.Group) (MergedLayer, error) {
 	l, err := m.LayerLoader(ctx, i)
 	if err != nil {
 		return nil, err

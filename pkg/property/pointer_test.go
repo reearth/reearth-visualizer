@@ -3,14 +3,13 @@ package property
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPointer(t *testing.T) {
-	iid := id.NewPropertyItemID()
-	sgid := id.PropertySchemaGroupID("foo")
-	fid := id.PropertySchemaFieldID("hoge")
+	iid := NewItemID()
+	sgid := SchemaGroupID("foo")
+	fid := FieldID("hoge")
 
 	var p *Pointer
 	var ok bool

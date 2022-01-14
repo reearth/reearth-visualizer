@@ -3,22 +3,21 @@ package user
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
 func TestUser(t *testing.T) {
-	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	uid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name     string
 		User     *User
 		Expected struct {
-			Id    id.UserID
+			Id    ID
 			Name  string
 			Email string
-			Team  id.TeamID
+			Team  TeamID
 			Auths []Auth
 			Lang  language.Tag
 		}
@@ -35,10 +34,10 @@ func TestUser(t *testing.T) {
 					Sub:      "sss",
 				}}).MustBuild(),
 			Expected: struct {
-				Id    id.UserID
+				Id    ID
 				Name  string
 				Email string
-				Team  id.TeamID
+				Team  TeamID
 				Auths []Auth
 				Lang  language.Tag
 			}{
@@ -265,7 +264,7 @@ func TestUser_UpdateLang(t *testing.T) {
 }
 
 func TestUser_UpdateTeam(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	u := New().NewID().MustBuild()
 	u.UpdateTeam(tid)
 	assert.Equal(t, tid, u.Team())

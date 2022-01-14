@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewTagID(t *testing.T) {
 	id := NewTagID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestTagIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestTagIDFrom(t *testing.T) {
 				result TagID
 				err    error
 			}{
-				TagID{},
-				ErrInvalidID,
+				result: TagID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestTagIDFrom(t *testing.T) {
 				result TagID
 				err    error
 			}{
-				TagID{},
-				ErrInvalidID,
+				result: TagID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestTagIDFrom(t *testing.T) {
 				result TagID
 				err    error
 			}{
-				TagID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: TagID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := TagIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := TagIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustTagID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustTagID(t *testing.T) {
 			expected:    TagID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustTagID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustTagID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestTagIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *TagID
@@ -139,159 +135,149 @@ func TestTagIDFromRef(t *testing.T) {
 			expected: &TagID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := TagIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := TagIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestTagIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := TagIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := TagIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, TagIDFromRefID(nil))
+	assert.Nil(t, TagIDFromRefID(&ID{}))
 }
 
 func TestTagID_ID(t *testing.T) {
 	id := New()
-	subId := TagIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := TagIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestTagID_String(t *testing.T) {
 	id := New()
-	subId := TagIDFromRefID(&id)
+	id2 := TagIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", TagID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestTagID_RefString(t *testing.T) {
+	id := NewTagID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, TagID{}.RefString())
 }
 
 func TestTagID_GoString(t *testing.T) {
 	id := New()
-	subId := TagIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.TagID("+id.String()+")")
-}
-
-func TestTagID_RefString(t *testing.T) {
-	id := New()
-	subId := TagIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := TagIDFromRefID(&id)
+	assert.Equal(t, "TagID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "TagID()", TagID{}.GoString())
 }
 
 func TestTagID_Ref(t *testing.T) {
-	id := New()
-	subId := TagIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewTagID()
+	assert.Equal(t, TagID(id), *id.Ref())
+	assert.Nil(t, (&TagID{}).Ref())
 }
 
 func TestTagID_Contains(t *testing.T) {
 	id := NewTagID()
 	id2 := NewTagID()
 	assert.True(t, id.Contains([]TagID{id, id2}))
+	assert.False(t, TagID{}.Contains([]TagID{id, id2, {}}))
 	assert.False(t, id.Contains([]TagID{id2}))
 }
 
 func TestTagID_CopyRef(t *testing.T) {
-	id := New()
-	subId := TagIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewTagID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*TagID)(nil).CopyRef())
 }
 
 func TestTagID_IDRef(t *testing.T) {
 	id := New()
-	subId := TagIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := TagIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&TagID{}).IDRef())
+	assert.Nil(t, (*TagID)(nil).IDRef())
 }
 
 func TestTagID_StringRef(t *testing.T) {
-	id := New()
-	subId := TagIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewTagID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&TagID{}).StringRef())
+	assert.Nil(t, (*TagID)(nil).StringRef())
 }
 
 func TestTagID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := TagIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewTagID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&TagID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*TagID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestTagID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &TagID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustTagID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &TagID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestTagID_MarshalText(t *testing.T) {
 	id := New()
-	subId := TagIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := TagIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&TagID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*TagID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestTagID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &TagID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &TagID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestTagID_IsNil(t *testing.T) {
-	subId := TagID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *TagIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, TagID{}.IsNil())
+	assert.False(t, NewTagID().IsNil())
 }
 
-func TestTagIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestTagID_IsNilRef(t *testing.T) {
+	assert.True(t, TagID{}.Ref().IsNilRef())
+	assert.True(t, (*TagID)(nil).IsNilRef())
+	assert.False(t, NewTagID().Ref().IsNilRef())
+}
+
+func TestTagIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []TagID
 		expected []string
@@ -321,19 +307,17 @@ func TestTagIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, TagIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, TagIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestTagIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestTagIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestTagIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := TagIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := TagIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := TagIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestTagIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []TagID
@@ -449,25 +431,22 @@ func TestTagIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TagIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTagIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []TagID
@@ -493,21 +472,18 @@ func TestTagIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TagIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTagIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []TagID
 		expected []ID
@@ -537,28 +513,25 @@ func TestTagIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TagIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestTagIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustTagID(id1.String())
+	id21 := MustTagID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustTagID(id2.String())
+	id22 := MustTagID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustTagID(id3.String())
+	id23 := MustTagID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*TagID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestTagIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*TagID{&subId1},
+			input:    []*TagID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*TagID{&subId1, &subId2, &subId3},
+			input:    []*TagID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := TagIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewTagIDSet(t *testing.T) {
 	TagIdSet := NewTagIDSet()
-
 	assert.NotNil(t, TagIdSet)
 	assert.Empty(t, TagIdSet.m)
 	assert.Empty(t, TagIdSet.s)
 }
 
 func TestTagIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []TagID
 		expected *TagIDSet
@@ -663,24 +632,19 @@ func TestTagIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewTagIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestTagIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	TagId := MustTagID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TagID
 		expected *TagIDSet
@@ -695,7 +659,7 @@ func TestTagIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &TagId,
+			input: MustTagID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &TagIDSet{
 				m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestTagIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewTagIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestTagIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			TagIDSet
-			TagID
-		}
+	tests := []struct {
+		name     string
+		target   *TagIDSet
+		input    TagID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				TagIDSet
-				TagID
-			}{TagIDSet: TagIDSet{}, TagID: MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &TagIDSet{},
+			input:    MustTagID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				TagIDSet
-				TagID
-			}{TagIDSet: TagIDSet{
+			target: &TagIDSet{
 				m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, TagID: MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustTagID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				TagIDSet
-				TagID
-			}{TagIDSet: TagIDSet{
+			target: &TagIDSet{
 				m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, TagID: MustTagID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustTagID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.TagIDSet.Has(tc.input.TagID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestTagIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    TagIDSet
-		expected TagIDSet
+		input    *TagIDSet
+		expected *TagIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: TagIDSet{},
-			expected: TagIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &TagIDSet{},
+			expected: &TagIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: TagIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &TagIDSet{
 				m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: TagIDSet{
+			expected: &TagIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestTagIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TagIDSet
 		expected []TagID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &TagIDSet{
 				m: map[TagID]struct{}{},
 				s: nil,
 			},
 			expected: make([]TagID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestTagIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestTagIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *TagIDSet
 		expected *TagIDSet
@@ -922,21 +873,19 @@ func TestTagIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestTagIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *TagIDSet
@@ -944,6 +893,23 @@ func TestTagIDSet_Merge(t *testing.T) {
 		}
 		expected *TagIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *TagIDSet
+				b *TagIDSet
+			}{
+				a: &TagIDSet{
+					m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &TagIDSet{
+				m: map[TagID]struct{}{MustTagID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []TagID{MustTagID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestTagIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

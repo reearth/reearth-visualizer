@@ -4,40 +4,39 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestScene_IsTeamIncluded(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name     string
-		Teams    []id.TeamID
+		Teams    []TeamID
 		S        *Scene
 		Expected bool
 	}{
 		{
 			Name:     "nil scene",
-			Teams:    []id.TeamID{id.NewTeamID()},
+			Teams:    []TeamID{NewTeamID()},
 			S:        nil,
 			Expected: false,
 		},
 		{
 			Name:     "nil teams",
 			Teams:    nil,
-			S:        New().NewID().Team(id.NewTeamID()).RootLayer(id.NewLayerID()).MustBuild(),
+			S:        New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).MustBuild(),
 			Expected: false,
 		},
 		{
 			Name:     "teams exist",
-			Teams:    []id.TeamID{tid},
-			S:        New().NewID().Team(tid).RootLayer(id.NewLayerID()).MustBuild(),
+			Teams:    []TeamID{tid},
+			S:        New().NewID().Team(tid).RootLayer(NewLayerID()).MustBuild(),
 			Expected: true,
 		},
 		{
 			Name:     "teams not exist",
-			Teams:    []id.TeamID{tid},
-			S:        New().NewID().Team(id.NewTeamID()).RootLayer(id.NewLayerID()).MustBuild(),
+			Teams:    []TeamID{tid},
+			S:        New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).MustBuild(),
 			Expected: false,
 		},
 	}
@@ -52,7 +51,7 @@ func TestScene_IsTeamIncluded(t *testing.T) {
 }
 
 func TestScene_SetUpdatedAt(t *testing.T) {
-	s := New().NewID().Team(id.NewTeamID()).RootLayer(id.NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
+	s := New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
 	s.SetUpdatedAt(time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC))
 	assert.Equal(t, time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC), s.UpdatedAt())
 	s = nil
@@ -61,24 +60,24 @@ func TestScene_SetUpdatedAt(t *testing.T) {
 }
 
 func TestScene_Properties(t *testing.T) {
-	pid1 := id.NewPropertyID()
-	pid2 := id.NewPropertyID()
+	pid1 := NewPropertyID()
+	pid2 := NewPropertyID()
 	s := New().
 		NewID().
-		Team(id.NewTeamID()).
-		RootLayer(id.NewLayerID()).
+		Team(NewTeamID()).
+		RootLayer(NewLayerID()).
 		Property(pid1).
 		WidgetSystem(
 			NewWidgetSystem(
 				[]*Widget{
-					MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+					MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
 				},
 			),
 		).
 		WidgetAlignSystem(NewWidgetAlignSystem()).
 		MustBuild()
 
-	assert.Equal(t, []id.PropertyID{pid1, pid2}, s.Properties())
+	assert.Equal(t, []PropertyID{pid1, pid2}, s.Properties())
 }
 
 func TestSceneNil(t *testing.T) {
@@ -96,7 +95,7 @@ func TestSceneNil(t *testing.T) {
 }
 
 func TestScene_Clusters(t *testing.T) {
-	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
+	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
 
 	tests := []struct {
 		name  string

@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewLayerID(t *testing.T) {
 	id := NewLayerID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestLayerIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestLayerIDFrom(t *testing.T) {
 				result LayerID
 				err    error
 			}{
-				LayerID{},
-				ErrInvalidID,
+				result: LayerID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestLayerIDFrom(t *testing.T) {
 				result LayerID
 				err    error
 			}{
-				LayerID{},
-				ErrInvalidID,
+				result: LayerID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestLayerIDFrom(t *testing.T) {
 				result LayerID
 				err    error
 			}{
-				LayerID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: LayerID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := LayerIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := LayerIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustLayerID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustLayerID(t *testing.T) {
 			expected:    LayerID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustLayerID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustLayerID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestLayerIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *LayerID
@@ -139,159 +135,149 @@ func TestLayerIDFromRef(t *testing.T) {
 			expected: &LayerID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := LayerIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := LayerIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestLayerIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := LayerIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := LayerIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, LayerIDFromRefID(nil))
+	assert.Nil(t, LayerIDFromRefID(&ID{}))
 }
 
 func TestLayerID_ID(t *testing.T) {
 	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := LayerIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestLayerID_String(t *testing.T) {
 	id := New()
-	subId := LayerIDFromRefID(&id)
+	id2 := LayerIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", LayerID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestLayerID_RefString(t *testing.T) {
+	id := NewLayerID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, LayerID{}.RefString())
 }
 
 func TestLayerID_GoString(t *testing.T) {
 	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.LayerID("+id.String()+")")
-}
-
-func TestLayerID_RefString(t *testing.T) {
-	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := LayerIDFromRefID(&id)
+	assert.Equal(t, "LayerID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "LayerID()", LayerID{}.GoString())
 }
 
 func TestLayerID_Ref(t *testing.T) {
-	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewLayerID()
+	assert.Equal(t, LayerID(id), *id.Ref())
+	assert.Nil(t, (&LayerID{}).Ref())
 }
 
 func TestLayerID_Contains(t *testing.T) {
 	id := NewLayerID()
 	id2 := NewLayerID()
 	assert.True(t, id.Contains([]LayerID{id, id2}))
+	assert.False(t, LayerID{}.Contains([]LayerID{id, id2, {}}))
 	assert.False(t, id.Contains([]LayerID{id2}))
 }
 
 func TestLayerID_CopyRef(t *testing.T) {
-	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewLayerID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*LayerID)(nil).CopyRef())
 }
 
 func TestLayerID_IDRef(t *testing.T) {
 	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := LayerIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&LayerID{}).IDRef())
+	assert.Nil(t, (*LayerID)(nil).IDRef())
 }
 
 func TestLayerID_StringRef(t *testing.T) {
-	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewLayerID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&LayerID{}).StringRef())
+	assert.Nil(t, (*LayerID)(nil).StringRef())
 }
 
 func TestLayerID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewLayerID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&LayerID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*LayerID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestLayerID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &LayerID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustLayerID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &LayerID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestLayerID_MarshalText(t *testing.T) {
 	id := New()
-	subId := LayerIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := LayerIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&LayerID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*LayerID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestLayerID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &LayerID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &LayerID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestLayerID_IsNil(t *testing.T) {
-	subId := LayerID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *LayerIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, LayerID{}.IsNil())
+	assert.False(t, NewLayerID().IsNil())
 }
 
-func TestLayerIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestLayerID_IsNilRef(t *testing.T) {
+	assert.True(t, LayerID{}.Ref().IsNilRef())
+	assert.True(t, (*LayerID)(nil).IsNilRef())
+	assert.False(t, NewLayerID().Ref().IsNilRef())
+}
+
+func TestLayerIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []LayerID
 		expected []string
@@ -321,19 +307,17 @@ func TestLayerIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, LayerIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, LayerIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestLayerIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestLayerIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestLayerIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := LayerIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := LayerIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := LayerIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestLayerIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []LayerID
@@ -449,25 +431,22 @@ func TestLayerIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := LayerIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestLayerIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []LayerID
@@ -493,21 +472,18 @@ func TestLayerIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := LayerIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestLayerIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []LayerID
 		expected []ID
@@ -537,28 +513,25 @@ func TestLayerIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := LayerIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestLayerIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustLayerID(id1.String())
+	id21 := MustLayerID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustLayerID(id2.String())
+	id22 := MustLayerID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustLayerID(id3.String())
+	id23 := MustLayerID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*LayerID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestLayerIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*LayerID{&subId1},
+			input:    []*LayerID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*LayerID{&subId1, &subId2, &subId3},
+			input:    []*LayerID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := LayerIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewLayerIDSet(t *testing.T) {
 	LayerIdSet := NewLayerIDSet()
-
 	assert.NotNil(t, LayerIdSet)
 	assert.Empty(t, LayerIdSet.m)
 	assert.Empty(t, LayerIdSet.s)
 }
 
 func TestLayerIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []LayerID
 		expected *LayerIDSet
@@ -663,24 +632,19 @@ func TestLayerIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewLayerIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestLayerIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	LayerId := MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *LayerID
 		expected *LayerIDSet
@@ -695,7 +659,7 @@ func TestLayerIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &LayerId,
+			input: MustLayerID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &LayerIDSet{
 				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestLayerIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewLayerIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestLayerIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			LayerIDSet
-			LayerID
-		}
+	tests := []struct {
+		name     string
+		target   *LayerIDSet
+		input    LayerID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				LayerIDSet
-				LayerID
-			}{LayerIDSet: LayerIDSet{}, LayerID: MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &LayerIDSet{},
+			input:    MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				LayerIDSet
-				LayerID
-			}{LayerIDSet: LayerIDSet{
+			target: &LayerIDSet{
 				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, LayerID: MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				LayerIDSet
-				LayerID
-			}{LayerIDSet: LayerIDSet{
+			target: &LayerIDSet{
 				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, LayerID: MustLayerID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustLayerID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.LayerIDSet.Has(tc.input.LayerID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestLayerIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    LayerIDSet
-		expected LayerIDSet
+		input    *LayerIDSet
+		expected *LayerIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: LayerIDSet{},
-			expected: LayerIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &LayerIDSet{},
+			expected: &LayerIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: LayerIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &LayerIDSet{
 				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: LayerIDSet{
+			expected: &LayerIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestLayerIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *LayerIDSet
 		expected []LayerID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &LayerIDSet{
 				m: map[LayerID]struct{}{},
 				s: nil,
 			},
 			expected: make([]LayerID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestLayerIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestLayerIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *LayerIDSet
 		expected *LayerIDSet
@@ -922,21 +873,19 @@ func TestLayerIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestLayerIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *LayerIDSet
@@ -944,6 +893,23 @@ func TestLayerIDSet_Merge(t *testing.T) {
 		}
 		expected *LayerIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *LayerIDSet
+				b *LayerIDSet
+			}{
+				a: &LayerIDSet{
+					m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &LayerIDSet{
+				m: map[LayerID]struct{}{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []LayerID{MustLayerID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestLayerIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

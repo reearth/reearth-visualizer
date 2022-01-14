@@ -41,7 +41,7 @@ func (r *datasetRepo) FindByID(ctx context.Context, id2 id.DatasetID, f []id.Sce
 func (r *datasetRepo) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.SceneID) (dataset.List, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.DatasetIDToKeys(ids)},
+			{Key: "$in", Value: id.DatasetIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*dataset.Dataset, 0, len(ids))
@@ -75,14 +75,14 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, f []id.Sc
 		return dataset.List{d}, nil
 	}
 
-	fieldsstr := id.DatasetSchemaFieldIDToKeys(fields)
+	fieldsstr := id.DatasetSchemaFieldIDsToStrings(fields)
 	firstField := fieldsstr[0]
 
 	aggfilter := bson.D{}
 	if f != nil {
 		aggfilter = append(aggfilter, bson.E{Key: "$in", Value: []interface{}{
 			"$$g.scene",
-			id.SceneIDToKeys(f),
+			id.SceneIDsToStrings(f),
 		}})
 	}
 
@@ -271,7 +271,7 @@ func (r *datasetRepo) RemoveAll(ctx context.Context, ids []id.DatasetID) error {
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.DatasetIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.DatasetIDsToStrings(ids))
 }
 
 func (r *datasetRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
@@ -336,7 +336,7 @@ func (*datasetRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D {
 	}
 	filter = append(filter, bson.E{
 		Key:   "scene",
-		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
+		Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(scenes)}},
 	})
 	return filter
 }

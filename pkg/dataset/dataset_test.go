@@ -3,14 +3,13 @@ package dataset
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDataset_Interface(t *testing.T) {
-	f1 := id.NewDatasetSchemaFieldID()
-	f2 := id.NewDatasetSchemaFieldID()
-	sid := id.NewDatasetSchemaID()
+	f1 := NewFieldID()
+	f2 := NewFieldID()
+	sid := NewSchemaID()
 
 	tests := []struct {
 		name    string
@@ -20,11 +19,11 @@ func TestDataset_Interface(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			schema: NewSchema().ID(sid).Scene(id.NewSceneID()).Fields([]*SchemaField{
+			schema: NewSchema().ID(sid).Scene(NewSceneID()).Fields([]*SchemaField{
 				NewSchemaField().ID(f1).Name("foo").Type(ValueTypeNumber).MustBuild(),
 				NewSchemaField().ID(f2).Name("bar").Type(ValueTypeLatLng).MustBuild(),
 			}).MustBuild(),
-			dataset: New().NewID().Scene(id.NewSceneID()).Schema(sid).Fields([]*Field{
+			dataset: New().NewID().Scene(NewSceneID()).Schema(sid).Fields([]*Field{
 				NewField(f1, ValueTypeNumber.ValueFrom(1), ""),
 				NewField(f2, ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}), ""),
 			}).MustBuild(),
@@ -51,8 +50,8 @@ func TestDataset_Interface(t *testing.T) {
 }
 
 func TestDataset_InterfaceWithFieldIDs(t *testing.T) {
-	f1 := id.NewDatasetSchemaFieldID()
-	f2 := id.NewDatasetSchemaFieldID()
+	f1 := NewFieldID()
+	f2 := NewFieldID()
 
 	tests := []struct {
 		name    string
@@ -61,7 +60,7 @@ func TestDataset_InterfaceWithFieldIDs(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			dataset: New().NewID().Scene(id.NewSceneID()).Schema(id.NewDatasetSchemaID()).Fields([]*Field{
+			dataset: New().NewID().Scene(NewSceneID()).Schema(NewSchemaID()).Fields([]*Field{
 				NewField(f1, ValueTypeNumber.ValueFrom(1), ""),
 				NewField(f2, ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}), ""),
 			}).MustBuild(),

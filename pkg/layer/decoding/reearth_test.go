@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -14,9 +13,9 @@ import (
 var _ Decoder = &ReearthDecoder{}
 
 func TestReearthDecoder_Decode(t *testing.T) {
-	sid := id.NewSceneID()
-	dsid := id.NewDatasetSchemaID()
-	did := id.NewDatasetID()
+	sid := layer.NewSceneID()
+	dsid := layer.NewDatasetSchemaID()
+	did := layer.NewDatasetID()
 	reearthjson := `{
 		"reearth": 1,
 		"layers": [
@@ -92,8 +91,8 @@ func TestReearthDecoder_Decode(t *testing.T) {
 	rootLayer := result.Layers.Group(result.Root.LayerAt(0))
 	assert.Equal(t, (&layer.Initializer{
 		ID:         rootLayer.IDRef(),
-		Plugin:     id.MustPluginID("reearth").Ref(),
-		Extension:  id.PluginExtensionID("marker").Ref(),
+		Plugin:     layer.OfficialPluginID.Ref(),
+		Extension:  layer.PluginExtensionID("marker").Ref(),
 		PropertyID: rootLayer.Property().Ref(),
 		Name:       "ABC",
 		Infobox: &layer.InitializerInfobox{
@@ -101,8 +100,8 @@ func TestReearthDecoder_Decode(t *testing.T) {
 			Fields: []*layer.InitializerInfoboxField{
 				{
 					ID:         rootLayer.Infobox().FieldAt(0).ID().Ref(),
-					Plugin:     id.MustPluginID("reearth"),
-					Extension:  id.PluginExtensionID("textblock"),
+					Plugin:     layer.OfficialPluginID,
+					Extension:  layer.PluginExtensionID("textblock"),
 					PropertyID: rootLayer.Infobox().FieldAt(0).Property().Ref(),
 				},
 			},
@@ -116,8 +115,8 @@ func TestReearthDecoder_Decode(t *testing.T) {
 	secondLayer := result.Layers.Item(rootLayer.Layers().LayerAt(0))
 	assert.Equal(t, (&layer.Initializer{
 		ID:            secondLayer.IDRef(),
-		Plugin:        id.MustPluginID("reearth").Ref(),
-		Extension:     id.PluginExtensionID("marker").Ref(),
+		Plugin:        layer.OfficialPluginID.Ref(),
+		Extension:     layer.PluginExtensionID("marker").Ref(),
 		PropertyID:    secondLayer.Property().Ref(),
 		Name:          "abc",
 		IsVisible:     &tr,
@@ -130,14 +129,14 @@ func TestReearthDecoder_Decode(t *testing.T) {
 		t,
 		(&property.Initializer{
 			ID:     prop.ID().Ref(),
-			Schema: id.MustPropertySchemaID("reearth/marker"),
+			Schema: property.MustSchemaID("reearth/marker"),
 			Items: []*property.InitializerItem{
 				{
 					ID:         prop.Items()[0].ID().Ref(),
-					SchemaItem: id.PropertySchemaGroupID("default"),
+					SchemaItem: property.SchemaGroupID("default"),
 					Fields: []*property.InitializerField{
 						{
-							Field: id.PropertySchemaFieldID("latlng"),
+							Field: property.FieldID("latlng"),
 							Type:  property.ValueTypeLatLng,
 							Value: property.ValueTypeLatLng.ValueFrom(property.LatLng{Lat: 1, Lng: 2}),
 						},
@@ -154,7 +153,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 		t,
 		(&property.Initializer{
 			ID:     rootLayer.Infobox().PropertyRef(),
-			Schema: id.MustPropertySchemaID("reearth/infobox"),
+			Schema: property.MustSchemaID("reearth/infobox"),
 		}).MustBeProperty(sid),
 		prop,
 	)
@@ -165,7 +164,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 		t,
 		(&property.Initializer{
 			ID:     rootLayer.Infobox().FieldAt(0).PropertyRef(),
-			Schema: id.MustPropertySchemaID("reearth/textblock"),
+			Schema: property.MustSchemaID("reearth/textblock"),
 		}).MustBeProperty(sid),
 		prop,
 	)
@@ -176,17 +175,17 @@ func TestReearthDecoder_Decode(t *testing.T) {
 		t,
 		(&property.Initializer{
 			ID:     prop.ID().Ref(),
-			Schema: id.MustPropertySchemaID("reearth/marker"),
+			Schema: property.MustSchemaID("reearth/marker"),
 			Items: []*property.InitializerItem{
 				{
 					ID:         prop.Items()[0].ID().Ref(),
-					SchemaItem: id.PropertySchemaGroupID("hoge"),
+					SchemaItem: property.SchemaGroupID("hoge"),
 					Groups: []*property.InitializerGroup{
 						{
 							ID: property.ToGroupList(prop.Items()[0]).GroupAt(0).IDRef(),
 							Fields: []*property.InitializerField{
 								{
-									Field: id.PropertySchemaFieldID("foobar"),
+									Field: property.FieldID("foobar"),
 									Type:  property.ValueTypeString,
 									Value: property.ValueTypeString.ValueFrom("bar"),
 								},
@@ -196,7 +195,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 							ID: property.ToGroupList(prop.Items()[0]).GroupAt(1).IDRef(),
 							Fields: []*property.InitializerField{
 								{
-									Field: id.PropertySchemaFieldID("foobar"),
+									Field: property.FieldID("foobar"),
 									Type:  property.ValueTypeString,
 									Value: property.ValueTypeString.ValueFrom("foo"),
 								},

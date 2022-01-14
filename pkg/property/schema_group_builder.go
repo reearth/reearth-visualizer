@@ -2,7 +2,6 @@ package property
 
 import (
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type SchemaGroupBuilder struct {
@@ -17,7 +16,7 @@ func NewSchemaGroup() *SchemaGroupBuilder {
 
 func (b *SchemaGroupBuilder) Build() (*SchemaGroup, error) {
 	if b.p.sid.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, ErrInvalidID
 	}
 	return b.p, nil
 }
@@ -30,19 +29,19 @@ func (b *SchemaGroupBuilder) MustBuild() *SchemaGroup {
 	return p
 }
 
-func (b *SchemaGroupBuilder) ID(id id.PropertySchemaGroupID) *SchemaGroupBuilder {
+func (b *SchemaGroupBuilder) ID(id SchemaGroupID) *SchemaGroupBuilder {
 	b.p.id = id
 	return b
 }
 
-func (b *SchemaGroupBuilder) Schema(sid id.PropertySchemaID) *SchemaGroupBuilder {
+func (b *SchemaGroupBuilder) Schema(sid SchemaID) *SchemaGroupBuilder {
 	b.p.sid = sid
 	return b
 }
 
 func (b *SchemaGroupBuilder) Fields(fields []*SchemaField) *SchemaGroupBuilder {
 	newFields := []*SchemaField{}
-	ids := map[id.PropertySchemaFieldID]struct{}{}
+	ids := map[FieldID]struct{}{}
 	for _, f := range fields {
 		if f == nil {
 			continue
@@ -72,7 +71,7 @@ func (b *SchemaGroupBuilder) Title(title i18n.String) *SchemaGroupBuilder {
 	return b
 }
 
-func (b *SchemaGroupBuilder) RepresentativeField(representativeField *id.PropertySchemaFieldID) *SchemaGroupBuilder {
+func (b *SchemaGroupBuilder) RepresentativeField(representativeField *FieldID) *SchemaGroupBuilder {
 	b.p.representativeField = representativeField.CopyRef()
 	return b
 }

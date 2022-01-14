@@ -4,18 +4,17 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTeamBuilder_ID(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	tm := NewTeam().ID(tid).MustBuild()
 	assert.Equal(t, tid, tm.ID())
 }
 
 func TestTeamBuilder_Members(t *testing.T) {
-	m := map[id.UserID]Role{id.NewUserID(): RoleOwner}
+	m := map[ID]Role{NewID(): RoleOwner}
 	tm := NewTeam().NewID().Members(m).MustBuild()
 	assert.Equal(t, m, tm.Members().Members())
 }
@@ -36,12 +35,12 @@ func TestTeamBuilder_NewID(t *testing.T) {
 }
 
 func TestTeamBuilder_Build(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name, UserName string
-		TID            id.TeamID
+		TID            TeamID
 		Personal       bool
-		Members        map[id.UserID]Role
+		Members        map[ID]Role
 		Expected       *Team
 		err            error
 	}{
@@ -50,7 +49,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 			UserName: "xxx",
 			TID:      tid,
 			Personal: true,
-			Expected: NewTeam().ID(tid).Members(map[id.UserID]Role{id.NewUserID(): RoleOwner}).Personal(true).Name("xxx").MustBuild(),
+			Expected: NewTeam().ID(tid).Members(map[ID]Role{NewID(): RoleOwner}).Personal(true).Name("xxx").MustBuild(),
 			err:      nil,
 		}, {
 			Name:     "success create team with nil members",
@@ -62,7 +61,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 		{
 			Name:     "fail invalid id",
 			Expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 	}
 
@@ -80,12 +79,12 @@ func TestTeamBuilder_Build(t *testing.T) {
 }
 
 func TestTeamBuilder_MustBuild(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name, UserName string
-		TID            id.TeamID
+		TID            TeamID
 		Personal       bool
-		Members        map[id.UserID]Role
+		Members        map[ID]Role
 		Expected       *Team
 		err            error
 	}{
@@ -94,7 +93,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 			UserName: "xxx",
 			TID:      tid,
 			Personal: true,
-			Expected: NewTeam().ID(tid).Members(map[id.UserID]Role{id.NewUserID(): RoleOwner}).Personal(true).Name("xxx").MustBuild(),
+			Expected: NewTeam().ID(tid).Members(map[ID]Role{NewID(): RoleOwner}).Personal(true).Name("xxx").MustBuild(),
 			err:      nil,
 		}, {
 			Name:     "success create team with nil members",
@@ -106,7 +105,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 		{
 			Name:     "fail invalid id",
 			Expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 	}
 

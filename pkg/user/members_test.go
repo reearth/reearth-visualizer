@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,30 +14,30 @@ func TestNewMembers(t *testing.T) {
 }
 
 func TestNewMembersWith(t *testing.T) {
-	uid := id.NewUserID()
-	m := NewMembersWith(map[id.UserID]Role{uid: RoleOwner})
+	uid := NewID()
+	m := NewMembersWith(map[ID]Role{uid: RoleOwner})
 	assert.NotNil(t, m)
-	assert.Equal(t, map[id.UserID]Role{uid: RoleOwner}, m.Members())
+	assert.Equal(t, map[ID]Role{uid: RoleOwner}, m.Members())
 }
 
 func TestMembers_ContainsUser(t *testing.T) {
-	uid1 := id.NewUserID()
-	uid2 := id.NewUserID()
+	uid1 := NewID()
+	uid2 := NewID()
 	testCases := []struct {
 		Name     string
 		M        *Members
-		UID      id.UserID
+		UID      ID
 		Expected bool
 	}{
 		{
 			Name:     "existing user",
-			M:        NewMembersWith(map[id.UserID]Role{uid1: RoleOwner, uid2: RoleReader}),
+			M:        NewMembersWith(map[ID]Role{uid1: RoleOwner, uid2: RoleReader}),
 			UID:      uid1,
 			Expected: true,
 		},
 		{
 			Name:     "not existing user",
-			M:        NewMembersWith(map[id.UserID]Role{uid2: RoleReader}),
+			M:        NewMembersWith(map[ID]Role{uid2: RoleReader}),
 			UID:      uid1,
 			Expected: false,
 		},
@@ -53,40 +52,40 @@ func TestMembers_ContainsUser(t *testing.T) {
 }
 
 func TestCopyMembers(t *testing.T) {
-	uid := id.NewUserID()
-	m := NewMembersWith(map[id.UserID]Role{uid: RoleOwner})
+	uid := NewID()
+	m := NewMembersWith(map[ID]Role{uid: RoleOwner})
 	m2 := CopyMembers(m)
 	assert.Equal(t, m, m2)
 }
 
 func TestMembers_Count(t *testing.T) {
-	m := NewMembersWith(map[id.UserID]Role{id.NewUserID(): RoleOwner})
+	m := NewMembersWith(map[ID]Role{NewID(): RoleOwner})
 	assert.Equal(t, len(m.Members()), m.Count())
 }
 
 func TestMembers_GetRole(t *testing.T) {
-	uid := id.NewUserID()
-	m := NewMembersWith(map[id.UserID]Role{uid: RoleOwner})
+	uid := NewID()
+	m := NewMembersWith(map[ID]Role{uid: RoleOwner})
 	assert.Equal(t, RoleOwner, m.GetRole(uid))
 }
 
 func TestMembers_IsOnlyOwner(t *testing.T) {
-	uid := id.NewUserID()
-	m := NewMembersWith(map[id.UserID]Role{uid: RoleOwner, id.NewUserID(): RoleReader})
+	uid := NewID()
+	m := NewMembersWith(map[ID]Role{uid: RoleOwner, NewID(): RoleReader})
 	assert.True(t, m.IsOnlyOwner(uid))
 }
 
 func TestMembers_Leave(t *testing.T) {
-	uid := id.NewUserID()
+	uid := NewID()
 	testCases := []struct {
 		Name string
 		M    *Members
-		UID  id.UserID
+		UID  ID
 		err  error
 	}{
 		{
 			Name: "success user left",
-			M:    NewMembersWith(map[id.UserID]Role{uid: RoleWriter, id.NewUserID(): RoleOwner}),
+			M:    NewMembersWith(map[ID]Role{uid: RoleWriter, NewID(): RoleOwner}),
 			UID:  uid,
 			err:  nil,
 		},
@@ -98,8 +97,8 @@ func TestMembers_Leave(t *testing.T) {
 		},
 		{
 			Name: "fail user not in the team",
-			M:    NewMembersWith(map[id.UserID]Role{uid: RoleWriter, id.NewUserID(): RoleOwner}),
-			UID:  id.NewUserID(),
+			M:    NewMembersWith(map[ID]Role{uid: RoleWriter, NewID(): RoleOwner}),
+			UID:  NewID(),
 			err:  ErrTargetUserNotInTheTeam,
 		},
 	}
@@ -118,23 +117,23 @@ func TestMembers_Leave(t *testing.T) {
 }
 
 func TestMembers_Members(t *testing.T) {
-	uid := id.NewUserID()
-	m := NewMembersWith(map[id.UserID]Role{uid: RoleOwner})
-	assert.Equal(t, map[id.UserID]Role{uid: RoleOwner}, m.Members())
+	uid := NewID()
+	m := NewMembersWith(map[ID]Role{uid: RoleOwner})
+	assert.Equal(t, map[ID]Role{uid: RoleOwner}, m.Members())
 }
 
 func TestMembers_UpdateRole(t *testing.T) {
-	uid := id.NewUserID()
+	uid := NewID()
 	testCases := []struct {
 		Name              string
 		M                 *Members
-		UID               id.UserID
+		UID               ID
 		NewRole, Expected Role
 		err               error
 	}{
 		{
 			Name:     "success role updated",
-			M:        NewMembersWith(map[id.UserID]Role{uid: RoleWriter}),
+			M:        NewMembersWith(map[ID]Role{uid: RoleWriter}),
 			UID:      uid,
 			NewRole:  RoleOwner,
 			Expected: RoleOwner,
@@ -142,7 +141,7 @@ func TestMembers_UpdateRole(t *testing.T) {
 		},
 		{
 			Name:     "nil role",
-			M:        NewMembersWith(map[id.UserID]Role{uid: RoleOwner}),
+			M:        NewMembersWith(map[ID]Role{uid: RoleOwner}),
 			UID:      uid,
 			NewRole:  "",
 			Expected: RoleOwner,
@@ -157,8 +156,8 @@ func TestMembers_UpdateRole(t *testing.T) {
 		},
 		{
 			Name:    "fail user not in the team",
-			M:       NewMembersWith(map[id.UserID]Role{uid: RoleOwner}),
-			UID:     id.NewUserID(),
+			M:       NewMembersWith(map[ID]Role{uid: RoleOwner}),
+			UID:     NewID(),
 			NewRole: "",
 			err:     ErrTargetUserNotInTheTeam,
 		},
@@ -178,18 +177,18 @@ func TestMembers_UpdateRole(t *testing.T) {
 }
 
 func TestMembers_Join(t *testing.T) {
-	uid := id.NewUserID()
-	uid2 := id.NewUserID()
+	uid := NewID()
+	uid2 := NewID()
 	testCases := []struct {
 		Name                   string
 		M                      *Members
-		UID                    id.UserID
+		UID                    ID
 		JoinRole, ExpectedRole Role
 		err                    error
 	}{
 		{
 			Name:         "success join user",
-			M:            NewMembersWith(map[id.UserID]Role{uid: RoleWriter}),
+			M:            NewMembersWith(map[ID]Role{uid: RoleWriter}),
 			UID:          uid2,
 			JoinRole:     "xxx",
 			ExpectedRole: "xxx",
@@ -197,7 +196,7 @@ func TestMembers_Join(t *testing.T) {
 		},
 		{
 			Name:         "success join user",
-			M:            NewMembersWith(map[id.UserID]Role{uid: RoleWriter}),
+			M:            NewMembersWith(map[ID]Role{uid: RoleWriter}),
 			UID:          uid2,
 			JoinRole:     "",
 			ExpectedRole: RoleReader,
@@ -212,7 +211,7 @@ func TestMembers_Join(t *testing.T) {
 		},
 		{
 			Name:     "fail user already joined",
-			M:        NewMembersWith(map[id.UserID]Role{uid: RoleOwner}),
+			M:        NewMembersWith(map[ID]Role{uid: RoleOwner}),
 			UID:      uid,
 			JoinRole: "",
 			err:      ErrUserAlreadyJoined,
@@ -234,20 +233,20 @@ func TestMembers_Join(t *testing.T) {
 }
 
 func TestMembers_UsersByRole(t *testing.T) {
-	uid := id.NewUserID()
-	uid2 := id.NewUserID()
+	uid := NewID()
+	uid2 := NewID()
 	testCases := []struct {
 		Name     string
 		M        *Members
 		Role     Role
-		Expected []id.UserID
+		Expected []ID
 		err      error
 	}{
 		{
 			Name:     "success join user",
-			M:        NewMembersWith(map[id.UserID]Role{uid: "xxx", uid2: "xxx"}),
+			M:        NewMembersWith(map[ID]Role{uid: "xxx", uid2: "xxx"}),
 			Role:     "xxx",
-			Expected: []id.UserID{uid2, uid},
+			Expected: []ID{uid2, uid},
 		},
 	}
 	for _, tc := range testCases {

@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewDatasetSchemaID(t *testing.T) {
 	id := NewDatasetSchemaID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestDatasetSchemaIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestDatasetSchemaIDFrom(t *testing.T) {
 				result DatasetSchemaID
 				err    error
 			}{
-				DatasetSchemaID{},
-				ErrInvalidID,
+				result: DatasetSchemaID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestDatasetSchemaIDFrom(t *testing.T) {
 				result DatasetSchemaID
 				err    error
 			}{
-				DatasetSchemaID{},
-				ErrInvalidID,
+				result: DatasetSchemaID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestDatasetSchemaIDFrom(t *testing.T) {
 				result DatasetSchemaID
 				err    error
 			}{
-				DatasetSchemaID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: DatasetSchemaID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := DatasetSchemaIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := DatasetSchemaIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustDatasetSchemaID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustDatasetSchemaID(t *testing.T) {
 			expected:    DatasetSchemaID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustDatasetSchemaID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustDatasetSchemaID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestDatasetSchemaIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *DatasetSchemaID
@@ -139,159 +135,149 @@ func TestDatasetSchemaIDFromRef(t *testing.T) {
 			expected: &DatasetSchemaID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := DatasetSchemaIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := DatasetSchemaIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestDatasetSchemaIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := DatasetSchemaIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, DatasetSchemaIDFromRefID(nil))
+	assert.Nil(t, DatasetSchemaIDFromRefID(&ID{}))
 }
 
 func TestDatasetSchemaID_ID(t *testing.T) {
 	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := DatasetSchemaIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestDatasetSchemaID_String(t *testing.T) {
 	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
+	id2 := DatasetSchemaIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", DatasetSchemaID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestDatasetSchemaID_RefString(t *testing.T) {
+	id := NewDatasetSchemaID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, DatasetSchemaID{}.RefString())
 }
 
 func TestDatasetSchemaID_GoString(t *testing.T) {
 	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.DatasetSchemaID("+id.String()+")")
-}
-
-func TestDatasetSchemaID_RefString(t *testing.T) {
-	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := DatasetSchemaIDFromRefID(&id)
+	assert.Equal(t, "DatasetSchemaID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "DatasetSchemaID()", DatasetSchemaID{}.GoString())
 }
 
 func TestDatasetSchemaID_Ref(t *testing.T) {
-	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewDatasetSchemaID()
+	assert.Equal(t, DatasetSchemaID(id), *id.Ref())
+	assert.Nil(t, (&DatasetSchemaID{}).Ref())
 }
 
 func TestDatasetSchemaID_Contains(t *testing.T) {
 	id := NewDatasetSchemaID()
 	id2 := NewDatasetSchemaID()
 	assert.True(t, id.Contains([]DatasetSchemaID{id, id2}))
+	assert.False(t, DatasetSchemaID{}.Contains([]DatasetSchemaID{id, id2, {}}))
 	assert.False(t, id.Contains([]DatasetSchemaID{id2}))
 }
 
 func TestDatasetSchemaID_CopyRef(t *testing.T) {
-	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewDatasetSchemaID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*DatasetSchemaID)(nil).CopyRef())
 }
 
 func TestDatasetSchemaID_IDRef(t *testing.T) {
 	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := DatasetSchemaIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&DatasetSchemaID{}).IDRef())
+	assert.Nil(t, (*DatasetSchemaID)(nil).IDRef())
 }
 
 func TestDatasetSchemaID_StringRef(t *testing.T) {
-	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewDatasetSchemaID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&DatasetSchemaID{}).StringRef())
+	assert.Nil(t, (*DatasetSchemaID)(nil).StringRef())
 }
 
 func TestDatasetSchemaID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewDatasetSchemaID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&DatasetSchemaID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*DatasetSchemaID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestDatasetSchemaID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &DatasetSchemaID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustDatasetSchemaID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &DatasetSchemaID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestDatasetSchemaID_MarshalText(t *testing.T) {
 	id := New()
-	subId := DatasetSchemaIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := DatasetSchemaIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&DatasetSchemaID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*DatasetSchemaID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestDatasetSchemaID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &DatasetSchemaID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &DatasetSchemaID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestDatasetSchemaID_IsNil(t *testing.T) {
-	subId := DatasetSchemaID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *DatasetSchemaIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, DatasetSchemaID{}.IsNil())
+	assert.False(t, NewDatasetSchemaID().IsNil())
 }
 
-func TestDatasetSchemaIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestDatasetSchemaID_IsNilRef(t *testing.T) {
+	assert.True(t, DatasetSchemaID{}.Ref().IsNilRef())
+	assert.True(t, (*DatasetSchemaID)(nil).IsNilRef())
+	assert.False(t, NewDatasetSchemaID().Ref().IsNilRef())
+}
+
+func TestDatasetSchemaIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []DatasetSchemaID
 		expected []string
@@ -321,19 +307,17 @@ func TestDatasetSchemaIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, DatasetSchemaIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, DatasetSchemaIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestDatasetSchemaIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestDatasetSchemaIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestDatasetSchemaIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := DatasetSchemaIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := DatasetSchemaIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := DatasetSchemaIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestDatasetSchemaIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []DatasetSchemaID
@@ -449,25 +431,22 @@ func TestDatasetSchemaIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := DatasetSchemaIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestDatasetSchemaIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []DatasetSchemaID
@@ -493,21 +472,18 @@ func TestDatasetSchemaIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := DatasetSchemaIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestDatasetSchemaIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []DatasetSchemaID
 		expected []ID
@@ -537,28 +513,25 @@ func TestDatasetSchemaIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := DatasetSchemaIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestDatasetSchemaIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustDatasetSchemaID(id1.String())
+	id21 := MustDatasetSchemaID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustDatasetSchemaID(id2.String())
+	id22 := MustDatasetSchemaID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustDatasetSchemaID(id3.String())
+	id23 := MustDatasetSchemaID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*DatasetSchemaID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestDatasetSchemaIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*DatasetSchemaID{&subId1},
+			input:    []*DatasetSchemaID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*DatasetSchemaID{&subId1, &subId2, &subId3},
+			input:    []*DatasetSchemaID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := DatasetSchemaIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewDatasetSchemaIDSet(t *testing.T) {
 	DatasetSchemaIdSet := NewDatasetSchemaIDSet()
-
 	assert.NotNil(t, DatasetSchemaIdSet)
 	assert.Empty(t, DatasetSchemaIdSet.m)
 	assert.Empty(t, DatasetSchemaIdSet.s)
 }
 
 func TestDatasetSchemaIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []DatasetSchemaID
 		expected *DatasetSchemaIDSet
@@ -663,24 +632,19 @@ func TestDatasetSchemaIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewDatasetSchemaIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	DatasetSchemaId := MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *DatasetSchemaID
 		expected *DatasetSchemaIDSet
@@ -695,7 +659,7 @@ func TestDatasetSchemaIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &DatasetSchemaId,
+			input: MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &DatasetSchemaIDSet{
 				m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestDatasetSchemaIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewDatasetSchemaIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			DatasetSchemaIDSet
-			DatasetSchemaID
-		}
+	tests := []struct {
+		name     string
+		target   *DatasetSchemaIDSet
+		input    DatasetSchemaID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				DatasetSchemaIDSet
-				DatasetSchemaID
-			}{DatasetSchemaIDSet: DatasetSchemaIDSet{}, DatasetSchemaID: MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &DatasetSchemaIDSet{},
+			input:    MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				DatasetSchemaIDSet
-				DatasetSchemaID
-			}{DatasetSchemaIDSet: DatasetSchemaIDSet{
+			target: &DatasetSchemaIDSet{
 				m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, DatasetSchemaID: MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				DatasetSchemaIDSet
-				DatasetSchemaID
-			}{DatasetSchemaIDSet: DatasetSchemaIDSet{
+			target: &DatasetSchemaIDSet{
 				m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, DatasetSchemaID: MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.DatasetSchemaIDSet.Has(tc.input.DatasetSchemaID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    DatasetSchemaIDSet
-		expected DatasetSchemaIDSet
+		input    *DatasetSchemaIDSet
+		expected *DatasetSchemaIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: DatasetSchemaIDSet{},
-			expected: DatasetSchemaIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &DatasetSchemaIDSet{},
+			expected: &DatasetSchemaIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: DatasetSchemaIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &DatasetSchemaIDSet{
 				m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: DatasetSchemaIDSet{
+			expected: &DatasetSchemaIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *DatasetSchemaIDSet
 		expected []DatasetSchemaID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &DatasetSchemaIDSet{
 				m: map[DatasetSchemaID]struct{}{},
 				s: nil,
 			},
 			expected: make([]DatasetSchemaID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestDatasetSchemaIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *DatasetSchemaIDSet
 		expected *DatasetSchemaIDSet
@@ -922,21 +873,19 @@ func TestDatasetSchemaIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestDatasetSchemaIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *DatasetSchemaIDSet
@@ -944,6 +893,23 @@ func TestDatasetSchemaIDSet_Merge(t *testing.T) {
 		}
 		expected *DatasetSchemaIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *DatasetSchemaIDSet
+				b *DatasetSchemaIDSet
+			}{
+				a: &DatasetSchemaIDSet{
+					m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &DatasetSchemaIDSet{
+				m: map[DatasetSchemaID]struct{}{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []DatasetSchemaID{MustDatasetSchemaID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestDatasetSchemaIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

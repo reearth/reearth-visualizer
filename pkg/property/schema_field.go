@@ -2,11 +2,10 @@ package property
 
 import (
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type SchemaField struct {
-	id           id.PropertySchemaFieldID
+	id           FieldID
 	propertyType ValueType
 	title        i18n.String
 	description  i18n.String
@@ -26,7 +25,7 @@ type SchemaFieldChoice struct {
 	Icon  string
 }
 
-func (p *SchemaField) ID() id.PropertySchemaFieldID {
+func (p *SchemaField) ID() FieldID {
 	return p.id
 }
 

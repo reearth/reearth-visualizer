@@ -1,17 +1,11 @@
 package scene
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
-// Plugin _
 type Plugin struct {
-	plugin   id.PluginID
-	property *id.PropertyID
+	plugin   PluginID
+	property *PropertyID
 }
 
-// NewPlugin _
-func NewPlugin(plugin id.PluginID, property *id.PropertyID) *Plugin {
+func NewPlugin(plugin PluginID, property *PropertyID) *Plugin {
 	if property != nil {
 		property2 := *property
 		property = &property2
@@ -22,13 +16,11 @@ func NewPlugin(plugin id.PluginID, property *id.PropertyID) *Plugin {
 	}
 }
 
-// Plugin _
-func (s Plugin) Plugin() id.PluginID {
+func (s Plugin) Plugin() PluginID {
 	return s.plugin
 }
 
-// Property _
-func (s Plugin) Property() *id.PropertyID {
+func (s Plugin) Property() *PropertyID {
 	property := s.property
 	if property != nil {
 		property2 := *property

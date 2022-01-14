@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/rerror"
@@ -14,13 +13,13 @@ import (
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 
-func (i *Root) manifest(sid *id.SceneID) (*Manifest, error) {
-	var pid id.PluginID
+func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
+	var pid plugin.ID
 	var err error
-	if i.System && string(i.ID) == id.OfficialPluginID.Name() {
-		pid = id.OfficialPluginID
+	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {
+		pid = plugin.OfficialPluginID
 	} else {
-		pid, err = id.NewPluginID(string(i.ID), i.Version, sid)
+		pid, err = plugin.NewID(string(i.ID), i.Version, sid)
 		if err != nil {
 			return nil, errInvalidManifestWith(fmt.Errorf("invalid plugin id: %s %s %s", i.ID, i.Version, sid))
 		}
@@ -82,7 +81,7 @@ func (i *Root) manifest(sid *id.SceneID) (*Manifest, error) {
 	}, nil
 }
 
-func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension, *property.Schema, error) {
+func (i Extension) extension(pluginID plugin.ID, sys bool) (*plugin.Extension, *property.Schema, error) {
 	eid := string(i.ID)
 	schema, err := i.Schema.schema(pluginID, eid)
 	if err != nil {
@@ -136,7 +135,7 @@ func (i Extension) extension(pluginID id.PluginID, sys bool) (*plugin.Extension,
 	}
 
 	ext, err := plugin.NewExtension().
-		ID(id.PluginExtensionID(eid)).
+		ID(plugin.ExtensionID(eid)).
 		Name(i18n.StringFrom(i.Name)).
 		Description(i18n.StringFrom(desc)).
 		Visualizer(viz).
@@ -185,8 +184,8 @@ func (l *WidgetLayout) layout() *plugin.WidgetLayout {
 	return plugin.NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, l.Floating, dl).Ref()
 }
 
-func (i *PropertySchema) schema(pluginID id.PluginID, idstr string) (*property.Schema, error) {
-	psid, err := id.PropertySchemaIDFrom(pluginID.String() + "/" + idstr)
+func (i *PropertySchema) schema(pluginID plugin.ID, idstr string) (*property.Schema, error) {
+	psid, err := property.SchemaIDFrom(pluginID.String() + "/" + idstr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id: %s", pluginID.String()+"/"+idstr)
 	}
@@ -235,17 +234,17 @@ func (p *PropertyPointer) pointer() *property.Pointer {
 		return nil
 	}
 	return property.NewPointer(
-		id.PropertySchemaGroupIDFrom(&p.SchemaGroupID),
+		property.SchemaGroupIDFrom(&p.SchemaGroupID),
 		nil,
-		id.PropertySchemaFieldIDFrom(&p.FieldID),
+		property.FieldIDFrom(&p.FieldID),
 	)
 }
 
-func (i PropertySchemaGroup) schemaGroup(sid id.PropertySchemaID) (*property.SchemaGroup, error) {
+func (i PropertySchemaGroup) schemaGroup(sid property.SchemaID) (*property.SchemaGroup, error) {
 	title := i.Title
-	var representativeField *id.PropertySchemaFieldID
+	var representativeField *property.FieldID
 	if i.RepresentativeField != nil {
-		representativeField = id.PropertySchemaFieldID(*i.RepresentativeField).Ref()
+		representativeField = property.FieldID(*i.RepresentativeField).Ref()
 	}
 
 	// fields
@@ -259,7 +258,7 @@ func (i PropertySchemaGroup) schemaGroup(sid id.PropertySchemaID) (*property.Sch
 	}
 
 	return property.NewSchemaGroup().
-		ID(id.PropertySchemaGroupID(i.ID)).
+		ID(property.SchemaGroupID(i.ID)).
 		Schema(sid).
 		IsList(i.List).
 		Fields(fields).
@@ -274,7 +273,7 @@ func (o *PropertyCondition) condition() *property.Condition {
 		return nil
 	}
 	return &property.Condition{
-		Field: id.PropertySchemaFieldID(o.Field),
+		Field: property.FieldID(o.Field),
 		Value: toValue(o.Value, o.Type),
 	}
 }
@@ -311,7 +310,7 @@ func (i PropertySchemaField) schemaField() (*property.SchemaField, error) {
 	}
 
 	f, err := property.NewSchemaField().
-		ID(id.PropertySchemaFieldID(i.ID)).
+		ID(property.FieldID(i.ID)).
 		Name(i18n.StringFrom(title)).
 		Description(i18n.StringFrom(desc)).
 		Type(t).

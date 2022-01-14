@@ -31,7 +31,7 @@ func (r *userRepo) init() {
 
 func (r *userRepo) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, error) {
 	filter := bson.D{{Key: "id", Value: bson.D{
-		{Key: "$in", Value: id.UserIDToKeys(ids)},
+		{Key: "$in", Value: id.UserIDsToStrings(ids)},
 	}}}
 	dst := make([]*user.User, 0, len(ids))
 	res, err := r.find(ctx, dst, filter)

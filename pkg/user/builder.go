@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"golang.org/x/text/language"
 )
 
@@ -14,8 +13,8 @@ func New() *Builder {
 }
 
 func (b *Builder) Build() (*User, error) {
-	if id.ID(b.u.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.u.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	return b.u, nil
 }
@@ -28,13 +27,13 @@ func (b *Builder) MustBuild() *User {
 	return r
 }
 
-func (b *Builder) ID(id id.UserID) *Builder {
+func (b *Builder) ID(id ID) *Builder {
 	b.u.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.u.id = id.UserID(id.New())
+	b.u.id = NewID()
 	return b
 }
 
@@ -48,7 +47,7 @@ func (b *Builder) Email(email string) *Builder {
 	return b
 }
 
-func (b *Builder) Team(team id.TeamID) *Builder {
+func (b *Builder) Team(team TeamID) *Builder {
 	b.u.team = team
 	return b
 }

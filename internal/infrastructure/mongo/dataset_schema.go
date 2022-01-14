@@ -41,7 +41,7 @@ func (r *datasetSchemaRepo) FindByID(ctx context.Context, id2 id.DatasetSchemaID
 func (r *datasetSchemaRepo) FindByIDs(ctx context.Context, ids []id.DatasetSchemaID, f []id.SceneID) (dataset.SchemaList, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.DatasetSchemaIDToKeys(ids)},
+			{Key: "$in", Value: id.DatasetSchemaIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*dataset.Schema, 0, len(ids))
@@ -111,7 +111,7 @@ func (r *datasetSchemaRepo) RemoveAll(ctx context.Context, ids []id.DatasetSchem
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.DatasetSchemaIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.DatasetSchemaIDsToStrings(ids))
 }
 
 func (r *datasetSchemaRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
@@ -176,7 +176,7 @@ func (*datasetSchemaRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D
 	}
 	filter = append(filter, bson.E{
 		Key:   "scene",
-		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
+		Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(scenes)}},
 	})
 	return filter
 }

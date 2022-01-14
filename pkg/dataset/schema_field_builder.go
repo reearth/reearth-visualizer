@@ -2,8 +2,6 @@ package dataset
 
 import (
 	"errors"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 type SchemaFieldBuilder struct {
@@ -15,8 +13,8 @@ func NewSchemaField() *SchemaFieldBuilder {
 }
 
 func (b *SchemaFieldBuilder) Build() (*SchemaField, error) {
-	if id.ID(b.d.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.d.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	if !b.d.dataType.Default() {
 		return nil, errors.New("invalid value type")
@@ -32,13 +30,13 @@ func (b *SchemaFieldBuilder) MustBuild() *SchemaField {
 	return r
 }
 
-func (b *SchemaFieldBuilder) ID(id id.DatasetSchemaFieldID) *SchemaFieldBuilder {
+func (b *SchemaFieldBuilder) ID(id FieldID) *SchemaFieldBuilder {
 	b.d.id = id
 	return b
 }
 
 func (b *SchemaFieldBuilder) NewID() *SchemaFieldBuilder {
-	b.d.id = id.DatasetSchemaFieldID(id.New())
+	b.d.id = NewFieldID()
 	return b
 }
 
@@ -57,7 +55,7 @@ func (b *SchemaFieldBuilder) Source(source string) *SchemaFieldBuilder {
 	return b
 }
 
-func (b *SchemaFieldBuilder) Ref(ref *id.DatasetSchemaID) *SchemaFieldBuilder {
+func (b *SchemaFieldBuilder) Ref(ref *SchemaID) *SchemaFieldBuilder {
 	if ref == nil {
 		b.d.ref = nil
 	} else {

@@ -44,7 +44,7 @@ func InfoboxFieldIDFromRef(i *string) *InfoboxFieldID {
 
 // InfoboxFieldIDFromRefID generates a new InfoboxFieldID from a ref of a generic ID.
 func InfoboxFieldIDFromRefID(i *ID) *InfoboxFieldID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := InfoboxFieldID(*i)
@@ -58,28 +58,40 @@ func (d InfoboxFieldID) ID() ID {
 
 // String returns a string representation.
 func (d InfoboxFieldID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d InfoboxFieldID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d InfoboxFieldID) GoString() string {
-	return "id.InfoboxFieldID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d InfoboxFieldID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "InfoboxFieldID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d InfoboxFieldID) Ref() *InfoboxFieldID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d InfoboxFieldID) Contains(ids []InfoboxFieldID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d InfoboxFieldID) Contains(ids []InfoboxFieldID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *InfoboxFieldID) CopyRef() *InfoboxFieldID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *InfoboxFieldID) CopyRef() *InfoboxFieldID {
 
 // IDRef returns a reference of a domain id.
 func (d *InfoboxFieldID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *InfoboxFieldID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *InfoboxFieldID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *InfoboxFieldID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *InfoboxFieldID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *InfoboxFieldID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *InfoboxFieldID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *InfoboxFieldID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d InfoboxFieldID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// InfoboxFieldIDToKeys converts IDs into a string slice.
-func InfoboxFieldIDToKeys(ids []InfoboxFieldID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *InfoboxFieldID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// InfoboxFieldIDsToStrings converts IDs into a string slice.
+func InfoboxFieldIDsToStrings(ids []InfoboxFieldID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // InfoboxFieldIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *InfoboxFieldIDSet) Clone() *InfoboxFieldIDSet {
 
 // Merge returns a merged set
 func (s *InfoboxFieldIDSet) Merge(s2 *InfoboxFieldIDSet) *InfoboxFieldIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

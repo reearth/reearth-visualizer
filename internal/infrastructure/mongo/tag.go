@@ -40,7 +40,7 @@ func (r *tagRepo) FindByID(ctx context.Context, id id.TagID, f []id.SceneID) (ta
 func (r *tagRepo) FindByIDs(ctx context.Context, ids []id.TagID, f []id.SceneID) ([]*tag.Tag, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.TagIDToKeys(ids)},
+			{Key: "$in", Value: id.TagIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*tag.Tag, 0, len(ids))
@@ -61,7 +61,7 @@ func (r *tagRepo) FindItemByID(ctx context.Context, id id.TagID, f []id.SceneID)
 func (r *tagRepo) FindItemByIDs(ctx context.Context, ids []id.TagID, f []id.SceneID) ([]*tag.Item, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.TagIDToKeys(ids)},
+			{Key: "$in", Value: id.TagIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*tag.Item, 0, len(ids))
@@ -82,7 +82,7 @@ func (r *tagRepo) FindGroupByID(ctx context.Context, id id.TagID, f []id.SceneID
 func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids []id.TagID, f []id.SceneID) ([]*tag.Group, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.TagIDToKeys(ids)},
+			{Key: "$in", Value: id.TagIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*tag.Group, 0, len(ids))
@@ -105,7 +105,7 @@ func (r *tagRepo) FindGroupByItem(ctx context.Context, tagID id.TagID, f []id.Sc
 	ids := []id.TagID{tagID}
 	filter := r.sceneFilter(bson.D{
 		{Key: "group.tags", Value: bson.D{
-			{Key: "$in", Value: id.TagIDToKeys(ids)},
+			{Key: "$in", Value: id.TagIDsToStrings(ids)},
 		}},
 	}, f)
 
@@ -133,7 +133,7 @@ func (r *tagRepo) RemoveAll(ctx context.Context, ids []id.TagID) error {
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.TagIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.TagIDsToStrings(ids))
 }
 
 func (r *tagRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
@@ -270,7 +270,7 @@ func (*tagRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D {
 	}
 	filter = append(filter, bson.E{
 		Key:   "scene",
-		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
+		Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(scenes)}},
 	})
 	return filter
 }

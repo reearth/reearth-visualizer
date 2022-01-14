@@ -44,7 +44,7 @@ func ClusterIDFromRef(i *string) *ClusterID {
 
 // ClusterIDFromRefID generates a new ClusterID from a ref of a generic ID.
 func ClusterIDFromRefID(i *ID) *ClusterID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := ClusterID(*i)
@@ -58,28 +58,40 @@ func (d ClusterID) ID() ID {
 
 // String returns a string representation.
 func (d ClusterID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d ClusterID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d ClusterID) GoString() string {
-	return "id.ClusterID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d ClusterID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "ClusterID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d ClusterID) Ref() *ClusterID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d ClusterID) Contains(ids []ClusterID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d ClusterID) Contains(ids []ClusterID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *ClusterID) CopyRef() *ClusterID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *ClusterID) CopyRef() *ClusterID {
 
 // IDRef returns a reference of a domain id.
 func (d *ClusterID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *ClusterID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *ClusterID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *ClusterID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *ClusterID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *ClusterID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *ClusterID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *ClusterID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d ClusterID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// ClusterIDToKeys converts IDs into a string slice.
-func ClusterIDToKeys(ids []ClusterID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *ClusterID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// ClusterIDsToStrings converts IDs into a string slice.
+func ClusterIDsToStrings(ids []ClusterID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // ClusterIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *ClusterIDSet) Clone() *ClusterIDSet {
 
 // Merge returns a merged set
 func (s *ClusterIDSet) Merge(s2 *ClusterIDSet) *ClusterIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

@@ -68,7 +68,7 @@ func NewTag(t tag.Tag) (*TagDocument, string) {
 		ids := tags.Tags()
 
 		group = &TagGroupDocument{
-			Tags: id.TagIDToKeys(ids),
+			Tags: id.TagIDsToStrings(ids),
 		}
 	}
 

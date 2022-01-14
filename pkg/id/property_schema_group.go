@@ -3,7 +3,7 @@ package id
 type PropertySchemaGroupID string
 
 func PropertySchemaGroupIDFrom(str *string) *PropertySchemaGroupID {
-	if str == nil {
+	if str == nil || *str == "" {
 		return nil
 	}
 	id := PropertySchemaGroupID(*str)
@@ -11,12 +11,15 @@ func PropertySchemaGroupIDFrom(str *string) *PropertySchemaGroupID {
 }
 
 func (id PropertySchemaGroupID) Ref() *PropertySchemaGroupID {
+	if id == "" {
+		return nil
+	}
 	id2 := id
 	return &id2
 }
 
 func (id *PropertySchemaGroupID) CopyRef() *PropertySchemaGroupID {
-	if id == nil {
+	if id == nil || *id == "" {
 		return nil
 	}
 	id2 := *id
@@ -28,7 +31,7 @@ func (id PropertySchemaGroupID) String() string {
 }
 
 func (id *PropertySchemaGroupID) StringRef() *string {
-	if id == nil {
+	if id == nil || *id == "" {
 		return nil
 	}
 	str := string(*id)

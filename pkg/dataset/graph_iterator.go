@@ -1,29 +1,27 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 // GraphIterator is a iterator for graphically exploring a dataset.
 type GraphIterator struct {
 	m                 Map
-	ids               [][]id.DatasetID
+	ids               [][]ID
 	currentIndex      int
 	currentDepthIndex int
 	maxDepth          int
 }
 
-func GraphIteratorFrom(root id.DatasetID, depth int) *GraphIterator {
+func GraphIteratorFrom(root ID, depth int) *GraphIterator {
 	return &GraphIterator{
-		ids:      [][]id.DatasetID{{root}},
+		ids:      [][]ID{{root}},
 		maxDepth: depth,
 	}
 }
 
-func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
+func (di *GraphIterator) Next(d *Dataset) (ID, bool) {
 	if di == nil || di.maxDepth == 0 || len(di.ids) == 0 || d == nil {
-		return id.DatasetID{}, false
+		return ID{}, false
 	}
 	if di.currentDepthIndex >= len(di.ids) {
-		return id.DatasetID{}, true
+		return ID{}, true
 	}
 
 	if di.m == nil {
@@ -33,13 +31,13 @@ func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
 
 	// add fields
 	if len(di.ids) <= di.currentDepthIndex+1 {
-		di.ids = append(di.ids, []id.DatasetID{})
+		di.ids = append(di.ids, []ID{})
 	}
 	nextDepthIDs := di.ids[di.currentDepthIndex+1]
 	currentIDs := di.ids[di.currentDepthIndex]
 	for _, f := range d.Fields() {
 		if r := f.Value().ValueRef(); r != nil {
-			if rid, err := id.DatasetIDFrom(*r); err == nil {
+			if rid, err := IDFrom(*r); err == nil {
 				nextDepthIDs = append(nextDepthIDs, rid)
 			}
 		}
@@ -53,7 +51,7 @@ func (di *GraphIterator) Next(d *Dataset) (id.DatasetID, bool) {
 		if di.maxDepth <= di.currentDepthIndex || len(nextDepthIDs) == 0 {
 			// done
 			di.currentDepthIndex++
-			return id.DatasetID{}, true
+			return ID{}, true
 		}
 		di.currentDepthIndex++
 	} else {

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"golang.org/x/text/language"
 )
 
@@ -11,16 +10,16 @@ type InitParams struct {
 	Auth0Sub string
 	Lang     *language.Tag
 	Theme    *Theme
-	UserID   *id.UserID
-	TeamID   *id.TeamID
+	UserID   *ID
+	TeamID   *TeamID
 }
 
 func Init(p InitParams) (*User, *Team, error) {
 	if p.UserID == nil {
-		p.UserID = id.NewUserID().Ref()
+		p.UserID = NewID().Ref()
 	}
 	if p.TeamID == nil {
-		p.TeamID = id.NewTeamID().Ref()
+		p.TeamID = NewTeamID().Ref()
 	}
 	if p.Lang == nil {
 		p.Lang = &language.Tag{}
@@ -46,7 +45,7 @@ func Init(p InitParams) (*User, *Team, error) {
 	t, err := NewTeam().
 		ID(*p.TeamID).
 		Name(p.Name).
-		Members(map[id.UserID]Role{u.ID(): RoleOwner}).
+		Members(map[ID]Role{u.ID(): RoleOwner}).
 		Personal(true).
 		Build()
 	if err != nil {

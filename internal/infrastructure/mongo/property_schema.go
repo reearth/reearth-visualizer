@@ -56,7 +56,7 @@ func (r *propertySchemaRepo) FindByIDs(ctx context.Context, ids []id.PropertySch
 
 	if len(ids2) > 0 {
 		filter := bson.D{{Key: "id", Value: bson.D{{
-			Key: "$in", Value: id.PropertySchemaIDToKeys(ids2),
+			Key: "$in", Value: id.PropertySchemaIDsToStrings(ids2),
 		}}}}
 		dst := make(property.SchemaList, 0, len(ids2))
 		res, err = r.find(ctx, dst, filter)
@@ -120,7 +120,7 @@ func (r *propertySchemaRepo) RemoveAll(ctx context.Context, ids []id.PropertySch
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.PropertySchemaIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.PropertySchemaIDsToStrings(ids))
 }
 
 func (r *propertySchemaRepo) find(ctx context.Context, dst property.SchemaList, filter bson.D) (property.SchemaList, error) {

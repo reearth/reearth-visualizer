@@ -2,8 +2,6 @@ package scene
 
 import (
 	"errors"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
@@ -45,7 +43,7 @@ func (w *WidgetSystem) Widgets() []*Widget {
 	return append([]*Widget{}, w.widgets...)
 }
 
-func (w *WidgetSystem) Widget(wid id.WidgetID) *Widget {
+func (w *WidgetSystem) Widget(wid WidgetID) *Widget {
 	if w == nil {
 		return nil
 	}
@@ -57,7 +55,7 @@ func (w *WidgetSystem) Widget(wid id.WidgetID) *Widget {
 	return nil
 }
 
-func (w *WidgetSystem) Has(wid id.WidgetID) bool {
+func (w *WidgetSystem) Has(wid WidgetID) bool {
 	if w == nil {
 		return false
 	}
@@ -77,7 +75,7 @@ func (w *WidgetSystem) Add(sw *Widget) {
 	w.widgets = append(w.widgets, &sw2)
 }
 
-func (w *WidgetSystem) Remove(wid id.WidgetID) {
+func (w *WidgetSystem) Remove(wid WidgetID) {
 	if w == nil {
 		return
 	}
@@ -89,7 +87,7 @@ func (w *WidgetSystem) Remove(wid id.WidgetID) {
 	}
 }
 
-func (w *WidgetSystem) RemoveAllByPlugin(p id.PluginID) (res []id.PropertyID) {
+func (w *WidgetSystem) RemoveAllByPlugin(p PluginID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -103,7 +101,7 @@ func (w *WidgetSystem) RemoveAllByPlugin(p id.PluginID) (res []id.PropertyID) {
 	return res
 }
 
-func (w *WidgetSystem) RemoveAllByExtension(p id.PluginID, e id.PluginExtensionID) (res []id.PropertyID) {
+func (w *WidgetSystem) RemoveAllByExtension(p PluginID, e PluginExtensionID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -117,7 +115,7 @@ func (w *WidgetSystem) RemoveAllByExtension(p id.PluginID, e id.PluginExtensionI
 	return res
 }
 
-func (w *WidgetSystem) ReplacePlugin(oldp, newp id.PluginID) {
+func (w *WidgetSystem) ReplacePlugin(oldp, newp PluginID) {
 	if w == nil || w.widgets == nil {
 		return
 	}
@@ -128,11 +126,11 @@ func (w *WidgetSystem) ReplacePlugin(oldp, newp id.PluginID) {
 	}
 }
 
-func (w *WidgetSystem) Properties() []id.PropertyID {
+func (w *WidgetSystem) Properties() []PropertyID {
 	if w == nil {
 		return nil
 	}
-	res := make([]id.PropertyID, 0, len(w.widgets))
+	res := make([]PropertyID, 0, len(w.widgets))
 	for _, ww := range w.widgets {
 		res = append(res, ww.property)
 	}

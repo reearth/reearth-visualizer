@@ -3,7 +3,6 @@ package tag
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,22 +10,22 @@ var _ Tag = &Item{}
 
 func TestItemBuilder_NewID(t *testing.T) {
 	b := NewItem().NewID()
-	assert.NotEqual(t, id.TagID{}, b.i.id)
+	assert.NotEqual(t, ID{}, b.i.id)
 }
 
 func TestItemBuilder_Build(t *testing.T) {
-	tid := id.NewTagID()
-	sid := id.NewSceneID()
-	dfid := id.NewDatasetSchemaFieldID()
-	did := id.NewDatasetID()
-	dsid := id.NewDatasetSchemaID()
+	tid := NewID()
+	sid := NewSceneID()
+	dfid := NewDatasetFieldID()
+	did := NewDatasetID()
+	dsid := NewDatasetSchemaID()
 	testCases := []struct {
 		Name, Label           string
-		Id                    id.TagID
-		Scene                 id.SceneID
-		LinkedDatasetFieldID  *id.DatasetSchemaFieldID
-		LinkedDatasetID       *id.DatasetID
-		LinkedDatasetSchemaID *id.DatasetSchemaID
+		Id                    ID
+		Scene                 SceneID
+		LinkedDatasetFieldID  *DatasetFieldID
+		LinkedDatasetID       *DatasetID
+		LinkedDatasetSchemaID *DatasetSchemaID
 		Expected              struct {
 			Item  Item
 			Error error
@@ -35,18 +34,18 @@ func TestItemBuilder_Build(t *testing.T) {
 		{
 			Name:  "fail: nil tag ID",
 			Label: "xxx",
-			Scene: id.NewSceneID(),
+			Scene: NewSceneID(),
 			Expected: struct {
 				Item  Item
 				Error error
 			}{
-				Error: id.ErrInvalidID,
+				Error: ErrInvalidID,
 			},
 		},
 		{
 			Name:  "fail: empty label",
-			Id:    id.NewTagID(),
-			Scene: id.NewSceneID(),
+			Id:    NewID(),
+			Scene: NewSceneID(),
 			Expected: struct {
 				Item  Item
 				Error error
@@ -57,7 +56,7 @@ func TestItemBuilder_Build(t *testing.T) {
 		{
 			Name:  "fail: nil scene ID",
 			Label: "xxx",
-			Id:    id.NewTagID(),
+			Id:    NewID(),
 			Expected: struct {
 				Item  Item
 				Error error

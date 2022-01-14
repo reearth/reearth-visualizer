@@ -1,9 +1,5 @@
 package layer
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 func GroupFromLayer(l Layer) *Group {
 	li, ok := l.(*Group)
 	if !ok {
@@ -32,8 +28,8 @@ func NewGroup() *GroupBuilder {
 }
 
 func (b *GroupBuilder) Build() (*Group, error) {
-	if id.ID(b.l.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.l.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -51,17 +47,17 @@ func (b *GroupBuilder) base(layer layerBase) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) ID(id id.LayerID) *GroupBuilder {
+func (b *GroupBuilder) ID(id ID) *GroupBuilder {
 	b.l.id = id
 	return b
 }
 
 func (b *GroupBuilder) NewID() *GroupBuilder {
-	b.l.id = id.NewLayerID()
+	b.l.id = NewID()
 	return b
 }
 
-func (b *GroupBuilder) Scene(s id.SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(s SceneID) *GroupBuilder {
 	b.l.scene = s
 	return b
 }
@@ -81,17 +77,17 @@ func (b *GroupBuilder) IsVisible(visible bool) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Plugin(plugin *id.PluginID) *GroupBuilder {
+func (b *GroupBuilder) Plugin(plugin *PluginID) *GroupBuilder {
 	b.l.plugin = plugin.CopyRef()
 	return b
 }
 
-func (b *GroupBuilder) Extension(extension *id.PluginExtensionID) *GroupBuilder {
+func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
 	b.l.extension = extension.CopyRef()
 	return b
 }
 
-func (b *GroupBuilder) Property(property *id.PropertyID) *GroupBuilder {
+func (b *GroupBuilder) Property(property *PropertyID) *GroupBuilder {
 	b.l.property = property.CopyRef()
 	return b
 }
@@ -106,7 +102,7 @@ func (b *GroupBuilder) Infobox(infobox *Infobox) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *id.DatasetSchemaID) *GroupBuilder {
+func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *DatasetSchemaID) *GroupBuilder {
 	b.l.linkedDatasetSchema = linkedDatasetSchema.CopyRef()
 	return b
 }

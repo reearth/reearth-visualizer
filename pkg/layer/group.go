@@ -1,22 +1,21 @@
 package layer
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 type Group struct {
 	layerBase
 	layers              *IDList
-	linkedDatasetSchema *id.DatasetSchemaID
+	linkedDatasetSchema *DatasetSchemaID
 	root                bool
 }
 
-func (l *Group) ID() id.LayerID {
+func (l *Group) ID() ID {
 	return l.layerBase.ID()
 }
 
-func (l *Group) IDRef() *id.LayerID {
+func (l *Group) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
@@ -27,14 +26,14 @@ func (l *Group) Name() string {
 	return l.layerBase.Name()
 }
 
-func (l *Group) Plugin() *id.PluginID {
+func (l *Group) Plugin() *PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.Plugin()
 }
 
-func (l *Group) Extension() *id.PluginExtensionID {
+func (l *Group) Extension() *PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -45,7 +44,7 @@ func (l *Group) UsesPlugin() bool {
 	return l.layerBase.UsesPlugin()
 }
 
-func (l *Group) Property() *id.PropertyID {
+func (l *Group) Property() *PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -87,7 +86,7 @@ func (l *Group) SetVisible(visible bool) {
 	l.layerBase.SetVisible(visible)
 }
 
-func (l *Group) SetPlugin(plugin *id.PluginID) {
+func (l *Group) SetPlugin(plugin *PluginID) {
 	if l == nil {
 		return
 	}
@@ -101,7 +100,7 @@ func (l *Group) IsLinked() bool {
 	return l.linkedDatasetSchema != nil
 }
 
-func (l *Group) LinkedDatasetSchema() *id.DatasetSchemaID {
+func (l *Group) LinkedDatasetSchema() *DatasetSchemaID {
 	if l == nil || l.linkedDatasetSchema == nil {
 		return nil
 	}
@@ -109,7 +108,7 @@ func (l *Group) LinkedDatasetSchema() *id.DatasetSchemaID {
 	return &id
 }
 
-func (l *Group) Link(ds id.DatasetSchemaID) {
+func (l *Group) Link(ds DatasetSchemaID) {
 	if l == nil {
 		return
 	}
@@ -134,7 +133,7 @@ func (l *Group) Layers() *IDList {
 	return l.layers
 }
 
-func (l *Group) MoveLayerFrom(id id.LayerID, index int, fromLayerGroup *Group) {
+func (l *Group) MoveLayerFrom(id ID, index int, fromLayerGroup *Group) {
 	if l == nil {
 		return
 	}
@@ -167,7 +166,7 @@ func (l *Group) IsRoot() bool {
 	return l.root
 }
 
-func (l *Group) Properties() []id.PropertyID {
+func (l *Group) Properties() []PropertyID {
 	if l == nil {
 		return nil
 	}

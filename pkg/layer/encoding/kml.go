@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	kml "github.com/twpayne/go-kml"
 )
@@ -154,7 +154,7 @@ func (e *KMLEncoder) encodeStyle(li *merging.SealedLayerItem) (*kml.SharedElemen
 
 // encodes non style layer features
 func (e *KMLEncoder) encodeLayerTag(li *merging.SealedLayerItem) (*kml.CompoundElement, error) {
-	if li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
+	if li.PluginID == nil || !layer.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, nil
 	}
 

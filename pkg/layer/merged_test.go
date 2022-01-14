@@ -3,24 +3,23 @@ package layer
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMerge(t *testing.T) {
-	scene := id.NewSceneID()
-	dataset1 := id.NewDatasetID()
-	p := id.MustPluginID("xxx~1.1.1")
-	e := id.PluginExtensionID("foo")
+	scene := NewSceneID()
+	dataset1 := NewDatasetID()
+	p := MustPluginID("xxx~1.1.1")
+	e := PluginExtensionID("foo")
 
-	itemProperty := id.NewPropertyID()
-	groupProperty := id.NewPropertyID()
-	ib1pr := id.NewPropertyID()
-	ib2pr := id.NewPropertyID()
-	f1pr := id.NewPropertyID()
-	f2pr := id.NewPropertyID()
-	f3pr := id.NewPropertyID()
+	itemProperty := NewPropertyID()
+	groupProperty := NewPropertyID()
+	ib1pr := NewPropertyID()
+	ib2pr := NewPropertyID()
+	f1pr := NewPropertyID()
+	f2pr := NewPropertyID()
+	f3pr := NewPropertyID()
 
 	f1 := NewInfoboxField().NewID().Plugin(p).Extension(e).Property(f1pr).MustBuild()
 	f2 := NewInfoboxField().NewID().Plugin(p).Extension(e).Property(f2pr).MustBuild()
@@ -317,13 +316,13 @@ func TestMerge(t *testing.T) {
 }
 
 func TestMergedProperties(t *testing.T) {
-	itemProperty := id.NewPropertyID()
-	groupProperty := id.NewPropertyID()
-	ib1pr := id.NewPropertyID()
-	ib2pr := id.NewPropertyID()
-	f1pr := id.NewPropertyID()
-	f2pr := id.NewPropertyID()
-	f3pr := id.NewPropertyID()
+	itemProperty := NewPropertyID()
+	groupProperty := NewPropertyID()
+	ib1pr := NewPropertyID()
+	ib2pr := NewPropertyID()
+	f1pr := NewPropertyID()
+	f2pr := NewPropertyID()
+	f3pr := NewPropertyID()
 
 	merged := &Merged{
 		Property: &property.MergedMetadata{
@@ -352,7 +351,7 @@ func TestMergedProperties(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, []id.PropertyID{
+	assert.Equal(t, []PropertyID{
 		itemProperty, groupProperty, ib1pr, ib2pr, f1pr, f2pr, f3pr,
 	}, merged.Properties())
 }

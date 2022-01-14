@@ -36,7 +36,7 @@ func (r *propertyRepo) FindByID(ctx context.Context, id2 id.PropertyID, f []id.S
 
 func (r *propertyRepo) FindByIDs(ctx context.Context, ids []id.PropertyID, f []id.SceneID) (property.List, error) {
 	filter := r.sceneFilter(bson.D{{Key: "id", Value: bson.D{{
-		Key: "$in", Value: id.PropertyIDToKeys(ids),
+		Key: "$in", Value: id.PropertyIDsToStrings(ids),
 	}}}}, f)
 	dst := make(property.List, 0, len(ids))
 	res, err := r.find(ctx, dst, filter)
@@ -99,7 +99,7 @@ func (r *propertyRepo) RemoveAll(ctx context.Context, ids []id.PropertyID) error
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.PropertyIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.PropertyIDsToStrings(ids))
 }
 
 func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
@@ -164,7 +164,7 @@ func (*propertyRepo) sceneFilter(filter bson.D, scenes []id.SceneID) bson.D {
 	}
 	filter = append(filter, bson.E{
 		Key:   "scene",
-		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
+		Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(scenes)}},
 	})
 	return filter
 }

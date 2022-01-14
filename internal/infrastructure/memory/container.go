@@ -4,7 +4,6 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
 
-// InitRepos _
 func InitRepos(c *repo.Container) *repo.Container {
 	if c == nil {
 		c = &repo.Container{}

@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewWidgetID(t *testing.T) {
 	id := NewWidgetID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestWidgetIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestWidgetIDFrom(t *testing.T) {
 				result WidgetID
 				err    error
 			}{
-				WidgetID{},
-				ErrInvalidID,
+				result: WidgetID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestWidgetIDFrom(t *testing.T) {
 				result WidgetID
 				err    error
 			}{
-				WidgetID{},
-				ErrInvalidID,
+				result: WidgetID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestWidgetIDFrom(t *testing.T) {
 				result WidgetID
 				err    error
 			}{
-				WidgetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: WidgetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := WidgetIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := WidgetIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustWidgetID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustWidgetID(t *testing.T) {
 			expected:    WidgetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustWidgetID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustWidgetID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestWidgetIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *WidgetID
@@ -139,159 +135,149 @@ func TestWidgetIDFromRef(t *testing.T) {
 			expected: &WidgetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := WidgetIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := WidgetIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestWidgetIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := WidgetIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := WidgetIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, WidgetIDFromRefID(nil))
+	assert.Nil(t, WidgetIDFromRefID(&ID{}))
 }
 
 func TestWidgetID_ID(t *testing.T) {
 	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := WidgetIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestWidgetID_String(t *testing.T) {
 	id := New()
-	subId := WidgetIDFromRefID(&id)
+	id2 := WidgetIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", WidgetID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestWidgetID_RefString(t *testing.T) {
+	id := NewWidgetID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, WidgetID{}.RefString())
 }
 
 func TestWidgetID_GoString(t *testing.T) {
 	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.WidgetID("+id.String()+")")
-}
-
-func TestWidgetID_RefString(t *testing.T) {
-	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := WidgetIDFromRefID(&id)
+	assert.Equal(t, "WidgetID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "WidgetID()", WidgetID{}.GoString())
 }
 
 func TestWidgetID_Ref(t *testing.T) {
-	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewWidgetID()
+	assert.Equal(t, WidgetID(id), *id.Ref())
+	assert.Nil(t, (&WidgetID{}).Ref())
 }
 
 func TestWidgetID_Contains(t *testing.T) {
 	id := NewWidgetID()
 	id2 := NewWidgetID()
 	assert.True(t, id.Contains([]WidgetID{id, id2}))
+	assert.False(t, WidgetID{}.Contains([]WidgetID{id, id2, {}}))
 	assert.False(t, id.Contains([]WidgetID{id2}))
 }
 
 func TestWidgetID_CopyRef(t *testing.T) {
-	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewWidgetID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*WidgetID)(nil).CopyRef())
 }
 
 func TestWidgetID_IDRef(t *testing.T) {
 	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := WidgetIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&WidgetID{}).IDRef())
+	assert.Nil(t, (*WidgetID)(nil).IDRef())
 }
 
 func TestWidgetID_StringRef(t *testing.T) {
-	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewWidgetID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&WidgetID{}).StringRef())
+	assert.Nil(t, (*WidgetID)(nil).StringRef())
 }
 
 func TestWidgetID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewWidgetID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&WidgetID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*WidgetID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestWidgetID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &WidgetID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustWidgetID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &WidgetID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestWidgetID_MarshalText(t *testing.T) {
 	id := New()
-	subId := WidgetIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := WidgetIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&WidgetID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*WidgetID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestWidgetID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &WidgetID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &WidgetID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestWidgetID_IsNil(t *testing.T) {
-	subId := WidgetID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *WidgetIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, WidgetID{}.IsNil())
+	assert.False(t, NewWidgetID().IsNil())
 }
 
-func TestWidgetIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestWidgetID_IsNilRef(t *testing.T) {
+	assert.True(t, WidgetID{}.Ref().IsNilRef())
+	assert.True(t, (*WidgetID)(nil).IsNilRef())
+	assert.False(t, NewWidgetID().Ref().IsNilRef())
+}
+
+func TestWidgetIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []WidgetID
 		expected []string
@@ -321,19 +307,17 @@ func TestWidgetIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, WidgetIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, WidgetIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestWidgetIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestWidgetIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestWidgetIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := WidgetIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := WidgetIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := WidgetIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestWidgetIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []WidgetID
@@ -449,25 +431,22 @@ func TestWidgetIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := WidgetIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestWidgetIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []WidgetID
@@ -493,21 +472,18 @@ func TestWidgetIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := WidgetIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestWidgetIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []WidgetID
 		expected []ID
@@ -537,28 +513,25 @@ func TestWidgetIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := WidgetIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestWidgetIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustWidgetID(id1.String())
+	id21 := MustWidgetID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustWidgetID(id2.String())
+	id22 := MustWidgetID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustWidgetID(id3.String())
+	id23 := MustWidgetID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*WidgetID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestWidgetIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*WidgetID{&subId1},
+			input:    []*WidgetID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*WidgetID{&subId1, &subId2, &subId3},
+			input:    []*WidgetID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := WidgetIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewWidgetIDSet(t *testing.T) {
 	WidgetIdSet := NewWidgetIDSet()
-
 	assert.NotNil(t, WidgetIdSet)
 	assert.Empty(t, WidgetIdSet.m)
 	assert.Empty(t, WidgetIdSet.s)
 }
 
 func TestWidgetIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []WidgetID
 		expected *WidgetIDSet
@@ -663,24 +632,19 @@ func TestWidgetIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewWidgetIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestWidgetIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	WidgetId := MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *WidgetID
 		expected *WidgetIDSet
@@ -695,7 +659,7 @@ func TestWidgetIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &WidgetId,
+			input: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &WidgetIDSet{
 				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestWidgetIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewWidgetIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestWidgetIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			WidgetIDSet
-			WidgetID
-		}
+	tests := []struct {
+		name     string
+		target   *WidgetIDSet
+		input    WidgetID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				WidgetIDSet
-				WidgetID
-			}{WidgetIDSet: WidgetIDSet{}, WidgetID: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &WidgetIDSet{},
+			input:    MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				WidgetIDSet
-				WidgetID
-			}{WidgetIDSet: WidgetIDSet{
+			target: &WidgetIDSet{
 				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, WidgetID: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				WidgetIDSet
-				WidgetID
-			}{WidgetIDSet: WidgetIDSet{
+			target: &WidgetIDSet{
 				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, WidgetID: MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustWidgetID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.WidgetIDSet.Has(tc.input.WidgetID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestWidgetIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    WidgetIDSet
-		expected WidgetIDSet
+		input    *WidgetIDSet
+		expected *WidgetIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: WidgetIDSet{},
-			expected: WidgetIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &WidgetIDSet{},
+			expected: &WidgetIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: WidgetIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &WidgetIDSet{
 				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: WidgetIDSet{
+			expected: &WidgetIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestWidgetIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *WidgetIDSet
 		expected []WidgetID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &WidgetIDSet{
 				m: map[WidgetID]struct{}{},
 				s: nil,
 			},
 			expected: make([]WidgetID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestWidgetIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestWidgetIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *WidgetIDSet
 		expected *WidgetIDSet
@@ -922,21 +873,19 @@ func TestWidgetIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestWidgetIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *WidgetIDSet
@@ -944,6 +893,23 @@ func TestWidgetIDSet_Merge(t *testing.T) {
 		}
 		expected *WidgetIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *WidgetIDSet
+				b *WidgetIDSet
+			}{
+				a: &WidgetIDSet{
+					m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &WidgetIDSet{
+				m: map[WidgetID]struct{}{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []WidgetID{MustWidgetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestWidgetIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

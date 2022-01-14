@@ -5,7 +5,7 @@ import (
 	"io"
 
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -40,7 +40,7 @@ func (e *GeoJSONEncoder) coordsToFloat(c property.Coordinates) [][]float64 {
 }
 
 func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojson.Feature, error) {
-	if li == nil || li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
+	if li == nil || li.PluginID == nil || !layer.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, nil
 	}
 

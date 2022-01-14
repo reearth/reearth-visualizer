@@ -3,8 +3,6 @@ package property
 import (
 	"errors"
 	"fmt"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
@@ -26,7 +24,7 @@ func NewSchema() *SchemaBuilder {
 
 func (b *SchemaBuilder) Build() (*Schema, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, ErrInvalidID
 	}
 	if d := b.p.DetectDuplicatedFields(); len(d) > 0 {
 		return nil, fmt.Errorf("%s: %s %s", ErrDuplicatedField, b.p.id, d)
@@ -45,7 +43,7 @@ func (b *SchemaBuilder) MustBuild() *Schema {
 	return p
 }
 
-func (b *SchemaBuilder) ID(id id.PropertySchemaID) *SchemaBuilder {
+func (b *SchemaBuilder) ID(id SchemaID) *SchemaBuilder {
 	b.p.id = id
 	return b
 }
@@ -57,7 +55,7 @@ func (b *SchemaBuilder) Version(version int) *SchemaBuilder {
 
 func (b *SchemaBuilder) Groups(groups []*SchemaGroup) *SchemaBuilder {
 	newGroups := []*SchemaGroup{}
-	ids := map[id.PropertySchemaGroupID]struct{}{}
+	ids := map[SchemaGroupID]struct{}{}
 	for _, f := range groups {
 		if f == nil {
 			continue

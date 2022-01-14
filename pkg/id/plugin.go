@@ -105,6 +105,21 @@ func PluginIDFromRef(id *string) *PluginID {
 	return &did
 }
 
+// Clone duplicates the PluginID
+func (d PluginID) Clone() PluginID {
+	return PluginID{
+		name:    d.name,
+		version: d.version,
+		sys:     d.sys,
+		scene:   d.scene.CopyRef(),
+	}
+}
+
+// IsNil checks if ID is empty or not.
+func (d PluginID) IsNil() bool {
+	return d.name == "" && d.version == "" && d.scene == nil && !d.sys
+}
+
 // Name returns a name.
 func (d PluginID) Name() string {
 	return d.name
@@ -158,7 +173,6 @@ func (d PluginID) Ref() *PluginID {
 	return &d2
 }
 
-// CopyRef _
 func (d *PluginID) CopyRef() *PluginID {
 	if d == nil {
 		return nil
@@ -201,7 +215,7 @@ func (d *PluginID) UnmarshalText(text []byte) (err error) {
 }
 
 // PluginIDToKeys converts IDs into a string slice.
-func PluginIDToKeys(ids []PluginID) []string {
+func PluginIDsToStrings(ids []PluginID) []string {
 	keys := make([]string, 0, len(ids))
 	for _, id := range ids {
 		keys = append(keys, id.String())

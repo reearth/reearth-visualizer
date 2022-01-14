@@ -5,16 +5,16 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInitialize(t *testing.T) {
-	lid := id.MustLayerID(id.New().String())
-	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
-	eid := id.PluginExtensionID("foo")
-	eid2 := id.PluginExtensionID("foo2")
+	lid := layer.NewID()
+	ps := plugin.MustPropertySchemaID("xxx~1.1.1/aa")
+	eid := plugin.ExtensionID("foo")
+	eid2 := plugin.ExtensionID("foo2")
 	e := plugin.NewExtension().
 		ID("foo").
 		Description(i18n.StringFrom("foo/des")).
@@ -29,17 +29,17 @@ func TestInitialize(t *testing.T) {
 	es := append(make([]*plugin.Extension, 0), e)
 	es = append(es, e2)
 	p := plugin.New().
-		ID(id.MustPluginID("xxx~1.1.1")).
+		ID(layer.MustPluginID("xxx~1.1.1")).
 		Schema(&ps).
 		Extensions(es).
 		MustBuild()
-	s := id.NewSceneID()
+	s := layer.NewSceneID()
 	testCases := []struct {
 		name          string
-		sceneID       *id.SceneID
-		parentLayerID *id.LayerID
+		sceneID       *layer.SceneID
+		parentLayerID *layer.ID
 		plugin        *plugin.Plugin
-		extID         *id.PluginExtensionID
+		extID         *layer.PluginExtensionID
 		err           error
 	}{
 		{

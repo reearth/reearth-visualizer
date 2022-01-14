@@ -16,7 +16,6 @@ const (
 	LockModePublishing LockMode = "publishing"
 )
 
-// IsLocked _
 func (l LockMode) IsLocked() bool {
 	switch l {
 	case LockModeFree:
@@ -27,7 +26,6 @@ func (l LockMode) IsLocked() bool {
 	return true
 }
 
-// Validate _
 func (l LockMode) Validate() (LockMode, bool) {
 	switch l {
 	case LockModeFree:

@@ -5,7 +5,6 @@ import (
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
-// Operator _
 type Operator struct {
 	User          id.UserID
 	ReadableTeams []id.TeamID
@@ -13,7 +12,6 @@ type Operator struct {
 	OwningTeams   []id.TeamID
 }
 
-// OperatorFrom _
 func OperatorFrom(u id.UserID, teams []*user.Team) *Operator {
 	rt := []id.TeamID{}
 	wt := []id.TeamID{}
@@ -41,7 +39,6 @@ func OperatorFrom(u id.UserID, teams []*user.Team) *Operator {
 	}
 }
 
-// Teams _
 func (o *Operator) Teams(r user.Role) []id.TeamID {
 	if o == nil {
 		return nil
@@ -58,7 +55,6 @@ func (o *Operator) Teams(r user.Role) []id.TeamID {
 	return nil
 }
 
-// IsReadableTeamIncluded _
 func (o *Operator) IsReadableTeamIncluded(team id.TeamID) bool {
 	if o == nil {
 		return false
@@ -71,7 +67,6 @@ func (o *Operator) IsReadableTeamIncluded(team id.TeamID) bool {
 	return false
 }
 
-// IsWritableTeamIncluded _
 func (o *Operator) IsWritableTeamIncluded(team id.TeamID) bool {
 	if o == nil {
 		return false
@@ -84,7 +79,6 @@ func (o *Operator) IsWritableTeamIncluded(team id.TeamID) bool {
 	return false
 }
 
-// IsOwningTeamIncluded _
 func (o *Operator) IsOwningTeamIncluded(team id.TeamID) bool {
 	if o == nil {
 		return false
@@ -97,7 +91,6 @@ func (o *Operator) IsOwningTeamIncluded(team id.TeamID) bool {
 	return false
 }
 
-// IsReadableTeamsIncluded _
 func (o *Operator) IsReadableTeamsIncluded(teams []id.TeamID) bool {
 	if o == nil {
 		return false
@@ -112,7 +105,6 @@ func (o *Operator) IsReadableTeamsIncluded(teams []id.TeamID) bool {
 	return false
 }
 
-// IsWritableTeamsIncluded _
 func (o *Operator) IsWritableTeamsIncluded(teams []id.TeamID) bool {
 	if o == nil {
 		return false
@@ -127,7 +119,6 @@ func (o *Operator) IsWritableTeamsIncluded(teams []id.TeamID) bool {
 	return false
 }
 
-// IsOwningTeamsIncluded _
 func (o *Operator) IsOwningTeamsIncluded(teams []id.TeamID) bool {
 	if o == nil {
 		return false

@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
@@ -17,8 +16,8 @@ func New() *Builder {
 }
 
 func (b *Builder) Build() (*Project, error) {
-	if id.ID(b.p.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.p.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	if b.p.alias != "" && !CheckAliasPattern(b.p.alias) {
 		return nil, ErrInvalidAlias
@@ -37,13 +36,13 @@ func (b *Builder) MustBuild() *Project {
 	return r
 }
 
-func (b *Builder) ID(id id.ProjectID) *Builder {
+func (b *Builder) ID(id ID) *Builder {
 	b.p.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.p.id = id.ProjectID(id.New())
+	b.p.id = NewID()
 	return b
 }
 
@@ -122,7 +121,7 @@ func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
 	return b
 }
 
-func (b *Builder) Team(team id.TeamID) *Builder {
+func (b *Builder) Team(team TeamID) *Builder {
 	b.p.team = team
 	return b
 }

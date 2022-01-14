@@ -1,10 +1,7 @@
 package property
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
-// Schema _
 type Schema struct {
-	id       id.PropertySchemaID
+	id       SchemaID
 	version  int
 	groups   []*SchemaGroup
 	linkable LinkableFields
@@ -15,11 +12,11 @@ type LinkableFields struct {
 	URL    *Pointer
 }
 
-func (p *Schema) ID() id.PropertySchemaID {
+func (p *Schema) ID() SchemaID {
 	return p.id
 }
 
-func (p *Schema) IDRef() *id.PropertySchemaID {
+func (p *Schema) IDRef() *SchemaID {
 	if p == nil {
 		return nil
 	}
@@ -41,7 +38,7 @@ func (p *Schema) Fields() []*SchemaField {
 	return fields
 }
 
-func (p *Schema) Field(id id.PropertySchemaFieldID) *SchemaField {
+func (p *Schema) Field(id FieldID) *SchemaField {
 	if p == nil {
 		return nil
 	}
@@ -71,7 +68,7 @@ func (p *Schema) Groups() []*SchemaGroup {
 	return append([]*SchemaGroup{}, p.groups...)
 }
 
-func (p *Schema) Group(id id.PropertySchemaGroupID) *SchemaGroup {
+func (p *Schema) Group(id SchemaGroupID) *SchemaGroup {
 	if p == nil {
 		return nil
 	}
@@ -83,7 +80,7 @@ func (p *Schema) Group(id id.PropertySchemaGroupID) *SchemaGroup {
 	return nil
 }
 
-func (p *Schema) GroupByField(id id.PropertySchemaFieldID) *SchemaGroup {
+func (p *Schema) GroupByField(id FieldID) *SchemaGroup {
 	if p == nil {
 		return nil
 	}
@@ -114,9 +111,9 @@ func (p *Schema) GroupByPointer(ptr *Pointer) *SchemaGroup {
 	return nil
 }
 
-func (s *Schema) DetectDuplicatedFields() []id.PropertySchemaFieldID {
-	duplicated := []id.PropertySchemaFieldID{}
-	ids := map[id.PropertySchemaFieldID]struct{}{}
+func (s *Schema) DetectDuplicatedFields() []FieldID {
+	duplicated := []FieldID{}
+	ids := map[FieldID]struct{}{}
 	for _, f := range s.Fields() {
 		i := f.ID()
 		if _, ok := ids[i]; ok {

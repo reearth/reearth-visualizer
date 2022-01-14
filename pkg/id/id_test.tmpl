@@ -12,19 +12,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestNew{{$name}}ID(t *testing.T) {
 	id := New{{$name}}ID()
-    assert.NotNil(t, id)
-    ulID, err := ulid.Parse(id.String())
-
-    assert.NotNil(t, ulID)
-    assert.Nil(t, err)
+	assert.NotNil(t, id)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
+	assert.Nil(t, err)
 }
 
 func Test{{$name}}IDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -39,8 +36,8 @@ func Test{{$name}}IDFrom(t *testing.T) {
 				result {{$name}}ID
 				err    error
 			}{
-				{{$name}}ID{},
-				ErrInvalidID,
+				result: {{$name}}ID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -50,8 +47,8 @@ func Test{{$name}}IDFrom(t *testing.T) {
 				result {{$name}}ID
 				err    error
 			}{
-				{{$name}}ID{},
-				ErrInvalidID,
+				result: {{$name}}ID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -61,27 +58,26 @@ func Test{{$name}}IDFrom(t *testing.T) {
 				result {{$name}}ID
 				err    error
 			}{
-				{{$name}}ID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: {{$name}}ID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := {{$name}}IDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := {{$name}}IDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMust{{$name}}ID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -104,23 +100,23 @@ func TestMust{{$name}}ID(t *testing.T) {
 			expected:    {{$name}}ID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := Must{{$name}}ID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := Must{{$name}}ID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func Test{{$name}}IDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *{{$name}}ID
@@ -141,159 +137,149 @@ func Test{{$name}}IDFromRef(t *testing.T) {
 			expected: &{{$name}}ID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := {{$name}}IDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := {{$name}}IDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func Test{{$name}}IDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := {{$name}}IDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := {{$name}}IDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, {{$name}}IDFromRefID(nil))
+	assert.Nil(t, {{$name}}IDFromRefID(&ID{}))
 }
 
 func Test{{$name}}ID_ID(t *testing.T) {
 	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := {{$name}}IDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func Test{{$name}}ID_String(t *testing.T) {
 	id := New()
-	subId := {{$name}}IDFromRefID(&id)
+	id2 := {{$name}}IDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", {{$name}}ID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func Test{{$name}}ID_RefString(t *testing.T) {
+	id := New{{$name}}ID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, {{$name}}ID{}.RefString())
 }
 
 func Test{{$name}}ID_GoString(t *testing.T) {
 	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.{{$name}}ID(" + id.String() + ")")
-}
-
-func Test{{$name}}ID_RefString(t *testing.T) {
-	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := {{$name}}IDFromRefID(&id)
+	assert.Equal(t, "{{$name}}ID(" + id.String() + ")", id2.GoString())
+	assert.Equal(t, "{{$name}}ID()", {{$name}}ID{}.GoString())
 }
 
 func Test{{$name}}ID_Ref(t *testing.T) {
-	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := New{{$name}}ID()
+	assert.Equal(t, {{$name}}ID(id), *id.Ref())
+	assert.Nil(t, (&{{$name}}ID{}).Ref())
 }
 
 func Test{{$name}}ID_Contains(t *testing.T) {
 	id := New{{$name}}ID()
 	id2 := New{{$name}}ID()
 	assert.True(t, id.Contains([]{{$name}}ID{id, id2}))
+	assert.False(t, {{$name}}ID{}.Contains([]{{$name}}ID{id, id2, {}}))
 	assert.False(t, id.Contains([]{{$name}}ID{id2}))
 }
 
 func Test{{$name}}ID_CopyRef(t *testing.T) {
-	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := New{{$name}}ID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*{{$name}}ID)(nil).CopyRef())
 }
 
 func Test{{$name}}ID_IDRef(t *testing.T) {
 	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := {{$name}}IDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&{{$name}}ID{}).IDRef())
+	assert.Nil(t, (*{{$name}}ID)(nil).IDRef())
 }
 
 func Test{{$name}}ID_StringRef(t *testing.T) {
-	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := New{{$name}}ID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&{{$name}}ID{}).StringRef())
+	assert.Nil(t, (*{{$name}}ID)(nil).StringRef())
 }
 
 func Test{{$name}}ID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := New{{$name}}ID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&{{$name}}ID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*{{$name}}ID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func Test{{$name}}ID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &{{$name}}ID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := Must{{$name}}ID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &{{$name}}ID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func Test{{$name}}ID_MarshalText(t *testing.T) {
 	id := New()
-	subId := {{$name}}IDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := {{$name}}IDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&{{$name}}ID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*{{$name}}ID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func Test{{$name}}ID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &{{$name}}ID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &{{$name}}ID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func Test{{$name}}ID_IsNil(t *testing.T) {
-	subId := {{$name}}ID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *{{$name}}IDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, {{$name}}ID{}.IsNil())
+	assert.False(t, New{{$name}}ID().IsNil())
 }
 
-func Test{{$name}}IDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func Test{{$name}}ID_IsNilRef(t *testing.T) {
+	assert.True(t, {{$name}}ID{}.Ref().IsNilRef())
+	assert.True(t, (*{{$name}}ID)(nil).IsNilRef())
+	assert.False(t, New{{$name}}ID().Ref().IsNilRef())
+}
+
+func Test{{$name}}IDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []{{$name}}ID
 		expected []string
@@ -323,19 +309,17 @@ func Test{{$name}}IDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, {{$name}}IDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, {{$name}}IDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func Test{{$name}}IDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -344,7 +328,7 @@ func Test{{$name}}IDsFrom(t *testing.T) {
 		}
 	}{
 		{
-			name:  "Empty slice",
+			name: "Empty slice",
 			input: make([]string, 0),
 			expected: struct {
 				res []{{$name}}ID
@@ -355,7 +339,7 @@ func Test{{$name}}IDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name:  "1 element",
+			name: "1 element",
 			input: []string{"01f3zhcaq35403zdjnd6dcm0t2"},
 			expected: struct {
 				res []{{$name}}ID
@@ -385,10 +369,10 @@ func Test{{$name}}IDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -401,27 +385,25 @@ func Test{{$name}}IDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := {{$name}}IDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := {{$name}}IDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := {{$name}}IDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func Test{{$name}}IDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []{{$name}}ID
@@ -451,25 +433,22 @@ func Test{{$name}}IDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := {{$name}}IDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func Test{{$name}}IDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []{{$name}}ID
@@ -495,21 +474,18 @@ func Test{{$name}}IDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := {{$name}}IDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func Test{{$name}}IDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []{{$name}}ID
 		expected []ID
@@ -539,28 +515,25 @@ func Test{{$name}}IDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := {{$name}}IDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func Test{{$name}}IDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := Must{{$name}}ID(id1.String())
+	id21 := Must{{$name}}ID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := Must{{$name}}ID(id2.String())
+	id22 := Must{{$name}}ID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := Must{{$name}}ID(id3.String())
+	id23 := Must{{$name}}ID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*{{$name}}ID
 		expected []*ID
@@ -572,54 +545,50 @@ func Test{{$name}}IDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*{{$name}}ID{&subId1},
+			input:    []*{{$name}}ID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*{{$name}}ID{&subId1, &subId2, &subId3},
+			input:    []*{{$name}}ID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := {{$name}}IDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNew{{$name}}IDSet(t *testing.T) {
 	{{$name}}IdSet := New{{$name}}IDSet()
-
 	assert.NotNil(t, {{$name}}IdSet)
 	assert.Empty(t, {{$name}}IdSet.m)
 	assert.Empty(t, {{$name}}IdSet.s)
 }
 
 func Test{{$name}}IDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []{{$name}}ID
 		expected *{{$name}}IDSet
 	}{
 		{
-			name:  "Empty slice",
-			input: make([]{{$name}}ID, 0),
+			name:     "Empty slice",
+			input:    make([]{{$name}}ID, 0),
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{},
 				s: nil,
 			},
 		},
 		{
-			name:  "1 element",
-			input: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "1 element",
+			input:    []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -646,7 +615,7 @@ func Test{{$name}}IDSet_Add(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements with duplication",
+			name:  "multiple elements with duplication",
 			input: []{{$name}}ID{
 				Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
 				Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
@@ -665,31 +634,26 @@ func Test{{$name}}IDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := New{{$name}}IDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func Test{{$name}}IDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	{{$name}}Id := Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *{{$name}}ID
 		expected *{{$name}}IDSet
 	}{
 		{
-			name:  "Empty slice",
-			input: nil,
+			name:     "Empty slice",
+			input:    nil,
 			expected: &{{$name}}IDSet{
 				m: nil,
 				s: nil,
@@ -697,7 +661,7 @@ func Test{{$name}}IDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &{{$name}}Id,
+			input: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -705,126 +669,116 @@ func Test{{$name}}IDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := New{{$name}}IDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func Test{{$name}}IDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
-		input struct {
-			{{$name}}IDSet
-			{{$name}}ID
-		}
+		target *{{$name}}IDSet
+		input {{$name}}ID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				{{$name}}IDSet
-				{{$name}}ID
-			}{ {{$name}}IDSet: {{$name}}IDSet{}, {{$name}}ID: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &{{$name}}IDSet{},
+			input:    Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
-			name: "Set Contains the element",
-			input: struct {
-				{{$name}}IDSet
-				{{$name}}ID
-			}{ {{$name}}IDSet: {{$name}}IDSet{
+			name:   "Set Contains the element",
+			target: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, {{$name}}ID: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				{{$name}}IDSet
-				{{$name}}ID
-			}{ {{$name}}IDSet: {{$name}}IDSet{
+			target: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, {{$name}}ID: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input: Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.{{$name}}IDSet.Has(tc.input.{{$name}}ID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func Test{{$name}}IDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    {{$name}}IDSet
-		expected {{$name}}IDSet
+		input    *{{$name}}IDSet
+		expected *{{$name}}IDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: {{$name}}IDSet{},
-			expected: {{$name}}IDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &{{$name}}IDSet{},
+			expected: &{{$name}}IDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: {{$name}}IDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: {{$name}}IDSet{
+			expected: &{{$name}}IDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func Test{{$name}}IDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *{{$name}}IDSet
 		expected []{{$name}}ID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &{{$name}}IDSet{
 				m: map[{{$name}}ID]struct{}{},
 				s: nil,
 			},
 			expected: make([]{{$name}}ID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -856,20 +810,17 @@ func Test{{$name}}IDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func Test{{$name}}IDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *{{$name}}IDSet
 		expected *{{$name}}IDSet
@@ -924,21 +875,19 @@ func Test{{$name}}IDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func Test{{$name}}IDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *{{$name}}IDSet
@@ -946,6 +895,23 @@ func Test{{$name}}IDSet_Merge(t *testing.T) {
 		}
 		expected *{{$name}}IDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *{{$name}}IDSet
+				b *{{$name}}IDSet
+			}{
+				a: &{{$name}}IDSet{
+					m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &{{$name}}IDSet{
+				m: map[{{$name}}ID]struct{}{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []{{$name}}ID{Must{{$name}}ID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1002,12 +968,11 @@ func Test{{$name}}IDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

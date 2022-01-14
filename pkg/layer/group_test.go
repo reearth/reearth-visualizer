@@ -3,29 +3,28 @@ package layer
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 var _ Layer = &Group{}
 
-var l1 = id.MustLayerID(id.New().String())
-var l2 = id.MustLayerID(id.New().String())
+var l1 = NewID()
+var l2 = NewID()
 var group = Group{
 	layerBase: layerBase{
-		id:        id.MustLayerID(id.New().String()),
+		id:        NewID(),
 		name:      "xxx",
 		visible:   false,
-		plugin:    id.MustPluginID("aaa~1.1.1").Ref(),
-		extension: id.PluginExtensionID("foo").Ref(),
+		plugin:    MustPluginID("aaa~1.1.1").Ref(),
+		extension: PluginExtensionID("foo").Ref(),
 		property:  nil,
 		infobox:   nil,
 		tags:      nil,
-		scene:     id.SceneID{},
+		scene:     SceneID{},
 	},
 	layers: &IDList{
-		layers:   append(make([]id.LayerID, 0), l1, l2),
-		layerIDs: map[id.LayerID]struct{}{l1: {}, l2: {}},
+		layers:   append(make([]ID, 0), l1, l2),
+		layerIDs: map[ID]struct{}{l1: {}, l2: {}},
 	},
 	linkedDatasetSchema: nil,
 	root:                true,
@@ -33,7 +32,7 @@ var group = Group{
 
 func TestGroup_ID(t *testing.T) {
 	assert.NotNil(t, group.ID())
-	assert.IsType(t, id.MustLayerID(id.New().String()), group.ID())
+	assert.IsType(t, NewID(), group.ID())
 }
 
 func TestGroup_Name(t *testing.T) {
@@ -42,12 +41,12 @@ func TestGroup_Name(t *testing.T) {
 
 func TestGroup_Plugin(t *testing.T) {
 	assert.NotNil(t, group.Plugin())
-	assert.True(t, id.MustPluginID("aaa~1.1.1").Equal(*group.Plugin()))
+	assert.True(t, MustPluginID("aaa~1.1.1").Equal(*group.Plugin()))
 }
 
 func TestGroup_IDRef(t *testing.T) {
 	assert.NotNil(t, group.IDRef())
-	assert.IsType(t, id.MustLayerID(id.New().String()), group.ID())
+	assert.IsType(t, NewID(), group.ID())
 }
 
 func TestGroup_Extension(t *testing.T) {
@@ -82,7 +81,7 @@ func TestGroup_Rename(t *testing.T) {
 
 func TestGroup_SetInfobox(t *testing.T) {
 	inf := Infobox{
-		property: id.MustPropertyID(id.New().String()),
+		property: NewPropertyID(),
 		fields:   nil,
 		ids:      nil,
 	}
@@ -91,9 +90,9 @@ func TestGroup_SetInfobox(t *testing.T) {
 }
 
 func TestGroup_SetPlugin(t *testing.T) {
-	group.SetPlugin(id.MustPluginID("ccc~1.1.1").Ref())
+	group.SetPlugin(MustPluginID("ccc~1.1.1").Ref())
 	assert.NotNil(t, group.Plugin())
-	assert.True(t, id.MustPluginID("ccc~1.1.1").Equal(*group.Plugin()))
+	assert.True(t, MustPluginID("ccc~1.1.1").Equal(*group.Plugin()))
 }
 
 func TestGroup_SetVisible(t *testing.T) {
@@ -123,7 +122,7 @@ func TestGroup_LinkedDatasetSchema(t *testing.T) {
 }
 
 func TestGroup_Link(t *testing.T) {
-	group.Link(id.MustDatasetSchemaID(id.New().String()))
+	group.Link(NewDatasetSchemaID())
 	assert.NotNil(t, group.LinkedDatasetSchema())
 }
 

@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
@@ -19,7 +18,7 @@ func NewExtension() *ExtensionBuilder {
 
 func (b *ExtensionBuilder) Build() (*Extension, error) {
 	if string(b.p.id) == "" {
-		return nil, id.ErrInvalidID
+		return nil, ErrInvalidID
 	}
 	if !b.s {
 		if b.p.extensionType == ExtensionTypeVisualizer || b.p.extensionType == ExtensionTypeInfobox {
@@ -37,7 +36,7 @@ func (b *ExtensionBuilder) MustBuild() *Extension {
 	return p
 }
 
-func (b *ExtensionBuilder) ID(id id.PluginExtensionID) *ExtensionBuilder {
+func (b *ExtensionBuilder) ID(id ExtensionID) *ExtensionBuilder {
 	b.p.id = id
 	return b
 }
@@ -62,7 +61,7 @@ func (b *ExtensionBuilder) Icon(icon string) *ExtensionBuilder {
 	return b
 }
 
-func (b *ExtensionBuilder) Schema(schema id.PropertySchemaID) *ExtensionBuilder {
+func (b *ExtensionBuilder) Schema(schema PropertySchemaID) *ExtensionBuilder {
 	b.p.schema = schema
 	return b
 }

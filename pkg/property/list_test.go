@@ -3,15 +3,14 @@ package property
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	sf = NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg = NewSchemaGroup().ID("aa").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	p  = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
-	p2 = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	sg = NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	p  = New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	p2 = New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
 )
 
 func TestMap_Add(t *testing.T) {

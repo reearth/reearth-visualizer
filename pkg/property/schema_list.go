@@ -1,14 +1,12 @@
 package property
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type SchemaList []*Schema
 
 func (l SchemaList) Map() SchemaMap {
 	return SchemaMapFrom(l)
 }
 
-type SchemaMap map[id.PropertySchemaID]*Schema
+type SchemaMap map[SchemaID]*Schema
 
 func SchemaMapFrom(l []*Schema) SchemaMap {
 	m := make(SchemaMap, len(l))

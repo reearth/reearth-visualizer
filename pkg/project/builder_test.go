@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +18,7 @@ func TestNew(t *testing.T) {
 
 func TestBuilder_ID(t *testing.T) {
 	var tb = New()
-	res := tb.ID(id.NewProjectID()).MustBuild()
+	res := tb.ID(NewID()).MustBuild()
 	assert.NotNil(t, res.ID())
 }
 
@@ -104,7 +103,7 @@ func TestBuilder_Visualizer(t *testing.T) {
 
 func TestBuilder_Team(t *testing.T) {
 	var tb = New().NewID()
-	res := tb.Team(id.NewTeamID()).MustBuild()
+	res := tb.Team(NewTeamID()).MustBuild()
 	assert.NotNil(t, res.Team())
 }
 
@@ -156,19 +155,19 @@ func TestBuilder_PublicNoIndex(t *testing.T) {
 func TestBuilder_Build(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
-	pid := id.NewProjectID()
-	tid := id.NewTeamID()
+	pid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		name, pname, description,
 		alias, publicTitle, publicDescription,
 		publicImage string
-		id                id.ProjectID
+		id                ID
 		isArchived        bool
 		updatedAt         time.Time
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		team              id.TeamID
+		team              TeamID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 		expected          *Project
@@ -212,7 +211,7 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			name:      "zero updated at",
-			id:        id.NewProjectID(),
+			id:        NewID(),
 			updatedAt: time.Time{},
 			expected:  nil,
 			err:       nil,
@@ -221,11 +220,11 @@ func TestBuilder_Build(t *testing.T) {
 			name: "failed invalid id",
 
 			expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 		{
 			name:     "failed invalid alias",
-			id:       id.NewProjectID(),
+			id:       NewID(),
 			alias:    "xxx.aaa",
 			expected: nil,
 			err:      ErrInvalidAlias,
@@ -269,19 +268,19 @@ func TestBuilder_Build(t *testing.T) {
 func TestBuilder_MustBuild(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
-	pid := id.NewProjectID()
-	tid := id.NewTeamID()
+	pid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		name, pname, description,
 		alias, publicTitle, publicDescription,
 		publicImage string
-		id                id.ProjectID
+		id                ID
 		isArchived        bool
 		updatedAt         time.Time
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		team              id.TeamID
+		team              TeamID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 		expected          *Project
@@ -325,7 +324,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		},
 		{
 			name:      "zero updated at",
-			id:        id.NewProjectID(),
+			id:        NewID(),
 			updatedAt: time.Time{},
 			expected:  nil,
 			err:       nil,
@@ -334,11 +333,11 @@ func TestBuilder_MustBuild(t *testing.T) {
 			name: "failed invalid id",
 
 			expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 		{
 			name:     "failed invalid alias",
-			id:       id.NewProjectID(),
+			id:       NewID(),
 			alias:    "xxx.aaa",
 			expected: nil,
 			err:      ErrInvalidAlias,

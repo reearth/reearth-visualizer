@@ -44,7 +44,7 @@ func DatasetSchemaIDFromRef(i *string) *DatasetSchemaID {
 
 // DatasetSchemaIDFromRefID generates a new DatasetSchemaID from a ref of a generic ID.
 func DatasetSchemaIDFromRefID(i *ID) *DatasetSchemaID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := DatasetSchemaID(*i)
@@ -58,28 +58,40 @@ func (d DatasetSchemaID) ID() ID {
 
 // String returns a string representation.
 func (d DatasetSchemaID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d DatasetSchemaID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d DatasetSchemaID) GoString() string {
-	return "id.DatasetSchemaID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d DatasetSchemaID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "DatasetSchemaID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d DatasetSchemaID) Ref() *DatasetSchemaID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d DatasetSchemaID) Contains(ids []DatasetSchemaID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d DatasetSchemaID) Contains(ids []DatasetSchemaID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *DatasetSchemaID) CopyRef() *DatasetSchemaID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *DatasetSchemaID) CopyRef() *DatasetSchemaID {
 
 // IDRef returns a reference of a domain id.
 func (d *DatasetSchemaID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *DatasetSchemaID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *DatasetSchemaID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *DatasetSchemaID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *DatasetSchemaID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *DatasetSchemaID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *DatasetSchemaID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *DatasetSchemaID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d DatasetSchemaID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// DatasetSchemaIDToKeys converts IDs into a string slice.
-func DatasetSchemaIDToKeys(ids []DatasetSchemaID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *DatasetSchemaID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// DatasetSchemaIDsToStrings converts IDs into a string slice.
+func DatasetSchemaIDsToStrings(ids []DatasetSchemaID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // DatasetSchemaIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *DatasetSchemaIDSet) Clone() *DatasetSchemaIDSet {
 
 // Merge returns a merged set
 func (s *DatasetSchemaIDSet) Merge(s2 *DatasetSchemaIDSet) *DatasetSchemaIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

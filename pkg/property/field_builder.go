@@ -1,7 +1,5 @@
 package property
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type FieldBuilder struct {
 	p   *Field
 	psf *SchemaField
@@ -19,8 +17,8 @@ func NewField(p *SchemaField) *FieldBuilder {
 }
 
 func (b *FieldBuilder) Build() (*Field, error) {
-	if b.p.field == id.PropertySchemaFieldID("") {
-		return nil, id.ErrInvalidID
+	if b.p.field == FieldID("") {
+		return nil, ErrInvalidID
 	}
 	if b.psf != nil && !b.psf.Validate(b.p.v) {
 		return nil, ErrInvalidPropertyValue
@@ -65,7 +63,7 @@ func (b *FieldUnsafeBuilder) Build() *Field {
 	return b.p
 }
 
-func (b *FieldUnsafeBuilder) FieldUnsafe(f id.PropertySchemaFieldID) *FieldUnsafeBuilder {
+func (b *FieldUnsafeBuilder) FieldUnsafe(f FieldID) *FieldUnsafeBuilder {
 	b.p.field = f
 	return b
 }

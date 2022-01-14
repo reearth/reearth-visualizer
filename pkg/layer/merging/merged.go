@@ -1,7 +1,6 @@
 package merging
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -13,7 +12,7 @@ var (
 
 type MergedLayer interface {
 	Common() *MergedLayerCommon
-	AllDatasets() []id.DatasetID
+	AllDatasets() []layer.DatasetID
 }
 
 type MergedLayerGroup struct {
@@ -56,15 +55,15 @@ func (l *MergedLayerItem) Common() *MergedLayerCommon {
 	return &l.MergedLayerCommon
 }
 
-func (l *MergedLayerCommon) Datasets() []id.DatasetID {
+func (l *MergedLayerCommon) Datasets() []layer.DatasetID {
 	return l.datasetIDSet().All()
 }
 
-func (l *MergedLayerCommon) datasetIDSet() *id.DatasetIDSet {
+func (l *MergedLayerCommon) datasetIDSet() *layer.DatasetIDSet {
 	if l == nil {
 		return nil
 	}
-	res := id.NewDatasetIDSet()
+	res := layer.NewDatasetIDSet()
 	res.Add(l.Property.Datasets()...)
 	res.Add(l.Infobox.Property.Datasets()...)
 	for _, f := range l.Infobox.Fields {
@@ -73,18 +72,18 @@ func (l *MergedLayerCommon) datasetIDSet() *id.DatasetIDSet {
 	return res
 }
 
-func (l *MergedLayerItem) AllDatasets() []id.DatasetID {
+func (l *MergedLayerItem) AllDatasets() []layer.DatasetID {
 	if l == nil {
 		return nil
 	}
 	return l.Datasets()
 }
 
-func (l *MergedLayerGroup) AllDatasets() []id.DatasetID {
+func (l *MergedLayerGroup) AllDatasets() []layer.DatasetID {
 	return l.allDatasetIDSet().All()
 }
 
-func (l *MergedLayerGroup) allDatasetIDSet() *id.DatasetIDSet {
+func (l *MergedLayerGroup) allDatasetIDSet() *layer.DatasetIDSet {
 	if l == nil {
 		return nil
 	}

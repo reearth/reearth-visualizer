@@ -1,7 +1,7 @@
 {
-  "$id": "https://app.reearth.io/schemas/plugin-manifest",
+  "$id": "https://reearth.io/schemas/plugin_manifest.json",
   "$schema": "http://json-schema.org/draft-04/schema",
-  "description": "Re:Earth plugin manifest schema",
+  "title": "Re:Earth plugin manifest",
   "definitions": {
     "id": {
       "$id": "#id",

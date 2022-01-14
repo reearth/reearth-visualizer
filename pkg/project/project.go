@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 )
 
@@ -15,9 +14,8 @@ var (
 	aliasRegexp           = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
-// Project _
 type Project struct {
-	id                id.ProjectID
+	id                ID
 	isArchived        bool
 	isBasicAuthActive bool
 	basicAuthUsername string
@@ -32,12 +30,12 @@ type Project struct {
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
-	team              id.TeamID
+	team              TeamID
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
 }
 
-func (p *Project) ID() id.ProjectID {
+func (p *Project) ID() ID {
 	return p.id
 }
 
@@ -105,12 +103,12 @@ func (p *Project) PublishmentStatus() PublishmentStatus {
 	return p.publishmentStatus
 }
 
-func (p *Project) Team() id.TeamID {
+func (p *Project) Team() TeamID {
 	return p.team
 }
 
 func (p *Project) CreatedAt() time.Time {
-	return id.ID(p.id).Timestamp()
+	return createdAt(p.id)
 }
 
 func (p *Project) Visualizer() visualizer.Visualizer {
@@ -183,7 +181,7 @@ func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {
 	p.publicNoIndex = publicNoIndex
 }
 
-func (p *Project) UpdateTeam(team id.TeamID) {
+func (p *Project) UpdateTeam(team TeamID) {
 	p.team = team
 }
 

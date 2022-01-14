@@ -51,7 +51,7 @@ func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID, sids []id.Sc
 			{
 				"id": pids,
 				"scene": bson.M{
-					"$in": id.SceneIDToKeys(sids),
+					"$in": id.SceneIDsToStrings(sids),
 				},
 			},
 		},
@@ -76,7 +76,7 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id
 	var err error
 
 	if len(ids2) > 0 {
-		keys := id.PluginIDToKeys(ids2)
+		keys := id.PluginIDsToStrings(ids2)
 		filter := bson.M{
 			"$or": []bson.M{
 				{
@@ -90,7 +90,7 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id
 				{
 					"id": bson.M{"$in": keys},
 					"scene": bson.M{
-						"$in": id.SceneIDToKeys(sids),
+						"$in": id.SceneIDsToStrings(sids),
 					},
 				},
 			},

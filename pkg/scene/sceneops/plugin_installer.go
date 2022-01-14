@@ -3,7 +3,7 @@ package sceneops
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
 type PluginInstaller struct {
@@ -12,7 +12,7 @@ type PluginInstaller struct {
 	// PropertySchemaRepo   repo.PropertySchema
 }
 
-func (s PluginInstaller) InstallPluginFromRepository(pluginID id.PluginID) error {
+func (s PluginInstaller) InstallPluginFromRepository(pluginID scene.PluginID) error {
 	return errors.New("not implemented")
 
 	// 	manifest, err := s.PluginRepositoryRepo.Manifest(pluginID)

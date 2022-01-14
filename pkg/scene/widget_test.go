@@ -3,20 +3,19 @@ package scene
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewWidget(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID()
-	wid := id.NewWidgetID()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID()
+	wid := NewWidgetID()
 	testCases := []struct {
 		Name      string
-		ID        id.WidgetID
-		Plugin    id.PluginID
-		Extension id.PluginExtensionID
-		Property  id.PropertyID
+		ID        WidgetID
+		Plugin    PluginID
+		Extension PluginExtensionID
+		Property  PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error
@@ -39,7 +38,7 @@ func TestNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			Err:       ErrInvalidID,
 		},
 	}
 
@@ -63,15 +62,15 @@ func TestNewWidget(t *testing.T) {
 }
 
 func TestMustNewWidget(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID()
-	wid := id.NewWidgetID()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID()
+	wid := NewWidgetID()
 	testCases := []struct {
 		Name      string
-		ID        id.WidgetID
-		Plugin    id.PluginID
-		Extension id.PluginExtensionID
-		Property  id.PropertyID
+		ID        WidgetID
+		Plugin    PluginID
+		Extension PluginExtensionID
+		Property  PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error
@@ -94,7 +93,7 @@ func TestMustNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			Err:       ErrInvalidID,
 		},
 	}
 
@@ -121,13 +120,13 @@ func TestMustNewWidget(t *testing.T) {
 }
 
 func TestWidget_SetEnabled(t *testing.T) {
-	res := MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false, false)
+	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res.SetEnabled(true)
 	assert.True(t, res.Enabled())
 }
 
 func TestWidget_SetExtended(t *testing.T) {
-	res := MustNewWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false, false)
+	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res.SetExtended(true)
 	assert.True(t, res.Extended())
 }

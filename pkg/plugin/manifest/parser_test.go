@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
@@ -16,35 +15,35 @@ import (
 //go:embed testdata/minimum.yml
 var minimum string
 var minimumExpected = &Manifest{
-	Plugin: plugin.New().ID(id.MustPluginID("aaa~1.1.1")).MustBuild(),
+	Plugin: plugin.New().ID(plugin.MustID("aaa~1.1.1")).MustBuild(),
 }
 
 //go:embed testdata/test.yml
 var normal string
 var normalExpected = &Manifest{
-	Plugin: plugin.New().ID(id.MustPluginID("aaa~1.1.1")).Name(i18n.StringFrom("bbb")).Extensions([]*plugin.Extension{
-		plugin.NewExtension().ID(id.PluginExtensionID("hoge")).
+	Plugin: plugin.New().ID(plugin.MustID("aaa~1.1.1")).Name(i18n.StringFrom("bbb")).Extensions([]*plugin.Extension{
+		plugin.NewExtension().ID(plugin.ExtensionID("hoge")).
 			Visualizer(visualizer.VisualizerCesium).
 			Type(plugin.ExtensionTypePrimitive).
 			WidgetLayout(nil).
-			Schema(id.MustPropertySchemaID("aaa~1.1.1/hoge")).
+			Schema(property.MustSchemaID("aaa~1.1.1/hoge")).
 			MustBuild(),
 	}).MustBuild(),
 	ExtensionSchema: []*property.Schema{
-		property.NewSchema().ID(id.MustPropertySchemaID("aaa~1.1.1/hoge")).Groups([]*property.SchemaGroup{
-			property.NewSchemaGroup().ID(id.PropertySchemaGroupID("default")).
-				Schema(id.MustPropertySchemaID("aaa~1.1.1/hoge")).
-				RepresentativeField(id.PropertySchemaFieldID("a").Ref()).
+		property.NewSchema().ID(property.MustSchemaID("aaa~1.1.1/hoge")).Groups([]*property.SchemaGroup{
+			property.NewSchemaGroup().ID(property.SchemaGroupID("default")).
+				Schema(property.MustSchemaID("aaa~1.1.1/hoge")).
+				RepresentativeField(property.FieldID("a").Ref()).
 				Fields([]*property.SchemaField{
-					property.NewSchemaField().ID(id.PropertySchemaFieldID("a")).
+					property.NewSchemaField().ID(property.FieldID("a")).
 						Type(property.ValueTypeBool).
 						DefaultValue(property.ValueTypeBool.ValueFrom(true)).
 						IsAvailableIf(&property.Condition{
-							Field: id.PropertySchemaFieldID("b"),
+							Field: property.FieldID("b"),
 							Value: property.ValueTypeNumber.ValueFrom(1),
 						}).
 						MustBuild(),
-					property.NewSchemaField().ID(id.PropertySchemaFieldID("b")).
+					property.NewSchemaField().ID(property.FieldID("b")).
 						Type(property.ValueTypeNumber).
 						MustBuild(),
 				}).MustBuild(),

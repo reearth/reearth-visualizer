@@ -1,16 +1,10 @@
 package property
 
-import (
-	"sort"
-
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type List []*Property
 
-func (l List) Schemas() []id.PropertySchemaID {
-	schemas := make([]id.PropertySchemaID, 0, len(l))
-	m := map[id.PropertySchemaID]struct{}{}
+func (l List) Schemas() []SchemaID {
+	schemas := make([]SchemaID, 0, len(l))
+	m := map[SchemaID]struct{}{}
 	for _, p := range l {
 		s := p.Schema()
 		if _, ok := m[s]; ok {
@@ -27,7 +21,7 @@ func (l List) Map() Map {
 	return m.Add(l...)
 }
 
-type Map map[id.PropertyID]*Property
+type Map map[ID]*Property
 
 func MapFrom(properties ...*Property) Map {
 	return Map{}.Add(properties...)
@@ -80,14 +74,12 @@ func (m Map) Merge(m2 Map) Map {
 	return m3.Add(m2.List()...)
 }
 
-func (m Map) Keys() []id.PropertyID {
-	keys := make([]id.PropertyID, 0, len(m))
+func (m Map) Keys() []ID {
+	keys := make([]ID, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
 	}
-	sort.SliceStable(keys, func(i, j int) bool {
-		return id.ID(keys[i]).Compare(id.ID(keys[j])) < 0
-	})
+	sortIDs(keys)
 	return keys
 }
 

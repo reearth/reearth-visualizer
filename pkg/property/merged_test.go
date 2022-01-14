@@ -3,45 +3,43 @@ package property
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMerge(t *testing.T) {
-	ds := id.NewDatasetSchemaID()
-	df := id.NewDatasetSchemaFieldID()
-	d := id.NewDatasetID()
-	d2 := id.NewDatasetID()
-	opid := id.NewPropertyID()
-	ppid := id.NewPropertyID()
-	psid := id.MustPropertySchemaID("hoge~0.1.0/fff")
-	psid2 := id.MustPropertySchemaID("hoge~0.1.0/aaa")
-	psgid1 := id.PropertySchemaGroupID("group1")
-	psgid2 := id.PropertySchemaGroupID("group2")
-	psgid3 := id.PropertySchemaGroupID("group3")
-	psgid4 := id.PropertySchemaGroupID("group4")
-	i1id := id.NewPropertyItemID()
-	i2id := id.NewPropertyItemID()
-	i3id := id.NewPropertyItemID()
-	i4id := id.NewPropertyItemID()
-	i5id := id.NewPropertyItemID()
-	i6id := id.NewPropertyItemID()
-	i7id := id.NewPropertyItemID()
-	i8id := id.NewPropertyItemID()
+	ds := NewDatasetSchemaID()
+	df := NewDatasetFieldID()
+	d := NewDatasetID()
+	d2 := NewDatasetID()
+	opid := NewID()
+	ppid := NewID()
+	psid := MustSchemaID("hoge~0.1.0/fff")
+	psid2 := MustSchemaID("hoge~0.1.0/aaa")
+	psgid1 := SchemaGroupID("group1")
+	psgid2 := SchemaGroupID("group2")
+	psgid3 := SchemaGroupID("group3")
+	psgid4 := SchemaGroupID("group4")
+	i1id := NewItemID()
+	i2id := NewItemID()
+	i3id := NewItemID()
+	i4id := NewItemID()
+	i5id := NewItemID()
+	i6id := NewItemID()
+	i7id := NewItemID()
+	i8id := NewItemID()
 
 	fields1 := []*Field{
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("a"))).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("b")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("b"))).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("e")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLink(d2, ds, df)})).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeNumber, nil)).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("a"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("b")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("b"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("e")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLink(d2, ds, df)})).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeNumber, nil)).Build(),
 	}
 
 	fields2 := []*Field{
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("1"))).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("c")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("2"))).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("d")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLinkFieldOnly(ds, df)})).Build(),
-		NewFieldUnsafe().FieldUnsafe(id.PropertySchemaFieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("a")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("1"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("c")).ValueUnsafe(OptionalValueFrom(ValueTypeString.ValueFrom("2"))).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("d")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).LinksUnsafe(NewLinks([]*Link{NewLinkFieldOnly(ds, df)})).Build(),
+		NewFieldUnsafe().FieldUnsafe(FieldID("f")).ValueUnsafe(NewOptionalValue(ValueTypeString, nil)).Build(),
 	}
 
 	groups1 := []*Group{
@@ -64,7 +62,7 @@ func TestMerge(t *testing.T) {
 		NewGroup().ID(i6id).Schema(psid, psgid4).Fields(fields2).MustBuild(),
 	}
 
-	sid := id.NewSceneID()
+	sid := NewSceneID()
 	op := New().ID(opid).Scene(sid).Schema(psid).Items(items1).MustBuild()
 	pp := New().NewID().Scene(sid).Schema(psid2).MustBuild()
 	pp2 := New().ID(ppid).Scene(sid).Schema(psid).Items(items2).MustBuild()
@@ -89,22 +87,22 @@ func TestMerge(t *testing.T) {
 						LinkedDataset: &d,
 						Fields: []*MergedField{
 							{
-								ID:    id.PropertySchemaFieldID("a"),
+								ID:    FieldID("a"),
 								Value: ValueTypeString.ValueFrom("a"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("b"),
+								ID:    FieldID("b"),
 								Value: ValueTypeString.ValueFrom("b"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("e"),
+								ID:    FieldID("e"),
 								Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:   id.PropertySchemaFieldID("f"),
+								ID:   FieldID("f"),
 								Type: ValueTypeNumber,
 							},
 						},
@@ -118,28 +116,28 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:         id.PropertySchemaFieldID("a"),
+						ID:         FieldID("a"),
 						Value:      ValueTypeString.ValueFrom("a"),
 						Type:       ValueTypeString,
 						Overridden: true,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("b"),
+						ID:    FieldID("b"),
 						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("e"),
+						ID:    FieldID("e"),
 						Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("c"),
+						ID:    FieldID("c"),
 						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("d"),
+						ID:    FieldID("d"),
 						Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 						Type:  ValueTypeString,
 					},
@@ -152,22 +150,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("b"),
+						ID:    FieldID("b"),
 						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("e"),
+						ID:    FieldID("e"),
 						Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeNumber,
 					},
 				},
@@ -179,22 +177,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("c"),
+						ID:    FieldID("c"),
 						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("d"),
+						ID:    FieldID("d"),
 						Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeString,
 					},
 				},
@@ -222,22 +220,22 @@ func TestMerge(t *testing.T) {
 						LinkedDataset: &d,
 						Fields: []*MergedField{
 							{
-								ID:    id.PropertySchemaFieldID("a"),
+								ID:    FieldID("a"),
 								Value: ValueTypeString.ValueFrom("a"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("b"),
+								ID:    FieldID("b"),
 								Value: ValueTypeString.ValueFrom("b"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("e"),
+								ID:    FieldID("e"),
 								Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:   id.PropertySchemaFieldID("f"),
+								ID:   FieldID("f"),
 								Type: ValueTypeNumber,
 							},
 						},
@@ -251,22 +249,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("b"),
+						ID:    FieldID("b"),
 						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("e"),
+						ID:    FieldID("e"),
 						Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeNumber,
 					},
 				},
@@ -278,22 +276,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("a"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("b"),
+						ID:    FieldID("b"),
 						Value: ValueTypeString.ValueFrom("b"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("e"),
+						ID:    FieldID("e"),
 						Links: NewLinks([]*Link{NewLink(d2, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeNumber,
 					},
 				},
@@ -321,22 +319,22 @@ func TestMerge(t *testing.T) {
 						LinkedDataset: &d,
 						Fields: []*MergedField{
 							{
-								ID:    id.PropertySchemaFieldID("a"),
+								ID:    FieldID("a"),
 								Value: ValueTypeString.ValueFrom("1"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("c"),
+								ID:    FieldID("c"),
 								Value: ValueTypeString.ValueFrom("2"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    id.PropertySchemaFieldID("d"),
+								ID:    FieldID("d"),
 								Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:   id.PropertySchemaFieldID("f"),
+								ID:   FieldID("f"),
 								Type: ValueTypeString,
 							},
 						},
@@ -350,22 +348,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("c"),
+						ID:    FieldID("c"),
 						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("d"),
+						ID:    FieldID("d"),
 						Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeString,
 					},
 				},
@@ -377,22 +375,22 @@ func TestMerge(t *testing.T) {
 				LinkedDataset: &d,
 				Fields: []*MergedField{
 					{
-						ID:    id.PropertySchemaFieldID("a"),
+						ID:    FieldID("a"),
 						Value: ValueTypeString.ValueFrom("1"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("c"),
+						ID:    FieldID("c"),
 						Value: ValueTypeString.ValueFrom("2"),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:    id.PropertySchemaFieldID("d"),
+						ID:    FieldID("d"),
 						Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   id.PropertySchemaFieldID("f"),
+						ID:   FieldID("f"),
 						Type: ValueTypeString,
 					},
 				},

@@ -6,26 +6,25 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPropertyMigrateSchema(t *testing.T) {
-	sceneID := id.NewSceneID()
-	oldSchema, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	newSchema, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test2")
-	schemaField1ID := id.PropertySchemaFieldID("a")
-	schemaField2ID := id.PropertySchemaFieldID("b")
-	schemaField3ID := id.PropertySchemaFieldID("c")
-	schemaField4ID := id.PropertySchemaFieldID("d")
-	schemaField5ID := id.PropertySchemaFieldID("e")
-	schemaField6ID := id.PropertySchemaFieldID("f")
-	schemaField7ID := id.PropertySchemaFieldID("g")
-	schemaField8ID := id.PropertySchemaFieldID("h")
-	schemaGroupID := id.PropertySchemaGroupID("i")
-	datasetID := id.NewDatasetID()
-	datasetSchemaID := id.NewDatasetSchemaID()
-	datasetFieldID := id.NewDatasetSchemaFieldID()
+	sceneID := NewSceneID()
+	oldSchema, _ := SchemaIDFrom("hoge~1.0.0/test")
+	newSchema, _ := SchemaIDFrom("hoge~1.0.0/test2")
+	schemaField1ID := FieldID("a")
+	schemaField2ID := FieldID("b")
+	schemaField3ID := FieldID("c")
+	schemaField4ID := FieldID("d")
+	schemaField5ID := FieldID("e")
+	schemaField6ID := FieldID("f")
+	schemaField7ID := FieldID("g")
+	schemaField8ID := FieldID("h")
+	schemaGroupID := SchemaGroupID("i")
+	datasetID := NewDatasetID()
+	datasetSchemaID := NewDatasetSchemaID()
+	datasetFieldID := NewDatasetFieldID()
 
 	schemaField1, _ := NewSchemaField().ID(schemaField1ID).Type(ValueTypeString).Build()
 	schemaField2, _ := NewSchemaField().ID(schemaField2ID).Type(ValueTypeNumber).Min(0).Max(100).Build()
@@ -115,12 +114,12 @@ func TestPropertyMigrateSchema(t *testing.T) {
 }
 
 func TestGetOrCreateItem(t *testing.T) {
-	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	sf1id := id.PropertySchemaFieldID("a")
-	sf2id := id.PropertySchemaFieldID("b")
-	sg1id := id.PropertySchemaGroupID("c")
-	sg2id := id.PropertySchemaGroupID("d")
+	sceneID := NewSceneID()
+	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
+	sf1id := FieldID("a")
+	sf2id := FieldID("b")
+	sg1id := SchemaGroupID("c")
+	sg2id := SchemaGroupID("d")
 
 	sf1 := NewSchemaField().ID(sf1id).Type(ValueTypeString).MustBuild()
 	sg1 := NewSchemaGroup().ID(sg1id).Schema(sid).Fields([]*SchemaField{sf1}).MustBuild()
@@ -165,12 +164,12 @@ func TestGetOrCreateItem(t *testing.T) {
 }
 
 func TestGetOrCreateField(t *testing.T) {
-	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	sf1id := id.PropertySchemaFieldID("a")
-	sf2id := id.PropertySchemaFieldID("b")
-	sg1id := id.PropertySchemaGroupID("c")
-	sg2id := id.PropertySchemaGroupID("d")
+	sceneID := NewSceneID()
+	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
+	sf1id := FieldID("a")
+	sf2id := FieldID("b")
+	sg1id := SchemaGroupID("c")
+	sg2id := SchemaGroupID("d")
 
 	sf1 := NewSchemaField().ID(sf1id).Type(ValueTypeString).MustBuild()
 	sg1 := NewSchemaGroup().ID(sg1id).Schema(sid).Fields([]*SchemaField{sf1}).MustBuild()
@@ -217,10 +216,10 @@ func TestGetOrCreateField(t *testing.T) {
 }
 
 func TestAddListItem(t *testing.T) {
-	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	sfid := id.PropertySchemaFieldID("a")
-	sgid := id.PropertySchemaGroupID("b")
+	sceneID := NewSceneID()
+	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
+	sfid := FieldID("a")
+	sgid := SchemaGroupID("b")
 	sf := NewSchemaField().ID(sfid).Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID(sgid).Schema(sid).Fields([]*SchemaField{sf}).IsList(true).MustBuild()
 	ps := NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild()
@@ -239,9 +238,9 @@ func TestAddListItem(t *testing.T) {
 }
 
 func TestMoveListItem(t *testing.T) {
-	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	sgid := id.PropertySchemaGroupID("b")
+	sceneID := NewSceneID()
+	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
+	sgid := SchemaGroupID("b")
 	g1 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	g2 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	gl := NewGroupList().NewID().Schema(sid, sgid).Groups([]*Group{g1, g2}).MustBuild()
@@ -254,9 +253,9 @@ func TestMoveListItem(t *testing.T) {
 }
 
 func TestRemoveListItem(t *testing.T) {
-	sceneID := id.NewSceneID()
-	sid, _ := id.PropertySchemaIDFrom("hoge~1.0.0/test")
-	sgid := id.PropertySchemaGroupID("b")
+	sceneID := NewSceneID()
+	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
+	sgid := SchemaGroupID("b")
 	g1 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	g2 := NewGroup().NewID().Schema(sid, sgid).MustBuild()
 	gl := NewGroupList().NewID().Schema(sid, sgid).Groups([]*Group{g1, g2}).MustBuild()

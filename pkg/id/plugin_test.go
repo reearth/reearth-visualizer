@@ -330,6 +330,19 @@ func TestPluginIDFromRef(t *testing.T) {
 	}
 }
 
+func TestPluginID_Clone(t *testing.T) {
+	p := PluginID{
+		name:    "aaa",
+		version: "1.0.0",
+		sys:     false,
+		scene:   NewSceneID().Ref(),
+	}
+	c := p.Clone()
+
+	assert.Equal(t, p, c)
+	assert.NotSame(t, p, c)
+}
+
 func TestPluginID_Name(t *testing.T) {
 	plugin := MustPluginID("MyPlugin~1.0.0")
 
@@ -564,7 +577,7 @@ func TestPluginID_UnmarshalText(t *testing.T) {
 
 }
 
-func TestPluginIDToKeys(t *testing.T) {
+func TestPluginIDsToStrings(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		name     string
@@ -600,7 +613,7 @@ func TestPluginIDToKeys(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
-			assert.Equal(tt, tc.expected, PluginIDToKeys(tc.input))
+			assert.Equal(tt, tc.expected, PluginIDsToStrings(tc.input))
 		})
 	}
 
@@ -687,6 +700,33 @@ func TestPluginIDsFrom(t *testing.T) {
 				assert.Equal(tt, tc.expected.res, res)
 				assert.Nil(tt, err)
 			}
+		})
+	}
+}
+
+func TestPluginID_IsNil(t *testing.T) {
+	tests := []struct {
+		name   string
+		target PluginID
+		want   bool
+	}{
+		{
+			name:   "present",
+			target: PluginID{name: "a"},
+			want:   false,
+		},
+		{
+			name:   "empty",
+			target: PluginID{},
+			want:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, tt.target.IsNil())
 		})
 	}
 }

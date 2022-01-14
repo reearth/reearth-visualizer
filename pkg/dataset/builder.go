@@ -1,9 +1,5 @@
 package dataset
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type Builder struct {
 	d *Dataset
 }
@@ -13,12 +9,12 @@ func New() *Builder {
 }
 
 func (b *Builder) Build() (*Dataset, error) {
-	if id.ID(b.d.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.d.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	if b.d.fields == nil || b.d.order == nil {
-		b.d.fields = map[id.DatasetSchemaFieldID]*Field{}
-		b.d.order = []id.DatasetSchemaFieldID{}
+		b.d.fields = map[FieldID]*Field{}
+		b.d.order = []FieldID{}
 	}
 	return b.d, nil
 }
@@ -31,17 +27,17 @@ func (b *Builder) MustBuild() *Dataset {
 	return r
 }
 
-func (b *Builder) ID(id id.DatasetID) *Builder {
+func (b *Builder) ID(id ID) *Builder {
 	b.d.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.d.id = id.DatasetID(id.New())
+	b.d.id = NewID()
 	return b
 }
 
-func (b *Builder) Scene(scene id.SceneID) *Builder {
+func (b *Builder) Scene(scene SceneID) *Builder {
 	b.d.scene = scene
 	return b
 }
@@ -51,14 +47,14 @@ func (b *Builder) Source(source string) *Builder {
 	return b
 }
 
-func (b *Builder) Schema(schema id.DatasetSchemaID) *Builder {
+func (b *Builder) Schema(schema SchemaID) *Builder {
 	b.d.schema = schema
 	return b
 }
 
 func (b *Builder) Fields(fields []*Field) *Builder {
-	b.d.fields = map[id.DatasetSchemaFieldID]*Field{}
-	b.d.order = make([]id.DatasetSchemaFieldID, 0, len(fields))
+	b.d.fields = map[FieldID]*Field{}
+	b.d.order = make([]FieldID, 0, len(fields))
 
 	sources := map[string]struct{}{}
 	for _, f := range b.d.fields {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/builtin"
 	"github.com/reearth/reearth-backend/pkg/czml"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/kml"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
@@ -18,21 +18,21 @@ var (
 )
 
 var (
-	extensions = map[string]id.PluginExtensionID{
-		"Point":    id.PluginExtensionID("marker"),
-		"Polygon":  id.PluginExtensionID("polygon"),
-		"Polyline": id.PluginExtensionID("polyline"),
+	extensions = map[string]layer.PluginExtensionID{
+		"Point":    layer.PluginExtensionID("marker"),
+		"Polygon":  layer.PluginExtensionID("polygon"),
+		"Polyline": layer.PluginExtensionID("polyline"),
 	}
-	propertySchemas = map[string]id.PropertySchemaID{
-		"Point":    id.MustPropertySchemaID("reearth/marker"),
-		"Polygon":  id.MustPropertySchemaID("reearth/polygon"),
-		"Polyline": id.MustPropertySchemaID("reearth/polyline"),
+	propertySchemas = map[string]property.SchemaID{
+		"Point":    property.MustSchemaID("reearth/marker"),
+		"Polygon":  property.MustSchemaID("reearth/polygon"),
+		"Polyline": property.MustSchemaID("reearth/polyline"),
 	}
-	propertyItems  = id.PropertySchemaGroupID("default")
-	propertyFields = map[string]id.PropertySchemaFieldID{
-		"Point":    id.PropertySchemaFieldID("location"),
-		"Polygon":  id.PropertySchemaFieldID("polygon"),
-		"Polyline": id.PropertySchemaFieldID("coordinates"),
+	propertyItems  = property.SchemaGroupID("default")
+	propertyFields = map[string]property.FieldID{
+		"Point":    property.FieldID("location"),
+		"Polygon":  property.FieldID("polygon"),
+		"Polyline": property.FieldID("coordinates"),
 	}
 )
 
@@ -74,7 +74,7 @@ func rgbafToHex(rgbaf []float64) (string, error) {
 	return rgbaToHex(rgba)
 }
 
-func MustCreateProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) *property.Property {
+func MustCreateProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) *property.Property {
 	p, err := createProperty(t, v, sceneID, styleItem, extension)
 	if err != nil {
 		panic(err)
@@ -82,7 +82,7 @@ func MustCreateProperty(t string, v interface{}, sceneID id.SceneID, styleItem i
 	return p
 }
 
-func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
+func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
 	propertySchema := propertySchemas[t]
 	item := propertyItems
 	field := propertyFields[t]

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/rerror"
@@ -80,7 +79,7 @@ func TestManifest(t *testing.T) {
 				Version:    "1.1.1",
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(id.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
+				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
 				ExtensionSchema: nil,
 				Schema:          nil,
 			},
@@ -93,7 +92,7 @@ func TestManifest(t *testing.T) {
 				System: true,
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(id.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
+				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
 				ExtensionSchema: nil,
 				Schema:          nil,
 			},
@@ -118,7 +117,7 @@ func TestManifest(t *testing.T) {
 				Version:    "1.1.1",
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(id.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
+				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
 				ExtensionSchema: nil,
 				Schema:          nil,
 			},
@@ -132,7 +131,7 @@ func TestManifest(t *testing.T) {
 				System: false,
 			},
 			expected: &Manifest{
-				Plugin: plugin.New().ID(id.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
+				Plugin: plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
 			},
 			err: "invalid manifest: invalid plugin id:   <nil>",
 		},
@@ -164,7 +163,7 @@ func TestExtension(t *testing.T) {
 		name       string
 		ext        Extension
 		sys        bool
-		pid        id.PluginID
+		pid        plugin.ID
 		expectedPE *plugin.Extension
 		expectedPS *property.Schema
 		err        string
@@ -181,9 +180,9 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &cesium,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("cesium").Type(plugin.ExtensionTypeVisualizer).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "primitive",
@@ -196,9 +195,9 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &cesium,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("cesium").Type(plugin.ExtensionTypePrimitive).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "widget",
@@ -211,9 +210,9 @@ func TestExtension(t *testing.T) {
 				SingleOnly:  &tr,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("").Type(plugin.ExtensionTypeWidget).System(true).Description(i18n.StringFrom("ddd")).SingleOnly(true).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "block",
@@ -225,9 +224,9 @@ func TestExtension(t *testing.T) {
 				Type:        "block",
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("").Type(plugin.ExtensionTypeBlock).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "infobox",
@@ -240,9 +239,9 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &cesium,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("cesium").Type(plugin.ExtensionTypeInfobox).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "cluster",
@@ -255,9 +254,9 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &cesium,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: plugin.NewExtension().ID("cesium").Name(i18n.StringFrom("Cesium")).Visualizer("cesium").Type(plugin.ExtensionTypeCluster).System(true).Description(i18n.StringFrom("ddd")).MustBuild(),
-			expectedPS: property.NewSchema().ID(id.MustPropertySchemaID("reearth/cesium")).MustBuild(),
+			expectedPS: property.NewSchema().ID(property.MustSchemaID("reearth/cesium")).MustBuild(),
 		},
 		{
 			name: "empty visualizer",
@@ -270,7 +269,7 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &es,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: nil,
 			expectedPS: nil,
 			err:        "visualizer missing",
@@ -286,7 +285,7 @@ func TestExtension(t *testing.T) {
 				Visualizer:  nil,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: nil,
 			expectedPS: nil,
 			err:        "visualizer missing",
@@ -302,7 +301,7 @@ func TestExtension(t *testing.T) {
 				Visualizer:  &cesium,
 			},
 			sys:        true,
-			pid:        id.OfficialPluginID,
+			pid:        plugin.OfficialPluginID,
 			expectedPE: nil,
 			expectedPS: nil,
 			err:        "type missing",
@@ -355,7 +354,7 @@ func TestPointer(t *testing.T) {
 				FieldID:       "xxx",
 				SchemaGroupID: "aaa",
 			},
-			expected: property.NewPointer(id.PropertySchemaGroupIDFrom(&sg), nil, id.PropertySchemaFieldIDFrom(&f)),
+			expected: property.NewPointer(property.SchemaGroupIDFrom(&sg), nil, property.FieldIDFrom(&f)),
 		},
 	}
 	for _, tc := range testCases {
@@ -427,8 +426,8 @@ func TestLinkable(t *testing.T) {
 				},
 			},
 			expected: property.LinkableFields{
-				LatLng: property.NewPointer(id.PropertySchemaGroupIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&l)),
-				URL:    property.NewPointer(id.PropertySchemaGroupIDFrom(&d), nil, id.PropertySchemaFieldIDFrom(&u)),
+				LatLng: property.NewPointer(property.SchemaGroupIDFrom(&d), nil, property.FieldIDFrom(&l)),
+				URL:    property.NewPointer(property.SchemaGroupIDFrom(&d), nil, property.FieldIDFrom(&u)),
 			},
 		},
 	}
@@ -446,7 +445,7 @@ func TestSchema(t *testing.T) {
 	testCases := []struct {
 		name, psid string
 		ps         *PropertySchema
-		pid        id.PluginID
+		pid        plugin.ID
 		expected   *property.Schema
 		err        string
 	}{
@@ -458,7 +457,7 @@ func TestSchema(t *testing.T) {
 				Linkable: nil,
 				Version:  0,
 			},
-			pid:      id.MustPluginID("aaa~1.1.1"),
+			pid:      plugin.MustID("aaa~1.1.1"),
 			expected: nil,
 			err:      "invalid id: aaa~1.1.1/@",
 		},
@@ -466,8 +465,8 @@ func TestSchema(t *testing.T) {
 			name:     "success nil PropertySchema",
 			psid:     "marker",
 			ps:       nil,
-			pid:      id.OfficialPluginID,
-			expected: property.NewSchema().ID(id.MustPropertySchemaID("reearth/marker")).MustBuild(),
+			pid:      plugin.OfficialPluginID,
+			expected: property.NewSchema().ID(property.MustSchemaID("reearth/marker")).MustBuild(),
 		},
 		{
 			name: "success ",
@@ -497,8 +496,8 @@ func TestSchema(t *testing.T) {
 				Linkable: nil,
 				Version:  0,
 			},
-			pid:      id.OfficialPluginID,
-			expected: property.NewSchema().ID(id.MustPropertySchemaID("reearth/marker")).Groups([]*property.SchemaGroup{property.NewSchemaGroup().ID("default").Schema(id.MustPropertySchemaID("reearth/cesium")).Fields([]*property.SchemaField{property.NewSchemaField().ID("location").Type(property.ValueTypeLatLng).MustBuild()}).MustBuild()}).MustBuild(),
+			pid:      plugin.OfficialPluginID,
+			expected: property.NewSchema().ID(property.MustSchemaID("reearth/marker")).Groups([]*property.SchemaGroup{property.NewSchemaGroup().ID("default").Schema(property.MustSchemaID("reearth/cesium")).Fields([]*property.SchemaField{property.NewSchemaField().ID("location").Type(property.ValueTypeLatLng).MustBuild()}).MustBuild()}).MustBuild(),
 		},
 	}
 	for _, tc := range testCases {
@@ -527,7 +526,7 @@ func TestSchemaGroup(t *testing.T) {
 	testCases := []struct {
 		name     string
 		psg      PropertySchemaGroup
-		sid      id.PropertySchemaID
+		sid      property.SchemaID
 		expected *property.SchemaGroup
 		err      string
 	}{
@@ -554,8 +553,8 @@ func TestSchemaGroup(t *testing.T) {
 				List:  false,
 				Title: "marker",
 			},
-			sid:      id.MustPropertySchemaID("reearth/cesium"),
-			expected: property.NewSchemaGroup().ID("default").Title(i18n.StringFrom("marker")).Title(i18n.StringFrom(str)).Schema(id.MustPropertySchemaID("reearth/cesium")).Fields([]*property.SchemaField{property.NewSchemaField().ID("location").Type(property.ValueTypeLatLng).MustBuild()}).MustBuild(),
+			sid:      property.MustSchemaID("reearth/cesium"),
+			expected: property.NewSchemaGroup().ID("default").Title(i18n.StringFrom("marker")).Title(i18n.StringFrom(str)).Schema(property.MustSchemaID("reearth/cesium")).Fields([]*property.SchemaField{property.NewSchemaField().ID("location").Type(property.ValueTypeLatLng).MustBuild()}).MustBuild(),
 		},
 		{
 			name: "fail invalid schema field",
@@ -580,7 +579,7 @@ func TestSchemaGroup(t *testing.T) {
 				List:  false,
 				Title: "marker",
 			},
-			sid:      id.MustPropertySchemaID("reearth/cesium"),
+			sid:      property.MustSchemaID("reearth/cesium"),
 			expected: nil,
 			err:      "field (location): invalid value type: xx",
 		},

@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/layerops"
 	"github.com/reearth/reearth-backend/pkg/plugin"
@@ -24,9 +23,9 @@ type DatasetMigrator struct {
 type MigrateDatasetResult struct {
 	Layers                layer.Map
 	Properties            property.Map
-	RemovedLayers         *id.LayerIDSet
-	RemovedDatasetSchemas []id.DatasetSchemaID
-	RemovedDatasets       []id.DatasetID
+	RemovedLayers         *layer.IDSet
+	RemovedDatasetSchemas []dataset.SchemaID
+	RemovedDatasets       []dataset.ID
 }
 
 func (r MigrateDatasetResult) Merge(r2 MigrateDatasetResult) MigrateDatasetResult {
@@ -38,30 +37,30 @@ func (r MigrateDatasetResult) Merge(r2 MigrateDatasetResult) MigrateDatasetResul
 }
 
 // NOTE: DatasetSchemaの削除には対応していない（自動的に削除されない）
-func (srv DatasetMigrator) Migrate(ctx context.Context, sid id.SceneID, newdsl []*dataset.Schema, newdl dataset.List) (MigrateDatasetResult, error) {
-	scenes := []id.SceneID{sid}
+func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, newdsl []*dataset.Schema, newdl dataset.List) (MigrateDatasetResult, error) {
+	scenes := []dataset.SceneID{sid}
 	result := MigrateDatasetResult{}
 
 	// 削除対象
-	noLogerUsedDS := []id.DatasetSchemaID{}
-	noLogerUsedD := []id.DatasetID{}
+	noLogerUsedDS := []dataset.SchemaID{}
+	noLogerUsedD := []dataset.ID{}
 
 	// 古いDatasetSchema
-	oldDatasetSchemaMap := map[id.DatasetSchemaID]*dataset.Schema{}
+	oldDatasetSchemaMap := map[dataset.SchemaID]*dataset.Schema{}
 	// 新しいDatasetSchema
-	newDatasetSchemaMap := map[id.DatasetSchemaID]*dataset.Schema{}
+	newDatasetSchemaMap := map[dataset.SchemaID]*dataset.Schema{}
 	// 新しいDatasetSchemaから古いDatasetSchemaIDへの対応
-	datasetSchemaMapNewOld := map[id.DatasetSchemaID]id.DatasetSchemaID{}
+	datasetSchemaMapNewOld := map[dataset.SchemaID]dataset.SchemaID{}
 	// 古いDatasetSchemaから新しいDatasetSchemaIDへの対応
-	datasetSchemaMapOldNew := map[id.DatasetSchemaID]id.DatasetSchemaID{}
+	datasetSchemaMapOldNew := map[dataset.SchemaID]dataset.SchemaID{}
 	// 古いDatasetFieldIDから新しいDatasetSchemaFieldIDへの対応
-	datasetSchemaFieldIDMap := map[id.DatasetSchemaFieldID]id.DatasetSchemaFieldID{}
+	datasetSchemaFieldIDMap := map[dataset.FieldID]dataset.FieldID{}
 	// 古いDatasetから新しいDatasetへの対応
-	newDatasetMap := map[id.DatasetID]*dataset.Dataset{}
-	datasetMapOldNew := map[id.DatasetID]*dataset.Dataset{}
-	datasetIDMapOldNew := map[id.DatasetID]id.DatasetID{}
+	newDatasetMap := map[dataset.ID]*dataset.Dataset{}
+	datasetMapOldNew := map[dataset.ID]*dataset.Dataset{}
+	datasetIDMapOldNew := map[dataset.ID]dataset.ID{}
 	// 新しいDatasetSchemaからDatasetDiffへの対応
-	datasetDiffMap := map[id.DatasetSchemaID]dataset.Diff{}
+	datasetDiffMap := map[dataset.SchemaID]dataset.Diff{}
 
 	// マップの作成
 	for _, newds := range newdsl {
@@ -162,8 +161,8 @@ func (srv DatasetMigrator) Migrate(ctx context.Context, sid id.SceneID, newdsl [
 	return result, nil
 }
 
-func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, oldds *dataset.Schema, newds *dataset.Schema, diff dataset.Diff) (MigrateDatasetResult, error) {
-	scenes := []id.SceneID{sid}
+func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID, oldds *dataset.Schema, newds *dataset.Schema, diff dataset.Diff) (MigrateDatasetResult, error) {
+	scenes := []dataset.SceneID{sid}
 
 	// 前のデータセットスキーマに紐づいたレイヤーグループを取得
 	layerGroups, err := srv.LayerRepo.FindGroupBySceneAndLinkedDatasetSchema(ctx, sid, oldds.ID())
@@ -173,7 +172,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, old
 
 	addedAndUpdatedLayers := layer.List{}
 	addedProperties := property.List{}
-	removedLayers := []id.LayerID{}
+	removedLayers := []layer.ID{}
 
 	for _, lg := range layerGroups {
 		layers, err := srv.LayerRepo.FindByIDs(ctx, lg.Layers().Layers(), scenes)
@@ -216,7 +215,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, old
 			// プラグインを取得
 			var plug *plugin.Plugin
 			if pid := lg.Plugin(); pid != nil {
-				plug2, err := srv.Plugin(ctx, []id.PluginID{*pid}, []id.SceneID{sid})
+				plug2, err := srv.Plugin(ctx, []plugin.ID{*pid}, []dataset.SceneID{sid})
 				if err != nil || len(plug2) < 1 {
 					return MigrateDatasetResult{}, err
 				}
@@ -266,7 +265,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, old
 		layerGroups.ToLayerList()...,
 	)
 
-	set := id.NewLayerIDSet()
+	set := layer.NewIDSet()
 	set.Add(removedLayers...)
 
 	return MigrateDatasetResult{

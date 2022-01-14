@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewInfoboxFieldID(t *testing.T) {
 	id := NewInfoboxFieldID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestInfoboxFieldIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestInfoboxFieldIDFrom(t *testing.T) {
 				result InfoboxFieldID
 				err    error
 			}{
-				InfoboxFieldID{},
-				ErrInvalidID,
+				result: InfoboxFieldID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestInfoboxFieldIDFrom(t *testing.T) {
 				result InfoboxFieldID
 				err    error
 			}{
-				InfoboxFieldID{},
-				ErrInvalidID,
+				result: InfoboxFieldID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestInfoboxFieldIDFrom(t *testing.T) {
 				result InfoboxFieldID
 				err    error
 			}{
-				InfoboxFieldID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: InfoboxFieldID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := InfoboxFieldIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := InfoboxFieldIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustInfoboxFieldID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustInfoboxFieldID(t *testing.T) {
 			expected:    InfoboxFieldID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustInfoboxFieldID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustInfoboxFieldID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestInfoboxFieldIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *InfoboxFieldID
@@ -139,159 +135,149 @@ func TestInfoboxFieldIDFromRef(t *testing.T) {
 			expected: &InfoboxFieldID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := InfoboxFieldIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := InfoboxFieldIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestInfoboxFieldIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := InfoboxFieldIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, InfoboxFieldIDFromRefID(nil))
+	assert.Nil(t, InfoboxFieldIDFromRefID(&ID{}))
 }
 
 func TestInfoboxFieldID_ID(t *testing.T) {
 	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := InfoboxFieldIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestInfoboxFieldID_String(t *testing.T) {
 	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
+	id2 := InfoboxFieldIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", InfoboxFieldID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestInfoboxFieldID_RefString(t *testing.T) {
+	id := NewInfoboxFieldID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, InfoboxFieldID{}.RefString())
 }
 
 func TestInfoboxFieldID_GoString(t *testing.T) {
 	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.InfoboxFieldID("+id.String()+")")
-}
-
-func TestInfoboxFieldID_RefString(t *testing.T) {
-	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := InfoboxFieldIDFromRefID(&id)
+	assert.Equal(t, "InfoboxFieldID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "InfoboxFieldID()", InfoboxFieldID{}.GoString())
 }
 
 func TestInfoboxFieldID_Ref(t *testing.T) {
-	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewInfoboxFieldID()
+	assert.Equal(t, InfoboxFieldID(id), *id.Ref())
+	assert.Nil(t, (&InfoboxFieldID{}).Ref())
 }
 
 func TestInfoboxFieldID_Contains(t *testing.T) {
 	id := NewInfoboxFieldID()
 	id2 := NewInfoboxFieldID()
 	assert.True(t, id.Contains([]InfoboxFieldID{id, id2}))
+	assert.False(t, InfoboxFieldID{}.Contains([]InfoboxFieldID{id, id2, {}}))
 	assert.False(t, id.Contains([]InfoboxFieldID{id2}))
 }
 
 func TestInfoboxFieldID_CopyRef(t *testing.T) {
-	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewInfoboxFieldID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*InfoboxFieldID)(nil).CopyRef())
 }
 
 func TestInfoboxFieldID_IDRef(t *testing.T) {
 	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := InfoboxFieldIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&InfoboxFieldID{}).IDRef())
+	assert.Nil(t, (*InfoboxFieldID)(nil).IDRef())
 }
 
 func TestInfoboxFieldID_StringRef(t *testing.T) {
-	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewInfoboxFieldID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&InfoboxFieldID{}).StringRef())
+	assert.Nil(t, (*InfoboxFieldID)(nil).StringRef())
 }
 
 func TestInfoboxFieldID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewInfoboxFieldID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&InfoboxFieldID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*InfoboxFieldID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestInfoboxFieldID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &InfoboxFieldID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustInfoboxFieldID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &InfoboxFieldID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestInfoboxFieldID_MarshalText(t *testing.T) {
 	id := New()
-	subId := InfoboxFieldIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := InfoboxFieldIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&InfoboxFieldID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*InfoboxFieldID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestInfoboxFieldID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &InfoboxFieldID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &InfoboxFieldID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestInfoboxFieldID_IsNil(t *testing.T) {
-	subId := InfoboxFieldID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *InfoboxFieldIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, InfoboxFieldID{}.IsNil())
+	assert.False(t, NewInfoboxFieldID().IsNil())
 }
 
-func TestInfoboxFieldIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestInfoboxFieldID_IsNilRef(t *testing.T) {
+	assert.True(t, InfoboxFieldID{}.Ref().IsNilRef())
+	assert.True(t, (*InfoboxFieldID)(nil).IsNilRef())
+	assert.False(t, NewInfoboxFieldID().Ref().IsNilRef())
+}
+
+func TestInfoboxFieldIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []InfoboxFieldID
 		expected []string
@@ -321,19 +307,17 @@ func TestInfoboxFieldIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, InfoboxFieldIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, InfoboxFieldIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestInfoboxFieldIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestInfoboxFieldIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestInfoboxFieldIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := InfoboxFieldIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := InfoboxFieldIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := InfoboxFieldIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestInfoboxFieldIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []InfoboxFieldID
@@ -449,25 +431,22 @@ func TestInfoboxFieldIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := InfoboxFieldIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestInfoboxFieldIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []InfoboxFieldID
@@ -493,21 +472,18 @@ func TestInfoboxFieldIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := InfoboxFieldIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestInfoboxFieldIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []InfoboxFieldID
 		expected []ID
@@ -537,28 +513,25 @@ func TestInfoboxFieldIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := InfoboxFieldIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestInfoboxFieldIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustInfoboxFieldID(id1.String())
+	id21 := MustInfoboxFieldID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustInfoboxFieldID(id2.String())
+	id22 := MustInfoboxFieldID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustInfoboxFieldID(id3.String())
+	id23 := MustInfoboxFieldID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*InfoboxFieldID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestInfoboxFieldIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*InfoboxFieldID{&subId1},
+			input:    []*InfoboxFieldID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*InfoboxFieldID{&subId1, &subId2, &subId3},
+			input:    []*InfoboxFieldID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := InfoboxFieldIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewInfoboxFieldIDSet(t *testing.T) {
 	InfoboxFieldIdSet := NewInfoboxFieldIDSet()
-
 	assert.NotNil(t, InfoboxFieldIdSet)
 	assert.Empty(t, InfoboxFieldIdSet.m)
 	assert.Empty(t, InfoboxFieldIdSet.s)
 }
 
 func TestInfoboxFieldIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []InfoboxFieldID
 		expected *InfoboxFieldIDSet
@@ -663,24 +632,19 @@ func TestInfoboxFieldIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewInfoboxFieldIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	InfoboxFieldId := MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *InfoboxFieldID
 		expected *InfoboxFieldIDSet
@@ -695,7 +659,7 @@ func TestInfoboxFieldIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &InfoboxFieldId,
+			input: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestInfoboxFieldIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewInfoboxFieldIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			InfoboxFieldIDSet
-			InfoboxFieldID
-		}
+	tests := []struct {
+		name     string
+		target   *InfoboxFieldIDSet
+		input    InfoboxFieldID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				InfoboxFieldIDSet
-				InfoboxFieldID
-			}{InfoboxFieldIDSet: InfoboxFieldIDSet{}, InfoboxFieldID: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &InfoboxFieldIDSet{},
+			input:    MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				InfoboxFieldIDSet
-				InfoboxFieldID
-			}{InfoboxFieldIDSet: InfoboxFieldIDSet{
+			target: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, InfoboxFieldID: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				InfoboxFieldIDSet
-				InfoboxFieldID
-			}{InfoboxFieldIDSet: InfoboxFieldIDSet{
+			target: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, InfoboxFieldID: MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.InfoboxFieldIDSet.Has(tc.input.InfoboxFieldID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    InfoboxFieldIDSet
-		expected InfoboxFieldIDSet
+		input    *InfoboxFieldIDSet
+		expected *InfoboxFieldIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: InfoboxFieldIDSet{},
-			expected: InfoboxFieldIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &InfoboxFieldIDSet{},
+			expected: &InfoboxFieldIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: InfoboxFieldIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: InfoboxFieldIDSet{
+			expected: &InfoboxFieldIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *InfoboxFieldIDSet
 		expected []InfoboxFieldID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &InfoboxFieldIDSet{
 				m: map[InfoboxFieldID]struct{}{},
 				s: nil,
 			},
 			expected: make([]InfoboxFieldID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestInfoboxFieldIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *InfoboxFieldIDSet
 		expected *InfoboxFieldIDSet
@@ -922,21 +873,19 @@ func TestInfoboxFieldIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestInfoboxFieldIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *InfoboxFieldIDSet
@@ -944,6 +893,23 @@ func TestInfoboxFieldIDSet_Merge(t *testing.T) {
 		}
 		expected *InfoboxFieldIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *InfoboxFieldIDSet
+				b *InfoboxFieldIDSet
+			}{
+				a: &InfoboxFieldIDSet{
+					m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &InfoboxFieldIDSet{
+				m: map[InfoboxFieldID]struct{}{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []InfoboxFieldID{MustInfoboxFieldID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestInfoboxFieldIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

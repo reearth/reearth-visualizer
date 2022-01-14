@@ -3,19 +3,18 @@ package layerops
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 type LayerItem struct {
-	SceneID                id.SceneID
-	ParentLayerID          id.LayerID
+	SceneID                layer.SceneID
+	ParentLayerID          layer.ID
 	Plugin                 *plugin.Plugin
-	ExtensionID            *id.PluginExtensionID
+	ExtensionID            *layer.PluginExtensionID
 	Index                  *int
-	LinkedDatasetID        *id.DatasetID
+	LinkedDatasetID        *layer.DatasetID
 	Name                   string
 	LinkablePropertySchema *property.Schema
 	LatLng                 *property.LatLng

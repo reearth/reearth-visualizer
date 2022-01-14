@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearth-backend/pkg/builtin"
 	"github.com/reearth/reearth-backend/pkg/kml"
 	"github.com/reearth/reearth-backend/pkg/layer"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -83,14 +81,14 @@ const kmlmock = `<?xml version="1.0" encoding="UTF-8"?>
 </kml>`
 
 func TestNewKMLDecoder(t *testing.T) {
-	d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(``)), id.NewSceneID())
+	d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(``)), layer.NewSceneID())
 	assert.NotNil(t, d)
 }
 
 func TestKMLDecoder_Decode(t *testing.T) {
 	r := strings.NewReader(kmlmock)
 	d := xml.NewDecoder(r)
-	s := id.NewSceneID()
+	s := layer.NewSceneID()
 	k := NewKMLDecoder(d, s)
 
 	result, err := k.Decode()
@@ -120,7 +118,7 @@ func TestKMLDecoder_Decode(t *testing.T) {
 	fImage, _, _ := prop.Field(property.PointFieldBySchemaGroup(propertyItems, "image"))
 	actUrl, _ := url.Parse("http://maps.google.com/mapfiles/kml/pal3/icon19.png")
 	assert.Equal(t, actUrl, fImage.Value().Value())
-	fh, _, _ := prop.Field(property.PointFieldBySchemaGroup(propertyItems, id.PropertySchemaFieldID("height")))
+	fh, _, _ := prop.Field(property.PointFieldBySchemaGroup(propertyItems, property.FieldID("height")))
 	assert.Equal(t, 43.0, fh.Value().Value())
 
 	// Polygon test
@@ -397,7 +395,7 @@ func TestKMLDecoder_Decode(t *testing.T) {
 //}
 //
 func TestKMLparseKML(t *testing.T) {
-	s := id.NewSceneID()
+	s := layer.NewSceneID()
 
 	testCases := []struct {
 		name, KMLstr string
@@ -489,7 +487,7 @@ func TestKMLparseKML(t *testing.T) {
 	}
 }
 func TestKMLdecodePlacemark(t *testing.T) {
-	s := id.NewSceneID()
+	s := layer.NewSceneID()
 	point := MustCreateProperty("Point", property.LatLngHeight{
 		Lat:    23,
 		Lng:    40,
@@ -554,7 +552,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 				Scene(s).
 				Property(point.IDRef()).
 				Extension(&pointExt).
-				Plugin(&id.OfficialPluginID).
+				Plugin(&layer.OfficialPluginID).
 				MustBuild(),
 			expectedProperty: point,
 			err:              nil,
@@ -578,7 +576,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 				Scene(s).
 				Property(polyline.IDRef()).
 				Extension(&polylineExt).
-				Plugin(&id.OfficialPluginID).
+				Plugin(&layer.OfficialPluginID).
 				MustBuild(),
 			expectedProperty: polyline,
 			err:              nil,
@@ -609,7 +607,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 				Scene(s).
 				Property(polygon.IDRef()).
 				Extension(&polygonExt).
-				Plugin(&id.OfficialPluginID).
+				Plugin(&layer.OfficialPluginID).
 				MustBuild(),
 			expectedProperty: polygon,
 			err:              nil,
@@ -630,7 +628,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 				Name("Point").
 				Scene(s).
 				Extension(&pointExt).
-				Plugin(&id.OfficialPluginID).
+				Plugin(&layer.OfficialPluginID).
 				MustBuild(),
 			expectedProperty: nil,
 			err:              nil,
@@ -660,7 +658,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 // @todo not finished yet
 //func TestKMLdecodeCollection(t *testing.T) {
 //	// @todo err and style cases
-//	s := id.NewSceneID()
+//	s := layer.NewSceneID()
 //	pointExt := extensions["Point"]
 //	point := MustCreateProperty("Point", property.LatLngHeight{
 //		Lat:    39,
@@ -674,7 +672,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 //		Scene(s).
 //		Property(point.IDRef()).
 //		Extension(&pointExt).
-//		Plugin(&id.OfficialPluginID).
+//		Plugin(&layer.OfficialPluginID).
 //		MustBuild()
 //	var ll layer.Layer = li
 //	testCases := []struct {

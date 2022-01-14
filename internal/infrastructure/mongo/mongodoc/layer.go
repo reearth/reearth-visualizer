@@ -91,7 +91,7 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 
 	if lg := layer.GroupFromLayer(l); lg != nil {
 		group = &LayerGroupDocument{
-			Layers:              id.LayerIDToKeys(lg.Layers().Layers()),
+			Layers:              id.LayerIDsToStrings(lg.Layers().Layers()),
 			LinkedDatasetSchema: lg.LinkedDatasetSchema().StringRef(),
 			Root:                lg.IsRoot(),
 		}

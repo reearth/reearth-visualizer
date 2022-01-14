@@ -52,7 +52,6 @@ func (p SchemaFieldUI) String() string {
 	return string(p)
 }
 
-// StringRef _
 func (p *SchemaFieldUI) StringRef() *string {
 	if p == nil {
 		return nil

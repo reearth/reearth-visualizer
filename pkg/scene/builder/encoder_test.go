@@ -3,10 +3,10 @@ package builder
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,18 +88,18 @@ func TestEncoder_Encode(t *testing.T) {
 }
 
 func TestEncoder_Layers(t *testing.T) {
-	lid := id.MustLayerID(id.New().String())
-	sid := id.MustSceneID(id.New().String())
-	pid := id.MustPropertyID(id.New().String())
-	ex := id.PluginExtensionID("marker")
-	iid := id.MustPropertyItemID(id.New().String())
+	lid := layer.NewID()
+	sid := scene.NewID()
+	pid := property.NewID()
+	ex := layer.PluginExtensionID("marker")
+	iid := property.NewItemID()
 	v1 := property.LatLng{
 		Lat: 4.4,
 		Lng: 53.4,
 	}
 
 	f1 := property.SealedField{
-		ID: id.PropertySchemaFieldID("location"),
+		ID: property.FieldID("location"),
 		Val: property.NewValueAndDatasetValue(
 			property.ValueTypeLatLng,
 			nil,
@@ -111,7 +111,7 @@ func TestEncoder_Layers(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   id.PropertySchemaGroupID("default"),
+		SchemaGroup:   property.SchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,
@@ -132,7 +132,7 @@ func TestEncoder_Layers(t *testing.T) {
 				Scene:       sid,
 				Property:    nil,
 				Infobox:     nil,
-				PluginID:    &id.OfficialPluginID,
+				PluginID:    &layer.OfficialPluginID,
 				ExtensionID: &ex,
 			},
 			Property: &sp,
@@ -156,7 +156,7 @@ func TestEncoder_Layers(t *testing.T) {
 			SL:   sealed,
 			Expected: &layerJSON{
 				ID:          lid.String(),
-				PluginID:    id.OfficialPluginID.StringRef(),
+				PluginID:    layer.OfficialPluginID.StringRef(),
 				ExtensionID: ex.StringRef(),
 				Name:        "test",
 				Property:    map[string]interface{}{"default": map[string]interface{}{"location": property.LatLng{Lat: 4.4, Lng: 53.4}}},

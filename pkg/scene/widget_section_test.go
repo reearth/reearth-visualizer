@@ -3,7 +3,6 @@ package scene
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,17 +21,17 @@ func TestWidgetSection_Area(t *testing.T) {
 }
 
 func TestWidgetSection_Find(t *testing.T) {
-	wid1 := id.NewWidgetID()
-	wid2 := id.NewWidgetID()
-	wid3 := id.NewWidgetID()
-	wid4 := id.NewWidgetID()
-	wid5 := id.NewWidgetID()
-	wid6 := id.NewWidgetID()
-	wid7 := id.NewWidgetID()
+	wid1 := NewWidgetID()
+	wid2 := NewWidgetID()
+	wid3 := NewWidgetID()
+	wid4 := NewWidgetID()
+	wid5 := NewWidgetID()
+	wid6 := NewWidgetID()
+	wid7 := NewWidgetID()
 
 	testCases := []struct {
 		Name      string
-		Input     id.WidgetID
+		Input     WidgetID
 		Expected1 int
 		Expected2 WidgetAreaType
 		Nil       bool
@@ -57,7 +56,7 @@ func TestWidgetSection_Find(t *testing.T) {
 		},
 		{
 			Name:      "invalid id",
-			Input:     id.NewWidgetID(),
+			Input:     NewWidgetID(),
 			Expected1: -1,
 			Expected2: "",
 		},
@@ -83,9 +82,9 @@ func TestWidgetSection_Find(t *testing.T) {
 			}
 
 			ws := NewWidgetSection()
-			ws.Area(WidgetAreaTop).AddAll([]id.WidgetID{wid1, wid2, wid3})
-			ws.Area(WidgetAreaMiddle).AddAll([]id.WidgetID{wid4, wid5})
-			ws.Area(WidgetAreaBottom).AddAll([]id.WidgetID{wid6, wid7})
+			ws.Area(WidgetAreaTop).AddAll([]WidgetID{wid1, wid2, wid3})
+			ws.Area(WidgetAreaMiddle).AddAll([]WidgetID{wid4, wid5})
+			ws.Area(WidgetAreaBottom).AddAll([]WidgetID{wid6, wid7})
 
 			index, area := ws.Find(tc.Input)
 			assert.Equal(tt, tc.Expected1, index)
@@ -95,50 +94,50 @@ func TestWidgetSection_Find(t *testing.T) {
 }
 
 func TestWidgetSection_Remove(t *testing.T) {
-	wid := id.NewWidgetID()
+	wid := NewWidgetID()
 
 	testCases := []struct {
 		Name     string
 		Area     WidgetAreaType
-		Input    id.WidgetID
-		Expected []id.WidgetID
+		Input    WidgetID
+		Expected []WidgetID
 		Nil      bool
 	}{
 		{
 			Name:     "top: remove a widget from widget section",
 			Area:     WidgetAreaTop,
 			Input:    wid,
-			Expected: []id.WidgetID{},
+			Expected: []WidgetID{},
 		},
 		{
 			Name:     "top: couldn't find widgetId",
 			Area:     WidgetAreaTop,
-			Input:    id.NewWidgetID(),
-			Expected: []id.WidgetID{wid},
+			Input:    NewWidgetID(),
+			Expected: []WidgetID{wid},
 		},
 		{
 			Name:     "middle: remove a widget from widget section",
 			Area:     WidgetAreaMiddle,
 			Input:    wid,
-			Expected: []id.WidgetID{},
+			Expected: []WidgetID{},
 		},
 		{
 			Name:     "middle: couldn't find widgetId",
 			Area:     WidgetAreaMiddle,
-			Input:    id.NewWidgetID(),
-			Expected: []id.WidgetID{wid},
+			Input:    NewWidgetID(),
+			Expected: []WidgetID{wid},
 		},
 		{
 			Name:     "bottom: remove a widget from widget section",
 			Area:     WidgetAreaBottom,
 			Input:    wid,
-			Expected: []id.WidgetID{},
+			Expected: []WidgetID{},
 		},
 		{
 			Name:     "bottom: couldn't find widgetId",
 			Area:     WidgetAreaBottom,
-			Input:    id.NewWidgetID(),
-			Expected: []id.WidgetID{wid},
+			Input:    NewWidgetID(),
+			Expected: []WidgetID{wid},
 		},
 		{
 			Name:  "nil",

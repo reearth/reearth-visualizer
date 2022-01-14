@@ -6,17 +6,12 @@ import (
 	"io"
 	"strconv"
 	"strings"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
-	// ErrFailedToParseCSVorTSVFile _
 	ErrFailedToParseCSVorTSVFile error = errors.New("failed to parse file content")
-	// ErrIncompatibleSchema _
-	ErrIncompatibleSchema error = errors.New("schema is not compatible with csv")
-	// ErrDuplicatiedNameFields _
-	ErrDuplicatiedNameFields error = errors.New("failed to parse, name-duplicated fields")
+	ErrIncompatibleSchema        error = errors.New("schema is not compatible with csv")
+	ErrDuplicatiedNameFields     error = errors.New("failed to parse, name-duplicated fields")
 )
 
 type DatasetCSVParser struct {
@@ -53,7 +48,7 @@ func (p *DatasetCSVParser) validateLine(line []string) bool {
 	return len(p.headers) == len(line)
 }
 
-func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
+func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
 	if !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
 	}
@@ -95,7 +90,7 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 		return nil, nil, errors.New("schema is not generated yet")
 	}
 	var fields []*Field
-	schemafieldmap := make(map[string]id.DatasetSchemaFieldID)
+	schemafieldmap := make(map[string]FieldID)
 	for _, f := range p.schema.Fields() {
 		if _, ok := schemafieldmap[f.Name()]; !ok {
 			schemafieldmap[f.Name()] = f.ID()
@@ -141,7 +136,7 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 	return p.schema, datasets, nil
 }
 
-func (p *DatasetCSVParser) getFields(line []string, sfm map[string]id.DatasetSchemaFieldID) ([]*Field, error) {
+func (p *DatasetCSVParser) getFields(line []string, sfm map[string]FieldID) ([]*Field, error) {
 	fields := []*Field{}
 	var lat, lng *float64
 	for i, record := range line {

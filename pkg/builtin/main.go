@@ -3,7 +3,6 @@ package builtin
 import (
 	_ "embed"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -20,10 +19,10 @@ var pluginTranslationList = map[string]*manifest.TranslationRoot{"ja": manifest.
 var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromBytes(pluginManifestJSON, nil), pluginTranslationList)
 
 // MUST NOT CHANGE
-var PropertySchemaIDVisualizerCesium = id.MustPropertySchemaID("reearth/cesium")
+var PropertySchemaIDVisualizerCesium = property.MustSchemaID("reearth/cesium")
 
 // MUST NOT CHANGE
-var PropertySchemaIDInfobox = id.MustPropertySchemaID("reearth/infobox")
+var PropertySchemaIDInfobox = property.MustSchemaID("reearth/infobox")
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {
@@ -42,7 +41,7 @@ func MustPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	return ps
 }
 
-func GetPropertySchema(id id.PropertySchemaID) *property.Schema {
+func GetPropertySchema(id property.SchemaID) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {
 		if id == p.ID() {
 			return p
@@ -55,7 +54,7 @@ func Plugin() *plugin.Plugin {
 	return pluginManifest.Plugin
 }
 
-func GetPlugin(id id.PluginID) *plugin.Plugin {
+func GetPlugin(id plugin.ID) *plugin.Plugin {
 	if id.Equal(pluginManifest.Plugin.ID()) {
 		return pluginManifest.Plugin
 	}

@@ -2,43 +2,42 @@ package property
 
 import (
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // SchemaGroup represents a group of property that has some fields
 type SchemaGroup struct {
-	id                  id.PropertySchemaGroupID
-	sid                 id.PropertySchemaID
+	id                  SchemaGroupID
+	sid                 SchemaID
 	fields              []*SchemaField
 	list                bool
 	isAvailableIf       *Condition
 	title               i18n.String
-	representativeField *id.PropertySchemaFieldID
+	representativeField *FieldID
 }
 
 // ID returns id
-func (s *SchemaGroup) ID() id.PropertySchemaGroupID {
+func (s *SchemaGroup) ID() SchemaGroupID {
 	if s == nil {
-		return id.PropertySchemaGroupID("")
+		return SchemaGroupID("")
 	}
 	return s.id
 }
 
-func (s *SchemaGroup) IDRef() *id.PropertySchemaGroupID {
+func (s *SchemaGroup) IDRef() *SchemaGroupID {
 	if s == nil {
 		return nil
 	}
 	return s.id.Ref()
 }
 
-func (s *SchemaGroup) Schema() id.PropertySchemaID {
+func (s *SchemaGroup) Schema() SchemaID {
 	if s == nil {
-		return id.PropertySchemaID{}
+		return SchemaID{}
 	}
 	return s.sid
 }
 
-func (s *SchemaGroup) SchemaRef() *id.PropertySchemaID {
+func (s *SchemaGroup) SchemaRef() *SchemaID {
 	if s == nil {
 		return nil
 	}
@@ -54,7 +53,7 @@ func (s *SchemaGroup) Fields() []*SchemaField {
 }
 
 // Field returns a field whose id is specified
-func (s *SchemaGroup) Field(fid id.PropertySchemaFieldID) *SchemaField {
+func (s *SchemaGroup) Field(fid FieldID) *SchemaField {
 	if s == nil {
 		return nil
 	}
@@ -78,7 +77,7 @@ func (s *SchemaGroup) FieldByPointer(ptr *Pointer) *SchemaField {
 	return s.Field(fid)
 }
 
-func (s *SchemaGroup) HasField(i id.PropertySchemaFieldID) bool {
+func (s *SchemaGroup) HasField(i FieldID) bool {
 	return s.Field(i) != nil
 }
 
@@ -107,7 +106,7 @@ func (s *SchemaGroup) Title() i18n.String {
 }
 
 // RepresentativeFieldID returns the representative field ID of the group
-func (s *SchemaGroup) RepresentativeFieldID() *id.PropertySchemaFieldID {
+func (s *SchemaGroup) RepresentativeFieldID() *FieldID {
 	if s == nil {
 		return nil
 	}

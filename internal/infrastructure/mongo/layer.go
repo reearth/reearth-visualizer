@@ -40,7 +40,7 @@ func (r *layerRepo) FindByID(ctx context.Context, id id.LayerID, f []id.SceneID)
 func (r *layerRepo) FindByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.List, error) {
 	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.LayerIDToKeys(ids)},
+			{Key: "$in", Value: id.LayerIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*layer.Layer, 0, len(ids))
@@ -68,7 +68,7 @@ func (r *layerRepo) FindItemByID(ctx context.Context, id id.LayerID, f []id.Scen
 func (r *layerRepo) FindItemByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.ItemList, error) {
 	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.LayerIDToKeys(ids)},
+			{Key: "$in", Value: id.LayerIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*layer.Item, 0, len(ids))
@@ -89,7 +89,7 @@ func (r *layerRepo) FindGroupByID(ctx context.Context, id id.LayerID, f []id.Sce
 func (r *layerRepo) FindGroupByIDs(ctx context.Context, ids []id.LayerID, f []id.SceneID) (layer.GroupList, error) {
 	filter := r.sceneFilterD(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.LayerIDToKeys(ids)},
+			{Key: "$in", Value: id.LayerIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*layer.Group, 0, len(ids))
@@ -154,7 +154,7 @@ func (r *layerRepo) RemoveAll(ctx context.Context, ids []id.LayerID) error {
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.LayerIDToKeys(ids))
+	return r.client.RemoveAll(ctx, id.LayerIDsToStrings(ids))
 }
 
 func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
@@ -170,7 +170,7 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 
 func (r *layerRepo) FindByTag(ctx context.Context, tagID id.TagID, f []id.SceneID) (layer.List, error) {
 	ids := []id.TagID{tagID}
-	tags := id.TagIDToKeys(ids)
+	tags := id.TagIDsToStrings(ids)
 	filter := r.sceneFilter(bson.M{
 		"$or": []bson.M{
 			{"tags.id": bson.M{"$in": tags}},
@@ -331,7 +331,7 @@ func (*layerRepo) sceneFilterD(filter bson.D, scenes []id.SceneID) bson.D {
 	}
 	filter = append(filter, bson.E{
 		Key:   "scene",
-		Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(scenes)}},
+		Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(scenes)}},
 	})
 	return filter
 }
@@ -340,6 +340,6 @@ func (*layerRepo) sceneFilter(filter bson.M, scenes []id.SceneID) bson.M {
 	if scenes == nil {
 		return filter
 	}
-	filter["scene"] = bson.M{"$in": id.SceneIDToKeys(scenes)}
+	filter["scene"] = bson.M{"$in": id.SceneIDsToStrings(scenes)}
 	return filter
 }

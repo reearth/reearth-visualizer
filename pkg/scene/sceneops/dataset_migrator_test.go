@@ -1,19 +1,19 @@
 package sceneops
 
 //import (
-//	"github.com/reearth/reearth-backend/pkg/dataset"
-//	"github.com/reearth/reearth-backend/pkg/id"
 //	"testing"
+//
+//	"github.com/reearth/reearth-backend/pkg/dataset"
 //)
 //
 //func TestDatasetMigrator_Migrate(t *testing.T) {
-//	sid := id.NewSceneID()
-//	dsid:=id.NewDatasetID()
-//	dssid:=id.NewDatasetSchemaID()
-//	dssfid:=id.NewDatasetSchemaFieldID()
+//	sid := dataset.NewSceneID()
+//	dsid := dataset.NewID()
+//	dssid := dataset.NewSchemaID()
+//	dssfid := dataset.MewFieldID()
 //	testCases := []struct {
 //		Name     string
-//		SID      id.SceneID
+//		SID      dataset.SceneID
 //		NewDSL   []*dataset.Schema
 //		NewDL    dataset.List
 //		Expected MigrateDatasetResult

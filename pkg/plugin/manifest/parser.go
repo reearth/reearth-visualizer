@@ -1,13 +1,13 @@
 package manifest
 
-//go:generate go run github.com/idubinskiy/schematyper -o schema_gen.go --package manifest ../../../plugin_manifest_schema.json
+//go:generate go run github.com/idubinskiy/schematyper -o schema_gen.go --package manifest ../../../schemas/plugin_manifest.json
 
 import (
 	"errors"
 	"io"
 
 	"github.com/goccy/go-yaml"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/plugin"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 	ErrSystemManifest              = errors.New("cannot build system manifest")
 )
 
-func Parse(source io.Reader, scene *id.SceneID) (*Manifest, error) {
+func Parse(source io.Reader, scene *plugin.SceneID) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.NewDecoder(source).Decode(&root); err != nil {
 		return nil, ErrFailedToParseManifest
@@ -34,7 +34,7 @@ func Parse(source io.Reader, scene *id.SceneID) (*Manifest, error) {
 	return manifest, nil
 }
 
-func ParseSystemFromBytes(source []byte, scene *id.SceneID) (*Manifest, error) {
+func ParseSystemFromBytes(source []byte, scene *plugin.SceneID) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.Unmarshal(source, &root); err != nil {
 		return nil, ErrFailedToParseManifest
@@ -49,7 +49,7 @@ func ParseSystemFromBytes(source []byte, scene *id.SceneID) (*Manifest, error) {
 	return manifest, nil
 }
 
-func MustParseSystemFromBytes(source []byte, scene *id.SceneID) *Manifest {
+func MustParseSystemFromBytes(source []byte, scene *plugin.SceneID) *Manifest {
 	m, err := ParseSystemFromBytes(source, scene)
 	if err != nil {
 		panic(err)

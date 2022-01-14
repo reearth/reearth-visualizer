@@ -63,6 +63,14 @@ func PropertySchemaIDFromRef(id *string) *PropertySchemaID {
 	return &did
 }
 
+// Clone duplicates the PropertySchemaID
+func (d PropertySchemaID) Clone() PropertySchemaID {
+	return PropertySchemaID{
+		plugin: d.plugin.Clone(),
+		id:     d.id,
+	}
+}
+
 // ID returns a fragment of just ID.
 func (d PropertySchemaID) ID() string {
 	return d.id
@@ -80,18 +88,24 @@ func (d PropertySchemaID) System() bool {
 
 // String returns a string representation.
 func (d PropertySchemaID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return d.plugin.String() + "/" + d.id
 }
 
 // Ref returns a reference.
 func (d PropertySchemaID) Ref() *PropertySchemaID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // CopyRef returns a copy of a reference.
 func (d *PropertySchemaID) CopyRef() *PropertySchemaID {
-	if d == nil {
+	if d == nil || d.IsNil() {
 		return nil
 	}
 	d2 := *d
@@ -100,7 +114,7 @@ func (d *PropertySchemaID) CopyRef() *PropertySchemaID {
 
 // IsNil checks if ID is empty or not.
 func (d PropertySchemaID) IsNil() bool {
-	return d.plugin == PluginID{} && d.id == ""
+	return d.plugin.IsNil() && d.id == ""
 }
 
 // Equal returns true if two IDs are equal.
@@ -129,7 +143,7 @@ func (d *PropertySchemaID) UnmarshalText(text []byte) (err error) {
 }
 
 // PropertySchemaIDToKeys converts IDs into a string slice.
-func PropertySchemaIDToKeys(ids []PropertySchemaID) []string {
+func PropertySchemaIDsToStrings(ids []PropertySchemaID) []string {
 	keys := make([]string, 0, len(ids))
 	for _, id := range ids {
 		keys = append(keys, id.String())

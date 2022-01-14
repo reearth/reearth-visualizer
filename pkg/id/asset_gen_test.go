@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewAssetID(t *testing.T) {
 	id := NewAssetID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestAssetIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestAssetIDFrom(t *testing.T) {
 				result AssetID
 				err    error
 			}{
-				AssetID{},
-				ErrInvalidID,
+				result: AssetID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestAssetIDFrom(t *testing.T) {
 				result AssetID
 				err    error
 			}{
-				AssetID{},
-				ErrInvalidID,
+				result: AssetID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestAssetIDFrom(t *testing.T) {
 				result AssetID
 				err    error
 			}{
-				AssetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: AssetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := AssetIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := AssetIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustAssetID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustAssetID(t *testing.T) {
 			expected:    AssetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustAssetID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustAssetID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestAssetIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *AssetID
@@ -139,159 +135,149 @@ func TestAssetIDFromRef(t *testing.T) {
 			expected: &AssetID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := AssetIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := AssetIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestAssetIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := AssetIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := AssetIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, AssetIDFromRefID(nil))
+	assert.Nil(t, AssetIDFromRefID(&ID{}))
 }
 
 func TestAssetID_ID(t *testing.T) {
 	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := AssetIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestAssetID_String(t *testing.T) {
 	id := New()
-	subId := AssetIDFromRefID(&id)
+	id2 := AssetIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", AssetID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestAssetID_RefString(t *testing.T) {
+	id := NewAssetID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, AssetID{}.RefString())
 }
 
 func TestAssetID_GoString(t *testing.T) {
 	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.AssetID("+id.String()+")")
-}
-
-func TestAssetID_RefString(t *testing.T) {
-	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := AssetIDFromRefID(&id)
+	assert.Equal(t, "AssetID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "AssetID()", AssetID{}.GoString())
 }
 
 func TestAssetID_Ref(t *testing.T) {
-	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewAssetID()
+	assert.Equal(t, AssetID(id), *id.Ref())
+	assert.Nil(t, (&AssetID{}).Ref())
 }
 
 func TestAssetID_Contains(t *testing.T) {
 	id := NewAssetID()
 	id2 := NewAssetID()
 	assert.True(t, id.Contains([]AssetID{id, id2}))
+	assert.False(t, AssetID{}.Contains([]AssetID{id, id2, {}}))
 	assert.False(t, id.Contains([]AssetID{id2}))
 }
 
 func TestAssetID_CopyRef(t *testing.T) {
-	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewAssetID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*AssetID)(nil).CopyRef())
 }
 
 func TestAssetID_IDRef(t *testing.T) {
 	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := AssetIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&AssetID{}).IDRef())
+	assert.Nil(t, (*AssetID)(nil).IDRef())
 }
 
 func TestAssetID_StringRef(t *testing.T) {
-	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewAssetID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&AssetID{}).StringRef())
+	assert.Nil(t, (*AssetID)(nil).StringRef())
 }
 
 func TestAssetID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewAssetID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&AssetID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*AssetID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestAssetID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &AssetID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustAssetID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &AssetID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestAssetID_MarshalText(t *testing.T) {
 	id := New()
-	subId := AssetIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := AssetIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&AssetID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*AssetID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestAssetID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &AssetID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &AssetID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestAssetID_IsNil(t *testing.T) {
-	subId := AssetID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *AssetIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, AssetID{}.IsNil())
+	assert.False(t, NewAssetID().IsNil())
 }
 
-func TestAssetIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestAssetID_IsNilRef(t *testing.T) {
+	assert.True(t, AssetID{}.Ref().IsNilRef())
+	assert.True(t, (*AssetID)(nil).IsNilRef())
+	assert.False(t, NewAssetID().Ref().IsNilRef())
+}
+
+func TestAssetIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []AssetID
 		expected []string
@@ -321,19 +307,17 @@ func TestAssetIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, AssetIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, AssetIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestAssetIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestAssetIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestAssetIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := AssetIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := AssetIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := AssetIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestAssetIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []AssetID
@@ -449,25 +431,22 @@ func TestAssetIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := AssetIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestAssetIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []AssetID
@@ -493,21 +472,18 @@ func TestAssetIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := AssetIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestAssetIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []AssetID
 		expected []ID
@@ -537,28 +513,25 @@ func TestAssetIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := AssetIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestAssetIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustAssetID(id1.String())
+	id21 := MustAssetID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustAssetID(id2.String())
+	id22 := MustAssetID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustAssetID(id3.String())
+	id23 := MustAssetID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*AssetID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestAssetIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*AssetID{&subId1},
+			input:    []*AssetID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*AssetID{&subId1, &subId2, &subId3},
+			input:    []*AssetID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := AssetIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewAssetIDSet(t *testing.T) {
 	AssetIdSet := NewAssetIDSet()
-
 	assert.NotNil(t, AssetIdSet)
 	assert.Empty(t, AssetIdSet.m)
 	assert.Empty(t, AssetIdSet.s)
 }
 
 func TestAssetIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []AssetID
 		expected *AssetIDSet
@@ -663,24 +632,19 @@ func TestAssetIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewAssetIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestAssetIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	AssetId := MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *AssetID
 		expected *AssetIDSet
@@ -695,7 +659,7 @@ func TestAssetIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &AssetId,
+			input: MustAssetID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &AssetIDSet{
 				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestAssetIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewAssetIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestAssetIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			AssetIDSet
-			AssetID
-		}
+	tests := []struct {
+		name     string
+		target   *AssetIDSet
+		input    AssetID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				AssetIDSet
-				AssetID
-			}{AssetIDSet: AssetIDSet{}, AssetID: MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &AssetIDSet{},
+			input:    MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				AssetIDSet
-				AssetID
-			}{AssetIDSet: AssetIDSet{
+			target: &AssetIDSet{
 				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, AssetID: MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				AssetIDSet
-				AssetID
-			}{AssetIDSet: AssetIDSet{
+			target: &AssetIDSet{
 				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, AssetID: MustAssetID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustAssetID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.AssetIDSet.Has(tc.input.AssetID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestAssetIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    AssetIDSet
-		expected AssetIDSet
+		input    *AssetIDSet
+		expected *AssetIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: AssetIDSet{},
-			expected: AssetIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &AssetIDSet{},
+			expected: &AssetIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: AssetIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &AssetIDSet{
 				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: AssetIDSet{
+			expected: &AssetIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestAssetIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *AssetIDSet
 		expected []AssetID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &AssetIDSet{
 				m: map[AssetID]struct{}{},
 				s: nil,
 			},
 			expected: make([]AssetID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestAssetIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestAssetIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *AssetIDSet
 		expected *AssetIDSet
@@ -922,21 +873,19 @@ func TestAssetIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestAssetIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *AssetIDSet
@@ -944,6 +893,23 @@ func TestAssetIDSet_Merge(t *testing.T) {
 		}
 		expected *AssetIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *AssetIDSet
+				b *AssetIDSet
+			}{
+				a: &AssetIDSet{
+					m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &AssetIDSet{
+				m: map[AssetID]struct{}{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []AssetID{MustAssetID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestAssetIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

@@ -44,7 +44,7 @@ func LayerIDFromRef(i *string) *LayerID {
 
 // LayerIDFromRefID generates a new LayerID from a ref of a generic ID.
 func LayerIDFromRefID(i *ID) *LayerID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := LayerID(*i)
@@ -58,28 +58,40 @@ func (d LayerID) ID() ID {
 
 // String returns a string representation.
 func (d LayerID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d LayerID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d LayerID) GoString() string {
-	return "id.LayerID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d LayerID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "LayerID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d LayerID) Ref() *LayerID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d LayerID) Contains(ids []LayerID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d LayerID) Contains(ids []LayerID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *LayerID) CopyRef() *LayerID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *LayerID) CopyRef() *LayerID {
 
 // IDRef returns a reference of a domain id.
 func (d *LayerID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *LayerID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *LayerID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *LayerID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *LayerID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *LayerID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *LayerID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *LayerID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d LayerID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// LayerIDToKeys converts IDs into a string slice.
-func LayerIDToKeys(ids []LayerID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *LayerID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// LayerIDsToStrings converts IDs into a string slice.
+func LayerIDsToStrings(ids []LayerID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // LayerIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *LayerIDSet) Clone() *LayerIDSet {
 
 // Merge returns a merged set
 func (s *LayerIDSet) Merge(s2 *LayerIDSet) *LayerIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

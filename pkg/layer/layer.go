@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
@@ -14,22 +13,22 @@ var (
 )
 
 type Layer interface {
-	ID() id.LayerID
+	ID() ID
 	Name() string
 	IsVisible() bool
-	Plugin() *id.PluginID
-	Extension() *id.PluginExtensionID
+	Plugin() *PluginID
+	Extension() *PluginExtensionID
 	UsesPlugin() bool
-	Property() *id.PropertyID
+	Property() *PropertyID
 	HasInfobox() bool
 	Infobox() *Infobox
-	Scene() id.SceneID
+	Scene() SceneID
 	Tags() *TagList
 	Rename(string)
 	SetVisible(bool)
 	SetInfobox(*Infobox)
-	SetPlugin(*id.PluginID)
-	Properties() []id.PropertyID
+	SetPlugin(*PluginID)
+	Properties() []PropertyID
 	ValidateProperties(property.Map) error
 }
 
@@ -70,22 +69,22 @@ func ToLayerItemRef(l *Layer) *Item {
 }
 
 type layerBase struct {
-	id        id.LayerID
+	id        ID
 	name      string
 	visible   bool
-	plugin    *id.PluginID
-	extension *id.PluginExtensionID
-	property  *id.PropertyID
+	plugin    *PluginID
+	extension *PluginExtensionID
+	property  *PropertyID
 	infobox   *Infobox
-	scene     id.SceneID
+	scene     SceneID
 	tags      *TagList
 }
 
-func (l *layerBase) ID() id.LayerID {
+func (l *layerBase) ID() ID {
 	return l.id
 }
 
-func (l *layerBase) IDRef() *id.LayerID {
+func (l *layerBase) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
@@ -113,21 +112,21 @@ func (l *layerBase) UsesPlugin() bool {
 	return l.plugin != nil && l.extension != nil
 }
 
-func (l *layerBase) Plugin() *id.PluginID {
+func (l *layerBase) Plugin() *PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.plugin.CopyRef()
 }
 
-func (l *layerBase) Extension() *id.PluginExtensionID {
+func (l *layerBase) Extension() *PluginExtensionID {
 	if l == nil {
 		return nil
 	}
 	return l.extension.CopyRef()
 }
 
-func (l *layerBase) Property() *id.PropertyID {
+func (l *layerBase) Property() *PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -148,7 +147,7 @@ func (l *layerBase) Infobox() *Infobox {
 	return l.infobox
 }
 
-func (l *layerBase) Scene() id.SceneID {
+func (l *layerBase) Scene() SceneID {
 	return l.scene
 }
 
@@ -173,18 +172,18 @@ func (l *layerBase) SetInfobox(infobox *Infobox) {
 	l.infobox = infobox
 }
 
-func (l *layerBase) SetPlugin(plugin *id.PluginID) {
+func (l *layerBase) SetPlugin(plugin *PluginID) {
 	if l == nil {
 		return
 	}
 	l.plugin = plugin.CopyRef()
 }
 
-func (l *layerBase) Properties() []id.PropertyID {
+func (l *layerBase) Properties() []PropertyID {
 	if l == nil {
 		return nil
 	}
-	res := []id.PropertyID{}
+	res := []PropertyID{}
 	if l.property != nil {
 		res = append(res, *l.property)
 	}
@@ -208,7 +207,7 @@ func (l *layerBase) ValidateProperties(pm property.Map) error {
 			return errors.New("layer should have plugin id and extension id")
 		}
 
-		psid, err := id.PropertySchemaIDFromExtension(*l.plugin, *l.extension)
+		psid, err := PropertySchemaIDFromExtension(*l.plugin, *l.extension)
 		if err != nil {
 			return errors.New("layer has invalid plugin id and extension id")
 		}

@@ -5,14 +5,13 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuilder_ID(t *testing.T) {
 	var b = New()
-	res := b.ID(id.MustPluginID("aaa~1.1.1")).MustBuild()
-	assert.Equal(t, id.MustPluginID("aaa~1.1.1"), res.ID())
+	res := b.ID(MustID("aaa~1.1.1")).MustBuild()
+	assert.Equal(t, MustID("aaa~1.1.1"), res.ID())
 }
 
 func TestBuilder_Name(t *testing.T) {
@@ -36,7 +35,7 @@ func TestBuilder_Description(t *testing.T) {
 func TestBuilder_Schema(t *testing.T) {
 	testCases := []struct {
 		name          string
-		sid, expected *id.PropertySchemaID
+		sid, expected *PropertySchemaID
 	}{
 		{
 			name:     "nil schema",
@@ -45,8 +44,8 @@ func TestBuilder_Schema(t *testing.T) {
 		},
 		{
 			name:     "build schema",
-			sid:      id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
-			expected: id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+			sid:      MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+			expected: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 		},
 	}
 	for _, tc := range testCases {
@@ -78,15 +77,15 @@ func TestBuilder_RepositoryURL(t *testing.T) {
 func TestBuilder_Build(t *testing.T) {
 	testCases := []struct {
 		name, author, repositoryURL string
-		id                          id.PluginID
+		id                          ID
 		pname, description          i18n.String
 		ext                         []*Extension
-		schema                      *id.PropertySchemaID
+		schema                      *PropertySchemaID
 		expected                    *Plugin
 		err                         error // skip for now as error is always nil
 	}{
 		{
-			id:            id.MustPluginID("hoge~0.1.0"),
+			id:            MustID("hoge~0.1.0"),
 			name:          "success build new plugin",
 			author:        "aaa",
 			repositoryURL: "uuu",
@@ -96,19 +95,19 @@ func TestBuilder_Build(t *testing.T) {
 				NewExtension().ID("xxx").MustBuild(),
 				NewExtension().ID("yyy").MustBuild(),
 			},
-			schema: id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+			schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			expected: &Plugin{
-				id:            id.MustPluginID("hoge~0.1.0"),
+				id:            MustID("hoge~0.1.0"),
 				name:          i18n.StringFrom("nnn"),
 				author:        "aaa",
 				description:   i18n.StringFrom("ddd"),
 				repositoryURL: "uuu",
-				extensions: map[id.PluginExtensionID]*Extension{
-					id.PluginExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
-					id.PluginExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
+				extensions: map[ExtensionID]*Extension{
+					ExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
+					ExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
 				},
-				extensionOrder: []id.PluginExtensionID{id.PluginExtensionID("xxx"), id.PluginExtensionID("yyy")},
-				schema:         id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+				extensionOrder: []ExtensionID{ExtensionID("xxx"), ExtensionID("yyy")},
+				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
 		},
 	}
@@ -137,14 +136,14 @@ func TestBuilder_Build(t *testing.T) {
 func TestBuilder_MustBuild(t *testing.T) {
 	testCases := []struct {
 		name, author, repositoryURL string
-		id                          id.PluginID
+		id                          ID
 		pname, description          i18n.String
 		ext                         []*Extension
-		schema                      *id.PropertySchemaID
+		schema                      *PropertySchemaID
 		expected                    *Plugin
 	}{
 		{
-			id:            id.MustPluginID("hoge~0.1.0"),
+			id:            MustID("hoge~0.1.0"),
 			name:          "success build new plugin",
 			author:        "aaa",
 			repositoryURL: "uuu",
@@ -154,19 +153,19 @@ func TestBuilder_MustBuild(t *testing.T) {
 				NewExtension().ID("xxx").MustBuild(),
 				NewExtension().ID("yyy").MustBuild(),
 			},
-			schema: id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+			schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			expected: &Plugin{
-				id:            id.MustPluginID("hoge~0.1.0"),
+				id:            MustID("hoge~0.1.0"),
 				name:          i18n.StringFrom("nnn"),
 				author:        "aaa",
 				description:   i18n.StringFrom("ddd"),
 				repositoryURL: "uuu",
-				extensions: map[id.PluginExtensionID]*Extension{
-					id.PluginExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
-					id.PluginExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
+				extensions: map[ExtensionID]*Extension{
+					ExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
+					ExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
 				},
-				extensionOrder: []id.PluginExtensionID{id.PluginExtensionID("xxx"), id.PluginExtensionID("yyy")},
-				schema:         id.MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+				extensionOrder: []ExtensionID{ExtensionID("xxx"), ExtensionID("yyy")},
+				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
 		},
 	}

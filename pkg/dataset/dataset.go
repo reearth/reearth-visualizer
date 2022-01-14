@@ -1,24 +1,22 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Dataset struct {
-	id     id.DatasetID
+	id     ID
 	source string
-	schema id.DatasetSchemaID
-	fields map[id.DatasetSchemaFieldID]*Field
-	order  []id.DatasetSchemaFieldID
-	scene  id.SceneID
+	schema SchemaID
+	fields map[FieldID]*Field
+	order  []FieldID
+	scene  SceneID
 }
 
-func (d *Dataset) ID() (i id.DatasetID) {
+func (d *Dataset) ID() (i ID) {
 	if d == nil {
 		return
 	}
 	return d.id
 }
 
-func (d *Dataset) Scene() (i id.SceneID) {
+func (d *Dataset) Scene() (i SceneID) {
 	if d == nil {
 		return
 	}
@@ -32,7 +30,7 @@ func (d *Dataset) Source() string {
 	return d.source
 }
 
-func (d *Dataset) Schema() (i id.DatasetSchemaID) {
+func (d *Dataset) Schema() (i SchemaID) {
 	if d == nil {
 		return
 	}
@@ -50,14 +48,14 @@ func (d *Dataset) Fields() []*Field {
 	return fields
 }
 
-func (d *Dataset) Field(id id.DatasetSchemaFieldID) *Field {
+func (d *Dataset) Field(id FieldID) *Field {
 	if d == nil || d.fields == nil {
 		return nil
 	}
 	return d.fields[id]
 }
 
-func (d *Dataset) FieldRef(id *id.DatasetSchemaFieldID) *Field {
+func (d *Dataset) FieldRef(id *FieldID) *Field {
 	if d == nil || id == nil {
 		return nil
 	}

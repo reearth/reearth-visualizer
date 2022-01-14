@@ -6,7 +6,6 @@ import (
 	"io"
 
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
@@ -19,11 +18,11 @@ type GeoStyle struct {
 type GeoJSONDecoder struct {
 	reader    io.Reader
 	features  []*geojson.Feature
-	sceneId   id.SceneID
+	sceneId   layer.SceneID
 	groupName string
 }
 
-func NewGeoJSONDecoder(r io.Reader, s id.SceneID) *GeoJSONDecoder {
+func NewGeoJSONDecoder(r io.Reader, s layer.SceneID) *GeoJSONDecoder {
 	return &GeoJSONDecoder{
 		reader:    r,
 		sceneId:   s,
@@ -109,7 +108,7 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 	var feat *geojson.Feature
 	var p *property.Property
 	var l *layer.Item
-	var ex id.PluginExtensionID
+	var ex layer.PluginExtensionID
 	var err error
 	var stroke, fillColor string
 	var strokeWidth float64
@@ -242,7 +241,7 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		Scene(d.sceneId).
 		Property(p.IDRef()).
 		Extension(&ex).
-		Plugin(&id.OfficialPluginID).
+		Plugin(&layer.OfficialPluginID).
 		Build()
 	if err != nil {
 		return nil, nil, err

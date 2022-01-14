@@ -44,7 +44,7 @@ func TagIDFromRef(i *string) *TagID {
 
 // TagIDFromRefID generates a new TagID from a ref of a generic ID.
 func TagIDFromRefID(i *ID) *TagID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := TagID(*i)
@@ -58,28 +58,40 @@ func (d TagID) ID() ID {
 
 // String returns a string representation.
 func (d TagID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d TagID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d TagID) GoString() string {
-	return "id.TagID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d TagID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "TagID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d TagID) Ref() *TagID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d TagID) Contains(ids []TagID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d TagID) Contains(ids []TagID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *TagID) CopyRef() *TagID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *TagID) CopyRef() *TagID {
 
 // IDRef returns a reference of a domain id.
 func (d *TagID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *TagID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *TagID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *TagID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *TagID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *TagID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *TagID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *TagID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d TagID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// TagIDToKeys converts IDs into a string slice.
-func TagIDToKeys(ids []TagID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *TagID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// TagIDsToStrings converts IDs into a string slice.
+func TagIDsToStrings(ids []TagID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // TagIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *TagIDSet) Clone() *TagIDSet {
 
 // Merge returns a merged set
 func (s *TagIDSet) Merge(s2 *TagIDSet) *TagIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

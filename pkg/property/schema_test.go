@@ -3,7 +3,6 @@ package property
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +15,7 @@ func TestSchema_Nil(t *testing.T) {
 }
 
 func TestSchema_Field(t *testing.T) {
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
@@ -24,7 +23,7 @@ func TestSchema_Field(t *testing.T) {
 		Name     string
 		S        *Schema
 		PTR      *Pointer
-		Input    id.PropertySchemaFieldID
+		Input    FieldID
 		Expected *SchemaField
 	}{
 		{
@@ -40,8 +39,8 @@ func TestSchema_Field(t *testing.T) {
 		{
 			Name:  "not found",
 			S:     NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild(),
-			PTR:   NewPointer(nil, nil, id.PropertySchemaFieldID("zz").Ref()),
-			Input: id.PropertySchemaFieldID("zz"),
+			PTR:   NewPointer(nil, nil, FieldID("zz").Ref()),
+			Input: FieldID("zz"),
 		},
 	}
 
@@ -56,7 +55,7 @@ func TestSchema_Field(t *testing.T) {
 }
 
 func TestSchema_Group(t *testing.T) {
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
@@ -64,8 +63,8 @@ func TestSchema_Group(t *testing.T) {
 		Name       string
 		S          *Schema
 		PTR        *Pointer
-		Input      id.PropertySchemaGroupID
-		InputField id.PropertySchemaFieldID
+		Input      SchemaGroupID
+		InputField FieldID
 		Expected   *SchemaGroup
 	}{
 		{
@@ -82,8 +81,8 @@ func TestSchema_Group(t *testing.T) {
 		{
 			Name:  "not found",
 			S:     NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild(),
-			PTR:   NewPointer(nil, nil, id.PropertySchemaFieldID("zz").Ref()),
-			Input: id.PropertySchemaGroupID("zz"),
+			PTR:   NewPointer(nil, nil, FieldID("zz").Ref()),
+			Input: SchemaGroupID("zz"),
 		},
 	}
 
@@ -99,7 +98,7 @@ func TestSchema_Group(t *testing.T) {
 }
 
 func TestSchema_DetectDuplicatedFields(t *testing.T) {
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
@@ -115,13 +114,13 @@ func TestSchema_DetectDuplicatedFields(t *testing.T) {
 		{
 			Name:     "invalid: URL",
 			S:        NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild(),
-			LF:       LinkableFields{URL: NewPointer(nil, nil, id.PropertySchemaFieldID("xx").Ref())},
+			LF:       LinkableFields{URL: NewPointer(nil, nil, FieldID("xx").Ref())},
 			Expected: false,
 		},
 		{
 			Name:     "invalid: Lng",
 			S:        NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild(),
-			LF:       LinkableFields{LatLng: NewPointer(nil, nil, id.PropertySchemaFieldID("xx").Ref())},
+			LF:       LinkableFields{LatLng: NewPointer(nil, nil, FieldID("xx").Ref())},
 			Expected: false,
 		},
 		{

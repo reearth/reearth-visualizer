@@ -3,12 +3,11 @@ package user
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTeam_ID(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	tm := NewTeam().ID(tid).MustBuild()
 	assert.Equal(t, tid, tm.ID())
 }
@@ -19,8 +18,8 @@ func TestTeam_Name(t *testing.T) {
 }
 
 func TestTeam_Members(t *testing.T) {
-	m := map[id.UserID]Role{
-		id.NewUserID(): RoleOwner,
+	m := map[ID]Role{
+		NewID(): RoleOwner,
 	}
 	tm := NewTeam().NewID().Members(m).MustBuild()
 	assert.Equal(t, m, tm.Members().Members())

@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -25,8 +24,8 @@ type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Layers            layer.List
 	Properties        []*property.Property
-	RemovedLayers     []id.LayerID
-	RemovedProperties []id.PropertyID
+	RemovedLayers     []layer.ID
+	RemovedProperties []property.ID
 }
 
 var (
@@ -34,7 +33,7 @@ var (
 	ErrInvalidPlugins     error = errors.New("invalid plugins")
 )
 
-func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID id.PluginID) (MigratePluginsResult, error) {
+func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID plugin.ID) (MigratePluginsResult, error) {
 	if s == nil {
 		return MigratePluginsResult{}, rerror.ErrInternalBy(errors.New("scene is nil"))
 	}
@@ -47,7 +46,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, ErrPluginNotInstalled
 	}
 
-	plugins, err := s.Plugin(ctx, []id.PluginID{oldPluginID, newPluginID}, []id.SceneID{sc.ID()})
+	plugins, err := s.Plugin(ctx, []plugin.ID{oldPluginID, newPluginID}, []scene.ID{sc.ID()})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
@@ -62,13 +61,13 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	modifiedLayers := layer.List{}
-	removedLayers := []id.LayerID{}
-	propertyIDs := []id.PropertyID{}
-	removedPropertyIDs := []id.PropertyID{}
-	schemaMap := map[id.PropertySchemaID]*property.Schema{}
+	removedLayers := []layer.ID{}
+	propertyIDs := []property.ID{}
+	removedPropertyIDs := []property.ID{}
+	schemaMap := map[property.SchemaID]*property.Schema{}
 
 	// プロパティスキーマの取得と、古いスキーマと新しいスキーマのマップ作成
-	schemaIDs := []id.PropertySchemaID{}
+	schemaIDs := []property.SchemaID{}
 	if oldPlugin.Schema() != nil {
 		if pps := newPlugin.Schema(); pps != nil {
 			schemaIDs = append(schemaIDs, *pps)
@@ -153,7 +152,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 
 		// 不正なInfoboxFieldの削除
 		if ib := ll.Infobox(); ib != nil {
-			removeFields := []id.InfoboxFieldID{}
+			removeFields := []layer.InfoboxFieldID{}
 			for _, f := range ib.Fields() {
 				if newPlugin.Extension(f.Extension()) == nil {
 					removeFields = append(removeFields, f.ID())
@@ -234,8 +233,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}, nil
 }
 
-func collectDatasetIDs(properties []*property.Property) []id.DatasetID {
-	res := []id.DatasetID{}
+func collectDatasetIDs(properties []*property.Property) []property.DatasetID {
+	res := []property.DatasetID{}
 	for _, p := range properties {
 		res = append(res, p.CollectDatasets()...)
 	}

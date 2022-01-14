@@ -3,7 +3,6 @@ package encoding
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 )
@@ -14,7 +13,7 @@ type Exporter struct {
 	Encoder Encoder
 }
 
-func (e *Exporter) ExportLayerByID(ctx context.Context, l id.LayerID) error {
+func (e *Exporter) ExportLayerByID(ctx context.Context, l layer.ID) error {
 	if e == nil {
 		return nil
 	}

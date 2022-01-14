@@ -2,14 +2,12 @@ package dataset
 
 import (
 	"context"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-type Loader func(context.Context, ...id.DatasetID) (List, error)
+type Loader func(context.Context, ...ID) (List, error)
 
 func LoaderFrom(data []*Dataset) Loader {
-	return func(ctx context.Context, ids ...id.DatasetID) (List, error) {
+	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make(List, 0, len(ids))
 		for _, i := range ids {
 			found := false
@@ -28,8 +26,8 @@ func LoaderFrom(data []*Dataset) Loader {
 	}
 }
 
-func LoaderFromMap(data map[id.DatasetID]*Dataset) Loader {
-	return func(ctx context.Context, ids ...id.DatasetID) (List, error) {
+func LoaderFromMap(data map[ID]*Dataset) Loader {
+	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make(List, 0, len(ids))
 		for _, i := range ids {
 			if d, ok := data[i]; ok {

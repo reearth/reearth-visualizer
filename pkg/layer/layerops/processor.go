@@ -3,22 +3,21 @@ package layerops
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 )
 
 type Processor struct {
-	RootLayerID id.LayerID
+	RootLayerID layer.ID
 	LayerLoader layer.Loader
 }
 
 type UninstallPluginResult struct {
 	ModifiedLayers    layer.List
 	RemovedLayers     *layer.IDList
-	RemovedProperties []id.PropertyID
+	RemovedProperties []layer.PropertyID
 }
 
-func (p Processor) UninstallPlugin(ctx context.Context, pluginID id.PluginID) (res UninstallPluginResult, err error) {
+func (p Processor) UninstallPlugin(ctx context.Context, pluginID layer.PluginID) (res UninstallPluginResult, err error) {
 	err = p.LayerLoader.Walk(ctx, func(l layer.Layer, parents layer.GroupList) error {
 		parent := parents.Last()
 		parentRemoved := parent != nil && res.RemovedLayers.HasLayer(parent.ID())
@@ -42,7 +41,7 @@ func (p Processor) UninstallPlugin(ctx context.Context, pluginID id.PluginID) (r
 		res.RemovedProperties = append(res.RemovedProperties, l.Properties()...)
 		res.ModifiedLayers = res.ModifiedLayers.Remove(l.ID())
 		return nil
-	}, []id.LayerID{p.RootLayerID})
+	}, []layer.ID{p.RootLayerID})
 
 	return
 }

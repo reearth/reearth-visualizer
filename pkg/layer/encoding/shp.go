@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
 	shp "github.com/reearth/reearth-backend/pkg/shp"
@@ -100,7 +100,7 @@ func polygonToSHP(poly property.Polygon) *shp.Polygon {
 }
 
 func (e *SHPEncoder) encodeLayer(li *merging.SealedLayerItem) (sh shp.Shape, st shp.ShapeType, err error) {
-	if li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
+	if li.PluginID == nil || !layer.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, 0, nil
 	}
 	switch li.ExtensionID.String() {

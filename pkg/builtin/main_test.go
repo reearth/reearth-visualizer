@@ -3,7 +3,8 @@ package builtin
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -45,17 +46,17 @@ func TestPlugin(t *testing.T) {
 func TestGetPlugin(t *testing.T) {
 	testCases := []struct {
 		name        string
-		pluginID    id.PluginID
+		pluginID    plugin.ID
 		expectedNil bool
 	}{
 		{
 			name:        "Official Plugin",
-			pluginID:    id.OfficialPluginID,
+			pluginID:    plugin.OfficialPluginID,
 			expectedNil: false,
 		},
 		{
 			name:        "foo plugin",
-			pluginID:    id.MustPluginID("foo~1.1.1"),
+			pluginID:    plugin.MustID("foo~1.1.1"),
 			expectedNil: true,
 		},
 	}
@@ -76,7 +77,7 @@ func TestGetPlugin(t *testing.T) {
 func TestGetPropertySchema(t *testing.T) {
 	testCases := []struct {
 		name        string
-		psId        id.PropertySchemaID
+		psId        property.SchemaID
 		expectedNil bool
 	}{
 		{
@@ -86,7 +87,7 @@ func TestGetPropertySchema(t *testing.T) {
 		},
 		{
 			name:        "unknown propertySchemaId",
-			psId:        id.MustPropertySchemaID("xxx~1.1.1/aa"),
+			psId:        property.MustSchemaID("xxx~1.1.1/aa"),
 			expectedNil: true,
 		},
 	}

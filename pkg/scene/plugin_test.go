@@ -3,13 +3,12 @@ package scene
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPlugin(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	res := NewPlugin(pid, pr)
 	p := Plugin{
 		plugin:   pid,

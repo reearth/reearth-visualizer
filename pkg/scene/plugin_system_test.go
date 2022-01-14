@@ -3,13 +3,12 @@ package scene
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewPluginSystem(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
 		Input    []*Plugin
@@ -65,13 +64,13 @@ func TestNewPluginSystem(t *testing.T) {
 }
 
 func TestPluginSystem_Property(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
-		Input    id.PluginID
+		Input    PluginID
 		PS       *PluginSystem
-		Expected *id.PropertyID
+		Expected *PropertyID
 	}{
 		{
 			Name:     "property is found",
@@ -88,7 +87,7 @@ func TestPluginSystem_Property(t *testing.T) {
 		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: nil,
 		},
 	}
@@ -103,11 +102,11 @@ func TestPluginSystem_Property(t *testing.T) {
 }
 
 func TestPluginSystem_Plugin(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
-		Input    id.PluginID
+		Input    PluginID
 		PS       *PluginSystem
 		Expected *Plugin
 	}{
@@ -120,7 +119,7 @@ func TestPluginSystem_Plugin(t *testing.T) {
 		{
 			Name:     "plugin is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: nil,
 		},
 	}
@@ -135,12 +134,12 @@ func TestPluginSystem_Plugin(t *testing.T) {
 }
 
 func TestPluginSystem_Properties(t *testing.T) {
-	pr := id.NewPropertyID().Ref()
-	pr2 := id.NewPropertyID().Ref()
+	pr := NewPropertyID().Ref()
+	pr2 := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
 		PS       *PluginSystem
-		Expected []id.PropertyID
+		Expected []PropertyID
 	}{
 		{
 			Name:     "pluginSystem is nil",
@@ -150,10 +149,10 @@ func TestPluginSystem_Properties(t *testing.T) {
 		{
 			Name: "get properties",
 			PS: NewPluginSystem([]*Plugin{
-				NewPlugin(id.MustPluginID("zzz~1.1.1"), pr),
-				NewPlugin(id.MustPluginID("xxx~1.1.1"), pr2),
+				NewPlugin(MustPluginID("zzz~1.1.1"), pr),
+				NewPlugin(MustPluginID("xxx~1.1.1"), pr2),
 			}),
-			Expected: []id.PropertyID{*pr, *pr2},
+			Expected: []PropertyID{*pr, *pr2},
 		},
 	}
 	for _, tc := range testCases {
@@ -167,11 +166,11 @@ func TestPluginSystem_Properties(t *testing.T) {
 }
 
 func TestPluginSystem_Has(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
-		Input    id.PluginID
+		Input    PluginID
 		PS       *PluginSystem
 		Expected bool
 	}{
@@ -184,7 +183,7 @@ func TestPluginSystem_Has(t *testing.T) {
 		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: false,
 		},
 	}
@@ -199,11 +198,11 @@ func TestPluginSystem_Has(t *testing.T) {
 }
 
 func TestPluginSystem_HasPlugin(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name     string
-		Input    id.PluginID
+		Input    PluginID
 		PS       *PluginSystem
 		Expected bool
 	}{
@@ -216,7 +215,7 @@ func TestPluginSystem_HasPlugin(t *testing.T) {
 		{
 			Name:     "property is not found",
 			Input:    pid,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.MustPluginID("zzz~1.1.1"), pr)}),
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
 			Expected: false,
 		},
 	}
@@ -231,8 +230,8 @@ func TestPluginSystem_HasPlugin(t *testing.T) {
 }
 
 func TestPluginSystem_Add(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string
 		Input        *Plugin
@@ -252,7 +251,7 @@ func TestPluginSystem_Add(t *testing.T) {
 		},
 		{
 			Name:     "add official plugin",
-			Input:    NewPlugin(id.OfficialPluginID, pr),
+			Input:    NewPlugin(OfficialPluginID, pr),
 			PS:       NewPluginSystem([]*Plugin{NewPlugin(pid, pr)}),
 			Expected: NewPluginSystem([]*Plugin{NewPlugin(pid, pr)}),
 		},
@@ -274,18 +273,18 @@ func TestPluginSystem_Add(t *testing.T) {
 }
 
 func TestPluginSystem_Remove(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string
-		Input        id.PluginID
+		Input        PluginID
 		PS, Expected *PluginSystem
 	}{
 		{
 			Name:     "remove official plugin",
-			Input:    id.OfficialPluginID,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.OfficialPluginID, pr)}),
-			Expected: NewPluginSystem([]*Plugin{NewPlugin(id.OfficialPluginID, pr)}),
+			Input:    OfficialPluginID,
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+			Expected: NewPluginSystem([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
 		},
 		{
 			Name:     "remove a plugin",
@@ -305,19 +304,19 @@ func TestPluginSystem_Remove(t *testing.T) {
 }
 
 func TestPluginSystem_Upgrade(t *testing.T) {
-	pid := id.MustPluginID("xxx~1.1.1")
-	nid := id.MustPluginID("zzz~1.1.1")
-	pr := id.NewPropertyID().Ref()
+	pid := MustPluginID("xxx~1.1.1")
+	nid := MustPluginID("zzz~1.1.1")
+	pr := NewPropertyID().Ref()
 	testCases := []struct {
 		Name         string
-		PID, NewID   id.PluginID
+		PID, NewID   PluginID
 		PS, Expected *PluginSystem
 	}{
 		{
 			Name:     "upgrade official plugin",
-			PID:      id.OfficialPluginID,
-			PS:       NewPluginSystem([]*Plugin{NewPlugin(id.OfficialPluginID, pr)}),
-			Expected: NewPluginSystem([]*Plugin{NewPlugin(id.OfficialPluginID, pr)}),
+			PID:      OfficialPluginID,
+			PS:       NewPluginSystem([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+			Expected: NewPluginSystem([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
 		},
 		{
 			Name:     "upgrade a plugin",

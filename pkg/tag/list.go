@@ -1,27 +1,25 @@
 package tag
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type List struct {
-	tags []id.TagID
+	tags []ID
 }
 
 func NewList() *List {
-	return &List{tags: []id.TagID{}}
+	return &List{tags: []ID{}}
 }
 
-func NewListFromTags(tags []id.TagID) *List {
+func NewListFromTags(tags []ID) *List {
 	return &List{tags: tags}
 }
 
-func (tl *List) Tags() []id.TagID {
+func (tl *List) Tags() []ID {
 	if tl == nil || tl.tags == nil {
 		return nil
 	}
-	return append([]id.TagID{}, tl.tags...)
+	return append([]ID{}, tl.tags...)
 }
 
-func (tl *List) Has(tid id.TagID) bool {
+func (tl *List) Has(tid ID) bool {
 	if tl == nil || tl.tags == nil {
 		return false
 	}
@@ -33,14 +31,14 @@ func (tl *List) Has(tid id.TagID) bool {
 	return false
 }
 
-func (tl *List) Add(tags ...id.TagID) {
+func (tl *List) Add(tags ...ID) {
 	if tl == nil || tl.tags == nil {
 		return
 	}
 	tl.tags = append(tl.tags, tags...)
 }
 
-func (tl *List) Remove(tags ...id.TagID) {
+func (tl *List) Remove(tags ...ID) {
 	if tl == nil || tl.tags == nil {
 		return
 	}

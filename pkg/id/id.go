@@ -53,7 +53,7 @@ func FromID(id string) (ID, error) {
 }
 
 func FromIDRef(id *string) *ID {
-	if id == nil {
+	if id == nil || *id == "" {
 		return nil
 	}
 	parsedID, err := parseID(*id)

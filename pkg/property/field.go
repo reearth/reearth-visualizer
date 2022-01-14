@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 var (
@@ -16,7 +15,7 @@ var (
 )
 
 type Field struct {
-	field id.PropertySchemaFieldID
+	field FieldID
 	links *Links
 	v     *OptionalValue
 }
@@ -29,7 +28,7 @@ func (p *Field) Clone() *Field {
 	}
 }
 
-func (p *Field) Field() id.PropertySchemaFieldID {
+func (p *Field) Field() FieldID {
 	return p.field
 }
 
@@ -74,11 +73,11 @@ func (p *Field) HasLinkedField() bool {
 	return p.Links().IsLinked()
 }
 
-func (p *Field) CollectDatasets() []id.DatasetID {
+func (p *Field) CollectDatasets() []DatasetID {
 	if p == nil {
 		return nil
 	}
-	res := []id.DatasetID{}
+	res := []DatasetID{}
 
 	if p.Links().IsLinkedFully() {
 		dsid := p.Links().Last().Dataset()
@@ -90,7 +89,7 @@ func (p *Field) CollectDatasets() []id.DatasetID {
 	return res
 }
 
-func (p *Field) IsDatasetLinked(s id.DatasetSchemaID, i id.DatasetID) bool {
+func (p *Field) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 	return p.Links().HasDatasetOrSchema(s, i)
 }
 
@@ -126,7 +125,7 @@ func (p *Field) Unlink() {
 	p.links = nil
 }
 
-func (p *Field) UpdateField(field id.PropertySchemaFieldID) {
+func (p *Field) UpdateField(field FieldID) {
 	if p == nil {
 		return
 	}
@@ -201,9 +200,9 @@ func (p *Field) ValidateSchema(ps *SchemaField) error {
 }
 
 type DatasetMigrationParam struct {
-	OldDatasetSchemaMap map[id.DatasetSchemaID]id.DatasetSchemaID
-	OldDatasetMap       map[id.DatasetID]id.DatasetID
-	DatasetFieldIDMap   map[id.DatasetSchemaFieldID]id.DatasetSchemaFieldID
-	NewDatasetSchemaMap map[id.DatasetSchemaID]*dataset.Schema
-	NewDatasetMap       map[id.DatasetID]*dataset.Dataset
+	OldDatasetSchemaMap map[DatasetSchemaID]DatasetSchemaID
+	OldDatasetMap       map[DatasetID]DatasetID
+	DatasetFieldIDMap   map[DatasetFieldID]DatasetFieldID
+	NewDatasetSchemaMap map[DatasetSchemaID]*dataset.Schema
+	NewDatasetMap       map[DatasetID]*dataset.Dataset
 }

@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewClusterID(t *testing.T) {
 	id := NewClusterID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestClusterIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestClusterIDFrom(t *testing.T) {
 				result ClusterID
 				err    error
 			}{
-				ClusterID{},
-				ErrInvalidID,
+				result: ClusterID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestClusterIDFrom(t *testing.T) {
 				result ClusterID
 				err    error
 			}{
-				ClusterID{},
-				ErrInvalidID,
+				result: ClusterID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestClusterIDFrom(t *testing.T) {
 				result ClusterID
 				err    error
 			}{
-				ClusterID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: ClusterID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := ClusterIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := ClusterIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustClusterID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustClusterID(t *testing.T) {
 			expected:    ClusterID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustClusterID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustClusterID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestClusterIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *ClusterID
@@ -139,159 +135,149 @@ func TestClusterIDFromRef(t *testing.T) {
 			expected: &ClusterID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := ClusterIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := ClusterIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestClusterIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := ClusterIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := ClusterIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, ClusterIDFromRefID(nil))
+	assert.Nil(t, ClusterIDFromRefID(&ID{}))
 }
 
 func TestClusterID_ID(t *testing.T) {
 	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := ClusterIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestClusterID_String(t *testing.T) {
 	id := New()
-	subId := ClusterIDFromRefID(&id)
+	id2 := ClusterIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", ClusterID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestClusterID_RefString(t *testing.T) {
+	id := NewClusterID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, ClusterID{}.RefString())
 }
 
 func TestClusterID_GoString(t *testing.T) {
 	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.ClusterID("+id.String()+")")
-}
-
-func TestClusterID_RefString(t *testing.T) {
-	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := ClusterIDFromRefID(&id)
+	assert.Equal(t, "ClusterID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "ClusterID()", ClusterID{}.GoString())
 }
 
 func TestClusterID_Ref(t *testing.T) {
-	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewClusterID()
+	assert.Equal(t, ClusterID(id), *id.Ref())
+	assert.Nil(t, (&ClusterID{}).Ref())
 }
 
 func TestClusterID_Contains(t *testing.T) {
 	id := NewClusterID()
 	id2 := NewClusterID()
 	assert.True(t, id.Contains([]ClusterID{id, id2}))
+	assert.False(t, ClusterID{}.Contains([]ClusterID{id, id2, {}}))
 	assert.False(t, id.Contains([]ClusterID{id2}))
 }
 
 func TestClusterID_CopyRef(t *testing.T) {
-	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewClusterID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*ClusterID)(nil).CopyRef())
 }
 
 func TestClusterID_IDRef(t *testing.T) {
 	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := ClusterIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&ClusterID{}).IDRef())
+	assert.Nil(t, (*ClusterID)(nil).IDRef())
 }
 
 func TestClusterID_StringRef(t *testing.T) {
-	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewClusterID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&ClusterID{}).StringRef())
+	assert.Nil(t, (*ClusterID)(nil).StringRef())
 }
 
 func TestClusterID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewClusterID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&ClusterID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*ClusterID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestClusterID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &ClusterID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustClusterID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &ClusterID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestClusterID_MarshalText(t *testing.T) {
 	id := New()
-	subId := ClusterIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := ClusterIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&ClusterID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*ClusterID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestClusterID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &ClusterID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &ClusterID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestClusterID_IsNil(t *testing.T) {
-	subId := ClusterID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *ClusterIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, ClusterID{}.IsNil())
+	assert.False(t, NewClusterID().IsNil())
 }
 
-func TestClusterIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestClusterID_IsNilRef(t *testing.T) {
+	assert.True(t, ClusterID{}.Ref().IsNilRef())
+	assert.True(t, (*ClusterID)(nil).IsNilRef())
+	assert.False(t, NewClusterID().Ref().IsNilRef())
+}
+
+func TestClusterIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []ClusterID
 		expected []string
@@ -321,19 +307,17 @@ func TestClusterIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, ClusterIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, ClusterIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestClusterIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestClusterIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestClusterIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := ClusterIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := ClusterIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := ClusterIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestClusterIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []ClusterID
@@ -449,25 +431,22 @@ func TestClusterIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := ClusterIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestClusterIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []ClusterID
@@ -493,21 +472,18 @@ func TestClusterIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := ClusterIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestClusterIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ClusterID
 		expected []ID
@@ -537,28 +513,25 @@ func TestClusterIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := ClusterIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestClusterIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustClusterID(id1.String())
+	id21 := MustClusterID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustClusterID(id2.String())
+	id22 := MustClusterID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustClusterID(id3.String())
+	id23 := MustClusterID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ClusterID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestClusterIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*ClusterID{&subId1},
+			input:    []*ClusterID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*ClusterID{&subId1, &subId2, &subId3},
+			input:    []*ClusterID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := ClusterIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewClusterIDSet(t *testing.T) {
 	ClusterIdSet := NewClusterIDSet()
-
 	assert.NotNil(t, ClusterIdSet)
 	assert.Empty(t, ClusterIdSet.m)
 	assert.Empty(t, ClusterIdSet.s)
 }
 
 func TestClusterIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ClusterID
 		expected *ClusterIDSet
@@ -663,24 +632,19 @@ func TestClusterIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewClusterIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestClusterIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	ClusterId := MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *ClusterID
 		expected *ClusterIDSet
@@ -695,7 +659,7 @@ func TestClusterIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &ClusterId,
+			input: MustClusterID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &ClusterIDSet{
 				m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestClusterIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewClusterIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestClusterIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			ClusterIDSet
-			ClusterID
-		}
+	tests := []struct {
+		name     string
+		target   *ClusterIDSet
+		input    ClusterID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				ClusterIDSet
-				ClusterID
-			}{ClusterIDSet: ClusterIDSet{}, ClusterID: MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &ClusterIDSet{},
+			input:    MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				ClusterIDSet
-				ClusterID
-			}{ClusterIDSet: ClusterIDSet{
+			target: &ClusterIDSet{
 				m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, ClusterID: MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				ClusterIDSet
-				ClusterID
-			}{ClusterIDSet: ClusterIDSet{
+			target: &ClusterIDSet{
 				m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, ClusterID: MustClusterID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustClusterID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.ClusterIDSet.Has(tc.input.ClusterID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestClusterIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    ClusterIDSet
-		expected ClusterIDSet
+		input    *ClusterIDSet
+		expected *ClusterIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: ClusterIDSet{},
-			expected: ClusterIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &ClusterIDSet{},
+			expected: &ClusterIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: ClusterIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &ClusterIDSet{
 				m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: ClusterIDSet{
+			expected: &ClusterIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestClusterIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *ClusterIDSet
 		expected []ClusterID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &ClusterIDSet{
 				m: map[ClusterID]struct{}{},
 				s: nil,
 			},
 			expected: make([]ClusterID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestClusterIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestClusterIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *ClusterIDSet
 		expected *ClusterIDSet
@@ -922,21 +873,19 @@ func TestClusterIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestClusterIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *ClusterIDSet
@@ -944,6 +893,23 @@ func TestClusterIDSet_Merge(t *testing.T) {
 		}
 		expected *ClusterIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *ClusterIDSet
+				b *ClusterIDSet
+			}{
+				a: &ClusterIDSet{
+					m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &ClusterIDSet{
+				m: map[ClusterID]struct{}{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []ClusterID{MustClusterID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestClusterIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

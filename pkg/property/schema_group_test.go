@@ -4,23 +4,22 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSchemaGroup(t *testing.T) {
-	scid := id.PropertySchemaGroupID("aa")
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	scid := SchemaGroupID("aa")
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
 	testCases := []struct {
 		Name     string
 		G        *SchemaGroup
 		Expected struct {
-			GIDRef        *id.PropertySchemaGroupID
-			SIDRef        *id.PropertySchemaID
-			GID           id.PropertySchemaGroupID
-			SID           id.PropertySchemaID
+			GIDRef        *SchemaGroupID
+			SIDRef        *SchemaID
+			GID           SchemaGroupID
+			SID           SchemaID
 			Fields        []*SchemaField
 			Title         i18n.String
 			IsAvailableIf *Condition
@@ -34,10 +33,10 @@ func TestSchemaGroup(t *testing.T) {
 			Name: "success",
 			G:    NewSchemaGroup().ID(scid).Schema(sid).Fields([]*SchemaField{sf}).MustBuild(),
 			Expected: struct {
-				GIDRef        *id.PropertySchemaGroupID
-				SIDRef        *id.PropertySchemaID
-				GID           id.PropertySchemaGroupID
-				SID           id.PropertySchemaID
+				GIDRef        *SchemaGroupID
+				SIDRef        *SchemaID
+				GID           SchemaGroupID
+				SID           SchemaID
 				Fields        []*SchemaField
 				Title         i18n.String
 				IsAvailableIf *Condition
@@ -71,15 +70,15 @@ func TestSchemaGroup(t *testing.T) {
 }
 
 func TestSchemaGroup_Field(t *testing.T) {
-	scid := id.PropertySchemaGroupID("aa")
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	scid := SchemaGroupID("aa")
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
 	testCases := []struct {
 		Name     string
 		G        *SchemaGroup
 		PTR      *Pointer
-		Input    id.PropertySchemaFieldID
+		Input    FieldID
 		Expected *SchemaField
 	}{
 		{
@@ -95,8 +94,8 @@ func TestSchemaGroup_Field(t *testing.T) {
 		{
 			Name:  "not found",
 			G:     NewSchemaGroup().ID(scid).Schema(sid).Fields([]*SchemaField{sf}).MustBuild(),
-			PTR:   NewPointer(nil, nil, id.PropertySchemaFieldID("zz").Ref()),
-			Input: id.PropertySchemaFieldID("zz"),
+			PTR:   NewPointer(nil, nil, FieldID("zz").Ref()),
+			Input: FieldID("zz"),
 		},
 	}
 
@@ -112,7 +111,7 @@ func TestSchemaGroup_Field(t *testing.T) {
 }
 
 func TestSchemaGroup_SetTitle(t *testing.T) {
-	sg := NewSchemaGroup().ID(id.PropertySchemaGroupID("aa")).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID(SchemaGroupID("aa")).Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	sg.SetTitle(i18n.StringFrom("ttt"))
 	assert.Equal(t, i18n.StringFrom("ttt"), sg.Title())
 }

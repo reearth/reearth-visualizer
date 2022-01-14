@@ -4,10 +4,9 @@ import (
 	"context"
 	"sync"
 
+	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/scene"
-
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
 
 type sceneLock struct {
@@ -19,7 +18,7 @@ func NewSceneLock() repo.SceneLock {
 }
 
 func (r *sceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.LockMode, error) {
-	if id.ID(sceneID).IsNil() {
+	if sceneID.IsNil() {
 		return "", id.ErrInvalidID
 	}
 	if v, ok := r.lock.Load(sceneID); ok {
@@ -33,7 +32,7 @@ func (r *sceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.Lock
 func (r *sceneLock) GetAllLock(ctx context.Context, sceneID []id.SceneID) ([]scene.LockMode, error) {
 	res := make([]scene.LockMode, 0, len(sceneID))
 	for _, si := range sceneID {
-		if id.ID(si).IsNil() {
+		if si.IsNil() {
 			return nil, id.ErrInvalidID
 		}
 		if v, ok := r.lock.Load(si); ok {

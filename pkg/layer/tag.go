@@ -1,11 +1,5 @@
 package layer
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
-type TagID = id.TagID
-
-var NewTagID = id.NewTagID
-
 type TagList struct {
 	tags []Tag
 }

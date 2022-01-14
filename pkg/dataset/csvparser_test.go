@@ -4,7 +4,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +17,7 @@ func TestCSVParser(t *testing.T) {
 	p := NewCSVParser(r, "hoge.csv", ',')
 	err := p.Init()
 	assert.NoError(t, err)
-	sceneID := id.NewSceneID()
+	sceneID := NewSceneID()
 	err = p.GuessSchema(sceneID)
 	assert.NoError(t, err)
 

@@ -4,7 +4,6 @@ package id
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/oklog/ulid"
@@ -14,15 +13,13 @@ import (
 func TestNewSceneID(t *testing.T) {
 	id := NewSceneID()
 	assert.NotNil(t, id)
-	ulID, err := ulid.Parse(id.String())
-
-	assert.NotNil(t, ulID)
+	u, err := ulid.Parse(id.String())
+	assert.NotNil(t, u)
 	assert.Nil(t, err)
 }
 
 func TestSceneIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -37,8 +34,8 @@ func TestSceneIDFrom(t *testing.T) {
 				result SceneID
 				err    error
 			}{
-				SceneID{},
-				ErrInvalidID,
+				result: SceneID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -48,8 +45,8 @@ func TestSceneIDFrom(t *testing.T) {
 				result SceneID
 				err    error
 			}{
-				SceneID{},
-				ErrInvalidID,
+				result: SceneID{},
+				err:    ErrInvalidID,
 			},
 		},
 		{
@@ -59,27 +56,26 @@ func TestSceneIDFrom(t *testing.T) {
 				result SceneID
 				err    error
 			}{
-				SceneID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
-				nil,
+				result: SceneID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
+				err:    nil,
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := SceneIDFrom(tc.input)
-			assert.Equal(tt, tc.expected.result, result)
-			if err != nil {
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := SceneIDFrom(tt.input)
+			assert.Equal(t, tt.expected.result, result)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.err, err)
 			}
 		})
 	}
 }
 
 func TestMustSceneID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		input       string
 		shouldPanic bool
@@ -102,23 +98,23 @@ func TestMustSceneID(t *testing.T) {
 			expected:    SceneID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.shouldPanic {
-				assert.Panics(tt, func() { MustBeID(tc.input) })
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.shouldPanic {
+				assert.Panics(t, func() { MustBeID(tt.input) })
 				return
 			}
-			result := MustSceneID(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := MustSceneID(tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestSceneIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *SceneID
@@ -139,159 +135,149 @@ func TestSceneIDFromRef(t *testing.T) {
 			expected: &SceneID{ulid.MustParse("01f2r7kg1fvvffp0gmexgy5hxy")},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result := SceneIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
-			if tc.expected != nil {
-				assert.Equal(tt, *tc.expected, *result)
-			}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := SceneIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
 
 func TestSceneIDFromRefID(t *testing.T) {
 	id := New()
-
-	subId := SceneIDFromRefID(&id)
-
-	assert.NotNil(t, subId)
-	assert.Equal(t, subId.id, id.id)
+	id2 := SceneIDFromRefID(&id)
+	assert.Equal(t, id.id, id2.id)
+	assert.Nil(t, SceneIDFromRefID(nil))
+	assert.Nil(t, SceneIDFromRefID(&ID{}))
 }
 
 func TestSceneID_ID(t *testing.T) {
 	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	idOrg := subId.ID()
-
-	assert.Equal(t, id, idOrg)
+	id2 := SceneIDFromRefID(&id)
+	assert.Equal(t, id, id2.ID())
 }
 
 func TestSceneID_String(t *testing.T) {
 	id := New()
-	subId := SceneIDFromRefID(&id)
+	id2 := SceneIDFromRefID(&id)
+	assert.Equal(t, id.String(), id2.String())
+	assert.Equal(t, "", SceneID{}.String())
+}
 
-	assert.Equal(t, subId.String(), id.String())
+func TestSceneID_RefString(t *testing.T) {
+	id := NewSceneID()
+	assert.Equal(t, id.String(), *id.RefString())
+	assert.Nil(t, SceneID{}.RefString())
 }
 
 func TestSceneID_GoString(t *testing.T) {
 	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	assert.Equal(t, subId.GoString(), "id.SceneID("+id.String()+")")
-}
-
-func TestSceneID_RefString(t *testing.T) {
-	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	refString := subId.StringRef()
-
-	assert.NotNil(t, refString)
-	assert.Equal(t, *refString, id.String())
+	id2 := SceneIDFromRefID(&id)
+	assert.Equal(t, "SceneID("+id.String()+")", id2.GoString())
+	assert.Equal(t, "SceneID()", SceneID{}.GoString())
 }
 
 func TestSceneID_Ref(t *testing.T) {
-	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	subIdRef := subId.Ref()
-
-	assert.Equal(t, *subId, *subIdRef)
+	id := NewSceneID()
+	assert.Equal(t, SceneID(id), *id.Ref())
+	assert.Nil(t, (&SceneID{}).Ref())
 }
 
 func TestSceneID_Contains(t *testing.T) {
 	id := NewSceneID()
 	id2 := NewSceneID()
 	assert.True(t, id.Contains([]SceneID{id, id2}))
+	assert.False(t, SceneID{}.Contains([]SceneID{id, id2, {}}))
 	assert.False(t, id.Contains([]SceneID{id2}))
 }
 
 func TestSceneID_CopyRef(t *testing.T) {
-	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	subIdCopyRef := subId.CopyRef()
-
-	assert.Equal(t, *subId, *subIdCopyRef)
-	assert.NotSame(t, subId, subIdCopyRef)
+	id := NewSceneID().Ref()
+	id2 := id.CopyRef()
+	assert.Equal(t, id, id2)
+	assert.NotSame(t, id, id2)
+	assert.Nil(t, (*SceneID)(nil).CopyRef())
 }
 
 func TestSceneID_IDRef(t *testing.T) {
 	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	assert.Equal(t, id, *subId.IDRef())
+	id2 := SceneIDFromRefID(&id)
+	assert.Equal(t, &id, id2.IDRef())
+	assert.Nil(t, (&SceneID{}).IDRef())
+	assert.Nil(t, (*SceneID)(nil).IDRef())
 }
 
 func TestSceneID_StringRef(t *testing.T) {
-	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	assert.Equal(t, *subId.StringRef(), id.String())
+	id := NewSceneID()
+	assert.Equal(t, id.String(), *id.StringRef())
+	assert.Nil(t, (&SceneID{}).StringRef())
+	assert.Nil(t, (*SceneID)(nil).StringRef())
 }
 
 func TestSceneID_MarhsalJSON(t *testing.T) {
-	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	res, err := subId.MarhsalJSON()
-	exp, _ := json.Marshal(subId.String())
-
+	id := NewSceneID()
+	res, err := id.MarhsalJSON()
 	assert.Nil(t, err)
+	exp, _ := json.Marshal(id.String())
 	assert.Equal(t, exp, res)
+
+	res, err = (&SceneID{}).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*SceneID)(nil).MarhsalJSON()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestSceneID_UnmarhsalJSON(t *testing.T) {
 	jsonString := "\"01f3zhkysvcxsnzepyyqtq21fb\""
-
-	subId := &SceneID{}
-
-	err := subId.UnmarhsalJSON([]byte(jsonString))
-
+	id := MustSceneID("01f3zhkysvcxsnzepyyqtq21fb")
+	id2 := &SceneID{}
+	err := id2.UnmarhsalJSON([]byte(jsonString))
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhkysvcxsnzepyyqtq21fb", subId.String())
+	assert.Equal(t, id, *id2)
 }
 
 func TestSceneID_MarshalText(t *testing.T) {
 	id := New()
-	subId := SceneIDFromRefID(&id)
-
-	res, err := subId.MarshalText()
-
+	res, err := SceneIDFromRefID(&id).MarshalText()
 	assert.Nil(t, err)
 	assert.Equal(t, []byte(id.String()), res)
+
+	res, err = (&SceneID{}).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
+
+	res, err = (*SceneID)(nil).MarshalText()
+	assert.Nil(t, err)
+	assert.Nil(t, res)
 }
 
 func TestSceneID_UnmarshalText(t *testing.T) {
 	text := []byte("01f3zhcaq35403zdjnd6dcm0t2")
-
-	subId := &SceneID{}
-
-	err := subId.UnmarshalText(text)
-
+	id2 := &SceneID{}
+	err := id2.UnmarshalText(text)
 	assert.Nil(t, err)
-	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", subId.String())
-
+	assert.Equal(t, "01f3zhcaq35403zdjnd6dcm0t2", id2.String())
 }
 
 func TestSceneID_IsNil(t *testing.T) {
-	subId := SceneID{}
-
-	assert.True(t, subId.IsNil())
-
-	id := New()
-	subId = *SceneIDFromRefID(&id)
-
-	assert.False(t, subId.IsNil())
+	assert.True(t, SceneID{}.IsNil())
+	assert.False(t, NewSceneID().IsNil())
 }
 
-func TestSceneIDToKeys(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+func TestSceneID_IsNilRef(t *testing.T) {
+	assert.True(t, SceneID{}.Ref().IsNilRef())
+	assert.True(t, (*SceneID)(nil).IsNilRef())
+	assert.False(t, NewSceneID().Ref().IsNilRef())
+}
+
+func TestSceneIDsToStrings(t *testing.T) {
+	tests := []struct {
 		name     string
 		input    []SceneID
 		expected []string
@@ -321,19 +307,17 @@ func TestSceneIDToKeys(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, SceneIDToKeys(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, SceneIDsToStrings(tt.input))
 		})
 	}
-
 }
 
 func TestSceneIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
 		expected struct {
@@ -383,10 +367,10 @@ func TestSceneIDsFrom(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "error",
 			input: []string{
 				"01f3zhcaq35403zdjnd6dcm0t1",
-				"01f3zhcaq35403zdjnd6dcm0t2",
+				"x",
 				"01f3zhcaq35403zdjnd6dcm0t3",
 			},
 			expected: struct {
@@ -399,27 +383,25 @@ func TestSceneIDsFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			res, err := SceneIDsFrom(tc.input)
 			if tc.expected.err != nil {
-				_, err := SceneIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+				assert.Equal(t, tc.expected.err, err)
+				assert.Nil(t, res)
 			} else {
-				res, err := SceneIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected.res, res)
 			}
-
 		})
 	}
 }
 
 func TestSceneIDsFromID(t *testing.T) {
 	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []ID
 		expected []SceneID
@@ -449,25 +431,22 @@ func TestSceneIDsFromID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := SceneIDsFromID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestSceneIDsFromIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*ID
 		expected []SceneID
@@ -493,21 +472,18 @@ func TestSceneIDsFromIDRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := SceneIDsFromIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestSceneIDsToID(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []SceneID
 		expected []ID
@@ -537,28 +513,25 @@ func TestSceneIDsToID(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := SceneIDsToID(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestSceneIDsToIDRef(t *testing.T) {
-	t.Parallel()
-
 	id1 := MustBeID("01f3zhcaq35403zdjnd6dcm0t1")
-	subId1 := MustSceneID(id1.String())
+	id21 := MustSceneID(id1.String())
 	id2 := MustBeID("01f3zhcaq35403zdjnd6dcm0t2")
-	subId2 := MustSceneID(id2.String())
+	id22 := MustSceneID(id2.String())
 	id3 := MustBeID("01f3zhcaq35403zdjnd6dcm0t3")
-	subId3 := MustSceneID(id3.String())
+	id23 := MustSceneID(id3.String())
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []*SceneID
 		expected []*ID
@@ -570,39 +543,35 @@ func TestSceneIDsToIDRef(t *testing.T) {
 		},
 		{
 			name:     "1 element",
-			input:    []*SceneID{&subId1},
+			input:    []*SceneID{&id21},
 			expected: []*ID{&id1},
 		},
 		{
 			name:     "multiple elements",
-			input:    []*SceneID{&subId1, &subId2, &subId3},
+			input:    []*SceneID{&id21, &id22, &id23},
 			expected: []*ID{&id1, &id2, &id3},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := SceneIDsToIDRef(tc.input)
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestNewSceneIDSet(t *testing.T) {
 	SceneIdSet := NewSceneIDSet()
-
 	assert.NotNil(t, SceneIdSet)
 	assert.Empty(t, SceneIdSet.m)
 	assert.Empty(t, SceneIdSet.s)
 }
 
 func TestSceneIDSet_Add(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []SceneID
 		expected *SceneIDSet
@@ -663,24 +632,19 @@ func TestSceneIDSet_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewSceneIDSet()
 			set.Add(tc.input...)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestSceneIDSet_AddRef(t *testing.T) {
-	t.Parallel()
-
-	SceneId := MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *SceneID
 		expected *SceneIDSet
@@ -695,7 +659,7 @@ func TestSceneIDSet_AddRef(t *testing.T) {
 		},
 		{
 			name:  "1 element",
-			input: &SceneId,
+			input: MustSceneID("01f3zhcaq35403zdjnd6dcm0t1").Ref(),
 			expected: &SceneIDSet{
 				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
@@ -703,126 +667,116 @@ func TestSceneIDSet_AddRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			set := NewSceneIDSet()
 			set.AddRef(tc.input)
-			assert.Equal(tt, tc.expected, set)
+			assert.Equal(t, tc.expected, set)
 		})
 	}
 }
 
 func TestSceneIDSet_Has(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name  string
-		input struct {
-			SceneIDSet
-			SceneID
-		}
+	tests := []struct {
+		name     string
+		target   *SceneIDSet
+		input    SceneID
 		expected bool
 	}{
 		{
-			name: "Empty Set",
-			input: struct {
-				SceneIDSet
-				SceneID
-			}{SceneIDSet: SceneIDSet{}, SceneID: MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
+			name:     "Empty Set",
+			target:   &SceneIDSet{},
+			input:    MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: false,
 		},
 		{
 			name: "Set Contains the element",
-			input: struct {
-				SceneIDSet
-				SceneID
-			}{SceneIDSet: SceneIDSet{
+			target: &SceneIDSet{
 				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, SceneID: MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+			input:    MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"),
 			expected: true,
 		},
 		{
 			name: "Set does not Contains the element",
-			input: struct {
-				SceneIDSet
-				SceneID
-			}{SceneIDSet: SceneIDSet{
+			target: &SceneIDSet{
 				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
-			}, SceneID: MustSceneID("01f3zhcaq35403zdjnd6dcm0t2")},
+			},
+			input:    MustSceneID("01f3zhcaq35403zdjnd6dcm0t2"),
 			expected: false,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.SceneIDSet.Has(tc.input.SceneID))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.target.Has(tc.input))
 		})
 	}
 }
 
 func TestSceneIDSet_Clear(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
-		input    SceneIDSet
-		expected SceneIDSet
+		input    *SceneIDSet
+		expected *SceneIDSet
 	}{
 		{
-			name:  "Empty Set",
-			input: SceneIDSet{},
-			expected: SceneIDSet{
-				m: nil,
-				s: nil,
-			},
+			name:     "Empty set",
+			input:    &SceneIDSet{},
+			expected: &SceneIDSet{},
 		},
 		{
-			name: "Set Contains the element",
-			input: SceneIDSet{
+			name:     "Nil set",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name: "Contains the element",
+			input: &SceneIDSet{
 				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
 				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
 			},
-			expected: SceneIDSet{
+			expected: &SceneIDSet{
 				m: nil,
 				s: nil,
 			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			set := tc.input
-			p := &set
-			p.Clear()
-			assert.Equal(tt, tc.expected, *p)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			tc.input.Clear()
+			assert.Equal(t, tc.expected, tc.input)
 		})
 	}
 }
 
 func TestSceneIDSet_All(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *SceneIDSet
 		expected []SceneID
 	}{
 		{
-			name: "Empty slice",
+			name: "Empty",
 			input: &SceneIDSet{
 				m: map[SceneID]struct{}{},
 				s: nil,
 			},
 			expected: make([]SceneID, 0),
+		},
+		{
+			name:     "Nil",
+			input:    nil,
+			expected: nil,
 		},
 		{
 			name: "1 element",
@@ -854,20 +808,17 @@ func TestSceneIDSet_All(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.All())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.All())
 		})
 	}
 }
 
 func TestSceneIDSet_Clone(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    *SceneIDSet
 		expected *SceneIDSet
@@ -922,21 +873,19 @@ func TestSceneIDSet_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			clone := tc.input.Clone()
-			assert.Equal(tt, tc.expected, clone)
-			assert.False(tt, tc.input == clone)
+			assert.Equal(t, tc.expected, clone)
+			assert.NotSame(t, tc.input, clone)
 		})
 	}
 }
 
 func TestSceneIDSet_Merge(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			a *SceneIDSet
@@ -944,6 +893,23 @@ func TestSceneIDSet_Merge(t *testing.T) {
 		}
 		expected *SceneIDSet
 	}{
+		{
+			name: "Nil Set",
+			input: struct {
+				a *SceneIDSet
+				b *SceneIDSet
+			}{
+				a: &SceneIDSet{
+					m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+					s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
+				},
+				b: nil,
+			},
+			expected: &SceneIDSet{
+				m: map[SceneID]struct{}{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1"): {}},
+				s: []SceneID{MustSceneID("01f3zhcaq35403zdjnd6dcm0t1")},
+			},
+		},
 		{
 			name: "Empty Set",
 			input: struct {
@@ -1000,12 +966,11 @@ func TestSceneIDSet_Merge(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-
-			assert.Equal(tt, tc.expected, tc.input.a.Merge(tc.input.b))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.a.Merge(tc.input.b))
 		})
 	}
 }

@@ -3,12 +3,11 @@ package layer
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestList_Remove(t *testing.T) {
-	sid := id.NewSceneID()
+	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()

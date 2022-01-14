@@ -4,33 +4,32 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGroupBuilder_Build(t *testing.T) {
-	iid := id.NewPropertyItemID()
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	iid := NewItemID()
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
 	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
 	testCases := []struct {
 		Name        string
-		Id          id.PropertyItemID
-		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaGroupID
+		Id          ItemID
+		Schema      SchemaID
+		SchemaGroup SchemaGroupID
 		Fields      []*Field
 		Expected    struct {
-			Id          id.PropertyItemID
-			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaGroupID
+			Id          ItemID
+			Schema      SchemaID
+			SchemaGroup SchemaGroupID
 			Fields      []*Field
 		}
 		Err error
 	}{
 		{
 			Name: "fail invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  ErrInvalidID,
 		},
 		{
 			Name:        "success",
@@ -39,9 +38,9 @@ func TestGroupBuilder_Build(t *testing.T) {
 			SchemaGroup: "a",
 			Fields:      []*Field{f},
 			Expected: struct {
-				Id          id.PropertyItemID
-				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaGroupID
+				Id          ItemID
+				Schema      SchemaID
+				SchemaGroup SchemaGroupID
 				Fields      []*Field
 			}{
 				Id:          iid,
@@ -71,22 +70,22 @@ func TestGroupBuilder_Build(t *testing.T) {
 }
 
 func TestGroupBuilder_MustBuild(t *testing.T) {
-	iid := id.NewPropertyItemID()
-	sid := id.MustPropertySchemaID("xx~1.0.0/aa")
+	iid := NewItemID()
+	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
 	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
 	testCases := []struct {
 		Name        string
 		Fail        bool
-		Id          id.PropertyItemID
-		Schema      id.PropertySchemaID
-		SchemaGroup id.PropertySchemaGroupID
+		Id          ItemID
+		Schema      SchemaID
+		SchemaGroup SchemaGroupID
 		Fields      []*Field
 		Expected    struct {
-			Id          id.PropertyItemID
-			Schema      id.PropertySchemaID
-			SchemaGroup id.PropertySchemaGroupID
+			Id          ItemID
+			Schema      SchemaID
+			SchemaGroup SchemaGroupID
 			Fields      []*Field
 		}
 	}{
@@ -101,9 +100,9 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 			SchemaGroup: "a",
 			Fields:      []*Field{f},
 			Expected: struct {
-				Id          id.PropertyItemID
-				Schema      id.PropertySchemaID
-				SchemaGroup id.PropertySchemaGroupID
+				Id          ItemID
+				Schema      SchemaID
+				SchemaGroup SchemaGroupID
 				Fields      []*Field
 			}{
 				Id:          iid,
@@ -146,7 +145,7 @@ func TestGroupBuilder_NewID(t *testing.T) {
 func TestGroupBuilder_InitGroupFrom(t *testing.T) {
 	var sg *SchemaGroup
 	assert.Nil(t, InitGroupFrom(sg))
-	sg = NewSchemaGroup().ID("a").Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).MustBuild()
+	sg = NewSchemaGroup().ID("a").Schema(MustSchemaID("xx~1.0.0/aa")).MustBuild()
 	g := InitGroupFrom(sg)
 	assert.Equal(t, sg.ID(), g.SchemaGroup())
 	assert.Equal(t, sg.Schema(), g.Schema())

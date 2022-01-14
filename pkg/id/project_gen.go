@@ -44,7 +44,7 @@ func ProjectIDFromRef(i *string) *ProjectID {
 
 // ProjectIDFromRefID generates a new ProjectID from a ref of a generic ID.
 func ProjectIDFromRefID(i *ID) *ProjectID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := ProjectID(*i)
@@ -58,28 +58,40 @@ func (d ProjectID) ID() ID {
 
 // String returns a string representation.
 func (d ProjectID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d ProjectID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d ProjectID) GoString() string {
-	return "id.ProjectID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d ProjectID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "ProjectID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d ProjectID) Ref() *ProjectID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d ProjectID) Contains(ids []ProjectID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d ProjectID) Contains(ids []ProjectID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *ProjectID) CopyRef() *ProjectID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *ProjectID) CopyRef() *ProjectID {
 
 // IDRef returns a reference of a domain id.
 func (d *ProjectID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *ProjectID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *ProjectID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *ProjectID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *ProjectID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *ProjectID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *ProjectID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *ProjectID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d ProjectID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// ProjectIDToKeys converts IDs into a string slice.
-func ProjectIDToKeys(ids []ProjectID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *ProjectID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// ProjectIDsToStrings converts IDs into a string slice.
+func ProjectIDsToStrings(ids []ProjectID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // ProjectIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *ProjectIDSet) Clone() *ProjectIDSet {
 
 // Merge returns a merged set
 func (s *ProjectIDSet) Merge(s2 *ProjectIDSet) *ProjectIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

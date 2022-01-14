@@ -3,40 +3,39 @@ package dataset
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDatasetGraphIterator(t *testing.T) {
-	sid := id.NewSceneID()
-	dsid := id.NewDatasetSchemaID()
+	sid := NewSceneID()
+	dsid := NewSchemaID()
 
-	d0id := id.NewDatasetID()
-	d11id := id.NewDatasetID()
-	d12id := id.NewDatasetID()
-	d21id := id.NewDatasetID()
-	d31id := id.NewDatasetID()
-	d32id := id.NewDatasetID()
+	d0id := NewID()
+	d11id := NewID()
+	d12id := NewID()
+	d21id := NewID()
+	d31id := NewID()
+	d32id := NewID()
 
 	d0, _ := New().ID(d0id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeRef.ValueFrom(d11id.ID()), ""),
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeRef.ValueFrom(d12id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d11id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d12id.ID()), ""),
 	}).Build()
 	d11, _ := New().ID(d11id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeRef.ValueFrom(d21id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d21id.ID()), ""),
 	}).Build()
 	d12, _ := New().ID(d12id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeString.ValueFrom("hoge"), ""),
+		NewField(NewFieldID(), ValueTypeString.ValueFrom("hoge"), ""),
 	}).Build()
 	d21, _ := New().ID(d21id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeRef.ValueFrom(d31id.ID()), ""),
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeRef.ValueFrom(d32id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d31id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d32id.ID()), ""),
 	}).Build()
 	d31, _ := New().ID(d31id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeString.ValueFrom("foo"), ""),
+		NewField(NewFieldID(), ValueTypeString.ValueFrom("foo"), ""),
 	}).Build()
 	d32, _ := New().ID(d32id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(id.NewDatasetSchemaFieldID(), ValueTypeString.ValueFrom("bar"), ""),
+		NewField(NewFieldID(), ValueTypeString.ValueFrom("bar"), ""),
 	}).Build()
 
 	it := GraphIteratorFrom(d0id, 3)

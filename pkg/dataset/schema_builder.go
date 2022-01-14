@@ -1,9 +1,5 @@
 package dataset
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type SchemaBuilder struct {
 	d *Schema
 }
@@ -13,12 +9,12 @@ func NewSchema() *SchemaBuilder {
 }
 
 func (b *SchemaBuilder) Build() (*Schema, error) {
-	if id.ID(b.d.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.d.id.IsNil() {
+		return nil, ErrInvalidID
 	}
 	if b.d.fields == nil || b.d.order == nil {
-		b.d.fields = map[id.DatasetSchemaFieldID]*SchemaField{}
-		b.d.order = []id.DatasetSchemaFieldID{}
+		b.d.fields = map[FieldID]*SchemaField{}
+		b.d.order = []FieldID{}
 	}
 	return b.d, nil
 }
@@ -31,17 +27,17 @@ func (b *SchemaBuilder) MustBuild() *Schema {
 	return r
 }
 
-func (b *SchemaBuilder) ID(id id.DatasetSchemaID) *SchemaBuilder {
+func (b *SchemaBuilder) ID(id SchemaID) *SchemaBuilder {
 	b.d.id = id
 	return b
 }
 
 func (b *SchemaBuilder) NewID() *SchemaBuilder {
-	b.d.id = id.DatasetSchemaID(id.New())
+	b.d.id = NewSchemaID()
 	return b
 }
 
-func (b *SchemaBuilder) Scene(scene id.SceneID) *SchemaBuilder {
+func (b *SchemaBuilder) Scene(scene SceneID) *SchemaBuilder {
 	b.d.scene = scene
 	return b
 }
@@ -61,15 +57,15 @@ func (b *SchemaBuilder) Source(source string) *SchemaBuilder {
 	return b
 }
 
-func (b *SchemaBuilder) RepresentativeField(representativeField id.DatasetSchemaFieldID) *SchemaBuilder {
+func (b *SchemaBuilder) RepresentativeField(representativeField FieldID) *SchemaBuilder {
 	rf := representativeField
 	b.d.representativeField = &rf
 	return b
 }
 
 func (b *SchemaBuilder) Fields(fields []*SchemaField) *SchemaBuilder {
-	b.d.fields = map[id.DatasetSchemaFieldID]*SchemaField{}
-	b.d.order = make([]id.DatasetSchemaFieldID, 0, len(fields))
+	b.d.fields = map[FieldID]*SchemaField{}
+	b.d.order = make([]FieldID, 0, len(fields))
 	sources := map[string]struct{}{}
 
 	for _, f := range fields {

@@ -1,31 +1,27 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 // SchemaGraphIterator は、データセットをグラフ探索するためのイテレータです。
 type SchemaGraphIterator struct {
 	m                 SchemaMap
-	ids               [][]id.DatasetSchemaID
+	ids               [][]SchemaID
 	currentIndex      int
 	currentDepthIndex int
 	maxDepth          int
 }
 
-// SchemaGraphIteratorFrom _
-func SchemaGraphIteratorFrom(root id.DatasetSchemaID, depth int) *SchemaGraphIterator {
+func SchemaGraphIteratorFrom(root SchemaID, depth int) *SchemaGraphIterator {
 	return &SchemaGraphIterator{
-		ids:      [][]id.DatasetSchemaID{{root}},
+		ids:      [][]SchemaID{{root}},
 		maxDepth: depth,
 	}
 }
 
-// Next _
-func (di *SchemaGraphIterator) Next(d *Schema) (id.DatasetSchemaID, bool) {
+func (di *SchemaGraphIterator) Next(d *Schema) (SchemaID, bool) {
 	if di == nil || di.maxDepth == 0 || di.ids == nil || len(di.ids) == 0 || d == nil {
-		return id.DatasetSchemaID{}, false
+		return SchemaID{}, false
 	}
 	if di.currentDepthIndex >= len(di.ids) {
-		return id.DatasetSchemaID{}, true
+		return SchemaID{}, true
 	}
 
 	if di.m == nil {
@@ -35,7 +31,7 @@ func (di *SchemaGraphIterator) Next(d *Schema) (id.DatasetSchemaID, bool) {
 
 	// add fields
 	if len(di.ids) <= di.currentDepthIndex+1 {
-		di.ids = append(di.ids, []id.DatasetSchemaID{})
+		di.ids = append(di.ids, []SchemaID{})
 	}
 	nextDepthIDs := di.ids[di.currentDepthIndex+1]
 	currentIDs := di.ids[di.currentDepthIndex]
@@ -53,7 +49,7 @@ func (di *SchemaGraphIterator) Next(d *Schema) (id.DatasetSchemaID, bool) {
 		if di.maxDepth <= di.currentDepthIndex || len(nextDepthIDs) == 0 {
 			// done
 			di.currentDepthIndex++
-			return id.DatasetSchemaID{}, true
+			return SchemaID{}, true
 		}
 		di.currentDepthIndex++
 	} else {
@@ -63,7 +59,6 @@ func (di *SchemaGraphIterator) Next(d *Schema) (id.DatasetSchemaID, bool) {
 	return di.ids[di.currentDepthIndex][di.currentIndex], false
 }
 
-// Result _
 func (di *SchemaGraphIterator) Result() SchemaMap {
 	if di == nil {
 		return nil

@@ -3,27 +3,26 @@ package dataset
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDatasetSchemaGraphIterator(t *testing.T) {
-	sid := id.NewSceneID()
-	d0id := id.NewDatasetSchemaID()
-	d11id := id.NewDatasetSchemaID()
-	d12id := id.NewDatasetSchemaID()
-	d21id := id.NewDatasetSchemaID()
-	d31id := id.NewDatasetSchemaID()
-	d32id := id.NewDatasetSchemaID()
+	sid := NewSceneID()
+	d0id := NewSchemaID()
+	d11id := NewSchemaID()
+	d12id := NewSchemaID()
+	d21id := NewSchemaID()
+	d31id := NewSchemaID()
+	d32id := NewSchemaID()
 
-	d0f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeRef).Ref(&d11id).Build()
-	d0f1, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeRef).Ref(&d12id).Build()
-	d11f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeString).Build()
-	d12f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeRef).Ref(&d21id).Build()
-	d21f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeRef).Ref(&d31id).Build()
-	d21f1, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeRef).Ref(&d32id).Build()
-	d31f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeString).Build()
-	d32f0, _ := NewSchemaField().ID(id.NewDatasetSchemaFieldID()).Type(ValueTypeString).Build()
+	d0f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeRef).Ref(&d11id).Build()
+	d0f1, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeRef).Ref(&d12id).Build()
+	d11f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeString).Build()
+	d12f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeRef).Ref(&d21id).Build()
+	d21f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeRef).Ref(&d31id).Build()
+	d21f1, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeRef).Ref(&d32id).Build()
+	d31f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeString).Build()
+	d32f0, _ := NewSchemaField().ID(NewFieldID()).Type(ValueTypeString).Build()
 
 	d0, _ := NewSchema().ID(d0id).Scene(sid).Fields([]*SchemaField{
 		d0f0, d0f1,

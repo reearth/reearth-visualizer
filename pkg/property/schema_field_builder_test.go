@@ -5,14 +5,13 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSchemaFieldBuilder_Build(t *testing.T) {
 	testCases := []struct {
 		Name         string
-		Id           id.PropertySchemaFieldID
+		Id           FieldID
 		PropertyType ValueType
 		Fname        i18n.String
 		Description  i18n.String
@@ -27,7 +26,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 		Choices      []SchemaFieldChoice
 		Cond         *Condition
 		Expected     struct {
-			Id           id.PropertySchemaFieldID
+			Id           FieldID
 			PropertyType ValueType
 			Fname        i18n.String
 			Description  i18n.String
@@ -44,11 +43,11 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "nil field",
-			Err:  id.ErrInvalidID,
+			Err:  ErrInvalidID,
 		},
 		{
 			Name: "fail min > max",
-			Id:   id.PropertySchemaFieldID("aa"),
+			Id:   FieldID("aa"),
 			Min:  10,
 			Max:  1,
 			Err:  errors.New("invalid min and max"),

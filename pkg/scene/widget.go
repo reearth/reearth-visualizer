@@ -1,21 +1,17 @@
 package scene
 
-import (
-	"github.com/reearth/reearth-backend/pkg/id"
-)
-
 type Widget struct {
-	id        id.WidgetID
-	plugin    id.PluginID
-	extension id.PluginExtensionID
-	property  id.PropertyID
+	id        WidgetID
+	plugin    PluginID
+	extension PluginExtensionID
+	property  PropertyID
 	enabled   bool
 	extended  bool
 }
 
-func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled, extended bool) (*Widget, error) {
-	if !plugin.Validate() || string(extension) == "" || id.ID(property).IsNil() {
-		return nil, id.ErrInvalidID
+func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled, extended bool) (*Widget, error) {
+	if !plugin.Validate() || string(extension) == "" || property.IsNil() {
+		return nil, ErrInvalidID
 	}
 
 	return &Widget{
@@ -28,7 +24,7 @@ func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtension
 	}, nil
 }
 
-func MustNewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool, extended bool) *Widget {
+func MustNewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) *Widget {
 	w, err := NewWidget(wid, plugin, extension, property, enabled, extended)
 	if err != nil {
 		panic(err)
@@ -36,19 +32,19 @@ func MustNewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExten
 	return w
 }
 
-func (w *Widget) ID() id.WidgetID {
+func (w *Widget) ID() WidgetID {
 	return w.id
 }
 
-func (w *Widget) Plugin() id.PluginID {
+func (w *Widget) Plugin() PluginID {
 	return w.plugin
 }
 
-func (w *Widget) Extension() id.PluginExtensionID {
+func (w *Widget) Extension() PluginExtensionID {
 	return w.extension
 }
 
-func (w *Widget) Property() id.PropertyID {
+func (w *Widget) Property() PropertyID {
 	return w.property
 }
 

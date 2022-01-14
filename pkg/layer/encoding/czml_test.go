@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/czml"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -17,9 +15,9 @@ import (
 var _ Encoder = (*CZMLEncoder)(nil)
 
 func TestCZMLEncoder_Encode(t *testing.T) {
-	lid := id.NewLayerID()
-	sid := id.NewSceneID()
-	iid := id.NewPropertyItemID()
+	lid := layer.NewID()
+	sid := layer.NewSceneID()
+	iid := property.NewItemID()
 
 	tests := []struct {
 		name   string
@@ -34,18 +32,18 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("marker").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("location"),
+										ID: property.FieldID("location"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeLatLng,
 											nil,
@@ -53,7 +51,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("height"),
+										ID: property.FieldID("height"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -61,7 +59,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("pointColor"),
+										ID: property.FieldID("pointColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -69,7 +67,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("pointSize"),
+										ID: property.FieldID("pointSize"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -102,18 +100,18 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polygon").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("polygon"),
+										ID: property.FieldID("polygon"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypePolygon,
 											nil,
@@ -127,7 +125,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("fill"),
+										ID: property.FieldID("fill"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeBool,
 											nil,
@@ -135,7 +133,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("fillColor"),
+										ID: property.FieldID("fillColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -143,7 +141,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("stroke"),
+										ID: property.FieldID("stroke"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeBool,
 											nil,
@@ -151,7 +149,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -159,7 +157,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -197,18 +195,18 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polyline").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("coordinates"),
+										ID: property.FieldID("coordinates"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeCoordinates,
 											nil,
@@ -220,7 +218,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -228,7 +226,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,

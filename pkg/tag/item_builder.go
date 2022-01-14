@@ -1,7 +1,5 @@
 package tag
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type ItemBuilder struct {
 	i *Item
 }
@@ -19,10 +17,10 @@ func ItemFrom(t Tag) *Item {
 }
 
 func (b *ItemBuilder) Build() (*Item, error) {
-	if id.ID(b.i.id).IsNil() {
-		return nil, id.ErrInvalidID
+	if b.i.id.IsNil() {
+		return nil, ErrInvalidID
 	}
-	if id.ID(b.i.sceneId).IsNil() {
+	if b.i.sceneId.IsNil() {
 		return nil, ErrInvalidSceneID
 	}
 	if b.i.label == "" {
@@ -31,13 +29,13 @@ func (b *ItemBuilder) Build() (*Item, error) {
 	return b.i, nil
 }
 
-func (b *ItemBuilder) ID(tid id.TagID) *ItemBuilder {
+func (b *ItemBuilder) ID(tid ID) *ItemBuilder {
 	b.i.id = tid
 	return b
 }
 
 func (b *ItemBuilder) NewID() *ItemBuilder {
-	b.i.id = id.NewTagID()
+	b.i.id = NewID()
 	return b
 }
 
@@ -46,27 +44,27 @@ func (b *ItemBuilder) Label(l string) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Scene(sid id.SceneID) *ItemBuilder {
+func (b *ItemBuilder) Scene(sid SceneID) *ItemBuilder {
 	b.i.sceneId = sid
 	return b
 }
 
-func (b *ItemBuilder) Parent(p *id.TagID) *ItemBuilder {
+func (b *ItemBuilder) Parent(p *ID) *ItemBuilder {
 	b.i.parent = p.CopyRef()
 	return b
 }
 
-func (b *ItemBuilder) LinkedDatasetFieldID(dfid *id.DatasetSchemaFieldID) *ItemBuilder {
+func (b *ItemBuilder) LinkedDatasetFieldID(dfid *DatasetFieldID) *ItemBuilder {
 	b.i.linkedDatasetFieldID = dfid
 	return b
 }
 
-func (b *ItemBuilder) LinkedDatasetID(did *id.DatasetID) *ItemBuilder {
+func (b *ItemBuilder) LinkedDatasetID(did *DatasetID) *ItemBuilder {
 	b.i.linkedDatasetID = did
 	return b
 }
 
-func (b *ItemBuilder) LinkedDatasetSchemaID(dsid *id.DatasetSchemaID) *ItemBuilder {
+func (b *ItemBuilder) LinkedDatasetSchemaID(dsid *DatasetSchemaID) *ItemBuilder {
 	b.i.linkedDatasetSchemaID = dsid
 	return b
 }

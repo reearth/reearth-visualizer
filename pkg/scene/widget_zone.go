@@ -1,7 +1,5 @@
 package scene
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 // WidgetZone is the structure of each layer (inner and outer) of the align system.
 type WidgetZone struct {
 	left   *WidgetSection
@@ -42,7 +40,7 @@ func (wz *WidgetZone) Section(s WidgetSectionType) *WidgetSection {
 	return nil
 }
 
-func (z *WidgetZone) Remove(wid id.WidgetID) {
+func (z *WidgetZone) Remove(wid WidgetID) {
 	if z == nil {
 		return
 	}
@@ -52,7 +50,7 @@ func (z *WidgetZone) Remove(wid id.WidgetID) {
 	z.right.Remove(wid)
 }
 
-func (z *WidgetZone) Find(wid id.WidgetID) (int, WidgetSectionType, WidgetAreaType) {
+func (z *WidgetZone) Find(wid WidgetID) (int, WidgetSectionType, WidgetAreaType) {
 	if z == nil {
 		return -1, "", ""
 	}

@@ -3,52 +3,43 @@ package plugin
 import (
 	"github.com/blang/semver"
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-// Plugin _
 type Plugin struct {
-	id             id.PluginID
+	id             ID
 	name           i18n.String
 	author         string
 	description    i18n.String
 	repositoryURL  string
-	extensions     map[id.PluginExtensionID]*Extension
-	extensionOrder []id.PluginExtensionID
-	schema         *id.PropertySchemaID
+	extensions     map[ExtensionID]*Extension
+	extensionOrder []ExtensionID
+	schema         *PropertySchemaID
 }
 
-// ID _
-func (p *Plugin) ID() id.PluginID {
+func (p *Plugin) ID() ID {
 	return p.id
 }
 
-// Version _
 func (p *Plugin) Version() semver.Version {
 	return p.id.Version()
 }
 
-// Name _
 func (p *Plugin) Name() i18n.String {
 	return p.name.Copy()
 }
 
-// Author _
 func (p *Plugin) Author() string {
 	return p.author
 }
 
-// Description _
 func (p *Plugin) Description() i18n.String {
 	return p.description.Copy()
 }
 
-// RepositoryURL _
 func (p *Plugin) RepositoryURL() string {
 	return p.repositoryURL
 }
 
-// Extensions _
 func (p *Plugin) Extensions() []*Extension {
 	if p.extensionOrder == nil {
 		return []*Extension{}
@@ -60,7 +51,7 @@ func (p *Plugin) Extensions() []*Extension {
 	return list
 }
 
-func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
+func (p *Plugin) Extension(id ExtensionID) *Extension {
 	if p == nil {
 		return nil
 	}
@@ -72,17 +63,16 @@ func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
 	return nil
 }
 
-// Schema _
-func (p *Plugin) Schema() *id.PropertySchemaID {
+func (p *Plugin) Schema() *PropertySchemaID {
 	return p.schema
 }
 
-func (p *Plugin) PropertySchemas() []id.PropertySchemaID {
+func (p *Plugin) PropertySchemas() []PropertySchemaID {
 	if p == nil {
 		return nil
 	}
 
-	ps := make([]id.PropertySchemaID, 0, len(p.extensions)+1)
+	ps := make([]PropertySchemaID, 0, len(p.extensions)+1)
 	if p.schema != nil {
 		ps = append(ps, *p.schema)
 	}
@@ -96,7 +86,6 @@ func (p *Plugin) Rename(name i18n.String) {
 	p.name = name.Copy()
 }
 
-// SetDescription _
 func (p *Plugin) SetDescription(des i18n.String) {
 	p.description = des.Copy()
 }

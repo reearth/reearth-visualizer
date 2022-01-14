@@ -5,17 +5,16 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLoader_Walk(t *testing.T) {
-	sid := id.NewSceneID()
+	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
-	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l1.ID(), l2.ID()})).MustBuild()
-	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l3.ID(), l4.ID()})).MustBuild()
+	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l1.ID(), l2.ID()})).MustBuild()
+	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l3.ID(), l4.ID()})).MustBuild()
 	w := LoaderFrom([]Layer{l1, l2, l3, l4, l5})
 
 	layers := []Layer{}
@@ -24,7 +23,7 @@ func TestLoader_Walk(t *testing.T) {
 		layers = append(layers, l)
 		parents = append(parents, p)
 		return nil
-	}, []id.LayerID{l5.ID()})
+	}, []ID{l5.ID()})
 
 	assert.NoError(t, err)
 	assert.Equal(t, []Layer{l5, l3, l4, l1, l2}, layers)
@@ -32,12 +31,12 @@ func TestLoader_Walk(t *testing.T) {
 }
 
 func TestLoader_Walk2(t *testing.T) {
-	sid := id.NewSceneID()
+	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
-	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l1.ID(), l2.ID()})).MustBuild()
-	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l3.ID(), l4.ID()})).MustBuild()
+	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l1.ID(), l2.ID()})).MustBuild()
+	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l3.ID(), l4.ID()})).MustBuild()
 	w := LoaderFrom([]Layer{l1, l2, l3, l4, l5})
 
 	layers := []Layer{}
@@ -46,7 +45,7 @@ func TestLoader_Walk2(t *testing.T) {
 		layers = append(layers, l)
 		parents = append(parents, p)
 		return WalkerSkipChildren
-	}, []id.LayerID{l5.ID()})
+	}, []ID{l5.ID()})
 
 	assert.NoError(t, err)
 	assert.Equal(t, []Layer{l5}, layers)
@@ -54,12 +53,12 @@ func TestLoader_Walk2(t *testing.T) {
 }
 
 func TestLoader_Walk3(t *testing.T) {
-	sid := id.NewSceneID()
+	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
-	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l1.ID(), l2.ID()})).MustBuild()
-	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]id.LayerID{l3.ID(), l4.ID()})).MustBuild()
+	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l1.ID(), l2.ID()})).MustBuild()
+	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l3.ID(), l4.ID()})).MustBuild()
 	w := LoaderFrom([]Layer{l1, l2, l3, l4, l5})
 
 	err := errors.New("Error")
@@ -72,7 +71,7 @@ func TestLoader_Walk3(t *testing.T) {
 			return err
 		}
 		return nil
-	}, []id.LayerID{l5.ID()})
+	}, []ID{l5.ID()})
 
 	assert.Same(t, err, err2)
 	assert.Equal(t, []Layer{l5, l3, l4}, layers)

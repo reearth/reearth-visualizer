@@ -5,19 +5,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuilder_Build(t *testing.T) {
-	aid := id.NewAssetID()
-	tid := id.NewTeamID()
+	aid := NewID()
+	tid := NewTeamID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	testCases := []struct {
 		Name, AssetName string
-		Id              id.AssetID
+		Id              ID
 		CreatedAt       time.Time
-		Team            id.TeamID
+		Team            TeamID
 		Size            int64
 		Url             string
 		ContentType     string
@@ -46,9 +45,9 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			Name:           "failed empty size",
-			Id:             id.NewAssetID(),
+			Id:             NewID(),
 			CreatedAt:      d,
-			Team:           id.NewTeamID(),
+			Team:           NewTeamID(),
 			Size:           0,
 			Url:            "tt://xxx.zz",
 			ContentType:    "bbb",
@@ -57,9 +56,9 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			Name:           "failed empty url",
-			Id:             id.NewAssetID(),
+			Id:             NewID(),
 			CreatedAt:      d,
-			Team:           id.NewTeamID(),
+			Team:           NewTeamID(),
 			Size:           10,
 			Url:            "",
 			ContentType:    "bbb",
@@ -68,9 +67,9 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			Name:           "failed empty team",
-			Id:             id.NewAssetID(),
+			Id:             NewID(),
 			CreatedAt:      d,
-			Team:           id.TeamID{},
+			Team:           TeamID{},
 			Size:           10,
 			Url:            "tt://xxx.zz",
 			ContentType:    "bbb",
@@ -79,9 +78,9 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			Name:           "failed invalid Id",
-			Id:             id.AssetID{},
+			Id:             ID{},
 			CreatedAt:      d,
-			Team:           id.NewTeamID(),
+			Team:           NewTeamID(),
 			Size:           10,
 			Url:            "tt://xxx.zz",
 			ContentType:    "bbb",
@@ -112,14 +111,14 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	aid := id.NewAssetID()
-	tid := id.NewTeamID()
+	aid := NewID()
+	tid := NewTeamID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	testCases := []struct {
 		name, assetName string
 		createdAt       time.Time
-		id              id.AssetID
-		team            id.TeamID
+		id              ID
+		team            TeamID
 		size            int64
 		url             string
 		contentType     string
@@ -149,8 +148,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name:           "failed empty size",
 			createdAt:      d,
-			id:             id.NewAssetID(),
-			team:           id.NewTeamID(),
+			id:             NewID(),
+			team:           NewTeamID(),
 			size:           0,
 			url:            "tt://xxx.zz",
 			contentType:    "bbb",
@@ -160,8 +159,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name:           "failed empty url",
 			createdAt:      d,
-			id:             id.NewAssetID(),
-			team:           id.NewTeamID(),
+			id:             NewID(),
+			team:           NewTeamID(),
 			size:           10,
 			url:            "",
 			contentType:    "bbb",
@@ -171,8 +170,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name:           "failed empty team",
 			createdAt:      d,
-			id:             id.NewAssetID(),
-			team:           id.TeamID{},
+			id:             NewID(),
+			team:           TeamID{},
 			size:           10,
 			url:            "tt://xxx.zz",
 			contentType:    "bbb",
@@ -182,8 +181,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name:           "failed invalid Id",
 			createdAt:      d,
-			id:             id.AssetID{},
-			team:           id.NewTeamID(),
+			id:             ID{},
+			team:           NewTeamID(),
 			size:           10,
 			url:            "tt://xxx.zz",
 			contentType:    "bbb",
@@ -231,6 +230,6 @@ func TestBuilder_MustBuild(t *testing.T) {
 }
 
 func TestNewID(t *testing.T) {
-	a := New().NewID().URL("tt://xxx.bb").Team(id.NewTeamID()).Size(10).MustBuild()
+	a := New().NewID().URL("tt://xxx.bb").Team(NewTeamID()).Size(10).MustBuild()
 	assert.False(t, a.id.IsNil())
 }

@@ -41,7 +41,7 @@ func (r *sceneRepo) FindByID(ctx context.Context, id id.SceneID, f []id.TeamID) 
 func (r *sceneRepo) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) ([]*scene.Scene, error) {
 	filter := r.teamFilter(bson.D{
 		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.SceneIDToKeys(ids)},
+			{Key: "$in", Value: id.SceneIDsToStrings(ids)},
 		}},
 	}, f)
 	dst := make([]*scene.Scene, 0, len(ids))
@@ -62,7 +62,7 @@ func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID, f []id.T
 func (r *sceneRepo) FindIDsByTeam(ctx context.Context, teams []id.TeamID) ([]id.SceneID, error) {
 	filter := bson.D{
 		{Key: "team", Value: bson.D{
-			{Key: "$in", Value: id.TeamIDToKeys(teams)},
+			{Key: "$in", Value: id.TeamIDsToStrings(teams)},
 		}},
 	}
 	c := mongodoc.SceneIDConsumer{
@@ -79,7 +79,7 @@ func (r *sceneRepo) FindIDsByTeam(ctx context.Context, teams []id.TeamID) ([]id.
 func (r *sceneRepo) HasSceneTeam(ctx context.Context, sceneID id.SceneID, temaIDs []id.TeamID) (bool, error) {
 	filter := bson.D{
 		{Key: "id", Value: sceneID.String()},
-		{Key: "team", Value: bson.D{{Key: "$in", Value: id.TeamIDToKeys(temaIDs)}}},
+		{Key: "team", Value: bson.D{{Key: "$in", Value: id.TeamIDsToStrings(temaIDs)}}},
 	}
 	res, err2 := r.client.Collection().CountDocuments(ctx, filter)
 	if err2 != nil {
@@ -90,8 +90,8 @@ func (r *sceneRepo) HasSceneTeam(ctx context.Context, sceneID id.SceneID, temaID
 
 func (r *sceneRepo) HasScenesTeam(ctx context.Context, sceneIDs []id.SceneID, teamIDs []id.TeamID) ([]bool, error) {
 	cursor, err2 := r.client.Collection().Find(ctx, bson.D{
-		{Key: "id", Value: bson.D{{Key: "$in", Value: id.SceneIDToKeys(sceneIDs)}}},
-		{Key: "team", Value: bson.D{{Key: "$in", Value: id.TeamIDToKeys(teamIDs)}}},
+		{Key: "id", Value: bson.D{{Key: "$in", Value: id.SceneIDsToStrings(sceneIDs)}}},
+		{Key: "team", Value: bson.D{{Key: "$in", Value: id.TeamIDsToStrings(teamIDs)}}},
 	}, &options.FindOptions{
 		Projection: bson.D{{Key: "id", Value: 1}, {Key: "_id", Value: 0}},
 	})
@@ -181,7 +181,7 @@ func (*sceneRepo) teamFilter(filter bson.D, teams []id.TeamID) bson.D {
 	}
 	filter = append(filter, bson.E{
 		Key:   "team",
-		Value: bson.D{{Key: "$in", Value: id.TeamIDToKeys(teams)}},
+		Value: bson.D{{Key: "$in", Value: id.TeamIDsToStrings(teams)}},
 	})
 	return filter
 }

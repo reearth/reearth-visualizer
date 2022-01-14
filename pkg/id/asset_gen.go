@@ -44,7 +44,7 @@ func AssetIDFromRef(i *string) *AssetID {
 
 // AssetIDFromRefID generates a new AssetID from a ref of a generic ID.
 func AssetIDFromRefID(i *ID) *AssetID {
-	if i == nil {
+	if i == nil || i.IsNil() {
 		return nil
 	}
 	nid := AssetID(*i)
@@ -58,28 +58,40 @@ func (d AssetID) ID() ID {
 
 // String returns a string representation.
 func (d AssetID) String() string {
+	if d.IsNil() {
+		return ""
+	}
 	return ID(d).String()
+}
+
+// StringRef returns a reference of the string representation.
+func (d AssetID) RefString() *string {
+	if d.IsNil() {
+		return nil
+	}
+	str := d.String()
+	return &str
 }
 
 // GoString implements fmt.GoStringer interface.
 func (d AssetID) GoString() string {
-	return "id.AssetID(" + d.String() + ")"
-}
-
-// RefString returns a reference of string representation.
-func (d AssetID) RefString() *string {
-	id := ID(d).String()
-	return &id
+	return "AssetID(" + d.String() + ")"
 }
 
 // Ref returns a reference.
 func (d AssetID) Ref() *AssetID {
+	if d.IsNil() {
+		return nil
+	}
 	d2 := d
 	return &d2
 }
 
 // Contains returns whether the id is contained in the slice.
 func (d AssetID) Contains(ids []AssetID) bool {
+	if d.IsNil() {
+		return false
+	}
 	for _, i := range ids {
 		if d.ID().Equal(i.ID()) {
 			return true
@@ -90,7 +102,7 @@ func (d AssetID) Contains(ids []AssetID) bool {
 
 // CopyRef returns a copy of a reference.
 func (d *AssetID) CopyRef() *AssetID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	d2 := *d
@@ -99,7 +111,7 @@ func (d *AssetID) CopyRef() *AssetID {
 
 // IDRef returns a reference of a domain id.
 func (d *AssetID) IDRef() *ID {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d)
@@ -108,7 +120,7 @@ func (d *AssetID) IDRef() *ID {
 
 // StringRef returns a reference of a string representation.
 func (d *AssetID) StringRef() *string {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil
 	}
 	id := ID(*d).String()
@@ -117,6 +129,9 @@ func (d *AssetID) StringRef() *string {
 
 // MarhsalJSON implements json.Marhsaler interface
 func (d *AssetID) MarhsalJSON() ([]byte, error) {
+	if d.IsNilRef() {
+		return nil, nil
+	}
 	return json.Marshal(d.String())
 }
 
@@ -132,7 +147,7 @@ func (d *AssetID) UnmarhsalJSON(bs []byte) (err error) {
 
 // MarshalText implements encoding.TextMarshaler interface
 func (d *AssetID) MarshalText() ([]byte, error) {
-	if d == nil {
+	if d.IsNilRef() {
 		return nil, nil
 	}
 	return []byte(d.String()), nil
@@ -144,18 +159,23 @@ func (d *AssetID) UnmarshalText(text []byte) (err error) {
 	return
 }
 
-// Ref returns true if a ID is nil or zero-value
+// IsNil returns true if a ID is zero-value
 func (d AssetID) IsNil() bool {
 	return ID(d).IsNil()
 }
 
-// AssetIDToKeys converts IDs into a string slice.
-func AssetIDToKeys(ids []AssetID) []string {
-	keys := make([]string, 0, len(ids))
+// IsNilRef returns true if a ID is nil or zero-value
+func (d *AssetID) IsNilRef() bool {
+	return d == nil || ID(*d).IsNil()
+}
+
+// AssetIDsToStrings converts IDs into a string slice.
+func AssetIDsToStrings(ids []AssetID) []string {
+	strs := make([]string, 0, len(ids))
 	for _, i := range ids {
-		keys = append(keys, i.String())
+		strs = append(strs, i.String())
 	}
-	return keys
+	return strs
 }
 
 // AssetIDsFrom converts a string slice into a ID slice.
@@ -285,9 +305,6 @@ func (s *AssetIDSet) Clone() *AssetIDSet {
 
 // Merge returns a merged set
 func (s *AssetIDSet) Merge(s2 *AssetIDSet) *AssetIDSet {
-	if s == nil {
-		return nil
-	}
 	s3 := s.Clone()
 	if s2 == nil {
 		return s3

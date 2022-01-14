@@ -4,13 +4,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
 func TestBuilder_ID(t *testing.T) {
-	uid := id.NewUserID()
+	uid := NewID()
 	b := New().ID(uid).MustBuild()
 	assert.Equal(t, uid, b.ID())
 }
@@ -26,7 +25,7 @@ func TestBuilder_NewID(t *testing.T) {
 }
 
 func TestBuilder_Team(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := NewTeamID()
 	b := New().NewID().Team(tid).MustBuild()
 	assert.Equal(t, tid, b.Team())
 }
@@ -94,12 +93,12 @@ func TestNew(t *testing.T) {
 }
 
 func TestBuilder_Build(t *testing.T) {
-	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	uid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name, UserName, Lang, Email string
-		UID                         id.UserID
-		TID                         id.TeamID
+		UID                         ID
+		TID                         TeamID
 		Auths                       []Auth
 		Expected                    *User
 		err                         error
@@ -129,7 +128,7 @@ func TestBuilder_Build(t *testing.T) {
 		}, {
 			Name:     "failed invalid id",
 			Expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 	}
 	for _, tc := range testCases {
@@ -146,12 +145,12 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	uid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name, UserName, Lang, Email string
-		UID                         id.UserID
-		TID                         id.TeamID
+		UID                         ID
+		TID                         TeamID
 		Auths                       []Auth
 		Expected                    *User
 		err                         error
@@ -181,7 +180,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		}, {
 			Name:     "failed invalid id",
 			Expected: nil,
-			err:      id.ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 	}
 	for _, tc := range testCases {

@@ -1,20 +1,19 @@
 package layer
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 // Merged represents a merged layer from two layers
 type Merged struct {
-	Original    id.LayerID
-	Parent      *id.LayerID
+	Original    ID
+	Parent      *ID
 	Name        string
-	Scene       id.SceneID
+	Scene       SceneID
 	Property    *property.MergedMetadata
 	Infobox     *MergedInfobox
-	PluginID    *id.PluginID
-	ExtensionID *id.PluginExtensionID
+	PluginID    *PluginID
+	ExtensionID *PluginExtensionID
 }
 
 // MergedInfobox represents a merged info box from two layers
@@ -25,9 +24,9 @@ type MergedInfobox struct {
 
 // MergedInfoboxField represents a field of MergedInfobox
 type MergedInfoboxField struct {
-	ID        id.InfoboxFieldID
-	Plugin    id.PluginID
-	Extension id.PluginExtensionID
+	ID        InfoboxFieldID
+	Plugin    PluginID
+	Extension PluginExtensionID
 	Property  *property.MergedMetadata
 }
 
@@ -54,7 +53,7 @@ func Merge(o Layer, p *Group) *Merged {
 }
 
 // MergeInfobox merges two infoboxes
-func MergeInfobox(o *Infobox, p *Infobox, linked *id.DatasetID) *MergedInfobox {
+func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 	if o == nil && p == nil {
 		return nil
 	}
@@ -92,12 +91,12 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *id.DatasetID) *MergedInfobox {
 }
 
 // Properties returns all property IDs in Merged
-func (m *Merged) Properties() []id.PropertyID {
+func (m *Merged) Properties() []PropertyID {
 	if m == nil {
 		return nil
 	}
-	added := map[id.PropertyID]struct{}{}
-	result := []id.PropertyID{}
+	added := map[PropertyID]struct{}{}
+	result := []PropertyID{}
 	if m.Property != nil {
 		if m.Property.Original != nil {
 			t := *m.Property.Original

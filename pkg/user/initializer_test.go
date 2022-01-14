@@ -4,17 +4,16 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInit(t *testing.T) {
-	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	uid := NewID()
+	tid := NewTeamID()
 	testCases := []struct {
 		Name, Email, Username, Sub string
-		UID                        *id.UserID
-		TID                        *id.TeamID
+		UID                        *ID
+		TID                        *TeamID
 		ExpectedUser               *User
 		ExpectedTeam               *Team
 		Err                        error
@@ -36,7 +35,7 @@ func TestInit(t *testing.T) {
 			ExpectedTeam: NewTeam().
 				ID(tid).
 				Name("nnn").
-				Members(map[id.UserID]Role{uid: RoleOwner}).
+				Members(map[ID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,
@@ -58,7 +57,7 @@ func TestInit(t *testing.T) {
 			ExpectedTeam: NewTeam().
 				NewID().
 				Name("nnn").
-				Members(map[id.UserID]Role{uid: RoleOwner}).
+				Members(map[ID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,
@@ -80,7 +79,7 @@ func TestInit(t *testing.T) {
 			ExpectedTeam: NewTeam().
 				ID(tid).
 				Name("nnn").
-				Members(map[id.UserID]Role{uid: RoleOwner}).
+				Members(map[ID]Role{uid: RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			Err: nil,

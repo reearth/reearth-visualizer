@@ -1,14 +1,12 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Field struct {
-	field  id.DatasetSchemaFieldID
+	field  FieldID
 	value  *Value
 	source string
 }
 
-func NewField(field id.DatasetSchemaFieldID, value *Value, source string) *Field {
+func NewField(field FieldID, value *Value, source string) *Field {
 	if value == nil {
 		return nil
 	}
@@ -18,14 +16,14 @@ func NewField(field id.DatasetSchemaFieldID, value *Value, source string) *Field
 	}
 }
 
-func (d *Field) Field() (i id.DatasetSchemaFieldID) {
+func (d *Field) Field() (i FieldID) {
 	if d == nil {
 		return
 	}
 	return d.field
 }
 
-func (d *Field) FieldRef() *id.DatasetSchemaFieldID {
+func (d *Field) FieldRef() *FieldID {
 	if d == nil {
 		return nil
 	}

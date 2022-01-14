@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +19,7 @@ func TestPackageFromZip(t *testing.T) {
 	}()
 
 	expected := plugin.New().
-		ID(id.MustPluginID("testplugin~1.0.1")).
+		ID(plugin.MustID("testplugin~1.0.1")).
 		Name(i18n.StringFrom("testplugin")).
 		MustBuild()
 

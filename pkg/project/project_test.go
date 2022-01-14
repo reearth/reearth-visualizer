@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -174,7 +173,7 @@ func TestProject_UpdatePublicTitle(t *testing.T) {
 
 func TestProject_UpdateTeam(t *testing.T) {
 	p := &Project{}
-	p.UpdateTeam(id.NewTeamID())
+	p.UpdateTeam(NewTeamID())
 	assert.NotNil(t, p.Team())
 }
 

@@ -2,16 +2,14 @@ package property
 
 import (
 	"context"
-
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-type Loader func(context.Context, ...id.PropertyID) (List, error)
+type Loader func(context.Context, ...ID) (List, error)
 
-type SchemaLoader func(context.Context, ...id.PropertySchemaID) (SchemaList, error)
+type SchemaLoader func(context.Context, ...SchemaID) (SchemaList, error)
 
 func LoaderFrom(data []*Property) Loader {
-	return func(ctx context.Context, ids ...id.PropertyID) (List, error) {
+	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make([]*Property, 0, len(ids))
 		for _, i := range ids {
 			found := false
@@ -30,8 +28,8 @@ func LoaderFrom(data []*Property) Loader {
 	}
 }
 
-func LoaderFromMap(data map[id.PropertyID]*Property) Loader {
-	return func(ctx context.Context, ids ...id.PropertyID) (List, error) {
+func LoaderFromMap(data map[ID]*Property) Loader {
+	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make([]*Property, 0, len(ids))
 		for _, i := range ids {
 			if d, ok := data[i]; ok {

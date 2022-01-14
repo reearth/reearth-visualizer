@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
@@ -15,7 +14,7 @@ import (
 var _ Encoder = (*KMLEncoder)(nil)
 
 func TestKMLEncoder_Encode(t *testing.T) {
-	lid := id.MustLayerID("01fmph48ykj1nd82r8e4znh6a6")
+	lid := layer.MustID("01fmph48ykj1nd82r8e4znh6a6")
 
 	tests := []struct {
 		name   string
@@ -28,20 +27,20 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       id.NewSceneID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("marker").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("location"),
+										ID: property.FieldID("location"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeLatLng,
 											nil,
@@ -49,7 +48,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("height"),
+										ID: property.FieldID("height"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -57,7 +56,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("imageSize"),
+										ID: property.FieldID("imageSize"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -65,7 +64,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("image"),
+										ID: property.FieldID("image"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeURL,
 											nil,
@@ -73,7 +72,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("pointColor"),
+										ID: property.FieldID("pointColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -113,20 +112,20 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       id.NewSceneID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polygon").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("polygon"),
+										ID: property.FieldID("polygon"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypePolygon,
 											nil,
@@ -138,7 +137,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("fill"),
+										ID: property.FieldID("fill"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeBool,
 											nil,
@@ -146,7 +145,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("fillColor"),
+										ID: property.FieldID("fillColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -154,7 +153,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("stroke"),
+										ID: property.FieldID("stroke"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeBool,
 											nil,
@@ -162,7 +161,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -170,7 +169,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,
@@ -217,20 +216,20 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       id.NewSceneID(),
+						Scene:       layer.NewSceneID(),
 						Name:        "test",
-						PluginID:    &id.OfficialPluginID,
-						ExtensionID: id.PluginExtensionID("polyline").Ref(),
+						PluginID:    &layer.OfficialPluginID,
+						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
-						Original: id.NewPropertyID().Ref(),
+						Original: property.NewID().Ref(),
 						Items: []*property.SealedItem{
 							{
-								Original:    id.NewPropertyItemID().Ref(),
-								SchemaGroup: id.PropertySchemaGroupID("default"),
+								Original:    property.NewItemID().Ref(),
+								SchemaGroup: property.SchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
-										ID: id.PropertySchemaFieldID("coordinates"),
+										ID: property.FieldID("coordinates"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeCoordinates,
 											nil,
@@ -242,7 +241,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeColor"),
+										ID: property.FieldID("strokeColor"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeString,
 											nil,
@@ -250,7 +249,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 										),
 									},
 									{
-										ID: id.PropertySchemaFieldID("strokeWidth"),
+										ID: property.FieldID("strokeWidth"),
 										Val: property.NewValueAndDatasetValue(
 											property.ValueTypeNumber,
 											nil,

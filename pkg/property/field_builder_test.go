@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,14 +16,14 @@ func TestFieldBuilder_Value(t *testing.T) {
 
 func TestFieldBuilder_Link(t *testing.T) {
 	p := NewSchemaField().ID("A").Type(ValueTypeString).MustBuild()
-	l := NewLink(id.NewDatasetID(), id.NewDatasetSchemaID(), id.NewDatasetSchemaFieldID())
+	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
 	ls := NewLinks([]*Link{l})
 	b := NewField(p).Link(ls).MustBuild()
 	assert.Equal(t, ls, b.Links())
 }
 
 func TestFieldBuilder_Build(t *testing.T) {
-	l := NewLink(id.NewDatasetID(), id.NewDatasetSchemaID(), id.NewDatasetSchemaFieldID())
+	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
 	testCases := []struct {
 		Name     string
 		Links    *Links
@@ -44,7 +43,7 @@ func TestFieldBuilder_Build(t *testing.T) {
 				Links *Links
 				Value *Value
 			}{},
-			Err: id.ErrInvalidID,
+			Err: ErrInvalidID,
 		},
 		{
 			Name:  "fail invalid property type",
@@ -91,7 +90,7 @@ func TestFieldBuilder_Build(t *testing.T) {
 }
 
 func TestFieldBuilder_MustBuild(t *testing.T) {
-	l := NewLink(id.NewDatasetID(), id.NewDatasetSchemaID(), id.NewDatasetSchemaFieldID())
+	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
 	testCases := []struct {
 		Name     string
 		Fails    bool
@@ -168,16 +167,16 @@ func TestNewFieldUnsafe(t *testing.T) {
 }
 
 func TestFieldUnsafeBuilder_Build(t *testing.T) {
-	l := NewLink(id.NewDatasetID(), id.NewDatasetSchemaID(), id.NewDatasetSchemaFieldID())
+	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
 	testCases := []struct {
 		Name     string
 		Links    *Links
 		Value    *Value
 		Type     ValueType
-		Field    id.PropertySchemaFieldID
+		Field    FieldID
 		Expected struct {
 			PType ValueType
-			Field id.PropertySchemaFieldID
+			Field FieldID
 			Links *Links
 			Value *Value
 		}
@@ -190,7 +189,7 @@ func TestFieldUnsafeBuilder_Build(t *testing.T) {
 			Field: "a",
 			Expected: struct {
 				PType ValueType
-				Field id.PropertySchemaFieldID
+				Field FieldID
 				Links *Links
 				Value *Value
 			}{
@@ -208,7 +207,7 @@ func TestFieldUnsafeBuilder_Build(t *testing.T) {
 			Field: "a",
 			Expected: struct {
 				PType ValueType
-				Field id.PropertySchemaFieldID
+				Field FieldID
 				Links *Links
 				Value *Value
 			}{

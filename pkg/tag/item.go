@@ -1,32 +1,30 @@
 package tag
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Item struct {
 	tag
-	parent                *id.TagID
-	linkedDatasetFieldID  *id.DatasetSchemaFieldID
-	linkedDatasetID       *id.DatasetID
-	linkedDatasetSchemaID *id.DatasetSchemaID
+	parent                *ID
+	linkedDatasetFieldID  *DatasetFieldID
+	linkedDatasetID       *DatasetID
+	linkedDatasetSchemaID *DatasetSchemaID
 }
 
-func (i *Item) Parent() *id.TagID {
+func (i *Item) Parent() *ID {
 	return i.parent.CopyRef()
 }
 
-func (i *Item) LinkedDatasetFieldID() *id.DatasetSchemaFieldID {
+func (i *Item) LinkedDatasetFieldID() *DatasetFieldID {
 	return i.linkedDatasetFieldID.CopyRef()
 }
 
-func (i *Item) LinkedDatasetID() *id.DatasetID {
+func (i *Item) LinkedDatasetID() *DatasetID {
 	return i.linkedDatasetID.CopyRef()
 }
 
-func (i *Item) LinkedDatasetSchemaID() *id.DatasetSchemaID {
+func (i *Item) LinkedDatasetSchemaID() *DatasetSchemaID {
 	return i.linkedDatasetSchemaID.CopyRef()
 }
 
-func (i *Item) SetParent(p *id.TagID) {
+func (i *Item) SetParent(p *ID) {
 	if i == nil {
 		return
 	}

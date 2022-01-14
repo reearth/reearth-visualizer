@@ -331,13 +331,11 @@ func TestID_generateAllID(t *testing.T) {
 
 func TestID_parseID(t *testing.T) {
 	_, err := parseID("")
-
-	assert.True(t, errors.As(ErrInvalidID, &err))
+	assert.Error(t, err)
 
 	id, err := parseID("01f2r7kg1fvvffp0gmexgy5hxy")
-
 	assert.Nil(t, err)
-	assert.EqualValues(t, strings.ToLower(id.String()), "01f2r7kg1fvvffp0gmexgy5hxy")
+	assert.Equal(t, strings.ToLower(id.String()), "01f2r7kg1fvvffp0gmexgy5hxy")
 }
 
 func TestID_includeUpperCase(t *testing.T) {

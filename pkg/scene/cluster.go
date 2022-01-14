@@ -1,16 +1,14 @@
 package scene
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Cluster struct {
-	id       id.ClusterID
+	id       ClusterID
 	name     string
-	property id.PropertyID
+	property PropertyID
 }
 
-func NewCluster(cid id.ClusterID, name string, pid id.PropertyID) (*Cluster, error) {
-	if id.ID(cid).IsNil() {
-		return nil, id.ErrInvalidID
+func NewCluster(cid ClusterID, name string, pid PropertyID) (*Cluster, error) {
+	if cid.IsNil() {
+		return nil, ErrInvalidID
 	}
 	return &Cluster{
 		id:       cid,
@@ -19,9 +17,9 @@ func NewCluster(cid id.ClusterID, name string, pid id.PropertyID) (*Cluster, err
 	}, nil
 }
 
-func (c *Cluster) ID() id.ClusterID {
+func (c *Cluster) ID() ClusterID {
 	if c == nil {
-		return id.ClusterID{}
+		return ClusterID{}
 	}
 	return c.id
 }
@@ -33,9 +31,9 @@ func (c *Cluster) Name() string {
 	return c.name
 }
 
-func (c *Cluster) Property() id.PropertyID {
+func (c *Cluster) Property() PropertyID {
 	if c == nil {
-		return id.PropertyID{}
+		return PropertyID{}
 	}
 	return c.property
 }
@@ -47,7 +45,7 @@ func (c *Cluster) Rename(name string) {
 	c.name = name
 }
 
-func (c *Cluster) UpdateProperty(pid id.PropertyID) {
+func (c *Cluster) UpdateProperty(pid PropertyID) {
 	if c == nil {
 		return
 	}

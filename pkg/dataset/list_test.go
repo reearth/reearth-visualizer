@@ -3,12 +3,11 @@ package dataset
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDatasetListDiff(t *testing.T) {
-	sid := id.SceneID(id.New())
+	sid := NewSceneID()
 	source1 := "hogehoge/1"
 	source2 := "hogehoge/2"
 	source3 := "hogehoge/3"
@@ -24,7 +23,7 @@ func TestDatasetListDiff(t *testing.T) {
 	expected := Diff{
 		Added:   []*Dataset{d4},
 		Removed: []*Dataset{d1},
-		Others: map[id.DatasetID]*Dataset{
+		Others: map[ID]*Dataset{
 			d2.ID(): d3,
 		},
 	}
@@ -36,7 +35,7 @@ func TestDatasetListDiff(t *testing.T) {
 	expected = Diff{
 		Added:   []*Dataset{d4},
 		Removed: []*Dataset{d1, d2},
-		Others: map[id.DatasetID]*Dataset{
+		Others: map[ID]*Dataset{
 			d5.ID(): d3,
 		},
 	}
@@ -44,13 +43,13 @@ func TestDatasetListDiff(t *testing.T) {
 }
 
 func TestDatasetMapGraphSearchByFields(t *testing.T) {
-	did1 := id.NewDatasetID()
-	did2 := id.NewDatasetID()
-	did3 := id.NewDatasetID()
-	fid1 := id.NewDatasetSchemaFieldID()
-	fid2 := id.NewDatasetSchemaFieldID()
-	fid3 := id.NewDatasetSchemaFieldID()
-	sid := id.NewSceneID()
+	did1 := NewID()
+	did2 := NewID()
+	did3 := NewID()
+	fid1 := NewFieldID()
+	fid2 := NewFieldID()
+	fid3 := NewFieldID()
+	sid := NewSceneID()
 	v1 := ValueTypeRef.ValueFrom(did2.ID())
 	v2 := ValueTypeRef.ValueFrom(did3.ID())
 	v3 := ValueTypeString.ValueFrom("value")

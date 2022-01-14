@@ -1,20 +1,19 @@
 package layer
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
 )
 
 type Item struct {
 	layerBase
-	linkedDataset *id.DatasetID
+	linkedDataset *DatasetID
 }
 
-func (l *Item) ID() id.LayerID {
+func (l *Item) ID() ID {
 	return l.layerBase.ID()
 }
 
-func (l *Item) IDRef() *id.LayerID {
+func (l *Item) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
@@ -35,14 +34,14 @@ func (l *Item) IsVisible() bool {
 	return l.layerBase.IsVisible()
 }
 
-func (l *Item) Plugin() *id.PluginID {
+func (l *Item) Plugin() *PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.Plugin()
 }
 
-func (l *Item) Extension() *id.PluginExtensionID {
+func (l *Item) Extension() *PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -56,7 +55,7 @@ func (l *Item) UsesPlugin() bool {
 	return l.layerBase.UsesPlugin()
 }
 
-func (l *Item) Property() *id.PropertyID {
+func (l *Item) Property() *PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -91,7 +90,7 @@ func (l *Item) SetInfobox(infobox *Infobox) {
 	l.layerBase.SetInfobox(infobox)
 }
 
-func (l *Item) SetPlugin(plugin *id.PluginID) {
+func (l *Item) SetPlugin(plugin *PluginID) {
 	if l == nil {
 		return
 	}
@@ -105,7 +104,7 @@ func (l *Item) IsLinked() bool {
 	return l.linkedDataset != nil
 }
 
-func (l *Item) LinkedDataset() *id.DatasetID {
+func (l *Item) LinkedDataset() *DatasetID {
 	if l == nil || l.linkedDataset == nil {
 		return nil
 	}
@@ -113,7 +112,7 @@ func (l *Item) LinkedDataset() *id.DatasetID {
 	return &id
 }
 
-func (l *Item) Link(ds id.DatasetID) {
+func (l *Item) Link(ds DatasetID) {
 	if l == nil {
 		return
 	}
@@ -136,7 +135,7 @@ func (l *Item) LayerRef() *Layer {
 	return &layer
 }
 
-func (l *Item) Properties() []id.PropertyID {
+func (l *Item) Properties() []PropertyID {
 	if l == nil {
 		return nil
 	}

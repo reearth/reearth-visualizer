@@ -12,11 +12,10 @@ var (
 	RoleWriter = Role("writer")
 	// RoleOwner is a role who can have full controll of project
 	RoleOwner = Role("owner")
-	// ErrInvalidRole _
+
 	ErrInvalidRole = errors.New("invalid role")
 )
 
-// Role _
 type Role string
 
 func checkRole(role Role) bool {
@@ -31,7 +30,6 @@ func checkRole(role Role) bool {
 	return false
 }
 
-// RoleFromString _
 func RoleFromString(r string) (Role, error) {
 	role := Role(strings.ToLower(r))
 

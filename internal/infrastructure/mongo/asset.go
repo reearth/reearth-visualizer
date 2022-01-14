@@ -33,7 +33,7 @@ func (r *assetRepo) FindByID(ctx context.Context, id id.AssetID, teams []id.Team
 
 func (r *assetRepo) FindByIDs(ctx context.Context, ids []id.AssetID, teams []id.TeamID) ([]*asset.Asset, error) {
 	filter := assetFilter(bson.M{
-		"id": bson.M{"$in": id.AssetIDToKeys(ids)},
+		"id": bson.M{"$in": id.AssetIDsToStrings(ids)},
 	}, teams)
 	dst := make([]*asset.Asset, 0, len(ids))
 	res, err := r.find(ctx, dst, filter)
@@ -112,6 +112,6 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 }
 
 func assetFilter(filter bson.M, teams []id.TeamID) bson.M {
-	filter["team"] = bson.M{"$in": id.TeamIDToKeys(teams)}
+	filter["team"] = bson.M{"$in": id.TeamIDsToStrings(teams)}
 	return filter
 }

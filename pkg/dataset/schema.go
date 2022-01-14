@@ -1,33 +1,31 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type Schema struct {
-	id                  id.DatasetSchemaID
+	id                  SchemaID
 	source              string
 	name                string
-	fields              map[id.DatasetSchemaFieldID]*SchemaField
-	order               []id.DatasetSchemaFieldID
-	representativeField *id.DatasetSchemaFieldID
-	scene               id.SceneID
+	fields              map[FieldID]*SchemaField
+	order               []FieldID
+	representativeField *FieldID
+	scene               SceneID
 	dynamic             bool
 }
 
-func (d *Schema) ID() (i id.DatasetSchemaID) {
+func (d *Schema) ID() (i SchemaID) {
 	if d == nil {
 		return
 	}
 	return d.id
 }
 
-func (d *Schema) IDRef() *id.DatasetSchemaID {
+func (d *Schema) IDRef() *SchemaID {
 	if d == nil {
 		return nil
 	}
 	return d.id.Ref()
 }
 
-func (d *Schema) Scene() (i id.SceneID) {
+func (d *Schema) Scene() (i SceneID) {
 	if d == nil {
 		return
 	}
@@ -48,7 +46,7 @@ func (d *Schema) Name() string {
 	return d.name
 }
 
-func (d *Schema) RepresentativeFieldID() *id.DatasetSchemaFieldID {
+func (d *Schema) RepresentativeFieldID() *FieldID {
 	if d == nil {
 		return nil
 	}
@@ -73,14 +71,14 @@ func (d *Schema) Fields() []*SchemaField {
 	return fields
 }
 
-func (d *Schema) Field(id id.DatasetSchemaFieldID) *SchemaField {
+func (d *Schema) Field(id FieldID) *SchemaField {
 	if d == nil {
 		return nil
 	}
 	return d.fields[id]
 }
 
-func (d *Schema) FieldRef(id *id.DatasetSchemaFieldID) *SchemaField {
+func (d *Schema) FieldRef(id *FieldID) *SchemaField {
 	if d == nil || id == nil {
 		return nil
 	}
@@ -111,12 +109,10 @@ func (d *Schema) FieldByType(t ValueType) *SchemaField {
 	return nil
 }
 
-// Dynamic _
 func (d *Schema) Dynamic() bool {
 	return d.dynamic
 }
 
-// Rename _
 func (u *Schema) Rename(name string) {
 	u.name = name
 }
