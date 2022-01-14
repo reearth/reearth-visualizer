@@ -19,10 +19,10 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: install lint
-        run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
-      - name: lint
-        run: $(go env GOPATH)/bin/golangci-lint run --timeout=10m
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.43
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic
       - name: Send coverage report
