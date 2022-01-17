@@ -22,7 +22,7 @@ jobs:
           token: ${{ secrets.GPT }}
       - name: Bump tag version
         id: tag
-        uses: mathieudutour/github-tag-action@v5.6
+        uses: mathieudutour/github-tag-action@v6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ github.event.inputs.custom_tag }}
