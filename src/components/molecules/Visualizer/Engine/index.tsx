@@ -14,69 +14,10 @@ import type { Camera, LatLng } from "@reearth/util/value";
 import { SelectLayerOptions } from "../Plugin/types";
 
 import Cesium from "./Cesium";
-import type { EngineRef } from "./ref";
+import type { EngineRef, SceneProperty } from "./ref";
 
 export type { OverriddenInfobox, SelectLayerOptions } from "../Plugin/types";
-
-export type SceneProperty = {
-  default?: {
-    camera?: Camera;
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
-    skybox?: boolean;
-    bgcolor?: string;
-    ion?: string;
-  };
-  cameraLimiter?: {
-    cameraLimitterEnabled?: boolean;
-    cameraLimitterShowHelper?: boolean;
-    cameraLimitterTargetArea?: Camera;
-    cameraLimitterTargetWidth: number;
-    cameraLimitterTargetLength: number;
-  };
-  tiles?: {
-    id: string;
-    tile_type?: string;
-    tile_url?: string;
-    tile_maxLevel?: number;
-    tile_minLevel?: number;
-  }[];
-  terrain?: {
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
-  };
-  atmosphere?: {
-    enable_sun?: boolean;
-    enable_lighting?: boolean;
-    ground_atmosphere?: boolean;
-    sky_atmosphere?: boolean;
-    shadows?: boolean;
-    fog?: boolean;
-    fog_density?: number;
-    brightness_shift?: number;
-    hue_shift?: number;
-    surturation_shift?: number;
-  };
-  timeline?: {
-    animation?: boolean;
-  };
-  googleAnalytics?: {
-    enableGA?: boolean;
-    trackingId?: string;
-  };
-  theme?: {
-    themeType?: "light" | "dark" | "forest" | "custom";
-    themeTextColor?: string;
-    themeSelectColor?: string;
-    themeBackgroundColor?: string;
-  };
-};
+export type { SceneProperty, ClusterProperty, ClusterProps } from "./ref";
 
 export type EngineProps = {
   className?: string;

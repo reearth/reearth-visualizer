@@ -7,6 +7,7 @@ import { delayedObject, merge } from "@reearth/util/object";
 import type { Ref as EngineRef } from "..";
 
 import builtinPrimitives from "./builtin";
+import Cluster from "./Cluster";
 import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
 
 const exposed = delayedObject(Cesium);
@@ -84,6 +85,7 @@ export default function useEngineRef(
         viewer?.scene?.camera.zoomOut(amount);
       },
       builtinPrimitives,
+      clusterComponent: Cluster,
     };
   }, [cesium]);
 

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { ComponentType } from "react";
 
-import Cluster from "../Engine/Cesium/Cluster";
+import { ClusterProperty, ClusterProps } from "../Engine";
 import P from "../Primitive";
 
 import { LayerStore } from "./store";
@@ -9,7 +9,7 @@ export type { Layer } from "../Primitive";
 
 export type Props = {
   pluginProperty?: { [key: string]: any };
-  clusterProperty?: { [key: string]: any };
+  clusterProperty?: ClusterProperty[];
   clusterLayers?: string[];
   sceneProperty?: any;
   isEditable?: boolean;
@@ -18,6 +18,7 @@ export type Props = {
   layers?: LayerStore;
   selectedLayerId?: string;
   overriddenProperties?: { [id in string]: any };
+  clusterComponent?: ComponentType<ClusterProps>;
   isLayerHidden?: (id: string) => boolean;
 };
 
@@ -35,23 +36,41 @@ export default function Layers({
   selectedLayerId,
   overriddenProperties,
   isLayerHidden,
+  clusterComponent,
 }: Props): JSX.Element | null {
+  const Cluster = clusterComponent;
+
   return (
     <>
-      {clusterProperty?.map((cluster: any) => (
-        // TODO: NEED REFACTORING: invalid dependency flow and duplicated codes
-        <Cluster
-          key={cluster.id}
-          property={cluster}
-          layers={layers}
-          pluginProperty={pluginProperty}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-          pluginBaseUrl={pluginBaseUrl}
-          selectedLayerId={selectedLayerId}
-          overriddenProperties={overriddenProperties}
-          isLayerHidden={isLayerHidden}></Cluster>
-      ))}
+      {Cluster &&
+        clusterProperty?.map(cluster => (
+          // TODO: NEED REFACTORING: invalid dependency flow and duplicated codes
+          <Cluster key={cluster.id} property={cluster}>
+            {layers?.flattenLayersRaw
+              ?.filter(layer =>
+                cluster?.layers?.some(clusterLayer => clusterLayer.layer === layer.id),
+              )
+              .map(layer =>
+                !layer.isVisible || !!layer.children ? null : (
+                  <P
+                    key={layer.id}
+                    layer={layer}
+                    pluginProperty={
+                      layer.pluginId && layer.extensionId
+                        ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
+                        : undefined
+                    }
+                    isHidden={isLayerHidden?.(layer.id)}
+                    isEditable={isEditable}
+                    isBuilt={isBuilt}
+                    isSelected={!!selectedLayerId && selectedLayerId === layer.id}
+                    pluginBaseUrl={pluginBaseUrl}
+                    overriddenProperties={overriddenProperties}
+                  />
+                ),
+              )}
+          </Cluster>
+        ))}
 
       {layers?.flattenLayersRaw
         ?.filter(layer => !clusterLayers?.some(clusterLayer => clusterLayer === layer.id))

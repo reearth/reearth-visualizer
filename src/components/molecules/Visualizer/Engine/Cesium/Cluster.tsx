@@ -1,45 +1,12 @@
-import { Color, Cartesian3, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
+import { Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
-import { toCSSFont, Typography } from "@reearth/util/value";
+import { toCSSFont } from "@reearth/util/value";
 
-import { LayerStore } from "../..";
-import P from "../../Primitive";
+import { ClusterProps } from "../ref";
 
-export type Props = {
-  property: {
-    default: {
-      clusterPixelRange: number;
-      clusterMinSize: number;
-      clusterLabelTypography?: Typography;
-      clusterImage?: string;
-      clusterImageHeight?: number;
-      clusterImageWidth?: number;
-    };
-    layers: { layer?: string }[];
-  };
-  pluginProperty?: { [key: string]: any };
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  pluginBaseUrl?: string;
-  layers?: LayerStore;
-  selectedLayerId?: string;
-  overriddenProperties?: { [id in string]: any };
-  isLayerHidden?: (id: string) => boolean;
-};
-
-const Cluster: React.FC<Props> = ({
-  property,
-  pluginProperty,
-  isEditable,
-  isBuilt,
-  pluginBaseUrl,
-  layers,
-  selectedLayerId,
-  overriddenProperties,
-  isLayerHidden,
-}) => {
+const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
   const {
     clusterPixelRange = 15,
     clusterMinSize = 3,
@@ -82,11 +49,14 @@ const Cluster: React.FC<Props> = ({
       clusterParam.label.fillColor = Color.fromCssColorString(
         clusterLabelTypography.color ?? "#FFF",
       );
-      clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
       clusterParam.billboard.show = true;
       clusterParam.billboard.image = clusterImage;
       clusterParam.billboard.height = clusterImageWidth;
       clusterParam.billboard.width = clusterImageHeight;
+
+      // force a re-cluster with the new styling
+      cluster.pixelRange = 0;
+      cluster.pixelRange = clusterPixelRange;
     });
   }, [
     clusterMinSize,
@@ -100,31 +70,7 @@ const Cluster: React.FC<Props> = ({
 
   return cluster ? (
     <CustomDataSource show clustering={cluster}>
-      {layers?.flattenLayersRaw
-        ?.filter(
-          layer =>
-            property?.layers &&
-            property?.layers.some(clusterLayer => clusterLayer.layer === layer.id),
-        )
-        .map(layer =>
-          !layer.isVisible || !!layer.children ? null : (
-            <P
-              key={layer.id}
-              layer={layer}
-              pluginProperty={
-                layer.pluginId && layer.extensionId
-                  ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                  : undefined
-              }
-              isHidden={isLayerHidden?.(layer.id)}
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-              pluginBaseUrl={pluginBaseUrl}
-              overriddenProperties={overriddenProperties}
-            />
-          ),
-        )}
+      {children}
     </CustomDataSource>
   ) : null;
 };
