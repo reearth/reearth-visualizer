@@ -2,7 +2,7 @@ package mongodoc
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
-	user1 "github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth-backend/pkg/user"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -18,7 +18,7 @@ type TeamDocument struct {
 }
 
 type TeamConsumer struct {
-	Rows []*user1.Team
+	Rows []*user.Team
 }
 
 func (c *TeamConsumer) Consume(raw bson.Raw) error {
@@ -38,7 +38,7 @@ func (c *TeamConsumer) Consume(raw bson.Raw) error {
 	return nil
 }
 
-func NewTeam(team *user1.Team) (*TeamDocument, string) {
+func NewTeam(team *user.Team) (*TeamDocument, string) {
 	membersDoc := map[string]TeamMemberDocument{}
 	for user, r := range team.Members().Members() {
 		membersDoc[user.String()] = TeamMemberDocument{
@@ -54,23 +54,23 @@ func NewTeam(team *user1.Team) (*TeamDocument, string) {
 	}, id
 }
 
-func (d *TeamDocument) Model() (*user1.Team, error) {
+func (d *TeamDocument) Model() (*user.Team, error) {
 	tid, err := id.TeamIDFrom(d.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	members := map[id.UserID]user1.Role{}
+	members := map[id.UserID]user.Role{}
 	if d.Members != nil {
-		for user, member := range d.Members {
-			uid, err := id.UserIDFrom(user)
+		for uid, member := range d.Members {
+			uid, err := id.UserIDFrom(uid)
 			if err != nil {
 				return nil, err
 			}
-			members[uid] = user1.Role(member.Role)
+			members[uid] = user.Role(member.Role)
 		}
 	}
-	return user1.NewTeam().
+	return user.NewTeam().
 		ID(tid).
 		Name(d.Name).
 		Members(members).
@@ -78,8 +78,8 @@ func (d *TeamDocument) Model() (*user1.Team, error) {
 		Build()
 }
 
-func NewTeams(teams []*user1.Team) ([]interface{}, []string) {
-	res := make([]interface{}, 0, len(teams))
+func NewTeams(teams []*user.Team) ([]*TeamDocument, []string) {
+	res := make([]*TeamDocument, 0, len(teams))
 	ids := make([]string, 0, len(teams))
 	for _, d := range teams {
 		if d == nil {

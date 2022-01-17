@@ -86,7 +86,7 @@ func (w *WebServer) Run() {
 	if w.appServer.Debug {
 		debugLog += " with debug mode"
 	}
-	log.Infof("server started%s at %s\n", debugLog, w.address)
+	log.Infof("server started%s at http://%s\n", debugLog, w.address)
 
 	go func() {
 		err := w.appServer.Start(w.address)

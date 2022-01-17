@@ -7,19 +7,19 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
-type DatasetFieldDocument struct {
-	Field  string
-	Type   string
-	Value  interface{}
-	Source string
-}
-
 type DatasetDocument struct {
 	ID     string
 	Source string
 	Schema string
 	Fields []*DatasetFieldDocument
 	Scene  string
+}
+
+type DatasetFieldDocument struct {
+	Field  string
+	Type   string
+	Value  interface{}
+	Source string
 }
 
 type DatasetExtendedDocument struct {

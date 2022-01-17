@@ -25,7 +25,7 @@ func NewDatasetSchema(client *mongodoc.Client) repo.DatasetSchema {
 }
 
 func (r *datasetSchemaRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"scene"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "datasetSchema", i)
 	}

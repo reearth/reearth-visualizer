@@ -23,7 +23,7 @@ func NewProperty(client *mongodoc.Client) repo.Property {
 }
 
 func (r *propertyRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "property", i)
 	}

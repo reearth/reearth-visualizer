@@ -25,7 +25,7 @@ func NewProject(client *mongodoc.Client) repo.Project {
 }
 
 func (r *projectRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"alias"})
+	i := r.client.CreateIndex(context.Background(), []string{"alias", "team"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "project", i)
 	}

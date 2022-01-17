@@ -10,6 +10,19 @@ import (
 	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
+type SceneDocument struct {
+	ID          string
+	Project     string
+	Team        string
+	RootLayer   string
+	Widgets     []SceneWidgetDocument
+	AlignSystem *WidgetAlignSystemDocument
+	Plugins     []ScenePluginDocument
+	UpdateAt    time.Time
+	Property    string
+	Clusters    []SceneClusterDocument
+}
+
 type SceneWidgetDocument struct {
 	ID        string
 	Plugin    string
@@ -28,19 +41,6 @@ type SceneClusterDocument struct {
 	ID       string
 	Name     string
 	Property string
-}
-
-type SceneDocument struct {
-	ID          string
-	Project     string
-	Team        string
-	RootLayer   string
-	Widgets     []SceneWidgetDocument
-	AlignSystem *WidgetAlignSystemDocument
-	Plugins     []ScenePluginDocument
-	UpdateAt    time.Time
-	Property    string
-	Clusters    []SceneClusterDocument
 }
 
 type SceneConsumer struct {

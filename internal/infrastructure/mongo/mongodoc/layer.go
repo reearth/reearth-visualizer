@@ -8,6 +8,30 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+type LayerDocument struct {
+	ID        string
+	Name      string
+	Visible   bool
+	Scene     string
+	Plugin    *string
+	Extension *string
+	Property  *string
+	Infobox   *LayerInfoboxDocument
+	Item      *LayerItemDocument
+	Group     *LayerGroupDocument
+	Tags      LayerTagListDocument
+}
+
+type LayerItemDocument struct {
+	LinkedDataset *string
+}
+
+type LayerGroupDocument struct {
+	Layers              []string
+	LinkedDatasetSchema *string
+	Root                bool
+}
+
 type LayerInfoboxFieldDocument struct {
 	ID        string
 	Plugin    string
@@ -27,30 +51,6 @@ type LayerTagDocument struct {
 }
 
 type LayerTagListDocument []LayerTagDocument
-
-type LayerItemDocument struct {
-	LinkedDataset *string
-}
-
-type LayerGroupDocument struct {
-	Layers              []string
-	LinkedDatasetSchema *string
-	Root                bool
-}
-
-type LayerDocument struct {
-	ID        string
-	Name      string
-	Visible   bool
-	Scene     string
-	Plugin    *string
-	Extension *string
-	Property  *string
-	Infobox   *LayerInfoboxDocument
-	Item      *LayerItemDocument
-	Group     *LayerGroupDocument
-	Tags      LayerTagListDocument
-}
 
 type LayerConsumer struct {
 	Rows      []*layer.Layer

@@ -60,7 +60,7 @@ func (r *assetRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *us
 }
 
 func (r *assetRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"team"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "asset", i)
 	}

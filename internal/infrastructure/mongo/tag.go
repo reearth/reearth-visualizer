@@ -24,7 +24,7 @@ func NewTag(client *mongodoc.Client) repo.Tag {
 }
 
 func (r *tagRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"scene", "group.tags", "item.parent"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "tag", i)
 	}

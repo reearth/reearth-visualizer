@@ -69,7 +69,11 @@ func (r *teamRepo) SaveAll(ctx context.Context, teams []*user.Team) error {
 		return nil
 	}
 	docs, ids := mongodoc.NewTeams(teams)
-	return r.client.SaveAll(ctx, ids, docs)
+	docs2 := make([]interface{}, 0, len(teams))
+	for _, d := range docs {
+		docs2 = append(docs2, d)
+	}
+	return r.client.SaveAll(ctx, ids, docs2)
 }
 
 func (r *teamRepo) Remove(ctx context.Context, id id.TeamID) error {

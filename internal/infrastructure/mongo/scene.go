@@ -25,7 +25,7 @@ func NewScene(client *mongodoc.Client) repo.Scene {
 }
 
 func (r *sceneRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"project"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "scene", i)
 	}

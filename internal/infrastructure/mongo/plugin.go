@@ -25,7 +25,7 @@ func NewPlugin(client *mongodoc.Client) repo.Plugin {
 }
 
 func (r *pluginRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), []string{"scene"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "plugin", i)
 	}
