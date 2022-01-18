@@ -19,7 +19,7 @@ func TestSchema_Field(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		S        *Schema
 		PTR      *Pointer
@@ -44,12 +44,12 @@ func TestSchema_Field(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.S.Field(tc.Input))
-			assert.Equal(tt, tc.Expected, tc.S.FieldByPointer(tc.PTR))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.S.Field(tc.Input))
+			assert.Equal(t, tc.Expected, tc.S.FieldByPointer(tc.PTR))
 		})
 	}
 }
@@ -59,7 +59,7 @@ func TestSchema_Group(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
-	testCases := []struct {
+	tests := []struct {
 		Name       string
 		S          *Schema
 		PTR        *Pointer
@@ -86,13 +86,13 @@ func TestSchema_Group(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.S.Group(tc.Input))
-			assert.Equal(tt, tc.Expected, tc.S.GroupByPointer(tc.PTR))
-			assert.Equal(tt, tc.Expected, tc.S.GroupByField(tc.InputField))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.S.Group(tc.Input))
+			assert.Equal(t, tc.Expected, tc.S.GroupByPointer(tc.PTR))
+			assert.Equal(t, tc.Expected, tc.S.GroupByField(tc.InputField))
 		})
 	}
 }
@@ -102,7 +102,7 @@ func TestSchema_DetectDuplicatedFields(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		S        *Schema
 		LF       LinkableFields
@@ -131,12 +131,12 @@ func TestSchema_DetectDuplicatedFields(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.LF.Validate(tc.S)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

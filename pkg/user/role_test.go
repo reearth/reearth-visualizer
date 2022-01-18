@@ -1,14 +1,13 @@
 package user
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRoleFromString(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name, Role string
 		Expected   Role
 		Err        error
@@ -27,22 +26,22 @@ func TestRoleFromString(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res, err := RoleFromString(tc.Role)
-			if err == nil {
-				assert.Equal(tt, tc.Expected, res)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res, err := RoleFromString(tt.Role)
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected, res)
 			} else {
-				assert.True(tt, errors.As(err, &tc.Err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}
 }
 
 func TestCheckRole(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input    Role
 		Expected bool
@@ -69,12 +68,12 @@ func TestCheckRole(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := checkRole(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := checkRole(tt.Input)
+			assert.Equal(t, tt.Expected, res)
 		})
 	}
 }

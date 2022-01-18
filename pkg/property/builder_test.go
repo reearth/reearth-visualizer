@@ -1,7 +1,6 @@
 package property
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,7 +39,7 @@ func TestBuilder_Items(t *testing.T) {
 	propertySchemaField1ID := FieldID("a")
 	propertySchemaGroup1ID := SchemaGroupID("A")
 
-	testCases := []struct {
+	tests := []struct {
 		Name            string
 		Input, Expected []Item
 	}{
@@ -77,16 +76,16 @@ func TestBuilder_Items(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
 			res := New().NewID().
 				Scene(NewSceneID()).
 				Schema(MustSchemaID("xxx~1.1.1/aa")).
-				Items(tc.Input).
+				Items(tt.Input).
 				MustBuild()
-			assert.Equal(tt, tc.Expected, res.Items())
+			assert.Equal(t, tt.Expected, res.Items())
 		})
 	}
 }
@@ -99,7 +98,7 @@ func TestBuilder_Build(t *testing.T) {
 	propertySchemaField1ID := FieldID("a")
 	propertySchemaGroup1ID := SchemaGroupID("A")
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Id       ID
 		Scene    SceneID
@@ -181,18 +180,18 @@ func TestBuilder_Build(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res, err := New().ID(tc.Id).Items(tc.Items).Scene(tc.Scene).Schema(tc.Schema).Build()
-			if err == nil {
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.Schema, res.Schema())
-				assert.Equal(tt, tc.Expected.Items, res.Items())
-				assert.Equal(tt, tc.Expected.Scene, res.Scene())
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res, err := New().ID(tt.Id).Items(tt.Items).Scene(tt.Scene).Schema(tt.Schema).Build()
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected.Id, res.ID())
+				assert.Equal(t, tt.Expected.Schema, res.Schema())
+				assert.Equal(t, tt.Expected.Items, res.Items())
+				assert.Equal(t, tt.Expected.Scene, res.Scene())
 			} else {
-				assert.True(tt, errors.As(tc.Err, &err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}

@@ -160,7 +160,9 @@ func TestValue_Interface(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.value.Interface())
 		})
 	}
@@ -170,6 +172,7 @@ func TestValue_Cast(t *testing.T) {
 	type args struct {
 		t ValueType
 	}
+
 	tests := []struct {
 		name   string
 		target *Value
@@ -215,14 +218,16 @@ func TestValue_Cast(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t))
 		})
 	}
 }
 
 func TestValueFromDataset(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input    *dataset.Value
 		Expected struct {
@@ -268,11 +273,11 @@ func TestValueFromDataset(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected.V, valueFromDataset(tc.Input))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected.V, valueFromDataset(tc.Input))
 		})
 	}
 }
@@ -281,6 +286,7 @@ func TestValueFromStringOrNumber(t *testing.T) {
 	type args struct {
 		s string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -319,7 +325,9 @@ func TestValueFromStringOrNumber(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, ValueFromStringOrNumber(tt.args.s))
 		})
 	}

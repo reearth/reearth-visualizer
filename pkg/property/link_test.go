@@ -58,7 +58,7 @@ func TestLinks_IsDatasetLinked(t *testing.T) {
 		NewLink(did1, dsid1, dfid1),
 	}
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		DSS      DatasetSchemaID
 		DS       DatasetID
@@ -84,16 +84,17 @@ func TestLinks_IsDatasetLinked(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Links.IsDatasetLinked(tc.DSS, tc.DS)
 			res2 := tc.Links.HasDataset(tc.DS)
 			res3 := tc.Links.HasDatasetSchema(tc.DSS)
-			assert.Equal(tt, tc.Expected, res)
-			assert.Equal(tt, tc.Expected, res2)
-			assert.Equal(tt, tc.Expected, res3)
+			assert.Equal(t, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res2)
+			assert.Equal(t, tc.Expected, res3)
 		})
 	}
 }
@@ -103,7 +104,7 @@ func TestLinks_Validate(t *testing.T) {
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		DSM      dataset.SchemaMap
 		DM       dataset.Map
@@ -143,12 +144,13 @@ func TestLinks_Validate(t *testing.T) {
 			Expected: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Links.Validate(tc.DSM, tc.DM)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -161,7 +163,7 @@ func TestLinks_Replace(t *testing.T) {
 	dfid1 := NewDatasetFieldID()
 	dfid2 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name            string
 		DSM             map[DatasetSchemaID]DatasetSchemaID
 		DM              map[DatasetID]DatasetID
@@ -219,12 +221,13 @@ func TestLinks_Replace(t *testing.T) {
 			Links: NewLinks([]*Link{NewLink(did1, dsid1, dfid1)}),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			tc.Links.Replace(tc.DSM, tc.DM, tc.FM)
-			assert.Equal(tt, tc.Expected.Links(), tc.Links.Links())
+			assert.Equal(t, tc.Expected.Links(), tc.Links.Links())
 		})
 	}
 }
@@ -234,7 +237,7 @@ func TestLinks_ApplyDataset(t *testing.T) {
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name            string
 		Input           *DatasetID
 		Expected, Links *Links
@@ -259,12 +262,13 @@ func TestLinks_ApplyDataset(t *testing.T) {
 			Expected: NewLinks([]*Link{NewLink(did1, dsid1, dfid1)}),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Links.ApplyDataset(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -274,7 +278,7 @@ func TestLink_Dataset(t *testing.T) {
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Link     *Link
 		Expected *DatasetID
@@ -292,11 +296,12 @@ func TestLink_Dataset(t *testing.T) {
 			Expected: did1.Ref(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			res := tc.Link.Dataset()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 
@@ -307,7 +312,7 @@ func TestLink_DatasetSchema(t *testing.T) {
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Link     *Link
 		Expected *DatasetSchemaID
@@ -321,11 +326,12 @@ func TestLink_DatasetSchema(t *testing.T) {
 			Expected: dsid1.Ref(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			res := tc.Link.DatasetSchema()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 
@@ -336,7 +342,7 @@ func TestLink_DatasetSchemaField(t *testing.T) {
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Link     *Link
 		Expected *DatasetFieldID
@@ -350,11 +356,12 @@ func TestLink_DatasetSchemaField(t *testing.T) {
 			Expected: dfid1.Ref(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			res := tc.Link.DatasetSchemaField()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -367,7 +374,7 @@ func TestLink_Value(t *testing.T) {
 		dataset.NewField(dfid1, dataset.ValueTypeString.ValueFrom("aaa"), ""),
 	}
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Link     *Link
 		Input    *dataset.Dataset
@@ -388,20 +395,22 @@ func TestLink_Value(t *testing.T) {
 			Expected: dataset.ValueTypeString.ValueFrom("aaa"),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			res := tc.Link.Value(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
+
 func TestLink_Validate(t *testing.T) {
 	dsid1 := NewDatasetSchemaID()
 	did1 := NewDatasetID()
 	dfid1 := NewDatasetFieldID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		DS       *dataset.Dataset
 		DSS      *dataset.Schema
@@ -462,12 +471,13 @@ func TestLink_Validate(t *testing.T) {
 			Expected: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Link.Validate(tc.DSS, tc.DS)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

@@ -7,8 +7,7 @@ import (
 )
 
 func TestShapeType_String(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    ShapeType
 		expected string
@@ -89,11 +88,12 @@ func TestShapeType_String(t *testing.T) {
 			expected: "ShapeType(-1)",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input.String())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input.String())
 		})
 	}
 }

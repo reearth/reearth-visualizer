@@ -9,7 +9,7 @@ import (
 )
 
 func TestSchemaFieldBuilder_Build(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name         string
 		Id           FieldID
 		PropertyType ValueType
@@ -53,40 +53,43 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 			Err:  errors.New("invalid min and max"),
 		},
 	}
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewSchemaField().
-				ID(tc.Id).Name(tc.Fname).
-				IsAvailableIf(tc.Cond).
-				Type(tc.PropertyType).
-				Description(tc.Description).
-				Choices(tc.Choices).
-				Prefix(tc.Prefix).
-				Suffix(tc.Suffix).
-				DefaultValue(tc.DefaultValue).
-				MaxRef(tc.MaxRef).
-				MinRef(tc.MinRef).
-				Min(tc.Min).
-				Max(tc.Max).
-				UI(tc.Ui).
-				UIRef(&tc.Ui).
+				ID(tt.Id).Name(tt.Fname).
+				IsAvailableIf(tt.Cond).
+				Type(tt.PropertyType).
+				Description(tt.Description).
+				Choices(tt.Choices).
+				Prefix(tt.Prefix).
+				Suffix(tt.Suffix).
+				DefaultValue(tt.DefaultValue).
+				MaxRef(tt.MaxRef).
+				MinRef(tt.MinRef).
+				Min(tt.Min).
+				Max(tt.Max).
+				UI(tt.Ui).
+				UIRef(&tt.Ui).
 				Build()
-			if err == nil {
-				assert.Equal(tt, tc.Expected.Ui, res.UI())
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.Min, res.Min())
-				assert.Equal(tt, tc.Expected.Max, res.Max())
-				assert.Equal(tt, tc.Expected.DefaultValue, res.DefaultValue())
-				assert.Equal(tt, tc.Expected.Description, res.Description())
-				assert.Equal(tt, tc.Expected.Prefix, res.Prefix())
-				assert.Equal(tt, tc.Expected.Suffix, res.Suffix())
-				assert.Equal(tt, tc.Expected.Choices, res.Choices())
-				assert.Equal(tt, tc.Expected.Cond, res.IsAvailableIf())
-				assert.Equal(tt, tc.Expected.Fname, res.Title())
-				assert.Equal(tt, tc.Expected.PropertyType, res.Type())
+
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected.Ui, res.UI())
+				assert.Equal(t, tt.Expected.Id, res.ID())
+				assert.Equal(t, tt.Expected.Min, res.Min())
+				assert.Equal(t, tt.Expected.Max, res.Max())
+				assert.Equal(t, tt.Expected.DefaultValue, res.DefaultValue())
+				assert.Equal(t, tt.Expected.Description, res.Description())
+				assert.Equal(t, tt.Expected.Prefix, res.Prefix())
+				assert.Equal(t, tt.Expected.Suffix, res.Suffix())
+				assert.Equal(t, tt.Expected.Choices, res.Choices())
+				assert.Equal(t, tt.Expected.Cond, res.IsAvailableIf())
+				assert.Equal(t, tt.Expected.Fname, res.Title())
+				assert.Equal(t, tt.Expected.PropertyType, res.Type())
 			} else {
-				assert.True(tt, errors.As(tc.Err, &err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 func TestLockMode_IsLocked(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		LM       LockMode
 		Expected bool
@@ -28,18 +28,19 @@ func TestLockMode_IsLocked(t *testing.T) {
 			Expected: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.LM.IsLocked()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
 
 func TestLockMode_Validate(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		LM       LockMode
 		Expected bool
@@ -75,12 +76,13 @@ func TestLockMode_Validate(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			_, res := tc.LM.Validate()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

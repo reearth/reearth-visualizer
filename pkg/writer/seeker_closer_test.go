@@ -14,7 +14,7 @@ var _ io.WriteSeeker = (*WriterSeeker)(nil)
 //reference: https://github.com/orcaman/writerseeker/blob/master/writerseeker_test.go
 
 func TestWrite(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name             string
 		Input            []byte
 		WS               *WriterSeeker
@@ -31,16 +31,17 @@ func TestWrite(t *testing.T) {
 			err:              nil,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			n, err := tc.WS.Write(tc.Input)
-			if err == nil {
-				assert.Equal(tt, tc.ExpectedBuffer, tc.WS.Buffer())
-				assert.Equal(tt, tc.ExpectedPosition, n)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			n, err := tt.WS.Write(tt.Input)
+			if tt.err == nil {
+				assert.Equal(t, tt.ExpectedBuffer, tt.WS.Buffer())
+				assert.Equal(t, tt.ExpectedPosition, n)
 			} else {
-				assert.True(tt, errors.As(err, &tc.err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -50,7 +51,7 @@ func TestSeek(t *testing.T) {
 	ws := &WriterSeeker{}
 	_, _ = ws.Write([]byte("xxxxxx"))
 
-	testCases := []struct {
+	tests := []struct {
 		Name                     string
 		WS                       *WriterSeeker
 		Whence                   int
@@ -90,16 +91,17 @@ func TestSeek(t *testing.T) {
 			err:              errors.New("negative result pos"),
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			// this test is sequential
-			//tt.Parallel()
-			n, err := tc.WS.Seek(tc.Offset, tc.Whence)
-			if err == nil {
-				assert.Equal(tt, tc.ExpectedPosition, n)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			// This test should be sequential
+
+			n, err := tt.WS.Seek(tt.Offset, tt.Whence)
+			if tt.err == nil {
+				assert.Equal(t, tt.ExpectedPosition, n)
 			} else {
-				assert.True(tt, errors.As(err, &tc.err))
+				assert.Equal(t, err, tt.err)
 			}
 		})
 	}

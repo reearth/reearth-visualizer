@@ -29,12 +29,12 @@ func TestLatLng_Clone(t *testing.T) {
 
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.LL.Clone()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 			if tc.Expected != nil {
-				assert.NotSame(tt, tc.Expected, res)
+				assert.NotSame(t, tc.Expected, res)
 			}
 		})
 	}

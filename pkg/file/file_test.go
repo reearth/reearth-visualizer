@@ -32,7 +32,7 @@ func TestReaders(t *testing.T) {
 		"test/foo.bar": "test\n",
 	}
 
-	testCases := []struct {
+	tests := []struct {
 		Name    string
 		Archive Iterator
 		Files   []string
@@ -49,10 +49,11 @@ func TestReaders(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			// tt.Parallel() cannot be used
-			assert := assert.New(tt)
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			// t.Parallel() cannot be used
+			assert := assert.New(t)
 
 			for i, f := range tc.Files {
 				n, err := tc.Archive.Next()

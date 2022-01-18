@@ -29,7 +29,7 @@ func TestWidgetZone_Find(t *testing.T) {
 	wid6 := NewWidgetID()
 	wid7 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name      string
 		Input     WidgetID
 		Expected1 int
@@ -75,16 +75,16 @@ func TestWidgetZone_Find(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				index, section, area := (*WidgetZone)(nil).Find(tc.Input)
-				assert.Equal(tt, tc.Expected1, index)
-				assert.Equal(tt, tc.Expected2, section)
-				assert.Equal(tt, tc.Expected3, area)
+				assert.Equal(t, tc.Expected1, index)
+				assert.Equal(t, tc.Expected2, section)
+				assert.Equal(t, tc.Expected3, area)
 				return
 			}
 
@@ -94,9 +94,9 @@ func TestWidgetZone_Find(t *testing.T) {
 			ez.Section(WidgetSectionRight).Area(WidgetAreaTop).AddAll([]WidgetID{wid6, wid7})
 
 			index, section, area := ez.Find(tc.Input)
-			assert.Equal(tt, tc.Expected1, index)
-			assert.Equal(tt, tc.Expected2, section)
-			assert.Equal(tt, tc.Expected3, area)
+			assert.Equal(t, tc.Expected1, index)
+			assert.Equal(t, tc.Expected2, section)
+			assert.Equal(t, tc.Expected3, area)
 		})
 	}
 }
@@ -104,7 +104,7 @@ func TestWidgetZone_Find(t *testing.T) {
 func TestWidgetZone_Remove(t *testing.T) {
 	wid := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Section  WidgetSectionType
 		Input    WidgetID
@@ -155,10 +155,10 @@ func TestWidgetZone_Remove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetZone)(nil).Remove(tc.Input)
@@ -168,7 +168,7 @@ func TestWidgetZone_Remove(t *testing.T) {
 			ws := NewWidgetZone()
 			ws.Section(tc.Section).Area(WidgetAreaTop).Add(wid, -1)
 			ws.Remove(tc.Input)
-			assert.Equal(tt, tc.Expected, ws.Section(tc.Section).Area(WidgetAreaTop).WidgetIDs())
+			assert.Equal(t, tc.Expected, ws.Section(tc.Section).Area(WidgetAreaTop).WidgetIDs())
 		})
 	}
 }
@@ -178,6 +178,7 @@ func TestWidgetZone_SetSection(t *testing.T) {
 		t WidgetSectionType
 		s *WidgetSection
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -220,6 +221,7 @@ func TestWidgetZone_SetSection(t *testing.T) {
 			nil: true,
 		},
 	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

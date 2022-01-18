@@ -12,9 +12,9 @@ type Scene struct {
 	project           ProjectID
 	team              TeamID
 	rootLayer         LayerID
-	widgetSystem      *WidgetSystem
+	widgets           *Widgets
 	widgetAlignSystem *WidgetAlignSystem
-	pluginSystem      *PluginSystem
+	plugins           *Plugins
 	updatedAt         time.Time
 	property          PropertyID
 	clusters          *ClusterList
@@ -62,11 +62,11 @@ func (s *Scene) RootLayer() LayerID {
 	return s.rootLayer
 }
 
-func (s *Scene) WidgetSystem() *WidgetSystem {
+func (s *Scene) Widgets() *Widgets {
 	if s == nil {
 		return nil
 	}
-	return s.widgetSystem
+	return s.widgets
 }
 
 func (s *Scene) WidgetAlignSystem() *WidgetAlignSystem {
@@ -76,11 +76,11 @@ func (s *Scene) WidgetAlignSystem() *WidgetAlignSystem {
 	return s.widgetAlignSystem
 }
 
-func (s *Scene) PluginSystem() *PluginSystem {
+func (s *Scene) Plugins() *Plugins {
 	if s == nil {
 		return nil
 	}
-	return s.pluginSystem
+	return s.plugins
 }
 
 func (s *Scene) UpdatedAt() time.Time {
@@ -114,8 +114,8 @@ func (s *Scene) Properties() []PropertyID {
 		return nil
 	}
 	ids := []PropertyID{s.property}
-	ids = append(ids, s.pluginSystem.Properties()...)
-	ids = append(ids, s.widgetSystem.Properties()...)
+	ids = append(ids, s.plugins.Properties()...)
+	ids = append(ids, s.widgets.Properties()...)
 	ids = append(ids, s.clusters.Properties()...)
 	return ids
 }

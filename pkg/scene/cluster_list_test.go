@@ -12,6 +12,7 @@ func TestList_Add(t *testing.T) {
 	type args struct {
 		clusters []*Cluster
 	}
+
 	tests := []struct {
 		name string
 		list *ClusterList
@@ -30,13 +31,14 @@ func TestList_Add(t *testing.T) {
 			args: args{clusters: []*Cluster{c1}},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
 			tc.list.Add(tc.args.clusters...)
-			assert.Equal(tt, tc.want, tc.list)
+			assert.Equal(t, tc.want, tc.list)
 		})
 	}
 }
@@ -44,6 +46,7 @@ func TestList_Add(t *testing.T) {
 func TestList_Clusters(t *testing.T) {
 	c1, _ := NewCluster(NewClusterID(), "ccc", NewPropertyID())
 	c2, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+
 	tests := []struct {
 		name string
 		list *ClusterList
@@ -60,11 +63,12 @@ func TestList_Clusters(t *testing.T) {
 			want: nil,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.want, tc.list.Clusters())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.want, tc.list.Clusters())
 		})
 	}
 }
@@ -75,6 +79,7 @@ func TestList_Has(t *testing.T) {
 	type args struct {
 		tid ClusterID
 	}
+
 	tests := []struct {
 		name string
 		list *ClusterList
@@ -105,9 +110,12 @@ func TestList_Has(t *testing.T) {
 			want: false,
 		},
 	}
+
 	for _, tc := range tests {
-		t.Run(tc.name, func(tt *testing.T) {
-			assert.Equal(tt, tc.want, tc.list.Has(tc.args.tid))
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.want, tc.list.Has(tc.args.tid))
 		})
 	}
 }
@@ -120,6 +128,7 @@ func TestList_Remove(t *testing.T) {
 	type args struct {
 		cluster ClusterID
 	}
+
 	tests := []struct {
 		name string
 		list *ClusterList
@@ -150,12 +159,13 @@ func TestList_Remove(t *testing.T) {
 			want: nil,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			tc.list.Remove(tc.args.cluster)
-			assert.Equal(tt, tc.want, tc.list)
+			assert.Equal(t, tc.want, tc.list)
 		})
 	}
 }
@@ -170,6 +180,7 @@ func TestClusterList_Get(t *testing.T) {
 	type args struct {
 		cid ClusterID
 	}
+
 	tests := []struct {
 		name string
 		list *ClusterList
@@ -201,12 +212,13 @@ func TestClusterList_Get(t *testing.T) {
 			want: nil,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got := tc.list.Get(tc.args.cid)
-			assert.Equal(tt, tc.want, got)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }

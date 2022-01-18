@@ -1,12 +1,12 @@
 package scene
 
-type PluginSystem struct {
+type Plugins struct {
 	plugins []*Plugin
 }
 
-func NewPluginSystem(p []*Plugin) *PluginSystem {
+func NewPlugins(p []*Plugin) *Plugins {
 	if p == nil {
-		return &PluginSystem{plugins: []*Plugin{}}
+		return &Plugins{plugins: []*Plugin{}}
 	}
 	p2 := make([]*Plugin, 0, len(p))
 	for _, p1 := range p {
@@ -25,14 +25,14 @@ func NewPluginSystem(p []*Plugin) *PluginSystem {
 			p2 = append(p2, &p3)
 		}
 	}
-	return &PluginSystem{plugins: p2}
+	return &Plugins{plugins: p2}
 }
 
-func (p *PluginSystem) Plugins() []*Plugin {
+func (p *Plugins) Plugins() []*Plugin {
 	return append([]*Plugin{}, p.plugins...)
 }
 
-func (p *PluginSystem) Property(id PluginID) *PropertyID {
+func (p *Plugins) Property(id PluginID) *PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
 			return p.property.CopyRef()
@@ -41,7 +41,7 @@ func (p *PluginSystem) Property(id PluginID) *PropertyID {
 	return nil
 }
 
-func (p *PluginSystem) Has(id PluginID) bool {
+func (p *Plugins) Has(id PluginID) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Equal(id) {
 			return true
@@ -50,7 +50,7 @@ func (p *PluginSystem) Has(id PluginID) bool {
 	return false
 }
 
-func (p *PluginSystem) HasPlugin(id PluginID) bool {
+func (p *Plugins) HasPlugin(id PluginID) bool {
 	name := id.Name()
 	for _, p2 := range p.plugins {
 		if p2.plugin.Name() == name {
@@ -60,7 +60,7 @@ func (p *PluginSystem) HasPlugin(id PluginID) bool {
 	return false
 }
 
-func (p *PluginSystem) Add(sp *Plugin) {
+func (p *Plugins) Add(sp *Plugin) {
 	if sp == nil || p.Has(sp.plugin) || sp.plugin.Equal(OfficialPluginID) {
 		return
 	}
@@ -68,7 +68,7 @@ func (p *PluginSystem) Add(sp *Plugin) {
 	p.plugins = append(p.plugins, &sp2)
 }
 
-func (p *PluginSystem) Remove(pid PluginID) {
+func (p *Plugins) Remove(pid PluginID) {
 	if pid.Equal(OfficialPluginID) {
 		return
 	}
@@ -80,7 +80,7 @@ func (p *PluginSystem) Remove(pid PluginID) {
 	}
 }
 
-func (p *PluginSystem) Upgrade(pid, newID PluginID) {
+func (p *Plugins) Upgrade(pid, newID PluginID) {
 	for i, p2 := range p.plugins {
 		if p2.plugin.Equal(OfficialPluginID) {
 			continue
@@ -92,7 +92,7 @@ func (p *PluginSystem) Upgrade(pid, newID PluginID) {
 	}
 }
 
-func (p *PluginSystem) Properties() []PropertyID {
+func (p *Plugins) Properties() []PropertyID {
 	if p == nil {
 		return nil
 	}
@@ -105,7 +105,7 @@ func (p *PluginSystem) Properties() []PropertyID {
 	return res
 }
 
-func (p *PluginSystem) Plugin(pluginID PluginID) *Plugin {
+func (p *Plugins) Plugin(pluginID PluginID) *Plugin {
 	for _, pp := range p.plugins {
 		if pp.plugin == pluginID {
 			return pp

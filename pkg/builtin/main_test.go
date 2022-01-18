@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetPropertySchemaByVisualizer(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		visualizer  visualizer.Visualizer
 		expectedNil bool
@@ -26,15 +26,16 @@ func TestGetPropertySchemaByVisualizer(t *testing.T) {
 			expectedNil: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := GetPropertySchemaByVisualizer(tc.visualizer)
 			if tc.expectedNil {
-				assert.Nil(tt, res)
+				assert.Nil(t, res)
 			} else {
-				assert.NotNil(tt, res)
+				assert.NotNil(t, res)
 			}
 		})
 	}
@@ -44,7 +45,7 @@ func TestPlugin(t *testing.T) {
 	assert.NotNil(t, Plugin())
 }
 func TestGetPlugin(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		pluginID    plugin.ID
 		expectedNil bool
@@ -60,22 +61,23 @@ func TestGetPlugin(t *testing.T) {
 			expectedNil: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := GetPlugin(tc.pluginID)
 			if tc.expectedNil {
-				assert.Nil(tt, res)
+				assert.Nil(t, res)
 			} else {
-				assert.NotNil(tt, res)
+				assert.NotNil(t, res)
 			}
 		})
 	}
 }
 
 func TestGetPropertySchema(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		psId        property.SchemaID
 		expectedNil bool
@@ -91,15 +93,16 @@ func TestGetPropertySchema(t *testing.T) {
 			expectedNil: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := GetPropertySchema(tc.psId)
 			if tc.expectedNil {
-				assert.Nil(tt, res)
+				assert.Nil(t, res)
 			} else {
-				assert.NotNil(tt, res)
+				assert.NotNil(t, res)
 			}
 		})
 	}

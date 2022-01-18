@@ -1,7 +1,6 @@
 package property
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,36 +10,35 @@ func TestGroupListBuilder_Build(t *testing.T) {
 	pid := NewItemID()
 	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
-	testCases := []struct {
-		Name        string
-		Id          ItemID
+
+	type args struct {
+		ID          ItemID
 		Schema      SchemaID
 		SchemaGroup SchemaGroupID
 		Groups      []*Group
-		Expected    struct {
-			Id          ItemID
-			Schema      SchemaID
-			SchemaGroup SchemaGroupID
-			Groups      []*Group
-		}
-		Err error
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Expected *GroupList
+		Err      error
 	}{
 		{
-			Name:        "success",
-			Id:          pid,
-			Schema:      scid,
-			SchemaGroup: "aa",
-			Groups:      groups,
-			Expected: struct {
-				Id          ItemID
-				Schema      SchemaID
-				SchemaGroup SchemaGroupID
-				Groups      []*Group
-			}{
-				Id:          pid,
+			Name: "success",
+			Args: args{
+				ID:          pid,
 				Schema:      scid,
 				SchemaGroup: "aa",
 				Groups:      groups,
+			},
+			Expected: &GroupList{
+				itemBase: itemBase{
+					ID:          pid,
+					Schema:      scid,
+					SchemaGroup: "aa",
+				},
+				groups: groups,
 			},
 		},
 		{
@@ -48,18 +46,20 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			Err:  ErrInvalidID,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res, err := NewGroupList().ID(tc.Id).Schema(tc.Schema, tc.SchemaGroup).Groups(tc.Groups).Build()
-			if err == nil {
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.SchemaGroup, res.SchemaGroup())
-				assert.Equal(tt, tc.Expected.Schema, res.Schema())
-				assert.Equal(tt, tc.Expected.Groups, res.Groups())
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res, err := NewGroupList().
+				ID(tt.Args.ID).
+				Schema(tt.Args.Schema, tt.Args.SchemaGroup).
+				Groups(tt.Args.Groups).
+				Build()
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected, res)
 			} else {
-				assert.True(tt, errors.As(tc.Err, &err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}
@@ -74,69 +74,68 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 	pid := NewItemID()
 	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
-	testCases := []struct {
-		Name        string
-		Fails       bool
-		Id          ItemID
+
+	type args struct {
+		ID          ItemID
 		Schema      SchemaID
 		SchemaGroup SchemaGroupID
 		Groups      []*Group
-		Expected    struct {
-			Id          ItemID
-			Schema      SchemaID
-			SchemaGroup SchemaGroupID
-			Groups      []*Group
-		}
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Err      error
+		Expected *GroupList
 	}{
 		{
-			Name:        "success",
-			Id:          pid,
-			Schema:      scid,
-			SchemaGroup: "aa",
-			Groups:      groups,
-			Expected: struct {
-				Id          ItemID
-				Schema      SchemaID
-				SchemaGroup SchemaGroupID
-				Groups      []*Group
-			}{
-				Id:          pid,
+			Name: "success",
+			Args: args{
+				ID:          pid,
 				Schema:      scid,
 				SchemaGroup: "aa",
 				Groups:      groups,
 			},
+			Expected: &GroupList{
+				itemBase: itemBase{
+					ID:          pid,
+					Schema:      scid,
+					SchemaGroup: "aa",
+				},
+				groups: groups,
+			},
 		},
 		{
-			Name:  "fail invalid id",
-			Fails: true,
+			Name: "fail invalid id",
+			Err:  ErrInvalidID,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			var res *GroupList
-			if tc.Fails {
-				defer func() {
-					if r := recover(); r != nil {
-						assert.Nil(tt, res)
-					}
-				}()
-				res = NewGroupList().ID(tc.Id).Schema(tc.Schema, tc.SchemaGroup).Groups(tc.Groups).MustBuild()
-			} else {
-				res = NewGroupList().ID(tc.Id).Schema(tc.Schema, tc.SchemaGroup).Groups(tc.Groups).MustBuild()
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.SchemaGroup, res.SchemaGroup())
-				assert.Equal(tt, tc.Expected.Schema, res.Schema())
-				assert.Equal(tt, tc.Expected.Groups, res.Groups())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			build := func() *GroupList {
+				t.Helper()
+				return NewGroupList().
+					ID(tc.Args.ID).
+					Schema(tc.Args.Schema, tc.Args.SchemaGroup).
+					Groups(tc.Args.Groups).
+					MustBuild()
 			}
 
+			if tc.Err != nil {
+				assert.PanicsWithValue(t, tc.Err, func() { _ = build() })
+			} else {
+				assert.Equal(t, tc.Expected, build())
+			}
 		})
 	}
 }
 
 func TestInitGroupListFrom(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name           string
 		SchemaGroup    *SchemaGroup
 		ExpectedSG     SchemaGroupID
@@ -153,13 +152,13 @@ func TestInitGroupListFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := InitGroupFrom(tc.SchemaGroup)
-			assert.Equal(tt, tc.ExpectedSG, res.SchemaGroup())
-			assert.Equal(tt, tc.ExpectedSchema, res.Schema())
+			assert.Equal(t, tc.ExpectedSG, res.SchemaGroup())
+			assert.Equal(t, tc.ExpectedSchema, res.Schema())
 		})
 	}
 }

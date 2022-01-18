@@ -11,6 +11,7 @@ func assertPointsEqual(t *testing.T, a, b []float64, msgAndArgs ...interface{}) 
 	if !assert.True(t, len(a) == len(b), msgAndArgs...) {
 		return false
 	}
+
 	for k, v := range a {
 		if !assert.True(t, v == b[k], msgAndArgs...) {
 			return false
@@ -182,6 +183,7 @@ func TestReadBBox(t *testing.T) {
 		{"test_files/polylinem.shp", Box{0, 0, 25, 25}},
 		{"test_files/polylinez.shp", Box{0, 0, 25, 25}},
 	}
+
 	for _, tt := range tests {
 		f, _ := os.Open(tt.filename)
 		r, err := ReadFrom(f)
@@ -204,16 +206,15 @@ func TestReadBBox(t *testing.T) {
 }
 
 func TestReader(t *testing.T) {
-	t.Parallel()
-	testCases := testsData
+	tests := testData
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			shapes := getShapesFromFile(tc.name, tt)
-			assert.Equal(tt, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
-			tc.tester(tt, tc.points, shapes)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			shapes := getShapesFromFile(tc.name, t)
+			assert.Equal(t, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
+			tc.tester(t, tc.points, shapes)
 		})
 	}
 

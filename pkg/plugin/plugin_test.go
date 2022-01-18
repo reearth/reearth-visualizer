@@ -8,7 +8,7 @@ import (
 )
 
 func TestPlugin_Extension(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		plugin   *Plugin
 		key      ExtensionID
@@ -33,11 +33,12 @@ func TestPlugin_Extension(t *testing.T) {
 			expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.plugin.Extension(tc.key))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.plugin.Extension(tc.key))
 		})
 	}
 }
@@ -47,7 +48,7 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 	ps2 := MustPropertySchemaID("hoge~0.1.0/b")
 	ps3 := MustPropertySchemaID("hoge~0.1.0/c")
 
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		plugin   *Plugin
 		expected []PropertySchemaID
@@ -68,11 +69,12 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 			expected: []PropertySchemaID(nil),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.plugin.PropertySchemas())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.plugin.PropertySchemas())
 		})
 	}
 }

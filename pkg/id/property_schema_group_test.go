@@ -7,10 +7,10 @@ import (
 )
 
 func TestPropertySchemaGroupIDFrom(t *testing.T) {
-	t.Parallel()
 	input1 := "testStringId"
 	expected1 := PropertySchemaGroupID(input1)
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		input    *string
 		expected *PropertySchemaGroupID
@@ -26,12 +26,13 @@ func TestPropertySchemaGroupIDFrom(t *testing.T) {
 			expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			result := PropertySchemaGroupIDFrom(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			assert.Equal(t, tc.expected, result)
 		})
 	}
 }

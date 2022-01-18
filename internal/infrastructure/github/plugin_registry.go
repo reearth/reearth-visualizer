@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
+	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 )
 
@@ -17,7 +18,6 @@ func NewPluginRegistry() gateway.PluginRegistry {
 const source = `https://raw.githubusercontent.com/reearth/plugins/main/plugins.json`
 
 func (d *pluginRegistry) FetchMetadata(ctx context.Context) ([]*plugin.Metadata, error) {
-
 	response, err := fetchURL(ctx, source)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,8 @@ func (d *pluginRegistry) FetchMetadata(ctx context.Context) ([]*plugin.Metadata,
 	var result []*plugin.Metadata
 	err = json.NewDecoder(response).Decode(&result)
 	if err != nil {
-		return nil, err
+		log.Errorf("plugin_registry: error: %s", err)
+		return nil, gateway.ErrFailedToFetchDataFromPluginRegistry
 	}
 	return result, nil
 }

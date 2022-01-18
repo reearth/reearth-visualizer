@@ -20,7 +20,8 @@ func TestGroupBuilder_Build(t *testing.T) {
 		NewID(),
 		NewID(),
 	}
-	testCases := []struct {
+
+	tests := []struct {
 		Name, Label string
 		Id          ID
 		Scene       SceneID
@@ -88,10 +89,11 @@ func TestGroupBuilder_Build(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewGroup().
 				ID(tc.Id).
 				Scene(tc.Scene).
@@ -99,12 +101,12 @@ func TestGroupBuilder_Build(t *testing.T) {
 				Tags(tc.Tags).
 				Build()
 			if tc.Expected.Error == nil {
-				assert.Equal(tt, tc.Expected.Group.ID(), res.ID())
-				assert.Equal(tt, tc.Expected.Group.Scene(), res.Scene())
-				assert.Equal(tt, tc.Expected.Group.Label(), res.Label())
-				assert.Equal(tt, tc.Expected.Group.Tags(), res.Tags())
+				assert.Equal(t, tc.Expected.Group.ID(), res.ID())
+				assert.Equal(t, tc.Expected.Group.Scene(), res.Scene())
+				assert.Equal(t, tc.Expected.Group.Label(), res.Label())
+				assert.Equal(t, tc.Expected.Group.Tags(), res.Tags())
 			} else {
-				assert.Equal(tt, tc.Expected.Error, err)
+				assert.Equal(t, tc.Expected.Error, err)
 			}
 		})
 	}

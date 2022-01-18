@@ -35,7 +35,7 @@ func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Ti
 }
 
 func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Property) map[string]propertyJSON {
-	scenePlugins := s.PluginSystem().Plugins()
+	scenePlugins := s.Plugins().Plugins()
 	res := map[string]propertyJSON{}
 	for _, sp := range scenePlugins {
 		if sp == nil {
@@ -49,7 +49,7 @@ func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Pro
 }
 
 func (b *Builder) widgets(ctx context.Context, s *scene.Scene, p []*property.Property) []*widgetJSON {
-	sceneWidgets := s.WidgetSystem().Widgets()
+	sceneWidgets := s.Widgets().Widgets()
 	res := make([]*widgetJSON, 0, len(sceneWidgets))
 	for _, w := range sceneWidgets {
 		if !w.Enabled() {

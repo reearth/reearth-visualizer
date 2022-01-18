@@ -18,7 +18,7 @@ func TestToValue(t *testing.T) {
 }
 
 func TestChoice(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		ch       *Choice
 		expected *property.SchemaFieldChoice
@@ -37,11 +37,12 @@ func TestChoice(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, *tc.expected, *tc.ch.choice())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, *tc.expected, *tc.ch.choice())
 		})
 	}
 
@@ -53,7 +54,8 @@ func TestManifest(t *testing.T) {
 	a := "aaa"
 	d := "ddd"
 	r := "rrr"
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		root     *Root
 		expected *Manifest
@@ -136,18 +138,19 @@ func TestManifest(t *testing.T) {
 			err: "invalid manifest: invalid plugin id:   <nil>",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			m, err := tc.root.manifest(nil)
 			if tc.err == "" {
-				assert.Equal(tt, tc.expected.Plugin.ID(), m.Plugin.ID())
-				assert.Equal(tt, tc.expected.Plugin.Name(), m.Plugin.Name())
-				assert.Equal(tt, len(tc.expected.Plugin.Extensions()), len(m.Plugin.Extensions()))
+				assert.Equal(t, tc.expected.Plugin.ID(), m.Plugin.ID())
+				assert.Equal(t, tc.expected.Plugin.Name(), m.Plugin.Name())
+				assert.Equal(t, len(tc.expected.Plugin.Extensions()), len(m.Plugin.Extensions()))
 				//assert.Equal(tt,tc.expected.Schema..)
 			} else {
-				assert.Equal(tt, tc.err, err.Error())
+				assert.Equal(t, tc.err, err.Error())
 			}
 		})
 	}
@@ -159,7 +162,8 @@ func TestExtension(t *testing.T) {
 	d := "ddd"
 	i := "xx:/aa.bb"
 	tr := true
-	testCases := []struct {
+
+	tests := []struct {
 		name       string
 		ext        Extension
 		sys        bool
@@ -308,20 +312,20 @@ func TestExtension(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			pe, ps, err := tc.ext.extension(tc.pid, tc.sys)
 			if tc.err == "" {
-				assert.Equal(tt, tc.expectedPE.ID(), pe.ID())
-				assert.Equal(tt, tc.expectedPE.Visualizer(), pe.Visualizer())
-				assert.Equal(tt, tc.expectedPE.Type(), pe.Type())
-				assert.Equal(tt, tc.expectedPE.Name(), pe.Name())
-				assert.Equal(tt, tc.expectedPS.ID(), ps.ID())
-				assert.Equal(tt, tc.expectedPS.ID(), ps.ID())
+				assert.Equal(t, tc.expectedPE.ID(), pe.ID())
+				assert.Equal(t, tc.expectedPE.Visualizer(), pe.Visualizer())
+				assert.Equal(t, tc.expectedPE.Type(), pe.Type())
+				assert.Equal(t, tc.expectedPE.Name(), pe.Name())
+				assert.Equal(t, tc.expectedPS.ID(), ps.ID())
+				assert.Equal(t, tc.expectedPS.ID(), ps.ID())
 			} else {
-				assert.Equal(tt, tc.err, err.Error())
+				assert.Equal(t, tc.err, err.Error())
 			}
 		})
 	}
@@ -330,7 +334,8 @@ func TestExtension(t *testing.T) {
 func TestPointer(t *testing.T) {
 	sg := "aaa"
 	f := "xxx"
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		pp       *PropertyPointer
 		expected *property.Pointer
@@ -357,17 +362,20 @@ func TestPointer(t *testing.T) {
 			expected: property.NewPointer(property.SchemaGroupIDFrom(&sg), nil, property.FieldIDFrom(&f)),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.pp.pointer())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.pp.pointer())
 		})
 	}
 }
+
 func TestCondition(t *testing.T) {
 	v := toValue("xxx", "string")
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		con      *PropertyCondition
 		expected *property.Condition
@@ -390,11 +398,12 @@ func TestCondition(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.con.condition())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.con.condition())
 		})
 	}
 }
@@ -403,7 +412,8 @@ func TestLinkable(t *testing.T) {
 	l := "location"
 	d := "default"
 	u := "url"
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		p        *PropertyLinkableFields
 		expected property.LinkableFields
@@ -431,18 +441,20 @@ func TestLinkable(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.p.linkable())
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.p.linkable())
 		})
 	}
 }
 
 func TestSchema(t *testing.T) {
 	str := "ddd"
-	testCases := []struct {
+
+	tests := []struct {
 		name, psid string
 		ps         *PropertySchema
 		pid        plugin.ID
@@ -500,21 +512,22 @@ func TestSchema(t *testing.T) {
 			expected: property.NewSchema().ID(property.MustSchemaID("reearth/marker")).Groups([]*property.SchemaGroup{property.NewSchemaGroup().ID("default").Schema(property.MustSchemaID("reearth/cesium")).Fields([]*property.SchemaField{property.NewSchemaField().ID("location").Type(property.ValueTypeLatLng).MustBuild()}).MustBuild()}).MustBuild(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res, err := tc.ps.schema(tc.pid, tc.psid)
 			if tc.err == "" {
-				assert.Equal(tt, len(tc.expected.Groups()), len(res.Groups()))
-				assert.Equal(tt, tc.expected.LinkableFields(), res.LinkableFields())
-				assert.Equal(tt, tc.expected.Version(), res.Version())
+				assert.Equal(t, len(tc.expected.Groups()), len(res.Groups()))
+				assert.Equal(t, tc.expected.LinkableFields(), res.LinkableFields())
+				assert.Equal(t, tc.expected.Version(), res.Version())
 				if len(res.Groups()) > 0 {
 					exg := tc.expected.Group(res.Groups()[0].ID())
-					assert.NotNil(tt, exg)
+					assert.NotNil(t, exg)
 				}
 			} else {
-				assert.Equal(tt, tc.err, err.Error())
+				assert.Equal(t, tc.err, err.Error())
 			}
 		})
 	}
@@ -523,7 +536,8 @@ func TestSchema(t *testing.T) {
 func TestSchemaGroup(t *testing.T) {
 	str := "marker"
 	des := "ddd"
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		psg      PropertySchemaGroup
 		sid      property.SchemaID
@@ -584,22 +598,23 @@ func TestSchemaGroup(t *testing.T) {
 			err:      "field (location): invalid value type: xx",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res, err := tc.psg.schemaGroup(tc.sid)
 			if tc.err == "" {
-				assert.Equal(tt, tc.expected.Title().String(), res.Title().String())
-				assert.Equal(tt, tc.expected.Title(), res.Title())
-				assert.Equal(tt, tc.expected.Schema(), res.Schema())
-				assert.Equal(tt, len(tc.expected.Fields()), len(res.Fields()))
+				assert.Equal(t, tc.expected.Title().String(), res.Title().String())
+				assert.Equal(t, tc.expected.Title(), res.Title())
+				assert.Equal(t, tc.expected.Schema(), res.Schema())
+				assert.Equal(t, len(tc.expected.Fields()), len(res.Fields()))
 				if len(res.Fields()) > 0 {
 					exf := res.Fields()[0]
-					assert.NotNil(tt, tc.expected.Field(exf.ID()))
+					assert.NotNil(t, tc.expected.Field(exf.ID()))
 				}
 			} else {
-				assert.Equal(tt, tc.err, err.Error())
+				assert.Equal(t, tc.err, err.Error())
 			}
 		})
 	}
@@ -607,7 +622,8 @@ func TestSchemaGroup(t *testing.T) {
 
 func TestSchemaField(t *testing.T) {
 	str := "xx"
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		psg      PropertySchemaField
 		expected *property.SchemaField
@@ -746,19 +762,20 @@ func TestSchemaField(t *testing.T) {
 			err:      nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res, err := tc.psg.schemaField()
 			if tc.err == nil {
-				assert.Equal(tt, tc.expected.Title(), res.Title())
-				assert.Equal(tt, tc.expected.Description(), res.Description())
-				assert.Equal(tt, tc.expected.Suffix(), res.Suffix())
-				assert.Equal(tt, tc.expected.Prefix(), res.Prefix())
-				assert.Equal(tt, tc.expected.Choices(), res.Choices())
+				assert.Equal(t, tc.expected.Title(), res.Title())
+				assert.Equal(t, tc.expected.Description(), res.Description())
+				assert.Equal(t, tc.expected.Suffix(), res.Suffix())
+				assert.Equal(t, tc.expected.Prefix(), res.Prefix())
+				assert.Equal(t, tc.expected.Choices(), res.Choices())
 			} else {
-				assert.Equal(tt, tc.err, rerror.Get(err).Err)
+				assert.Equal(t, tc.err, rerror.Get(err).Err)
 			}
 		})
 	}
@@ -767,7 +784,7 @@ func TestSchemaField(t *testing.T) {
 func TestLayout(t *testing.T) {
 	tr := true
 
-	testCases := []struct {
+	tests := []struct {
 		name         string
 		widgetLayout WidgetLayout
 		expected     *plugin.WidgetLayout
@@ -808,12 +825,12 @@ func TestLayout(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.widgetLayout.layout()
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }

@@ -7,8 +7,7 @@ import (
 )
 
 func TestBox_ExtendWithPoint(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input struct {
 			b Box
@@ -77,12 +76,13 @@ func TestBox_ExtendWithPoint(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			tc.input.b.ExtendWithPoint(tc.input.p)
-			assert.Equal(tt, tc.expected, tc.input.b)
+			assert.Equal(t, tc.expected, tc.input.b)
 		})
 	}
 
@@ -131,8 +131,7 @@ func TestNewPolyLine(t *testing.T) {
 }
 
 func TestBBoxFromPoints(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []Point
 		expected Box
@@ -186,11 +185,12 @@ func TestBBoxFromPoints(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, BBoxFromPoints(tc.input))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, BBoxFromPoints(tc.input))
 		})
 	}
 }

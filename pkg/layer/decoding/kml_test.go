@@ -163,7 +163,7 @@ func TestKMLDecoder_Decode(t *testing.T) {
 }
 
 //func TestKMLCoordinatesToLatLng(t *testing.T) {
-//	testCases := []struct {
+//	tests := []struct {
 //		name, cords    string
 //		expectedLatLng *property.LatLng
 //		expectedHeight float64
@@ -197,23 +197,23 @@ func TestKMLDecoder_Decode(t *testing.T) {
 //			err:            strconv.ErrSyntax,
 //		},
 //	}
-//	for _, tc := range testCases {
-//		tc := tc
-//		t.Run(tc.name, func(tt *testing.T) {
-//			tt.Parallel()
-//			ll, h, err := coordinatesToLatLngHeight(tc.cords)
-//			if tc.err == nil {
-//				assert.True(tt, reflect.DeepEqual(ll, tc.expectedLatLng))
-//				assert.Equal(tt, tc.expectedHeight, h)
+//	for _, tt := range tests {
+//		tt := tt
+//		t.Run(tt.name, func(t *testing.T) {
+//			t.Parallel()
+//			ll, h, err := coordinatesToLatLngHeight(tt.cords)
+//			if tt.err == nil {
+//				assert.True(t, reflect.DeepEqual(ll, tt.expectedLatLng))
+//				assert.Equal(t, tt.expectedHeight, h)
 //			} else {
-//				assert.True(tt, errors.As(err, &tc.err))
+//				assert.Equal(t, tt.err, err)
 //			}
 //		})
 //	}
 //}
 //
 //func TestKMLCoordinatesToLatLngList(t *testing.T) {
-//	testCases := []struct {
+//	tests := []struct {
 //		name, cords string
 //		expected    []property.LatLngHeight
 //		err         error
@@ -254,15 +254,15 @@ func TestKMLDecoder_Decode(t *testing.T) {
 //			err:      strconv.ErrSyntax,
 //		},
 //	}
-//	for _, tc := range testCases {
-//		tc := tc
-//		t.Run(tc.name, func(tt *testing.T) {
-//			tt.Parallel()
-//			res, err := coordinatesToLatLngHeightList(tc.cords)
-//			if tc.err == nil {
-//				assert.True(tt, reflect.DeepEqual(res, tc.expected))
+//	for _, tt := range tests {
+//		tt := tt
+//		t.Run(tt.name, func(t *testing.T) {
+//			t.Parallel()
+//			res, err := coordinatesToLatLngHeightList(tt.cords)
+//			if tt.err == nil {
+//				assert.True(t, reflect.DeepEqual(res, tt.expected))
 //			} else {
-//				assert.True(tt, errors.As(err, &tc.err))
+//				assert.Equal(t, tt.err, err)
 //			}
 //		})
 //	}
@@ -303,7 +303,7 @@ func TestKMLDecoder_Decode(t *testing.T) {
 //		},
 //	}
 //	expected := [][]property.LatLngHeight{cl1, cl2}
-//	testCases := []struct {
+//	tests := []struct {
 //		name     string
 //		polygon  *kml.Polygon
 //		expected [][]property.LatLngHeight
@@ -380,15 +380,15 @@ func TestKMLDecoder_Decode(t *testing.T) {
 //			err:      strconv.ErrSyntax,
 //		},
 //	}
-//	for _, tc := range testCases {
-//		tc := tc
-//		t.Run(tc.name, func(tt *testing.T) {
-//			tt.Parallel()
-//			res, err := getPolygon(tc.polygon)
-//			if tc.err == nil {
-//				assert.True(tt, reflect.DeepEqual(res, tc.expected))
+//	for _, tt := range tests {
+//		tt := tt
+//		t.Run(tt.name, func(t *testing.T) {
+//			t.Parallel()
+//			res, err := getPolygon(tt.polygon)
+//			if tt.err == nil {
+//				assert.True(t, reflect.DeepEqual(res, tt.expected))
 //			} else {
-//				assert.True(tt, errors.As(err, &tc.err))
+//				assert.Equal(t, tt.err, err)
 //			}
 //		})
 //	}
@@ -397,7 +397,7 @@ func TestKMLDecoder_Decode(t *testing.T) {
 func TestKMLparseKML(t *testing.T) {
 	s := layer.NewSceneID()
 
-	testCases := []struct {
+	tests := []struct {
 		name, KMLstr string
 		expected     interface{}
 		err          error
@@ -468,20 +468,17 @@ func TestKMLparseKML(t *testing.T) {
 			err:      errors.New("XML syntax error on line 5: element <xxx> closed by </fff>"),
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(tc.KMLstr)), s)
-			for {
-				res, err := d.parseKML()
-				if res != nil {
-					assert.Equal(tt, tc.expected, res)
-					break
-				} else {
-					assert.Equal(tt, tc.err.Error(), err.Error())
-					break
-				}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(tt.KMLstr)), s)
+			res, err := d.parseKML()
+			if tt.expected != nil {
+				assert.Equal(t, tt.expected, res)
+			} else {
+				assert.Equal(t, tt.err.Error(), err.Error())
 			}
 		})
 	}
@@ -526,7 +523,8 @@ func TestKMLdecodePlacemark(t *testing.T) {
 	pointExt := extensions["Point"]
 	polylineExt := extensions["Polyline"]
 	polygonExt := extensions["Polygon"]
-	testCases := []struct {
+
+	tests := []struct {
 		name, pt         string
 		placemark        kml.Placemark
 		expectedLayer    *layer.Item
@@ -634,22 +632,23 @@ func TestKMLdecodePlacemark(t *testing.T) {
 			err:              nil,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(``)), s)
-			l, p, err := d.decodePlacemark(tc.placemark)
-			if err == nil {
-				assert.NotNil(tt, l)
-				assert.NotNil(tt, p)
-				assert.Equal(tt, l.Name(), tc.expectedLayer.Name())
-				ps := builtin.GetPropertySchema(propertySchemas[tc.pt])
-				fa, _, _, _ := p.GetOrCreateField(ps, property.PointFieldBySchemaGroup(propertyItems, propertyFields[tc.pt]))
-				fe, _, _, _ := tc.expectedProperty.GetOrCreateField(ps, property.PointFieldBySchemaGroup(propertyItems, propertyFields[tc.pt]))
-				assert.Equal(tt, fe.Value(), fa.Value())
+			l, p, err := d.decodePlacemark(tt.placemark)
+			if tt.err == nil {
+				assert.NotNil(t, l)
+				assert.NotNil(t, p)
+				assert.Equal(t, l.Name(), tt.expectedLayer.Name())
+				ps := builtin.GetPropertySchema(propertySchemas[tt.pt])
+				fa, _, _, _ := p.GetOrCreateField(ps, property.PointFieldBySchemaGroup(propertyItems, propertyFields[tt.pt]))
+				fe, _, _, _ := tt.expectedProperty.GetOrCreateField(ps, property.PointFieldBySchemaGroup(propertyItems, propertyFields[tt.pt]))
+				assert.Equal(t, fe.Value(), fa.Value())
 			} else {
-				assert.True(tt, errors.As(err, &tc.err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -675,7 +674,7 @@ func TestKMLdecodePlacemark(t *testing.T) {
 //		Plugin(&layer.OfficialPluginID).
 //		MustBuild()
 //	var ll layer.Layer = li
-//	testCases := []struct {
+//	tests := []struct {
 //		name               string
 //		collection         *kml.Collection
 //		expectedLayers     []*layer.Layer
@@ -716,35 +715,36 @@ func TestKMLdecodePlacemark(t *testing.T) {
 //			err:                nil,
 //		},
 //	}
-//	for _, tc := range testCases {
-//		tc := tc
-//		t.Run(tc.name, func(tt *testing.T) {
+//
+//	for _, tt := range tests {
+//		tt := tt
+//		t.Run(tt.name, func(t *testing.T) {
 //			d := NewKMLDecoder(xml.NewDecoder(strings.NewReader(``)), s)
-//			_, lm, pm, _ := d.decodeCollection(*tc.collection, 0)
-//			//if err == nil {
-//			//	if tc.expectedGroupLayer != nil {
-//			//		assert.NotNil(tt, lg)
-//			//		assert.Equal(tt, tc.expectedGroupLayer.Name(), lg.Name())
+//			_, lm, pm, _ := d.decodeCollection(*tt.collection, 0)
+//			//if tt.err == nil {
+//			//	if tt.expectedGroupLayer != nil {
+//			//		assert.NotNil(t, lg)
+//			//		assert.Equal(t, tt.expectedGroupLayer.Name(), lg.Name())
 //			//	}
-//			//	if tc.expectedLayers != nil {
-//			//		assert.NotNil(tt, ll)
-//			//		assert.True(tt, len(ll) == 1)
-//			//		el := *tc.expectedLayers[0]
+//			//	if tt.expectedLayers != nil {
+//			//		assert.NotNil(t, ll)
+//			//		assert.True(t, len(ll) == 1)
+//			//		el := *tt.expectedLayers[0]
 //			//		al := *ll[0]
-//			//		assert.Equal(tt, el.Name(), al.Name())
-//			//		assert.NotNil(tt, al.Property())
+//			//		assert.Equal(t, el.Name(), al.Name())
+//			//		assert.NotNil(t, al.Property())
 //			//	}
-//			//	if tc.expectedProperties != nil {
-//			//		assert.NotNil(tt, pl)
-//			//		assert.True(tt, len(pl) == 1)
-//			//		ep := *tc.expectedProperties[0]
+//			//	if tt.expectedProperties != nil {
+//			//		assert.NotNil(t, pl)
+//			//		assert.True(t, len(pl) == 1)
+//			//		ep := *tt.expectedProperties[0]
 //			//		ap := pl.Keys()[0]
 //			//		fa, _, _, _ := ap.GetOrCreateField(builtin.GetPropertySchema(propertySchemas["Point"]), property.PointFieldBySchemaGroup(propertyItems, propertyFields["Point"]))
 //			//		fe, _, _, _ := ep.GetOrCreateField(builtin.GetPropertySchema(propertySchemas["Point"]), property.PointFieldBySchemaGroup(propertyItems, propertyFields["Point"]))
-//			//		assert.Equal(tt, fe.Value(), fa.Value())
+//			//		assert.Equal(t, fe.Value(), fa.Value())
 //			//	}
 //			//} else {
-//			//	assert.True(tt, errors.As(err, &tc.err))
+//			//	assert.Equal(t, tt.err, err)
 //			//}
 //		})
 //	}

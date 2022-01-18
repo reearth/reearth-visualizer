@@ -1,7 +1,6 @@
 package layerops
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
@@ -34,7 +33,8 @@ func TestInitialize(t *testing.T) {
 		Extensions(es).
 		MustBuild()
 	s := layer.NewSceneID()
-	testCases := []struct {
+
+	tests := []struct {
 		name          string
 		sceneID       *layer.SceneID
 		parentLayerID *layer.ID
@@ -59,23 +59,24 @@ func TestInitialize(t *testing.T) {
 			err:           ErrExtensionTypeMustBePrimitive,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			layerItem, property, err := LayerItem{
-				SceneID:       *tc.sceneID,
-				ParentLayerID: *tc.parentLayerID,
-				Plugin:        tc.plugin,
-				ExtensionID:   tc.extID,
-				Name:          tc.name,
+				SceneID:       *tt.sceneID,
+				ParentLayerID: *tt.parentLayerID,
+				Plugin:        tt.plugin,
+				ExtensionID:   tt.extID,
+				Name:          tt.name,
 			}.Initialize()
-			if tc.err == nil {
-				assert.NoError(tt, err)
-				assert.NotNil(tt, layerItem)
-				assert.NotNil(tt, property)
+			if tt.err == nil {
+				assert.NoError(t, err)
+				assert.NotNil(t, layerItem)
+				assert.NotNil(t, property)
 			} else {
-				assert.True(t, errors.As(err, &tc.err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}

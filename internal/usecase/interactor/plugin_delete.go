@@ -37,7 +37,7 @@ func (i *Plugin) Delete(ctx context.Context, pid id.PluginID, operator *usecase.
 		return interfaces.ErrOperationDenied
 	}
 
-	if s.PluginSystem().HasPlugin(p.ID()) {
+	if s.Plugins().HasPlugin(p.ID()) {
 		return interfaces.ErrCannotDeleteUsedPlugin
 	}
 

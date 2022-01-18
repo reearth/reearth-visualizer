@@ -11,7 +11,8 @@ func TestSchemaField_MinMax(t *testing.T) {
 	getFloatRef := func(f float64) *float64 {
 		return &f
 	}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		SF       *SchemaField
 		Expected struct {
@@ -32,19 +33,20 @@ func TestSchemaField_MinMax(t *testing.T) {
 			Name: "nil sf",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			min, max := tc.SF.MinMax()
-			assert.Equal(tt, tc.Expected.Min, min)
-			assert.Equal(tt, tc.Expected.Max, max)
+			assert.Equal(t, tc.Expected.Min, min)
+			assert.Equal(t, tc.Expected.Max, max)
 		})
 	}
 }
 
 func TestSchemaField_Choice(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name, Key string
 		SF        *SchemaField
 		Expected  *SchemaFieldChoice
@@ -91,12 +93,13 @@ func TestSchemaField_Choice(t *testing.T) {
 			Name: "nil sf",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			ch := tc.SF.Choice(tc.Key)
-			assert.Equal(tt, tc.Expected, ch)
+			assert.Equal(t, tc.Expected, ch)
 		})
 	}
 }
@@ -114,7 +117,7 @@ func TestSchemaField_SetTitle(t *testing.T) {
 }
 
 func TestSchemaField_Validate(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		SF       *SchemaField
 		Input    *OptionalValue
@@ -200,12 +203,13 @@ func TestSchemaField_Validate(t *testing.T) {
 			Expected: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.SF.Validate(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

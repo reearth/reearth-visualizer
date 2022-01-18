@@ -11,7 +11,8 @@ func TestAsset(t *testing.T) {
 	aid := NewID()
 	tid := NewTeamID()
 	d := createdAt(aid)
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Expected struct {
 			ID          ID
@@ -45,18 +46,19 @@ func TestAsset(t *testing.T) {
 			Actual: New().ID(aid).CreatedAt(d).ContentType("test").Team(tid).Size(10).Name("xxx").URL("tt://xxx.xx").MustBuild(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
 
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected.ID, tc.Actual.ID())
-			assert.Equal(tt, tc.Expected.CreatedAt, tc.Actual.CreatedAt())
-			assert.Equal(tt, tc.Expected.Team, tc.Actual.Team())
-			assert.Equal(tt, tc.Expected.Url, tc.Actual.URL())
-			assert.Equal(tt, tc.Expected.Size, tc.Actual.Size())
-			assert.Equal(tt, tc.Expected.Name, tc.Actual.Name())
-			assert.Equal(tt, tc.Expected.ContentType, tc.Actual.ContentType())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected.ID, tc.Actual.ID())
+			assert.Equal(t, tc.Expected.CreatedAt, tc.Actual.CreatedAt())
+			assert.Equal(t, tc.Expected.Team, tc.Actual.Team())
+			assert.Equal(t, tc.Expected.Url, tc.Actual.URL())
+			assert.Equal(t, tc.Expected.Size, tc.Actual.Size())
+			assert.Equal(t, tc.Expected.Name, tc.Actual.Name())
+			assert.Equal(t, tc.Expected.ContentType, tc.Actual.ContentType())
 		})
 	}
 }

@@ -39,7 +39,8 @@ func TestList_Has(t *testing.T) {
 	tags := []ID{
 		tid1,
 	}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Tags     []ID
 		TID      ID
@@ -62,10 +63,11 @@ func TestList_Has(t *testing.T) {
 			Expected: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := NewListFromTags(tc.Tags).Has(tc.TID)
 			assert.Equal(t, tc.Expected, res)
 		})

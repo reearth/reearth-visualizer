@@ -10,7 +10,8 @@ func TestNewWidget(t *testing.T) {
 	pid := MustPluginID("xxx~1.1.1")
 	pr := NewPropertyID()
 	wid := NewWidgetID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name      string
 		ID        WidgetID
 		Plugin    PluginID
@@ -42,20 +43,20 @@ func TestNewWidget(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
 			if tc.Err == nil {
-				assert.Equal(tt, tc.ID, res.ID())
-				assert.Equal(tt, tc.Property, res.Property())
-				assert.Equal(tt, tc.Extension, res.Extension())
-				assert.Equal(tt, tc.Enabled, res.Enabled())
-				assert.Equal(tt, tc.Extended, res.Extended())
-				assert.Equal(tt, tc.Plugin, res.Plugin())
+				assert.Equal(t, tc.ID, res.ID())
+				assert.Equal(t, tc.Property, res.Property())
+				assert.Equal(t, tc.Extension, res.Extension())
+				assert.Equal(t, tc.Enabled, res.Enabled())
+				assert.Equal(t, tc.Extended, res.Extended())
+				assert.Equal(t, tc.Plugin, res.Plugin())
 			} else {
-				assert.ErrorIs(tt, err, tc.Err)
+				assert.ErrorIs(t, err, tc.Err)
 			}
 		})
 	}
@@ -65,7 +66,8 @@ func TestMustNewWidget(t *testing.T) {
 	pid := MustPluginID("xxx~1.1.1")
 	pr := NewPropertyID()
 	wid := NewWidgetID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name      string
 		ID        WidgetID
 		Plugin    PluginID
@@ -97,24 +99,24 @@ func TestMustNewWidget(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Err != nil {
-				assert.PanicsWithError(tt, tc.Err.Error(), func() {
+				assert.PanicsWithError(t, tc.Err.Error(), func() {
 					MustNewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
 				})
 				return
 			}
 
 			res := MustNewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
-			assert.Equal(tt, tc.ID, res.ID())
-			assert.Equal(tt, tc.Property, res.Property())
-			assert.Equal(tt, tc.Extension, res.Extension())
-			assert.Equal(tt, tc.Enabled, res.Enabled())
-			assert.Equal(tt, tc.Plugin, res.Plugin())
+			assert.Equal(t, tc.ID, res.ID())
+			assert.Equal(t, tc.Property, res.Property())
+			assert.Equal(t, tc.Extension, res.Extension())
+			assert.Equal(t, tc.Enabled, res.Enabled())
+			assert.Equal(t, tc.Plugin, res.Plugin())
 		})
 	}
 }

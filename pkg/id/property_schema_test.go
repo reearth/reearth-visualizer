@@ -2,7 +2,6 @@ package id
 
 import (
 	"encoding"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,8 +11,7 @@ var _ encoding.TextMarshaler = (*PropertySchemaID)(nil)
 var _ encoding.TextUnmarshaler = (*PropertySchemaID)(nil)
 
 func TestPropertySchemaIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -61,17 +59,17 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			result, err := PropertySchemaIDFrom(tc.input)
-			if tc.expected.err != nil {
-				assert.Equal(tt, tc.expected.result, result)
-				assert.True(tt, errors.As(tc.expected.err, &err))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result, err := PropertySchemaIDFrom(tt.input)
+			if tt.expected.err != nil {
+				assert.Equal(t, tt.expected.result, result)
+				assert.Equal(t, tt.expected.err, err)
 			} else {
-				assert.Equal(tt, tc.expected.result, result)
-				assert.Nil(tt, err)
+				assert.Equal(t, tt.expected.result, result)
+				assert.Nil(t, err)
 			}
 		})
 	}
@@ -91,8 +89,7 @@ func TestPropertySchemaIDFromExtension(t *testing.T) {
 }
 
 func TestMustPropertySchemaID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected struct {
@@ -139,18 +136,18 @@ func TestMustPropertySchemaID(t *testing.T) {
 			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			if tc.expected.err != nil {
-				assert.Panics(tt, func() {
-					_ = MustPropertySchemaID(tc.input)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if tt.expected.err != nil {
+				assert.Panics(t, func() {
+					_ = MustPropertySchemaID(tt.input)
 				})
 			} else {
-				result := MustPropertySchemaID(tc.input)
-				assert.Equal(tt, tc.expected.result, result)
+				result := MustPropertySchemaID(tt.input)
+				assert.Equal(t, tt.expected.result, result)
 			}
 		})
 	}
@@ -169,7 +166,7 @@ func TestMustPropertySchemaIDFromExtension(t *testing.T) {
 }
 
 func TestPropertySchemaIDFromRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *PropertySchemaID
@@ -204,13 +201,13 @@ func TestPropertySchemaIDFromRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-			result := PropertySchemaIDFromRef(&tc.input)
-			assert.Equal(tt, tc.expected, result)
+			result := PropertySchemaIDFromRef(&tt.input)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
@@ -304,8 +301,7 @@ func TestPropertySchemaID_UnmarshalText(t *testing.T) {
 }
 
 func TestPropertySchemaIDsToStrings(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []PropertySchemaID
 		expected []string
@@ -335,47 +331,32 @@ func TestPropertySchemaIDsToStrings(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, PropertySchemaIDsToStrings(tc.input))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, PropertySchemaIDsToStrings(tt.input))
 		})
 	}
 
 }
 
 func TestPropertySchemaIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
-		expected struct {
-			res []PropertySchemaID
-			err error
-		}
+		expected []PropertySchemaID
+		err      error
 	}{
 		{
-			name:  "Empty slice",
-			input: make([]string, 0),
-			expected: struct {
-				res []PropertySchemaID
-				err error
-			}{
-				res: make([]PropertySchemaID, 0),
-				err: nil,
-			},
+			name:     "Empty slice",
+			input:    make([]string, 0),
+			expected: []PropertySchemaID{},
 		},
 		{
-			name:  "1 element",
-			input: []string{"Test~1.0.0/test"},
-			expected: struct {
-				res []PropertySchemaID
-				err error
-			}{
-				res: []PropertySchemaID{MustPropertySchemaID("Test~1.0.0/test")},
-				err: nil,
-			},
+			name:     "1 element",
+			input:    []string{"Test~1.0.0/test"},
+			expected: []PropertySchemaID{MustPropertySchemaID("Test~1.0.0/test")},
 		},
 		{
 			name: "multiple elements",
@@ -384,47 +365,35 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 				"Test~1.0.1/test",
 				"Test~1.0.2/test",
 			},
-			expected: struct {
-				res []PropertySchemaID
-				err error
-			}{
-				res: []PropertySchemaID{
-					MustPropertySchemaID("Test~1.0.0/test"),
-					MustPropertySchemaID("Test~1.0.1/test"),
-					MustPropertySchemaID("Test~1.0.2/test"),
-				},
-				err: nil,
+			expected: []PropertySchemaID{
+				MustPropertySchemaID("Test~1.0.0/test"),
+				MustPropertySchemaID("Test~1.0.1/test"),
+				MustPropertySchemaID("Test~1.0.2/test"),
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "invalid elements",
 			input: []string{
 				"Test~1.0.0/test",
 				"Test~1.0.1/test",
-				"Test~1.0.2/test",
+				"Test~1.0.2",
 			},
-			expected: struct {
-				res []PropertySchemaID
-				err error
-			}{
-				res: nil,
-				err: ErrInvalidID,
-			},
+			err: ErrInvalidID,
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-			if tc.expected.err != nil {
-				_, err := PropertySchemaIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+			res, err := PropertySchemaIDsFrom(tt.input)
+			if tt.err != nil {
+				assert.Nil(t, res)
+				assert.Equal(t, tt.err, err)
 			} else {
-				res, err := PropertySchemaIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Equal(t, tt.expected, res)
+				assert.Nil(t, err)
 			}
 		})
 	}

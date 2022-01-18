@@ -26,7 +26,7 @@ var (
 )
 
 func TestSeal(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		MD       *Merged
 		DSGL     dataset.GraphLoader
@@ -163,14 +163,13 @@ func TestSeal(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := Seal(context.Background(), tc.MD, tc.DSGL)
-			if err == nil {
-				assert.Equal(tt, tc.Expected, res)
-			}
+			assert.Equal(t, tc.Expected, res)
+			assert.Nil(t, err)
 		})
 	}
 }
@@ -178,7 +177,8 @@ func TestSeal(t *testing.T) {
 func TestSealProperty(t *testing.T) {
 	pid := NewID()
 	ps := MustSchemaID("xxx~1.1.1/aa")
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Input    *Property
 		Expected *Sealed
@@ -199,19 +199,19 @@ func TestSealProperty(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := SealProperty(context.Background(), tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
 
 func TestSealedItemFrom(t *testing.T) {
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		MG       *MergedGroup
 		DSGL     dataset.GraphLoader
@@ -357,21 +357,20 @@ func TestSealedItemFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := sealedItemFrom(context.Background(), tc.MG, tc.DSGL)
-			if err == nil {
-				assert.Equal(tt, tc.Expected, res)
-			}
+			assert.Equal(t, tc.Expected, res)
+			assert.Nil(t, err)
 		})
 	}
 }
 
 func TestSealed_Interface(t *testing.T) {
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		S        *Sealed
 		Expected map[string]interface{}
@@ -460,18 +459,18 @@ func TestSealed_Interface(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.S.Interface()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
 
 func TestSealedItem_Match(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		SI       *SealedItem
 		Input    ItemID
@@ -518,19 +517,19 @@ func TestSealedItem_Match(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.SI.Match(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
 
 func TestSealed_ItemBy(t *testing.T) {
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		S        *Sealed
 		Input    *Pointer
@@ -805,19 +804,19 @@ func TestSealed_ItemBy(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.S.ItemBy(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
 
 func TestSealed_FieldBy(t *testing.T) {
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		S        *Sealed
 		Input    *Pointer
@@ -1053,12 +1052,12 @@ func TestSealed_FieldBy(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.S.FieldBy(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

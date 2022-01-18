@@ -34,8 +34,7 @@ func TestReadZipFrom(t *testing.T) {
 }
 
 func TestReadZipFromWrongScenarios(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name  string
 		input string
 	}{
@@ -52,10 +51,11 @@ func TestReadZipFromWrongScenarios(t *testing.T) {
 			input: "test_files/multi.zip",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
 			ior, err := os.Open(tc.input)
 			assert.Nil(t, err)
@@ -65,7 +65,7 @@ func TestReadZipFromWrongScenarios(t *testing.T) {
 			}()
 
 			_, err = ReadZipFrom(ior)
-			assert.NotNil(tt, err)
+			assert.NotNil(t, err)
 		})
 	}
 }

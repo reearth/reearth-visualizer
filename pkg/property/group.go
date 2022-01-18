@@ -231,18 +231,18 @@ func (g *Group) MigrateDataset(q DatasetMigrationParam) {
 	}
 }
 
-func (g *Group) UpdateNameFieldValue(ps *Schema, value *Value) error {
-	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
+func (g *Group) RepresentativeField(schema *Schema) *Field {
+	if g == nil || schema == nil || !g.Schema().Equal(schema.ID()) {
 		return nil
 	}
-	if psg := ps.GroupByPointer(NewPointer(&g.itemBase.SchemaGroup, nil, nil)); psg != nil {
+	if psg := schema.GroupByPointer(NewPointer(&g.itemBase.SchemaGroup, nil, nil)); psg != nil {
 		if representativeField := psg.RepresentativeFieldID(); representativeField != nil {
-			if f, _ := g.GetOrCreateField(ps, *representativeField); f != nil {
-				return f.Update(value, psg.Field(*representativeField))
+			if f, _ := g.GetOrCreateField(schema, *representativeField); f != nil {
+				return f
 			}
 		}
 	}
-	return ErrInvalidPropertyField
+	return nil
 }
 
 func (p *Group) ValidateSchema(ps *SchemaGroup) error {

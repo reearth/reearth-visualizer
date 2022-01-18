@@ -12,6 +12,7 @@ func TestNewNilableValue(t *testing.T) {
 		t ValueType
 		v *Value
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -63,6 +64,7 @@ func TestOptionalValueFrom(t *testing.T) {
 	type args struct {
 		v *Value
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -211,6 +213,7 @@ func TestOptionalValue_SetValue(t *testing.T) {
 	type args struct {
 		v *Value
 	}
+
 	tests := []struct {
 		name    string
 		value   *OptionalValue
@@ -291,8 +294,11 @@ func TestOptionalValue_Clone(t *testing.T) {
 			target: nil,
 		},
 	}
+
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
@@ -306,6 +312,7 @@ func TestOptionalValue_Cast(t *testing.T) {
 	type args struct {
 		t ValueType
 	}
+
 	tests := []struct {
 		name   string
 		target *OptionalValue
@@ -345,7 +352,9 @@ func TestOptionalValue_Cast(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t))
 		})
 	}

@@ -34,7 +34,7 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 	wid4 := NewWidgetID()
 	wid5 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name      string
 		Input     WidgetID
 		Expected1 int
@@ -68,15 +68,15 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				index, location := (*WidgetAlignSystem)(nil).Find(tc.Input)
-				assert.Equal(tt, tc.Expected1, index)
-				assert.Equal(tt, tc.Expected2, location)
+				assert.Equal(t, tc.Expected1, index)
+				assert.Equal(t, tc.Expected2, location)
 				return
 			}
 
@@ -85,8 +85,8 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 			was.Zone(WidgetZoneOuter).Section(WidgetSectionLeft).Area(WidgetAreaTop).AddAll([]WidgetID{wid4, wid5})
 
 			index, location := was.Find(tc.Input)
-			assert.Equal(tt, tc.Expected1, index)
-			assert.Equal(tt, tc.Expected2, location)
+			assert.Equal(t, tc.Expected1, index)
+			assert.Equal(t, tc.Expected2, location)
 		})
 	}
 }
@@ -94,7 +94,7 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 func TestWidgetAlignSystem_Remove(t *testing.T) {
 	wid := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Zone     WidgetZoneType
 		Input    WidgetID
@@ -133,10 +133,10 @@ func TestWidgetAlignSystem_Remove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetZone)(nil).Remove(tc.Input)
@@ -146,7 +146,7 @@ func TestWidgetAlignSystem_Remove(t *testing.T) {
 			ws := NewWidgetAlignSystem()
 			ws.Zone(tc.Zone).Section(WidgetSectionLeft).Area(WidgetAreaTop).Add(wid, -1)
 			ws.Remove(tc.Input)
-			assert.Equal(tt, tc.Expected, ws.Zone(tc.Zone).Section(WidgetSectionLeft).Area(WidgetAreaTop).WidgetIDs())
+			assert.Equal(t, tc.Expected, ws.Zone(tc.Zone).Section(WidgetSectionLeft).Area(WidgetAreaTop).WidgetIDs())
 		})
 	}
 }
@@ -158,7 +158,7 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 	wid4 := NewWidgetID()
 	wid5 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name           string
 		Input1         WidgetID
 		Input2         WidgetLocation
@@ -242,10 +242,10 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetAlignSystem)(nil).Move(tc.Input1, tc.Input2, tc.Input3)
@@ -260,8 +260,8 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 
 			ws.Move(tc.Input1, tc.Input2, tc.Input3)
 
-			assert.Equal(tt, tc.ExpectedSource, ws.Area(tc.Source).WidgetIDs())
-			assert.Equal(tt, tc.ExpectedDest, ws.Area(tc.Input2).WidgetIDs())
+			assert.Equal(t, tc.ExpectedSource, ws.Area(tc.Source).WidgetIDs())
+			assert.Equal(t, tc.ExpectedDest, ws.Area(tc.Input2).WidgetIDs())
 		})
 	}
 }
@@ -271,6 +271,7 @@ func TestWidgetAlignSystem_SetZone(t *testing.T) {
 		t WidgetZoneType
 		z *WidgetZone
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -306,6 +307,7 @@ func TestWidgetAlignSystem_SetZone(t *testing.T) {
 			nil: true,
 		},
 	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

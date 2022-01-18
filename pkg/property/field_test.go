@@ -15,7 +15,7 @@ func TestField_ActualValue(t *testing.T) {
 	l := NewLink(dsid, dssid, dssfid)
 	ls := NewLinks([]*Link{l})
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Field    *Field
 		DS       *dataset.Dataset
@@ -44,12 +44,12 @@ func TestField_ActualValue(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Field.ActualValue(tc.DS)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -62,7 +62,7 @@ func TestField_CollectDatasets(t *testing.T) {
 	l := NewLink(dsid, dssid, dssfid)
 	ls := NewLinks([]*Link{l})
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Field    *Field
 		Expected []DatasetID
@@ -78,12 +78,12 @@ func TestField_CollectDatasets(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Field.CollectDatasets()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

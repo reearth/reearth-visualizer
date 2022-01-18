@@ -13,6 +13,7 @@ func TestNewValueAndDatasetValue(t *testing.T) {
 		d  *dataset.Value
 		p  *Value
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -121,7 +122,9 @@ func TestNewValueAndDatasetValue(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, NewValueAndDatasetValue(tt.args.ty, tt.args.d, tt.args.p))
 		})
 	}
@@ -151,7 +154,9 @@ func TestValueAndDatasetValue_Type(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Type())
 		})
 	}
@@ -201,7 +206,9 @@ func TestValueAndDatasetValue_DatasetValuee(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.DatasetValue())
 		})
 	}
@@ -251,7 +258,9 @@ func TestValueAndDatasetValue_PropertyValue(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.PropertyValue())
 		})
 	}
@@ -301,7 +310,9 @@ func TestValueAndDatasetValue_Value(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Value())
 		})
 	}

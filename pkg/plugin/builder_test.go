@@ -1,7 +1,6 @@
 package plugin
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
@@ -33,7 +32,7 @@ func TestBuilder_Description(t *testing.T) {
 }
 
 func TestBuilder_Schema(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name          string
 		sid, expected *PropertySchemaID
 	}{
@@ -48,12 +47,13 @@ func TestBuilder_Schema(t *testing.T) {
 			expected: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			res := New().Schema(tc.sid).MustBuild()
-			assert.Equal(tt, tc.expected, res.Schema())
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			res := New().Schema(tt.sid).MustBuild()
+			assert.Equal(t, tt.expected, res.Schema())
 		})
 	}
 }
@@ -75,27 +75,34 @@ func TestBuilder_RepositoryURL(t *testing.T) {
 }
 
 func TestBuilder_Build(t *testing.T) {
-	testCases := []struct {
-		name, author, repositoryURL string
-		id                          ID
-		pname, description          i18n.String
-		ext                         []*Extension
-		schema                      *PropertySchemaID
-		expected                    *Plugin
-		err                         error // skip for now as error is always nil
+	type args struct {
+		id                    ID
+		author, repositoryURL string
+		pname, description    i18n.String
+		ext                   []*Extension
+		schema                *PropertySchemaID
+	}
+
+	tests := []struct {
+		name     string
+		args     args
+		expected *Plugin
+		err      error // skip for now as error is always nil
 	}{
 		{
-			id:            MustID("hoge~0.1.0"),
-			name:          "success build new plugin",
-			author:        "aaa",
-			repositoryURL: "uuu",
-			pname:         i18n.StringFrom("nnn"),
-			description:   i18n.StringFrom("ddd"),
-			ext: []*Extension{
-				NewExtension().ID("xxx").MustBuild(),
-				NewExtension().ID("yyy").MustBuild(),
+			name: "success build new plugin",
+			args: args{
+				id:            MustID("hoge~0.1.0"),
+				author:        "aaa",
+				repositoryURL: "uuu",
+				pname:         i18n.StringFrom("nnn"),
+				description:   i18n.StringFrom("ddd"),
+				ext: []*Extension{
+					NewExtension().ID("xxx").MustBuild(),
+					NewExtension().ID("yyy").MustBuild(),
+				},
+				schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
-			schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			expected: &Plugin{
 				id:            MustID("hoge~0.1.0"),
 				name:          i18n.StringFrom("nnn"),
@@ -111,49 +118,58 @@ func TestBuilder_Build(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			p, err := New().
-				ID(tc.id).
-				Extensions(tc.ext).
-				RepositoryURL(tc.repositoryURL).
-				Description(tc.description).
-				Name(tc.pname).
-				Schema(tc.schema).
-				Author(tc.author).
+				ID(tt.args.id).
+				Extensions(tt.args.ext).
+				RepositoryURL(tt.args.repositoryURL).
+				Description(tt.args.description).
+				Name(tt.args.pname).
+				Schema(tt.args.schema).
+				Author(tt.args.author).
 				Build()
-			if tc.err == nil {
-				assert.Equal(tt, tc.expected, p)
+			if tt.err == nil {
+				assert.Equal(t, tt.expected, p)
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	testCases := []struct {
-		name, author, repositoryURL string
-		id                          ID
-		pname, description          i18n.String
-		ext                         []*Extension
-		schema                      *PropertySchemaID
-		expected                    *Plugin
+	type args struct {
+		author, repositoryURL string
+		id                    ID
+		pname, description    i18n.String
+		ext                   []*Extension
+		schema                *PropertySchemaID
+	}
+
+	tests := []struct {
+		name     string
+		args     args
+		expected *Plugin
+		err      error // skip for now as error is always nil
 	}{
 		{
-			id:            MustID("hoge~0.1.0"),
-			name:          "success build new plugin",
-			author:        "aaa",
-			repositoryURL: "uuu",
-			pname:         i18n.StringFrom("nnn"),
-			description:   i18n.StringFrom("ddd"),
-			ext: []*Extension{
-				NewExtension().ID("xxx").MustBuild(),
-				NewExtension().ID("yyy").MustBuild(),
+			name: "success build new plugin",
+			args: args{
+				id:            MustID("hoge~0.1.0"),
+				author:        "aaa",
+				repositoryURL: "uuu",
+				pname:         i18n.StringFrom("nnn"),
+				description:   i18n.StringFrom("ddd"),
+				ext: []*Extension{
+					NewExtension().ID("xxx").MustBuild(),
+					NewExtension().ID("yyy").MustBuild(),
+				},
+				schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
-			schema: MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			expected: &Plugin{
 				id:            MustID("hoge~0.1.0"),
 				name:          i18n.StringFrom("nnn"),
@@ -169,21 +185,30 @@ func TestBuilder_MustBuild(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
 
-			p := New().
-				ID(tc.id).
-				Extensions(tc.ext).
-				RepositoryURL(tc.repositoryURL).
-				Description(tc.description).
-				Name(tc.pname).
-				Schema(tc.schema).
-				Author(tc.author).
-				MustBuild()
-			assert.Equal(tt, tc.expected, p)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			build := func() *Plugin {
+				t.Helper()
+				return New().
+					ID(tt.args.id).
+					Extensions(tt.args.ext).
+					RepositoryURL(tt.args.repositoryURL).
+					Description(tt.args.description).
+					Name(tt.args.pname).
+					Schema(tt.args.schema).
+					Author(tt.args.author).
+					MustBuild()
+			}
+
+			if tt.err != nil {
+				assert.PanicsWithValue(t, tt.err, func() { _ = build() })
+			} else {
+				assert.Equal(t, tt.expected, build())
+			}
 		})
 	}
 }

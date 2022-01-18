@@ -51,19 +51,19 @@ func TestTypography_Clone(t *testing.T) {
 
 	for _, tc := range testes {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.Typography.Clone()
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 			if tc.Expected != nil {
-				assert.NotSame(tt, tc.Expected, res)
+				assert.NotSame(t, tc.Expected, res)
 			}
 		})
 	}
 }
 
 func TestTextAlignFrom(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Expected struct {
 			TA   TextAlign
@@ -132,13 +132,13 @@ func TestTextAlignFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, ok := TextAlignFrom(tc.Name)
-			assert.Equal(tt, tc.Expected.TA, res)
-			assert.Equal(tt, tc.Expected.Bool, ok)
+			assert.Equal(t, tc.Expected.TA, res)
+			assert.Equal(t, tc.Expected.Bool, ok)
 		})
 	}
 }
@@ -149,7 +149,8 @@ func TestTextAlignFromRef(t *testing.T) {
 	c := TextAlignCenter
 	l := TextAlignLeft
 	r := TextAlignRight
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Input    *string
 		Expected *TextAlign
@@ -188,12 +189,12 @@ func TestTextAlignFromRef(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := TextAlignFromRef(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

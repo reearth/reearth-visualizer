@@ -4,15 +4,13 @@ import "testing"
 
 type testFunc func(*testing.T, [][]float64, []Shape)
 
-type testCaseData struct {
+var testData = []struct {
 	name    string
 	points  [][]float64
 	tester  testFunc
 	shpType ShapeType
 	count   int
-}
-
-var testsData = []testCaseData{
+}{
 	{
 		name:    "test_files/point",
 		shpType: POINT,

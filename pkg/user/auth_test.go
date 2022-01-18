@@ -7,7 +7,7 @@ import (
 )
 
 func TestAuthFromAuth0Sub(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name, Sub string
 		Expected  Auth
 	}{
@@ -16,7 +16,7 @@ func TestAuthFromAuth0Sub(t *testing.T) {
 			Sub:  "xx|yy",
 			Expected: Auth{
 				Provider: "xx",
-				Sub:      "yy",
+				Sub:      "xx|yy",
 			},
 		},
 		{
@@ -25,16 +25,18 @@ func TestAuthFromAuth0Sub(t *testing.T) {
 			Expected: Auth{},
 		},
 	}
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, AuthFromAuth0Sub(tc.Sub))
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, AuthFromAuth0Sub(tc.Sub))
 		})
 	}
 }
 
 func TestAuth_IsAuth0(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Auth     Auth
 		Expected bool
@@ -57,10 +59,11 @@ func TestAuth_IsAuth0(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.Auth.IsAuth0())
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.Auth.IsAuth0())
 		})
 	}
 }

@@ -404,7 +404,7 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 
 	// Set nameFieldValue to the name field
 	if inp.NameFieldValue != nil {
-		_ = item.UpdateNameFieldValue(ps, inp.NameFieldValue)
+		item.RepresentativeField(ps).UpdateUnsafe(inp.NameFieldValue)
 	}
 
 	err = i.propertyRepo.Save(ctx, p)
@@ -524,7 +524,7 @@ func (i *Property) UpdateItems(ctx context.Context, inp interfaces.UpdatePropert
 		if op.Operation == interfaces.ListOperationAdd {
 			g, _ := p.AddListItem(ps, inp.Pointer, op.Index)
 			if op.NameFieldValue != nil {
-				_ = g.UpdateNameFieldValue(ps, op.NameFieldValue)
+				g.RepresentativeField(ps).UpdateUnsafe(op.NameFieldValue)
 			}
 		} else if op.Operation == interfaces.ListOperationMove && ptr != nil && op.Index != nil {
 			_, _ = p.MoveListItem(ptr, *op.Index)

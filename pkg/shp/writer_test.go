@@ -118,15 +118,14 @@ func TestWriter_Close(t *testing.T) {
 }
 
 func TestWriter(t *testing.T) {
-	t.Parallel()
-	testCases := testsData
+	tests := testData
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			shapes := getShapesFromFile(tc.name, tt)
-			assert.Equal(tt, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			shapes := getShapesFromFile(tc.name, t)
+			assert.Equal(t, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
 
 			for i, shp := range shapes {
 				outputPath := tc.name + "_out_" + fmt.Sprint(i)
@@ -134,20 +133,20 @@ func TestWriter(t *testing.T) {
 				shape, _ := CreateFrom(f, tc.shpType)
 
 				_, err := shape.Write(shp)
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
 
 				err = shape.Close()
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
 
 				err = f.Close()
-				assert.Nil(tt, err)
+				assert.Nil(t, err)
 
-				shpFromOut := getShapesFromFile(outputPath, tt)
-				assert.Equal(tt, shpFromOut[0], shp)
+				shpFromOut := getShapesFromFile(outputPath, t)
+				assert.Equal(t, shpFromOut[0], shp)
 
-				removeShapefile(tt, outputPath)
+				removeShapefile(t, outputPath)
 			}
-			tc.tester(tt, tc.points, shapes)
+			tc.tester(t, tc.points, shapes)
 		})
 	}
 

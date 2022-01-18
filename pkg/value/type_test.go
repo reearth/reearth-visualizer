@@ -40,6 +40,7 @@ func TestType_Default(t *testing.T) {
 			want: false,
 		},
 	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

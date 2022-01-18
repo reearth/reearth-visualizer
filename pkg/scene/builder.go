@@ -22,14 +22,14 @@ func (b *Builder) Build() (*Scene, error) {
 	if b.scene.rootLayer.ID().IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.widgetSystem == nil {
-		b.scene.widgetSystem = NewWidgetSystem(nil)
+	if b.scene.widgets == nil {
+		b.scene.widgets = NewWidgets(nil)
 	}
 	if b.scene.widgetAlignSystem == nil {
 		b.scene.widgetAlignSystem = NewWidgetAlignSystem()
 	}
-	if b.scene.pluginSystem == nil {
-		b.scene.pluginSystem = NewPluginSystem(nil)
+	if b.scene.plugins == nil {
+		b.scene.plugins = NewPlugins(nil)
 	}
 	if b.scene.updatedAt.IsZero() {
 		b.scene.updatedAt = b.scene.CreatedAt()
@@ -70,9 +70,8 @@ func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 	return b
 }
 
-func (b *Builder) WidgetSystem(widgetSystem *WidgetSystem) *Builder {
-	widgetSystem2 := *widgetSystem
-	b.scene.widgetSystem = &widgetSystem2
+func (b *Builder) Widgets(widgets *Widgets) *Builder {
+	b.scene.widgets = widgets
 	return b
 }
 
@@ -86,9 +85,8 @@ func (b *Builder) RootLayer(rootLayer LayerID) *Builder {
 	return b
 }
 
-func (b *Builder) PluginSystem(pluginSystem *PluginSystem) *Builder {
-	pluginSystem2 := *pluginSystem
-	b.scene.pluginSystem = &pluginSystem2
+func (b *Builder) Plugins(plugins *Plugins) *Builder {
+	b.scene.plugins = plugins
 	return b
 }
 

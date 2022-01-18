@@ -14,7 +14,7 @@ func TestGroupList_IDRef(t *testing.T) {
 }
 
 func TestGroupList_SchemaRef(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name           string
 		GL             *GroupList
 		ExpectedSG     *SchemaGroupID
@@ -30,12 +30,13 @@ func TestGroupList_SchemaRef(t *testing.T) {
 			ExpectedSchema: MustSchemaID("xx~1.0.0/aa").Ref(),
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.ExpectedSG, tc.GL.SchemaGroupRef())
-			assert.Equal(tt, tc.ExpectedSchema, tc.GL.SchemaRef())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.ExpectedSG, tc.GL.SchemaGroupRef())
+			assert.Equal(t, tc.ExpectedSchema, tc.GL.SchemaRef())
 		})
 	}
 }
@@ -49,7 +50,8 @@ func TestGroupList_HasLinkedField(t *testing.T) {
 	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected bool
@@ -68,12 +70,13 @@ func TestGroupList_HasLinkedField(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.HasLinkedField())
-			assert.Equal(tt, tc.Expected, tc.GL.IsDatasetLinked(dssid, dsid))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.HasLinkedField())
+			assert.Equal(t, tc.Expected, tc.GL.IsDatasetLinked(dssid, dsid))
 		})
 	}
 }
@@ -87,7 +90,8 @@ func TestGroupList_CollectDatasets(t *testing.T) {
 	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected []DatasetID
@@ -106,11 +110,12 @@ func TestGroupList_CollectDatasets(t *testing.T) {
 			Expected: []DatasetID{},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.CollectDatasets())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.CollectDatasets())
 		})
 	}
 }
@@ -124,7 +129,8 @@ func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected []*Field
@@ -143,11 +149,12 @@ func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 			Expected: []*Field{},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.FieldsByLinkedDataset(dssid, dsid))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.FieldsByLinkedDataset(dssid, dsid))
 		})
 	}
 }
@@ -160,7 +167,8 @@ func TestGroupList_IsEmpty(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	f := NewField(sf).Value(OptionalValueFrom(v)).Link(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).MustBuild()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected bool
@@ -179,11 +187,12 @@ func TestGroupList_IsEmpty(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.IsEmpty())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.IsEmpty())
 		})
 	}
 }
@@ -196,7 +205,8 @@ func TestGroupList_Prune(t *testing.T) {
 	pid := NewItemID()
 	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f, f2}).MustBuild()}
 	pruned := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected []*Group
@@ -210,12 +220,13 @@ func TestGroupList_Prune(t *testing.T) {
 			Expected: pruned,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			tc.GL.Prune()
-			assert.Equal(tt, tc.Expected, tc.GL.Groups())
+			assert.Equal(t, tc.Expected, tc.GL.Groups())
 		})
 	}
 }
@@ -223,7 +234,8 @@ func TestGroupList_Prune(t *testing.T) {
 func TestGroupList_GetGroup(t *testing.T) {
 	pid := NewItemID()
 	g := NewGroup().ID(pid).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Input    ItemID
 		GL       *GroupList
@@ -245,11 +257,12 @@ func TestGroupList_GetGroup(t *testing.T) {
 			Expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.GetGroup(tc.Input))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.GetGroup(tc.Input))
 		})
 	}
 }
@@ -259,7 +272,8 @@ func TestGroupList_GroupAt(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Index    int
 		GL       *GroupList
@@ -283,11 +297,12 @@ func TestGroupList_GroupAt(t *testing.T) {
 			Expected: g3,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.GroupAt(tc.Index))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.GroupAt(tc.Index))
 		})
 	}
 }
@@ -297,7 +312,8 @@ func TestGroupList_Has(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Input    ItemID
 		GL       *GroupList
@@ -319,11 +335,12 @@ func TestGroupList_Has(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.Has(tc.Input))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.Has(tc.Input))
 		})
 	}
 }
@@ -333,7 +350,8 @@ func TestGroupList_Count(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Expected int
@@ -347,11 +365,12 @@ func TestGroupList_Count(t *testing.T) {
 			Expected: 4,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.GL.Count())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.GL.Count())
 		})
 	}
 }
@@ -361,7 +380,8 @@ func TestGroupList_Add(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Gr       *Group
@@ -402,12 +422,12 @@ func TestGroupList_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.GL.Add(tc.Gr, tc.Index)
-			assert.Equal(tt, tc.Expected.Gr, tc.GL.GroupAt(tc.Expected.Index))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			tt.GL.Add(tt.Gr, tt.Index)
+			assert.Equal(t, tt.Expected.Gr, tt.GL.GroupAt(tt.Expected.Index))
 		})
 	}
 }
@@ -417,7 +437,8 @@ func TestGroupList_AddOrMove(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Gr       *Group
@@ -471,12 +492,12 @@ func TestGroupList_AddOrMove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.GL.AddOrMove(tc.Gr, tc.Index)
-			assert.Equal(tt, tc.Expected.Gr, tc.GL.GroupAt(tc.Expected.Index))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			tt.GL.AddOrMove(tt.Gr, tt.Index)
+			assert.Equal(t, tt.Expected.Gr, tt.GL.GroupAt(tt.Expected.Index))
 		})
 	}
 }
@@ -486,7 +507,8 @@ func TestGroupList_Move(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Id       ItemID
@@ -511,12 +533,12 @@ func TestGroupList_Move(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.GL.Move(tc.Id, tc.ToIndex)
-			assert.Equal(tt, tc.Expected.Id, tc.GL.GroupAt(tc.Expected.Index).ID())
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			tt.GL.Move(tt.Id, tt.ToIndex)
+			assert.Equal(t, tt.Expected.Id, tt.GL.GroupAt(tt.Expected.Index).ID())
 		})
 	}
 }
@@ -526,7 +548,8 @@ func TestGroupList_MoveAt(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name               string
 		GL                 *GroupList
 		FromIndex, ToIndex int
@@ -558,12 +581,12 @@ func TestGroupList_MoveAt(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.GL.MoveAt(tc.FromIndex, tc.ToIndex)
-			assert.Equal(tt, tc.Expected, tc.GL.Groups())
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			tt.GL.MoveAt(tt.FromIndex, tt.ToIndex)
+			assert.Equal(t, tt.Expected, tt.GL.Groups())
 		})
 	}
 }
@@ -573,7 +596,8 @@ func TestGroupList_RemoveAt(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Index    int
@@ -602,12 +626,12 @@ func TestGroupList_RemoveAt(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.GL.RemoveAt(tc.Index)
-			assert.Equal(tt, tc.Expected, tc.GL.Groups())
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			tt.GL.RemoveAt(tt.Index)
+			assert.Equal(t, tt.Expected, tt.GL.Groups())
 		})
 	}
 }
@@ -616,7 +640,8 @@ func TestGroupList_Remove(t *testing.T) {
 	g2 := NewGroup().ID(NewItemID()).MustBuild()
 	g3 := NewGroup().ID(NewItemID()).MustBuild()
 	g4 := NewGroup().ID(NewItemID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Input    ItemID
@@ -639,12 +664,12 @@ func TestGroupList_Remove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.GL.Remove(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.GL.Remove(tt.Input)
+			assert.Equal(t, tt.Expected, res)
 		})
 	}
 }
@@ -653,7 +678,8 @@ func TestGroupList_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	g := NewGroup().ID(NewItemID()).Schema(sg.Schema(), sg.ID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Schema   *Schema
@@ -696,13 +722,13 @@ func TestGroupList_GetOrCreateField(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res, ok := tc.GL.GetOrCreateField(tc.Schema, tc.Ptr)
-			assert.Equal(tt, tc.Expected.Field, res)
-			assert.Equal(tt, tc.Expected.Ok, ok)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res, ok := tt.GL.GetOrCreateField(tt.Schema, tt.Ptr)
+			assert.Equal(t, tt.Expected.Field, res)
+			assert.Equal(t, tt.Expected.Ok, ok)
 		})
 	}
 }
@@ -712,7 +738,8 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	g := NewGroup().ID(NewItemID()).Schema(sg.Schema(), sg.ID()).MustBuild()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		GL       *GroupList
 		Schema   *Schema
@@ -728,14 +755,14 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.GL.CreateAndAddListItem(tc.Schema, tc.Index)
-			assert.Equal(tt, tc.Expected.Schema(), res.Schema())
-			assert.Equal(tt, tc.Expected.Fields(), res.Fields())
-			assert.Equal(tt, tc.Expected.SchemaGroup(), res.SchemaGroup())
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.GL.CreateAndAddListItem(tt.Schema, tt.Index)
+			assert.Equal(t, tt.Expected.Schema(), res.Schema())
+			assert.Equal(t, tt.Expected.Fields(), res.Fields())
+			assert.Equal(t, tt.Expected.SchemaGroup(), res.SchemaGroup())
 		})
 	}
 }

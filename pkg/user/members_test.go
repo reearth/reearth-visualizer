@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,7 +22,8 @@ func TestNewMembersWith(t *testing.T) {
 func TestMembers_ContainsUser(t *testing.T) {
 	uid1 := NewID()
 	uid2 := NewID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		M        *Members
 		UID      ID
@@ -42,11 +42,13 @@ func TestMembers_ContainsUser(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.M.ContainsUser(tc.UID)
-			assert.Equal(tt, tc.Expected, res)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.M.ContainsUser(tt.UID)
+			assert.Equal(t, tt.Expected, res)
 		})
 	}
 }
@@ -77,7 +79,8 @@ func TestMembers_IsOnlyOwner(t *testing.T) {
 
 func TestMembers_Leave(t *testing.T) {
 	uid := NewID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name string
 		M    *Members
 		UID  ID
@@ -102,15 +105,16 @@ func TestMembers_Leave(t *testing.T) {
 			err:  ErrTargetUserNotInTheTeam,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			err := tc.M.Leave(tc.UID)
-			if err == nil {
-				assert.False(tt, tc.M.ContainsUser(tc.UID))
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			err := tt.M.Leave(tt.UID)
+			if tt.err == nil {
+				assert.False(t, tt.M.ContainsUser(tt.UID))
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -124,7 +128,8 @@ func TestMembers_Members(t *testing.T) {
 
 func TestMembers_UpdateRole(t *testing.T) {
 	uid := NewID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name              string
 		M                 *Members
 		UID               ID
@@ -151,26 +156,27 @@ func TestMembers_UpdateRole(t *testing.T) {
 			Name:    "fail personal team",
 			M:       NewFixedMembers(uid),
 			UID:     uid,
-			NewRole: Role("xxx"),
+			NewRole: RoleOwner,
 			err:     ErrCannotModifyPersonalTeam,
 		},
 		{
 			Name:    "fail user not in the team",
 			M:       NewMembersWith(map[ID]Role{uid: RoleOwner}),
 			UID:     NewID(),
-			NewRole: "",
+			NewRole: RoleOwner,
 			err:     ErrTargetUserNotInTheTeam,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			err := tc.M.UpdateRole(tc.UID, tc.NewRole)
-			if err == nil {
-				assert.Equal(tt, tc.Expected, tc.M.GetRole(tc.UID))
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			err := tt.M.UpdateRole(tt.UID, tt.NewRole)
+			if tt.err == nil {
+				assert.Equal(t, tt.Expected, tt.M.GetRole(tt.UID))
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -179,7 +185,8 @@ func TestMembers_UpdateRole(t *testing.T) {
 func TestMembers_Join(t *testing.T) {
 	uid := NewID()
 	uid2 := NewID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name                   string
 		M                      *Members
 		UID                    ID
@@ -217,16 +224,17 @@ func TestMembers_Join(t *testing.T) {
 			err:      ErrUserAlreadyJoined,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			err := tc.M.Join(tc.UID, tc.JoinRole)
-			if err == nil {
-				assert.True(tt, tc.M.ContainsUser(tc.UID))
-				assert.Equal(tt, tc.ExpectedRole, tc.M.GetRole(tc.UID))
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			err := tt.M.Join(tt.UID, tt.JoinRole)
+			if tt.err == nil {
+				assert.True(t, tt.M.ContainsUser(tt.UID))
+				assert.Equal(t, tt.ExpectedRole, tt.M.GetRole(tt.UID))
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -235,7 +243,8 @@ func TestMembers_Join(t *testing.T) {
 func TestMembers_UsersByRole(t *testing.T) {
 	uid := NewID()
 	uid2 := NewID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		M        *Members
 		Role     Role
@@ -249,12 +258,13 @@ func TestMembers_UsersByRole(t *testing.T) {
 			Expected: []ID{uid2, uid},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.M.UsersByRole(tc.Role)
-			assert.Equal(tt, tc.Expected, res)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.M.UsersByRole(tt.Role)
+			assert.Equal(t, tt.Expected, res)
 		})
 	}
 }

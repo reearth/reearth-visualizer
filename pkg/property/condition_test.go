@@ -7,7 +7,7 @@ import (
 )
 
 func TestCondition_Clone(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name          string
 		Con, Expected *Condition
 	}{
@@ -29,12 +29,12 @@ func TestCondition_Clone(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.Con.Clone()
-			assert.Equal(tt, tc.Expected, res)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.Con.Clone()
+			assert.Equal(t, tt.Expected, res)
 		})
 	}
 }

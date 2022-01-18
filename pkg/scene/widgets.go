@@ -8,13 +8,13 @@ var (
 	ErrDuplicatedWidgetInstance = errors.New("duplicated widget instance")
 )
 
-type WidgetSystem struct {
+type Widgets struct {
 	widgets []*Widget
 }
 
-func NewWidgetSystem(w []*Widget) *WidgetSystem {
+func NewWidgets(w []*Widget) *Widgets {
 	if w == nil {
-		return &WidgetSystem{widgets: []*Widget{}}
+		return &Widgets{widgets: []*Widget{}}
 	}
 	w2 := make([]*Widget, 0, len(w))
 	for _, w1 := range w {
@@ -33,17 +33,17 @@ func NewWidgetSystem(w []*Widget) *WidgetSystem {
 			w2 = append(w2, &w3)
 		}
 	}
-	return &WidgetSystem{widgets: w2}
+	return &Widgets{widgets: w2}
 }
 
-func (w *WidgetSystem) Widgets() []*Widget {
+func (w *Widgets) Widgets() []*Widget {
 	if w == nil {
 		return nil
 	}
 	return append([]*Widget{}, w.widgets...)
 }
 
-func (w *WidgetSystem) Widget(wid WidgetID) *Widget {
+func (w *Widgets) Widget(wid WidgetID) *Widget {
 	if w == nil {
 		return nil
 	}
@@ -55,7 +55,7 @@ func (w *WidgetSystem) Widget(wid WidgetID) *Widget {
 	return nil
 }
 
-func (w *WidgetSystem) Has(wid WidgetID) bool {
+func (w *Widgets) Has(wid WidgetID) bool {
 	if w == nil {
 		return false
 	}
@@ -67,7 +67,7 @@ func (w *WidgetSystem) Has(wid WidgetID) bool {
 	return false
 }
 
-func (w *WidgetSystem) Add(sw *Widget) {
+func (w *Widgets) Add(sw *Widget) {
 	if w == nil || sw == nil || w.Has(sw.ID()) {
 		return
 	}
@@ -75,7 +75,7 @@ func (w *WidgetSystem) Add(sw *Widget) {
 	w.widgets = append(w.widgets, &sw2)
 }
 
-func (w *WidgetSystem) Remove(wid WidgetID) {
+func (w *Widgets) Remove(wid WidgetID) {
 	if w == nil {
 		return
 	}
@@ -87,7 +87,7 @@ func (w *WidgetSystem) Remove(wid WidgetID) {
 	}
 }
 
-func (w *WidgetSystem) RemoveAllByPlugin(p PluginID) (res []PropertyID) {
+func (w *Widgets) RemoveAllByPlugin(p PluginID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -101,7 +101,7 @@ func (w *WidgetSystem) RemoveAllByPlugin(p PluginID) (res []PropertyID) {
 	return res
 }
 
-func (w *WidgetSystem) RemoveAllByExtension(p PluginID, e PluginExtensionID) (res []PropertyID) {
+func (w *Widgets) RemoveAllByExtension(p PluginID, e PluginExtensionID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -115,7 +115,7 @@ func (w *WidgetSystem) RemoveAllByExtension(p PluginID, e PluginExtensionID) (re
 	return res
 }
 
-func (w *WidgetSystem) ReplacePlugin(oldp, newp PluginID) {
+func (w *Widgets) ReplacePlugin(oldp, newp PluginID) {
 	if w == nil || w.widgets == nil {
 		return
 	}
@@ -126,7 +126,7 @@ func (w *WidgetSystem) ReplacePlugin(oldp, newp PluginID) {
 	}
 }
 
-func (w *WidgetSystem) Properties() []PropertyID {
+func (w *Widgets) Properties() []PropertyID {
 	if w == nil {
 		return nil
 	}

@@ -37,16 +37,15 @@ func getShapesSequentially(prefix string, t *testing.T) (shapes []Shape) {
 }
 
 func TestSequentialReader(t *testing.T) {
-	t.Parallel()
-	testCases := testsData
+	tests := testData
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			shapes := getShapesSequentially(tc.name, tt)
-			assert.Equal(tt, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
-			tc.tester(tt, tc.points, shapes)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			shapes := getShapesSequentially(tc.name, t)
+			assert.Equal(t, tc.count, len(shapes), "Number of shapes for %s read was wrong. Wanted %d, got %d.", tc.name, tc.count, len(shapes))
+			tc.tester(t, tc.points, shapes)
 		})
 	}
 }

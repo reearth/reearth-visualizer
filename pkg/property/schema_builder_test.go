@@ -1,7 +1,6 @@
 package property
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -12,67 +11,70 @@ func TestSchemaBuilder_Build(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	sg2 := NewSchemaGroup().ID("daa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	testCases := []struct {
-		Name     string
-		Id       SchemaID
+
+	type args struct {
+		ID       SchemaID
 		Version  int
 		Groups   []*SchemaGroup
 		Linkable LinkableFields
-		Expected struct {
-			Id       SchemaID
-			Version  int
-			Groups   []*SchemaGroup
-			Linkable LinkableFields
-		}
-		Err error
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Expected *Schema
+		Err      error
 	}{
 		{
 			Name: "fail: invalid id",
 			Err:  ErrInvalidID,
 		},
 		{
-			Name:     "fail: invalid linkable field",
-			Id:       MustSchemaID("xx~1.0.0/aa"),
-			Linkable: LinkableFields{LatLng: NewPointer(nil, nil, FieldID("xx").Ref())},
-			Err:      ErrInvalidPropertyLinkableField,
+			Name: "fail: invalid linkable field",
+			Args: args{
+				ID:       MustSchemaID("xx~1.0.0/aa"),
+				Linkable: LinkableFields{LatLng: NewPointer(nil, nil, FieldID("xx").Ref())},
+			},
+			Err: ErrInvalidPropertyLinkableField,
 		},
 		{
-			Name:   "fail: duplicated field",
-			Id:     MustSchemaID("xx~1.0.0/aa"),
-			Groups: []*SchemaGroup{sg, sg2},
-			Err:    fmt.Errorf("%s: %s %s", ErrDuplicatedField, MustSchemaID("xx~1.0.0/aa"), []FieldID{"aa"}),
+			Name: "fail: duplicated field",
+			Args: args{
+				ID:     MustSchemaID("xx~1.0.0/aa"),
+				Groups: []*SchemaGroup{sg, sg2},
+			},
+			Err: fmt.Errorf("%s: %s %s", ErrDuplicatedField, MustSchemaID("xx~1.0.0/aa"), []FieldID{"aa"}),
 		},
 		{
-			Name:    "success",
-			Id:      MustSchemaID("xx~1.0.0/aa"),
-			Groups:  []*SchemaGroup{sg},
-			Version: 1,
-			Expected: struct {
-				Id       SchemaID
-				Version  int
-				Groups   []*SchemaGroup
-				Linkable LinkableFields
-			}{Id: MustSchemaID("xx~1.0.0/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
+			Name: "success",
+			Args: args{
+				ID:      MustSchemaID("xx~1.0.0/aa"),
+				Groups:  []*SchemaGroup{sg},
+				Version: 1,
+			},
+			Expected: &Schema{
+				id:      MustSchemaID("xx~1.0.0/aa"),
+				version: 1,
+				groups:  []*SchemaGroup{sg},
+			},
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewSchema().
-				ID(tc.Id).
-				Groups(tc.Groups).
-				Version(tc.Version).
-				LinkableFields(tc.Linkable).
+				ID(tt.Args.ID).
+				Groups(tt.Args.Groups).
+				Version(tt.Args.Version).
+				LinkableFields(tt.Args.Linkable).
 				Build()
-			if err == nil {
-				assert.Equal(tt, tc.Expected.Linkable, res.LinkableFields())
-				assert.Equal(tt, tc.Expected.Groups, res.Groups())
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.Version, res.Version())
+
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected, res)
 			} else {
-				assert.True(tt, errors.As(tc.Err, &err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}
@@ -82,78 +84,74 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aaa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
 	sg2 := NewSchemaGroup().ID("daa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	testCases := []struct {
-		Name     string
-		Fails    bool
-		Id       SchemaID
+
+	type args struct {
+		ID       SchemaID
 		Version  int
 		Groups   []*SchemaGroup
 		Linkable LinkableFields
-		Expected struct {
-			Id       SchemaID
-			Version  int
-			Groups   []*SchemaGroup
-			Linkable LinkableFields
-		}
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Expected *Schema
+		Err      string
 	}{
 		{
-			Name:  "fail: invalid id",
-			Fails: true,
+			Name: "fail: invalid id",
+			Err:  ErrInvalidID.Error(),
 		},
 		{
-			Name:     "fail: invalid linkable field",
-			Id:       MustSchemaID("xx~1.0.0/aa"),
-			Linkable: LinkableFields{LatLng: NewPointer(nil, nil, FieldID("xx").Ref())},
-			Fails:    true,
+			Name: "fail: invalid linkable field",
+			Args: args{
+				ID:       MustSchemaID("xx~1.0.0/aa"),
+				Linkable: LinkableFields{LatLng: NewPointer(nil, nil, FieldID("xx").Ref())},
+			},
+			Err: ErrInvalidPropertyLinkableField.Error(),
 		},
 		{
-			Name:   "fail: duplicated field",
-			Id:     MustSchemaID("xx~1.0.0/aa"),
-			Groups: []*SchemaGroup{sg, sg2},
-			Fails:  true,
+			Name: "fail: duplicated field",
+			Args: args{
+				ID:     MustSchemaID("xx~1.0.0/aa"),
+				Groups: []*SchemaGroup{sg, sg2},
+			},
+			Err: fmt.Sprintf("%s: %s %s", ErrDuplicatedField, MustSchemaID("xx~1.0.0/aa"), []FieldID{"aa"}),
 		},
 		{
-			Name:    "success",
-			Id:      MustSchemaID("xx~1.0.0/aa"),
-			Groups:  []*SchemaGroup{sg},
-			Version: 1,
-			Expected: struct {
-				Id       SchemaID
-				Version  int
-				Groups   []*SchemaGroup
-				Linkable LinkableFields
-			}{Id: MustSchemaID("xx~1.0.0/aa"), Version: 1, Groups: []*SchemaGroup{sg}},
+			Name: "success",
+			Args: args{
+				ID:      MustSchemaID("xx~1.0.0/aa"),
+				Groups:  []*SchemaGroup{sg},
+				Version: 1,
+			},
+			Expected: &Schema{
+				id:      MustSchemaID("xx~1.0.0/aa"),
+				version: 1,
+				groups:  []*SchemaGroup{sg},
+			},
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			var res *Schema
-			if tc.Fails {
-				defer func() {
-					if r := recover(); r != nil {
-						assert.Nil(tt, res)
-					}
-				}()
-				res = NewSchema().
-					ID(tc.Id).
-					Groups(tc.Groups).
-					Version(tc.Version).
-					LinkableFields(tc.Linkable).
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			build := func() *Schema {
+				t.Helper()
+				return NewSchema().
+					ID(tc.Args.ID).
+					Groups(tc.Args.Groups).
+					Version(tc.Args.Version).
+					LinkableFields(tc.Args.Linkable).
 					MustBuild()
+			}
+
+			if tc.Err != "" {
+				assert.PanicsWithError(t, tc.Err, func() { _ = build() })
 			} else {
-				res = NewSchema().
-					ID(tc.Id).
-					Groups(tc.Groups).
-					Version(tc.Version).
-					LinkableFields(tc.Linkable).
-					MustBuild()
-				assert.Equal(tt, tc.Expected.Linkable, res.LinkableFields())
-				assert.Equal(tt, tc.Expected.Groups, res.Groups())
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.Version, res.Version())
+				assert.Equal(t, tc.Expected, build())
 			}
 		})
 	}

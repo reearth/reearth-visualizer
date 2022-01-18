@@ -14,6 +14,7 @@ func TestNewTagItem(t *testing.T) {
 	type args struct {
 		t TagID
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -45,6 +46,7 @@ func TestTagItemFrom(t *testing.T) {
 	type args struct {
 		t Tag
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -88,6 +90,7 @@ func TestTagItemFrom(t *testing.T) {
 
 func TestTagItem_ID(t *testing.T) {
 	tag := NewTagID()
+
 	tests := []struct {
 		name   string
 		target *TagItem
@@ -116,6 +119,7 @@ func TestTagItem_ID(t *testing.T) {
 
 func TestTagItem_Clone(t *testing.T) {
 	tag := NewTagID()
+
 	tests := []struct {
 		name   string
 		target *TagItem
@@ -145,6 +149,7 @@ func TestTagItem_Clone(t *testing.T) {
 
 func TestTagItem_CloneItem(t *testing.T) {
 	tag := NewTagID()
+
 	tests := []struct {
 		name   string
 		target *TagItem
@@ -181,6 +186,7 @@ func TestNewTagGroup(t *testing.T) {
 		t        TagID
 		children []*TagItem
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -224,6 +230,7 @@ func TestTagGroupFrom(t *testing.T) {
 	type args struct {
 		t Tag
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -267,6 +274,7 @@ func TestTagGroupFrom(t *testing.T) {
 
 func TestTagGroup_ID(t *testing.T) {
 	tag := NewTagID()
+
 	tests := []struct {
 		name   string
 		target *TagGroup
@@ -335,6 +343,7 @@ func TestTagGroup_Find(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name   string
 		target *TagGroup
@@ -379,6 +388,7 @@ func TestTagGroup_Add(t *testing.T) {
 	type args struct {
 		ti *TagItem
 	}
+
 	tests := []struct {
 		name         string
 		target       *TagGroup
@@ -432,6 +442,7 @@ func TestTagGroup_Delete(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name         string
 		target       *TagGroup
@@ -542,6 +553,7 @@ func TestNewTagList(t *testing.T) {
 	type args struct {
 		tags []Tag
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -615,6 +627,7 @@ func TestTagList_Add(t *testing.T) {
 	type args struct {
 		ti Tag
 	}
+
 	tests := []struct {
 		name         string
 		target       *TagList
@@ -707,6 +720,7 @@ func TestTagList_Delete(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name     string
 		target   *TagList
@@ -770,6 +784,7 @@ func TestTagList_Find(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name      string
 		target    *TagList
@@ -853,6 +868,7 @@ func TestTagList_FindGroup(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name   string
 		target *TagList
@@ -906,6 +922,7 @@ func TestTagList_FindItem(t *testing.T) {
 	type args struct {
 		ti TagID
 	}
+
 	tests := []struct {
 		name   string
 		target *TagList

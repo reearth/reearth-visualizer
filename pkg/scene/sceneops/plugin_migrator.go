@@ -42,7 +42,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
 
-	if !sc.PluginSystem().Has(oldPluginID) {
+	if !sc.Plugins().Has(oldPluginID) {
 		return MigratePluginsResult{}, ErrPluginNotInstalled
 	}
 
@@ -100,19 +100,19 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// シーンのプラグイン
-	sc.PluginSystem().Upgrade(oldPluginID, newPluginID)
-	for _, sp := range sc.PluginSystem().Plugins() {
+	sc.Plugins().Upgrade(oldPluginID, newPluginID)
+	for _, sp := range sc.Plugins().Plugins() {
 		if sp.Plugin().Equal(newPluginID) && sp.Property() != nil {
 			propertyIDs = append(propertyIDs, *sp.Property())
 		}
 	}
 
 	// シーンのウィジェット
-	sc.WidgetSystem().ReplacePlugin(oldPluginID, newPluginID)
-	for _, w := range sc.WidgetSystem().Widgets() {
+	sc.Widgets().ReplacePlugin(oldPluginID, newPluginID)
+	for _, w := range sc.Widgets().Widgets() {
 		if w.Plugin().Equal(newPluginID) {
 			if newPlugin.Extension(w.Extension()) == nil {
-				sc.WidgetSystem().RemoveAllByExtension(oldPluginID, w.Extension())
+				sc.Widgets().RemoveAllByExtension(oldPluginID, w.Extension())
 			} else {
 				propertyIDs = append(propertyIDs, w.Property())
 			}

@@ -153,7 +153,7 @@ func (r *mutationResolver) UploadPlugin(ctx context.Context, input gqlmodel.Uplo
 	return &gqlmodel.UploadPluginPayload{
 		Plugin:      gqlmodel.ToPlugin(p),
 		Scene:       gqlmodel.ToScene(s),
-		ScenePlugin: gqlmodel.ToScenePlugin(s.PluginSystem().Plugin(p.ID())),
+		ScenePlugin: gqlmodel.ToScenePlugin(s.Plugins().Plugin(p.ID())),
 	}, nil
 }
 
@@ -192,7 +192,7 @@ func (r *mutationResolver) UpgradePlugin(ctx context.Context, input gqlmodel.Upg
 
 	return &gqlmodel.UpgradePluginPayload{
 		Scene:       gqlmodel.ToScene(s),
-		ScenePlugin: gqlmodel.ToScenePlugin(s.PluginSystem().Plugin(input.ToPluginID)),
+		ScenePlugin: gqlmodel.ToScenePlugin(s.Plugins().Plugin(input.ToPluginID)),
 	}, nil
 }
 

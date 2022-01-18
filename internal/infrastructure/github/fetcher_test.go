@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,28 +17,34 @@ func TestFetchURL(t *testing.T) {
 	server2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusBadRequest)
 	}))
-	testCases := []struct {
+
+	defer func() {
+		server.Close()
+		server2.Close()
+	}()
+
+	tests := []struct {
 		Name, URL   string
 		Ctx         context.Context
-		ExpectedErr error
+		ExpectedErr string
 	}{
 		{
 			Name:        "Fail: nil context",
 			Ctx:         nil,
 			URL:         server.URL,
-			ExpectedErr: errors.New("nil Context"),
+			ExpectedErr: "net/http: nil Context",
 		},
 		{
-			Name:        "Fail: nil unsupported protocol scheme ",
+			Name:        "Fail: nil unsupported protocol scheme",
 			Ctx:         context.Background(),
 			URL:         "",
-			ExpectedErr: errors.New("unsupported protocol scheme"),
+			ExpectedErr: "Get \"\": unsupported protocol scheme \"\"",
 		},
 		{
 			Name:        "Fail: bad request ",
 			Ctx:         context.Background(),
 			URL:         server2.URL,
-			ExpectedErr: errors.New("StatusCode=400"),
+			ExpectedErr: "StatusCode=400",
 		},
 		{
 			Name: "Success",
@@ -47,18 +52,16 @@ func TestFetchURL(t *testing.T) {
 			URL:  server.URL,
 		},
 	}
-	defer func() {
-		server.Close()
-		server2.Close()
-	}()
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			body, err := fetchURL(tc.Ctx, tc.URL)
-			if err != nil {
-				assert.True(tt, errors.As(tc.ExpectedErr, &err))
+			if tc.ExpectedErr != "" {
+				assert.EqualError(t, err, tc.ExpectedErr)
 			} else {
-				assert.NotNil(tt, body)
+				_ = body.Close()
+				assert.NotNil(t, body)
 			}
 		})
 	}

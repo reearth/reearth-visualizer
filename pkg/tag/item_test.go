@@ -19,7 +19,8 @@ func TestItemBuilder_Build(t *testing.T) {
 	dfid := NewDatasetFieldID()
 	did := NewDatasetID()
 	dsid := NewDatasetSchemaID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name, Label           string
 		Id                    ID
 		Scene                 SceneID
@@ -89,10 +90,11 @@ func TestItemBuilder_Build(t *testing.T) {
 			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewItem().
 				ID(tc.Id).
 				Scene(tc.Scene).
@@ -102,14 +104,14 @@ func TestItemBuilder_Build(t *testing.T) {
 				LinkedDatasetFieldID(tc.LinkedDatasetFieldID).
 				Build()
 			if tc.Expected.Error == nil {
-				assert.Equal(tt, tc.Expected.Item.ID(), res.ID())
-				assert.Equal(tt, tc.Expected.Item.Scene(), res.Scene())
-				assert.Equal(tt, tc.Expected.Item.Label(), res.Label())
-				assert.Equal(tt, tc.Expected.Item.LinkedDatasetFieldID(), res.LinkedDatasetFieldID())
-				assert.Equal(tt, tc.Expected.Item.LinkedDatasetSchemaID(), res.LinkedDatasetSchemaID())
-				assert.Equal(tt, tc.Expected.Item.LinkedDatasetID(), res.LinkedDatasetID())
+				assert.Equal(t, tc.Expected.Item.ID(), res.ID())
+				assert.Equal(t, tc.Expected.Item.Scene(), res.Scene())
+				assert.Equal(t, tc.Expected.Item.Label(), res.Label())
+				assert.Equal(t, tc.Expected.Item.LinkedDatasetFieldID(), res.LinkedDatasetFieldID())
+				assert.Equal(t, tc.Expected.Item.LinkedDatasetSchemaID(), res.LinkedDatasetSchemaID())
+				assert.Equal(t, tc.Expected.Item.LinkedDatasetID(), res.LinkedDatasetID())
 			} else {
-				assert.Equal(tt, tc.Expected.Error, err)
+				assert.Equal(t, tc.Expected.Error, err)
 			}
 		})
 	}

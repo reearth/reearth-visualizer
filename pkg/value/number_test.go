@@ -78,7 +78,10 @@ func Test_propertyNumber_I2V(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &propertyNumber{}
 			for i, v := range tt.args {
 				got1, got2 := p.I2V(v)
@@ -91,7 +94,6 @@ func Test_propertyNumber_I2V(t *testing.T) {
 				} else {
 					assert.Equal(t, tt.want1, got1, "test %d", i)
 				}
-
 				assert.Equal(t, tt.want2, got2, "test %d", i)
 			}
 		})

@@ -11,45 +11,38 @@ import (
 func TestErrInternal(t *testing.T) {
 	werr := errors.New("wrapped")
 	err := ErrInternalBy(werr)
-	var err2 *Error
-	assert.Equal(t, "internal", err.Error())
-	assert.True(t, errors.As(err, &err2))
-	assert.Same(t, errInternal, err2.Label)
-	assert.True(t, err2.Hidden)
+	assert.EqualError(t, err, "internal")
+	assert.IsType(t, err, &Error{})
 	assert.Same(t, werr, errors.Unwrap(err))
 }
 
 func TestError(t *testing.T) {
 	werr := errors.New("wrapped")
-	label := errors.New("label")
-	var err error = &Error{Label: label, Err: werr}
+	err := &Error{Label: errors.New("label"), Err: werr}
 
-	var err2 *Error
-	assert.Equal(t, "label: wrapped", err.Error())
-	assert.True(t, errors.As(err, &err2))
+	assert.EqualError(t, err, "label: wrapped")
 	assert.Same(t, werr, errors.Unwrap(err))
 
 	label2 := errors.New("foo")
 	err3 := &Error{Label: label2, Err: err}
-	assert.Equal(t, "foo.label: wrapped", err3.Error())
+	assert.EqualError(t, err3, "foo.label: wrapped")
 
-	label3 := errors.New("bar")
-	err4 := &Error{Label: label3, Err: err3}
-	assert.Equal(t, "bar.foo.label: wrapped", err4.Error())
+	err4 := &Error{Label: errors.New("bar"), Err: err3}
+	assert.EqualError(t, err4, "bar.foo.label: wrapped")
 
-	err5 := Error{
-		Label:  label,
+	err5 := &Error{
+		Label:  errors.New("label"),
 		Err:    werr,
 		Hidden: true,
 	}
-	assert.Equal(t, "label", err5.Error())
+	assert.EqualError(t, err5, "label")
 
 	var nilerr *Error
-	assert.Equal(t, "", nilerr.Error())
+	assert.EqualError(t, nilerr, "")
 	assert.Nil(t, nilerr.Unwrap())
 
 	err6 := &Error{Label: errors.New("d"), Err: &Error{Label: errors.New("e"), Err: &Error{Label: errors.New("f"), Err: errors.New("g")}}, Separate: true}
-	assert.Equal(t, "d: e.f: g", err6.Error())
+	assert.EqualError(t, err6, "d: e.f: g")
 }
 
 func TestUnwrapErrInternal(t *testing.T) {
@@ -69,7 +62,7 @@ func TestFrom(t *testing.T) {
 func TestFromSep(t *testing.T) {
 	werr := &Error{Label: errors.New("wrapped"), Err: errors.New("wrapped2")}
 	err := FromSep("label", werr)
-	assert.Equal(t, "label", err.Label.Error())
+	assert.EqualError(t, err.Label, "label")
 	assert.Same(t, werr, err.Err)
 	assert.False(t, err.Hidden)
 	assert.True(t, err.Separate)

@@ -41,7 +41,7 @@ var expected = &TranslationRoot{
 var mergeManifest string
 
 func TestParseTranslation(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *TranslationRoot
@@ -61,23 +61,23 @@ func TestParseTranslation(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			r := strings.NewReader(tc.input)
 			res, err := ParseTranslation(r)
 			if tc.err != nil {
-				assert.ErrorIs(tt, err, tc.err)
+				assert.ErrorIs(t, err, tc.err)
 				return
 			}
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestParseTranslationFromBytes(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *TranslationRoot
@@ -97,61 +97,61 @@ func TestParseTranslationFromBytes(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			res, err := ParseTranslationFromBytes([]byte(tc.input))
 			if tc.err != nil {
-				assert.ErrorIs(tt, err, tc.err)
+				assert.ErrorIs(t, err, tc.err)
 				return
 			}
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestMustParseTransSystemFromBytes(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *TranslationRoot
-		err      error
+		fails    bool
 	}{
 		{
 			name:     "success create translation",
 			input:    translatedManifest,
 			expected: expected,
-			err:      nil,
+			fails:    false,
 		},
 		{
 			name:     "fail not valid YAML",
 			input:    "--",
 			expected: nil,
-			err:      ErrFailedToParseManifestTranslation,
+			fails:    true,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-			if tc.err != nil {
-				assert.PanicsWithError(tt, tc.err.Error(), func() {
+			if tc.fails {
+				assert.Panics(t, func() {
 					_ = MustParseTranslationFromBytes([]byte(tc.input))
 				})
 				return
 			}
 
 			res := MustParseTranslationFromBytes([]byte(tc.input))
-			assert.Equal(tt, tc.expected, res)
+			assert.Equal(t, tc.expected, res)
 		})
 	}
 }
 
 func TestMergeManifestTranslation(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name         string
 		Translations map[string]*TranslationRoot
 		Manifest     *Manifest
@@ -180,21 +180,21 @@ func TestMergeManifestTranslation(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := MergeManifestTranslation(tc.Manifest, tc.Translations)
 			if tc.Expected == nil {
-				assert.Nil(tt, res)
+				assert.Nil(t, res)
 				return
 			}
-			assert.Equal(tt, tc.Expected.PluginName, res.Plugin.Name())
-			assert.Equal(tt, tc.Expected.PluginDesc, res.Plugin.Description())
-			assert.Equal(tt, tc.Expected.ExtName, res.Plugin.Extension(plugin.ExtensionID("test_ext")).Name())
-			assert.Equal(tt, tc.Expected.PsTitle, res.ExtensionSchema[0].Group("test_ps").Title())
-			assert.Equal(tt, tc.Expected.FieldTitle, res.ExtensionSchema[0].Group("test_ps").Field("test_field").Title())
-			assert.Equal(tt, tc.Expected.FieldDesc, res.ExtensionSchema[0].Group("test_ps").Field("test_field").Description())
+			assert.Equal(t, tc.Expected.PluginName, res.Plugin.Name())
+			assert.Equal(t, tc.Expected.PluginDesc, res.Plugin.Description())
+			assert.Equal(t, tc.Expected.ExtName, res.Plugin.Extension(plugin.ExtensionID("test_ext")).Name())
+			assert.Equal(t, tc.Expected.PsTitle, res.ExtensionSchema[0].Group("test_ps").Title())
+			assert.Equal(t, tc.Expected.FieldTitle, res.ExtensionSchema[0].Group("test_ps").Field("test_field").Title())
+			assert.Equal(t, tc.Expected.FieldDesc, res.ExtensionSchema[0].Group("test_ps").Field("test_field").Description())
 		})
 	}
 }

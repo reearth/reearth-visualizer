@@ -111,15 +111,15 @@ func TestNew(t *testing.T) {
 
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			ur, _ := url.Parse(tc.Input)
 			u, err := New(ur)
 			if tc.Err != nil {
-				assert.ErrorIs(tt, err, tc.Err)
+				assert.ErrorIs(t, err, tc.Err)
 			} else {
-				assert.NoError(tt, err)
-				assert.Equal(tt, tc.Expected, u)
+				assert.NoError(t, err)
+				assert.Equal(t, tc.Expected, u)
 			}
 		})
 	}
@@ -128,15 +128,16 @@ func TestNew(t *testing.T) {
 func TestMust(t *testing.T) {
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
 			ur, _ := url.Parse(tc.Input)
 			if tc.Err != nil {
-				assert.PanicsWithError(tt, tc.Err.Error(), func() {
+				assert.PanicsWithError(t, tc.Err.Error(), func() {
 					_ = Must(ur)
 				})
 			} else {
-				assert.Equal(tt, tc.Expected, Must(ur))
+				assert.Equal(t, tc.Expected, Must(ur))
 			}
 		})
 	}
@@ -145,14 +146,14 @@ func TestMust(t *testing.T) {
 func TestParse(t *testing.T) {
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			u, err := Parse(tc.Input)
 			if tc.Err != nil {
-				assert.ErrorIs(tt, err, tc.Err)
+				assert.ErrorIs(t, err, tc.Err)
 			} else {
-				assert.NoError(tt, err)
-				assert.Equal(tt, tc.Expected, u)
+				assert.NoError(t, err)
+				assert.Equal(t, tc.Expected, u)
 			}
 		})
 	}
@@ -161,14 +162,14 @@ func TestParse(t *testing.T) {
 func TestMustParse(t *testing.T) {
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			if tc.Err != nil {
-				assert.PanicsWithError(tt, tc.Err.Error(), func() {
+				assert.PanicsWithError(t, tc.Err.Error(), func() {
 					_ = MustParse(tc.Input)
 				})
 			} else {
-				assert.Equal(tt, tc.Expected, MustParse(tc.Input))
+				assert.Equal(t, tc.Expected, MustParse(tc.Input))
 			}
 		})
 	}
@@ -293,11 +294,11 @@ func TestURL_ArchiveURL(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.Input.ArchiveURL().String())
+	for _, tt := range cases {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.Expected, tt.Input.ArchiveURL().String())
 		})
 	}
 }

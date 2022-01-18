@@ -13,6 +13,7 @@ func TestFromPropertyValueAndType(t *testing.T) {
 		v interface{}
 		t ValueType
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -37,7 +38,9 @@ func TestFromPropertyValueAndType(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, FromPropertyValueAndType(tt.args.v, tt.args.t))
 		})
 	}

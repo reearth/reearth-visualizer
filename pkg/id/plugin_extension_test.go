@@ -7,10 +7,10 @@ import (
 )
 
 func TestPluginExtensionIDFromRef(t *testing.T) {
-	t.Parallel()
 	input1 := "testStringId"
 	expected1 := PluginExtensionID(input1)
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		input    *string
 		expected *PluginExtensionID
@@ -26,12 +26,13 @@ func TestPluginExtensionIDFromRef(t *testing.T) {
 			expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			result := PluginExtensionIDFromRef(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			assert.Equal(t, tc.expected, result)
 		})
 	}
 }

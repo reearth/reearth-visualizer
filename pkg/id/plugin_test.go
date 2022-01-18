@@ -2,7 +2,6 @@ package id
 
 import (
 	"encoding"
-	"errors"
 	"strings"
 	"testing"
 
@@ -14,8 +13,7 @@ var _ encoding.TextMarshaler = (*PluginID)(nil)
 var _ encoding.TextUnmarshaler = (*PluginID)(nil)
 
 func TestPluginIDValidator(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected bool
@@ -66,18 +64,18 @@ func TestPluginIDValidator(t *testing.T) {
 			expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, validatePluginName(tc.input))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, validatePluginName(tc.input))
 		})
 	}
 }
 
 func TestNewPluginID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name          string
 		pluginName    string
 		version       string
@@ -141,23 +139,23 @@ func TestNewPluginID(t *testing.T) {
 			expectedError: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := NewPluginID(tc.pluginName, tc.version, tc.scene)
 			if tc.expectedError {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			} else {
-				assert.Equal(tt, tc.expected, result)
+				assert.Equal(t, tc.expected, result)
 			}
 		})
 	}
 }
 
 func TestPluginIDFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name          string
 		input         string
 		expected      PluginID
@@ -214,23 +212,23 @@ func TestPluginIDFrom(t *testing.T) {
 			expectedError: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := PluginIDFrom(tc.input)
 			if tc.expectedError {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			} else {
-				assert.Equal(tt, tc.expected, result)
+				assert.Equal(t, tc.expected, result)
 			}
 		})
 	}
 }
 
 func TestMustPluginID(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name          string
 		input         string
 		expected      PluginID
@@ -266,25 +264,25 @@ func TestMustPluginID(t *testing.T) {
 			expectedError: true,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			if tc.expectedError {
-				assert.Panics(tt, func() {
+				assert.Panics(t, func() {
 					_ = MustPluginID(tc.input)
 				})
 			} else {
 				result := MustPluginID(tc.input)
-				assert.Equal(tt, tc.expected, result)
+				assert.Equal(t, tc.expected, result)
 			}
 		})
 	}
 }
 
 func TestPluginIDFromRef(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *PluginID
@@ -315,16 +313,17 @@ func TestPluginIDFromRef(t *testing.T) {
 			input: "xxxx~ssss~1.0.0",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			if tc.expected == nil {
 				result := PluginIDFromRef(&tc.input)
-				assert.Nil(tt, result)
+				assert.Nil(t, result)
 			} else {
 				result := PluginIDFromRef(&tc.input)
-				assert.Equal(tt, *tc.expected, *result)
+				assert.Equal(t, *tc.expected, *result)
 			}
 		})
 	}
@@ -375,8 +374,7 @@ func TestPluginID_System(t *testing.T) {
 }
 
 func TestPluginID_Validate(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    PluginID
 		expected bool
@@ -400,17 +398,17 @@ func TestPluginID_Validate(t *testing.T) {
 			expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			assert.Equal(tt, tc.expected, tc.input.Validate())
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.input.Validate())
 		})
 	}
 }
 
 func TestPluginID_String(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    PluginID
 		expected string
@@ -456,10 +454,11 @@ func TestPluginID_String(t *testing.T) {
 			expected: "reearth",
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			assert.Equal(tt, tc.expected, tc.input.String())
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.input.String())
 		})
 	}
 }
@@ -495,8 +494,7 @@ func TestPluginID_StringRef(t *testing.T) {
 }
 
 func TestPluginID_Equal(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input1   PluginID
 		input2   PluginID
@@ -545,12 +543,13 @@ func TestPluginID_Equal(t *testing.T) {
 			expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, tc.input1.Equal(tc.input2))
-			assert.Equal(tt, tc.expected, tc.input2.Equal(tc.input1))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input1.Equal(tc.input2))
+			assert.Equal(t, tc.expected, tc.input2.Equal(tc.input1))
 		})
 	}
 
@@ -578,8 +577,7 @@ func TestPluginID_UnmarshalText(t *testing.T) {
 }
 
 func TestPluginIDsToStrings(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []PluginID
 		expected []string
@@ -609,47 +607,31 @@ func TestPluginIDsToStrings(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expected, PluginIDsToStrings(tc.input))
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, PluginIDsToStrings(tc.input))
 		})
 	}
-
 }
 
 func TestPluginIDsFrom(t *testing.T) {
-	t.Parallel()
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    []string
-		expected struct {
-			res []PluginID
-			err error
-		}
+		expected []PluginID
+		err      error
 	}{
 		{
-			name:  "Empty slice",
-			input: make([]string, 0),
-			expected: struct {
-				res []PluginID
-				err error
-			}{
-				res: make([]PluginID, 0),
-				err: nil,
-			},
+			name:     "Empty slice",
+			input:    make([]string, 0),
+			expected: []PluginID{},
 		},
 		{
-			name:  "1 element",
-			input: []string{"Test~1.0.0"},
-			expected: struct {
-				res []PluginID
-				err error
-			}{
-				res: []PluginID{MustPluginID("Test~1.0.0")},
-				err: nil,
-			},
+			name:     "1 element",
+			input:    []string{"Test~1.0.0"},
+			expected: []PluginID{MustPluginID("Test~1.0.0")},
 		},
 		{
 			name: "multiple elements",
@@ -658,47 +640,36 @@ func TestPluginIDsFrom(t *testing.T) {
 				"Test~1.0.1",
 				"Test~1.0.2",
 			},
-			expected: struct {
-				res []PluginID
-				err error
-			}{
-				res: []PluginID{
-					MustPluginID("Test~1.0.0"),
-					MustPluginID("Test~1.0.1"),
-					MustPluginID("Test~1.0.2"),
-				},
-				err: nil,
+			expected: []PluginID{
+				MustPluginID("Test~1.0.0"),
+				MustPluginID("Test~1.0.1"),
+				MustPluginID("Test~1.0.2"),
 			},
 		},
 		{
-			name: "multiple elements",
+			name: "invalid element",
 			input: []string{
 				"Test~1.0.0",
 				"Test~1.0.1",
-				"Test~1.0.2",
+				"Test",
 			},
-			expected: struct {
-				res []PluginID
-				err error
-			}{
-				res: nil,
-				err: ErrInvalidID,
-			},
+			expected: nil,
+			err:      ErrInvalidID,
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-			if tc.expected.err != nil {
-				_, err := PluginIDsFrom(tc.input)
-				assert.True(tt, errors.As(ErrInvalidID, &err))
+			res, err := PluginIDsFrom(tt.input)
+			if tt.err != nil {
+				assert.Nil(t, res)
+				assert.Equal(t, tt.err, err)
 			} else {
-				res, err := PluginIDsFrom(tc.input)
-				assert.Equal(tt, tc.expected.res, res)
-				assert.Nil(tt, err)
+				assert.Equal(t, tt.expected, res)
+				assert.Nil(t, err)
 			}
 		})
 	}

@@ -16,7 +16,8 @@ func TestScene_FindProperty(t *testing.T) {
 		property.New().NewID().Scene(sid).Schema(scid).MustBuild(),
 		property.New().ID(p1).Scene(sid).Schema(scid).MustBuild(),
 	}
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		PL       []*property.Property
 		Input    property.ID
@@ -35,12 +36,13 @@ func TestScene_FindProperty(t *testing.T) {
 			Expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := findProperty(tc.PL, tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -55,7 +57,7 @@ func TestScene_ToString(t *testing.T) {
 	wids := []scene.WidgetID{wid, wid2, wid3}
 	widsString := []string{widS, wid2S, wid3S}
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input    []scene.WidgetID
 		Expected []string
@@ -71,12 +73,13 @@ func TestScene_ToString(t *testing.T) {
 			Expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := toString(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -90,7 +93,7 @@ func TestBuildWidgetAlignSystem(t *testing.T) {
 		Area:    scene.WidgetAreaTop,
 	}).Add(wid, -1)
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input    *scene.WidgetAlignSystem
 		Expected *widgetAlignSystemJSON
@@ -115,12 +118,13 @@ func TestBuildWidgetAlignSystem(t *testing.T) {
 			Expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := buildWidgetAlignSystem(tc.Input)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

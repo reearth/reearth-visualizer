@@ -1,7 +1,6 @@
 package scene
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -32,12 +31,12 @@ func TestBuilder_Property(t *testing.T) {
 	assert.Equal(t, pid, b.Property())
 }
 
-func TestBuilder_PluginSystem(t *testing.T) {
-	ps := NewPluginSystem([]*Plugin{
+func TestBuilder_Plugins(t *testing.T) {
+	ps := NewPlugins([]*Plugin{
 		NewPlugin(OfficialPluginID, NewPropertyID().Ref()),
 	})
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).PluginSystem(ps).MustBuild()
-	assert.Equal(t, ps, b.PluginSystem())
+	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Plugins(ps).MustBuild()
+	assert.Equal(t, ps, b.Plugins())
 }
 
 func TestBuilder_Project(t *testing.T) {
@@ -46,12 +45,12 @@ func TestBuilder_Project(t *testing.T) {
 	assert.Equal(t, pid, b.Project())
 }
 
-func TestBuilder_WidgetSystem(t *testing.T) {
-	ws := NewWidgetSystem([]*Widget{
+func TestBuilder_Widgets(t *testing.T) {
+	ws := NewWidgets([]*Widget{
 		MustNewWidget(NewWidgetID(), OfficialPluginID, "xxx", NewPropertyID(), true, false),
 	})
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).WidgetSystem(ws).MustBuild()
-	assert.Equal(t, ws, b.WidgetSystem())
+	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Widgets(ws).MustBuild()
+	assert.Equal(t, ws, b.Widgets())
 }
 func TestBuilder_WidgetAlignSystem(t *testing.T) {
 	was := NewWidgetAlignSystem()
@@ -65,137 +64,124 @@ func TestBuilder_Build(t *testing.T) {
 	pid := NewProjectID()
 	ppid := NewPropertyID()
 	lid := NewLayerID()
-	ws := NewWidgetSystem([]*Widget{
+	ws := NewWidgets([]*Widget{
 		MustNewWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
 	})
 	was := NewWidgetAlignSystem()
-	ps := NewPluginSystem([]*Plugin{
+	ps := NewPlugins([]*Plugin{
 		NewPlugin(OfficialPluginID, ppid.Ref()),
 	})
-	testCases := []struct {
-		Name              string
-		Id                ID
+
+	type args struct {
+		ID                ID
 		Project           ProjectID
 		Team              TeamID
 		RootLayer         LayerID
-		WidgetSystem      *WidgetSystem
+		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
-		PluginSystem      *PluginSystem
+		Plugins           *Plugins
 		UpdatedAt         time.Time
 		Property          PropertyID
-		Expected          struct {
-			Id                ID
-			Project           ProjectID
-			Team              TeamID
-			RootLayer         LayerID
-			WidgetSystem      *WidgetSystem
-			WidgetAlignSystem *WidgetAlignSystem
-			PluginSystem      *PluginSystem
-			UpdatedAt         time.Time
-			Property          PropertyID
-		}
-		err error
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Expected *Scene
+		Err      error
 	}{
 		{
-			Name:              "fail nil scene id",
-			Id:                ID{},
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "fail nil team id",
-			Id:                sid,
-			Project:           pid,
-			Team:              TeamID{},
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "fail nil root layer id",
-			Id:                sid,
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         LayerID{},
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "success build new scene",
-			Id:                sid,
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			Expected: struct {
-				Id                ID
-				Project           ProjectID
-				Team              TeamID
-				RootLayer         LayerID
-				WidgetSystem      *WidgetSystem
-				WidgetAlignSystem *WidgetAlignSystem
-				PluginSystem      *PluginSystem
-				UpdatedAt         time.Time
-				Property          PropertyID
-			}{
-				Id:                sid,
+			Name: "fail nil scene id",
+			Args: args{
+				ID:                ID{},
 				Project:           pid,
 				Team:              tid,
 				RootLayer:         lid,
-				WidgetSystem:      ws,
+				Widgets:           ws,
 				WidgetAlignSystem: was,
-				PluginSystem:      ps,
+				Plugins:           ps,
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			err: nil,
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil team id",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              TeamID{},
+				RootLayer:         lid,
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil root layer id",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              tid,
+				RootLayer:         LayerID{},
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "success build new scene",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              tid,
+				RootLayer:         lid,
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Expected: &Scene{
+				id:                sid,
+				project:           pid,
+				team:              tid,
+				rootLayer:         lid,
+				widgets:           ws,
+				widgetAlignSystem: was,
+				plugins:           ps,
+				updatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				property:          ppid,
+			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := New().
-				ID(tc.Id).
-				WidgetSystem(tc.WidgetSystem).
-				WidgetAlignSystem(tc.WidgetAlignSystem).
-				Project(tc.Project).
-				PluginSystem(tc.PluginSystem).
-				Property(tc.Property).
-				RootLayer(tc.RootLayer).
-				Team(tc.Team).
-				UpdatedAt(tc.UpdatedAt).
+				ID(tt.Args.ID).
+				Widgets(tt.Args.Widgets).
+				WidgetAlignSystem(tt.Args.WidgetAlignSystem).
+				Project(tt.Args.Project).
+				Plugins(tt.Args.Plugins).
+				Property(tt.Args.Property).
+				RootLayer(tt.Args.RootLayer).
+				Team(tt.Args.Team).
+				UpdatedAt(tt.Args.UpdatedAt).
 				Build()
-			if err == nil {
-				assert.Equal(tt, tc.Expected.Id, res.ID())
-				assert.Equal(tt, tc.Expected.UpdatedAt, res.UpdatedAt())
-				assert.Equal(tt, tc.Expected.Team, res.Team())
-				assert.Equal(tt, tc.Expected.RootLayer, res.RootLayer())
-				assert.Equal(tt, tc.Expected.Property, res.Property())
-				assert.Equal(tt, tc.Expected.PluginSystem, res.PluginSystem())
-				assert.Equal(tt, tc.Expected.WidgetSystem, res.WidgetSystem())
-				assert.Equal(tt, tc.Expected.Project, res.Project())
+
+			if tt.Err == nil {
+				assert.Equal(t, tt.Expected, res)
 			} else {
-				assert.True(tt, errors.As(tc.err, &err))
+				assert.Equal(t, tt.Err, err)
 			}
 		})
 	}
@@ -207,141 +193,129 @@ func TestBuilder_MustBuild(t *testing.T) {
 	pid := NewProjectID()
 	ppid := NewPropertyID()
 	lid := NewLayerID()
-	ws := NewWidgetSystem([]*Widget{
+	ws := NewWidgets([]*Widget{
 		MustNewWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
 	})
 	was := NewWidgetAlignSystem()
-	ps := NewPluginSystem([]*Plugin{
+	ps := NewPlugins([]*Plugin{
 		NewPlugin(OfficialPluginID, ppid.Ref()),
 	})
-	testCases := []struct {
-		Name              string
-		Id                ID
+
+	type args struct {
+		ID                ID
 		Project           ProjectID
 		Team              TeamID
 		RootLayer         LayerID
-		WidgetSystem      *WidgetSystem
+		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
-		PluginSystem      *PluginSystem
+		Plugins           *Plugins
 		UpdatedAt         time.Time
 		Property          PropertyID
-		Expected          struct {
-			Id                ID
-			Project           ProjectID
-			Team              TeamID
-			RootLayer         LayerID
-			WidgetSystem      *WidgetSystem
-			WidgetAlignSystem *WidgetAlignSystem
-			PluginSystem      *PluginSystem
-			UpdatedAt         time.Time
-			Property          PropertyID
-		}
-		err error
+	}
+
+	tests := []struct {
+		Name     string
+		Args     args
+		Expected *Scene
+		Err      error
 	}{
 		{
-			Name:              "fail nil scene id",
-			Id:                ID{},
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "fail nil team id",
-			Id:                sid,
-			Project:           pid,
-			Team:              TeamID{},
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "fail nil root layer id",
-			Id:                sid,
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         LayerID{},
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			err:               ErrInvalidID,
-		},
-		{
-			Name:              "success build new scene",
-			Id:                sid,
-			Project:           pid,
-			Team:              tid,
-			RootLayer:         lid,
-			WidgetSystem:      ws,
-			WidgetAlignSystem: was,
-			PluginSystem:      ps,
-			UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-			Property:          ppid,
-			Expected: struct {
-				Id                ID
-				Project           ProjectID
-				Team              TeamID
-				RootLayer         LayerID
-				WidgetSystem      *WidgetSystem
-				WidgetAlignSystem *WidgetAlignSystem
-				PluginSystem      *PluginSystem
-				UpdatedAt         time.Time
-				Property          PropertyID
-			}{
-				Id:                sid,
+			Name: "fail nil scene id",
+			Args: args{
+				ID:                ID{},
 				Project:           pid,
 				Team:              tid,
 				RootLayer:         lid,
-				WidgetSystem:      ws,
+				Widgets:           ws,
 				WidgetAlignSystem: was,
-				PluginSystem:      ps,
+				Plugins:           ps,
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			err: nil,
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil team id",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              TeamID{},
+				RootLayer:         lid,
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil root layer id",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              tid,
+				RootLayer:         LayerID{},
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "success build new scene",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Team:              tid,
+				RootLayer:         lid,
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Expected: &Scene{
+				id:                sid,
+				project:           pid,
+				team:              tid,
+				rootLayer:         lid,
+				widgets:           ws,
+				widgetAlignSystem: was,
+				plugins:           ps,
+				updatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				property:          ppid,
+			},
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			var res *Scene
-			defer func() {
-				if r := recover(); r == nil {
-					assert.Equal(tt, tc.Expected.Id, res.ID())
-					assert.Equal(tt, tc.Expected.UpdatedAt, res.UpdatedAt())
-					assert.Equal(tt, tc.Expected.Team, res.Team())
-					assert.Equal(tt, tc.Expected.RootLayer, res.RootLayer())
-					assert.Equal(tt, tc.Expected.Property, res.Property())
-					assert.Equal(tt, tc.Expected.PluginSystem, res.PluginSystem())
-					assert.Equal(tt, tc.Expected.WidgetSystem, res.WidgetSystem())
-					assert.Equal(tt, tc.Expected.WidgetAlignSystem, res.WidgetAlignSystem())
-					assert.Equal(tt, tc.Expected.Project, res.Project())
-				}
-			}()
 
-			res = New().
-				ID(tc.Id).
-				WidgetSystem(tc.WidgetSystem).
-				WidgetAlignSystem(tc.WidgetAlignSystem).
-				Project(tc.Project).
-				PluginSystem(tc.PluginSystem).
-				Property(tc.Property).
-				RootLayer(tc.RootLayer).
-				Team(tc.Team).
-				UpdatedAt(tc.UpdatedAt).
-				MustBuild()
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+
+			build := func() *Scene {
+				t.Helper()
+				return New().
+					ID(tt.Args.ID).
+					Widgets(tt.Args.Widgets).
+					WidgetAlignSystem(tt.Args.WidgetAlignSystem).
+					Project(tt.Args.Project).
+					Plugins(tt.Args.Plugins).
+					Property(tt.Args.Property).
+					RootLayer(tt.Args.RootLayer).
+					Team(tt.Args.Team).
+					UpdatedAt(tt.Args.UpdatedAt).
+					MustBuild()
+			}
+
+			if tt.Err != nil {
+				assert.PanicsWithValue(t, tt.Err, func() { _ = build() })
+			} else {
+				assert.Equal(t, tt.Expected, build())
+			}
 		})
 	}
 }

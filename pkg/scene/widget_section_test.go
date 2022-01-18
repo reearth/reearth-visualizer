@@ -29,7 +29,7 @@ func TestWidgetSection_Find(t *testing.T) {
 	wid6 := NewWidgetID()
 	wid7 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name      string
 		Input     WidgetID
 		Expected1 int
@@ -69,15 +69,15 @@ func TestWidgetSection_Find(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				index, area := (*WidgetSection)(nil).Find(tc.Input)
-				assert.Equal(tt, tc.Expected1, index)
-				assert.Equal(tt, tc.Expected2, area)
+				assert.Equal(t, tc.Expected1, index)
+				assert.Equal(t, tc.Expected2, area)
 				return
 			}
 
@@ -87,8 +87,8 @@ func TestWidgetSection_Find(t *testing.T) {
 			ws.Area(WidgetAreaBottom).AddAll([]WidgetID{wid6, wid7})
 
 			index, area := ws.Find(tc.Input)
-			assert.Equal(tt, tc.Expected1, index)
-			assert.Equal(tt, tc.Expected2, area)
+			assert.Equal(t, tc.Expected1, index)
+			assert.Equal(t, tc.Expected2, area)
 		})
 	}
 }
@@ -96,7 +96,7 @@ func TestWidgetSection_Find(t *testing.T) {
 func TestWidgetSection_Remove(t *testing.T) {
 	wid := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Area     WidgetAreaType
 		Input    WidgetID
@@ -147,10 +147,10 @@ func TestWidgetSection_Remove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetSection)(nil).Remove(tc.Input)
@@ -160,7 +160,7 @@ func TestWidgetSection_Remove(t *testing.T) {
 			ws := NewWidgetSection()
 			ws.Area(tc.Area).Add(wid, -1)
 			ws.Remove(tc.Input)
-			assert.Equal(tt, tc.Expected, ws.Area(tc.Area).WidgetIDs())
+			assert.Equal(t, tc.Expected, ws.Area(tc.Area).WidgetIDs())
 		})
 	}
 }
@@ -170,6 +170,7 @@ func TestWidgetSection_SetArea(t *testing.T) {
 		t WidgetAreaType
 		a *WidgetArea
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -212,6 +213,7 @@ func TestWidgetSection_SetArea(t *testing.T) {
 			nil: true,
 		},
 	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

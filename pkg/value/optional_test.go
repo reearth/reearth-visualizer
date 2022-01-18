@@ -11,6 +11,7 @@ func TestNewOptional(t *testing.T) {
 		t Type
 		v *Value
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -70,6 +71,7 @@ func TestOptionalFrom(t *testing.T) {
 	type args struct {
 		v *Value
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -225,6 +227,7 @@ func TestOptional_SetValue(t *testing.T) {
 	type args struct {
 		v *Value
 	}
+
 	tests := []struct {
 		name    string
 		value   *Optional
@@ -319,7 +322,9 @@ func TestOptional_Clone(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
@@ -334,6 +339,7 @@ func TestOptional_Cast(t *testing.T) {
 		t Type
 		p TypePropertyMap
 	}
+
 	tests := []struct {
 		name   string
 		target *Optional
@@ -379,7 +385,9 @@ func TestOptional_Cast(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t, tt.args.p))
 		})
 	}

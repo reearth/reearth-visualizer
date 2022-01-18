@@ -36,7 +36,7 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 		return c.String(http.StatusOK, "test")
 	})
 
-	testCases := []struct {
+	tests := []struct {
 		Name              string
 		PublishedName     string
 		BasicAuthUsername string
@@ -74,12 +74,12 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
-			assert := assert.New(tt)
+			assert := assert.New(t)
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
 			if tc.BasicAuthUsername != "" {
 				req.Header.Set(echo.HeaderAuthorization, "basic "+base64.StdEncoding.EncodeToString([]byte(tc.BasicAuthUsername+":"+tc.BasicAuthPassword)))
@@ -110,7 +110,7 @@ func TestPublishedData(t *testing.T) {
 		return nil, rerror.ErrNotFound
 	})
 
-	testCases := []struct {
+	tests := []struct {
 		Name          string
 		PublishedName string
 		Error         error
@@ -130,11 +130,12 @@ func TestPublishedData(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert := assert.New(tt)
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			assert := assert.New(t)
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
 			res := httptest.NewRecorder()
 			e := echo.New()
@@ -156,7 +157,7 @@ func TestPublishedData(t *testing.T) {
 }
 
 func TestPublishedIndex(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name          string
 		PublishedName string
 		Error         error
@@ -182,12 +183,12 @@ func TestPublishedIndex(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
-			assert := assert.New(tt)
+			assert := assert.New(t)
 			req := httptest.NewRequest(http.MethodGet, "/aaa/bbb", nil)
 			res := httptest.NewRecorder()
 			e := echo.New()

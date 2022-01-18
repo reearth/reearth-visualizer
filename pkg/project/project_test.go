@@ -25,11 +25,12 @@ func TestCheckAliasPattern(t *testing.T) {
 			expexted: false,
 		},
 	}
-	for _, tc := range testCase {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expexted, CheckAliasPattern(tc.alias))
+
+	for _, tt := range testCase {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expexted, CheckAliasPattern(tt.alias))
 		})
 	}
 }
@@ -74,11 +75,12 @@ func TestProject_MatchWithPublicName(t *testing.T) {
 			expexted: false,
 		},
 	}
-	for _, tc := range testCase {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.expexted, tc.p.MatchWithPublicName(tc.n))
+
+	for _, tt := range testCase {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expexted, tt.p.MatchWithPublicName(tt.n))
 		})
 	}
 }
@@ -121,15 +123,16 @@ func TestProject_SetImageURL(t *testing.T) {
 			expectedNil: false,
 		},
 	}
-	for _, tc := range testCase {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.p.SetImageURL(tc.image)
-			if tc.expectedNil {
-				assert.Nil(tt, tc.p.ImageURL())
+
+	for _, tt := range testCase {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.p.SetImageURL(tt.image)
+			if tt.expectedNil {
+				assert.Nil(t, tt.p.ImageURL())
 			} else {
-				assert.NotNil(tt, tc.p.ImageURL())
+				assert.NotNil(t, tt.p.ImageURL())
 			}
 		})
 	}
@@ -185,7 +188,7 @@ func TestProject_UpdateVisualizer(t *testing.T) {
 }
 
 func TestProject_UpdateAlias(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name, a  string
 		expected string
 		err      error
@@ -203,16 +206,17 @@ func TestProject_UpdateAlias(t *testing.T) {
 			err:      ErrInvalidAlias,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			p := &Project{}
-			err := p.UpdateAlias(tc.a)
-			if err == nil {
-				assert.Equal(tt, tc.expected, p.Alias())
+			err := p.UpdateAlias(tt.a)
+			if tt.err == nil {
+				assert.Equal(t, tt.expected, p.Alias())
 			} else {
-				assert.Equal(tt, tc.err, err)
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -225,7 +229,7 @@ func TestProject_UpdatePublicImage(t *testing.T) {
 }
 
 func TestProject_PublicName(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		p        *Project
 		expected string
@@ -258,12 +262,13 @@ func TestProject_PublicName(t *testing.T) {
 			expected: "",
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.p.PublicName()
-			assert.Equal(tt, tc.expected, res)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.p.PublicName()
+			assert.Equal(t, tt.expected, res)
 		})
 	}
 }
@@ -289,11 +294,13 @@ func TestProject_IsBasicAuthActive(t *testing.T) {
 			expected: true,
 		},
 	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.p.IsBasicAuthActive()
-			assert.Equal(tt, tc.expected, res)
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.p.IsBasicAuthActive()
+			assert.Equal(t, tt.expected, res)
 		})
 	}
 }

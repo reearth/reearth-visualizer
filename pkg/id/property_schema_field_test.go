@@ -7,10 +7,10 @@ import (
 )
 
 func TestPropertySchemaFieldIDFrom(t *testing.T) {
-	t.Parallel()
 	input1 := "testStringId"
 	expected1 := PropertySchemaFieldID(input1)
-	testCases := []struct {
+
+	tests := []struct {
 		name     string
 		input    *string
 		expected *PropertySchemaFieldID
@@ -26,12 +26,13 @@ func TestPropertySchemaFieldIDFrom(t *testing.T) {
 			expected: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			result := PropertySchemaFieldIDFrom(tc.input)
-			assert.Equal(tt, tc.expected, result)
+			assert.Equal(t, tc.expected, result)
 		})
 	}
 }

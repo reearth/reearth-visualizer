@@ -10,7 +10,7 @@ func TestWidgetArea(t *testing.T) {
 	wid1 := NewWidgetID()
 	wid2 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input1   []WidgetID
 		Input2   WidgetAlignType
@@ -36,10 +36,10 @@ func TestWidgetArea(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			wa := NewWidgetArea(tc.Input1, tc.Input2)
 			assert.Equal(t, tc.Expected, wa)
 		})
@@ -63,7 +63,7 @@ func TestWidgetArea_Find(t *testing.T) {
 	wid := NewWidgetID()
 	wid2 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Input    WidgetID
 		Expected int
@@ -86,16 +86,16 @@ func TestWidgetArea_Find(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			var wa *WidgetArea
 			if !tc.Nil {
 				wa = NewWidgetArea([]WidgetID{wid}, WidgetAlignStart)
 			}
-			assert.Equal(tt, tc.Expected, wa.Find(tc.Input))
+			assert.Equal(t, tc.Expected, wa.Find(tc.Input))
 		})
 	}
 }
@@ -105,7 +105,7 @@ func TestWidgetArea_Add(t *testing.T) {
 	wid2 := NewWidgetID()
 	wid3 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Nil      bool
 		Input    WidgetID
@@ -136,10 +136,10 @@ func TestWidgetArea_Add(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetArea)(nil).Add(wid1, -1)
@@ -148,7 +148,7 @@ func TestWidgetArea_Add(t *testing.T) {
 
 			wa := NewWidgetArea([]WidgetID{wid1, wid2}, WidgetAlignStart)
 			wa.Add(tc.Input, tc.Input2)
-			assert.Equal(tt, tc.Expected, wa.WidgetIDs())
+			assert.Equal(t, tc.Expected, wa.WidgetIDs())
 		})
 	}
 }
@@ -157,7 +157,7 @@ func TestWidgetArea_AddAll(t *testing.T) {
 	wid1 := NewWidgetID()
 	wid2 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Nil      bool
 		Input    []WidgetID
@@ -179,10 +179,10 @@ func TestWidgetArea_AddAll(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			if tc.Nil {
 				(*WidgetArea)(nil).AddAll(nil)
@@ -191,13 +191,13 @@ func TestWidgetArea_AddAll(t *testing.T) {
 
 			wa := NewWidgetArea(nil, WidgetAlignStart)
 			wa.AddAll(tc.Input)
-			assert.Equal(tt, tc.Expected, wa.WidgetIDs())
+			assert.Equal(t, tc.Expected, wa.WidgetIDs())
 		})
 	}
 }
 
 func TestWidgetArea_SetAlignment(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		Nil      bool
 		Input    WidgetAlignType
@@ -220,10 +220,10 @@ func TestWidgetArea_SetAlignment(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			var wa *WidgetArea
 			if !tc.Nil {
@@ -239,7 +239,8 @@ func TestWidgetArea_SetAlignment(t *testing.T) {
 
 func TestWidgetArea_Remove(t *testing.T) {
 	wid := NewWidgetID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Input    WidgetID
 		Expected []WidgetID
@@ -262,10 +263,10 @@ func TestWidgetArea_Remove(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			var wa *WidgetArea
 			if !tc.Nil {
@@ -273,7 +274,7 @@ func TestWidgetArea_Remove(t *testing.T) {
 			}
 			wa.Remove(tc.Input)
 			if !tc.Nil {
-				assert.Equal(tt, tc.Expected, wa.widgetIds)
+				assert.Equal(t, tc.Expected, wa.widgetIds)
 			}
 		})
 	}
@@ -284,7 +285,7 @@ func TestWidgetArea_Move(t *testing.T) {
 	wid2 := NewWidgetID()
 	wid3 := NewWidgetID()
 
-	testCases := []struct {
+	tests := []struct {
 		Name           string
 		Input1, Input2 int
 		Expected       []WidgetID
@@ -308,10 +309,10 @@ func TestWidgetArea_Move(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			var wa *WidgetArea
 			if !tc.Nil {
@@ -319,7 +320,7 @@ func TestWidgetArea_Move(t *testing.T) {
 			}
 			wa.Move(tc.Input1, tc.Input2)
 			if !tc.Nil {
-				assert.Equal(tt, tc.Expected, wa.widgetIds)
+				assert.Equal(t, tc.Expected, wa.widgetIds)
 			}
 		})
 	}

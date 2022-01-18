@@ -21,7 +21,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 		Title         i18n.String
 	}
 
-	testCases := []struct {
+	tests := []struct {
 		Name          string
 		ID            SchemaGroupID
 		Sid           SchemaID
@@ -84,10 +84,10 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res, err := NewSchemaGroup().
 				ID(tc.ID).
 				Schema(tc.Sid).
@@ -97,14 +97,14 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 				IsAvailableIf(tc.IsAvailableIf).
 				Build()
 			if tc.Err == nil {
-				assert.Equal(tt, tc.Expected.IsAvailableIf, res.IsAvailableIf())
-				assert.Equal(tt, tc.Expected.Sid, res.Schema())
-				assert.Equal(tt, tc.Expected.ID, res.ID())
-				assert.Equal(tt, tc.Expected.Title, res.Title())
-				assert.Equal(tt, tc.Expected.List, res.IsList())
-				assert.Equal(tt, tc.Expected.Fields, res.Fields())
+				assert.Equal(t, tc.Expected.IsAvailableIf, res.IsAvailableIf())
+				assert.Equal(t, tc.Expected.Sid, res.Schema())
+				assert.Equal(t, tc.Expected.ID, res.ID())
+				assert.Equal(t, tc.Expected.Title, res.Title())
+				assert.Equal(t, tc.Expected.List, res.IsList())
+				assert.Equal(t, tc.Expected.Fields, res.Fields())
 			} else {
-				assert.Equal(tt, tc.Err, err)
+				assert.Equal(t, tc.Err, err)
 			}
 		})
 	}

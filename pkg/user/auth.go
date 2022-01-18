@@ -8,7 +8,7 @@ type Auth struct {
 }
 
 func AuthFromAuth0Sub(sub string) Auth {
-	s := strings.Split(sub, "|")
+	s := strings.SplitN(sub, "|", 2)
 	if len(s) != 2 {
 		return Auth{}
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestString_String(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name, ExpectedStr string
 		I18nString        String
 	}{
@@ -23,17 +23,18 @@ func TestString_String(t *testing.T) {
 			I18nString:  nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.ExpectedStr, tc.I18nString.String())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.ExpectedStr, tc.I18nString.String())
 		})
 	}
 }
 
 func TestStringTranslated(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name, Lang, ExpectedStr string
 		I18nString              String
 	}{
@@ -56,11 +57,12 @@ func TestStringTranslated(t *testing.T) {
 			I18nString:  nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.ExpectedStr, tc.I18nString.Translated(tc.Lang))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.ExpectedStr, tc.I18nString.Translated(tc.Lang))
 		})
 	}
 }
@@ -71,7 +73,7 @@ func TestStringFrom(t *testing.T) {
 }
 
 func TestStringCopy(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name         string
 		SourceString String
 	}{
@@ -88,13 +90,14 @@ func TestStringCopy(t *testing.T) {
 			SourceString: nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.True(tt, reflect.DeepEqual(tc.SourceString, tc.SourceString.Copy()))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.True(t, reflect.DeepEqual(tc.SourceString, tc.SourceString.Copy()))
 			if tc.SourceString == nil {
-				assert.Nil(tt, tc.SourceString.Copy())
+				assert.Nil(t, tc.SourceString.Copy())
 			}
 		})
 	}
@@ -105,7 +108,7 @@ func TestString_StringRef(t *testing.T) {
 		return &s
 	}
 
-	testCases := []struct {
+	tests := []struct {
 		Name       string
 		I18nString String
 		Expected   *string
@@ -121,11 +124,12 @@ func TestString_StringRef(t *testing.T) {
 			Expected:   nil,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.I18nString.StringRef())
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.I18nString.StringRef())
 		})
 	}
 }

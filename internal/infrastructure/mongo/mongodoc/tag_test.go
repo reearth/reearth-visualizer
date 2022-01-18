@@ -31,6 +31,7 @@ func TestNewTag(t *testing.T) {
 	type args struct {
 		t tag.Tag
 	}
+
 	tests := []struct {
 		name  string
 		args  args
@@ -70,13 +71,14 @@ func TestNewTag(t *testing.T) {
 			want1: ti.ID().String(),
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got, got1 := NewTag(tc.args.t)
-			assert.Equal(tt, tc.want1, got1)
-			assert.Equal(tt, tc.want, got)
+			assert.Equal(t, tc.want1, got1)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }
@@ -98,6 +100,7 @@ func TestNewTags(t *testing.T) {
 	type args struct {
 		tags []*tag.Tag
 	}
+
 	tests := []struct {
 		name  string
 		args  args
@@ -123,13 +126,14 @@ func TestNewTags(t *testing.T) {
 			want1: []string{tgi.ID().String()},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got, got1 := NewTags(tc.args.tags)
-			assert.Equal(tt, tc.want, got)
-			assert.Equal(tt, tc.want1, got1)
+			assert.Equal(t, tc.want, got)
+			assert.Equal(t, tc.want1, got1)
 		})
 	}
 }
@@ -158,6 +162,7 @@ func TestFuncConsumer_Consume(t *testing.T) {
 	type args struct {
 		raw bson.Raw
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -213,10 +218,11 @@ func TestFuncConsumer_Consume(t *testing.T) {
 			wantErr: true,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			c := &TagConsumer{
 				Rows:      tc.fields.Rows,
 				GroupRows: tc.fields.GroupRows,
@@ -224,7 +230,7 @@ func TestFuncConsumer_Consume(t *testing.T) {
 			}
 
 			if err := c.Consume(tc.args.raw); tc.wantErr {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			}
 		})
 	}
@@ -256,6 +262,7 @@ func TestTagDocument_Model(t *testing.T) {
 		Item  *TagItemDocument
 		Group *TagGroupDocument
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -301,10 +308,11 @@ func TestTagDocument_Model(t *testing.T) {
 			wantErr: true,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			d := &TagDocument{
 				ID:    tc.fields.ID,
 				Label: tc.fields.Label,
@@ -314,10 +322,10 @@ func TestTagDocument_Model(t *testing.T) {
 			}
 			got, got1, err := d.Model()
 			if tc.wantErr {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			} else {
-				assert.Equal(tt, tc.want, got)
-				assert.Equal(tt, tc.want1, got1)
+				assert.Equal(t, tc.want, got)
+				assert.Equal(t, tc.want1, got1)
 			}
 		})
 	}
@@ -343,6 +351,7 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 		Item  *TagItemDocument
 		Group *TagGroupDocument
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -392,10 +401,11 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 			wantErr: false,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			d := &TagDocument{
 				ID:    tc.fields.ID,
 				Label: tc.fields.Label,
@@ -405,9 +415,9 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 			}
 			got, err := d.ModelGroup()
 			if tc.wantErr {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			}
-			assert.Equal(tt, tc.want, got)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }
@@ -432,6 +442,7 @@ func TestTagDocument_ModelItem(t *testing.T) {
 		Item  *TagItemDocument
 		Group *TagGroupDocument
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -474,10 +485,11 @@ func TestTagDocument_ModelItem(t *testing.T) {
 			wantErr: false,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			d := &TagDocument{
 				ID:    tc.fields.ID,
 				Label: tc.fields.Label,
@@ -487,9 +499,9 @@ func TestTagDocument_ModelItem(t *testing.T) {
 			}
 			got, err := d.ModelItem()
 			if tc.wantErr {
-				assert.Error(tt, err)
+				assert.Error(t, err)
 			}
-			assert.Equal(tt, tc.want, got)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }

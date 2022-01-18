@@ -12,7 +12,7 @@ func TestSchemaGroup(t *testing.T) {
 	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		G        *SchemaGroup
 		Expected struct {
@@ -52,19 +52,19 @@ func TestSchemaGroup(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
-			assert.Equal(tt, tc.Expected.GID, tc.G.ID())
-			assert.Equal(tt, tc.Expected.GIDRef, tc.G.IDRef())
-			assert.Equal(tt, tc.Expected.SID, tc.G.Schema())
-			assert.Equal(tt, tc.Expected.SIDRef, tc.G.SchemaRef())
-			assert.Equal(tt, tc.Expected.Fields, tc.G.Fields())
-			assert.Equal(tt, tc.Expected.IsList, tc.G.IsList())
-			assert.Equal(tt, tc.Expected.IsAvailableIf, tc.G.IsAvailableIf())
-			assert.Equal(tt, tc.Expected.Title, tc.G.Title())
+			assert.Equal(t, tc.Expected.GID, tc.G.ID())
+			assert.Equal(t, tc.Expected.GIDRef, tc.G.IDRef())
+			assert.Equal(t, tc.Expected.SID, tc.G.Schema())
+			assert.Equal(t, tc.Expected.SIDRef, tc.G.SchemaRef())
+			assert.Equal(t, tc.Expected.Fields, tc.G.Fields())
+			assert.Equal(t, tc.Expected.IsList, tc.G.IsList())
+			assert.Equal(t, tc.Expected.IsAvailableIf, tc.G.IsAvailableIf())
+			assert.Equal(t, tc.Expected.Title, tc.G.Title())
 		})
 	}
 }
@@ -74,7 +74,7 @@ func TestSchemaGroup_Field(t *testing.T) {
 	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		G        *SchemaGroup
 		PTR      *Pointer
@@ -99,13 +99,13 @@ func TestSchemaGroup_Field(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			assert.Equal(tt, tc.Expected, tc.G.Field(tc.Input))
-			assert.Equal(tt, tc.Expected, tc.G.FieldByPointer(tc.PTR))
-			assert.Equal(tt, tc.Expected != nil, tc.G.HasField(tc.Input))
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.G.Field(tc.Input))
+			assert.Equal(t, tc.Expected, tc.G.FieldByPointer(tc.PTR))
+			assert.Equal(t, tc.Expected != nil, tc.G.HasField(tc.Input))
 		})
 	}
 }

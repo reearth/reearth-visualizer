@@ -1,7 +1,6 @@
 package project
 
 import (
-	"errors"
 	"net/url"
 	"reflect"
 	"testing"
@@ -64,7 +63,7 @@ func TestBuilder_BasicAuthPassword(t *testing.T) {
 }
 
 func TestBuilder_ImageURL(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		image       *url.URL
 		expectedNil bool
@@ -80,16 +79,17 @@ func TestBuilder_ImageURL(t *testing.T) {
 			expectedNil: true,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			tb := New().NewID()
-			res := tb.ImageURL(tc.image).MustBuild()
+			res := tb.ImageURL(tt.image).MustBuild()
 			if res.imageURL == nil {
-				assert.True(tt, tc.expectedNil)
+				assert.True(t, tt.expectedNil)
 			} else {
-				assert.False(tt, tc.expectedNil)
+				assert.False(t, tt.expectedNil)
 			}
 		})
 	}
@@ -157,39 +157,48 @@ func TestBuilder_Build(t *testing.T) {
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := NewID()
 	tid := NewTeamID()
-	testCases := []struct {
-		name, pname, description,
-		alias, publicTitle, publicDescription,
-		publicImage string
-		id                ID
-		isArchived        bool
-		updatedAt         time.Time
-		publishedAt       time.Time
-		imageURL          *url.URL
-		publicNoIndex     bool
-		team              TeamID
-		visualizer        visualizer.Visualizer
-		publishmentStatus PublishmentStatus
-		expected          *Project
-		err               error
+
+	type args struct {
+		name, description  string
+		alias, publicTitle string
+		publicDescription  string
+		publicImage        string
+		id                 ID
+		isArchived         bool
+		updatedAt          time.Time
+		publishedAt        time.Time
+		imageURL           *url.URL
+		publicNoIndex      bool
+		team               TeamID
+		visualizer         visualizer.Visualizer
+		publishmentStatus  PublishmentStatus
+	}
+
+	tests := []struct {
+		name     string
+		args     args
+		expected *Project
+		err      error
 	}{
 		{
-			name:              "build normal project",
-			pname:             "xxx.aaa",
-			description:       "ddd",
-			alias:             "aaaaa",
-			publicTitle:       "ttt",
-			publicDescription: "dddd",
-			publicImage:       "iii",
-			id:                pid,
-			isArchived:        false,
-			updatedAt:         d,
-			publishedAt:       d,
-			imageURL:          i,
-			publicNoIndex:     true,
-			team:              tid,
-			visualizer:        visualizer.VisualizerCesium,
-			publishmentStatus: "ppp",
+			name: "build normal project",
+			args: args{
+				name:              "xxx.aaa",
+				description:       "ddd",
+				alias:             "aaaaa",
+				publicTitle:       "ttt",
+				publicDescription: "dddd",
+				publicImage:       "iii",
+				id:                pid,
+				isArchived:        false,
+				updatedAt:         d,
+				publishedAt:       d,
+				imageURL:          i,
+				publicNoIndex:     true,
+				team:              tid,
+				visualizer:        visualizer.VisualizerCesium,
+				publishmentStatus: "ppp",
+			},
 			expected: &Project{
 				id:                pid,
 				description:       "ddd",
@@ -207,59 +216,58 @@ func TestBuilder_Build(t *testing.T) {
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
-			err: nil,
 		},
 		{
-			name:      "zero updated at",
-			id:        NewID(),
-			updatedAt: time.Time{},
-			expected:  nil,
-			err:       nil,
+			name: "zero updated at",
+			args: args{
+				id: pid,
+			},
+			expected: &Project{
+				id:        pid,
+				updatedAt: createdAt(pid),
+			},
 		},
 		{
 			name: "failed invalid id",
-
-			expected: nil,
-			err:      ErrInvalidID,
+			err:  ErrInvalidID,
 		},
 		{
-			name:     "failed invalid alias",
-			id:       NewID(),
-			alias:    "xxx.aaa",
+			name: "failed invalid alias",
+			args: args{
+				id:    NewID(),
+				alias: "xxx.aaa",
+			},
 			expected: nil,
 			err:      ErrInvalidAlias,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			p, err := New().
-				ID(tc.id).
-				PublicNoIndex(tc.publicNoIndex).
-				PublicDescription(tc.publicDescription).
-				PublishmentStatus(tc.publishmentStatus).
-				PublicTitle(tc.publicTitle).
-				UpdatedAt(tc.updatedAt).
-				PublishedAt(tc.publishedAt).
-				PublicImage(tc.publicImage).
-				Team(tc.team).
-				ImageURL(tc.imageURL).
-				Name(tc.pname).
-				Alias(tc.alias).
-				Visualizer(tc.visualizer).
-				UpdatedAt(tc.updatedAt).
-				Description(tc.description).
-				Build()
-			if err == nil {
-				if tc.expected == nil {
-					assert.Equal(tt, p.UpdatedAt(), p.CreatedAt())
 
-				} else {
-					assert.Equal(tt, tc.expected, p)
-				}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			p, err := New().
+				ID(tt.args.id).
+				PublicNoIndex(tt.args.publicNoIndex).
+				PublicDescription(tt.args.publicDescription).
+				PublishmentStatus(tt.args.publishmentStatus).
+				PublicTitle(tt.args.publicTitle).
+				UpdatedAt(tt.args.updatedAt).
+				PublishedAt(tt.args.publishedAt).
+				PublicImage(tt.args.publicImage).
+				Team(tt.args.team).
+				ImageURL(tt.args.imageURL).
+				Name(tt.args.name).
+				Alias(tt.args.alias).
+				Visualizer(tt.args.visualizer).
+				UpdatedAt(tt.args.updatedAt).
+				Description(tt.args.description).
+				Build()
+
+			if tt.err == nil {
+				assert.Equal(t, tt.expected, p)
 			} else {
-				assert.True(tt, errors.As(err, &tc.err))
+				assert.Equal(t, tt.err, err)
 			}
 		})
 	}
@@ -270,39 +278,48 @@ func TestBuilder_MustBuild(t *testing.T) {
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := NewID()
 	tid := NewTeamID()
-	testCases := []struct {
-		name, pname, description,
-		alias, publicTitle, publicDescription,
-		publicImage string
-		id                ID
-		isArchived        bool
-		updatedAt         time.Time
-		publishedAt       time.Time
-		imageURL          *url.URL
-		publicNoIndex     bool
-		team              TeamID
-		visualizer        visualizer.Visualizer
-		publishmentStatus PublishmentStatus
-		expected          *Project
-		err               error
+
+	type args struct {
+		name, description  string
+		alias, publicTitle string
+		publicDescription  string
+		publicImage        string
+		id                 ID
+		isArchived         bool
+		updatedAt          time.Time
+		publishedAt        time.Time
+		imageURL           *url.URL
+		publicNoIndex      bool
+		team               TeamID
+		visualizer         visualizer.Visualizer
+		publishmentStatus  PublishmentStatus
+	}
+
+	tests := []struct {
+		name     string
+		args     args
+		expected *Project
+		err      error
 	}{
 		{
-			name:              "build normal project",
-			pname:             "xxx.aaa",
-			description:       "ddd",
-			alias:             "aaaaa",
-			publicTitle:       "ttt",
-			publicDescription: "dddd",
-			publicImage:       "iii",
-			id:                pid,
-			isArchived:        false,
-			updatedAt:         d,
-			publishedAt:       d,
-			imageURL:          i,
-			publicNoIndex:     true,
-			team:              tid,
-			visualizer:        visualizer.VisualizerCesium,
-			publishmentStatus: "ppp",
+			name: "build normal project",
+			args: args{
+				name:              "xxx.aaa",
+				description:       "ddd",
+				alias:             "aaaaa",
+				publicTitle:       "ttt",
+				publicDescription: "dddd",
+				publicImage:       "iii",
+				id:                pid,
+				isArchived:        false,
+				updatedAt:         d,
+				publishedAt:       d,
+				imageURL:          i,
+				publicNoIndex:     true,
+				team:              tid,
+				visualizer:        visualizer.VisualizerCesium,
+				publishmentStatus: "ppp",
+			},
 			expected: &Project{
 				id:                pid,
 				description:       "ddd",
@@ -320,60 +337,62 @@ func TestBuilder_MustBuild(t *testing.T) {
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
-			err: nil,
 		},
 		{
-			name:      "zero updated at",
-			id:        NewID(),
-			updatedAt: time.Time{},
-			expected:  nil,
-			err:       nil,
+			name: "zero updated at",
+			args: args{
+				id: pid,
+			},
+			expected: &Project{
+				id:        pid,
+				updatedAt: createdAt(pid),
+			},
 		},
 		{
 			name: "failed invalid id",
-
-			expected: nil,
-			err:      ErrInvalidID,
+			err:  ErrInvalidID,
 		},
 		{
-			name:     "failed invalid alias",
-			id:       NewID(),
-			alias:    "xxx.aaa",
-			expected: nil,
-			err:      ErrInvalidAlias,
+			name: "failed invalid alias",
+			args: args{
+				id:    NewID(),
+				alias: "xxx.aaa",
+			},
+			err: ErrInvalidAlias,
 		},
 	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			var p *Project
-			defer func() {
-				if r := recover(); r == nil {
-					if tc.expected == nil {
-						assert.Equal(tt, p.UpdatedAt(), p.CreatedAt())
-					} else {
-						assert.Equal(tt, tc.expected, p)
-					}
-				}
-			}()
-			p = New().
-				ID(tc.id).
-				PublicNoIndex(tc.publicNoIndex).
-				PublicDescription(tc.publicDescription).
-				PublishmentStatus(tc.publishmentStatus).
-				PublicTitle(tc.publicTitle).
-				UpdatedAt(tc.updatedAt).
-				PublishedAt(tc.publishedAt).
-				PublicImage(tc.publicImage).
-				Team(tc.team).
-				ImageURL(tc.imageURL).
-				Name(tc.pname).
-				Alias(tc.alias).
-				Visualizer(tc.visualizer).
-				UpdatedAt(tc.updatedAt).
-				Description(tc.description).
-				MustBuild()
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			build := func() *Project {
+				t.Helper()
+				return New().
+					ID(tt.args.id).
+					PublicNoIndex(tt.args.publicNoIndex).
+					PublicDescription(tt.args.publicDescription).
+					PublishmentStatus(tt.args.publishmentStatus).
+					PublicTitle(tt.args.publicTitle).
+					UpdatedAt(tt.args.updatedAt).
+					PublishedAt(tt.args.publishedAt).
+					PublicImage(tt.args.publicImage).
+					Team(tt.args.team).
+					ImageURL(tt.args.imageURL).
+					Name(tt.args.name).
+					Alias(tt.args.alias).
+					Visualizer(tt.args.visualizer).
+					UpdatedAt(tt.args.updatedAt).
+					Description(tt.args.description).
+					MustBuild()
+			}
+
+			if tt.err != nil {
+				assert.PanicsWithValue(t, tt.err, func() { _ = build() })
+			} else {
+				assert.Equal(t, tt.expected, build())
+			}
 		})
 	}
 }

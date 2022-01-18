@@ -133,7 +133,10 @@ func TestEncodeSHP(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			// sequential test
+
 			tmpFile, err := os.CreateTemp(os.TempDir(), "*.shp")
 			assert.NoError(t, err)
 			en := NewSHPEncoder(tmpFile)

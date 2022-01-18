@@ -9,7 +9,8 @@ import (
 
 func TestScene_IsTeamIncluded(t *testing.T) {
 	tid := NewTeamID()
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		Teams    []TeamID
 		S        *Scene
@@ -40,12 +41,13 @@ func TestScene_IsTeamIncluded(t *testing.T) {
 			Expected: false,
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 			res := tc.S.IsTeamIncluded(tc.Teams)
-			assert.Equal(tt, tc.Expected, res)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }
@@ -67,8 +69,8 @@ func TestScene_Properties(t *testing.T) {
 		Team(NewTeamID()).
 		RootLayer(NewLayerID()).
 		Property(pid1).
-		WidgetSystem(
-			NewWidgetSystem(
+		Widgets(
+			NewWidgets(
 				[]*Widget{
 					MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
 				},
@@ -84,13 +86,13 @@ func TestSceneNil(t *testing.T) {
 	var s *Scene
 	assert.Nil(t, s.Properties())
 	assert.True(t, s.ID().IsNil())
-	assert.Nil(t, s.WidgetSystem())
+	assert.Nil(t, s.Widgets())
 	assert.Nil(t, s.WidgetAlignSystem())
 	assert.True(t, s.Project().IsNil())
 	assert.True(t, s.Team().IsNil())
 	assert.True(t, s.RootLayer().IsNil())
 	assert.True(t, s.CreatedAt().IsZero())
-	assert.Nil(t, s.PluginSystem())
+	assert.Nil(t, s.Plugins())
 	assert.True(t, s.Property().IsNil())
 }
 
@@ -110,12 +112,13 @@ func TestScene_Clusters(t *testing.T) {
 			want: NewClusterListFrom([]*Cluster{c1}),
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-			assert.Equal(tt, tc.want, tc.scene.Clusters())
+			assert.Equal(t, tc.want, tc.scene.Clusters())
 		})
 	}
 }

@@ -13,7 +13,8 @@ func TestInitItemFrom(t *testing.T) {
 	iid := NewItemID()
 	propertySchemaID := MustSchemaID("xx~1.0.0/aa")
 	propertySchemaField1ID := SchemaGroupID("aa")
-	testCases := []struct {
+
+	tests := []struct {
 		Name     string
 		SG       *SchemaGroup
 		Expected Item
@@ -33,16 +34,16 @@ func TestInitItemFrom(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := InitItemFrom(tc.SG)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := InitItemFrom(tt.SG)
 			if res != nil {
-				assert.Equal(tt, tc.Expected.Schema(), res.Schema())
-				assert.Equal(tt, tc.Expected.SchemaGroup(), res.SchemaGroup())
+				assert.Equal(t, tt.Expected.Schema(), res.Schema())
+				assert.Equal(t, tt.Expected.SchemaGroup(), res.SchemaGroup())
 			} else {
-				assert.Nil(tt, tc.Expected)
+				assert.Nil(t, tt.Expected)
 			}
 		})
 	}

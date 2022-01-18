@@ -34,8 +34,11 @@ func Test_actualValue(t *testing.T) {
 			false,
 		},
 	}
+
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := actualValue(tt.args.datasetLoader, tt.args.value, tt.args.links, tt.args.overridden)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("actualValue() error = %v, wantErr %v", err, tt.wantErr)

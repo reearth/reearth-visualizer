@@ -98,6 +98,7 @@ func TestValue_Clone(t *testing.T) {
 
 func TestValue_Value(t *testing.T) {
 	u, _ := url.Parse("https://reearth.io")
+
 	tests := []struct {
 		name  string
 		value *Value
@@ -257,7 +258,9 @@ func TestValue_Interface(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.value.Interface())
 		})
 	}
@@ -268,6 +271,7 @@ func TestValue_Cast(t *testing.T) {
 		t Type
 		p TypePropertyMap
 	}
+
 	tests := []struct {
 		name   string
 		target *Value
@@ -313,7 +317,9 @@ func TestValue_Cast(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t, tt.args.p))
 		})
 	}

@@ -256,7 +256,9 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			expected, _ := json.Marshal(tt.want)
 			writer := bytes.Buffer{}
 			assert.NoError(t, NewCZMLEncoder(&writer).Encode(tt.target))

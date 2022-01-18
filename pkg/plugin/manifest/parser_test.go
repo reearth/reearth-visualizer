@@ -52,7 +52,7 @@ var normalExpected = &Manifest{
 }
 
 func TestParse(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name     string
 		input    string
 		expected *Manifest
@@ -89,26 +89,26 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			m, err := Parse(strings.NewReader(tc.input), nil)
 			if tc.err == nil {
-				if !assert.NoError(tt, err) {
+				if !assert.NoError(t, err) {
 					return
 				}
-				assert.Equal(tt, tc.expected, m)
+				assert.Equal(t, tc.expected, m)
 				return
 			}
-			assert.ErrorIs(tt, tc.err, err)
+			assert.ErrorIs(t, tc.err, err)
 		})
 	}
 
 }
 
 func TestParseSystemFromBytes(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name, input string
 		expected    *Manifest
 		err         error
@@ -133,63 +133,63 @@ func TestParseSystemFromBytes(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			m, err := ParseSystemFromBytes([]byte(tc.input), nil)
 			if tc.err == nil {
-				if !assert.NoError(tt, err) {
+				if !assert.NoError(t, err) {
 					return
 				}
-				assert.Equal(tt, tc.expected, m)
+				assert.Equal(t, tc.expected, m)
 				return
 			}
-			assert.ErrorIs(tt, tc.err, err)
+			assert.ErrorIs(t, tc.err, err)
 		})
 	}
 }
 
 func TestMustParseSystemFromBytes(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name, input string
 		expected    *Manifest
-		err         error
+		fails       bool
 	}{
 		{
 			name:     "success create simple manifest",
 			input:    minimum,
 			expected: minimumExpected,
-			err:      nil,
+			fails:    false,
 		},
 		{
 			name:     "success create manifest",
 			input:    normal,
 			expected: normalExpected,
-			err:      nil,
+			fails:    false,
 		},
 		{
 			name:     "fail not valid JSON",
 			input:    "--",
 			expected: nil,
-			err:      ErrFailedToParseManifest,
+			fails:    true,
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-			if tc.err != nil {
-				assert.PanicsWithError(tt, tc.err.Error(), func() {
+			if tc.fails {
+				assert.Panics(t, func() {
 					_ = MustParseSystemFromBytes([]byte(tc.input), nil)
 				})
 				return
 			}
 
 			m := MustParseSystemFromBytes([]byte(tc.input), nil)
-			assert.Equal(tt, m, tc.expected)
+			assert.Equal(t, m, tc.expected)
 		})
 	}
 }

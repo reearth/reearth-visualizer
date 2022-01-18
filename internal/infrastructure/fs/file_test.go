@@ -88,8 +88,8 @@ func TestFile_RemoveAsset(t *testing.T) {
 
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
 
 			fs := mockFs()
 			f, _ := NewFile(fs, "https://example.com/assets")
@@ -98,16 +98,16 @@ func TestFile_RemoveAsset(t *testing.T) {
 			err := f.RemoveAsset(context.Background(), u)
 
 			if tc.Err == nil {
-				assert.NoError(tt, err)
+				assert.NoError(t, err)
 			} else {
-				assert.Same(tt, tc.Err, err)
+				assert.Same(t, tc.Err, err)
 			}
 
 			_, err = fs.Stat(filepath.Join("assets", "xxx.txt"))
 			if tc.Deleted {
-				assert.ErrorIs(tt, err, os.ErrNotExist)
+				assert.ErrorIs(t, err, os.ErrNotExist)
 			} else {
-				assert.NoError(tt, err)
+				assert.NoError(t, err)
 			}
 		})
 	}
