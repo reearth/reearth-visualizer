@@ -12,10 +12,11 @@ export type Props = {
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
+  onClick?: () => void;
 };
 
 const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
-  { autoResize, className, html, visible, iFrameProps, onLoad, onMessage },
+  { autoResize, className, html, visible, iFrameProps, onLoad, onMessage, onClick },
   ref,
 ) => {
   const {
@@ -30,6 +31,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
     ref,
     onLoad,
     onMessage,
+    onClick,
   });
 
   return html ? (

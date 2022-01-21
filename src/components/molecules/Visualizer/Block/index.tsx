@@ -54,6 +54,7 @@ export default function BlockComponent<P = any, PP = any>({
         pluginProperty={props.pluginProperty}
         layer={props.layer}
         block={props.block}
+        onClick={props.onClick}
       />
     </Wrapper>
   );

@@ -23,6 +23,7 @@ export default function useHook({
   iFrameProps,
   onLoad,
   onMessage,
+  onClick,
 }: {
   autoResizeMessageKey?: string;
   html?: string;
@@ -32,6 +33,7 @@ export default function useHook({
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
+  onClick?: () => void;
 } = {}): {
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
@@ -144,6 +146,18 @@ export default function useHook({
     }),
     [autoResize, iFrameProps, iFrameSize, visible],
   );
+
+  useEffect(() => {
+    const handleBlur = () => {
+      if (iFrameRef.current && iFrameRef.current === document.activeElement) {
+        onClick?.();
+      }
+    };
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, [onClick]);
 
   return {
     ref: iFrameRef,

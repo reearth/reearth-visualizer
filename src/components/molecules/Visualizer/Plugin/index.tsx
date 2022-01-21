@@ -31,6 +31,7 @@ export type Props = {
   layer?: Layer;
   widget?: Widget;
   block?: Block;
+  onClick?: () => void;
 };
 
 export default function Plugin({
@@ -46,6 +47,7 @@ export default function Plugin({
   widget,
   block,
   pluginProperty,
+  onClick,
 }: Props): JSX.Element | null {
   const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
     pluginId,
@@ -72,6 +74,7 @@ export default function Plugin({
       onMessage={onMessage}
       onPreInit={onPreInit}
       onDispose={onDispose}
+      onClick={onClick}
     />
   ) : null;
 }

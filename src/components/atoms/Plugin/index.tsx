@@ -21,6 +21,7 @@ export type Props = {
   onPreInit?: () => void;
   onError?: (err: any) => void;
   onDispose?: () => void;
+  onClick?: () => void;
 };
 
 const Plugin: React.FC<Props> = ({
@@ -38,6 +39,7 @@ const Plugin: React.FC<Props> = ({
   onPreInit,
   onError,
   onDispose,
+  onClick,
 }) => {
   const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
@@ -60,6 +62,7 @@ const Plugin: React.FC<Props> = ({
       visible={iFrameVisible}
       onMessage={onMessage}
       iFrameProps={iFrameProps}
+      onClick={onClick}
     />
   ) : renderPlaceholder ? (
     <>{renderPlaceholder}</>
