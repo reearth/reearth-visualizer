@@ -9,6 +9,7 @@ export type Property = {
   default?: {
     url?: string;
     type?: Type | "auto";
+    clampToGround?: boolean;
   };
 };
 
@@ -28,7 +29,7 @@ const comps = {
 
 const Resource: React.FC<Props> = ({ layer }) => {
   const { isVisible, property } = layer ?? {};
-  const { url, type } = property?.default ?? {};
+  const { url, type, clampToGround } = property?.default ?? {};
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],
@@ -37,7 +38,8 @@ const Resource: React.FC<Props> = ({ layer }) => {
   const Component = actualType ? comps[actualType] : undefined;
 
   if (!isVisible || !Component || !url) return null;
-  return <Component data={url} />;
+
+  return <Component data={url} clampToGround={clampToGround} />;
 };
 
 export default Resource;
