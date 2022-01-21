@@ -1144,6 +1144,11 @@ extensions:
                   label: GeoJSON / TopoJSON
                 - key: czml
                   label: CZML
+            - id: clampToGround
+              type: bool
+              title: Clamp to ground
+              description: Option to attach the primitive to the ground (keeps primitive on top of the map even with terrain enabled).
+              defaultValue: false
   - id: textblock
     type: block
     name: Text
