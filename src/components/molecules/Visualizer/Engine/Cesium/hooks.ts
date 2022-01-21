@@ -2,7 +2,7 @@ import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
@@ -17,6 +17,8 @@ import imagery from "./imagery";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
+
+const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
 export default ({
   ref,
@@ -40,14 +42,9 @@ export default ({
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
-
+  const cesiumIonAccessToken = property?.default?.ion;
   // Ensure to set Cesium Ion access token before the first rendering
-  useLayoutEffect(() => {
-    const { ion } = property?.default ?? {};
-    if (ion) {
-      Ion.defaultAccessToken = ion;
-    }
-  }, [property?.default]);
+  Ion.defaultAccessToken = cesiumIonAccessToken || cesiumIonDefaultAccessToken;
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
@@ -74,7 +71,7 @@ export default ({
         (t): t is [string, ImageryProvider, number | undefined, number | undefined] => !!t[1],
       );
     setImageryLayers(newTiles);
-  }, [property?.tiles ?? []]);
+  }, [property?.tiles ?? [], cesiumIonAccessToken]);
 
   // terrain
   const terrainProperty = useMemo(
@@ -104,12 +101,14 @@ export default ({
   );
 
   const terrainProvider = useMemo((): TerrainProvider | undefined => {
-    return terrainProperty.terrain
+    const provider = terrainProperty.terrain
       ? terrainProperty.terrainType
         ? terrain[terrainProperty.terrainType] || terrain.default
         : terrain.cesium
       : terrain.default;
-  }, [terrainProperty.terrain, terrainProperty.terrainType]);
+    return typeof provider === "function" ? provider() : provider;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cesiumIonAccessToken, terrainProperty.terrain, terrainProperty.terrainType]);
 
   const backgroundColor = useMemo(
     () =>

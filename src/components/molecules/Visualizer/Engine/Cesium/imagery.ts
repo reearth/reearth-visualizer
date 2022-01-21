@@ -4,19 +4,25 @@ import {
   IonImageryProvider,
   OpenStreetMapImageryProvider,
   IonWorldImageryStyle,
-  createWorldImagery,
   UrlTemplateImageryProvider,
+  Ion,
 } from "cesium";
 
 export default {
-  default: () => createWorldImagery(),
+  default: () =>
+    new IonImageryProvider({
+      assetId: IonWorldImageryStyle.AERIAL,
+      accessToken: Ion.defaultAccessToken,
+    }),
   default_label: () =>
-    createWorldImagery({
-      style: IonWorldImageryStyle.AERIAL_WITH_LABELS,
+    new IonImageryProvider({
+      assetId: IonWorldImageryStyle.AERIAL_WITH_LABELS,
+      accessToken: Ion.defaultAccessToken,
     }),
   default_road: () =>
-    createWorldImagery({
-      style: IonWorldImageryStyle.ROAD,
+    new IonImageryProvider({
+      assetId: IonWorldImageryStyle.ROAD,
+      accessToken: Ion.defaultAccessToken,
     }),
   stamen_watercolor: () =>
     new OpenStreetMapImageryProvider({
@@ -41,7 +47,8 @@ export default {
         "Copyright: Tiles © Esri — Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Communit",
       enablePickFeatures: false,
     }),
-  black_marble: () => new IonImageryProvider({ assetId: 3812 }),
+  black_marble: () =>
+    new IonImageryProvider({ assetId: 3812, accessToken: Ion.defaultAccessToken }),
   japan_gsi_standard: () =>
     new OpenStreetMapImageryProvider({
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
