@@ -8,7 +8,6 @@ import {
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   useGetLayersQuery,
-  useGetClustersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
@@ -33,7 +32,13 @@ import {
 } from "@reearth/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
-import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
+import {
+  convertLayers,
+  convertWidgets,
+  convertToBlocks,
+  convertProperty,
+  processSceneTags,
+} from "./convert";
 
 export default (isBuilt?: boolean) => {
   const intl = useIntl();
@@ -81,37 +86,32 @@ export default (isBuilt?: boolean) => {
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
-  const { data: widgetData } = useGetEarthWidgetsQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
-    skip: !sceneId,
-  });
-
-  // TODO
-  const { data: clusterData } = useGetClustersQuery({
+  const { data: sceneData } = useGetEarthWidgetsQuery({
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
-  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+  const scene = sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
 
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
   const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
-  const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
+  const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
-  const clusterScene = clusterData?.node?.__typename === "Scene" ? clusterData.node : undefined;
+  const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
+  // TODO: refactor
   const clusterProperty = useMemo(
-    () => clusterScene?.clusters.reduce<any[]>((a, b) => [...a, convertProperty(b.property)], []),
-    [clusterScene?.clusters],
+    () => scene?.clusters.reduce<any[]>((a, b) => [...a, convertProperty(b.property)], []),
+    [scene?.clusters],
   );
 
   const clusterLayers = useMemo(
     () =>
-      clusterScene?.clusters.reduce<any[]>(
+      scene?.clusters.reduce<any[]>(
         (a, b) =>
           flatMap([
             ...a,
@@ -119,7 +119,7 @@ export default (isBuilt?: boolean) => {
           ]).filter(item => !!item),
         [],
       ),
-    [clusterScene?.clusters],
+    [scene?.clusters],
   );
 
   const pluginProperty = useMemo(
@@ -279,6 +279,7 @@ export default (isBuilt?: boolean) => {
     pluginProperty,
     clusterProperty,
     clusterLayers,
+    tags,
     widgets,
     layers,
     selectedLayer,

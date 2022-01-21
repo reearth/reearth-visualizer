@@ -11,6 +11,7 @@ import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore } from "./Layers";
 import { Provider } from "./Plugin";
+import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
 import WidgetAlignSystem, {
@@ -21,6 +22,7 @@ import WidgetAlignSystem, {
 export type { SceneProperty, ClusterProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Layer } from "./Layers";
+export type { Tag } from "./Plugin/types";
 export type {
   Widget,
   Alignment,
@@ -44,6 +46,7 @@ export type Props = PropsWithChildren<
       layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
     };
     sceneProperty?: SceneProperty;
+    tags?: Tag[];
     pluginProperty?: { [key: string]: any };
     clusterProperty?: ClusterProperty[];
     clusterLayers?: string[];
@@ -70,6 +73,7 @@ export default function Visualizer({
   layers,
   widgets,
   sceneProperty,
+  tags,
   children,
   pluginProperty,
   clusterProperty,
@@ -121,6 +125,7 @@ export default function Visualizer({
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
+    tags,
     onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,

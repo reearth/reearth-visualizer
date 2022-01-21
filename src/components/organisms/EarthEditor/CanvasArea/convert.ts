@@ -10,6 +10,7 @@ import {
   WidgetArea,
   Alignment,
   WidgetLayoutConstraint,
+  Tag,
 } from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
@@ -148,6 +149,7 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
       layer.__typename === "LayerItem"
         ? processMergedInfobox(layer.merged?.infobox)
         : processInfobox(layer.infobox),
+    tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
         ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
@@ -296,3 +298,31 @@ export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined 
     .filter((a): a is BlockType[] => !!a)
     .reduce((a, b) => [...a, ...b], []);
 };
+
+export function processLayerTags(
+  tags: {
+    tagId: string;
+    tag?: Maybe<{ label: string }>;
+    children?: { tagId: string; tag?: Maybe<{ label: string }> }[];
+  }[],
+): Tag[] {
+  return tags.map(t => ({
+    id: t.tagId,
+    label: t.tag?.label ?? "",
+    tags: t.children?.map(tt => ({ id: tt.tagId, label: tt.tag?.label ?? "" })),
+  }));
+}
+
+export function processSceneTags(
+  tags: {
+    id: string;
+    label: string;
+    tags?: { id: string; label: string }[];
+  }[],
+): Tag[] {
+  return tags.map(t => ({
+    id: t.id,
+    label: t.label ?? "",
+    tags: t.tags?.map(tt => ({ id: tt.id, label: tt.label ?? "" })),
+  }));
+}

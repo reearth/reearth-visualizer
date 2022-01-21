@@ -14,7 +14,7 @@ import type {
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
-import { CameraOptions, FlyToDestination, LookAtDestination } from "./Plugin/types";
+import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
 
 export default ({
   engineType,
@@ -27,6 +27,7 @@ export default ({
   selectedBlockId: outerSelectedBlockId,
   camera,
   sceneProperty,
+  tags,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
@@ -42,6 +43,7 @@ export default ({
   selectedBlockId?: string;
   camera?: Camera;
   sceneProperty?: SceneProperty;
+  tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
@@ -139,6 +141,7 @@ export default ({
     {
       engineName: engineType || "",
       sceneProperty,
+      tags,
       camera,
       selectedLayer,
       layerSelectionReason,

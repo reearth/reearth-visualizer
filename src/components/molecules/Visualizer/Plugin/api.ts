@@ -3,7 +3,16 @@ import { merge } from "@reearth/util/object";
 
 import type { LayerStore } from "../Layers";
 
-import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth, Plugin } from "./types";
+import type {
+  GlobalThis,
+  Block,
+  Layer,
+  Widget,
+  ReearthEventType,
+  Reearth,
+  Plugin,
+  Tag,
+} from "./types";
 
 export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
 
@@ -100,6 +109,7 @@ export function commonReearth({
   events,
   layers,
   sceneProperty,
+  tags,
   camera,
   selectedLayer,
   layerSelectionReason,
@@ -118,6 +128,7 @@ export function commonReearth({
   events: Events<ReearthEventType>;
   layers: () => LayerStore;
   sceneProperty: () => any;
+  tags: () => Tag[];
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"]["position"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
@@ -172,6 +183,9 @@ export function commonReearth({
       get layers() {
         return layers().root.children ?? [];
       },
+      get tags() {
+        return tags();
+      },
       get selectionReason() {
         return layerSelectionReason();
       },
@@ -186,6 +200,12 @@ export function commonReearth({
       },
       get findByIds() {
         return layers().findByIds;
+      },
+      get findByTags() {
+        return layers().findByTags;
+      },
+      get findByTagLabels() {
+        return layers().findByTagLabels;
       },
       get find() {
         return layers().find;

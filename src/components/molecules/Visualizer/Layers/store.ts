@@ -20,6 +20,7 @@ export class LayerStore {
         "propertyId",
         "title",
         "type",
+        "tags",
       ],
       function (key) {
         const id = (this as any).id;
@@ -75,6 +76,22 @@ export class LayerStore {
 
   findByIds = (...ids: string[]): (PluginLayer | undefined)[] => {
     return ids.map(id => this.findById(id));
+  };
+
+  findByTags = (...tagIds: string[]): PluginLayer[] => {
+    return this.findAll(
+      l =>
+        !!l.tags?.some(t => tagIds.includes(t.id) || !!t.tags?.some(tt => tagIds.includes(tt.id))),
+    );
+  };
+
+  findByTagLabels = (...tagLabels: string[]): PluginLayer[] => {
+    return this.findAll(
+      l =>
+        !!l.tags?.some(
+          t => tagLabels.includes(t.label) || !!t.tags?.some(tt => tagLabels.includes(tt.label)),
+        ),
+    );
   };
 
   find = (

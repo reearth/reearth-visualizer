@@ -56,6 +56,22 @@ const fragments = gql`
       id
       ...PropertyFragmentWithoutSchema
     }
+    tags {
+      tagId
+      tag {
+        id
+        label
+      }
+      ... on LayerTagGroup {
+        children {
+          tagId
+          tag {
+            id
+            label
+          }
+        }
+      }
+    }
     infobox {
       propertyId
       property {
@@ -174,6 +190,25 @@ export const GET_EARTH_WIDGETS = gql`
         property {
           id
           ...PropertyFragment
+        }
+        clusters {
+          id
+          name
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        tags {
+          id
+          label
+          ... on TagGroup {
+            tags {
+              id
+              label
+            }
+          }
         }
         plugins {
           property {

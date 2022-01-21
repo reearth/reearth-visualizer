@@ -23,6 +23,7 @@ import type {
   ReearthEventType,
   FlyToDestination,
   LookAtDestination,
+  Tag,
 } from "./types";
 
 export type EngineContext = {
@@ -35,6 +36,7 @@ export type Props = {
   engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
+  tags?: Tag[];
   camera?: CameraPosition;
   layers: LayerStore;
   selectedLayer?: Layer;
@@ -69,6 +71,7 @@ export function Provider({
   engine: { api, isMarshalable, builtinPrimitives },
   engineName,
   sceneProperty,
+  tags,
   camera,
   layers,
   selectedLayer,
@@ -93,6 +96,7 @@ export function Provider({
 
   const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
+  const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
@@ -111,6 +115,7 @@ export function Provider({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
+        tags: getTags,
         camera: getCamera,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
