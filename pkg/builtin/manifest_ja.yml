@@ -153,6 +153,18 @@ extensions:
     propertySchema:
       default:
         title: インフォボックス
+        paddingTop:
+          title: 余白上
+          description: "上端の余白を設定します。最小0px・最大40ox"
+        paddingBottom:
+          title: 余白下
+          description: "下端の余白を設定します。最小0px・最大40ox"
+        paddingLeft:
+          title: 余白左
+          description: "左端の余白を設定します。最小0px・最大40ox"
+        paddingRight:
+          title: 余白右
+          description: "右端の余白を設定します。最小0px・最大40ox"
         fields:
           title:
             title: タイトル
@@ -526,6 +538,18 @@ extensions:
             title: コンテンツ
           markdown:
             title: マークダウン
+          paddingTop:
+            title: 余白上
+            description: "上端の余白を設定します。最小0px・最大40ox"
+          paddingBottom:
+            title: 余白下
+            description: "下端の余白を設定します。最小0px・最大40ox"
+          paddingLeft:
+            title: 余白左
+            description: "左端の余白を設定します。最小0px・最大40ox"
+          paddingRight:
+            title: 余白右
+            description: "右端の余白を設定します。最小0px・最大40ox"
           typography:
             title: フォント
   imageblock:

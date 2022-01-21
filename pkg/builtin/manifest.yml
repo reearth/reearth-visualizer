@@ -298,6 +298,34 @@ extensions:
             - id: title
               type: string
               title: Title
+            - id: infoboxPaddingTop
+              type: number
+              title: Top padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the top of the infobox and the title. Min: 0  Max: 40"
+            - id: infoboxPaddingBottom
+              type: number
+              title: Bottom padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the bottom of the infobox and the last block. Min: 0  Max: 40"
+            - id: infoboxPaddingLeft
+              type: number
+              title: Left padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the left side of the infobox and the title and blocks. Min: 0  Max: 40"
+            - id: infoboxPaddingRight
+              type: number
+              title: Right padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
             - id: size
               type: string
               title: Size Type
@@ -1168,6 +1196,34 @@ extensions:
             - id: markdown
               type: bool
               title: Use markdown
+            - id: paddingTop
+              type: number
+              title: Top padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the top edge of the text block and the uppermost text. Min: 0  Max: 40"
+            - id: paddingBottom
+              type: number
+              title: Bottom padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the bottom edge of the text block and the last text. Min: 0  Max: 40"
+            - id: paddingLeft
+              type: number
+              title: Left padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the left edge of the text block and the text. Min: 0  Max: 40"
+            - id: paddingRight
+              type: number
+              title: Right padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the right edge of the text block and the text. Min: 0  Max: 40"
             - id: typography
               type: typography
               title: Font
