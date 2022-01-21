@@ -15,6 +15,10 @@ import { SceneProperty } from "../../Engine";
 export type InfoboxStyles = {
   typography?: Typography;
   bgcolor?: string;
+  infoboxPaddingTop?: number;
+  infoboxPaddingBottom?: number;
+  infoboxPaddingLeft?: number;
+  infoboxPaddingRight?: number;
 };
 
 export type Props = {
@@ -86,7 +90,6 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
-
   return (
     <StyledFloatedPanel
       className={className}
@@ -121,7 +124,13 @@ const InfoBox: React.FC<Props> = ({
           onClick={handleClose}
           open={open}
         />
-        <Content ref={ref2} open={open}>
+        <Content
+          ref={ref2}
+          open={open}
+          paddingTop={styles?.infoboxPaddingTop}
+          paddingBottom={styles?.infoboxPaddingBottom}
+          paddingLeft={styles?.infoboxPaddingLeft}
+          paddingRight={styles?.infoboxPaddingRight}>
           {children}
         </Content>
       </Wrapper>
@@ -134,7 +143,6 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   open?: boolean;
   size?: "small" | "large";
 }>`
-  position: ${props => (props.floated ? "absolute" : "static")};
   top: 15%;
   right: ${({ open }) => (open ? "30px" : "-6px")};
   max-height: 70%;
@@ -202,7 +210,13 @@ const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
   display: ${({ open }) => (open ? "block" : "none")};
 `;
 
-const Content = styled.div<{ open?: boolean }>`
+const Content = styled.div<{
+  open?: boolean;
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+}>`
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   flex: auto;
@@ -222,6 +236,10 @@ const Content = styled.div<{ open?: boolean }>`
 
   max-height: ${({ open }) => (open ? "50vh" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
+  padding-top: ${({ paddingTop }) => paddingTop ?`${paddingTop}px` : null};
+  padding-bottom: ${({ paddingBottom }) => paddingBottom ? `${paddingBottom}px` : null};
+  padding-left: ${({ paddingLeft }) => paddingLeft ? `${paddingLeft}px` : null};
+  padding-right: ${({ paddingRight }) => paddingRight ? `${paddingRight}px` : null};
 `;
 
 export default InfoBox;

@@ -11,3 +11,4 @@ __screenshots__
 /cypress/screenshots
 /.env*
 /reearth-config.json
+.idea/*
