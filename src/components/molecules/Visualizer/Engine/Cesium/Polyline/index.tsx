@@ -33,7 +33,7 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
 
   const positions = useCustomCompareMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
-    [coordinates],
+    [coordinates ?? []],
     isEqual,
   );
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);

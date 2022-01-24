@@ -1,7 +1,7 @@
-import { flatMap } from "lodash";
 import { useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
+import { ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import {
   Location,
   Alignment,
@@ -103,22 +103,11 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
-  // TODO: refactor
-  const clusterProperty = useMemo(
-    () => scene?.clusters.reduce<any[]>((a, b) => [...a, convertProperty(b.property)], []),
-    [scene?.clusters],
-  );
-
-  const clusterLayers = useMemo(
+  const clusterProperty = useMemo<ClusterProperty[]>(
     () =>
-      scene?.clusters.reduce<any[]>(
-        (a, b) =>
-          flatMap([
-            ...a,
-            convertProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
-          ]).filter(item => !!item),
-        [],
-      ),
+      scene?.clusters
+        .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
+        .filter((c): c is ClusterProperty => !!c) ?? [],
     [scene?.clusters],
   );
 
@@ -278,7 +267,6 @@ export default (isBuilt?: boolean) => {
     sceneProperty,
     pluginProperty,
     clusterProperty,
-    clusterLayers,
     tags,
     widgets,
     layers,

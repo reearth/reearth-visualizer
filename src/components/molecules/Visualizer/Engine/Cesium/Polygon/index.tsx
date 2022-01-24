@@ -51,7 +51,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
               ),
           )
         : undefined,
-    [polygon],
+    [polygon ?? []],
     isEqual,
   );
 

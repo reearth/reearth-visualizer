@@ -1,4 +1,3 @@
-import { flatMap } from "lodash";
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
@@ -8,6 +7,7 @@ import type {
   Block,
   WidgetAlignSystem,
   Alignment,
+  ClusterProperty,
 } from "@reearth/components/molecules/Visualizer";
 import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
@@ -23,20 +23,8 @@ export default (alias?: string) => {
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
   );
-  const clusterProperty = useMemo(
-    () => data?.clusters?.reduce<any[]>((a, b) => [...a, processProperty(b.property)], []),
-    [data],
-  );
-  const clusterLayers = useMemo(
-    () =>
-      data?.clusters?.reduce<any[]>(
-        (a, b) =>
-          flatMap([
-            ...a,
-            processProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
-          ]).filter(item => !!item),
-        [],
-      ),
+  const clusterProperty = useMemo<ClusterProperty[]>(
+    () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
   );
 
@@ -203,7 +191,6 @@ export default (alias?: string) => {
     pluginProperty,
     layers,
     clusterProperty,
-    clusterLayers,
     widgets: widgetSystem,
     ready,
     error,
