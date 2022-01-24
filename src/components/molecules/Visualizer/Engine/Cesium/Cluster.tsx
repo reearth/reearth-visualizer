@@ -1,4 +1,4 @@
-import { Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
+import { Cartesian3, Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
@@ -28,44 +28,56 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
   const cluster = useMemo(() => {
     return new EntityCluster({
       enabled: true,
-      pixelRange: clusterPixelRange,
-      minimumClusterSize: clusterMinSize,
+      pixelRange: 15,
+      minimumClusterSize: 2,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
     });
-  }, [clusterMinSize, clusterPixelRange]);
+  }, []);
 
   useEffect(() => {
-    return cluster?.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
-      clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
-      clusterParam.label.horizontalOrigin =
-        clusterLabelTypography.textAlign === "right"
-          ? HorizontalOrigin.LEFT
-          : clusterLabelTypography.textAlign === "left"
-          ? HorizontalOrigin.RIGHT
-          : HorizontalOrigin.CENTER;
-      clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
-      clusterParam.label.fillColor = Color.fromCssColorString(
-        clusterLabelTypography.color ?? "#FFF",
-      );
-      clusterParam.billboard.show = true;
-      clusterParam.billboard.image = clusterImage;
-      clusterParam.billboard.height = clusterImageWidth;
-      clusterParam.billboard.width = clusterImageHeight;
-
-      // force a re-cluster with the new styling
-      cluster.pixelRange = 0;
-      cluster.pixelRange = clusterPixelRange;
-    });
+    const isClusterHidden = React.Children.count(children) < clusterMinSize;
+    const removeListener = cluster?.clusterEvent.addEventListener(
+      (_clusteredEntities, clusterParam) => {
+        clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
+        clusterParam.label.horizontalOrigin =
+          clusterLabelTypography.textAlign === "right"
+            ? HorizontalOrigin.LEFT
+            : clusterLabelTypography.textAlign === "left"
+            ? HorizontalOrigin.RIGHT
+            : HorizontalOrigin.CENTER;
+        clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
+        clusterParam.label.fillColor = Color.fromCssColorString(
+          clusterLabelTypography.color ?? "#FFF",
+        );
+        clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
+        clusterParam.billboard.show = true;
+        clusterParam.billboard.image = clusterImage;
+        clusterParam.billboard.height = clusterImageHeight;
+        clusterParam.billboard.width = clusterImageWidth;
+        // Workaround if minimumClusterSize is larger than number of layers event listner breaks
+        cluster.minimumClusterSize = isClusterHidden
+          ? React.Children.count(children)
+          : clusterMinSize;
+      },
+    );
+    cluster.enabled = !isClusterHidden;
+    // Workaround to re-style components
+    cluster.pixelRange = 0;
+    cluster.pixelRange = clusterPixelRange;
+    return () => {
+      removeListener();
+    };
   }, [
     clusterMinSize,
     clusterPixelRange,
-    cluster,
     clusterLabelTypography,
     clusterImage,
     clusterImageHeight,
     clusterImageWidth,
+    children,
+    cluster,
   ]);
 
   return cluster ? (
