@@ -3,7 +3,7 @@ import React, { ComponentType, useMemo, useCallback } from "react";
 import { ClusterProperty, ClusterProps } from "../Engine";
 import P from "../Primitive";
 
-import { LayerStore, Layer } from "./store";
+import type { LayerStore, Layer } from "./store";
 
 export type { Layer } from "../Primitive";
 

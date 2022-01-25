@@ -2,6 +2,8 @@ import { objectFromGetter } from "@reearth/util/object";
 
 import type { Layer } from "../Primitive";
 
+export type { Layer } from "../Primitive";
+
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
 
