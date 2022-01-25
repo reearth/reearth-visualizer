@@ -4,12 +4,12 @@ type Plugins struct {
 	plugins []*Plugin
 }
 
-func NewPlugins(p []*Plugin) *Plugins {
-	if p == nil {
+func NewPlugins(plugins []*Plugin) *Plugins {
+	if plugins == nil {
 		return &Plugins{plugins: []*Plugin{}}
 	}
-	p2 := make([]*Plugin, 0, len(p))
-	for _, p1 := range p {
+	p2 := make([]*Plugin, 0, len(plugins))
+	for _, p1 := range plugins {
 		if p1 == nil {
 			continue
 		}
@@ -21,8 +21,7 @@ func NewPlugins(p []*Plugin) *Plugins {
 			}
 		}
 		if !duplicated {
-			p3 := *p1
-			p2 = append(p2, &p3)
+			p2 = append(p2, p1)
 		}
 	}
 	return &Plugins{plugins: p2}
@@ -64,8 +63,7 @@ func (p *Plugins) Add(sp *Plugin) {
 	if sp == nil || p.Has(sp.plugin) || sp.plugin.Equal(OfficialPluginID) {
 		return
 	}
-	sp2 := *sp
-	p.plugins = append(p.plugins, &sp2)
+	p.plugins = append(p.plugins, sp)
 }
 
 func (p *Plugins) Remove(pid PluginID) {
@@ -107,7 +105,7 @@ func (p *Plugins) Properties() []PropertyID {
 
 func (p *Plugins) Plugin(pluginID PluginID) *Plugin {
 	for _, pp := range p.plugins {
-		if pp.plugin == pluginID {
+		if pp.plugin.Equal(pluginID) {
 			return pp
 		}
 	}

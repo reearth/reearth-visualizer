@@ -48,7 +48,7 @@ func (p *Initializer) Property(scene SceneID) (*Property, error) {
 	if p.Items != nil {
 		items = make([]Item, 0, len(p.Items))
 		for _, i := range p.Items {
-			item, err := i.PropertyItem(p.Schema)
+			item, err := i.PropertyItem()
 			if err != nil {
 				return nil, err
 			}
@@ -124,7 +124,7 @@ func (p *InitializerItem) Clone() *InitializerItem {
 	}
 }
 
-func (p *InitializerItem) PropertyItem(parent SchemaID) (Item, error) {
+func (p *InitializerItem) PropertyItem() (Item, error) {
 	if p == nil {
 		return nil, nil
 	}
@@ -134,12 +134,12 @@ func (p *InitializerItem) PropertyItem(parent SchemaID) (Item, error) {
 		i = NewItemID().Ref()
 	}
 
-	pi := NewItem().ID(*i).Schema(parent, p.SchemaItem)
+	pi := NewItem().ID(*i).SchemaGroup(p.SchemaItem)
 
 	if p.Groups != nil {
 		groups := make([]*Group, 0, len(p.Groups))
 		for _, g := range p.Groups {
-			g2, err := g.PropertyGroup(parent, p.SchemaItem)
+			g2, err := g.PropertyGroup(p.SchemaItem)
 			if err != nil {
 				return nil, err
 			}
@@ -164,16 +164,16 @@ func (p *InitializerItem) PropertyItem(parent SchemaID) (Item, error) {
 	return pi.Group().Fields(fields).Build()
 }
 
-func (p *InitializerItem) PropertyGroupList(parent SchemaID) *GroupList {
-	i, _ := p.PropertyItem(parent)
+func (p *InitializerItem) PropertyGroupList() *GroupList {
+	i, _ := p.PropertyItem()
 	if g := ToGroupList(i); g != nil {
 		return g
 	}
 	return nil
 }
 
-func (p *InitializerItem) PropertyGroup(parent SchemaID) *Group {
-	i, _ := p.PropertyItem(parent)
+func (p *InitializerItem) PropertyGroup() *Group {
+	i, _ := p.PropertyItem()
 	if g := ToGroup(i); g != nil {
 		return g
 	}
@@ -204,7 +204,7 @@ func (p *InitializerGroup) Clone() *InitializerGroup {
 	}
 }
 
-func (p *InitializerGroup) PropertyGroup(parent SchemaID, parentItem SchemaGroupID) (*Group, error) {
+func (p *InitializerGroup) PropertyGroup(parentItem SchemaGroupID) (*Group, error) {
 	if p == nil {
 		return nil, nil
 	}
@@ -214,7 +214,7 @@ func (p *InitializerGroup) PropertyGroup(parent SchemaID, parentItem SchemaGroup
 		i = NewItemID().Ref()
 	}
 
-	pi := NewItem().ID(*i).Schema(parent, parentItem)
+	pi := NewItem().ID(*i).SchemaGroup(parentItem)
 
 	var fields []*Field
 	if p.Fields != nil {
@@ -274,7 +274,10 @@ func (p *InitializerField) PropertyField() *Field {
 		plinks = NewLinks(links)
 	}
 
-	return NewFieldUnsafe().LinksUnsafe(plinks).FieldUnsafe(p.Field).ValueUnsafe(NewOptionalValue(p.Type, p.Value.Clone())).Build()
+	return NewField(p.Field).
+		Value(NewOptionalValue(p.Type, p.Value.Clone())).
+		Links(plinks).
+		Build()
 }
 
 type InitializerLink struct {

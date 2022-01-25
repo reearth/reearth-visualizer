@@ -21,6 +21,9 @@ type Field struct {
 }
 
 func (p *Field) Clone() *Field {
+	if p == nil {
+		return nil
+	}
 	return &Field{
 		field: p.field,
 		links: p.links.Clone(),
@@ -29,6 +32,9 @@ func (p *Field) Clone() *Field {
 }
 
 func (p *Field) Field() FieldID {
+	if p == nil {
+		return FieldID("")
+	}
 	return p.field
 }
 
@@ -69,16 +75,12 @@ func (p *Field) ActualValue(ds *dataset.Dataset) *Value {
 	return p.Value()
 }
 
-func (p *Field) HasLinkedField() bool {
-	return p.Links().IsLinked()
-}
-
-func (p *Field) CollectDatasets() []DatasetID {
+func (p *Field) Datasets() []DatasetID {
 	if p == nil {
 		return nil
 	}
-	res := []DatasetID{}
 
+	res := []DatasetID{}
 	if p.Links().IsLinkedFully() {
 		dsid := p.Links().Last().Dataset()
 		if dsid != nil {
@@ -90,7 +92,7 @@ func (p *Field) CollectDatasets() []DatasetID {
 }
 
 func (p *Field) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
-	return p.Links().HasDatasetOrSchema(s, i)
+	return p.Links().HasDatasetSchemaAndDataset(s, i)
 }
 
 func (p *Field) Update(value *Value, field *SchemaField) error {
@@ -111,6 +113,14 @@ func (p *Field) UpdateUnsafe(value *Value) {
 	p.v.SetValue(value)
 }
 
+func (p *Field) Cast(t ValueType) {
+	if p == nil || p.Type() == t {
+		return
+	}
+	p.v = p.v.Cast(t)
+	p.Unlink()
+}
+
 func (p *Field) Link(links *Links) {
 	if p == nil {
 		return
@@ -119,10 +129,7 @@ func (p *Field) Link(links *Links) {
 }
 
 func (p *Field) Unlink() {
-	if p == nil {
-		return
-	}
-	p.links = nil
+	p.Link(nil)
 }
 
 func (p *Field) UpdateField(field FieldID) {

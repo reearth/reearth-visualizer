@@ -3,7 +3,7 @@ package user
 type Team struct {
 	id      TeamID
 	name    string
-	members Members
+	members *Members
 }
 
 func (t *Team) ID() TeamID {
@@ -15,13 +15,13 @@ func (t *Team) Name() string {
 }
 
 func (t *Team) Members() *Members {
-	return &t.members
+	return t.members
+}
+
+func (t *Team) IsPersonal() bool {
+	return t.members.Fixed()
 }
 
 func (t *Team) Rename(name string) {
 	t.name = name
-}
-
-func (t *Team) IsPersonal() bool {
-	return t.members.fixed
 }

@@ -17,7 +17,7 @@ func TestSchema_Nil(t *testing.T) {
 func TestSchema_Field(t *testing.T) {
 	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -57,7 +57,7 @@ func TestSchema_Field(t *testing.T) {
 func TestSchema_Group(t *testing.T) {
 	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	tests := []struct {
 		Name       string
@@ -100,7 +100,7 @@ func TestSchema_Group(t *testing.T) {
 func TestSchema_DetectDuplicatedFields(t *testing.T) {
 	sid := MustSchemaID("xx~1.0.0/aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(sid).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	tests := []struct {
 		Name     string

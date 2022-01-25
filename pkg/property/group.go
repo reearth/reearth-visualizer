@@ -45,40 +45,26 @@ func (g *Group) SchemaGroupRef() *SchemaGroupID {
 	return g.itemBase.SchemaGroup.Ref()
 }
 
-func (g *Group) Schema() SchemaID {
-	if g == nil {
-		return SchemaID{}
-	}
-	return g.itemBase.Schema
-}
-
-func (g *Group) SchemaRef() *SchemaID {
-	if g == nil {
-		return nil
-	}
-	return g.itemBase.Schema.Ref()
-}
-
 func (g *Group) HasLinkedField() bool {
 	if g == nil {
 		return false
 	}
 	for _, f := range g.fields {
-		if f.HasLinkedField() {
+		if f.Links().IsLinked() {
 			return true
 		}
 	}
 	return false
 }
 
-func (g *Group) CollectDatasets() []DatasetID {
+func (g *Group) Datasets() []DatasetID {
 	if g == nil {
 		return nil
 	}
 	res := []DatasetID{}
 
 	for _, f := range g.fields {
-		res = append(res, f.CollectDatasets()...)
+		res = append(res, f.Datasets()...)
 	}
 
 	return res
@@ -90,7 +76,7 @@ func (g *Group) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Field {
 	}
 	res := []*Field{}
 	for _, f := range g.fields {
-		if f.Links().IsDatasetLinked(s, i) {
+		if f.Links().HasSchemaAndDataset(s, i) {
 			res = append(res, f)
 		}
 	}
@@ -137,8 +123,6 @@ func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 		return
 	}
 
-	g.itemBase.Schema = newSchema.ID()
-
 	for _, f := range g.fields {
 		if !f.MigrateSchema(ctx, newSchema, dl) {
 			g.RemoveField(f.Field())
@@ -149,7 +133,7 @@ func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 }
 
 func (g *Group) GetOrCreateField(ps *Schema, fid FieldID) (*Field, bool) {
-	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
+	if g == nil || ps == nil {
 		return nil, false
 	}
 	psg := ps.Group(g.SchemaGroup())
@@ -169,7 +153,7 @@ func (g *Group) GetOrCreateField(ps *Schema, fid FieldID) (*Field, bool) {
 	}
 
 	// if the field does not exist, create it here
-	field, _ = NewField(psf).Build()
+	field = FieldFrom(psf).Type(psf.Type()).Build()
 	if field == nil {
 		return nil, false
 	}
@@ -232,7 +216,7 @@ func (g *Group) MigrateDataset(q DatasetMigrationParam) {
 }
 
 func (g *Group) RepresentativeField(schema *Schema) *Field {
-	if g == nil || schema == nil || !g.Schema().Equal(schema.ID()) {
+	if g == nil || schema == nil {
 		return nil
 	}
 	if psg := schema.GroupByPointer(NewPointer(&g.itemBase.SchemaGroup, nil, nil)); psg != nil {
@@ -251,9 +235,6 @@ func (p *Group) ValidateSchema(ps *SchemaGroup) error {
 	}
 	if ps == nil {
 		return errors.New("invalid schema")
-	}
-	if !p.Schema().Equal(ps.Schema()) {
-		return errors.New("invalid schema id")
 	}
 	if p.SchemaGroup() != ps.ID() {
 		return errors.New("invalid schema group id")

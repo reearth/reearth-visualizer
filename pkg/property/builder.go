@@ -1,13 +1,5 @@
 package property
 
-import (
-	"errors"
-)
-
-var (
-	ErrInvalidItem = errors.New("invalid item")
-)
-
 type Builder struct {
 	p *Property
 }
@@ -25,11 +17,6 @@ func (b *Builder) Build() (*Property, error) {
 	}
 	if b.p.schema.IsNil() {
 		return nil, ErrInvalidPropertySchemaID
-	}
-	for _, i := range b.p.items {
-		if !i.Schema().Equal(b.p.schema) {
-			return nil, ErrInvalidItem
-		}
 	}
 	return b.p, nil
 }
@@ -68,7 +55,7 @@ func (b *Builder) Items(items []Item) *Builder {
 		return b
 	}
 
-	newItems := []Item{}
+	newItems := make([]Item, 0, len(items))
 	ids := map[ItemID]struct{}{}
 	for _, f := range items {
 		if f == nil {
@@ -80,6 +67,7 @@ func (b *Builder) Items(items []Item) *Builder {
 		ids[f.ID()] = struct{}{}
 		newItems = append(newItems, f)
 	}
+
 	b.p.items = newItems
 	return b
 }

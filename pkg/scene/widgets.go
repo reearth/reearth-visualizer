@@ -29,8 +29,7 @@ func NewWidgets(w []*Widget) *Widgets {
 			}
 		}
 		if !duplicated {
-			w3 := *w1
-			w2 = append(w2, &w3)
+			w2 = append(w2, w1)
 		}
 	}
 	return &Widgets{widgets: w2}
@@ -71,8 +70,7 @@ func (w *Widgets) Add(sw *Widget) {
 	if w == nil || sw == nil || w.Has(sw.ID()) {
 		return
 	}
-	sw2 := *sw
-	w.widgets = append(w.widgets, &sw2)
+	w.widgets = append(w.widgets, sw)
 }
 
 func (w *Widgets) Remove(wid WidgetID) {

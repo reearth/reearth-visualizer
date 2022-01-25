@@ -2,7 +2,6 @@ package dataset
 
 import (
 	"net/url"
-	"strconv"
 
 	"github.com/reearth/reearth-backend/pkg/value"
 )
@@ -12,6 +11,8 @@ type LatLngHeight = value.LatLngHeight
 type Coordinates = value.Coordinates
 type Rect = value.Rect
 type Polygon = value.Polygon
+
+type ValueType value.Type
 
 var (
 	ValueTypeUnknown      = ValueType(value.TypeUnknown)
@@ -27,10 +28,8 @@ var (
 	TypePolygon           = ValueType(value.TypePolygon)
 )
 
-type ValueType value.Type
-
-func ValueTypeFrom(t string) ValueType {
-	return ValueType(value.Type(t))
+func (vt ValueType) Valid() bool {
+	return value.Type(vt).Default()
 }
 
 func (t ValueType) Default() bool {
@@ -52,8 +51,16 @@ func (vt ValueType) MustBeValue(i interface{}) *Value {
 	panic("invalid value")
 }
 
+func (vt ValueType) None() *OptionalValue {
+	return NewOptionalValue(vt, nil)
+}
+
 type Value struct {
 	v value.Value
+}
+
+func (v *Value) IsEmpty() bool {
+	return v == nil || v.v.IsEmpty()
 }
 
 func (v *Value) Clone() *Value {
@@ -65,6 +72,10 @@ func (v *Value) Clone() *Value {
 		return nil
 	}
 	return &Value{v: *vv}
+}
+
+func (v *Value) Some() *OptionalValue {
+	return OptionalValueFrom(v)
 }
 
 func (v *Value) Type() ValueType {
@@ -210,16 +221,12 @@ func (v *Value) ValuePolygon() *Polygon {
 }
 
 func ValueFromStringOrNumber(s string) *Value {
-	if vint, err := strconv.Atoi(s); err == nil {
-		return ValueTypeNumber.ValueFrom(vint)
+	if s == "true" || s == "false" || s == "TRUE" || s == "FALSE" || s == "True" || s == "False" {
+		return ValueTypeBool.ValueFrom(s)
 	}
 
-	if vfloat64, err := strconv.ParseFloat(s, 64); err == nil {
-		return ValueTypeNumber.ValueFrom(vfloat64)
-	}
-
-	if vbool, err := strconv.ParseBool(s); err == nil {
-		return ValueTypeBool.ValueFrom(vbool)
+	if v := ValueTypeNumber.ValueFrom(s); v != nil {
+		return v
 	}
 
 	return ValueTypeString.ValueFrom(s)

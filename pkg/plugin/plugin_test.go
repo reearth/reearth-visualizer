@@ -99,3 +99,51 @@ func TestPlugin_Author(t *testing.T) {
 func TestPlugin_ID(t *testing.T) {
 	assert.Equal(t, New().ID(MustID("xxx~1.1.1")).MustBuild().ID(), MustID("xxx~1.1.1"))
 }
+
+func TestPlugin_Clone(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *Plugin
+	}{
+		{
+			name: "ok",
+			target: &Plugin{
+				id:   MustID("hoge~0.1.0"),
+				name: i18n.StringFrom("hoge"),
+				extensions: map[ExtensionID]*Extension{
+					ExtensionID("foo"): {
+						id:            ExtensionID("foo"),
+						extensionType: ExtensionTypeBlock,
+						schema:        MustPropertySchemaID("hoge~0.1.0/foo"),
+					},
+					ExtensionID("bar"): {
+						id:            ExtensionID("bar"),
+						extensionType: ExtensionTypePrimitive,
+						schema:        MustPropertySchemaID("hoge~0.1.0/bar"),
+					},
+				},
+				extensionOrder: []ExtensionID{"foo", "bar"},
+				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
+			},
+		},
+		{
+			name:   "empty",
+			target: &Plugin{},
+		},
+		{
+			name: "nil",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got := tt.target.Clone()
+			assert.Equal(t, tt.target, got)
+			if tt.target != nil {
+				assert.NotSame(t, tt.target, got)
+			}
+		})
+	}
+}

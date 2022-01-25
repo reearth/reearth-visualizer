@@ -15,7 +15,7 @@ func NewSchemaGroup() *SchemaGroupBuilder {
 }
 
 func (b *SchemaGroupBuilder) Build() (*SchemaGroup, error) {
-	if b.p.sid.IsNil() {
+	if b.p.id == "" {
 		return nil, ErrInvalidID
 	}
 	return b.p, nil
@@ -31,11 +31,6 @@ func (b *SchemaGroupBuilder) MustBuild() *SchemaGroup {
 
 func (b *SchemaGroupBuilder) ID(id SchemaGroupID) *SchemaGroupBuilder {
 	b.p.id = id
-	return b
-}
-
-func (b *SchemaGroupBuilder) Schema(sid SchemaID) *SchemaGroupBuilder {
-	b.p.sid = sid
 	return b
 }
 

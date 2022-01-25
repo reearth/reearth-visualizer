@@ -70,7 +70,7 @@ func (p *Property) Item(id ItemID) (Item, *GroupList) {
 			return f, nil
 		}
 		if gl := ToGroupList(f); gl != nil {
-			if i := gl.GetGroup(id); i != nil {
+			if i := gl.Group(id); i != nil {
 				return i, gl
 			}
 		}
@@ -131,12 +131,12 @@ func (p *Property) ListItem(ptr *Pointer) (*Group, *GroupList) {
 	}
 	if sgid, i, ok := ptr.ItemBySchemaGroupAndItem(); ok {
 		if item := ToGroupList(p.ItemBySchema(sgid)); item != nil {
-			return item.GetGroup(i), item
+			return item.Group(i), item
 		}
 	} else if iid, ok := ptr.Item(); ok {
 		for _, item := range p.items {
 			litem := ToGroupList(item)
-			if g := litem.GetGroup(iid); g != nil {
+			if g := litem.Group(iid); g != nil {
 				return g, litem
 			}
 		}
@@ -183,14 +183,14 @@ func (p *Property) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 	return false
 }
 
-func (p *Property) CollectDatasets() []DatasetID {
+func (p *Property) Datasets() []DatasetID {
 	if p == nil {
 		return nil
 	}
 	res := []DatasetID{}
 
 	for _, f := range p.items {
-		res = append(res, f.CollectDatasets()...)
+		res = append(res, f.Datasets()...)
 	}
 
 	return res

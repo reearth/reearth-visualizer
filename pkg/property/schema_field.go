@@ -26,39 +26,56 @@ type SchemaFieldChoice struct {
 }
 
 func (p *SchemaField) ID() FieldID {
+	if p == nil {
+		return ""
+	}
 	return p.id
 }
 
 func (p *SchemaField) Type() ValueType {
+	if p == nil {
+		return ValueTypeUnknown
+	}
 	return p.propertyType
 }
 
 func (p *SchemaField) Title() i18n.String {
+	if p == nil {
+		return nil
+	}
 	return p.title.Copy()
 }
 
 func (p *SchemaField) Description() i18n.String {
+	if p == nil {
+		return nil
+	}
 	return p.description.Copy()
 }
 
 func (p *SchemaField) Prefix() string {
+	if p == nil {
+		return ""
+	}
 	return p.prefix
 }
 
 func (p *SchemaField) Suffix() string {
+	if p == nil {
+		return ""
+	}
 	return p.suffix
 }
 
 func (p *SchemaField) DefaultValue() *Value {
-	if p == nil || p.defaultValue == nil {
+	if p == nil {
 		return nil
 	}
-	v := *p.defaultValue
-	return &v
+	return p.defaultValue.Clone()
 }
 
 func (p *SchemaField) UI() *SchemaFieldUI {
-	if p == nil || p.ui == SchemaFieldUI("") {
+	if p == nil || p.ui == "" {
 		return nil
 	}
 	ui := p.ui
@@ -151,14 +168,23 @@ func (p *SchemaField) Validate(value *OptionalValue) bool {
 }
 
 func (p *SchemaField) SetTitle(title i18n.String) {
+	if p == nil {
+		return
+	}
 	p.title = title.Copy()
 }
 
 func (p *SchemaField) SetDescription(des i18n.String) {
+	if p == nil {
+		return
+	}
 	p.description = des.Copy()
 }
 
 func (c *SchemaFieldChoice) SetTitle(l i18n.String) {
+	if c == nil {
+		return
+	}
 	c.Title = l.Copy()
 }
 

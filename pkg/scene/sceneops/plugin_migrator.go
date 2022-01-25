@@ -236,7 +236,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 func collectDatasetIDs(properties []*property.Property) []property.DatasetID {
 	res := []property.DatasetID{}
 	for _, p := range properties {
-		res = append(res, p.CollectDatasets()...)
+		res = append(res, p.Datasets()...)
 	}
 	return res
 }

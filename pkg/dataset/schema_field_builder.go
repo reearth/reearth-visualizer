@@ -56,11 +56,6 @@ func (b *SchemaFieldBuilder) Source(source string) *SchemaFieldBuilder {
 }
 
 func (b *SchemaFieldBuilder) Ref(ref *SchemaID) *SchemaFieldBuilder {
-	if ref == nil {
-		b.d.ref = nil
-	} else {
-		ref2 := *ref
-		b.d.ref = &ref2
-	}
+	b.d.ref = ref.CopyRef()
 	return b
 }

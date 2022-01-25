@@ -163,15 +163,19 @@ func (l *IDList) MoveLayerAt(fromIndex int, toIndex int) {
 	l.layers = append(newSlice, l.layers[toIndex:]...)
 }
 
-func (l *IDList) RemoveLayer(id ID) {
+func (l *IDList) RemoveLayer(ids ...ID) {
 	if l == nil {
 		return
 	}
 
-	for index, layer := range l.layers {
-		if layer == id {
-			l.RemoveLayerAt(index)
-			return
+	for i := 0; i < len(l.layers); i++ {
+		layer := l.layers[i]
+		for _, id := range ids {
+			if layer == id {
+				l.RemoveLayerAt(i)
+				i--
+				break
+			}
 		}
 	}
 }

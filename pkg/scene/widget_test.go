@@ -132,3 +132,11 @@ func TestWidget_SetExtended(t *testing.T) {
 	res.SetExtended(true)
 	assert.True(t, res.Extended())
 }
+
+func TestWidget_Clone(t *testing.T) {
+	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res2 := res.Clone()
+	assert.Equal(t, res, res2)
+	assert.NotSame(t, res, res2)
+	assert.Nil(t, (*Widget)(nil).Clone())
+}

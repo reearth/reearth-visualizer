@@ -199,7 +199,7 @@ func (i *PropertySchema) schema(pluginID plugin.ID, idstr string) (*property.Sch
 	// items
 	items := make([]*property.SchemaGroup, 0, len(i.Groups))
 	for _, d := range i.Groups {
-		item, err := d.schemaGroup(psid)
+		item, err := d.schemaGroup()
 		if err != nil {
 			return nil, rerror.From(fmt.Sprintf("item (%s)", d.ID), err)
 		}
@@ -240,7 +240,7 @@ func (p *PropertyPointer) pointer() *property.Pointer {
 	)
 }
 
-func (i PropertySchemaGroup) schemaGroup(sid property.SchemaID) (*property.SchemaGroup, error) {
+func (i PropertySchemaGroup) schemaGroup() (*property.SchemaGroup, error) {
 	title := i.Title
 	var representativeField *property.FieldID
 	if i.RepresentativeField != nil {
@@ -259,7 +259,6 @@ func (i PropertySchemaGroup) schemaGroup(sid property.SchemaID) (*property.Schem
 
 	return property.NewSchemaGroup().
 		ID(property.SchemaGroupID(i.ID)).
-		Schema(sid).
 		IsList(i.List).
 		Fields(fields).
 		Title(i18n.StringFrom(title)).

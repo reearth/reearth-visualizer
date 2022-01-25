@@ -268,3 +268,36 @@ func TestMembers_UsersByRole(t *testing.T) {
 		})
 	}
 }
+
+func TestMembers_Fixed(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *Members
+		want   bool
+	}{
+		{
+			name: "true",
+			target: &Members{
+				fixed: true,
+			},
+			want: true,
+		},
+		{
+			name:   "empty",
+			target: &Members{},
+			want:   false,
+		},
+		{
+			name: "nil",
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, tt.target.Fixed())
+		})
+	}
+}

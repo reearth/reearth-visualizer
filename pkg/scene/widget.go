@@ -75,3 +75,17 @@ func (w *Widget) SetExtended(extended bool) {
 	}
 	w.extended = extended
 }
+
+func (w *Widget) Clone() *Widget {
+	if w == nil {
+		return nil
+	}
+	return &Widget{
+		id:        w.id,
+		plugin:    w.plugin.Clone(),
+		extension: w.extension,
+		property:  w.property,
+		enabled:   w.enabled,
+		extended:  w.extended,
+	}
+}

@@ -183,5 +183,5 @@ func toModelDatasetValue(v interface{}, t string) *dataset.Value {
 	if v2, ok := v.(bson.D); ok {
 		v = v2.Map()
 	}
-	return dataset.ValueTypeFrom(t).ValueFrom(v)
+	return dataset.ValueType(t).ValueFrom(v)
 }

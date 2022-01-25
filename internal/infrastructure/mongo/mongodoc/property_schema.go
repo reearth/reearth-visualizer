@@ -14,6 +14,14 @@ type PropertySchemaDocument struct {
 	LinkableFields *PropertyLinkableFieldsDocument
 }
 
+type PropertySchemaGroupDocument struct {
+	ID            string
+	Fields        []*PropertySchemaFieldDocument
+	List          bool
+	IsAvailableIf *PropertyConditonDocument
+	Title         map[string]string
+}
+
 type PropertySchemaFieldDocument struct {
 	ID           string
 	Type         string
@@ -48,14 +56,6 @@ type PropertyConditonDocument struct {
 	Field string
 	Type  string
 	Value interface{}
-}
-
-type PropertySchemaGroupDocument struct {
-	ID            string
-	Fields        []*PropertySchemaFieldDocument
-	List          bool
-	IsAvailableIf *PropertyConditonDocument
-	Title         map[string]string
 }
 
 type PropertySchemaConsumer struct {
@@ -190,7 +190,7 @@ func (doc *PropertySchemaDocument) Model() (*property.Schema, error) {
 
 	groups := make([]*property.SchemaGroup, 0, len(doc.Groups))
 	for _, g := range doc.Groups {
-		g2, err := toModelPropertySchemaGroup(g, pid)
+		g2, err := g.Model()
 		if err != nil {
 			return nil, err
 		}
@@ -248,7 +248,7 @@ func newPropertySchemaGroup(p *property.SchemaGroup) *PropertySchemaGroupDocumen
 	}
 }
 
-func toModelPropertySchemaGroup(d *PropertySchemaGroupDocument, sid id.PropertySchemaID) (*property.SchemaGroup, error) {
+func (d *PropertySchemaGroupDocument) Model() (*property.SchemaGroup, error) {
 	if d == nil {
 		return nil, nil
 	}
@@ -264,7 +264,6 @@ func toModelPropertySchemaGroup(d *PropertySchemaGroupDocument, sid id.PropertyS
 
 	return property.NewSchemaGroup().
 		ID(id.PropertySchemaGroupID(d.ID)).
-		Schema(sid).
 		IsList(d.List).
 		Title(d.Title).
 		IsAvailableIf(toModelPropertyCondition(d.IsAvailableIf)).

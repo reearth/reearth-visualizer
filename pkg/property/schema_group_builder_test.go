@@ -8,13 +8,11 @@ import (
 )
 
 func TestSchemaGroupBuilder_Build(t *testing.T) {
-	sid := MustSchemaID("xx~1.0.0/aa")
 	gid := SchemaGroupID("xx")
 	sf := NewSchemaField().ID("ff").Type(ValueTypeString).MustBuild()
 
 	type expected struct {
 		ID            SchemaGroupID
-		Sid           SchemaID
 		Fields        []*SchemaField
 		List          bool
 		IsAvailableIf *Condition
@@ -24,7 +22,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 	tests := []struct {
 		Name          string
 		ID            SchemaGroupID
-		Sid           SchemaID
 		Fields        []*SchemaField
 		List          bool
 		IsAvailableIf *Condition
@@ -39,7 +36,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 		{
 			Name:   "success",
 			ID:     gid,
-			Sid:    sid,
 			Fields: []*SchemaField{sf, nil, sf},
 			List:   true,
 			IsAvailableIf: &Condition{
@@ -49,7 +45,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 			Title: i18n.StringFrom("tt"),
 			Expected: expected{
 				ID:     gid,
-				Sid:    sid,
 				Fields: []*SchemaField{sf},
 				List:   true,
 				IsAvailableIf: &Condition{
@@ -62,7 +57,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 		{
 			Name:   "success: nil name",
 			ID:     gid,
-			Sid:    sid,
 			Fields: []*SchemaField{sf},
 			List:   true,
 			IsAvailableIf: &Condition{
@@ -72,7 +66,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 			Title: i18n.StringFrom("tt"),
 			Expected: expected{
 				ID:     gid,
-				Sid:    sid,
 				Fields: []*SchemaField{sf},
 				List:   true,
 				IsAvailableIf: &Condition{
@@ -90,7 +83,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 			t.Parallel()
 			res, err := NewSchemaGroup().
 				ID(tc.ID).
-				Schema(tc.Sid).
 				Fields(tc.Fields).
 				IsList(tc.List).
 				Title(tc.Title).
@@ -98,7 +90,6 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 				Build()
 			if tc.Err == nil {
 				assert.Equal(t, tc.Expected.IsAvailableIf, res.IsAvailableIf())
-				assert.Equal(t, tc.Expected.Sid, res.Schema())
 				assert.Equal(t, tc.Expected.ID, res.ID())
 				assert.Equal(t, tc.Expected.Title, res.Title())
 				assert.Equal(t, tc.Expected.List, res.IsList())

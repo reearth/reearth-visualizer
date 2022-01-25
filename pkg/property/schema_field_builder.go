@@ -72,8 +72,7 @@ func (b *SchemaFieldBuilder) DefaultValue(v *Value) *SchemaFieldBuilder {
 	if v == nil {
 		b.p.defaultValue = nil
 	} else {
-		v2 := *v
-		b.p.defaultValue = &v2
+		b.p.defaultValue = v.Clone()
 	}
 	return b
 }

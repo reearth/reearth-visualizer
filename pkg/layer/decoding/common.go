@@ -87,8 +87,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 	item := propertyItems
 	field := propertyFields[t]
 	ps := builtin.GetPropertySchema(propertySchema)
-	p, err := property.
-		New().
+	p, err := property.New().
 		NewID().
 		Scene(sceneID).
 		Schema(propertySchema).

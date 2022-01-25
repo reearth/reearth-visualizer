@@ -36,7 +36,7 @@ func TestInitializer_Property(t *testing.T) {
 	}
 
 	expected := New().ID(*initializer.ID).Schema(initializer.Schema).Scene(sid).Items([]Item{
-		NewItem().ID(*initializer.Items[0].ID).Schema(initializer.Schema, initializer.Items[0].SchemaItem).Group().MustBuild(),
+		NewItem().ID(*initializer.Items[0].ID).SchemaGroup(initializer.Items[0].SchemaItem).Group().MustBuild(),
 	}).MustBuild()
 
 	actual, err := initializer.Property(sid)
@@ -78,7 +78,7 @@ func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
 	// test case 3: should generates a property normally
 	actual, err = initializer.PropertyIncludingEmpty(sid, psid2)
 	expected = New().ID(actual.ID()).Schema(initializer.Schema).Scene(sid).Items([]Item{
-		NewItem().ID(*initializer.Items[0].ID).Schema(initializer.Schema, initializer.Items[0].SchemaItem).Group().MustBuild(),
+		NewItem().ID(*initializer.Items[0].ID).SchemaGroup(initializer.Items[0].SchemaItem).Group().MustBuild(),
 	}).MustBuild()
 	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
@@ -114,26 +114,24 @@ func TestInitializerItem_Clone(t *testing.T) {
 }
 
 func TestInitializerItem_PropertyItem(t *testing.T) {
-	parent := MustSchemaID("reearth/marker")
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
 		SchemaItem: SchemaGroupID("hoge"),
 	}
 
-	expected := NewItem().ID(*item.ID).Schema(parent, item.SchemaItem).Group().MustBuild()
+	expected := NewItem().ID(*item.ID).SchemaGroup(item.SchemaItem).Group().MustBuild()
 
-	created, err := item.PropertyItem(parent)
+	created, err := item.PropertyItem()
 	assert.NoError(t, err)
 	assert.Equal(t, expected, created)
 
 	item.ID = nil
-	created, err = item.PropertyItem(parent)
+	created, err = item.PropertyItem()
 	assert.NoError(t, err)
 	assert.False(t, created.ID().IsNil())
 }
 
 func TestInitializerItem_PropertyGroup(t *testing.T) {
-	parent := MustSchemaID("reearth/marker")
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
 		SchemaItem: SchemaGroupID("hoge"),
@@ -144,19 +142,20 @@ func TestInitializerItem_PropertyGroup(t *testing.T) {
 		}},
 	}
 
-	expected := NewItem().ID(*item.ID).Schema(parent, item.SchemaItem).Group().Fields([]*Field{
-		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).ValueUnsafe(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).Build(),
+	expected := NewItem().ID(*item.ID).SchemaGroup(item.SchemaItem).Group().Fields([]*Field{
+		NewField(item.Fields[0].Field).
+			Value(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).
+			MustBuild(),
 	}).MustBuild()
 
-	assert.Equal(t, expected, item.PropertyGroup(parent))
+	assert.Equal(t, expected, item.PropertyGroup())
 
 	// check if a new id is generated
 	item.ID = nil
-	assert.False(t, item.PropertyGroup(parent).ID().IsNil())
+	assert.False(t, item.PropertyGroup().ID().IsNil())
 }
 
 func TestInitializerItem_PropertyGroupList(t *testing.T) {
-	parent := MustSchemaID("reearth/marker")
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
 		SchemaItem: SchemaGroupID("hoge"),
@@ -165,15 +164,15 @@ func TestInitializerItem_PropertyGroupList(t *testing.T) {
 		}},
 	}
 
-	expected := NewItem().ID(*item.ID).Schema(parent, item.SchemaItem).GroupList().Groups([]*Group{
-		NewItem().ID(*item.Groups[0].ID).Schema(parent, item.SchemaItem).Group().MustBuild(),
+	expected := NewItem().ID(*item.ID).SchemaGroup(item.SchemaItem).GroupList().Groups([]*Group{
+		NewItem().ID(*item.Groups[0].ID).SchemaGroup(item.SchemaItem).Group().MustBuild(),
 	}).MustBuild()
 
-	assert.Equal(t, expected, item.PropertyGroupList(parent))
+	assert.Equal(t, expected, item.PropertyGroupList())
 
 	// check if a new id is generated
 	item.ID = nil
-	assert.False(t, item.PropertyGroupList(parent).ID().IsNil())
+	assert.False(t, item.PropertyGroupList().ID().IsNil())
 }
 
 func TestInitializerGroup_Clone(t *testing.T) {
@@ -200,7 +199,6 @@ func TestInitializerGroup_Clone(t *testing.T) {
 }
 
 func TestInitializerGroup_PropertyGroup(t *testing.T) {
-	parent := MustSchemaID("reearth/marker")
 	parentItem := SchemaGroupID("hoge")
 	item := &InitializerGroup{
 		ID: NewItemID().Ref(),
@@ -211,17 +209,19 @@ func TestInitializerGroup_PropertyGroup(t *testing.T) {
 		}},
 	}
 
-	expected := NewItem().ID(*item.ID).Schema(parent, parentItem).Group().Fields([]*Field{
-		NewFieldUnsafe().FieldUnsafe(item.Fields[0].Field).ValueUnsafe(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).Build(),
+	expected := NewItem().ID(*item.ID).SchemaGroup(parentItem).Group().Fields([]*Field{
+		NewField(item.Fields[0].Field).
+			Value(NewOptionalValue(item.Fields[0].Type, item.Fields[0].Value)).
+			MustBuild(),
 	}).MustBuild()
 
-	p, err := item.PropertyGroup(parent, parentItem)
+	p, err := item.PropertyGroup(parentItem)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, p)
 
 	// check if a new id is generated
 	item.ID = nil
-	p, err = item.PropertyGroup(parent, parentItem)
+	p, err = item.PropertyGroup(parentItem)
 	assert.NoError(t, err)
 	assert.False(t, p.ID().IsNil())
 }
@@ -256,11 +256,10 @@ func TestInitializerField_PropertyField(t *testing.T) {
 		}},
 	}
 
-	expected := NewFieldUnsafe().
-		FieldUnsafe(field.Field).
-		ValueUnsafe(NewOptionalValue(field.Type, field.Value)).
-		LinksUnsafe(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CopyRef(), field.Links[0].Schema, field.Links[0].Field)})).
-		Build()
+	expected := NewField(field.Field).
+		Value(NewOptionalValue(field.Type, field.Value)).
+		Links(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CopyRef(), field.Links[0].Schema, field.Links[0].Field)})).
+		MustBuild()
 
 	assert.Equal(t, expected, field.PropertyField())
 }

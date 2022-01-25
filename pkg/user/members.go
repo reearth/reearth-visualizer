@@ -123,3 +123,10 @@ func (m *Members) UsersByRole(role Role) []ID {
 func (m *Members) IsOnlyOwner(u ID) bool {
 	return len(m.UsersByRole(RoleOwner)) == 1 && m.members[u] == RoleOwner
 }
+
+func (m *Members) Fixed() bool {
+	if m == nil {
+		return false
+	}
+	return m.fixed
+}

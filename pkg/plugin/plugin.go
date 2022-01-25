@@ -17,30 +17,52 @@ type Plugin struct {
 }
 
 func (p *Plugin) ID() ID {
+	if p == nil {
+		return ID{}
+	}
 	return p.id
 }
 
 func (p *Plugin) Version() semver.Version {
+	if p == nil {
+		return semver.Version{}
+	}
 	return p.id.Version()
 }
 
 func (p *Plugin) Name() i18n.String {
+	if p == nil {
+		return nil
+	}
 	return p.name.Copy()
 }
 
 func (p *Plugin) Author() string {
+	if p == nil {
+		return ""
+	}
 	return p.author
 }
 
 func (p *Plugin) Description() i18n.String {
+	if p == nil {
+		return nil
+	}
 	return p.description.Copy()
 }
 
 func (p *Plugin) RepositoryURL() string {
+	if p == nil {
+		return ""
+	}
 	return p.repositoryURL
 }
 
 func (p *Plugin) Extensions() []*Extension {
+	if p == nil || len(p.extensions) == 0 {
+		return nil
+	}
+
 	if p.extensionOrder == nil {
 		return []*Extension{}
 	}
@@ -64,6 +86,9 @@ func (p *Plugin) Extension(id ExtensionID) *Extension {
 }
 
 func (p *Plugin) Schema() *PropertySchemaID {
+	if p == nil {
+		return nil
+	}
 	return p.schema
 }
 
@@ -82,10 +107,46 @@ func (p *Plugin) PropertySchemas() []PropertySchemaID {
 	return ps
 }
 
+func (p *Plugin) Clone() *Plugin {
+	if p == nil {
+		return nil
+	}
+
+	var extensions map[ExtensionID]*Extension
+	if p.extensions != nil {
+		extensions = make(map[ExtensionID]*Extension, len(p.extensions))
+		for _, e := range p.extensions {
+			extensions[e.ID()] = e.Clone()
+		}
+	}
+
+	var extensionOrder []ExtensionID
+	if p.extensionOrder != nil {
+		extensionOrder = append([]ExtensionID{}, p.extensionOrder...)
+	}
+
+	return &Plugin{
+		id:             p.id.Clone(),
+		name:           p.name.Copy(),
+		author:         p.author,
+		description:    p.description.Copy(),
+		repositoryURL:  p.repositoryURL,
+		extensions:     extensions,
+		extensionOrder: extensionOrder,
+		schema:         p.schema.CopyRef(),
+	}
+}
+
 func (p *Plugin) Rename(name i18n.String) {
+	if p == nil {
+		return
+	}
 	p.name = name.Copy()
 }
 
 func (p *Plugin) SetDescription(des i18n.String) {
+	if p == nil {
+		return
+	}
 	p.description = des.Copy()
 }

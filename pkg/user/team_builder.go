@@ -15,9 +15,9 @@ func (b *TeamBuilder) Build() (*Team, error) {
 		return nil, ErrInvalidID
 	}
 	if b.members == nil {
-		b.t.members = *NewMembers()
+		b.t.members = NewMembers()
 	} else {
-		b.t.members = *NewMembersWith(b.members)
+		b.t.members = NewMembersWith(b.members)
 	}
 	b.t.members.fixed = b.personal
 	return b.t, nil

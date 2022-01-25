@@ -9,8 +9,8 @@ import (
 
 func TestSchemaBuilder_Build(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	sg2 := NewSchemaGroup().ID("daa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
+	sg2 := NewSchemaGroup().ID("daa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
 		ID       SchemaID
@@ -82,8 +82,8 @@ func TestSchemaBuilder_Build(t *testing.T) {
 
 func TestSchemaBuilder_MustBuild(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	sg := NewSchemaGroup().ID("aaa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
-	sg2 := NewSchemaGroup().ID("daa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
+	sg2 := NewSchemaGroup().ID("daa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
 		ID       SchemaID

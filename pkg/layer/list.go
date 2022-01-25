@@ -9,6 +9,28 @@ func (ll List) Last() *Layer {
 	return ll[len(ll)-1]
 }
 
+func (ll List) IDs() *IDList {
+	if len(ll) == 0 {
+		return nil
+	}
+	ids := make([]ID, 0, len(ll))
+	for _, l := range ll.Deref() {
+		ids = append(ids, l.ID())
+	}
+	return NewIDList(ids)
+}
+
+func (ll List) Properties() []PropertyID {
+	if len(ll) == 0 {
+		return nil
+	}
+	ids := make([]PropertyID, 0, len(ll))
+	for _, l := range ll.Deref() {
+		ids = append(ids, l.Properties()...)
+	}
+	return ids
+}
+
 func (ll List) Pick(il *IDList) List {
 	if il == nil {
 		return nil

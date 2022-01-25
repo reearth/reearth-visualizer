@@ -21,6 +21,10 @@ func (v *Value) Clone() *Value {
 	return v.t.ValueFrom(v.v, v.p)
 }
 
+func (v *Value) Some() *Optional {
+	return OptionalFrom(v)
+}
+
 func (v *Value) Value() interface{} {
 	if v == nil {
 		return nil

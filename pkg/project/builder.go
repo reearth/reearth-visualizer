@@ -95,6 +95,7 @@ func (b *Builder) ImageURL(imageURL *url.URL) *Builder {
 	if imageURL == nil {
 		b.p.imageURL = nil
 	} else {
+		// https://github.com/golang/go/issues/38351
 		imageURL2 := *imageURL
 		b.p.imageURL = &imageURL2
 	}

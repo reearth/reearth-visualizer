@@ -47,20 +47,6 @@ func (g *GroupList) SchemaGroupRef() *SchemaGroupID {
 	return g.itemBase.SchemaGroup.Ref()
 }
 
-func (g *GroupList) Schema() SchemaID {
-	if g == nil {
-		return SchemaID{}
-	}
-	return g.itemBase.Schema
-}
-
-func (g *GroupList) SchemaRef() *SchemaID {
-	if g == nil {
-		return nil
-	}
-	return g.itemBase.Schema.Ref()
-}
-
 func (g *GroupList) HasLinkedField() bool {
 	if g == nil {
 		return false
@@ -73,14 +59,14 @@ func (g *GroupList) HasLinkedField() bool {
 	return false
 }
 
-func (g *GroupList) CollectDatasets() []DatasetID {
+func (g *GroupList) Datasets() []DatasetID {
 	if g == nil {
 		return nil
 	}
 	res := []DatasetID{}
 
 	for _, f := range g.groups {
-		res = append(res, f.CollectDatasets()...)
+		res = append(res, f.Datasets()...)
 	}
 
 	return res
@@ -127,8 +113,6 @@ func (g *GroupList) MigrateSchema(ctx context.Context, newSchema *Schema, dl dat
 		return
 	}
 
-	g.itemBase.Schema = newSchema.ID()
-
 	for _, f := range g.groups {
 		f.MigrateSchema(ctx, newSchema, dl)
 	}
@@ -144,8 +128,8 @@ func (g *GroupList) Groups() []*Group {
 	return append([]*Group{}, g.groups...)
 }
 
-// GetGroup returns a group whose id is specified
-func (g *GroupList) GetGroup(gid ItemID) *Group {
+// Group returns a group whose id is specified
+func (g *GroupList) Group(gid ItemID) *Group {
 	if g == nil {
 		return nil
 	}
@@ -294,7 +278,7 @@ func (g *GroupList) Empty() {
 }
 
 func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
-	if g == nil || ptr == nil || ps == nil || ps.ID() != g.Schema() {
+	if g == nil || ptr == nil || ps == nil {
 		return nil, false
 	}
 	psg := ps.Group(g.SchemaGroup())
@@ -307,7 +291,7 @@ func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
 		return nil, false
 	}
 
-	i := g.GetGroup(item)
+	i := g.Group(item)
 	if i == nil {
 		return nil, false
 	}
@@ -316,7 +300,7 @@ func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
 }
 
 func (g *GroupList) CreateAndAddListItem(ps *Schema, index *int) *Group {
-	if g == nil || ps == nil || !g.Schema().Equal(ps.ID()) {
+	if g == nil || ps == nil {
 		return nil
 	}
 	psg := ps.Group(g.SchemaGroup())
@@ -352,9 +336,6 @@ func (p *GroupList) ValidateSchema(ps *SchemaGroup) error {
 	}
 	if ps == nil {
 		return errors.New("invalid schema")
-	}
-	if !p.Schema().Equal(ps.Schema()) {
-		return errors.New("invalid schema id")
 	}
 	if p.SchemaGroup() != ps.ID() {
 		return errors.New("invalid schema group id")

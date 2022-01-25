@@ -20,7 +20,7 @@ func TestGroup_SchemaGroup(t *testing.T) {
 	assert.Nil(t, g.SchemaGroupRef())
 	assert.Equal(t, SchemaGroupID(""), g.SchemaGroup())
 	pfid := SchemaGroupID("aa")
-	g = NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), pfid).MustBuild()
+	g = NewGroup().NewID().SchemaGroup(pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())
 }
@@ -30,8 +30,8 @@ func TestGroup_HasLinkedField(t *testing.T) {
 	v := ValueTypeString.ValueFrom("vvv")
 	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
 	ls := NewLinks([]*Link{l})
-	f := NewField(sf).Value(OptionalValueFrom(v)).Link(ls).MustBuild()
-	f2 := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
+	f2 := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -71,8 +71,8 @@ func TestGroup_IsDatasetLinked(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	l := NewLink(dsid, dssid, NewDatasetFieldID())
 	ls := NewLinks([]*Link{l})
-	f := NewField(sf).Value(OptionalValueFrom(v)).Link(ls).MustBuild()
-	f2 := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
+	f2 := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 
 	tests := []struct {
 		Name          string
@@ -108,13 +108,13 @@ func TestGroup_IsDatasetLinked(t *testing.T) {
 	}
 }
 
-func TestGroup_CollectDatasets(t *testing.T) {
+func TestGroup_Datasets(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
 	dsid := NewDatasetID()
 	l := NewLink(dsid, NewDatasetSchemaID(), NewDatasetFieldID())
 	ls := NewLinks([]*Link{l})
-	f := NewField(sf).Value(OptionalValueFrom(v)).Link(ls).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -137,7 +137,7 @@ func TestGroup_CollectDatasets(t *testing.T) {
 		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tt.Group.CollectDatasets()
+			res := tt.Group.Datasets()
 			assert.Equal(t, tt.Expected, res)
 		})
 	}
@@ -150,7 +150,7 @@ func TestGroup_FieldsByLinkedDataset(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	l := NewLink(dsid, dssid, NewDatasetFieldID())
 	ls := NewLinks([]*Link{l})
-	f := NewField(sf).Value(OptionalValueFrom(v)).Link(ls).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
 
 	tests := []struct {
 		Name          string
@@ -184,8 +184,8 @@ func TestGroup_FieldsByLinkedDataset(t *testing.T) {
 func TestGroup_IsEmpty(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
-	f2 := NewField(sf).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f2 := FieldFrom(sf).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -218,8 +218,8 @@ func TestGroup_IsEmpty(t *testing.T) {
 func TestGroup_Prune(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
-	f2 := NewField(sf).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f2 := FieldFrom(sf).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -249,8 +249,8 @@ func TestGroup_Prune(t *testing.T) {
 
 func TestGroup_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
-	f := NewField(sf).MustBuild()
-	sg := NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).Fields([]*SchemaField{sf}).MustBuild()
+	f := FieldFrom(sf).MustBuild()
+	sg := NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -267,36 +267,36 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		},
 		{
 			Name:  "nil ps",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 		},
 		{
 			Name:  "group schema doesn't equal to ps",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aaa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 		},
 		{
 			Name:  "create field",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
 				Bool  bool
 			}{
-				Field: NewField(sf).MustBuild(),
+				Field: FieldFrom(sf).MustBuild(),
 				Bool:  true,
 			},
 		},
 		{
 			Name:  "get field",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").Fields([]*Field{f}).MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").Fields([]*Field{f}).MustBuild(),
 			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
 				Bool  bool
 			}{
-				Field: NewField(sf).MustBuild(),
+				Field: FieldFrom(sf).MustBuild(),
 				Bool:  false,
 			},
 		},
@@ -317,8 +317,8 @@ func TestGroup_RemoveField(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	sf2 := NewSchemaField().ID("b").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
-	f2 := NewField(sf2).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f2 := FieldFrom(sf2).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -351,8 +351,8 @@ func TestGroup_FieldIDs(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	sf2 := NewSchemaField().ID("b").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
-	f2 := NewField(sf2).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f2 := FieldFrom(sf2).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -383,8 +383,8 @@ func TestGroup_Field(t *testing.T) {
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	sf2 := NewSchemaField().ID("b").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	f := NewField(sf).Value(OptionalValueFrom(v)).MustBuild()
-	f2 := NewField(sf2).MustBuild()
+	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
+	f2 := FieldFrom(sf2).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -419,16 +419,14 @@ func TestGroup_Field(t *testing.T) {
 	}
 }
 
-func TestGroup_UpdateRepresentativeFieldValue(t *testing.T) {
+func TestGroup_RepresentativeFieldValue(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").
-		Schema(MustSchemaID("xx~1.0.0/aa")).
 		Fields([]*SchemaField{sf}).
 		RepresentativeField(FieldID("aa").Ref()).
 		MustBuild()
 	sg2 := NewSchemaGroup().
 		ID("bb").
-		Schema(MustSchemaID("xx~1.0.0/bb")).
 		Fields([]*SchemaField{sf}).
 		MustBuild()
 
@@ -449,18 +447,11 @@ func TestGroup_UpdateRepresentativeFieldValue(t *testing.T) {
 		},
 		{
 			Name:  "nil ps",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
-		},
-		{
-			Name:  "group schema doesn't equal to ps",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aaa"), "aa").MustBuild(),
-			Args: args{
-				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
-			},
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 		},
 		{
 			Name:  "invalid property field",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			Args: args{
 				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/bb")).Groups([]*SchemaGroup{sg2}).MustBuild(),
 				Value:  ValueTypeString.ValueFrom("abc"),
@@ -468,7 +459,7 @@ func TestGroup_UpdateRepresentativeFieldValue(t *testing.T) {
 		},
 		{
 			Name:  "ok",
-			Group: NewGroup().NewID().Schema(MustSchemaID("xx~1.0.0/aa"), "aa").MustBuild(),
+			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			Args: args{
 				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
 				Value:  ValueTypeString.ValueFrom("abc"),

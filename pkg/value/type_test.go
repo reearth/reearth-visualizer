@@ -50,6 +50,38 @@ func TestType_Default(t *testing.T) {
 	}
 }
 
+func TestType_None(t *testing.T) {
+	tests := []struct {
+		name string
+		tr   Type
+		want *Optional
+	}{
+		{
+			name: "default",
+			tr:   TypeString,
+			want: &Optional{t: TypeString},
+		},
+		{
+			name: "custom",
+			tr:   Type("foo"),
+			want: &Optional{t: Type("foo")},
+		},
+		{
+			name: "unknown",
+			tr:   TypeUnknown,
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, tt.tr.None())
+		})
+	}
+}
+
 func TestType_ValueFrom(t *testing.T) {
 	tpm := TypePropertyMap{
 		Type("foo"): &tpmock{},

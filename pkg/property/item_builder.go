@@ -26,8 +26,7 @@ func (b *ItemBuilder) NewID() *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Schema(s SchemaID, g SchemaGroupID) *ItemBuilder {
-	b.base.Schema = s
+func (b *ItemBuilder) SchemaGroup(g SchemaGroupID) *ItemBuilder {
 	b.base.SchemaGroup = g
 	return b
 }

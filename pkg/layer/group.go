@@ -101,11 +101,10 @@ func (l *Group) IsLinked() bool {
 }
 
 func (l *Group) LinkedDatasetSchema() *DatasetSchemaID {
-	if l == nil || l.linkedDatasetSchema == nil {
+	if l == nil {
 		return nil
 	}
-	id := *l.linkedDatasetSchema
-	return &id
+	return l.linkedDatasetSchema.CopyRef()
 }
 
 func (l *Group) Link(ds DatasetSchemaID) {

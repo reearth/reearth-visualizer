@@ -22,8 +22,7 @@ func NewLinks(links []*Link) *Links {
 	}
 	links2 := make([]*Link, 0, len(links))
 	for _, l := range links {
-		l2 := *l
-		links2 = append(links2, &l2)
+		links2 = append(links2, l.Clone())
 	}
 	return &Links{
 		links: links2,
@@ -161,8 +160,7 @@ func (l *Links) Links() []*Link {
 	}
 	links2 := make([]*Link, 0, len(l.links))
 	for _, l := range l.links {
-		l2 := *l
-		links2 = append(links2, &l2)
+		links2 = append(links2, l.Clone())
 	}
 	return links2
 }
@@ -197,7 +195,7 @@ func (l *Links) DatasetSchemaIDs() []DatasetSchemaID {
 	return schemas
 }
 
-func (l *Links) IsDatasetLinked(s DatasetSchemaID, dsid DatasetID) bool {
+func (l *Links) HasSchemaAndDataset(s DatasetSchemaID, dsid DatasetID) bool {
 	if l == nil {
 		return false
 	}
@@ -253,7 +251,7 @@ func (l *Links) HasDatasetSchema(dsid DatasetSchemaID) bool {
 	return false
 }
 
-func (l *Links) HasDatasetOrSchema(dsid DatasetSchemaID, did DatasetID) bool {
+func (l *Links) HasDatasetSchemaAndDataset(dsid DatasetSchemaID, did DatasetID) bool {
 	if l == nil {
 		return false
 	}
@@ -286,27 +284,24 @@ func NewLinkFieldOnly(ds DatasetSchemaID, f DatasetFieldID) *Link {
 }
 
 func (l *Link) Dataset() *DatasetID {
-	if l == nil || l.dataset == nil {
+	if l == nil {
 		return nil
 	}
-	dataset := *l.dataset
-	return &dataset
+	return l.dataset.CopyRef()
 }
 
 func (l *Link) DatasetSchema() *DatasetSchemaID {
-	if l == nil || l.schema == nil {
+	if l == nil {
 		return nil
 	}
-	datasetSchema := *l.schema
-	return &datasetSchema
+	return l.schema.CopyRef()
 }
 
 func (l *Link) DatasetSchemaField() *DatasetFieldID {
-	if l == nil || l.field == nil {
+	if l == nil {
 		return nil
 	}
-	field := *l.field
-	return &field
+	return l.field.CopyRef()
 }
 
 func (l *Link) Value(ds *dataset.Dataset) *dataset.Value {
@@ -369,9 +364,8 @@ func (l *Link) ApplyDataset(ds *DatasetID) *Link {
 	if ds == nil || l.Dataset() != nil {
 		return l.Clone()
 	}
-	ds2 := *ds
 	return &Link{
-		dataset: &ds2,
+		dataset: ds.CopyRef(),
 		schema:  l.DatasetSchema(),
 		field:   l.DatasetSchemaField(),
 	}

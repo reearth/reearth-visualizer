@@ -32,7 +32,6 @@ var normalExpected = &Manifest{
 	ExtensionSchema: []*property.Schema{
 		property.NewSchema().ID(property.MustSchemaID("aaa~1.1.1/hoge")).Groups([]*property.SchemaGroup{
 			property.NewSchemaGroup().ID(property.SchemaGroupID("default")).
-				Schema(property.MustSchemaID("aaa~1.1.1/hoge")).
 				RepresentativeField(property.FieldID("a").Ref()).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().ID(property.FieldID("a")).

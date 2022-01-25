@@ -79,6 +79,7 @@ func (p *Project) ImageURL() *url.URL {
 	if p == nil || p.imageURL == nil {
 		return nil
 	}
+	// https://github.com/golang/go/issues/38351
 	imageURL2 := *p.imageURL
 	return &imageURL2
 }
@@ -143,6 +144,7 @@ func (p *Project) SetImageURL(imageURL *url.URL) {
 	if imageURL == nil {
 		p.imageURL = nil
 	} else {
+		// https://github.com/golang/go/issues/38351
 		imageURL2 := *imageURL
 		p.imageURL = &imageURL2
 	}

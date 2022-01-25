@@ -307,6 +307,8 @@ func getGCSObjectURL(base *url.URL, objectName string) *url.URL {
 	if base == nil {
 		return nil
 	}
+
+	// https://github.com/golang/go/issues/38351
 	b := *base
 	b.Path = path.Join(b.Path, objectName)
 	return &b

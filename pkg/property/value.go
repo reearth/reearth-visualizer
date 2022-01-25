@@ -40,6 +40,13 @@ func (vt ValueType) Valid() bool {
 	return value.Type(vt).Default()
 }
 
+func (t ValueType) Default() bool {
+	if _, ok := types[value.Type(t)]; ok {
+		return true
+	}
+	return value.Type(t).Default()
+}
+
 func (vt ValueType) ValueFrom(i interface{}) *Value {
 	v := value.Type(vt).ValueFrom(i, types)
 	if v == nil {
@@ -53,6 +60,10 @@ func (vt ValueType) MustBeValue(i interface{}) *Value {
 		return v
 	}
 	panic("invalid value")
+}
+
+func (vt ValueType) None() *OptionalValue {
+	return NewOptionalValue(vt, nil)
 }
 
 type Value struct {
@@ -72,6 +83,10 @@ func (v *Value) Clone() *Value {
 		return nil
 	}
 	return &Value{v: *vv}
+}
+
+func (v *Value) Some() *OptionalValue {
+	return OptionalValueFrom(v)
 }
 
 func (v *Value) Type() ValueType {

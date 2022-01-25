@@ -124,11 +124,10 @@ func (p *Pointer) Item() (i ItemID, ok bool) {
 }
 
 func (p *Pointer) ItemRef() *ItemID {
-	if p == nil || p.item == nil {
+	if p == nil {
 		return nil
 	}
-	f := *p.item
-	return &f
+	return p.item.CopyRef()
 }
 
 func (p *Pointer) FieldByItem() (i ItemID, f FieldID, ok bool) {
@@ -164,11 +163,10 @@ func (p *Pointer) Field() (f FieldID, ok bool) {
 }
 
 func (p *Pointer) FieldRef() *FieldID {
-	if p == nil || p.field == nil {
+	if p == nil {
 		return nil
 	}
-	f := *p.field
-	return &f
+	return p.field.CopyRef()
 }
 
 func (p *Pointer) GetAll() (sg *SchemaGroupID, i *ItemID, f *FieldID) {

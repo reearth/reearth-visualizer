@@ -48,7 +48,7 @@ func TestNewLinks(t *testing.T) {
 	assert.Equal(t, 2, lin.Len())
 }
 
-func TestLinks_IsDatasetLinked(t *testing.T) {
+func TestLinks_HasSchemaAndDataset(t *testing.T) {
 	dsid1 := NewDatasetSchemaID()
 	dsid2 := NewDatasetSchemaID()
 	did1 := NewDatasetID()
@@ -89,7 +89,7 @@ func TestLinks_IsDatasetLinked(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.Links.IsDatasetLinked(tc.DSS, tc.DS)
+			res := tc.Links.HasSchemaAndDataset(tc.DSS, tc.DS)
 			res2 := tc.Links.HasDataset(tc.DS)
 			res3 := tc.Links.HasDatasetSchema(tc.DSS)
 			assert.Equal(t, tc.Expected, res)

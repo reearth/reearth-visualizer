@@ -32,8 +32,7 @@ func (r *Plugin) FindByID(ctx context.Context, id id.PluginID, sids []id.SceneID
 	}
 	for _, p := range r.data {
 		if p.ID().Equal(id) && (p.ID().Scene() == nil || p.ID().Scene().Contains(sids)) {
-			p2 := *p
-			return &p2, nil
+			return p.Clone(), nil
 		}
 	}
 	return nil, rerror.ErrNotFound
@@ -51,8 +50,7 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.Sce
 		}
 		for _, p := range r.data {
 			if p.ID().Equal(id) && (p.ID().Scene() == nil || p.ID().Scene().Contains(sids)) {
-				p2 := *p
-				result = append(result, &p2)
+				result = append(result, p.Clone())
 			} else {
 				result = append(result, nil)
 			}
@@ -73,8 +71,7 @@ func (r *Plugin) Save(ctx context.Context, p *plugin.Plugin) error {
 			return nil
 		}
 	}
-	p2 := *p
-	r.data = append(r.data, &p2)
+	r.data = append(r.data, p.Clone())
 	return nil
 }
 

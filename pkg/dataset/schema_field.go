@@ -49,3 +49,16 @@ func (d *SchemaField) Source() (s string) {
 	}
 	return d.source
 }
+
+func (d *SchemaField) Clone() *SchemaField {
+	if d == nil {
+		return nil
+	}
+	return &SchemaField{
+		id:       d.id,
+		name:     d.name,
+		dataType: d.dataType,
+		source:   d.source,
+		ref:      d.ref.CopyRef(),
+	}
+}

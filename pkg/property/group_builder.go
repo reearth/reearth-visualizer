@@ -14,7 +14,7 @@ func InitGroupFrom(g *SchemaGroup) *Group {
 	if g == nil {
 		return nil
 	}
-	g2, _ := NewGroup().NewID().Schema(g.Schema(), g.ID()).Build()
+	g2, _ := NewGroup().NewID().SchemaGroup(g.ID()).Build()
 	return g2
 }
 
@@ -48,8 +48,7 @@ func (b *GroupBuilder) NewID() *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Schema(s SchemaID, g SchemaGroupID) *GroupBuilder {
-	b.p.itemBase.Schema = s
+func (b *GroupBuilder) SchemaGroup(g SchemaGroupID) *GroupBuilder {
 	b.p.itemBase.SchemaGroup = g
 	return b
 }

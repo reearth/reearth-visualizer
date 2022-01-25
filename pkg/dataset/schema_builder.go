@@ -74,12 +74,10 @@ func (b *SchemaBuilder) Fields(fields []*SchemaField) *SchemaBuilder {
 		}
 
 		if source := f.Source(); source == "" {
-			copied := *f
-			b.d.fields[f.ID()] = &copied
+			b.d.fields[f.ID()] = f.Clone()
 			b.d.order = append(b.d.order, f.ID())
 		} else if _, ok := sources[source]; !ok {
-			copied := *f
-			b.d.fields[f.ID()] = &copied
+			b.d.fields[f.ID()] = f.Clone()
 			b.d.order = append(b.d.order, f.ID())
 			sources[source] = struct{}{}
 		}

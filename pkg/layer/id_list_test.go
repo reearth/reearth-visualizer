@@ -128,4 +128,11 @@ func TestLayerIDList(t *testing.T) {
 	assert.Equal(t, l3, layers.LayerAt(2))
 	assert.Equal(t, l4, layers.LayerAt(3))
 	assert.True(t, layers.HasLayer(l2))
+
+	// 1, 3
+
+	layers.RemoveLayer(l2, l4)
+	assert.Equal(t, 2, layers.LayerCount())
+	assert.Equal(t, l1, layers.LayerAt(0))
+	assert.Equal(t, l3, layers.LayerAt(1))
 }

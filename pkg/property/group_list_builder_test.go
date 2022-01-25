@@ -8,12 +8,10 @@ import (
 
 func TestGroupListBuilder_Build(t *testing.T) {
 	pid := NewItemID()
-	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 
 	type args struct {
 		ID          ItemID
-		Schema      SchemaID
 		SchemaGroup SchemaGroupID
 		Groups      []*Group
 	}
@@ -28,14 +26,12 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			Name: "success",
 			Args: args{
 				ID:          pid,
-				Schema:      scid,
 				SchemaGroup: "aa",
 				Groups:      groups,
 			},
 			Expected: &GroupList{
 				itemBase: itemBase{
 					ID:          pid,
-					Schema:      scid,
 					SchemaGroup: "aa",
 				},
 				groups: groups,
@@ -53,7 +49,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			t.Parallel()
 			res, err := NewGroupList().
 				ID(tt.Args.ID).
-				Schema(tt.Args.Schema, tt.Args.SchemaGroup).
+				SchemaGroup(tt.Args.SchemaGroup).
 				Groups(tt.Args.Groups).
 				Build()
 			if tt.Err == nil {
@@ -72,12 +68,10 @@ func TestGroupListBuilder_NewID(t *testing.T) {
 
 func TestGroupListBuilder_MustBuild(t *testing.T) {
 	pid := NewItemID()
-	scid := MustSchemaID("xx~1.0.0/aa")
 	groups := []*Group{NewGroup().ID(pid).MustBuild()}
 
 	type args struct {
 		ID          ItemID
-		Schema      SchemaID
 		SchemaGroup SchemaGroupID
 		Groups      []*Group
 	}
@@ -92,14 +86,12 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 			Name: "success",
 			Args: args{
 				ID:          pid,
-				Schema:      scid,
 				SchemaGroup: "aa",
 				Groups:      groups,
 			},
 			Expected: &GroupList{
 				itemBase: itemBase{
 					ID:          pid,
-					Schema:      scid,
 					SchemaGroup: "aa",
 				},
 				groups: groups,
@@ -120,7 +112,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 				t.Helper()
 				return NewGroupList().
 					ID(tc.Args.ID).
-					Schema(tc.Args.Schema, tc.Args.SchemaGroup).
+					SchemaGroup(tc.Args.SchemaGroup).
 					Groups(tc.Args.Groups).
 					MustBuild()
 			}
@@ -136,19 +128,17 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 
 func TestInitGroupListFrom(t *testing.T) {
 	tests := []struct {
-		Name           string
-		SchemaGroup    *SchemaGroup
-		ExpectedSG     SchemaGroupID
-		ExpectedSchema SchemaID
+		Name        string
+		SchemaGroup *SchemaGroup
+		ExpectedSG  SchemaGroupID
 	}{
 		{
 			Name: "nil schema group",
 		},
 		{
-			Name:           "success",
-			SchemaGroup:    NewSchemaGroup().ID("aa").Schema(MustSchemaID("xx~1.0.0/aa")).MustBuild(),
-			ExpectedSG:     "aa",
-			ExpectedSchema: MustSchemaID("xx~1.0.0/aa"),
+			Name:        "success",
+			SchemaGroup: NewSchemaGroup().ID("aa").MustBuild(),
+			ExpectedSG:  "aa",
 		},
 	}
 
@@ -158,7 +148,6 @@ func TestInitGroupListFrom(t *testing.T) {
 			t.Parallel()
 			res := InitGroupFrom(tc.SchemaGroup)
 			assert.Equal(t, tc.ExpectedSG, res.SchemaGroup())
-			assert.Equal(t, tc.ExpectedSchema, res.Schema())
 		})
 	}
 }

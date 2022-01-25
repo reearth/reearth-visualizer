@@ -211,7 +211,7 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 	pgroups := propertySchema.Groups()
 	groups := make([]*PropertySchemaGroup, 0, len(pgroups))
 	for _, g := range pgroups {
-		groups = append(groups, ToPropertySchemaGroup(g))
+		groups = append(groups, ToPropertySchemaGroup(g, propertySchema.ID()))
 	}
 
 	return &PropertySchema{
@@ -364,7 +364,7 @@ func ToMergedPropertyField(f *property.MergedField, s id.PropertySchemaID) *Merg
 	}
 }
 
-func ToPropertySchemaGroup(g *property.SchemaGroup) *PropertySchemaGroup {
+func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *PropertySchemaGroup {
 	if g == nil {
 		return nil
 	}
@@ -381,7 +381,7 @@ func ToPropertySchemaGroup(g *property.SchemaGroup) *PropertySchemaGroup {
 	}
 	return &PropertySchemaGroup{
 		SchemaGroupID:         g.ID(),
-		SchemaID:              g.Schema(),
+		SchemaID:              s,
 		IsList:                g.IsList(),
 		Title:                 g.Title().StringRef(),
 		Fields:                fields,
@@ -405,7 +405,7 @@ func ToPropertyGroup(g *property.Group, p *property.Property, gl *property.Group
 
 	return &PropertyGroup{
 		ID:            g.ID().ID(),
-		SchemaID:      g.Schema(),
+		SchemaID:      p.Schema(),
 		SchemaGroupID: g.SchemaGroup(),
 		Fields:        fields,
 	}
@@ -424,7 +424,7 @@ func ToPropertyGroupList(g *property.GroupList, p *property.Property) *PropertyG
 
 	return &PropertyGroupList{
 		ID:            g.ID().ID(),
-		SchemaID:      g.Schema(),
+		SchemaID:      p.Schema(),
 		SchemaGroupID: g.SchemaGroup(),
 		Groups:        groups,
 	}

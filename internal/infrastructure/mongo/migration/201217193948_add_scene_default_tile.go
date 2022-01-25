@@ -56,7 +56,7 @@ func AddSceneDefaultTile(ctx context.Context, c DBClient) error {
 				if g == nil || g.Count() > 0 {
 					continue
 				}
-				f := property.NewGroup().NewID().Schema(p.Schema(), id.PropertySchemaGroupID("tiles")).MustBuild()
+				f := property.NewGroup().NewID().SchemaGroup(id.PropertySchemaGroupID("tiles")).MustBuild()
 				g.Add(f, -1)
 			}
 

@@ -61,7 +61,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 			Expected: &Team{
 				id:   tid,
 				name: "xxx",
-				members: Members{
+				members: &Members{
 					members: map[ID]Role{uid: RoleOwner},
 					fixed:   true,
 				},
@@ -75,7 +75,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 			Expected: &Team{
 				id:   tid,
 				name: "xxx",
-				members: Members{
+				members: &Members{
 					members: map[ID]Role{},
 					fixed:   false,
 				},
@@ -134,7 +134,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 			Expected: &Team{
 				id:   tid,
 				name: "xxx",
-				members: Members{
+				members: &Members{
 					members: map[ID]Role{uid: RoleOwner},
 					fixed:   true,
 				},
@@ -148,7 +148,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 			Expected: &Team{
 				id:   tid,
 				name: "xxx",
-				members: Members{
+				members: &Members{
 					members: map[ID]Role{},
 					fixed:   false,
 				},

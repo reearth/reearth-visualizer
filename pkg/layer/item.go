@@ -105,11 +105,10 @@ func (l *Item) IsLinked() bool {
 }
 
 func (l *Item) LinkedDataset() *DatasetID {
-	if l == nil || l.linkedDataset == nil {
+	if l == nil {
 		return nil
 	}
-	id := *l.linkedDataset
-	return &id
+	return l.linkedDataset.CopyRef()
 }
 
 func (l *Item) Link(ds DatasetID) {

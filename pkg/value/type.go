@@ -30,6 +30,10 @@ func (t Type) Default() bool {
 	return ok
 }
 
+func (t Type) None() *Optional {
+	return NewOptional(t, nil)
+}
+
 func (t Type) ValueFrom(i interface{}, p TypePropertyMap) *Value {
 	if t == TypeUnknown || i == nil {
 		return nil

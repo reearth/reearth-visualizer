@@ -1,9 +1,8 @@
-package property
+package dataset
 
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -75,7 +74,7 @@ func TestValue_Clone(t *testing.T) {
 			name:  "ok",
 			value: ValueTypeString.ValueFrom("foo"),
 			want: &Value{
-				v: *value.TypeString.ValueFrom("foo", types),
+				v: *value.TypeString.ValueFrom("foo", nil),
 			},
 		},
 		{
@@ -108,10 +107,10 @@ func TestValue_Some(t *testing.T) {
 		{
 			name: "ok",
 			value: &Value{
-				v: *value.TypeString.ValueFrom("foo", types),
+				v: *value.TypeString.ValueFrom("foo", nil),
 			},
 			want: &OptionalValue{
-				ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types)),
+				ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", nil)),
 			},
 		},
 		{
@@ -285,113 +284,6 @@ func TestValue_Cast(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t))
-		})
-	}
-}
-
-func TestValueFromDataset(t *testing.T) {
-	tests := []struct {
-		Name     string
-		Input    *dataset.Value
-		Expected struct {
-			V  *Value
-			Ok bool
-		}
-	}{
-		{
-			Name: "latlng",
-			Input: dataset.ValueTypeLatLng.ValueFrom(dataset.LatLng{
-				Lat: 10,
-				Lng: 12,
-			}),
-			Expected: struct {
-				V  *Value
-				Ok bool
-			}{
-				V: ValueTypeLatLng.ValueFrom(LatLng{
-					Lat: 10,
-					Lng: 12,
-				}),
-				Ok: true,
-			},
-		},
-		{
-			Name: "LatLngHeight",
-			Input: dataset.ValueTypeLatLngHeight.ValueFrom(dataset.LatLngHeight{
-				Lat:    10,
-				Lng:    12,
-				Height: 14,
-			}),
-			Expected: struct {
-				V  *Value
-				Ok bool
-			}{
-				V: ValueTypeLatLngHeight.ValueFrom(LatLngHeight{
-					Lat:    10,
-					Lng:    12,
-					Height: 14,
-				}),
-				Ok: true,
-			},
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tc.Expected.V, valueFromDataset(tc.Input))
-		})
-	}
-}
-
-func TestValueFromStringOrNumber(t *testing.T) {
-	type args struct {
-		s string
-	}
-
-	tests := []struct {
-		name string
-		args args
-		want *Value
-	}{
-		{
-			name: "string",
-			args: args{"aax"},
-			want: ValueTypeString.ValueFrom("aax"),
-		},
-		{
-			name: "number positive int",
-			args: args{"1023"},
-			want: ValueTypeNumber.ValueFrom(1023),
-		},
-		{
-			name: "number negative int",
-			args: args{"-1"},
-			want: ValueTypeNumber.ValueFrom(-1),
-		},
-		{
-			name: "number float",
-			args: args{"1.14"},
-			want: ValueTypeNumber.ValueFrom(1.14),
-		},
-		{
-			name: "bool true",
-			args: args{"true"},
-			want: ValueTypeBool.ValueFrom(true),
-		},
-		{
-			name: "bool false",
-			args: args{"false"},
-			want: ValueTypeBool.ValueFrom(false),
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tt.want, ValueFromStringOrNumber(tt.args.s))
 		})
 	}
 }

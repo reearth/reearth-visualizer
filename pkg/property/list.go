@@ -2,16 +2,35 @@ package property
 
 type List []*Property
 
-func (l List) Schemas() []SchemaID {
-	schemas := make([]SchemaID, 0, len(l))
-	m := map[SchemaID]struct{}{}
+func (l List) IDs() []ID {
+	ids := make([]ID, 0, len(l))
+	m := map[ID]struct{}{}
 	for _, p := range l {
-		s := p.Schema()
+		s := p.ID()
 		if _, ok := m[s]; ok {
 			continue
 		}
-		schemas = append(schemas, s)
+		ids = append(ids, s)
 		m[s] = struct{}{}
+	}
+	return ids
+}
+
+func (l List) Schemas() []SchemaID {
+	schemas := make([]SchemaID, 0, len(l))
+	for _, p := range l {
+		s := p.Schema()
+		skip := false
+		for _, ss := range schemas {
+			if ss.Equal(s) {
+				skip = true
+				break
+			}
+		}
+		if skip {
+			continue
+		}
+		schemas = append(schemas, s)
 	}
 	return schemas
 }
