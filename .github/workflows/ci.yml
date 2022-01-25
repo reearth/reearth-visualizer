@@ -1,8 +1,12 @@
-name: pr
-on: [pull_request]
+name: CI
+on:
+  push:
+    branches: [main]
+    tags-ignore: ["*"]
+  pull_request:
 jobs:
-  pr:
-    name: pr
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - name: set up
@@ -23,6 +27,8 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.43
+          args: --timeout=10m
+          skip-go-installation: true
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic
       - name: Send coverage report

@@ -1,51 +1,26 @@
-name: main
+name: build
 on:
-  push:
-    branches:
-      - main
-    tags-ignore:
-      - "*"
+  workflow_run:
+    workflows: [ci]
+    type: completed
+    branches: [main]
 jobs:
-  main:
+  info:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
-      branch: ${{ steps.info.outputs.branch }}
       sha_short: ${{ steps.info.outputs.sha_short }}
       new_tag: ${{ steps.info.outputs.new_tag }}
       new_tag_short: ${{ steps.info.outputs.new_tag_short }}
     steps:
-      - name: set up
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
-        id: go
       - name: checkout
         uses: actions/checkout@v2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.43
-      - name: test
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic
-      - name: Send coverage report
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.txt
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
         # The tag name should be retrieved lazily, as tagging may be delayed.
         run: |
-          echo "::set-output name=branch::${GITHUB_REF##*/}"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           TAG=$(git tag --points-at HEAD)
           if [[ ! -z "$TAG" ]]; then
@@ -56,7 +31,7 @@ jobs:
     name: Build and release
     runs-on: ubuntu-latest
     needs:
-      - main
+      - info
     if: github.event.repository.full_name == 'reearth/reearth-backend'
     env:
       NAME: reearth-backend
@@ -70,17 +45,17 @@ jobs:
         with:
           go-version: 1.17
       - name: Run GoReleaser for nightly
-        if: "!needs.main.outputs.new_tag"
+        if: "!needs.info.outputs.new_tag"
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist --snapshot
         env:
           GORELEASER_CURRENT_TAG: 0.0.0
       - name: Rename artifacts
-        if: "!needs.main.outputs.new_tag"
+        if: "!needs.info.outputs.new_tag"
         run: for f in dist/${NAME}_*.*; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_nightly/'); done
       - name: Create GitHub release for nightly
-        if: "!needs.main.outputs.new_tag"
+        if: "!needs.info.outputs.new_tag"
         uses: ncipollo/release-action@v1
         with:
           artifacts: dist/${{ env.NAME }}_*.*
@@ -91,33 +66,33 @@ jobs:
           prerelease: true
           allowUpdates: true
       - name: Run GoReleaser
-        if: needs.main.outputs.new_tag
+        if: needs.info.outputs.new_tag
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist
         env:
-          GORELEASER_CURRENT_TAG: ${{ needs.main.outputs.new_tag }}
+          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.new_tag }}
       - name: Download latest changelog
-        if: needs.main.outputs.new_tag
+        if: needs.info.outputs.new_tag
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
-          name: changelog-${{ needs.main.outputs.new_tag }}
+          name: changelog-${{ needs.info.outputs.new_tag }}
       - name: Create GitHub release
-        if: needs.main.outputs.new_tag
+        if: needs.info.outputs.new_tag
         uses: ncipollo/release-action@v1
         with:
           artifacts: dist/${{ env.NAME }}_*.*
           commit: ${{ github.sha }}
-          name: ${{ needs.main.outputs.new_tag }}
-          tag: ${{ needs.main.outputs.new_tag }}
+          name: ${{ needs.info.outputs.new_tag }}
+          tag: ${{ needs.info.outputs.new_tag }}
           bodyFile: CHANGELOG_latest.md
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-backend'
     needs:
-      - main
+      - info
     env:
       IMAGE_NAME: reearth/reearth-backend
     steps:
@@ -133,22 +108,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push nightly
-        if: "!needs.main.outputs.new_tag"
+        if: "!needs.info.outputs.new_tag"
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: VERSION=0.0.0-SNAPSHOT-${{ needs.main.outputs.sha_short }}
+          build-args: VERSION=0.0.0-SNAPSHOT-${{ needs.info.outputs.sha_short }}
           tags: ${{ env.IMAGE_NAME }}:nightly
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:nightly
-          cache-to: type=inline
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Get Docker tags
         id: tags
-        if: needs.main.outputs.new_tag
+        if: needs.info.outputs.new_tag
         env:
-          TAG: ${{ needs.main.outputs.new_tag_short }}
+          TAG: ${{ needs.info.outputs.new_tag_short }}
         run: |
           TAGS=$IMAGE_NAME:$TAG
           if [[ ! $TAG =~ '-' ]]; then
@@ -158,26 +133,13 @@ jobs:
           fi
           echo "::set-output name=tags::$TAGS"
       - name: Build and push release
-        if: needs.main.outputs.new_tag
+        if: needs.info.outputs.new_tag
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: VERSION=${{ needs.main.outputs.new_tag_short }}
+          build-args: VERSION=${{ needs.info.outputs.new_tag_short }}
           tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=registry,ref=${IMAGE_NAME}:latest
           cache-to: type=inline
-  slack-notification:
-    if: github.event.workflow_run.conclusion == 'success' && always()
-    name: Slack Notification
-    needs:
-      - main
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
