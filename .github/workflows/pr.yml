@@ -1,8 +1,12 @@
-name: pr
-on: [pull_request]
+name: CI
+on:
+  push:
+    branches: [main]
+    tags-ignore: ["*"]
+  pull_request:
 jobs:
-  pr:
-    name: pr
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v2
@@ -29,18 +33,11 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
-      - name: Storybook Notification
-        run: yarn run storybook:notify
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PR_COMMENTS_URL: ${{ github.event.pull_request.comments_url }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_BRANCH_NAME: ${{ github.event.pull_request.base.ref }}
   slack-notification:
     if: always()
     name: Slack Notification
     needs:
-      - pr
+      - ci
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
