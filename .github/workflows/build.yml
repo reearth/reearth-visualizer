@@ -2,7 +2,7 @@ name: build
 on:
   workflow_run:
     workflows: [ci]
-    type: completed
+    type: [completed]
     branches: [main]
 jobs:
   info:
