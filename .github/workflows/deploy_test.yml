@@ -1,17 +1,16 @@
 name: deploy_test
 on:
   workflow_run:
-    workflows:
-      - main
-    types:
-      - completed
+    workflows: [build]
+    types: [completed]
+    branches: [main]
 env:
   IMAGE: reearth/reearth-backend:nightly
   IMAGE_GCP: us.gcr.io/reearth-oss/reearth-backend:nightly
   GCP_REGION: us-central1
 jobs:
   deploy_test:
-    name: deploy_test
+    name: Deploy app to test env
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-backend'
     steps:
