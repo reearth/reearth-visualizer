@@ -40,7 +40,7 @@ jobs:
     if: github.event.repository.full_name == 'reearth/reearth-backend' && always()
     name: Slack Notification
     needs:
-      - pr
+      - ci
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
