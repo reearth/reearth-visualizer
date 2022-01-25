@@ -52,7 +52,6 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   width: 288px;
-  height: 160px;
   color: ${props => props.theme.infoBox.mainText};
   box-shadow: 0 0 5px ${props => props.theme.infoBox.deepBg};
   &:after {
@@ -74,6 +73,8 @@ const ContentsList = styled.div`
   display: flex;
   flex-wrap: wrap;
   height: 100%;
+  max-height: 200px;
+  overflow: auto;
 `;
 
 const ContentItem = styled.div`
