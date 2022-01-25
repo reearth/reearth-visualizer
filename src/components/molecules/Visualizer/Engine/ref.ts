@@ -126,7 +126,7 @@ export type SceneProperty = {
 
 export type ClusterProperty = {
   id: string;
-  default: {
+  default?: {
     clusterPixelRange: number;
     clusterMinSize: number;
     clusterLabelTypography?: Typography;
@@ -134,5 +134,5 @@ export type ClusterProperty = {
     clusterImageHeight?: number;
     clusterImageWidth?: number;
   };
-  layers: { layer?: string }[];
+  layers?: { layer?: string }[];
 };

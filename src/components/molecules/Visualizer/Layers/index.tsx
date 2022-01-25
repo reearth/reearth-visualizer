@@ -1,15 +1,16 @@
-import React, { ComponentType, useCallback } from "react";
+import React, { ComponentType, useMemo, useCallback } from "react";
 
 import { ClusterProperty, ClusterProps } from "../Engine";
-import P, { Layer } from "../Primitive";
+import P from "../Primitive";
 
-import { LayerStore } from "./store";
+import { LayerStore, Layer } from "./store";
 
 export type { Layer } from "../Primitive";
 
 export type Props = {
   pluginProperty?: { [key: string]: any };
   clusterProperty?: ClusterProperty[];
+  sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
   pluginBaseUrl?: string;
@@ -24,6 +25,7 @@ export { LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
   pluginProperty,
+  sceneProperty,
   clusterProperty,
   isEditable,
   isBuilt,
@@ -35,6 +37,15 @@ export default function Layers({
   clusterComponent,
 }: Props): JSX.Element | null {
   const Cluster = clusterComponent;
+  const clusteredLayers = useMemo<Set<string>>(
+    () =>
+      new Set(
+        clusterProperty?.flatMap(c =>
+          (c.layers ?? []).map(l => l.layer).filter((l): l is string => !!l),
+        ),
+      ),
+    [clusterProperty],
+  );
 
   const renderLayer = useCallback(
     (layer: Layer<any, any>) => {
@@ -42,6 +53,7 @@ export default function Layers({
         <P
           key={layer.id}
           layer={layer}
+          sceneProperty={sceneProperty}
           pluginProperty={
             layer.pluginId && layer.extensionId
               ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
@@ -63,6 +75,7 @@ export default function Layers({
       overriddenProperties,
       pluginBaseUrl,
       pluginProperty,
+      sceneProperty,
       selectedLayerId,
     ],
   );
@@ -79,13 +92,7 @@ export default function Layers({
                 .map(renderLayer)}
             </Cluster>
           ))}
-      {layers?.flattenLayersRaw
-        ?.filter(
-          layer =>
-            !clusterProperty ||
-            clusterProperty.every(cluster => cluster?.layers?.every(l => l.layer !== layer.id)),
-        )
-        .map(renderLayer)}
+      {layers?.flattenLayersRaw?.filter(layer => !clusteredLayers.has(layer.id)).map(renderLayer)}
     </>
   );
 }

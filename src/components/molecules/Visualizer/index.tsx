@@ -166,6 +166,7 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
+            sceneProperty={sceneProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}
