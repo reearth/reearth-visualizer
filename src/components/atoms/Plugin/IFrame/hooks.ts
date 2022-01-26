@@ -140,6 +140,7 @@ export default function useHook({
         width: visible ? (autoResize ? iFrameSize?.[0] : "100%") : "0px",
         height: visible ? (autoResize ? iFrameSize?.[1] : "100%") : "0px",
         minWidth: "100%",
+        maxWidth: "100%",
         ...iFrameProps?.style,
       },
       ...iFrameProps,
