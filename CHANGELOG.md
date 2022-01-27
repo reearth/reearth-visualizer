@@ -1,7 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.3.0 - 2021-12-23
+## 0.4.0 - 2022-01-27
+
+### 🚀 Features
+
+- Add "clamp to ground" option to file primitive ([#95](https://github.com/reearth/reearth-backend/pull/95)) [`559194`](https://github.com/reearth/reearth-backend/commit/559194)
+- Infobox and text block padding ([#100](https://github.com/reearth/reearth-backend/pull/100)) [`ddd0db`](https://github.com/reearth/reearth-backend/commit/ddd0db)
+
+### ⚡️ Performance
+
+- Add indexes of mongo collections ([#98](https://github.com/reearth/reearth-backend/pull/98)) [`691cb7`](https://github.com/reearth/reearth-backend/commit/691cb7)
+
+### ✨ Refactor
+
+- Pkg/id, use ID aliases, move JSON schemas ([#97](https://github.com/reearth/reearth-backend/pull/97)) [`1265ac`](https://github.com/reearth/reearth-backend/commit/1265ac)
+- Unit tests ([#99](https://github.com/reearth/reearth-backend/pull/99)) [`0d112c`](https://github.com/reearth/reearth-backend/commit/0d112c)
+- Pkg/property, pkg/layer, pkg/plugin ([#101](https://github.com/reearth/reearth-backend/pull/101)) [`17a463`](https://github.com/reearth/reearth-backend/commit/17a463)
+
+## 0.3.0 - 2022-01-11
 
 ### 🚀 Features
 
