@@ -59,7 +59,7 @@ jobs:
               .map(l => l[1])
               .slice(0, 2);
             if (!h.length) throw new Error("failed to get the changelog of the latest version");
-            const m = lines.slice(h[0], h[1]).join("\n");
+            const m = lines.slice(h[0] + 1, h[1]).join("\n");
             fs.writeFileSync("CHANGELOG_latest.md", m);
       - name: Upload latest changelog
         uses: actions/upload-artifact@v2
