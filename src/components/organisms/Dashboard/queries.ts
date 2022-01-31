@@ -31,7 +31,10 @@ export const ME = gql`
           user {
             id
             name
+            email
           }
+          userId
+          role
         }
         projects(first: 100) {
           nodes {

@@ -2207,7 +2207,7 @@ export enum WidgetZoneType {
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null | undefined, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null | undefined } | null | undefined> } }, teams: Array<{ __typename?: 'Team', id: string, name: string, members: Array<{ __typename?: 'TeamMember', user?: { __typename?: 'User', id: string, name: string } | null | undefined }>, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null | undefined, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null | undefined } | null | undefined> } }> } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null | undefined, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null | undefined } | null | undefined> } }, teams: Array<{ __typename?: 'Team', id: string, name: string, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null | undefined }>, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null | undefined, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null | undefined } | null | undefined> } }> } | null | undefined };
 
 export type CreateProjectMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3879,7 +3879,10 @@ export const MeDocument = gql`
         user {
           id
           name
+          email
         }
+        userId
+        role
       }
       projects(first: 100) {
         nodes {
