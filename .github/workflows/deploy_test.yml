@@ -1,10 +1,9 @@
 name: deploy_test
 on:
   workflow_run:
-    workflows:
-      - main
-    types:
-      - completed
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
 env:
   REEARTH_URL: test.reearth.dev
   GCS_DEST: gs://test.reearth.dev/
