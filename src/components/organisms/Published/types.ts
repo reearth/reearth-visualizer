@@ -10,6 +10,7 @@ export type PublishedData = {
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   clusters: Cluster[];
+  tags?: Tag[];
 };
 
 export type Plugin = {
@@ -22,11 +23,22 @@ export type Layer = {
   name?: string;
   pluginId: string;
   extensionId: string;
+  propertyId?: string;
+  /** If undefined, it should be treated as true. */
+  isVisible?: boolean;
   property: any;
   infobox?: {
     fields: Block[];
     property: any;
   } | null;
+  tags?: Tag[];
+  children?: Layer[];
+};
+
+export type Tag = {
+  id: string;
+  label: string;
+  tags?: Tag[];
 };
 
 export type Block = {
