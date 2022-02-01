@@ -9,18 +9,30 @@ type Item struct {
 }
 
 func (i *Item) Parent() *ID {
+	if i == nil {
+		return nil
+	}
 	return i.parent.CopyRef()
 }
 
 func (i *Item) LinkedDatasetFieldID() *DatasetFieldID {
+	if i == nil {
+		return nil
+	}
 	return i.linkedDatasetFieldID.CopyRef()
 }
 
 func (i *Item) LinkedDatasetID() *DatasetID {
+	if i == nil {
+		return nil
+	}
 	return i.linkedDatasetID.CopyRef()
 }
 
 func (i *Item) LinkedDatasetSchemaID() *DatasetSchemaID {
+	if i == nil {
+		return nil
+	}
 	return i.linkedDatasetSchemaID.CopyRef()
 }
 

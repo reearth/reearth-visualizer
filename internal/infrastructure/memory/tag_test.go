@@ -4,11 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/rerror"
-
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/tag"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +39,7 @@ func TestTag_FindByIDs(t *testing.T) {
 	sid2 := id.NewSceneID()
 	sl := []id.SceneID{sid}
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	t3, _ := tag.NewItem().NewID().Scene(sid2).Label("item2").Build()
 	tti := tag.Tag(t1)
@@ -64,7 +62,7 @@ func TestTag_FindRootsByScene(t *testing.T) {
 	sid := id.NewSceneID()
 	sid2 := id.NewSceneID()
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	t3, _ := tag.NewItem().NewID().Scene(sid2).Label("item2").Build()
 	tti := tag.Tag(t1)
@@ -87,7 +85,7 @@ func TestTag_FindGroupByID(t *testing.T) {
 	sid := id.NewSceneID()
 	sl := []id.SceneID{sid}
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
 	ttg := tag.Tag(t2)
@@ -110,7 +108,7 @@ func TestTag_FindItemByID(t *testing.T) {
 	sid := id.NewSceneID()
 	sl := []id.SceneID{sid}
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
 	ttg := tag.Tag(t2)
@@ -208,7 +206,7 @@ func TestTag_Remove(t *testing.T) {
 	ctx := context.Background()
 	sid := id.NewSceneID()
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
 	ttg := tag.Tag(t2)
@@ -228,7 +226,7 @@ func TestTag_RemoveAll(t *testing.T) {
 	ctx := context.Background()
 	sid := id.NewSceneID()
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
 	t3, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
@@ -252,7 +250,7 @@ func TestTag_RemoveByScene(t *testing.T) {
 	sid := id.NewSceneID()
 	sid2 := id.NewSceneID()
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewItem().NewID().Scene(sid2).Label("item").Build()
 	t3, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
@@ -276,7 +274,7 @@ func TestTag_FindGroupByItem(t *testing.T) {
 	sid := id.NewSceneID()
 	sl := []id.SceneID{sid}
 	t1, _ := tag.NewItem().NewID().Scene(sid).Label("item").Build()
-	tl := tag.NewListFromTags([]id.TagID{t1.ID()})
+	tl := tag.IDListFrom([]id.TagID{t1.ID()})
 	t2, _ := tag.NewGroup().NewID().Scene(sid).Label("group").Tags(tl).Build()
 	tti := tag.Tag(t1)
 	ttg := tag.Tag(t2)

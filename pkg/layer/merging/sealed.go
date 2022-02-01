@@ -13,6 +13,8 @@ var (
 type SealedLayer interface {
 	Common() *SealedLayerCommon
 	Flatten() []*SealedLayerItem
+	Group() *SealedLayerGroup
+	Item() *SealedLayerItem
 }
 
 type SealedLayerGroup struct {
@@ -28,6 +30,7 @@ type SealedLayerCommon struct {
 	layer.Merged
 	Property *property.Sealed
 	Infobox  *SealedInfobox
+	Tags     []SealedTag
 }
 
 type SealedInfobox struct {
@@ -39,6 +42,12 @@ type SealedInfobox struct {
 type SealedInfoboxField struct {
 	layer.MergedInfoboxField
 	Property *property.Sealed
+}
+
+type SealedTag struct {
+	ID    layer.TagID
+	Label string
+	Tags  []SealedTag
 }
 
 func (l *SealedLayerGroup) Common() *SealedLayerCommon {
@@ -59,6 +68,17 @@ func (l *SealedLayerGroup) Flatten() []*SealedLayerItem {
 	return layers
 }
 
+func (l *SealedLayerGroup) Item() *SealedLayerItem {
+	return nil
+}
+
+func (l *SealedLayerGroup) Group() *SealedLayerGroup {
+	if l == nil {
+		return nil
+	}
+	return l
+}
+
 func (l *SealedLayerItem) Common() *SealedLayerCommon {
 	if l == nil {
 		return nil
@@ -71,4 +91,15 @@ func (l *SealedLayerItem) Flatten() []*SealedLayerItem {
 		return nil
 	}
 	return []*SealedLayerItem{l}
+}
+
+func (l *SealedLayerItem) Item() *SealedLayerItem {
+	if l == nil {
+		return nil
+	}
+	return l
+}
+
+func (*SealedLayerItem) Group() *SealedLayerGroup {
+	return nil
 }

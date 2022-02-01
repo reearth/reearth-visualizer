@@ -9,10 +9,13 @@ import (
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/tag"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSceneBuilder(t *testing.T) {
+	publishedAt := time.Date(2019, time.August, 15, 0, 0, 0, 0, time.Local)
+
 	// ids
 	sceneID := scene.NewID()
 	scenePropertyID := property.NewID()
@@ -66,6 +69,21 @@ func TestSceneBuilder(t *testing.T) {
 		),
 	}).Scene(sceneID).Schema(dss3id).Source("ds3").MustBuild()
 
+	// tags
+	tag1 := tag.NewItem().NewID().Label("hoge").Scene(sceneID).MustBuild()
+	tag2 := tag.NewItem().NewID().Label("foo").Scene(sceneID).MustBuild()
+	tag3 := tag.NewItem().NewID().Label("unused").Scene(sceneID).MustBuild()
+	tag4 := tag.NewGroup().NewID().Label("bar").Scene(sceneID).Tags(tag.IDListFrom(([]tag.ID{
+		tag1.ID(), tag2.ID(), tag3.ID(),
+	}))).MustBuild()
+	tag5 := tag.NewItem().NewID().Label("dummy").Scene(scene.NewID()).MustBuild() // dummy
+	tags := tag.List{tag1, tag2, tag3, tag4, tag5}
+
+	// layer tags
+	ltag1 := layer.NewTagItem(tag1.ID())
+	ltag2 := layer.NewTagItem(tag2.ID())
+	ltag3 := layer.NewTagGroup(tag4.ID(), []*layer.TagItem{ltag2})
+
 	// layer1: normal layer item
 	layer1p := property.New().
 		NewID().
@@ -89,6 +107,7 @@ func TestSceneBuilder(t *testing.T) {
 		Plugin(&pluginID).
 		Extension(&pluginExtension1ID).
 		Property(layer1p.IDRef()).
+		Tags(layer.NewTagList([]layer.Tag{ltag1, ltag3})).
 		MustBuild()
 
 	// layer2: normal layer group
@@ -114,6 +133,7 @@ func TestSceneBuilder(t *testing.T) {
 		Plugin(&pluginID).
 		Extension(&pluginExtension1ID).
 		Property(layer21p.IDRef()).
+		Tags(layer.NewTagList([]layer.Tag{ltag2})).
 		MustBuild()
 	layer2p := property.New().
 		NewID().
@@ -131,7 +151,12 @@ func TestSceneBuilder(t *testing.T) {
 				}).MustBuild(),
 		}).
 		MustBuild()
-	layer2ibf1 := layer.NewInfoboxField().NewID().Plugin(pluginID).Extension(pluginExtension1ID).Property(layer2p.ID()).MustBuild()
+	layer2ibf1 := layer.NewInfoboxField().
+		NewID().
+		Plugin(pluginID).
+		Extension(pluginExtension1ID).
+		Property(layer2p.ID()).
+		MustBuild()
 	layer2ib := layer.NewInfobox([]*layer.InfoboxField{
 		layer2ibf1,
 	}, scenePropertyID)
@@ -143,6 +168,7 @@ func TestSceneBuilder(t *testing.T) {
 		Property(layer2p.IDRef()).
 		Infobox(layer2ib).
 		Layers(layer.NewIDList([]layer.ID{layer21.ID()})).
+		Tags(layer.NewTagList([]layer.Tag{ltag1, ltag3})).
 		MustBuild()
 
 	// layer3: full-linked layer item with infobox
@@ -227,7 +253,12 @@ func TestSceneBuilder(t *testing.T) {
 				}).MustBuild(),
 		}).
 		MustBuild()
-	layer4ibf1 := layer.NewInfoboxField().NewID().Plugin(pluginID).Extension(pluginExtension1ID).Property(layer4p.ID()).MustBuild()
+	layer4ibf1 := layer.NewInfoboxField().
+		NewID().
+		Plugin(pluginID).
+		Extension(pluginExtension1ID).
+		Property(layer4p.ID()).
+		MustBuild()
 	layer4ib := layer.NewInfobox([]*layer.InfoboxField{
 		layer4ibf1,
 	}, scenePropertyID)
@@ -363,14 +394,14 @@ func TestSceneBuilder(t *testing.T) {
 		pluginExtension1ID,
 		scenePropertyID,
 		false,
-		true)
+		false)
 	sceneWidget2 := scene.MustNewWidget(
 		sceneWidgetID2,
 		pluginID,
 		pluginExtension2ID,
 		scenePropertyID,
 		true,
-		false)
+		true)
 	scenePlugin1 := scene.NewPlugin(pluginID, &scenePropertyID)
 
 	assert.Equal(t, sceneWidgetID1, sceneWidget1.ID())
@@ -416,166 +447,327 @@ func TestSceneBuilder(t *testing.T) {
 		layer51p,
 		layer6p,
 	})
+	tloader := tag.LoaderFrom(tags)
+	tsloader := tag.SceneLoaderFrom(tags)
+
+	expectedLayer1 := &layerJSON{
+		ID:          layer1.ID().String(),
+		PluginID:    layer1.Plugin().StringRef(),
+		ExtensionID: layer1.Extension().StringRef(),
+		Name:        layer1.Name(),
+		IsVisible:   true,
+		PropertyID:  layer1.Property().String(),
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": "xxx",
+				"b": float64(1),
+			},
+		},
+		Infobox: nil,
+		Tags: []tagJSON{
+			{ID: tag1.ID().String(), Label: tag1.Label(), Tags: nil},
+			{ID: tag4.ID().String(), Label: tag4.Label(), Tags: []tagJSON{
+				{ID: tag2.ID().String(), Label: tag2.Label(), Tags: nil},
+			}},
+		},
+		Children: nil,
+	}
+
+	expectedLayer2 := &layerJSON{
+		ID:          layer2.ID().String(),
+		PluginID:    layer2.Plugin().StringRef(),
+		ExtensionID: layer2.Extension().StringRef(),
+		Name:        layer2.Name(),
+		IsVisible:   true,
+		PropertyID:  layer2.Property().String(),
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": "xxx",
+				"c": "test",
+			},
+		},
+		Infobox: &infoboxJSON{
+			Fields: []infoboxFieldJSON{
+				{
+					ID:          layer2ibf1.ID().String(),
+					PluginID:    layer2ibf1.Plugin().String(),
+					ExtensionID: layer2ibf1.Extension().String(),
+					Property: map[string]interface{}{
+						"A": map[string]interface{}{
+							"a": "xxx",
+							"c": "test",
+						},
+					},
+				},
+			},
+			Property: map[string]interface{}{
+				"A": map[string]interface{}{
+					"a": "hogehoge",
+				},
+			},
+		},
+		Tags: []tagJSON{
+			{ID: tag1.ID().String(), Label: tag1.Label()},
+			{ID: tag4.ID().String(), Label: tag4.Label(), Tags: []tagJSON{
+				{ID: tag2.ID().String(), Label: tag2.Label()},
+			}},
+		},
+		Children: []*layerJSON{
+			{
+				ID:          layer21.ID().String(),
+				PluginID:    layer21.Plugin().StringRef(),
+				ExtensionID: layer21.Extension().StringRef(),
+				Name:        layer21.Name(),
+				IsVisible:   true,
+				PropertyID:  layer21.Property().String(),
+				Property: map[string]interface{}{
+					"A": map[string]interface{}{
+						"a": "yyy",
+						"b": float64(1),
+						"c": "test",
+					},
+				},
+				Infobox: &infoboxJSON{
+					Fields: []infoboxFieldJSON{
+						{
+							ID:          layer2ibf1.ID().String(),
+							PluginID:    layer2ibf1.Plugin().String(),
+							ExtensionID: layer2ibf1.Extension().String(),
+							Property: map[string]interface{}{
+								"A": map[string]interface{}{
+									"a": "xxx",
+									"c": "test",
+								},
+							},
+						},
+					},
+					Property: map[string]interface{}{
+						"A": map[string]interface{}{
+							"a": "hogehoge",
+						},
+					},
+				},
+				Tags: []tagJSON{
+					{ID: tag2.ID().String(), Label: tag2.Label()},
+				},
+			},
+		},
+	}
+
+	expectedLayer3 := &layerJSON{
+		ID:          layer3.ID().String(),
+		PluginID:    layer3.Plugin().StringRef(),
+		ExtensionID: layer3.Extension().StringRef(),
+		Name:        layer3.Name(),
+		IsVisible:   true,
+		PropertyID:  layer3.Property().String(),
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": "b",
+			},
+		},
+		Infobox: &infoboxJSON{
+			Property: map[string]interface{}{
+				"A": map[string]interface{}{
+					"a": "hogehoge",
+				},
+			},
+			Fields: []infoboxFieldJSON{
+				{
+					ID:          layer3ibf1.ID().String(),
+					PluginID:    layer3ibf1.Plugin().String(),
+					ExtensionID: layer3ibf1.Extension().String(),
+					Property: map[string]interface{}{
+						"A": map[string]interface{}{
+							"a": "hogehoge",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	expectedLayer4 := &layerJSON{
+		ID:          layer4.ID().String(),
+		PluginID:    layer4.Plugin().StringRef(),
+		ExtensionID: layer4.Extension().StringRef(),
+		Name:        layer4.Name(),
+		IsVisible:   true,
+		PropertyID:  layer4.Property().String(),
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": nil,
+				"c": "xxx",
+			},
+		},
+		Infobox: &infoboxJSON{
+			Property: map[string]interface{}{
+				"A": map[string]interface{}{
+					"a": "hogehoge",
+				},
+			},
+			Fields: []infoboxFieldJSON{
+				{
+					ID:          layer4ibf1.ID().String(),
+					PluginID:    layer4ibf1.Plugin().String(),
+					ExtensionID: layer4ibf1.Extension().String(),
+					Property: map[string]interface{}{
+						"A": map[string]interface{}{
+							"a": nil,
+							"c": "xxx",
+						},
+					},
+				},
+			},
+		},
+		Children: []*layerJSON{
+			{
+				ID:          layer41.ID().String(),
+				PluginID:    layer41.Plugin().StringRef(),
+				ExtensionID: layer41.Extension().StringRef(),
+				IsVisible:   true,
+				PropertyID:  layer41.Property().String(),
+				Property: map[string]interface{}{
+					"A": map[string]interface{}{
+						"a": "b",
+						"b": float64(1),
+						"c": "xxx",
+					},
+				},
+				Infobox: &infoboxJSON{
+					Property: map[string]interface{}{
+						"A": map[string]interface{}{
+							"a": "hogehoge",
+							"b": float64(1),
+						},
+					},
+					Fields: []infoboxFieldJSON{
+						{
+							ID:          layer41ibf1.ID().String(),
+							PluginID:    layer41ibf1.Plugin().String(),
+							ExtensionID: layer41ibf1.Extension().String(),
+							Property: map[string]interface{}{
+								"A": map[string]interface{}{
+									"b": float64(1),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	expectedLayer5 := &layerJSON{
+		ID:          layer5.ID().String(),
+		PluginID:    layer5.Plugin().StringRef(),
+		ExtensionID: layer5.Extension().StringRef(),
+		Name:        layer5.Name(),
+		IsVisible:   true,
+		PropertyID:  layer5.Property().String(),
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": nil,
+				"b": nil,
+			},
+		},
+		Infobox: nil,
+		Tags:    nil,
+		Children: []*layerJSON{
+			{
+				ID:          layer51.ID().String(),
+				PluginID:    layer51.Plugin().StringRef(),
+				ExtensionID: layer51.Extension().StringRef(),
+				IsVisible:   true,
+				PropertyID:  layer51.Property().String(),
+				Property: map[string]interface{}{
+					"A": map[string]interface{}{
+						"a": "a",
+						"b": "b",
+					},
+				},
+			},
+		},
+	}
+
+	expectedLayer6 := &layerJSON{
+		ID:          layer6.ID().String(),
+		PluginID:    layer6.Plugin().StringRef(),
+		ExtensionID: layer6.Extension().StringRef(),
+		Name:        layer6.Name(),
+		IsVisible:   true,
+		PropertyID:  layer6.Property().String(),
+		Property: map[string]interface{}{
+			"B": []map[string]interface{}{
+				{
+					"id": propertyItemID1.String(),
+					"a":  "XYZ",
+				},
+				{
+					"id": propertyItemID2.String(),
+					"a":  "ZYX",
+				},
+			},
+		},
+		Infobox:  nil,
+		Tags:     nil,
+		Children: nil,
+	}
+
+	expectedLayers := []*layerJSON{
+		expectedLayer1,
+		expectedLayer2,
+		expectedLayer3,
+		expectedLayer4,
+		expectedLayer5,
+		expectedLayer6,
+	}
+
+	expected := &sceneJSON{
+		SchemaVersion: version,
+		ID:            sceneID.String(),
+		PublishedAt:   publishedAt,
+		Layers:        expectedLayers,
+		Property: map[string]interface{}{
+			"A": map[string]interface{}{
+				"a": "hogehoge",
+			},
+		},
+		Plugins: map[string]map[string]interface{}{
+			pluginID.String(): {
+				"A": map[string]interface{}{
+					"a": "hogehoge",
+				},
+			},
+		},
+		Widgets: []*widgetJSON{
+			{
+				ID:          sceneWidget2.ID().String(),
+				PluginID:    sceneWidget2.Plugin().String(),
+				ExtensionID: sceneWidget2.Extension().String(),
+				Property: map[string]interface{}{
+					"A": map[string]interface{}{
+						"a": "hogehoge",
+					},
+				},
+				Extended: true,
+			},
+		},
+		WidgetAlignSystem: nil,
+		Tags: []*tagJSON{
+			{ID: tag4.ID().String(), Label: tag4.Label(), Tags: []tagJSON{
+				{ID: tag1.ID().String(), Label: tag1.Label(), Tags: nil},
+				{ID: tag2.ID().String(), Label: tag2.Label(), Tags: nil},
+				{ID: tag3.ID().String(), Label: tag3.Label(), Tags: nil},
+			}},
+		},
+		Clusters: []*clusterJSON{},
+	}
 
 	// exec
-	sb := New(lloader, ploader, dloader)
-	publishedAt := time.Date(2019, time.August, 15, 0, 0, 0, 0, time.Local)
+	sb := New(lloader, ploader, dloader, tloader, tsloader)
 	result, err := sb.buildScene(context.Background(), scene, publishedAt)
 
-	// general
 	assert.NoError(t, err)
-	assert.Equal(t, sceneID.String(), result.ID)
-	assert.Equal(t, version, result.SchemaVersion)
-	assert.Equal(t, publishedAt, result.PublishedAt)
-
-	// property
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, result.Property, "property")
-
-	// plugins
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, result.Plugins[pluginID.String()], "plugin1 property")
-
-	// widgets
-	assert.Equal(t, 1, len(result.Widgets), "widgets len")
-	resWidget1 := result.Widgets[0]
-	assert.Equal(t, pluginID.String(), resWidget1.PluginID, "widget1 plugin")
-	assert.Equal(t, string(pluginExtension2ID), resWidget1.ExtensionID, "widget1 extension")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, resWidget1.Property, "widget1 property")
-
-	// layers
-	assert.Equal(t, 6, len(result.Layers), "layers len")
-
-	// layer1
-	resLayer1 := result.Layers[0]
-	assert.Equal(t, layer1.ID().String(), resLayer1.ID, "layer1 id")
-	assert.Equal(t, pluginID.StringRef(), resLayer1.PluginID, "layer1 plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer1.ExtensionID, "layer1 extension id")
-	assert.Nil(t, resLayer1.Infobox, "layer1 infobox")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "xxx",
-			"b": float64(1),
-		},
-	}, resLayer1.Property, "layer1 prpperty")
-
-	// layer2
-	resLayer2 := result.Layers[1]
-	assert.Equal(t, layer21.ID().String(), resLayer2.ID, "layer２ id")
-	assert.Equal(t, pluginID.StringRef(), resLayer2.PluginID, "layer２ plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer2.ExtensionID, "layer２ extension id")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, resLayer2.Infobox.Property, "layer2 infobox property")
-	assert.Equal(t, 1, len(resLayer2.Infobox.Fields), "layer2 infobox fields len")
-	assert.Equal(t, pluginID.String(), resLayer2.Infobox.Fields[0].PluginID, "layer2 infobox field1 plugin")
-	assert.Equal(t, string(pluginExtension1ID), resLayer2.Infobox.Fields[0].ExtensionID, "layer2 infobox field1 extension")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "xxx",
-			"c": "test",
-		},
-	}, resLayer2.Infobox.Fields[0].Property, "layer2 infobox field1 property")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "yyy",
-			"b": float64(1),
-			"c": "test",
-		},
-	}, resLayer2.Property, "layer2 prpperty")
-
-	// layer3
-	resLayer3 := result.Layers[2]
-	assert.Equal(t, layer3.ID().String(), resLayer3.ID, "layer3 id")
-	assert.Equal(t, pluginID.StringRef(), resLayer3.PluginID, "layer3 plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer3.ExtensionID, "layer3 extension id")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, resLayer3.Infobox.Property, "layer3 infobox property")
-	assert.Equal(t, 1, len(resLayer3.Infobox.Fields), "layer3 infobox fields len")
-	assert.Equal(t, pluginID.String(), resLayer3.Infobox.Fields[0].PluginID, "layer3 infobox field1 plugin")
-	assert.Equal(t, string(pluginExtension1ID), resLayer3.Infobox.Fields[0].ExtensionID, "layer3 infobox field1 extension")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-		},
-	}, resLayer3.Infobox.Fields[0].Property, "layer3 infobox field1 property")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "b",
-		},
-	}, resLayer3.Property, "layer3 prpperty")
-
-	// layer4
-	resLayer4 := result.Layers[3]
-	assert.Equal(t, layer41.ID().String(), resLayer4.ID, "layer4 id")
-	assert.Equal(t, pluginID.StringRef(), resLayer4.PluginID, "layer4 plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer4.ExtensionID, "layer4 extension id")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "hogehoge",
-			"b": float64(1),
-		},
-	}, resLayer4.Infobox.Property, "layer4 infobox property")
-	assert.Equal(t, 1, len(resLayer4.Infobox.Fields), "layer4 infobox fields len")
-	assert.Equal(t, pluginID.String(), resLayer4.Infobox.Fields[0].PluginID, "layer4 infobox field1 plugin")
-	assert.Equal(t, string(pluginExtension1ID), resLayer4.Infobox.Fields[0].ExtensionID, "layer4 infobox field1 extension")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"b": float64(1),
-		},
-	}, resLayer4.Infobox.Fields[0].Property, "layer4 infobox field1 property")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "b",
-			"b": float64(1),
-			"c": "xxx",
-		},
-	}, resLayer4.Property, "layer4 prpperty")
-
-	// layer5
-	resLayer5 := result.Layers[4]
-	assert.Equal(t, layer51.ID().String(), resLayer5.ID, "layer5 id")
-	assert.Equal(t, pluginID.StringRef(), resLayer5.PluginID, "layer5 plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer5.ExtensionID, "layer5 extension id")
-	assert.Nil(t, resLayer5.Infobox, "layer5 infobox")
-	assert.Equal(t, map[string]interface{}{
-		"A": map[string]interface{}{
-			"a": "a",
-			"b": "b",
-		},
-	}, resLayer5.Property, "layer5 prpperty")
-
-	// layer6
-	resLayer6 := result.Layers[5]
-	assert.Equal(t, layer6.ID().String(), resLayer6.ID, "layer6 id")
-	assert.Equal(t, pluginID.StringRef(), resLayer6.PluginID, "layer6 plugin id")
-	assert.Equal(t, pluginExtension1ID.StringRef(), resLayer6.ExtensionID, "layer6 extension id")
-	assert.Nil(t, resLayer6.Infobox, "layer6 infobox")
-	assert.Equal(t, map[string]interface{}{
-		"B": []map[string]interface{}{
-			{
-				"a":  "XYZ",
-				"id": propertyItemID1.String(),
-			},
-			{
-				"a":  "ZYX",
-				"id": propertyItemID2.String(),
-			},
-		},
-	}, resLayer6.Property, "layer6 prpperty")
+	assert.Equal(t, expected, result)
 }

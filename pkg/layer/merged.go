@@ -14,6 +14,14 @@ type Merged struct {
 	Infobox     *MergedInfobox
 	PluginID    *PluginID
 	ExtensionID *PluginExtensionID
+	IsVisible   bool
+	Tags        []MergedTag
+}
+
+// MergedTag represents a merged tag from two layers
+type MergedTag struct {
+	ID   TagID
+	Tags []MergedTag
 }
 
 // MergedInfobox represents a merged info box from two layers
@@ -48,8 +56,37 @@ func Merge(o Layer, p *Group) *Merged {
 			Parent:        p.Property(),
 			LinkedDataset: ToLayerItem(o).LinkedDataset(),
 		},
-		Infobox: MergeInfobox(o.Infobox(), p.Infobox(), ToLayerItem(o).LinkedDataset()),
+		IsVisible: o.IsVisible(),
+		Tags:      MergeTags(o.Tags(), p.Tags()),
+		Infobox:   MergeInfobox(o.Infobox(), p.Infobox(), ToLayerItem(o).LinkedDataset()),
 	}
+}
+
+// MergeInfobox merges two tag lists
+func MergeTags(o, _p *TagList) []MergedTag {
+	// Currently parent tags are ignored
+	tags := o.Tags()
+	if len(tags) == 0 {
+		return nil
+	}
+	res := make([]MergedTag, 0, len(tags))
+	for _, t := range tags {
+		tags := TagGroupFrom(t).Children()
+
+		var tags2 []MergedTag
+		if len(tags) > 0 {
+			tags2 = make([]MergedTag, 0, len(tags))
+			for _, t := range tags {
+				tags2 = append(tags2, MergedTag{ID: t.ID()})
+			}
+		}
+
+		res = append(res, MergedTag{
+			ID:   t.ID(),
+			Tags: tags2,
+		})
+	}
+	return res
 }
 
 // MergeInfobox merges two infoboxes
@@ -148,4 +185,24 @@ func (m *Merged) Properties() []PropertyID {
 		}
 	}
 	return result
+}
+
+func (m *Merged) AllTags() (res []MergedTag) {
+	if m == nil {
+		return nil
+	}
+	for _, t := range m.Tags {
+		res = append(res, append([]MergedTag{t}, t.Tags...)...)
+	}
+	return res
+}
+
+func (m *Merged) AllTagIDs() (res []TagID) {
+	if m == nil {
+		return nil
+	}
+	for _, t := range m.AllTags() {
+		res = append(res, t.ID)
+	}
+	return res
 }

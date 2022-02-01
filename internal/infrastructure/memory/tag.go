@@ -13,7 +13,7 @@ import (
 
 type Tag struct {
 	lock sync.Mutex
-	data map[id.TagID]tag.Tag
+	data tag.Map
 }
 
 func NewTag() repo.Tag {
@@ -48,6 +48,13 @@ func (t *Tag) FindByIDs(ctx context.Context, tids []id.TagID, ids []id.SceneID) 
 		res = append(res, nil)
 	}
 	return res, nil
+}
+
+func (t *Tag) FindByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.Tag, error) {
+	t.lock.Lock()
+	defer t.lock.Unlock()
+
+	return t.data.All().FilterByScene(sceneID).Refs(), nil
 }
 
 func (t *Tag) FindItemByID(ctx context.Context, tagID id.TagID, ids []id.SceneID) (*tag.Item, error) {
@@ -116,14 +123,7 @@ func (t *Tag) FindRootsByScene(ctx context.Context, sceneID id.SceneID) ([]*tag.
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
-	var res []*tag.Tag
-	for _, tag := range t.data {
-		tag := tag
-		if tag.Scene() == sceneID {
-			res = append(res, &tag)
-		}
-	}
-	return res, nil
+	return t.data.All().FilterByScene(sceneID).Roots().Refs(), nil
 }
 
 func (t *Tag) Save(ctx context.Context, tag tag.Tag) error {

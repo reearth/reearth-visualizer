@@ -26,8 +26,15 @@ func (b *GroupBuilder) Build() (*Group, error) {
 	if b.g.label == "" {
 		return nil, ErrEmptyLabel
 	}
-
 	return b.g, nil
+}
+
+func (b *GroupBuilder) MustBuild() *Group {
+	res, err := b.Build()
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
 
 func (b *GroupBuilder) ID(tid ID) *GroupBuilder {
@@ -50,7 +57,7 @@ func (b *GroupBuilder) Scene(sid SceneID) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Tags(tl *List) *GroupBuilder {
+func (b *GroupBuilder) Tags(tl *IDList) *GroupBuilder {
 	if tl != nil {
 		b.g.tags = tl
 	}

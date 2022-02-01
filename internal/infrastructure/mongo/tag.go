@@ -51,6 +51,13 @@ func (r *tagRepo) FindByIDs(ctx context.Context, ids []id.TagID, f []id.SceneID)
 	return filterTags(ids, res), nil
 }
 
+func (r *tagRepo) FindByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
+	filter := bson.M{
+		"scene": id.String(),
+	}
+	return r.find(ctx, nil, filter)
+}
+
 func (r *tagRepo) FindItemByID(ctx context.Context, id id.TagID, f []id.SceneID) (*tag.Item, error) {
 	filter := r.sceneFilter(bson.D{
 		{Key: "id", Value: id.String()},

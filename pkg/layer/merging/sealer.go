@@ -4,39 +4,52 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
+	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 type Sealer struct {
 	DatasetGraphLoader dataset.GraphLoader
+	TagLoader          tag.Loader
 }
 
 func (s *Sealer) Seal(ctx context.Context, m MergedLayer) (SealedLayer, error) {
 	if s == nil || m == nil {
 		return nil, nil
 	}
-	return s.sealLayer(ctx, m)
+
+	var tagMap tag.Map
+	if tags := m.AllTags(); len(tags) > 0 {
+		tags2, err := s.TagLoader(ctx, tags...)
+		if err != nil {
+			return nil, err
+		}
+		tagMap = tag.MapFromRefList(tags2)
+	}
+
+	return s.sealLayer(ctx, m, tagMap)
 }
 
-func (s *Sealer) sealLayer(ctx context.Context, m MergedLayer) (SealedLayer, error) {
+func (s *Sealer) sealLayer(ctx context.Context, m MergedLayer, tagMap tag.Map) (SealedLayer, error) {
 	if s == nil || m == nil {
 		return nil, nil
 	}
 	if g, ok := m.(*MergedLayerGroup); ok {
-		return s.sealLayerGroup(ctx, g)
+		return s.sealLayerGroup(ctx, g, tagMap)
 	}
 	if i, ok := m.(*MergedLayerItem); ok {
-		return s.sealLayerItem(ctx, i)
+		return s.sealLayerItem(ctx, i, tagMap)
 	}
 	return nil, nil
 }
 
-func (s *Sealer) sealLayerGroup(ctx context.Context, m *MergedLayerGroup) (*SealedLayerGroup, error) {
+func (s *Sealer) sealLayerGroup(ctx context.Context, m *MergedLayerGroup, tagMap tag.Map) (*SealedLayerGroup, error) {
 	if s == nil || m == nil {
 		return nil, nil
 	}
 
-	c, err := s.sealLayerCommon(ctx, &m.MergedLayerCommon)
+	c, err := s.sealLayerCommon(ctx, &m.MergedLayerCommon, tagMap)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +59,7 @@ func (s *Sealer) sealLayerGroup(ctx context.Context, m *MergedLayerGroup) (*Seal
 
 	children := make([]SealedLayer, 0, len(m.Children))
 	for _, c := range m.Children {
-		s, err := s.sealLayer(ctx, c)
+		s, err := s.sealLayer(ctx, c, tagMap)
 		if err != nil {
 			return nil, err
 		}
@@ -59,11 +72,11 @@ func (s *Sealer) sealLayerGroup(ctx context.Context, m *MergedLayerGroup) (*Seal
 	}, nil
 }
 
-func (s *Sealer) sealLayerItem(ctx context.Context, m *MergedLayerItem) (*SealedLayerItem, error) {
+func (s *Sealer) sealLayerItem(ctx context.Context, m *MergedLayerItem, tagMap tag.Map) (*SealedLayerItem, error) {
 	if s == nil || m == nil {
 		return nil, nil
 	}
-	c, err := s.sealLayerCommon(ctx, &m.MergedLayerCommon)
+	c, err := s.sealLayerCommon(ctx, &m.MergedLayerCommon, tagMap)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +88,7 @@ func (s *Sealer) sealLayerItem(ctx context.Context, m *MergedLayerItem) (*Sealed
 	}, nil
 }
 
-func (s *Sealer) sealLayerCommon(ctx context.Context, m *MergedLayerCommon) (*SealedLayerCommon, error) {
+func (s *Sealer) sealLayerCommon(ctx context.Context, m *MergedLayerCommon, tagMap tag.Map) (*SealedLayerCommon, error) {
 	if s == nil || m == nil {
 		return nil, nil
 	}
@@ -87,10 +100,12 @@ func (s *Sealer) sealLayerCommon(ctx context.Context, m *MergedLayerCommon) (*Se
 	if err != nil {
 		return nil, err
 	}
+	tags := s.sealTags(m.Merged.Tags, tagMap)
 	return &SealedLayerCommon{
 		Merged:   m.Merged,
 		Property: p,
 		Infobox:  ib,
+		Tags:     tags,
 	}, nil
 }
 
@@ -136,4 +151,23 @@ func (s *Sealer) sealProperty(ctx context.Context, m *property.Merged) (*propert
 		return nil, nil
 	}
 	return property.Seal(ctx, m, s.DatasetGraphLoader)
+}
+
+func (s *Sealer) sealTags(m []layer.MergedTag, tagMap tag.Map) []SealedTag {
+	if len(m) == 0 {
+		return nil
+	}
+	res := make([]SealedTag, 0, len(m))
+	for _, t := range m {
+		tt := SealedTag{
+			ID:    t.ID,
+			Tags:  s.sealTags(t.Tags, tagMap),
+			Label: "",
+		}
+		if ttt, ok := tagMap[t.ID]; ok {
+			tt.Label = ttt.Label()
+		}
+		res = append(res, tt)
+	}
+	return res
 }

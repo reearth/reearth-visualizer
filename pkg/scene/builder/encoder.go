@@ -9,59 +9,79 @@ import (
 var _ encoding.Encoder = &encoder{}
 
 type encoder struct {
-	res []*layerJSON
+	res *layerJSON
 }
 
 func (e *encoder) Result() []*layerJSON {
-	if e == nil {
+	if e == nil || e.res == nil {
 		return nil
 	}
-	return e.res
+	return e.res.Children
 }
 
 func (e *encoder) Encode(l merging.SealedLayer) (err error) {
 	if e == nil {
 		return
 	}
-	e.res = e.layers(l)
+	e.res = e.layer(l)
 	return
 }
 
-func (e *encoder) layers(l merging.SealedLayer) []*layerJSON {
+func (e *encoder) layer(layer merging.SealedLayer) *layerJSON {
+	if layer == nil {
+		return nil
+	}
+	l := layer.Common()
 	if l == nil {
 		return nil
 	}
-	if i, ok := l.(*merging.SealedLayerItem); ok {
-		layer := e.layer(i)
-		if layer == nil {
-			return nil
-		}
-		return []*layerJSON{layer}
-	} else if g, ok := l.(*merging.SealedLayerGroup); ok {
-		// This encoder does not print group layer representation.
-		layers := make([]*layerJSON, 0, len(g.Children))
+
+	var children []*layerJSON
+	if g := layer.Group(); g != nil {
 		for _, c := range g.Children {
-			l := e.layers(c)
-			if l != nil {
-				layers = append(layers, l...)
+			if d := e.layer(c); d != nil {
+				children = append(children, d)
 			}
 		}
-		return layers
 	}
-	return nil
-}
 
-func (e *encoder) layer(l *merging.SealedLayerItem) *layerJSON {
-	if l == nil {
-		return nil
+	var propertyID string
+	if l.Property != nil {
+		propertyID = l.Property.Original.String()
 	}
+
+	var tags []tagJSON
+	if len(l.Tags) > 0 {
+		for _, t := range l.Tags {
+			var tags2 []tagJSON
+			if len(t.Tags) > 0 {
+				tags2 = make([]tagJSON, 0, len(t.Tags))
+				for _, t := range t.Tags {
+					tags2 = append(tags2, tagJSON{
+						ID:    t.ID.String(),
+						Label: t.Label,
+					})
+				}
+			}
+			tags = append(tags, tagJSON{
+				ID:    t.ID.String(),
+				Label: t.Label,
+				Tags:  tags2,
+			})
+		}
+	}
+
 	return &layerJSON{
 		ID:          l.Original.String(),
 		PluginID:    l.PluginID.StringRef(),
 		ExtensionID: l.ExtensionID.StringRef(),
 		Name:        l.Name,
 		Property:    e.property(l.Property),
+		PropertyID:  propertyID,
 		Infobox:     e.infobox(l.Infobox),
+		IsVisible:   l.IsVisible,
+		Tags:        tags,
+		Children:    children,
 	}
 }
 
@@ -93,8 +113,18 @@ type layerJSON struct {
 	PluginID    *string      `json:"pluginId,omitempty"`
 	ExtensionID *string      `json:"extensionId,omitempty"`
 	Name        string       `json:"name,omitempty"`
+	PropertyID  string       `json:"propertyId,omitempty"`
 	Property    propertyJSON `json:"property,omitempty"`
 	Infobox     *infoboxJSON `json:"infobox,omitempty"`
+	Tags        []tagJSON    `json:"tags,omitempty"`
+	IsVisible   bool         `json:"isVisible"`
+	Children    []*layerJSON `json:"children,omitempty"`
+}
+
+type tagJSON struct {
+	ID    string    `json:"id"`
+	Label string    `json:"label"`
+	Tags  []tagJSON `json:"tags,omitempty"`
 }
 
 type infoboxJSON struct {

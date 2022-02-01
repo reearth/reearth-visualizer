@@ -37,7 +37,7 @@ func (m *Merger) MergeLayer(ctx context.Context, l layer.Layer, parent *layer.Gr
 
 		children := make([]MergedLayer, 0, len(layers))
 		for _, c := range layers {
-			if c == nil || !(*c).IsVisible() {
+			if c == nil {
 				continue
 			}
 			ml, err := m.MergeLayer(ctx, *c, lg)

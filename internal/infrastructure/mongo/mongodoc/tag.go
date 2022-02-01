@@ -177,6 +177,6 @@ func (d *TagDocument) ModelGroup() (*tag.Group, error) {
 		ID(tid).
 		Label(d.Label).
 		Scene(sid).
-		Tags(tag.NewListFromTags(ids)).
+		Tags(tag.IDListFrom(ids)).
 		Build()
 }

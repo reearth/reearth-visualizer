@@ -29,6 +29,14 @@ func (b *ItemBuilder) Build() (*Item, error) {
 	return b.i, nil
 }
 
+func (b *ItemBuilder) MustBuild() *Item {
+	res, err := b.Build()
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
 func (b *ItemBuilder) ID(tid ID) *ItemBuilder {
 	b.i.id = tid
 	return b

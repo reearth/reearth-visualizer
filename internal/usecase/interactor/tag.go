@@ -103,7 +103,7 @@ func (i *Tag) CreateGroup(ctx context.Context, inp interfaces.CreateTagGroupPara
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	list := tag.NewListFromTags(inp.Tags)
+	list := tag.IDListFrom(inp.Tags)
 	group, err := tag.NewGroup().
 		NewID().
 		Label(inp.Label).

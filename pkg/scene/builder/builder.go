@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 const (
@@ -21,14 +22,16 @@ const (
 
 type Builder struct {
 	ploader  property.Loader
+	tloader  tag.SceneLoader
 	exporter *encoding.Exporter
 	encoder  *encoder
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader) *Builder {
 	e := &encoder{}
 	return &Builder{
 		ploader: pl,
+		tloader: tsl,
 		encoder: e,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
@@ -37,6 +40,7 @@ func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader) *Builder {
 			},
 			Sealer: &merging.Sealer{
 				DatasetGraphLoader: dl,
+				TagLoader:          tl,
 			},
 			Encoder: e,
 		},
@@ -73,6 +77,5 @@ func (b *Builder) buildScene(ctx context.Context, s *scene.Scene, publishedAt ti
 	}
 	layers := b.encoder.Result()
 
-	res := b.scene(ctx, s, publishedAt, layers, p)
-	return res, nil
+	return b.scene(ctx, s, publishedAt, layers, p)
 }

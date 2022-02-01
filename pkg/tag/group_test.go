@@ -25,7 +25,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 		Name, Label string
 		Id          ID
 		Scene       SceneID
-		Tags        *List
+		Tags        *IDList
 		Expected    struct {
 			Group Group
 			Error error
@@ -69,7 +69,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 			Id:    tid,
 			Label: "xxx",
 			Scene: sid,
-			Tags: &List{
+			Tags: &IDList{
 				tags: tags,
 			},
 			Expected: struct {
@@ -82,7 +82,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 						label:   "xxx",
 						sceneId: sid,
 					},
-					tags: &List{
+					tags: &IDList{
 						tags: tags,
 					},
 				},

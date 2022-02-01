@@ -25,7 +25,7 @@ func TestNewTag(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.NewListFromTags([]id.TagID{ti.ID()})).
+		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
 		Scene(sid).
 		Build()
 	type args struct {
@@ -93,7 +93,7 @@ func TestNewTags(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.NewListFromTags([]id.TagID{ti.ID()})).
+		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
 		Scene(sid).
 		Build()
 	tgi := tag.Tag(tg)
@@ -252,7 +252,7 @@ func TestTagDocument_Model(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.NewListFromTags([]id.TagID{ti.ID()})).
+		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
 		Scene(sid).
 		Build()
 	type fields struct {
@@ -341,7 +341,7 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.NewListFromTags([]id.TagID{ti.ID()})).
+		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
 		Scene(sid).
 		Build()
 	type fields struct {

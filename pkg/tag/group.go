@@ -2,9 +2,12 @@ package tag
 
 type Group struct {
 	tag
-	tags *List
+	tags *IDList
 }
 
-func (g *Group) Tags() *List {
+func (g *Group) Tags() *IDList {
+	if g == nil {
+		return nil
+	}
 	return g.tags
 }

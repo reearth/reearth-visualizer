@@ -180,6 +180,9 @@ func (l *Group) ValidateProperties(pm property.Map) error {
 }
 
 func (l *Group) Tags() *TagList {
+	if l == nil {
+		return nil
+	}
 	if l.layerBase.tags == nil {
 		l.layerBase.tags = NewTagList(nil)
 	}

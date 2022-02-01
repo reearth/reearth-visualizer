@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/property"
 	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 type sceneJSON struct {
@@ -17,10 +18,16 @@ type sceneJSON struct {
 	Layers            []*layerJSON            `json:"layers"`
 	Widgets           []*widgetJSON           `json:"widgets"`
 	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
+	Tags              []*tagJSON              `json:"tags"`
 	Clusters          []*clusterJSON          `json:"clusters"`
 }
 
-func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property) *sceneJSON {
+func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property) (*sceneJSON, error) {
+	tags, err := b.tags(ctx, s)
+	if err != nil {
+		return nil, err
+	}
+
 	return &sceneJSON{
 		SchemaVersion:     version,
 		ID:                s.ID().String(),
@@ -30,8 +37,9 @@ func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Ti
 		Widgets:           b.widgets(ctx, s, p),
 		Clusters:          b.clusters(ctx, s, p),
 		Layers:            l,
+		Tags:              tags,
 		WidgetAlignSystem: buildWidgetAlignSystem(s.WidgetAlignSystem()),
-	}
+	}, nil
 }
 
 func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Property) map[string]propertyJSON {
@@ -78,6 +86,45 @@ func (b *Builder) clusters(ctx context.Context, s *scene.Scene, p []*property.Pr
 		})
 	}
 	return res
+}
+
+func (b *Builder) tags(ctx context.Context, s *scene.Scene) ([]*tagJSON, error) {
+	tags, err := b.tloader(ctx, s.ID())
+	if err != nil {
+		return nil, err
+	}
+	tagMap := tag.MapFromRefList(tags)
+	rootTags := tag.DerefList(tags).Roots()
+	stags := make([]*tagJSON, 0, len(rootTags))
+	for _, t := range rootTags {
+		if t == nil {
+			continue
+		}
+		t2 := toTag(t, tagMap)
+		stags = append(stags, &t2)
+	}
+	return stags, nil
+}
+
+func toTag(t tag.Tag, m tag.Map) tagJSON {
+	var tags []tagJSON
+	if children := tag.GroupFrom(t).Tags().Tags(); children != nil {
+		tags = make([]tagJSON, 0, len(children))
+		for _, tid := range children {
+			t, ok := m[tid]
+			if !ok {
+				continue
+			}
+			t2 := toTag(t, m)
+			tags = append(tags, t2)
+		}
+	}
+
+	return tagJSON{
+		ID:    t.ID().String(),
+		Label: t.Label(),
+		Tags:  tags,
+	}
 }
 
 func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {

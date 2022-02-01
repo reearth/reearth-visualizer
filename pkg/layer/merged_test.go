@@ -13,6 +13,9 @@ func TestMerge(t *testing.T) {
 	p := MustPluginID("xxx~1.1.1")
 	e := PluginExtensionID("foo")
 
+	t1 := NewTagID()
+	t2 := NewTagID()
+	t3 := NewTagID()
 	itemProperty := NewPropertyID()
 	groupProperty := NewPropertyID()
 	ib1pr := NewPropertyID()
@@ -32,6 +35,7 @@ func TestMerge(t *testing.T) {
 		Plugin(&p).
 		Extension(&e).
 		Property(&itemProperty).
+		IsVisible(false).
 		MustBuild()
 	// no-infobox
 	itemLayer2 := NewItem().
@@ -41,6 +45,7 @@ func TestMerge(t *testing.T) {
 		Extension(&e).
 		Property(&itemProperty).
 		LinkedDataset(&dataset1).
+		Tags(NewTagList([]Tag{NewTagGroup(t1, []*TagItem{NewTagItem(t2)}), NewTagItem(t3)})).
 		MustBuild()
 	// infobox
 	itemLayer3 := NewItem().
@@ -69,6 +74,7 @@ func TestMerge(t *testing.T) {
 		Plugin(&p).
 		Extension(&e).
 		Property(&groupProperty).
+		Tags(NewTagList([]Tag{NewTagGroup(t1, []*TagItem{NewTagItem(t2)}), NewTagItem(t3)})).
 		MustBuild()
 	// infobox
 	groupLayer2 := NewGroup().
@@ -108,6 +114,7 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   false,
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        nil,
@@ -125,6 +132,7 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        nil,
@@ -171,6 +179,11 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
+				Tags: []MergedTag{
+					{ID: t1, Tags: []MergedTag{{ID: t2}}},
+					{ID: t3},
+				},
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        &groupProperty,
@@ -188,6 +201,7 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        &groupProperty,
@@ -234,6 +248,11 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
+				Tags: []MergedTag{
+					{ID: t1, Tags: []MergedTag{{ID: t2}}},
+					{ID: t3},
+				},
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        &groupProperty,
@@ -280,6 +299,7 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        &groupProperty,
@@ -326,6 +346,7 @@ func TestMerge(t *testing.T) {
 				Scene:       scene,
 				PluginID:    &p,
 				ExtensionID: &e,
+				IsVisible:   true,
 				Property: &property.MergedMetadata{
 					Original:      &itemProperty,
 					Parent:        &groupProperty,

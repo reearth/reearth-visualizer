@@ -60,10 +60,12 @@ var DatasetSchemaIDFromRefID = id.DatasetSchemaIDFromRefID
 type IDSet = id.LayerIDSet
 type InfoboxFIeldIDSet = id.InfoboxFieldIDSet
 type DatasetIDSet = id.DatasetIDSet
+type TagIDSet = id.TagIDSet
 
 var NewIDSet = id.NewLayerIDSet
 var NewInfoboxFIeldIDSet = id.NewInfoboxFieldIDSet
 var NewDatasetIDSet = id.NewDatasetIDSet
+var NewTagIDSet = id.NewTagIDSet
 
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID

@@ -1,25 +1,25 @@
 package tag
 
-type List struct {
+type IDList struct {
 	tags []ID
 }
 
-func NewList() *List {
-	return &List{tags: []ID{}}
+func NewIDList() *IDList {
+	return &IDList{tags: []ID{}}
 }
 
-func NewListFromTags(tags []ID) *List {
-	return &List{tags: tags}
+func IDListFrom(tags []ID) *IDList {
+	return &IDList{tags: tags}
 }
 
-func (tl *List) Tags() []ID {
-	if tl == nil || tl.tags == nil {
+func (tl *IDList) Tags() []ID {
+	if tl == nil || len(tl.tags) == 0 {
 		return nil
 	}
 	return append([]ID{}, tl.tags...)
 }
 
-func (tl *List) Has(tid ID) bool {
+func (tl *IDList) Has(tid ID) bool {
 	if tl == nil || tl.tags == nil {
 		return false
 	}
@@ -31,14 +31,14 @@ func (tl *List) Has(tid ID) bool {
 	return false
 }
 
-func (tl *List) Add(tags ...ID) {
+func (tl *IDList) Add(tags ...ID) {
 	if tl == nil || tl.tags == nil {
 		return
 	}
 	tl.tags = append(tl.tags, tags...)
 }
 
-func (tl *List) Remove(tags ...ID) {
+func (tl *IDList) Remove(tags ...ID) {
 	if tl == nil || tl.tags == nil {
 		return
 	}
@@ -51,4 +51,100 @@ func (tl *List) Remove(tags ...ID) {
 			}
 		}
 	}
+}
+
+type List []Tag
+
+func DerefList(tags []*Tag) List {
+	res := make(List, 0, len(tags))
+	for _, t := range tags {
+		if t == nil {
+			continue
+		}
+		res = append(res, *t)
+	}
+	return res
+}
+
+func (l List) Items() (res []*Item) {
+	if len(l) == 0 {
+		return
+	}
+
+	res = make([]*Item, 0, len(l))
+	for _, t := range l {
+		if g := ItemFrom(t); g != nil {
+			res = append(res, g)
+		}
+	}
+
+	return res
+}
+
+func (l List) Groups() (res []*Group) {
+	if len(l) == 0 {
+		return
+	}
+
+	res = make([]*Group, 0, len(l))
+	for _, t := range l {
+		if g := GroupFrom(t); g != nil {
+			res = append(res, g)
+		}
+	}
+
+	return res
+}
+
+func (l List) FilterByScene(s SceneID) (res List) {
+	if len(l) == 0 {
+		return
+	}
+
+	res = make(List, 0, len(l))
+	for _, t := range l {
+		if t.Scene() == s {
+			res = append(res, t)
+		}
+	}
+
+	return res
+}
+
+func (l List) Roots() (res List) {
+	if len(l) == 0 {
+		return
+	}
+
+	groups := l.Groups()
+	for _, t := range l {
+		found := false
+		for _, u := range groups {
+			if t.ID() == u.ID() {
+				continue
+			}
+			if u.Tags().Has(t.ID()) {
+				found = true
+			}
+		}
+		if !found {
+			res = append(res, t)
+		}
+	}
+
+	return res
+}
+
+func (l List) Refs() (res []*Tag) {
+	if len(l) == 0 {
+		return
+	}
+
+	res = make([]*Tag, 0, len(l))
+	for _, t := range l {
+		t := t
+		res = append(res, &t)
+	}
+
+	return res
 }

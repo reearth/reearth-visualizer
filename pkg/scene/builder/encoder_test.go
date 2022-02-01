@@ -13,25 +13,27 @@ import (
 func TestEncoder_Result(t *testing.T) {
 	tests := []struct {
 		Name     string
-		E        *encoder
+		Target   *encoder
 		Expected []*layerJSON
 	}{
 		{
 			Name:     "nil encoder",
-			E:        nil,
+			Target:   nil,
 			Expected: nil,
 		},
 		{
 			Name: "success",
-			E: &encoder{
-				res: []*layerJSON{
-					{
-						ID:          "xxx",
-						PluginID:    nil,
-						ExtensionID: nil,
-						Name:        "aaa",
-						Property:    nil,
-						Infobox:     nil,
+			Target: &encoder{
+				res: &layerJSON{
+					Children: []*layerJSON{
+						{
+							ID:          "xxx",
+							PluginID:    nil,
+							ExtensionID: nil,
+							Name:        "aaa",
+							Property:    nil,
+							Infobox:     nil,
+						},
 					},
 				},
 			},
@@ -52,7 +54,7 @@ func TestEncoder_Result(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.E.Result()
+			res := tc.Target.Result()
 			assert.Equal(t, tc.Expected, res)
 		})
 	}
@@ -61,20 +63,20 @@ func TestEncoder_Result(t *testing.T) {
 func TestEncoder_Encode(t *testing.T) {
 	tests := []struct {
 		Name     string
-		E        *encoder
-		SL       merging.SealedLayer
+		Target   *encoder
+		Input    merging.SealedLayer
 		Expected error
 	}{
 		{
 			Name:     "nil encoder",
-			E:        nil,
-			SL:       nil,
+			Target:   nil,
+			Input:    nil,
 			Expected: nil,
 		},
 		{
 			Name:     "success encoding",
-			E:        &encoder{},
-			SL:       nil,
+			Target:   &encoder{},
+			Input:    nil,
 			Expected: nil,
 		},
 	}
@@ -83,7 +85,7 @@ func TestEncoder_Encode(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.E.Encode(tc.SL)
+			res := tc.Target.Encode(tc.Input)
 			assert.Equal(t, tc.Expected, res)
 		})
 	}
@@ -139,31 +141,37 @@ func TestEncoder_Layers(t *testing.T) {
 			},
 			Property: &sp,
 			Infobox:  nil,
-		}}
+		},
+	}
 
 	tests := []struct {
 		Name     string
-		E        *encoder
-		SL       *merging.SealedLayerItem
+		Target   *encoder
+		Input    *merging.SealedLayerItem
 		Expected *layerJSON
 	}{
 		{
 			Name:     "nil layers",
-			E:        &encoder{},
-			SL:       nil,
+			Target:   &encoder{},
+			Input:    nil,
 			Expected: nil,
 		},
 		{
-			Name: "success",
-			E:    &encoder{},
-			SL:   sealed,
+			Name:   "success",
+			Target: &encoder{},
+			Input:  sealed,
 			Expected: &layerJSON{
 				ID:          lid.String(),
 				PluginID:    layer.OfficialPluginID.StringRef(),
 				ExtensionID: ex.StringRef(),
 				Name:        "test",
-				Property:    map[string]interface{}{"default": map[string]interface{}{"location": property.LatLng{Lat: 4.4, Lng: 53.4}}},
-				Infobox:     nil,
+				PropertyID:  pid.String(),
+				Property: map[string]interface{}{
+					"default": map[string]interface{}{
+						"location": property.LatLng{Lat: 4.4, Lng: 53.4},
+					},
+				},
+				Infobox: nil,
 			},
 		},
 	}
@@ -172,17 +180,8 @@ func TestEncoder_Layers(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.E.layer(tc.SL)
-			if res == nil {
-				assert.Equal(t, tc.Expected, res)
-			} else {
-				assert.Equal(t, tc.Expected.Property, res.Property)
-				assert.Equal(t, tc.Expected.Infobox, res.Infobox)
-				assert.Equal(t, *tc.Expected.ExtensionID, *res.ExtensionID)
-				assert.Equal(t, tc.Expected.ID, res.ID)
-				assert.Equal(t, tc.Expected.Name, res.Name)
-				assert.Equal(t, *tc.Expected.PluginID, *res.PluginID)
-			}
+			res := tc.Target.layer(tc.Input)
+			assert.Equal(t, tc.Expected, res)
 		})
 	}
 }

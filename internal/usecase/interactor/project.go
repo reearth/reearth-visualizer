@@ -29,6 +29,7 @@ type Project struct {
 	layerRepo         repo.Layer
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
+	tagRepo           repo.Tag
 	transaction       repo.Transaction
 	file              gateway.File
 }
@@ -46,6 +47,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		layerRepo:         r.Layer,
 		datasetRepo:       r.Dataset,
 		datasetSchemaRepo: r.DatasetSchema,
+		tagRepo:           r.Tag,
 		transaction:       r.Transaction,
 		file:              gr.File,
 	}
@@ -315,6 +317,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.LayerLoaderFrom(i.layerRepo, scenes),
 				repo.PropertyLoaderFrom(i.propertyRepo, scenes),
 				repo.DatasetGraphLoaderFrom(i.datasetRepo, scenes),
+				repo.TagLoaderFrom(i.tagRepo, scenes),
+				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 			).BuildScene(ctx, w, s, time.Now())
 		}()
 
