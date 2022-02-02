@@ -8,14 +8,13 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter/gql"
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer/encoding"
 	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/user"
 )
 
 // TODO: move to adapter and usecase layer
@@ -60,14 +59,16 @@ func privateAPI(
 ) {
 	r.GET("/layers/:param", func(c echo.Context) error {
 		ctx := c.Request().Context()
-		user := c.Request().Context().Value(gql.ContextUser).(*user.User)
+		user := adapter.User(c.Request().Context())
 		if user == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrUnauthorized}
 		}
-		op := c.Request().Context().Value(gql.ContextOperator).(*usecase.Operator)
+
+		op := adapter.Operator(c.Request().Context())
 		if op == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
 		}
+
 		param := c.Param("param")
 		params := strings.Split(param, ".")
 		if len(params) != 2 {
@@ -78,6 +79,7 @@ func privateAPI(
 		if err != nil {
 			return &echo.HTTPError{Code: http.StatusBadRequest, Message: ErrBadID}
 		}
+
 		scenes, err := repos.Scene.FindIDsByTeam(ctx, op.ReadableTeams)
 		if err != nil {
 			if errors.Is(rerror.ErrNotFound, err) {
@@ -85,6 +87,7 @@ func privateAPI(
 			}
 			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
 		}
+
 		layer, err := repos.Layer.FindByID(ctx, lid, scenes)
 		if err != nil {
 			if errors.Is(rerror.ErrNotFound, err) {
@@ -92,6 +95,7 @@ func privateAPI(
 			}
 			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
 		}
+
 		err = checkScene(ctx, layer.Scene(), op, repos.Scene)
 		if err != nil {
 			if errors.Is(ErrOpDenied, err) {

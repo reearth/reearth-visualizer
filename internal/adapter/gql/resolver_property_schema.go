@@ -25,9 +25,6 @@ func (r *Resolver) PropertySchemaGroup() PropertySchemaGroupResolver {
 type propertySchemaFieldResolver struct{ *Resolver }
 
 func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
@@ -35,9 +32,6 @@ func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *
 }
 
 func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if s, ok := obj.AllTranslatedDescription[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
@@ -47,41 +41,29 @@ func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context,
 type propertyLinkableFieldsResolver struct{ *Resolver }
 
 func (r *propertyLinkableFieldsResolver) Schema(ctx context.Context, obj *gqlmodel.PropertyLinkableFields) (*gqlmodel.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
+	return dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 }
 
 func (r *propertyLinkableFieldsResolver) LatlngField(ctx context.Context, obj *gqlmodel.PropertyLinkableFields) (*gqlmodel.PropertySchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.Latlng == nil {
 		return nil, nil
 	}
-	ps, err := DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
+	ps, err := dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 	return ps.Field(*obj.Latlng), err
 }
 
 func (r *propertyLinkableFieldsResolver) URLField(ctx context.Context, obj *gqlmodel.PropertyLinkableFields) (*gqlmodel.PropertySchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.URL == nil {
 		return nil, nil
 	}
-	ps, err := DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
+	ps, err := dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 	return ps.Field(*obj.URL), err
 }
 
 type propertySchemaGroupResolver struct{ *Resolver }
 
 func (r *propertySchemaGroupResolver) Schema(ctx context.Context, obj *gqlmodel.PropertySchemaGroup) (*gqlmodel.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).PropertySchema.Load(obj.SchemaID)
+	return dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 }
 
 func (r *propertySchemaGroupResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaGroup, lang *string) (string, error) {

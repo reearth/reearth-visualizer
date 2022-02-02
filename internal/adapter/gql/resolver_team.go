@@ -19,24 +19,15 @@ func (r *Resolver) TeamMember() TeamMemberResolver {
 type teamResolver struct{ *Resolver }
 
 func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Asset.FindByTeam(ctx, obj.ID, first, last, before, after)
+	return loaders(ctx).Asset.FindByTeam(ctx, obj.ID, first, last, before, after)
 }
 
 func (r *teamResolver) Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Project.FindByTeam(ctx, id.TeamID(obj.ID), first, last, before, after)
+	return loaders(ctx).Project.FindByTeam(ctx, id.TeamID(obj.ID), first, last, before, after)
 }
 
 type teamMemberResolver struct{ *Resolver }
 
 func (r *teamMemberResolver) User(ctx context.Context, obj *gqlmodel.TeamMember) (*gqlmodel.User, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).User.Load(id.UserID(obj.UserID))
+	return dataloaders(ctx).User.Load(id.UserID(obj.UserID))
 }

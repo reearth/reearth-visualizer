@@ -18,17 +18,11 @@ func (r *Resolver) DatasetField() DatasetFieldResolver {
 type datasetResolver struct{ *Resolver }
 
 func (r *datasetResolver) Schema(ctx context.Context, obj *gqlmodel.Dataset) (*gqlmodel.DatasetSchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
+	return dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
 }
 
 func (r *datasetResolver) Name(ctx context.Context, obj *gqlmodel.Dataset) (*string, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	ds, err := DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
+	ds, err := dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
 	if err != nil || ds == nil || ds.RepresentativeFieldID == nil {
 		return nil, err
 	}
@@ -46,24 +40,15 @@ func (r *datasetResolver) Name(ctx context.Context, obj *gqlmodel.Dataset) (*str
 type datasetFieldResolver struct{ *Resolver }
 
 func (r *datasetFieldResolver) Field(ctx context.Context, obj *gqlmodel.DatasetField) (*gqlmodel.DatasetSchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	ds, err := DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
+	ds, err := dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
 	return ds.Field(obj.FieldID), err
 }
 
 func (r *datasetFieldResolver) Schema(ctx context.Context, obj *gqlmodel.DatasetField) (*gqlmodel.DatasetSchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
+	return dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
 }
 
 func (r *datasetFieldResolver) ValueRef(ctx context.Context, obj *gqlmodel.DatasetField) (*gqlmodel.Dataset, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.Value == nil {
 		return nil, nil
 	}
@@ -71,5 +56,5 @@ func (r *datasetFieldResolver) ValueRef(ctx context.Context, obj *gqlmodel.Datas
 	if !ok {
 		return nil, nil
 	}
-	return DataLoadersFromContext(ctx).Dataset.Load(id.DatasetID(idstr))
+	return dataloaders(ctx).Dataset.Load(id.DatasetID(idstr))
 }

@@ -45,9 +45,12 @@ type DataLoaders struct {
 	TagGroup       TagGroupDataLoader
 }
 
-func NewLoaders(usecases interfaces.Container) Loaders {
-	return Loaders{
-		usecases: usecases,
+func NewLoaders(usecases *interfaces.Container) *Loaders {
+	if usecases == nil {
+		return nil
+	}
+	return &Loaders{
+		usecases: *usecases,
 		Asset:    NewAssetLoader(usecases.Asset),
 		Dataset:  NewDatasetLoader(usecases.Dataset),
 		Layer:    NewLayerLoader(usecases.Layer),
@@ -61,15 +64,15 @@ func NewLoaders(usecases interfaces.Container) Loaders {
 	}
 }
 
-func (l Loaders) DataLoadersWith(ctx context.Context, enabled bool) DataLoaders {
+func (l Loaders) DataLoadersWith(ctx context.Context, enabled bool) *DataLoaders {
 	if enabled {
 		return l.DataLoaders(ctx)
 	}
 	return l.OrdinaryDataLoaders(ctx)
 }
 
-func (l Loaders) DataLoaders(ctx context.Context) DataLoaders {
-	return DataLoaders{
+func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
+	return &DataLoaders{
 		Asset:          l.Asset.DataLoader(ctx),
 		Dataset:        l.Dataset.DataLoader(ctx),
 		DatasetSchema:  l.Dataset.SchemaDataLoader(ctx),
@@ -89,8 +92,8 @@ func (l Loaders) DataLoaders(ctx context.Context) DataLoaders {
 	}
 }
 
-func (l Loaders) OrdinaryDataLoaders(ctx context.Context) DataLoaders {
-	return DataLoaders{
+func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
+	return &DataLoaders{
 		Asset:          l.Asset.OrdinaryDataLoader(ctx),
 		Dataset:        l.Dataset.OrdinaryDataLoader(ctx),
 		DatasetSchema:  l.Dataset.SchemaOrdinaryDataLoader(ctx),
@@ -108,14 +111,4 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) DataLoaders {
 		TagItem:        l.Tag.ItemDataLoader(ctx),
 		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
-}
-
-type dataLoadersKey struct{}
-
-func DataLoadersFromContext(ctx context.Context) DataLoaders {
-	return ctx.Value(dataLoadersKey{}).(DataLoaders)
-}
-
-func DataLoadersKey() interface{} {
-	return dataLoadersKey{}
 }

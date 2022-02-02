@@ -9,15 +9,12 @@ import (
 )
 
 func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInput) (*gqlmodel.SignupPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	secret := ""
 	if input.Secret != nil {
 		secret = *input.Secret
 	}
 
-	u, team, err := r.usecases.User.Signup(ctx, interfaces.SignupParam{
+	u, team, err := usecases(ctx).User.Signup(ctx, interfaces.SignupParam{
 		Sub:    getSub(ctx),
 		Lang:   input.Lang,
 		Theme:  gqlmodel.ToTheme(input.Theme),
@@ -33,10 +30,7 @@ func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInpu
 }
 
 func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMeInput) (*gqlmodel.UpdateMePayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err := r.usecases.User.UpdateMe(ctx, interfaces.UpdateMeParam{
+	res, err := usecases(ctx).User.UpdateMe(ctx, interfaces.UpdateMeParam{
 		Name:                 input.Name,
 		Email:                input.Email,
 		Lang:                 input.Lang,
@@ -52,10 +46,7 @@ func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMe
 }
 
 func (r *mutationResolver) RemoveMyAuth(ctx context.Context, input gqlmodel.RemoveMyAuthInput) (*gqlmodel.UpdateMePayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err := r.usecases.User.RemoveMyAuth(ctx, input.Auth, getOperator(ctx))
+	res, err := usecases(ctx).User.RemoveMyAuth(ctx, input.Auth, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -64,10 +55,7 @@ func (r *mutationResolver) RemoveMyAuth(ctx context.Context, input gqlmodel.Remo
 }
 
 func (r *mutationResolver) DeleteMe(ctx context.Context, input gqlmodel.DeleteMeInput) (*gqlmodel.DeleteMePayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	if err := r.usecases.User.DeleteMe(ctx, id.UserID(input.UserID), getOperator(ctx)); err != nil {
+	if err := usecases(ctx).User.DeleteMe(ctx, id.UserID(input.UserID), getOperator(ctx)); err != nil {
 		return nil, err
 	}
 

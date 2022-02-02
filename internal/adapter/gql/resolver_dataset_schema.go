@@ -19,16 +19,10 @@ func (r *Resolver) DatasetSchemaField() DatasetSchemaFieldResolver {
 type datasetSchemaResolver struct{ *Resolver }
 
 func (r *datasetSchemaResolver) Scene(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.Scene, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
 }
 
 func (r *datasetSchemaResolver) RepresentativeField(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.DatasetSchemaField, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.RepresentativeFieldID == nil {
 		return nil, nil
 	}
@@ -42,27 +36,18 @@ func (r *datasetSchemaResolver) RepresentativeField(ctx context.Context, obj *gq
 }
 
 func (r *datasetSchemaResolver) Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Dataset.FindBySchema(ctx, obj.ID, first, last, before, after)
+	return loaders(ctx).Dataset.FindBySchema(ctx, obj.ID, first, last, before, after)
 }
 
 type datasetSchemaFieldResolver struct{ *Resolver }
 
 func (r *datasetSchemaFieldResolver) Schema(ctx context.Context, obj *gqlmodel.DatasetSchemaField) (*gqlmodel.DatasetSchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
+	return dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(obj.SchemaID))
 }
 
 func (r *datasetSchemaFieldResolver) Ref(ctx context.Context, obj *gqlmodel.DatasetSchemaField) (*gqlmodel.DatasetSchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.RefID == nil {
 		return nil, nil
 	}
-	return DataLoadersFromContext(ctx).DatasetSchema.Load(id.DatasetSchemaID(*obj.RefID))
+	return dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(*obj.RefID))
 }

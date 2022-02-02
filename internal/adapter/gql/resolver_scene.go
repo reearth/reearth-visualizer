@@ -27,31 +27,19 @@ func (r *Resolver) Cluster() ClusterResolver {
 type sceneResolver struct{ *Resolver }
 
 func (r *sceneResolver) Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Project.Load(id.ProjectID(obj.ProjectID))
+	return dataloaders(ctx).Project.Load(id.ProjectID(obj.ProjectID))
 }
 
 func (r *sceneResolver) Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Team.Load(id.TeamID(obj.TeamID))
+	return dataloaders(ctx).Team.Load(id.TeamID(obj.TeamID))
 }
 
 func (r *sceneResolver) Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+	return dataloaders(ctx).Property.Load(id.PropertyID(obj.PropertyID))
 }
 
 func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	layer, err := DataLoadersFromContext(ctx).Layer.Load(id.LayerID(obj.RootLayerID))
+	layer, err := dataloaders(ctx).Layer.Load(id.LayerID(obj.RootLayerID))
 	if err != nil {
 		return nil, err
 	}
@@ -66,17 +54,11 @@ func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gq
 }
 
 func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
+	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
 }
 
 func (r *sceneResolver) LockMode(ctx context.Context, obj *gqlmodel.Scene) (gqlmodel.SceneLockMode, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	sl, err := r.loaders.Scene.FetchLock(ctx, id.SceneID(obj.ID))
+	sl, err := loaders(ctx).Scene.FetchLock(ctx, id.SceneID(obj.ID))
 	if err != nil {
 		return gqlmodel.SceneLockModeFree, err
 	}
@@ -84,10 +66,7 @@ func (r *sceneResolver) LockMode(ctx context.Context, obj *gqlmodel.Scene) (gqlm
 }
 
 func (r *sceneResolver) Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.Tag, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tags, err := r.usecases.Tag.FetchByScene(ctx, id.SceneID(obj.ID), getOperator(ctx))
+	tags, err := usecases(ctx).Tag.FetchByScene(ctx, id.SceneID(obj.ID), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -102,35 +81,23 @@ func (r *sceneResolver) Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmod
 type scenePluginResolver struct{ *Resolver }
 
 func (r *scenePluginResolver) Plugin(ctx context.Context, obj *gqlmodel.ScenePlugin) (*gqlmodel.Plugin, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Plugin.Load(obj.PluginID)
+	return dataloaders(ctx).Plugin.Load(obj.PluginID)
 }
 func (r *scenePluginResolver) Property(ctx context.Context, obj *gqlmodel.ScenePlugin) (*gqlmodel.Property, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	if obj.PropertyID == nil {
 		return nil, nil
 	}
-	return DataLoadersFromContext(ctx).Property.Load(id.PropertyID(*obj.PropertyID))
+	return dataloaders(ctx).Property.Load(id.PropertyID(*obj.PropertyID))
 }
 
 type sceneWidgetResolver struct{ *Resolver }
 
 func (r *sceneWidgetResolver) Plugin(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.Plugin, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Plugin.Load(obj.PluginID)
+	return dataloaders(ctx).Plugin.Load(obj.PluginID)
 }
 
 func (r *sceneWidgetResolver) Extension(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.PluginExtension, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	plugin, err := DataLoadersFromContext(ctx).Plugin.Load(obj.PluginID)
+	plugin, err := dataloaders(ctx).Plugin.Load(obj.PluginID)
 	if err != nil {
 		return nil, err
 	}
@@ -143,17 +110,11 @@ func (r *sceneWidgetResolver) Extension(ctx context.Context, obj *gqlmodel.Scene
 }
 
 func (r *sceneWidgetResolver) Property(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.Property, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+	return dataloaders(ctx).Property.Load(id.PropertyID(obj.PropertyID))
 }
 
 type clusterResolver struct{ *Resolver }
 
 func (r *clusterResolver) Property(ctx context.Context, obj *gqlmodel.Cluster) (*gqlmodel.Property, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+	return dataloaders(ctx).Property.Load(id.PropertyID(obj.PropertyID))
 }

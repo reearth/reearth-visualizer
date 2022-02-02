@@ -18,8 +18,12 @@ func publicAPI(
 	repos *repo.Container,
 	gateways *gateway.Container,
 ) {
-	controller := http1.NewUserController(interactor.NewUser(repos, gateways, conf.SignupSecret))
-	publishedController := http1.NewPublishedController(interactor.NewPublished(repos.Project, gateways.File, ""))
+	controller := http1.NewUserController(
+		interactor.NewUser(repos, gateways, conf.SignupSecret),
+	)
+	publishedController := http1.NewPublishedController(
+		interactor.NewPublished(repos.Project, gateways.File, ""),
+	)
 
 	r.GET("/ping", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "pong")

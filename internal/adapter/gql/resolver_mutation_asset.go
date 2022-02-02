@@ -9,10 +9,7 @@ import (
 )
 
 func (r *mutationResolver) CreateAsset(ctx context.Context, input gqlmodel.CreateAssetInput) (*gqlmodel.CreateAssetPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err := r.usecases.Asset.Create(ctx, interfaces.CreateAssetParam{
+	res, err := usecases(ctx).Asset.Create(ctx, interfaces.CreateAssetParam{
 		TeamID: id.TeamID(input.TeamID),
 		File:   gqlmodel.FromFile(&input.File),
 	}, getOperator(ctx))
@@ -24,10 +21,7 @@ func (r *mutationResolver) CreateAsset(ctx context.Context, input gqlmodel.Creat
 }
 
 func (r *mutationResolver) RemoveAsset(ctx context.Context, input gqlmodel.RemoveAssetInput) (*gqlmodel.RemoveAssetPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err2 := r.usecases.Asset.Remove(ctx, id.AssetID(input.AssetID), getOperator(ctx))
+	res, err2 := usecases(ctx).Asset.Remove(ctx, id.AssetID(input.AssetID), getOperator(ctx))
 	if err2 != nil {
 		return nil, err2
 	}

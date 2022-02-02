@@ -15,16 +15,10 @@ func (r *Resolver) Query() QueryResolver {
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Assets(ctx context.Context, teamID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Asset.FindByTeam(ctx, teamID, first, last, before, after)
+	return loaders(ctx).Asset.FindByTeam(ctx, teamID, first, last, before, after)
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.User, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	u := getUser(ctx)
 	if u == nil {
 		return nil, nil
@@ -33,10 +27,7 @@ func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.User, error) {
 }
 
 func (r *queryResolver) Node(ctx context.Context, i id.ID, typeArg gqlmodel.NodeType) (gqlmodel.Node, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	dataloaders := DataLoadersFromContext(ctx)
+	dataloaders := dataloaders(ctx)
 	switch typeArg {
 	case gqlmodel.NodeTypeAsset:
 		result, err := dataloaders.Asset.Load(id.AssetID(i))
@@ -103,10 +94,7 @@ func (r *queryResolver) Node(ctx context.Context, i id.ID, typeArg gqlmodel.Node
 }
 
 func (r *queryResolver) Nodes(ctx context.Context, ids []*id.ID, typeArg gqlmodel.NodeType) ([]gqlmodel.Node, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	dataloaders := DataLoadersFromContext(ctx)
+	dataloaders := dataloaders(ctx)
 	switch typeArg {
 	case gqlmodel.NodeTypeAsset:
 		data, err := dataloaders.Asset.LoadAll(id.AssetIDsFromIDRef(ids))
@@ -214,16 +202,10 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []*id.ID, typeArg gqlmode
 }
 
 func (r *queryResolver) PropertySchema(ctx context.Context, i id.PropertySchemaID) (*gqlmodel.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).PropertySchema.Load(i)
+	return dataloaders(ctx).PropertySchema.Load(i)
 }
 
 func (r *queryResolver) PropertySchemas(ctx context.Context, ids []*id.PropertySchemaID) ([]*gqlmodel.PropertySchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	ids2 := make([]id.PropertySchemaID, 0, len(ids))
 	for _, i := range ids {
 		if i != nil {
@@ -231,7 +213,7 @@ func (r *queryResolver) PropertySchemas(ctx context.Context, ids []*id.PropertyS
 		}
 	}
 
-	data, err := DataLoadersFromContext(ctx).PropertySchema.LoadAll(ids2)
+	data, err := dataloaders(ctx).PropertySchema.LoadAll(ids2)
 	if len(err) > 0 && err[0] != nil {
 		return nil, err[0]
 	}
@@ -240,16 +222,10 @@ func (r *queryResolver) PropertySchemas(ctx context.Context, ids []*id.PropertyS
 }
 
 func (r *queryResolver) Plugin(ctx context.Context, id id.PluginID) (*gqlmodel.Plugin, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Plugin.Load(id)
+	return dataloaders(ctx).Plugin.Load(id)
 }
 
 func (r *queryResolver) Plugins(ctx context.Context, ids []*id.PluginID) ([]*gqlmodel.Plugin, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	ids2 := make([]id.PluginID, 0, len(ids))
 	for _, i := range ids {
 		if i != nil {
@@ -257,7 +233,7 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []*id.PluginID) ([]*gql
 		}
 	}
 
-	data, err := DataLoadersFromContext(ctx).Plugin.LoadAll(ids2)
+	data, err := dataloaders(ctx).Plugin.LoadAll(ids2)
 	if len(err) > 0 && err[0] != nil {
 		return nil, err[0]
 	}
@@ -266,10 +242,7 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []*id.PluginID) ([]*gql
 }
 
 func (r *queryResolver) Layer(ctx context.Context, layerID id.ID) (gqlmodel.Layer, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	dataloaders := DataLoadersFromContext(ctx)
+	dataloaders := dataloaders(ctx)
 	result, err := dataloaders.Layer.Load(id.LayerID(layerID))
 	if result == nil || *result == nil {
 		return nil, nil
@@ -278,64 +251,37 @@ func (r *queryResolver) Layer(ctx context.Context, layerID id.ID) (gqlmodel.Laye
 }
 
 func (r *queryResolver) Scene(ctx context.Context, projectID id.ID) (*gqlmodel.Scene, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Scene.FindByProject(ctx, id.ProjectID(projectID))
+	return loaders(ctx).Scene.FindByProject(ctx, id.ProjectID(projectID))
 }
 
 func (r *queryResolver) Projects(ctx context.Context, teamID id.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Project.FindByTeam(ctx, id.TeamID(teamID), first, last, before, after)
+	return loaders(ctx).Project.FindByTeam(ctx, id.TeamID(teamID), first, last, before, after)
 }
 
 func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
+	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
 }
 
 func (r *queryResolver) DynamicDatasetSchemas(ctx context.Context, sceneID id.ID) ([]*gqlmodel.DatasetSchema, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Dataset.FindDynamicSchemasByScene(ctx, sceneID)
+	return loaders(ctx).Dataset.FindDynamicSchemasByScene(ctx, sceneID)
 }
 
 func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
+	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
 }
 
 func (r *queryResolver) SceneLock(ctx context.Context, sceneID id.ID) (*gqlmodel.SceneLockMode, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Scene.FetchLock(ctx, id.SceneID(sceneID))
+	return loaders(ctx).Scene.FetchLock(ctx, id.SceneID(sceneID))
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.SearchedUser, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.User.SearchUser(ctx, nameOrEmail)
+	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)
 }
 
 func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Project.CheckAlias(ctx, alias)
+	return loaders(ctx).Project.CheckAlias(ctx, alias)
 }
 
 func (r *queryResolver) InstallablePlugins(ctx context.Context) ([]*gqlmodel.PluginMetadata, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Plugin.FetchPluginMetadata(ctx)
+	return loaders(ctx).Plugin.FetchPluginMetadata(ctx)
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter/gql"
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/rerror"
@@ -27,9 +27,6 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if u, ok := ctx.Value(contextUser).(string); ok {
 				userID = u
 			}
-
-			// attach sub
-			ctx = context.WithValue(ctx, gql.ContextSub, sub)
 
 			// debug mode
 			if cfg.Debug {
@@ -61,30 +58,6 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				if err != nil && err != rerror.ErrNotFound {
 					return err
 				}
-
-				// Auth0 accounts are already merged into one so it doesn't need to fetch more info from Auth0
-				//
-				// if u == nil && token != "" {
-				// 	// user not found by sub
-
-				// 	// fetch user profile from Auth0
-				// 	data, err := cfg.Gateways.Authenticator.FetchUser(token)
-				// 	if err != nil {
-				// 		return err
-				// 	}
-
-				// 	// if !data.EmailVerified {
-				// 	// 	return errors.New("email is not verified")
-				// 	// }
-
-				// 	u, err = cfg.Repos.User.FindByEmail(ctx, data.Email)
-				// 	if err != nil && err != rerror.ErrNotFound {
-				// 		return err
-				// 	}
-				// 	if u == nil {
-				// 		return rerror.ErrUserNotFound
-				// 	}
-				// }
 			}
 
 			// save a new sub
@@ -94,15 +67,14 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 			}
 
-			// attach operator
 			op, err := generateOperator(ctx, cfg, u)
 			if err != nil {
 				return err
 			}
-			ctx = context.WithValue(ctx, gql.ContextOperator, op)
 
-			// attach user
-			ctx = context.WithValue(ctx, gql.ContextUser, u)
+			ctx = adapter.AttachSub(ctx, sub)
+			ctx = adapter.AttachOperator(ctx, op)
+			ctx = adapter.AttachUser(ctx, u)
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)

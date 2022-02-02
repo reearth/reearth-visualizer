@@ -3,59 +3,54 @@ package gql
 import (
 	"context"
 
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
 type ContextKey string
 
 const (
-	ContextUser     ContextKey = "user"
-	ContextOperator ContextKey = "operator"
-	ContextSub      ContextKey = "sub"
+	contextLoaders     ContextKey = "loaders"
+	contextDataloaders ContextKey = "dataloaders"
 )
 
+func AttachUsecases(ctx context.Context, u *interfaces.Container, enableDataLoaders bool) context.Context {
+	loaders := NewLoaders(u)
+	dataloaders := loaders.DataLoadersWith(ctx, enableDataLoaders)
+
+	ctx = adapter.AttachUsecases(ctx, u)
+	ctx = context.WithValue(ctx, contextLoaders, loaders)
+	ctx = context.WithValue(ctx, contextDataloaders, dataloaders)
+
+	return ctx
+}
+
 func getUser(ctx context.Context) *user.User {
-	if v := ctx.Value(ContextUser); v != nil {
-		if u, ok := v.(*user.User); ok {
-			return u
-		}
-	}
-	return nil
+	return adapter.User(ctx)
 }
 
 func getLang(ctx context.Context, lang *string) string {
-	if lang != nil && *lang != "" {
-		return *lang
-	}
-
-	u := getUser(ctx)
-	if u == nil {
-		return "en" // default language
-	}
-
-	l := u.Lang()
-	if l.IsRoot() {
-		return "en" // default language
-	}
-
-	return l.String()
+	return adapter.Lang(ctx, lang)
 }
 
 func getOperator(ctx context.Context) *usecase.Operator {
-	if v := ctx.Value(ContextOperator); v != nil {
-		if v2, ok := v.(*usecase.Operator); ok {
-			return v2
-		}
-	}
-	return nil
+	return adapter.Operator(ctx)
 }
 
 func getSub(ctx context.Context) string {
-	if v := ctx.Value(ContextSub); v != nil {
-		if v2, ok := v.(string); ok {
-			return v2
-		}
-	}
-	return ""
+	return adapter.Sub(ctx)
+}
+
+func usecases(ctx context.Context) *interfaces.Container {
+	return adapter.Usecases(ctx)
+}
+
+func loaders(ctx context.Context) *Loaders {
+	return ctx.Value(contextLoaders).(*Loaders)
+}
+
+func dataloaders(ctx context.Context) *DataLoaders {
+	return ctx.Value(contextDataloaders).(*DataLoaders)
 }

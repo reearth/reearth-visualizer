@@ -15,17 +15,11 @@ func (r *Resolver) Project() ProjectResolver {
 type projectResolver struct{ *Resolver }
 
 func (r *projectResolver) Team(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Team, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Team.Load(id.TeamID(obj.TeamID))
+	return dataloaders(ctx).Team.Load(id.TeamID(obj.TeamID))
 }
 
 func (r *projectResolver) Scene(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Scene, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	s, err := r.loaders.Scene.FindByProject(ctx, id.ProjectID(obj.ID))
+	s, err := loaders(ctx).Scene.FindByProject(ctx, id.ProjectID(obj.ID))
 	if err != nil && err != rerror.ErrNotFound {
 		return nil, err
 	}

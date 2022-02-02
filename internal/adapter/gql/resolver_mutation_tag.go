@@ -9,10 +9,7 @@ import (
 )
 
 func (r *mutationResolver) CreateTagItem(ctx context.Context, input gqlmodel.CreateTagItemInput) (*gqlmodel.CreateTagItemPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tag, parent, err := r.usecases.Tag.CreateItem(ctx, interfaces.CreateTagItemParam{
+	tag, parent, err := usecases(ctx).Tag.CreateItem(ctx, interfaces.CreateTagItemParam{
 		Label:                 input.Label,
 		SceneID:               id.SceneID(input.SceneID),
 		Parent:                id.TagIDFromRefID(input.Parent),
@@ -31,10 +28,7 @@ func (r *mutationResolver) CreateTagItem(ctx context.Context, input gqlmodel.Cre
 }
 
 func (r *mutationResolver) CreateTagGroup(ctx context.Context, input gqlmodel.CreateTagGroupInput) (*gqlmodel.CreateTagGroupPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tag, err := r.usecases.Tag.CreateGroup(ctx, interfaces.CreateTagGroupParam{
+	tag, err := usecases(ctx).Tag.CreateGroup(ctx, interfaces.CreateTagGroupParam{
 		Label:   input.Label,
 		SceneID: id.SceneID(input.SceneID),
 		Tags:    id.TagIDsFromIDRef(input.Tags),
@@ -48,10 +42,7 @@ func (r *mutationResolver) CreateTagGroup(ctx context.Context, input gqlmodel.Cr
 }
 
 func (r *mutationResolver) UpdateTag(ctx context.Context, input gqlmodel.UpdateTagInput) (*gqlmodel.UpdateTagPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tag, err := r.usecases.Tag.UpdateTag(ctx, interfaces.UpdateTagParam{
+	tag, err := usecases(ctx).Tag.UpdateTag(ctx, interfaces.UpdateTagParam{
 		Label:   input.Label,
 		SceneID: id.SceneID(input.SceneID),
 		TagID:   id.TagID(input.TagID),
@@ -65,10 +56,7 @@ func (r *mutationResolver) UpdateTag(ctx context.Context, input gqlmodel.UpdateT
 }
 
 func (r *mutationResolver) AttachTagItemToGroup(ctx context.Context, input gqlmodel.AttachTagItemToGroupInput) (*gqlmodel.AttachTagItemToGroupPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tag, err := r.usecases.Tag.AttachItemToGroup(ctx, interfaces.AttachItemToGroupParam{
+	tag, err := usecases(ctx).Tag.AttachItemToGroup(ctx, interfaces.AttachItemToGroupParam{
 		ItemID:  id.TagID(input.ItemID),
 		GroupID: id.TagID(input.GroupID),
 	}, getOperator(ctx))
@@ -81,10 +69,7 @@ func (r *mutationResolver) AttachTagItemToGroup(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) DetachTagItemFromGroup(ctx context.Context, input gqlmodel.DetachTagItemFromGroupInput) (*gqlmodel.DetachTagItemFromGroupPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tag, err := r.usecases.Tag.DetachItemFromGroup(ctx, interfaces.DetachItemToGroupParam{
+	tag, err := usecases(ctx).Tag.DetachItemFromGroup(ctx, interfaces.DetachItemToGroupParam{
 		ItemID:  id.TagID(input.ItemID),
 		GroupID: id.TagID(input.GroupID),
 	}, getOperator(ctx))
@@ -97,10 +82,7 @@ func (r *mutationResolver) DetachTagItemFromGroup(ctx context.Context, input gql
 }
 
 func (r *mutationResolver) RemoveTag(ctx context.Context, input gqlmodel.RemoveTagInput) (*gqlmodel.RemoveTagPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	tagID, layers, err := r.usecases.Tag.Remove(ctx, id.TagID(input.TagID), getOperator(ctx))
+	tagID, layers, err := usecases(ctx).Tag.Remove(ctx, id.TagID(input.TagID), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

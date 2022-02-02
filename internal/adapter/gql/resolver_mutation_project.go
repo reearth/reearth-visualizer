@@ -10,10 +10,7 @@ import (
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err := r.usecases.Project.Create(ctx, interfaces.CreateProjectParam{
+	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
 		TeamID:      id.TeamID(input.TeamID),
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        input.Name,
@@ -30,9 +27,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 }
 
 func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.UpdateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
 	deletePublicImage := false
 	if input.DeletePublicImage != nil {
 		deletePublicImage = *input.DeletePublicImage
@@ -43,7 +37,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		deleteImageURL = *input.DeleteImageURL
 	}
 
-	res, err := r.usecases.Project.Update(ctx, interfaces.UpdateProjectParam{
+	res, err := usecases(ctx).Project.Update(ctx, interfaces.UpdateProjectParam{
 		ID:                id.ProjectID(input.ProjectID),
 		Name:              input.Name,
 		Description:       input.Description,
@@ -68,10 +62,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 }
 
 func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	res, err := r.usecases.Project.Publish(ctx, interfaces.PublishProjectParam{
+	res, err := usecases(ctx).Project.Publish(ctx, interfaces.PublishProjectParam{
 		ID:     id.ProjectID(input.ProjectID),
 		Alias:  input.Alias,
 		Status: gqlmodel.FromPublishmentStatus(input.Status),
@@ -84,10 +75,7 @@ func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.Pu
 }
 
 func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	err := r.usecases.Project.Delete(ctx, id.ProjectID(input.ProjectID), getOperator(ctx))
+	err := usecases(ctx).Project.Delete(ctx, id.ProjectID(input.ProjectID), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

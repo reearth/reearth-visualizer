@@ -14,15 +14,9 @@ func (r *Resolver) User() UserResolver {
 type userResolver struct{ *Resolver }
 
 func (r *userResolver) MyTeam(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Team, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return DataLoadersFromContext(ctx).Team.Load(id.TeamID(obj.MyTeamID))
+	return dataloaders(ctx).Team.Load(id.TeamID(obj.MyTeamID))
 }
 
 func (r *userResolver) Teams(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.Team, error) {
-	exit := trace(ctx)
-	defer exit()
-
-	return r.loaders.Team.FindByUser(ctx, id.UserID(obj.ID))
+	return loaders(ctx).Team.FindByUser(ctx, id.UserID(obj.ID))
 }
