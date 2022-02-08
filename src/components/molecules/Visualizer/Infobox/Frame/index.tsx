@@ -236,10 +236,10 @@ const Content = styled.div<{
 
   max-height: ${({ open }) => (open ? "50vh" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
-  padding-top: ${({ paddingTop }) => paddingTop ?`${paddingTop}px` : null};
-  padding-bottom: ${({ paddingBottom }) => paddingBottom ? `${paddingBottom}px` : null};
-  padding-left: ${({ paddingLeft }) => paddingLeft ? `${paddingLeft}px` : null};
-  padding-right: ${({ paddingRight }) => paddingRight ? `${paddingRight}px` : null};
+  padding-top: ${({ paddingTop }) => (paddingTop ? `${paddingTop}px` : null)};
+  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? `${paddingBottom}px` : null)};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? `${paddingLeft}px` : null)};
+  padding-right: ${({ paddingRight }) => (paddingRight ? `${paddingRight}px` : null)};
 `;
 
 export default InfoBox;

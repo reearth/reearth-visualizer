@@ -5,7 +5,7 @@ import useHook, { RefType } from "./hooks";
 export type Ref = RefType;
 
 export type Props = {
-  autoResize?: boolean;
+  autoResize?: "both" | "width-only" | "height-only";
   className?: string;
   html?: string;
   visible?: boolean;
