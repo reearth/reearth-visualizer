@@ -152,7 +152,6 @@ export function Provider({
       lookAt,
       zoomIn,
       zoomOut,
-      getTags,
     ],
   );
 
