@@ -29,7 +29,6 @@ export const Default: Story<Props> = args => {
 };
 
 Default.args = {
-  autoResize: false,
   visible: true,
   iFrameProps: {
     style: {

@@ -23,6 +23,7 @@ export type Props = {
   pluginId?: string;
   extensionId?: string;
   extensionType?: string;
+  autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
@@ -40,6 +41,7 @@ export default function Plugin({
   pluginId,
   extensionId,
   extensionType,
+  autoResize,
   iFrameProps,
   visible,
   pluginBaseUrl = "/plugins",
@@ -49,11 +51,22 @@ export default function Plugin({
   pluginProperty,
   onClick,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
+  const {
+    skip,
+    src,
+    isMarshalable,
+    actualAutoResize,
+    onPreInit,
+    onDispose,
+    exposed,
+    onError,
+    onMessage,
+  } = useHooks({
     pluginId,
     extensionId,
     extensionType,
     pluginBaseUrl,
+    autoResize,
     layer,
     widget,
     block,
@@ -65,7 +78,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      filled={!!widget?.extended?.horizontally || !!widget?.extended?.vertically}
+      autoResize={actualAutoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}

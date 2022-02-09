@@ -5,7 +5,7 @@ import useHook, { RefType } from "./hooks";
 export type Ref = RefType;
 
 export type Props = {
-  autoResize?: boolean;
+  autoResize?: "both" | "width-only" | "height-only";
   className?: string;
   html?: string;
   visible?: boolean;
@@ -37,7 +37,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   return html ? (
     <iframe
       frameBorder="no"
-      scrolling={autoResize ? "no" : undefined}
+      scrolling={autoResize ? undefined : "no"}
       data-testid="iframe"
       srcDoc=""
       key={html}

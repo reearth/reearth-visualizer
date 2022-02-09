@@ -13,6 +13,7 @@ export default function ({
   pluginId,
   extensionId,
   pluginBaseUrl,
+  autoResize,
   extensionType,
   block,
   layer,
@@ -22,6 +23,7 @@ export default function ({
   pluginId?: string;
   extensionId?: string;
   pluginBaseUrl?: string;
+  autoResize?: "both" | "width-only" | "height-only";
   extensionType?: string;
   layer?: Layer;
   widget?: Widget;
@@ -51,6 +53,16 @@ export default function ({
       ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
       : undefined;
 
+  const actualAutoResize =
+    autoResize ??
+    (widget?.extended?.horizontally && widget.extended.vertically
+      ? "both"
+      : widget?.extended?.vertically
+      ? "width-only"
+      : widget?.extended?.horizontally
+      ? "height-only"
+      : undefined);
+
   return {
     skip: !staticExposed,
     src,
@@ -60,6 +72,7 @@ export default function ({
     onMessage,
     onPreInit,
     onDispose,
+    actualAutoResize,
   };
 }
 

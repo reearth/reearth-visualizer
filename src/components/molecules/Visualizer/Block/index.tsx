@@ -44,6 +44,7 @@ export default function BlockComponent<P = any, PP = any>({
   ) : (
     <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
       <Plugin
+        autoResize="height-only"
         pluginId={props.block?.pluginId}
         extensionId={props.block?.extensionId}
         sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
