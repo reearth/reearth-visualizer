@@ -57,6 +57,7 @@ export type Layers = {
   readonly overriddenInfobox?: OverriddenInfobox;
   readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly layersInViewport: Layer[];
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
@@ -189,9 +190,17 @@ export type Visualizer = {
   readonly property?: any;
 };
 
+type Rect = {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+};
+
 export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
+  readonly viewport: Rect | undefined;
   readonly zoomIn: (amount: number) => void;
   readonly zoomOut: (amount: number) => void;
   /** Moves the camera position to the specified destination. */

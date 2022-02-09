@@ -10,6 +10,7 @@ import React, {
 } from "react";
 
 import events from "@reearth/util/event";
+import { Rect } from "@reearth/util/value";
 
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
@@ -51,6 +52,8 @@ export type Props = {
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  layersInViewport: () => Layer[];
+  viewport: () => Rect | undefined;
 };
 
 export type Context = {
@@ -82,10 +85,12 @@ export function Provider({
   hideLayer,
   selectLayer,
   overrideLayerProperty,
+  layersInViewport,
   flyTo,
   lookAt,
   zoomIn,
   zoomOut,
+  viewport,
   children,
 }: PropsWithChildren<Props>): JSX.Element {
   const [ev, emit] = useMemo(
@@ -125,10 +130,12 @@ export function Provider({
         hideLayer,
         selectLayer,
         overrideLayerProperty,
+        layersInViewport,
         flyTo,
         lookAt,
         zoomIn,
         zoomOut,
+        viewport,
       }),
     }),
     [
@@ -149,10 +156,12 @@ export function Provider({
       hideLayer,
       selectLayer,
       overrideLayerProperty,
+      layersInViewport,
       flyTo,
       lookAt,
       zoomIn,
       zoomOut,
+      viewport,
     ],
   );
 

@@ -77,6 +77,8 @@ export const context: ProviderProps = {
   zoomIn: act("zoomIn"),
   zoomOut: act("zoomOut"),
   overrideLayerProperty: act("overrideLayerProperty"),
+  layersInViewport: act("layersInViewport"),
+  viewport: act("viewport"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(
