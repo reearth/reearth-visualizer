@@ -7,6 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	testSchemaField1 = NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
+	testSchemaField2 = NewSchemaField().ID("b").Type(ValueTypeNumber).MustBuild()
+	testSchemaField3 = NewSchemaField().ID("c").Type(ValueTypeLatLng).MustBuild()
+)
+
 func TestSchemaField_MinMax(t *testing.T) {
 	getFloatRef := func(f float64) *float64 {
 		return &f

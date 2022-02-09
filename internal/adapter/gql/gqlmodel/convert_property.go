@@ -208,7 +208,7 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 		return nil
 	}
 
-	pgroups := propertySchema.Groups()
+	pgroups := propertySchema.Groups().Groups()
 	groups := make([]*PropertySchemaGroup, 0, len(pgroups))
 	for _, g := range pgroups {
 		groups = append(groups, ToPropertySchemaGroup(g, propertySchema.ID()))
@@ -222,10 +222,17 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 }
 
 func ToPropertyLinkableFields(sid id.PropertySchemaID, l property.LinkableFields) *PropertyLinkableFields {
+	var latlng, url *id.PropertySchemaFieldID
+	if l.LatLng != nil {
+		latlng = &l.LatLng.Field
+	}
+	if l.URL != nil {
+		url = &l.URL.Field
+	}
 	return &PropertyLinkableFields{
 		SchemaID: sid,
-		Latlng:   l.LatLng.FieldRef(),
-		URL:      l.URL.FieldRef(),
+		Latlng:   latlng,
+		URL:      url,
 	}
 }
 
@@ -397,7 +404,7 @@ func ToPropertyGroup(g *property.Group, p *property.Property, gl *property.Group
 		return nil
 	}
 
-	gfields := g.Fields()
+	gfields := g.Fields(nil)
 	fields := make([]*PropertyField, 0, len(gfields))
 	for _, f := range gfields {
 		fields = append(fields, ToPropertyField(f, p, gl, g))

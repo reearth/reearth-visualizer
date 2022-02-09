@@ -78,3 +78,42 @@ func TestToGroupList(t *testing.T) {
 	assert.Equal(t, propertySchemaGroup1ID, g.SchemaGroup())
 	assert.Equal(t, iid, g.ID())
 }
+
+func TestGroupAndField_SchemaFieldPointer(t *testing.T) {
+	tests := []struct {
+		name   string
+		target GroupAndField
+		want   SchemaFieldPointer
+	}{
+		{
+			name: "group",
+			target: GroupAndField{
+				ParentGroup: nil,
+				Group:       testGroup1,
+				Field:       testField1,
+			},
+			want: SchemaFieldPointer{
+				SchemaGroup: testGroup1.SchemaGroup(),
+				Field:       testField1.Field(),
+			},
+		},
+		{
+			name: "group list",
+			target: GroupAndField{
+				ParentGroup: testGroupList1,
+				Group:       testGroup2,
+				Field:       testField2,
+			},
+			want: SchemaFieldPointer{
+				SchemaGroup: testGroup2.SchemaGroup(),
+				Field:       testField2.Field(),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.SchemaFieldPointer())
+		})
+	}
+}

@@ -38,11 +38,11 @@ func TestChoice(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, *tc.expected, *tc.ch.choice())
+			assert.Equal(t, *tt.expected, *tt.ch.choice())
 		})
 	}
 
@@ -81,7 +81,16 @@ func TestManifest(t *testing.T) {
 				Version:    "1.1.1",
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
+				Plugin: plugin.New().
+					ID(plugin.OfficialPluginID).
+					Name(i18n.StringFrom("aaa")).
+					Extensions([]*plugin.Extension{
+						plugin.NewExtension().
+							ID("cesium").
+							Visualizer("cesium").
+							Type("visualizer").
+							System(true).MustBuild(),
+					}).MustBuild(),
 				ExtensionSchema: nil,
 				Schema:          nil,
 			},
@@ -119,7 +128,18 @@ func TestManifest(t *testing.T) {
 				Version:    "1.1.1",
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("aaa")).Extensions([]*plugin.Extension{plugin.NewExtension().ID("cesium").Visualizer("cesium").Type("visualizer").System(true).MustBuild()}).MustBuild(),
+				Plugin: plugin.New().
+					ID(plugin.OfficialPluginID).
+					Name(i18n.StringFrom("aaa")).
+					Extensions([]*plugin.Extension{
+						plugin.NewExtension().
+							ID("cesium").
+							Visualizer("cesium").
+							Type("visualizer").
+							System(true).
+							MustBuild(),
+					}).
+					MustBuild(),
 				ExtensionSchema: nil,
 				Schema:          nil,
 			},
@@ -133,24 +153,26 @@ func TestManifest(t *testing.T) {
 				System: false,
 			},
 			expected: &Manifest{
-				Plugin: plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
+				Plugin: plugin.New().
+					ID(plugin.OfficialPluginID).
+					Name(i18n.StringFrom("reearth")).
+					MustBuild(),
 			},
 			err: "invalid manifest: invalid plugin id:   <nil>",
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			m, err := tc.root.manifest(nil)
-			if tc.err == "" {
-				assert.Equal(t, tc.expected.Plugin.ID(), m.Plugin.ID())
-				assert.Equal(t, tc.expected.Plugin.Name(), m.Plugin.Name())
-				assert.Equal(t, len(tc.expected.Plugin.Extensions()), len(m.Plugin.Extensions()))
-				//assert.Equal(tt,tc.expected.Schema..)
+			m, err := tt.root.manifest(nil)
+			if tt.err == "" {
+				assert.Equal(t, tt.expected.Plugin.ID(), m.Plugin.ID())
+				assert.Equal(t, tt.expected.Plugin.Name(), m.Plugin.Name())
+				assert.Equal(t, len(tt.expected.Plugin.Extensions()), len(m.Plugin.Extensions()))
 			} else {
-				assert.Equal(t, tc.err, err.Error())
+				assert.Equal(t, tt.err, err.Error())
 			}
 		})
 	}
@@ -373,16 +395,16 @@ func TestExtension(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			pe, ps, err := tc.ext.extension(tc.pid, tc.sys)
-			if tc.err == "" {
-				assert.Equal(t, tc.expectedPE, pe)
-				assert.Equal(t, tc.expectedPS, ps)
+			pe, ps, err := tt.ext.extension(tt.pid, tt.sys)
+			if tt.err == "" {
+				assert.Equal(t, tt.expectedPE, pe)
+				assert.Equal(t, tt.expectedPS, ps)
 			} else {
-				assert.Equal(t, tc.err, err.Error())
+				assert.Equal(t, tt.err, err.Error())
 			}
 		})
 	}
@@ -395,7 +417,7 @@ func TestPointer(t *testing.T) {
 	tests := []struct {
 		name     string
 		pp       *PropertyPointer
-		expected *property.Pointer
+		expected *property.SchemaFieldPointer
 	}{
 		{
 			name:     "failed nil PropertyPointer",
@@ -416,15 +438,18 @@ func TestPointer(t *testing.T) {
 				FieldID:       "xxx",
 				SchemaGroupID: "aaa",
 			},
-			expected: property.NewPointer(property.SchemaGroupIDFrom(&sg), nil, property.FieldIDFrom(&f)),
+			expected: &property.SchemaFieldPointer{
+				SchemaGroup: property.SchemaGroupID(sg),
+				Field:       property.FieldID(f),
+			},
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tc.expected, tc.pp.pointer())
+			assert.Equal(t, tt.expected, tt.pp.pointer())
 		})
 	}
 }
@@ -456,11 +481,11 @@ func TestCondition(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tc.expected, tc.con.condition())
+			assert.Equal(t, tt.expected, tt.con.condition())
 		})
 	}
 }
@@ -493,17 +518,17 @@ func TestLinkable(t *testing.T) {
 				},
 			},
 			expected: property.LinkableFields{
-				LatLng: property.NewPointer(property.SchemaGroupIDFrom(&d), nil, property.FieldIDFrom(&l)),
-				URL:    property.NewPointer(property.SchemaGroupIDFrom(&d), nil, property.FieldIDFrom(&u)),
+				LatLng: &property.SchemaFieldPointer{SchemaGroup: property.SchemaGroupID(d), Field: property.FieldID(l)},
+				URL:    &property.SchemaFieldPointer{SchemaGroup: property.SchemaGroupID(d), Field: property.FieldID(u)},
 			},
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tc.expected, tc.p.linkable())
+			assert.Equal(t, tt.expected, tt.p.linkable())
 		})
 	}
 }
@@ -569,7 +594,7 @@ func TestSchema(t *testing.T) {
 			expected: property.
 				NewSchema().
 				ID(property.MustSchemaID("reearth/marker")).
-				Groups([]*property.SchemaGroup{
+				Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
 					property.NewSchemaGroup().
 						ID("default").
 						Fields([]*property.SchemaField{
@@ -579,26 +604,26 @@ func TestSchema(t *testing.T) {
 								MustBuild()},
 						).
 						MustBuild()},
-				).
+				)).
 				MustBuild(),
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tc.ps.schema(tc.pid, tc.psid)
-			if tc.err == "" {
-				assert.Equal(t, len(tc.expected.Groups()), len(res.Groups()))
-				assert.Equal(t, tc.expected.LinkableFields(), res.LinkableFields())
-				assert.Equal(t, tc.expected.Version(), res.Version())
-				if len(res.Groups()) > 0 {
-					exg := tc.expected.Group(res.Groups()[0].ID())
+			res, err := tt.ps.schema(tt.pid, tt.psid)
+			if tt.err == "" {
+				assert.Equal(t, tt.expected.Groups().Len(), res.Groups().Len())
+				assert.Equal(t, tt.expected.LinkableFields(), res.LinkableFields())
+				assert.Equal(t, tt.expected.Version(), res.Version())
+				if res.Groups().Len() > 0 {
+					exg := tt.expected.Groups().Group(res.Groups().Groups()[0].ID())
 					assert.NotNil(t, exg)
 				}
 			} else {
-				assert.Equal(t, tc.err, err.Error())
+				assert.Equal(t, tt.err, err.Error())
 			}
 		})
 	}
@@ -675,21 +700,21 @@ func TestSchemaGroup(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tc.psg.schemaGroup()
-			if tc.err == "" {
-				assert.Equal(t, tc.expected.Title().String(), res.Title().String())
-				assert.Equal(t, tc.expected.Title(), res.Title())
-				assert.Equal(t, len(tc.expected.Fields()), len(res.Fields()))
+			res, err := tt.psg.schemaGroup()
+			if tt.err == "" {
+				assert.Equal(t, tt.expected.Title().String(), res.Title().String())
+				assert.Equal(t, tt.expected.Title(), res.Title())
+				assert.Equal(t, len(tt.expected.Fields()), len(res.Fields()))
 				if len(res.Fields()) > 0 {
 					exf := res.Fields()[0]
-					assert.NotNil(t, tc.expected.Field(exf.ID()))
+					assert.NotNil(t, tt.expected.Field(exf.ID()))
 				}
 			} else {
-				assert.Equal(t, tc.err, err.Error())
+				assert.Equal(t, tt.err, err.Error())
 			}
 		})
 	}
@@ -862,19 +887,19 @@ func TestSchemaField(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tc.psg.schemaField()
-			if tc.err == nil {
-				assert.Equal(t, tc.expected.Title(), res.Title())
-				assert.Equal(t, tc.expected.Description(), res.Description())
-				assert.Equal(t, tc.expected.Suffix(), res.Suffix())
-				assert.Equal(t, tc.expected.Prefix(), res.Prefix())
-				assert.Equal(t, tc.expected.Choices(), res.Choices())
+			res, err := tt.psg.schemaField()
+			if tt.err == nil {
+				assert.Equal(t, tt.expected.Title(), res.Title())
+				assert.Equal(t, tt.expected.Description(), res.Description())
+				assert.Equal(t, tt.expected.Suffix(), res.Suffix())
+				assert.Equal(t, tt.expected.Prefix(), res.Prefix())
+				assert.Equal(t, tt.expected.Choices(), res.Choices())
 			} else {
-				assert.Equal(t, tc.err, rerror.Get(err).Err)
+				assert.Equal(t, tt.err, rerror.Get(err).Err)
 			}
 		})
 	}
@@ -924,12 +949,12 @@ func TestLayout(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.widgetLayout.layout()
-			assert.Equal(t, tc.expected, res)
+			res := tt.widgetLayout.layout()
+			assert.Equal(t, tt.expected, res)
 		})
 	}
 }

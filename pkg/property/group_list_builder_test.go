@@ -8,7 +8,7 @@ import (
 
 func TestGroupListBuilder_Build(t *testing.T) {
 	pid := NewItemID()
-	groups := []*Group{NewGroup().ID(pid).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("x").MustBuild()}
 
 	type args struct {
 		ID          ItemID
@@ -26,16 +26,25 @@ func TestGroupListBuilder_Build(t *testing.T) {
 			Name: "success",
 			Args: args{
 				ID:          pid,
-				SchemaGroup: "aa",
+				SchemaGroup: "x",
 				Groups:      groups,
 			},
 			Expected: &GroupList{
 				itemBase: itemBase{
 					ID:          pid,
-					SchemaGroup: "aa",
+					SchemaGroup: "x",
 				},
 				groups: groups,
 			},
+		},
+		{
+			Name: "fail invalid group",
+			Args: args{
+				ID:          pid,
+				SchemaGroup: "aa",
+				Groups:      groups,
+			},
+			Err: ErrInvalidGroupInGroupList,
 		},
 		{
 			Name: "fail invalid id",
@@ -62,13 +71,13 @@ func TestGroupListBuilder_Build(t *testing.T) {
 }
 
 func TestGroupListBuilder_NewID(t *testing.T) {
-	b := NewGroupList().NewID().MustBuild()
+	b := NewGroupList().NewID().SchemaGroup("x").MustBuild()
 	assert.NotNil(t, b.ID())
 }
 
 func TestGroupListBuilder_MustBuild(t *testing.T) {
 	pid := NewItemID()
-	groups := []*Group{NewGroup().ID(pid).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("x").MustBuild()}
 
 	type args struct {
 		ID          ItemID
@@ -86,16 +95,25 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 			Name: "success",
 			Args: args{
 				ID:          pid,
-				SchemaGroup: "aa",
+				SchemaGroup: "x",
 				Groups:      groups,
 			},
 			Expected: &GroupList{
 				itemBase: itemBase{
 					ID:          pid,
-					SchemaGroup: "aa",
+					SchemaGroup: "x",
 				},
 				groups: groups,
 			},
+		},
+		{
+			Name: "fail invalid group",
+			Args: args{
+				ID:          pid,
+				SchemaGroup: "aa",
+				Groups:      groups,
+			},
+			Err: ErrInvalidGroupInGroupList,
 		},
 		{
 			Name: "fail invalid id",
@@ -130,7 +148,7 @@ func TestInitGroupListFrom(t *testing.T) {
 	tests := []struct {
 		Name        string
 		SchemaGroup *SchemaGroup
-		ExpectedSG  SchemaGroupID
+		Expected    SchemaGroupID
 	}{
 		{
 			Name: "nil schema group",
@@ -138,7 +156,7 @@ func TestInitGroupListFrom(t *testing.T) {
 		{
 			Name:        "success",
 			SchemaGroup: NewSchemaGroup().ID("aa").MustBuild(),
-			ExpectedSG:  "aa",
+			Expected:    "aa",
 		},
 	}
 
@@ -147,7 +165,11 @@ func TestInitGroupListFrom(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 			res := InitGroupFrom(tc.SchemaGroup)
-			assert.Equal(t, tc.ExpectedSG, res.SchemaGroup())
+			if tc.Expected != "" {
+				assert.Equal(t, tc.Expected, res.SchemaGroup())
+			} else {
+				assert.Nil(t, res)
+			}
 		})
 	}
 }

@@ -1,5 +1,9 @@
 package property
 
+import "errors"
+
+var ErrInvalidGroupInGroupList = errors.New("cannot contain an invalid property group in the property group list")
+
 type GroupListBuilder struct {
 	p *GroupList
 }
@@ -21,6 +25,14 @@ func InitGroupListFrom(g *SchemaGroup) *GroupList {
 func (b *GroupListBuilder) Build() (*GroupList, error) {
 	if b.p.itemBase.ID.IsNil() {
 		return nil, ErrInvalidID
+	}
+	if b.p.itemBase.SchemaGroup == "" {
+		return nil, ErrInvalidID
+	}
+	for _, g := range b.p.groups {
+		if g.SchemaGroup() != b.p.SchemaGroup() {
+			return nil, ErrInvalidGroupInGroupList
+		}
 	}
 	return b.p, nil
 }
@@ -53,18 +65,18 @@ func (b *GroupListBuilder) SchemaGroup(g SchemaGroupID) *GroupListBuilder {
 	return b
 }
 
-func (b *GroupListBuilder) Groups(fields []*Group) *GroupListBuilder {
+func (b *GroupListBuilder) Groups(groups []*Group) *GroupListBuilder {
 	newGroups := []*Group{}
 	ids := map[ItemID]struct{}{}
-	for _, f := range fields {
-		if f == nil {
+	for _, g := range groups {
+		if g == nil {
 			continue
 		}
-		if _, ok := ids[f.ID()]; ok {
+		if _, ok := ids[g.ID()]; ok {
 			continue
 		}
-		ids[f.ID()] = struct{}{}
-		newGroups = append(newGroups, f)
+		ids[g.ID()] = struct{}{}
+		newGroups = append(newGroups, g)
 	}
 	b.p.groups = newGroups
 	return b

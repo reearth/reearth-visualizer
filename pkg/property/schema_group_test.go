@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	testSchemaGroup1 = NewSchemaGroup().ID("aa").Fields([]*SchemaField{testSchemaField1, testSchemaField2}).MustBuild()
+	testSchemaGroup2 = NewSchemaGroup().ID("bb").Fields([]*SchemaField{testSchemaField3}).IsList(true).MustBuild()
+)
+
 func TestSchemaGroup(t *testing.T) {
 	scid := SchemaGroupID("aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()

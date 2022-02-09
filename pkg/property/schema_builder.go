@@ -2,7 +2,6 @@ package property
 
 import (
 	"errors"
-	"fmt"
 )
 
 var (
@@ -11,7 +10,6 @@ var (
 	ErrInvalidValue                 = errors.New("invalid value")
 	ErrInvalidPropertyLinkableField = errors.New("invalid property linkable field")
 	ErrInvalidVersion               = errors.New("invalid version")
-	ErrDuplicatedField              = errors.New("duplicated field")
 )
 
 type SchemaBuilder struct {
@@ -25,9 +23,6 @@ func NewSchema() *SchemaBuilder {
 func (b *SchemaBuilder) Build() (*Schema, error) {
 	if b.p.id.IsNil() {
 		return nil, ErrInvalidID
-	}
-	if d := b.p.DetectDuplicatedFields(); len(d) > 0 {
-		return nil, fmt.Errorf("%s: %s %s", ErrDuplicatedField, b.p.id, d)
 	}
 	if !b.p.linkable.Validate(b.p) {
 		return nil, ErrInvalidPropertyLinkableField
@@ -53,20 +48,8 @@ func (b *SchemaBuilder) Version(version int) *SchemaBuilder {
 	return b
 }
 
-func (b *SchemaBuilder) Groups(groups []*SchemaGroup) *SchemaBuilder {
-	newGroups := []*SchemaGroup{}
-	ids := map[SchemaGroupID]struct{}{}
-	for _, f := range groups {
-		if f == nil {
-			continue
-		}
-		if _, ok := ids[f.ID()]; ok {
-			continue
-		}
-		ids[f.ID()] = struct{}{}
-		newGroups = append(newGroups, f)
-	}
-	b.p.groups = newGroups
+func (b *SchemaBuilder) Groups(groups *SchemaGroupList) *SchemaBuilder {
+	b.p.groups = groups
 	return b
 }
 

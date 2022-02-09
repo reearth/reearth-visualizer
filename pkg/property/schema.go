@@ -3,13 +3,13 @@ package property
 type Schema struct {
 	id       SchemaID
 	version  int
-	groups   []*SchemaGroup
+	groups   *SchemaGroupList
 	linkable LinkableFields
 }
 
 type LinkableFields struct {
-	LatLng *Pointer
-	URL    *Pointer
+	LatLng *SchemaFieldPointer
+	URL    *SchemaFieldPointer
 }
 
 func (p *Schema) ID() SchemaID {
@@ -27,102 +27,11 @@ func (p *Schema) Version() int {
 	return p.version
 }
 
-func (p *Schema) Fields() []*SchemaField {
+func (p *Schema) Groups() *SchemaGroupList {
 	if p == nil {
 		return nil
 	}
-	fields := []*SchemaField{}
-	for _, g := range p.groups {
-		fields = append(fields, g.Fields()...)
-	}
-	return fields
-}
-
-func (p *Schema) Field(id FieldID) *SchemaField {
-	if p == nil {
-		return nil
-	}
-	for _, g := range p.groups {
-		if f := g.Field(id); f != nil {
-			return f
-		}
-	}
-	return nil
-}
-
-func (p *Schema) FieldByPointer(ptr *Pointer) *SchemaField {
-	if p == nil {
-		return nil
-	}
-	g := p.GroupByPointer(ptr)
-	if g == nil {
-		return nil
-	}
-	return g.FieldByPointer(ptr)
-}
-
-func (p *Schema) Groups() []*SchemaGroup {
-	if p == nil {
-		return nil
-	}
-	return append([]*SchemaGroup{}, p.groups...)
-}
-
-func (p *Schema) Group(id SchemaGroupID) *SchemaGroup {
-	if p == nil {
-		return nil
-	}
-	for _, f := range p.groups {
-		if f.ID() == id {
-			return f
-		}
-	}
-	return nil
-}
-
-func (p *Schema) GroupByField(id FieldID) *SchemaGroup {
-	if p == nil {
-		return nil
-	}
-	for _, f := range p.groups {
-		if f.HasField(id) {
-			return f
-		}
-	}
-	return nil
-}
-
-func (p *Schema) GroupByPointer(ptr *Pointer) *SchemaGroup {
-	if p == nil {
-		return nil
-	}
-
-	if gid, ok := ptr.ItemBySchemaGroup(); ok {
-		return p.Group(gid)
-	}
-	if fid, ok := ptr.Field(); ok {
-		for _, g := range p.groups {
-			if g.HasField(fid) {
-				return g
-			}
-		}
-	}
-
-	return nil
-}
-
-func (s *Schema) DetectDuplicatedFields() []FieldID {
-	duplicated := []FieldID{}
-	ids := map[FieldID]struct{}{}
-	for _, f := range s.Fields() {
-		i := f.ID()
-		if _, ok := ids[i]; ok {
-			duplicated = append(duplicated, i)
-			return duplicated
-		}
-		ids[i] = struct{}{}
-	}
-	return nil
+	return p.groups
 }
 
 func (p *Schema) LinkableFields() LinkableFields {
@@ -132,10 +41,10 @@ func (p *Schema) LinkableFields() LinkableFields {
 	return p.linkable.Clone()
 }
 
-func (l LinkableFields) Clone() LinkableFields {
+func (p LinkableFields) Clone() LinkableFields {
 	return LinkableFields{
-		LatLng: l.LatLng.Clone(),
-		URL:    l.URL.Clone(),
+		LatLng: p.LatLng.Clone(),
+		URL:    p.URL.Clone(),
 	}
 }
 
@@ -144,14 +53,32 @@ func (l LinkableFields) Validate(s *Schema) bool {
 		return false
 	}
 	if l.LatLng != nil {
-		if f := s.FieldByPointer(l.LatLng); f == nil {
+		if f := s.Groups().Field(l.LatLng.Field); f == nil {
 			return false
 		}
 	}
 	if l.URL != nil {
-		if f := s.FieldByPointer(l.URL); f == nil {
+		if f := s.Groups().Field(l.URL.Field); f == nil {
 			return false
 		}
 	}
 	return true
+}
+
+func (l LinkableFields) PointerByType(ty ValueType) *SchemaFieldPointer {
+	switch ty {
+	case ValueTypeLatLng:
+		return l.LatLng
+	case ValueTypeURL:
+		return l.URL
+	}
+	return nil
+}
+
+func (l LinkableFields) FieldByType(ty ValueType) *FieldID {
+	p := l.PointerByType(ty)
+	if p == nil {
+		return nil
+	}
+	return p.Field.Ref()
 }

@@ -99,13 +99,16 @@ func (g *GroupList) IsEmpty() bool {
 	return g != nil && (g.groups == nil || len(g.groups) == 0)
 }
 
-func (g *GroupList) Prune() {
+func (g *GroupList) Prune() (res bool) {
 	if g == nil {
 		return
 	}
 	for _, f := range g.groups {
-		f.Prune()
+		if f.Prune() {
+			res = true
+		}
 	}
+	return
 }
 
 func (g *GroupList) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) {
@@ -133,12 +136,131 @@ func (g *GroupList) Group(gid ItemID) *Group {
 	if g == nil {
 		return nil
 	}
-	for _, f := range g.groups {
-		if f.ID() == gid {
-			return f
+	for _, g := range g.groups {
+		if g.ID() == gid {
+			return g
 		}
 	}
 	return nil
+}
+
+func (g *GroupList) GroupByPointer(ptr *Pointer) *Group {
+	if g == nil {
+		return nil
+	}
+	gid, ok := ptr.Item()
+	if !ok {
+		return nil
+	}
+	return g.Group(gid)
+}
+
+func (p *GroupList) Clone() *GroupList {
+	if p == nil {
+		return nil
+	}
+	groups := make([]*Group, 0, len(p.groups))
+	for _, g := range p.groups {
+		groups = append(groups, g.Clone())
+	}
+	return &GroupList{
+		groups:   groups,
+		itemBase: p.itemBase,
+	}
+}
+
+func (p *GroupList) CloneItem() Item {
+	return p.Clone()
+}
+
+func (g *GroupList) Fields(ptr *Pointer) []*Field {
+	if g == nil || len(g.groups) == 0 || (ptr != nil && !ptr.TestSchemaGroup(g.SchemaGroup())) {
+		return nil
+	}
+
+	if pi, ok := ptr.Item(); ok && g.ID() != pi {
+		return g.Group(pi).Fields(ptr)
+	}
+
+	if fid, ok := ptr.Field(); ok {
+		ptr = PointFieldOnly(fid)
+	}
+
+	var fields []*Field
+	for _, g := range g.groups {
+		if f := g.Fields(ptr); len(f) > 0 {
+			fields = append(fields, f...)
+		}
+	}
+	return fields
+}
+
+func (g *GroupList) RemoveFields(ptr *Pointer) (res bool) {
+	if g == nil {
+		return
+	}
+
+	if i, ok := ptr.Item(); ok && g.ID() != i {
+		return g.GroupByPointer(ptr).RemoveFields(ptr)
+	}
+
+	if i, ok := ptr.ItemBySchemaGroup(); ok && g.SchemaGroup() != i {
+		return g.GroupByPointer(ptr).RemoveFields(ptr)
+	}
+
+	if fid, ok := ptr.Field(); ok {
+		for _, g := range g.groups {
+			if g.RemoveField(fid) {
+				res = true
+			}
+		}
+	}
+
+	return
+}
+
+func (p *GroupList) GroupAndFields(ptr *Pointer) []GroupAndField {
+	if p == nil || len(p.groups) == 0 {
+		return nil
+	}
+	res := []GroupAndField{}
+	for _, g := range p.groups {
+		if ptr == nil || ptr.TestItem(g.SchemaGroup(), g.ID()) {
+			for _, r := range g.GroupAndFields(ptr) {
+				res = append(res, GroupAndField{
+					ParentGroup: p,
+					Group:       r.Group,
+					Field:       r.Field,
+				})
+			}
+		}
+	}
+	return res
+}
+
+func (g *GroupList) GuessSchema() *SchemaGroup {
+	if g == nil {
+		return nil
+	}
+
+	fieldm := map[FieldID]struct{}{}
+	fields := []*SchemaField{}
+
+	for _, g := range g.groups {
+		if gsg := g.GuessSchema(); gsg != nil {
+			for _, f := range gsg.Fields() {
+				if _, ok := fieldm[f.ID()]; ok {
+					continue
+				}
+				fields = append(fields, f)
+				fieldm[f.ID()] = struct{}{}
+			}
+		}
+	}
+
+	// TODO: error handling
+	sg, _ := NewSchemaGroup().ID(g.SchemaGroup()).IsList(true).Fields(fields).Build()
+	return sg
 }
 
 // GroupAt returns a group whose index is specified
@@ -281,7 +403,7 @@ func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
 	if g == nil || ptr == nil || ps == nil {
 		return nil, false
 	}
-	psg := ps.Group(g.SchemaGroup())
+	psg := ps.Groups().Group(g.SchemaGroup())
 	if psg == nil {
 		return nil, false
 	}
@@ -303,7 +425,7 @@ func (g *GroupList) CreateAndAddListItem(ps *Schema, index *int) *Group {
 	if g == nil || ps == nil {
 		return nil
 	}
-	psg := ps.Group(g.SchemaGroup())
+	psg := ps.Groups().Group(g.SchemaGroup())
 	if psg == nil {
 		return nil
 	}

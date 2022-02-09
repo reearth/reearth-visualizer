@@ -16,10 +16,15 @@ type Item interface {
 	FieldsByLinkedDataset(DatasetSchemaID, DatasetID) []*Field
 	IsDatasetLinked(DatasetSchemaID, DatasetID) bool
 	IsEmpty() bool
-	Prune()
+	Prune() bool
 	MigrateSchema(context.Context, *Schema, dataset.Loader)
 	MigrateDataset(DatasetMigrationParam)
 	ValidateSchema(*SchemaGroup) error
+	Fields(*Pointer) []*Field
+	RemoveFields(*Pointer) bool
+	CloneItem() Item
+	GroupAndFields(*Pointer) []GroupAndField
+	GuessSchema() *SchemaGroup
 }
 
 type itemBase struct {
@@ -45,4 +50,17 @@ func InitItemFrom(psg *SchemaGroup) Item {
 		return InitGroupListFrom(psg)
 	}
 	return InitGroupFrom(psg)
+}
+
+type GroupAndField struct {
+	ParentGroup *GroupList
+	Group       *Group
+	Field       *Field
+}
+
+func (f GroupAndField) SchemaFieldPointer() SchemaFieldPointer {
+	return SchemaFieldPointer{
+		SchemaGroup: f.Group.SchemaGroup(),
+		Field:       f.Field.Field(),
+	}
 }

@@ -131,7 +131,7 @@ func newPropertyItem(f property.Item) *PropertyItemDocument {
 
 	if g := property.ToGroup(f); g != nil {
 		t = typePropertyItemGroup
-		pfields := g.Fields()
+		pfields := g.Fields(nil)
 		fields = make([]*PropertyFieldDocument, 0, len(pfields))
 		for _, r := range pfields {
 			fields = append(fields, newPropertyField(r))

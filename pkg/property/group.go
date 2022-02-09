@@ -3,7 +3,6 @@ package property
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
 )
@@ -18,9 +17,6 @@ type Group struct {
 var _ Item = &Group{}
 
 func (g *Group) ID() ItemID {
-	if g == nil {
-		return ItemID{}
-	}
 	return g.itemBase.ID
 }
 
@@ -32,9 +28,6 @@ func (g *Group) IDRef() *ItemID {
 }
 
 func (g *Group) SchemaGroup() SchemaGroupID {
-	if g == nil {
-		return SchemaGroupID("")
-	}
 	return g.itemBase.SchemaGroup
 }
 
@@ -106,15 +99,18 @@ func (g *Group) IsEmpty() bool {
 	return true
 }
 
-func (g *Group) Prune() {
+func (g *Group) Prune() (res bool) {
 	if g == nil {
 		return
 	}
 	for _, f := range g.fields {
 		if f.IsEmpty() {
-			g.RemoveField(f.Field())
+			if g.RemoveField(f.Field()) {
+				res = true
+			}
 		}
 	}
+	return
 }
 
 // TODO: group migration
@@ -136,7 +132,7 @@ func (g *Group) GetOrCreateField(ps *Schema, fid FieldID) (*Field, bool) {
 	if g == nil || ps == nil {
 		return nil, false
 	}
-	psg := ps.Group(g.SchemaGroup())
+	psg := ps.Groups().Group(g.SchemaGroup())
 	if psg == nil {
 		return nil, false
 	}
@@ -158,20 +154,31 @@ func (g *Group) GetOrCreateField(ps *Schema, fid FieldID) (*Field, bool) {
 		return nil, false
 	}
 
-	g.fields = append(g.fields, field)
+	g.AddFields(field)
 	return field, true
 }
 
-func (g *Group) RemoveField(fid FieldID) {
+func (g *Group) AddFields(fields ...*Field) {
 	if g == nil {
 		return
+	}
+	for _, f := range fields {
+		_ = g.RemoveField(f.Field())
+		g.fields = append(g.fields, f)
+	}
+}
+
+func (g *Group) RemoveField(fid FieldID) (res bool) {
+	if g == nil {
+		return false
 	}
 	for i, f := range g.fields {
 		if f.Field() == fid {
 			g.fields = append(g.fields[:i], g.fields[i+1:]...)
-			return
+			return true
 		}
 	}
+	return false
 }
 
 func (g *Group) FieldIDs() []FieldID {
@@ -183,14 +190,6 @@ func (g *Group) FieldIDs() []FieldID {
 		fields = append(fields, f.Field())
 	}
 	return fields
-}
-
-// Fields returns a slice of fields
-func (g *Group) Fields() []*Field {
-	if g == nil {
-		return nil
-	}
-	return append([]*Field{}, g.fields...)
 }
 
 // Field returns a field whose id is specified
@@ -219,7 +218,7 @@ func (g *Group) RepresentativeField(schema *Schema) *Field {
 	if g == nil || schema == nil {
 		return nil
 	}
-	if psg := schema.GroupByPointer(NewPointer(&g.itemBase.SchemaGroup, nil, nil)); psg != nil {
+	if psg := schema.Groups().Group(g.itemBase.SchemaGroup); psg != nil {
 		if representativeField := psg.RepresentativeFieldID(); representativeField != nil {
 			if f, _ := g.GetOrCreateField(schema, *representativeField); f != nil {
 				return f
@@ -241,10 +240,89 @@ func (p *Group) ValidateSchema(ps *SchemaGroup) error {
 	}
 
 	for _, i := range p.fields {
-		if err := i.ValidateSchema(ps.Field(i.Field())); err != nil {
-			return fmt.Errorf("%s: %w", i.Field(), err)
+		f := ps.Field(i.Field())
+		if f.Type() != i.Type() {
+			return errors.New("invalid field type")
 		}
 	}
 
 	return nil
+}
+
+func (p *Group) Clone() *Group {
+	if p == nil {
+		return nil
+	}
+	fields := make([]*Field, 0, len(p.fields))
+	for _, f := range p.fields {
+		fields = append(fields, f.Clone())
+	}
+	return &Group{
+		fields:   fields,
+		itemBase: p.itemBase,
+	}
+}
+
+func (p *Group) CloneItem() Item {
+	return p.Clone()
+}
+
+func (g *Group) Fields(p *Pointer) []*Field {
+	if g == nil || len(g.fields) == 0 || (p != nil && !p.TestItem(g.SchemaGroup(), g.ID())) {
+		return nil
+	}
+
+	if fid, ok := p.Field(); ok {
+		if f := g.Field(fid); f != nil {
+			return []*Field{f}
+		}
+		return nil
+	}
+
+	return append(g.fields[:0:0], g.fields...)
+}
+
+func (g *Group) RemoveFields(ptr *Pointer) (res bool) {
+	if g == nil || ptr == nil {
+		return false
+	}
+	if f, ok := ptr.FieldIfItemIs(g.SchemaGroup(), g.ID()); ok {
+		if g.RemoveField(f) {
+			res = true
+		}
+	}
+	return
+}
+
+func (p *Group) GroupAndFields(ptr *Pointer) []GroupAndField {
+	if p == nil || len(p.fields) == 0 {
+		return nil
+	}
+	res := []GroupAndField{}
+	for _, f := range p.fields {
+		if ptr == nil || ptr.Test(p.SchemaGroup(), p.ID(), f.Field()) {
+			res = append(res, GroupAndField{
+				Group: p,
+				Field: f,
+			})
+		}
+	}
+	return res
+}
+
+func (g *Group) GuessSchema() *SchemaGroup {
+	if g == nil {
+		return nil
+	}
+
+	fields := make([]*SchemaField, 0, len(g.fields))
+	for _, f := range g.fields {
+		if sf := f.GuessSchema(); sf != nil {
+			fields = append(fields, sf)
+		}
+	}
+
+	// TODO: error handling
+	sg, _ := NewSchemaGroup().ID(g.SchemaGroup()).Fields(fields).Build()
+	return sg
 }

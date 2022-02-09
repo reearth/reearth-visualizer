@@ -42,14 +42,13 @@ type PropertySchemaFieldChoiceDocument struct {
 }
 
 type PropertyLinkableFieldsDocument struct {
-	LatLng *PropertyPointerDocument
-	URL    *PropertyPointerDocument
+	LatLng *PropertySchemaFieldPointerDocument
+	URL    *PropertySchemaFieldPointerDocument
 }
 
-type PropertyPointerDocument struct {
-	SchemaGroupID *string
-	ItemID        *string
-	FieldID       *string
+type PropertySchemaFieldPointerDocument struct {
+	SchemaGroupID string
+	FieldID       string
 }
 
 type PropertyConditonDocument struct {
@@ -113,7 +112,7 @@ func NewPropertySchema(m *property.Schema) (*PropertySchemaDocument, string) {
 		return nil, ""
 	}
 
-	pgroups := m.Groups()
+	pgroups := m.Groups().Groups()
 	groups := make([]*PropertySchemaGroupDocument, 0, len(pgroups))
 	for _, f := range pgroups {
 		groups = append(groups, newPropertySchemaGroup(f))
@@ -200,7 +199,7 @@ func (doc *PropertySchemaDocument) Model() (*property.Schema, error) {
 	return property.NewSchema().
 		ID(pid).
 		Version(doc.Version).
-		Groups(groups).
+		Groups(property.NewSchemaGroupList(groups)).
 		LinkableFields(toModelPropertyLinkableFields(doc.LinkableFields)).
 		Build()
 }
@@ -288,25 +287,22 @@ func toModelPropertyLinkableFields(l *PropertyLinkableFieldsDocument) property.L
 	}
 }
 
-func toModelPropertyPointer(p *PropertyPointerDocument) *property.Pointer {
+func toModelPropertyPointer(p *PropertySchemaFieldPointerDocument) *property.SchemaFieldPointer {
 	if p == nil {
 		return nil
 	}
-	return property.NewPointer(
-		id.PropertySchemaGroupIDFrom(p.SchemaGroupID),
-		id.PropertyItemIDFromRef(p.ItemID),
-		id.PropertySchemaFieldIDFrom(p.FieldID),
-	)
+	return &property.SchemaFieldPointer{
+		SchemaGroup: property.SchemaGroupID(p.SchemaGroupID),
+		Field:       property.FieldID(p.FieldID),
+	}
 }
 
-func newDocPropertyPointer(p *property.Pointer) *PropertyPointerDocument {
+func newDocPropertyPointer(p *property.SchemaFieldPointer) *PropertySchemaFieldPointerDocument {
 	if p == nil {
 		return nil
 	}
-	schemaGroupID, itemID, fieldID := p.GetAll()
-	return &PropertyPointerDocument{
-		SchemaGroupID: schemaGroupID.StringRef(),
-		ItemID:        itemID.StringRef(),
-		FieldID:       fieldID.StringRef(),
+	return &PropertySchemaFieldPointerDocument{
+		SchemaGroupID: p.SchemaGroup.String(),
+		FieldID:       p.Field.String(),
 	}
 }

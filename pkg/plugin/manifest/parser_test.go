@@ -30,7 +30,7 @@ var normalExpected = &Manifest{
 			MustBuild(),
 	}).MustBuild(),
 	ExtensionSchema: []*property.Schema{
-		property.NewSchema().ID(property.MustSchemaID("aaa~1.1.1/hoge")).Groups([]*property.SchemaGroup{
+		property.NewSchema().ID(property.MustSchemaID("aaa~1.1.1/hoge")).Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
 			property.NewSchemaGroup().ID(property.SchemaGroupID("default")).
 				RepresentativeField(property.FieldID("a").Ref()).
 				Fields([]*property.SchemaField{
@@ -46,7 +46,7 @@ var normalExpected = &Manifest{
 						Type(property.ValueTypeNumber).
 						MustBuild(),
 				}).MustBuild(),
-		}).MustBuild(),
+		})).MustBuild(),
 	},
 }
 

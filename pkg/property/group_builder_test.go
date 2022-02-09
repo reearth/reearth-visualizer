@@ -126,7 +126,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 }
 
 func TestGroupBuilder_NewID(t *testing.T) {
-	g := NewGroup().NewID().MustBuild()
+	g := NewGroup().NewID().SchemaGroup("x").MustBuild()
 	assert.False(t, g.ID().IsNil())
 }
 

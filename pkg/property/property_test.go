@@ -6,13 +6,18 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPropertyMigrateSchema(t *testing.T) {
+var (
+	testProperty1 = New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{testGroup1, testGroupList1}).MustBuild()
+)
+
+func TestProperty_MigrateSchema(t *testing.T) {
 	sceneID := NewSceneID()
-	oldSchema, _ := SchemaIDFrom("hoge~1.0.0/test")
-	newSchema, _ := SchemaIDFrom("hoge~1.0.0/test2")
+	oldSchema := MustSchemaID("hoge~1.0.0/test")
+	newSchema := MustSchemaID("hoge~1.0.0/test2")
 	schemaField1ID := FieldID("a")
 	schemaField2ID := FieldID("b")
 	schemaField3ID := FieldID("c")
@@ -45,9 +50,9 @@ func TestPropertyMigrateSchema(t *testing.T) {
 		schemaField6,
 		schemaField7,
 	}
-	schemaGroups := []*SchemaGroup{
+	schemaGroups := NewSchemaGroupList([]*SchemaGroup{
 		NewSchemaGroup().ID(schemaGroupID).Fields(schemaFields).MustBuild(),
-	}
+	})
 
 	fields := []*Field{
 		// should remain
@@ -104,7 +109,7 @@ func TestPropertyMigrateSchema(t *testing.T) {
 	property.MigrateSchema(context.Background(), schema, dataset.LoaderFrom([]*dataset.Dataset{ds}))
 
 	newGroup := ToGroup(property.ItemBySchema(schemaGroupID))
-	newFields := newGroup.Fields()
+	newFields := newGroup.Fields(nil)
 
 	assert.Equal(t, schema.ID(), property.Schema())
 	assert.Equal(t, 1, len(property.Items()))
@@ -126,7 +131,7 @@ func TestGetOrCreateItem(t *testing.T) {
 	sg1 := NewSchemaGroup().ID(sg1id).Fields([]*SchemaField{sf1}).MustBuild()
 	sf2 := NewSchemaField().ID(sf2id).Type(ValueTypeString).MustBuild()
 	sg2 := NewSchemaGroup().ID(sg2id).Fields([]*SchemaField{sf2}).IsList(true).MustBuild()
-	s := NewSchema().ID(sid).Groups([]*SchemaGroup{sg1, sg2}).MustBuild()
+	s := NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg1, sg2})).MustBuild()
 
 	p := New().NewID().Scene(sceneID).Schema(sid).MustBuild()
 
@@ -134,13 +139,15 @@ func TestGetOrCreateItem(t *testing.T) {
 	assert.Nil(t, p.ItemBySchema(sg1id))
 	assert.Equal(t, []Item{}, p.Items())
 
-	i, _ := p.GetOrCreateItem(s, PointItemBySchema(sg1id))
+	i, gl := p.GetOrCreateItem(s, PointItemBySchema(sg1id))
+	assert.Nil(t, gl)
 	assert.NotNil(t, i)
 	assert.Equal(t, sg1id, i.SchemaGroup())
 	assert.Equal(t, i, ToGroup(p.ItemBySchema(sg1id)))
 	assert.Equal(t, []Item{i}, p.Items())
 
-	i2, _ := p.GetOrCreateItem(s, PointItemBySchema(sg1id))
+	i2, gl := p.GetOrCreateItem(s, PointItemBySchema(sg1id))
+	assert.Nil(t, gl)
 	assert.NotNil(t, i2)
 	assert.Equal(t, i, i2)
 	assert.Equal(t, i2, ToGroup(p.ItemBySchema(sg1id)))
@@ -149,13 +156,15 @@ func TestGetOrCreateItem(t *testing.T) {
 	// group list
 	assert.Nil(t, p.ItemBySchema(sg2id))
 
-	i3, _ := p.GetOrCreateItem(s, PointItemBySchema(sg2id))
+	i3, gl := p.GetOrCreateItem(s, PointItemBySchema(sg2id))
+	assert.Nil(t, gl)
 	assert.NotNil(t, i3)
 	assert.Equal(t, sg2id, i3.SchemaGroup())
 	assert.Equal(t, i3, ToGroupList(p.ItemBySchema(sg2id)))
 	assert.Equal(t, []Item{i, i3}, p.Items())
 
-	i4, _ := p.GetOrCreateItem(s, PointItemBySchema(sg2id))
+	i4, gl := p.GetOrCreateItem(s, PointItemBySchema(sg2id))
+	assert.Nil(t, gl)
 	assert.NotNil(t, i4)
 	assert.Equal(t, i3, i4)
 	assert.Equal(t, i4, ToGroupList(p.ItemBySchema(sg2id)))
@@ -174,7 +183,7 @@ func TestGetOrCreateField(t *testing.T) {
 	sg1 := NewSchemaGroup().ID(sg1id).Fields([]*SchemaField{sf1}).MustBuild()
 	sf2 := NewSchemaField().ID(sf2id).Type(ValueTypeString).MustBuild()
 	sg2 := NewSchemaGroup().ID(sg2id).Fields([]*SchemaField{sf2}).IsList(true).MustBuild()
-	s := NewSchema().ID(sid).Groups([]*SchemaGroup{sg1, sg2}).MustBuild()
+	s := NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg1, sg2})).MustBuild()
 
 	p := New().NewID().Scene(sceneID).Schema(sid).MustBuild()
 
@@ -188,7 +197,7 @@ func TestGetOrCreateField(t *testing.T) {
 	assert.Equal(t, sf1id, f.Field())
 	i := ToGroup(p.ItemBySchema(sg1id))
 	assert.Equal(t, sg1id, i.SchemaGroup())
-	assert.Equal(t, []*Field{f}, i.Fields())
+	assert.Equal(t, []*Field{f}, i.Fields(nil))
 	field, _, _ := p.Field(PointFieldBySchemaGroup(sg1id, sf1id))
 	assert.Equal(t, f, field)
 
@@ -220,7 +229,7 @@ func TestAddListItem(t *testing.T) {
 	sgid := SchemaGroupID("b")
 	sf := NewSchemaField().ID(sfid).Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID(sgid).Fields([]*SchemaField{sf}).IsList(true).MustBuild()
-	ps := NewSchema().ID(sid).Groups([]*SchemaGroup{sg}).MustBuild()
+	ps := NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild()
 	p := New().NewID().Scene(sceneID).Schema(sid).MustBuild()
 
 	item, _ := p.AddListItem(ps, PointItemBySchema(sgid), nil)
@@ -269,4 +278,398 @@ func TestRemoveListItem(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, []*Group{}, gl.Groups())
 	assert.Equal(t, 0, len(p.Items()))
+}
+
+func TestPointer_Test(t *testing.T) {
+	itemID := NewItemID()
+
+	type args struct {
+		sg   SchemaGroupID
+		i    ItemID
+		f    FieldID
+		want bool
+	}
+	tests := []struct {
+		name   string
+		target *Pointer
+		args   []args
+	}{
+		{
+			name:   "schema group only",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+			},
+		},
+		{
+			name:   "item only",
+			target: &Pointer{item: itemID.Ref()},
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+			},
+		},
+		{
+			name:   "schema group and item",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: itemID.Ref()},
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("a"), want: false},
+			},
+		},
+		{
+			name:   "all",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: itemID.Ref(), field: FieldID("a").Ref()},
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: false},
+			},
+		},
+		{
+			name:   "empty",
+			target: &Pointer{},
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: true},
+				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: true},
+				{sg: SchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: true},
+			},
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args: []args{
+				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: false},
+				{sg: SchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: false},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			for i, a := range tt.args {
+				assert.Equal(t, a.want, tt.target.Test(a.sg, a.i, a.f), "test %d", i)
+			}
+		})
+	}
+}
+
+func TestPointer_TestItem(t *testing.T) {
+	iid := NewItemID()
+
+	type args struct {
+		sg SchemaGroupID
+		i  ItemID
+	}
+	tests := []struct {
+		name   string
+		target *Pointer
+		args   args
+		want   bool
+	}{
+		{
+			name:   "true schema group only",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			want:   true,
+		},
+		{
+			name:   "true item only",
+			target: &Pointer{item: iid.Ref()},
+			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			want:   true,
+		},
+		{
+			name:   "true schema group and item",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: iid.Ref()},
+			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			want:   true,
+		},
+		{
+			name:   "true empty",
+			target: &Pointer{},
+			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			want:   true,
+		},
+		{
+			name:   "false schema group only",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			args:   args{sg: SchemaGroupID("yy"), i: iid},
+			want:   false,
+		},
+		{
+			name:   "false item only",
+			target: &Pointer{item: iid.Ref()},
+			args:   args{sg: SchemaGroupID("xx"), i: NewItemID()},
+			want:   false,
+		},
+		{
+			name:   "false schema group and item",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: iid.Ref()},
+			args:   args{sg: SchemaGroupID("xx"), i: NewItemID()},
+			want:   false,
+		},
+		{
+			name:   "false nil",
+			target: nil,
+			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.TestItem(tt.args.sg, tt.args.i))
+		})
+	}
+}
+
+func TestPointer_TestSchemaGroup(t *testing.T) {
+	type args struct {
+		sg SchemaGroupID
+	}
+	tests := []struct {
+		name   string
+		target *Pointer
+		args   args
+		want   bool
+	}{
+		{
+			name:   "true",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			args:   args{sg: SchemaGroupID("xx")},
+			want:   true,
+		},
+		{
+			name:   "false",
+			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			args:   args{sg: SchemaGroupID("yy")},
+			want:   false,
+		},
+		{
+			name:   "empty",
+			target: &Pointer{},
+			args:   args{sg: SchemaGroupID("xx")},
+			want:   true,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{sg: SchemaGroupID("xx")},
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.TestSchemaGroup(tt.args.sg))
+		})
+	}
+}
+
+func TestPointer_TestField(t *testing.T) {
+	type args struct {
+		f FieldID
+	}
+	tests := []struct {
+		name   string
+		target *Pointer
+		args   args
+		want   bool
+	}{
+		{
+			name:   "true",
+			target: &Pointer{field: FieldID("xx").Ref()},
+			args:   args{f: FieldID("xx")},
+			want:   true,
+		},
+		{
+			name:   "false",
+			target: &Pointer{field: FieldID("xx").Ref()},
+			args:   args{f: FieldID("yy")},
+			want:   false,
+		},
+		{
+			name:   "empty",
+			target: &Pointer{},
+			args:   args{f: FieldID("xx")},
+			want:   true,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{f: FieldID("xx")},
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.TestField(tt.args.f))
+		})
+	}
+}
+
+func TestProperty_MoveFields(t *testing.T) {
+	itemID1 := NewItemID()
+	itemID2 := NewItemID()
+
+	type args struct {
+		from *Pointer
+		to   *Pointer
+	}
+	tests := []struct {
+		name           string
+		target         *Property
+		args           args
+		wantRes        bool
+		wantFieldsFrom []*Field
+		wantFieldsTo   []*Field
+	}{
+		{
+			name:   "same group",
+			target: testProperty1.Clone(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(testGroup1.SchemaGroup().Ref(), nil, FieldID("x").Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{testField1}, // changing field ID is not supported
+			wantFieldsTo:   []*Field{testField1},
+		},
+		{
+			name: "group -> group",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(testSchemaGroup1.ID()).Fields([]*Field{testField1}).MustBuild(),
+				NewGroup().NewID().SchemaGroup("x").Fields([]*Field{testField2}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},
+			wantFieldsTo:   []*Field{testField2, testField1},
+		},
+		{
+			name: "group -> group (new)",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(testSchemaGroup1.ID()).Fields([]*Field{testField1}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},
+			wantFieldsTo:   []*Field{testField1},
+		},
+		{
+			name: "group -> group (rename)",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(testSchemaGroup1.ID()).Fields([]*Field{testField1}).MustBuild(),
+				NewGroup().NewID().SchemaGroup("x").Fields([]*Field{}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("x").Ref(), nil, FieldID("y").Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},
+			wantFieldsTo:   []*Field{testField1}, // changing field ID is not supported
+		},
+		{
+			name: "group -> group (field nil)",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(testSchemaGroup1.ID()).Fields([]*Field{testField1}).MustBuild(),
+				NewGroup().NewID().SchemaGroup("x").Fields([]*Field{}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("x").Ref(), nil, nil),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},
+			wantFieldsTo:   []*Field{testField1},
+		},
+		{
+			name: "group -> list",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(testSchemaGroup1.ID()).Fields([]*Field{testField1}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(testSchemaGroup2.ID()).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(testSchemaGroup2.ID().Ref(), nil, testField1.Field().Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{}, // deleted
+			wantFieldsTo:   []*Field{}, // not moved
+		},
+		{
+			name: "list -> group",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroup().NewID().SchemaGroup(SchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(SchemaGroupID("y")).Groups([]*Group{
+					NewGroup().ID(itemID1).SchemaGroup(SchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
+				}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(SchemaGroupID("y").Ref(), itemID1.Ref(), testField2.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField2.Field().Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},           // deleted
+			wantFieldsTo:   []*Field{testField1}, // not moved
+		},
+		{
+			name: "list -> list",
+			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
+				NewGroupList().NewID().SchemaGroup(SchemaGroupID("x")).Groups([]*Group{
+					NewGroup().ID(itemID1).SchemaGroup(SchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
+				}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(SchemaGroupID("y")).Groups([]*Group{
+					NewGroup().ID(itemID2).SchemaGroup(SchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
+				}).MustBuild(),
+			}).MustBuild(),
+			args: args{
+				from: NewPointer(SchemaGroupID("x").Ref(), itemID1.Ref(), testField1.Field().Ref()),
+				to:   NewPointer(SchemaGroupID("y").Ref(), itemID2.Ref(), testField2.Field().Ref()),
+			},
+			wantRes:        true,
+			wantFieldsFrom: []*Field{},           // deleted
+			wantFieldsTo:   []*Field{testField2}, // not moved
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args: args{
+				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(testGroup1.SchemaGroup().Ref(), nil, FieldID("x").Ref()),
+			},
+			wantRes:        false,
+			wantFieldsFrom: nil,
+			wantFieldsTo:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.wantRes, tt.target.MoveFields(tt.args.from, tt.args.to))
+			assert.Equal(t, tt.wantFieldsFrom, tt.target.Fields(tt.args.from.AllFields()))
+			assert.Equal(t, tt.wantFieldsTo, tt.target.Fields(tt.args.to.AllFields()))
+		})
+	}
 }

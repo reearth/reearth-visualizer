@@ -6,11 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	testGroupList1 = NewGroupList().NewID().SchemaGroup(testSchemaGroup2.ID()).Groups([]*Group{testGroup2}).MustBuild()
+)
+
 func TestGroupList_IDRef(t *testing.T) {
-	var b *GroupList
-	assert.Nil(t, b.IDRef())
-	b = NewGroupList().NewID().MustBuild()
-	assert.NotNil(t, b.IDRef())
+	id := NewItemID()
+	assert.Nil(t, (*GroupList)(nil).IDRef())
+	assert.Equal(t, &id, (&GroupList{
+		itemBase: itemBase{ID: id},
+	}).IDRef())
 }
 
 func TestGroupList_SchemaRef(t *testing.T) {
@@ -50,8 +55,8 @@ func TestGroupList_HasLinkedField(t *testing.T) {
 		Value(OptionalValueFrom(v)).
 		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
+	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
 
 	tests := []struct {
 		Name     string
@@ -93,8 +98,8 @@ func TestGroupList_Datasets(t *testing.T) {
 		Value(OptionalValueFrom(v)).
 		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
+	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
 
 	tests := []struct {
 		Name     string
@@ -135,8 +140,8 @@ func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 		Value(OptionalValueFrom(v)).
 		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
+	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
 
 	tests := []struct {
 		Name     string
@@ -177,7 +182,7 @@ func TestGroupList_IsEmpty(t *testing.T) {
 		Value(OptionalValueFrom(v)).
 		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 
 	tests := []struct {
 		Name     string
@@ -214,8 +219,8 @@ func TestGroupList_Prune(t *testing.T) {
 	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 	f2 := FieldFrom(sf).MustBuild()
 	pid := NewItemID()
-	groups := []*Group{NewGroup().ID(pid).Fields([]*Field{f, f2}).MustBuild()}
-	pruned := []*Group{NewGroup().ID(pid).Fields([]*Field{f}).MustBuild()}
+	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f, f2}).MustBuild()}
+	pruned := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 
 	tests := []struct {
 		Name     string
@@ -244,7 +249,7 @@ func TestGroupList_Prune(t *testing.T) {
 
 func TestGroupList_Group(t *testing.T) {
 	pid := NewItemID()
-	g := NewGroup().ID(pid).MustBuild()
+	g := NewGroup().ID(pid).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -279,10 +284,10 @@ func TestGroupList_Group(t *testing.T) {
 }
 
 func TestGroupList_GroupAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -319,10 +324,10 @@ func TestGroupList_GroupAt(t *testing.T) {
 }
 
 func TestGroupList_Has(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -357,10 +362,10 @@ func TestGroupList_Has(t *testing.T) {
 }
 
 func TestGroupList_Count(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -387,10 +392,10 @@ func TestGroupList_Count(t *testing.T) {
 }
 
 func TestGroupList_Add(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -444,10 +449,10 @@ func TestGroupList_Add(t *testing.T) {
 }
 
 func TestGroupList_AddOrMove(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -514,33 +519,29 @@ func TestGroupList_AddOrMove(t *testing.T) {
 }
 
 func TestGroupList_Move(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
-		Name     string
-		GL       *GroupList
-		Id       ItemID
-		ToIndex  int
-		Expected struct {
-			Id    ItemID
-			Index int
-		}
+		Name          string
+		GL            *GroupList
+		ID            ItemID
+		ToIndex       int
+		ExpectedID    ItemID
+		ExpectedIndex int
 	}{
 		{
 			Name: "nil group list",
 		},
 		{
-			Name:    "success",
-			Id:      g1.ID(),
-			ToIndex: 2,
-			GL:      NewGroupList().NewID().SchemaGroup("xx").Groups([]*Group{g1, g2, g3, g4}).MustBuild(),
-			Expected: struct {
-				Id    ItemID
-				Index int
-			}{Id: g1.ID(), Index: 2},
+			Name:          "success",
+			ID:            g1.ID(),
+			ToIndex:       2,
+			GL:            NewGroupList().NewID().SchemaGroup("xx").Groups([]*Group{g1, g2, g3, g4}).MustBuild(),
+			ExpectedID:    g1.ID(),
+			ExpectedIndex: 2,
 		},
 	}
 
@@ -548,17 +549,20 @@ func TestGroupList_Move(t *testing.T) {
 		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
-			tt.GL.Move(tt.Id, tt.ToIndex)
-			assert.Equal(t, tt.Expected.Id, tt.GL.GroupAt(tt.Expected.Index).ID())
+			tt.GL.Move(tt.ID, tt.ToIndex)
+			g := tt.GL.GroupAt(tt.ExpectedIndex)
+			if !tt.ExpectedID.IsNil() {
+				assert.Equal(t, tt.ExpectedID, g.ID())
+			}
 		})
 	}
 }
 
 func TestGroupList_MoveAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name               string
@@ -603,10 +607,10 @@ func TestGroupList_MoveAt(t *testing.T) {
 }
 
 func TestGroupList_RemoveAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -647,10 +651,10 @@ func TestGroupList_RemoveAt(t *testing.T) {
 	}
 }
 func TestGroupList_Remove(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).MustBuild()
-	g2 := NewGroup().ID(NewItemID()).MustBuild()
-	g3 := NewGroup().ID(NewItemID()).MustBuild()
-	g4 := NewGroup().ID(NewItemID()).MustBuild()
+	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -689,10 +693,11 @@ func TestGroupList_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
 	g := NewGroup().ID(NewItemID()).SchemaGroup(sg.ID()).MustBuild()
+	s := NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild()
 
 	tests := []struct {
 		Name       string
-		GL         *GroupList
+		Target     *GroupList
 		Schema     *Schema
 		Ptr        *Pointer
 		Expected   *Field
@@ -700,28 +705,28 @@ func TestGroupList_GetOrCreateField(t *testing.T) {
 	}{
 		{
 			Name:       "success",
-			GL:         NewGroupList().NewID().SchemaGroup("aa").Groups([]*Group{g}).MustBuild(),
-			Schema:     NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Target:     NewGroupList().NewID().SchemaGroup("aa").Groups([]*Group{g}).MustBuild(),
+			Schema:     s,
 			Ptr:        NewPointer(nil, g.IDRef(), sf.ID().Ref()),
 			Expected:   FieldFrom(sf).MustBuild(),
 			ExpectedOK: true,
 		},
 		{
 			Name:   "can't get a group",
-			GL:     NewGroupList().NewID().SchemaGroup("aa").MustBuild(),
-			Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Target: NewGroupList().NewID().SchemaGroup("aa").MustBuild(),
+			Schema: s,
 			Ptr:    NewPointer(nil, g.IDRef(), sf.ID().Ref()),
 		},
 		{
-			Name:   "FieldByItem not ok: sg!=nil",
-			GL:     NewGroupList().NewID().SchemaGroup("aa").Groups([]*Group{g}).MustBuild(),
-			Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Name:   "FieldByItem not ok: sg != nil",
+			Target: NewGroupList().NewID().SchemaGroup("aa").Groups([]*Group{g}).MustBuild(),
+			Schema: s,
 			Ptr:    NewPointer(sg.IDRef(), g.IDRef(), sf.ID().Ref()),
 		},
 		{
 			Name:   "psg == nil",
-			GL:     NewGroupList().NewID().Groups([]*Group{g}).MustBuild(),
-			Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Target: nil,
+			Schema: s,
 			Ptr:    NewPointer(nil, g.IDRef(), sf.ID().Ref()),
 		},
 	}
@@ -730,7 +735,7 @@ func TestGroupList_GetOrCreateField(t *testing.T) {
 		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
-			res, ok := tt.GL.GetOrCreateField(tt.Schema, tt.Ptr)
+			res, ok := tt.Target.GetOrCreateField(tt.Schema, tt.Ptr)
 			assert.Equal(t, tt.Expected, res)
 			assert.Equal(t, tt.ExpectedOK, ok)
 		})
@@ -754,7 +759,7 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 			Name:     "success",
 			Index:    getIntRef(0),
 			GL:       NewGroupList().NewID().SchemaGroup("aa").MustBuild(),
-			Schema:   NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups([]*SchemaGroup{sg}).MustBuild(),
+			Schema:   NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			Expected: g,
 		},
 	}
@@ -764,8 +769,302 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
 			res := tt.GL.CreateAndAddListItem(tt.Schema, tt.Index)
-			assert.Equal(t, tt.Expected.Fields(), res.Fields())
+			assert.Equal(t, tt.Expected.Fields(nil), res.Fields(nil))
 			assert.Equal(t, tt.Expected.SchemaGroup(), res.SchemaGroup())
+		})
+	}
+}
+
+func TestGroupList_Clone(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *GroupList
+		n      bool
+	}{
+		{
+			name:   "ok",
+			target: testGroupList1.Clone(),
+		},
+		{
+			name: "nil",
+			n:    true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := tt.target.Clone()
+			if tt.n {
+				assert.Nil(t, res)
+			} else {
+				assert.Equal(t, tt.target, res)
+				assert.NotSame(t, tt.target, res)
+			}
+		})
+	}
+}
+
+func TestGroupList_CloneItem(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *GroupList
+		n      bool
+	}{
+		{
+			name:   "ok",
+			target: testGroupList1.Clone(),
+		},
+		{
+			name: "nil",
+			n:    true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := tt.target.CloneItem()
+			if tt.n {
+				assert.Nil(t, res)
+			} else {
+				assert.Equal(t, tt.target, res)
+				assert.NotSame(t, tt.target, res)
+			}
+		})
+	}
+}
+
+func TestGroupList_Fields(t *testing.T) {
+	type args struct {
+		p *Pointer
+	}
+	tests := []struct {
+		name   string
+		target *GroupList
+		args   args
+		want   []*Field
+	}{
+		{
+			name:   "all",
+			target: testGroupList1,
+			args:   args{p: nil},
+			want:   []*Field{testField2},
+		},
+		{
+			name:   "specified",
+			target: testGroupList1,
+			args:   args{p: PointFieldOnly(testField2.Field())},
+			want:   []*Field{testField2},
+		},
+		{
+			name:   "not found",
+			target: testGroupList1,
+			args:   args{p: PointFieldOnly("xxxxxx")},
+			want:   nil,
+		},
+		{
+			name:   "empty",
+			target: &GroupList{},
+			args:   args{p: PointFieldOnly(testField2.Field())},
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   args{p: PointFieldOnly(testField2.Field())},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Fields(tt.args.p))
+		})
+	}
+}
+
+func TestGroupList_RemoveFields(t *testing.T) {
+	type args struct {
+		p *Pointer
+	}
+	tests := []struct {
+		name       string
+		target     *GroupList
+		args       args
+		want       bool
+		wantFields []*Field
+	}{
+		{
+			name:       "nil pointer",
+			target:     testGroupList1.Clone(),
+			args:       args{p: nil},
+			want:       false,
+			wantFields: []*Field{testField2},
+		},
+		{
+			name:       "specified",
+			target:     testGroupList1.Clone(),
+			args:       args{p: PointFieldOnly(testField2.Field())},
+			want:       true,
+			wantFields: nil,
+		},
+		{
+			name:       "specified schema group",
+			target:     testGroupList1.Clone(),
+			args:       args{p: PointItemBySchema(testGroupList1.SchemaGroup())},
+			want:       false,
+			wantFields: []*Field{testField2},
+		},
+		{
+			name:       "specified item",
+			target:     testGroupList1.Clone(),
+			args:       args{p: PointItem(testGroupList1.ID())},
+			want:       false,
+			wantFields: []*Field{testField2},
+		},
+		{
+			name:       "not found",
+			target:     testGroupList1.Clone(),
+			args:       args{p: PointFieldOnly("xxxxxx")},
+			want:       false,
+			wantFields: []*Field{testField2},
+		},
+		{
+			name:       "empty",
+			target:     &GroupList{},
+			args:       args{p: PointFieldOnly(testField1.Field())},
+			want:       false,
+			wantFields: nil,
+		},
+		{
+			name:       "nil",
+			target:     nil,
+			args:       args{p: PointFieldOnly(testField1.Field())},
+			want:       false,
+			wantFields: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.RemoveFields(tt.args.p))
+			if tt.target != nil {
+				assert.Equal(t, tt.wantFields, tt.target.Fields(nil))
+			}
+		})
+	}
+}
+
+func TestGroupList_GroupAndFields(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *GroupList
+		args   *Pointer
+		want   []GroupAndField
+	}{
+		{
+			name:   "all",
+			target: testGroupList1,
+			args:   nil,
+			want: []GroupAndField{
+				{ParentGroup: testGroupList1, Group: testGroup2, Field: testField2},
+			},
+		},
+		{
+			name:   "specified",
+			target: testGroupList1,
+			args:   PointFieldByItem(testGroup2.ID(), testField2.Field()),
+			want: []GroupAndField{
+				{ParentGroup: testGroupList1, Group: testGroup2, Field: testField2},
+			},
+		},
+		{
+			name:   "specified but not found",
+			target: testGroupList1,
+			args:   PointFieldByItem(testGroup1.ID(), testField2.Field()),
+			want:   []GroupAndField{},
+		},
+		{
+			name:   "empty",
+			target: &GroupList{},
+			args:   nil,
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			args:   nil,
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := tt.target.GroupAndFields(tt.args)
+			assert.Equal(t, tt.want, res)
+			for i, r := range res {
+				assert.Same(t, tt.want[i].Field, r.Field)
+				assert.Same(t, tt.want[i].Group, r.Group)
+				assert.Same(t, tt.want[i].ParentGroup, r.ParentGroup)
+			}
+		})
+	}
+}
+
+func TestGroupList_GuessSchema(t *testing.T) {
+	tests := []struct {
+		name   string
+		target *GroupList
+		want   *SchemaGroup
+	}{
+		{
+			name: "ok",
+			target: &GroupList{
+				itemBase: itemBase{
+					SchemaGroup: "aa",
+				},
+				groups: []*Group{
+					{
+						itemBase: itemBase{
+							SchemaGroup: "aa",
+						},
+						fields: []*Field{
+							{field: "a", v: NewOptionalValue(ValueTypeLatLng, nil)},
+						},
+					},
+					{
+						itemBase: itemBase{
+							SchemaGroup: "aa",
+						},
+						fields: []*Field{
+							{field: "b", v: NewOptionalValue(ValueTypeString, nil)},
+						},
+					},
+				},
+			},
+			want: &SchemaGroup{
+				id:   "aa",
+				list: true,
+				fields: []*SchemaField{
+					{id: "a", propertyType: ValueTypeLatLng},
+					{id: "b", propertyType: ValueTypeString},
+				},
+			},
+		},
+		{
+			name:   "empty",
+			target: &GroupList{},
+			want:   nil,
+		},
+		{
+			name:   "nil",
+			target: nil,
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.GuessSchema())
 		})
 	}
 }

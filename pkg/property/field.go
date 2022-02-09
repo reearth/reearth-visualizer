@@ -32,10 +32,14 @@ func (p *Field) Clone() *Field {
 }
 
 func (p *Field) Field() FieldID {
-	if p == nil {
-		return FieldID("")
-	}
 	return p.field
+}
+
+func (p *Field) FieldRef() *FieldID {
+	if p == nil {
+		return nil
+	}
+	return p.field.Ref()
 }
 
 func (p *Field) Links() *Links {
@@ -59,20 +63,32 @@ func (p *Field) Value() *Value {
 	return p.v.Value()
 }
 
-func (p *Field) ActualValue(ds *dataset.Dataset) *Value {
-	if p.links != nil {
-		if l := p.links.Last(); l != nil {
-			ldid := l.Dataset()
-			ldsfid := l.DatasetSchemaField()
-			if ldid != nil || ldsfid != nil || ds.ID() == *ldid {
-				if f := ds.Field(*ldsfid); f != nil {
-					return valueFromDataset(f.Value())
-				}
-			}
-		}
+func (p *Field) TypeAndValue() *OptionalValue {
+	if p == nil {
 		return nil
 	}
-	return p.Value()
+	return p.v
+}
+
+func (p *Field) ActualValue(ds *dataset.Dataset) *ValueAndDatasetValue {
+	if p == nil {
+		return nil
+	}
+
+	var dv *dataset.Value
+	if p.links != nil {
+		if l := p.links.Last(); l != nil {
+			d := l.Dataset()
+			if d != nil && ds.ID() == *d && l.DatasetSchemaField() != nil {
+				dv = ds.Field(*l.DatasetSchemaField()).Value()
+			} else {
+				return nil
+			}
+		} else {
+			return nil
+		}
+	}
+	return NewValueAndDatasetValue(p.Type(), dv, p.Value())
 }
 
 func (p *Field) Datasets() []DatasetID {
@@ -113,12 +129,13 @@ func (p *Field) UpdateUnsafe(value *Value) {
 	p.v.SetValue(value)
 }
 
-func (p *Field) Cast(t ValueType) {
-	if p == nil || p.Type() == t {
-		return
+func (p *Field) Cast(t ValueType) bool {
+	if p == nil || t == ValueTypeUnknown || p.Type() == ValueTypeUnknown || p.Type() == t {
+		return false
 	}
 	p.v = p.v.Cast(t)
 	p.Unlink()
+	return true
 }
 
 func (p *Field) Link(links *Links) {
@@ -140,7 +157,7 @@ func (p *Field) UpdateField(field FieldID) {
 }
 
 func (p *Field) IsEmpty() bool {
-	return p != nil && p.Value().IsEmpty() && p.Links().IsEmpty()
+	return p == nil || p.Value().IsEmpty() && p.Links().IsEmpty()
 }
 
 func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) bool {
@@ -149,7 +166,7 @@ func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 	}
 
 	fid := p.Field()
-	schemaField := newSchema.Field(fid)
+	schemaField := newSchema.Groups().Field(fid)
 
 	// If field is not found in new schema, this field should be removed
 	invalid := schemaField == nil
@@ -175,13 +192,6 @@ func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 	return !invalid
 }
 
-func (p *Field) DatasetValue(ctx context.Context, d dataset.GraphLoader) (*dataset.Value, error) {
-	if p == nil {
-		return nil, nil
-	}
-	return p.links.DatasetValue(ctx, d)
-}
-
 func (p *Field) MigrateDataset(q DatasetMigrationParam) {
 	if p == nil {
 		return
@@ -193,15 +203,12 @@ func (p *Field) MigrateDataset(q DatasetMigrationParam) {
 	}
 }
 
-func (p *Field) ValidateSchema(ps *SchemaField) error {
-	if p == nil {
+func (f *Field) GuessSchema() *SchemaField {
+	if f == nil {
 		return nil
 	}
-	if ps == nil {
-		return errors.New("schema not found")
-	}
-	if p.v == nil {
-		return errors.New("invalid field value and type")
+	if f, err := NewSchemaField().ID(f.Field()).Type(f.Type()).Build(); err == nil {
+		return f
 	}
 	return nil
 }

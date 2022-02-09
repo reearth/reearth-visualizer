@@ -22,6 +22,9 @@ func (b *GroupBuilder) Build() (*Group, error) {
 	if b.p.itemBase.ID.IsNil() {
 		return nil, ErrInvalidID
 	}
+	if b.p.itemBase.SchemaGroup == "" {
+		return nil, ErrInvalidID
+	}
 	return b.p, nil
 }
 
@@ -44,7 +47,8 @@ func (b *GroupBuilder) ID(id ItemID) *GroupBuilder {
 }
 
 func (b *GroupBuilder) NewID() *GroupBuilder {
-	b.p.itemBase.ID = NewItemID()
+	nid := NewItemID
+	b.p.itemBase.ID = nid()
 	return b
 }
 

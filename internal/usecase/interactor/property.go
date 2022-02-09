@@ -243,7 +243,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 	if v == nil {
 		return nil, nil, nil, nil, interfaces.ErrInvalidPropertyValue
 	}
-	if err = field.Update(v, ps.Field(field.Field())); err != nil {
+	if err = field.Update(v, ps.Groups().Field(field.Field())); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
