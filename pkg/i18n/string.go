@@ -1,12 +1,36 @@
 package i18n
 
+const DefaultLang = "en"
+
 type String map[string]string // key should use BCP 47 representation
 
 func StringFrom(s string) String {
 	if s == "" {
+		return String{}
+	}
+	return String{DefaultLang: s}
+}
+
+func (s String) WithDefault(d string) String {
+	if s == nil && d == "" {
 		return nil
 	}
-	return String{"en": s}
+
+	res := s.Clone()
+	if res == nil {
+		res = String{}
+	}
+	if d != "" {
+		res[DefaultLang] = d
+	}
+	return res
+}
+
+func (s String) WithDefaultRef(d *string) String {
+	if d == nil {
+		return s.Clone()
+	}
+	return s.WithDefault(*d)
 }
 
 func (s String) Translated(lang ...string) string {
@@ -21,8 +45,8 @@ func (s String) Translated(lang ...string) string {
 	return s.String()
 }
 
-func (s String) Copy() String {
-	if s == nil {
+func (s String) Clone() String {
+	if len(s) == 0 {
 		return nil
 	}
 	s2 := make(String, len(s))
@@ -36,13 +60,13 @@ func (s String) String() string {
 	if s == nil {
 		return ""
 	}
-	return s["en"]
+	return s[DefaultLang]
 }
 
 func (s String) StringRef() *string {
 	if s == nil {
 		return nil
 	}
-	st := s["en"]
+	st := s[DefaultLang]
 	return &st
 }

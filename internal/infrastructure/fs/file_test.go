@@ -249,15 +249,17 @@ func TestGetAssetFileURL(t *testing.T) {
 }
 
 func mockFs() afero.Fs {
+	files := map[string]string{
+		"assets/xxx.txt":           "hello",
+		"plugins/aaa~1.0.0/foo.js": "bar",
+		"published/s.json":         "{}",
+	}
+
 	fs := afero.NewMemMapFs()
-	f, _ := fs.Create("assets/xxx.txt")
-	_, _ = f.WriteString("hello")
-	_ = f.Close()
-	f, _ = fs.Create("plugins/aaa~1.0.0/foo.js")
-	_, _ = f.WriteString("bar")
-	_ = f.Close()
-	f, _ = fs.Create("published/s.json")
-	_, _ = f.WriteString("{}")
-	_ = f.Close()
+	for name, content := range files {
+		f, _ := fs.Create(name)
+		_, _ = f.WriteString(content)
+		_ = f.Close()
+	}
 	return fs
 }

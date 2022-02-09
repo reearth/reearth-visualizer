@@ -20,17 +20,18 @@ func TestToValue(t *testing.T) {
 func TestChoice(t *testing.T) {
 	tests := []struct {
 		name     string
-		ch       *Choice
-		expected *property.SchemaFieldChoice
+		ch       Choice
+		tc       i18n.String
+		expected property.SchemaFieldChoice
 	}{
 		{
 			name: "success",
-			ch: &Choice{
+			ch: Choice{
 				Icon:  "aaa",
 				Key:   "nnn",
 				Label: "vvv",
 			},
-			expected: &property.SchemaFieldChoice{
+			expected: property.SchemaFieldChoice{
 				Key:   "nnn",
 				Title: i18n.StringFrom("vvv"),
 				Icon:  "aaa",
@@ -42,10 +43,9 @@ func TestChoice(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, *tt.expected, *tt.ch.choice())
+			assert.Equal(t, tt.expected, tt.ch.choice(tt.tc))
 		})
 	}
-
 }
 
 func TestManifest(t *testing.T) {
@@ -58,7 +58,9 @@ func TestManifest(t *testing.T) {
 	tests := []struct {
 		name     string
 		root     *Root
+		scene    *plugin.SceneID
 		expected *Manifest
+		tl       *TranslatedRoot
 		err      string
 	}{
 		{
@@ -72,27 +74,53 @@ func TestManifest(t *testing.T) {
 					Description: nil,
 					ID:          "cesium",
 					Name:        "",
-					Schema:      nil,
 					Type:        "visualizer",
 					Visualizer:  &cesium,
 				}},
 				Repository: &r,
 				System:     true,
 				Version:    "1.1.1",
+				Schema: &PropertySchema{
+					Groups: []PropertySchemaGroup{
+						{ID: "default"},
+					},
+				},
+			},
+			tl: &TranslatedRoot{
+				Name:        i18n.String{"ja": "A"},
+				Description: i18n.String{"ja": "B"},
+				Extensions:  map[string]*TranslatedExtension{"cesium": {Name: i18n.String{"ja": "セジウム"}}},
+				Schema:      TranslatedPropertySchema{"default": {Title: i18n.String{"ja": "デフォルト"}}},
 			},
 			expected: &Manifest{
 				Plugin: plugin.New().
 					ID(plugin.OfficialPluginID).
-					Name(i18n.StringFrom("aaa")).
+					Name(i18n.String{"en": "aaa", "ja": "A"}).
+					Author(a).
+					RepositoryURL(r).
+					Description(i18n.String{"en": d, "ja": "B"}).
+					Schema(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "@").Ref()).
 					Extensions([]*plugin.Extension{
 						plugin.NewExtension().
 							ID("cesium").
+							Name(i18n.String{"ja": "セジウム"}).
 							Visualizer("cesium").
 							Type("visualizer").
-							System(true).MustBuild(),
+							Schema(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "cesium")).
+							System(true).
+							MustBuild(),
 					}).MustBuild(),
-				ExtensionSchema: nil,
-				Schema:          nil,
+				ExtensionSchema: property.SchemaList{
+					property.NewSchema().
+						ID(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "cesium")).
+						MustBuild(),
+				},
+				Schema: property.NewSchema().
+					ID(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "@")).
+					Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
+						property.NewSchemaGroup().ID("default").Title(i18n.String{"ja": "デフォルト"}).MustBuild(),
+					})).
+					MustBuild(),
 			},
 		},
 		{
@@ -103,9 +131,7 @@ func TestManifest(t *testing.T) {
 				System: true,
 			},
 			expected: &Manifest{
-				Plugin:          plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
-				ExtensionSchema: nil,
-				Schema:          nil,
+				Plugin: plugin.New().ID(plugin.OfficialPluginID).Name(i18n.StringFrom("reearth")).MustBuild(),
 			},
 		},
 		{
@@ -166,13 +192,13 @@ func TestManifest(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			m, err := tt.root.manifest(nil)
+			m, err := tt.root.manifest(tt.scene, tt.tl)
 			if tt.err == "" {
-				assert.Equal(t, tt.expected.Plugin.ID(), m.Plugin.ID())
-				assert.Equal(t, tt.expected.Plugin.Name(), m.Plugin.Name())
-				assert.Equal(t, len(tt.expected.Plugin.Extensions()), len(m.Plugin.Extensions()))
+				assert.Equal(t, tt.expected, m)
+				assert.NoError(t, err)
 			} else {
-				assert.Equal(t, tt.err, err.Error())
+				assert.Nil(t, m)
+				assert.EqualError(t, err, tt.err)
 			}
 		})
 	}
@@ -189,6 +215,7 @@ func TestExtension(t *testing.T) {
 		name       string
 		ext        Extension
 		sys        bool
+		tl         *TranslatedExtension
 		pid        plugin.ID
 		expectedPE *plugin.Extension
 		expectedPS *property.Schema
@@ -201,24 +228,38 @@ func TestExtension(t *testing.T) {
 				ID:          "cesium",
 				Name:        "Cesium",
 				Icon:        &i,
-				Schema:      nil,
-				Type:        "visualizer",
-				Visualizer:  &cesium,
+				Schema: &PropertySchema{
+					Groups: []PropertySchemaGroup{
+						{ID: "default"},
+					},
+				},
+				Type:       "visualizer",
+				Visualizer: &cesium,
 			},
 			sys: true,
 			pid: plugin.OfficialPluginID,
+			tl: &TranslatedExtension{
+				Name:        i18n.String{"ja": "セジウム"},
+				Description: i18n.String{"ja": "DDD"},
+				PropertySchema: TranslatedPropertySchema{
+					"default": {Title: i18n.String{"ja": "デフォルト"}},
+				},
+			},
 			expectedPE: plugin.NewExtension().
 				ID("cesium").
-				Name(i18n.StringFrom("Cesium")).
+				Name(i18n.String{"en": "Cesium", "ja": "セジウム"}).
 				Visualizer("cesium").
 				Type(plugin.ExtensionTypeVisualizer).
 				System(true).
-				Description(i18n.StringFrom("ddd")).
+				Description(i18n.String{"en": "ddd", "ja": "DDD"}).
 				Schema(property.MustSchemaID("reearth/cesium")).
 				Icon(i).
 				MustBuild(),
 			expectedPS: property.NewSchema().
 				ID(property.MustSchemaID("reearth/cesium")).
+				Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
+					property.NewSchemaGroup().ID("default").Title(i18n.String{"ja": "デフォルト"}).MustBuild(),
+				})).
 				MustBuild(),
 		},
 		{
@@ -399,12 +440,15 @@ func TestExtension(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			pe, ps, err := tt.ext.extension(tt.pid, tt.sys)
+			pe, ps, err := tt.ext.extension(tt.pid, tt.sys, tt.tl)
 			if tt.err == "" {
 				assert.Equal(t, tt.expectedPE, pe)
 				assert.Equal(t, tt.expectedPS, ps)
+				assert.Nil(t, err)
 			} else {
-				assert.Equal(t, tt.err, err.Error())
+				assert.EqualError(t, err, tt.err)
+				assert.Nil(t, pe)
+				assert.Nil(t, ps)
 			}
 		})
 	}
@@ -540,12 +584,13 @@ func TestSchema(t *testing.T) {
 		name, psid string
 		ps         *PropertySchema
 		pid        plugin.ID
+		tl         *TranslatedPropertySchema
 		expected   *property.Schema
 		err        string
 	}{
 		{
 			name: "fail invalid id",
-			psid: "@",
+			psid: "~",
 			ps: &PropertySchema{
 				Groups:   nil,
 				Linkable: nil,
@@ -553,7 +598,7 @@ func TestSchema(t *testing.T) {
 			},
 			pid:      plugin.MustID("aaa~1.1.1"),
 			expected: nil,
-			err:      "invalid id: aaa~1.1.1/@",
+			err:      "invalid id: aaa~1.1.1/~",
 		},
 		{
 			name:     "success nil PropertySchema",
@@ -563,7 +608,7 @@ func TestSchema(t *testing.T) {
 			expected: property.NewSchema().ID(property.MustSchemaID("reearth/marker")).MustBuild(),
 		},
 		{
-			name: "success ",
+			name: "success",
 			psid: "marker",
 			ps: &PropertySchema{
 				Groups: []PropertySchemaGroup{{
@@ -590,6 +635,9 @@ func TestSchema(t *testing.T) {
 				Linkable: nil,
 				Version:  0,
 			},
+			tl: &TranslatedPropertySchema{
+				"default": {Title: i18n.String{"ja": "マーカー"}},
+			},
 			pid: plugin.OfficialPluginID,
 			expected: property.
 				NewSchema().
@@ -597,6 +645,7 @@ func TestSchema(t *testing.T) {
 				Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
 					property.NewSchemaGroup().
 						ID("default").
+						Title(i18n.String{"en": "marker", "ja": "マーカー"}).
 						Fields([]*property.SchemaField{
 							property.NewSchemaField().
 								ID("location").
@@ -613,17 +662,13 @@ func TestSchema(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tt.ps.schema(tt.pid, tt.psid)
+			res, err := tt.ps.schema(tt.pid, tt.psid, tt.tl)
 			if tt.err == "" {
-				assert.Equal(t, tt.expected.Groups().Len(), res.Groups().Len())
-				assert.Equal(t, tt.expected.LinkableFields(), res.LinkableFields())
-				assert.Equal(t, tt.expected.Version(), res.Version())
-				if res.Groups().Len() > 0 {
-					exg := tt.expected.Groups().Group(res.Groups().Groups()[0].ID())
-					assert.NotNil(t, exg)
-				}
+				assert.Equal(t, tt.expected, res)
+				assert.Nil(t, err)
 			} else {
-				assert.Equal(t, tt.err, err.Error())
+				assert.Nil(t, res)
+				assert.EqualError(t, err, tt.err)
 			}
 		})
 	}
@@ -636,6 +681,7 @@ func TestSchemaGroup(t *testing.T) {
 	tests := []struct {
 		name     string
 		psg      PropertySchemaGroup
+		tl       *TranslatedPropertySchemaGroup
 		expected *property.SchemaGroup
 		err      string
 	}{
@@ -662,13 +708,21 @@ func TestSchemaGroup(t *testing.T) {
 				List:  false,
 				Title: "marker",
 			},
+			tl: &TranslatedPropertySchemaGroup{
+				Title:       i18n.String{"ja": "マーカー"},
+				Description: i18n.String{"ja": "説明"},
+				Fields: map[string]*TranslatedPropertySchemaField{
+					"location": {Title: i18n.String{"en": "x"}},
+				},
+			},
 			expected: property.NewSchemaGroup().
 				ID("default").
-				Title(i18n.StringFrom(str)).
+				Title(i18n.String{"en": str, "ja": "マーカー"}).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().
 						ID("location").
 						Type(property.ValueTypeLatLng).
+						Name(i18n.String{"en": "x"}).
 						MustBuild(),
 				}).MustBuild(),
 		},
@@ -704,17 +758,13 @@ func TestSchemaGroup(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tt.psg.schemaGroup()
+			res, err := tt.psg.schemaGroup(tt.tl)
 			if tt.err == "" {
-				assert.Equal(t, tt.expected.Title().String(), res.Title().String())
-				assert.Equal(t, tt.expected.Title(), res.Title())
-				assert.Equal(t, len(tt.expected.Fields()), len(res.Fields()))
-				if len(res.Fields()) > 0 {
-					exf := res.Fields()[0]
-					assert.NotNil(t, tt.expected.Field(exf.ID()))
-				}
+				assert.Equal(t, tt.expected, res)
+				assert.Nil(t, err)
 			} else {
-				assert.Equal(t, tt.err, err.Error())
+				assert.Nil(t, res)
+				assert.EqualError(t, err, tt.err)
 			}
 		})
 	}
@@ -726,11 +776,12 @@ func TestSchemaField(t *testing.T) {
 	tests := []struct {
 		name     string
 		psg      PropertySchemaField
+		tl       *TranslatedPropertySchemaField
 		expected *property.SchemaField
 		err      error
 	}{
 		{
-			name: "success name not nil",
+			name: "success",
 			psg: PropertySchemaField{
 				AvailableIf:  nil,
 				Choices:      nil,
@@ -745,8 +796,18 @@ func TestSchemaField(t *testing.T) {
 				Type:         "string",
 				UI:           nil,
 			},
-			expected: property.NewSchemaField().ID("aaa").Name(i18n.StringFrom("xx")).Description(i18n.StringFrom("")).Type(property.ValueTypeString).MustBuild(),
-			err:      nil,
+			tl: &TranslatedPropertySchemaField{
+				Title:       i18n.String{"en": "TITLE", "ja": "タイトル"},
+				Description: i18n.String{"ja": "説明"},
+				Choices:     map[string]i18n.String{"A": {"en": "a"}},
+			},
+			expected: property.NewSchemaField().
+				ID("aaa").
+				Name(i18n.String{"en": str, "ja": "タイトル"}).
+				Description(i18n.String{"ja": "説明"}).
+				Type(property.ValueTypeString).
+				MustBuild(),
+			err: nil,
 		},
 		{
 			name: "success description not nil",
@@ -764,8 +825,13 @@ func TestSchemaField(t *testing.T) {
 				Type:         "string",
 				UI:           nil,
 			},
-			expected: property.NewSchemaField().ID("aaa").Name(i18n.StringFrom("")).Description(i18n.StringFrom("xx")).Type(property.ValueTypeString).MustBuild(),
-			err:      nil,
+			expected: property.NewSchemaField().
+				ID("aaa").
+				Name(i18n.StringFrom("")).
+				Description(i18n.StringFrom("xx")).
+				Type(property.ValueTypeString).
+				MustBuild(),
+			err: nil,
 		},
 		{
 			name: "success prefix not nil",
@@ -827,6 +893,9 @@ func TestSchemaField(t *testing.T) {
 						Key:   "nnn",
 						Label: "vvv",
 					},
+					{
+						Key: "z",
+					},
 				},
 				DefaultValue: nil,
 				Description:  nil,
@@ -839,13 +908,20 @@ func TestSchemaField(t *testing.T) {
 				Type:         "string",
 				UI:           nil,
 			},
+			tl: &TranslatedPropertySchemaField{
+				Choices: map[string]i18n.String{"nnn": {"ja": "a"}, "z": {"en": "Z"}},
+			},
 			expected: property.NewSchemaField().
 				ID("aaa").
 				Choices([]property.SchemaFieldChoice{
 					{
 						Key:   "nnn",
-						Title: i18n.StringFrom("vvv"),
+						Title: i18n.String{"en": "vvv", "ja": "a"},
 						Icon:  "aaa",
+					},
+					{
+						Key:   "z",
+						Title: i18n.String{"en": "Z"},
 					},
 				}).
 				Type(property.ValueTypeString).
@@ -891,14 +967,12 @@ func TestSchemaField(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res, err := tt.psg.schemaField()
+			res, err := tt.psg.schemaField(tt.tl)
 			if tt.err == nil {
-				assert.Equal(t, tt.expected.Title(), res.Title())
-				assert.Equal(t, tt.expected.Description(), res.Description())
-				assert.Equal(t, tt.expected.Suffix(), res.Suffix())
-				assert.Equal(t, tt.expected.Prefix(), res.Prefix())
-				assert.Equal(t, tt.expected.Choices(), res.Choices())
+				assert.Equal(t, tt.expected, res)
+				assert.Nil(t, err)
 			} else {
+				assert.Nil(t, res)
 				assert.Equal(t, tt.err, rerror.Get(err).Err)
 			}
 		})

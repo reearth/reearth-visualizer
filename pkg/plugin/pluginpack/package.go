@@ -6,6 +6,7 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"regexp"
 
 	"github.com/reearth/reearth-backend/pkg/file"
 	"github.com/reearth/reearth-backend/pkg/plugin"
@@ -14,6 +15,8 @@ import (
 )
 
 const manfiestFilePath = "reearth.yml"
+
+var translationFileNameRegexp = regexp.MustCompile(`reearth_([a-zA-Z]+(?:-[a-zA-Z]+)?).yml`)
 
 type Package struct {
 	Manifest *manifest.Manifest
@@ -32,6 +35,7 @@ func PackageFromZip(r io.Reader, scene *plugin.SceneID, sizeLimit int64) (*Packa
 	}
 
 	basePath := file.ZipBasePath(zr)
+
 	f, err := zr.Open(path.Join(basePath, manfiestFilePath))
 	if err != nil {
 		return nil, rerror.From("manifest open error", err)
@@ -40,7 +44,12 @@ func PackageFromZip(r io.Reader, scene *plugin.SceneID, sizeLimit int64) (*Packa
 		_ = f.Close()
 	}()
 
-	m, err := manifest.Parse(f, scene)
+	translations, err := readTranslation(zr, basePath)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := manifest.Parse(f, scene, translations.TranslatedRef())
 	if err != nil {
 		return nil, rerror.From("invalid manifest", err)
 	}
@@ -55,4 +64,32 @@ func iterator(a file.Iterator, prefix string) file.Iterator {
 	return file.NewFilteredIterator(file.NewPrefixIterator(a, prefix), func(p string) bool {
 		return p == manfiestFilePath || filepath.Ext(p) != ".js"
 	})
+}
+
+func readTranslation(fs *zip.Reader, base string) (manifest.TranslationMap, error) {
+	translationMap := manifest.TranslationMap{}
+	for _, f := range fs.File {
+		if filepath.Dir(f.Name) != base {
+			continue
+		}
+
+		lang := translationFileNameRegexp.FindStringSubmatch(filepath.Base(f.Name))
+		if len(lang) == 0 {
+			continue
+		}
+		langfile, err := f.Open()
+		if err != nil {
+			return nil, rerror.ErrInternalBy(err)
+		}
+		defer func() {
+			_ = langfile.Close()
+		}()
+		t, err := manifest.ParseTranslation(langfile)
+		if err != nil {
+			return nil, err
+		}
+		translationMap[lang[1]] = t
+	}
+
+	return translationMap, nil
 }

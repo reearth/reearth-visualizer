@@ -1,7 +1,6 @@
 package i18n
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,18 +8,18 @@ import (
 
 func TestString_String(t *testing.T) {
 	tests := []struct {
-		Name, ExpectedStr string
-		I18nString        String
+		Name, Expected string
+		Target         String
 	}{
 		{
-			Name:        "en string",
-			ExpectedStr: "foo",
-			I18nString:  String{"en": "foo"},
+			Name:     "en string",
+			Expected: "foo",
+			Target:   String{"en": "foo"},
 		},
 		{
-			Name:        "nil string",
-			ExpectedStr: "",
-			I18nString:  nil,
+			Name:     "nil string",
+			Expected: "",
+			Target:   nil,
 		},
 	}
 
@@ -28,7 +27,115 @@ func TestString_String(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tc.ExpectedStr, tc.I18nString.String())
+			assert.Equal(t, tc.Expected, tc.Target.String())
+		})
+	}
+}
+
+func TestString_WithDefault(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Target   String
+		Input    string
+		Expected String
+	}{
+		{
+			Name:     "ok",
+			Target:   String{"en": "foo", "ja": "bar"},
+			Input:    "x",
+			Expected: String{"en": "x", "ja": "bar"},
+		},
+		{
+			Name:     "empty default",
+			Target:   String{"en": "foo"},
+			Input:    "",
+			Expected: String{"en": "foo"},
+		},
+		{
+			Name:     "empty",
+			Target:   String{},
+			Input:    "x",
+			Expected: String{"en": "x"},
+		},
+		{
+			Name:     "empty string and empty default",
+			Target:   String{},
+			Input:    "",
+			Expected: String{},
+		},
+		{
+			Name:     "nil string",
+			Target:   nil,
+			Input:    "x",
+			Expected: String{"en": "x"},
+		},
+		{
+			Name:     "nil string and empty default",
+			Target:   nil,
+			Input:    "",
+			Expected: nil,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.Target.WithDefault(tc.Input))
+		})
+	}
+}
+
+func TestString_WithDefaultRef(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Target   String
+		Input    *string
+		Expected String
+	}{
+		{
+			Name:     "ok",
+			Target:   String{"en": "foo", "ja": "bar"},
+			Input:    sr("x"),
+			Expected: String{"en": "x", "ja": "bar"},
+		},
+		{
+			Name:     "nil default",
+			Target:   String{"en": "foo", "ja": "bar"},
+			Input:    nil,
+			Expected: String{"en": "foo", "ja": "bar"},
+		},
+		{
+			Name:     "empty default",
+			Target:   String{"en": "foo"},
+			Input:    sr(""),
+			Expected: String{"en": "foo"},
+		},
+		{
+			Name:     "empty",
+			Target:   String{},
+			Input:    sr("x"),
+			Expected: String{"en": "x"},
+		},
+		{
+			Name:     "empty string and empty default",
+			Target:   String{},
+			Input:    sr(""),
+			Expected: String{},
+		},
+		{
+			Name:     "nil string",
+			Target:   nil,
+			Input:    sr("x"),
+			Expected: String{"en": "x"},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.Expected, tc.Target.WithDefaultRef(tc.Input))
 		})
 	}
 }
@@ -69,25 +176,28 @@ func TestStringTranslated(t *testing.T) {
 
 func TestStringFrom(t *testing.T) {
 	assert.Equal(t, String{"en": "foo"}, StringFrom("foo"))
-	assert.Nil(t, String(nil), StringFrom(""))
+	assert.Equal(t, String{}, StringFrom(""))
 }
 
-func TestStringCopy(t *testing.T) {
+func TestString_Clone(t *testing.T) {
 	tests := []struct {
-		Name         string
-		SourceString String
+		Name             string
+		Target, Expected String
 	}{
 		{
-			Name:         "String with content",
-			SourceString: String{"ja": "foo"},
+			Name:     "String with content",
+			Target:   String{"ja": "foo"},
+			Expected: String{"ja": "foo"},
 		},
 		{
-			Name:         "empty String",
-			SourceString: String{},
+			Name:     "empty String",
+			Target:   String{},
+			Expected: nil,
 		},
 		{
-			Name:         "nil",
-			SourceString: nil,
+			Name:     "nil",
+			Target:   nil,
+			Expected: nil,
 		},
 	}
 
@@ -95,10 +205,9 @@ func TestStringCopy(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			assert.True(t, reflect.DeepEqual(tc.SourceString, tc.SourceString.Copy()))
-			if tc.SourceString == nil {
-				assert.Nil(t, tc.SourceString.Copy())
-			}
+			res := tc.Target.Clone()
+			assert.Equal(t, tc.Expected, res)
+			assert.NotSame(t, tc.Target, res)
 		})
 	}
 }
@@ -132,4 +241,8 @@ func TestString_StringRef(t *testing.T) {
 			assert.Equal(t, tc.Expected, tc.I18nString.StringRef())
 		})
 	}
+}
+
+func sr(s string) *string {
+	return &s
 }

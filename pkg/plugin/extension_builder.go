@@ -42,7 +42,7 @@ func (b *ExtensionBuilder) ID(id ExtensionID) *ExtensionBuilder {
 }
 
 func (b *ExtensionBuilder) Name(name i18n.String) *ExtensionBuilder {
-	b.p.name = name.Copy()
+	b.p.name = name.Clone()
 	return b
 }
 
@@ -52,7 +52,7 @@ func (b *ExtensionBuilder) Type(extensionType ExtensionType) *ExtensionBuilder {
 }
 
 func (b *ExtensionBuilder) Description(description i18n.String) *ExtensionBuilder {
-	b.p.description = description.Copy()
+	b.p.description = description.Clone()
 	return b
 }
 

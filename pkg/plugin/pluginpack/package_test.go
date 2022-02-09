@@ -12,22 +12,22 @@ import (
 )
 
 func TestPackageFromZip(t *testing.T) {
+	expected := &manifest.Manifest{
+		Plugin: plugin.New().
+			ID(plugin.MustID("testplugin~1.0.1")).
+			Name(i18n.String{"en": "testplugin", "ja": "テストプラグイン", "zh-CN": "测试插件"}).
+			MustBuild(),
+	}
+
 	f, err := os.Open("testdata/test.zip")
 	assert.NoError(t, err)
 	defer func() {
 		_ = f.Close()
 	}()
 
-	expected := plugin.New().
-		ID(plugin.MustID("testplugin~1.0.1")).
-		Name(i18n.StringFrom("testplugin")).
-		MustBuild()
-
-	p, err := PackageFromZip(f, nil, 1000)
+	p, err := PackageFromZip(f, nil, 10000)
 	assert.NoError(t, err)
-	assert.Equal(t, &manifest.Manifest{
-		Plugin: expected,
-	}, p.Manifest)
+	assert.Equal(t, expected, p.Manifest)
 
 	var files []string
 	for {

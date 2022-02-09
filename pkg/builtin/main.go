@@ -15,14 +15,16 @@ var pluginManifestJSON []byte
 //go:embed manifest_ja.yml
 var pluginManifestJSON_ja []byte
 
-var pluginTranslationList = map[string]*manifest.TranslationRoot{"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja)}
-var pluginManifest = manifest.MergeManifestTranslation(manifest.MustParseSystemFromBytes(pluginManifestJSON, nil), pluginTranslationList)
+var pluginTranslationList = manifest.TranslationMap{
+	"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
+}
+var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
 
 // MUST NOT CHANGE
-var PropertySchemaIDVisualizerCesium = property.MustSchemaID("reearth/cesium")
-
-// MUST NOT CHANGE
-var PropertySchemaIDInfobox = property.MustSchemaID("reearth/infobox")
+var (
+	PropertySchemaIDVisualizerCesium = property.MustSchemaID("reearth/cesium")
+	PropertySchemaIDInfobox          = property.MustSchemaID("reearth/infobox")
+)
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {

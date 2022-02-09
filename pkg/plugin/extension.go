@@ -40,11 +40,11 @@ func (w *Extension) Type() ExtensionType {
 }
 
 func (w *Extension) Name() i18n.String {
-	return w.name.Copy()
+	return w.name.Clone()
 }
 
 func (w *Extension) Description() i18n.String {
-	return w.description.Copy()
+	return w.description.Clone()
 }
 
 func (w *Extension) Icon() string {
@@ -71,12 +71,12 @@ func (w *Extension) WidgetLayout() *WidgetLayout {
 }
 
 func (w *Extension) Rename(name i18n.String) {
-	w.name = name.Copy()
+	w.name = name.Clone()
 
 }
 
 func (w *Extension) SetDescription(des i18n.String) {
-	w.description = des.Copy()
+	w.description = des.Clone()
 }
 
 func (w *Extension) Clone() *Extension {
@@ -86,8 +86,8 @@ func (w *Extension) Clone() *Extension {
 	return &Extension{
 		id:            w.id,
 		extensionType: w.extensionType,
-		name:          w.name.Copy(),
-		description:   w.description.Copy(),
+		name:          w.name.Clone(),
+		description:   w.description.Clone(),
 		icon:          w.icon,
 		schema:        w.schema.Clone(),
 		visualizer:    w.visualizer,

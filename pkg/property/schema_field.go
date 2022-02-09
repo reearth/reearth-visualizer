@@ -43,14 +43,14 @@ func (p *SchemaField) Title() i18n.String {
 	if p == nil {
 		return nil
 	}
-	return p.title.Copy()
+	return p.title.Clone()
 }
 
 func (p *SchemaField) Description() i18n.String {
 	if p == nil {
 		return nil
 	}
-	return p.description.Copy()
+	return p.description.Clone()
 }
 
 func (p *SchemaField) Prefix() string {
@@ -171,27 +171,27 @@ func (p *SchemaField) SetTitle(title i18n.String) {
 	if p == nil {
 		return
 	}
-	p.title = title.Copy()
+	p.title = title.Clone()
 }
 
 func (p *SchemaField) SetDescription(des i18n.String) {
 	if p == nil {
 		return
 	}
-	p.description = des.Copy()
+	p.description = des.Clone()
 }
 
 func (c *SchemaFieldChoice) SetTitle(l i18n.String) {
 	if c == nil {
 		return
 	}
-	c.Title = l.Copy()
+	c.Title = l.Clone()
 }
 
 func (c SchemaFieldChoice) Copy() SchemaFieldChoice {
 	return SchemaFieldChoice{
 		Icon:  c.Icon,
 		Key:   c.Key,
-		Title: c.Title.Copy(),
+		Title: c.Title.Clone(),
 	}
 }

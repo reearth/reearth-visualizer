@@ -26,5 +26,5 @@ func (r *pluginRepository) Data(ctx context.Context, id id.PluginID) (file.Itera
 }
 
 func (r *pluginRepository) Manifest(ctx context.Context, id id.PluginID) (*manifest.Manifest, error) {
-	return readManifest(r.fs, id)
+	return readPluginManifest(r.fs, id)
 }

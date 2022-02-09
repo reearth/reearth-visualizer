@@ -16,14 +16,14 @@ var (
 	ErrSystemManifest              = errors.New("cannot build system manifest")
 )
 
-func Parse(source io.Reader, scene *plugin.SceneID) (*Manifest, error) {
+func Parse(source io.Reader, scene *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.NewDecoder(source).Decode(&root); err != nil {
 		return nil, ErrFailedToParseManifest
 		// return nil, fmt.Errorf("failed to parse plugin manifest: %w", err)
 	}
 
-	manifest, err := root.manifest(scene)
+	manifest, err := root.manifest(scene, tl)
 	if err != nil {
 		return nil, err
 	}
@@ -34,14 +34,14 @@ func Parse(source io.Reader, scene *plugin.SceneID) (*Manifest, error) {
 	return manifest, nil
 }
 
-func ParseSystemFromBytes(source []byte, scene *plugin.SceneID) (*Manifest, error) {
+func ParseSystemFromBytes(source []byte, scene *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	root := Root{}
 	if err := yaml.Unmarshal(source, &root); err != nil {
 		return nil, ErrFailedToParseManifest
 		// return nil, fmt.Errorf("failed to parse plugin manifest: %w", err)
 	}
 
-	manifest, err := root.manifest(scene)
+	manifest, err := root.manifest(scene, tl)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +49,8 @@ func ParseSystemFromBytes(source []byte, scene *plugin.SceneID) (*Manifest, erro
 	return manifest, nil
 }
 
-func MustParseSystemFromBytes(source []byte, scene *plugin.SceneID) *Manifest {
-	m, err := ParseSystemFromBytes(source, scene)
+func MustParseSystemFromBytes(source []byte, scene *plugin.SceneID, tl *TranslatedRoot) *Manifest {
+	m, err := ParseSystemFromBytes(source, scene, tl)
 	if err != nil {
 		panic(err)
 	}

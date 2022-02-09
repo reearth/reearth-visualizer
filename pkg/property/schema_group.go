@@ -87,7 +87,7 @@ func (s *SchemaGroup) Title() i18n.String {
 	if s == nil {
 		return nil
 	}
-	return s.title.Copy()
+	return s.title.Clone()
 }
 
 // RepresentativeFieldID returns the representative field ID of the group
@@ -107,5 +107,5 @@ func (s *SchemaGroup) RepresentativeField() *SchemaField {
 }
 
 func (s *SchemaGroup) SetTitle(t i18n.String) {
-	s.title = t.Copy()
+	s.title = t.Clone()
 }

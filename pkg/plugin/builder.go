@@ -31,7 +31,7 @@ func (b *Builder) ID(id ID) *Builder {
 }
 
 func (b *Builder) Name(name i18n.String) *Builder {
-	b.p.name = name.Copy()
+	b.p.name = name.Clone()
 	return b
 }
 
@@ -41,7 +41,7 @@ func (b *Builder) Author(author string) *Builder {
 }
 
 func (b *Builder) Description(description i18n.String) *Builder {
-	b.p.description = description.Copy()
+	b.p.description = description.Clone()
 	return b
 }
 

@@ -7,7 +7,7 @@ import (
 
 const schemaSystemIDPrefix = "reearth"
 
-var schemaNameRe = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
+var schemaIDRe = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9_-]*$|^@$")
 
 // PropertySchemaID is an ID for PropertySchema.
 type PropertySchemaID struct {
@@ -18,7 +18,7 @@ type PropertySchemaID struct {
 // PropertySchemaIDFrom generates a new PropertySchemaID from a string.
 func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
 	ids := strings.SplitN(id, "/", 2)
-	if len(ids) < 2 || !schemaNameRe.MatchString(ids[len(ids)-1]) {
+	if len(ids) < 2 || !schemaIDRe.MatchString(ids[len(ids)-1]) {
 		return PropertySchemaID{}, ErrInvalidID
 	}
 	pid, err := PluginIDFrom(ids[0])

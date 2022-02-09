@@ -79,18 +79,6 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 	}
 }
 
-func TestPlugin_Rename(t *testing.T) {
-	p := New().Name(i18n.StringFrom("x")).MustBuild()
-	p.Rename(i18n.StringFrom("z"))
-	assert.Equal(t, i18n.StringFrom("z"), p.Name())
-}
-
-func TestPlugin_SetDescription(t *testing.T) {
-	p := New().MustBuild()
-	p.SetDescription(i18n.StringFrom("xxx"))
-	assert.Equal(t, i18n.StringFrom("xxx"), p.Description())
-}
-
 func TestPlugin_Author(t *testing.T) {
 	p := New().Author("xx").MustBuild()
 	assert.Equal(t, "xx", p.Author())

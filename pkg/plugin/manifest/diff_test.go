@@ -11,7 +11,7 @@ import (
 func TestDiffFrom(t *testing.T) {
 	oldp := plugin.MustID("aaaaaa~1.0.0")
 	newp := plugin.MustID("aaaaaa~1.1.0")
-	oldps := property.MustSchemaID("aaaaaa~1.0.0/_")
+	oldps := property.MustSchemaID("aaaaaa~1.0.0/@")
 	olde1ps := property.MustSchemaID("aaaaaa~1.0.0/a")
 	olde2ps := property.MustSchemaID("aaaaaa~1.0.0/b")
 	olde3ps := property.MustSchemaID("aaaaaa~1.0.0/c")

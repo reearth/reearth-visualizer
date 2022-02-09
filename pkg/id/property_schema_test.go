@@ -20,7 +20,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 		}
 	}{
 		{
-			name:  "success:valid name",
+			name:  "success",
 			input: "test~1.0.0/Test_Test-01",
 			expected: struct {
 				result PropertySchemaID
@@ -34,7 +34,21 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			},
 		},
 		{
-			name:  "fail:invalid name",
+			name:  "success: @",
+			input: "test~1.0.0/@",
+			expected: struct {
+				result PropertySchemaID
+				err    error
+			}{
+				result: PropertySchemaID{
+					plugin: MustPluginID("test~1.0.0"),
+					id:     "@",
+				},
+				err: nil,
+			},
+		},
+		{
+			name:  "fail 1",
 			input: "Test",
 			expected: struct {
 				result PropertySchemaID
@@ -42,7 +56,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
-			name:  "fail:invalid name",
+			name:  "fail 2",
 			input: "Test/+dsad",
 			expected: struct {
 				result PropertySchemaID
@@ -50,8 +64,16 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
-			name:  "fail:invalid name",
-			input: "Test/dsa d",
+			name:  "fail 3",
+			input: "Test/-",
+			expected: struct {
+				result PropertySchemaID
+				err    error
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
+		},
+		{
+			name:  "fail 4",
+			input: "Test/__",
 			expected: struct {
 				result PropertySchemaID
 				err    error

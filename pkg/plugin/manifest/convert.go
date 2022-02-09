@@ -13,7 +13,7 @@ import (
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 
-func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
+func (i *Root) manifest(sid *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	var pid plugin.ID
 	var err error
 	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {
@@ -27,7 +27,11 @@ func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
 
 	var pluginSchema *property.Schema
 	if i.Schema != nil {
-		schema, err := i.Schema.schema(pid, "@")
+		var ts *TranslatedPropertySchema
+		if tl != nil {
+			ts = &tl.Schema
+		}
+		schema, err := i.Schema.schema(pid, "@", ts)
 		if err != nil {
 			return nil, errInvalidManifestWith(rerror.From("plugin property schema", err))
 		}
@@ -42,7 +46,12 @@ func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
 	}
 
 	for _, e := range i.Extensions {
-		extension, extensionSchema, err2 := e.extension(pid, i.System)
+		var te *TranslatedExtension
+		if tl != nil {
+			te = tl.Extensions[string(e.ID)]
+		}
+
+		extension, extensionSchema, err2 := e.extension(pid, i.System, te)
 		if err2 != nil {
 			return nil, errInvalidManifestWith(rerror.From(fmt.Sprintf("ext (%s)", e.ID), err2))
 		}
@@ -50,22 +59,27 @@ func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
 		extensionSchemas = append(extensionSchemas, extensionSchema)
 	}
 
-	var author, desc, repository string
+	var author, repository string
 	if i.Author != nil {
 		author = *i.Author
-	}
-	if i.Description != nil {
-		desc = *i.Description
 	}
 	if i.Repository != nil {
 		repository = *i.Repository
 	}
 
+	var name, desc i18n.String
+	if tl != nil {
+		name = tl.Name
+		desc = tl.Description
+	}
+	name = name.WithDefault(i.Name)
+	desc = desc.WithDefaultRef(i.Description)
+
 	p, err := plugin.New().
 		ID(pid).
-		Name(i18n.StringFrom(i.Name)).
+		Name(name).
 		Author(author).
-		Description(i18n.StringFrom(desc)).
+		Description(desc).
 		RepositoryURL(repository).
 		Schema(pluginSchema.IDRef()).
 		Extensions(extensions).
@@ -81,9 +95,13 @@ func (i *Root) manifest(sid *plugin.SceneID) (*Manifest, error) {
 	}, nil
 }
 
-func (i Extension) extension(pluginID plugin.ID, sys bool) (*plugin.Extension, *property.Schema, error) {
+func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtension) (*plugin.Extension, *property.Schema, error) {
 	eid := string(i.ID)
-	schema, err := i.Schema.schema(pluginID, eid)
+	var ts *TranslatedPropertySchema
+	if te != nil {
+		ts = &te.PropertySchema
+	}
+	schema, err := i.Schema.schema(pluginID, eid, ts)
 	if err != nil {
 		return nil, nil, rerror.From("property schema", err)
 	}
@@ -122,11 +140,8 @@ func (i Extension) extension(pluginID plugin.ID, sys bool) (*plugin.Extension, *
 		return nil, nil, fmt.Errorf("invalid type: %s", i.Type)
 	}
 
-	var desc, icon string
+	var icon string
 	var singleOnly bool
-	if i.Description != nil {
-		desc = *i.Description
-	}
 	if i.Icon != nil {
 		icon = *i.Icon
 	}
@@ -134,10 +149,18 @@ func (i Extension) extension(pluginID plugin.ID, sys bool) (*plugin.Extension, *
 		singleOnly = *i.SingleOnly
 	}
 
+	var name, desc i18n.String
+	if te != nil {
+		name = te.Name
+		desc = te.Description
+	}
+	name = name.WithDefault(i.Name)
+	desc = desc.WithDefaultRef(i.Description)
+
 	ext, err := plugin.NewExtension().
 		ID(plugin.ExtensionID(eid)).
-		Name(i18n.StringFrom(i.Name)).
-		Description(i18n.StringFrom(desc)).
+		Name(name).
+		Description(desc).
 		Visualizer(viz).
 		Type(typ).
 		SingleOnly(singleOnly).
@@ -184,7 +207,7 @@ func (l *WidgetLayout) layout() *plugin.WidgetLayout {
 	return plugin.NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, l.Floating, dl).Ref()
 }
 
-func (i *PropertySchema) schema(pluginID plugin.ID, idstr string) (*property.Schema, error) {
+func (i *PropertySchema) schema(pluginID plugin.ID, idstr string, ts *TranslatedPropertySchema) (*property.Schema, error) {
 	psid, err := property.SchemaIDFrom(pluginID.String() + "/" + idstr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id: %s", pluginID.String()+"/"+idstr)
@@ -199,7 +222,12 @@ func (i *PropertySchema) schema(pluginID plugin.ID, idstr string) (*property.Sch
 	// groups
 	groups := make([]*property.SchemaGroup, 0, len(i.Groups))
 	for _, d := range i.Groups {
-		item, err := d.schemaGroup()
+		var tg *TranslatedPropertySchemaGroup
+		if ts != nil {
+			tg = (*ts)[string(d.ID)]
+		}
+
+		item, err := d.schemaGroup(tg)
 		if err != nil {
 			return nil, rerror.From(fmt.Sprintf("item (%s)", d.ID), err)
 		}
@@ -243,28 +271,41 @@ func (p *PropertyPointer) pointer() *property.SchemaFieldPointer {
 	}
 }
 
-func (i PropertySchemaGroup) schemaGroup() (*property.SchemaGroup, error) {
-	title := i.Title
+func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*property.SchemaGroup, error) {
+	var title i18n.String
+	if tg != nil {
+		title = tg.Title.Clone()
+	}
+	title = title.WithDefault(i.Title)
+
 	var representativeField *property.FieldID
 	if i.RepresentativeField != nil {
 		representativeField = property.FieldID(*i.RepresentativeField).Ref()
 	}
 
 	// fields
-	fields := make([]*property.SchemaField, 0, len(i.Fields))
-	for _, d := range i.Fields {
-		field, err := d.schemaField()
-		if err != nil {
-			return nil, rerror.From(fmt.Sprintf("field (%s)", d.ID), err)
+	var fields []*property.SchemaField
+	if len(i.Fields) > 0 {
+		fields = make([]*property.SchemaField, 0, len(i.Fields))
+		for _, d := range i.Fields {
+			var tf *TranslatedPropertySchemaField
+			if tg != nil {
+				tf = tg.Fields[string(d.ID)]
+			}
+
+			field, err := d.schemaField(tf)
+			if err != nil {
+				return nil, rerror.From(fmt.Sprintf("field (%s)", d.ID), err)
+			}
+			fields = append(fields, field)
 		}
-		fields = append(fields, field)
 	}
 
 	return property.NewSchemaGroup().
 		ID(property.SchemaGroupID(i.ID)).
 		IsList(i.List).
 		Fields(fields).
-		Title(i18n.StringFrom(title)).
+		Title(title).
 		RepresentativeField(representativeField).
 		IsAvailableIf(i.AvailableIf.condition()).
 		Build()
@@ -280,19 +321,21 @@ func (o *PropertyCondition) condition() *property.Condition {
 	}
 }
 
-func (i PropertySchemaField) schemaField() (*property.SchemaField, error) {
+func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*property.SchemaField, error) {
 	t := property.ValueType(i.Type)
 	if !t.Valid() {
 		return nil, fmt.Errorf("invalid value type: %s", i.Type)
 	}
 
-	var title, desc, prefix, suffix string
-	if i.Title != nil {
-		title = *i.Title
+	var title, desc i18n.String
+	if tf != nil {
+		title = tf.Title.Clone()
+		desc = tf.Description.Clone()
 	}
-	if i.Description != nil {
-		desc = *i.Description
-	}
+	title = title.WithDefaultRef(i.Title)
+	desc = desc.WithDefaultRef(i.Description)
+
+	var prefix, suffix string
 	if i.Prefix != nil {
 		prefix = *i.Prefix
 	}
@@ -307,14 +350,19 @@ func (i PropertySchemaField) schemaField() (*property.SchemaField, error) {
 			if c.Key == "" {
 				continue
 			}
-			choices = append(choices, *c.choice())
+
+			var t i18n.String
+			if tf != nil {
+				t = tf.Choices[c.Key]
+			}
+			choices = append(choices, c.choice(t))
 		}
 	}
 
 	f, err := property.NewSchemaField().
 		ID(property.FieldID(i.ID)).
-		Name(i18n.StringFrom(title)).
-		Description(i18n.StringFrom(desc)).
+		Name(title).
+		Description(desc).
 		Type(t).
 		Prefix(prefix).
 		Suffix(suffix).
@@ -331,13 +379,10 @@ func (i PropertySchemaField) schemaField() (*property.SchemaField, error) {
 	return f, err
 }
 
-func (c *Choice) choice() *property.SchemaFieldChoice {
-	if c == nil {
-		return nil
-	}
-	return &property.SchemaFieldChoice{
+func (c Choice) choice(t i18n.String) property.SchemaFieldChoice {
+	return property.SchemaFieldChoice{
 		Key:   c.Key,
-		Title: i18n.StringFrom(c.Label),
+		Title: t.WithDefault(c.Label),
 		Icon:  c.Icon,
 	}
 }

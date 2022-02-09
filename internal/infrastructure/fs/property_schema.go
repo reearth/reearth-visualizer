@@ -22,7 +22,7 @@ func NewPropertySchema(fs afero.Fs) repo.PropertySchema {
 }
 
 func (r *propertySchema) FindByID(ctx context.Context, i id.PropertySchemaID) (*property.Schema, error) {
-	m, err := readManifest(r.fs, i.Plugin())
+	m, err := readPluginManifest(r.fs, i.Plugin())
 	if err != nil {
 		return nil, err
 	}

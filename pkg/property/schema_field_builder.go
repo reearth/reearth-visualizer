@@ -49,12 +49,12 @@ func (b *SchemaFieldBuilder) Type(propertyType ValueType) *SchemaFieldBuilder {
 }
 
 func (b *SchemaFieldBuilder) Name(name i18n.String) *SchemaFieldBuilder {
-	b.p.title = name.Copy()
+	b.p.title = name.Clone()
 	return b
 }
 
 func (b *SchemaFieldBuilder) Description(description i18n.String) *SchemaFieldBuilder {
-	b.p.description = description.Copy()
+	b.p.description = description.Clone()
 	return b
 }
 
