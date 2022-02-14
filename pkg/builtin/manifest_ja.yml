@@ -152,29 +152,51 @@ extensions:
     description: 閲覧者が地図上のレイヤーをクリックした時に表示されるボックスです。テキストや画像、動画などのコンテンツを表示することができます。
     propertySchema:
       default:
-        title: インフォボックス
-        paddingTop:
-          title: 余白上
-          description: "上端の余白を設定します。最小0px・最大40ox"
-        paddingBottom:
-          title: 余白下
-          description: "下端の余白を設定します。最小0px・最大40ox"
-        paddingLeft:
-          title: 余白左
-          description: "左端の余白を設定します。最小0px・最大40ox"
-        paddingRight:
-          title: 余白右
-          description: "右端の余白を設定します。最小0px・最大40ox"
+        title: デフォルト
         fields:
           title:
             title: タイトル
+          showTitle:
+            title: タイトル表示
+          position:
+            title: 位置
+            choices:
+              right: 右
+              middle: 中央
+              left: 左
           size:
             title: サイズ
             choices:
               small: 小
+              medium: 中
               large: 大
+          heightType:
+            title: 高さ設定
+            choices:
+              auto: 自動
+              manual: 手動
+          height:
+            title: 高さ
+          infoboxPaddingTop:
+            title: 余白上
+            description: "上端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingBottom:
+            title: 余白下
+            description: "下端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingLeft:
+            title: 余白左
+            description: "左端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingRight:
+            title: 余白右
+            description: "右端の余白を設定します。最小px・最大40px"
           bgcolor:
             title: 背景色
+          outlineWidth:
+            title: 線幅
+          outlineColor:
+            title: 線色
+          useMask:
+            title: 背景オーバーレイ
           typography:
             title: フォント
   marker:

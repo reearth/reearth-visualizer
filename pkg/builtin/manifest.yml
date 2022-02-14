@@ -298,6 +298,50 @@ extensions:
             - id: title
               type: string
               title: Title
+            - id: showTitle
+              type: bool
+              title: Show Title
+            - id: position
+              type: string
+              title: Position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: middle
+                  label: Middle
+                - key: left
+                  label: Left
+            - id: size
+              type: string
+              title: Width
+              defaultValue: small
+              choices:
+                - key: small
+                  label: Small
+                - key: medium
+                  label: Medium
+                - key: large
+                  label: Large
+            - id: heightType
+              type: string
+              title: Height Type
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: manual
+                  label: Manual
+            - id: height
+              type: number
+              title: Height
+              min: 284
+              max: 2048
+              suffix: px
+              availableIf:
+                field: heightType
+                type: string
+                value: manual
             - id: infoboxPaddingTop
               type: number
               title: Top padding
@@ -326,19 +370,22 @@ extensions:
               max: 40
               suffix: px
               description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
-            - id: size
-              type: string
-              title: Size Type
-              defaultValue: small
-              choices:
-                - key: small
-                  label: Small
-                - key: large
-                  label: Large
             - id: bgcolor
               type: string
               title: Background Color
               ui: color
+            - id: outlineWidth
+              type: number
+              title: Outline width
+              suffix: px
+              max: 20
+            - id: outlineColor
+              type: string
+              title: Outline Color
+              ui: color
+            - id: useMask
+              type: bool
+              title: Use Mask
             - id: typography
               type: typography
               title: Font
