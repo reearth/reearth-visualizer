@@ -129,6 +129,7 @@ export default function Visualizer({
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
+
   return (
     <Provider {...providerProps}>
       <Filled ref={wrapperRef}>

@@ -26,10 +26,17 @@ export type Props = {
   infoboxKey?: string;
   sceneProperty?: SceneProperty;
   title?: string;
-  size?: "small" | "large";
+  height?: number;
+  outlineColor?: string;
+  outlineWidth?: number;
+  heightType?: "auto" | "manual";
+  size?: "small" | "medium" | "large";
+  position?: "right" | "middle" | "left";
   visible?: boolean;
   noContent?: boolean;
+  useMask?: boolean;
   styles?: InfoboxStyles;
+  showTitle?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onEnter?: () => void;
@@ -44,9 +51,16 @@ const InfoBox: React.FC<Props> = ({
   sceneProperty,
   title,
   size,
+  height,
+  heightType,
+  position,
+  outlineColor,
+  outlineWidth,
   visible,
   noContent,
+  useMask,
   styles,
+  showTitle,
   children,
   onClick,
   onClickAway,
@@ -90,64 +104,111 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
+
   return (
-    <StyledFloatedPanel
-      className={className}
-      visible={visible}
-      open={open}
-      styles={wrapperStyles}
-      onClick={onClick}
-      onEnter={onEnter}
-      onEntered={onEntered}
-      onExit={onExit}
-      onExited={onExited}
-      size={size}
-      floated>
-      <Wrapper ref={ref} open={open}>
-        <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-          {!open && (
-            <IconWrapper align="center" justify="space-around">
-              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={16} open={open} />
-              <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
-            </IconWrapper>
-          )}
-          {!open ? null : (
-            <Text size="m" weight="bold" customColor>
-              <TitleText>{title || " "}</TitleText>
-            </Text>
-          )}
-        </TitleFlex>
-        <CloseBtn
-          color={publishedTheme.mainIcon}
-          icon="cancel"
-          size={16}
-          onClick={handleClose}
-          open={open}
-        />
-        <Content
-          ref={ref2}
-          open={open}
-          paddingTop={styles?.infoboxPaddingTop}
-          paddingBottom={styles?.infoboxPaddingBottom}
-          paddingLeft={styles?.infoboxPaddingLeft}
-          paddingRight={styles?.infoboxPaddingRight}>
-          {children}
-        </Content>
-      </Wrapper>
-    </StyledFloatedPanel>
+    <>
+      <Mask activate={open && useMask} />
+      <StyledFloatedPanel
+        className={className}
+        visible={visible}
+        open={open}
+        styles={wrapperStyles}
+        onClick={onClick}
+        onEnter={onEnter}
+        onEntered={onEntered}
+        onExit={onExit}
+        onExited={onExited}
+        position={position}
+        size={size}
+        height={height}
+        heightType={heightType}
+        outlineColor={outlineColor ? outlineColor : publishedTheme.mainText}
+        outlineWidth={outlineWidth}
+        floated>
+        <Wrapper ref={ref} open={open}>
+          <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
+            {!open && (
+              <IconWrapper align="center" justify="space-around">
+                <StyledIcon
+                  color={publishedTheme.mainIcon}
+                  icon="arrowLeft"
+                  size={16}
+                  open={open}
+                />
+                <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
+              </IconWrapper>
+            )}
+            {open && (
+              <Text size="m" weight="bold" customColor>
+                <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
+              </Text>
+            )}
+          </TitleFlex>
+          <CloseBtn
+            color={publishedTheme.mainIcon}
+            icon="cancel"
+            size={16}
+            onClick={handleClose}
+            open={open}
+          />
+          <Content
+            ref={ref2}
+            open={open}
+            paddingTop={styles?.infoboxPaddingTop}
+            paddingBottom={styles?.infoboxPaddingBottom}
+            paddingLeft={styles?.infoboxPaddingLeft}
+            paddingRight={styles?.infoboxPaddingRight}>
+            {children}
+          </Content>
+        </Wrapper>
+      </StyledFloatedPanel>
+    </>
   );
 };
+
+const Mask = styled.div<{ activate?: boolean }>`
+  display: ${({ activate }) => (activate ? "flex" : "none")};
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.6);
+  overflow-x: hidden;
+  pointer-events: none;
+`;
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
   open?: boolean;
-  size?: "small" | "large";
+  position?: "right" | "middle" | "left";
+  size?: "small" | "medium" | "large";
+  height?: number;
+  heightType?: "auto" | "manual";
+  outlineColor?: string;
+  outlineWidth?: number;
 }>`
   top: 15%;
-  right: ${({ open }) => (open ? "30px" : "-6px")};
-  max-height: 70%;
-  width: ${({ size, open }) => (open ? (size == "large" ? "624px" : "346px") : "80px")};
+  ${({ open, position }) =>
+    open
+      ? position === "middle"
+        ? `left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;`
+        : position === "left"
+        ? "left: 30px"
+        : `right: 30px`
+      : "right: -6px"};
+  ${({ heightType, height, open }) =>
+    heightType === "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
+  width: ${({ size, open }) =>
+    open ? (size === "large" ? "624px" : size === "medium" ? "540px" : "346px") : "80px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  ${({ outlineWidth, outlineColor, open }) =>
+    outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -197,8 +258,11 @@ const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
   color: ${({ color }) => color};
 `;
 
-const TitleText = styled.span`
+const TitleText = styled.span<{
+  show: boolean;
+}>`
   line-height: ${metricsSizes["2xl"]}px;
+  display: ${({ show }) => (show ? "block" : "none")};
 `;
 
 const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`

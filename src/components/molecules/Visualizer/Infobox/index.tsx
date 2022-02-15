@@ -24,6 +24,7 @@ export type Props = {
   layer?: Layer;
   blocks?: Block[];
   title?: string;
+  showTitle?: boolean;
   isEditable?: boolean;
   isBuilt?: boolean;
   selectedBlockId?: string;
@@ -82,9 +83,16 @@ const Infobox: React.FC<Props> = ({
       sceneProperty={sceneProperty}
       title={property?.default?.title || title}
       size={property?.default?.size}
+      height={property?.default?.height}
+      heightType={property?.default?.heightType}
+      position={property?.default?.position}
+      outlineColor={property?.default?.outlineColor}
+      useMask={!!property?.default?.useMask}
+      outlineWidth={property?.default?.outlineWidth}
       visible={visible}
       noContent={!blocks?.length}
       styles={property?.default}
+      showTitle={property?.default?.showTitle}
       onClick={() => selectedBlockId && onBlockSelect?.(undefined)}
       onEnter={() => setIsReadyToRender(false)}
       onEntered={() => setIsReadyToRender(true)}
