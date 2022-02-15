@@ -17,11 +17,15 @@ type Layer interface {
 	FindGroupByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.GroupList, error)
 	FindGroupBySceneAndLinkedDatasetSchema(context.Context, id.SceneID, id.DatasetSchemaID) (layer.GroupList, error)
 	FindParentByID(context.Context, id.LayerID, []id.SceneID) (*layer.Group, error)
+	FindParentsByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.GroupList, error)
+	FindByPluginAndExtension(context.Context, id.PluginID, *id.PluginExtensionID, []id.SceneID) (layer.List, error)
+	FindByPluginAndExtensionOfBlocks(context.Context, id.PluginID, *id.PluginExtensionID, []id.SceneID) (layer.List, error)
 	FindByProperty(context.Context, id.PropertyID, []id.SceneID) (layer.Layer, error)
 	FindByScene(context.Context, id.SceneID) (layer.List, error)
 	FindByTag(context.Context, id.TagID, []id.SceneID) (layer.List, error)
 	Save(context.Context, layer.Layer) error
 	SaveAll(context.Context, layer.List) error
+	UpdatePlugin(context.Context, id.PluginID, id.PluginID, []id.SceneID) error
 	Remove(context.Context, id.LayerID) error
 	RemoveAll(context.Context, []id.LayerID) error
 	RemoveByScene(context.Context, id.SceneID) error

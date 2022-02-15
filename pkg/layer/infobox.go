@@ -66,6 +66,19 @@ func (i *Infobox) FieldAt(index int) *InfoboxField {
 	return i.fields[index]
 }
 
+func (i *Infobox) FieldsByPlugin(pid PluginID, eid *PluginExtensionID) []*InfoboxField {
+	if i == nil {
+		return nil
+	}
+	fields := make([]*InfoboxField, 0, len(i.fields))
+	for _, f := range i.fields {
+		if f.Plugin().Equal(pid) && (eid == nil || f.Extension() == *eid) {
+			fields = append(fields, f)
+		}
+	}
+	return fields
+}
+
 func (i *Infobox) Has(id InfoboxFieldID) bool {
 	_, ok := i.ids[id]
 	return ok
@@ -124,14 +137,14 @@ func (i *Infobox) Remove(field InfoboxFieldID) {
 	}
 }
 
-func (i *Infobox) RemoveAllByPlugin(pid PluginID) []PropertyID {
+func (i *Infobox) RemoveAllByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
 	if i == nil {
 		return nil
 	}
 
 	var properties []PropertyID
 	for j := 0; j < len(i.fields); j++ {
-		if i.fields[j].plugin.Equal(pid) {
+		if i.fields[j].plugin.Equal(pid) && (eid == nil || i.fields[j].Extension() == *eid) {
 			properties = append(properties, i.fields[j].Property())
 			i.fields = append(i.fields[:j], i.fields[j+1:]...)
 			j--

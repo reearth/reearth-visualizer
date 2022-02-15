@@ -137,6 +137,67 @@ func (r *Layer) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, s id
 	return result, nil
 }
 
+func (r *Layer) FindParentsByIDs(_ context.Context, ids []id.LayerID, scenes []id.SceneID) (layer.GroupList, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	res := layer.GroupList{}
+	for _, l := range r.data {
+		if !isSceneIncludes(l.Scene(), scenes) {
+			continue
+		}
+		gl, ok := l.(*layer.Group)
+		if !ok {
+			continue
+		}
+		for _, cl := range gl.Layers().Layers() {
+			if cl.Contains(ids) {
+				res = append(res, gl)
+			}
+		}
+	}
+
+	return res, nil
+}
+
+func (r *Layer) FindByPluginAndExtension(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID, scenes []id.SceneID) (layer.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	res := layer.List{}
+	for _, l := range r.data {
+		l := l
+		if !isSceneIncludes(l.Scene(), scenes) {
+			continue
+		}
+
+		if p := l.Plugin(); p != nil && p.Equal(pid) {
+			e := l.Extension()
+			if eid == nil || e != nil && *e == *eid {
+				res = append(res, &l)
+			}
+		}
+	}
+
+	return res, nil
+}
+
+func (r *Layer) FindByPluginAndExtensionOfBlocks(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID, scenes []id.SceneID) (layer.List, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	res := layer.List{}
+	for _, l := range r.data {
+		l := l
+		if !isSceneIncludes(l.Scene(), scenes) || len(l.Infobox().FieldsByPlugin(pid, eid)) == 0 {
+			continue
+		}
+		res = append(res, &l)
+	}
+
+	return res, nil
+}
+
 func (r *Layer) FindByProperty(ctx context.Context, id id.PropertyID, f []id.SceneID) (layer.Layer, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
@@ -187,6 +248,7 @@ func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List
 
 	res := layer.List{}
 	for _, l := range r.data {
+		l := l
 		if l.Scene() == sceneID {
 			res = append(res, &l)
 		}
@@ -226,6 +288,20 @@ func (r *Layer) SaveAll(ctx context.Context, ll layer.List) error {
 	return nil
 }
 
+func (r *Layer) UpdatePlugin(ctx context.Context, old id.PluginID, new id.PluginID, scenes []id.SceneID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, l := range r.data {
+		p := l.Plugin()
+		if p != nil && p.Equal(old) && isSceneIncludes(l.Scene(), scenes) {
+			l.SetPlugin(&new)
+			r.data[l.ID()] = l
+		}
+	}
+	return nil
+}
+
 func (r *Layer) Remove(ctx context.Context, id id.LayerID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
@@ -260,9 +336,10 @@ func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID, s []id.SceneID) (
 	r.lock.Lock()
 	defer r.lock.Unlock()
 	var res layer.List
-	for _, layer := range r.data {
-		if layer.Tags().Has(tagID) {
-			res = append(res, &layer)
+	for _, l := range r.data {
+		l := l
+		if l.Tags().Has(tagID) {
+			res = append(res, &l)
 		}
 	}
 

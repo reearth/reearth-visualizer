@@ -90,8 +90,8 @@ func (d Diff) DeletedPropertySchemas() []id.PropertySchemaID {
 	return s
 }
 
-func (d Diff) PropertySchmaDiffs() []property.SchemaDiff {
-	s := make([]property.SchemaDiff, 0, len(d.UpdatedExtensions)+1)
+func (d Diff) PropertySchmaDiffs() property.SchemaDiffList {
+	s := make(property.SchemaDiffList, 0, len(d.UpdatedExtensions)+1)
 	if !d.PropertySchemaDeleted && (!d.PropertySchemaDiff.IsEmpty() || d.PropertySchemaDiff.IsIDChanged()) {
 		s = append(s, d.PropertySchemaDiff)
 	}

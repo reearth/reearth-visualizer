@@ -52,6 +52,9 @@ func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, i
 			return err
 		}
 		for _, l := range loaded.Deref() {
+			if l == nil {
+				continue
+			}
 			if err := walker(l, parents); err == WalkerSkipChildren {
 				continue
 			} else if err != nil {

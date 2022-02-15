@@ -8,16 +8,15 @@ import (
 var ErrSceneIsLocked error = errors.New("scene is locked")
 
 type Scene struct {
-	id                ID
-	project           ProjectID
-	team              TeamID
-	rootLayer         LayerID
-	widgets           *Widgets
-	widgetAlignSystem *WidgetAlignSystem
-	plugins           *Plugins
-	updatedAt         time.Time
-	property          PropertyID
-	clusters          *ClusterList
+	id        ID
+	project   ProjectID
+	team      TeamID
+	rootLayer LayerID
+	widgets   *Widgets
+	plugins   *Plugins
+	updatedAt time.Time
+	property  PropertyID
+	clusters  *ClusterList
 }
 
 func (s *Scene) ID() ID {
@@ -67,13 +66,6 @@ func (s *Scene) Widgets() *Widgets {
 		return nil
 	}
 	return s.widgets
-}
-
-func (s *Scene) WidgetAlignSystem() *WidgetAlignSystem {
-	if s == nil {
-		return nil
-	}
-	return s.widgetAlignSystem
 }
 
 func (s *Scene) Plugins() *Plugins {

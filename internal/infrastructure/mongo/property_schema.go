@@ -89,7 +89,7 @@ func (r *propertySchemaRepo) FindByIDs(ctx context.Context, ids []id.PropertySch
 }
 
 func (r *propertySchemaRepo) Save(ctx context.Context, m *property.Schema) error {
-	if m.ID().System() {
+	if m.ID().Plugin().System() {
 		return errors.New("cannnot save system property schema")
 	}
 
@@ -99,7 +99,7 @@ func (r *propertySchemaRepo) Save(ctx context.Context, m *property.Schema) error
 
 func (r *propertySchemaRepo) SaveAll(ctx context.Context, m property.SchemaList) error {
 	for _, ps := range m {
-		if ps.ID().System() {
+		if ps.ID().Plugin().System() {
 			return errors.New("cannnot save system property schema")
 		}
 	}

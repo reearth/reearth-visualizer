@@ -78,6 +78,31 @@ func (r *propertyRepo) FindByDataset(ctx context.Context, sid id.DatasetSchemaID
 	return r.find(ctx, nil, filter)
 }
 
+func (r *propertyRepo) FindBySchema(ctx context.Context, psids []id.PropertySchemaID, sid id.SceneID) (property.List, error) {
+	if len(psids) == 0 {
+		return nil, nil
+	}
+
+	filters := make([]bson.M, 0, len(psids))
+	for _, s := range psids {
+		filters = append(filters, bson.M{
+			"schemaplugin": s.Plugin().String(),
+			"schemaname":   s.ID(),
+			"scene":        sid.String(),
+		})
+	}
+	filter := bson.M{"$and": filters}
+	return r.find(ctx, nil, filter)
+}
+
+func (r *propertyRepo) FindByPlugin(ctx context.Context, pid id.PluginID, sid id.SceneID) (property.List, error) {
+	filter := bson.M{
+		"schemaplugin": pid.String(),
+		"scene":        sid.String(),
+	}
+	return r.find(ctx, nil, filter)
+}
+
 func (r *propertyRepo) Save(ctx context.Context, property *property.Property) error {
 	doc, id := mongodoc.NewProperty(property)
 	return r.client.SaveOne(ctx, id, doc)
@@ -89,6 +114,15 @@ func (r *propertyRepo) SaveAll(ctx context.Context, properties property.List) er
 	}
 	docs, ids := mongodoc.NewProperties(properties)
 	return r.client.SaveAll(ctx, ids, docs)
+}
+
+func (r *propertyRepo) UpdateSchemaPlugin(ctx context.Context, old, new id.PluginID, s id.SceneID) error {
+	return r.client.UpdateMany(ctx, bson.M{
+		"schemaplugin": old,
+		"scene":        s.String(),
+	}, bson.M{
+		"schemaplugin": new,
+	})
 }
 
 func (r *propertyRepo) Remove(ctx context.Context, id id.PropertyID) error {
@@ -113,7 +147,7 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	return nil
 }
 
-func (r *propertyRepo) find(ctx context.Context, dst property.List, filter bson.D) (property.List, error) {
+func (r *propertyRepo) find(ctx context.Context, dst property.List, filter interface{}) (property.List, error) {
 	c := mongodoc.PropertyConsumer{
 		Rows: dst,
 	}

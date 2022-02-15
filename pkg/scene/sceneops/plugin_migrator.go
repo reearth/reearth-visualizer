@@ -100,7 +100,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// シーンのプラグイン
-	sc.Plugins().Upgrade(oldPluginID, newPluginID)
+	sc.Plugins().Upgrade(oldPluginID, newPluginID, nil, false)
 	for _, sp := range sc.Plugins().Plugins() {
 		if sp.Plugin().Equal(newPluginID) && sp.Property() != nil {
 			propertyIDs = append(propertyIDs, *sp.Property())
@@ -112,7 +112,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	for _, w := range sc.Widgets().Widgets() {
 		if w.Plugin().Equal(newPluginID) {
 			if newPlugin.Extension(w.Extension()) == nil {
-				sc.Widgets().RemoveAllByExtension(oldPluginID, w.Extension())
+				sc.Widgets().RemoveAllByPlugin(oldPluginID, w.Extension().Ref())
 			} else {
 				propertyIDs = append(propertyIDs, w.Property())
 			}

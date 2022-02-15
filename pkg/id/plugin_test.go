@@ -329,6 +329,22 @@ func TestPluginIDFromRef(t *testing.T) {
 	}
 }
 
+func TestPluginID_WithScene(t *testing.T) {
+	sid := NewSceneID().Ref()
+
+	assert.Equal(t, PluginID{
+		name:    "aaa",
+		version: "1.0.0",
+		sys:     false,
+		scene:   sid,
+	}, PluginID{
+		name:    "aaa",
+		version: "1.0.0",
+		sys:     false,
+		scene:   nil,
+	}.WithScene(sid))
+}
+
 func TestPluginID_Clone(t *testing.T) {
 	p := PluginID{
 		name:    "aaa",

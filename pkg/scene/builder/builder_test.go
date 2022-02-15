@@ -414,7 +414,7 @@ func TestSceneBuilder(t *testing.T) {
 		Property(scenep.ID()).
 		Widgets(scene.NewWidgets([]*scene.Widget{
 			sceneWidget1, sceneWidget2,
-		})).
+		}, nil)).
 		Plugins(scene.NewPlugins([]*scene.Plugin{scenePlugin1})).
 		RootLayer(rootLayer.ID()).
 		MustBuild()

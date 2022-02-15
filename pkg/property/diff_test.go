@@ -598,3 +598,22 @@ func TestSchemaDiff_IsIDChanged(t *testing.T) {
 		})
 	}
 }
+
+func TestSchemaDiffList_FindByFrom(t *testing.T) {
+	p1 := MustSchemaID("a~1.0.0/a")
+	p2 := MustSchemaID("a~1.0.0/b")
+
+	assert.Equal(t, &SchemaDiff{From: p1}, SchemaDiffList{{From: p1}}.FindByFrom(p1))
+	assert.Nil(t, SchemaDiffList{}.FindByFrom(p2))
+	assert.Nil(t, SchemaDiffList{}.FindByFrom(p1))
+	assert.Nil(t, SchemaDiffList(nil).FindByFrom(p1))
+}
+
+func TestSchemaDiffList_FromSchemas(t *testing.T) {
+	p1 := MustSchemaID("a~1.0.0/a")
+	p2 := MustSchemaID("a~1.0.0/b")
+
+	assert.Equal(t, []SchemaID{p1, p2}, SchemaDiffList{{From: p1}, {From: p2}, {From: p2}}.FromSchemas())
+	assert.Nil(t, SchemaDiffList{}.FromSchemas())
+	assert.Nil(t, SchemaDiffList(nil).FromSchemas())
+}

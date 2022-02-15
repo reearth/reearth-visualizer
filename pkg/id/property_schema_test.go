@@ -10,6 +10,21 @@ import (
 var _ encoding.TextMarshaler = (*PropertySchemaID)(nil)
 var _ encoding.TextUnmarshaler = (*PropertySchemaID)(nil)
 
+func TestNewPropertySchemaID(t *testing.T) {
+	pluginID := MustPluginID("test~2.0.0")
+	pluginExtensionID := "test2"
+	propertySchemaID := NewPropertySchemaID(pluginID, pluginExtensionID)
+
+	assert.NotNil(t, propertySchemaID)
+	assert.Equal(t, PropertySchemaID{
+		plugin: MustPluginID("test~2.0.0"),
+		id:     "test2",
+	}, propertySchemaID)
+
+	assert.Equal(t, PropertySchemaID{}, NewPropertySchemaID(PluginID{}, "a"))
+	assert.Equal(t, PropertySchemaID{}, NewPropertySchemaID(pluginID, ""))
+}
+
 func TestPropertySchemaIDFrom(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -97,19 +112,6 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 	}
 }
 
-func TestPropertySchemaIDFromExtension(t *testing.T) {
-	pluginID := MustPluginID("test~2.0.0")
-	pluginExtensionID := PluginExtensionID("test2")
-	propertySchemaID, err := PropertySchemaIDFromExtension(pluginID, pluginExtensionID)
-
-	assert.NotNil(t, propertySchemaID)
-	assert.Equal(t, PropertySchemaID{
-		plugin: MustPluginID("test~2.0.0"),
-		id:     "test2",
-	}, propertySchemaID)
-	assert.Nil(t, err)
-}
-
 func TestMustPropertySchemaID(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -175,18 +177,6 @@ func TestMustPropertySchemaID(t *testing.T) {
 	}
 }
 
-func TestMustPropertySchemaIDFromExtension(t *testing.T) {
-	pluginID := MustPluginID("test~2.0.0")
-	pluginExtensionID := PluginExtensionID("test2")
-	propertySchemaID := MustPropertySchemaIDFromExtension(pluginID, pluginExtensionID)
-
-	assert.NotNil(t, propertySchemaID)
-	assert.Equal(t, PropertySchemaID{
-		plugin: MustPluginID("test~2.0.0"),
-		id:     "test2",
-	}, propertySchemaID)
-}
-
 func TestPropertySchemaIDFromRef(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -250,6 +240,27 @@ func TestPropertySchemaID_Clone(t *testing.T) {
 	assert.NotSame(t, p, c)
 }
 
+func TestPropertySchemaID_WithPlugin(t *testing.T) {
+	c := PropertySchemaID{
+		id: "xxx",
+		plugin: PluginID{
+			name:    "aaa",
+			version: "1.0.0",
+		},
+	}.WithPlugin(PluginID{
+		name:    "aaa",
+		version: "1.1.0",
+	})
+
+	assert.Equal(t, PropertySchemaID{
+		id: "xxx",
+		plugin: PluginID{
+			name:    "aaa",
+			version: "1.1.0",
+		},
+	}, c)
+}
+
 func TestPropertySchemaID_ID(t *testing.T) {
 	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
 	assert.Equal(t, propertySchemaID.ID(), "test")
@@ -258,16 +269,6 @@ func TestPropertySchemaID_ID(t *testing.T) {
 func TestPropertySchemaID_Plugin(t *testing.T) {
 	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
 	assert.Equal(t, MustPluginID("Test~2.0.0"), propertySchemaID.Plugin())
-}
-
-func TestPropertySchemaID_System(t *testing.T) {
-	propertySchemaID := MustPropertySchemaID("Test~2.0.0/test")
-	assert.False(t, propertySchemaID.System())
-	extinctionName := schemaSystemIDPrefix
-	propertySchemaID = MustPropertySchemaIDFromExtension(MustPluginID("test~2.0.0"), *PluginExtensionIDFromRef(&extinctionName))
-	assert.True(t, propertySchemaID.System())
-	propertySchemaID = MustPropertySchemaID("Test~2.0.0/" + schemaSystemIDPrefix)
-	assert.True(t, propertySchemaID.System())
 }
 
 func TestPropertySchemaID_String(t *testing.T) {

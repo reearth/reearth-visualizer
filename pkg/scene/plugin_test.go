@@ -16,9 +16,12 @@ func TestPlugin(t *testing.T) {
 		property: pr,
 	}, res)
 	assert.Equal(t, pid, res.Plugin())
+	assert.Equal(t, &pid, res.PluginRef())
 	assert.Equal(t, pr, res.Property())
 
 	cl := res.Clone()
 	assert.Equal(t, res, cl)
 	assert.NotSame(t, res, cl)
+
+	assert.Nil(t, (*Plugin)(nil).PluginRef())
 }

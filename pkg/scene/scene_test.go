@@ -70,13 +70,10 @@ func TestScene_Properties(t *testing.T) {
 		RootLayer(NewLayerID()).
 		Property(pid1).
 		Widgets(
-			NewWidgets(
-				[]*Widget{
-					MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
-				},
-			),
+			NewWidgets([]*Widget{
+				MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+			}, nil),
 		).
-		WidgetAlignSystem(NewWidgetAlignSystem()).
 		MustBuild()
 
 	assert.Equal(t, []PropertyID{pid1, pid2}, s.Properties())
@@ -87,7 +84,6 @@ func TestSceneNil(t *testing.T) {
 	assert.Nil(t, s.Properties())
 	assert.True(t, s.ID().IsNil())
 	assert.Nil(t, s.Widgets())
-	assert.Nil(t, s.WidgetAlignSystem())
 	assert.True(t, s.Project().IsNil())
 	assert.True(t, s.Team().IsNil())
 	assert.True(t, s.RootLayer().IsNil())

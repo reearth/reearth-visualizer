@@ -47,7 +47,7 @@ func (i *InfoboxField) ValidateProperty(pm property.Map) error {
 	if lp == nil {
 		return errors.New("property does not exist")
 	}
-	if !lp.Schema().Equal(MustPropertySchemaIDFromExtension(i.plugin, i.extension)) {
+	if !lp.Schema().Equal(NewPropertySchemaID(i.plugin, i.extension.String())) {
 		return errors.New("property has a invalid schema")
 	}
 

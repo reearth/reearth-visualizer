@@ -10,11 +10,15 @@ var (
 
 type Widgets struct {
 	widgets []*Widget
+	align   *WidgetAlignSystem
 }
 
-func NewWidgets(w []*Widget) *Widgets {
+func NewWidgets(w []*Widget, a *WidgetAlignSystem) *Widgets {
+	if a == nil {
+		a = NewWidgetAlignSystem()
+	}
 	if w == nil {
-		return &Widgets{widgets: []*Widget{}}
+		return &Widgets{widgets: []*Widget{}, align: a}
 	}
 	w2 := make([]*Widget, 0, len(w))
 	for _, w1 := range w {
@@ -32,7 +36,7 @@ func NewWidgets(w []*Widget) *Widgets {
 			w2 = append(w2, w1)
 		}
 	}
-	return &Widgets{widgets: w2}
+	return &Widgets{widgets: w2, align: a}
 }
 
 func (w *Widgets) Widgets() []*Widget {
@@ -40,6 +44,13 @@ func (w *Widgets) Widgets() []*Widget {
 		return nil
 	}
 	return append([]*Widget{}, w.widgets...)
+}
+
+func (w *Widgets) Alignment() *WidgetAlignSystem {
+	if w == nil {
+		return nil
+	}
+	return w.align
 }
 
 func (w *Widgets) Widget(wid WidgetID) *Widget {
@@ -85,27 +96,15 @@ func (w *Widgets) Remove(wid WidgetID) {
 	}
 }
 
-func (w *Widgets) RemoveAllByPlugin(p PluginID) (res []PropertyID) {
+func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
 	for i := 0; i < len(w.widgets); i++ {
-		if w.widgets[i].plugin.Equal(p) {
-			res = append(res, w.widgets[i].Property())
-			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
-			i--
-		}
-	}
-	return res
-}
-
-func (w *Widgets) RemoveAllByExtension(p PluginID, e PluginExtensionID) (res []PropertyID) {
-	if w == nil {
-		return nil
-	}
-	for i := 0; i < len(w.widgets); i++ {
-		if w.widgets[i].Plugin().Equal(p) && w.widgets[i].Extension() == e {
-			res = append(res, w.widgets[i].Property())
+		ww := w.widgets[i]
+		if ww.Plugin().Equal(p) && (e == nil || ww.Extension() == *e) {
+			res = append(res, ww.Property())
+			w.align.Remove(ww.ID())
 			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
 			i--
 		}

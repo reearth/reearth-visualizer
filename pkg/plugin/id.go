@@ -9,6 +9,7 @@ type SceneID = id.SceneID
 
 var NewID = id.NewPluginID
 var NewSceneID = id.NewSceneID
+var NewPropertySchemaID = id.NewPropertySchemaID
 
 var MustID = id.MustPluginID
 var MustSceneID = id.MustSceneID
@@ -24,8 +25,6 @@ var SceneIDFromRef = id.SceneIDFromRef
 var PropertySchemaIDFromRef = id.PropertySchemaIDFromRef
 
 var SceneIDFromRefID = id.SceneIDFromRefID
-
-var PropertySchemaIDFromExtension = id.PropertySchemaIDFromExtension
 
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID

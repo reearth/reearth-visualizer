@@ -92,12 +92,8 @@ func (l *ReearthLayer) layer() *layer.Initializer {
 	}
 
 	var psid *property.SchemaID
-	if l.Plugin != nil || l.Extension != nil {
-		psid2, err := layer.PropertySchemaIDFromExtension(*l.Plugin, *l.Extension)
-		if err == nil {
-			// if there is an error, property schema id will be nil.
-			psid = psid2.Ref()
-		}
+	if l.Plugin != nil && l.Extension != nil {
+		psid = layer.NewPropertySchemaID(*l.Plugin, l.Extension.String()).Ref()
 	}
 
 	var pr *property.Initializer
@@ -156,18 +152,11 @@ type ReearthInfoboxField struct {
 }
 
 func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
-	if f == nil {
+	if f == nil || f.Plugin.IsNil() || f.Extension == "" {
 		return nil
 	}
 
-	var psid *property.SchemaID
-	{
-		psid2, err := layer.PropertySchemaIDFromExtension(f.Plugin, f.Extension)
-		if err == nil {
-			// if there is an error, property schema id will be nil.
-			psid = psid2.Ref()
-		}
-	}
+	psid := layer.NewPropertySchemaID(f.Plugin, f.Extension.String()).Ref()
 
 	var pr *property.Initializer
 	if f.Property != nil {

@@ -22,7 +22,7 @@ func NewPropertySchema() repo.PropertySchema {
 }
 
 func (r *PropertySchema) initMap() {
-	if r.data != nil {
+	if r.data == nil {
 		r.data = map[string]*property.Schema{}
 	}
 }
@@ -68,7 +68,7 @@ func (r *PropertySchema) Save(ctx context.Context, p *property.Schema) error {
 	defer r.lock.Unlock()
 
 	r.initMap()
-	if p.ID().System() {
+	if p.ID().Plugin().System() {
 		return errors.New("cannnot save system property schema")
 	}
 	r.data[p.ID().String()] = p
@@ -80,10 +80,11 @@ func (r *PropertySchema) SaveAll(ctx context.Context, p property.SchemaList) err
 	defer r.lock.Unlock()
 
 	r.initMap()
-	for _, ps := range p {
-		if err := r.Save(ctx, ps); err != nil {
-			return err
+	for _, p := range p {
+		if p.ID().Plugin().System() {
+			return errors.New("cannnot save system property schema")
 		}
+		r.data[p.ID().String()] = p
 	}
 	return nil
 }

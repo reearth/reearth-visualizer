@@ -13,10 +13,12 @@ const (
 )
 
 type PropertyDocument struct {
-	ID     string
-	Scene  string
-	Schema string
-	Items  []*PropertyItemDocument
+	ID           string
+	Scene        string
+	Schema       string `bson:",omitempty"` // compatibility
+	SchemaPlugin string
+	SchemaName   string
+	Items        []*PropertyItemDocument
 }
 
 type PropertyFieldDocument struct {
@@ -162,10 +164,11 @@ func NewProperty(property *property.Property) (*PropertyDocument, string) {
 	pid := property.ID().String()
 	items := property.Items()
 	doc := PropertyDocument{
-		ID:     pid,
-		Schema: property.Schema().String(),
-		Items:  make([]*PropertyItemDocument, 0, len(items)),
-		Scene:  property.Scene().String(),
+		ID:           pid,
+		SchemaPlugin: property.Schema().Plugin().String(),
+		SchemaName:   property.Schema().ID(),
+		Items:        make([]*PropertyItemDocument, 0, len(items)),
+		Scene:        property.Scene().String(),
 	}
 	for _, f := range items {
 		doc.Items = append(doc.Items, newPropertyItem(f))
@@ -286,7 +289,7 @@ func (doc *PropertyDocument) Model() (*property.Property, error) {
 	if err != nil {
 		return nil, err
 	}
-	psid, err := id.PropertySchemaIDFrom(doc.Schema)
+	pl, err := id.PluginIDFrom(doc.SchemaPlugin)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +306,7 @@ func (doc *PropertyDocument) Model() (*property.Property, error) {
 	return property.New().
 		ID(pid).
 		Scene(sid).
-		Schema(psid).
+		Schema(id.NewPropertySchemaID(pl, doc.SchemaName)).
 		Items(items).
 		Build()
 }

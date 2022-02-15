@@ -139,6 +139,40 @@ func TestPlugins_Plugin(t *testing.T) {
 	}
 }
 
+func TestPlugins_PluginByName(t *testing.T) {
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
+
+	tests := []struct {
+		Name     string
+		Input    string
+		PS       *Plugins
+		Expected *Plugin
+	}{
+		{
+			Name:     "plugin is found",
+			Input:    "xxx",
+			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Expected: NewPlugin(pid, pr),
+		},
+		{
+			Name:     "plugin is not found",
+			Input:    "xxz",
+			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Expected: nil,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tc.PS.PluginByName(tc.Input)
+			assert.Equal(t, tc.Expected, res)
+		})
+	}
+}
+
 func TestPlugins_Properties(t *testing.T) {
 	pr := NewPropertyID().Ref()
 	pr2 := NewPropertyID().Ref()
@@ -218,15 +252,15 @@ func TestPlugins_HasPlugin(t *testing.T) {
 		Expected bool
 	}{
 		{
-			Name:     "property is found",
+			Name:     "plugin is found",
 			Input:    pid,
 			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
 			Expected: true,
 		},
 		{
-			Name:     "property is not found",
+			Name:     "plugin is not found",
 			Input:    pid,
-			PS:       NewPlugins([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
+			PS:       NewPlugins([]*Plugin{NewPlugin(MustPluginID("xxx~1.2.1"), pr)}),
 			Expected: false,
 		},
 	}
@@ -236,6 +270,40 @@ func TestPlugins_HasPlugin(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 			res := tc.PS.HasPlugin(tc.Input)
+			assert.Equal(t, tc.Expected, res)
+		})
+	}
+}
+
+func TestPlugins_HasPluginByName(t *testing.T) {
+	pid := MustPluginID("xxx~1.1.1")
+	pr := NewPropertyID().Ref()
+
+	tests := []struct {
+		Name     string
+		Input    string
+		PS       *Plugins
+		Expected bool
+	}{
+		{
+			Name:     "plugin is found",
+			Input:    "xxx",
+			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Expected: true,
+		},
+		{
+			Name:     "plugin is not found",
+			Input:    "xxxx",
+			PS:       NewPlugins([]*Plugin{NewPlugin(MustPluginID("zzz~1.1.1"), pr)}),
+			Expected: false,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tc.PS.HasPluginByName(tc.Input)
 			assert.Equal(t, tc.Expected, res)
 		})
 	}
@@ -323,33 +391,77 @@ func TestPlugins_Upgrade(t *testing.T) {
 	pid := MustPluginID("xxx~1.1.1")
 	nid := MustPluginID("zzz~1.1.1")
 	pr := NewPropertyID().Ref()
+	pr2 := NewPropertyID().Ref()
+
+	type args struct {
+		From           PluginID
+		To             PluginID
+		Property       *PropertyID
+		DeleteProperty bool
+	}
 
 	tests := []struct {
-		Name         string
-		PID, NewID   PluginID
-		PS, Expected *Plugins
+		name   string
+		args   args
+		target *Plugins
+		want   *Plugins
 	}{
 		{
-			Name:     "upgrade official plugin",
-			PID:      OfficialPluginID,
-			PS:       NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
-			Expected: NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+			name: "upgrade a plugin",
+			args: args{
+				From: pid,
+				To:   nid,
+			},
+			target: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			want:   NewPlugins([]*Plugin{NewPlugin(nid, pr)}),
 		},
 		{
-			Name:     "upgrade a plugin",
-			PID:      pid,
-			NewID:    nid,
-			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
-			Expected: NewPlugins([]*Plugin{NewPlugin(nid, pr)}),
+			name: "upgrade a plugin with changing property",
+			args: args{
+				From:     pid,
+				To:       nid,
+				Property: pr2,
+			},
+			target: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			want:   NewPlugins([]*Plugin{NewPlugin(nid, pr2)}),
+		},
+		{
+			name: "upgrade a plugin with deleting property",
+			args: args{
+				From:           pid,
+				To:             nid,
+				Property:       pr2,
+				DeleteProperty: true,
+			},
+			target: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			want:   NewPlugins([]*Plugin{NewPlugin(nid, nil)}),
+		},
+		{
+			name: "upgrade official plugin",
+			args: args{
+				From: OfficialPluginID,
+				To:   nid,
+			},
+			target: NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+			want:   NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+		},
+		{
+			name: "nil",
+			args: args{
+				From: pid,
+				To:   nid,
+			},
+			target: nil,
+			want:   nil,
 		},
 	}
 
 	for _, tc := range tests {
 		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			tc.PS.Upgrade(tc.PID, tc.NewID)
-			assert.Equal(t, tc.Expected, tc.PS)
+			tc.target.Upgrade(tc.args.From, tc.args.To, tc.args.Property, tc.args.DeleteProperty)
+			assert.Equal(t, tc.want, tc.target)
 		})
 	}
 }

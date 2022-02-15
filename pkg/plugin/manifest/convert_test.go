@@ -99,24 +99,24 @@ func TestManifest(t *testing.T) {
 					Author(a).
 					RepositoryURL(r).
 					Description(i18n.String{"en": d, "ja": "B"}).
-					Schema(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "@").Ref()).
+					Schema(property.NewSchemaID(plugin.OfficialPluginID, "@").Ref()).
 					Extensions([]*plugin.Extension{
 						plugin.NewExtension().
 							ID("cesium").
 							Name(i18n.String{"ja": "セジウム"}).
 							Visualizer("cesium").
 							Type("visualizer").
-							Schema(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "cesium")).
+							Schema(property.NewSchemaID(plugin.OfficialPluginID, "cesium")).
 							System(true).
 							MustBuild(),
 					}).MustBuild(),
 				ExtensionSchema: property.SchemaList{
 					property.NewSchema().
-						ID(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "cesium")).
+						ID(property.NewSchemaID(plugin.OfficialPluginID, "cesium")).
 						MustBuild(),
 				},
 				Schema: property.NewSchema().
-					ID(property.MustSchemaIDFromExtension(plugin.OfficialPluginID, "@")).
+					ID(property.NewSchemaID(plugin.OfficialPluginID, "@")).
 					Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
 						property.NewSchemaGroup().ID("default").Title(i18n.String{"ja": "デフォルト"}).MustBuild(),
 					})).

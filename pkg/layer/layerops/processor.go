@@ -25,7 +25,7 @@ func (p Processor) UninstallPlugin(ctx context.Context, pluginID layer.PluginID)
 		if !parentRemoved {
 			if pid := l.Plugin(); pid == nil || !pid.Equal(pluginID) {
 				// delete infobox fields
-				removedProperties := l.Infobox().RemoveAllByPlugin(pluginID)
+				removedProperties := l.Infobox().RemoveAllByPlugin(pluginID, nil)
 				if len(removedProperties) > 0 {
 					res.RemovedProperties = append(res.RemovedProperties, removedProperties...)
 					res.ModifiedLayers = append(res.ModifiedLayers, &l)

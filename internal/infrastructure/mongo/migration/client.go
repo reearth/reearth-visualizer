@@ -25,7 +25,9 @@ func (c Client) Migrate(ctx context.Context) (err error) {
 		return fmt.Errorf("Failed to load config: %w", rerror.UnwrapErrInternal(err))
 	}
 	defer func() {
-		err = c.Config.Unlock(ctx)
+		if err2 := c.Config.Unlock(ctx); err == nil && err2 != nil {
+			err = err2
+		}
 	}()
 
 	nextMigrations := config.NextMigrations(migrationKeys())
@@ -36,7 +38,9 @@ func (c Client) Migrate(ctx context.Context) (err error) {
 	var tx repo.Tx
 	defer func() {
 		if tx != nil {
-			err = tx.End(ctx)
+			if err2 := tx.End(ctx); err == nil && err2 != nil {
+				err = err2
+			}
 		}
 	}()
 

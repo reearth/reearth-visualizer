@@ -71,7 +71,7 @@ func ToScene(scene *scene.Scene) *Scene {
 		UpdatedAt:         scene.UpdatedAt(),
 		Clusters:          clusters,
 		Widgets:           widgets,
-		WidgetAlignSystem: ToWidgetAlignSystem(scene.WidgetAlignSystem()),
+		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
 		Plugins:           plugins,
 	}
 }

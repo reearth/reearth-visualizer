@@ -5,14 +5,20 @@ import (
 	"strings"
 )
 
-const schemaSystemIDPrefix = "reearth"
-
 var schemaIDRe = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9_-]*$|^@$")
 
 // PropertySchemaID is an ID for PropertySchema.
 type PropertySchemaID struct {
 	plugin PluginID
 	id     string
+}
+
+// NewPropertySchemaID generates a new PropertySchemaID from a plugin ID and name.
+func NewPropertySchemaID(p PluginID, name string) PropertySchemaID {
+	if p.IsNil() || !schemaIDRe.MatchString(name) {
+		return PropertySchemaID{}
+	}
+	return PropertySchemaID{plugin: p.Clone(), id: name}
 }
 
 // PropertySchemaIDFrom generates a new PropertySchemaID from a string.
@@ -28,29 +34,6 @@ func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
 	return PropertySchemaID{plugin: pid, id: ids[1]}, nil
 }
 
-// PropertySchemaIDFromExtension generates a new PropertySchemaID from a plugin ID and an extension ID.
-func PropertySchemaIDFromExtension(p PluginID, e PluginExtensionID) (PropertySchemaID, error) {
-	return PropertySchemaID{plugin: p, id: e.String()}, nil
-}
-
-// MustPropertySchemaID generates a new PropertySchemaID from a string, but panics if the string cannot be parsed.
-func MustPropertySchemaID(id string) PropertySchemaID {
-	did, err := PropertySchemaIDFrom(id)
-	if err != nil {
-		panic(err)
-	}
-	return did
-}
-
-// MustPropertySchemaIDFromExtension generates a new PropertySchemaID from a plugin ID and an extension ID, but panics if the string cannot be parsed.
-func MustPropertySchemaIDFromExtension(p PluginID, e PluginExtensionID) PropertySchemaID {
-	did, err := PropertySchemaIDFromExtension(p, e)
-	if err != nil {
-		panic(err)
-	}
-	return did
-}
-
 // PropertySchemaIDFromRef generates a new PropertySchemaID from a string ref.
 func PropertySchemaIDFromRef(id *string) *PropertySchemaID {
 	if id == nil {
@@ -63,10 +46,27 @@ func PropertySchemaIDFromRef(id *string) *PropertySchemaID {
 	return &did
 }
 
+// MustPropertySchemaID generates a new PropertySchemaID from a string, but panics if the string cannot be parsed.
+func MustPropertySchemaID(id string) PropertySchemaID {
+	did, err := PropertySchemaIDFrom(id)
+	if err != nil {
+		panic(err)
+	}
+	return did
+}
+
 // Clone duplicates the PropertySchemaID
 func (d PropertySchemaID) Clone() PropertySchemaID {
 	return PropertySchemaID{
 		plugin: d.plugin.Clone(),
+		id:     d.id,
+	}
+}
+
+// WithPlugin duplicates the PropertySchemaID but its plugin ID is changed
+func (d PropertySchemaID) WithPlugin(plugin PluginID) PropertySchemaID {
+	return PropertySchemaID{
+		plugin: plugin.Clone(),
 		id:     d.id,
 	}
 }
@@ -79,11 +79,6 @@ func (d PropertySchemaID) ID() string {
 // Plugin returns a fragment of plugin ID.
 func (d PropertySchemaID) Plugin() PluginID {
 	return d.plugin
-}
-
-// System returns if it is system ID
-func (d PropertySchemaID) System() bool {
-	return d.id == schemaSystemIDPrefix || strings.HasPrefix(d.id, schemaSystemIDPrefix+"/")
 }
 
 // String returns a string representation.

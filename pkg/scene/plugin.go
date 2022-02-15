@@ -19,6 +19,13 @@ func (s *Plugin) Plugin() PluginID {
 	return s.plugin
 }
 
+func (s *Plugin) PluginRef() *PluginID {
+	if s == nil {
+		return nil
+	}
+	return s.plugin.Ref()
+}
+
 func (s *Plugin) Property() *PropertyID {
 	if s == nil {
 		return nil

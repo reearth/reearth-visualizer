@@ -626,3 +626,7 @@ func (p *Property) updateSchema(s SchemaID) bool {
 	p.schema = s.Clone()
 	return true
 }
+
+func (p *Property) SetSchema(schema SchemaID) {
+	p.schema = schema.Clone()
+}

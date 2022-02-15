@@ -66,9 +66,10 @@ func (r *Plugin) Save(ctx context.Context, p *plugin.Plugin) error {
 	if p.ID().System() {
 		return errors.New("cannnot save system plugin")
 	}
-	for _, p := range r.data {
-		if p.ID().Equal(p.ID()) {
-			return nil
+	for i, q := range r.data {
+		if q.ID().Equal(p.ID()) {
+			r.data = append(r.data[:i], r.data[i+1:]...)
+			break
 		}
 	}
 	r.data = append(r.data, p.Clone())

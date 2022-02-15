@@ -108,6 +108,36 @@ func (r *layerRepo) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, 
 	return r.findGroups(ctx, nil, filter)
 }
 
+func (r *layerRepo) FindParentsByIDs(ctx context.Context, ids []id.LayerID, scenes []id.SceneID) (layer.GroupList, error) {
+	f := bson.M{
+		"group.layers": bson.M{"$in": id.LayerIDsToStrings(ids)},
+	}
+	filter := r.sceneFilter(f, scenes)
+	return r.findGroups(ctx, nil, filter)
+}
+
+func (r *layerRepo) FindByPluginAndExtension(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID, scenes []id.SceneID) (layer.List, error) {
+	f := bson.M{
+		"plugin": pid.String(),
+	}
+	if eid != nil {
+		f["extension"] = eid.String()
+	}
+	filter := r.sceneFilter(f, scenes)
+	return r.find(ctx, nil, filter)
+}
+
+func (r *layerRepo) FindByPluginAndExtensionOfBlocks(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID, scenes []id.SceneID) (layer.List, error) {
+	f := bson.M{
+		"infobox.fields.plugin": pid.String(),
+	}
+	if eid != nil {
+		f["infobox.fields.extension"] = eid.String()
+	}
+	filter := r.sceneFilter(f, scenes)
+	return r.find(ctx, nil, filter)
+}
+
 func (r *layerRepo) FindByProperty(ctx context.Context, id id.PropertyID, f []id.SceneID) (layer.Layer, error) {
 	filter := r.sceneFilterD(bson.D{
 		{Key: "$or", Value: []bson.D{
@@ -144,6 +174,25 @@ func (r *layerRepo) SaveAll(ctx context.Context, layers layer.List) error {
 	}
 	docs, ids := mongodoc.NewLayers(layers)
 	return r.client.SaveAll(ctx, ids, docs)
+}
+
+func (r *layerRepo) UpdatePlugin(ctx context.Context, old, new id.PluginID, scenes []id.SceneID) error {
+	return r.client.UpdateManyMany(
+		ctx,
+		[]mongodoc.Update{
+			{
+				Filter: r.sceneFilter(bson.M{"plugin": old.String()}, scenes),
+				Update: bson.M{"plugin": new.String()},
+			},
+			{
+				Filter: r.sceneFilter(bson.M{"infobox.fields": bson.M{"$type": "array"}}, scenes),
+				Update: bson.M{"infobox.fields.$[if].plugin": new.String()},
+				ArrayFilters: []interface{}{
+					bson.M{"if.plugin": old.String()},
+				},
+			},
+		},
+	)
 }
 
 func (r *layerRepo) Remove(ctx context.Context, id id.LayerID) error {
@@ -224,16 +273,7 @@ func (r *layerRepo) findGroupOne(ctx context.Context, filter bson.D) (*layer.Gro
 	return c.GroupRows[0], nil
 }
 
-// func (r *layerRepo) paginate(ctx context.Context, filter bson.D, pagination *usecase.Pagination) (layer.List, *usecase.PageInfo, error) {
-// 	var c mongodoc.LayerConsumer
-// 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
-// 	if err2 != nil {
-// 		return nil, nil, rerror.ErrInternalBy(err2)
-// 	}
-// 	return c.Rows, pageInfo, nil
-// }
-
-func (r *layerRepo) findItems(ctx context.Context, dst layer.ItemList, filter bson.D) (layer.ItemList, error) {
+func (r *layerRepo) findItems(ctx context.Context, dst layer.ItemList, filter interface{}) (layer.ItemList, error) {
 	c := mongodoc.LayerConsumer{
 		ItemRows: dst,
 	}
@@ -246,16 +286,7 @@ func (r *layerRepo) findItems(ctx context.Context, dst layer.ItemList, filter bs
 	return c.ItemRows, nil
 }
 
-// func (r *layerRepo) paginateItems(ctx context.Context, filter bson.D, pagination *usecase.Pagination) (layer.ItemList, *usecase.PageInfo, error) {
-// 	var c mongodoc.LayerConsumer
-// 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
-// 	if err2 != nil {
-// 		return nil, nil, rerror.ErrInternalBy(err2)
-// 	}
-// 	return c.ItemRows, pageInfo, nil
-// }
-
-func (r *layerRepo) findGroups(ctx context.Context, dst layer.GroupList, filter bson.D) (layer.GroupList, error) {
+func (r *layerRepo) findGroups(ctx context.Context, dst layer.GroupList, filter interface{}) (layer.GroupList, error) {
 	c := mongodoc.LayerConsumer{
 		GroupRows: dst,
 	}
@@ -267,6 +298,24 @@ func (r *layerRepo) findGroups(ctx context.Context, dst layer.GroupList, filter 
 	}
 	return c.GroupRows, nil
 }
+
+// func (r *layerRepo) paginate(ctx context.Context, filter bson.D, pagination *usecase.Pagination) (layer.List, *usecase.PageInfo, error) {
+// 	var c mongodoc.LayerConsumer
+// 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
+// 	if err2 != nil {
+// 		return nil, nil, rerror.ErrInternalBy(err2)
+// 	}
+// 	return c.Rows, pageInfo, nil
+// }
+
+// func (r *layerRepo) paginateItems(ctx context.Context, filter bson.D, pagination *usecase.Pagination) (layer.ItemList, *usecase.PageInfo, error) {
+// 	var c mongodoc.LayerConsumer
+// 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
+// 	if err2 != nil {
+// 		return nil, nil, rerror.ErrInternalBy(err2)
+// 	}
+// 	return c.ItemRows, pageInfo, nil
+// }
 
 // func (r *layerRepo) paginateGroups(ctx context.Context, filter bson.D, pagination *usecase.Pagination) (layer.GroupList, *usecase.PageInfo, error) {
 // 	var c mongodoc.LayerConsumer

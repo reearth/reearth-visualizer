@@ -131,7 +131,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		RootLayer:   scene.RootLayer().String(),
 		Widgets:     widgetsDoc,
 		Plugins:     pluginsDoc,
-		AlignSystem: NewWidgetAlignSystem(scene.WidgetAlignSystem()),
+		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
 		Clusters:    clsuterDoc,
@@ -223,8 +223,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		Team(tid).
 		RootLayer(lid).
 		Clusters(cl).
-		Widgets(scene.NewWidgets(ws)).
-		WidgetAlignSystem(d.AlignSystem.Model()).
+		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).

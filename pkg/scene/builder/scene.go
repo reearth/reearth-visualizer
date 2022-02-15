@@ -38,7 +38,7 @@ func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Ti
 		Clusters:          b.clusters(ctx, s, p),
 		Layers:            l,
 		Tags:              tags,
-		WidgetAlignSystem: buildWidgetAlignSystem(s.WidgetAlignSystem()),
+		WidgetAlignSystem: buildWidgetAlignSystem(s.Widgets().Alignment()),
 	}, nil
 }
 

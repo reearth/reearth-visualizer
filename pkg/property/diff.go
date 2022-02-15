@@ -105,3 +105,36 @@ func (d *SchemaDiff) IsEmpty() bool {
 func (d *SchemaDiff) IsIDChanged() bool {
 	return d != nil && !d.From.Equal(d.To)
 }
+
+type SchemaDiffList []SchemaDiff
+
+func (l SchemaDiffList) FindByFrom(from SchemaID) *SchemaDiff {
+	for _, d := range l {
+		if d.From.Equal(from) {
+			return &d
+		}
+	}
+	return nil
+}
+
+func (l SchemaDiffList) FromSchemas() []SchemaID {
+	if len(l) == 0 {
+		return nil
+	}
+
+	res := make([]SchemaID, 0, len(l))
+	for _, d := range l {
+		s := d.From
+		found := false
+		for _, r := range res {
+			if r.Equal(s) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			res = append(res, s)
+		}
+	}
+	return res
+}

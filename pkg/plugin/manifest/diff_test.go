@@ -210,7 +210,7 @@ func TestDiff_PropertySchmaDiffs(t *testing.T) {
 	tests := []struct {
 		name   string
 		target Diff
-		want   []property.SchemaDiff
+		want   property.SchemaDiffList
 	}{
 		{
 			name: "ok",
@@ -224,7 +224,7 @@ func TestDiff_PropertySchmaDiffs(t *testing.T) {
 					}},
 				},
 			},
-			want: []property.SchemaDiff{
+			want: property.SchemaDiffList{
 				{
 					From: ps1,
 				},
@@ -236,7 +236,7 @@ func TestDiff_PropertySchmaDiffs(t *testing.T) {
 		{
 			name:   "empty",
 			target: Diff{},
-			want:   []property.SchemaDiff{},
+			want:   property.SchemaDiffList{},
 		},
 	}
 

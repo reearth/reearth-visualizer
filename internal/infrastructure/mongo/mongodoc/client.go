@@ -120,7 +120,7 @@ var (
 )
 
 func (c *Client) SaveOne(ctx context.Context, col string, id string, replacement interface{}) error {
-	_, err := c.Collection(col).ReplaceOne(ctx, bson.D{{Key: "id", Value: id}}, replacement, replaceOption)
+	_, err := c.Collection(col).ReplaceOne(ctx, bson.M{"id": id}, replacement, replaceOption)
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}
@@ -140,9 +140,46 @@ func (c *Client) SaveAll(ctx context.Context, col string, ids []string, updates 
 		id := ids[i]
 		writeModels = append(writeModels, &mongo.ReplaceOneModel{
 			Upsert:      &upsert,
-			Filter:      bson.D{{Key: "id", Value: id}},
+			Filter:      bson.M{"id": id},
 			Replacement: u,
 		})
+	}
+
+	_, err := c.Collection(col).BulkWrite(ctx, writeModels)
+	if err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+	return nil
+}
+
+func (c *Client) UpdateMany(ctx context.Context, col string, filter, update interface{}) error {
+	_, err := c.Collection(col).UpdateMany(ctx, filter, bson.M{
+		"$set": update,
+	})
+	if err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+	return nil
+}
+
+type Update struct {
+	Filter       interface{}
+	Update       interface{}
+	ArrayFilters []interface{}
+}
+
+func (c *Client) UpdateManyMany(ctx context.Context, col string, updates []Update) error {
+	writeModels := make([]mongo.WriteModel, 0, len(updates))
+	for _, w := range updates {
+		wm := mongo.NewUpdateManyModel().SetFilter(w.Filter).SetUpdate(bson.M{
+			"$set": w.Update,
+		})
+		if len(w.ArrayFilters) > 0 {
+			wm.SetArrayFilters(options.ArrayFilters{
+				Filters: w.ArrayFilters,
+			})
+		}
+		writeModels = append(writeModels, wm)
 	}
 
 	_, err := c.Collection(col).BulkWrite(ctx, writeModels)

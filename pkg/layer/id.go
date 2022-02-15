@@ -21,6 +21,7 @@ var NewInfoboxFieldID = id.NewInfoboxFieldID
 var NewTagID = id.NewTagID
 var NewSceneID = id.NewSceneID
 var NewPropertyID = id.NewPropertyID
+var NewPropertySchemaID = id.NewPropertySchemaID
 var NewDatasetID = id.NewDatasetID
 var NewDatasetSchemaID = id.NewDatasetSchemaID
 
@@ -30,8 +31,6 @@ var MustTagID = id.MustTagID
 var MustSceneID = id.MustSceneID
 var MustPluginID = id.MustPluginID
 var MustPropertyID = id.MustPropertyID
-var PropertySchemaIDFromExtension = id.PropertySchemaIDFromExtension
-var MustPropertySchemaIDFromExtension = id.MustPropertySchemaIDFromExtension
 
 var IDFrom = id.LayerIDFrom
 var InfoboxFieldIDFrom = id.InfoboxFieldIDFrom

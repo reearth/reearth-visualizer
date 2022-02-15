@@ -105,6 +105,15 @@ func PluginIDFromRef(id *string) *PluginID {
 	return &did
 }
 
+func (d PluginID) WithScene(sid *SceneID) PluginID {
+	return PluginID{
+		name:    d.name,
+		version: d.version,
+		sys:     d.sys,
+		scene:   sid.CopyRef(),
+	}
+}
+
 // Clone duplicates the PluginID
 func (d PluginID) Clone() PluginID {
 	return PluginID{

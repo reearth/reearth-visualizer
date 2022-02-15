@@ -50,7 +50,15 @@ func (p *Plugins) Has(id PluginID) bool {
 }
 
 func (p *Plugins) HasPlugin(id PluginID) bool {
-	name := id.Name()
+	for _, p2 := range p.plugins {
+		if p2.plugin.Equal(id) {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Plugins) HasPluginByName(name string) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Name() == name {
 			return true
@@ -60,7 +68,7 @@ func (p *Plugins) HasPlugin(id PluginID) bool {
 }
 
 func (p *Plugins) Add(sp *Plugin) {
-	if sp == nil || p.Has(sp.plugin) || sp.plugin.Equal(OfficialPluginID) {
+	if sp == nil || p.HasPluginByName(sp.plugin.Name()) || sp.plugin.Equal(OfficialPluginID) {
 		return
 	}
 	p.plugins = append(p.plugins, sp)
@@ -78,13 +86,24 @@ func (p *Plugins) Remove(pid PluginID) {
 	}
 }
 
-func (p *Plugins) Upgrade(pid, newID PluginID) {
+func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool) {
+	if p == nil || from.IsNil() || to.IsNil() {
+		return
+	}
+
 	for i, p2 := range p.plugins {
 		if p2.plugin.Equal(OfficialPluginID) {
 			continue
 		}
-		if p2.plugin.Equal(pid) {
-			p.plugins[i] = &Plugin{plugin: newID, property: p2.property}
+		if p2.plugin.Equal(from) {
+			var newpr *PropertyID
+			if !deleteProperty {
+				newpr = pr.CopyRef()
+				if newpr == nil {
+					newpr = p2.property.CopyRef()
+				}
+			}
+			p.plugins[i] = &Plugin{plugin: to, property: newpr}
 			return
 		}
 	}
@@ -106,6 +125,15 @@ func (p *Plugins) Properties() []PropertyID {
 func (p *Plugins) Plugin(pluginID PluginID) *Plugin {
 	for _, pp := range p.plugins {
 		if pp.plugin.Equal(pluginID) {
+			return pp
+		}
+	}
+	return nil
+}
+
+func (p *Plugins) PluginByName(name string) *Plugin {
+	for _, pp := range p.plugins {
+		if pp.plugin.Name() == name {
 			return pp
 		}
 	}

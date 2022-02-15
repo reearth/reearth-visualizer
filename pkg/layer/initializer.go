@@ -265,10 +265,7 @@ func (i *InitializerInfoboxField) InfoboxField(scene SceneID) (*InfoboxField, *p
 		return nil, nil, nil
 	}
 
-	psid, err := PropertySchemaIDFromExtension(i.Plugin, i.Extension)
-	if err != nil {
-		return nil, nil, err
-	}
+	psid := NewPropertySchemaID(i.Plugin, i.Extension.String())
 
 	fid := i.ID
 	if i.ID == nil {
@@ -278,12 +275,13 @@ func (i *InitializerInfoboxField) InfoboxField(scene SceneID) (*InfoboxField, *p
 	pid := i.PropertyID
 	var p *property.Property
 	if pid == nil {
-		p, err = i.Property.PropertyIncludingEmpty(scene, psid)
+		p2, err := i.Property.PropertyIncludingEmpty(scene, psid)
 		if err != nil {
 			return nil, nil, ErrInitializationPropertyWith(err)
 		}
-		if p != nil {
-			pid = p.IDRef()
+		if p2 != nil {
+			p = p2
+			pid = p2.IDRef()
 		}
 	}
 	if pid == nil {

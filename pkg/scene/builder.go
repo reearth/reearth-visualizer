@@ -23,10 +23,7 @@ func (b *Builder) Build() (*Scene, error) {
 		return nil, ErrInvalidID
 	}
 	if b.scene.widgets == nil {
-		b.scene.widgets = NewWidgets(nil)
-	}
-	if b.scene.widgetAlignSystem == nil {
-		b.scene.widgetAlignSystem = NewWidgetAlignSystem()
+		b.scene.widgets = NewWidgets(nil, nil)
 	}
 	if b.scene.plugins == nil {
 		b.scene.plugins = NewPlugins(nil)
@@ -72,11 +69,6 @@ func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 
 func (b *Builder) Widgets(widgets *Widgets) *Builder {
 	b.scene.widgets = widgets
-	return b
-}
-
-func (b *Builder) WidgetAlignSystem(widgetAlignSystem *WidgetAlignSystem) *Builder {
-	b.scene.widgetAlignSystem = widgetAlignSystem
 	return b
 }
 

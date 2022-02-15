@@ -207,10 +207,7 @@ func (l *layerBase) ValidateProperties(pm property.Map) error {
 			return errors.New("layer should have plugin id and extension id")
 		}
 
-		psid, err := PropertySchemaIDFromExtension(*l.plugin, *l.extension)
-		if err != nil {
-			return errors.New("layer has invalid plugin id and extension id")
-		}
+		psid := NewPropertySchemaID(*l.plugin, l.extension.String())
 
 		lp := pm[*l.property]
 		if lp == nil {

@@ -233,7 +233,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		s.WidgetAlignSystem().Area(loc).Add(widget.ID(), -1)
+		s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
 	}
 
 	err = i.propertyRepo.Save(ctx, property)
@@ -282,7 +282,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	if widget == nil {
 		return nil, nil, rerror.ErrNotFound
 	}
-	_, location := scene.WidgetAlignSystem().Find(param.WidgetID)
+	_, location := scene.Widgets().Alignment().Find(param.WidgetID)
 
 	_, extension, err := i.getPlugin(ctx, scene.ID(), widget.Plugin(), widget.Extension())
 	if err != nil {
@@ -304,7 +304,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		if param.Index != nil {
 			index = *param.Index
 		}
-		scene.WidgetAlignSystem().Move(widget.ID(), location, index)
+		scene.Widgets().Alignment().Move(widget.ID(), location, index)
 	}
 
 	if param.Extended != nil {
@@ -360,7 +360,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
-	area := scene.WidgetAlignSystem().Area(param.Location)
+	area := scene.Widgets().Alignment().Area(param.Location)
 
 	if area == nil {
 		return nil, errors.New("invalid location")
@@ -414,7 +414,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	}
 
 	ws.Remove(wid)
-	scene.WidgetAlignSystem().Remove(wid)
+	scene.Widgets().Alignment().Remove(wid)
 
 	err2 = i.propertyRepo.Remove(ctx, widget.Property())
 	if err2 != nil {
@@ -553,7 +553,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	ps.Remove(pid)
 
 	// remove widgets
-	removedProperties = append(removedProperties, scene.Widgets().RemoveAllByPlugin(pid)...)
+	removedProperties = append(removedProperties, scene.Widgets().RemoveAllByPlugin(pid, nil)...)
 
 	// remove layers
 	res, err := layerops.Processor{

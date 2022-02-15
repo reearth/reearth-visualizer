@@ -38,7 +38,8 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 	c.Lock = lock
 
 	// migration
-	if err := (migration.Client{Client: client, Config: c.Config}).Migrate(ctx); err != nil {
+	m := migration.Client{Client: client, Config: c.Config}
+	if err := m.Migrate(ctx); err != nil {
 		return err
 	}
 
