@@ -4,8 +4,7 @@
     ":semanticCommits",
     ":semanticCommitScopeDisabled",
     ":maintainLockFilesWeekly",
-    ":enableVulnerabilityAlertsWithLabel(security)",
-    ":semanticCommitTypeAll(chore)"
+    ":enableVulnerabilityAlertsWithLabel(security)"
   ],
   "postUpdateOptions": [
     "gomodTidy",
@@ -13,11 +12,44 @@
   ],
   "packageRules": [
     {
+      "enabledManagers": [
+        "gomod"
+      ],
       "packagePatterns": [
         "*"
       ],
-      "groupName": "all dependencies",
-      "groupSlug": "all",
+      "groupName": "dependencies",
+      "groupSlug": "gomod",
+      "semanticCommitType": "chore",
+      "extends": [
+        "schedule:earlyMondays"
+      ]
+    },
+    {
+      "enabledManagers": [
+        "dockerfile",
+        "docker-compose"
+      ],
+      "packagePatterns": [
+        "*"
+      ],
+      "groupName": "docker dependencies",
+      "groupSlug": "docker",
+      "semanticCommitType": "chore",
+      "extends": [
+        "schedule:earlyMondays"
+      ]
+    },
+    {
+      "enabledManagers": [
+        "github-actions"
+      ],
+      "packagePatterns": [
+        "*"
+      ],
+      "groupName": "github actions dependencies",
+      "groupSlug": "github-actions",
+      "semanticCommitType": "ci",
       "extends": [
         "schedule:earlyMondays"
       ]
