@@ -15,7 +15,7 @@ services:
     depends_on:
       - reearth-mongo
   reearth-mongo:
-    image: mongo:4.2.0-bionic
+    image: mongo:4.4.6-bionic
     ports:
       - 27017:27017
     volumes:

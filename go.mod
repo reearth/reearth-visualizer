@@ -1,10 +1,10 @@
 module github.com/reearth/reearth-backend
 
 require (
-	cloud.google.com/go/profiler v0.1.2
-	cloud.google.com/go/storage v1.19.0
+	cloud.google.com/go/profiler v0.2.0
+	cloud.google.com/go/storage v1.20.0
 	github.com/99designs/gqlgen v0.16.0
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.0.0
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.3.0
 	github.com/auth0/go-jwt-middleware v1.0.1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
@@ -25,7 +25,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.4.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/afero v1.8.0
+	github.com/spf13/afero v1.8.1
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
 	github.com/stretchr/testify v1.7.0
 	github.com/twpayne/go-kml v1.5.2
@@ -33,21 +33,21 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser/v2 v2.3.1
-	go.mongodb.org/mongo-driver v1.8.2
-	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.28.0
-	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.28.0
-	go.opentelemetry.io/otel v1.3.0
-	go.opentelemetry.io/otel/sdk v1.3.0
+	go.mongodb.org/mongo-driver v1.8.3
+	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.29.0
+	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.29.0
+	go.opentelemetry.io/otel v1.4.0
+	go.opentelemetry.io/otel/sdk v1.4.0
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.9
-	google.golang.org/api v0.66.0
+	google.golang.org/api v0.68.0
 	gopkg.in/go-playground/colors.v1 v1.2.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
 
 require (
 	cloud.google.com/go v0.100.2 // indirect
-	cloud.google.com/go/compute v0.1.0 // indirect
+	cloud.google.com/go/compute v1.2.0 // indirect
 	cloud.google.com/go/iam v0.1.1 // indirect
 	cloud.google.com/go/trace v1.0.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
@@ -59,15 +59,15 @@ require (
 	github.com/dgryski/trifles v0.0.0-20200705224438-cafc02a1ee2b // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813 // indirect
-	github.com/go-logr/logr v1.2.1 // indirect
-	github.com/go-logr/stdr v1.2.0 // indirect
+	github.com/go-logr/logr v1.2.2 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
-	github.com/google/pprof v0.0.0-20211214055906-6f57359322fd // indirect
+	github.com/google/pprof v0.0.0-20220113144219-d25a53d42d00 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
@@ -91,19 +91,19 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.opentelemetry.io/contrib v1.3.0 // indirect
-	go.opentelemetry.io/otel/trace v1.3.0 // indirect
+	go.opentelemetry.io/otel/trace v1.4.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
 	golang.org/x/mod v0.5.1 // indirect
-	golang.org/x/net v0.0.0-20211101193420-4a448f8816b3 // indirect
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/sys v0.0.0-20220207234003-57398862261d // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220118154757-00ab72f36ad5 // indirect
-	google.golang.org/grpc v1.40.1 // indirect
+	google.golang.org/genproto v0.0.0-20220207185906-7721543eae58 // indirect
+	google.golang.org/grpc v1.44.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
