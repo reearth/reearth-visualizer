@@ -393,7 +393,9 @@ function useProviderProps(
     return layers.findAll(
       layer =>
         rect &&
-        layer.property &&
+        layer.property?.default?.location &&
+        typeof layer.property.default.location.lng === "number" &&
+        typeof layer.property.default.location.lat === "number" &&
         Rectangle.contains(
           new Rectangle(
             CesiumMath.toRadians(rect.west),
