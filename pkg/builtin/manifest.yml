@@ -301,6 +301,7 @@ extensions:
             - id: showTitle
               type: bool
               title: Show Title
+              defaultValue: true
             - id: position
               type: string
               title: Position
@@ -338,6 +339,7 @@ extensions:
               min: 284
               max: 2048
               suffix: px
+              description: "This sets the infobox height. Min: 284  Max: 2048"
               availableIf:
                 field: heightType
                 type: string

@@ -177,6 +177,7 @@ extensions:
               manual: 手動
           height:
             title: 高さ
+            description: インフォボックスの高さを設定します。最小284px・最大2048px
           infoboxPaddingTop:
             title: 余白上
             description: "上端の余白を設定します。最小0px・最大40px"
