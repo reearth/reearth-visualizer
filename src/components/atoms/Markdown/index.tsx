@@ -37,7 +37,7 @@ const Markdown: React.FC<Props> = ({
       dark={dark}
       onClick={onClick}
       onDoubleClick={onDoubleClick}>
-      <ReactMarkdown plugins={plugins} className={className} linkTarget="_blank">
+      <ReactMarkdown remarkPlugins={plugins} className={className} linkTarget="_blank">
         {children || ""}
       </ReactMarkdown>
     </Wrapper>

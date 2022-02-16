@@ -43,7 +43,12 @@ export type Props = {
   sceneProperty?: SceneProperty;
 };
 
-export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
+export default function MenuButton({
+  button: b,
+  menuItems,
+  pos,
+  sceneProperty,
+}: Props): JSX.Element {
   const ctx = useContext();
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();

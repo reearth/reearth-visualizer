@@ -42,7 +42,7 @@ export type Props = {
   sceneProperty?: SceneProperty;
 };
 
-export default function ({
+export default function MenuButton({
   button: b,
   menuItems,
   location: position,
