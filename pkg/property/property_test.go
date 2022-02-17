@@ -274,7 +274,7 @@ func TestRemoveListItem(t *testing.T) {
 	assert.Equal(t, []*Group{g2}, gl.Groups())
 	assert.Equal(t, 1, len(p.Items()))
 
-	ok = p.RemoveListItem(PointItem(g2.ID()))
+	ok = p.RemoveListItem(NewPointer(sgid.Ref(), g2.IDRef(), nil))
 	assert.True(t, ok)
 	assert.Equal(t, []*Group{}, gl.Groups())
 	assert.Equal(t, 0, len(p.Items()))
@@ -670,6 +670,181 @@ func TestProperty_MoveFields(t *testing.T) {
 			assert.Equal(t, tt.wantRes, tt.target.MoveFields(tt.args.from, tt.args.to))
 			assert.Equal(t, tt.wantFieldsFrom, tt.target.Fields(tt.args.from.AllFields()))
 			assert.Equal(t, tt.wantFieldsTo, tt.target.Fields(tt.args.to.AllFields()))
+		})
+	}
+}
+
+func TestProperty_GroupAndList(t *testing.T) {
+	type args struct {
+		ptr *Pointer
+	}
+
+	pgid1 := NewItemID()
+	pgid2 := NewItemID()
+
+	tests := []struct {
+		name   string
+		target *Property
+		args   args
+		want   *Group
+		want1  *GroupList
+	}{
+		{
+			name: "found",
+			target: &Property{
+				items: []Item{
+					&GroupList{
+						itemBase: itemBase{
+							ID:          pgid1,
+							SchemaGroup: SchemaGroupID("aaaa"),
+						},
+						groups: []*Group{
+							{
+								itemBase: itemBase{
+									ID:          pgid2,
+									SchemaGroup: SchemaGroupID("aaaa"),
+								},
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ptr: &Pointer{
+					schemaGroup: SchemaGroupID("aaaa").Ref(),
+					item:        pgid2.Ref(),
+					field:       nil,
+				},
+			},
+			want: &Group{
+				itemBase: itemBase{
+					ID:          pgid2,
+					SchemaGroup: SchemaGroupID("aaaa"),
+				},
+			},
+			want1: &GroupList{
+				itemBase: itemBase{
+					ID:          pgid1,
+					SchemaGroup: SchemaGroupID("aaaa"),
+				},
+				groups: []*Group{
+					{
+						itemBase: itemBase{
+							ID:          pgid2,
+							SchemaGroup: SchemaGroupID("aaaa"),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "list only",
+			target: &Property{
+				items: []Item{
+					&GroupList{
+						itemBase: itemBase{
+							ID:          pgid1,
+							SchemaGroup: SchemaGroupID("aaaa"),
+						},
+						groups: []*Group{
+							{
+								itemBase: itemBase{
+									ID:          pgid2,
+									SchemaGroup: SchemaGroupID("aaaa"),
+								},
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ptr: &Pointer{
+					schemaGroup: SchemaGroupID("aaaa").Ref(),
+					item:        pgid1.Ref(),
+					field:       nil,
+				},
+			},
+			want: nil,
+			want1: &GroupList{
+				itemBase: itemBase{
+					ID:          pgid1,
+					SchemaGroup: SchemaGroupID("aaaa"),
+				},
+				groups: []*Group{
+					{
+						itemBase: itemBase{
+							ID:          pgid2,
+							SchemaGroup: SchemaGroupID("aaaa"),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got, got1 := tt.target.GroupAndList(tt.args.ptr)
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.want1, got1)
+		})
+	}
+}
+
+func TestProperty_AddItem(t *testing.T) {
+	type args struct {
+		i Item
+	}
+
+	iid := NewItemID()
+
+	tests := []struct {
+		name      string
+		target    *Property
+		args      args
+		want      bool
+		wantItems []Item
+	}{
+		{
+			name:      "ok",
+			target:    &Property{},
+			args:      args{i: &Group{}},
+			want:      true,
+			wantItems: []Item{&Group{}},
+		},
+		{
+			name:      "schema group duplicated",
+			target:    &Property{items: []Item{&Group{itemBase: itemBase{SchemaGroup: "a"}}}},
+			args:      args{i: &Group{itemBase: itemBase{SchemaGroup: "a"}}},
+			want:      false,
+			wantItems: []Item{&Group{itemBase: itemBase{SchemaGroup: "a"}}},
+		},
+		{
+			name:      "id duplicated",
+			target:    &Property{items: []Item{&Group{itemBase: itemBase{ID: iid}}}},
+			args:      args{i: &Group{itemBase: itemBase{ID: iid}}},
+			want:      false,
+			wantItems: []Item{&Group{itemBase: itemBase{ID: iid}}},
+		},
+		{
+			name:      "nil",
+			target:    nil,
+			args:      args{i: &Group{}},
+			want:      false,
+			wantItems: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, tt.target.AddItem(tt.args.i))
+			if tt.target != nil {
+				assert.Equal(t, tt.wantItems, tt.target.items)
+			}
 		})
 	}
 }

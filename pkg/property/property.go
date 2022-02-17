@@ -75,7 +75,7 @@ func (p *Property) GroupAndList(ptr *Pointer) (*Group, *GroupList) {
 	}
 
 	for _, i := range p.items {
-		if ptr.TestItem(i.SchemaGroup(), i.ID()) {
+		if ptr.TestSchemaGroup(i.SchemaGroup()) {
 			if gl := ToGroupList(i); gl != nil {
 				return gl.GroupByPointer(ptr), gl
 			} else if g := ToGroup(i); g != nil {
@@ -234,6 +234,14 @@ func (p *Property) Datasets() []DatasetID {
 	return res
 }
 
+func (p *Property) AddItem(i Item) bool {
+	if p == nil || p.ItemBySchema(i.SchemaGroup()) != nil || p.Item(PointItem(i.ID())) != nil {
+		return false
+	}
+	p.items = append(p.items, i)
+	return true
+}
+
 func (p *Property) RemoveItem(ptr *Pointer) {
 	if p == nil || ptr == nil {
 		return
@@ -283,6 +291,7 @@ func (p *Property) UpdateValue(ps *Schema, ptr *Pointer, v *Value) (*Field, *Gro
 	field, gl, g, created := p.GetOrCreateField(ps, ptr)
 	if field == nil || created && v == nil {
 		// The field is empty and will be removed by prune, so it does not make sense
+		// p.Prune()
 		return nil, nil, nil, nil
 	}
 
@@ -351,7 +360,7 @@ func (p *Property) GetOrCreateItem(ps *Schema, ptr *Pointer) (Item, *GroupList) 
 
 	ni := InitItemFrom(psg)
 	if ni != nil {
-		p.items = append(p.items, ni)
+		_ = p.AddItem(ni)
 	}
 
 	return ni, nil // root item
@@ -395,8 +404,7 @@ func (p *Property) GetOrCreateRootGroup(ptr *Pointer) (*Group, bool) {
 		return nil, false
 	}
 
-	p.items = append(p.items, ng)
-	return ng, true
+	return ng, p.AddItem(ng)
 }
 
 func (p *Property) GetOrCreateGroupList(ps *Schema, ptr *Pointer) *GroupList {

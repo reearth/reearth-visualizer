@@ -457,7 +457,6 @@ func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItem
 }
 
 func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemovePropertyItemParam, operator *usecase.Operator) (p *property.Property, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
