@@ -6,16 +6,13 @@ var TypeURL Type = "url"
 
 type propertyURL struct{}
 
-func (*propertyURL) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyURL) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(url.URL); ok {
 		return &v, true
 	}
 
-	if v, ok := i.(*url.URL); ok {
-		if v == nil {
-			return nil, false
-		}
-		return v, true
+	if v, ok := i.(*url.URL); ok && v != nil {
+		return p.I2V(*v) // clone URL
 	}
 
 	if v, ok := i.(string); ok {
@@ -25,9 +22,7 @@ func (*propertyURL) I2V(i interface{}) (interface{}, bool) {
 	}
 
 	if v, ok := i.(*string); ok && v != nil {
-		if u, err := url.Parse(*v); err == nil {
-			return u, true
-		}
+		return p.I2V(*v)
 	}
 
 	return nil, false

@@ -23,7 +23,7 @@ var TypeLatLngHeight Type = "latlngheight"
 
 type propertyLatLngHeight struct{}
 
-func (*propertyLatLngHeight) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyLatLngHeight) I2V(i interface{}) (interface{}, bool) {
 	switch v := i.(type) {
 	case LatLngHeight:
 		return v, true
@@ -31,11 +31,11 @@ func (*propertyLatLngHeight) I2V(i interface{}) (interface{}, bool) {
 		return LatLngHeight{Lat: v.Lat, Lng: v.Lng, Height: 0}, true
 	case *LatLngHeight:
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 	case *LatLng:
 		if v != nil {
-			return LatLngHeight{Lat: v.Lat, Lng: v.Lng, Height: 0}, true
+			return p.I2V(*v)
 		}
 	}
 

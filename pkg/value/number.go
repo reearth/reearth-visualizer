@@ -9,7 +9,7 @@ var TypeNumber Type = "number"
 
 type propertyNumber struct{}
 
-func (*propertyNumber) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyNumber) I2V(i interface{}) (interface{}, bool) {
 	switch v := i.(type) {
 	case float64:
 		return v, true
@@ -45,69 +45,75 @@ func (*propertyNumber) I2V(i interface{}) (interface{}, bool) {
 		if vfloat64, err := strconv.ParseFloat(v, 64); err == nil {
 			return vfloat64, true
 		}
+	case bool:
+		if v {
+			return float64(1), true
+		} else {
+			return float64(0), true
+		}
 	case *float64:
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 	case *float32:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *int:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *int8:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *int16:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *int32:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *int64:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uint:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uint8:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uint16:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uint32:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uint64:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *uintptr:
 		if v != nil {
-			return float64(*v), true
+			return p.I2V(*v)
 		}
 	case *json.Number:
 		if v != nil {
-			if f, err := v.Float64(); err == nil {
-				return f, true
-			}
+			return p.I2V(*v)
 		}
 	case *string:
 		if v != nil {
-			if vfloat64, err := strconv.ParseFloat(*v, 64); err == nil {
-				return vfloat64, true
-			}
+			return p.I2V(*v)
+		}
+	case *bool:
+		if v != nil {
+			return p.I2V(*v)
 		}
 	}
 	return nil, false

@@ -9,15 +9,19 @@ var TypeString Type = "string"
 
 type propertyString struct{}
 
-func (*propertyString) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyString) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(string); ok {
 		return v, true
-	} else if v, ok := i.(*string); ok && v != nil {
-		return *v, true
 	} else if v, ok := i.(float64); ok {
 		return strconv.FormatFloat(v, 'f', -1, 64), true
+	} else if v, ok := i.(bool); ok && v {
+		return "true", true
+	} else if v, ok := i.(*string); ok && v != nil {
+		return p.I2V(*v)
 	} else if v, ok := i.(*float64); ok && v != nil {
-		return strconv.FormatFloat(*v, 'f', -1, 64), true
+		return p.I2V(*v)
+	} else if v, ok := i.(*bool); ok && v != nil {
+		return p.I2V(*v)
 	} else if v, ok := i.(fmt.Stringer); ok && v != nil {
 		return v.String(), true
 	}

@@ -155,30 +155,31 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 	w3 := MustNewWidget(NewWidgetID(), pid2, "e1", NewPropertyID(), true, false)
 
 	tests := []struct {
-		Name           string
-		PID            PluginID
-		EID            *PluginExtensionID
-		WS, Expected   *Widgets
-		ExpectedResult []PropertyID
+		Name             string
+		ArgsPID          PluginID
+		ArgsEID          *PluginExtensionID
+		Target, Expected *Widgets
+		ExpectedResult   []PropertyID
 	}{
 		{
 			Name:           "remove widgets",
-			PID:            pid,
-			WS:             NewWidgets([]*Widget{w1, w2, w3}, nil),
+			ArgsPID:        pid,
+			ArgsEID:        nil,
+			Target:         NewWidgets([]*Widget{w1, w2, w3}, nil),
 			Expected:       NewWidgets([]*Widget{w3}, nil),
 			ExpectedResult: []PropertyID{w1.Property(), w2.Property()},
 		},
 		{
-			Name:           "remove widgets",
-			PID:            pid,
-			EID:            PluginExtensionID("e2").Ref(),
-			WS:             NewWidgets([]*Widget{w1, w2, w3}, nil),
+			Name:           "remove widgets of extension",
+			ArgsPID:        pid,
+			ArgsEID:        PluginExtensionID("e2").Ref(),
+			Target:         NewWidgets([]*Widget{w1, w2, w3}, nil),
 			Expected:       NewWidgets([]*Widget{w1, w3}, nil),
 			ExpectedResult: []PropertyID{w2.Property()},
 		},
 		{
 			Name:           "remove from nil widgets",
-			WS:             nil,
+			Target:         nil,
 			Expected:       nil,
 			ExpectedResult: nil,
 		},
@@ -188,8 +189,8 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tc.ExpectedResult, tc.WS.RemoveAllByPlugin(tc.PID, tc.EID))
-			assert.Equal(t, tc.Expected, tc.WS)
+			assert.Equal(t, tc.ExpectedResult, tc.Target.RemoveAllByPlugin(tc.ArgsPID, tc.ArgsEID))
+			assert.Equal(t, tc.Expected, tc.Target)
 		})
 	}
 }

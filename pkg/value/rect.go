@@ -13,12 +13,12 @@ type Rect struct {
 
 type propertyRect struct{}
 
-func (*propertyRect) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyRect) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(Rect); ok {
 		return v, true
 	} else if v, ok := i.(*Rect); ok {
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 		return nil, false
 	}

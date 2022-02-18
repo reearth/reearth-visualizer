@@ -16,14 +16,14 @@ func PolygonFrom(rings [][]float64) Polygon {
 
 type propertyPolygon struct{}
 
-func (*propertyPolygon) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyPolygon) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(Polygon); ok {
 		return v, true
 	}
 
 	if v, ok := i.(*Polygon); ok {
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 		return nil, false
 	}

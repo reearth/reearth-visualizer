@@ -90,14 +90,20 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 		}
 	}()
 
+	var oldPManifest *manifest.Manifest
 	newpid := p.Manifest.Plugin.ID()
 	oldpid := s.Plugins().PluginByName(newpid.Name()).PluginRef()
-	var oldp *plugin.Plugin
 	if oldpid != nil {
-		oldp, err = i.pluginRepo.FindByID(ctx, *oldpid, []id.SceneID{sid})
+		oldPlugin, err := i.pluginRepo.FindByID(ctx, *oldpid, []id.SceneID{sid})
 		if err != nil {
 			return nil, nil, err
 		}
+
+		oldPManifest2, err := i.pluginManifestFromPlugin(ctx, oldPlugin)
+		if err != nil {
+			return nil, nil, err
+		}
+		oldPManifest = &oldPManifest2
 	}
 
 	// new (oldpid == nil): upload files, save plugin and properties -> install
@@ -136,19 +142,19 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 		return nil, nil, err
 	}
 
-	if oldpid == nil {
+	if oldPManifest == nil {
 		// new: install plugin
 		if err := i.installScenePlugin(ctx, p, s); err != nil {
 			return nil, nil, err
 		}
 	} else {
 		// same, diff: migrate
-		if err := i.migrateScenePlugin(ctx, p, s, oldp); err != nil {
+		if err := i.migrateScenePlugin(ctx, *oldPManifest, p, s); err != nil {
 			return nil, nil, err
 		}
 	}
 
-	if oldpid != nil && !oldpid.Equal(newpid) {
+	if oldpid != nil && oldPManifest != nil && !oldpid.Equal(newpid) {
 		// diff only: delete old files
 		if err := i.file.RemovePlugin(ctx, *oldpid); err != nil {
 			return nil, nil, err
@@ -159,7 +165,7 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 			if err := i.pluginRepo.Remove(ctx, *oldpid); err != nil {
 				return nil, nil, err
 			}
-			if ps := oldp.PropertySchemas(); len(ps) > 0 {
+			if ps := oldPManifest.Plugin.PropertySchemas(); len(ps) > 0 {
 				if err := i.propertySchemaRepo.RemoveAll(ctx, ps); err != nil {
 					return nil, nil, err
 				}
@@ -195,17 +201,12 @@ func (i *Plugin) installScenePlugin(ctx context.Context, p *pluginpack.Package, 
 	return nil
 }
 
-func (i *Plugin) migrateScenePlugin(ctx context.Context, p *pluginpack.Package, s *scene.Scene, oldp *plugin.Plugin) (err error) {
-	if oldp == nil || p.Manifest == nil {
+func (i *Plugin) migrateScenePlugin(ctx context.Context, oldm manifest.Manifest, p *pluginpack.Package, s *scene.Scene) (err error) {
+	if oldm.Plugin == nil || p.Manifest == nil {
 		return nil
 	}
 
-	oldPManifest, err := i.pluginManifestFromPlugin(ctx, oldp)
-	if err != nil {
-		return err
-	}
-
-	diff := manifest.DiffFrom(oldPManifest, *p.Manifest)
+	diff := manifest.DiffFrom(oldm, *p.Manifest)
 	updatedProperties := property.List{}
 
 	// update scene
@@ -220,8 +221,7 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, p *pluginpack.Package, 
 		updatedProperties = append(updatedProperties, p)
 	}
 
-	sp := s.Plugins().Plugin(diff.From)
-	if sp != nil && sp.Property() != nil && diff.PropertySchemaDeleted {
+	if sp := s.Plugins().Plugin(diff.From); sp != nil && sp.Property() != nil && diff.PropertySchemaDeleted {
 		// plugin property should be removed
 		if err := i.propertyRepo.Remove(ctx, *sp.Property()); err != nil {
 			return err
@@ -229,9 +229,6 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, p *pluginpack.Package, 
 	}
 
 	s.Plugins().Upgrade(diff.From, diff.To, spp, diff.PropertySchemaDeleted)
-	if err := i.sceneRepo.Save(ctx, s); err != nil {
-		return err
-	}
 
 	// delete layers, blocks and widgets
 	for _, e := range diff.DeletedExtensions {
@@ -253,6 +250,10 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, p *pluginpack.Package, 
 				return err
 			}
 		}
+	}
+
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		return err
 	}
 
 	// migrate layers

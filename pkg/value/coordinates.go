@@ -32,12 +32,12 @@ var TypeCoordinates Type = "coordinates"
 
 type propertyCoordinates struct{}
 
-func (*propertyCoordinates) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyCoordinates) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(Coordinates); ok {
 		return v, true
 	} else if v, ok := i.(*Coordinates); ok {
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 		return nil, false
 	} else if v2, ok := i.([]float64); ok {

@@ -137,6 +137,8 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 	eid := id.PluginExtensionID("marker")
+	eid2 := id.PluginExtensionID("widget")
+	wid := id.NewWidgetID()
 
 	repos := memory.InitRepos(nil)
 	mfs := mockFS(map[string]string{
@@ -146,16 +148,21 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	assert.NoError(t, err)
 
 	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid.String())).MustBuild()
+	ps2 := property.NewSchema().ID(property.NewSchemaID(pid, eid2.String())).MustBuild()
 	pl := plugin.New().ID(pid).Extensions([]*plugin.Extension{
 		plugin.NewExtension().ID(eid).Type(plugin.ExtensionTypePrimitive).Schema(ps.ID()).MustBuild(),
+		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(ps2.ID()).MustBuild(),
 	}).MustBuild()
 
 	p := property.New().NewID().Schema(ps.ID()).Scene(sid).MustBuild()
+	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid.Ref()).Property(p.IDRef()).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
 	scene := scene.New().ID(sid).Team(team).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(pid, nil),
-	})).MustBuild()
+	})).Widgets(scene.NewWidgets([]*scene.Widget{
+		scene.MustNewWidget(wid, pid, eid2, p2.ID(), false, false),
+	}, nil)).MustBuild()
 
 	_ = repos.PropertySchema.Save(ctx, ps)
 	_ = repos.Plugin.Save(ctx, pl)
@@ -188,6 +195,11 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	nscene, err := repos.Scene.FindByID(ctx, scene.ID(), nil)
 	assert.NoError(t, err)
 	assert.True(t, nscene.Plugins().HasPlugin(pl.ID()))
+	assert.Nil(t, nscene.Widgets().Widget(wid))
+
+	nlp2, err := repos.Property.FindByID(ctx, p.ID(), nil)
+	assert.Nil(t, nlp2) // deleted
+	assert.Equal(t, rerror.ErrNotFound, err)
 
 	// plugin
 	npl, err := repos.Plugin.FindByID(ctx, pid, []id.SceneID{scene.ID()})
@@ -196,6 +208,10 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 
 	nlps, err := repos.PropertySchema.FindByID(ctx, ps.ID())
 	assert.Nil(t, nlps) // deleted
+	assert.Equal(t, rerror.ErrNotFound, err)
+
+	nlps2, err := repos.PropertySchema.FindByID(ctx, ps2.ID())
+	assert.Nil(t, nlps2) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
 	_, err = mfs.Open("plugins/" + pid.String() + "/hogehoge")

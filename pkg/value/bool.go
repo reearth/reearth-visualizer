@@ -6,7 +6,7 @@ var TypeBool Type = "bool"
 
 type propertyBool struct{}
 
-func (*propertyBool) I2V(i interface{}) (interface{}, bool) {
+func (p *propertyBool) I2V(i interface{}) (interface{}, bool) {
 	switch v := i.(type) {
 	case bool:
 		return v, true
@@ -16,13 +16,11 @@ func (*propertyBool) I2V(i interface{}) (interface{}, bool) {
 		}
 	case *bool:
 		if v != nil {
-			return *v, true
+			return p.I2V(*v)
 		}
 	case *string:
 		if v != nil {
-			if b, err := strconv.ParseBool(*v); err == nil {
-				return b, true
-			}
+			return p.I2V(*v)
 		}
 	}
 	return nil, false
