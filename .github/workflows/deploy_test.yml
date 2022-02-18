@@ -1,7 +1,7 @@
 name: deploy_test
 on:
   workflow_run:
-    workflows: [ci]
+    workflows: [build]
     types: [completed]
     branches: [main]
 env:
