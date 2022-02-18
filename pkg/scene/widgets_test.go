@@ -29,20 +29,20 @@ func TestNewWidgets(t *testing.T) {
 		{
 			Name: "widget list",
 			Input: []*Widget{
-				MustNewWidget(wid, pid, "see", pr, true, false),
+				MustWidget(wid, pid, "see", pr, true, false),
 			},
 			Expected: []*Widget{
-				MustNewWidget(wid, pid, "see", pr, true, false),
+				MustWidget(wid, pid, "see", pr, true, false),
 			},
 		},
 		{
 			Name: "widget list with duplicatd values",
 			Input: []*Widget{
-				MustNewWidget(wid, pid, "see", pr, true, false),
-				MustNewWidget(wid, pid, "see", pr, true, false),
+				MustWidget(wid, pid, "see", pr, true, false),
+				MustWidget(wid, pid, "see", pr, true, false),
 			},
 			Expected: []*Widget{
-				MustNewWidget(wid, pid, "see", pr, true, false),
+				MustWidget(wid, pid, "see", pr, true, false),
 			},
 		},
 	}
@@ -70,8 +70,8 @@ func TestWidgets_Add(t *testing.T) {
 	}{
 		{
 			Name:     "add new widget",
-			Input:    MustNewWidget(wid, pid, "see", pr, true, false),
-			Expected: []*Widget{MustNewWidget(wid, pid, "see", pr, true, false)},
+			Input:    MustWidget(wid, pid, "see", pr, true, false),
+			Expected: []*Widget{MustWidget(wid, pid, "see", pr, true, false)},
 		},
 		{
 			Name:     "add nil widget",
@@ -80,15 +80,15 @@ func TestWidgets_Add(t *testing.T) {
 		},
 		{
 			Name:     "add to nil widgets",
-			Input:    MustNewWidget(wid, pid, "see", pr, true, false),
+			Input:    MustWidget(wid, pid, "see", pr, true, false),
 			Expected: nil,
 			Nil:      true,
 		},
 		{
 			Name:     "add existing widget",
-			Widgets:  []*Widget{MustNewWidget(wid, pid, "see", pr, true, false)},
-			Input:    MustNewWidget(wid, pid, "see", pr, true, false),
-			Expected: []*Widget{MustNewWidget(wid, pid, "see", pr, true, false)},
+			Widgets:  []*Widget{MustWidget(wid, pid, "see", pr, true, false)},
+			Input:    MustWidget(wid, pid, "see", pr, true, false),
+			Expected: []*Widget{MustWidget(wid, pid, "see", pr, true, false)},
 		},
 	}
 
@@ -136,8 +136,8 @@ func TestWidgets_Remove(t *testing.T) {
 			var ws *Widgets
 			if !tc.Nil {
 				ws = NewWidgets([]*Widget{
-					MustNewWidget(wid, pid2, "e1", pr, true, false),
-					MustNewWidget(wid2, pid, "e1", pr, true, false),
+					MustWidget(wid, pid2, "e1", pr, true, false),
+					MustWidget(wid2, pid, "e1", pr, true, false),
 				}, nil)
 				assert.True(t, ws.Has(tc.Input))
 			}
@@ -150,9 +150,9 @@ func TestWidgets_Remove(t *testing.T) {
 func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 	pid := MustPluginID("xxx~1.1.1")
 	pid2 := MustPluginID("xxx~1.1.2")
-	w1 := MustNewWidget(NewWidgetID(), pid, "e1", NewPropertyID(), true, false)
-	w2 := MustNewWidget(NewWidgetID(), pid, "e2", NewPropertyID(), true, false)
-	w3 := MustNewWidget(NewWidgetID(), pid2, "e1", NewPropertyID(), true, false)
+	w1 := MustWidget(NewWidgetID(), pid, "e1", NewPropertyID(), true, false)
+	w2 := MustWidget(NewWidgetID(), pid, "e2", NewPropertyID(), true, false)
+	w3 := MustWidget(NewWidgetID(), pid2, "e1", NewPropertyID(), true, false)
 
 	tests := []struct {
 		Name             string
@@ -195,7 +195,7 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 	}
 }
 
-func TestWidgets_ReplacePlugin(t *testing.T) {
+func TestWidgets_UpgradePlugin(t *testing.T) {
 	pid := MustPluginID("xxx~1.1.1")
 	pid2 := MustPluginID("zzz~1.1.1")
 	pr := NewPropertyID()
@@ -210,8 +210,8 @@ func TestWidgets_ReplacePlugin(t *testing.T) {
 			Name:     "replace a widget",
 			PID:      pid,
 			NewID:    pid2,
-			WS:       NewWidgets([]*Widget{MustNewWidget(wid, pid, "eee", pr, true, false)}, nil),
-			Expected: NewWidgets([]*Widget{MustNewWidget(wid, pid2, "eee", pr, true, false)}, nil),
+			WS:       NewWidgets([]*Widget{MustWidget(wid, pid, "eee", pr, true, false)}, nil),
+			Expected: NewWidgets([]*Widget{MustWidget(wid, pid2, "eee", pr, true, false)}, nil),
 		},
 		{
 			Name:     "replace with nil widget",
@@ -230,7 +230,7 @@ func TestWidgets_ReplacePlugin(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			tc.WS.ReplacePlugin(tc.PID, tc.NewID)
+			tc.WS.UpgradePlugin(tc.PID, tc.NewID)
 			assert.Equal(t, tc.Expected, tc.WS)
 		})
 	}
@@ -251,8 +251,8 @@ func TestWidgets_Properties(t *testing.T) {
 		{
 			Name: "get properties",
 			WS: NewWidgets([]*Widget{
-				MustNewWidget(wid, pid, "eee", pr, true, false),
-				MustNewWidget(wid2, pid, "eee", pr2, true, false),
+				MustWidget(wid, pid, "eee", pr, true, false),
+				MustWidget(wid2, pid, "eee", pr2, true, false),
 			}, nil),
 			Expected: []PropertyID{pr, pr2},
 		},
@@ -288,12 +288,12 @@ func TestWidgets_Widgets(t *testing.T) {
 		{
 			Name: "get widgets",
 			WS: NewWidgets([]*Widget{
-				MustNewWidget(wid, pid, "eee", pr, true, false),
-				MustNewWidget(wid2, pid, "eee", pr2, true, false),
+				MustWidget(wid, pid, "eee", pr, true, false),
+				MustWidget(wid2, pid, "eee", pr2, true, false),
 			}, nil),
 			Expected: []*Widget{
-				MustNewWidget(wid, pid, "eee", pr, true, false),
-				MustNewWidget(wid2, pid, "eee", pr2, true, false),
+				MustWidget(wid, pid, "eee", pr, true, false),
+				MustWidget(wid2, pid, "eee", pr2, true, false),
 			},
 		},
 		{
@@ -327,8 +327,8 @@ func TestWidgets_Widget(t *testing.T) {
 		{
 			Name:     "get a widget",
 			ID:       wid,
-			WS:       NewWidgets([]*Widget{MustNewWidget(wid, pid, "eee", pr, true, false)}, nil),
-			Expected: MustNewWidget(wid, pid, "eee", pr, true, false),
+			WS:       NewWidgets([]*Widget{MustWidget(wid, pid, "eee", pr, true, false)}, nil),
+			Expected: MustWidget(wid, pid, "eee", pr, true, false),
 		},
 		{
 			Name:     "dont has the widget",
@@ -368,7 +368,7 @@ func TestWidgets_Has(t *testing.T) {
 		{
 			Name:     "has a widget",
 			ID:       wid,
-			WS:       NewWidgets([]*Widget{MustNewWidget(wid, pid, "eee", pr, true, false)}, nil),
+			WS:       NewWidgets([]*Widget{MustWidget(wid, pid, "eee", pr, true, false)}, nil),
 			Expected: true,
 		},
 		{

@@ -4,7 +4,7 @@ type SchemaList []*Schema
 
 func (l SchemaList) Find(psid SchemaID) *Schema {
 	for _, s := range l {
-		if s.ID().Equal(psid) {
+		if s != nil && s.ID().Equal(psid) {
 			return s
 		}
 	}

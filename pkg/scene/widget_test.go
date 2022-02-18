@@ -106,12 +106,12 @@ func TestMustNewWidget(t *testing.T) {
 
 			if tc.Err != nil {
 				assert.PanicsWithError(t, tc.Err.Error(), func() {
-					MustNewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
+					MustWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
 				})
 				return
 			}
 
-			res := MustNewWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
+			res := MustWidget(tc.ID, tc.Plugin, tc.Extension, tc.Property, tc.Enabled, tc.Extended)
 			assert.Equal(t, tc.ID, res.ID())
 			assert.Equal(t, tc.Property, res.Property())
 			assert.Equal(t, tc.Extension, res.Extension())
@@ -122,19 +122,19 @@ func TestMustNewWidget(t *testing.T) {
 }
 
 func TestWidget_SetEnabled(t *testing.T) {
-	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res.SetEnabled(true)
 	assert.True(t, res.Enabled())
 }
 
 func TestWidget_SetExtended(t *testing.T) {
-	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res.SetExtended(true)
 	assert.True(t, res.Extended())
 }
 
 func TestWidget_Clone(t *testing.T) {
-	res := MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res2 := res.Clone()
 	assert.Equal(t, res, res2)
 	assert.NotSame(t, res, res2)

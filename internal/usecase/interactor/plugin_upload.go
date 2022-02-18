@@ -228,6 +228,7 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, oldm manifest.Manifest,
 		}
 	}
 
+	s.Widgets().UpgradePlugin(diff.From, diff.To)
 	s.Plugins().Upgrade(diff.From, diff.To, spp, diff.PropertySchemaDeleted)
 
 	// delete layers, blocks and widgets

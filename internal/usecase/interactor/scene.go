@@ -555,7 +555,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	// remove widgets
 	removedProperties = append(removedProperties, scene.Widgets().RemoveAllByPlugin(pid, nil)...)
 
-	// remove layers
+	// remove layers and blocks
 	res, err := layerops.Processor{
 		LayerLoader: repo.LayerLoaderFrom(i.layerRepo, []id.SceneID{sid}),
 		RootLayerID: scene.RootLayer(),

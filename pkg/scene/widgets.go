@@ -112,13 +112,13 @@ func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []Pro
 	return res
 }
 
-func (w *Widgets) ReplacePlugin(oldp, newp PluginID) {
-	if w == nil || w.widgets == nil {
+func (w *Widgets) UpgradePlugin(oldp, newp PluginID) {
+	if w == nil || w.widgets == nil || oldp.Equal(newp) || oldp.IsNil() || newp.IsNil() {
 		return
 	}
 	for _, ww := range w.widgets {
 		if ww.plugin.Equal(oldp) {
-			ww.plugin = newp
+			ww.SetPlugin(newp)
 		}
 	}
 }

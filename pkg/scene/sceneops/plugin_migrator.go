@@ -108,7 +108,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// シーンのウィジェット
-	sc.Widgets().ReplacePlugin(oldPluginID, newPluginID)
+	sc.Widgets().UpgradePlugin(oldPluginID, newPluginID)
 	for _, w := range sc.Widgets().Widgets() {
 		if w.Plugin().Equal(newPluginID) {
 			if newPlugin.Extension(w.Extension()) == nil {

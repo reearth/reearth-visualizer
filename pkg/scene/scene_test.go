@@ -71,7 +71,7 @@ func TestScene_Properties(t *testing.T) {
 		Property(pid1).
 		Widgets(
 			NewWidgets([]*Widget{
-				MustNewWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+				MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
 			}, nil),
 		).
 		MustBuild()

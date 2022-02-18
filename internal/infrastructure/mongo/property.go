@@ -118,10 +118,10 @@ func (r *propertyRepo) SaveAll(ctx context.Context, properties property.List) er
 
 func (r *propertyRepo) UpdateSchemaPlugin(ctx context.Context, old, new id.PluginID, s id.SceneID) error {
 	return r.client.UpdateMany(ctx, bson.M{
-		"schemaplugin": old,
+		"schemaplugin": old.String(),
 		"scene":        s.String(),
 	}, bson.M{
-		"schemaplugin": new,
+		"schemaplugin": new.String(),
 	})
 }
 

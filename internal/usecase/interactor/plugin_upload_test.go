@@ -42,6 +42,11 @@ const mockPluginManifest = `{
 					}
 				]
 			}
+		},
+	  {
+      "id": "widget",
+			"type": "widget",
+			"schema": {}
 		}
   ]
 }`
@@ -127,6 +132,9 @@ func TestPlugin_Upload_New(t *testing.T) {
 	assert.Equal(t, "// barfoo", string(npfc))
 }
 
+// The plugin and its files should be replaced with the new one (old files are deleted)
+// Properties that schema is changed should be migrated
+// Layers, widgets, blocks, properties, and property schemas that extension is deleted should deleted
 func TestPlugin_Upload_SameVersion(t *testing.T) {
 	// upgrade plugin to the same version
 	// 1 extension is deleted -> property schema, layers, and properties of the extension should be deleted
@@ -136,9 +144,9 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	team := id.NewTeamID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
-	eid := id.PluginExtensionID("marker")
-	eid2 := id.PluginExtensionID("widget")
-	wid := id.NewWidgetID()
+	eid1 := id.PluginExtensionID("marker")
+	eid2 := id.PluginExtensionID("widget2")
+	wid1 := id.NewWidgetID()
 
 	repos := memory.InitRepos(nil)
 	mfs := mockFS(map[string]string{
@@ -147,26 +155,26 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
 
-	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid.String())).MustBuild()
+	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid1.String())).MustBuild()
 	ps2 := property.NewSchema().ID(property.NewSchemaID(pid, eid2.String())).MustBuild()
 	pl := plugin.New().ID(pid).Extensions([]*plugin.Extension{
-		plugin.NewExtension().ID(eid).Type(plugin.ExtensionTypePrimitive).Schema(ps.ID()).MustBuild(),
+		plugin.NewExtension().ID(eid1).Type(plugin.ExtensionTypePrimitive).Schema(ps.ID()).MustBuild(),
 		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(ps2.ID()).MustBuild(),
 	}).MustBuild()
 
-	p := property.New().NewID().Schema(ps.ID()).Scene(sid).MustBuild()
+	p1 := property.New().NewID().Schema(ps.ID()).Scene(sid).MustBuild()
 	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
-	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid.Ref()).Property(p.IDRef()).MustBuild()
+	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid1.Ref()).Property(p1.IDRef()).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
 	scene := scene.New().ID(sid).Team(team).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(pid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
-		scene.MustNewWidget(wid, pid, eid2, p2.ID(), false, false),
+		scene.MustWidget(wid1, pid, eid2, p2.ID(), false, false),
 	}, nil)).MustBuild()
 
 	_ = repos.PropertySchema.Save(ctx, ps)
 	_ = repos.Plugin.Save(ctx, pl)
-	_ = repos.Property.Save(ctx, p)
+	_ = repos.Property.Save(ctx, p1)
 	_ = repos.Layer.SaveAll(ctx, layer.List{pluginLayer.LayerRef(), rootLayer.LayerRef()})
 	_ = repos.Scene.Save(ctx, scene)
 
@@ -195,9 +203,9 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	nscene, err := repos.Scene.FindByID(ctx, scene.ID(), nil)
 	assert.NoError(t, err)
 	assert.True(t, nscene.Plugins().HasPlugin(pl.ID()))
-	assert.Nil(t, nscene.Widgets().Widget(wid))
+	assert.Nil(t, nscene.Widgets().Widget(wid1))
 
-	nlp2, err := repos.Property.FindByID(ctx, p.ID(), nil)
+	nlp2, err := repos.Property.FindByID(ctx, p1.ID(), nil)
 	assert.Nil(t, nlp2) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
@@ -223,7 +231,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	assert.Equal(t, "// barfoo", string(npfc))
 
 	// layer
-	nlp, err := repos.Property.FindByID(ctx, p.ID(), nil)
+	nlp, err := repos.Property.FindByID(ctx, p1.ID(), nil)
 	assert.Nil(t, nlp) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
@@ -236,6 +244,10 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	assert.Equal(t, []layer.ID{}, nrl.Layers().Layers()) // deleted
 }
 
+// The plugin and its files should be newrly created (old plugin and files are deleted if the plugin is private)
+// Properties that schema is changed should be migrated
+// Layers, widgets, blocks, properties, and property schemas that extension is deleted should deleted
+// Plugin field of layers, widgets, block, properties, and property schemas are replaced with the new plugin ID
 func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	// upgrade plugin to the different version
 	// plugin ID of property and layers should be updated
@@ -245,8 +257,11 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	sid := id.NewSceneID()
 	oldpid := id.MustPluginID("testplugin~1.0.0").WithScene(sid.Ref())
 	pid := mockPluginID.WithScene(sid.Ref())
-	eid := id.PluginExtensionID("block")
-	nlpsid := id.NewPropertySchemaID(pid, eid.String())
+	eid1 := id.PluginExtensionID("block")
+	eid2 := id.PluginExtensionID("widget")
+	nlpsid1 := id.NewPropertySchemaID(pid, eid1.String())
+	nlpsid2 := id.NewPropertySchemaID(pid, eid2.String())
+	wid := id.NewWidgetID()
 
 	repos := memory.InitRepos(nil)
 	mfs := mockFS(map[string]string{
@@ -257,11 +272,13 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 
 	oldpsf := property.NewSchemaField().ID("field").Type(property.ValueTypeNumber).MustBuild()
 	oldpsg := property.NewSchemaGroup().ID("default").Fields([]*property.SchemaField{oldpsf}).MustBuild()
-	oldps := property.NewSchema().ID(property.NewSchemaID(oldpid, eid.String())).Groups(property.NewSchemaGroupList(
+	oldps := property.NewSchema().ID(property.NewSchemaID(oldpid, eid1.String())).Groups(property.NewSchemaGroupList(
 		[]*property.SchemaGroup{oldpsg},
 	)).MustBuild()
+	oldps2 := property.NewSchema().ID(property.NewSchemaID(oldpid, eid2.String())).MustBuild()
 	oldpl := plugin.New().ID(oldpid).Extensions([]*plugin.Extension{
-		plugin.NewExtension().ID(eid).Type(plugin.ExtensionTypeBlock).Schema(oldps.ID()).MustBuild(),
+		plugin.NewExtension().ID(eid1).Type(plugin.ExtensionTypeBlock).Schema(oldps.ID()).MustBuild(),
+		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(oldps2.ID()).MustBuild(),
 	}).MustBuild()
 
 	pf := property.NewField("field").Value(property.ValueTypeNumber.ValueFrom(100).Some()).MustBuild()
@@ -269,18 +286,21 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	oldp := property.New().NewID().Schema(oldps.ID()).Scene(sid).Items([]property.Item{pg}).MustBuild()
 	oldp2 := property.New().NewID().Schema(oldps.ID()).Scene(sid).MustBuild()
 	oldp3 := property.New().NewID().Schema(oldps.ID()).Scene(sid).MustBuild()
+	oldp4 := property.New().NewID().Schema(oldps2.ID()).Scene(sid).MustBuild()
 	ib := layer.NewInfobox([]*layer.InfoboxField{
 		layer.NewInfoboxField().NewID().Plugin(oldp3.Schema().Plugin()).Extension(plugin.ExtensionID(oldp3.Schema().ID())).Property(oldp3.ID()).MustBuild(),
 	}, oldp2.ID())
-	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
+	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid1.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
 	scene := scene.New().ID(sid).Team(team).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(oldpid, nil),
-	})).MustBuild()
+	})).Widgets(scene.NewWidgets([]*scene.Widget{
+		scene.MustWidget(wid, oldpid, eid2, oldp4.ID(), true, false),
+	}, nil)).MustBuild()
 
-	_ = repos.PropertySchema.Save(ctx, oldps)
+	_ = repos.PropertySchema.SaveAll(ctx, property.SchemaList{oldps, oldps2})
 	_ = repos.Plugin.Save(ctx, oldpl)
-	_ = repos.Property.SaveAll(ctx, property.List{oldp, oldp2, oldp3})
+	_ = repos.Property.SaveAll(ctx, property.List{oldp, oldp2, oldp3, oldp4})
 	_ = repos.Layer.SaveAll(ctx, layer.List{pluginLayer.LayerRef(), rootLayer.LayerRef()})
 	_ = repos.Scene.Save(ctx, scene)
 
@@ -310,6 +330,8 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, nscene.Plugins().HasPlugin(oldpid))
 	assert.True(t, nscene.Plugins().HasPlugin(pid))
+	assert.Equal(t, pid, nscene.Widgets().Widget(wid).Plugin())
+	assert.Equal(t, eid2, nscene.Widgets().Widget(wid).Extension())
 
 	// plugin
 	opl, err := repos.Plugin.FindByID(ctx, oldpid, []id.SceneID{scene.ID()})
@@ -324,9 +346,13 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.Nil(t, olps) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
-	nlps, err := repos.PropertySchema.FindByID(ctx, nlpsid)
+	nlps1, err := repos.PropertySchema.FindByID(ctx, nlpsid1)
 	assert.NoError(t, err)
-	assert.Equal(t, nlpsid, nlps.ID())
+	assert.Equal(t, nlpsid1, nlps1.ID())
+
+	nlps2, err := repos.PropertySchema.FindByID(ctx, nlpsid2)
+	assert.NoError(t, err)
+	assert.Equal(t, nlpsid2, nlps2.ID())
 
 	_, err = mfs.Open("plugins/" + oldpid.String() + "/hogehoge")
 	assert.True(t, os.IsNotExist(err)) // deleted
@@ -340,7 +366,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	nl, err := repos.Layer.FindByID(ctx, pluginLayer.ID(), nil)
 	assert.NoError(t, err)
 	assert.Equal(t, pid, *nl.Plugin())
-	assert.Equal(t, eid, *nl.Extension())
+	assert.Equal(t, eid1, *nl.Extension())
 	assert.Equal(t, oldp.ID(), *nl.Property())
 	assert.Equal(t, oldp2.ID(), nl.Infobox().Property())
 	assert.Equal(t, oldp3.ID(), nl.Infobox().FieldAt(0).Property())
@@ -348,14 +374,14 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	nlp, err := repos.Property.FindByID(ctx, *nl.Property(), nil)
 	assert.NoError(t, err)
 	assert.Equal(t, *nl.Property(), nlp.ID())
-	assert.Equal(t, nlpsid, nlp.Schema())
+	assert.Equal(t, nlpsid1, nlp.Schema())
 	assert.Equal(t, property.ValueTypeString.ValueFrom("100"), property.ToGroup(nlp.ItemBySchema("default")).Field("field").Value())
 
 	nlp2, err := repos.Property.FindByID(ctx, oldp2.ID(), nil)
 	assert.NoError(t, err)
-	assert.Equal(t, nlpsid, nlp2.Schema())
+	assert.Equal(t, nlpsid1, nlp2.Schema())
 
 	nlp3, err := repos.Property.FindByID(ctx, oldp3.ID(), nil)
 	assert.NoError(t, err)
-	assert.Equal(t, nlpsid, nlp3.Schema())
+	assert.Equal(t, nlpsid1, nlp3.Schema())
 }

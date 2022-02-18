@@ -24,7 +24,7 @@ func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, prope
 	}, nil
 }
 
-func MustNewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) *Widget {
+func MustWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) *Widget {
 	w, err := NewWidget(wid, plugin, extension, property, enabled, extended)
 	if err != nil {
 		panic(err)
@@ -88,4 +88,11 @@ func (w *Widget) Clone() *Widget {
 		enabled:   w.enabled,
 		extended:  w.extended,
 	}
+}
+
+func (w *Widget) SetPlugin(pid PluginID) {
+	if w == nil || pid.IsNil() {
+		return
+	}
+	w.plugin = pid.Clone()
 }
