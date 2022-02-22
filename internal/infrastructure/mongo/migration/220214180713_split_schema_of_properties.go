@@ -15,7 +15,7 @@ func SplitSchemaOfProperties(ctx context.Context, c DBClient) error {
 	return col.Find(ctx, bson.M{
 		"schema": bson.M{"$exists": true},
 	}, &mongodoc.BatchConsumer{
-		Size: 50,
+		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))

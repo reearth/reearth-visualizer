@@ -2,6 +2,9 @@
 
 package migration
 
+// WARNING:
+// If the migration takes too long, the deployment may fail in a serverless environment.
+// Set the batch size to as large a value as possible without using up the RAM of the deployment destination.
 var migrations = map[int64]MigrationFunc{
   201217132559: AddSceneWidgetId,
   201217193948: AddSceneDefaultTile,

@@ -13,7 +13,7 @@ func AddSceneWidgetId(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("scene")
 
 	return col.Find(ctx, bson.D{}, &mongodoc.BatchConsumer{
-		Size: 50,
+		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 
 			ids := make([]string, 0, len(rows))

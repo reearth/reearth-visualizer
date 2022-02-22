@@ -101,6 +101,10 @@ import "context"
 func {{.Name}}(ctx context.Context, c DBClient) error {
 	// TODO: Write your migration code here
 
+	// WARNING:
+	// If the migration takes too long, the deployment may fail in a serverless environment.
+	// Set the batch size to as large a value as possible without using up the RAM of the deployment destination.
+
 	return nil
 }
 `))
@@ -109,6 +113,9 @@ var templ2 = template.Must(template.New("generated2").Parse(`// Code generated b
 
 package migration
 
+// WARNING:
+// If the migration takes too long, the deployment may fail in a serverless environment.
+// Set the batch size to as large a value as possible without using up the RAM of the deployment destination.
 var migrations = map[int64]MigrationFunc{
 {{range .}}  {{.Key}}: {{.Name}},
 {{end}}}
