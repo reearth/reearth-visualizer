@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.0 - 2022-02-22
+
+### 🚀 Features
+
+- Implement property.Diff and plugin/manifest.Diff ([#107](https://github.com/reearth/reearth-backend/pull/107)) [`700269`](https://github.com/reearth/reearth-backend/commit/700269)
+- Support 3rd party plugin translation ([#109](https://github.com/reearth/reearth-backend/pull/109)) [`67a618`](https://github.com/reearth/reearth-backend/commit/67a618)
+- Improve the Infobox style (manifest) ([#110](https://github.com/reearth/reearth-backend/pull/110)) [`7aebcd`](https://github.com/reearth/reearth-backend/commit/7aebcd)
+- Overwrite installation of new plug-ins without removing (automatic property migration) ([#113](https://github.com/reearth/reearth-backend/pull/113)) [`2dc192`](https://github.com/reearth/reearth-backend/commit/2dc192)
+- Update infobox style fields ([#115](https://github.com/reearth/reearth-backend/pull/115)) [`608436`](https://github.com/reearth/reearth-backend/commit/608436)
+
+### 🔧 Bug Fixes
+
+- Scene exporter should export layers and tags while maintaining the tree structure ([#104](https://github.com/reearth/reearth-backend/pull/104)) [`805d78`](https://github.com/reearth/reearth-backend/commit/805d78)
+- Property field in groups in list cannot be updated correctly [`5009c5`](https://github.com/reearth/reearth-backend/commit/5009c5)
+- Scenes and properties are not updated properly when plugin is updated [`861c4b`](https://github.com/reearth/reearth-backend/commit/861c4b)
+- Scene widgets and blocks are not update properly when plugin is updated [`f66f9a`](https://github.com/reearth/reearth-backend/commit/f66f9a)
+
+### ✨ Refactor
+
+- Graphql resolvers ([#105](https://github.com/reearth/reearth-backend/pull/105)) [`01a4e6`](https://github.com/reearth/reearth-backend/commit/01a4e6)
+
+### Miscellaneous Tasks
+
+- Update all dependencies ([#111](https://github.com/reearth/reearth-backend/pull/111)) [`173881`](https://github.com/reearth/reearth-backend/commit/173881)
+- Increase batch size of db migration [ci skip] [`fbbca4`](https://github.com/reearth/reearth-backend/commit/fbbca4)
+
 ## 0.4.0 - 2022-01-27
 
 ### 🚀 Features
