@@ -1,48 +1,37 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React from "react";
 import { RgbaColorPicker } from "react-colorful";
 import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
-import tinycolor, { ColorInput } from "tinycolor2";
 
 import Button from "@reearth/components/atoms/Button";
 import Text from "@reearth/components/atoms/Text";
 import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
 
 import { FieldProps } from "../types";
+
+import useHooks from "./hooks";
 import "./styles.css";
 
 export type Props = FieldProps<string>;
 
-export type RGBA = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
-
-const getHexString = (value?: ColorInput) => {
-  if (!value) return undefined;
-  const color = tinycolor(value);
-  return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
-};
-
-const initColor = tinycolor().toRgb();
-
 const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) => {
   const intl = useIntl();
-  const [colorState, setColor] = useState<string | null>(null);
-  const [rgba, setRgba] = useState<RGBA>(initColor);
-  const [open, setOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (value) {
-      setColor(value);
-      setRgba(tinycolor(value).toRgb());
-    } else {
-      setColor(null);
-    }
-  }, [value]);
+  const theme = useTheme();
+  const {
+    wrapperRef,
+    pickerRef,
+    colorState,
+    open,
+    rgba,
+    handleClose,
+    handleSave,
+    handleHexSave,
+    handleChange,
+    handleRgbaInput,
+    handleHexInput,
+    handleClick,
+    handleKeyPress,
+  } = useHooks({ value, onChange });
 
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
     placement: "bottom-start",
@@ -63,97 +52,6 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
       },
     ],
   });
-
-  const handleChange = useCallback(newColor => {
-    const color = getHexString(newColor);
-    if (!color) return;
-    setColor(color);
-    setRgba(newColor);
-  }, []);
-
-  const handleRgbaInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.preventDefault();
-
-      if (e.target.name === "a") {
-        setRgba({
-          ...rgba,
-          [e.target.name]: Number(e.target.value) / 100,
-        });
-      } else {
-        setRgba({
-          ...rgba,
-          [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
-        });
-      }
-    },
-    [rgba],
-  );
-
-  const handleHexInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setColor(e.target.value);
-  }, []);
-
-  const handleClick = useCallback(() => setOpen(!open), [open]);
-
-  const handleClose = useCallback(() => {
-    if (value) {
-      setColor(value);
-      setRgba(tinycolor(value).toRgb());
-    } else {
-      setColor(null);
-      setRgba(tinycolor(colorState == null ? undefined : colorState).toRgb());
-    }
-    setOpen(false);
-  }, [value, colorState]);
-
-  const handleSave = useCallback(() => {
-    if (!onChange) return;
-    if (colorState != value) {
-      onChange(colorState);
-    }
-    setOpen(false);
-  }, [colorState, onChange, value]);
-
-  const handleHexSave = useCallback(() => {
-    const hexPattern = /^#?([a-fA-F0-9]{3,4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/;
-    if (colorState && hexPattern.test(colorState)) {
-      handleSave();
-    } else {
-      value && setColor(value);
-    }
-  }, [colorState, handleSave, value]);
-
-  const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        handleHexSave();
-      }
-    },
-    [handleHexSave],
-  );
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (open && wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        if (colorState != value && !open) {
-          handleSave();
-        }
-        handleClose();
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [handleClose]); // eslint-disable-line react-hooks/exhaustive-deps
-  const theme = useTheme();
 
   return (
     <Wrapper ref={wrapperRef}>
@@ -187,7 +85,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              Red
+              {intl.formatMessage({ defaultMessage: "Red" })}
             </PickerText>
           </Field>
           <Field>
@@ -202,7 +100,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              Green
+              {intl.formatMessage({ defaultMessage: "Green" })}
             </PickerText>
           </Field>
           <Field>
@@ -217,7 +115,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              Blue
+              {intl.formatMessage({ defaultMessage: "Blue" })}
             </PickerText>
           </Field>
           <Field>
@@ -230,7 +128,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              Alpha
+              {intl.formatMessage({ defaultMessage: "Alpha" })}
             </PickerText>
           </Field>
         </RgbaInputWrapper>

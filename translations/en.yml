@@ -190,7 +190,11 @@ src:
             ColorField:
               '1115770113': Save
               '1533357798': Not set
+              '1847234945': Red
+              '1936615876': Alpha
+              '2090560987': Green
               '3528672691': Cancel
+              '3801160378': Blue
             LocationField:
               '2222144661': Latitude
               '3067266584': Altitude
