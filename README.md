@@ -12,7 +12,7 @@
 [![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
 
 <p align="center">
-  <a href="https://community.reearth.io">Website</a>
+  <a href="https://reearth.io">Website</a>
   ·
   <a href="https://docs.reearth.io">Documentation</a>
   ·
