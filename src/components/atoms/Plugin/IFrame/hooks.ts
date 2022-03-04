@@ -106,13 +106,10 @@ export default function useHook({
             horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
             verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
             const scrollbarW = win.innerWidth - html.offsetWidth;
-            const scrollbarH = win.innerHeight - html.offsetHeight;
-            const resize = {
-              width: html.offsetWidth + horizontalMargin + scrollbarW,
-              height: html.offsetHeight + verticalMargin + scrollbarH,
-            };
+            const width = html.offsetWidth + horizontalMargin + scrollbarW;
+            const height = html.offsetHeight + verticalMargin;
             parent.postMessage({
-              [${JSON.stringify(autoResizeMessageKey)}]: resize
+              [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
             })
           }).observe(document.body.parentElement);
         }
