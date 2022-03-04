@@ -31,7 +31,9 @@
       "groupName": "all dependencies",
       "groupSlug": "all",
       "extends": [
-        "schedule:earlyMondays"
+        {
+          "schedule": "before 3am on the fourth day of the month"
+        }
       ]
     }
   ]
