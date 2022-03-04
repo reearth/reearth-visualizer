@@ -1,9 +1,11 @@
-import React, { useMemo } from "react";
+import { omit, pick } from "lodash-es";
+import React, { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
+import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
-import W from "../Widget";
+import W, { WidgetLayout } from "../Widget";
 
 import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
 
@@ -18,32 +20,31 @@ type Props = {
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
+  // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
   wrapContent?: boolean;
 };
 
-export default function WidgetAreaComponent({
+export default function Area({
   zone,
   section,
   area,
   align,
   widgets,
-  sceneProperty,
   pluginProperty,
-  pluginBaseUrl,
-  isEditable,
-  isBuilt,
   layoutConstraint,
   wrapContent,
+  ...props
 }: Props) {
   const theme = useTheme();
-  const widgetLayout = useMemo(
+  const layout = useMemo<WidgetLayout>(
     () => ({
       location: { zone, section, area },
       align,
     }),
     [align, area, section, zone],
   );
+  const { overriddenExtended, handleExtend } = useOverriddenExtended({ layout, widgets });
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea
@@ -68,7 +69,8 @@ export default function WidgetAreaComponent({
           widget.pluginId && widget.extensionId
             ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
             : undefined;
-        const extendable =
+        const extended = overriddenExtended?.[widget.id];
+        const extendable2 =
           (section === "center" && constraint?.extendable?.horizontally) ||
           (area === "middle" && constraint?.extendable?.vertically);
         return (
@@ -76,23 +78,22 @@ export default function WidgetAreaComponent({
             key={widget.id}
             id={widget.id}
             index={i}
-            extended={widget.extended}
-            extendable={extendable}
+            extended={extended ?? widget.extended}
+            extendable={extendable2}
             style={{ pointerEvents: "auto" }}>
             {({ editing }) => (
               <W
                 widget={widget}
-                sceneProperty={sceneProperty}
                 pluginProperty={
                   widget.pluginId && widget.extensionId
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
                     : undefined
                 }
-                isEditable={isEditable}
-                isBuilt={isBuilt}
-                pluginBaseUrl={pluginBaseUrl}
-                widgetLayout={widgetLayout}
-                widgetAlignSystemState={{ editing }}
+                layout={layout}
+                extended={extended}
+                editing={editing}
+                onExtend={handleExtend}
+                {...props}
               />
             )}
           </GridItem>
@@ -100,6 +101,40 @@ export default function WidgetAreaComponent({
       })}
     </GridArea>
   ) : null;
+}
+
+function useOverriddenExtended({
+  layout,
+  widgets,
+}: {
+  layout: WidgetLayout;
+  widgets: Widget[] | undefined;
+}) {
+  const extendable = layout.location.section === "center" || layout.location.area === "middle";
+  const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});
+  const handleExtend = useCallback(
+    (id: string, extended: boolean | undefined) => {
+      overrideExtend(oe =>
+        oe[id] === extended
+          ? oe
+          : {
+              ...omit(oe, id),
+              ...(typeof extended === "undefined" || !extendable ? {} : { [id]: extended }),
+            },
+      );
+    },
+    [extendable],
+  );
+
+  const widgetIds = widgets?.map(w => w.id) ?? [];
+  useDeepCompareEffect(() => {
+    overrideExtend(oe => pick(oe, Object.keys(widgetIds)));
+  }, [widgetIds]);
+
+  return {
+    overriddenExtended: extendable ? overriddenExtended : undefined,
+    handleExtend,
+  };
 }
 
 export function getLocationFromId(id: string): Location | undefined {

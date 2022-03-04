@@ -13,22 +13,36 @@ export default function ({
   pluginId,
   extensionId,
   pluginBaseUrl,
-  autoResize,
   extensionType,
   block,
   layer,
   widget,
   pluginProperty,
+  onRender,
+  onResize,
 }: {
   pluginId?: string;
   extensionId?: string;
   pluginBaseUrl?: string;
-  autoResize?: "both" | "width-only" | "height-only";
   extensionType?: string;
   layer?: Layer;
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 }) {
   const { staticExposed, isMarshalable, onPreInit, onDispose, onMessage } =
     useAPI({
@@ -39,6 +53,8 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      onRender,
+      onResize,
     }) ?? [];
 
   const onError = useCallback(
@@ -53,16 +69,6 @@ export default function ({
       ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
       : undefined;
 
-  const actualAutoResize =
-    autoResize ??
-    (widget?.extended?.horizontally && widget.extended.vertically
-      ? "both"
-      : widget?.extended?.vertically
-      ? "width-only"
-      : widget?.extended?.horizontally
-      ? "height-only"
-      : undefined);
-
   return {
     skip: !staticExposed,
     src,
@@ -72,7 +78,6 @@ export default function ({
     onMessage,
     onPreInit,
     onDispose,
-    actualAutoResize,
   };
 }
 
@@ -84,6 +89,8 @@ export function useAPI({
   layer,
   block,
   widget,
+  onRender,
+  onResize,
 }: {
   pluginId: string | undefined;
   extensionId: string | undefined;
@@ -92,6 +99,20 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
   isMarshalable: Options["isMarshalable"] | undefined;
@@ -147,9 +168,8 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ postMessage, render }: IFrameAPI) => {
+    return ({ postMessage, render, resize }: IFrameAPI) => {
       return exposed({
-        engineAPI: ctx.engine.api,
         commonReearth: ctx.reearth,
         events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
         plugin: {
@@ -162,11 +182,19 @@ export function useAPI({
         layer: getLayer,
         widget: getWidget,
         postMessage,
-        render,
+        render: (html, { extended, ...options } = {}) => {
+          render(html, options);
+          onRender?.(
+            typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
+          );
+        },
+        resize: (width, height, extended) => {
+          resize(width, height);
+          onResize?.(width, height, extended);
+        },
       });
     };
   }, [
-    ctx?.engine.api,
     ctx?.reearth,
     extensionId,
     extensionType,
@@ -175,6 +203,8 @@ export function useAPI({
     getBlock,
     getLayer,
     getWidget,
+    onRender,
+    onResize,
   ]);
 
   useEffect(() => {

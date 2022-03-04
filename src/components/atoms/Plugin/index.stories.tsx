@@ -1,8 +1,8 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React from "react";
+import React, { useRef } from "react";
 
-import Component, { Props } from ".";
+import Component, { Props, Ref } from ".";
 
 export default {
   title: "atoms/Plugin",
@@ -89,4 +89,49 @@ SourceCode.args = {
       log: action("console.log"),
     },
   },
+};
+
+export const AutoResize: Story<Props> = args => {
+  const ref = useRef<Ref>(null);
+  return (
+    <Component
+      {...args}
+      onMessage={msg => {
+        ref.current
+          ?.arena()
+          ?.evalCode(`"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`);
+      }}
+      ref={ref}
+    />
+  );
+};
+
+AutoResize.args = {
+  sourceCode: `
+    render(\`
+      <style>body{width: 100px; height: 50px; background:yellow}</style>
+      <h1 id="s"></h1>
+      <script>
+        let a = false;
+        const s = document.getElementById("s");
+
+        setInterval(() => {
+          a = !a;
+          const w = a ? "300px" : "100px";
+          document.body.style.width = w;
+          parent.postMessage({ width: w }, "*");
+        }, 1000);
+
+        const resize = () => {
+          s.textContent = window.innerWidth + "x" + window.innerHeight;
+        };
+        window.onresize = resize;
+        resize();
+      </script>
+    \`);
+    onmessage = msg => { resize(msg.width, msg.height); };
+  `,
+  autoResize: "both",
+  canBeVisible: true,
+  exposed: ({ render, resize }) => ({ render, resize }),
 };

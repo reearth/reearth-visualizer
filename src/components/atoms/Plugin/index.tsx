@@ -1,10 +1,17 @@
-import React, { IframeHTMLAttributes, ReactNode } from "react";
+import React, {
+  forwardRef,
+  ForwardRefRenderFunction,
+  IframeHTMLAttributes,
+  ReactNode,
+} from "react";
 
-import useHook, { IFrameAPI } from "./hooks";
-import IFrame from "./IFrame";
+import useHook, { IFrameAPI, RefType } from "./hooks";
+import IFrame, { AutoResize as AutoResizeType } from "./IFrame";
 
 export { defaultIsMarshalable } from "./hooks";
 export type { IFrameAPI } from "./hooks";
+export type AutoResize = AutoResizeType;
+export type Ref = RefType;
 
 export type Props = {
   className?: string;
@@ -13,7 +20,7 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
@@ -24,23 +31,26 @@ export type Props = {
   onClick?: () => void;
 };
 
-const Plugin: React.FC<Props> = ({
-  className,
-  canBeVisible,
-  skip,
-  src,
-  sourceCode,
-  renderPlaceholder,
-  autoResize,
-  iFrameProps,
-  isMarshalable,
-  exposed,
-  onMessage,
-  onPreInit,
-  onError,
-  onDispose,
-  onClick,
-}) => {
+const Plugin: ForwardRefRenderFunction<RefType, Props> = (
+  {
+    className,
+    canBeVisible,
+    skip,
+    src,
+    sourceCode,
+    renderPlaceholder,
+    autoResize,
+    iFrameProps,
+    isMarshalable,
+    exposed,
+    onMessage,
+    onPreInit,
+    onError,
+    onDispose,
+    onClick,
+  },
+  ref,
+) => {
   const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
     skip,
@@ -48,6 +58,7 @@ const Plugin: React.FC<Props> = ({
     sourceCode,
     isMarshalable,
     exposed,
+    ref,
     onPreInit,
     onError,
     onDispose,
@@ -69,4 +80,4 @@ const Plugin: React.FC<Props> = ({
   ) : null;
 };
 
-export default Plugin;
+export default forwardRef(Plugin);

@@ -33,6 +33,20 @@ export type Props = {
   widget?: Widget;
   block?: Block;
   onClick?: () => void;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 };
 
 export default function Plugin({
@@ -50,27 +64,20 @@ export default function Plugin({
   block,
   pluginProperty,
   onClick,
+  onRender,
+  onResize,
 }: Props): JSX.Element | null {
-  const {
-    skip,
-    src,
-    isMarshalable,
-    actualAutoResize,
-    onPreInit,
-    onDispose,
-    exposed,
-    onError,
-    onMessage,
-  } = useHooks({
+  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
     pluginId,
     extensionId,
     extensionType,
     pluginBaseUrl,
-    autoResize,
     layer,
     widget,
     block,
     pluginProperty,
+    onRender,
+    onResize,
   });
 
   return !skip && (src || sourceCode) ? (
@@ -78,7 +85,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      autoResize={actualAutoResize}
+      autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}

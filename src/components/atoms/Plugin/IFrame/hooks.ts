@@ -12,10 +12,15 @@ import {
 
 export type RefType = {
   postMessage: (message: any) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
 };
+
+export type AutoResize = "both" | "width-only" | "height-only";
 
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
+  width,
+  height,
   html,
   ref,
   autoResize,
@@ -25,10 +30,12 @@ export default function useHook({
   onMessage,
   onClick,
 }: {
+  width?: number | string;
+  height?: number | string;
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
@@ -41,18 +48,23 @@ export default function useHook({
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameSize, setIFrameSize] = useState<[string, string]>();
+  const [iFrameSize, setIFrameSize] = useState<[string | undefined, string | undefined]>();
   const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
-    () => ({
-      postMessage: (message: any) => {
+    (): RefType => ({
+      postMessage: message => {
         if (!loaded.current || !iFrameRef.current?.contentWindow) {
           pendingMesages.current.push(message);
           return;
         }
         iFrameRef.current.contentWindow.postMessage(message, "*");
+      },
+      resize: (width, height) => {
+        const width2 = typeof width === "number" ? width + "px" : width ?? undefined;
+        const height2 = typeof height === "number" ? height + "px" : height ?? undefined;
+        setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
       },
     }),
     [],
@@ -88,13 +100,16 @@ export default function useHook({
       resize.textContent = `
         if ("ResizeObserver" in window) {
           new window.ResizeObserver(entries => {
-            const el = document.body.parentElement;
-            const st = document.defaultView.getComputedStyle(el, "");
-            horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
-            verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
+            const win = document.defaultView;
+            const html = document.body.parentElement;
+            const st = win.getComputedStyle(html, "");
+            horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
+            verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
+            const scrollbarW = win.innerWidth - html.offsetWidth;
+            const scrollbarH = win.innerHeight - html.offsetHeight;
             const resize = {
-              width: el.offsetWidth + horizontalMargin,
-              height: el.offsetHeight + verticalMargin,
+              width: html.offsetWidth + horizontalMargin + scrollbarW,
+              height: html.offsetHeight + verticalMargin + scrollbarH,
             };
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: resize
@@ -137,19 +152,16 @@ export default function useHook({
     () => ({
       style: {
         display: visible ? undefined : "none",
-        // TODO: width iFrameSize?.[0]
         width: visible
-          ? autoResize == "height-only" || autoResize == "both"
+          ? !autoResize || autoResize == "height-only"
             ? "100%"
             : iFrameSize?.[0]
           : "0px",
         height: visible
-          ? autoResize == "width-only" || autoResize == "both"
+          ? !autoResize || autoResize == "width-only"
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
-        minWidth: "100%",
-        maxWidth: "100%",
         ...iFrameProps?.style,
       },
       ...iFrameProps,
@@ -168,6 +180,12 @@ export default function useHook({
       window.removeEventListener("blur", handleBlur);
     };
   }, [onClick]);
+
+  useEffect(() => {
+    const w = typeof width === "number" ? width + "px" : width;
+    const h = typeof height === "number" ? height + "px" : height;
+    setIFrameSize(w && h ? [w, h] : undefined);
+  }, [width, height]);
 
   return {
     ref: iFrameRef,

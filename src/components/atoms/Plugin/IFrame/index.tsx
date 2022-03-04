@@ -1,22 +1,26 @@
 import React, { IframeHTMLAttributes } from "react";
 
-import useHook, { RefType } from "./hooks";
+import useHook, { RefType, AutoResize as AutoResizeType } from "./hooks";
 
 export type Ref = RefType;
 
+export type AutoResize = AutoResizeType;
+
 export type Props = {
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   className?: string;
   html?: string;
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
+  width?: string | number;
+  height?: string | number;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
   onClick?: () => void;
 };
 
 const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
-  { autoResize, className, html, visible, iFrameProps, onLoad, onMessage, onClick },
+  { autoResize, className, html, visible, iFrameProps, width, height, onLoad, onMessage, onClick },
   ref,
 ) => {
   const {
@@ -24,6 +28,8 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
     props,
     onLoad: onIFrameLoad,
   } = useHook({
+    width,
+    height,
     visible,
     iFrameProps,
     autoResize,
