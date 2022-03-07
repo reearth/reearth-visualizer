@@ -29,7 +29,7 @@ func (r *teamRepo) init() {
 	}
 }
 
-func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) ([]*user.Team, error) {
+func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList, error) {
 	filter := bson.D{
 		{Key: "members." + strings.Replace(id.String(), ".", "", -1), Value: bson.D{
 			{Key: "$exists", Value: true},
@@ -38,7 +38,7 @@ func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) ([]*user.Team, 
 	return r.find(ctx, nil, filter)
 }
 
-func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) ([]*user.Team, error) {
+func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamList, error) {
 	filter := bson.D{
 		{Key: "id", Value: bson.D{
 			{Key: "$in", Value: id.TeamIDsToStrings(ids)},
@@ -87,7 +87,7 @@ func (r *teamRepo) RemoveAll(ctx context.Context, ids []id.TeamID) error {
 	return r.client.RemoveAll(ctx, id.TeamIDsToStrings(ids))
 }
 
-func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) ([]*user.Team, error) {
+func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) (user.TeamList, error) {
 	c := mongodoc.TeamConsumer{
 		Rows: dst,
 	}
@@ -108,26 +108,6 @@ func (r *teamRepo) findOne(ctx context.Context, filter bson.D) (*user.Team, erro
 	return c.Rows[0], nil
 }
 
-// func (r *teamRepo) paginate(ctx context.Context, filter bson.D, pagination *usecase.Pagination) ([]*user.Team, *usecase.PageInfo, error) {
-// 	var c mongodoc.TeamConsumer
-// 	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
-// 	if err2 != nil {
-// 		return nil, nil, rerror.ErrInternalBy(err2)
-// 	}
-// 	return c.Rows, pageInfo, nil
-// }
-
-func filterTeams(ids []id.TeamID, rows []*user.Team) []*user.Team {
-	res := make([]*user.Team, 0, len(ids))
-	for _, id := range ids {
-		var r2 *user.Team
-		for _, r := range rows {
-			if r.ID() == id {
-				r2 = r
-				break
-			}
-		}
-		res = append(res, r2)
-	}
-	return res
+func filterTeams(ids []id.TeamID, rows user.TeamList) user.TeamList {
+	return rows.FilterByID(ids...)
 }

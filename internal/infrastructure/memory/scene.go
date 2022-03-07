@@ -5,21 +5,20 @@ import (
 	"sync"
 	"time"
 
+	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
-
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
 
 type Scene struct {
 	lock sync.Mutex
-	data map[id.SceneID]scene.Scene
+	data map[id.SceneID]*scene.Scene
 }
 
 func NewScene() repo.Scene {
 	return &Scene{
-		data: map[id.SceneID]scene.Scene{},
+		data: map[id.SceneID]*scene.Scene{},
 	}
 }
 
@@ -29,20 +28,20 @@ func (r *Scene) FindByID(ctx context.Context, id id.SceneID, f []id.TeamID) (*sc
 
 	s, ok := r.data[id]
 	if ok && isTeamIncludes(s.Team(), f) {
-		return &s, nil
+		return s, nil
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) ([]*scene.Scene, error) {
+func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := []*scene.Scene{}
+	result := scene.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
 			if isTeamIncludes(d.Team(), f) {
-				result = append(result, &d)
+				result = append(result, d)
 				continue
 			}
 		}
@@ -58,60 +57,23 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID, f []id.TeamI
 
 	for _, d := range r.data {
 		if d.Project() == id && isTeamIncludes(d.Team(), f) {
-			return &d, nil
+			return d, nil
 		}
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindIDsByTeam(ctx context.Context, teams []id.TeamID) ([]id.SceneID, error) {
+func (r *Scene) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := []id.SceneID{}
+	result := scene.List{}
 	for _, d := range r.data {
 		if isTeamIncludes(d.Team(), teams) {
-			result = append(result, d.ID())
+			result = append(result, d)
 		}
 	}
 	return result, nil
-}
-
-func (r *Scene) HasSceneTeam(ctx context.Context, id id.SceneID, teams []id.TeamID) (bool, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	s, ok := r.data[id]
-	if !ok {
-		return false, rerror.ErrNotFound
-	}
-	return s.IsTeamIncluded(teams), nil
-}
-
-func (r *Scene) HasScenesTeam(ctx context.Context, id []id.SceneID, teams []id.TeamID) ([]bool, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	if id == nil {
-		return nil, nil
-	}
-	if len(teams) == 0 {
-		return make([]bool, len(id)), nil
-	}
-	res := make([]bool, 0, len(id))
-	for _, i := range id {
-		if teams == nil {
-			res = append(res, false)
-			continue
-		}
-		s, ok := r.data[i]
-		if !ok {
-			res = append(res, false)
-			continue
-		}
-		res = append(res, s.IsTeamIncluded(teams))
-	}
-	return res, nil
 }
 
 func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {
@@ -119,7 +81,7 @@ func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {
 	defer r.lock.Unlock()
 
 	s.SetUpdatedAt(time.Now())
-	r.data[s.ID()] = *s
+	r.data[s.ID()] = s
 	return nil
 }
 

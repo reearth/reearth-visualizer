@@ -31,7 +31,7 @@ func NewAsset(r *repo.Container, gr *gateway.Container) interfaces.Asset {
 }
 
 func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecase.Operator) ([]*asset.Asset, error) {
-	return i.assetRepo.FindByIDs(ctx, assets, operator.ReadableTeams)
+	return i.assetRepo.FindByIDs(ctx, assets, operator.AllReadableTeams())
 }
 
 func (i *Asset) FindByTeam(ctx context.Context, tid id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
@@ -86,7 +86,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 }
 
 func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Operator) (result id.AssetID, err error) {
-	asset, err := i.assetRepo.FindByID(ctx, aid, operator.WritableTeams)
+	asset, err := i.assetRepo.FindByID(ctx, aid, operator.AllWritableTeams())
 	if err != nil {
 		return aid, err
 	}

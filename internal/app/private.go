@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -9,7 +8,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer/encoding"
@@ -26,17 +24,6 @@ var (
 	ErrBadID        = errors.New("bad id")
 	ErrBadParameter = errors.New("id.ext is needed")
 )
-
-func checkScene(ctx context.Context, id id.SceneID, op *usecase.Operator, sr repo.Scene) error {
-	res, err := sr.HasSceneTeam(ctx, id, op.ReadableTeams)
-	if err != nil {
-		return err
-	}
-	if !res {
-		return ErrOpDenied
-	}
-	return nil
-}
 
 func getEncoder(w io.Writer, ext string) (encoding.Encoder, string) {
 	switch strings.ToLower(ext) {
@@ -68,6 +55,7 @@ func privateAPI(
 		if op == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
 		}
+		scenes := op.AllReadableScenes()
 
 		param := c.Param("param")
 		params := strings.Split(param, ".")
@@ -80,14 +68,6 @@ func privateAPI(
 			return &echo.HTTPError{Code: http.StatusBadRequest, Message: ErrBadID}
 		}
 
-		scenes, err := repos.Scene.FindIDsByTeam(ctx, op.ReadableTeams)
-		if err != nil {
-			if errors.Is(rerror.ErrNotFound, err) {
-				return &echo.HTTPError{Code: http.StatusNotFound, Message: err}
-			}
-			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
-		}
-
 		layer, err := repos.Layer.FindByID(ctx, lid, scenes)
 		if err != nil {
 			if errors.Is(rerror.ErrNotFound, err) {
@@ -95,14 +75,8 @@ func privateAPI(
 			}
 			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
 		}
-
-		err = checkScene(ctx, layer.Scene(), op, repos.Scene)
-		if err != nil {
-			if errors.Is(ErrOpDenied, err) {
-				return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
-			}
-
-			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err}
+		if !op.IsReadableScene(layer.Scene()) {
+			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
 		}
 		ext := params[1]
 

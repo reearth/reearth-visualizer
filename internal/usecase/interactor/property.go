@@ -15,7 +15,7 @@ import (
 )
 
 type Property struct {
-	commonScene
+	common
 	commonSceneLock
 	propertyRepo       repo.Property
 	propertySchemaRepo repo.PropertySchema
@@ -29,7 +29,6 @@ type Property struct {
 
 func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 	return &Property{
-		commonScene:        commonScene{sceneRepo: r.Scene},
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		propertyRepo:       r.Property,
 		propertySchemaRepo: r.PropertySchema,
@@ -43,7 +42,7 @@ func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 }
 
 func (i *Property) Fetch(ctx context.Context, ids []id.PropertyID, operator *usecase.Operator) ([]*property.Property, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +59,7 @@ func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, o
 }
 
 func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, linked *id.DatasetID, operator *usecase.Operator) (*property.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +102,7 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -148,7 +147,7 @@ func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +188,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return nil, nil, nil, nil, interfaces.ErrInvalidFile
 	}
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -203,7 +202,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return nil, nil, nil, nil, err
 	}
 
-	propertyScene, err := i.sceneRepo.FindByID(ctx, p.Scene(), operator.WritableTeams)
+	propertyScene, err := i.sceneRepo.FindByID(ctx, p.Scene(), operator.AllWritableTeams())
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -267,7 +266,7 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -329,7 +328,7 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -378,7 +377,7 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -428,7 +427,7 @@ func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItem
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -467,7 +466,7 @@ func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemoveProperty
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +494,7 @@ func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemoveProperty
 }
 
 func (i *Property) UpdateItems(ctx context.Context, inp interfaces.UpdatePropertyItemsParam, operator *usecase.Operator) (*property.Property, error) {
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}

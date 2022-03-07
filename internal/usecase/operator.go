@@ -2,41 +2,18 @@ package usecase
 
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/user"
 )
 
 type Operator struct {
-	User          id.UserID
-	ReadableTeams []id.TeamID
-	WritableTeams []id.TeamID
-	OwningTeams   []id.TeamID
-}
-
-func OperatorFrom(u id.UserID, teams []*user.Team) *Operator {
-	rt := []id.TeamID{}
-	wt := []id.TeamID{}
-	ot := []id.TeamID{}
-	for _, t := range teams {
-		r := t.Members().GetRole(u)
-		if r == user.Role("") {
-			continue
-		}
-		tid := t.ID()
-		rt = append(rt, tid)
-		if r == user.RoleWriter {
-			wt = append(wt, tid)
-		} else if r == user.RoleOwner {
-			wt = append(wt, tid)
-			ot = append(ot, tid)
-		}
-	}
-
-	return &Operator{
-		User:          u,
-		ReadableTeams: rt,
-		WritableTeams: wt,
-		OwningTeams:   ot,
-	}
+	User           user.ID
+	ReadableTeams  user.TeamIDList
+	WritableTeams  user.TeamIDList
+	OwningTeams    user.TeamIDList
+	ReadableScenes scene.IDList
+	WritableScenes scene.IDList
+	OwningScenes   scene.IDList
 }
 
 func (o *Operator) Teams(r user.Role) []id.TeamID {
@@ -55,80 +32,50 @@ func (o *Operator) Teams(r user.Role) []id.TeamID {
 	return nil
 }
 
-func (o *Operator) IsReadableTeamIncluded(team id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range o.ReadableTeams {
-		if t == team {
-			return true
-		}
-	}
-	return false
+func (o *Operator) AllReadableTeams() user.TeamIDList {
+	return append(o.ReadableTeams, o.AllWritableTeams()...)
 }
 
-func (o *Operator) IsWritableTeamIncluded(team id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range o.WritableTeams {
-		if t == team {
-			return true
-		}
-	}
-	return false
+func (o *Operator) AllWritableTeams() user.TeamIDList {
+	return append(o.WritableTeams, o.AllOwningTeams()...)
 }
 
-func (o *Operator) IsOwningTeamIncluded(team id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range o.OwningTeams {
-		if t == team {
-			return true
-		}
-	}
-	return false
+func (o *Operator) AllOwningTeams() user.TeamIDList {
+	return o.OwningTeams
 }
 
-func (o *Operator) IsReadableTeamsIncluded(teams []id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range teams {
-		for _, t2 := range o.ReadableTeams {
-			if t == t2 {
-				return true
-			}
-		}
-	}
-	return false
+func (o *Operator) IsReadableTeam(team ...id.TeamID) bool {
+	return o.AllReadableTeams().Filter(team...).Len() > 0
 }
 
-func (o *Operator) IsWritableTeamsIncluded(teams []id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range teams {
-		for _, t2 := range o.WritableTeams {
-			if t == t2 {
-				return true
-			}
-		}
-	}
-	return false
+func (o *Operator) IsWritableTeam(team ...id.TeamID) bool {
+	return o.AllWritableTeams().Filter(team...).Len() > 0
 }
 
-func (o *Operator) IsOwningTeamsIncluded(teams []id.TeamID) bool {
-	if o == nil {
-		return false
-	}
-	for _, t := range teams {
-		for _, t2 := range o.OwningTeams {
-			if t == t2 {
-				return true
-			}
-		}
-	}
-	return false
+func (o *Operator) IsOwningTeam(team ...id.TeamID) bool {
+	return o.AllOwningTeams().Filter(team...).Len() > 0
+}
+
+func (o *Operator) AllReadableScenes() scene.IDList {
+	return append(o.ReadableScenes, o.AllWritableScenes()...)
+}
+
+func (o *Operator) AllWritableScenes() scene.IDList {
+	return append(o.WritableScenes, o.AllOwningScenes()...)
+}
+
+func (o *Operator) AllOwningScenes() scene.IDList {
+	return o.OwningScenes
+}
+
+func (o *Operator) IsReadableScene(scene ...id.SceneID) bool {
+	return o.AllReadableScenes().Includes(scene...)
+}
+
+func (o *Operator) IsWritableScene(scene ...id.SceneID) bool {
+	return o.AllWritableScenes().Includes(scene...)
+}
+
+func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
+	return o.AllOwningScenes().Includes(scene...)
 }

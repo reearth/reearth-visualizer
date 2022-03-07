@@ -12,7 +12,6 @@ import (
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/adapter/gql"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -22,7 +21,6 @@ func graphqlAPI(
 	ec *echo.Echo,
 	r *echo.Group,
 	conf *ServerConfig,
-	usecases interfaces.Container,
 ) {
 	playgroundEnabled := conf.Debug || conf.Config.Dev
 
@@ -65,8 +63,8 @@ func graphqlAPI(
 		req := c.Request()
 		ctx := req.Context()
 
-		ctx = adapter.AttachUsecases(ctx, &usecases)
-		ctx = gql.AttachUsecases(ctx, &usecases, enableDataLoaders)
+		usecases := adapter.Usecases(ctx)
+		ctx = gql.AttachUsecases(ctx, usecases, enableDataLoaders)
 		c.SetRequest(req.WithContext(ctx))
 
 		srv.ServeHTTP(c.Response(), c.Request())

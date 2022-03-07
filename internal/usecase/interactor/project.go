@@ -18,7 +18,7 @@ import (
 )
 
 type Project struct {
-	commonScene
+	common
 	commonSceneLock
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
@@ -36,7 +36,6 @@ type Project struct {
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonScene:       commonScene{sceneRepo: r.Scene},
 		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
 		assetRepo:         r.Asset,
 		projectRepo:       r.Project,
@@ -57,7 +56,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *useca
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err
 	}
-	return i.projectRepo.FindByIDs(ctx, ids, operator.ReadableTeams)
+	return i.projectRepo.FindByIDs(ctx, ids, operator.AllReadableTeams())
 }
 
 func (i *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
@@ -131,7 +130,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, p.ID, operator.WritableTeams)
+	prj, err := i.projectRepo.FindByID(ctx, p.ID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +226,6 @@ func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
 }
 
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -242,7 +240,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, params.ID, operator.WritableTeams)
+	prj, err := i.projectRepo.FindByID(ctx, params.ID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +249,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByProject(ctx, params.ID, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByProject(ctx, params.ID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -339,8 +337,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	prj.UpdatePublishmentStatus(params.Status)
 	prj.SetPublishedAt(time.Now())
 
-	err = i.projectRepo.Save(ctx, prj)
-	if err != nil {
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
 	}
 
@@ -363,7 +360,7 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 		return err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID, operator.WritableTeams)
+	prj, err := i.projectRepo.FindByID(ctx, projectID, operator.AllWritableTeams())
 	if err != nil {
 		return err
 	}

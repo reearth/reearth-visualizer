@@ -69,7 +69,7 @@ func (i *User) Fetch(ctx context.Context, ids []id.UserID, operator *usecase.Ope
 				teamIDs = append(teamIDs, t.ID())
 			}
 		}
-		if !operator.IsReadableTeamsIncluded(teamIDs) {
+		if !operator.IsReadableTeam(teamIDs...) {
 			res[k] = nil
 		}
 	}

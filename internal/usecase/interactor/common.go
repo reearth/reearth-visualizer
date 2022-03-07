@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"net/url"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
@@ -16,21 +17,31 @@ import (
 )
 
 type ContainerConfig struct {
-	SignupSecret string
+	SignupSecret       string
+	PublishedIndexHTML string
+	PublishedIndexURL  *url.URL
 }
 
 func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfig) interfaces.Container {
+	var published interfaces.Published
+	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
+		published = NewPublishedWithURL(r.Project, g.File, config.PublishedIndexURL)
+	} else {
+		published = NewPublished(r.Project, g.File, config.PublishedIndexHTML)
+	}
+
 	return interfaces.Container{
-		Asset:    NewAsset(r, g),
-		Dataset:  NewDataset(r, g),
-		Layer:    NewLayer(r),
-		Plugin:   NewPlugin(r, g),
-		Project:  NewProject(r, g),
-		Property: NewProperty(r, g),
-		Scene:    NewScene(r, g),
-		Tag:      NewTag(r),
-		Team:     NewTeam(r),
-		User:     NewUser(r, g, config.SignupSecret),
+		Asset:     NewAsset(r, g),
+		Dataset:   NewDataset(r, g),
+		Layer:     NewLayer(r),
+		Plugin:    NewPlugin(r, g),
+		Project:   NewProject(r, g),
+		Property:  NewProperty(r, g),
+		Published: published,
+		Scene:     NewScene(r, g),
+		Tag:       NewTag(r),
+		Team:      NewTeam(r),
+		User:      NewUser(r, g, config.SignupSecret),
 	}
 }
 
@@ -57,7 +68,7 @@ func (i common) CanReadTeam(t id.TeamID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	if !op.IsReadableTeamIncluded(t) {
+	if !op.IsReadableTeam(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
@@ -67,65 +78,44 @@ func (i common) CanWriteTeam(t id.TeamID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	if !op.IsWritableTeamIncluded(t) {
+	if !op.IsWritableTeam(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
 }
 
-type commonScene struct {
-	common
-	sceneRepo repo.Scene
-}
-
-func (i commonScene) OnlyReadableScenes(ctx context.Context, op *usecase.Operator) ([]id.SceneID, error) {
-	if err := i.OnlyOperator(op); err != nil {
-		return nil, err
-	}
-	scenes, err := i.sceneRepo.FindIDsByTeam(ctx, op.ReadableTeams)
-	if err != nil {
-		return nil, err
-	}
-	return scenes, nil
-}
-
-func (i commonScene) OnlyWritableScenes(ctx context.Context, op *usecase.Operator) ([]id.SceneID, error) {
-	if err := i.OnlyOperator(op); err != nil {
-		return nil, err
-	}
-	scenes, err := i.sceneRepo.FindIDsByTeam(ctx, op.WritableTeams)
-	if err != nil {
-		return nil, err
-	}
-	return scenes, nil
-}
-
-func (i commonScene) CanReadScene(ctx context.Context, s id.SceneID, op *usecase.Operator) error {
+func (i common) CanReadScene(t id.SceneID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	res, err := i.sceneRepo.HasSceneTeam(ctx, s, op.ReadableTeams)
-	if err != nil {
-		return err
-	}
-	if !res {
+	if !op.IsReadableScene(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
 }
 
-func (i commonScene) CanWriteScene(ctx context.Context, s id.SceneID, op *usecase.Operator) error {
+func (i common) CanWriteScene(t id.SceneID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	res, err := i.sceneRepo.HasSceneTeam(ctx, s, op.WritableTeams)
-	if err != nil {
-		return err
-	}
-	if !res {
+	if !op.IsWritableScene(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
+}
+
+func (i common) OnlyReadableScenes(op *usecase.Operator) ([]id.SceneID, error) {
+	if err := i.OnlyOperator(op); err != nil {
+		return nil, err
+	}
+	return op.AllReadableScenes(), nil
+}
+
+func (i common) OnlyWritableScenes(op *usecase.Operator) ([]id.SceneID, error) {
+	if err := i.OnlyOperator(op); err != nil {
+		return nil, err
+	}
+	return op.AllWritableScenes(), nil
 }
 
 type commonSceneLock struct {
@@ -236,7 +226,7 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 	}
 
 	// Fetch scene
-	s, err := d.Scene.FindByProject(ctx, prj.ID(), operator.WritableTeams)
+	s, err := d.Scene.FindByProject(ctx, prj.ID(), operator.AllWritableTeams())
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return err
 	}

@@ -21,7 +21,7 @@ import (
 )
 
 type Scene struct {
-	commonScene
+	common
 	commonSceneLock
 	sceneRepo          repo.Scene
 	sceneLockRepo      repo.SceneLock
@@ -37,7 +37,6 @@ type Scene struct {
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 	return &Scene{
-		commonScene:        commonScene{sceneRepo: r.Scene},
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		sceneRepo:          r.Scene,
 		sceneLockRepo:      r.SceneLock,
@@ -56,14 +55,14 @@ func (i *Scene) Fetch(ctx context.Context, ids []id.SceneID, operator *usecase.O
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err
 	}
-	return i.sceneRepo.FindByIDs(ctx, ids, operator.ReadableTeams)
+	return i.sceneRepo.FindByIDs(ctx, ids, operator.AllReadableTeams())
 }
 
 func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *usecase.Operator) (*scene.Scene, error) {
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err
 	}
-	res, err := i.sceneRepo.FindByProject(ctx, id, operator.ReadableTeams)
+	res, err := i.sceneRepo.FindByProject(ctx, id, operator.AllReadableTeams())
 	return res, err
 }
 
@@ -82,7 +81,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, pid, operator.WritableTeams)
+	prj, err := i.projectRepo.FindByID(ctx, pid, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +173,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sid, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -270,7 +269,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		return nil, nil, err
 	}
 
-	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.WritableTeams)
+	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
 	if err2 != nil {
 		return nil, nil, err2
 	}
@@ -352,7 +351,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
-	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.WritableTeams)
+	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
 	if err2 != nil {
 		return nil, err2
 	}
@@ -393,7 +392,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	scene, err2 := i.sceneRepo.FindByID(ctx, id, operator.WritableTeams)
+	scene, err2 := i.sceneRepo.FindByID(ctx, id, operator.AllWritableTeams())
 	if err2 != nil {
 		return nil, err2
 	}
@@ -445,7 +444,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		return nil, pid, nil, interfaces.ErrOperationDenied
 	}
 
-	s, err2 := i.sceneRepo.FindByID(ctx, sid, operator.WritableTeams)
+	s, err2 := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
 	if err2 != nil {
 		return nil, pid, nil, err2
 	}
@@ -521,7 +520,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 		return nil, err
 	}
 
-	scene, err := i.sceneRepo.FindByID(ctx, sid, operator.WritableTeams)
+	scene, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -623,7 +622,7 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sid, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}
@@ -704,7 +703,7 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -754,7 +753,7 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, param.SceneID, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -797,7 +796,7 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.AllWritableTeams())
 	if err != nil {
 		return nil, err
 	}

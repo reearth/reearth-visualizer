@@ -44,7 +44,7 @@ type ImportDatasetFromGoogleSheetParam struct {
 }
 
 type RemoveDatasetSchemaParam struct {
-	SchemaId id.DatasetSchemaID
+	SchemaID id.DatasetSchemaID
 	Force    *bool
 }
 

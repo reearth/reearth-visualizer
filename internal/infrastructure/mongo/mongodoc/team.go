@@ -18,7 +18,7 @@ type TeamDocument struct {
 }
 
 type TeamConsumer struct {
-	Rows []*user.Team
+	Rows user.TeamList
 }
 
 func (c *TeamConsumer) Consume(raw bson.Raw) error {

@@ -17,25 +17,6 @@ import (
 )
 
 func TestPublishedAuthMiddleware(t *testing.T) {
-	h := PublishedAuthMiddleware(func(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
-		if name == "active" {
-			return interfaces.ProjectPublishedMetadata{
-				IsBasicAuthActive: true,
-				BasicAuthUsername: "fooo",
-				BasicAuthPassword: "baar",
-			}, nil
-		} else if name == "inactive" {
-			return interfaces.ProjectPublishedMetadata{
-				IsBasicAuthActive: false,
-				BasicAuthUsername: "fooo",
-				BasicAuthPassword: "baar",
-			}, nil
-		}
-		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
-	})(func(c echo.Context) error {
-		return c.String(http.StatusOK, "test")
-	})
-
 	tests := []struct {
 		Name              string
 		PublishedName     string
@@ -89,8 +70,13 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
+			m := UsecaseMiddleware(&interfaces.Container{
+				Published: &mockPublished{},
+			})
 
-			err := h(c)
+			err := m(PublishedAuthMiddleware()(func(c echo.Context) error {
+				return c.String(http.StatusOK, "test")
+			}))(c)
 			if tc.Error == nil {
 				assert.NoError(err)
 				assert.Equal(http.StatusOK, res.Code)
@@ -103,13 +89,6 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 }
 
 func TestPublishedData(t *testing.T) {
-	h := PublishedData(func(ctx context.Context, name string) (io.Reader, error) {
-		if name == "prj" {
-			return strings.NewReader("aaa"), nil
-		}
-		return nil, rerror.ErrNotFound
-	})
-
 	tests := []struct {
 		Name          string
 		PublishedName string
@@ -142,8 +121,12 @@ func TestPublishedData(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
+			m := UsecaseMiddleware(&interfaces.Container{
+				Published: &mockPublished{},
+			})
 
-			err := h(c)
+			err := m(PublishedData())(c)
+
 			if tc.Error == nil {
 				assert.NoError(err)
 				assert.Equal(http.StatusOK, res.Code)
@@ -169,7 +152,7 @@ func TestPublishedIndex(t *testing.T) {
 		},
 		{
 			Name:       "empty index",
-			Error:      echo.ErrNotFound,
+			Error:      rerror.ErrNotFound,
 			EmptyIndex: true,
 		},
 		{
@@ -195,17 +178,11 @@ func TestPublishedIndex(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
+			m := UsecaseMiddleware(&interfaces.Container{
+				Published: &mockPublished{EmptyIndex: tc.EmptyIndex},
+			})
 
-			err := PublishedIndex(func(ctx context.Context, name string, url *url.URL) (string, error) {
-				if tc.EmptyIndex {
-					return "", nil
-				}
-				if name == "prj" {
-					assert.Equal("http://example.com/aaa/bbb", url.String())
-					return "index", nil
-				}
-				return "", rerror.ErrNotFound
-			})(c)
+			err := m(PublishedIndex())(c)
 
 			if tc.Error == nil {
 				assert.NoError(err)
@@ -217,4 +194,43 @@ func TestPublishedIndex(t *testing.T) {
 			}
 		})
 	}
+}
+
+type mockPublished struct {
+	interfaces.Published
+	EmptyIndex bool
+}
+
+func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
+	if name == "active" {
+		return interfaces.ProjectPublishedMetadata{
+			IsBasicAuthActive: true,
+			BasicAuthUsername: "fooo",
+			BasicAuthPassword: "baar",
+		}, nil
+	} else if name == "inactive" {
+		return interfaces.ProjectPublishedMetadata{
+			IsBasicAuthActive: false,
+			BasicAuthUsername: "fooo",
+			BasicAuthPassword: "baar",
+		}, nil
+	}
+	return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+}
+
+func (p *mockPublished) Data(ctx context.Context, name string) (io.Reader, error) {
+	if name == "prj" {
+		return strings.NewReader("aaa"), nil
+	}
+	return nil, rerror.ErrNotFound
+}
+
+func (p *mockPublished) Index(ctx context.Context, name string, url *url.URL) (string, error) {
+	if p.EmptyIndex {
+		return "", nil
+	}
+	if name == "prj" && url.String() == "http://example.com/aaa/bbb" {
+		return "index", nil
+	}
+	return "", rerror.ErrNotFound
 }

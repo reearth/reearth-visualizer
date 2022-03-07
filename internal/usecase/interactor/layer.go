@@ -27,7 +27,7 @@ import (
 // TODO: レイヤー作成のドメインロジックがここに多く漏れ出しているのでドメイン層に移す
 
 type Layer struct {
-	commonScene
+	common
 	commonSceneLock
 	layerRepo          repo.Layer
 	tagRepo            repo.Tag
@@ -43,7 +43,6 @@ type Layer struct {
 
 func NewLayer(r *repo.Container) interfaces.Layer {
 	return &Layer{
-		commonScene:        commonScene{sceneRepo: r.Scene},
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		layerRepo:          r.Layer,
 		tagRepo:            r.Tag,
@@ -59,7 +58,7 @@ func NewLayer(r *repo.Container) interfaces.Layer {
 }
 
 func (i *Layer) Fetch(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) (layer.List, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +67,7 @@ func (i *Layer) Fetch(ctx context.Context, ids []id.LayerID, operator *usecase.O
 }
 
 func (i *Layer) FetchGroup(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) ([]*layer.Group, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func (i *Layer) FetchGroup(ctx context.Context, ids []id.LayerID, operator *usec
 }
 
 func (i *Layer) FetchItem(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) ([]*layer.Item, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +85,7 @@ func (i *Layer) FetchItem(ctx context.Context, ids []id.LayerID, operator *useca
 }
 
 func (i *Layer) FetchParent(ctx context.Context, pid id.LayerID, operator *usecase.Operator) (*layer.Group, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +94,7 @@ func (i *Layer) FetchParent(ctx context.Context, pid id.LayerID, operator *useca
 }
 
 func (i *Layer) FetchByProperty(ctx context.Context, pid id.PropertyID, operator *usecase.Operator) (layer.Layer, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +103,7 @@ func (i *Layer) FetchByProperty(ctx context.Context, pid id.PropertyID, operator
 }
 
 func (i *Layer) FetchMerged(ctx context.Context, org id.LayerID, parent *id.LayerID, operator *usecase.Operator) (*layer.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +136,7 @@ func (i *Layer) FetchMerged(ctx context.Context, org id.LayerID, parent *id.Laye
 }
 
 func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operator *usecase.Operator) (*layer.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +154,7 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 }
 
 func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.List, error) {
-	scenes, err := i.OnlyReadableScenes(ctx, operator)
+	scenes, err := i.OnlyReadableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +172,7 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -258,7 +257,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -476,7 +475,7 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return lid, nil, err
 	}
@@ -544,7 +543,7 @@ func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, ope
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -588,7 +587,7 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return inp.LayerID, nil, nil, -1, err
 	}
@@ -652,7 +651,7 @@ func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *use
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -705,7 +704,7 @@ func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator 
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -752,7 +751,7 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -827,7 +826,7 @@ func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfobox
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return inp.InfoboxFieldID, nil, -1, err
 	}
@@ -870,7 +869,7 @@ func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInf
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return inp.InfoboxFieldID, nil, err
 	}
@@ -941,7 +940,7 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 	if inp.File == nil {
 		return nil, nil, interfaces.ErrFileNotIncluded
 	}
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1029,7 +1028,7 @@ func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagI
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}
@@ -1077,7 +1076,7 @@ func (i *Layer) DetachTag(ctx context.Context, layerID id.LayerID, tagID id.TagI
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(ctx, operator)
+	scenes, err := i.OnlyWritableScenes(operator)
 	if err != nil {
 		return nil, err
 	}

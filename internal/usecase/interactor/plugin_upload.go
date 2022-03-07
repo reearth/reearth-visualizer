@@ -21,7 +21,7 @@ import (
 var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
 
 func (i *Plugin) Upload(ctx context.Context, r io.Reader, sid id.SceneID, operator *usecase.Operator) (_ *plugin.Plugin, _ *scene.Scene, err error) {
-	if err := i.CanWriteScene(ctx, sid, operator); err != nil {
+	if err := i.CanWriteScene(sid, operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -38,7 +38,7 @@ func (i *Plugin) Upload(ctx context.Context, r io.Reader, sid id.SceneID, operat
 }
 
 func (i *Plugin) UploadFromRemote(ctx context.Context, u *url.URL, sid id.SceneID, operator *usecase.Operator) (_ *plugin.Plugin, _ *scene.Scene, err error) {
-	if err := i.CanWriteScene(ctx, sid, operator); err != nil {
+	if err := i.CanWriteScene(sid, operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -71,11 +71,11 @@ func (i *Plugin) UploadFromRemote(ctx context.Context, u *url.URL, sid id.SceneI
 }
 
 func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.SceneID, operator *usecase.Operator) (_ *plugin.Plugin, _ *scene.Scene, err error) {
-	if err := i.CanWriteScene(ctx, sid, operator); err != nil {
+	if err := i.CanWriteScene(sid, operator); err != nil {
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sid, operator.WritableTeams)
+	s, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
 	if err != nil {
 		return nil, nil, err
 	}

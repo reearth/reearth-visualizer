@@ -97,7 +97,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
-		commonScene:        commonScene{sceneRepo: repos.Scene},
+		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
 		propertyRepo:       repos.Property,
@@ -106,8 +106,8 @@ func TestPlugin_Upload_New(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		ReadableTeams: []id.TeamID{team},
-		WritableTeams: []id.TeamID{team},
+		WritableTeams:  []id.TeamID{team},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -179,7 +179,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
-		commonScene:        commonScene{sceneRepo: repos.Scene},
+		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
 		propertyRepo:       repos.Property,
@@ -188,8 +188,8 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		ReadableTeams: []id.TeamID{team},
-		WritableTeams: []id.TeamID{team},
+		WritableTeams:  []id.TeamID{team},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -305,7 +305,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
-		commonScene:        commonScene{sceneRepo: repos.Scene},
+		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
 		propertyRepo:       repos.Property,
@@ -314,15 +314,15 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		ReadableTeams: []id.TeamID{team},
-		WritableTeams: []id.TeamID{team},
+		WritableTeams:  []id.TeamID{team},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
-	oldpl, s, err := uc.Upload(ctx, reader, scene.ID(), op)
+	oldpl, s2, err := uc.Upload(ctx, reader, sid, op)
 
 	assert.NoError(t, err)
-	assert.Equal(t, scene.ID(), s.ID())
+	assert.Equal(t, scene.ID(), s2.ID())
 	assert.Equal(t, pid, oldpl.ID())
 
 	// scene

@@ -77,3 +77,94 @@ func TestCheckRole(t *testing.T) {
 		})
 	}
 }
+
+func TestRole_Includes(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Target   Role
+		Input    Role
+		Expected bool
+	}{
+		{
+			Name:     "reader and readner",
+			Target:   RoleReader,
+			Input:    RoleReader,
+			Expected: true,
+		},
+		{
+			Name:     "reader and writer",
+			Target:   RoleReader,
+			Input:    RoleWriter,
+			Expected: false,
+		},
+		{
+			Name:     "reader and owner",
+			Target:   RoleReader,
+			Input:    RoleOwner,
+			Expected: false,
+		},
+		{
+			Name:     "writer and readner",
+			Target:   RoleWriter,
+			Input:    RoleReader,
+			Expected: true,
+		},
+		{
+			Name:     "writer and writer",
+			Target:   RoleWriter,
+			Input:    RoleWriter,
+			Expected: true,
+		},
+		{
+			Name:     "writer and owner",
+			Target:   RoleWriter,
+			Input:    RoleOwner,
+			Expected: false,
+		},
+		{
+			Name:     "owner and readner",
+			Target:   RoleOwner,
+			Input:    RoleReader,
+			Expected: true,
+		},
+		{
+			Name:     "owner and writer",
+			Target:   RoleOwner,
+			Input:    RoleWriter,
+			Expected: true,
+		},
+		{
+			Name:     "owner and owner",
+			Target:   RoleOwner,
+			Input:    RoleOwner,
+			Expected: true,
+		},
+		{
+			Name:     "unknown role",
+			Target:   Role("xxx"),
+			Input:    Role("yyy"),
+			Expected: false,
+		},
+		{
+			Name:     "unknown role 2",
+			Target:   RoleOwner,
+			Input:    Role("yyy"),
+			Expected: false,
+		},
+		{
+			Name:     "unknown role 3",
+			Target:   Role("xxx"),
+			Input:    RoleOwner,
+			Expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.Target.Includes(tt.Input)
+			assert.Equal(t, tt.Expected, res)
+		})
+	}
+}

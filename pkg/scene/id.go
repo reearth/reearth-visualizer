@@ -66,3 +66,36 @@ var ErrInvalidID = id.ErrInvalidID
 func createdAt(i ID) time.Time {
 	return id.ID(i).Timestamp()
 }
+
+type IDList []ID
+
+func (l IDList) Filter(ids ...ID) IDList {
+	if l == nil {
+		return nil
+	}
+
+	res := make(IDList, 0, len(l))
+	for _, t := range l {
+		for _, t2 := range ids {
+			if t == t2 {
+				res = append(res, t)
+			}
+		}
+	}
+	return res
+}
+
+func (l IDList) Includes(ids ...ID) bool {
+	for _, t := range l {
+		for _, t2 := range ids {
+			if t == t2 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (l IDList) Len() int {
+	return len(l)
+}

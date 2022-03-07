@@ -21,11 +21,11 @@ func NewTeam() repo.Team {
 	}
 }
 
-func (r *Team) FindByUser(ctx context.Context, i id.UserID) ([]*user.Team, error) {
+func (r *Team) FindByUser(ctx context.Context, i id.UserID) (user.TeamList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := []*user.Team{}
+	result := user.TeamList{}
 	for _, d := range r.data {
 		if d.Members().ContainsUser(i) {
 			result = append(result, &d)
@@ -34,11 +34,11 @@ func (r *Team) FindByUser(ctx context.Context, i id.UserID) ([]*user.Team, error
 	return result, nil
 }
 
-func (r *Team) FindByIDs(ctx context.Context, ids []id.TeamID) ([]*user.Team, error) {
+func (r *Team) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := []*user.Team{}
+	result := user.TeamList{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
 			result = append(result, &d)

@@ -2,8 +2,10 @@ package app
 
 import (
 	"errors"
+	"io/fs"
 	"net/http"
 	"net/http/pprof"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
@@ -23,12 +25,12 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 	e.Debug = cfg.Debug
 	e.HideBanner = true
 	e.HidePort = true
+	e.HTTPErrorHandler = errorHandler(e.DefaultHTTPErrorHandler)
 
+	// basic middleware
 	logger := GetEchoLogger()
 	e.Logger = logger
-	e.Use(logger.Hook())
-
-	e.Use(middleware.Recover(), otelecho.Middleware("reearth-backend"))
+	e.Use(logger.Hook(), middleware.Recover(), otelecho.Middleware("reearth-backend"))
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
 		e.Use(
@@ -38,8 +40,8 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 		)
 	}
 
+	// enable pprof
 	if e.Debug {
-		// enable pprof
 		pprofGroup := e.Group("/debug/pprof")
 		pprofGroup.Any("/cmdline", echo.WrapHandler(http.HandlerFunc(pprof.Cmdline)))
 		pprofGroup.Any("/profile", echo.WrapHandler(http.HandlerFunc(pprof.Profile)))
@@ -48,7 +50,54 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 		pprofGroup.Any("/*", echo.WrapHandler(http.HandlerFunc(pprof.Index)))
 	}
 
-	e.HTTPErrorHandler = func(err error, c echo.Context) {
+	// GraphQL Playground without auth
+	if cfg.Debug || cfg.Config.Dev {
+		e.GET("/graphql", echo.WrapHandler(
+			playground.Handler("reearth-backend", "/api/graphql"),
+		))
+	}
+
+	// init usecases
+	var publishedIndexHTML string
+	if cfg.Config.Published.IndexURL == nil || cfg.Config.Published.IndexURL.String() == "" {
+		if html, err := fs.ReadFile(os.DirFS("."), "web/published.html"); err == nil {
+			publishedIndexHTML = string(html)
+		}
+	}
+	usecases := interactor.NewContainer(cfg.Repos, cfg.Gateways, interactor.ContainerConfig{
+		SignupSecret:       cfg.Config.SignupSecret,
+		PublishedIndexHTML: publishedIndexHTML,
+		PublishedIndexURL:  cfg.Config.Published.IndexURL,
+	})
+
+	e.Use(UsecaseMiddleware(&usecases))
+
+	// apis
+	api := e.Group("/api")
+	api.GET("/ping", Ping())
+	api.POST("/signup", Signup())
+	api.GET("/published/:name", PublishedMetadata())
+	api.GET("/published_data/:name", PublishedData())
+
+	privateApi := api.Group("")
+	jwks := &JwksSyncOnce{}
+	authRequired(privateApi, jwks, cfg)
+	graphqlAPI(e, privateApi, cfg)
+	privateAPI(e, privateApi, cfg.Repos)
+
+	published := e.Group("/p")
+	auth := PublishedAuthMiddleware()
+	published.GET("/:name/data.json", PublishedData(), auth)
+	published.GET("/:name/", PublishedIndex(), auth)
+
+	serveFiles(e, cfg.Gateways.File)
+	web(e, cfg.Config.Web, cfg.Config.Auth0)
+
+	return e
+}
+
+func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
+	return func(err error, c echo.Context) {
 		if c.Response().Committed {
 			return
 		}
@@ -59,36 +108,9 @@ func initEcho(cfg *ServerConfig) *echo.Echo {
 		if err := c.JSON(code, map[string]string{
 			"error": msg,
 		}); err != nil {
-			e.DefaultHTTPErrorHandler(err, c)
+			next(err, c)
 		}
 	}
-
-	if cfg.Debug || cfg.Config.Dev {
-		// GraphQL Playground without auth
-		e.GET("/graphql", echo.WrapHandler(
-			playground.Handler("reearth-backend", "/api/graphql"),
-		))
-	}
-
-	usecases := interactor.NewContainer(cfg.Repos, cfg.Gateways, interactor.ContainerConfig{
-		SignupSecret: cfg.Config.SignupSecret,
-	})
-
-	api := e.Group("/api")
-	publicAPI(e, api, cfg.Config, cfg.Repos, cfg.Gateways)
-	jwks := &JwksSyncOnce{}
-	privateApi := api.Group("")
-	authRequired(privateApi, jwks, cfg)
-	graphqlAPI(e, privateApi, cfg, usecases)
-	privateAPI(e, privateApi, cfg.Repos)
-
-	published := e.Group("/p")
-	publishedRoute(e, published, cfg.Config, cfg.Repos, cfg.Gateways)
-
-	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.Auth0)
-
-	return e
 }
 
 func authRequired(g *echo.Group, jwks Jwks, cfg *ServerConfig) {

@@ -44,7 +44,7 @@ type SceneClusterDocument struct {
 }
 
 type SceneConsumer struct {
-	Rows []*scene.Scene
+	Rows scene.List
 }
 
 func (c *SceneConsumer) Consume(raw bson.Raw) error {

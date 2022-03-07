@@ -86,11 +86,30 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 	if u == nil {
 		return nil, nil
 	}
-	teams, err := cfg.Repos.Team.FindByUser(ctx, u.ID())
+
+	uid := u.ID()
+	teams, err := cfg.Repos.Team.FindByUser(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
-	return usecase.OperatorFrom(u.ID(), teams), nil
+	scenes, err := cfg.Repos.Scene.FindByTeam(ctx, teams.IDs()...)
+	if err != nil {
+		return nil, err
+	}
+
+	readableTeams := teams.FilterByUserRole(uid, user.RoleReader).IDs()
+	writableTeams := teams.FilterByUserRole(uid, user.RoleWriter).IDs()
+	owningTeams := teams.FilterByUserRole(uid, user.RoleOwner).IDs()
+
+	return &usecase.Operator{
+		User:           uid,
+		ReadableTeams:  readableTeams,
+		WritableTeams:  writableTeams,
+		OwningTeams:    owningTeams,
+		ReadableScenes: scenes.FilterByTeam(readableTeams...).IDs(),
+		WritableScenes: scenes.FilterByTeam(writableTeams...).IDs(),
+		OwningScenes:   scenes.FilterByTeam(owningTeams...).IDs(),
+	}, nil
 }
 
 func addAuth0SubToUser(ctx context.Context, u *user.User, a user.Auth, cfg *ServerConfig) error {

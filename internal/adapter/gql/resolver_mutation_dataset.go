@@ -72,7 +72,7 @@ func (r *mutationResolver) SyncDataset(ctx context.Context, input gqlmodel.SyncD
 
 func (r *mutationResolver) RemoveDatasetSchema(ctx context.Context, input gqlmodel.RemoveDatasetSchemaInput) (*gqlmodel.RemoveDatasetSchemaPayload, error) {
 	res, err := usecases(ctx).Dataset.RemoveDatasetSchema(ctx, interfaces.RemoveDatasetSchemaParam{
-		SchemaId: id.DatasetSchemaID(input.SchemaID),
+		SchemaID: id.DatasetSchemaID(input.SchemaID),
 		Force:    input.Force,
 	}, getOperator(ctx))
 	if err != nil {
