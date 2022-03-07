@@ -7504,10 +7504,10 @@ cesium-dnd@1.0.3:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.0.3.tgz#d10be77ec27e0b4ba88d0b0735a6c4aaee337c34"
   integrity sha512-7TX7vsg5fHSVzu3Xx8P+3Rriezj0bRNUpyk+VbUk0oxze3UM44YoPWY5LUoyojLqITGoDT0LRmEJnQizHiaXtw==
 
-cesium@^1.90.0:
-  version "1.90.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.90.0.tgz#ff94e81c4325dc1b475c1003010b12575cf5448a"
-  integrity sha512-/Nzqu3OdtOd/0rHg7rVca1ht3gGRcFg0D8FWTm89oGnc1sqHGLffXMHa774Fev1L0EPwzZN4h9PmfFeJnMXMbw==
+cesium@^1.91.0:
+  version "1.91.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.91.0.tgz#3b901913b5dca286406227d588617697ee3b6afc"
+  integrity sha512-HCwwYq7+qqB8c9ydz51luX1KP/apMiMVA8UAu8C7V2SOANUjOZQSi3CcXAtXXn1oUZQDrJlBs6sBT9nt0zRRLg==
 
 chalk@*, chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.1:
   version "4.1.2"
