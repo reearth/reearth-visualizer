@@ -37,6 +37,7 @@ export type Props = {
   useMask?: boolean;
   styles?: InfoboxStyles;
   showTitle?: boolean;
+  onMaskClick?: () => void;
   onClick?: () => void;
   onClickAway?: () => void;
   onEnter?: () => void;
@@ -62,6 +63,7 @@ const InfoBox: React.FC<Props> = ({
   styles,
   showTitle,
   children,
+  onMaskClick,
   onClick,
   onClickAway,
   onEnter,
@@ -107,7 +109,7 @@ const InfoBox: React.FC<Props> = ({
 
   return (
     <>
-      <Mask activate={open && useMask} />
+      <Mask activate={open && useMask} onClick={onMaskClick} />
       <StyledFloatedPanel
         className={className}
         visible={visible}
@@ -177,7 +179,6 @@ const Mask = styled.div<{ activate?: boolean }>`
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.6);
   overflow-x: hidden;
-  pointer-events: none;
 `;
 
 const StyledFloatedPanel = styled(FloatedPanel)<{

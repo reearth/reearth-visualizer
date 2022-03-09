@@ -112,6 +112,7 @@ export default function Visualizer({
     handleLayerDrag,
     handleLayerDrop,
     isLayerDragging,
+    handleInfoboxMaskClick,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -211,6 +212,7 @@ export default function Visualizer({
             onBlockSelect={selectBlock}
             renderInsertionPopUp={renderInfoboxInsertionPopUp}
             pluginBaseUrl={pluginBaseUrl}
+            onMaskClick={handleInfoboxMaskClick}
           />
         )}
         {children}

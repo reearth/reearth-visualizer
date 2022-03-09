@@ -31,6 +31,7 @@ export type Props = {
   visible?: boolean;
   pluginBaseUrl?: string;
   pluginProperty?: { [key: string]: any };
+  onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
     blockId: string,
@@ -58,6 +59,7 @@ const Infobox: React.FC<Props> = ({
   visible,
   pluginBaseUrl,
   pluginProperty,
+  onMaskClick,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
@@ -93,6 +95,7 @@ const Infobox: React.FC<Props> = ({
       noContent={!blocks?.length}
       styles={property?.default}
       showTitle={property?.default?.showTitle}
+      onMaskClick={onMaskClick}
       onClick={() => selectedBlockId && onBlockSelect?.(undefined)}
       onEnter={() => setIsReadyToRender(false)}
       onEntered={() => setIsReadyToRender(true)}

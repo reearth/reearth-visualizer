@@ -31,7 +31,6 @@ const Menu = ({ widget, sceneProperty }: Props): JSX.Element | null => {
 };
 
 const Wrapper = styled.div`
-  padding: 5px;
   display: flex;
 `;
 

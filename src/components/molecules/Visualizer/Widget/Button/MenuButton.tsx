@@ -181,10 +181,10 @@ const Wrapper = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
 const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
   display: flex;
   border-radius: ${metricsSizes["xs"]}px;
-  min-width: 32px;
-  height: 32px;
+  min-width: 35px;
+  height: 35px;
   padding: 0 10px;
-  line-height: 32px;
+  line-height: 35px;
   box-sizing: border-box;
   color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme.mainText};
   cursor: pointer;
@@ -206,11 +206,10 @@ const MenuWrapper = styled.div`
 `;
 
 const MenuInnerWrapper = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
-  min-width: 32px;
+  min-width: 35px;
   width: 100%;
   color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme.mainText};
-  overflow-wrap: break-word;
-  hyphens: auto;
+  white-space: nowrap;
 `;
 
 const MenuItem = styled(Flex)<{ item?: MenuItem; button?: Button; publishedTheme: PublishTheme }>`

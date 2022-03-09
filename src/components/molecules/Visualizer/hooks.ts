@@ -161,6 +161,10 @@ export default ({
     engineRef.current?.requestRender();
   });
 
+  const handleInfoboxMaskClick = useCallback(() => {
+    selectLayer(undefined);
+  }, [selectLayer]);
+  
   return {
     engineRef,
     wrapperRef,
@@ -180,6 +184,7 @@ export default ({
     isLayerDragging,
     handleLayerDrag,
     handleLayerDrop,
+    handleInfoboxMaskClick,
   };
 };
 
