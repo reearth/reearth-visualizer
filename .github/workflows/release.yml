@@ -16,7 +16,7 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
@@ -43,7 +43,7 @@ jobs:
           URL=${URL//\//\\\/}
           sed -i -E 's/<!-- [0-9]+ -->//g; s/\(#([0-9]+)\)/([#\1]('"$URL"'\/pull\/\1))/g; s/`([a-zA-Z0-9]+)`/[`\1`]('"$URL"'\/commit\/\1)/g' CHANGELOG.md
       - name: Generate CHANGELOG_latest.md
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             const fs = require("fs");
@@ -58,7 +58,7 @@ jobs:
             const m = lines.slice(h[0] + 1, h[1]).join("\n").trim();
             fs.writeFileSync("CHANGELOG_latest.md", m);
       - name: Upload latest changelog
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: changelog-${{ steps.tag.outputs.new_tag }}
           path: CHANGELOG_latest.md
