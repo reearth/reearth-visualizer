@@ -121,6 +121,8 @@ import NoProjects from "./Icons/noProjects.svg";
 import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
+import CheckCircle2 from "./Icons/checkCircle2.svg";
+import MailCircle from "./Icons/mailCircle.svg";
 import Tag from "./Icons/tag.svg";
 
 // Plug-ins
@@ -231,6 +233,8 @@ export default {
   noProjects: NoProjects,
   moon: Moon,
   sun: Sun,
+  checkCircle2: CheckCircle2,
+  mailCircle: MailCircle,
   install: Install,
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,

@@ -24,7 +24,12 @@ const AuthPage: React.FC = ({ children }) => {
 const Wrapper = styled(Flex)`
   height: 100%;
   background: ${({ theme }) =>
-    `linear-gradient(70deg, ${theme.main.brandBlue} 10%, ${theme.main.brandRed} 60%, ${theme.main.brandBlue} 90%)`};
+    `linear-gradient(79.71deg, 
+      ${theme.main.brandBlue} 0%, 
+      ${theme.main.brandRed} 25.9%, 
+      ${theme.main.brandRed} 34.81%, 
+      ${theme.main.brandBlue} 88.99%)
+    `};
 `;
 
 const FormWrapper = styled(Flex)`

@@ -3,7 +3,9 @@ import React, { Suspense } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
-// import LoginPage from "@reearth/components/pages/Authentication/LoginPage";
+import LoginPage from "@reearth/components/pages/Authentication/LoginPage";
+import PasswordResetPage from "@reearth/components/pages/Authentication/PasswordReset";
+import SignupPage from "@reearth/components/pages/Authentication/SignupPage";
 import NotFound from "@reearth/components/pages/NotFound";
 import AccountSettings from "@reearth/components/pages/Settings/Account";
 import ProjectSettings from "@reearth/components/pages/Settings/Project";
@@ -46,7 +48,9 @@ const App: React.FC = () => {
               <NotificationBanner />
               <StyledRouter>
                 <RootPage path="/" />
-                {/* <LoginPage path="/login" /> */}
+                <LoginPage path="/login" />
+                <SignupPage path="/signup" />
+                <PasswordResetPage path="/password-reset" />
                 <Dashboard path="/dashboard/:teamId" />
                 <EarthEditor path="/edit/:sceneId" />
                 <Preview path="/edit/:sceneId/preview" />

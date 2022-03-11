@@ -1,5 +1,5 @@
 import { Link } from "@reach/router";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -10,15 +10,16 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
 
-export type Props = {
-  onLogin: (username: string, password: string) => void;
-};
-
-const Login: React.FC<Props> = ({ onLogin }) => {
+const Login: React.FC = () => {
   const intl = useIntl();
   const theme = useTheme();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    setDisabled(!username || !password);
+  }, [username, password]);
 
   const handleUsernameInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,10 +37,6 @@ const Login: React.FC<Props> = ({ onLogin }) => {
     [],
   );
 
-  const handleLogin = useCallback(() => {
-    onLogin(username, password);
-  }, [username, password, onLogin]);
-
   return (
     <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
@@ -49,34 +46,55 @@ const Login: React.FC<Props> = ({ onLogin }) => {
       <Text className="form-item" size="s" customColor>
         {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
       </Text>
-      <StyledInput
-        className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
-        color={theme.main.weak}
-        value={username}
-        onChange={handleUsernameInput}
-      />
-      <StyledInput
-        className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Password" })}
-        type="password"
-        autoComplete="new-password"
-        color={theme.main.weak}
-        value={password}
-        onChange={handlePasswordInput}
-      />
-      <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
-        <Text className="form-item" size="xs" color={theme.main.link}>
-          {intl.formatMessage({ defaultMessage: "Forgot password?" })}
-        </Text>
-      </StyledLink>
-      <StyledButton
-        className="form-item"
-        large
-        disabled // ************ disabled until backend is setup ************
-        onClick={handleLogin}
-        text={intl.formatMessage({ defaultMessage: "Continue" })}
-      />
+      <StyledForm
+        id="login-form"
+        action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
+        method="post">
+        <input
+          type="hidden"
+          name="id"
+          value={new URLSearchParams(window.location.search).get("id") ?? undefined}
+        />
+        <StyledInput
+          className="form-item"
+          name="username"
+          placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
+          color={theme.main.weak}
+          value={username}
+          autoFocus
+          onChange={handleUsernameInput}
+        />
+        <StyledInput
+          className="form-item"
+          name="password"
+          placeholder={intl.formatMessage({ defaultMessage: "Password" })}
+          type="password"
+          autoComplete="new-password"
+          color={theme.main.weak}
+          value={password}
+          onChange={handlePasswordInput}
+        />
+        <div style={{ width: "100%" }}>
+          <StyledLink to={"/password-reset"}>
+            <Text
+              className="form-item"
+              size="xs"
+              color={theme.main.link}
+              otherProperties={{ display: "inline-block" }}>
+              {intl.formatMessage({ defaultMessage: "Forgot password?" })}
+            </Text>
+          </StyledLink>
+        </div>
+        <StyledButton
+          className="form-item"
+          large
+          type="submit"
+          disabled={disabled}
+          color={disabled ? theme.main.text : theme.other.white}
+          background={disabled ? theme.main.weak : theme.main.link}
+          text={intl.formatMessage({ defaultMessage: "Continue" })}
+        />
+      </StyledForm>
       <Footer className="form-item">
         <Text size="xs" color={theme.main.weak}>
           {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
@@ -95,12 +113,27 @@ const Login: React.FC<Props> = ({ onLogin }) => {
   );
 };
 
-const StyledButton = styled(Button)`
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  background: ${({ theme }) => theme.main.link};
-  border: none;
+  align-items: center;
+  > .form-item {
+    margin-bottom: 24px;
+  }
+`;
+
+const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
+  width: 100%;
+  background: ${({ background }) => background};
+  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
   border-radius: 2px;
-  color: ${({ theme }) => theme.other.white};
+  color: ${({ color }) => color};
+
+  :hover {
+    color: ${({ color }) => color};
+    background: ${({ background }) => background};
+  }
 `;
 
 const StyledInput = styled.input`
@@ -115,7 +148,7 @@ const StyledInput = styled.input`
   outline: none;
 
   :focus {
-    border: 2px solid ${({ theme }) => theme.main.brandBlue};
+    border: 2px solid ${({ theme }) => theme.main.link};
     margin: -1px -1px 23px -1px;
   }
 `;

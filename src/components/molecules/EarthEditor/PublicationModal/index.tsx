@@ -80,7 +80,6 @@ const PublicationModal: React.FC<Props> = ({
     () => `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
     [purl],
   );
-
   const publishDisabled =
     loading ||
     (publishing === "unpublishing" && publicationStatus === "unpublished") ||
