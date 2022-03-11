@@ -47,7 +47,7 @@ type Auth0Config struct {
 
 type AuthSrvConfig struct {
 	Domain   string `default:"http://localhost:8080"`
-	UIDomain string `default:"http://localhost:3000"`
+	UIDomain string `default:"http://localhost:8080"`
 	Key      string
 	DN       *AuthDNConfig
 }

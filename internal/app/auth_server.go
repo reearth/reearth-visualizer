@@ -55,9 +55,10 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 	storage, err := interactor.NewAuthStorage(
 		ctx,
 		&interactor.StorageConfig{
-			Domain: domain.String(),
-			Debug:  cfg.Debug,
-			DN:     dn,
+			Domain:       domain.String(),
+			ClientDomain: cfg.Config.AuthSrv.UIDomain,
+			Debug:        cfg.Debug,
+			DN:           dn,
 		},
 		cfg.Repos.AuthRequest,
 		cfg.Repos.Config,

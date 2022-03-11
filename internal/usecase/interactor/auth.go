@@ -34,9 +34,10 @@ type AuthStorage struct {
 }
 
 type StorageConfig struct {
-	Domain string `default:"http://localhost:8080"`
-	Debug  bool
-	DN     *AuthDNConfig
+	Domain       string `default:"http://localhost:8080"`
+	ClientDomain string `default:"http://localhost:8080"`
+	Debug        bool
+	DN           *AuthDNConfig
 }
 
 type AuthDNConfig struct {
@@ -63,7 +64,7 @@ var dummyName = pkix.Name{
 
 func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRequest, config repo.Config, getUserBySubject func(context.Context, string) (*user.User, error)) (op.Storage, error) {
 
-	client := auth.NewLocalClient(cfg.Debug)
+	client := auth.NewLocalClient(cfg.Debug, cfg.ClientDomain)
 
 	name := dummyName
 	if cfg.DN != nil {
