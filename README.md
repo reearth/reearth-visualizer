@@ -27,6 +27,8 @@
 
 Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
 
+💡 **We are hiring full-time OSS comitters!** (senior, front-end, back-end) https://eukarya.io/join
+
 https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
 
 ---
