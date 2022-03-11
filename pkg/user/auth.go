@@ -1,6 +1,8 @@
 package user
 
-import "strings"
+import (
+	"strings"
+)
 
 type Auth struct {
 	Provider string
@@ -17,4 +19,16 @@ func AuthFromAuth0Sub(sub string) Auth {
 
 func (a Auth) IsAuth0() bool {
 	return a.Provider == "auth0"
+}
+
+func (a Auth) Ref() *Auth {
+	a2 := a
+	return &a2
+}
+
+func GenReearthSub(userID string) *Auth {
+	return &Auth{
+		Provider: "reearth",
+		Sub:      "reearth|" + userID,
+	}
 }

@@ -3,6 +3,8 @@ package user
 import (
 	"testing"
 
+	"github.com/reearth/reearth-backend/pkg/id"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -64,6 +66,31 @@ func TestAuth_IsAuth0(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tc.Expected, tc.Auth.IsAuth0())
+		})
+	}
+}
+
+func TestGenReearthSub(t *testing.T) {
+	uid := id.NewUserID()
+
+	tests := []struct {
+		name  string
+		input string
+		want  *Auth
+	}{
+		{
+			name:  "should return reearth sub",
+			input: uid.String(),
+			want: &Auth{
+				Provider: "reearth",
+				Sub:      "reearth|" + uid.String(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GenReearthSub(tt.input)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

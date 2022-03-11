@@ -2,17 +2,13 @@ package app
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"net/http"
-	"strings"
-	"sync"
+	"fmt"
+	"net/url"
+	"time"
 
-	jwtmiddleware "github.com/auth0/go-jwt-middleware"
-	// TODO: github.com/form3tech-oss/jwt-go is decrepated.
-	// Alternative is https://github.com/golang-jwt/jwt, but go-jwt-middleware still uses github.comform3tech-oss/jwt-go
-	// See also https://github.com/auth0/go-jwt-middleware/issues/73
-	"github.com/form3tech-oss/jwt-go"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
+	"github.com/auth0/go-jwt-middleware/v2/jwks"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/pkg/log"
 )
@@ -20,205 +16,81 @@ import (
 type contextKey string
 
 const (
-	userProfileKey                     = "auth0_user"
-	debugUserHeader                    = "X-Reearth-Debug-User"
-	contextAuth0AccessToken contextKey = "auth0AccessToken"
-	contextAuth0Sub         contextKey = "auth0Sub"
-	contextUser             contextKey = "reearth_user"
+	debugUserHeader            = "X-Reearth-Debug-User"
+	contextAuth0Sub contextKey = "auth0Sub"
+	contextUser     contextKey = "reearth_user"
 )
 
-type JSONWebKeys struct {
-	Kty string   `json:"kty"`
-	Kid string   `json:"kid"`
-	Use string   `json:"use"`
-	N   string   `json:"n"`
-	E   string   `json:"e"`
-	X5c []string `json:"x5c"`
+type MultiValidator []*validator.Validator
+
+func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
+	validators := make([]*validator.Validator, 0, len(providers))
+	for _, p := range providers {
+
+		issuerURL, err := url.Parse(p.ISS)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse the issuer url: %w", err)
+		}
+
+		provider := jwks.NewCachingProvider(issuerURL, time.Duration(*p.TTL)*time.Minute)
+
+		algorithm := validator.SignatureAlgorithm(*p.ALG)
+
+		v, err := validator.New(
+			provider.KeyFunc,
+			algorithm,
+			p.ISS,
+			p.AUD,
+		)
+		if err != nil {
+			return nil, err
+		}
+		validators = append(validators, v)
+	}
+	return validators, nil
 }
 
-type Jwks interface {
-	GetJwks(string) ([]JSONWebKeys, error)
-}
-
-type JwksSyncOnce struct {
-	jwks []JSONWebKeys
-	once sync.Once
-}
-
-func (jso *JwksSyncOnce) GetJwks(publicKeyURL string) ([]JSONWebKeys, error) {
-	var err error
-	jso.once.Do(func() {
-		jso.jwks, err = fetchJwks(publicKeyURL)
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return jso.jwks, nil
-}
-
-func fetchJwks(publicKeyURL string) ([]JSONWebKeys, error) {
-	resp, err := http.Get(publicKeyURL)
-	var res struct {
-		Jwks []JSONWebKeys `json:"keys"`
-	}
-
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	err = json.NewDecoder(resp.Body).Decode(&res)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Jwks, nil
-}
-
-func getPemCert(token *jwt.Token, publicKeyURL string, jwks Jwks) (string, error) {
-	cert := ""
-	keys, err := jwks.GetJwks(publicKeyURL)
-
-	if err != nil {
-		return cert, err
-	}
-
-	for k := range keys {
-		if token.Header["kid"] == keys[k].Kid {
-			cert = "-----BEGIN CERTIFICATE-----\n" + keys[k].X5c[0] + "\n-----END CERTIFICATE-----"
+// ValidateToken Trys to validate the token with each validator
+// NOTE: the last validation error only is returned
+func (mv MultiValidator) ValidateToken(ctx context.Context, tokenString string) (res interface{}, err error) {
+	for _, v := range mv {
+		res, err = v.ValidateToken(ctx, tokenString)
+		if err == nil {
+			return
 		}
 	}
-
-	if cert == "" {
-		err := errors.New("unable to find appropriate key")
-		return cert, err
-	}
-
-	return cert, nil
+	return
 }
 
-func parseJwtMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
-	iss := urlFromDomain(cfg.Config.Auth0.Domain)
-	aud := cfg.Config.Auth0.Audience
+// Validate the access token and inject the user clams into ctx
+func jwtEchoMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
+	jwtValidator, err := NewMultiValidator(cfg.Config.Auth)
+	if err != nil {
+		log.Fatalf("failed to set up the validator: %v", err)
+	}
+
+	middleware := jwtmiddleware.New(jwtValidator.ValidateToken)
+
+	return echo.WrapMiddleware(middleware.CheckJWT)
+}
+
+// load claim from ctx and inject the user sub into ctx
+func parseJwtMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()
 			ctx := req.Context()
 
-			token := ctx.Value(userProfileKey)
-			if userProfile, ok := token.(*jwt.Token); ok {
-				claims := userProfile.Claims.(jwt.MapClaims)
-
-				// Verify 'iss' claim
-				checkIss := claims.VerifyIssuer(iss, false)
-				if !checkIss {
-					return errorResponse(c, "invalid issuer")
-				}
-
-				// Verify 'aud' claim
-				if !verifyAudience(claims, aud) {
-					return errorResponse(c, "invalid audience")
-				}
+			rawClaims := ctx.Value(jwtmiddleware.ContextKey{})
+			if claims, ok := rawClaims.(*validator.ValidatedClaims); ok {
 
 				// attach sub and access token to context
-				if sub, ok := claims["sub"].(string); ok {
-					ctx = context.WithValue(ctx, contextAuth0Sub, sub)
-				}
-				if user, ok := claims["https://reearth.io/user_id"].(string); ok {
-					ctx = context.WithValue(ctx, contextUser, user)
-				}
-				ctx = context.WithValue(ctx, contextAuth0AccessToken, userProfile.Raw)
+				ctx = context.WithValue(ctx, contextAuth0Sub, claims.RegisteredClaims.Subject)
 			}
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)
 		}
 	}
-}
-
-func jwtEchoMiddleware(jwks Jwks, cfg *ServerConfig) echo.MiddlewareFunc {
-	jwksURL := urlFromDomain(cfg.Config.Auth0.Domain) + ".well-known/jwks.json"
-
-	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
-		CredentialsOptional: cfg.Debug,
-		UserProperty:        userProfileKey,
-		SigningMethod:       jwt.SigningMethodRS256,
-		// Make jwtmiddleware return an error object by not writing ErrorHandler to ResponseWriter
-		ErrorHandler: func(w http.ResponseWriter, req *http.Request, err string) {},
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			cert, err := getPemCert(token, jwksURL, jwks)
-			if err != nil {
-				log.Errorf("jwt: %s", err)
-				return nil, err
-			}
-			result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
-			return result, nil
-		},
-	})
-
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			err := jwtMiddleware.CheckJWT(c.Response(), c.Request())
-			if err != nil {
-				return errorResponse(c, err.Error())
-			}
-			return next(c)
-		}
-	}
-}
-
-func urlFromDomain(path string) string {
-	if path == "" {
-		return path
-	}
-	if !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
-		path = "https://" + path
-	}
-	if path[len(path)-1] != '/' {
-		path += "/"
-	}
-	return path
-}
-
-// WORKAROUND: golang-jwt/jwt-go supports multiple audiences, but go-jwt-middleware still uses github.comform3tech-oss/jwt-go
-func verifyAudience(claims jwt.MapClaims, aud string) bool {
-	if aud == "" {
-		return true
-	}
-
-	auds, ok := claims["aud"].([]string)
-	if !ok {
-		auds2, ok := claims["aud"].([]interface{})
-		if ok {
-			for _, a := range auds2 {
-				if aa, ok := a.(string); ok {
-					auds = append(auds, aa)
-				}
-			}
-		} else {
-			a, ok := claims["aud"].(string)
-			if !ok || a == "" {
-				return false
-			}
-			auds = append(auds, a)
-		}
-	}
-
-	for _, a := range auds {
-		if jwt.MapClaims(map[string]interface{}{"aud": a}).VerifyAudience(aud, true) {
-			return true
-		}
-	}
-	return false
-}
-
-func errorResponse(c echo.Context, err string) error {
-	res := map[string]string{"error": err}
-	return c.JSON(http.StatusUnauthorized, res)
 }

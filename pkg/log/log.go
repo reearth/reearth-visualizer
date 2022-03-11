@@ -102,3 +102,7 @@ func Errorln(args ...interface{}) {
 func Fatalln(args ...interface{}) {
 	logrus.Fatalln(args...)
 }
+
+func Panicf(format string, args ...interface{}) {
+	logrus.Panicf(format, args...)
+}

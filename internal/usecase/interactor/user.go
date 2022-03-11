@@ -1,14 +1,20 @@
 package interactor
 
 import (
+	"bytes"
 	"context"
+	_ "embed"
 	"errors"
+	htmlTmpl "html/template"
+	"net/mail"
+	textTmpl "text/template"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/project"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/user"
@@ -28,10 +34,57 @@ type User struct {
 	transaction       repo.Transaction
 	file              gateway.File
 	authenticator     gateway.Authenticator
+	mailer            gateway.Mailer
 	signupSecret      string
+	authSrvUIDomain   string
 }
 
-func NewUser(r *repo.Container, g *gateway.Container, signupSecret string) interfaces.User {
+type mailContent struct {
+	UserName    string
+	Message     string
+	Suffix      string
+	ActionLabel string
+	ActionURL   htmlTmpl.URL
+}
+
+var (
+	//go:embed emails/auth_html.tmpl
+	autHTMLTMPLStr string
+	//go:embed emails/auth_text.tmpl
+	authTextTMPLStr string
+
+	authTextTMPL *textTmpl.Template
+	authHTMLTMPL *htmlTmpl.Template
+
+	signupMailContent        mailContent
+	passwordResetMailContent mailContent
+)
+
+func init() {
+	var err error
+	authTextTMPL, err = textTmpl.New("passwordReset").Parse(authTextTMPLStr)
+	if err != nil {
+		log.Panicf("password reset email template parse error: %s\n", err)
+	}
+	authHTMLTMPL, err = htmlTmpl.New("passwordReset").Parse(autHTMLTMPLStr)
+	if err != nil {
+		log.Panicf("password reset email template parse error: %s\n", err)
+	}
+
+	signupMailContent = mailContent{
+		Message:     "Thank you for signing up to Re:Earth. Please verify your email address by clicking the button below.",
+		Suffix:      "You can use this email address to log in to Re:Earth account anytime.",
+		ActionLabel: "Activate your account and log in",
+	}
+
+	passwordResetMailContent = mailContent{
+		Message:     "Thank you for using Re:Earth. We’ve received a request to reset your password. If this was you, please click the link below to confirm and change your password.",
+		Suffix:      "If you did not mean to reset your password, then you can ignore this email.",
+		ActionLabel: "Confirm to reset your password",
+	}
+}
+
+func NewUser(r *repo.Container, g *gateway.Container, signupSecret, authSrcUIDomain string) interfaces.User {
 	return &User{
 		userRepo:          r.User,
 		teamRepo:          r.Team,
@@ -46,6 +99,8 @@ func NewUser(r *repo.Container, g *gateway.Container, signupSecret string) inter
 		file:              g.File,
 		authenticator:     g.Authenticator,
 		signupSecret:      signupSecret,
+		authSrvUIDomain:   authSrcUIDomain,
+		mailer:            g.Mailer,
 	}
 }
 
@@ -77,17 +132,19 @@ func (i *User) Fetch(ctx context.Context, ids []id.UserID, operator *usecase.Ope
 }
 
 func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.User, _ *user.Team, err error) {
-	if i.signupSecret != "" && inp.Secret != i.signupSecret {
-		return nil, nil, interfaces.ErrSignupInvalidSecret
-	}
-
-	if len(inp.Sub) == 0 {
-		return nil, nil, errors.New("sub is required")
-	}
-
-	tx, err := i.transaction.Begin()
-	if err != nil {
+	var team *user.Team
+	var email, name string
+	var auth *user.Auth
+	var tx repo.Tx
+	isOidc := inp.Secret != nil && inp.Sub != nil
+	isAuth := inp.Name != nil && inp.Email != nil && inp.Password != nil
+	if !isAuth && !isOidc {
 		return
+	}
+
+	tx, err = i.transaction.Begin()
+	if err != nil {
+		return nil, nil, err
 	}
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -95,25 +152,43 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		}
 	}()
 
-	// Check if user and team already exists
-	existed, err := i.userRepo.FindByAuth0Sub(ctx, inp.Sub)
-	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-		return nil, nil, err
-	}
-	if existed != nil {
-		return nil, nil, errors.New("existed user")
+	if isOidc {
+		// Auth0
+		if i.signupSecret != "" && *inp.Secret != i.signupSecret {
+			return nil, nil, interfaces.ErrSignupInvalidSecret
+		}
+
+		if len(*inp.Sub) == 0 {
+			return nil, nil, errors.New("sub is required")
+		}
+		name, email, auth, err = i.oidcSignup(ctx, inp)
+		if err != nil {
+			return
+		}
+
+	} else if isAuth {
+		if *inp.Name == "" {
+			return nil, nil, interfaces.ErrSignupInvalidName
+		}
+		if _, err := mail.ParseAddress(*inp.Email); err != nil {
+			return nil, nil, interfaces.ErrInvalidUserEmail
+		}
+		if *inp.Password == "" {
+			return nil, nil, interfaces.ErrSignupInvalidPassword
+		}
+
+		var unverifiedUser *user.User
+		var unverifiedTeam *user.Team
+		name, email, unverifiedUser, unverifiedTeam, err = i.reearthSignup(ctx, inp)
+		if err != nil {
+			return
+		}
+		if unverifiedUser != nil && unverifiedTeam != nil {
+			return unverifiedUser, unverifiedTeam, nil
+		}
 	}
 
-	if inp.UserID != nil {
-		existed, err := i.userRepo.FindByID(ctx, *inp.UserID)
-		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, err
-		}
-		if existed != nil {
-			return nil, nil, errors.New("existed user")
-		}
-	}
-
+	// Check if team already exists
 	if inp.TeamID != nil {
 		existed, err := i.teamRepo.FindByID(ctx, *inp.TeamID)
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
@@ -124,27 +199,12 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		}
 	}
 
-	// Fetch user info
-	ui, err := i.authenticator.FetchUser(inp.Sub)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Check if user and team already exists
-	var team *user.Team
-	existed, err = i.userRepo.FindByEmail(ctx, ui.Email)
-	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-		return nil, nil, err
-	}
-	if existed != nil {
-		return nil, nil, errors.New("existed user")
-	}
-
 	// Initialize user and team
 	u, team, err = user.Init(user.InitParams{
-		Email:    ui.Email,
-		Name:     ui.Name,
-		Auth0Sub: inp.Sub,
+		Email:    email,
+		Name:     name,
+		Sub:      auth,
+		Password: *inp.Password,
 		Lang:     inp.Lang,
 		Theme:    inp.Theme,
 		UserID:   inp.UserID,
@@ -159,9 +219,187 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 	if err := i.teamRepo.Save(ctx, team); err != nil {
 		return nil, nil, err
 	}
+	if tx != nil {
+		tx.Commit()
+	}
+
+	return u, team, nil
+}
+
+func (i *User) reearthSignup(ctx context.Context, inp interfaces.SignupParam) (string, string, *user.User, *user.Team, error) {
+	// Check if user email already exists
+	existed, err := i.userRepo.FindByEmail(ctx, *inp.Email)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", "", nil, nil, err
+	}
+
+	if existed != nil {
+		if existed.Verification().IsVerified() {
+			return "", "", nil, nil, errors.New("existed user email")
+		} else {
+			//	if user exists but not verified -> create a new verification
+			if err := i.CreateVerification(ctx, *inp.Email); err != nil {
+				return "", "", nil, nil, err
+			} else {
+				team, err := i.teamRepo.FindByID(ctx, existed.Team())
+				if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+					return "", "", nil, nil, err
+				}
+				return "", "", existed, team, nil
+			}
+		}
+	}
+
+	return *inp.Name, *inp.Email, nil, nil, nil
+}
+
+func (i *User) oidcSignup(ctx context.Context, inp interfaces.SignupParam) (string, string, *user.Auth, error) {
+	// Check if user already exists
+	existed, err := i.userRepo.FindByAuth0Sub(ctx, *inp.Sub)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", "", nil, err
+	}
+	if existed != nil {
+		return "", "", nil, errors.New("existed user")
+	}
+
+	if inp.UserID != nil {
+		existed, err := i.userRepo.FindByID(ctx, *inp.UserID)
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return "", "", nil, err
+		}
+		if existed != nil {
+			return "", "", nil, errors.New("existed user")
+		}
+	}
+
+	// Fetch user info
+	ui, err := i.authenticator.FetchUser(*inp.Sub)
+	if err != nil {
+		return "", "", nil, err
+	}
+
+	// Check if user and team already exists
+	existed, err = i.userRepo.FindByEmail(ctx, ui.Email)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", "", nil, err
+	}
+	if existed != nil {
+		return "", "", nil, errors.New("existed user")
+	}
+
+	return ui.Name, ui.Email, user.AuthFromAuth0Sub(*inp.Sub).Ref(), nil
+}
+
+func (i *User) GetUserByCredentials(ctx context.Context, inp interfaces.GetUserByCredentials) (u *user.User, err error) {
+	u, err = i.userRepo.FindByNameOrEmail(ctx, inp.Email)
+	if err != nil && !errors.Is(rerror.ErrNotFound, err) {
+		return nil, err
+	} else if u == nil {
+		return nil, interfaces.ErrInvalidUserEmail
+	}
+	matched, err := u.MatchPassword(inp.Password)
+	if err != nil {
+		return nil, err
+	}
+	if !matched {
+		return nil, interfaces.ErrSignupInvalidPassword
+	}
+	return u, nil
+}
+
+func (i *User) GetUserBySubject(ctx context.Context, sub string) (u *user.User, err error) {
+	u, err = i.userRepo.FindByAuth0Sub(ctx, sub)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func (i *User) StartPasswordReset(ctx context.Context, email string) error {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	u, err := i.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	pr := user.NewPasswordReset()
+	u.SetPasswordReset(pr)
+
+	if err := i.userRepo.Save(ctx, u); err != nil {
+		return err
+	}
+
+	var TextOut, HTMLOut bytes.Buffer
+	link := i.authSrvUIDomain + "/?pwd-reset-token=" + pr.Token
+	passwordResetMailContent.UserName = u.Name()
+	passwordResetMailContent.ActionURL = htmlTmpl.URL(link)
+
+	if err := authTextTMPL.Execute(&TextOut, passwordResetMailContent); err != nil {
+		return err
+	}
+	if err := authHTMLTMPL.Execute(&HTMLOut, passwordResetMailContent); err != nil {
+		return err
+	}
+
+	err = i.mailer.SendMail([]gateway.Contact{
+		{
+			Email: u.Email(),
+			Name:  u.Name(),
+		},
+	}, "Password reset", TextOut.String(), HTMLOut.String())
+	if err != nil {
+		return err
+	}
 
 	tx.Commit()
-	return u, team, nil
+	return nil
+}
+
+func (i *User) PasswordReset(ctx context.Context, password, token string) error {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	u, err := i.userRepo.FindByPasswordResetRequest(ctx, token)
+	if err != nil {
+		return err
+	}
+
+	passwordReset := u.PasswordReset()
+	ok := passwordReset.Validate(token)
+
+	if !ok {
+		return interfaces.ErrUserInvalidPasswordReset
+	}
+
+	u.SetPasswordReset(nil)
+
+	if err := u.SetPassword(password); err != nil {
+		return err
+	}
+
+	if err := i.userRepo.Save(ctx, u); err != nil {
+		return err
+	}
+
+	tx.Commit()
+	return nil
 }
 
 func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operator *usecase.Operator) (u *user.User, err error) {
@@ -374,4 +612,68 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 
 	tx.Commit()
 	return nil
+}
+
+func (i *User) CreateVerification(ctx context.Context, email string) error {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return err
+	}
+	u, err := i.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	vr := user.NewVerification()
+	u.SetVerification(vr)
+	err = i.userRepo.Save(ctx, u)
+	if err != nil {
+		return err
+	}
+
+	var TextOut, HTMLOut bytes.Buffer
+	link := i.authSrvUIDomain + "/?user-verification-token=" + vr.Code()
+	signupMailContent.UserName = email
+	signupMailContent.ActionURL = htmlTmpl.URL(link)
+
+	if err := authTextTMPL.Execute(&TextOut, signupMailContent); err != nil {
+		return err
+	}
+	if err := authHTMLTMPL.Execute(&HTMLOut, signupMailContent); err != nil {
+		return err
+	}
+
+	err = i.mailer.SendMail([]gateway.Contact{
+		{
+			Email: u.Email(),
+			Name:  u.Name(),
+		},
+	}, "email verification", TextOut.String(), HTMLOut.String())
+	if err != nil {
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+func (i *User) VerifyUser(ctx context.Context, code string) (*user.User, error) {
+	tx, err := i.transaction.Begin()
+	if err != nil {
+		return nil, err
+	}
+	u, err := i.userRepo.FindByVerification(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+	if u.Verification().IsExpired() {
+		return nil, errors.New("verification expired")
+	}
+	u.Verification().SetVerified(true)
+	err = i.userRepo.Save(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return u, nil
 }

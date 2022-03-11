@@ -1,6 +1,8 @@
 package mongodoc
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -8,15 +10,29 @@ import (
 	user1 "github.com/reearth/reearth-backend/pkg/user"
 )
 
+type PasswordResetDocument struct {
+	Token     string
+	CreatedAt time.Time
+}
+
 type UserDocument struct {
-	ID           string
-	Name         string
-	Email        string
-	Auth0Sub     string
-	Auth0SubList []string
-	Team         string
-	Lang         string
-	Theme        string
+	ID            string
+	Name          string
+	Email         string
+	Auth0Sub      string
+	Auth0SubList  []string
+	Team          string
+	Lang          string
+	Theme         string
+	Password      []byte
+	PasswordReset *PasswordResetDocument
+	Verification  *UserVerificationDoc
+}
+
+type UserVerificationDoc struct {
+	Code       string
+	Expiration time.Time
+	Verified   bool
 }
 
 type UserConsumer struct {
@@ -47,15 +63,35 @@ func NewUser(user *user1.User) (*UserDocument, string) {
 	for _, a := range auths {
 		authsdoc = append(authsdoc, a.Sub)
 	}
+	var v *UserVerificationDoc
+	if user.Verification() != nil {
+		v = &UserVerificationDoc{
+			Code:       user.Verification().Code(),
+			Expiration: user.Verification().Expiration(),
+			Verified:   user.Verification().IsVerified(),
+		}
+	}
+	pwdReset := user.PasswordReset()
+
+	var pwdResetDoc *PasswordResetDocument
+	if pwdReset != nil {
+		pwdResetDoc = &PasswordResetDocument{
+			Token:     pwdReset.Token,
+			CreatedAt: pwdReset.CreatedAt,
+		}
+	}
 
 	return &UserDocument{
-		ID:           id,
-		Name:         user.Name(),
-		Email:        user.Email(),
-		Auth0SubList: authsdoc,
-		Team:         user.Team().String(),
-		Lang:         user.Lang().String(),
-		Theme:        string(user.Theme()),
+		ID:            id,
+		Name:          user.Name(),
+		Email:         user.Email(),
+		Auth0SubList:  authsdoc,
+		Team:          user.Team().String(),
+		Lang:          user.Lang().String(),
+		Theme:         string(user.Theme()),
+		Verification:  v,
+		Password:      user.Password(),
+		PasswordReset: pwdResetDoc,
 	}, id
 }
 
@@ -75,17 +111,36 @@ func (d *UserDocument) Model() (*user1.User, error) {
 	if d.Auth0Sub != "" {
 		auths = append(auths, user.AuthFromAuth0Sub(d.Auth0Sub))
 	}
-	user, err := user1.New().
+	var v *user.Verification
+	if d.Verification != nil {
+		v = user.VerificationFrom(d.Verification.Code, d.Verification.Expiration, d.Verification.Verified)
+	}
+
+	u, err := user1.New().
 		ID(uid).
 		Name(d.Name).
 		Email(d.Email).
 		Auths(auths).
 		Team(tid).
 		LangFrom(d.Lang).
+		Verification(v).
+		Password(d.Password).
+		PasswordReset(d.PasswordReset.Model()).
 		Theme(user.Theme(d.Theme)).
 		Build()
+
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return u, nil
+}
+
+func (d *PasswordResetDocument) Model() *user1.PasswordReset {
+	if d == nil {
+		return nil
+	}
+	return &user1.PasswordReset{
+		Token:     d.Token,
+		CreatedAt: d.CreatedAt,
+	}
 }

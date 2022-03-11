@@ -73,6 +73,18 @@ func (r *userRepo) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*
 	return r.findOne(ctx, filter)
 }
 
+func (r *userRepo) FindByVerification(ctx context.Context, code string) (*user.User, error) {
+	filter := bson.D{{Key: "verification.code", Value: code}}
+	return r.findOne(ctx, filter)
+}
+
+func (r *userRepo) FindByPasswordResetRequest(ctx context.Context, pwdResetToken string) (*user.User, error) {
+	filter := bson.D{
+		{Key: "passwordreset.token", Value: pwdResetToken},
+	}
+	return r.findOne(ctx, filter)
+}
+
 func (r *userRepo) Save(ctx context.Context, user *user.User) error {
 	doc, id := mongodoc.NewUser(user)
 	return r.client.SaveOne(ctx, id, doc)

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TesIDtList_Add(t *testing.T) {
+func TestIDtList_Add(t *testing.T) {
 	tid := NewID()
 	var tl *IDList
 	tl.Add(tid)

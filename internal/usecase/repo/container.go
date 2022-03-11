@@ -2,6 +2,7 @@ package repo
 
 type Container struct {
 	Asset          Asset
+	AuthRequest    AuthRequest
 	Config         Config
 	DatasetSchema  DatasetSchema
 	Dataset        Dataset

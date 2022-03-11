@@ -40,7 +40,7 @@ func Start(debug bool, version string) {
 	repos, gateways := initReposAndGateways(ctx, conf, debug)
 
 	// Start web server
-	NewServer(&ServerConfig{
+	NewServer(ctx, &ServerConfig{
 		Config:   conf,
 		Debug:    debug,
 		Repos:    repos,
@@ -60,7 +60,7 @@ type ServerConfig struct {
 	Gateways *gateway.Container
 }
 
-func NewServer(cfg *ServerConfig) *WebServer {
+func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 	port := cfg.Config.Port
 	if port == "" {
 		port = "8080"
@@ -75,7 +75,7 @@ func NewServer(cfg *ServerConfig) *WebServer {
 		address: address,
 	}
 
-	w.appServer = initEcho(cfg)
+	w.appServer = initEcho(ctx, cfg)
 	return w
 }
 

@@ -18,6 +18,7 @@ import (
 
 type ContainerConfig struct {
 	SignupSecret       string
+	AuthSrvUIDomain    string
 	PublishedIndexHTML string
 	PublishedIndexURL  *url.URL
 }
@@ -41,7 +42,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 		Scene:     NewScene(r, g),
 		Tag:       NewTag(r),
 		Team:      NewTeam(r),
-		User:      NewUser(r, g, config.SignupSecret),
+		User:      NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
 	}
 }
 

@@ -2,6 +2,7 @@ package user
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
@@ -11,6 +12,7 @@ func TestBuilder_ID(t *testing.T) {
 	uid := NewID()
 	b := New().ID(uid).MustBuild()
 	assert.Equal(t, uid, b.ID())
+	assert.Nil(t, b.passwordReset)
 }
 
 func TestBuilder_Name(t *testing.T) {
@@ -87,6 +89,31 @@ func TestBuilder_LangFrom(t *testing.T) {
 	}
 }
 
+func TestBuilder_PasswordReset(t *testing.T) {
+	testCases := []struct {
+		Name, Token string
+		CreatedAt   time.Time
+		Expected    PasswordReset
+	}{
+		{
+			Name:      "Test1",
+			Token:     "xyz",
+			CreatedAt: time.Unix(0, 0),
+			Expected: PasswordReset{
+				Token:     "xyz",
+				CreatedAt: time.Unix(0, 0),
+			},
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(tt *testing.T) {
+			tt.Parallel()
+			// u := New().NewID().PasswordReset(tc.Token, tc.CreatedAt).MustBuild()
+			// assert.Equal(t, tc.Expected, *u.passwordReset)
+		})
+	}
+}
+
 func TestNew(t *testing.T) {
 	b := New()
 	assert.NotNil(t, b)
@@ -97,12 +124,14 @@ func TestBuilder_Build(t *testing.T) {
 	uid := NewID()
 	tid := NewTeamID()
 	en, _ := language.Parse("en")
+	pass, _ := encodePassword("pass")
 
 	type args struct {
 		Name, Lang, Email string
 		ID                ID
 		Team              TeamID
 		Auths             []Auth
+		PasswordBin       []byte
 	}
 
 	tests := []struct {
@@ -114,11 +143,12 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			Name: "Success build user",
 			Args: args{
-				Name:  "xxx",
-				Email: "xx@yy.zz",
-				Lang:  "en",
-				ID:    uid,
-				Team:  tid,
+				Name:        "xxx",
+				Email:       "xx@yy.zz",
+				Lang:        "en",
+				ID:          uid,
+				Team:        tid,
+				PasswordBin: pass,
 				Auths: []Auth{
 					{
 						Provider: "ppp",
@@ -127,16 +157,18 @@ func TestBuilder_Build(t *testing.T) {
 				},
 			},
 			Expected: &User{
-				id:    uid,
-				team:  tid,
-				email: "xx@yy.zz",
-				name:  "xxx",
-				auths: []Auth{{Provider: "ppp", Sub: "sss"}},
-				lang:  en,
+				id:       uid,
+				team:     tid,
+				email:    "xx@yy.zz",
+				name:     "xxx",
+				password: pass,
+				auths:    []Auth{{Provider: "ppp", Sub: "sss"}},
+				lang:     en,
 			},
 		}, {
-			Name: "failed invalid id",
-			Err:  ErrInvalidID,
+			Name:     "failed invalid id",
+			Expected: nil,
+			Err:      ErrInvalidID,
 		},
 	}
 
@@ -146,6 +178,7 @@ func TestBuilder_Build(t *testing.T) {
 			t.Parallel()
 			res, err := New().
 				ID(tt.Args.ID).
+				Password(pass).
 				Name(tt.Args.Name).
 				Auths(tt.Args.Auths).
 				LangFrom(tt.Args.Lang).
@@ -165,11 +198,13 @@ func TestBuilder_MustBuild(t *testing.T) {
 	uid := NewID()
 	tid := NewTeamID()
 	en, _ := language.Parse("en")
+	pass, _ := encodePassword("pass")
 
 	type args struct {
 		Name, Lang, Email string
 		ID                ID
 		Team              TeamID
+		PasswordBin       []byte
 		Auths             []Auth
 	}
 
@@ -182,11 +217,12 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			Name: "Success build user",
 			Args: args{
-				Name:  "xxx",
-				Email: "xx@yy.zz",
-				Lang:  "en",
-				ID:    uid,
-				Team:  tid,
+				Name:        "xxx",
+				Email:       "xx@yy.zz",
+				Lang:        "en",
+				ID:          uid,
+				Team:        tid,
+				PasswordBin: pass,
 				Auths: []Auth{
 					{
 						Provider: "ppp",
@@ -195,12 +231,13 @@ func TestBuilder_MustBuild(t *testing.T) {
 				},
 			},
 			Expected: &User{
-				id:    uid,
-				team:  tid,
-				email: "xx@yy.zz",
-				name:  "xxx",
-				auths: []Auth{{Provider: "ppp", Sub: "sss"}},
-				lang:  en,
+				id:       uid,
+				team:     tid,
+				email:    "xx@yy.zz",
+				name:     "xxx",
+				password: pass,
+				auths:    []Auth{{Provider: "ppp", Sub: "sss"}},
+				lang:     en,
 			},
 		}, {
 			Name: "failed invalid id",
@@ -217,6 +254,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				t.Helper()
 				return New().
 					ID(tt.Args.ID).
+					Password(pass).
 					Name(tt.Args.Name).
 					Auths(tt.Args.Auths).
 					LangFrom(tt.Args.Lang).
@@ -230,6 +268,40 @@ func TestBuilder_MustBuild(t *testing.T) {
 			} else {
 				assert.Equal(t, tt.Expected, build())
 			}
+		})
+	}
+}
+
+func TestBuilder_Verification(t *testing.T) {
+	tests := []struct {
+		name  string
+		input *Verification
+		want  *Builder
+	}{
+		{
+			name: "should return verification",
+			input: &Verification{
+				verified:   true,
+				code:       "xxx",
+				expiration: time.Time{},
+			},
+
+			want: &Builder{
+				u: &User{
+					verification: &Verification{
+						verified:   true,
+						code:       "xxx",
+						expiration: time.Time{},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := New()
+			b.Verification(tt.input)
+			assert.Equal(t, tt.want, b)
 		})
 	}
 }
