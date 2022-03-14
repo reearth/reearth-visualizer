@@ -133,13 +133,18 @@ func (i *User) Fetch(ctx context.Context, ids []id.UserID, operator *usecase.Ope
 
 func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.User, _ *user.Team, err error) {
 	var team *user.Team
-	var email, name string
 	var auth *user.Auth
+	var email, name string
 	var tx repo.Tx
-	isOidc := inp.Secret != nil && inp.Sub != nil
+
+	isOidc := inp.Sub != nil && inp.Password == nil
 	isAuth := inp.Name != nil && inp.Email != nil && inp.Password != nil
 	if !isAuth && !isOidc {
-		return
+		return nil, nil, errors.New("invalid params")
+	}
+
+	if i.signupSecret != "" && *inp.Secret != i.signupSecret {
+		return nil, nil, interfaces.ErrSignupInvalidSecret
 	}
 
 	tx, err = i.transaction.Begin()
@@ -152,12 +157,18 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		}
 	}()
 
-	if isOidc {
-		// Auth0
-		if i.signupSecret != "" && *inp.Secret != i.signupSecret {
-			return nil, nil, interfaces.ErrSignupInvalidSecret
+	// Check if team already exists
+	if inp.TeamID != nil {
+		existed, err := i.teamRepo.FindByID(ctx, *inp.TeamID)
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return nil, nil, err
 		}
+		if existed != nil {
+			return nil, nil, errors.New("existed team")
+		}
+	}
 
+	if isOidc {
 		if len(*inp.Sub) == 0 {
 			return nil, nil, errors.New("sub is required")
 		}
@@ -165,7 +176,6 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		if err != nil {
 			return
 		}
-
 	} else if isAuth {
 		if *inp.Name == "" {
 			return nil, nil, interfaces.ErrSignupInvalidName
@@ -188,41 +198,31 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 		}
 	}
 
-	// Check if team already exists
-	if inp.TeamID != nil {
-		existed, err := i.teamRepo.FindByID(ctx, *inp.TeamID)
-		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, err
-		}
-		if existed != nil {
-			return nil, nil, errors.New("existed team")
-		}
-	}
-
 	// Initialize user and team
 	u, team, err = user.Init(user.InitParams{
 		Email:    email,
 		Name:     name,
 		Sub:      auth,
-		Password: *inp.Password,
+		Password: inp.Password,
 		Lang:     inp.Lang,
 		Theme:    inp.Theme,
 		UserID:   inp.UserID,
 		TeamID:   inp.TeamID,
 	})
+
 	if err != nil {
 		return nil, nil, err
 	}
+
 	if err := i.userRepo.Save(ctx, u); err != nil {
 		return nil, nil, err
 	}
+
 	if err := i.teamRepo.Save(ctx, team); err != nil {
 		return nil, nil, err
 	}
-	if tx != nil {
-		tx.Commit()
-	}
 
+	tx.Commit()
 	return u, team, nil
 }
 
