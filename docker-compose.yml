@@ -12,10 +12,6 @@ services:
     environment:
       REEARTH_ENV: docker
       REEARTH_DB_URL: mongodb://reearth-mongo
-      REEARTH_MAILER: smtp
-      REEARTH_SMTP_URL: #add later
-      REEARTH_SMTP_USER: #add later
-      REEARTH_SMTP_PASSWORD: #add later
     depends_on:
       - reearth-mongo
   reearth-mongo:

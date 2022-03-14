@@ -4,51 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-
 	"github.com/stretchr/testify/assert"
 )
-
-func TestNewWithSMTP(t *testing.T) {
-	type args struct {
-		host     string
-		port     string
-		email    string
-		username string
-		password string
-	}
-	tests := []struct {
-		name string
-		args args
-		want gateway.Mailer
-	}{
-		{
-			name: "should create mailer with given args",
-			args: args{
-				host:     "x.x.x",
-				port:     "8080",
-				username: "foo",
-				email:    "xxx@test.com",
-				password: "foo.pass",
-			},
-			want: &smtpMailer{
-				host:     "x.x.x",
-				port:     "8080",
-				username: "foo",
-				email:    "xxx@test.com",
-				password: "foo.pass",
-			},
-		},
-	}
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			got := NewWithSMTP(tc.args.host, tc.args.port, tc.args.username, tc.args.email, tc.args.password)
-			assert.Equal(tt, tc.want, got)
-		})
-	}
-}
 
 func Test_message_encodeContent(t *testing.T) {
 	// subject and receiver email are not needed for encoding the content
