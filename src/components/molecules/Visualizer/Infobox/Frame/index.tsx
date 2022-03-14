@@ -76,6 +76,7 @@ const InfoBox: React.FC<Props> = ({
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
+  const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
 
   const handleOpen = useCallback(() => {
@@ -97,6 +98,9 @@ const InfoBox: React.FC<Props> = ({
     if (!visible) {
       setOpen(true);
     }
+    setTimeout(() => {
+      setShowMask(visible);
+    }, 0);
   }, [visible]);
 
   const wrapperStyles = useMemo(
@@ -109,7 +113,7 @@ const InfoBox: React.FC<Props> = ({
 
   return (
     <>
-      <Mask activate={open && useMask} onClick={onMaskClick} />
+      <Mask activate={showMask && useMask} onClick={onMaskClick} />
       <StyledFloatedPanel
         className={className}
         visible={visible}
@@ -169,7 +173,7 @@ const InfoBox: React.FC<Props> = ({
 };
 
 const Mask = styled.div<{ activate?: boolean }>`
-  display: ${({ activate }) => (activate ? "flex" : "none")};
+  display: ${({ activate }) => (activate ? "block" : "none")};
   height: 100%;
   width: 100%;
   position: absolute;
