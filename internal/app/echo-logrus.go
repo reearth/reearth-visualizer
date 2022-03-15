@@ -115,37 +115,37 @@ func (l *Logger) Panicj(j log.JSON) {
 
 // Print string log
 func (l *Logger) Print(i ...interface{}) {
-	logrus.Print(i[0].(string))
+	logrus.Print(i...)
 }
 
 // Debug string log
 func (l *Logger) Debug(i ...interface{}) {
-	logrus.Debug(i[0].(string))
+	logrus.Debug(i...)
 }
 
 // Info string log
 func (l *Logger) Info(i ...interface{}) {
-	logrus.Info(i[0].(string))
+	logrus.Info(i...)
 }
 
 // Warn string log
 func (l *Logger) Warn(i ...interface{}) {
-	logrus.Warn(i[0].(string))
+	logrus.Warn(i...)
 }
 
 // Error string log
 func (l *Logger) Error(i ...interface{}) {
-	logrus.Error(i[0].(string))
+	logrus.Error(i...)
 }
 
 // Fatal string log
 func (l *Logger) Fatal(i ...interface{}) {
-	logrus.Fatal(i[0].(string))
+	logrus.Fatal(i...)
 }
 
 // Panic string log
 func (l *Logger) Panic(i ...interface{}) {
-	logrus.Panic(i[0].(string))
+	logrus.Panic(i...)
 }
 
 // Printf print json log

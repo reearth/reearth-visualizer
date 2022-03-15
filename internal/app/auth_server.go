@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -23,7 +24,6 @@ var (
 )
 
 func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *ServerConfig) {
-
 	userUsecase := interactor.NewUser(cfg.Repos, cfg.Gateways, cfg.Config.SignupSecret, cfg.Config.AuthSrv.UIDomain)
 
 	domain, err := url.Parse(cfg.Config.AuthSrv.Domain)
@@ -78,13 +78,13 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 		op.WithCustomKeysEndpoint(op.NewEndpoint(jwksEndpoint)),
 	)
 	if err != nil {
-		e.Logger.Fatal(err)
+		e.Logger.Fatal(fmt.Errorf("auth: init failed: %w", err))
 	}
 
 	router := handler.HttpHandler().(*mux.Router)
 
 	if err := router.Walk(muxToEchoMapper(r)); err != nil {
-		e.Logger.Fatal(err)
+		e.Logger.Fatal(fmt.Errorf("auth: walk failed: %w", err))
 	}
 
 	// Actual login endpoint
@@ -96,7 +96,6 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 	// can be removed when the mentioned issue is solved
 	// https://github.com/auth0/auth0-spa-js/issues/845
 	r.GET("v2/logout", logout())
-
 }
 
 func setURLVarsHandler() func(handler http.Handler) http.Handler {
