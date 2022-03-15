@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/caos/oidc/pkg/op"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/reearth/reearth-backend/pkg/log"
@@ -103,6 +104,9 @@ func ReadConfig(debug bool) (*Config, error) {
 
 	if debug {
 		c.Dev = true
+		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
+			_ = os.Setenv(op.OidcDevMode, "1")
+		}
 	}
 
 	return &c, err
