@@ -30,6 +30,10 @@ func (p *Plugin) Version() semver.Version {
 	return p.id.Version()
 }
 
+func (p *Plugin) Scene() *SceneID {
+	return p.ID().Scene()
+}
+
 func (p *Plugin) Name() i18n.String {
 	if p == nil {
 		return nil

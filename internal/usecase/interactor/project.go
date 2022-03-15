@@ -53,20 +53,18 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 }
 
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*project.Project, error) {
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-	return i.projectRepo.FindByIDs(ctx, ids, operator.AllReadableTeams())
+	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
-	if err := i.CanReadTeam(id, operator); err != nil {
-		return nil, nil, err
-	}
 	return i.projectRepo.FindByTeam(ctx, id, p)
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	if err := i.CanWriteTeam(p.TeamID, operator); err != nil {
+		return nil, err
+	}
+
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -76,10 +74,6 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 			err = err2
 		}
 	}()
-
-	if err := i.CanWriteTeam(p.TeamID, operator); err != nil {
-		return nil, err
-	}
 
 	pb := project.New().
 		NewID().
@@ -126,15 +120,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, p.ID, operator.AllWritableTeams())
+	prj, err := i.projectRepo.FindByID(ctx, p.ID)
 	if err != nil {
 		return nil, err
 	}
-
 	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
 		return nil, err
 	}
@@ -236,20 +225,15 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, params.ID, operator.AllWritableTeams())
+	prj, err := i.projectRepo.FindByID(ctx, params.ID)
 	if err != nil {
 		return nil, err
 	}
-
 	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByProject(ctx, params.ID, operator.AllWritableTeams())
+	s, err := i.sceneRepo.FindByProject(ctx, params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -312,10 +296,10 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			}()
 
 			err = builder.New(
-				repo.LayerLoaderFrom(i.layerRepo, scenes),
-				repo.PropertyLoaderFrom(i.propertyRepo, scenes),
-				repo.DatasetGraphLoaderFrom(i.datasetRepo, scenes),
-				repo.TagLoaderFrom(i.tagRepo, scenes),
+				repo.LayerLoaderFrom(i.layerRepo),
+				repo.PropertyLoaderFrom(i.propertyRepo),
+				repo.DatasetGraphLoaderFrom(i.datasetRepo),
+				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 			).BuildScene(ctx, w, s, time.Now())
 		}()
@@ -356,15 +340,10 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, projectID, operator.AllWritableTeams())
+	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
 		return err
 	}
-
 	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
 		return err
 	}

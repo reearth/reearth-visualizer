@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/tag"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -97,8 +98,10 @@ func TestNewTags(t *testing.T) {
 		Scene(sid).
 		Build()
 	tgi := tag.Tag(tg)
+
 	type args struct {
 		tags []*tag.Tag
+		f    scene.IDList
 	}
 
 	tests := []struct {
@@ -125,13 +128,43 @@ func TestNewTags(t *testing.T) {
 			},
 			want1: []string{tgi.ID().String()},
 		},
+		{
+			name: "filtered tags 1",
+			args: args{
+				tags: []*tag.Tag{
+					&tgi,
+				},
+				f: scene.IDList{tgi.Scene()},
+			},
+			want: []interface{}{
+				&TagDocument{
+					ID:    tg.ID().String(),
+					Label: "group",
+					Scene: sid.ID().String(),
+					Item:  nil,
+					Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
+				},
+			},
+			want1: []string{tgi.ID().String()},
+		},
+		{
+			name: "filtered tags 2",
+			args: args{
+				tags: []*tag.Tag{
+					&tgi,
+				},
+				f: scene.IDList{},
+			},
+			want:  []interface{}{},
+			want1: []string{},
+		},
 	}
 
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			got, got1 := NewTags(tc.args.tags)
+			got, got1 := NewTags(tc.args.tags, tc.args.f)
 			assert.Equal(t, tc.want, got)
 			assert.Equal(t, tc.want1, got1)
 		})

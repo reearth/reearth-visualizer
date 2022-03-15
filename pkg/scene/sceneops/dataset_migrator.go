@@ -38,7 +38,6 @@ func (r MigrateDatasetResult) Merge(r2 MigrateDatasetResult) MigrateDatasetResul
 
 // NOTE: DatasetSchemaの削除には対応していない（自動的に削除されない）
 func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, newdsl []*dataset.Schema, newdl dataset.List) (MigrateDatasetResult, error) {
-	scenes := []dataset.SceneID{sid}
 	result := MigrateDatasetResult{}
 
 	// 削除対象
@@ -95,7 +94,7 @@ func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, new
 		}
 
 		// 古いDSのDを探し出す
-		olddl, _, err := srv.DatasetRepo.FindBySchema(ctx, oldds.ID(), scenes, nil)
+		olddl, _, err := srv.DatasetRepo.FindBySchema(ctx, oldds.ID(), nil)
 		if err != nil {
 			return MigrateDatasetResult{}, err
 		}
@@ -162,8 +161,6 @@ func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, new
 }
 
 func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID, oldds *dataset.Schema, newds *dataset.Schema, diff dataset.Diff) (MigrateDatasetResult, error) {
-	scenes := []dataset.SceneID{sid}
-
 	// 前のデータセットスキーマに紐づいたレイヤーグループを取得
 	layerGroups, err := srv.LayerRepo.FindGroupBySceneAndLinkedDatasetSchema(ctx, sid, oldds.ID())
 	if err != nil {
@@ -175,7 +172,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID
 	removedLayers := []layer.ID{}
 
 	for _, lg := range layerGroups {
-		layers, err := srv.LayerRepo.FindByIDs(ctx, lg.Layers().Layers(), scenes)
+		layers, err := srv.LayerRepo.FindByIDs(ctx, lg.Layers().Layers())
 		if err != nil {
 			return MigrateDatasetResult{}, err
 		}
@@ -215,7 +212,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID
 			// プラグインを取得
 			var plug *plugin.Plugin
 			if pid := lg.Plugin(); pid != nil {
-				plug2, err := srv.Plugin(ctx, []plugin.ID{*pid}, []dataset.SceneID{sid})
+				plug2, err := srv.Plugin(ctx, []plugin.ID{*pid})
 				if err != nil || len(plug2) < 1 {
 					return MigrateDatasetResult{}, err
 				}

@@ -19,6 +19,18 @@ func (l SchemaList) Loader() SchemaLoader {
 	return SchemaLoaderFromMap(l.Map())
 }
 
+func (l SchemaList) Concat(m SchemaList) SchemaList {
+	return append(l, m...)
+}
+
+func (l SchemaList) MapToIDs(ids []SchemaID) SchemaList {
+	results := make(SchemaList, 0, len(ids))
+	for _, id := range ids {
+		results = append(results, l.Find(id))
+	}
+	return results
+}
+
 type SchemaMap map[SchemaID]*Schema
 
 func SchemaMapFrom(l []*Schema) SchemaMap {

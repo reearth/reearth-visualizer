@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
+	"github.com/reearth/reearth-backend/pkg/scene"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -136,14 +137,18 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 	}, id
 }
 
-func NewLayers(layers layer.List) ([]interface{}, []string) {
+func NewLayers(layers layer.List, f scene.IDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(layers))
 	ids := make([]string, 0, len(layers))
 	for _, d := range layers {
 		if d == nil {
 			continue
 		}
-		r, id := NewLayer(*d)
+		d2 := *d
+		if d2 == nil || f != nil && !f.Includes(d2.Scene()) {
+			continue
+		}
+		r, id := NewLayer(d2)
 		res = append(res, r)
 		ids = append(ids, id)
 	}

@@ -6,6 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTeamIDList_Clone(t *testing.T) {
+	t1 := NewTeamID()
+	t2 := NewTeamID()
+	t3 := NewTeamID()
+	ids := TeamIDList{t1, t2, t3}
+	assert.Equal(t, ids, ids.Clone())
+	assert.NotSame(t, ids, ids.Clone())
+	assert.Nil(t, TeamIDList(nil).Clone())
+}
+
 func TestTeamIDList_Filter(t *testing.T) {
 	t1 := NewTeamID()
 	t2 := NewTeamID()

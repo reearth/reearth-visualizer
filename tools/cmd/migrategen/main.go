@@ -113,6 +113,8 @@ var templ2 = template.Must(template.New("generated2").Parse(`// Code generated b
 
 package migration
 
+// To add a new migration, run go run ./tools/cmd/migrategen migration_name
+
 // WARNING:
 // If the migration takes too long, the deployment may fail in a serverless environment.
 // Set the batch size to as large a value as possible without using up the RAM of the deployment destination.

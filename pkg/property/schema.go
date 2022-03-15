@@ -23,6 +23,10 @@ func (p *Schema) IDRef() *SchemaID {
 	return p.id.Ref()
 }
 
+func (p *Schema) Scene() *SceneID {
+	return p.id.Plugin().Scene()
+}
+
 func (p *Schema) Version() int {
 	return p.version
 }

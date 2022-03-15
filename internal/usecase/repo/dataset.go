@@ -9,11 +9,12 @@ import (
 )
 
 type Dataset interface {
-	FindByID(context.Context, id.DatasetID, []id.SceneID) (*dataset.Dataset, error)
-	FindByIDs(context.Context, []id.DatasetID, []id.SceneID) (dataset.List, error)
-	FindBySchema(context.Context, id.DatasetSchemaID, []id.SceneID, *usecase.Pagination) (dataset.List, *usecase.PageInfo, error)
+	Filtered(SceneFilter) Dataset
+	FindByID(context.Context, id.DatasetID) (*dataset.Dataset, error)
+	FindByIDs(context.Context, []id.DatasetID) (dataset.List, error)
+	FindBySchema(context.Context, id.DatasetSchemaID, *usecase.Pagination) (dataset.List, *usecase.PageInfo, error)
 	FindBySchemaAll(context.Context, id.DatasetSchemaID) (dataset.List, error)
-	FindGraph(context.Context, id.DatasetID, []id.SceneID, []id.DatasetSchemaFieldID) (dataset.List, error)
+	FindGraph(context.Context, id.DatasetID, []id.DatasetSchemaFieldID) (dataset.List, error)
 	Save(context.Context, *dataset.Dataset) error
 	SaveAll(context.Context, dataset.List) error
 	Remove(context.Context, id.DatasetID) error
@@ -21,16 +22,16 @@ type Dataset interface {
 	RemoveByScene(context.Context, id.SceneID) error
 }
 
-func DatasetLoaderFrom(r Dataset, scenes []id.SceneID) dataset.Loader {
+func DatasetLoaderFrom(r Dataset) dataset.Loader {
 	return func(ctx context.Context, ids ...id.DatasetID) (dataset.List, error) {
-		return r.FindByIDs(ctx, ids, scenes)
+		return r.FindByIDs(ctx, ids)
 	}
 }
 
-func DatasetGraphLoaderFrom(r Dataset, scenes []id.SceneID) dataset.GraphLoader {
+func DatasetGraphLoaderFrom(r Dataset) dataset.GraphLoader {
 	return func(ctx context.Context, root id.DatasetID, fields ...id.DatasetSchemaFieldID) (dataset.List, *dataset.Field, error) {
 		if len(fields) <= 1 {
-			d, err := r.FindByID(ctx, root, scenes)
+			d, err := r.FindByID(ctx, root)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -41,7 +42,7 @@ func DatasetGraphLoaderFrom(r Dataset, scenes []id.SceneID) dataset.GraphLoader 
 			return dataset.List{d}, field, nil
 		}
 
-		list2, err := r.FindGraph(ctx, root, scenes, fields)
+		list2, err := r.FindGraph(ctx, root, fields)
 		if err != nil {
 			return nil, nil, err
 		}

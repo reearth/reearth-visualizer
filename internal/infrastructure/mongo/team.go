@@ -77,14 +77,16 @@ func (r *teamRepo) SaveAll(ctx context.Context, teams []*user.Team) error {
 }
 
 func (r *teamRepo) Remove(ctx context.Context, id id.TeamID) error {
-	return r.client.RemoveOne(ctx, id.String())
+	return r.client.RemoveOne(ctx, bson.M{"id": id.String()})
 }
 
 func (r *teamRepo) RemoveAll(ctx context.Context, ids []id.TeamID) error {
 	if len(ids) == 0 {
 		return nil
 	}
-	return r.client.RemoveAll(ctx, id.TeamIDsToStrings(ids))
+	return r.client.RemoveAll(ctx, bson.M{
+		"id": bson.M{"$in": id.TeamIDsToStrings(ids)},
+	})
 }
 
 func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) (user.TeamList, error) {

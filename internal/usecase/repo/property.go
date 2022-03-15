@@ -8,8 +8,9 @@ import (
 )
 
 type Property interface {
-	FindByID(context.Context, id.PropertyID, []id.SceneID) (*property.Property, error)
-	FindByIDs(context.Context, []id.PropertyID, []id.SceneID) (property.List, error)
+	Filtered(SceneFilter) Property
+	FindByID(context.Context, id.PropertyID) (*property.Property, error)
+	FindByIDs(context.Context, []id.PropertyID) (property.List, error)
 	FindLinkedAll(context.Context, id.SceneID) (property.List, error)
 	FindByDataset(context.Context, id.DatasetSchemaID, id.DatasetID) (property.List, error)
 	FindBySchema(context.Context, []id.PropertySchemaID, id.SceneID) (property.List, error)
@@ -22,8 +23,8 @@ type Property interface {
 	RemoveByScene(context.Context, id.SceneID) error
 }
 
-func PropertyLoaderFrom(r Property, scenes []id.SceneID) property.Loader {
+func PropertyLoaderFrom(r Property) property.Loader {
 	return func(ctx context.Context, ids ...id.PropertyID) (property.List, error) {
-		return r.FindByIDs(ctx, ids, scenes)
+		return r.FindByIDs(ctx, ids)
 	}
 }

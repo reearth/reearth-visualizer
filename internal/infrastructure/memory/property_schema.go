@@ -15,6 +15,7 @@ import (
 type PropertySchema struct {
 	lock sync.Mutex
 	data map[string]*property.Schema
+	f    repo.SceneFilter
 }
 
 func NewPropertySchema() repo.PropertySchema {
@@ -24,6 +25,14 @@ func NewPropertySchema() repo.PropertySchema {
 func (r *PropertySchema) initMap() {
 	if r.data == nil {
 		r.data = map[string]*property.Schema{}
+	}
+}
+
+func (r *PropertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
+	return &PropertySchema{
+		// note data is shared between the source repo and mutex cannot work well
+		data: r.data,
+		f:    f.Clone(),
 	}
 }
 
@@ -38,7 +47,9 @@ func (r *PropertySchema) FindByID(ctx context.Context, id id.PropertySchemaID) (
 	r.initMap()
 	p, ok := r.data[id.String()]
 	if ok {
-		return p, nil
+		if s := p.Scene(); s == nil || r.f.CanRead(*s) {
+			return p, nil
+		}
 	}
 	return nil, rerror.ErrNotFound
 }
@@ -55,7 +66,9 @@ func (r *PropertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaI
 			continue
 		}
 		if d, ok := r.data[id.String()]; ok {
-			result = append(result, d)
+			if s := d.Scene(); s == nil || r.f.CanRead(*s) {
+				result = append(result, d)
+			}
 		} else {
 			result = append(result, nil)
 		}
@@ -64,6 +77,10 @@ func (r *PropertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaI
 }
 
 func (r *PropertySchema) Save(ctx context.Context, p *property.Schema) error {
+	if s := p.Scene(); s != nil && !r.f.CanWrite(*s) {
+		return repo.ErrOperationDenied
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -82,9 +99,11 @@ func (r *PropertySchema) SaveAll(ctx context.Context, p property.SchemaList) err
 	r.initMap()
 	for _, p := range p {
 		if p.ID().Plugin().System() {
-			return errors.New("cannnot save system property schema")
+			continue
 		}
-		r.data[p.ID().String()] = p
+		if s := p.Scene(); s == nil || r.f.CanRead(*s) {
+			r.data[p.ID().String()] = p
+		}
 	}
 	return nil
 }
@@ -94,7 +113,13 @@ func (r *PropertySchema) Remove(ctx context.Context, id id.PropertySchemaID) err
 	defer r.lock.Unlock()
 
 	r.initMap()
-	delete(r.data, id.String())
+
+	if d, ok := r.data[id.String()]; ok {
+		if s := d.Scene(); s == nil || r.f.CanRead(*s) {
+			delete(r.data, id.String())
+		}
+	}
+
 	return nil
 }
 
@@ -104,7 +129,11 @@ func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaI
 
 	r.initMap()
 	for _, id := range ids {
-		delete(r.data, id.String())
+		if d, ok := r.data[id.String()]; ok {
+			if s := d.Scene(); s == nil || r.f.CanRead(*s) {
+				delete(r.data, id.String())
+			}
+		}
 	}
 	return nil
 }

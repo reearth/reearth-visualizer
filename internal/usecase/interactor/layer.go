@@ -58,61 +58,31 @@ func NewLayer(r *repo.Container) interfaces.Layer {
 }
 
 func (i *Layer) Fetch(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) (layer.List, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.layerRepo.FindByIDs(ctx, ids, scenes)
+	return i.layerRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Layer) FetchGroup(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) ([]*layer.Group, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.layerRepo.FindGroupByIDs(ctx, ids, scenes)
+	return i.layerRepo.FindGroupByIDs(ctx, ids)
 }
 
 func (i *Layer) FetchItem(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) ([]*layer.Item, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.layerRepo.FindItemByIDs(ctx, ids, scenes)
+	return i.layerRepo.FindItemByIDs(ctx, ids)
 }
 
 func (i *Layer) FetchParent(ctx context.Context, pid id.LayerID, operator *usecase.Operator) (*layer.Group, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.layerRepo.FindParentByID(ctx, pid, scenes)
+	return i.layerRepo.FindParentByID(ctx, pid)
 }
 
 func (i *Layer) FetchByProperty(ctx context.Context, pid id.PropertyID, operator *usecase.Operator) (layer.Layer, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.layerRepo.FindByProperty(ctx, pid, scenes)
+	return i.layerRepo.FindByProperty(ctx, pid)
 }
 
 func (i *Layer) FetchMerged(ctx context.Context, org id.LayerID, parent *id.LayerID, operator *usecase.Operator) (*layer.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
 	ids := []id.LayerID{org}
 	if parent != nil {
 		ids = append(ids, *parent)
 	}
-	layers, err := i.layerRepo.FindByIDs(ctx, ids, scenes)
+	layers, err := i.layerRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
@@ -136,16 +106,11 @@ func (i *Layer) FetchMerged(ctx context.Context, org id.LayerID, parent *id.Laye
 }
 
 func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operator *usecase.Operator) (*layer.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
+	orgl, err := i.layerRepo.FindItemByID(ctx, org)
 	if err != nil {
 		return nil, err
 	}
-
-	orgl, err := i.layerRepo.FindItemByID(ctx, org, scenes)
-	if err != nil {
-		return nil, err
-	}
-	parent, err := i.layerRepo.FindParentByID(ctx, org, scenes)
+	parent, err := i.layerRepo.FindParentByID(ctx, org)
 	if err != nil {
 		return nil, err
 	}
@@ -154,11 +119,7 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 }
 
 func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.List, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-	return i.layerRepo.FindByTag(ctx, tag, scenes)
+	return i.layerRepo.FindByTag(ctx, tag)
 }
 
 func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, operator *usecase.Operator) (_ *layer.Item, _ *layer.Group, err error) {
@@ -172,16 +133,8 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID, scenes)
-	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, err
-		}
 		return nil, nil, err
 	}
 
@@ -257,17 +210,10 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID, scenes)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	layerScenes := []id.SceneID{parentLayer.Scene()}
 
 	// check scene lock
 	if err := i.CheckSceneLock(ctx, parentLayer.Scene()); err != nil {
@@ -295,7 +241,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	var datasetSchema *dataset.Schema
 	var ds dataset.List
 	if inp.LinkedDatasetSchemaID != nil {
-		datasetSchema2, err := i.datasetSchemaRepo.FindByID(ctx, *inp.LinkedDatasetSchemaID, layerScenes)
+		datasetSchema2, err := i.datasetSchemaRepo.FindByID(ctx, *inp.LinkedDatasetSchemaID)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -436,9 +382,9 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	return layerGroup, parentLayer, nil
 }
 
-func (i *Layer) fetchAllChildren(ctx context.Context, l layer.Layer, scenes []id.SceneID) ([]id.LayerID, []id.PropertyID, error) {
+func (i *Layer) fetchAllChildren(ctx context.Context, l layer.Layer) ([]id.LayerID, []id.PropertyID, error) {
 	lidl := layer.ToLayerGroup(l).Layers().Layers()
-	layers, err := i.layerRepo.FindByIDs(ctx, lidl, scenes)
+	layers, err := i.layerRepo.FindByIDs(ctx, lidl)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -447,7 +393,7 @@ func (i *Layer) fetchAllChildren(ctx context.Context, l layer.Layer, scenes []id
 		lg := layer.ToLayerGroup(*ll)
 		li := layer.ToLayerItem(*ll)
 		if lg != nil {
-			childrenLayers, childrenProperties, err := i.fetchAllChildren(ctx, lg, scenes)
+			childrenLayers, childrenProperties, err := i.fetchAllChildren(ctx, lg)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -464,7 +410,6 @@ func (i *Layer) fetchAllChildren(ctx context.Context, l layer.Layer, scenes []id
 }
 
 func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Operator) (_ id.LayerID, _ *layer.Group, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -475,13 +420,11 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	l, err := i.layerRepo.FindByID(ctx, lid)
 	if err != nil {
 		return lid, nil, err
 	}
-
-	l, err := i.layerRepo.FindByID(ctx, lid, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
 		return lid, nil, err
 	}
 
@@ -493,7 +436,7 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 		return lid, nil, errors.New("root layer cannot be deleted")
 	}
 
-	parentLayer, err := i.layerRepo.FindParentByID(ctx, lid, scenes)
+	parentLayer, err := i.layerRepo.FindParentByID(ctx, lid)
 	if err != nil && err != rerror.ErrNotFound {
 		return lid, nil, err
 	}
@@ -513,7 +456,7 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 			return lid, nil, err
 		}
 	}
-	layers, properties, err := i.fetchAllChildren(ctx, l, scenes)
+	layers, properties, err := i.fetchAllChildren(ctx, l)
 	if err != nil {
 		return lid, nil, err
 	}
@@ -532,7 +475,6 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 }
 
 func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, operator *usecase.Operator) (_ layer.Layer, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -543,13 +485,11 @@ func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, ope
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
 		return nil, err
 	}
-
-	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, err
 	}
 
@@ -576,7 +516,6 @@ func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, ope
 }
 
 func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operator *usecase.Operator) (_ id.LayerID, _ *layer.Group, _ *layer.Group, _ int, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -587,13 +526,11 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	parentLayer, err := i.layerRepo.FindParentByID(ctx, inp.LayerID)
 	if err != nil {
 		return inp.LayerID, nil, nil, -1, err
 	}
-
-	parentLayer, err := i.layerRepo.FindParentByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(parentLayer.Scene(), operator); err != nil {
 		return inp.LayerID, nil, nil, -1, err
 	}
 
@@ -608,7 +545,7 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 	} else if parentLayer.IsLinked() {
 		return inp.LayerID, nil, nil, -1, interfaces.ErrLinkedLayerItemCannotBeMoved
 	} else {
-		toParentLayer, err = i.layerRepo.FindGroupByID(ctx, *inp.DestLayerID, scenes)
+		toParentLayer, err = i.layerRepo.FindGroupByID(ctx, *inp.DestLayerID)
 		if err != nil {
 			return inp.LayerID, nil, nil, -1, err
 		}
@@ -640,7 +577,6 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 }
 
 func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *usecase.Operator) (_ layer.Layer, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -651,13 +587,11 @@ func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *use
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	l, err := i.layerRepo.FindByID(ctx, lid)
 	if err != nil {
 		return nil, err
 	}
-
-	l, err := i.layerRepo.FindByID(ctx, lid, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
 		return nil, err
 	}
 
@@ -704,13 +638,11 @@ func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator 
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	layer, err := i.layerRepo.FindByID(ctx, layerID)
 	if err != nil {
 		return nil, err
 	}
-
-	layer, err := i.layerRepo.FindByID(ctx, layerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, err
 	}
 
@@ -751,13 +683,11 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	l, err := i.layerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	l, err := i.layerRepo.FindByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -815,7 +745,6 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 }
 
 func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfoboxFieldParam, operator *usecase.Operator) (_ id.InfoboxFieldID, _ layer.Layer, _ int, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -826,13 +755,11 @@ func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfobox
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
 		return inp.InfoboxFieldID, nil, -1, err
 	}
-
-	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return inp.InfoboxFieldID, nil, -1, err
 	}
 
@@ -858,7 +785,6 @@ func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfobox
 }
 
 func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInfoboxFieldParam, operator *usecase.Operator) (_ id.InfoboxFieldID, _ layer.Layer, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -869,13 +795,11 @@ func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInf
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
 		return inp.InfoboxFieldID, nil, err
 	}
-
-	layer, err := i.layerRepo.FindByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return inp.InfoboxFieldID, nil, err
 	}
 
@@ -905,7 +829,7 @@ func (i *Layer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID, e
 		return nil, nil, nil
 	}
 
-	plugin, err := i.pluginRepo.FindByID(ctx, *p, []id.SceneID{sid})
+	plugin, err := i.pluginRepo.FindByID(ctx, *p)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
@@ -926,6 +850,9 @@ func (i *Layer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID, e
 }
 
 func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam, operator *usecase.Operator) (_ layer.List, _ *layer.Group, err error) {
+	if inp.File == nil {
+		return nil, nil, interfaces.ErrFileNotIncluded
+	}
 
 	tx, err := i.transaction.Begin()
 	if err != nil {
@@ -937,17 +864,14 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 		}
 	}()
 
-	if inp.File == nil {
-		return nil, nil, interfaces.ErrFileNotIncluded
-	}
-	scenes, err := i.OnlyWritableScenes(operator)
+	parent, err := i.layerRepo.FindGroupByID(ctx, inp.LayerID)
 	if err != nil {
 		return nil, nil, err
 	}
-	parent, err := i.layerRepo.FindGroupByID(ctx, inp.LayerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(parent.Scene(), operator); err != nil {
 		return nil, nil, err
 	}
+
 	var decoder decoding.Decoder
 	switch inp.Format {
 	case decoding.LayerEncodingFormatKML:
@@ -1028,18 +952,16 @@ func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagI
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
 	// ensure the tag exists
-	t, err := i.tagRepo.FindByID(ctx, tagID, scenes)
+	t, err := i.tagRepo.FindByID(ctx, tagID)
 	if err != nil {
 		return nil, err
 	}
+	if err := i.CanWriteScene(t.Scene(), operator); err != nil {
+		return nil, err
+	}
 
-	l, err := i.layerRepo.FindByID(ctx, layerID, scenes)
+	l, err := i.layerRepo.FindByID(ctx, layerID)
 	if err != nil {
 		return nil, err
 	}
@@ -1076,13 +998,11 @@ func (i *Layer) DetachTag(ctx context.Context, layerID id.LayerID, tagID id.TagI
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	layer, err := i.layerRepo.FindByID(ctx, layerID)
 	if err != nil {
 		return nil, err
 	}
-
-	layer, err := i.layerRepo.FindByID(ctx, layerID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, err
 	}
 

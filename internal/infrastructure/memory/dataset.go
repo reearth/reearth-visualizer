@@ -13,35 +13,44 @@ import (
 
 type Dataset struct {
 	lock sync.Mutex
-	data map[id.DatasetID]dataset.Dataset
+	data map[id.DatasetID]*dataset.Dataset
+	f    repo.SceneFilter
 }
 
 func NewDataset() repo.Dataset {
 	return &Dataset{
-		data: map[id.DatasetID]dataset.Dataset{},
+		data: map[id.DatasetID]*dataset.Dataset{},
 	}
 }
 
-func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID, f []id.SceneID) (*dataset.Dataset, error) {
+func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {
+	return &Dataset{
+		// note data is shared between the source repo and mutex cannot work well
+		data: r.data,
+		f:    f.Clone(),
+	}
+}
+
+func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID) (*dataset.Dataset, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	p, ok := r.data[id]
-	if ok && isSceneIncludes(p.Scene(), f) {
-		return &p, nil
+	if ok && r.f.CanRead(p.Scene()) {
+		return p, nil
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.SceneID) (dataset.List, error) {
+func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID) (dataset.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := dataset.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
-			if isSceneIncludes(d.Scene(), f) {
-				result = append(result, &d)
+			if r.f.CanRead(d.Scene()) {
+				result = append(result, d)
 				continue
 			}
 		}
@@ -50,15 +59,14 @@ func (r *Dataset) FindByIDs(ctx context.Context, ids []id.DatasetID, f []id.Scen
 	return result, nil
 }
 
-func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, f []id.SceneID, p *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
+func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := dataset.List{}
 	for _, d := range r.data {
-		if d.Schema() == id && isSceneIncludes(d.Scene(), f) {
-			dd := d
-			result = append(result, &dd)
+		if d.Schema() == id && r.f.CanRead(d.Scene()) {
+			result = append(result, d)
 		}
 	}
 
@@ -85,23 +93,21 @@ func (r *Dataset) FindBySchemaAll(ctx context.Context, id id.DatasetSchemaID) (d
 
 	result := dataset.List{}
 	for _, d := range r.data {
-		if d.Schema() == id {
-			dd := d
-			result = append(result, &dd)
+		if d.Schema() == id && r.f.CanRead(d.Scene()) {
+			result = append(result, d)
 		}
 	}
 	return result, nil
 }
 
-func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, f []id.SceneID, fields []id.DatasetSchemaFieldID) (dataset.List, error) {
+func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, fields []id.DatasetSchemaFieldID) (dataset.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := make(dataset.List, 0, len(fields))
 	next := i
 	for _, nextField := range fields {
-		d, _ := r.FindByID(ctx, next, f)
-		if d != nil {
+		if d := r.data[next]; d != nil && r.f.CanRead(d.Scene()) {
 			result = append(result, d)
 			if f := d.Field(nextField); f != nil {
 				if f.Type() == dataset.ValueTypeRef {
@@ -119,10 +125,14 @@ func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, f []id.SceneID,
 }
 
 func (r *Dataset) Save(ctx context.Context, d *dataset.Dataset) error {
+	if !r.f.CanWrite(d.Scene()) {
+		return repo.ErrOperationDenied
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	r.data[d.ID()] = *d
+	r.data[d.ID()] = d
 	return nil
 }
 
@@ -131,7 +141,9 @@ func (r *Dataset) SaveAll(ctx context.Context, dl dataset.List) error {
 	defer r.lock.Unlock()
 
 	for _, d := range dl {
-		r.data[d.ID()] = *d
+		if r.f.CanWrite(d.Scene()) {
+			r.data[d.ID()] = d
+		}
 	}
 	return nil
 }
@@ -140,7 +152,9 @@ func (r *Dataset) Remove(ctx context.Context, id id.DatasetID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	delete(r.data, id)
+	if d, ok := r.data[id]; ok && r.f.CanWrite(d.Scene()) {
+		delete(r.data, id)
+	}
 	return nil
 }
 
@@ -149,12 +163,18 @@ func (r *Dataset) RemoveAll(ctx context.Context, ids []id.DatasetID) error {
 	defer r.lock.Unlock()
 
 	for _, id := range ids {
-		delete(r.data, id)
+		if d, ok := r.data[id]; ok && r.f.CanWrite(d.Scene()) {
+			delete(r.data, id)
+		}
 	}
 	return nil
 }
 
 func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	if !r.f.CanWrite(sceneID) {
+		return nil
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

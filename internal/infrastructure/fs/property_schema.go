@@ -13,11 +13,19 @@ import (
 
 type propertySchema struct {
 	fs afero.Fs
+	f  repo.SceneFilter
 }
 
 func NewPropertySchema(fs afero.Fs) repo.PropertySchema {
 	return &propertySchema{
 		fs: fs,
+	}
+}
+
+func (r *propertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
+	return &propertySchema{
+		fs: r.fs,
+		f:  f.Clone(),
 	}
 }
 
@@ -36,7 +44,9 @@ func (r *propertySchema) FindByID(ctx context.Context, i id.PropertySchemaID) (*
 			continue
 		}
 		if ps.ID().Equal(i) {
-			return ps, nil
+			if s := ps.Scene(); s == nil || r.f.CanRead(*s) {
+				return ps, nil
+			}
 		}
 	}
 

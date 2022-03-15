@@ -55,16 +55,6 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) IsMe(u id.UserID, op *usecase.Operator) error {
-	if err := i.OnlyOperator(op); err != nil {
-		return err
-	}
-	if op.User != u {
-		return interfaces.ErrOperationDenied
-	}
-	return nil
-}
-
 func (i common) CanReadTeam(t id.TeamID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
@@ -103,20 +93,6 @@ func (i common) CanWriteScene(t id.SceneID, op *usecase.Operator) error {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
-}
-
-func (i common) OnlyReadableScenes(op *usecase.Operator) ([]id.SceneID, error) {
-	if err := i.OnlyOperator(op); err != nil {
-		return nil, err
-	}
-	return op.AllReadableScenes(), nil
-}
-
-func (i common) OnlyWritableScenes(op *usecase.Operator) ([]id.SceneID, error) {
-	if err := i.OnlyOperator(op); err != nil {
-		return nil, err
-	}
-	return op.AllWritableScenes(), nil
 }
 
 type commonSceneLock struct {
@@ -227,7 +203,7 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 	}
 
 	// Fetch scene
-	s, err := d.Scene.FindByProject(ctx, prj.ID(), operator.AllWritableTeams())
+	s, err := d.Scene.FindByProject(ctx, prj.ID())
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return err
 	}

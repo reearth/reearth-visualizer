@@ -69,6 +69,13 @@ func createdAt(i ID) time.Time {
 
 type IDList []ID
 
+func (l IDList) Clone() IDList {
+	if l == nil {
+		return nil
+	}
+	return append(IDList{}, l...)
+}
+
 func (l IDList) Filter(ids ...ID) IDList {
 	if l == nil {
 		return nil
@@ -98,4 +105,8 @@ func (l IDList) Includes(ids ...ID) bool {
 
 func (l IDList) Len() int {
 	return len(l)
+}
+
+func (k IDList) Strings() []string {
+	return id.SceneIDsToStrings(k)
 }

@@ -24,6 +24,17 @@ func NewPropertySchema(readers []repo.PropertySchema, writer repo.PropertySchema
 	}
 }
 
+func (r *propertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
+	readers := make([]repo.PropertySchema, 0, len(r.readers))
+	for _, r := range r.readers {
+		readers = append(readers, r.Filtered(f))
+	}
+	return &propertySchema{
+		readers: readers,
+		writer:  r.writer.Filtered(f),
+	}
+}
+
 func (r *propertySchema) FindByID(ctx context.Context, id id.PropertySchemaID) (*property.Schema, error) {
 	for _, re := range r.readers {
 		if res, err := re.FindByID(ctx, id); err != nil {

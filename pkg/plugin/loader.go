@@ -4,4 +4,4 @@ import (
 	"context"
 )
 
-type Loader func(context.Context, []ID, []SceneID) ([]*Plugin, error)
+type Loader func(context.Context, []ID) ([]*Plugin, error)

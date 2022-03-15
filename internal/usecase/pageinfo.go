@@ -27,6 +27,16 @@ func NewPageInfo(totalCount int, startCursor *Cursor, endCursor *Cursor, hasNext
 	}
 }
 
+func EmptyPageInfo() *PageInfo {
+	return &PageInfo{
+		totalCount:      0,
+		startCursor:     nil,
+		endCursor:       nil,
+		hasNextPage:     false,
+		hasPreviousPage: false,
+	}
+}
+
 func (p *PageInfo) TotalCount() int {
 	if p == nil {
 		return 0

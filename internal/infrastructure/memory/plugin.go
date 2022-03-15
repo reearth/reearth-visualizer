@@ -15,6 +15,7 @@ import (
 type Plugin struct {
 	lock sync.Mutex
 	data []*plugin.Plugin
+	f    repo.SceneFilter
 }
 
 func NewPlugin() repo.Plugin {
@@ -23,7 +24,15 @@ func NewPlugin() repo.Plugin {
 	}
 }
 
-func (r *Plugin) FindByID(ctx context.Context, id id.PluginID, sids []id.SceneID) (*plugin.Plugin, error) {
+func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {
+	return &Plugin{
+		// note data is shared between the source repo and mutex cannot work well
+		data: r.data,
+		f:    f.Clone(),
+	}
+}
+
+func (r *Plugin) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -31,14 +40,16 @@ func (r *Plugin) FindByID(ctx context.Context, id id.PluginID, sids []id.SceneID
 		return p, nil
 	}
 	for _, p := range r.data {
-		if p.ID().Equal(id) && (p.ID().Scene() == nil || p.ID().Scene().Contains(sids)) {
-			return p.Clone(), nil
+		if p.ID().Equal(id) {
+			if s := p.ID().Scene(); s == nil || r.f.CanRead(*s) {
+				return p.Clone(), nil
+			}
 		}
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.SceneID) ([]*plugin.Plugin, error) {
+func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -49,10 +60,12 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.Sce
 			continue
 		}
 		for _, p := range r.data {
-			if p.ID().Equal(id) && (p.ID().Scene() == nil || p.ID().Scene().Contains(sids)) {
-				result = append(result, p.Clone())
-			} else {
-				result = append(result, nil)
+			if p.ID().Equal(id) {
+				if s := p.ID().Scene(); s == nil || r.f.CanRead(*s) {
+					result = append(result, p.Clone())
+				} else {
+					result = append(result, nil)
+				}
 			}
 		}
 	}
@@ -66,6 +79,10 @@ func (r *Plugin) Save(ctx context.Context, p *plugin.Plugin) error {
 	if p.ID().System() {
 		return errors.New("cannnot save system plugin")
 	}
+	if s := p.ID().Scene(); s != nil && !r.f.CanWrite(*s) {
+		return repo.ErrOperationDenied
+	}
+
 	for i, q := range r.data {
 		if q.ID().Equal(p.ID()) {
 			r.data = append(r.data[:i], r.data[i+1:]...)
@@ -81,10 +98,13 @@ func (r *Plugin) Remove(ctx context.Context, id id.PluginID) error {
 	defer r.lock.Unlock()
 
 	for i := 0; i < len(r.data); i++ {
-		if r.data[i].ID().Equal(id) {
-			r.data = append(r.data[:i], r.data[i+1:]...)
-			i--
+		if p := r.data[i]; p.ID().Equal(id) {
+			if s := p.ID().Scene(); s == nil || r.f.CanWrite(*s) {
+				r.data = append(r.data[:i], r.data[i+1:]...)
+				i--
+			}
 		}
 	}
+
 	return nil
 }

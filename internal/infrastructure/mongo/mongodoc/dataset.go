@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
 type DatasetDocument struct {
@@ -162,11 +163,11 @@ func NewDataset(dataset *dataset.Dataset) (*DatasetDocument, string) {
 	return &doc, did
 }
 
-func NewDatasets(datasets []*dataset.Dataset) ([]interface{}, []string) {
+func NewDatasets(datasets []*dataset.Dataset, f scene.IDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(datasets))
 	ids := make([]string, 0, len(datasets))
 	for _, d := range datasets {
-		if d == nil {
+		if d == nil || f != nil && !f.Includes(d.Scene()) {
 			continue
 		}
 		r, id := NewDataset(d)

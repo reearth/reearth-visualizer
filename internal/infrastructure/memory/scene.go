@@ -9,11 +9,13 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/user"
 )
 
 type Scene struct {
 	lock sync.Mutex
 	data map[id.SceneID]*scene.Scene
+	f    repo.TeamFilter
 }
 
 func NewScene() repo.Scene {
@@ -22,28 +24,33 @@ func NewScene() repo.Scene {
 	}
 }
 
-func (r *Scene) FindByID(ctx context.Context, id id.SceneID, f []id.TeamID) (*scene.Scene, error) {
+func (r *Scene) Filtered(f repo.TeamFilter) repo.Scene {
+	return &Scene{
+		// note data is shared between the source repo and mutex cannot work well
+		data: r.data,
+		f:    f.Clone(),
+	}
+}
+
+func (r *Scene) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	s, ok := r.data[id]
-	if ok && isTeamIncludes(s.Team(), f) {
+	if s, ok := r.data[id]; ok && r.f.CanRead(s.Team()) {
 		return s, nil
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) (scene.List, error) {
+func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := scene.List{}
 	for _, id := range ids {
-		if d, ok := r.data[id]; ok {
-			if isTeamIncludes(d.Team(), f) {
-				result = append(result, d)
-				continue
-			}
+		if d, ok := r.data[id]; ok && r.f.CanRead(d.Team()) {
+			result = append(result, d)
+			continue
 		}
 		result = append(result, nil)
 
@@ -51,12 +58,12 @@ func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID, f []id.TeamID) 
 	return result, nil
 }
 
-func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID, f []id.TeamID) (*scene.Scene, error) {
+func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scene, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	for _, d := range r.data {
-		if d.Project() == id && isTeamIncludes(d.Team(), f) {
+		if d.Project() == id && r.f.CanRead(d.Team()) {
 			return d, nil
 		}
 	}
@@ -69,7 +76,7 @@ func (r *Scene) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List,
 
 	result := scene.List{}
 	for _, d := range r.data {
-		if isTeamIncludes(d.Team(), teams) {
+		if user.TeamIDList(teams).Includes(d.Team()) && r.f.CanRead(d.Team()) {
 			result = append(result, d)
 		}
 	}
@@ -77,6 +84,10 @@ func (r *Scene) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List,
 }
 
 func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {
+	if !r.f.CanWrite(s.Team()) {
+		return repo.ErrOperationDenied
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -85,14 +96,13 @@ func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {
 	return nil
 }
 
-func (r *Scene) Remove(ctx context.Context, sceneID id.SceneID) error {
+func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	for sid := range r.data {
-		if sid == sceneID {
-			delete(r.data, sid)
-		}
+	if s, ok := r.data[id]; ok && r.f.CanWrite(s.Team()) {
+		delete(r.data, id)
 	}
+
 	return nil
 }

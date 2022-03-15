@@ -67,14 +67,19 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 			}
 
-			op, err := generateOperator(ctx, cfg, u)
-			if err != nil {
-				return err
+			if sub != "" {
+				ctx = adapter.AttachSub(ctx, sub)
 			}
 
-			ctx = adapter.AttachSub(ctx, sub)
-			ctx = adapter.AttachOperator(ctx, op)
-			ctx = adapter.AttachUser(ctx, u)
+			if u != nil {
+				op, err := generateOperator(ctx, cfg, u)
+				if err != nil {
+					return err
+				}
+
+				ctx = adapter.AttachUser(ctx, u)
+				ctx = adapter.AttachOperator(ctx, op)
+			}
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)
@@ -120,4 +125,16 @@ func addAuth0SubToUser(ctx context.Context, u *user.User, a user.Auth, cfg *Serv
 		}
 	}
 	return nil
+}
+
+func AuthRequiredMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			ctx := c.Request().Context()
+			if adapter.Operator(ctx) == nil {
+				return echo.ErrUnauthorized
+			}
+			return next(c)
+		}
+	}
 }

@@ -13,7 +13,7 @@ import (
 func TestPlugin(t *testing.T) {
 	ctx := context.Background()
 	fs := NewPlugin(mockPluginFS())
-	p, err := fs.FindByID(ctx, plugin.MustID("testplugin~1.0.0"), nil)
+	p, err := fs.FindByID(ctx, plugin.MustID("testplugin~1.0.0"))
 	assert.NoError(t, err)
 	assert.Equal(t, plugin.New().ID(plugin.MustID("testplugin~1.0.0")).Name(i18n.String{
 		"en":    "testplugin",

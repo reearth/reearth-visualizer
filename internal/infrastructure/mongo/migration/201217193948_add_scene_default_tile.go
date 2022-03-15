@@ -60,7 +60,7 @@ func AddSceneDefaultTile(ctx context.Context, c DBClient) error {
 				g.Add(f, -1)
 			}
 
-			docs, ids := mongodoc.NewProperties(properties)
+			docs, ids := mongodoc.NewProperties(properties, nil)
 
 			return col.SaveAll(ctx, ids, docs)
 		},

@@ -16,6 +16,7 @@ import (
 
 type pluginRepo struct {
 	fs afero.Fs
+	f  repo.SceneFilter
 }
 
 func NewPlugin(fs afero.Fs) repo.Plugin {
@@ -24,24 +25,30 @@ func NewPlugin(fs afero.Fs) repo.Plugin {
 	}
 }
 
-func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID, sids []id.SceneID) (*plugin.Plugin, error) {
+func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
+	return &pluginRepo{
+		fs: r.fs,
+		f:  f.Clone(),
+	}
+}
+
+func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plugin, error) {
 	m, err := readPluginManifest(r.fs, pid)
 	if err != nil {
 		return nil, err
 	}
 
-	sid := m.Plugin.ID().Scene()
-	if sid != nil && !sid.Contains(sids) {
+	if s := m.Plugin.ID().Scene(); s != nil && !r.f.CanRead(*s) {
 		return nil, nil
 	}
 
 	return m.Plugin, nil
 }
 
-func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.SceneID) ([]*plugin.Plugin, error) {
+func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
 	results := make([]*plugin.Plugin, 0, len(ids))
 	for _, id := range ids {
-		res, err := r.FindByID(ctx, id, sids)
+		res, err := r.FindByID(ctx, id)
 		if err != nil {
 			return nil, err
 		}

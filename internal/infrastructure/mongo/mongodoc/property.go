@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
 const (
@@ -176,7 +177,7 @@ func NewProperty(property *property.Property) (*PropertyDocument, string) {
 	return &doc, pid
 }
 
-func NewProperties(properties []*property.Property) ([]interface{}, []string) {
+func NewProperties(properties []*property.Property, f scene.IDList) ([]interface{}, []string) {
 	if properties == nil {
 		return nil, nil
 	}
@@ -184,7 +185,7 @@ func NewProperties(properties []*property.Property) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(properties))
 	ids := make([]string, 0, len(properties))
 	for _, d := range properties {
-		if d == nil {
+		if d == nil || f != nil && !f.Includes(d.Scene()) {
 			continue
 		}
 		r, id := NewProperty(d)

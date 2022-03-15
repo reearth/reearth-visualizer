@@ -6,6 +6,10 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
+	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/user"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -45,4 +49,29 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 	}
 
 	return nil
+}
+
+func applyTeamFilter(filter interface{}, ids user.TeamIDList) interface{} {
+	if ids == nil {
+		return filter
+	}
+	return mongodoc.And(filter, "team", bson.M{"$in": id.TeamIDsToStrings(ids)})
+}
+
+func applySceneFilter(filter interface{}, ids scene.IDList) interface{} {
+	if ids == nil {
+		return filter
+	}
+	return mongodoc.And(filter, "scene", bson.M{"$in": id.SceneIDsToStrings(ids)})
+}
+
+func applyOptionalSceneFilter(filter interface{}, ids scene.IDList) interface{} {
+	if ids == nil {
+		return filter
+	}
+	return mongodoc.And(filter, "", bson.M{"$or": []bson.M{
+		{"scene": bson.M{"$in": id.SceneIDsToStrings(ids)}},
+		{"scene": nil},
+		{"scene": ""},
+	}})
 }

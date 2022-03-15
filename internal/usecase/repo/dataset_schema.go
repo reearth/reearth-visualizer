@@ -9,8 +9,9 @@ import (
 )
 
 type DatasetSchema interface {
-	FindByID(context.Context, id.DatasetSchemaID, []id.SceneID) (*dataset.Schema, error)
-	FindByIDs(context.Context, []id.DatasetSchemaID, []id.SceneID) (dataset.SchemaList, error)
+	Filtered(SceneFilter) DatasetSchema
+	FindByID(context.Context, id.DatasetSchemaID) (*dataset.Schema, error)
+	FindByIDs(context.Context, []id.DatasetSchemaID) (dataset.SchemaList, error)
 	FindByScene(context.Context, id.SceneID, *usecase.Pagination) (dataset.SchemaList, *usecase.PageInfo, error)
 	FindBySceneAll(context.Context, id.SceneID) (dataset.SchemaList, error)
 	FindBySceneAndSource(context.Context, id.SceneID, string) (dataset.SchemaList, error)

@@ -8,6 +8,7 @@ import (
 )
 
 type PropertySchema interface {
+	Filtered(SceneFilter) PropertySchema
 	FindByID(context.Context, id.PropertySchemaID) (*property.Schema, error)
 	FindByIDs(context.Context, []id.PropertySchemaID) (property.SchemaList, error)
 	Save(context.Context, *property.Schema) error

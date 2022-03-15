@@ -16,6 +16,7 @@ import (
 
 type projectRepo struct {
 	client *mongodoc.ClientCollection
+	f      repo.TeamFilter
 }
 
 func NewProject(client *mongodoc.Client) repo.Project {
@@ -31,12 +32,19 @@ func (r *projectRepo) init() {
 	}
 }
 
-func (r *projectRepo) FindByIDs(ctx context.Context, ids []id.ProjectID, f []id.TeamID) ([]*project.Project, error) {
-	filter := r.teamFilter(bson.D{
-		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.ProjectIDsToStrings(ids)},
-		}},
-	}, f)
+func (r *projectRepo) Filtered(f repo.TeamFilter) repo.Project {
+	return &projectRepo{
+		client: r.client,
+		f:      f.Clone(),
+	}
+}
+
+func (r *projectRepo) FindByIDs(ctx context.Context, ids []id.ProjectID) ([]*project.Project, error) {
+	filter := bson.M{
+		"id": bson.M{
+			"$in": id.ProjectIDsToStrings(ids),
+		},
+	}
 	dst := make([]*project.Project, 0, len(ids))
 	res, err := r.find(ctx, dst, filter)
 	if err != nil {
@@ -45,79 +53,79 @@ func (r *projectRepo) FindByIDs(ctx context.Context, ids []id.ProjectID, f []id.
 	return filterProjects(ids, res), nil
 }
 
-func (r *projectRepo) FindByID(ctx context.Context, id id.ProjectID, f []id.TeamID) (*project.Project, error) {
-	filter := r.teamFilter(bson.D{
-		{Key: "id", Value: id.String()},
-	}, f)
-	return r.findOne(ctx, filter)
+func (r *projectRepo) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	return r.findOne(ctx, bson.M{
+		"id": id.String(),
+	})
 }
 
 func (r *projectRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
-	filter := bson.D{
-		{Key: "team", Value: id.String()},
+	if !r.f.CanRead(id) {
+		return nil, usecase.EmptyPageInfo(), nil
 	}
-	return r.paginate(ctx, filter, pagination)
+	return r.paginate(ctx, bson.M{
+		"team": id.String(),
+	}, pagination)
 }
 
 func (r *projectRepo) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
-	var filter bson.D
-
 	if name == "" {
-		return nil, nil
+		return nil, rerror.ErrNotFound
 	}
-
-	filter = bson.D{
-		{Key: "$or", Value: []bson.D{
-			{{Key: "alias", Value: name}, {Key: "publishmentstatus", Value: "limited"}},
-			{{Key: "domains.domain", Value: name}, {Key: "publishmentstatus", Value: "public"}},
-			{{Key: "alias", Value: name}, {Key: "publishmentstatus", Value: "public"}},
-		}},
-	}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{
+		"$or": []bson.M{
+			{"alias": name, "publishmentstatus": "limited"},
+			{"domains.domain": name, "publishmentstatus": "public"},
+			{"alias": name, "publishmentstatus": "public"},
+		},
+	})
 }
 
 func (r *projectRepo) CountByTeam(ctx context.Context, team id.TeamID) (int, error) {
-	count, err := r.client.Count(ctx, bson.D{
-		{Key: "team", Value: team.String()},
+	count, err := r.client.Count(ctx, bson.M{
+		"team": team.String(),
 	})
 	return int(count), err
 }
 
 func (r *projectRepo) Save(ctx context.Context, project *project.Project) error {
+	if !r.f.CanWrite(project.Team()) {
+		return repo.ErrOperationDenied
+	}
 	doc, id := mongodoc.NewProject(project)
 	return r.client.SaveOne(ctx, id, doc)
 }
 
 func (r *projectRepo) Remove(ctx context.Context, id id.ProjectID) error {
-	return r.client.RemoveOne(ctx, id.String())
+	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *projectRepo) find(ctx context.Context, dst []*project.Project, filter bson.D) ([]*project.Project, error) {
+func (r *projectRepo) find(ctx context.Context, dst []*project.Project, filter interface{}) ([]*project.Project, error) {
 	c := mongodoc.ProjectConsumer{
 		Rows: dst,
 	}
-	if err := r.client.Find(ctx, filter, &c); err != nil {
+	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
 		return nil, err
 	}
 	return c.Rows, nil
 }
 
-func (r *projectRepo) findOne(ctx context.Context, filter bson.D) (*project.Project, error) {
+func (r *projectRepo) findOne(ctx context.Context, filter interface{}) (*project.Project, error) {
 	dst := make([]*project.Project, 0, 1)
 	c := mongodoc.ProjectConsumer{
 		Rows: dst,
 	}
-	if err := r.client.FindOne(ctx, filter, &c); err != nil {
+	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
 		return nil, err
 	}
 	return c.Rows[0], nil
 }
 
-func (r *projectRepo) paginate(ctx context.Context, filter bson.D, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *projectRepo) paginate(ctx context.Context, filter bson.M, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	var c mongodoc.ProjectConsumer
-	pageInfo, err2 := r.client.Paginate(ctx, filter, pagination, &c)
-	if err2 != nil {
-		return nil, nil, rerror.ErrInternalBy(err2)
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), pagination, &c)
+	if err != nil {
+		return nil, nil, rerror.ErrInternalBy(err)
 	}
 	return c.Rows, pageInfo, nil
 }
@@ -137,13 +145,10 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 	return res
 }
 
-func (*projectRepo) teamFilter(filter bson.D, teams []id.TeamID) bson.D {
-	if teams == nil {
-		return filter
-	}
-	filter = append(filter, bson.E{
-		Key:   "team",
-		Value: bson.D{{Key: "$in", Value: id.TeamIDsToStrings(teams)}},
-	})
-	return filter
+func (r *projectRepo) readFilter(filter interface{}) interface{} {
+	return applyTeamFilter(filter, r.f.Readable)
+}
+
+func (r *projectRepo) writeFilter(filter interface{}) interface{} {
+	return applyTeamFilter(filter, r.f.Writable)
 }

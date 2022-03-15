@@ -117,12 +117,12 @@ func TestPlugin_Upload_New(t *testing.T) {
 	assert.Equal(t, pid, pl.ID())
 
 	// scene
-	nscene, err := repos.Scene.FindByID(ctx, scene.ID(), nil)
+	nscene, err := repos.Scene.FindByID(ctx, scene.ID())
 	assert.NoError(t, err)
 	assert.True(t, nscene.Plugins().HasPlugin(pl.ID()))
 
 	// plugin
-	npl, err := repos.Plugin.FindByID(ctx, pid, []id.SceneID{scene.ID()})
+	npl, err := repos.Plugin.FindByID(ctx, pid)
 	assert.NoError(t, err)
 	assert.Equal(t, pid, npl.ID())
 
@@ -200,17 +200,17 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	assert.Equal(t, pid, pl.ID())
 
 	// scene
-	nscene, err := repos.Scene.FindByID(ctx, scene.ID(), nil)
+	nscene, err := repos.Scene.FindByID(ctx, scene.ID())
 	assert.NoError(t, err)
 	assert.True(t, nscene.Plugins().HasPlugin(pl.ID()))
 	assert.Nil(t, nscene.Widgets().Widget(wid1))
 
-	nlp2, err := repos.Property.FindByID(ctx, p1.ID(), nil)
+	nlp2, err := repos.Property.FindByID(ctx, p1.ID())
 	assert.Nil(t, nlp2) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
 	// plugin
-	npl, err := repos.Plugin.FindByID(ctx, pid, []id.SceneID{scene.ID()})
+	npl, err := repos.Plugin.FindByID(ctx, pid)
 	assert.NoError(t, err)
 	assert.Equal(t, pid, npl.ID())
 
@@ -231,15 +231,15 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	assert.Equal(t, "// barfoo", string(npfc))
 
 	// layer
-	nlp, err := repos.Property.FindByID(ctx, p1.ID(), nil)
+	nlp, err := repos.Property.FindByID(ctx, p1.ID())
 	assert.Nil(t, nlp) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
-	nl, err := repos.Layer.FindByID(ctx, pluginLayer.ID(), nil)
+	nl, err := repos.Layer.FindByID(ctx, pluginLayer.ID())
 	assert.Nil(t, nl) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
-	nrl, err := repos.Layer.FindGroupByID(ctx, rootLayer.ID(), nil)
+	nrl, err := repos.Layer.FindGroupByID(ctx, rootLayer.ID())
 	assert.NoError(t, err)
 	assert.Equal(t, []layer.ID{}, nrl.Layers().Layers()) // deleted
 }
@@ -326,7 +326,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.Equal(t, pid, oldpl.ID())
 
 	// scene
-	nscene, err := repos.Scene.FindByID(ctx, scene.ID(), nil)
+	nscene, err := repos.Scene.FindByID(ctx, scene.ID())
 	assert.NoError(t, err)
 	assert.False(t, nscene.Plugins().HasPlugin(oldpid))
 	assert.True(t, nscene.Plugins().HasPlugin(pid))
@@ -334,11 +334,11 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.Equal(t, eid2, nscene.Widgets().Widget(wid).Extension())
 
 	// plugin
-	opl, err := repos.Plugin.FindByID(ctx, oldpid, []id.SceneID{scene.ID()})
+	opl, err := repos.Plugin.FindByID(ctx, oldpid)
 	assert.Nil(t, opl) // deleted
 	assert.Equal(t, rerror.ErrNotFound, err)
 
-	npl, err := repos.Plugin.FindByID(ctx, pid, []id.SceneID{scene.ID()})
+	npl, err := repos.Plugin.FindByID(ctx, pid)
 	assert.NoError(t, err)
 	assert.Equal(t, pid, npl.ID())
 
@@ -363,7 +363,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.Equal(t, "// barfoo", string(npfc))
 
 	// layer
-	nl, err := repos.Layer.FindByID(ctx, pluginLayer.ID(), nil)
+	nl, err := repos.Layer.FindByID(ctx, pluginLayer.ID())
 	assert.NoError(t, err)
 	assert.Equal(t, pid, *nl.Plugin())
 	assert.Equal(t, eid1, *nl.Extension())
@@ -371,17 +371,17 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	assert.Equal(t, oldp2.ID(), nl.Infobox().Property())
 	assert.Equal(t, oldp3.ID(), nl.Infobox().FieldAt(0).Property())
 
-	nlp, err := repos.Property.FindByID(ctx, *nl.Property(), nil)
+	nlp, err := repos.Property.FindByID(ctx, *nl.Property())
 	assert.NoError(t, err)
 	assert.Equal(t, *nl.Property(), nlp.ID())
 	assert.Equal(t, nlpsid1, nlp.Schema())
 	assert.Equal(t, property.ValueTypeString.ValueFrom("100"), property.ToGroup(nlp.ItemBySchema("default")).Field("field").Value())
 
-	nlp2, err := repos.Property.FindByID(ctx, oldp2.ID(), nil)
+	nlp2, err := repos.Property.FindByID(ctx, oldp2.ID())
 	assert.NoError(t, err)
 	assert.Equal(t, nlpsid1, nlp2.Schema())
 
-	nlp3, err := repos.Property.FindByID(ctx, oldp3.ID(), nil)
+	nlp3, err := repos.Property.FindByID(ctx, oldp3.ID())
 	assert.NoError(t, err)
 	assert.Equal(t, nlpsid1, nlp3.Schema())
 }

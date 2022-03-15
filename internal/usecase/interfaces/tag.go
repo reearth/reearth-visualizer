@@ -38,9 +38,8 @@ type DetachItemToGroupParam struct {
 }
 
 type UpdateTagParam struct {
-	Label   *string
-	SceneID id.SceneID
-	TagID   id.TagID
+	Label *string
+	TagID id.TagID
 }
 
 type Tag interface {

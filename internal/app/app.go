@@ -31,7 +31,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// basic middleware
 	logger := GetEchoLogger()
 	e.Logger = logger
-	e.Use(logger.Hook(), middleware.Recover(), otelecho.Middleware("reearth-backend"))
+	e.Use(
+		logger.Hook(),
+		middleware.Recover(),
+		otelecho.Middleware("reearth-backend"),
+	)
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
 		e.Use(
@@ -40,6 +44,12 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 			}),
 		)
 	}
+
+	e.Use(
+		jwtEchoMiddleware(cfg),
+		parseJwtMiddleware(),
+		authMiddleware(cfg),
+	)
 
 	// enable pprof
 	if e.Debug {
@@ -65,14 +75,13 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 			publishedIndexHTML = string(html)
 		}
 	}
-	usecases := interactor.NewContainer(cfg.Repos, cfg.Gateways, interactor.ContainerConfig{
+
+	e.Use(UsecaseMiddleware(cfg.Repos, cfg.Gateways, interactor.ContainerConfig{
 		SignupSecret:       cfg.Config.SignupSecret,
 		PublishedIndexHTML: publishedIndexHTML,
 		PublishedIndexURL:  cfg.Config.Published.IndexURL,
 		AuthSrvUIDomain:    cfg.Config.AuthSrv.UIDomain,
-	})
-
-	e.Use(UsecaseMiddleware(&usecases))
+	}))
 
 	// auth srv
 	auth := e.Group("")
@@ -88,15 +97,13 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
 
-	privateApi := api.Group("")
-	authRequired(privateApi, cfg)
+	privateApi := api.Group("", AuthRequiredMiddleware())
 	graphqlAPI(e, privateApi, cfg)
 	privateAPI(e, privateApi, cfg.Repos)
 
-	published := e.Group("/p")
-	publishedAuth := PublishedAuthMiddleware()
-	published.GET("/:name/data.json", PublishedData(), publishedAuth)
-	published.GET("/:name/", PublishedIndex(), publishedAuth)
+	published := e.Group("/p", PublishedAuthMiddleware())
+	published.GET("/:name/data.json", PublishedData())
+	published.GET("/:name/", PublishedIndex())
 
 	serveFiles(e, cfg.Gateways.File)
 	web(e, cfg.Config.Web, cfg.Config.Auth0)
@@ -119,12 +126,6 @@ func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 			next(err, c)
 		}
 	}
-}
-
-func authRequired(g *echo.Group, cfg *ServerConfig) {
-	g.Use(jwtEchoMiddleware(cfg))
-	g.Use(parseJwtMiddleware())
-	g.Use(authMiddleware(cfg))
 }
 
 func allowedOrigins(cfg *ServerConfig) []string {

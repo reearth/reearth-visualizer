@@ -42,28 +42,14 @@ func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 }
 
 func (i *Property) Fetch(ctx context.Context, ids []id.PropertyID, operator *usecase.Operator) ([]*property.Property, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
-	return i.propertyRepo.FindByIDs(ctx, ids, scenes)
+	return i.propertyRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, operator *usecase.Operator) ([]*property.Schema, error) {
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-	res, err := i.propertySchemaRepo.FindByIDs(ctx, ids)
-	return res, err
+	return i.propertySchemaRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, linked *id.DatasetID, operator *usecase.Operator) (*property.Merged, error) {
-	scenes, err := i.OnlyReadableScenes(operator)
-	if err != nil {
-		return nil, err
-	}
-
 	ids := []id.PropertyID{}
 	if org != nil {
 		ids = append(ids, *org)
@@ -71,7 +57,7 @@ func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, 
 	if parent != nil {
 		ids = append(ids, *parent)
 	}
-	props, err := i.propertyRepo.FindByIDs(ctx, ids, scenes)
+	props, err := i.propertyRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
@@ -102,13 +88,11 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
@@ -136,7 +120,6 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 }
 
 func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropertyFieldParam, operator *usecase.Operator) (p *property.Property, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -147,13 +130,11 @@ func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, err
 	}
 
@@ -188,13 +169,11 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return nil, nil, nil, nil, interfaces.ErrInvalidFile
 	}
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
@@ -202,7 +181,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 		return nil, nil, nil, nil, err
 	}
 
-	propertyScene, err := i.sceneRepo.FindByID(ctx, p.Scene(), operator.AllWritableTeams())
+	propertyScene, err := i.sceneRepo.FindByID(ctx, p.Scene())
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -255,7 +234,6 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 }
 
 func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyValueParam, operator *usecase.Operator) (p *property.Property, pgl *property.GroupList, pg *property.Group, field *property.Field, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -266,13 +244,11 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
@@ -287,16 +263,14 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 
 	field, pgl, pg, _ = p.GetOrCreateField(ps, inp.Pointer)
 
-	propertyScenes := []id.SceneID{p.Scene()}
-
 	if inp.Links != nil {
 		dsids := inp.Links.DatasetSchemaIDs()
 		dids := inp.Links.DatasetIDs()
-		dss, err := i.datasetSchemaRepo.FindByIDs(ctx, dsids, propertyScenes)
+		dss, err := i.datasetSchemaRepo.FindByIDs(ctx, dsids)
 		if err != nil {
 			return nil, nil, nil, nil, err
 		}
-		ds, err := i.datasetRepo.FindByIDs(ctx, dids, propertyScenes)
+		ds, err := i.datasetRepo.FindByIDs(ctx, dids)
 		if err != nil {
 			return nil, nil, nil, nil, err
 		}
@@ -328,13 +302,11 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
@@ -366,7 +338,6 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 }
 
 func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, pg *property.Group, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -377,13 +348,11 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, err
 	}
 
@@ -416,7 +385,6 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 }
 
 func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItemParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, err error) {
-
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -427,13 +395,11 @@ func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItem
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, err
 	}
 
@@ -466,13 +432,11 @@ func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemoveProperty
 		}
 	}()
 
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, err
 	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, err
 	}
 
@@ -494,13 +458,11 @@ func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemoveProperty
 }
 
 func (i *Property) UpdateItems(ctx context.Context, inp interfaces.UpdatePropertyItemsParam, operator *usecase.Operator) (*property.Property, error) {
-	scenes, err := i.OnlyWritableScenes(operator)
+	p, err := i.propertyRepo.FindByID(ctx, inp.PropertyID)
 	if err != nil {
 		return nil, err
 	}
-
-	p, err := i.propertyRepo.FindByID(ctx, inp.PropertyID, scenes)
-	if err != nil {
+	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, err
 	}
 

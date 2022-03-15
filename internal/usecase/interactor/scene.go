@@ -52,18 +52,11 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 }
 
 func (i *Scene) Fetch(ctx context.Context, ids []id.SceneID, operator *usecase.Operator) ([]*scene.Scene, error) {
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-	return i.sceneRepo.FindByIDs(ctx, ids, operator.AllReadableTeams())
+	return i.sceneRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *usecase.Operator) (*scene.Scene, error) {
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-	res, err := i.sceneRepo.FindByProject(ctx, id, operator.AllReadableTeams())
-	return res, err
+	return i.sceneRepo.FindByProject(ctx, id)
 }
 
 func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
@@ -77,15 +70,10 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, pid, operator.AllWritableTeams())
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
-
 	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
 		return nil, err
 	}
@@ -164,20 +152,16 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, nil, interfaces.ErrOperationDenied
-	}
-
-	// check scene lock
-	if err := i.CheckSceneLock(ctx, sid); err != nil {
-		return nil, nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
+	s, err := i.sceneRepo.FindByID(ctx, sid)
 	if err != nil {
 		return nil, nil, err
 	}
 	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+		return nil, nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, sid); err != nil {
 		return nil, nil, err
 	}
 
@@ -260,20 +244,16 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, nil, interfaces.ErrOperationDenied
-	}
-
-	// check scene lock
-	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
-		return nil, nil, err
-	}
-
-	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
+	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID)
 	if err2 != nil {
 		return nil, nil, err2
 	}
 	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+		return nil, nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
 		return nil, nil, err
 	}
 
@@ -342,20 +322,16 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
-	}
-
-	// check scene lock
-	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
-		return nil, err
-	}
-
-	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
+	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID)
 	if err2 != nil {
 		return nil, err2
 	}
 	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
 		return nil, err
 	}
 
@@ -388,11 +364,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
-	}
-
-	scene, err2 := i.sceneRepo.FindByID(ctx, id, operator.AllWritableTeams())
+	scene, err2 := i.sceneRepo.FindByID(ctx, id)
 	if err2 != nil {
 		return nil, err2
 	}
@@ -440,11 +412,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		}
 	}()
 
-	if operator == nil {
-		return nil, pid, nil, interfaces.ErrOperationDenied
-	}
-
-	s, err2 := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
+	s, err2 := i.sceneRepo.FindByID(ctx, sid)
 	if err2 != nil {
 		return nil, pid, nil, err2
 	}
@@ -461,7 +429,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		return nil, pid, nil, interfaces.ErrPluginAlreadyInstalled
 	}
 
-	plugin, err := i.pluginRepo.FindByID(ctx, pid, []id.SceneID{sid})
+	plugin, err := i.pluginRepo.FindByID(ctx, pid)
 	if err != nil {
 		if errors.Is(err2, rerror.ErrNotFound) {
 			return nil, pid, nil, interfaces.ErrPluginNotFound
@@ -516,11 +484,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-
-	scene, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
+	scene, err := i.sceneRepo.FindByID(ctx, sid)
 	if err != nil {
 		return nil, err
 	}
@@ -528,7 +492,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 		return nil, err
 	}
 
-	pl, err := i.pluginRepo.FindByID(ctx, pid, []id.SceneID{sid})
+	pl, err := i.pluginRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
@@ -556,7 +520,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 
 	// remove layers and blocks
 	res, err := layerops.Processor{
-		LayerLoader: repo.LayerLoaderFrom(i.layerRepo, []id.SceneID{sid}),
+		LayerLoader: repo.LayerLoaderFrom(i.layerRepo),
 		RootLayerID: scene.RootLayer(),
 	}.UninstallPlugin(ctx, pid)
 	if err != nil {
@@ -618,11 +582,7 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, sid, operator.AllWritableTeams())
+	s, err := i.sceneRepo.FindByID(ctx, sid)
 	if err != nil {
 		return nil, err
 	}
@@ -636,11 +596,10 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 
 	defer i.ReleaseSceneLock(ctx, sid)
 
-	scenes := []id.SceneID{s.ID()}
 	pluginMigrator := sceneops.PluginMigrator{
-		Property:       repo.PropertyLoaderFrom(i.propertyRepo, scenes),
+		Property:       repo.PropertyLoaderFrom(i.propertyRepo),
 		PropertySchema: repo.PropertySchemaLoaderFrom(i.propertySchemaRepo),
-		Dataset:        repo.DatasetLoaderFrom(i.datasetRepo, scenes),
+		Dataset:        repo.DatasetLoaderFrom(i.datasetRepo),
 		Layer:          repo.LayerLoaderBySceneFrom(i.layerRepo),
 		Plugin:         repo.PluginLoaderFrom(i.pluginRepo),
 	}
@@ -668,7 +627,7 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 }
 
 func (i *Scene) getPlugin(ctx context.Context, sid id.SceneID, p id.PluginID, e id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
-	plugin, err2 := i.pluginRepo.FindByID(ctx, p, []id.SceneID{sid})
+	plugin, err2 := i.pluginRepo.FindByID(ctx, p)
 	if err2 != nil {
 		if errors.Is(err2, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
@@ -695,16 +654,15 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, nil, interfaces.ErrOperationDenied
+	s, err := i.sceneRepo.FindByID(ctx, sceneID)
+	if err != nil {
+		return nil, nil, err
 	}
-
-	if err := i.CheckSceneLock(ctx, sceneID); err != nil {
+	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.AllWritableTeams())
-	if err != nil {
+	if err := i.CheckSceneLock(ctx, sceneID); err != nil {
 		return nil, nil, err
 	}
 
@@ -725,8 +683,7 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
-	err = i.sceneRepo.Save(ctx, s)
-	if err != nil {
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, nil, err
 	}
 
@@ -745,18 +702,18 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, nil, interfaces.ErrOperationDenied
+	s, err := i.sceneRepo.FindByID(ctx, param.SceneID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+		return nil, nil, err
 	}
 
 	if err := i.CheckSceneLock(ctx, param.SceneID); err != nil {
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, param.SceneID, operator.AllWritableTeams())
-	if err != nil {
-		return nil, nil, err
-	}
 	cluster := s.Clusters().Get(param.ClusterID)
 	if cluster == nil {
 		return nil, nil, rerror.ErrNotFound
@@ -768,8 +725,7 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		cluster.UpdateProperty(*param.PropertyID)
 	}
 
-	err = i.sceneRepo.Save(ctx, s)
-	if err != nil {
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, nil, err
 	}
 
@@ -788,22 +744,21 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 		}
 	}()
 
-	if err := i.OnlyOperator(operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
+	s, err := i.sceneRepo.FindByID(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+		return nil, err
 	}
 
 	if err := i.CheckSceneLock(ctx, sceneID); err != nil {
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, sceneID, operator.AllWritableTeams())
-	if err != nil {
-		return nil, err
-	}
 	s.Clusters().Remove(clusterID)
 
-	err = i.sceneRepo.Save(ctx, s)
-	if err != nil {
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, err
 	}
 

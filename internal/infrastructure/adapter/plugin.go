@@ -24,9 +24,20 @@ func NewPlugin(readers []repo.Plugin, writer repo.Plugin) repo.Plugin {
 	}
 }
 
-func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID, sids []id.SceneID) (*plugin.Plugin, error) {
+func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
+	readers := make([]repo.Plugin, 0, len(r.readers))
+	for _, r := range r.readers {
+		readers = append(readers, r.Filtered(f))
+	}
+	return &pluginRepo{
+		readers: readers,
+		writer:  r.writer.Filtered(f),
+	}
+}
+
+func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID) (*plugin.Plugin, error) {
 	for _, re := range r.readers {
-		if res, err := re.FindByID(ctx, id, sids); err != nil {
+		if res, err := re.FindByID(ctx, id); err != nil {
 			if errors.Is(err, rerror.ErrNotFound) {
 				continue
 			} else {
@@ -39,10 +50,10 @@ func (r *pluginRepo) FindByID(ctx context.Context, id id.PluginID, sids []id.Sce
 	return nil, rerror.ErrNotFound
 }
 
-func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID, sids []id.SceneID) ([]*plugin.Plugin, error) {
+func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
 	results := make([]*plugin.Plugin, 0, len(ids))
 	for _, id := range ids {
-		res, err := r.FindByID(ctx, id, sids)
+		res, err := r.FindByID(ctx, id)
 		if err != nil && err != rerror.ErrNotFound {
 			return nil, err
 		}

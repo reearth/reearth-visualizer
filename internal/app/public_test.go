@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/rerror"
 	"github.com/stretchr/testify/assert"
@@ -70,9 +71,7 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
-			m := UsecaseMiddleware(&interfaces.Container{
-				Published: &mockPublished{},
-			})
+			m := mockPublishedUsecaseMiddleware(false)
 
 			err := m(PublishedAuthMiddleware()(func(c echo.Context) error {
 				return c.String(http.StatusOK, "test")
@@ -121,9 +120,7 @@ func TestPublishedData(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
-			m := UsecaseMiddleware(&interfaces.Container{
-				Published: &mockPublished{},
-			})
+			m := mockPublishedUsecaseMiddleware(false)
 
 			err := m(PublishedData())(c)
 
@@ -178,9 +175,7 @@ func TestPublishedIndex(t *testing.T) {
 			c := e.NewContext(req, res)
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
-			m := UsecaseMiddleware(&interfaces.Container{
-				Published: &mockPublished{EmptyIndex: tc.EmptyIndex},
-			})
+			m := mockPublishedUsecaseMiddleware(tc.EmptyIndex)
 
 			err := m(PublishedIndex())(c)
 
@@ -194,6 +189,14 @@ func TestPublishedIndex(t *testing.T) {
 			}
 		})
 	}
+}
+
+func mockPublishedUsecaseMiddleware(emptyIndex bool) echo.MiddlewareFunc {
+	return ContextMiddleware(func(ctx context.Context) context.Context {
+		return adapter.AttachUsecases(ctx, &interfaces.Container{
+			Published: &mockPublished{EmptyIndex: emptyIndex},
+		})
+	})
 }
 
 type mockPublished struct {

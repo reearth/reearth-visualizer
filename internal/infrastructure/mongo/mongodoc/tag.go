@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
@@ -91,14 +92,18 @@ func NewTag(t tag.Tag) (*TagDocument, string) {
 	}, tid
 }
 
-func NewTags(tags []*tag.Tag) ([]interface{}, []string) {
+func NewTags(tags []*tag.Tag, f scene.IDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(tags))
 	ids := make([]string, 0, len(tags))
 	for _, d := range tags {
 		if d == nil {
 			continue
 		}
-		r, tid := NewTag(*d)
+		d2 := *d
+		if f != nil && !f.Includes(d2.Scene()) {
+			continue
+		}
+		r, tid := NewTag(d2)
 		res = append(res, r)
 		ids = append(ids, tid)
 	}

@@ -5,10 +5,12 @@ import (
 
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/scene"
 )
 
 type PropertySchemaDocument struct {
 	ID             string
+	Scene          *string `bson:",omitempty"`
 	Version        int
 	Groups         []*PropertySchemaGroupDocument
 	LinkableFields *PropertyLinkableFieldsDocument
@@ -121,13 +123,14 @@ func NewPropertySchema(m *property.Schema) (*PropertySchemaDocument, string) {
 	id := m.ID().String()
 	return &PropertySchemaDocument{
 		ID:             id,
+		Scene:          m.Scene().StringRef(),
 		Version:        m.Version(),
 		Groups:         groups,
 		LinkableFields: ToDocPropertyLinkableFields(m.LinkableFields()),
 	}, id
 }
 
-func NewPropertySchemas(ps []*property.Schema) ([]interface{}, []string) {
+func NewPropertySchemas(ps []*property.Schema, f scene.IDList) ([]interface{}, []string) {
 	if ps == nil {
 		return nil, nil
 	}
@@ -136,6 +139,9 @@ func NewPropertySchemas(ps []*property.Schema) ([]interface{}, []string) {
 	ids := make([]string, 0, len(ps))
 	for _, d := range ps {
 		if d == nil {
+			continue
+		}
+		if s := d.Scene(); s != nil && f != nil && !f.Includes(*s) {
 			continue
 		}
 		r, id := NewPropertySchema(d)

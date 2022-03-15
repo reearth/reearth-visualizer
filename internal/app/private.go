@@ -55,7 +55,7 @@ func privateAPI(
 		if op == nil {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrOpDenied}
 		}
-		scenes := op.AllReadableScenes()
+		repos := repos.Filtered(repo.TeamFilterFromOperator(op), repo.SceneFilterFromOperator(op))
 
 		param := c.Param("param")
 		params := strings.Split(param, ".")
@@ -68,7 +68,7 @@ func privateAPI(
 			return &echo.HTTPError{Code: http.StatusBadRequest, Message: ErrBadID}
 		}
 
-		layer, err := repos.Layer.FindByID(ctx, lid, scenes)
+		layer, err := repos.Layer.FindByID(ctx, lid)
 		if err != nil {
 			if errors.Is(rerror.ErrNotFound, err) {
 				return &echo.HTTPError{Code: http.StatusNotFound, Message: err}
@@ -88,11 +88,11 @@ func privateAPI(
 
 		ex := &encoding.Exporter{
 			Merger: &merging.Merger{
-				LayerLoader:    repo.LayerLoaderFrom(repos.Layer, scenes),
-				PropertyLoader: repo.PropertyLoaderFrom(repos.Property, scenes),
+				LayerLoader:    repo.LayerLoaderFrom(repos.Layer),
+				PropertyLoader: repo.PropertyLoaderFrom(repos.Property),
 			},
 			Sealer: &merging.Sealer{
-				DatasetGraphLoader: repo.DatasetGraphLoaderFrom(repos.Dataset, scenes),
+				DatasetGraphLoader: repo.DatasetGraphLoaderFrom(repos.Dataset),
 			},
 			Encoder: e,
 		}

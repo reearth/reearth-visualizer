@@ -8,32 +8,33 @@ import (
 )
 
 type Layer interface {
-	FindByID(context.Context, id.LayerID, []id.SceneID) (layer.Layer, error)
-	FindByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.List, error)
-	FindItemByID(context.Context, id.LayerID, []id.SceneID) (*layer.Item, error)
-	FindItemByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.ItemList, error)
+	Filtered(SceneFilter) Layer
+	FindByID(context.Context, id.LayerID) (layer.Layer, error)
+	FindByIDs(context.Context, []id.LayerID) (layer.List, error)
+	FindItemByID(context.Context, id.LayerID) (*layer.Item, error)
+	FindItemByIDs(context.Context, []id.LayerID) (layer.ItemList, error)
 	FindAllByDatasetSchema(context.Context, id.DatasetSchemaID) (layer.List, error)
-	FindGroupByID(context.Context, id.LayerID, []id.SceneID) (*layer.Group, error)
-	FindGroupByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.GroupList, error)
+	FindGroupByID(context.Context, id.LayerID) (*layer.Group, error)
+	FindGroupByIDs(context.Context, []id.LayerID) (layer.GroupList, error)
 	FindGroupBySceneAndLinkedDatasetSchema(context.Context, id.SceneID, id.DatasetSchemaID) (layer.GroupList, error)
-	FindParentByID(context.Context, id.LayerID, []id.SceneID) (*layer.Group, error)
-	FindParentsByIDs(context.Context, []id.LayerID, []id.SceneID) (layer.GroupList, error)
-	FindByPluginAndExtension(context.Context, id.PluginID, *id.PluginExtensionID, []id.SceneID) (layer.List, error)
-	FindByPluginAndExtensionOfBlocks(context.Context, id.PluginID, *id.PluginExtensionID, []id.SceneID) (layer.List, error)
-	FindByProperty(context.Context, id.PropertyID, []id.SceneID) (layer.Layer, error)
+	FindParentByID(context.Context, id.LayerID) (*layer.Group, error)
+	FindParentsByIDs(context.Context, []id.LayerID) (layer.GroupList, error)
+	FindByPluginAndExtension(context.Context, id.PluginID, *id.PluginExtensionID) (layer.List, error)
+	FindByPluginAndExtensionOfBlocks(context.Context, id.PluginID, *id.PluginExtensionID) (layer.List, error)
+	FindByProperty(context.Context, id.PropertyID) (layer.Layer, error)
 	FindByScene(context.Context, id.SceneID) (layer.List, error)
-	FindByTag(context.Context, id.TagID, []id.SceneID) (layer.List, error)
+	FindByTag(context.Context, id.TagID) (layer.List, error)
 	Save(context.Context, layer.Layer) error
 	SaveAll(context.Context, layer.List) error
-	UpdatePlugin(context.Context, id.PluginID, id.PluginID, []id.SceneID) error
+	UpdatePlugin(context.Context, id.PluginID, id.PluginID) error
 	Remove(context.Context, id.LayerID) error
 	RemoveAll(context.Context, []id.LayerID) error
 	RemoveByScene(context.Context, id.SceneID) error
 }
 
-func LayerLoaderFrom(r Layer, scenes []id.SceneID) layer.Loader {
+func LayerLoaderFrom(r Layer) layer.Loader {
 	return func(ctx context.Context, ids ...id.LayerID) (layer.List, error) {
-		return r.FindByIDs(ctx, ids, scenes)
+		return r.FindByIDs(ctx, ids)
 	}
 }
 

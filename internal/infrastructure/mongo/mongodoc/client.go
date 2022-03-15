@@ -88,24 +88,16 @@ func (c *Client) Count(ctx context.Context, col string, filter interface{}) (int
 	return count, nil
 }
 
-func (c *Client) RemoveAll(ctx context.Context, col string, ids []string) error {
-	if len(ids) == 0 {
-		return nil
-	}
-	filter := bson.D{
-		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: ids},
-		}},
-	}
-	_, err := c.Collection(col).DeleteMany(ctx, filter)
+func (c *Client) RemoveOne(ctx context.Context, col string, f interface{}) error {
+	_, err := c.Collection(col).DeleteOne(ctx, f)
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}
 	return nil
 }
 
-func (c *Client) RemoveOne(ctx context.Context, col string, id string) error {
-	_, err := c.Collection(col).DeleteOne(ctx, bson.D{{Key: "id", Value: id}})
+func (c *Client) RemoveAll(ctx context.Context, col string, f interface{}) error {
+	_, err := c.Collection(col).DeleteMany(ctx, f)
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}
@@ -113,10 +105,7 @@ func (c *Client) RemoveOne(ctx context.Context, col string, id string) error {
 }
 
 var (
-	upsert        = true
-	replaceOption = &options.ReplaceOptions{
-		Upsert: &upsert,
-	}
+	replaceOption = (&options.ReplaceOptions{}).SetUpsert(true)
 )
 
 func (c *Client) SaveOne(ctx context.Context, col string, id string, replacement interface{}) error {
@@ -138,11 +127,13 @@ func (c *Client) SaveAll(ctx context.Context, col string, ids []string, updates 
 	writeModels := make([]mongo.WriteModel, 0, len(updates))
 	for i, u := range updates {
 		id := ids[i]
-		writeModels = append(writeModels, &mongo.ReplaceOneModel{
-			Upsert:      &upsert,
-			Filter:      bson.M{"id": id},
-			Replacement: u,
-		})
+		writeModels = append(
+			writeModels,
+			(&mongo.ReplaceOneModel{}).
+				SetUpsert(true).
+				SetFilter(bson.M{"id": id}).
+				SetReplacement(u),
+		)
 	}
 
 	_, err := c.Collection(col).BulkWrite(ctx, writeModels)

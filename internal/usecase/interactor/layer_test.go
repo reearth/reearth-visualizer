@@ -24,13 +24,14 @@ func TestCreateInfobox(t *testing.T) {
 	_ = db.Layer.Save(ctx, l)
 
 	i, _ := il.CreateInfobox(ctx, l.ID(), &usecase.Operator{
-		WritableTeams: []id.TeamID{scene.Team()},
+		WritableScenes: []id.SceneID{scene.ID()},
 	})
 	assert.NotNil(t, i)
-	l, _ = db.Layer.FindItemByID(ctx, l.ID(), nil)
+	l, err := db.Layer.FindItemByID(ctx, l.ID())
+	assert.NoError(t, err)
 	infobox := l.Infobox()
 	assert.NotNil(t, infobox)
-	property, _ := db.Property.FindByID(ctx, infobox.Property(), nil)
+	property, _ := db.Property.FindByID(ctx, infobox.Property())
 	assert.NotNil(t, property)
 	assert.NotNil(t, property.Schema())
 }
