@@ -1,12 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
-import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
 import { styled } from "@reearth/theme";
-
-export type Asset = AssetType;
 
 export type Props = {
   currentProject?: {
@@ -15,11 +12,11 @@ export type Props = {
     publicDescription: string;
     publicImage?: string;
   };
-  assets?: Asset[];
-  updatePublicTitle?: (title: string) => void;
-  updatePublicDescription?: (description: string) => void;
-  updatePublicImage?: (imageUrl: string | null) => void;
-  createAssets?: (files: FileList) => Promise<void>;
+  updatePublicTitle?: (title?: string) => void;
+  updatePublicDescription?: (description?: string) => void;
+  updatePublicImage?: (imageUrl?: string) => void;
+  assetModal?: React.ReactNode;
+  toggleAssetModal?: (open?: boolean) => void;
 };
 
 const PublicSection: React.FC<Props> = ({
@@ -27,13 +24,10 @@ const PublicSection: React.FC<Props> = ({
   updatePublicTitle,
   updatePublicDescription,
   updatePublicImage,
-  assets,
-  createAssets,
+  assetModal,
+  toggleAssetModal,
 }) => {
   const intl = useIntl();
-  const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
 
   return (
     <Wrapper>
@@ -59,19 +53,11 @@ const PublicSection: React.FC<Props> = ({
           onSubmit={updatePublicImage}
           imageSrc={currentProject?.publicImage}
           isImage
-          onEditStart={() => openAssetModal()}
-          onEditCancel={() => closeAssetModal()}
+          onEditStart={() => toggleAssetModal?.(true)}
+          onEditCancel={() => toggleAssetModal?.(false)}
         />
       </Section>
-      <AssetModal
-        isOpen={isAssetModalOpen}
-        onClose={closeAssetModal}
-        assets={assets}
-        fileType="image"
-        onCreateAsset={createAssets}
-        onSelect={updatePublicImage}
-        value={currentProject?.publicImage}
-      />
+      {assetModal}
     </Wrapper>
   );
 };

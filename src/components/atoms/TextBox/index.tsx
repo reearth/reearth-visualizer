@@ -5,10 +5,10 @@ import { styled, metrics } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-export type Props = {
+export type Props<T extends string = string> = {
   className?: string;
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: T;
+  onChange?: (value: T | undefined) => void;
   disabled?: boolean;
   type?: "text" | "password";
   multiline?: boolean;
@@ -25,7 +25,7 @@ export type Props = {
   autofocus?: boolean;
 };
 
-const TextBox: React.FC<Props> = ({
+export default function TextBox<T extends string = string>({
   className,
   value,
   onChange,
@@ -43,7 +43,7 @@ const TextBox: React.FC<Props> = ({
   floatedTextColor,
   doesChangeEveryTime = false,
   autofocus = false,
-}) => {
+}: Props<T>): JSX.Element | null {
   const isDirty = useRef(false);
   const [innerValue, setInnerValue] = useState(value);
   const [rows, setRows] = useState(5);
@@ -51,7 +51,7 @@ const TextBox: React.FC<Props> = ({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = e.currentTarget.value;
+      const newValue = e.currentTarget.value as T;
       isDirty.current = value !== newValue;
       setInnerValue(newValue);
       doesChangeEveryTime && onChange?.(newValue);
@@ -74,7 +74,7 @@ const TextBox: React.FC<Props> = ({
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (onChange && e.key === "Enter" && isDirty.current) {
-        onChange(e.currentTarget.value);
+        onChange(e.currentTarget.value as T);
       }
     },
     [onChange],
@@ -83,7 +83,7 @@ const TextBox: React.FC<Props> = ({
   const handleBlur = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (onChange && isDirty.current) {
-        onChange(e.currentTarget.value);
+        onChange(e.currentTarget.value as T);
       }
     },
     [onChange],
@@ -97,7 +97,7 @@ const TextBox: React.FC<Props> = ({
   useEffect(() => {
     if (throttle && onChange && isDirty.current) {
       const timeout = setTimeout(() => {
-        onChange(innerValue ?? "");
+        onChange(innerValue ?? undefined);
       }, throttleTimeout);
       return () => clearTimeout(timeout);
     }
@@ -148,7 +148,7 @@ const TextBox: React.FC<Props> = ({
       </FormWrapper>
     </div>
   );
-};
+}
 
 type InputProps = Pick<Props, "color" | "backgroundColor" | "borderColor" | "floatedTextColor">;
 
@@ -199,5 +199,3 @@ const FloatedText = styled.span<InputProps>`
   font-size: ${fonts.sizes.s}px;
   user-select: none;
 `;
-
-export default TextBox;

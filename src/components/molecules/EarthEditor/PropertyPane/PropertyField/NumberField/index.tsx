@@ -39,7 +39,7 @@ const NumberField: React.FC<Props> = ({
     (newValue: string) => {
       if (!onChange || !isEditing.current || !isDirty.current) return;
       if (newValue === "") {
-        onChange(null);
+        onChange(undefined);
         isDirty.current = false;
       } else {
         const floatValue = parseFloat(newValue);

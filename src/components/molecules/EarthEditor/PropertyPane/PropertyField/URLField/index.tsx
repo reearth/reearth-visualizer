@@ -1,20 +1,21 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, ComponentType } from "react";
 import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
-import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
+import { Props as AssetModalPropsType } from "@reearth/components/molecules/Common/AssetModal";
 import { styled } from "@reearth/theme";
 
 import TextField from "../TextField";
 import { FieldProps } from "../types";
 
-export type Asset = AssetType;
+export type AssetModalProps = Pick<
+  AssetModalPropsType,
+  "isOpen" | "fileType" | "initialAssetUrl" | "onSelect" | "toggleAssetModal"
+>;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assets?: Asset[];
-  onRemoveFile?: () => void;
-  onCreateAsset?: (files: FileList) => void;
+  assetModal?: ComponentType<AssetModalProps>;
 };
 
 const URLField: React.FC<Props> = ({
@@ -23,48 +24,57 @@ const URLField: React.FC<Props> = ({
   linked,
   overridden,
   fileType,
-  assets,
+  assetModal: AssetModal,
   onChange,
-  onCreateAsset,
 }) => {
   const intl = useIntl();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
-  const deleteValue = useCallback(() => onChange?.(null), [onChange]);
+  const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
+
+  const handleAssetModalOpen = useCallback(() => {
+    setAssetModalOpen(!isAssetModalOpen);
+  }, [isAssetModalOpen]);
+
+  const handleChange = useCallback(
+    (value?: string) => {
+      if (!value) return;
+      onChange?.(value);
+    },
+    [onChange],
+  );
 
   return (
     <Wrapper>
       <InputWrapper>
         <StyledTextField
           name={name}
-          value={value}
+          value={value ? intl.formatMessage({ defaultMessage: "Field set" }) : undefined}
           onChange={onChange}
           placeholder={intl.formatMessage({ defaultMessage: "Not set" })}
           linked={linked}
           overridden={overridden}
           disabled
-          onClick={openAssetModal}
+          onClick={handleAssetModalOpen}
         />
         {value ? (
           <AssetButton icon="bin" size={18} onClick={deleteValue} />
         ) : fileType === "image" ? (
-          <AssetButton icon="image" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="image" size={18} active={!linked} onClick={handleAssetModalOpen} />
         ) : fileType === "video" ? (
-          <AssetButton icon="video" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="video" size={18} active={!linked} onClick={handleAssetModalOpen} />
         ) : (
-          <AssetButton icon="resource" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="resource" size={18} active={!linked} onClick={handleAssetModalOpen} />
         )}
       </InputWrapper>
-      <AssetModal
-        isOpen={isAssetModalOpen}
-        onClose={closeAssetModal}
-        assets={assets}
-        fileType={fileType}
-        onCreateAsset={onCreateAsset}
-        onSelect={onChange}
-        value={value}
-      />
+      {AssetModal && (
+        <AssetModal
+          isOpen={isAssetModalOpen}
+          fileType={fileType}
+          initialAssetUrl={value}
+          onSelect={handleChange}
+          toggleAssetModal={handleAssetModalOpen}
+        />
+      )}
     </Wrapper>
   );
 };

@@ -45,16 +45,18 @@ const AssetCard: React.FC<Props> = ({
           <Icon icon={icon} size={iconSize} />
         )}
       </ImgWrapper>
-      <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>
-        {name}
-      </FileName>
-      {checked && (
-        <StyledIcon
-          icon="checkCircle"
-          alt="checked"
-          size={cardSize === "small" ? "18px" : "24px"}
-        />
-      )}
+      <Flex>
+        <FileName size={cardSize === "large" ? "m" : "2xs"} cardSize={cardSize} customColor>
+          {name}
+        </FileName>
+        {checked && (
+          <StyledIcon
+            icon="checkCircle"
+            alt="checked"
+            size={cardSize === "small" ? "18px" : "24px"}
+          />
+        )}
+      </Flex>
     </Wrapper>
   );
 };
@@ -102,7 +104,7 @@ const FileName = styled(Text)<{ cardSize?: CardSize }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-top: ${({ cardSize }) => (cardSize === "large" ? "16px" : "12px")};
+  margin-top: ${({ cardSize }) => (cardSize === "large" ? "12px" : "8px")};
   color: inherit;
 `;
 

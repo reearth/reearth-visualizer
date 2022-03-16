@@ -1,30 +1,30 @@
 import React, { useMemo } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import Select, { Props as SelectProps } from "@reearth/components/atoms/Select";
+import Select from "@reearth/components/atoms/Select";
 import { Option } from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 
-interface SelectFieldProps {
+interface SelectFieldProps<T extends string = string> {
   variant?: "filled" | "standard";
-  value?: string;
-  items?: { key: string; label: string; icon?: string }[];
-  onChange?: (value: string) => void;
+  value?: T;
+  items?: { key: T; label: string; icon?: string }[];
+  onChange?: (value: T) => void;
   fullWidth?: boolean;
 }
 
 // TODO: 汎用化させて molecules/property/SelectField の元にする
-const SelectField: React.FC<SelectFieldProps> = ({
+export function SelectField<T extends string = string>({
   value: selectedKey,
   items = [],
   onChange,
   fullWidth,
-}) => {
+}: SelectFieldProps<T>) {
   const hasIcon = useMemo(() => items.some(({ icon }) => icon), [items]);
 
   return (
-    <StyledSelect value={selectedKey} onChange={onChange} fullWidth={fullWidth}>
+    <Select value={selectedKey} onChange={onChange} fullWidth={fullWidth}>
       {items.map(({ key, label, icon }) => (
         <Option key={key} value={key} label={label}>
           <OptionCheck size="xs">
@@ -34,11 +34,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
           {label}
         </Option>
       ))}
-    </StyledSelect>
+    </Select>
   );
-};
-
-const StyledSelect = styled(Select as React.ComponentType<SelectProps<string>>)``;
+}
 
 const OptionCheck = styled(Text)`
   display: flex;

@@ -7,7 +7,7 @@ import { styled } from "@reearth/theme";
 
 export type Props = {
   username?: string;
-  updateName?: (name: string) => void;
+  updateName?: (name?: string) => void;
 };
 
 const ProfileSection: React.FC<Props> = ({ username, updateName }) => {

@@ -7,6 +7,7 @@ import PublicSection from "@reearth/components/molecules/Settings/Project/Public
 import PublishSection from "@reearth/components/molecules/Settings/Project/PublishSection";
 import StatusSection from "@reearth/components/molecules/Settings/Project/StatusSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
@@ -32,8 +33,8 @@ const Public: React.FC<Props> = ({ projectId }) => {
     updatePublicTitle,
     updatePublicDescription,
     updatePublicImage,
-    assets,
-    createAssets,
+    assetModalOpened,
+    toggleAssetModal,
   } = useHooks({ projectId });
 
   return (
@@ -56,8 +57,15 @@ const Public: React.FC<Props> = ({ projectId }) => {
             updatePublicTitle={updatePublicTitle}
             updatePublicDescription={updatePublicDescription}
             updatePublicImage={updatePublicImage}
-            assets={assets}
-            createAssets={createAssets}
+            toggleAssetModal={toggleAssetModal}
+            assetModal={
+              <AssetModal
+                teamId={currentTeam?.id}
+                isOpen={assetModalOpened}
+                onSelect={updatePublicImage}
+                toggleAssetModal={toggleAssetModal}
+              />
+            }
           />
           <PublishSection
             loading={loading}

@@ -2,12 +2,10 @@ import { Link } from "@reach/router";
 import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import Header, { Props as HeaderProps } from "@reearth/components/molecules/Common/Header";
+import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
-
-type Props = {} & HeaderProps;
 
 const SettingPage: React.FC<Props> = ({
   children,
@@ -16,10 +14,6 @@ const SettingPage: React.FC<Props> = ({
   sceneId,
   ...props
 }) => {
-  const center = currentProject && (
-    <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
-  );
-
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
     setIsOpen(o => !o);
@@ -37,7 +31,9 @@ const SettingPage: React.FC<Props> = ({
             </StyledLink>
           )
         }
-        center={center}
+        center={
+          currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
+        }
       />
       <BodyWrapper>
         <LeftWrapper>

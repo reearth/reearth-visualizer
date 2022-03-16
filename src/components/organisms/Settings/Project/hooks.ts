@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -6,13 +6,8 @@ import {
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
-  useCreateAssetMutation,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 type Params = {
   projectId: string;
@@ -26,7 +21,7 @@ export default ({ projectId }: Params) => {
   const teamId = currentTeam?.id;
 
   const { data } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
@@ -63,22 +58,25 @@ export default ({ projectId }: Params) => {
   });
 
   const updateProjectName = useCallback(
-    (name: string) => {
-      projectId && updateProjectMutation({ variables: { projectId, name } });
+    (name?: string) => {
+      if (!projectId || !name) return;
+      updateProjectMutation({ variables: { projectId, name } });
     },
     [projectId, updateProjectMutation],
   );
 
   const updateProjectDescription = useCallback(
-    (description: string) => {
-      projectId && updateProjectMutation({ variables: { projectId, description } });
+    (description?: string) => {
+      if (!projectId || !description) return;
+      updateProjectMutation({ variables: { projectId, description } });
     },
     [projectId, updateProjectMutation],
   );
 
   const updateProjectImageUrl = useCallback(
-    (imageUrl: string | null) => {
-      projectId && updateProjectMutation({ variables: { projectId, imageUrl } });
+    (imageUrl?: string) => {
+      if (!projectId || !imageUrl) return;
+      updateProjectMutation({ variables: { projectId, imageUrl } });
     },
     [projectId, updateProjectMutation],
   );
@@ -127,26 +125,18 @@ export default ({ projectId }: Params) => {
     }
   }, [projectId, intl, setNotification, deleteProjectMutation]);
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
+  const [assetModalOpened, setOpenAssets] = useState(false);
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const toggleAssetModal = useCallback(
+    (open?: boolean) => {
+      if (!open) {
+        setOpenAssets(!assetModalOpened);
+      } else {
+        setOpenAssets(open);
+      }
+    },
+    [assetModalOpened, setOpenAssets],
+  );
 
   return {
     project,
@@ -157,7 +147,7 @@ export default ({ projectId }: Params) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    createAssets,
-    assets,
+    assetModalOpened,
+    toggleAssetModal,
   };
 };

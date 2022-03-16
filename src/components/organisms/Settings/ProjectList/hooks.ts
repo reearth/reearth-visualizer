@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
-import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
 import {
   useMeQuery,
   PublishmentStatus,
@@ -11,8 +10,6 @@ import {
   useCreateSceneMutation,
   useProjectQuery,
   Visualizer,
-  useAssetsQuery,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -23,7 +20,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     ? "limited"
     : "unpublished";
 
-export default () => {
+export default (teamId: string) => {
   const [, setNotification] = useNotification();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
@@ -38,13 +35,14 @@ export default () => {
     refetchQueries: ["Project"],
   });
   const [createScene] = useCreateSceneMutation();
-  const [createAssetMutation] = useCreateAssetMutation();
 
-  const teamId = currentTeam?.id;
+  if (currentTeam && currentTeam.id !== teamId) {
+    teamId = currentTeam?.id;
+  }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
   const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
@@ -148,25 +146,18 @@ export default () => {
     [navigate, setProject],
   );
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const [assetModalOpened, setOpenAssets] = useState(false);
+  const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
+  const toggleAssetModal = useCallback(
+    () => setOpenAssets(!assetModalOpened),
+    [assetModalOpened, setOpenAssets],
   );
+
+  const onAssetSelect = useCallback((asset?: string) => {
+    if (!asset) return;
+    selectAsset(asset);
+  }, []);
 
   return {
     currentProjects,
@@ -178,7 +169,9 @@ export default () => {
     handleModalClose,
     createProject,
     selectProject,
-    assets,
-    createAssets,
+    selectedAsset,
+    assetModalOpened,
+    toggleAssetModal,
+    onAssetSelect,
   };
 };

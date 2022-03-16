@@ -5,8 +5,6 @@ import {
   useGetLayerPropertyQuery,
   useGetLinkableDatasetsQuery,
   useGetLayersFromLayerIdQuery,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
 import { Selected } from "@reearth/state";
 
@@ -14,14 +12,11 @@ import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "cluster";
 
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
-
 export default ({
   sceneId,
   rootLayerId,
   selected,
   selectedBlock,
-  teamId,
   mode,
   locale,
 }: {
@@ -29,7 +24,6 @@ export default ({
   rootLayerId?: string;
   selected?: Selected;
   selectedBlock?: string;
-  teamId?: string;
   mode: Mode;
   locale: string;
 }) => {
@@ -67,12 +61,6 @@ export default ({
     },
     skip: !sceneId,
   });
-
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
 
   const scene =
     scenePropertyData?.node?.__typename === "Scene" ? scenePropertyData.node : undefined;
@@ -213,7 +201,6 @@ export default ({
     isInfoboxCreatable,
     datasetSchemas,
     layers,
-    assets,
     selectedWidget,
   };
 };

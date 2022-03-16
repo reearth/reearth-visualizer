@@ -10,11 +10,11 @@ export type RGBA = {
 
 export type Params = {
   value?: string;
-  onChange?: (value: string | null) => void | undefined;
+  onChange?: (value: string | undefined) => void | undefined;
 };
 
 export default ({ value, onChange }: Params) => {
-  const [colorState, setColor] = useState<string | null>(null);
+  const [colorState, setColor] = useState<string>();
   const [rgba, setRgba] = useState<RGBA>(tinycolor(value).toRgb());
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ export default ({ value, onChange }: Params) => {
       setColor(value);
       setRgba(tinycolor(value).toRgb());
     } else {
-      setColor(null);
+      setColor(undefined);
       setRgba(tinycolor(colorState == null ? undefined : colorState).toRgb());
     }
     setOpen(false);
@@ -101,7 +101,7 @@ export default ({ value, onChange }: Params) => {
       setColor(value);
       setRgba(tinycolor(value).toRgb());
     } else {
-      setColor(null);
+      setColor(undefined);
     }
   }, [value]);
 

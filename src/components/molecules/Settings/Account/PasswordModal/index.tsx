@@ -48,41 +48,41 @@ const PasswordModal: React.FC<Props> = ({
 
   const [password, setPassword] = useState("");
   const [regexMessage, setRegexMessage] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>();
   const [disabled, setDisabled] = useState(true);
 
   const handlePasswordChange = useCallback(
-    (password: string) => {
-      setPassword(password);
+    (password: string | undefined) => {
+      setPassword(password ?? "");
       switch (true) {
-        case passwordPolicy?.whitespace?.test(password):
+        case passwordPolicy?.whitespace?.test(password ?? ""):
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "No whitespace is allowed.",
             }),
           );
           break;
-        case passwordPolicy?.tooShort?.test(password):
+        case passwordPolicy?.tooShort?.test(password ?? ""):
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "Too short.",
             }),
           );
           break;
-        case passwordPolicy?.tooLong?.test(password):
+        case passwordPolicy?.tooLong?.test(password ?? ""):
           setRegexMessage(
             intl.formatMessage({
               defaultMessage: "That is terribly long.",
             }),
           );
           break;
-        case passwordPolicy?.highSecurity?.test(password):
+        case passwordPolicy?.highSecurity?.test(password ?? ""):
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
           break;
-        case passwordPolicy?.medSecurity?.test(password):
+        case passwordPolicy?.medSecurity?.test(password ?? ""):
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
           break;
-        case passwordPolicy?.lowSecurity?.test(password):
+        case passwordPolicy?.lowSecurity?.test(password ?? ""):
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
           break;
         default:

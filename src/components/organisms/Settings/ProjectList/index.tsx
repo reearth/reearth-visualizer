@@ -5,11 +5,10 @@ import Loading from "@reearth/components/atoms/Loading";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
-
-// Components
 
 type Props = {
   teamId: string;
@@ -26,9 +25,11 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     createProject,
     selectProject,
-    assets,
-    createAssets,
-  } = useHooks();
+    selectedAsset,
+    assetModalOpened,
+    toggleAssetModal,
+    onAssetSelect,
+  } = useHooks(teamId);
 
   return (
     <SettingPage teamId={teamId}>
@@ -43,8 +44,16 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         open={modalShown}
         onClose={handleModalClose}
         onSubmit={createProject}
-        assets={assets}
-        createAssets={createAssets}
+        toggleAssetModal={toggleAssetModal}
+        selectedAsset={selectedAsset}
+        assetModal={
+          <AssetModal
+            teamId={teamId}
+            isOpen={assetModalOpened}
+            onSelect={onAssetSelect}
+            toggleAssetModal={toggleAssetModal}
+          />
+        }
       />
       {loading && <Loading portal overlay />}
     </SettingPage>

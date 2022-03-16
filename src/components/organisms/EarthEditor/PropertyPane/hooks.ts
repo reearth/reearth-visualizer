@@ -16,7 +16,6 @@ import {
   useLinkDatasetMutation,
   useUpdatePropertyItemsMutation,
   ListOperation,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import {
   useSelected,
@@ -61,7 +60,6 @@ export default (mode: Mode) => {
     isInfoboxCreatable,
     datasetSchemas,
     layers,
-    assets,
     selectedWidget,
   } = useQueries({
     mode,
@@ -69,7 +67,6 @@ export default (mode: Mode) => {
     rootLayerId,
     selectedBlock,
     selected,
-    teamId: team?.id,
     locale: intl.locale,
   });
 
@@ -80,7 +77,7 @@ export default (mode: Mode) => {
       schemaGroupId: string,
       itemId: string | undefined,
       fieldId: string,
-      v: ValueTypes[ValueType] | null,
+      v: ValueTypes[ValueType] | undefined,
       vt: ValueType,
     ) => {
       const gvt = valueTypeToGQL(vt);
@@ -143,24 +140,6 @@ export default (mode: Mode) => {
       });
     },
     [intl.locale, uploadFileMutation],
-  );
-
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (team?.id) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({
-                variables: { teamId: team.id, file },
-                refetchQueries: ["Assets"],
-              }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, team?.id],
   );
 
   const removeFile = useCallback(
@@ -330,6 +309,7 @@ export default (mode: Mode) => {
 
   return {
     pane,
+    teamId: team?.id,
     error,
     loading,
     isLayerGroup,
@@ -339,7 +319,6 @@ export default (mode: Mode) => {
     removeField,
     link,
     uploadFile,
-    createAssets,
     removeFile,
     createInfobox,
     removeInfobox,
@@ -358,6 +337,5 @@ export default (mode: Mode) => {
     updatePropertyItems,
     datasetSchemas,
     layers,
-    assets,
   };
 };

@@ -13,27 +13,22 @@ export const validateUrl = (url: string): { result: boolean; message: string } =
 export default (onSend: (repoUrl: string) => void, loading?: boolean) => {
   const [isOpen, open] = useState(false);
   const [validationErr, setValidationErr] = useState("");
-  const [repoUrl, setRepoUrl] = useState("");
-
+  const [repoUrl, setRepoUrl] = useState<string>();
   const handleOpen = () => open(true);
-
-  const handleRepoUrlChange = (text: string) => {
-    setRepoUrl(text);
-  };
 
   const handleClose = useCallback(() => {
     if (!loading) {
       open(false);
-      setRepoUrl("");
+      setRepoUrl(undefined);
       setValidationErr("");
     }
   }, [loading]);
 
   const handleSubmit = useCallback(() => {
-    const { result: success, message } = validateUrl(repoUrl);
+    const { result: success, message } = validateUrl(repoUrl ?? "");
     setValidationErr(message);
     if (!success) return;
-    onSend(repoUrl);
+    onSend(repoUrl ?? "");
     handleClose();
   }, [handleClose, onSend, repoUrl]);
 
@@ -41,7 +36,7 @@ export default (onSend: (repoUrl: string) => void, loading?: boolean) => {
     isOpen,
     validationErr,
     repoUrl,
-    handleRepoUrlChange,
+    handleRepoUrlChange: setRepoUrl,
     handleOpen,
     handleSubmit,
     handleClose,

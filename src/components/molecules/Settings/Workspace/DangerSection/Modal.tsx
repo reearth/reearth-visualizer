@@ -24,7 +24,7 @@ type Props = {
 
 const DangerModal: React.FC<Props> = ({ team, isVisible, deleteTeam, onClose }) => {
   const [disabled, setDisabled] = useState(true);
-  const [text, setText] = useState("");
+  const [text, setText] = useState<string>();
   const navigate = useNavigate();
   const intl = useIntl();
 

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const PROJECT = gql`
-  query Project($teamId: ID!) {
-    projects(teamId: $teamId, first: 0, last: 100) {
+  query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+    projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
       nodes {
         id
         name

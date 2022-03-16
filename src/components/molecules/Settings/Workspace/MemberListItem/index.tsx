@@ -24,7 +24,8 @@ const MemberListItem: React.FC<Props> = ({ name, role, owner, onChangeRole, onRe
   const intl = useIntl();
 
   const saveEdit = useCallback(
-    (role: string) => {
+    (role?: string) => {
+      if (!role) return;
       onChangeRole(role as Role);
     },
     [onChangeRole],

@@ -1,6 +1,6 @@
 export type FieldProps<T> = {
   value?: T;
-  onChange?: (value: T | null) => void;
+  onChange?: (value: T | undefined) => void;
   name?: string;
   description?: string;
   linkedFieldName?: string;

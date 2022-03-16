@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, ComponentType } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -23,7 +23,7 @@ import PropertyItem, {
   DatasetField as ItemDatasetField,
   DatasetType as ItemDatasetType,
   Layer as LayerType,
-  Asset as AssetType,
+  AssetModalProps as AssetModalPropsType,
   Mode as ModeType,
 } from "./PropertyItem";
 import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
@@ -41,7 +41,7 @@ export type DatasetSchema = ItemDatasetSchema;
 export type DatasetField = ItemDatasetField;
 export type DatasetType = ItemDatasetType;
 export type Layer = LayerType;
-export type Asset = AssetType;
+export type AssetModalProps = AssetModalPropsType;
 export type Mode = ModeType;
 
 export type Widget = {
@@ -57,9 +57,8 @@ export type Props = {
   isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
-  onCreateAsset?: (files: FileList) => void;
   onRemovePane?: () => void;
-  assets?: Asset[];
+  assetModal?: ComponentType<AssetModalProps>;
   selectedWidget?: Widget;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;

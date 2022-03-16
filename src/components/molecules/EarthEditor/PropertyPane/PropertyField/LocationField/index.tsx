@@ -41,7 +41,7 @@ const LocationField: React.FC<Props> = ({
         name={intl.formatMessage({ defaultMessage: "Latitude" })}
         value={value?.lat}
         onChange={v =>
-          onChange && v !== null && !isNaN(v) && onChange({ lat: v, lng: value?.lng ?? 0 })
+          onChange && v !== undefined && !isNaN(v) && onChange({ lat: v, lng: value?.lng ?? 0 })
         }
         linked={linked}
         overridden={overridden}
@@ -53,7 +53,7 @@ const LocationField: React.FC<Props> = ({
         name={intl.formatMessage({ defaultMessage: "Longitude" })}
         value={value?.lng}
         onChange={v =>
-          onChange && v !== null && !isNaN(v) && onChange({ lat: value?.lat ?? 0, lng: v })
+          onChange && v !== undefined && !isNaN(v) && onChange({ lat: value?.lat ?? 0, lng: v })
         }
         linked={linked}
         overridden={overridden}

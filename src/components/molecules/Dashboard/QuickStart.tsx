@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 import { useMedia } from "react-use";
 
@@ -6,7 +6,6 @@ import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import { styled, useTheme, metrics, css } from "@reearth/theme";
@@ -20,20 +19,29 @@ export interface Props {
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  assets?: Asset[];
-  createAssets?: (files: FileList) => Promise<void>;
+  assetModal?: React.ReactNode;
+  toggleAssetModal?: () => void;
+  selectedAsset?: string;
+  onAssetSelect?: (asset?: string) => void;
 }
 
 const QuickStart: React.FC<Props> = ({
   className,
+  assetModal,
+  selectedAsset,
   onCreateTeam,
   onCreateProject,
-  assets,
-  createAssets,
+  toggleAssetModal,
+  onAssetSelect,
 }) => {
   const intl = useIntl();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
+
+  const handleProjModalClose = useCallback(() => {
+    setProjCreateOpen(false);
+    onAssetSelect?.();
+  }, [onAssetSelect]);
 
   const theme = useTheme();
 
@@ -79,10 +87,11 @@ const QuickStart: React.FC<Props> = ({
       </Content>
       <ProjectCreationModal
         open={projCreateOpen}
-        onClose={() => setProjCreateOpen(false)}
+        onClose={handleProjModalClose}
         onSubmit={onCreateProject}
-        assets={assets}
-        createAssets={createAssets}
+        toggleAssetModal={toggleAssetModal}
+        selectedAsset={selectedAsset}
+        assetModal={assetModal}
       />
       <WorkspaceCreationModal
         open={workCreateOpen}

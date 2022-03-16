@@ -164,7 +164,7 @@ export default ({
   const handleInfoboxMaskClick = useCallback(() => {
     selectLayer(undefined);
   }, [selectLayer]);
-  
+
   return {
     engineRef,
     wrapperRef,

@@ -1,27 +1,30 @@
 import { useNavigate } from "@reach/router";
-import { useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
+import { useEffect } from "react";
 
-import {
-  AssetsQuery,
-  useAssetsQuery,
-  useCreateAssetMutation,
-  useRemoveAssetMutation,
-} from "@reearth/gql";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hooks";
+import { useTeam, useProject } from "@reearth/state";
 
-type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
-
-type Params = {
+export type Params = {
   teamId: string;
 };
 
 export default (params: Params) => {
-  const intl = useIntl();
-  const [, setNotification] = useNotification();
+  const navigate = useNavigate();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
-  const navigate = useNavigate();
+
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+    removeAssets,
+  } = assetHooks(currentTeam?.id);
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
@@ -29,79 +32,18 @@ export default (params: Params) => {
     }
   }, [params, currentTeam, navigate]);
 
-  const teamId = currentTeam?.id;
-
-  const { data, refetch } = useAssetsQuery({ variables: { teamId: teamId ?? "" }, skip: !teamId });
-  const assets = data?.assets.nodes.filter(Boolean).reverse() as AssetNodes;
-
-  const [createAssetMutation] = useCreateAssetMutation();
-
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (!teamId) return;
-
-        const results = await Promise.all(
-          Array.from(files).map(async file => {
-            const result = await createAssetMutation({ variables: { teamId, file } });
-            if (result.errors || !result.data?.createAsset) {
-              setNotification({
-                type: "error",
-                text: intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
-              });
-            }
-          }),
-        );
-        if (results) {
-          setNotification({
-            type: "success",
-            text: intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
-          });
-          await refetch();
-        }
-      })(),
-    [createAssetMutation, refetch, teamId, setNotification, intl],
-  );
-
-  const [removeAssetMutation] = useRemoveAssetMutation();
-
-  const removeAsset = useCallback(
-    (assetIds: string[]) =>
-      (async () => {
-        if (!teamId) return;
-        const results = await Promise.all(
-          assetIds.map(async assetId => {
-            const result = await removeAssetMutation({
-              variables: { assetId },
-              refetchQueries: ["Assets"],
-            });
-            if (result.errors || result.data?.removeAsset) {
-              setNotification({
-                type: "error",
-                text: intl.formatMessage({
-                  defaultMessage: "Failed to delete one or more assets.",
-                }),
-              });
-            }
-          }),
-        );
-        if (results) {
-          setNotification({
-            type: "info",
-            text: intl.formatMessage({
-              defaultMessage: "One or more assets were successfully deleted.",
-            }),
-          });
-        }
-      })(),
-    [removeAssetMutation, teamId, setNotification, intl],
-  );
-
   return {
     currentProject,
     currentTeam,
     assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
     createAssets,
-    removeAsset,
+    handleSortChange,
+    handleSearchTerm,
+    removeAssets,
   };
 };

@@ -38,9 +38,9 @@ const AddMemberModal: React.FC<Props> = ({
   const [nameOrEmail, setNameOrEmail] = useState("");
 
   const handleChange = useCallback(
-    (nameOrEmail: string) => {
-      searchUser(nameOrEmail);
-      setNameOrEmail(nameOrEmail);
+    (nameOrEmail: string | undefined) => {
+      searchUser(nameOrEmail ?? "");
+      setNameOrEmail(nameOrEmail ?? "");
     },
     [searchUser, setNameOrEmail],
   );

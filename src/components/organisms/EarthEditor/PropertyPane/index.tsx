@@ -1,7 +1,10 @@
-import React from "react";
+import React, { ComponentType } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
+import AssetModal, {
+  Props as AssetModalProps,
+} from "@reearth/components/organisms/Common/AssetModal";
 
 import useHooks, { Mode as RawMode } from "./hooks";
 
@@ -13,6 +16,7 @@ export interface Props {
 const PropertyPane: React.FC<Props> = ({ mode }) => {
   const {
     pane,
+    teamId,
     isLayerGroup,
     linkedDatasetSchemaId,
     linkedDatasetId,
@@ -22,14 +26,12 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     datasetSchemas,
     loading,
     layers,
-    assets,
     selectedWidget,
     widgetAlignEditorActivated,
     changeValue,
     removeField,
     link,
     uploadFile,
-    createAssets,
     removeFile,
     createInfobox,
     removeInfobox,
@@ -42,6 +44,10 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     onWidgetAlignEditorActivate,
     updatePropertyItems,
   } = useHooks(mode);
+
+  const AssetModalComponent: ComponentType<AssetModalProps> = ({ ...props }) => (
+    <AssetModal teamId={teamId} {...props} />
+  );
   return (
     <>
       {pane && (
@@ -60,7 +66,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
           layers={layers}
-          assets={assets}
+          assetModal={AssetModalComponent}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}
@@ -68,7 +74,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onRemove={removeField}
           onLink={link}
           onUploadFile={uploadFile}
-          onCreateAsset={createAssets}
           onRemoveFile={removeFile}
           onIsCapturingChange={onIsCapturingChange}
           onCameraChange={onCameraChange}

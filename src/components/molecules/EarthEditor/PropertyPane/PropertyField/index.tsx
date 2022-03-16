@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, ComponentType } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import PropertyTitle, {
@@ -26,7 +26,7 @@ import SwitchField from "./SwitchField";
 import TextField from "./TextField";
 import { FieldProps } from "./types";
 import TypographyField from "./TypographyField";
-import URLField, { Asset as AssetType } from "./URLField";
+import URLField, { AssetModalProps as AssetModalPropsType } from "./URLField";
 
 export type { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
 
@@ -35,7 +35,7 @@ export type ValueTypes = ValueTypesType;
 export type LatLng = LatLngType;
 export type Location = LocationType;
 export type Layer = LayerType;
-export type Asset = AssetType;
+export type AssetModalProps = AssetModalPropsType;
 
 export type SchemaField<T extends ValueType = ValueType> = {
   id: string;
@@ -95,13 +95,12 @@ export type Props<T extends ValueType = ValueType> = {
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
-  assets?: Asset[];
-  onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
+  assetModal?: ComponentType<AssetModalProps>;
+  onChange?: (id: string, value: ValueTypes[T] | undefined, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
   onUploadFile?: (id: string, file: File) => void;
   onRemoveFile?: (id: string) => void;
-  onCreateAsset?: (files: FileList) => void;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   onCameraChange?: (camera: Partial<Camera>) => void;
 } & Pick<PropertyTitleProps, "datasetSchemas" | "onDatasetPickerOpen">;
@@ -112,7 +111,6 @@ const PropertyField: React.FC<Props> = ({
   field,
   schema,
   onUploadFile,
-  onCreateAsset,
   onRemoveFile,
   hidden,
   isCapturing,
@@ -127,7 +125,7 @@ const PropertyField: React.FC<Props> = ({
   linkedDatasetSchemaId,
   linkedDatasetId,
   layers,
-  assets,
+  assetModal,
 }) => {
   const rawEvents = useMemo(
     () => ({
@@ -147,7 +145,7 @@ const PropertyField: React.FC<Props> = ({
     overridden: !!field?.overridden,
     value: field?.mergedValue ?? field?.value ?? schema?.defaultValue,
     onChange: useCallback(
-      (value: ValueTypes[keyof ValueTypes] | null) => {
+      (value: ValueTypes[keyof ValueTypes] | undefined) => {
         if (!onChange || !schema) return;
         onChange(schema.id, value, schema.type);
       },
@@ -218,8 +216,7 @@ const PropertyField: React.FC<Props> = ({
           <URLField
             {...commonProps}
             fileType={schema.ui === "image" || schema.ui === "video" ? schema.ui : undefined}
-            assets={assets}
-            onCreateAsset={onCreateAsset}
+            assetModal={assetModal}
           />
         ) : type === "typography" ? (
           <TypographyField {...commonProps} />

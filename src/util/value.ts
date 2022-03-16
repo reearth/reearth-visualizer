@@ -105,17 +105,20 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
       textAlign: val.textAlign.toLowerCase(),
     };
   }
-  return { type: t, value: newVal, ok };
+  return { type: t, value: newVal ?? undefined, ok };
 };
 
-export function valueToGQL<T extends ValueType>(val: ValueTypes[T] | null, type: T): any {
+export function valueToGQL<T extends ValueType>(
+  val: ValueTypes[T] | null | undefined,
+  type: T,
+): any {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
       ...(val as any),
       altitude: (val as any).height,
     };
   }
-  return val;
+  return val ?? null;
 }
 
 export const valueTypeFromGQL = (t: GQLValueType): ValueType | undefined => {

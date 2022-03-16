@@ -1327,6 +1327,35 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "AssetSortType",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "DATE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NAME",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SIZE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "AttachTagItemToGroupInput",
         "description": null,
@@ -8728,6 +8757,65 @@
         "possibleTypes": null
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "Pagination",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "after",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Cursor",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "before",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Cursor",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "first",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "last",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Plugin",
         "description": null,
@@ -11627,11 +11715,11 @@
             "description": null,
             "args": [
               {
-                "name": "after",
+                "name": "keyword",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Cursor",
+                  "name": "String",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -11639,11 +11727,11 @@
                 "deprecationReason": null
               },
               {
-                "name": "before",
+                "name": "pagination",
                 "description": null,
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "Cursor",
+                  "kind": "INPUT_OBJECT",
+                  "name": "Pagination",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -11651,23 +11739,11 @@
                 "deprecationReason": null
               },
               {
-                "name": "first",
+                "name": "sort",
                 "description": null,
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "last",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
+                  "kind": "ENUM",
+                  "name": "AssetSortType",
                   "ofType": null
                 },
                 "defaultValue": null,

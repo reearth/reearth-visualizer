@@ -179,6 +179,12 @@ export type AssetEdge = {
   node?: Maybe<Asset>;
 };
 
+export enum AssetSortType {
+  Date = 'DATE',
+  Name = 'NAME',
+  Size = 'SIZE'
+}
+
 export type AttachTagItemToGroupInput = {
   groupID: Scalars['ID'];
   itemID: Scalars['ID'];
@@ -1146,6 +1152,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['Cursor']>;
 };
 
+export type Pagination = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type Plugin = {
   __typename?: 'Plugin';
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
@@ -1490,10 +1503,9 @@ export type Query = {
 
 
 export type QueryAssetsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  keyword?: InputMaybe<Scalars['String']>;
+  pagination?: InputMaybe<Pagination>;
+  sort?: InputMaybe<AssetSortType>;
   teamId: Scalars['ID'];
 };
 
@@ -2909,6 +2921,10 @@ export type UninstallPluginMutation = { __typename?: 'Mutation', uninstallPlugin
 
 export type ProjectQueryVariables = Exact<{
   teamId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
 }>;
 
 
@@ -2969,6 +2985,9 @@ export type SceneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene',
 
 export type AssetsQueryVariables = Exact<{
   teamId: Scalars['ID'];
+  sort?: Maybe<AssetSortType>;
+  keyword?: Maybe<Scalars['String']>;
+  pagination?: Maybe<Pagination>;
 }>;
 
 
@@ -7160,8 +7179,14 @@ export type UninstallPluginMutationHookResult = ReturnType<typeof useUninstallPl
 export type UninstallPluginMutationResult = Apollo.MutationResult<UninstallPluginMutation>;
 export type UninstallPluginMutationOptions = Apollo.BaseMutationOptions<UninstallPluginMutation, UninstallPluginMutationVariables>;
 export const ProjectDocument = gql`
-    query Project($teamId: ID!) {
-  projects(teamId: $teamId, first: 0, last: 100) {
+    query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  projects(
+    teamId: $teamId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
     nodes {
       id
       name
@@ -7197,6 +7222,10 @@ export const ProjectDocument = gql`
  * const { data, loading, error } = useProjectQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */
@@ -7467,8 +7496,8 @@ export type SceneQueryHookResult = ReturnType<typeof useSceneQuery>;
 export type SceneLazyQueryHookResult = ReturnType<typeof useSceneLazyQuery>;
 export type SceneQueryResult = Apollo.QueryResult<SceneQuery, SceneQueryVariables>;
 export const AssetsDocument = gql`
-    query Assets($teamId: ID!) {
-  assets(teamId: $teamId, first: 0, last: 300) {
+    query Assets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
+  assets(teamId: $teamId, keyword: $keyword, sort: $sort, pagination: $pagination) {
     edges {
       cursor
       node {
@@ -7512,6 +7541,9 @@ export const AssetsDocument = gql`
  * const { data, loading, error } = useAssetsQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
+ *      sort: // value for 'sort'
+ *      keyword: // value for 'keyword'
+ *      pagination: // value for 'pagination'
  *   },
  * });
  */

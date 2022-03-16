@@ -5,6 +5,7 @@ import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import SearchBar from "@reearth/components/atoms/SearchBar";
 import Text from "@reearth/components/atoms/Text";
 import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
@@ -15,69 +16,85 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
+import useHooks, { Asset as AssetType, LayoutTypes, SortType } from "./hooks";
 
 export type Asset = AssetType;
 
+export type AssetSortType = SortType;
+
 export type Props = {
+  teamId?: string;
+  initialAssetUrl?: string | null;
+  allowDeletion?: boolean;
   className?: string;
   assets?: Asset[];
-  isMultipleSelectable?: boolean;
-  accept?: string;
-  onCreateAsset?: (files: FileList) => void;
-  onRemove?: (assetIds: string[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
-  selectAsset?: (assets: Asset[]) => void;
+  isLoading?: boolean;
+  isMultipleSelectable?: boolean;
+  accept?: string;
   fileType?: "image" | "video" | "file";
-  isHeightFixed?: boolean;
+  height?: number;
+  hasMoreAssets?: boolean;
+  sort?: { type?: AssetSortType | null; reverse?: boolean };
+  searchTerm?: string;
+  smallCardOnly?: boolean;
+  onCreateAssets?: (files: FileList) => void;
+  onRemove?: (assetIds: string[]) => void;
+  onGetMore?: () => void;
+  onAssetUrlSelect?: (asset?: string) => void;
+  onSelect?: (asset?: Asset) => void;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string) => void;
+  onURLShow?: (assets?: Asset[]) => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
   accept,
-  onCreateAsset,
-  onRemove,
   initialAsset,
   selectedAssets,
-  selectAsset,
   fileType,
-  isHeightFixed,
+  height,
+  hasMoreAssets,
+  isLoading,
+  sort,
+  searchTerm,
+  smallCardOnly,
+  onCreateAssets,
+  onRemove,
+  onGetMore,
+  onAssetUrlSelect,
+  onSelect,
+  onSortChange,
+  onSearch,
 }) => {
   const intl = useIntl();
   const {
     layoutType,
-    setLayoutType,
-    filteredAssets,
-    handleFilterChange,
-    filterSelected,
-    currentSaved,
-    searchResults,
     iconChoice,
-    handleAssetsSelect,
+    deleteModalVisible,
+    sortOptions,
+    handleScroll,
+    setLayoutType,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    deleteModalVisible,
     setDeleteModalVisible,
     handleRemove,
   } = useHooks({
-    assets,
+    sort,
     isMultipleSelectable,
     accept,
-    onCreateAsset,
-    initialAsset,
-    selectAsset,
     selectedAssets,
+    smallCardOnly,
+    onSortChange,
+    onCreateAssets,
+    onAssetUrlSelect,
     onRemove,
+    onSearch,
   });
-
-  const filterOptions: { key: FilterTypes; label: string }[] = [
-    { key: "time", label: intl.formatMessage({ defaultMessage: "Time" }) },
-    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
-    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
-  ];
 
   return (
     <Wrapper>
@@ -109,10 +126,10 @@ const AssetContainer: React.FC<Props> = ({
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
-          <AssetSelect<"time" | "size" | "name">
-            value={filterSelected}
-            items={filterOptions}
-            onChange={handleFilterChange}
+          <AssetSelect<AssetSortType>
+            value={sort?.type ?? "date"}
+            items={sortOptions}
+            onChange={onSortChange}
           />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
@@ -123,21 +140,24 @@ const AssetContainer: React.FC<Props> = ({
             onClick={() => setLayoutType("list")}
             selected={layoutType === "list"}
           />
-          <StyledIcon
-            icon="assetGridSmall"
-            onClick={() => setLayoutType("small")}
-            selected={layoutType === "small"}
-          />
-          <StyledIcon
-            icon="assetGrid"
-            onClick={() => setLayoutType("medium")}
-            selected={layoutType === "medium"}
-          />
+          {smallCardOnly ? (
+            <StyledIcon
+              icon="assetGridSmall"
+              onClick={() => setLayoutType("small")}
+              selected={layoutType === "small"}
+            />
+          ) : (
+            <StyledIcon
+              icon="assetGrid"
+              onClick={() => setLayoutType("medium")}
+              selected={layoutType === "medium"}
+            />
+          )}
         </LayoutButtons>
-        <SearchBar onChange={handleSearch} />
+        <SearchBar value={searchTerm ?? ""} onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper isHeightFixed={isHeightFixed}>
-        {!filteredAssets || filteredAssets.length < 1 ? (
+      <AssetWrapper height={height}>
+        {!isLoading && (!assets || assets.length < 1) ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
               {fileType === "image"
@@ -152,30 +172,32 @@ const AssetContainer: React.FC<Props> = ({
             </TemplateText>
           </Template>
         ) : (
-          <AssetList layoutType={layoutType}>
+          <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
             {layoutType === "list"
-              ? (searchResults || filteredAssets)?.map(a => (
+              ? assets?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    onCheck={() => handleAssetsSelect(a)}
+                    onCheck={() => onSelect?.(a)}
                     selected={selectedAssets?.includes(a)}
-                    checked={currentSaved === a}
+                    checked={initialAsset === a}
                   />
                 ))
-              : (searchResults || filteredAssets)?.map(a => (
+              : assets?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    onCheck={() => handleAssetsSelect(a)}
+                    onCheck={() => onSelect?.(a)}
                     selected={selectedAssets?.includes(a)}
-                    checked={currentSaved === a}
+                    checked={initialAsset === a}
                   />
                 ))}
           </AssetList>
         )}
+        {isLoading && <StyledLoading relative />}
+        {!hasMoreAssets && <Divider margin="2px" />}
         <Divider margin="0" />
       </AssetWrapper>
       <AssetDeleteModal
@@ -191,9 +213,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
-  height: ${({ isHeightFixed }) => (isHeightFixed ? "" : "425px")};
-  min-height: 400px;
+const AssetWrapper = styled.div<{ height?: number }>`
+  max-height: ${({ height }) => height ?? ""}px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -248,6 +269,10 @@ const StyledIcon = styled(Icon)<{ selected?: boolean }>`
     background: ${({ theme }) => theme.main.paleBg};
     color: ${({ theme }) => theme.main.text};
   }
+`;
+
+const StyledLoading = styled(Loading)`
+  margin: 52px auto;
 `;
 
 const Template = styled(Flex)`

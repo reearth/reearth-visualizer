@@ -59,13 +59,13 @@ const TypographyField: React.FC<Props> = ({
   );
 
   const handleChangeColor = useCallback(
-    (hex: string | null) => updateTypography({ color: hex ?? undefined }),
+    (hex: string | undefined) => updateTypography({ color: hex }),
     [updateTypography],
   );
 
   const handleChangeAlign = useCallback(
-    (value: string | null) =>
-      updateTypography({ textAlign: (value ?? undefined) as HorizontalAlignKey | undefined }),
+    (value: string | undefined) =>
+      updateTypography({ textAlign: value as HorizontalAlignKey | undefined }),
     [updateTypography],
   );
 

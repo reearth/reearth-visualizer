@@ -13,7 +13,7 @@ export type Props = {
     // description: string;
     personal?: boolean;
   };
-  updateTeamName?: (name: string) => void;
+  updateTeamName?: (name?: string) => void;
   updateProjectDescription?: (description: string) => void;
   owner?: boolean;
 };

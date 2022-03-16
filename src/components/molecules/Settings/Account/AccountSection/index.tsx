@@ -1,9 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useIntl } from "react-intl";
 
-import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import Text from "@reearth/components/atoms/Text";
 import PasswordModal, {
   PasswordPolicy,
 } from "@reearth/components/molecules/Settings/Account/PasswordModal";
@@ -13,7 +11,7 @@ import Section from "@reearth/components/molecules/Settings/Section";
 import { localesWithLabel } from "@reearth/locale";
 import { styled } from "@reearth/theme";
 
-export type Theme = "DARK" | "LIGHT";
+export type Theme = "dark" | "light" | "default";
 
 export type Props = {
   email?: string;
@@ -22,8 +20,8 @@ export type Props = {
   hasPassword: boolean;
   passwordPolicy?: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
-  updateLanguage?: (lang: string) => void;
-  updateTheme?: (theme: string) => void;
+  updateLanguage?: (lang?: string) => void;
+  updateTheme?: (theme: Theme) => void;
 };
 
 const ProfileSection: React.FC<Props> = ({
@@ -52,8 +50,8 @@ const ProfileSection: React.FC<Props> = ({
 
   const themeItems: { key: Theme; label: string; icon: string }[] = useMemo(
     () => [
-      { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
-      { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+      { key: "dark", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
+      { key: "light", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
     ],
     [intl],
   );
@@ -74,6 +72,14 @@ const ProfileSection: React.FC<Props> = ({
       setIsOpen(false);
     },
     [updatePassword],
+  );
+
+  const handleThemeUpdate = useCallback(
+    (theme?: string) => {
+      if (!theme) return;
+      updateTheme?.(theme as Theme);
+    },
+    [updateTheme],
   );
 
   return (
@@ -99,19 +105,8 @@ const ProfileSection: React.FC<Props> = ({
           dropdownItems={themeItems}
           currentItem={appTheme}
           body={currentThemeLabel}
-          onSubmit={updateTheme}
+          onSubmit={handleThemeUpdate}
         />
-        <Notice>
-          <AlertIcon icon="alert" size={16} />
-          <Message>
-            <StyledText size="xs">
-              {intl.formatMessage({
-                defaultMessage:
-                  "Light theme is still in beta. Some UI may still not be supported (ie. public projects will not use light theme).",
-              })}
-            </StyledText>
-          </Message>
-        </Notice>
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
@@ -133,23 +128,6 @@ const StyledIcon = styled(Icon)`
   &:hover {
     color: ${({ theme }) => theme.main.strongText};
   }
-`;
-
-const AlertIcon = styled(Icon)`
-  color: ${({ theme }) => theme.main.warning};
-`;
-
-const Notice = styled(Flex)`
-  margin-left: 184px;
-`;
-
-const Message = styled.div`
-  max-width: 500px;
-`;
-
-const StyledText = styled(Text)`
-  margin-left: 12px;
-  font-style: italic;
 `;
 
 export default ProfileSection;

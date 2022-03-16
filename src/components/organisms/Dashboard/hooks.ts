@@ -12,13 +12,8 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  useCreateAssetMutation,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
@@ -105,7 +100,7 @@ export default (teamId?: string) => {
   );
 
   const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
@@ -172,26 +167,23 @@ export default (teamId?: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
+  const [assetModalOpened, setOpenAssets] = useState(false);
+  const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
+
+  const toggleAssetModal = useCallback(
+    (b?: boolean) => {
+      if (!b) {
+        setOpenAssets(!assetModalOpened);
+      } else {
+        setOpenAssets(b);
+      }
+    },
+    [assetModalOpened, setOpenAssets],
   );
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const onAssetSelect = useCallback((asset?: string) => {
+    selectAsset(asset);
+  }, []);
 
   return {
     user,
@@ -204,7 +196,9 @@ export default (teamId?: string) => {
     modalShown,
     openModal,
     handleModalClose,
-    createAssets,
-    assets,
+    selectedAsset,
+    assetModalOpened,
+    toggleAssetModal,
+    onAssetSelect,
   };
 };

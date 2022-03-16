@@ -2,13 +2,20 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
+import { useUpdateMeMutation, useProfileQuery, Theme as GQLTheme } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-export enum Theme {
-  Default = "DEFAULT",
-  Light = "LIGHT",
-  Dark = "DARK",
+const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
+  [GQLTheme.Default]: "default",
+  [GQLTheme.Dark]: "dark",
+  [GQLTheme.Light]: "light",
+};
+
+export type Theme = "dark" | "light" | "default";
+
+function toGQLEnum(val?: Theme) {
+  if (!val) return;
+  return (Object.keys(enumTypeMapper) as GQLTheme[]).find(k => enumTypeMapper[k] === val);
 }
 
 export default () => {
@@ -27,7 +34,8 @@ export default () => {
   const [updateMeMutation] = useUpdateMeMutation();
 
   const updateName = useCallback(
-    async (name: string) => {
+    async (name?: string) => {
+      if (!name) return;
       const username = await updateMeMutation({ variables: { name } });
       if (username.errors) {
         setNotification({
@@ -58,7 +66,8 @@ export default () => {
   );
 
   const updateLanguage = useCallback(
-    async (lang: string) => {
+    async (lang?: string) => {
+      if (!lang) return;
       const language = await updateMeMutation({ variables: { lang } });
       if (language.errors) {
         setNotification({
@@ -73,8 +82,8 @@ export default () => {
   );
 
   const updateTheme = useCallback(
-    async (theme: string) => {
-      const newTheme = await updateMeMutation({ variables: { theme: theme as Theme } });
+    async (theme: Theme) => {
+      const newTheme = await updateMeMutation({ variables: { theme: toGQLEnum(theme) } });
       if (newTheme.errors) {
         setNotification({
           type: "error",

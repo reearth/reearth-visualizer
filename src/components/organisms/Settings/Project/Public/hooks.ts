@@ -3,17 +3,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import {
   useProjectQuery,
-  useAssetsQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
-
-import { AssetNodes } from "../hooks";
 
 type Params = {
   projectId: string;
@@ -25,14 +21,13 @@ export default ({ projectId }: Params) => {
 
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProject] = useUpdateProjectMutation();
-  const [createAssetMutation] = useCreateAssetMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
   const [validAlias, setValidAlias] = useState(false);
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
   const teamId = currentTeam?.id;
 
   const { data } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
@@ -109,43 +104,24 @@ export default ({ projectId }: Params) => {
 
   // Public
   const updatePublicTitle = useCallback(
-    (publicTitle: string) => {
-      projectId && updateProject({ variables: { projectId, publicTitle } });
+    (publicTitle?: string) => {
+      if (!projectId || !publicTitle) return;
+      updateProject({ variables: { projectId, publicTitle } });
     },
     [projectId, updateProject],
   );
   const updatePublicDescription = useCallback(
-    (publicDescription: string) => {
-      projectId && updateProject({ variables: { projectId, publicDescription } });
+    (publicDescription?: string) => {
+      if (!projectId || !publicDescription) return;
+      updateProject({ variables: { projectId, publicDescription } });
     },
     [projectId, updateProject],
   );
   const updatePublicImage = useCallback(
-    (publicImage: string | null) => {
+    (publicImage?: string) => {
       projectId && updateProject({ variables: { projectId, publicImage } });
     },
     [projectId, updateProject],
-  );
-
-  // Assets
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
-
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
   );
 
   // Publication
@@ -165,6 +141,19 @@ export default ({ projectId }: Params) => {
     [projectId, publishProjectMutation],
   );
 
+  const [assetModalOpened, setOpenAssets] = useState(false);
+
+  const toggleAssetModal = useCallback(
+    (open?: boolean) => {
+      if (!open) {
+        setOpenAssets(!assetModalOpened);
+      } else {
+        setOpenAssets(open);
+      }
+    },
+    [assetModalOpened, setOpenAssets],
+  );
+
   return {
     currentTeam,
     currentProject,
@@ -180,8 +169,8 @@ export default ({ projectId }: Params) => {
     updatePublicTitle,
     updatePublicDescription,
     updatePublicImage,
-    assets,
-    createAssets,
+    assetModalOpened,
+    toggleAssetModal,
   };
 };
 

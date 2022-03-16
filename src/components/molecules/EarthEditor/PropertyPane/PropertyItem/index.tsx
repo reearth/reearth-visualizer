@@ -20,7 +20,7 @@ import PropertyField, {
   ValueTypes as ValueTypesType,
   LatLng as LatLngType,
   SchemaField as SchemaFieldType,
-  Asset as AssetType,
+  AssetModalProps as AssetModalPropsType,
 } from "../PropertyField";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
@@ -54,7 +54,7 @@ export type SchemaField<T extends ValueType = ValueType> = SchemaFieldType<T> & 
 export type ValueType = ValueTypeType;
 export type ValueTypes = ValueTypesType;
 export type LatLng = LatLngType;
-export type Asset = AssetType;
+export type AssetModalProps = AssetModalPropsType;
 
 export type ItemCommon = {
   id?: string;
@@ -115,8 +115,7 @@ export type Props = {
   | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"
-  | "assets"
-  | "onCreateAsset"
+  | "assetModal"
 > &
   ExtendedFuncProps2<
     Pick<FieldProps, "onChange" | "onRemove" | "onLink" | "onUploadFile" | "onRemoveFile">,

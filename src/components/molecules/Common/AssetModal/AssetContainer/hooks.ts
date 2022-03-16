@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
-export type FilterTypes = "time" | "size" | "name";
+export type SortType = "date" | "name" | "size";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
@@ -14,94 +15,65 @@ export type Asset = {
   contentType: string;
 };
 
+function handleScroll(
+  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+  onLoadMore?: () => void,
+) {
+  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+    onLoadMore?.();
+  }
+}
+
 export default ({
-  assets,
   isMultipleSelectable,
   accept,
-  onCreateAsset,
-  initialAsset,
-  selectAsset,
   selectedAssets,
+  sort,
+  smallCardOnly,
+  onCreateAssets,
+  onAssetUrlSelect,
   onRemove,
+  onSortChange,
+  onSearch,
 }: {
-  assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
-  onCreateAsset?: (files: FileList) => void;
-  initialAsset?: Asset;
-  selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
+  sort?: { type?: SortType | null; reverse?: boolean };
+  smallCardOnly?: boolean;
+  onCreateAssets?: (files: FileList) => void;
+  onAssetUrlSelect?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string | undefined) => void;
 }) => {
-  const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
-  const [currentSaved, setCurrentSaved] = useState(initialAsset);
-  const [reverse, setReverse] = useState(false);
-
-  const [searchResults, setSearchResults] = useState<Asset[]>();
-  const [filterSelected, selectFilter] = useState<FilterTypes>("time");
-
-  const [filteredAssets, setAssets] = useState(assets);
-
+  const intl = useIntl();
+  const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  const handleRemove = useCallback(() => {
-    if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
-      setDeleteModalVisible(false);
-    }
-  }, [onRemove, selectAsset, selectedAssets]);
+  const sortOptions: { key: SortType; label: string }[] = useMemo(
+    () => [
+      { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
+      { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
+      { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+    ],
+    [intl],
+  );
 
   const iconChoice =
-    filterSelected === "name"
-      ? reverse
+    sort?.type === "name"
+      ? sort?.reverse
         ? "filterNameReverse"
         : "filterName"
-      : filterSelected === "size"
-      ? reverse
+      : sort?.type === "size"
+      ? sort?.reverse
         ? "filterSizeReverse"
         : "filterSize"
-      : reverse
+      : sort?.reverse
       ? "filterTimeReverse"
       : "filterTime";
 
-  const handleFilterChange = useCallback(
-    (f: FilterTypes) => {
-      selectFilter(f);
-      setReverse(false);
-      setCurrentSaved(initialAsset);
-      if (!assets) return;
-      const newArray =
-        f === "time"
-          ? [...assets]
-          : [...assets].sort((a: Asset, a2: Asset) => {
-              return f === "name"
-                ? a.name.localeCompare(a2.name)
-                : a[f] < a2[f]
-                ? -1
-                : a[f] > a2[f]
-                ? 1
-                : 0;
-            });
-      setAssets(newArray);
-    },
-    [assets, initialAsset],
-  );
-
-  useEffect(() => {
-    if (!assets) return;
-    handleFilterChange(filterSelected);
-  }, [handleFilterChange, filterSelected, assets]);
-
-  const handleAssetsSelect = (asset: Asset) => {
-    selectedAssets?.includes(asset)
-      ? selectAsset?.(selectedAssets?.filter(a => a !== asset))
-      : selectAsset?.(
-          isMultipleSelectable && selectedAssets ? [...selectedAssets, asset] : [asset],
-        );
-  };
-
-  const handleFileSelect = useFileInput(files => onCreateAsset?.(files), {
+  const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
     accept,
     multiple: isMultipleSelectable,
   });
@@ -110,38 +82,39 @@ export default ({
     handleFileSelect();
   }, [handleFileSelect]);
 
+  const handleRemove = useCallback(() => {
+    if (selectedAssets?.length) {
+      onRemove?.(selectedAssets.map(a => a.id));
+      onAssetUrlSelect?.();
+      setDeleteModalVisible(false);
+    }
+  }, [onRemove, onAssetUrlSelect, selectedAssets]);
+
   const handleReverse = useCallback(() => {
-    setReverse(!reverse);
-    if (!filteredAssets) return;
-    setAssets(filteredAssets.reverse());
-  }, [filteredAssets, reverse]);
+    onSortChange?.(undefined, !sort?.reverse);
+  }, [onSortChange, sort?.reverse]);
 
   const handleSearch = useCallback(
-    (value: string) => {
-      if (!value) {
-        setSearchResults(undefined);
+    (term?: string) => {
+      if (!term || term.length < 1) {
+        onSearch?.(undefined);
       } else {
-        if (!filteredAssets) return;
-        setSearchResults(filteredAssets.filter(a => a.name.toLowerCase().includes(value)));
+        onSearch?.(term);
       }
     },
-    [filteredAssets],
+    [onSearch],
   );
 
   return {
     layoutType,
-    setLayoutType,
-    filteredAssets,
-    handleFilterChange,
-    filterSelected,
-    currentSaved,
-    searchResults,
     iconChoice,
-    handleAssetsSelect,
+    deleteModalVisible,
+    sortOptions,
+    handleScroll,
+    setLayoutType,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    deleteModalVisible,
     setDeleteModalVisible,
     handleRemove,
   };

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, PropsWithChildren } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import TextBox from "@reearth/components/atoms/TextBox";
@@ -8,34 +8,34 @@ import SelectField from "@reearth/components/molecules/Settings/SelectField";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-export type Props = {
+export type Props<T extends string = string> = {
   className?: string;
   title?: React.ReactNode;
-  body?: string;
+  body?: T;
   dropdown?: boolean;
   isImage?: boolean;
   dropdownItems?:
     | {
-        key: string;
+        key: T;
         label: string;
         icon?: string | undefined;
       }[]
     | undefined;
-  currentItem?: string;
+  currentItem?: T;
   imageSrc?: string;
   icon?: string;
   iHeight?: string;
   multilineTextBox?: boolean;
   disabled?: boolean;
-  onSubmit?: (body: string) => void;
+  onSubmit?: (body: T | undefined) => void;
   onEditStart?: () => void;
   onEditCancel?: () => void;
 };
 
-const EditableItem: React.FC<Props> = ({
+export default function EditableItem<T extends string = string>({
   className,
   title,
-  body = "",
+  body,
   dropdown,
   isImage,
   dropdownItems,
@@ -48,7 +48,7 @@ const EditableItem: React.FC<Props> = ({
   onSubmit,
   onEditStart,
   onEditCancel,
-}) => {
+}: PropsWithChildren<Props<T>>): JSX.Element | null {
   const [isEditting, setIsEditting] = useState(false);
   const [inputState, setInputState] = useState(currentItem || body);
 
@@ -115,7 +115,7 @@ const EditableItem: React.FC<Props> = ({
       action={
         !disabled && (
           <ButtonWrapper>
-            {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.("")} />}
+            {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.(undefined)} />}
             <StyledIcon icon="edit" size={20} onClick={startEdit} />
           </ButtonWrapper>
         )
@@ -133,7 +133,7 @@ const EditableItem: React.FC<Props> = ({
       )}
     </Field>
   );
-};
+}
 
 const StyledIcon = styled(Icon)`
   padding: 0;
@@ -158,5 +158,3 @@ const Image = styled.img`
   max-width: 480px;
   width: 75%;
 `;
-
-export default EditableItem;

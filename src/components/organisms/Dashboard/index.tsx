@@ -7,6 +7,7 @@ import Logo from "@reearth/components/molecules/Dashboard/Logo";
 import ProjectList from "@reearth/components/molecules/Dashboard/ProjectList";
 import QuickStart from "@reearth/components/molecules/Dashboard/QuickStart";
 import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
+import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 
 import useHooks from "./hooks";
 
@@ -28,8 +29,10 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     modalShown,
     openModal,
     handleModalClose,
-    createAssets,
-    assets,
+    selectedAsset,
+    assetModalOpened,
+    toggleAssetModal,
+    onAssetSelect,
   } = useHooks(teamId);
 
   return (
@@ -52,8 +55,18 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
       <QuickStart
         onCreateTeam={createTeam}
         onCreateProject={createProject}
-        assets={assets}
-        createAssets={createAssets}
+        selectedAsset={selectedAsset}
+        onAssetSelect={onAssetSelect}
+        toggleAssetModal={toggleAssetModal}
+        assetModal={
+          <AssetModal
+            teamId={teamId}
+            initialAssetUrl={selectedAsset}
+            isOpen={assetModalOpened}
+            onSelect={onAssetSelect}
+            toggleAssetModal={toggleAssetModal}
+          />
+        }
       />
       <Logo />
       <ProjectList projects={projects} />

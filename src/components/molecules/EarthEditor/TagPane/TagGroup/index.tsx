@@ -53,8 +53,8 @@ const TagGroup: React.FC<Props> = ({
   useClickAway(titleRef, () => setEditing(false));
 
   const handleEditTitle = useCallback(
-    (value: string) => {
-      onTitleEdit?.(value);
+    (value: string | undefined) => {
+      onTitleEdit?.(value ?? "");
       setEditing(false);
     },
     [onTitleEdit],

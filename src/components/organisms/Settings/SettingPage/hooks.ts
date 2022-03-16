@@ -60,7 +60,7 @@ export default (params: Params) => {
   }, [currentTeam, setTeam, teams, teamsData?.me]);
 
   const { data } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
