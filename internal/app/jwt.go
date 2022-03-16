@@ -19,6 +19,7 @@ const (
 	debugUserHeader            = "X-Reearth-Debug-User"
 	contextAuth0Sub contextKey = "auth0Sub"
 	contextUser     contextKey = "reearth_user"
+	defaultJWTTTL              = 5 * time.Minute
 )
 
 type MultiValidator []*validator.Validator
@@ -26,15 +27,24 @@ type MultiValidator []*validator.Validator
 func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
 	validators := make([]*validator.Validator, 0, len(providers))
 	for _, p := range providers {
-
 		issuerURL, err := url.Parse(p.ISS)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse the issuer url: %w", err)
 		}
 
-		provider := jwks.NewCachingProvider(issuerURL, time.Duration(*p.TTL)*time.Minute)
+		var ttl time.Duration
+		if p.TTL != nil {
+			ttl = time.Duration(*p.TTL) * time.Minute
+		} else {
+			ttl = defaultJWTTTL
+		}
+		provider := jwks.NewCachingProvider(issuerURL, ttl)
 
-		algorithm := validator.SignatureAlgorithm(*p.ALG)
+		alg := "RS256"
+		if p.ALG != nil && *p.ALG != "" {
+			alg = *p.ALG
+		}
+		algorithm := validator.SignatureAlgorithm(alg)
 
 		v, err := validator.New(
 			provider.KeyFunc,
@@ -64,8 +74,7 @@ func (mv MultiValidator) ValidateToken(ctx context.Context, tokenString string) 
 
 // Validate the access token and inject the user clams into ctx
 func jwtEchoMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
-
-	jwtValidator, err := NewMultiValidator(cfg.Config.Auth)
+	jwtValidator, err := NewMultiValidator(cfg.Config.Auths())
 	if err != nil {
 		log.Fatalf("failed to set up the validator: %v", err)
 	}
@@ -84,7 +93,6 @@ func parseJwtMiddleware() echo.MiddlewareFunc {
 
 			rawClaims := ctx.Value(jwtmiddleware.ContextKey{})
 			if claims, ok := rawClaims.(*validator.ValidatedClaims); ok {
-
 				// attach sub and access token to context
 				ctx = context.WithValue(ctx, contextAuth0Sub, claims.RegisteredClaims.Subject)
 			}

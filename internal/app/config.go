@@ -123,6 +123,34 @@ func (c Config) Print() string {
 	return s
 }
 
+func (c Config) Auths() []AuthConfig {
+	if ac := c.Auth0.AuthConfig(); ac != nil {
+		return append(c.Auth, *ac)
+	}
+	return c.Auth
+}
+
+func (c Auth0Config) AuthConfig() *AuthConfig {
+	domain := c.Domain
+	if c.Domain == "" {
+		return nil
+	}
+	if !strings.HasPrefix(domain, "https://") && !strings.HasPrefix(domain, "http://") {
+		domain = "https://" + domain
+	}
+	if !strings.HasSuffix(domain, "/") {
+		domain = domain + "/"
+	}
+	aud := []string{}
+	if c.Audience != "" {
+		aud = append(aud, c.Audience)
+	}
+	return &AuthConfig{
+		ISS: domain,
+		AUD: aud,
+	}
+}
+
 type AuthConfig struct {
 	ISS string
 	AUD []string
@@ -139,17 +167,6 @@ func (ipd *AuthConfigs) Decode(value string) error {
 	err := json.Unmarshal([]byte(value), &providers)
 	if err != nil {
 		return fmt.Errorf("invalid identity providers json: %w", err)
-	}
-
-	for i := range providers {
-		if providers[i].TTL == nil {
-			providers[i].TTL = new(int)
-			*providers[i].TTL = 5
-		}
-		if providers[i].ALG == nil {
-			providers[i].ALG = new(string)
-			*providers[i].ALG = "RS256"
-		}
 	}
 
 	*ipd = providers
