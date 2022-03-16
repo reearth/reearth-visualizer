@@ -40,6 +40,14 @@ func TestGetE(t *testing.T) {
 func TestAnd(t *testing.T) {
 	assert.Equal(t, bson.M{"x": "y"}, And(bson.M{}, "x", "y"))
 	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "x", "y"))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", nil))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", bson.M(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", bson.D(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", bson.A(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", []bson.M(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", []bson.D(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", []bson.A(nil)))
+	assert.Equal(t, bson.M{"x": "z"}, And(bson.M{"x": "z"}, "", []interface{}(nil)))
 	assert.Equal(t, bson.M{
 		"$and": []interface{}{
 			bson.M{"$or": []bson.M{{"a": "b"}}},

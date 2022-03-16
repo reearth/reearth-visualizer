@@ -105,6 +105,28 @@ func And(filter interface{}, key string, f interface{}) interface{} {
 	if f == nil {
 		return filter
 	}
+	if g, ok := f.(bson.M); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.(bson.D); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.(bson.A); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.([]interface{}); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.([]bson.M); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.([]bson.D); ok && g == nil {
+		return filter
+	}
+	if g, ok := f.([]bson.A); ok && g == nil {
+		return filter
+	}
+
 	if key != "" && getE(filter, key) != nil {
 		return filter
 	}
