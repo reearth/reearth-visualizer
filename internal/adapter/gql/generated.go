@@ -781,7 +781,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets                func(childComplexity int, teamID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		Assets                func(childComplexity int, teamID id.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) int
 		CheckProjectAlias     func(childComplexity int, alias string) int
 		DatasetSchemas        func(childComplexity int, sceneID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
 		Datasets              func(childComplexity int, datasetSchemaID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
@@ -1303,7 +1303,7 @@ type QueryResolver interface {
 	Plugins(ctx context.Context, id []*id.PluginID) ([]*gqlmodel.Plugin, error)
 	Layer(ctx context.Context, id id.ID) (gqlmodel.Layer, error)
 	Scene(ctx context.Context, projectID id.ID) (*gqlmodel.Scene, error)
-	Assets(ctx context.Context, teamID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error)
+	Assets(ctx context.Context, teamID id.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
 	Projects(ctx context.Context, teamID id.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error)
 	DatasetSchemas(ctx context.Context, sceneID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 	Datasets(ctx context.Context, datasetSchemaID id.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error)
@@ -4990,7 +4990,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Assets(childComplexity, args["teamId"].(id.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Query.Assets(childComplexity, args["teamId"].(id.ID), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSortType), args["pagination"].(*gqlmodel.Pagination)), true
 
 	case "Query.checkProjectAlias":
 		if e.complexity.Query.CheckProjectAlias == nil {
@@ -6357,6 +6357,13 @@ type Rect {
   north: Float!
 }
 
+input Pagination{
+  first: Int
+  last: Int
+  after: Cursor
+  before: Cursor
+}
+
 enum TextAlign {
   LEFT
   CENTER
@@ -6403,6 +6410,12 @@ type Asset implements Node {
   url: String!
   contentType: String!
   team: Team @goField(forceResolver: true)
+}
+
+enum AssetSortType {
+  DATE
+  SIZE
+  NAME
 }
 
 # User
@@ -7823,10 +7836,9 @@ type Query {
   scene(projectId: ID!): Scene
   assets(
     teamId: ID!
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
+    keyword: String
+    sort: AssetSortType
+    pagination: Pagination
   ): AssetConnection!
   projects(
     teamId: ID!
@@ -9152,42 +9164,33 @@ func (ec *executionContext) field_Query_assets_args(ctx context.Context, rawArgs
 		}
 	}
 	args["teamId"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+	var arg1 *string
+	if tmp, ok := rawArgs["keyword"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["first"] = arg1
-	var arg2 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+	args["keyword"] = arg1
+	var arg2 *gqlmodel.AssetSortType
+	if tmp, ok := rawArgs["sort"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sort"))
+		arg2, err = ec.unmarshalOAssetSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetSortType(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["last"] = arg2
-	var arg3 *usecase.Cursor
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+	args["sort"] = arg2
+	var arg3 *gqlmodel.Pagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg3, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["after"] = arg3
-	var arg4 *usecase.Cursor
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋusecaseᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg4
+	args["pagination"] = arg3
 	return args, nil
 }
 
@@ -26092,7 +26095,7 @@ func (ec *executionContext) _Query_assets(ctx context.Context, field graphql.Col
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Assets(rctx, args["teamId"].(id.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor))
+		return ec.resolvers.Query().Assets(rctx, args["teamId"].(id.ID), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSortType), args["pagination"].(*gqlmodel.Pagination))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33791,6 +33794,53 @@ func (ec *executionContext) unmarshalInputMovePropertyItemInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj interface{}) (gqlmodel.Pagination, error) {
+	var it gqlmodel.Pagination
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "first":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+			it.First, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "last":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+			it.Last, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "after":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+			it.After, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋusecaseᚐCursor(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "before":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+			it.Before, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋusecaseᚐCursor(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45199,6 +45249,22 @@ func (ec *executionContext) marshalOAsset2ᚖgithubᚗcomᚋreearthᚋreearthᚑ
 	return ec._Asset(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOAssetSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetSortType(ctx context.Context, v interface{}) (*gqlmodel.AssetSortType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.AssetSortType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAssetSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetSortType(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AssetSortType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalOAttachTagItemToGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAttachTagItemToGroupPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AttachTagItemToGroupPayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -45585,6 +45651,14 @@ func (ec *executionContext) marshalONode2githubᚗcomᚋreearthᚋreearthᚑback
 		return graphql.Null
 	}
 	return ec._Node(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination(ctx context.Context, v interface{}) (*gqlmodel.Pagination, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPagination(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOPlugin2ᚖgithubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPlugin(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Plugin) graphql.Marshaler {

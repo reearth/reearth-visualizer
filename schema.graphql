@@ -96,6 +96,13 @@ type Rect {
   north: Float!
 }
 
+input Pagination{
+  first: Int
+  last: Int
+  after: Cursor
+  before: Cursor
+}
+
 enum TextAlign {
   LEFT
   CENTER
@@ -142,6 +149,12 @@ type Asset implements Node {
   url: String!
   contentType: String!
   team: Team @goField(forceResolver: true)
+}
+
+enum AssetSortType {
+  DATE
+  SIZE
+  NAME
 }
 
 # User
@@ -1562,10 +1575,9 @@ type Query {
   scene(projectId: ID!): Scene
   assets(
     teamId: ID!
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
+    keyword: String
+    sort: AssetSortType
+    pagination: Pagination
   ): AssetConnection!
   projects(
     teamId: ID!

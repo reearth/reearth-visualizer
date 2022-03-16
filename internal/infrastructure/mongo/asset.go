@@ -2,8 +2,8 @@ package mongo
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"fmt"
+	"regexp"
 
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase"
@@ -12,6 +12,8 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/log"
 	"github.com/reearth/reearth-backend/pkg/rerror"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type assetRepo struct {
@@ -50,13 +52,22 @@ func (r *assetRepo) FindByIDs(ctx context.Context, ids []id.AssetID) ([]*asset.A
 	return filterAssets(ids, res), nil
 }
 
-func (r *assetRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *assetRepo) FindByTeam(ctx context.Context, id id.TeamID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
-	return r.paginate(ctx, bson.M{
+
+	var filter interface{} = bson.M{
 		"team": id.String(),
-	}, pagination)
+	}
+
+	if uFilter.Keyword != nil {
+		filter = mongodoc.And(filter, "name", bson.M{
+			"$regex": primitive.Regex{Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)), Options: "i"},
+		})
+	}
+
+	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
 func (r *assetRepo) Save(ctx context.Context, asset *asset.Asset) error {
@@ -80,9 +91,15 @@ func (r *assetRepo) init() {
 	}
 }
 
-func (r *assetRepo) paginate(ctx context.Context, filter bson.M, pagination *usecase.Pagination) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *assetRepo) paginate(ctx context.Context, filter interface{}, sort *asset.SortType, pagination *usecase.Pagination) ([]*asset.Asset, *usecase.PageInfo, error) {
+	var sortstr *string
+	if sort != nil {
+		sortstr2 := string(*sort)
+		sortstr = &sortstr2
+	}
+
 	var c mongodoc.AssetConsumer
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), pagination, &c)
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), sortstr, pagination, &c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}

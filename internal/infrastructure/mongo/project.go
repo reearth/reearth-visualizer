@@ -123,7 +123,7 @@ func (r *projectRepo) findOne(ctx context.Context, filter interface{}) (*project
 
 func (r *projectRepo) paginate(ctx context.Context, filter bson.M, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	var c mongodoc.ProjectConsumer
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), pagination, &c)
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, &c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}

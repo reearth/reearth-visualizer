@@ -661,6 +661,13 @@ type PageInfo struct {
 	HasPreviousPage bool            `json:"hasPreviousPage"`
 }
 
+type Pagination struct {
+	First  *int            `json:"first"`
+	Last   *int            `json:"last"`
+	After  *usecase.Cursor `json:"after"`
+	Before *usecase.Cursor `json:"before"`
+}
+
 type Plugin struct {
 	ID                       id.PluginID          `json:"id"`
 	SceneID                  *id.ID               `json:"sceneId"`
@@ -1372,6 +1379,49 @@ type WidgetZone struct {
 	Left   *WidgetSection `json:"left"`
 	Center *WidgetSection `json:"center"`
 	Right  *WidgetSection `json:"right"`
+}
+
+type AssetSortType string
+
+const (
+	AssetSortTypeDate AssetSortType = "DATE"
+	AssetSortTypeSize AssetSortType = "SIZE"
+	AssetSortTypeName AssetSortType = "NAME"
+)
+
+var AllAssetSortType = []AssetSortType{
+	AssetSortTypeDate,
+	AssetSortTypeSize,
+	AssetSortTypeName,
+}
+
+func (e AssetSortType) IsValid() bool {
+	switch e {
+	case AssetSortTypeDate, AssetSortTypeSize, AssetSortTypeName:
+		return true
+	}
+	return false
+}
+
+func (e AssetSortType) String() string {
+	return string(e)
+}
+
+func (e *AssetSortType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AssetSortType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AssetSortType", str)
+	}
+	return nil
+}
+
+func (e AssetSortType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type LayerEncodingFormat string

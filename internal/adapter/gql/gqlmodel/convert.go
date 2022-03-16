@@ -85,3 +85,15 @@ func FromListOperation(op ListOperation) interfaces.ListOperation {
 	}
 	return interfaces.ListOperation("")
 }
+
+func ToPagination(pagination *Pagination) *usecase.Pagination {
+	if pagination == nil {
+		return nil
+	}
+	return &usecase.Pagination{
+		Before: pagination.Before,
+		After:  pagination.After,
+		First:  pagination.First,
+		Last:   pagination.Last,
+	}
+}

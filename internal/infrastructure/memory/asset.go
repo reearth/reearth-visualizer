@@ -2,6 +2,8 @@ package memory
 
 import (
 	"context"
+	"sort"
+	"strings"
 	"sync"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
@@ -59,7 +61,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids []id.AssetID) ([]*asset.Asset
 	return result, nil
 }
 
-func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
@@ -69,9 +71,25 @@ func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecas
 
 	result := []*asset.Asset{}
 	for _, d := range r.data {
-		if d.Team() == id {
+		if d.Team() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
 			result = append(result, d)
 		}
+	}
+
+	if filter.Sort != nil {
+		s := *filter.Sort
+		sort.SliceStable(result, func(i, j int) bool {
+			if s == asset.SortTypeID {
+				return result[i].ID().ID().Compare(result[j].ID().ID()) < 0
+			}
+			if s == asset.SortTypeSize {
+				return result[i].Size() < result[j].Size()
+			}
+			if s == asset.SortTypeName {
+				return strings.Compare(result[i].Name(), result[j].Name()) < 0
+			}
+			return false
+		})
 	}
 
 	var startCursor, endCursor *usecase.Cursor

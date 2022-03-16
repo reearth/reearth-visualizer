@@ -168,7 +168,7 @@ func (r *datasetSchemaRepo) findOne(ctx context.Context, filter interface{}) (*d
 
 func (r *datasetSchemaRepo) paginate(ctx context.Context, filter bson.M, pagination *usecase.Pagination) ([]*dataset.Schema, *usecase.PageInfo, error) {
 	var c mongodoc.DatasetSchemaConsumer
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), pagination, &c)
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, &c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}

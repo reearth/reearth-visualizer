@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
+	"github.com/reearth/reearth-backend/pkg/asset"
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
@@ -32,9 +33,10 @@ func (c *AssetLoader) Fetch(ctx context.Context, ids []id.AssetID) ([]*gqlmodel.
 	return assets, nil
 }
 
-func (c *AssetLoader) FindByTeam(ctx context.Context, teamID id.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
-	p := usecase.NewPagination(first, last, before, after)
-	assets, pi, err := c.usecase.FindByTeam(ctx, id.TeamID(teamID), p, getOperator(ctx))
+func (c *AssetLoader) FindByTeam(ctx context.Context, teamID id.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
+	p := gqlmodel.ToPagination(pagination)
+
+	assets, pi, err := c.usecase.FindByTeam(ctx, id.TeamID(teamID), keyword, sort, p, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
