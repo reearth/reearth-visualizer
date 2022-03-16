@@ -1,23 +1,27 @@
-import { useNavigate } from "@reach/router";
+import { useLocation, useNavigate } from "@reach/router";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
 export default () => {
-  const intl = useIntl();
-  const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
+  const { isAuthenticated, isLoading, error: authError, logout, login } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentTeam, setTeam] = useTeam();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
   const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
+
+  useEffect(() => {
+    if (location.pathname === "/login" && !new URLSearchParams(window.location.search).has("id"))
+      login();
+  }, [login, location.pathname]);
 
   useEffect(() => {
     if (!isAuthenticated || currentTeam || !data || !teamId) return;
@@ -75,20 +79,18 @@ export default () => {
       if (res.status !== 200) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again." }),
+          text: res.data.error,
         });
         return res;
       } else {
         setNotification({
           type: "success",
-          text: intl.formatMessage({
-            defaultMessage: "Successfully sent verification email! Please check your inbox.",
-          }),
+          text: res.data.message,
         });
         return res;
       }
     },
-    [isAuthenticated, setNotification, intl],
+    [isAuthenticated, setNotification],
   );
 
   const handlePasswordResetRequest = useCallback(
@@ -100,20 +102,18 @@ export default () => {
       if (res.status !== 200) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again." }),
+          text: res.data.error,
         });
         return res;
       } else {
         setNotification({
           type: "success",
-          text: intl.formatMessage({
-            defaultMessage: "Successfully sent verification email! Please check your inbox.",
-          }),
+          text: res.data.message,
         });
         return res;
       }
     },
-    [isAuthenticated, setNotification, intl],
+    [isAuthenticated, setNotification],
   );
 
   const handleNewPasswordSubmit = useCallback(
@@ -127,22 +127,17 @@ export default () => {
       if (res.status === 200) {
         setNotification({
           type: "success",
-          text: intl.formatMessage({
-            defaultMessage:
-              "Successfully changed password! Please use your new password next time you login.",
-          }),
+          text: res.data.message,
         });
         navigate("/login");
       } else {
         setNotification({
           type: "error",
-          text: intl.formatMessage({
-            defaultMessage: "Something went wrong. Please try again.",
-          }),
+          text: res.data.error,
         });
       }
     },
-    [isAuthenticated, intl, setNotification, navigate],
+    [isAuthenticated, setNotification, navigate],
   );
 
   return {
