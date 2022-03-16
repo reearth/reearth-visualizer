@@ -177,7 +177,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 			return
 		}
 	} else if isAuth {
-		if *inp.Name == "" {
+		if _, err := mail.ParseAddress(*inp.Name); err == nil || *inp.Name == "" {
 			return nil, nil, interfaces.ErrSignupInvalidName
 		}
 		if _, err := mail.ParseAddress(*inp.Email); err != nil {
@@ -228,28 +228,38 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (u *user.
 
 func (i *User) reearthSignup(ctx context.Context, inp interfaces.SignupParam) (string, string, *user.User, *user.Team, error) {
 	// Check if user email already exists
-	existed, err := i.userRepo.FindByEmail(ctx, *inp.Email)
+	existedByEmail, err := i.userRepo.FindByEmail(ctx, *inp.Email)
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return "", "", nil, nil, err
 	}
 
-	if existed != nil {
-		if existed.Verification().IsVerified() {
-			return "", "", nil, nil, errors.New("existed user email")
-		} else {
-			//	if user exists but not verified -> create a new verification
-			if err := i.CreateVerification(ctx, *inp.Email); err != nil {
-				return "", "", nil, nil, err
-			} else {
-				team, err := i.teamRepo.FindByID(ctx, existed.Team())
-				if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-					return "", "", nil, nil, err
-				}
-				return "", "", existed, team, nil
-			}
+	if existedByEmail != nil {
+		if existedByEmail.Verification() != nil && existedByEmail.Verification().IsVerified() {
+			return "", "", nil, nil, errors.New("existed email")
 		}
+
+		//	if user exists but not verified -> create a new verification
+		if err := i.CreateVerification(ctx, *inp.Email); err != nil {
+			return "", "", nil, nil, err
+		}
+
+		team, err := i.teamRepo.FindByID(ctx, existedByEmail.Team())
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return "", "", nil, nil, err
+		}
+		return "", "", existedByEmail, team, nil
 	}
 
+	existedByName, err := i.userRepo.FindByName(ctx, *inp.Name)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", "", nil, nil, err
+	}
+
+	if existedByName != nil {
+		return "", "", nil, nil, errors.New("taken username")
+	}
+
+	// !existedByName && !existedByEmail
 	return *inp.Name, *inp.Email, nil, nil, nil
 }
 
@@ -304,6 +314,9 @@ func (i *User) GetUserByCredentials(ctx context.Context, inp interfaces.GetUserB
 	}
 	if !matched {
 		return nil, interfaces.ErrSignupInvalidPassword
+	}
+	if u.Verification() == nil || !u.Verification().IsVerified() {
+		return nil, interfaces.ErrNotVerifiedUser
 	}
 	return u, nil
 }
@@ -430,7 +443,15 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		return nil, err
 	}
 
-	if p.Name != nil {
+	if p.Name != nil && *p.Name != u.Name() {
+		// username should not be a valid mail
+		if _, err := mail.ParseAddress(*p.Name); err == nil {
+			return nil, interfaces.ErrSignupInvalidName
+		}
+		// make sure the username is not exists
+		if userByName, _ := i.userRepo.FindByName(ctx, *p.Name); userByName != nil {
+			return nil, interfaces.ErrSignupInvalidName
+		}
 		oldName := u.Name()
 		u.UpdateName(*p.Name)
 
@@ -456,9 +477,18 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		u.UpdateTheme(*p.Theme)
 	}
 
+	if p.Password != nil && u.HasAuthProvider("reearth") {
+		if err := u.SetPassword(*p.Password); err != nil {
+			return nil, err
+		}
+	}
+
 	// Update Auth0 users
 	if p.Name != nil || p.Email != nil || p.Password != nil {
 		for _, a := range u.Auths() {
+			if a.Provider != "auth0" {
+				continue
+			}
 			if _, err := i.authenticator.UpdateUser(gateway.AuthenticatorUpdateUserParam{
 				ID:       a.Sub,
 				Name:     p.Name,

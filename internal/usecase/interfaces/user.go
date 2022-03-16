@@ -18,6 +18,7 @@ var (
 	ErrSignupInvalidSecret             = errors.New("invalid secret")
 	ErrSignupInvalidName               = errors.New("invalid name")
 	ErrInvalidUserEmail                = errors.New("invalid email")
+	ErrNotVerifiedUser                 = errors.New("not verified user")
 	ErrSignupInvalidPassword           = errors.New("invalid password")
 )
 

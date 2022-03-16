@@ -97,6 +97,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
 
+	// authenticated endpoints
 	privateApi := api.Group("", AuthRequiredMiddleware())
 	graphqlAPI(e, privateApi, cfg)
 	privateAPI(e, privateApi, cfg.Repos)

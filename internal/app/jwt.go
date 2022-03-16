@@ -70,7 +70,7 @@ func jwtEchoMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 		log.Fatalf("failed to set up the validator: %v", err)
 	}
 
-	middleware := jwtmiddleware.New(jwtValidator.ValidateToken)
+	middleware := jwtmiddleware.New(jwtValidator.ValidateToken, jwtmiddleware.WithCredentialsOptional(true))
 
 	return echo.WrapMiddleware(middleware.CheckJWT)
 }

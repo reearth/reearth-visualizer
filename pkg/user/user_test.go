@@ -205,6 +205,45 @@ func TestUser_ContainAuth(t *testing.T) {
 	}
 }
 
+func TestUser_HasAuthProvider(t *testing.T) {
+	tests := []struct {
+		Name     string
+		User     *User
+		P        string
+		Expected bool
+	}{
+		{
+			Name:     "nil user",
+			User:     nil,
+			Expected: false,
+		},
+		{
+			Name:     "not existing auth",
+			User:     New().NewID().MustBuild(),
+			P:        "auth0",
+			Expected: false,
+		},
+		{
+			Name: "existing auth",
+			User: New().NewID().Auths([]Auth{{
+				Provider: "xxx",
+				Sub:      "zzz",
+			}}).MustBuild(),
+			P:        "xxx",
+			Expected: true,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+			res := tc.User.HasAuthProvider(tc.P)
+			assert.Equal(t, tc.Expected, res)
+		})
+	}
+}
+
 func TestUser_RemoveAuthByProvider(t *testing.T) {
 	tests := []struct {
 		Name     string

@@ -102,6 +102,18 @@ func (u *User) ContainAuth(a Auth) bool {
 	return false
 }
 
+func (u *User) HasAuthProvider(p string) bool {
+	if u == nil {
+		return false
+	}
+	for _, b := range u.auths {
+		if b.Provider == p {
+			return true
+		}
+	}
+	return false
+}
+
 func (u *User) AddAuth(a Auth) bool {
 	if u == nil {
 		return false

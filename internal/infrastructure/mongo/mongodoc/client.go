@@ -304,24 +304,35 @@ func (c *Client) Paginate(ctx context.Context, col string, filter interface{}, p
 }
 
 func (c *Client) CreateIndex(ctx context.Context, col string, keys []string) []string {
+	return c.CreateUniqueIndex(ctx, col, keys, []string{})
+}
+
+func (c *Client) CreateUniqueIndex(ctx context.Context, col string, keys, uniqueKeys []string) []string {
 	coll := c.Collection(col)
 	indexedKeys := indexes(ctx, coll)
 
-	newIndexes := []mongo.IndexModel{}
+	// store unique keys as map to check them in an efficient way
+	ukm := map[string]struct{}{}
+	for _, k := range append([]string{"id"}, uniqueKeys...) {
+		ukm[k] = struct{}{}
+	}
+
+	var newIndexes []mongo.IndexModel
 	for _, k := range append([]string{"id"}, keys...) {
-		if _, ok := indexedKeys[k]; !ok {
-			indexBg := true
-			unique := k == "id"
-			newIndexes = append(newIndexes, mongo.IndexModel{
-				Keys: map[string]int{
-					k: 1,
-				},
-				Options: &options.IndexOptions{
-					Background: &indexBg,
-					Unique:     &unique,
-				},
-			})
+		if _, ok := indexedKeys[k]; ok {
+			continue
 		}
+		indexBg := true
+		_, isUnique := ukm[k]
+		newIndexes = append(newIndexes, mongo.IndexModel{
+			Keys: map[string]int{
+				k: 1,
+			},
+			Options: &options.IndexOptions{
+				Background: &indexBg,
+				Unique:     &isUnique,
+			},
+		})
 	}
 
 	if len(newIndexes) > 0 {

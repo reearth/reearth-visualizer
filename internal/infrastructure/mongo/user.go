@@ -23,7 +23,7 @@ func NewUser(client *mongodoc.Client) repo.User {
 }
 
 func (r *userRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"email", "auth0sublist"})
+	i := r.client.CreateUniqueIndex(context.Background(), []string{"email", "name", "auth0sublist"}, []string{"name"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "user", i)
 	}
@@ -62,6 +62,11 @@ func (r *userRepo) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.U
 
 func (r *userRepo) FindByEmail(ctx context.Context, email string) (*user.User, error) {
 	filter := bson.D{{Key: "email", Value: email}}
+	return r.findOne(ctx, filter)
+}
+
+func (r *userRepo) FindByName(ctx context.Context, name string) (*user.User, error) {
+	filter := bson.D{{Key: "name", Value: name}}
 	return r.findOne(ctx, filter)
 }
 

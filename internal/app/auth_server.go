@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,12 +14,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-backend/internal/usecase/interactor"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
+	"github.com/reearth/reearth-backend/pkg/log"
 )
 
-var (
+const (
 	loginEndpoint  = "api/login"
 	logoutEndpoint = "api/logout"
 	jwksEndpoint   = ".well-known/jwks.json"
+	authProvider   = "reearth"
 )
 
 func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *ServerConfig) {
@@ -65,7 +66,7 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 		userUsecase.GetUserBySubject,
 	)
 	if err != nil {
-		e.Logger.Fatal(err)
+		log.Fatalf("auth: init failed: %s\n", err)
 	}
 
 	handler, err := op.NewOpenIDProvider(
@@ -78,13 +79,13 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 		op.WithCustomKeysEndpoint(op.NewEndpoint(jwksEndpoint)),
 	)
 	if err != nil {
-		e.Logger.Fatal(fmt.Errorf("auth: init failed: %w", err))
+		log.Fatalf("auth: init failed: %s\n", err)
 	}
 
 	router := handler.HttpHandler().(*mux.Router)
 
 	if err := router.Walk(muxToEchoMapper(r)); err != nil {
-		e.Logger.Fatal(fmt.Errorf("auth: walk failed: %w", err))
+		log.Fatalf("auth: walk failed: %s\n", err)
 	}
 
 	// Actual login endpoint
@@ -178,23 +179,22 @@ type loginForm struct {
 
 func login(ctx context.Context, cfg *ServerConfig, storage op.Storage, userUsecase interfaces.User) func(ctx echo.Context) error {
 	return func(ec echo.Context) error {
-
 		request := new(loginForm)
 		err := ec.Bind(request)
 		if err != nil {
-			ec.Logger().Error("filed to parse login request")
-			return err
+			log.Errorln("auth: filed to parse login request")
+			return ec.Redirect(http.StatusFound, redirectURL(ec.Request().Referer(), !cfg.Debug, "", "Bad request!"))
 		}
 
 		authRequest, err := storage.AuthRequestByID(ctx, request.AuthRequestID)
 		if err != nil {
-			ec.Logger().Error("filed to parse login request")
-			return err
+			log.Errorf("auth: filed to parse login request: %s\n", err)
+			return ec.Redirect(http.StatusFound, redirectURL(ec.Request().Referer(), !cfg.Debug, "", "Bad request!"))
 		}
 
 		if len(request.Email) == 0 || len(request.Password) == 0 {
-			ec.Logger().Error("credentials are not provided")
-			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "invalid login"))
+			log.Errorln("auth: one of credentials are not provided")
+			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "Bad request!"))
 		}
 
 		// check user credentials from db
@@ -203,15 +203,15 @@ func login(ctx context.Context, cfg *ServerConfig, storage op.Storage, userUseca
 			Password: request.Password,
 		})
 		if err != nil {
-			ec.Logger().Error("wrong credentials!")
-			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "invalid login"))
+			log.Errorf("auth: wrong credentials: %s\n", err)
+			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "Login failed; Invalid user ID or password."))
 		}
 
 		// Complete the auth request && set the subject
-		err = storage.(*interactor.AuthStorage).CompleteAuthRequest(ctx, request.AuthRequestID, user.GetAuthByProvider("reearth").Sub)
+		err = storage.(*interactor.AuthStorage).CompleteAuthRequest(ctx, request.AuthRequestID, user.GetAuthByProvider(authProvider).Sub)
 		if err != nil {
-			ec.Logger().Error("failed to complete the auth request !")
-			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "invalid login"))
+			log.Errorf("auth: failed to complete the auth request: %s\n", err)
+			return ec.Redirect(http.StatusFound, redirectURL(authRequest.GetRedirectURI(), !cfg.Debug, request.AuthRequestID, "Bad request!"))
 		}
 
 		return ec.Redirect(http.StatusFound, "/authorize/callback?id="+request.AuthRequestID)

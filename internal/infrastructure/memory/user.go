@@ -107,6 +107,23 @@ func (r *User) FindByEmail(ctx context.Context, email string) (*user.User, error
 	return nil, rerror.ErrNotFound
 }
 
+func (r *User) FindByName(ctx context.Context, name string) (*user.User, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if name == "" {
+		return nil, rerror.ErrInvalidParams
+	}
+
+	for _, u := range r.data {
+		if u.Name() == name {
+			return &u, nil
+		}
+	}
+
+	return nil, rerror.ErrNotFound
+}
+
 func (r *User) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user.User, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

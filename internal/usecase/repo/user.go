@@ -12,6 +12,7 @@ type User interface {
 	FindByID(context.Context, id.UserID) (*user.User, error)
 	FindByAuth0Sub(context.Context, string) (*user.User, error)
 	FindByEmail(context.Context, string) (*user.User, error)
+	FindByName(context.Context, string) (*user.User, error)
 	FindByNameOrEmail(context.Context, string) (*user.User, error)
 	FindByVerification(context.Context, string) (*user.User, error)
 	FindByPasswordResetRequest(context.Context, string) (*user.User, error)

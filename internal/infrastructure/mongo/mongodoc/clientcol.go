@@ -59,3 +59,7 @@ func (c *ClientCollection) RemoveAll(ctx context.Context, f interface{}) error {
 func (c *ClientCollection) CreateIndex(ctx context.Context, keys []string) []string {
 	return c.Client.CreateIndex(ctx, c.CollectionName, keys)
 }
+
+func (c *ClientCollection) CreateUniqueIndex(ctx context.Context, keys, uniqueKeys []string) []string {
+	return c.Client.CreateUniqueIndex(ctx, c.CollectionName, keys, uniqueKeys)
+}
