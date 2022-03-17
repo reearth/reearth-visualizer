@@ -80,11 +80,11 @@ func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRe
 	}
 	c, err := config.LockAndLoad(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("Could not load auth config: %w\n", err)
+		return nil, fmt.Errorf("could not load auth config: %w\n", err)
 	}
 	defer func() {
 		if err := config.Unlock(ctx); err != nil {
-			log.Errorf("auth: Could not release config lock: %s\n", err)
+			log.Errorf("auth: could not release config lock: %s\n", err)
 		}
 	}()
 
@@ -95,7 +95,7 @@ func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRe
 	} else {
 		keyBytes, certBytes, err = generateCert(name)
 		if err != nil {
-			return nil, fmt.Errorf("Could not generate raw cert: %w\n", err)
+			return nil, fmt.Errorf("could not generate raw cert: %w\n", err)
 		}
 		c.Auth = &config2.Auth{
 			Key:  string(keyBytes),
@@ -103,13 +103,14 @@ func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRe
 		}
 
 		if err := config.Save(ctx, c); err != nil {
-			return nil, fmt.Errorf("Could not save raw cert: %w\n", err)
+			return nil, fmt.Errorf("could not save raw cert: %w\n", err)
 		}
+		log.Info("auth: init a new private key and certificate")
 	}
 
 	key, sigKey, keySet, err := initKeys(keyBytes, certBytes)
 	if err != nil {
-		return nil, fmt.Errorf("Fail to init keys: %w\n", err)
+		return nil, fmt.Errorf("could not init keys: %w\n", err)
 	}
 
 	return &AuthStorage{
@@ -126,17 +127,25 @@ func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRe
 }
 
 func initKeys(keyBytes, certBytes []byte) (*rsa.PrivateKey, *jose.SigningKey, *jose.JSONWebKeySet, error) {
-	block, _ := pem.Decode(keyBytes)
-	if block == nil {
+	keyBlock, _ := pem.Decode(keyBytes)
+	if keyBlock == nil {
 		return nil, nil, nil, fmt.Errorf("failed to decode the key bytes")
 	}
-
-	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	key, err := x509.ParsePKCS1PrivateKey(keyBlock.Bytes)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to parse the private key bytes: %w\n", err)
 	}
 
-	cert, err := x509.ParseCertificate(certBytes)
+	var certActualBytes []byte
+	certBlock, _ := pem.Decode(certBytes)
+	if certBlock == nil {
+		certActualBytes = certBytes // backwards compatibility
+	} else {
+		certActualBytes = certBlock.Bytes
+	}
+
+	var cert *x509.Certificate
+	cert, err = x509.ParseCertificate(certActualBytes)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to parse the cert bytes: %w\n", err)
 	}
@@ -175,11 +184,15 @@ func generateCert(name pkix.Name) (keyPem, certPem []byte, err error) {
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 	}
 
-	certPem, err = x509.CreateCertificate(rand.Reader, cert, cert, key.Public(), key)
+	certBytes, err := x509.CreateCertificate(rand.Reader, cert, cert, key.Public(), key)
 	if err != nil {
 		err = fmt.Errorf("failed to create the cert: %w\n", err)
 	}
 
+	certPem = pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: certBytes,
+	})
 	return
 }
 
