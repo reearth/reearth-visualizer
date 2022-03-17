@@ -84,16 +84,20 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}))
 
 	// auth srv
-	auth := e.Group("")
-	authEndPoints(ctx, e, auth, cfg)
+	if !cfg.Config.AuthSrv.Disabled {
+		auth := e.Group("")
+		authEndPoints(ctx, e, auth, cfg)
+	}
 
 	// apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping())
-	api.POST("/signup", Signup())
-	api.POST("/signup/verify", StartSignupVerify())
-	api.POST("/signup/verify/:code", SignupVerify())
-	api.POST("/password-reset", PasswordReset())
+	if cfg.Config.AuthSrv.Disabled {
+		api.POST("/signup", Signup())
+		api.POST("/signup/verify", StartSignupVerify())
+		api.POST("/signup/verify/:code", SignupVerify())
+		api.POST("/password-reset", PasswordReset())
+	}
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
 
@@ -107,7 +111,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/", PublishedIndex())
 
 	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.Auth0)
+	web(e, cfg.Config.Web, cfg.Config.Auths())
 
 	return e
 }

@@ -10,7 +10,7 @@ import (
 
 type WebConfig map[string]string
 
-func web(e *echo.Echo, wc WebConfig, ac Auth0Config) {
+func web(e *echo.Echo, wc WebConfig, a []AuthConfig) {
 	if _, err := os.Stat("web"); err != nil {
 		return // web won't be delivered
 	}
@@ -18,14 +18,17 @@ func web(e *echo.Echo, wc WebConfig, ac Auth0Config) {
 	e.Logger.Info("web: web directory will be delivered\n")
 
 	config := map[string]string{}
-	if ac.Domain != "" {
-		config["auth0Domain"] = ac.Domain
-	}
-	if ac.WebClientID != "" {
-		config["auth0ClientId"] = ac.WebClientID
-	}
-	if ac.Audience != "" {
-		config["auth0Audience"] = ac.Audience
+	if len(a) > 0 {
+		ac := a[0]
+		if ac.ISS != "" {
+			config["auth0Domain"] = ac.ISS
+		}
+		if ac.ClientID != nil {
+			config["auth0ClientId"] = *ac.ClientID
+		}
+		if len(ac.AUD) > 0 {
+			config["auth0Audience"] = ac.AUD[0]
+		}
 	}
 	for k, v := range wc {
 		config[k] = v

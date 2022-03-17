@@ -8,6 +8,8 @@ import (
 	"github.com/caos/oidc/pkg/op"
 )
 
+const ClientID = "01FH69GFQ4DFCXS5XD91JK4HZ1"
+
 type Client struct {
 	id                 string
 	applicationType    op.ApplicationType
@@ -26,7 +28,7 @@ type Client struct {
 
 func NewLocalClient(devMode bool, clientDomain string) op.Client {
 	return &Client{
-		id:              "01FH69GFQ4DFCXS5XD91JK4HZ1",
+		id:              ClientID,
 		applicationType: op.ApplicationTypeWeb,
 		authMethod:      oidc.AuthMethodNone,
 		accessTokenType: op.AccessTokenTypeJWT,

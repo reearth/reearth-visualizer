@@ -63,7 +63,6 @@ var dummyName = pkix.Name{
 }
 
 func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRequest, config repo.Config, getUserBySubject func(context.Context, string) (*user.User, error)) (op.Storage, error) {
-
 	client := auth.NewLocalClient(cfg.Debug, cfg.ClientDomain)
 
 	name := dummyName
@@ -127,7 +126,6 @@ func NewAuthStorage(ctx context.Context, cfg *StorageConfig, request repo.AuthRe
 }
 
 func initKeys(keyBytes, certBytes []byte) (*rsa.PrivateKey, *jose.SigningKey, *jose.JSONWebKeySet, error) {
-
 	block, _ := pem.Decode(keyBytes)
 	if block == nil {
 		return nil, nil, nil, fmt.Errorf("failed to decode the key bytes")
@@ -255,7 +253,6 @@ func (s *AuthStorage) AuthRequestBySubject(ctx context.Context, subject string) 
 }
 
 func (s *AuthStorage) SaveAuthCode(ctx context.Context, requestID, code string) error {
-
 	request, err := s.AuthRequestByID(ctx, requestID)
 	if err != nil {
 		return err
