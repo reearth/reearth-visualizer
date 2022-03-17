@@ -74,9 +74,24 @@ func (f TeamFilter) Clone() TeamFilter {
 }
 
 func (f TeamFilter) Merge(g TeamFilter) TeamFilter {
+	var r, w user.TeamIDList
+	if f.Readable != nil || g.Readable != nil {
+		if f.Readable == nil {
+			r = append(g.Readable[:0:0], g.Readable...)
+		} else {
+			r = append(f.Readable, g.Readable...)
+		}
+	}
+	if f.Writable != nil || g.Writable != nil {
+		if f.Writable == nil {
+			w = append(g.Writable[:0:0], g.Writable...)
+		} else {
+			w = append(f.Writable, g.Writable...)
+		}
+	}
 	return TeamFilter{
-		Readable: append(f.Readable, g.Readable...),
-		Writable: append(f.Writable, g.Writable...),
+		Readable: r,
+		Writable: w,
 	}
 }
 
@@ -101,9 +116,24 @@ func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
 }
 
 func (f SceneFilter) Merge(g SceneFilter) SceneFilter {
+	var r, w scene.IDList
+	if f.Readable != nil || g.Readable != nil {
+		if f.Readable == nil {
+			r = append(g.Readable[:0:0], g.Readable...)
+		} else {
+			r = append(f.Readable, g.Readable...)
+		}
+	}
+	if f.Writable != nil || g.Writable != nil {
+		if f.Writable == nil {
+			w = append(g.Writable[:0:0], g.Writable...)
+		} else {
+			w = append(f.Writable, g.Writable...)
+		}
+	}
 	return SceneFilter{
-		Readable: append(f.Readable, g.Readable...),
-		Writable: append(f.Writable, g.Writable...),
+		Readable: r,
+		Writable: w,
 	}
 }
 
