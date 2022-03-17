@@ -164,11 +164,9 @@ export default (teamId?: string, allowDeletion?: boolean) => {
 
   useEffect(() => {
     return () => {
-      setTimeout(() => {
-        setSort(undefined);
-        setSearchTerm(undefined);
-        gqlCache.evict({ fieldName: "assets" });
-      }, 200);
+      setSort(undefined);
+      setSearchTerm(undefined);
+      gqlCache.evict({ fieldName: "assets" });
     };
   }, [gqlCache]);
 
