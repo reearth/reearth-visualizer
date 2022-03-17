@@ -28,7 +28,7 @@ func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {
 	return &Plugin{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
-		f:    f.Clone(),
+		f:    r.f.Merge(f),
 	}
 }
 

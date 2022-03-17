@@ -35,7 +35,7 @@ func (r *datasetSchemaRepo) init() {
 func (r *datasetSchemaRepo) Filtered(f repo.SceneFilter) repo.DatasetSchema {
 	return &datasetSchemaRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

@@ -34,7 +34,7 @@ func (r *layerRepo) init() {
 func (r *layerRepo) Filtered(f repo.SceneFilter) repo.Layer {
 	return &layerRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

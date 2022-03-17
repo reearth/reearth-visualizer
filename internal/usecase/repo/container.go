@@ -73,6 +73,13 @@ func (f TeamFilter) Clone() TeamFilter {
 	}
 }
 
+func (f TeamFilter) Merge(g TeamFilter) TeamFilter {
+	return TeamFilter{
+		Readable: append(f.Readable, g.Readable...),
+		Writable: append(f.Writable, g.Writable...),
+	}
+}
+
 func (f TeamFilter) CanRead(id user.TeamID) bool {
 	return f.Readable == nil || f.Readable.Includes(id)
 }
@@ -90,6 +97,13 @@ func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
 	return SceneFilter{
 		Readable: o.AllReadableScenes(),
 		Writable: o.AllWritableScenes(),
+	}
+}
+
+func (f SceneFilter) Merge(g SceneFilter) SceneFilter {
+	return SceneFilter{
+		Readable: append(f.Readable, g.Readable...),
+		Writable: append(f.Writable, g.Writable...),
 	}
 }
 

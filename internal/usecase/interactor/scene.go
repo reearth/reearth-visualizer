@@ -74,7 +74,8 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+	team := prj.Team()
+	if err := i.CanWriteTeam(team, operator); err != nil {
 		return nil, err
 	}
 
@@ -100,7 +101,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	g := p.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
 
-	scene, err := scene.New().
+	res, err := scene.New().
 		ID(sceneID).
 		Project(pid).
 		Team(prj.Team()).
@@ -114,24 +115,25 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	}
 
 	if p != nil {
-		err = i.propertyRepo.Save(ctx, p)
+		err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	err = i.layerRepo.Save(ctx, rootLayer)
+	err = i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
 	if err != nil {
 		return nil, err
 	}
 
-	err = i.sceneRepo.Save(ctx, scene)
+	err = i.sceneRepo.Save(ctx, res)
 	if err != nil {
 		return nil, err
 	}
 
+	operator.AddNewScene(team, sceneID)
 	tx.Commit()
-	return scene, err
+	return res, err
 }
 
 func (s *Scene) FetchLock(ctx context.Context, ids []id.SceneID, operator *usecase.Operator) ([]scene.LockMode, error) {

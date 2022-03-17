@@ -18,7 +18,7 @@ var (
 type Team interface {
 	Fetch(context.Context, []id.TeamID, *usecase.Operator) ([]*user.Team, error)
 	FindByUser(context.Context, id.UserID, *usecase.Operator) ([]*user.Team, error)
-	Create(context.Context, string, id.UserID) (*user.Team, error)
+	Create(context.Context, string, id.UserID, *usecase.Operator) (*user.Team, error)
 	Update(context.Context, id.TeamID, string, *usecase.Operator) (*user.Team, error)
 	AddMember(context.Context, id.TeamID, id.UserID, user.Role, *usecase.Operator) (*user.Team, error)
 	RemoveMember(context.Context, id.TeamID, id.UserID, *usecase.Operator) (*user.Team, error)

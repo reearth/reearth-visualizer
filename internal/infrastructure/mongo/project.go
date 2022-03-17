@@ -35,7 +35,7 @@ func (r *projectRepo) init() {
 func (r *projectRepo) Filtered(f repo.TeamFilter) repo.Project {
 	return &projectRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

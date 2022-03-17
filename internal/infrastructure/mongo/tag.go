@@ -34,7 +34,7 @@ func (r *tagRepo) init() {
 func (r *tagRepo) Filtered(f repo.SceneFilter) repo.Tag {
 	return &tagRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

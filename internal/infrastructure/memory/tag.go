@@ -27,7 +27,7 @@ func (r *Tag) Filtered(f repo.SceneFilter) repo.Tag {
 	return &Tag{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
-		f:    f.Clone(),
+		f:    r.f.Merge(f),
 	}
 }
 

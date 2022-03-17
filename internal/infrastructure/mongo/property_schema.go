@@ -34,7 +34,7 @@ func (r *propertySchemaRepo) init() {
 func (r *propertySchemaRepo) Filtered(f repo.SceneFilter) repo.PropertySchema {
 	return &propertySchemaRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

@@ -25,7 +25,7 @@ func NewPropertySchema(fs afero.Fs) repo.PropertySchema {
 func (r *propertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
 	return &propertySchema{
 		fs: r.fs,
-		f:  f.Clone(),
+		f:  r.f.Merge(f),
 	}
 }
 

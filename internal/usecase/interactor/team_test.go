@@ -16,11 +16,10 @@ func TestCreateTeam(t *testing.T) {
 
 	db := memory.InitRepos(nil)
 
-	user := user.New().NewID().Team(id.NewTeamID()).MustBuild()
-
+	u := user.New().NewID().Team(id.NewTeamID()).MustBuild()
 	teamUC := NewTeam(db)
-
-	team, err := teamUC.Create(ctx, "team name", user.ID())
+	op := &usecase.Operator{User: u.ID()}
+	team, err := teamUC.Create(ctx, "team name", u.ID(), op)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, team)
@@ -33,4 +32,5 @@ func TestCreateTeam(t *testing.T) {
 	assert.NotEmpty(t, resultTeams)
 	assert.Equal(t, resultTeams[0].ID(), team.ID())
 	assert.Equal(t, resultTeams[0].Name(), "team name")
+	assert.Equal(t, user.TeamIDList{resultTeams[0].ID()}, op.OwningTeams)
 }

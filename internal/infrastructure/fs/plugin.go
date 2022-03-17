@@ -28,7 +28,7 @@ func NewPlugin(fs afero.Fs) repo.Plugin {
 func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
 	return &pluginRepo{
 		fs: r.fs,
-		f:  f.Clone(),
+		f:  r.f.Merge(f),
 	}
 }
 

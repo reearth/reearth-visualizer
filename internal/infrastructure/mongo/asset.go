@@ -30,7 +30,7 @@ func NewAsset(client *mongodoc.Client) repo.Asset {
 func (r *assetRepo) Filtered(f repo.TeamFilter) repo.Asset {
 	return &assetRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

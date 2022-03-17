@@ -36,7 +36,7 @@ func (r *pluginRepo) init() {
 func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
 	return &pluginRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

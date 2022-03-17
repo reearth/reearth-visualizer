@@ -79,3 +79,15 @@ func (o *Operator) IsWritableScene(scene ...id.SceneID) bool {
 func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
 	return o.AllOwningScenes().Includes(scene...)
 }
+
+func (o *Operator) AddNewTeam(team id.TeamID) {
+	o.OwningTeams = append(o.OwningTeams, team)
+}
+
+func (o *Operator) AddNewScene(team id.TeamID, scene id.SceneID) {
+	if o.IsOwningTeam(team) {
+		o.OwningScenes = append(o.OwningScenes, scene)
+	} else if o.IsWritableTeam(team) {
+		o.WritableScenes = append(o.WritableScenes, scene)
+	}
+}

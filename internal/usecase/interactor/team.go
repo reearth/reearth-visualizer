@@ -45,7 +45,7 @@ func (i *Team) FindByUser(ctx context.Context, id id.UserID, operator *usecase.O
 	return res2, err
 }
 
-func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID) (_ *user.Team, err error) {
+func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID, operator *usecase.Operator) (_ *user.Team, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -64,16 +64,15 @@ func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID) (_ 
 		return nil, err
 	}
 
-	err = team.Members().Join(firstUser, user.RoleOwner)
-	if err != nil {
+	if err := team.Members().Join(firstUser, user.RoleOwner); err != nil {
 		return nil, err
 	}
 
-	err = i.teamRepo.Save(ctx, team)
-	if err != nil {
+	if err := i.teamRepo.Save(ctx, team); err != nil {
 		return nil, err
 	}
 
+	operator.AddNewTeam(team.ID())
 	tx.Commit()
 	return team, nil
 }

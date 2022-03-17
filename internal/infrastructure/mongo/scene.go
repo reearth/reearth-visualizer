@@ -34,7 +34,7 @@ func (r *sceneRepo) init() {
 func (r *sceneRepo) Filtered(f repo.TeamFilter) repo.Scene {
 	return &sceneRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

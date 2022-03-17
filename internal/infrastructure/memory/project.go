@@ -28,7 +28,7 @@ func (r *Project) Filtered(f repo.TeamFilter) repo.Project {
 	return &Project{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
-		f:    f.Clone(),
+		f:    r.f.Merge(f),
 	}
 }
 

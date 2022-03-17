@@ -33,7 +33,7 @@ func (r *propertyRepo) init() {
 func (r *propertyRepo) Filtered(f repo.SceneFilter) repo.Property {
 	return &propertyRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

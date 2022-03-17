@@ -30,7 +30,7 @@ func NewDataset(client *mongodoc.Client) repo.Dataset {
 func (r *datasetRepo) Filtered(f repo.SceneFilter) repo.Dataset {
 	return &datasetRepo{
 		client: r.client,
-		f:      f.Clone(),
+		f:      r.f.Merge(f),
 	}
 }
 

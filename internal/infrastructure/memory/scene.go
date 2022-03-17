@@ -28,7 +28,7 @@ func (r *Scene) Filtered(f repo.TeamFilter) repo.Scene {
 	return &Scene{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
-		f:    f.Clone(),
+		f:    r.f.Merge(f),
 	}
 }
 

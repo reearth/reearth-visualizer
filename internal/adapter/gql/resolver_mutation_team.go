@@ -8,7 +8,7 @@ import (
 )
 
 func (r *mutationResolver) CreateTeam(ctx context.Context, input gqlmodel.CreateTeamInput) (*gqlmodel.CreateTeamPayload, error) {
-	res, err := usecases(ctx).Team.Create(ctx, input.Name, getUser(ctx).ID())
+	res, err := usecases(ctx).Team.Create(ctx, input.Name, getUser(ctx).ID(), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
