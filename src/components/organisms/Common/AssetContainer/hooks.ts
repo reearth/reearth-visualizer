@@ -16,6 +16,15 @@ export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export type AssetSortType = "date" | "name" | "size";
 
+export type Asset = {
+  id: string;
+  teamId: string;
+  name: string;
+  size: number;
+  url: string;
+  contentType: string;
+};
+
 const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
   [GQLSortType.Date]: "date",
   [GQLSortType.Name]: "name",
@@ -43,7 +52,7 @@ function pagination(
   };
 }
 
-export default (teamId?: string, allowDeletion?: boolean) => {
+export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?: boolean) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
@@ -65,6 +74,9 @@ export default (teamId?: string, allowDeletion?: boolean) => {
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
+
+  const initialAsset = assets?.find(a => a.url === initialAssetUrl);
+  const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
 
   const getMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
@@ -133,6 +145,7 @@ export default (teamId?: string, allowDeletion?: boolean) => {
               defaultMessage: "One or more assets were successfully deleted.",
             }),
           });
+          selectAsset([]);
         }
       })(),
     [removeAssetMutation, teamId, setNotification, intl],
@@ -172,10 +185,13 @@ export default (teamId?: string, allowDeletion?: boolean) => {
 
   return {
     assets,
+    initialAsset,
     isLoading: loading ?? isRefetching,
     hasMoreAssets,
     sort,
     searchTerm,
+    selectedAssets,
+    selectAsset,
     getMoreAssets,
     createAssets,
     removeAssets: allowDeletion ? removeAssets : undefined,

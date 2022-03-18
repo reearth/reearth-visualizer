@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 
 import MoleculeAssetContainer, {
   Asset as AssetType,
@@ -24,19 +24,19 @@ const AssetContainer: React.FC<Props> = ({
 }) => {
   const {
     assets,
+    initialAsset,
     isLoading,
     hasMoreAssets,
     sort,
     searchTerm,
+    selectedAssets,
+    selectAsset,
     getMoreAssets,
     createAssets,
     handleSortChange,
     handleSearchTerm,
     removeAssets,
-  } = useHooks(teamId, allowDeletion);
-
-  const initialAsset = assets?.find(a => a.url === initialAssetUrl);
-  const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
+  } = useHooks(teamId, initialAssetUrl, allowDeletion);
 
   useEffect(() => {
     onURLShow?.(assets);
@@ -46,7 +46,7 @@ const AssetContainer: React.FC<Props> = ({
     if (initialAsset) {
       selectAsset([initialAsset]);
     }
-  }, [initialAsset]);
+  }, [selectAsset, initialAsset]);
 
   const filteredAssets = useMemo(() => {
     if (!assets) return;
