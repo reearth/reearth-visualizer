@@ -92,7 +92,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping())
-	if cfg.Config.AuthSrv.Disabled {
+	if !cfg.Config.AuthSrv.Disabled {
 		api.POST("/signup", Signup())
 		api.POST("/signup/verify", StartSignupVerify())
 		api.POST("/signup/verify/:code", SignupVerify())
