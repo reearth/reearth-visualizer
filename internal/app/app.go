@@ -93,7 +93,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping())
-	api.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev), AuthRequiredMiddleware())
+	api.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
 	api.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
