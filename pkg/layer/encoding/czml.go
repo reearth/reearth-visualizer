@@ -20,6 +20,10 @@ func NewCZMLEncoder(w io.Writer) *CZMLEncoder {
 	}
 }
 
+func (*CZMLEncoder) MimeType() string {
+	return "application/json"
+}
+
 func (e *CZMLEncoder) stringToCZMLColor(s string) *czml.Color {
 	c := getColor(s)
 	if c == nil {

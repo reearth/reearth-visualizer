@@ -20,6 +20,10 @@ func NewGeoJSONEncoder(w io.Writer) *GeoJSONEncoder {
 	}
 }
 
+func (*GeoJSONEncoder) MimeType() string {
+	return "application/json"
+}
+
 func (e *GeoJSONEncoder) polygonToFloat(p property.Polygon) [][][]float64 {
 	var res [][][]float64
 	for _, c := range p {

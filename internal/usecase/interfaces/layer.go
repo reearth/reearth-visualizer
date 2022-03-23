@@ -3,6 +3,7 @@ package interfaces
 import (
 	"context"
 	"errors"
+	"io"
 
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/pkg/file"
@@ -92,6 +93,7 @@ type Layer interface {
 	FetchMerged(context.Context, id.LayerID, *id.LayerID, *usecase.Operator) (*layer.Merged, error)
 	FetchParentAndMerged(context.Context, id.LayerID, *usecase.Operator) (*layer.Merged, error)
 	FetchByTag(context.Context, id.TagID, *usecase.Operator) (layer.List, error)
+	Export(context.Context, id.LayerID, string) (io.Reader, string, error)
 	AddItem(context.Context, AddLayerItemInput, *usecase.Operator) (*layer.Item, *layer.Group, error)
 	AddGroup(context.Context, AddLayerGroupInput, *usecase.Operator) (*layer.Group, *layer.Group, error)
 	Remove(context.Context, id.LayerID, *usecase.Operator) (id.LayerID, *layer.Group, error)

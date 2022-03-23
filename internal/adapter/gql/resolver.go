@@ -12,11 +12,8 @@ var ErrNotImplemented = errors.New("not impleneted yet")
 var ErrUnauthorized = errors.New("unauthorized")
 
 type Resolver struct {
-	debug bool
 }
 
-func NewResolver(debug bool) ResolverRoot {
-	return &Resolver{
-		debug: debug,
-	}
+func NewResolver() ResolverRoot {
+	return &Resolver{}
 }

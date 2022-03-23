@@ -5,23 +5,25 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"io"
 	"strings"
 
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/shp"
-	"github.com/reearth/reearth-backend/pkg/tag"
-
 	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/builtin"
 	"github.com/reearth/reearth-backend/pkg/dataset"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/decoding"
+	"github.com/reearth/reearth-backend/pkg/layer/encoding"
 	"github.com/reearth/reearth-backend/pkg/layer/layerops"
+	"github.com/reearth/reearth-backend/pkg/layer/merging"
 	"github.com/reearth/reearth-backend/pkg/plugin"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth-backend/pkg/shp"
+	"github.com/reearth/reearth-backend/pkg/tag"
 )
 
 // TODO: レイヤー作成のドメインロジックがここに多く漏れ出しているのでドメイン層に移す
@@ -120,6 +122,41 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 
 func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.List, error) {
 	return i.layerRepo.FindByTag(ctx, tag)
+}
+
+func (l *Layer) Export(ctx context.Context, lid id.LayerID, ext string) (io.Reader, string, error) {
+	_, err := l.layerRepo.FindByID(ctx, lid)
+	if err != nil {
+		return nil, "", err
+	}
+
+	reader, writer := io.Pipe()
+	e := encoding.EncoderFromExt(strings.ToLower(ext), writer)
+	if e == nil {
+		return nil, "", rerror.ErrNotFound
+	}
+	ex := &encoding.Exporter{
+		Merger: &merging.Merger{
+			LayerLoader:    repo.LayerLoaderFrom(l.layerRepo),
+			PropertyLoader: repo.PropertyLoaderFrom(l.propertyRepo),
+		},
+		Sealer: &merging.Sealer{
+			DatasetGraphLoader: repo.DatasetGraphLoaderFrom(l.datasetRepo),
+		},
+		Encoder: e,
+	}
+
+	go func() {
+		defer func() {
+			_ = writer.Close()
+		}()
+		err = ex.ExportLayerByID(ctx, lid)
+	}()
+
+	if err != nil {
+		return nil, "", err
+	}
+	return reader, e.MimeType(), nil
 }
 
 func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, operator *usecase.Operator) (_ *layer.Item, _ *layer.Group, err error) {

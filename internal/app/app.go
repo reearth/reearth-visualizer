@@ -62,7 +62,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	// GraphQL Playground without auth
-	if cfg.Debug || cfg.Config.Dev {
+	gqldev := cfg.Debug || cfg.Config.Dev
+	if gqldev {
 		e.GET("/graphql", echo.WrapHandler(
 			playground.Handler("reearth-backend", "/api/graphql"),
 		))
@@ -92,19 +93,17 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping())
+	api.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev), AuthRequiredMiddleware())
+	api.GET("/published/:name", PublishedMetadata())
+	api.GET("/published_data/:name", PublishedData())
+	api.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
+
 	if !cfg.Config.AuthSrv.Disabled {
 		api.POST("/signup", Signup())
 		api.POST("/signup/verify", StartSignupVerify())
 		api.POST("/signup/verify/:code", SignupVerify())
 		api.POST("/password-reset", PasswordReset())
 	}
-	api.GET("/published/:name", PublishedMetadata())
-	api.GET("/published_data/:name", PublishedData())
-
-	// authenticated endpoints
-	privateApi := api.Group("", AuthRequiredMiddleware())
-	graphqlAPI(e, privateApi, cfg)
-	privateAPI(e, privateApi, cfg.Repos)
 
 	published := e.Group("/p", PublishedAuthMiddleware())
 	published.GET("/:name/data.json", PublishedData())

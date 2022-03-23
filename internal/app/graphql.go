@@ -7,7 +7,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
-	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth-backend/internal/adapter"
@@ -17,31 +16,22 @@ import (
 
 const enableDataLoaders = true
 
-func graphqlAPI(
-	ec *echo.Echo,
-	r *echo.Group,
-	conf *ServerConfig,
-) {
-	playgroundEnabled := conf.Debug || conf.Config.Dev
-
-	if playgroundEnabled {
-		r.GET("/graphql", echo.WrapHandler(
-			playground.Handler("reearth-backend", "/api/graphql"),
-		))
-	}
-
+func GraphqlAPI(
+	conf GraphQLConfig,
+	dev bool,
+) echo.HandlerFunc {
 	schema := gql.NewExecutableSchema(gql.Config{
-		Resolvers: gql.NewResolver(conf.Debug),
+		Resolvers: gql.NewResolver(),
 	})
 
 	srv := handler.NewDefaultServer(schema)
 	srv.Use(otelgqlgen.Middleware())
 
-	if conf.Config.GraphQL.ComplexityLimit > 0 {
-		srv.Use(extension.FixedComplexityLimit(conf.Config.GraphQL.ComplexityLimit))
+	if conf.ComplexityLimit > 0 {
+		srv.Use(extension.FixedComplexityLimit(conf.ComplexityLimit))
 	}
 
-	if playgroundEnabled {
+	if dev {
 		srv.Use(extension.Introspection{})
 	}
 
@@ -52,14 +42,14 @@ func graphqlAPI(
 	srv.SetErrorPresenter(
 		// show more detailed error messgage in debug mode
 		func(ctx context.Context, e error) *gqlerror.Error {
-			if conf.Debug {
+			if dev {
 				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), e.Error())
 			}
 			return graphql.DefaultErrorPresenter(ctx, e)
 		},
 	)
 
-	r.POST("/graphql", func(c echo.Context) error {
+	return func(c echo.Context) error {
 		req := c.Request()
 		ctx := req.Context()
 
@@ -69,5 +59,5 @@ func graphqlAPI(
 
 		srv.ServeHTTP(c.Response(), c.Request())
 		return nil
-	})
+	}
 }

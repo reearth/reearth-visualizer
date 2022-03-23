@@ -20,6 +20,10 @@ func NewKMLEncoder(w io.Writer) *KMLEncoder {
 	}
 }
 
+func (*KMLEncoder) MimeType() string {
+	return "application/xml"
+}
+
 // generates a composite string of layer name and id to be used as style tag id
 func generateKMLStyleId(id string) string {
 	return id + "_style"

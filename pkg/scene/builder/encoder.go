@@ -12,6 +12,10 @@ type encoder struct {
 	res *layerJSON
 }
 
+func (*encoder) MimeType() string {
+	return "application/json"
+}
+
 func (e *encoder) Result() []*layerJSON {
 	if e == nil || e.res == nil {
 		return nil

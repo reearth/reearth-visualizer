@@ -21,6 +21,10 @@ func NewSHPEncoder(w io.Writer) *SHPEncoder {
 	}
 }
 
+func (*SHPEncoder) MimeType() string {
+	return "application/octet-stream"
+}
+
 func coordsToPoints(coords property.Coordinates) []shp.Point {
 	var res []shp.Point
 	for _, l := range coords {
