@@ -29,6 +29,9 @@ export const defaultConfig: Config = {
   api: "/api",
   plugins: "/plugins",
   published: window.origin + "/p/{}/",
+  auth0Audience: "http://localhost:8080",
+  auth0Domain: "http://localhost:8080",
+  auth0ClientId: "reearth-authsrv-client-default",
 };
 
 export function convertPasswordPolicy(passwordPolicy?: {
