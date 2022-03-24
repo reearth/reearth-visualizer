@@ -89,31 +89,6 @@ func TestBuilder_LangFrom(t *testing.T) {
 	}
 }
 
-func TestBuilder_PasswordReset(t *testing.T) {
-	testCases := []struct {
-		Name, Token string
-		CreatedAt   time.Time
-		Expected    PasswordReset
-	}{
-		{
-			Name:      "Test1",
-			Token:     "xyz",
-			CreatedAt: time.Unix(0, 0),
-			Expected: PasswordReset{
-				Token:     "xyz",
-				CreatedAt: time.Unix(0, 0),
-			},
-		},
-	}
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			// u := New().NewID().PasswordReset(tc.Token, tc.CreatedAt).MustBuild()
-			// assert.Equal(t, tc.Expected, *u.passwordReset)
-		})
-	}
-}
-
 func TestNew(t *testing.T) {
 	b := New()
 	assert.NotNil(t, b)

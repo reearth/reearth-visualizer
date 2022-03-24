@@ -30,7 +30,7 @@ jobs:
           args: --timeout=10m
           skip-go-installation: true
       - name: test
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 15m
       - name: Send coverage report
         uses: codecov/codecov-action@v2
         with:

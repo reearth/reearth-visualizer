@@ -8,7 +8,7 @@ import (
 	"github.com/caos/oidc/pkg/op"
 )
 
-const ClientID = "01FH69GFQ4DFCXS5XD91JK4HZ1"
+const ClientID = "reearth-authsrv-client-default"
 
 type Client struct {
 	id                 string
