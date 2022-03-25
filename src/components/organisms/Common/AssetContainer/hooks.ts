@@ -168,6 +168,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
 
   useEffect(() => {
     if (sort || searchTerm) {
+      selectAsset([]);
       refetch({
         sort: toGQLEnum(sort?.type),
         keyword: searchTerm,

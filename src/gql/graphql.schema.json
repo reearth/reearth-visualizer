@@ -1052,7 +1052,7 @@
       {
         "kind": "SCALAR",
         "name": "Any",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -2257,7 +2257,7 @@
       {
         "kind": "SCALAR",
         "name": "Cursor",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -3106,7 +3106,7 @@
       {
         "kind": "SCALAR",
         "name": "DatasetSchemaFieldID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -3116,7 +3116,7 @@
       {
         "kind": "SCALAR",
         "name": "DateTime",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -3428,7 +3428,7 @@
       {
         "kind": "SCALAR",
         "name": "FileSize",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -4227,7 +4227,7 @@
       {
         "kind": "SCALAR",
         "name": "Lang",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -9398,7 +9398,7 @@
       {
         "kind": "SCALAR",
         "name": "PluginExtensionID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -9449,7 +9449,7 @@
       {
         "kind": "SCALAR",
         "name": "PluginID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -11345,7 +11345,7 @@
       {
         "kind": "SCALAR",
         "name": "PropertySchemaFieldID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -11604,7 +11604,7 @@
       {
         "kind": "SCALAR",
         "name": "PropertySchemaGroupID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -11614,7 +11614,7 @@
       {
         "kind": "SCALAR",
         "name": "PropertySchemaID",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -15196,7 +15196,7 @@
       {
         "kind": "SCALAR",
         "name": "TranslatedString",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -15313,7 +15313,7 @@
       {
         "kind": "SCALAR",
         "name": "URL",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -16828,7 +16828,7 @@
       {
         "kind": "SCALAR",
         "name": "Upload",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -18901,7 +18901,7 @@
       },
       {
         "name": "specifiedBy",
-        "description": "Exposes a URL that specifies the behaviour of this scalar.",
+        "description": "Exposes a URL that specifies the behavior of this scalar.",
         "isRepeatable": false,
         "locations": [
           "SCALAR"
@@ -18909,7 +18909,7 @@
         "args": [
           {
             "name": "url",
-            "description": "The URL that specifies the behaviour of this scalar.",
+            "description": "The URL that specifies the behavior of this scalar.",
             "type": {
               "kind": "NON_NULL",
               "name": null,

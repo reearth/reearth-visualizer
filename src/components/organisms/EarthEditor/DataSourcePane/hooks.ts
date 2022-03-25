@@ -4,23 +4,23 @@ import { useIntl } from "react-intl";
 
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
-  useGetAllDataSetsQuery,
+  useDatasetSchemasQuery,
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification, useSelected } from "@reearth/state";
+import { useSceneId, useNotification, useSelected, useProject } from "@reearth/state";
 
 export default () => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
   const [selected, select] = useSelected();
   const [sceneId] = useSceneId();
+  const [project] = useProject();
 
-  const { data, loading } = useGetAllDataSetsQuery({
-    variables: { sceneId: sceneId || "" },
-    skip: !sceneId,
+  const { data, loading } = useDatasetSchemasQuery({
+    variables: { projectId: project?.id || "", first: 100 },
   });
 
   const datasetMessageSuccess = intl.formatMessage({
@@ -38,15 +38,15 @@ export default () => {
 
   const datasetSchemas = useMemo(
     () =>
-      data
-        ? data.datasetSchemas.nodes
+      data?.scene
+        ? data.scene.datasetSchemas.nodes
             .map<DatasetSchema | undefined>(n =>
               n
                 ? {
                     id: n.id,
                     name: n.name,
                     source: n.source as DataSource,
-                    totalCount: n.datasets.totalCount,
+                    totalCount: data.scene?.datasetSchemas.totalCount,
                   }
                 : undefined,
             )

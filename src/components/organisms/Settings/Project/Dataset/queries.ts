@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client";
 
 export const DATASET_SCHEMAS = gql`
-  query datasetSchemas($projectId: ID!) {
+  query datasetSchemas($projectId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
     scene(projectId: $projectId) {
       id
-      datasetSchemas(first: 100) {
+      datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
         nodes {
           id
           source

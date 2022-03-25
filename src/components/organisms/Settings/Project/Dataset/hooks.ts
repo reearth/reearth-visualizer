@@ -29,7 +29,7 @@ export default (projectId: string) => {
   const sceneId = sceneData?.scene?.id;
 
   const { data } = useDatasetSchemasQuery({
-    variables: { projectId: projectId ?? "" },
+    variables: { projectId: projectId ?? "", first: 100 },
     skip: !projectId,
   });
 

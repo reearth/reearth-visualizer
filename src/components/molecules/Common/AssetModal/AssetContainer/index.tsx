@@ -159,8 +159,12 @@ const AssetContainer: React.FC<Props> = ({
       <AssetWrapper height={height}>
         {!isLoading && (!assets || assets.length < 1) ? (
           <Template align="center" justify="center">
-            <TemplateText size="m">
-              {fileType === "image"
+            <TemplateText size="m" otherProperties={{ textAlign: "center" }}>
+              {searchTerm
+                ? intl.formatMessage({
+                    defaultMessage: "No assets match your search.",
+                  })
+                : fileType === "image"
                 ? intl.formatMessage({
                     defaultMessage:
                       "You haven't uploaded any image assets yet. Click the upload button above and select an image from your computer.",
@@ -172,33 +176,40 @@ const AssetContainer: React.FC<Props> = ({
             </TemplateText>
           </Template>
         ) : (
-          <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
-            {layoutType === "list"
-              ? assets?.map(a => (
-                  <AssetListItem
-                    key={a.id}
-                    asset={a}
-                    onCheck={() => onSelect?.(a)}
-                    selected={selectedAssets?.includes(a)}
-                    checked={initialAsset === a}
-                  />
-                ))
-              : assets?.map(a => (
-                  <AssetCard
-                    key={a.id}
-                    name={a.name}
-                    cardSize={layoutType}
-                    url={a.url}
-                    onCheck={() => onSelect?.(a)}
-                    selected={selectedAssets?.includes(a)}
-                    checked={initialAsset === a}
-                  />
-                ))}
-          </AssetList>
+          <AssetListWrapper
+            onScroll={e => !isLoading && hasMoreAssets && handleScroll(e, onGetMore)}>
+            <AssetList layoutType={layoutType}>
+              {layoutType === "list"
+                ? assets?.map(a => (
+                    <AssetListItem
+                      key={a.id}
+                      asset={a}
+                      onCheck={() => onSelect?.(a)}
+                      selected={selectedAssets?.includes(a)}
+                      checked={initialAsset === a}
+                    />
+                  ))
+                : assets?.map(a => (
+                    <AssetCard
+                      key={a.id}
+                      name={a.name}
+                      cardSize={layoutType}
+                      url={a.url}
+                      onCheck={() => onSelect?.(a)}
+                      selected={selectedAssets?.includes(a)}
+                      checked={initialAsset === a}
+                    />
+                  ))}
+            </AssetList>
+            {isLoading && <StyledLoading relative />}
+          </AssetListWrapper>
         )}
-        {isLoading && <StyledLoading relative />}
-        {!hasMoreAssets && <Divider margin="2px" />}
-        <Divider margin="0" />
+        {assets && assets.length > 0 && (
+          <>
+            {!hasMoreAssets && !isLoading && <Divider margin="2px" />}
+            <Divider margin="0" />
+          </>
+        )}
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
@@ -220,10 +231,18 @@ const AssetWrapper = styled.div<{ height?: number }>`
   justify-content: space-between;
 `;
 
-const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
-  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
+const AssetListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow-y: scroll;
   scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
+  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
   display: grid;
   grid-template-columns: ${({ layoutType }) =>
     (layoutType === "list" && "100%") ||
@@ -238,9 +257,6 @@ const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
     (layoutType === "medium" && "24px") ||
     (layoutType === "small" && "16px")};
   justify-content: space-between;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const NavBar = styled(Flex)`

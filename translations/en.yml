@@ -24,6 +24,52 @@ src:
           '2441159578': Username or email
           '3242928626': Forgot password?
           '3640052215': Continue
+        PasswordReset:
+          '264517228': That password is better.
+          '324893002': No whitespace is allowed.
+          '619506016': That password is okay.
+          '917896132': Enter a new password below to change your password.
+          '1766832403': Email address
+          '2039038750': New password
+          '2195074526': Change Your Password
+          '2326364051': Check Your Email
+          '2751609704': >-
+            Please check your inbox for instructions on how to verify your
+            account.
+          '2842174837': Go back to log in page
+          '2891876584': Go to log in page.
+          '2925394684': Reset password
+          '3253956934': Forgot Your Password?
+          '3497016136': Too short.
+          '3569665907': Resend email
+          '3627357388': That password is great!
+          '3640052215': Continue
+          '3907506757': 'That password confuses me, but might be okay.'
+          '3999962747': >-
+            Enter your email address and we will send you instructions to reset
+            your password.
+          '4066780408': That is terribly long.
+        Signup:
+          '264517228': That password is better.
+          '324893002': No whitespace is allowed.
+          '438034249': Create your Account
+          '619506016': That password is okay.
+          '1135777802': Log in
+          '1766832403': Email address
+          '2237029987': Password
+          '2326364051': Check Your Email
+          '2663586870': Username
+          '2751609704': >-
+            Please check your inbox for instructions on how to verify your
+            account.
+          '2891876584': Go to log in page.
+          '3497016136': Too short.
+          '3569665907': Resend email
+          '3627357388': That password is great!
+          '3640052215': Continue
+          '3907506757': 'That password confuses me, but might be okay.'
+          '3997369764': Already have an account?
+          '4066780408': That is terribly long.
       Common:
         AssetModal:
           '164261147': Select Image
@@ -37,11 +83,11 @@ src:
           '4035057905': Image URL
           '4070151372': Select
           AssetContainer:
+            '1896833639': No assets match your search.
             '1982191895': File size
             '2409515782': >-
               You haven't uploaded any file assets yet. Click the upload button
               above and select a compatible file from your computer.
-            '2854191800': Time
             '2906553848': Alphabetical
             '3057159632': Upload image
             '3645414921': Delete
@@ -49,6 +95,7 @@ src:
               You haven't uploaded any image assets yet. Click the upload button
               above and select an image from your computer.
             '3863945965': Upload file
+            '4205493358': Date
           AssetDeleteModal:
             '2868137144': >-
               Please make sure no selected assets are in use. This cannot be
@@ -219,6 +266,7 @@ src:
               FontSizeField:
                 '3704724012': Font size
             URLField:
+              '1297271134': Field set
               '1533357798': Not set
           PropertyItem:
             '367293545': >-
@@ -283,9 +331,6 @@ src:
             '1840107345': Dark theme
             '2237029987': Password
             '3198092477': Account
-            '3923994153': >-
-              Light theme is still in beta. Some UI may still not be supported
-              (ie. public projects will not use light theme).
           PasswordModal:
             '264517228': That password is better.
             '324893002': No whitespace is allowed.
@@ -467,6 +512,16 @@ src:
         Infobox:
           '3037025019': Move mouse here and click "+" to add content
     organisms:
+      Authentication:
+        RootPage:
+          '3270720423': Your account has been successfully verified! Feel free to login now.
+          '4277505836': Could not verify your signup. Please start the process over.
+      Common:
+        AssetContainer:
+          '325979456': Failed to add one or more assets.
+          '2700226140': Successfully added one or more assets.
+          '3402808678': Failed to delete one or more assets.
+          '4222118896': One or more assets were successfully deleted.
       Dashboard:
         '118901803': Successfully created project!
         '1043376506': Failed to create project.
@@ -553,15 +608,5 @@ src:
           '4038320151': You have changed the workspace's name.
           Asset:
             '165162143': Assets
-            '325979456': Failed to add one or more assets.
-            '2700226140': Successfully added one or more assets.
-            '3402808678': Failed to delete one or more assets.
-            '4222118896': One or more assets were successfully deleted.
         WorkspaceList:
           '541301752': Workspace List
-    pages:
-      Authentication:
-        LoginPage:
-          '1704018516': >-
-            Could not log in. Please make sure you inputted the correct username
-            and password and try again.
