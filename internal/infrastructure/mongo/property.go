@@ -161,10 +161,9 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	if !r.f.CanWrite(sceneID) {
 		return nil
 	}
-	filter := bson.D{
-		{Key: "scene", Value: sceneID.String()},
-	}
-	_, err := r.client.Collection().DeleteMany(ctx, filter)
+	_, err := r.client.Collection().DeleteMany(ctx, bson.M{
+		"scene": sceneID.String(),
+	})
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}

@@ -45,24 +45,17 @@ func (r *sceneRepo) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, 
 }
 
 func (r *sceneRepo) FindByIDs(ctx context.Context, ids []id.SceneID) (scene.List, error) {
-	filter := bson.M{
+	return r.find(ctx, make(scene.List, 0, len(ids)), bson.M{
 		"id": bson.M{
 			"$in": id.SceneIDsToStrings(ids),
 		},
-	}
-	dst := make(scene.List, 0, len(ids))
-	res, err := r.find(ctx, dst, filter)
-	if err != nil {
-		return nil, err
-	}
-	return filterScenes(ids, res), nil
+	})
 }
 
 func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scene, error) {
-	filter := bson.M{
+	return r.findOne(ctx, bson.M{
 		"project": id.String(),
-	}
-	return r.findOne(ctx, filter)
+	})
 }
 
 func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
@@ -109,10 +102,6 @@ func (r *sceneRepo) findOne(ctx context.Context, filter interface{}) (*scene.Sce
 		return nil, err
 	}
 	return c.Rows[0], nil
-}
-
-func filterScenes(ids []id.SceneID, rows scene.List) scene.List {
-	return rows.FilterByID(ids...)
 }
 
 func (r *sceneRepo) readFilter(filter interface{}) interface{} {

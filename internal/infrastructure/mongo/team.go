@@ -30,22 +30,18 @@ func (r *teamRepo) init() {
 }
 
 func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList, error) {
-	filter := bson.D{
-		{Key: "members." + strings.Replace(id.String(), ".", "", -1), Value: bson.D{
-			{Key: "$exists", Value: true},
-		}},
-	}
-	return r.find(ctx, nil, filter)
+	return r.find(ctx, nil, bson.M{
+		"members." + strings.Replace(id.String(), ".", "", -1): bson.M{
+			"$exists": true,
+		},
+	})
 }
 
 func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamList, error) {
-	filter := bson.D{
-		{Key: "id", Value: bson.D{
-			{Key: "$in", Value: id.TeamIDsToStrings(ids)},
-		}},
-	}
 	dst := make([]*user.Team, 0, len(ids))
-	res, err := r.find(ctx, dst, filter)
+	res, err := r.find(ctx, dst, bson.M{
+		"id": bson.M{"$in": id.TeamIDsToStrings(ids)},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +49,7 @@ func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamLis
 }
 
 func (r *teamRepo) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
-	filter := bson.D{
-		{Key: "id", Value: id.String()},
-	}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
 func (r *teamRepo) Save(ctx context.Context, team *user.Team) error {
@@ -89,7 +82,7 @@ func (r *teamRepo) RemoveAll(ctx context.Context, ids []id.TeamID) error {
 	})
 }
 
-func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) (user.TeamList, error) {
+func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter interface{}) (user.TeamList, error) {
 	c := mongodoc.TeamConsumer{
 		Rows: dst,
 	}
@@ -99,7 +92,7 @@ func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter bson.D) (u
 	return c.Rows, nil
 }
 
-func (r *teamRepo) findOne(ctx context.Context, filter bson.D) (*user.Team, error) {
+func (r *teamRepo) findOne(ctx context.Context, filter interface{}) (*user.Team, error) {
 	dst := make([]*user.Team, 0, 1)
 	c := mongodoc.TeamConsumer{
 		Rows: dst,

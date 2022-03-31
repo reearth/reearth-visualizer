@@ -153,10 +153,9 @@ func (r *tagRepo) RemoveAll(ctx context.Context, ids []id.TagID) error {
 }
 
 func (r *tagRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
-	filter := bson.D{
-		{Key: "scene", Value: sceneID.String()},
-	}
-	_, err := r.client.Collection().DeleteMany(ctx, filter)
+	_, err := r.client.Collection().DeleteMany(ctx, bson.M{
+		"scene": sceneID.String(),
+	})
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}

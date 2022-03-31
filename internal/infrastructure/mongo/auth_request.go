@@ -29,18 +29,15 @@ func (r *authRequestRepo) init() {
 }
 
 func (r *authRequestRepo) FindByID(ctx context.Context, id2 id.AuthRequestID) (*auth.Request, error) {
-	filter := bson.D{{Key: "id", Value: id2.String()}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"id": id2.String()})
 }
 
 func (r *authRequestRepo) FindByCode(ctx context.Context, s string) (*auth.Request, error) {
-	filter := bson.D{{Key: "code", Value: s}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"code": s})
 }
 
 func (r *authRequestRepo) FindBySubject(ctx context.Context, s string) (*auth.Request, error) {
-	filter := bson.D{{Key: "subject", Value: s}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"subject": s})
 }
 
 func (r *authRequestRepo) Save(ctx context.Context, request *auth.Request) error {
@@ -49,10 +46,10 @@ func (r *authRequestRepo) Save(ctx context.Context, request *auth.Request) error
 }
 
 func (r *authRequestRepo) Remove(ctx context.Context, requestID id.AuthRequestID) error {
-	return r.client.RemoveOne(ctx, requestID.String())
+	return r.client.RemoveOne(ctx, bson.M{"id": requestID.String()})
 }
 
-func (r *authRequestRepo) findOne(ctx context.Context, filter bson.D) (*auth.Request, error) {
+func (r *authRequestRepo) findOne(ctx context.Context, filter interface{}) (*auth.Request, error) {
 	dst := make([]*auth.Request, 0, 1)
 	c := mongodoc.AuthRequestConsumer{
 		Rows: dst,

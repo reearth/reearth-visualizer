@@ -30,11 +30,10 @@ func (r *userRepo) init() {
 }
 
 func (r *userRepo) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, error) {
-	filter := bson.D{{Key: "id", Value: bson.D{
-		{Key: "$in", Value: id.UserIDsToStrings(ids)},
-	}}}
 	dst := make([]*user.User, 0, len(ids))
-	res, err := r.find(ctx, dst, filter)
+	res, err := r.find(ctx, dst, bson.M{
+		"id": bson.M{"$in": id.UserIDsToStrings(ids)},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -42,52 +41,51 @@ func (r *userRepo) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User
 }
 
 func (r *userRepo) FindByID(ctx context.Context, id2 id.UserID) (*user.User, error) {
-	filter := bson.D{{Key: "id", Value: id.ID(id2).String()}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"id": id2.String()})
 }
 
 func (r *userRepo) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User, error) {
-	filter := bson.D{
-		{Key: "$or", Value: []bson.D{
-			{{Key: "auth0sub", Value: auth0sub}},
-			{{Key: "auth0sublist", Value: bson.D{
-				{Key: "$elemMatch", Value: bson.D{
-					{Key: "$eq", Value: auth0sub},
-				}},
-			}}},
-		}},
-	}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{
+		"$or": []bson.M{
+			{"auth0sub": auth0sub},
+			{
+				"auth0sublist": bson.M{
+					"$elemMatch": bson.M{
+						"$eq": auth0sub,
+					},
+				},
+			},
+		},
+	})
 }
 
 func (r *userRepo) FindByEmail(ctx context.Context, email string) (*user.User, error) {
-	filter := bson.D{{Key: "email", Value: email}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"email": email})
 }
 
 func (r *userRepo) FindByName(ctx context.Context, name string) (*user.User, error) {
-	filter := bson.D{{Key: "name", Value: name}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{"name": name})
 }
 
 func (r *userRepo) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user.User, error) {
-	filter := bson.D{{Key: "$or", Value: []bson.D{
-		{{Key: "email", Value: nameOrEmail}},
-		{{Key: "name", Value: nameOrEmail}},
-	}}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{
+		"$or": []bson.M{
+			{"email": nameOrEmail},
+			{"name": nameOrEmail},
+		},
+	})
 }
 
 func (r *userRepo) FindByVerification(ctx context.Context, code string) (*user.User, error) {
-	filter := bson.D{{Key: "verification.code", Value: code}}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{
+		"verification.code": code,
+	})
 }
 
 func (r *userRepo) FindByPasswordResetRequest(ctx context.Context, pwdResetToken string) (*user.User, error) {
-	filter := bson.D{
-		{Key: "passwordreset.token", Value: pwdResetToken},
-	}
-	return r.findOne(ctx, filter)
+	return r.findOne(ctx, bson.M{
+		"passwordreset.token": pwdResetToken,
+	})
 }
 
 func (r *userRepo) Save(ctx context.Context, user *user.User) error {
@@ -96,10 +94,10 @@ func (r *userRepo) Save(ctx context.Context, user *user.User) error {
 }
 
 func (r *userRepo) Remove(ctx context.Context, user id.UserID) error {
-	return r.client.RemoveOne(ctx, user.String())
+	return r.client.RemoveOne(ctx, bson.M{"id": user.String()})
 }
 
-func (r *userRepo) find(ctx context.Context, dst []*user.User, filter bson.D) ([]*user.User, error) {
+func (r *userRepo) find(ctx context.Context, dst []*user.User, filter interface{}) ([]*user.User, error) {
 	c := mongodoc.UserConsumer{
 		Rows: dst,
 	}
@@ -109,10 +107,9 @@ func (r *userRepo) find(ctx context.Context, dst []*user.User, filter bson.D) ([
 	return c.Rows, nil
 }
 
-func (r *userRepo) findOne(ctx context.Context, filter bson.D) (*user.User, error) {
-	dst := make([]*user.User, 0, 1)
+func (r *userRepo) findOne(ctx context.Context, filter interface{}) (*user.User, error) {
 	c := mongodoc.UserConsumer{
-		Rows: dst,
+		Rows: make([]*user.User, 0, 1),
 	}
 	if err := r.client.FindOne(ctx, filter, &c); err != nil {
 		return nil, err

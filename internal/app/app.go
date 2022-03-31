@@ -97,9 +97,9 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
 	api.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
+	api.POST("/signup", Signup())
 
 	if !cfg.Config.AuthSrv.Disabled {
-		api.POST("/signup", Signup())
 		api.POST("/signup/verify", StartSignupVerify())
 		api.POST("/signup/verify/:code", SignupVerify())
 		api.POST("/password-reset", PasswordReset())
