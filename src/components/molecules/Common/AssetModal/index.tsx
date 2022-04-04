@@ -24,7 +24,7 @@ export type Props = {
   className?: string;
   teamId?: string;
   initialAssetUrl?: string | null;
-  fileType?: "image" | "video";
+  videoOnly?: boolean;
   isOpen?: boolean;
   onSelect?: (value?: string) => void;
   toggleAssetModal?: (b: boolean) => void;
@@ -36,7 +36,7 @@ type Tabs = "assets" | "url";
 const AssetModal: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
-  fileType,
+  videoOnly,
   isOpen,
   onSelect,
   toggleAssetModal,
@@ -56,11 +56,10 @@ const AssetModal: React.FC<Props> = ({
   const handleShowURL = useCallback(
     (assets?: AssetType[]) => {
       setShowURL(
-        fileType === "video" ||
-          !!(selectedAssetUrl && !assets?.some(e => e.url === selectedAssetUrl)),
+        videoOnly || !!(selectedAssetUrl && !assets?.some(e => e.url === selectedAssetUrl)),
       );
     },
-    [fileType, selectedAssetUrl],
+    [videoOnly, selectedAssetUrl],
   );
 
   const handleTextUrlChange = useCallback(text => {
@@ -68,11 +67,9 @@ const AssetModal: React.FC<Props> = ({
   }, []);
 
   const handleSave = useCallback(() => {
-    onSelect?.(
-      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssetUrl) || undefined,
-    );
+    onSelect?.((selectedTab === "url" || videoOnly ? textUrl : selectedAssetUrl) || undefined);
     toggleAssetModal?.(false);
-  }, [toggleAssetModal, selectedAssetUrl, selectedTab, onSelect, fileType, textUrl]);
+  }, [toggleAssetModal, selectedAssetUrl, selectedTab, onSelect, videoOnly, textUrl]);
 
   const resetValues = useCallback(() => {
     setTextUrl(showURL && initialAssetUrl ? initialAssetUrl : undefined);
@@ -90,7 +87,7 @@ const AssetModal: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialAssetUrl, showURL]);
 
-  return fileType === "video" ? (
+  return videoOnly ? (
     <Modal
       size="sm"
       title={intl.formatMessage({ defaultMessage: "Add video URL" })}
@@ -118,11 +115,7 @@ const AssetModal: React.FC<Props> = ({
     </Modal>
   ) : (
     <TabularModal<Tabs>
-      title={
-        fileType === "image"
-          ? intl.formatMessage({ defaultMessage: "Select Image" })
-          : intl.formatMessage({ defaultMessage: "Select Resource" })
-      }
+      title={intl.formatMessage({ defaultMessage: "Select Asset" })}
       isVisible={isOpen}
       size="lg"
       onClose={handleModalClose}
@@ -151,7 +144,6 @@ const AssetModal: React.FC<Props> = ({
           teamId={teamId}
           initialAssetUrl={initialAssetUrl}
           onAssetUrlSelect={selectAssetUrl}
-          fileType={fileType}
           smallCardOnly
           height={425}
           onURLShow={handleShowURL}
@@ -159,11 +151,7 @@ const AssetModal: React.FC<Props> = ({
       )}
       {selectedTab === "url" && (
         <TextContainer align="center">
-          <Title size="s">
-            {fileType === "image"
-              ? intl.formatMessage({ defaultMessage: "Image URL" })
-              : intl.formatMessage({ defaultMessage: "Resource URL" })}
-          </Title>
+          <Title size="s">{intl.formatMessage({ defaultMessage: "Resource URL" })}</Title>
           <StyledTextField value={textUrl} onChange={handleTextUrlChange} />
         </TextContainer>
       )}

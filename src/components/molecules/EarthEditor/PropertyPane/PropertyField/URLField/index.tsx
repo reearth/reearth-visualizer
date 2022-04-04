@@ -10,7 +10,7 @@ import { FieldProps } from "../types";
 
 export type AssetModalProps = Pick<
   AssetModalPropsType,
-  "isOpen" | "fileType" | "initialAssetUrl" | "onSelect" | "toggleAssetModal"
+  "isOpen" | "videoOnly" | "initialAssetUrl" | "onSelect" | "toggleAssetModal"
 >;
 
 export type Props = FieldProps<string> & {
@@ -69,7 +69,7 @@ const URLField: React.FC<Props> = ({
       {AssetModal && (
         <AssetModal
           isOpen={isAssetModalOpen}
-          fileType={fileType}
+          videoOnly={fileType == "video"}
           initialAssetUrl={value}
           onSelect={handleChange}
           toggleAssetModal={handleAssetModalOpen}

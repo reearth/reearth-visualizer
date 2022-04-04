@@ -6,6 +6,10 @@ export type SortType = "date" | "name" | "size";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
+export const fileFormats = ".kml,.czml,.topojson,.geojson,.json,.gltf,.glb";
+
+export const imageFormats = ".jpg,.jpeg,.png,.gif,.svg,.tiff,.webp";
+
 export type Asset = {
   id: string;
   teamId: string;
@@ -26,7 +30,6 @@ function handleScroll(
 
 export default ({
   isMultipleSelectable,
-  accept,
   selectedAssets,
   sort,
   smallCardOnly,
@@ -37,7 +40,6 @@ export default ({
   onSearch,
 }: {
   isMultipleSelectable?: boolean;
-  accept?: string;
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
   smallCardOnly?: boolean;
@@ -74,7 +76,7 @@ export default ({
       : "filterTime";
 
   const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
-    accept,
+    accept: imageFormats + "," + fileFormats,
     multiple: isMultipleSelectable,
   });
 
