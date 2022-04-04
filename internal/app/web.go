@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,7 +22,7 @@ func web(e *echo.Echo, wc WebConfig, a []AuthConfig) {
 	if len(a) > 0 {
 		ac := a[0]
 		if ac.ISS != "" {
-			config["auth0Domain"] = ac.ISS
+			config["auth0Domain"] = strings.TrimSuffix(ac.ISS, "/")
 		}
 		if ac.ClientID != nil {
 			config["auth0ClientId"] = *ac.ClientID

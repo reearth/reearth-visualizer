@@ -7,11 +7,13 @@ import (
 )
 
 func TestAuth0Config_AuthConfig(t *testing.T) {
+	s := ""
 	assert.Equal(t, &AuthConfig{
-		ISS: "https://hoge.auth0.com/",
-		AUD: []string{"xxx"},
+		ISS:      "https://hoge.auth0.com",
+		AUD:      []string{"https://xxx"},
+		ClientID: &s,
 	}, Auth0Config{
-		Domain:   "hoge.auth0.com",
+		Domain:   "hoge.auth0.com/",
 		Audience: "xxx",
 	}.AuthConfig())
 	assert.Nil(t, Auth0Config{

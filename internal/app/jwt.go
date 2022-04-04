@@ -28,6 +28,7 @@ func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
 	validators := make([]*validator.Validator, 0, len(providers))
 	for _, p := range providers {
 		issuerURL, err := url.Parse(p.ISS)
+		issuerURL.Path = "/"
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse the issuer url: %w", err)
 		}
@@ -49,7 +50,7 @@ func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
 		v, err := validator.New(
 			provider.KeyFunc,
 			algorithm,
-			p.ISS,
+			issuerURL.String(),
 			p.AUD,
 		)
 		if err != nil {

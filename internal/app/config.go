@@ -55,6 +55,7 @@ type Auth0Config struct {
 }
 
 type AuthSrvConfig struct {
+	Dev      bool
 	Disabled bool
 	Domain   string `default:"http://localhost:8080"`
 	UIDomain string `default:"http://localhost:8080"`
@@ -131,6 +132,8 @@ func ReadConfig(debug bool) (*Config, error) {
 
 	if debug {
 		c.Dev = true
+	}
+	if c.Dev || c.AuthSrv.Dev {
 		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
 			_ = os.Setenv(op.OidcDevMode, "1")
 		}
@@ -173,24 +176,28 @@ func (c Config) Auths() (res []AuthConfig) {
 	return append(res, c.Auth...)
 }
 
+func prepareUrl(url string) string {
+	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
+		url = "https://" + url
+	}
+	url = strings.TrimSuffix(url, "/")
+	return url
+}
+
 func (c Auth0Config) AuthConfig() *AuthConfig {
-	domain := c.Domain
 	if c.Domain == "" {
 		return nil
 	}
-	if !strings.HasPrefix(domain, "https://") && !strings.HasPrefix(domain, "http://") {
-		domain = "https://" + domain
-	}
-	if !strings.HasSuffix(domain, "/") {
-		domain = domain + "/"
-	}
+	domain := prepareUrl(c.Domain)
+
 	aud := []string{}
 	if c.Audience != "" {
-		aud = append(aud, c.Audience)
+		aud = append(aud, prepareUrl(c.Audience))
 	}
 	return &AuthConfig{
-		ISS: domain,
-		AUD: aud,
+		ISS:      domain,
+		AUD:      aud,
+		ClientID: &c.ClientID,
 	}
 }
 

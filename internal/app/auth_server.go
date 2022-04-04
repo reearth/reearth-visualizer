@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/caos/oidc/pkg/op"
@@ -97,6 +99,14 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 	// can be removed when the mentioned issue is solved
 	// https://github.com/auth0/auth0-spa-js/issues/845
 	r.GET("v2/logout", logout())
+
+	debugMsg := ""
+	if dev, ok := os.LookupEnv(op.OidcDevMode); ok {
+		if isDev, _ := strconv.ParseBool(dev); isDev {
+			debugMsg = " with debug mode"
+		}
+	}
+	log.Infof("auth: oidc server started%s at %s", debugMsg, domain.String())
 }
 
 func setURLVarsHandler() func(handler http.Handler) http.Handler {
