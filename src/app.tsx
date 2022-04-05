@@ -27,6 +27,7 @@ import { Provider as ThemeProvider, styled } from "./theme";
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
 const GraphQLPlayground = React.lazy(() => import("@reearth/components/pages/GraphQLPlayground"));
+const PluginEditor = React.lazy(() => import("./components/pages/PluginEditor"));
 
 const enableWhyDidYouRender = false;
 
@@ -64,6 +65,7 @@ const App: React.FC = () => {
                 <PublicSettings path="/settings/project/:projectId/public" />
                 <DatasetSettings path="/settings/project/:projectId/dataset" />
                 <PluginSettings path="/settings/project/:projectId/plugins" />
+                <PluginEditor path="/plugin-editor" />
                 {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
                 <NotFound default />
               </StyledRouter>
