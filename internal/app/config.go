@@ -18,6 +18,8 @@ const configPrefix = "reearth"
 
 type Config struct {
 	Port           string `default:"8080" envconfig:"PORT"`
+	Host           string `default:"http://localhost:8080"`
+	Host_Web       string
 	Dev            bool
 	DB             string `default:"mongodb://localhost"`
 	Mailer         string
@@ -57,25 +59,32 @@ type Auth0Config struct {
 type AuthSrvConfig struct {
 	Dev      bool
 	Disabled bool
-	Domain   string `default:"http://localhost:8080"`
-	UIDomain string `default:"http://localhost:8080"`
+	Domain   string
 	Key      string
 	DN       *AuthSrvDNConfig
 }
 
-func (c AuthSrvConfig) AuthConfig(debug bool) *AuthConfig {
+func (c AuthSrvConfig) AuthConfig(debug bool, host string) *AuthConfig {
 	if c.Disabled {
 		return nil
 	}
-	var aud []string
-	if debug {
-		aud = []string{"http://localhost:8080", c.Domain}
-	} else {
-		aud = []string{c.Domain}
+
+	domain := c.Domain
+	if domain == "" {
+		domain = host
 	}
+
+	var aud []string
+	if debug && host != "" && c.Domain != "" {
+		aud = []string{host, c.Domain}
+	} else {
+		aud = []string{domain}
+	}
+
 	clientID := auth.ClientID
+
 	return &AuthConfig{
-		ISS:      c.Domain,
+		ISS:      domain,
 		AUD:      aud,
 		ClientID: &clientID,
 	}
@@ -130,10 +139,16 @@ func ReadConfig(debug bool) (*Config, error) {
 	var c Config
 	err := envconfig.Process(configPrefix, &c)
 
+	// defailt values
 	if debug {
 		c.Dev = true
 	}
-	if c.Dev || c.AuthSrv.Dev {
+	if c.Host_Web == "" {
+		c.Host_Web = c.Host
+	}
+
+	// overwrite env vars
+	if !c.AuthSrv.Disabled && (c.Dev || c.AuthSrv.Dev || c.AuthSrv.Domain == "") {
 		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
 			_ = os.Setenv(op.OidcDevMode, "1")
 		}
@@ -170,7 +185,7 @@ func (c Config) Auths() (res []AuthConfig) {
 			ClientID: c.Auth_ClientID,
 		})
 	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev); ac != nil {
+	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
 		res = append(res, *ac)
 	}
 	return append(res, c.Auth...)

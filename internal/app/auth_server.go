@@ -27,7 +27,7 @@ const (
 )
 
 func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *ServerConfig) {
-	userUsecase := interactor.NewUser(cfg.Repos, cfg.Gateways, cfg.Config.SignupSecret, cfg.Config.AuthSrv.UIDomain)
+	userUsecase := interactor.NewUser(cfg.Repos, cfg.Gateways, cfg.Config.SignupSecret, cfg.Config.Host_Web)
 
 	domain, err := url.Parse(cfg.Config.AuthSrv.Domain)
 	if err != nil {
@@ -59,7 +59,7 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 		ctx,
 		&interactor.StorageConfig{
 			Domain:       domain.String(),
-			ClientDomain: cfg.Config.AuthSrv.UIDomain,
+			ClientDomain: cfg.Config.Host_Web,
 			Debug:        cfg.Debug,
 			DN:           dn,
 		},
