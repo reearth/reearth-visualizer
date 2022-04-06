@@ -3,19 +3,21 @@ services:
   reearth-backend:
     build:
       context: .
-      args:
-        TAG: debug
+    image: reearth/reearth-backend:nightly
+    environment:
+      REEARTH_DB: mongodb://reearth-mongo
     ports:
       - '8080:8080'
-    env_file:
-      - ./.env
-    environment:
-      REEARTH_ENV: docker
-      REEARTH_DB_URL: mongodb://reearth-mongo
+    # env_file:
+    #   - ./.env
+    links:
+      - reearth-mongo
     depends_on:
       - reearth-mongo
+    volumes:
+      - ./data:/reearth/data
   reearth-mongo:
-    image: mongo:4.4.6-bionic
+    image: mongo:4.4-focal
     ports:
       - 27017:27017
     volumes:
