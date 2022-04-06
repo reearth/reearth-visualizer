@@ -12,12 +12,12 @@ import (
 
 type AuthRequest struct {
 	lock sync.Mutex
-	data map[id.AuthRequestID]auth.Request
+	data map[id.AuthRequestID]*auth.Request
 }
 
 func NewAuthRequest() repo.AuthRequest {
 	return &AuthRequest{
-		data: map[id.AuthRequestID]auth.Request{},
+		data: map[id.AuthRequestID]*auth.Request{},
 	}
 }
 
@@ -27,9 +27,9 @@ func (r *AuthRequest) FindByID(_ context.Context, id id.AuthRequestID) (*auth.Re
 
 	d, ok := r.data[id]
 	if ok {
-		return &d, nil
+		return d, nil
 	}
-	return &auth.Request{}, rerror.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *AuthRequest) FindByCode(_ context.Context, s string) (*auth.Request, error) {
@@ -38,11 +38,11 @@ func (r *AuthRequest) FindByCode(_ context.Context, s string) (*auth.Request, er
 
 	for _, ar := range r.data {
 		if ar.GetCode() == s {
-			return &ar, nil
+			return ar, nil
 		}
 	}
 
-	return &auth.Request{}, rerror.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *AuthRequest) FindBySubject(_ context.Context, s string) (*auth.Request, error) {
@@ -51,18 +51,18 @@ func (r *AuthRequest) FindBySubject(_ context.Context, s string) (*auth.Request,
 
 	for _, ar := range r.data {
 		if ar.GetSubject() == s {
-			return &ar, nil
+			return ar, nil
 		}
 	}
 
-	return &auth.Request{}, rerror.ErrNotFound
+	return nil, rerror.ErrNotFound
 }
 
 func (r *AuthRequest) Save(_ context.Context, request *auth.Request) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	r.data[request.ID()] = *request
+	r.data[request.ID()] = request
 	return nil
 }
 

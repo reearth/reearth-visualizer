@@ -13,9 +13,18 @@ type ContextKey string
 const (
 	contextUser     ContextKey = "user"
 	contextOperator ContextKey = "operator"
-	contextSub      ContextKey = "sub"
+	contextAuthInfo ContextKey = "authinfo"
 	contextUsecases ContextKey = "usecases"
 )
+
+type AuthInfo struct {
+	Token         string
+	Sub           string
+	Iss           string
+	Name          string
+	Email         string
+	EmailVerified *bool
+}
 
 func AttachUser(ctx context.Context, u *user.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
@@ -25,8 +34,8 @@ func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
 }
 
-func AttachSub(ctx context.Context, sub string) context.Context {
-	return context.WithValue(ctx, contextSub, sub)
+func AttachAuthInfo(ctx context.Context, a AuthInfo) context.Context {
+	return context.WithValue(ctx, contextAuthInfo, a)
 }
 
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
@@ -70,13 +79,13 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
-func Sub(ctx context.Context) string {
-	if v := ctx.Value(contextSub); v != nil {
-		if v2, ok := v.(string); ok {
-			return v2
+func GetAuthInfo(ctx context.Context) *AuthInfo {
+	if v := ctx.Value(contextAuthInfo); v != nil {
+		if v2, ok := v.(AuthInfo); ok {
+			return &v2
 		}
 	}
-	return ""
+	return nil
 }
 
 func Usecases(ctx context.Context) *interfaces.Container {

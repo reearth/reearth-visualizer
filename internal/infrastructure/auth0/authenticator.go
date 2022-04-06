@@ -72,22 +72,6 @@ func New(domain, clientID, clientSecret string) *Auth0 {
 	}
 }
 
-func (a *Auth0) FetchUser(id string) (gateway.AuthenticatorUser, error) {
-	if err := a.updateToken(); err != nil {
-		return gateway.AuthenticatorUser{}, err
-	}
-
-	var r response
-	r, err := a.exec(http.MethodGet, "api/v2/users/"+id, a.token, nil)
-	if err != nil {
-		if !a.disableLogging {
-			log.Errorf("auth0: fetch user: %+v", err)
-		}
-		return gateway.AuthenticatorUser{}, errors.New("failed to auth")
-	}
-	return r.Into(), nil
-}
-
 func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway.AuthenticatorUser, err error) {
 	err = a.updateToken()
 	if err != nil {

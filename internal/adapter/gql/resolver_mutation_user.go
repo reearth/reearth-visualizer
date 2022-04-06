@@ -3,31 +3,44 @@ package gql
 import (
 	"context"
 
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/user"
 )
 
 func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInput) (*gqlmodel.SignupPayload, error) {
-	secret := ""
-	if input.Secret != nil {
-		secret = *input.Secret
+	au := adapter.GetAuthInfo(ctx)
+
+	var u *user.User
+	var t *user.Team
+	var err error
+
+	if au != nil {
+		u, t, err = usecases(ctx).User.SignupOIDC(ctx, interfaces.SignupOIDCParam{
+			Sub:         au.Sub,
+			AccessToken: au.Token,
+			Issuer:      au.Iss,
+			Email:       au.Email,
+			Name:        au.Name,
+			Secret:      input.Secret,
+			User: interfaces.SignupUserParam{
+				Lang:   input.Lang,
+				Theme:  gqlmodel.ToTheme(input.Theme),
+				UserID: id.UserIDFromRefID(input.UserID),
+				TeamID: id.TeamIDFromRefID(input.TeamID),
+			},
+		})
+	} else {
+		return nil, interfaces.ErrOperationDenied
 	}
 
-	sub := getSub(ctx)
-	u, team, err := usecases(ctx).User.Signup(ctx, interfaces.SignupParam{
-		Sub:    &sub,
-		Lang:   input.Lang,
-		Theme:  gqlmodel.ToTheme(input.Theme),
-		UserID: id.UserIDFromRefID(input.UserID),
-		TeamID: id.TeamIDFromRefID(input.TeamID),
-		Secret: &secret,
-	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &gqlmodel.SignupPayload{User: gqlmodel.ToUser(u), Team: gqlmodel.ToTeam(team)}, nil
+	return &gqlmodel.SignupPayload{User: gqlmodel.ToUser(u), Team: gqlmodel.ToTeam(t)}, nil
 }
 
 func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMeInput) (*gqlmodel.UpdateMePayload, error) {

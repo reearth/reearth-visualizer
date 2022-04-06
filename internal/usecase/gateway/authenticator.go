@@ -15,6 +15,5 @@ type AuthenticatorUser struct {
 }
 
 type Authenticator interface {
-	FetchUser(string) (AuthenticatorUser, error)
 	UpdateUser(AuthenticatorUpdateUserParam) (AuthenticatorUser, error)
 }

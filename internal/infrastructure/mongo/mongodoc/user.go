@@ -124,7 +124,7 @@ func (d *UserDocument) Model() (*user1.User, error) {
 		Team(tid).
 		LangFrom(d.Lang).
 		Verification(v).
-		Password(d.Password).
+		EncodedPassword(d.Password).
 		PasswordReset(d.PasswordReset.Model()).
 		Theme(user.Theme(d.Theme)).
 		Build()

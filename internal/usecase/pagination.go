@@ -1,5 +1,7 @@
 package usecase
 
+type Cursor string
+
 type Pagination struct {
 	Before *Cursor
 	After  *Cursor

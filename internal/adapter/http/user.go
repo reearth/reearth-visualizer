@@ -2,9 +2,13 @@ package http
 
 import (
 	"context"
+	"errors"
 
+	"github.com/reearth/reearth-backend/internal/adapter"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/user"
+	"golang.org/x/text/language"
 )
 
 type UserController struct {
@@ -24,13 +28,15 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub      *string    `json:"sub"`
-	Secret   *string    `json:"secret"`
-	UserID   *id.UserID `json:"userId"`
-	TeamID   *id.TeamID `json:"teamId"`
-	Name     *string    `json:"username"`
-	Email    *string    `json:"email"`
-	Password *string    `json:"password"`
+	Sub      *string       `json:"sub"`
+	Secret   *string       `json:"secret"`
+	UserID   *id.UserID    `json:"userId"`
+	TeamID   *id.TeamID    `json:"teamId"`
+	Name     *string       `json:"name"`
+	Email    *string       `json:"email"`
+	Password *string       `json:"password"`
+	Theme    *user.Theme   `json:"theme"`
+	Lang     *language.Tag `json:"lang"`
 }
 
 type CreateVerificationInput struct {
@@ -55,21 +61,50 @@ type SignupOutput struct {
 	Email string `json:"email"`
 }
 
-func (c *UserController) Signup(ctx context.Context, input SignupInput) (interface{}, error) {
-	u, _, err := c.usecase.Signup(ctx, interfaces.SignupParam{
-		Sub:      input.Sub,
-		Secret:   input.Secret,
-		UserID:   input.UserID,
-		TeamID:   input.TeamID,
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: input.Password,
-	})
-	if err != nil {
-		return nil, err
+func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupOutput, error) {
+	var u *user.User
+	var err error
+
+	if au := adapter.GetAuthInfo(ctx); au != nil {
+		var name string
+		if input.Name != nil {
+			name = *input.Name
+		}
+
+		u, _, err = c.usecase.SignupOIDC(ctx, interfaces.SignupOIDCParam{
+			Sub:         au.Sub,
+			AccessToken: au.Token,
+			Issuer:      au.Iss,
+			Email:       au.Email,
+			Name:        name,
+			Secret:      input.Secret,
+			User: interfaces.SignupUserParam{
+				UserID: input.UserID,
+				TeamID: input.TeamID,
+				Lang:   input.Lang,
+				Theme:  input.Theme,
+			},
+		})
+	} else if input.Name != nil && input.Email != nil && input.Password != nil {
+		u, _, err = c.usecase.Signup(ctx, interfaces.SignupParam{
+			Sub:      input.Sub,
+			Name:     *input.Name,
+			Email:    *input.Email,
+			Password: *input.Password,
+			Secret:   input.Secret,
+			User: interfaces.SignupUserParam{
+				UserID: input.UserID,
+				TeamID: input.TeamID,
+				Lang:   input.Lang,
+				Theme:  input.Theme,
+			},
+		})
+	} else {
+		err = errors.New("invalid params")
 	}
-	if err := c.usecase.CreateVerification(ctx, *input.Email); err != nil {
-		return nil, err
+
+	if err != nil {
+		return SignupOutput{}, err
 	}
 
 	return SignupOutput{
@@ -80,16 +115,13 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (interfa
 }
 
 func (c *UserController) CreateVerification(ctx context.Context, input CreateVerificationInput) error {
-	if err := c.usecase.CreateVerification(ctx, input.Email); err != nil {
-		return err
-	}
-	return nil
+	return c.usecase.CreateVerification(ctx, input.Email)
 }
 
-func (c *UserController) VerifyUser(ctx context.Context, code string) (interface{}, error) {
+func (c *UserController) VerifyUser(ctx context.Context, code string) (VerifyUserOutput, error) {
 	u, err := c.usecase.VerifyUser(ctx, code)
 	if err != nil {
-		return nil, err
+		return VerifyUserOutput{}, err
 	}
 	return VerifyUserOutput{
 		UserID:   u.ID().String(),
@@ -98,12 +130,7 @@ func (c *UserController) VerifyUser(ctx context.Context, code string) (interface
 }
 
 func (c *UserController) StartPasswordReset(ctx context.Context, input PasswordResetInput) error {
-	err := c.usecase.StartPasswordReset(ctx, input.Email)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.usecase.StartPasswordReset(ctx, input.Email)
 }
 
 func (c *UserController) PasswordReset(ctx context.Context, input PasswordResetInput) error {

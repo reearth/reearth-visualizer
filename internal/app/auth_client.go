@@ -17,13 +17,11 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			req := c.Request()
 			ctx := req.Context()
 
-			var sub, userID string
+			var userID string
 			var u *user.User
 
 			// get sub from context
-			if s, ok := ctx.Value(contextAuth0Sub).(string); ok {
-				sub = s
-			}
+			au := adapter.GetAuthInfo(ctx)
 			if u, ok := ctx.Value(contextUser).(string); ok {
 				userID = u
 			}
@@ -51,24 +49,20 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 			}
 
-			if u == nil && sub != "" {
+			if u == nil && au != nil {
 				var err error
 				// find user
-				u, err = cfg.Repos.User.FindByAuth0Sub(ctx, sub)
+				u, err = cfg.Repos.User.FindByAuth0Sub(ctx, au.Sub)
 				if err != nil && err != rerror.ErrNotFound {
 					return err
 				}
 			}
 
 			// save a new sub
-			if u != nil && sub != "" {
-				if err := addAuth0SubToUser(ctx, u, user.AuthFromAuth0Sub(sub), cfg); err != nil {
+			if u != nil && au != nil {
+				if err := addAuth0SubToUser(ctx, u, user.AuthFromAuth0Sub(au.Sub), cfg); err != nil {
 					return err
 				}
-			}
-
-			if sub != "" {
-				ctx = adapter.AttachSub(ctx, sub)
 			}
 
 			if u != nil {

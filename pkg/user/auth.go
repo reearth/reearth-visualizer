@@ -12,7 +12,7 @@ type Auth struct {
 func AuthFromAuth0Sub(sub string) Auth {
 	s := strings.SplitN(sub, "|", 2)
 	if len(s) != 2 {
-		return Auth{}
+		return Auth{Provider: "", Sub: sub}
 	}
 	return Auth{Provider: s[0], Sub: sub}
 }

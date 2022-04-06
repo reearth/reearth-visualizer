@@ -50,20 +50,8 @@ func TestAuth0(t *testing.T) {
 	assert.True(t, a.needsFetchToken())
 	a.current = func() time.Time { return current }
 
-	r, err := a.FetchUser(userID)
-	assert.NoError(t, err)
-	assert.Equal(t, gateway.AuthenticatorUser{
-		ID:            userID,
-		Email:         userEmail,
-		EmailVerified: true,
-		Name:          userName,
-	}, r)
-
-	_, err = a.FetchUser(token)
-	assert.Error(t, err)
-
 	newEmail := "xxxxx"
-	r, err = a.UpdateUser(gateway.AuthenticatorUpdateUserParam{
+	r, err := a.UpdateUser(gateway.AuthenticatorUpdateUserParam{
 		ID:    userID,
 		Email: &newEmail,
 	})
@@ -76,9 +64,6 @@ func TestAuth0(t *testing.T) {
 	}, r)
 
 	a.current = func() time.Time { return current2 }
-	_, err = a.FetchUser(token + "a")
-	assert.Error(t, err)
-	assert.Equal(t, current2.Add(time.Second*expiresIn), a.expireAt)
 }
 
 func res(i interface{}) io.ReadCloser {

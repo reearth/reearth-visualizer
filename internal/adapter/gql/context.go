@@ -39,10 +39,6 @@ func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
 }
 
-func getSub(ctx context.Context) string {
-	return adapter.Sub(ctx)
-}
-
 func usecases(ctx context.Context) *interfaces.Container {
 	return adapter.Usecases(ctx)
 }

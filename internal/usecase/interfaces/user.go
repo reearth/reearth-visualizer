@@ -20,18 +20,33 @@ var (
 	ErrInvalidUserEmail                = errors.New("invalid email")
 	ErrNotVerifiedUser                 = errors.New("not verified user")
 	ErrSignupInvalidPassword           = errors.New("invalid password")
+	ErrUserAlreadyExists               = errors.New("user already exists")
 )
 
 type SignupParam struct {
-	Sub      *string
-	UserID   *id.UserID
+	Sub      *string // required by Auth0
+	Email    string
+	Name     string
+	Password string
 	Secret   *string
-	Name     *string
-	Email    *string
-	Password *string
-	Lang     *language.Tag
-	Theme    *user.Theme
-	TeamID   *id.TeamID
+	User     SignupUserParam
+}
+
+type SignupOIDCParam struct {
+	AccessToken string
+	Issuer      string
+	Sub         string
+	Email       string
+	Name        string
+	Secret      *string
+	User        SignupUserParam
+}
+
+type SignupUserParam struct {
+	UserID *id.UserID
+	Lang   *language.Tag
+	Theme  *user.Theme
+	TeamID *id.TeamID
 }
 
 type GetUserByCredentials struct {
@@ -51,6 +66,7 @@ type UpdateMeParam struct {
 type User interface {
 	Fetch(context.Context, []id.UserID, *usecase.Operator) ([]*user.User, error)
 	Signup(context.Context, SignupParam) (*user.User, *user.Team, error)
+	SignupOIDC(context.Context, SignupOIDCParam) (*user.User, *user.Team, error)
 	CreateVerification(context.Context, string) error
 	VerifyUser(context.Context, string) (*user.User, error)
 	GetUserByCredentials(context.Context, GetUserByCredentials) (*user.User, error)

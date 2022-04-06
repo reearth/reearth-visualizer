@@ -16,7 +16,7 @@ func TestCreateTeam(t *testing.T) {
 
 	db := memory.InitRepos(nil)
 
-	u := user.New().NewID().Team(id.NewTeamID()).MustBuild()
+	u := user.New().NewID().Email("aaa@bbb.com").Team(id.NewTeamID()).MustBuild()
 	teamUC := NewTeam(db)
 	op := &usecase.Operator{User: u.ID()}
 	team, err := teamUC.Create(ctx, "team name", u.ID(), op)

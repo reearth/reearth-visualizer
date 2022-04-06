@@ -84,7 +84,7 @@ func TestUser_AddAuth(t *testing.T) {
 		},
 		{
 			Name: "add new auth",
-			User: New().NewID().MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
 			A: Auth{
 				Provider: "xxx",
 				Sub:      "zzz",
@@ -93,7 +93,7 @@ func TestUser_AddAuth(t *testing.T) {
 		},
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -129,7 +129,7 @@ func TestUser_RemoveAuth(t *testing.T) {
 		},
 		{
 			Name: "remove auth0",
-			User: New().NewID().MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
 			A: Auth{
 				Provider: "auth0",
 				Sub:      "zzz",
@@ -138,7 +138,7 @@ func TestUser_RemoveAuth(t *testing.T) {
 		},
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -174,7 +174,7 @@ func TestUser_ContainAuth(t *testing.T) {
 		},
 		{
 			Name: "not existing auth",
-			User: New().NewID().MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
 			A: Auth{
 				Provider: "auth0",
 				Sub:      "zzz",
@@ -183,7 +183,7 @@ func TestUser_ContainAuth(t *testing.T) {
 		},
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -219,13 +219,13 @@ func TestUser_HasAuthProvider(t *testing.T) {
 		},
 		{
 			Name:     "not existing auth",
-			User:     New().NewID().MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
 			P:        "auth0",
 			Expected: false,
 		},
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -258,13 +258,13 @@ func TestUser_RemoveAuthByProvider(t *testing.T) {
 		},
 		{
 			Name:     "remove auth0",
-			User:     New().NewID().MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Provider: "auth0",
 			Expected: false,
 		},
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -284,7 +284,7 @@ func TestUser_RemoveAuthByProvider(t *testing.T) {
 }
 
 func TestUser_ClearAuths(t *testing.T) {
-	u := New().NewID().Auths([]Auth{{
+	u := New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 		Provider: "xxx",
 		Sub:      "zzz",
 	}}).MustBuild()
@@ -298,26 +298,27 @@ func TestUser_Auths(t *testing.T) {
 }
 
 func TestUser_UpdateEmail(t *testing.T) {
-	u := New().NewID().MustBuild()
-	u.UpdateEmail("ff@xx.zz")
-	assert.Equal(t, "ff@xx.zz", u.Email())
+	u := New().NewID().Email("abc@abc.com").MustBuild()
+	assert.NoError(t, u.UpdateEmail("abc@xyz.com"))
+	assert.Equal(t, "abc@xyz.com", u.Email())
+	assert.Error(t, u.UpdateEmail("abcxyz"))
 }
 
 func TestUser_UpdateLang(t *testing.T) {
-	u := New().NewID().MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").MustBuild()
 	u.UpdateLang(language.Make("en"))
 	assert.Equal(t, language.Make("en"), u.Lang())
 }
 
 func TestUser_UpdateTeam(t *testing.T) {
 	tid := NewTeamID()
-	u := New().NewID().MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").MustBuild()
 	u.UpdateTeam(tid)
 	assert.Equal(t, tid, u.Team())
 }
 
 func TestUser_UpdateName(t *testing.T) {
-	u := New().NewID().MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").MustBuild()
 	u.UpdateName("xxx")
 	assert.Equal(t, "xxx", u.Name())
 }
@@ -331,7 +332,7 @@ func TestUser_GetAuthByProvider(t *testing.T) {
 	}{
 		{
 			Name: "existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -343,7 +344,7 @@ func TestUser_GetAuthByProvider(t *testing.T) {
 		},
 		{
 			Name: "not existing auth",
-			User: New().NewID().Auths([]Auth{{
+			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
 				Provider: "xxx",
 				Sub:      "zzz",
 			}}).MustBuild(),
@@ -362,10 +363,15 @@ func TestUser_GetAuthByProvider(t *testing.T) {
 }
 
 func TestUser_MatchPassword(t *testing.T) {
-	encodedPass, _ := encodePassword("test")
+	// bcrypt is not suitable for unit tests as it requires heavy computation
+	DefaultPasswordEncoder = &NoopPasswordEncoder{}
+
+	password := MustEncodedPassword("abcDEF0!")
+
 	type args struct {
 		pass string
 	}
+
 	tests := []struct {
 		name     string
 		password []byte
@@ -374,17 +380,17 @@ func TestUser_MatchPassword(t *testing.T) {
 		wantErr  bool
 	}{
 		{
-			name:     "passwords should match",
-			password: encodedPass,
+			name:     "should match",
+			password: password,
 			args: args{
-				pass: "test",
+				pass: "abcDEF0!",
 			},
 			want:    true,
 			wantErr: false,
 		},
 		{
-			name:     "passwords shouldn't match",
-			password: encodedPass,
+			name:     "should not match",
+			password: password,
 			args: args{
 				pass: "xxx",
 			},
@@ -392,7 +398,9 @@ func TestUser_MatchPassword(t *testing.T) {
 			wantErr: false,
 		},
 	}
+
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			u := &User{
 				password: tc.password,
@@ -409,6 +417,9 @@ func TestUser_MatchPassword(t *testing.T) {
 }
 
 func TestUser_SetPassword(t *testing.T) {
+	// bcrypt is not suitable for unit tests as it requires heavy computation
+	DefaultPasswordEncoder = &NoopPasswordEncoder{}
+
 	type args struct {
 		pass string
 	}
@@ -432,11 +443,13 @@ func TestUser_SetPassword(t *testing.T) {
 			want: "Testabc1",
 		},
 	}
+
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
 			u := &User{}
 			_ = u.SetPassword(tc.args.pass)
-			got, err := verifyPassword(tc.want, u.password)
+			got, err := u.password.Verify(tc.want)
 			assert.NoError(tt, err)
 			assert.True(tt, got)
 		})
@@ -451,18 +464,19 @@ func TestUser_PasswordReset(t *testing.T) {
 	}{
 		{
 			Name:     "not password request",
-			User:     New().NewID().MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Expected: nil,
 		},
 		{
 			Name: "create new password request over existing one",
-			User: New().NewID().PasswordReset(&PasswordReset{"xzy", time.Unix(0, 0)}).MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Unix(0, 0)}).MustBuild(),
 			Expected: &PasswordReset{
 				Token:     "xzy",
 				CreatedAt: time.Unix(0, 0),
 			},
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
@@ -481,13 +495,13 @@ func TestUser_SetPasswordReset(t *testing.T) {
 	}{
 		{
 			Name:     "nil",
-			User:     New().NewID().MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},
 		{
 			Name: "nil",
-			User: New().NewID().MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -499,7 +513,7 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name: "create new password request",
-			User: New().NewID().MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -511,7 +525,7 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name: "create new password request over existing one",
-			User: New().NewID().PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -523,18 +537,20 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name:     "remove none existing password request",
-			User:     New().NewID().MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},
 		{
 			Name:     "remove existing password request",
-			User:     New().NewID().PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},
 	}
+
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			tt.User.SetPasswordReset(tt.Pr)
 			assert.Equal(t, tt.Expected, tt.User.PasswordReset())
@@ -566,7 +582,9 @@ func TestUser_Verification(t *testing.T) {
 			want:         v,
 		},
 	}
+
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
 				verification: tt.verification,
@@ -577,7 +595,6 @@ func TestUser_Verification(t *testing.T) {
 }
 
 func Test_ValidatePassword(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		pass    string
@@ -609,9 +626,11 @@ func Test_ValidatePassword(t *testing.T) {
 			wantErr: true,
 		},
 	}
+
 	for _, tc := range tests {
+		tc := tc
 		t.Run(tc.name, func(tt *testing.T) {
-			out := validatePassword(tc.pass)
+			out := ValidatePasswordFormat(tc.pass)
 			assert.Equal(tt, out != nil, tc.wantErr)
 		})
 	}

@@ -14,7 +14,7 @@ func TestAuthFromAuth0Sub(t *testing.T) {
 		Expected  Auth
 	}{
 		{
-			Name: "Create Auth",
+			Name: "with provider",
 			Sub:  "xx|yy",
 			Expected: Auth{
 				Provider: "xx",
@@ -22,7 +22,15 @@ func TestAuthFromAuth0Sub(t *testing.T) {
 			},
 		},
 		{
-			Name:     "Create empty Auth",
+			Name: "without provider",
+			Sub:  "yy",
+			Expected: Auth{
+				Provider: "",
+				Sub:      "yy",
+			},
+		},
+		{
+			Name:     "empty",
 			Sub:      "",
 			Expected: Auth{},
 		},
@@ -87,6 +95,7 @@ func TestGenReearthSub(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GenReearthSub(tt.input)

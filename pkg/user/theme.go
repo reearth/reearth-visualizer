@@ -7,3 +7,7 @@ const (
 	ThemeLight   Theme = "light"
 	ThemeDark    Theme = "dark"
 )
+
+func (t Theme) Ref() *Theme {
+	return &t
+}
