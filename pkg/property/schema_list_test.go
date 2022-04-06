@@ -40,6 +40,9 @@ func TestSchemaList_MapToIDs(t *testing.T) {
 func TestSchemaMap_List(t *testing.T) {
 	p1 := &Schema{id: MustSchemaID("foo~1.0.0/a")}
 	p2 := &Schema{id: MustSchemaID("bar~1.0.0/a")}
-	assert.Equal(t, SchemaList{p1, p2}, SchemaMap{p1.ID(): p1, p2.ID(): p2}.List())
+	list := SchemaMap{p1.ID(): p1, p2.ID(): p2}.List()
+	assert.Len(t, list, 2)
+	assert.Contains(t, list, p1)
+	assert.Contains(t, list, p2)
 	assert.Nil(t, SchemaMap(nil).List())
 }
