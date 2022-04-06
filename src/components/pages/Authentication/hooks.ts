@@ -4,8 +4,10 @@ import { useCallback, useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
+import { intl } from "@reearth/locale";
 import { useTeam, useNotification } from "@reearth/state";
 
+// TODO: move hooks to molecules (page components should be thin)
 export default () => {
   const { isAuthenticated, isLoading, error: authError, logout, login } = useAuth();
   const error = useCleanUrl();
@@ -69,25 +71,38 @@ export default () => {
   }
 
   const handleSignup = useCallback(
-    async (email?: string, username?: string, password?: string) => {
-      if (isAuthenticated || !email || !username || !password) return;
-      const res = await axios.post((window.REEARTH_CONFIG?.api || "/api") + "/signup", {
-        email,
-        username,
-        password,
-      });
-      if (res.status !== 200) {
+    async ({
+      email,
+      username,
+      password,
+    }: {
+      email: string;
+      username: string;
+      password: string;
+    }) => {
+      if (isAuthenticated) return;
+
+      try {
+        const res = await axios.post((window.REEARTH_CONFIG?.api || "/api") + "/signup", {
+          email,
+          username,
+          password,
+        });
+
+        if (res.status !== 200) {
+          throw res;
+        }
+      } catch (err: any) {
         setNotification({
           type: "error",
-          text: res.data.error,
+          text:
+            err?.response?.data?.error ||
+            err?.data?.error ||
+            intl.formatMessage({
+              defaultMessage: "Some error has occurred. Please wait a moment and try again.",
+            }),
         });
-        return res;
-      } else {
-        setNotification({
-          type: "success",
-          text: res.data.message,
-        });
-        return res;
+        throw err;
       }
     },
     [isAuthenticated, setNotification],

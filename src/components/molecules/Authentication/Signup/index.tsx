@@ -1,5 +1,5 @@
 import { Link } from "@reach/router";
-import React, { useState, useCallback, useEffect } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -10,110 +10,32 @@ import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
-import { PasswordPolicy as PasswordPolicyType } from "../common";
+
+import useHooks, { PasswordPolicy as PasswordPolicyType } from "./hooks";
 
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onSignup: (email?: string, username?: string, password?: string) => any;
+  onSignup: (info: { email: string; username: string; password: string }) => any;
   passwordPolicy?: PasswordPolicy;
 };
 
 const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   const intl = useIntl();
   const theme = useTheme();
-  const [regexMessage, setRegexMessage] = useState("");
-  const [username, setUsername] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [disabled, setDisabled] = useState(true);
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (
-      !email ||
-      !username ||
-      !password ||
-      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
-      passwordPolicy?.tooShort?.test(password) ||
-      passwordPolicy?.tooLong?.test(password)
-    ) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
-  }, [email, username, password, passwordPolicy]);
-
-  const handleUsernameInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = e.currentTarget.value;
-      setUsername(newValue);
-    },
-    [],
-  );
-  const handleEmailInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = e.currentTarget.value;
-      setEmail(newValue);
-    },
-    [],
-  );
-  const handlePasswordInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const password = e.currentTarget.value;
-      setPassword(password);
-      switch (true) {
-        case passwordPolicy?.whitespace?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "No whitespace is allowed.",
-            }),
-          );
-          break;
-        case passwordPolicy?.tooShort?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "Too short.",
-            }),
-          );
-          break;
-        case passwordPolicy?.tooLong?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That is terribly long.",
-            }),
-          );
-          break;
-        case passwordPolicy?.highSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
-          break;
-        case passwordPolicy?.medSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
-          break;
-        case passwordPolicy?.lowSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
-          break;
-        default:
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That password confuses me, but might be okay.",
-            }),
-          );
-          break;
-      }
-    },
-    [password], // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleSignup = useCallback(async () => {
-    setLoading(true);
-    const res = await onSignup(email, username, password);
-    if (res.status === 200) {
-      setSent(true);
-    }
-    setLoading(false);
-  }, [email, username, password, onSignup]);
+  const {
+    disabled,
+    loading,
+    regexMessage,
+    sent,
+    email,
+    username,
+    password,
+    handleEmailInput,
+    handlePasswordInput,
+    handleUsernameInput,
+    handleSignup,
+  } = useHooks({ onSignup, passwordPolicy });
 
   return (
     <AuthPage>

@@ -1,3 +1,4 @@
+e5c8f: Some error has occurred. Please wait a moment and try again.
 src:
   components:
     atoms:
@@ -72,28 +73,22 @@ src:
           '4066780408': That is terribly long.
       Common:
         AssetModal:
-          '164261147': Select Image
-          '388451950': Select Resource
           '854575786': Assets Library
           '1115770113': Save
           '2229699602': Resource URL
           '2599388697': Use URL
+          '3290612551': Select Asset
           '3304605076': Add video URL
           '3528672691': Cancel
-          '4035057905': Image URL
           '4070151372': Select
           AssetContainer:
+            '710251853': >-
+              You haven't uploaded any assets yet. Click the upload button above
+              and select a compatible file from your computer.
             '1896833639': No assets match your search.
             '1982191895': File size
-            '2409515782': >-
-              You haven't uploaded any file assets yet. Click the upload button
-              above and select a compatible file from your computer.
             '2906553848': Alphabetical
-            '3057159632': Upload image
             '3645414921': Delete
-            '3715622784': >-
-              You haven't uploaded any image assets yet. Click the upload button
-              above and select an image from your computer.
             '3863945965': Upload file
             '4205493358': Date
           AssetDeleteModal:
