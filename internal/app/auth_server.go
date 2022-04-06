@@ -29,9 +29,13 @@ const (
 func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *ServerConfig) {
 	userUsecase := interactor.NewUser(cfg.Repos, cfg.Gateways, cfg.Config.SignupSecret, cfg.Config.Host_Web)
 
-	domain, err := url.Parse(cfg.Config.AuthSrv.Domain)
+	d := cfg.Config.AuthSrv.Domain
+	if d == "" {
+		d = cfg.Config.Host
+	}
+	domain, err := url.Parse(d)
 	if err != nil {
-		panic("not valid auth domain")
+		log.Panicf("auth: not valid auth domain: %s", d)
 	}
 	domain.Path = "/"
 

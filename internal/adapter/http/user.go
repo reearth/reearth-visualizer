@@ -32,7 +32,7 @@ type SignupInput struct {
 	Secret   *string       `json:"secret"`
 	UserID   *id.UserID    `json:"userId"`
 	TeamID   *id.TeamID    `json:"teamId"`
-	Name     *string       `json:"name"`
+	Name     *string       `json:"username"`
 	Email    *string       `json:"email"`
 	Password *string       `json:"password"`
 	Theme    *user.Theme   `json:"theme"`
