@@ -139,6 +139,13 @@ func ReadConfig(debug bool) (*Config, error) {
 	var c Config
 	err := envconfig.Process(configPrefix, &c)
 
+	// overwrite env vars
+	if !c.AuthSrv.Disabled && (c.Dev || c.AuthSrv.Dev || c.AuthSrv.Domain == "") {
+		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
+			_ = os.Setenv(op.OidcDevMode, "1")
+		}
+	}
+
 	// defailt values
 	if debug {
 		c.Dev = true
@@ -156,13 +163,6 @@ func ReadConfig(debug bool) (*Config, error) {
 	}
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
-	}
-
-	// overwrite env vars
-	if !c.AuthSrv.Disabled && (c.Dev || c.AuthSrv.Dev || c.AuthSrv.Domain == "") {
-		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
-			_ = os.Setenv(op.OidcDevMode, "1")
-		}
 	}
 
 	return &c, err
