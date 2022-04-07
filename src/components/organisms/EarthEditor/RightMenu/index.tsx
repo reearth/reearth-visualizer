@@ -45,6 +45,8 @@ const RightMenu: React.FC = () => {
           ? "infobox"
           : selectedTab === "export"
           ? "export"
+          : selectedTab === "tag"
+          ? "tag"
           : selected
       }
       disabled={isCapturing}
