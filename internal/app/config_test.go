@@ -32,3 +32,9 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, "hoge", cfg.Auth_ISS)
 	assert.Equal(t, "foo", cfg.Auth_AUD)
 }
+
+func Test_AddHTTPScheme(t *testing.T) {
+	assert.Equal(t, "http://a", addHTTPScheme("a"))
+	assert.Equal(t, "http://a", addHTTPScheme("http://a"))
+	assert.Equal(t, "https://a", addHTTPScheme("https://a"))
+}

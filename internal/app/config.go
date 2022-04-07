@@ -143,6 +143,17 @@ func ReadConfig(debug bool) (*Config, error) {
 	if debug {
 		c.Dev = true
 	}
+	c.Host = addHTTPScheme(c.Host)
+	if c.Host_Web == "" {
+		c.Host_Web = c.Host
+	} else {
+		c.Host_Web = addHTTPScheme(c.Host_Web)
+	}
+	if c.AuthSrv.Domain == "" {
+		c.AuthSrv.Domain = c.Host
+	} else {
+		c.AuthSrv.Domain = addHTTPScheme(c.AuthSrv.Domain)
+	}
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
 	}
@@ -241,4 +252,38 @@ func (ipd *AuthConfigs) Decode(value string) error {
 
 	*ipd = providers
 	return nil
+}
+
+func (c Config) HostURL() *url.URL {
+	u, err := url.Parse(c.Host)
+	if err != nil {
+		u = nil
+	}
+	return u
+}
+
+func (c Config) HostWebURL() *url.URL {
+	u, err := url.Parse(c.Host_Web)
+	if err != nil {
+		u = nil
+	}
+	return u
+}
+
+func (c Config) AuthServeDomainURL() *url.URL {
+	u, err := url.Parse(c.AuthSrv.Domain)
+	if err != nil {
+		u = nil
+	}
+	return u
+}
+
+func addHTTPScheme(host string) string {
+	if host == "" {
+		return ""
+	}
+	if !strings.HasPrefix(host, "https://") && !strings.HasPrefix(host, "http://") {
+		host = "http://" + host
+	}
+	return host
 }
