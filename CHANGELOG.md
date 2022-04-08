@@ -1,6 +1,84 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.6.0 - 2022-04-08
+
+### reearth-web
+
+#### 🚀 Features
+
+- Add a plugin API to resize iframe by plugins ([#181](https://github.com/reearth/reearth-web/pull/181)) [`7c1019`](https://github.com/reearth/reearth-web/commit/7c1019)
+- Authentication ([#121](https://github.com/reearth/reearth-web/pull/121)) [`b63018`](https://github.com/reearth/reearth-web/commit/b63018)
+- Infinite scroll on assets ([#130](https://github.com/reearth/reearth-web/pull/130)) [`11f2f2`](https://github.com/reearth/reearth-web/commit/11f2f2)
+- Basic plugin editor ([#184](https://github.com/reearth/reearth-web/pull/184)) [`1c4e09`](https://github.com/reearth/reearth-web/commit/1c4e09)
+
+#### 🔧 Bug Fixes
+
+- Unable to type RGBA values ([#180](https://github.com/reearth/reearth-web/pull/180)) [`f7345c`](https://github.com/reearth/reearth-web/commit/f7345c)
+- Small height of block plugins [`8070a3`](https://github.com/reearth/reearth-web/commit/8070a3)
+- Button widget squishing its text & infobox mask click away ([#185](https://github.com/reearth/reearth-web/pull/185)) [`ac7ef0`](https://github.com/reearth/reearth-web/commit/ac7ef0)
+- Cannot select layers that activate infobox mask ([#186](https://github.com/reearth/reearth-web/pull/186)) [`d824b6`](https://github.com/reearth/reearth-web/commit/d824b6)
+- Display error messages from auth server ([#187](https://github.com/reearth/reearth-web/pull/187)) [`e19fab`](https://github.com/reearth/reearth-web/commit/e19fab)
+- Duplicate asset results ([#188](https://github.com/reearth/reearth-web/pull/188)) [`b3eb7f`](https://github.com/reearth/reearth-web/commit/b3eb7f)
+- Workspace name cannot be changed, error displayed when deleting assets ([#189](https://github.com/reearth/reearth-web/pull/189)) [`a99cf3`](https://github.com/reearth/reearth-web/commit/a99cf3)
+- Multiple assets in infinite scroll and datasets not showing in DatasetPane  ([#192](https://github.com/reearth/reearth-web/pull/192)) [`6f5c93`](https://github.com/reearth/reearth-web/commit/6f5c93)
+- Asset modal showing only image-based assets ([#196](https://github.com/reearth/reearth-web/pull/196)) [`83a6bf`](https://github.com/reearth/reearth-web/commit/83a6bf)
+- Screen becomes inoperable when errors occur in sign up [`820a04`](https://github.com/reearth/reearth-web/commit/820a04)
+- Add missing translations [`a4c237`](https://github.com/reearth/reearth-web/commit/a4c237)
+
+#### Miscellaneous Tasks
+
+- Update dependency cesium to ^1.91.0 ([#182](https://github.com/reearth/reearth-web/pull/182)) [`603a5c`](https://github.com/reearth/reearth-web/commit/603a5c)
+- Set default auth config to start app with zero configuration ([#191](https://github.com/reearth/reearth-web/pull/191)) [`d5a2aa`](https://github.com/reearth/reearth-web/commit/d5a2aa)
+
+### reearth-backend
+#### 🚀 Features
+
+- Authentication system ([#108](https://github.com/reearth/reearth-backend/pull/108)) [`b89c32`](https://github.com/reearth/reearth-backend/commit/b89c32)
+- Default mailer that outputs mails into stdout [`aab26c`](https://github.com/reearth/reearth-backend/commit/aab26c)
+- Assets filtering & pagination ([#81](https://github.com/reearth/reearth-backend/pull/81)) [`739943`](https://github.com/reearth/reearth-backend/commit/739943)
+- Support sign up with information provided by OIDC providers ([#130](https://github.com/reearth/reearth-backend/pull/130)) [`fef60e`](https://github.com/reearth/reearth-backend/commit/fef60e)
+
+#### 🔧 Bug Fixes
+
+- Load auth client domain from config ([#124](https://github.com/reearth/reearth-backend/pull/124)) [`9bde8a`](https://github.com/reearth/reearth-backend/commit/9bde8a)
+- Signup fails when password is not set [`27c2f0`](https://github.com/reearth/reearth-backend/commit/27c2f0)
+- Logger panics [`d1e3a8`](https://github.com/reearth/reearth-backend/commit/d1e3a8)
+- Set auth server dev mode automatically [`83a66a`](https://github.com/reearth/reearth-backend/commit/83a66a)
+- Auth server bugs and auth client bugs ([#125](https://github.com/reearth/reearth-backend/pull/125)) [`ce2309`](https://github.com/reearth/reearth-backend/commit/ce2309)
+- Auth0 setting is not used by JWT verification middleware [`232e75`](https://github.com/reearth/reearth-backend/commit/232e75)
+- Invalid mongo queries of pagination [`7caf68`](https://github.com/reearth/reearth-backend/commit/7caf68)
+- Auth config not loaded expectedly [`570fe7`](https://github.com/reearth/reearth-backend/commit/570fe7)
+- Users cannot creates a new team and scene [`5df25f`](https://github.com/reearth/reearth-backend/commit/5df25f)
+- Auth server certificate is not saved as pem format [`982a71`](https://github.com/reearth/reearth-backend/commit/982a71)
+- Repo filters are not merged expectedly [`f4cc3f`](https://github.com/reearth/reearth-backend/commit/f4cc3f)
+- Auth is no longer required for GraphQL endpoint [`58a6d1`](https://github.com/reearth/reearth-backend/commit/58a6d1)
+- Rename auth srv default client ID ([#128](https://github.com/reearth/reearth-backend/pull/128)) [`89adc3`](https://github.com/reearth/reearth-backend/commit/89adc3)
+- Signup API is disabled when auth server is disabled, users and auth requests in mongo cannot be deleted ([#132](https://github.com/reearth/reearth-backend/pull/132)) [`47be6a`](https://github.com/reearth/reearth-backend/commit/47be6a)
+- Auth to work with zero config ([#131](https://github.com/reearth/reearth-backend/pull/131)) [`3cbb45`](https://github.com/reearth/reearth-backend/commit/3cbb45)
+- Property.SchemaListMap.List test fails [`3e6dff`](https://github.com/reearth/reearth-backend/commit/3e6dff)
+- Errors when auth srv domain is not specified [`10691a`](https://github.com/reearth/reearth-backend/commit/10691a)
+- Errors when auth srv domain is not specified [`648073`](https://github.com/reearth/reearth-backend/commit/648073)
+- Login redirect does not work [`cb6ca4`](https://github.com/reearth/reearth-backend/commit/cb6ca4)
+- Enable auth srv dev mode when no domain is specified [`0c0e28`](https://github.com/reearth/reearth-backend/commit/0c0e28)
+- Add a trailing slash to jwt audiences [`e96f78`](https://github.com/reearth/reearth-backend/commit/e96f78)
+- Allow separate auth server ui domain [`0ce79f`](https://github.com/reearth/reearth-backend/commit/0ce79f)
+
+#### ⚡️ Performance
+
+- Reduce database queries to obtain scene IDs ([#119](https://github.com/reearth/reearth-backend/pull/119)) [`784332`](https://github.com/reearth/reearth-backend/commit/784332)
+
+#### ✨ Refactor
+
+- Remove filter args from repos to prevent implementation errors in the use case layer ([#122](https://github.com/reearth/reearth-backend/pull/122)) [`82cf28`](https://github.com/reearth/reearth-backend/commit/82cf28)
+- Http api to export layers [`3f2582`](https://github.com/reearth/reearth-backend/commit/3f2582)
+
+#### Miscellaneous Tasks
+
+- Update dependencies ([#117](https://github.com/reearth/reearth-backend/pull/117)) [`d1a38e`](https://github.com/reearth/reearth-backend/commit/d1a38e)
+- Update docker-compose config [`83f9b1`](https://github.com/reearth/reearth-backend/commit/83f9b1)
+- Add log for GraphQL Playground endpoint ([#133](https://github.com/reearth/reearth-backend/pull/133)) [`adeda4`](https://github.com/reearth/reearth-backend/commit/adeda4)
+
 ## 0.5.0 - 2022-02-24
 
 ### reearth-web
