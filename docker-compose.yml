@@ -4,10 +4,10 @@ services:
     image: reearth/reearth:latest
     environment:
       REEARTH_DB: mongodb://reearth-mongo
-    env_file:
-      - .env
     ports:
       - 8080:8080
+    # env_file:
+    #  - ./.env
     links:
       - reearth-mongo
     depends_on:
@@ -15,7 +15,7 @@ services:
     volumes:
       - ./data:/reearth/data
   reearth-mongo:
-    image: mongo:4.2.0-bionic
+    image: mongo:4.4-focal
     ports:
       - 27017:27017
     volumes:
