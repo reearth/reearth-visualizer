@@ -36,6 +36,8 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 	}
 	domain.Path = "/"
 
+	uidomain := cfg.Config.AuthServeUIDomainURL()
+
 	config := &op.Config{
 		Issuer:                domain.String(),
 		CryptoKey:             sha256.Sum256([]byte(cfg.Config.AuthSrv.Key)),
@@ -92,7 +94,7 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 	}
 
 	// Actual login endpoint
-	r.POST(loginEndpoint, login(ctx, domain, storage, userUsecase))
+	r.POST(loginEndpoint, login(ctx, domain, uidomain, storage, userUsecase))
 
 	r.GET(logoutEndpoint, logout())
 
@@ -188,7 +190,7 @@ type loginForm struct {
 	AuthRequestID string `json:"id" form:"id"`
 }
 
-func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase interfaces.User) func(ctx echo.Context) error {
+func login(ctx context.Context, url, uiurl *url.URL, storage op.Storage, userUsecase interfaces.User) func(ctx echo.Context) error {
 	return func(ec echo.Context) error {
 		request := new(loginForm)
 		err := ec.Bind(request)
@@ -196,7 +198,7 @@ func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase in
 			log.Errorln("auth: filed to parse login request")
 			return ec.Redirect(
 				http.StatusFound,
-				redirectURL(url, "/login", "", "Bad request!"),
+				redirectURL(uiurl, "/login", "", "Bad request!"),
 			)
 		}
 
@@ -204,7 +206,7 @@ func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase in
 			log.Errorf("auth: filed to parse login request: %s\n", err)
 			return ec.Redirect(
 				http.StatusFound,
-				redirectURL(url, "/login", "", "Bad request!"),
+				redirectURL(uiurl, "/login", "", "Bad request!"),
 			)
 		}
 
@@ -212,7 +214,7 @@ func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase in
 			log.Errorln("auth: one of credentials are not provided")
 			return ec.Redirect(
 				http.StatusFound,
-				redirectURL(url, "/login", request.AuthRequestID, "Bad request!"),
+				redirectURL(uiurl, "/login", request.AuthRequestID, "Bad request!"),
 			)
 		}
 
@@ -232,7 +234,7 @@ func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase in
 			log.Errorf("auth: wrong credentials: %s\n", err)
 			return ec.Redirect(
 				http.StatusFound,
-				redirectURL(url, "/login", request.AuthRequestID, "Login failed; Invalid user ID or password."),
+				redirectURL(uiurl, "/login", request.AuthRequestID, "Login failed; Invalid user ID or password."),
 			)
 		}
 
@@ -242,7 +244,7 @@ func login(ctx context.Context, url *url.URL, storage op.Storage, userUsecase in
 			log.Errorf("auth: failed to complete the auth request: %s\n", err)
 			return ec.Redirect(
 				http.StatusFound,
-				redirectURL(url, "/login", request.AuthRequestID, "Bad request!"),
+				redirectURL(uiurl, "/login", request.AuthRequestID, "Bad request!"),
 			)
 		}
 
@@ -262,10 +264,9 @@ func logout() func(ec echo.Context) error {
 
 func redirectURL(u *url.URL, p string, requestID, err string) string {
 	v := cloneURL(u)
-	if p == "" {
-		p = "/login"
+	if p != "" {
+		v.Path = p
 	}
-	v.Path = p
 	queryValues := u.Query()
 	queryValues.Set("id", requestID)
 	if err != "" {

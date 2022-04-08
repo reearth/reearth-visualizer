@@ -60,6 +60,7 @@ type AuthSrvConfig struct {
 	Dev      bool
 	Disabled bool
 	Domain   string
+	UIDomain string
 	Key      string
 	DN       *AuthSrvDNConfig
 }
@@ -75,7 +76,7 @@ func (c AuthSrvConfig) AuthConfig(debug bool, host string) *AuthConfig {
 	}
 
 	var aud []string
-	if debug && host != "" && c.Domain != "" {
+	if debug && host != "" && c.Domain != "" && c.Domain != host {
 		aud = []string{host, c.Domain}
 	} else {
 		aud = []string{domain}
@@ -146,7 +147,7 @@ func ReadConfig(debug bool) (*Config, error) {
 		}
 	}
 
-	// defailt values
+	// default values
 	if debug {
 		c.Dev = true
 	}
@@ -163,6 +164,11 @@ func ReadConfig(debug bool) (*Config, error) {
 	}
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
+	}
+	if c.AuthSrv.UIDomain == "" {
+		c.AuthSrv.UIDomain = c.Host_Web
+	} else {
+		c.AuthSrv.UIDomain = addHTTPScheme(c.AuthSrv.UIDomain)
 	}
 
 	return &c, err
@@ -272,6 +278,14 @@ func (c Config) HostWebURL() *url.URL {
 
 func (c Config) AuthServeDomainURL() *url.URL {
 	u, err := url.Parse(c.AuthSrv.Domain)
+	if err != nil {
+		u = nil
+	}
+	return u
+}
+
+func (c Config) AuthServeUIDomainURL() *url.URL {
+	u, err := url.Parse(c.AuthSrv.UIDomain)
 	if err != nil {
 		u = nil
 	}
