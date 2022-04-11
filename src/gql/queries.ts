@@ -14,11 +14,20 @@ export const CREATE_TEAM = gql`
       team {
         id
         name
+        members {
+          user {
+            id
+            name
+            email
+          }
+          userId
+          role
+        }
+        personal
       }
     }
   }
 `;
-
 export const TEAMS = gql`
   fragment Team on Team {
     id

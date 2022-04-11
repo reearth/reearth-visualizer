@@ -3152,7 +3152,7 @@ export type CreateTeamMutationVariables = Exact<{
 }>;
 
 
-export type CreateTeamMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string } } | null };
+export type CreateTeamMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
 
 export type TeamFragment = { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> };
 
@@ -7922,6 +7922,16 @@ export const CreateTeamDocument = gql`
     team {
       id
       name
+      members {
+        user {
+          id
+          name
+          email
+        }
+        userId
+        role
+      }
+      personal
     }
   }
 }
