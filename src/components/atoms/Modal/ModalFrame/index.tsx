@@ -21,7 +21,9 @@ const Modal: React.FC<Props> = ({ size, isVisible, onClose, children }) => {
     unmountOnExit: true,
   });
 
-  const handleClose = useCallback(() => onClose?.(), [onClose]);
+  const handleClose = useCallback(() => {
+    if (isVisible) onClose?.();
+  }, [onClose, isVisible]);
 
   useKeyPressEvent("Escape", handleClose);
 
