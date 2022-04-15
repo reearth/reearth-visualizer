@@ -24,17 +24,20 @@ const Public: React.FC<Props> = ({ projectId }) => {
     projectAlias,
     projectStatus,
     project,
-    updateProjectBasicAuth,
-    publishProject,
     validAlias,
-    checkProjectAlias,
     validatingAlias,
     loading,
+    assetModalOpened,
+    currentLanguage,
+    currentTheme,
+    updateProjectBasicAuth,
+    publishProject,
+    checkProjectAlias,
     updatePublicTitle,
     updatePublicDescription,
     updatePublicImage,
-    assetModalOpened,
     toggleAssetModal,
+    handleNotificationChange,
   } = useHooks({ projectId });
 
   return (
@@ -68,13 +71,17 @@ const Public: React.FC<Props> = ({ projectId }) => {
             }
           />
           <PublishSection
+            projectId={projectId}
             loading={loading}
             projectAlias={projectAlias}
             publicationStatus={projectStatus}
-            onPublish={publishProject}
             validAlias={validAlias}
-            onAliasValidate={checkProjectAlias}
             validatingAlias={validatingAlias}
+            currentLanguage={currentLanguage}
+            currentTheme={currentTheme}
+            onPublish={publishProject}
+            onAliasValidate={checkProjectAlias}
+            onNotificationChange={handleNotificationChange}
           />
         </>
       ) : (

@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from "react";
 
+import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import { styled, fonts } from "@reearth/theme";
+import Text from "@reearth/components/atoms/Text";
+import { styled } from "@reearth/theme";
 
 import DatasetDeleteModal from "../DatasetDeleteModal";
 
@@ -12,7 +14,7 @@ export type DatasetSchemaProps = {
   totalCount?: number;
   onRemove?: (schemaId: string) => void;
   selected?: boolean;
-  selectDatasetSchema?: (datasetSchemaId: string) => void;
+  onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
 };
 
 const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
@@ -22,22 +24,25 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   name,
   totalCount,
   selected,
-  selectDatasetSchema,
+  onDatasetSchemaSelect,
 }) => {
-  const handleSelect = useCallback(() => {
-    if (!id) return;
-    selectDatasetSchema?.(id);
-  }, [id, selectDatasetSchema]);
   const [showDeleteModal, setDeleteModal] = useState(false);
 
+  const handleSelect = useCallback(() => {
+    if (!id) return;
+    onDatasetSchemaSelect?.(id);
+  }, [id, onDatasetSchemaSelect]);
+
+  const handleToggleDeleteModal = useCallback(() => {
+    setDeleteModal(!showDeleteModal);
+  }, [showDeleteModal]);
+
   return (
-    <Wrapper className={className} selected={selected} onClick={handleSelect}>
+    <Wrapper className={className} align="center" selected={selected} onClick={handleSelect}>
       <StyledIcon icon="dataset" size={16} />
-      <Name>{name}</Name>
-      <Count>({totalCount ?? ""})</Count>
-      <div onClick={() => setDeleteModal(!showDeleteModal)}>
-        <RemoveButton icon="bin" size={14} />
-      </div>
+      <Name size="xs">{name}</Name>
+      <Count size="xs">({totalCount ?? ""})</Count>
+      <RemoveButton icon="bin" size={14} onClick={handleToggleDeleteModal} />
       <DatasetDeleteModal
         onRemove={() => id && onRemove?.(id)}
         openModal={showDeleteModal}
@@ -47,12 +52,10 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   );
 };
 
-const Wrapper = styled.div<Pick<DatasetSchemaProps, "selected">>`
+const Wrapper = styled(Flex)<Pick<DatasetSchemaProps, "selected">>`
   background-color: ${({ selected, theme }) =>
     selected ? theme.layers.selectedLayer : "transparent"};
-  display: flex;
-  align-items: center;
-  font-size: ${fonts.sizes.xs}px;
+  align-content: center;
   padding: 10px;
   border-radius: 3px;
   cursor: pointer;
@@ -65,18 +68,17 @@ const Wrapper = styled.div<Pick<DatasetSchemaProps, "selected">>`
 
 const StyledIcon = styled(Icon)`
   flex-shrink: 0;
-  padding-right: 0.5em;
+  margin-right: 5px;
 `;
 
-const Name = styled.div`
+const Name = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex: auto;
 `;
 
-const Count = styled.div`
-  font-size: 0.8em;
+const Count = styled(Text)`
   padding-left: 0.5em;
 `;
 

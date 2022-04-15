@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -13,6 +13,8 @@ import { styled, useTheme } from "@reearth/theme";
 import Gdrive from "./Gdrive";
 import useHooks from "./hooks";
 
+export type NotificationType = "error" | "warning" | "info" | "success";
+
 interface Props {
   className?: string;
   isVisible: boolean;
@@ -25,6 +27,7 @@ interface Props {
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>;
+  onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 }
 
 const DatasetModal: React.FC<Props> = ({
@@ -33,29 +36,28 @@ const DatasetModal: React.FC<Props> = ({
   onClose,
   handleDatasetAdd,
   handleGoogleSheetDatasetAdd,
+  onNotificationChange,
 }) => {
+  const theme = useTheme();
   const intl = useIntl();
-  const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
+
   const {
+    url,
     csv,
     dataType,
     disabled,
-    onSelectCsvFile,
-    onReturn,
-    onSheetSelect,
+    accessToken,
+    primaryButtonText,
+    googleApiKey,
+    extensions,
+    setUrl,
+    handleSelectCsvFile,
+    handleSetDataType,
+    handleReturn,
+    handleSheetSelect,
     handleImport,
-    handleClick,
     handleClose,
-  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
-
-  const primaryButtonText = useMemo(() => {
-    if (syncLoading) {
-      return intl.formatMessage({ defaultMessage: "sending..." });
-    } else {
-      return intl.formatMessage({ defaultMessage: "Add Dataset" });
-    }
-  }, [syncLoading, intl]);
-  const theme = useTheme();
+  } = useHooks(syncLoading, handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
 
   return (
     <Modal
@@ -91,7 +93,7 @@ const DatasetModal: React.FC<Props> = ({
               margin={56}
               border="dashed"
               borderColor={theme.main.border}
-              onClick={onSelectCsvFile}
+              onClick={handleSelectCsvFile}
             />
             {googleApiKey && (
               <Card
@@ -102,22 +104,39 @@ const DatasetModal: React.FC<Props> = ({
                 margin={56}
                 border="dashed"
                 borderColor={theme.main.border}
-                onClick={handleClick}
+                onClick={handleSetDataType}
               />
             )}
+            {extensions?.map(ext => (
+              <Card
+                key={ext.id}
+                id={ext.id}
+                icon={ext.image}
+                iconSize="80px"
+                text={ext.title}
+                margin={56}
+                border="dashed"
+                borderColor={theme.main.border}
+                onClick={handleSetDataType}
+              />
+            ))}
           </Content>
         </ConnectSection>
       ) : (
         <InputSection>
           {dataType === "gdrive" && (
-            <Gdrive onReturn={onReturn} onSheetSelect={onSheetSelect} syncLoading={syncLoading} />
+            <Gdrive
+              onReturn={handleReturn}
+              onSheetSelect={handleSheetSelect}
+              syncLoading={syncLoading}
+            />
           )}
           {dataType === "csv" && (
             <>
               <StyledIcon
                 icon={"arrowLongLeft"}
                 size={24}
-                onClick={onReturn}
+                onClick={handleReturn}
                 color={theme.main.text}
               />
               <Subtitle
@@ -136,9 +155,19 @@ const DatasetModal: React.FC<Props> = ({
               </Content>
             </>
           )}
+          {extensions?.map(ext => (
+            <ext.component
+              key={ext.id}
+              url={url}
+              accessToken={accessToken}
+              onReturn={handleReturn}
+              onUrlChange={setUrl}
+              onNotificationChange={onNotificationChange}
+            />
+          ))}
           {!dataType && (
             <>
-              <Button onClick={onReturn}>
+              <Button onClick={handleReturn}>
                 <Icon icon={"arrowLongLeft"} size={24} color={theme.main.text} />
               </Button>
 
@@ -160,7 +189,6 @@ const ConnectSection = styled.div`
   width: 100%;
   min-height: 200px;
   & > div > div {
-    // margin-right: 40px;
     &:hover {
       cursor: pointer;
       background: ${props => props.theme.main.paleBg};

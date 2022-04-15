@@ -2,7 +2,10 @@ import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
+import {
+  DatasetSchema,
+  DataSource,
+} from "@reearth/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
   useDatasetSchemasQuery,
   useSyncDatasetMutation,
@@ -10,7 +13,13 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification, useSelected, useProject } from "@reearth/state";
+import {
+  useSceneId,
+  useNotification,
+  useSelected,
+  useProject,
+  NotificationType,
+} from "@reearth/state";
 
 export default () => {
   const intl = useIntl();
@@ -55,7 +64,7 @@ export default () => {
     [data],
   );
 
-  const selectDatasetSchema = useCallback(
+  const handleDatasetSchemaSelect = useCallback(
     (datasetSchemaId: string) => {
       select({ type: "dataset", datasetSchemaId: datasetSchemaId });
     },
@@ -141,7 +150,7 @@ export default () => {
   );
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
-  const handleRemoveDataset = useCallback(
+  const handleDatasetRemove = useCallback(
     async (schemaId: string) => {
       const result = await removeDatasetSchema({
         variables: {
@@ -171,14 +180,22 @@ export default () => {
   const selectedDatasetSchemaId =
     selected?.type === "dataset" ? selected.datasetSchemaId : undefined;
 
+  const handleNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification],
+  );
+
   return {
     datasetSchemas,
+    loading,
+    selectedDatasetSchemaId,
     handleDatasetSync,
     handleDatasetImport,
     handleGoogleSheetDatasetImport,
-    handleRemoveDataset,
-    loading,
-    selectDatasetSchema,
-    selectedDatasetSchemaId: selectedDatasetSchemaId,
+    handleDatasetRemove,
+    handleDatasetSchemaSelect,
+    handleNotificationChange,
   };
 };

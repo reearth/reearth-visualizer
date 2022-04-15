@@ -36,7 +36,7 @@ const Card: React.FC<Props> = ({
       margin={margin}
       onClick={onClick && (() => onClick(id))}>
       <Content>
-        <StyledIcon icon={icon} size={iconSize} color={theme.main.text} />
+        <Icon icon={icon} size={iconSize} color={theme.main.text} />
         <Text size="xs">{text}</Text>
         <Text size="2xs" color={theme.main.text}>
           {subtext}
@@ -64,8 +64,6 @@ const StyledContainer = styled.div<{
   text-align: center;
   flex-direction: column;
 `;
-
-const StyledIcon = styled(Icon)``;
 
 const Content = styled.div`
   display: flex;

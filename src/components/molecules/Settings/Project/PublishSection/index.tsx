@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
+import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
-import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import Field from "@reearth/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/ChangeSiteNameModal";
@@ -10,62 +10,63 @@ import Section from "@reearth/components/molecules/Settings/Section";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import useHooks from "./hooks";
+import useHooks, { Status } from "./hooks";
+
+export type NotificationType = "error" | "warning" | "info" | "success";
 
 interface Props {
   className?: string;
+  projectId: string;
   loading?: boolean;
   projectAlias?: string;
   publicationStatus?: Status;
   validAlias?: boolean;
+  validatingAlias?: boolean;
+  currentLanguage?: string;
+  currentTheme?: string;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onAliasValidate?: (alias: string) => void;
-  validatingAlias?: boolean;
+  onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 }
 
 const PublishSection: React.FC<Props> = ({
+  projectId,
   loading,
   projectAlias,
   publicationStatus,
-  onPublish,
   validAlias,
-  onAliasValidate,
   validatingAlias,
+  currentLanguage,
+  currentTheme,
+  onPublish,
+  onAliasValidate,
+  onNotificationChange,
 }) => {
-  const url = window.REEARTH_CONFIG?.published?.split("{}");
-
-  const [showDModal, setDModal] = useState(false);
-  const intl = useIntl();
   const theme = useTheme();
+  const intl = useIntl();
 
-  const { alias, onAliasChange, validation, handleCopyToClipBoard } = useHooks(
+  const {
+    alias,
+    extensions,
+    accessToken,
+    url,
+    purl,
+    showDModal,
+    publishDisabled,
+    handlePublish,
+    handleDomainModalClose,
+    setDModal,
+    handleAliasChange,
+    handleCopyToClipBoard,
+  } = useHooks(
     projectAlias,
+    loading,
+    publicationStatus,
+    validAlias,
+    validatingAlias,
     onAliasValidate,
+    onPublish,
   );
-
-  const purl = useMemo(() => {
-    return (url?.[0] ?? "") + (projectAlias?.replace("/", "") ?? "") + (url?.[1] ?? "");
-  }, [url, projectAlias]);
-
-  const onDModalClose = useCallback(() => {
-    onAliasChange(projectAlias);
-    setDModal(false);
-  }, [projectAlias, onAliasChange]);
-
-  const handlePublish = useCallback(async () => {
-    if (!publicationStatus) {
-      setDModal(false);
-      return;
-    }
-    await onPublish?.(alias, publicationStatus);
-    setDModal(false);
-  }, [alias, onPublish, publicationStatus]);
-
-  const publishDisabled =
-    loading ||
-    publicationStatus === "unpublished" ||
-    (publicationStatus === "published" &&
-      (!alias || !!validation || validatingAlias || !validAlias));
 
   return (
     <>
@@ -94,13 +95,29 @@ const PublishSection: React.FC<Props> = ({
             />
           )}
         </Section>
+        {extensions && accessToken ? (
+          <>
+            <Divider margin="0" />
+            {extensions.map(ext => (
+              <ext.component
+                key={ext.id}
+                projectId={projectId}
+                projectAlias={projectAlias}
+                lang={currentLanguage as "en" | "ja"}
+                theme={currentTheme as "dark" | "light"}
+                accessToken={accessToken}
+                onNotificationChange={onNotificationChange}
+              />
+            ))}
+          </>
+        ) : null}
       </Wrapper>
       <ChangeSiteNameModal
         show={showDModal}
-        onClose={onDModalClose}
+        onClose={handleDomainModalClose}
         url={url}
         alias={alias}
-        onAliasChange={onAliasChange}
+        onAliasChange={handleAliasChange}
         handlePublish={handlePublish}
         disabled={publishDisabled}
       />

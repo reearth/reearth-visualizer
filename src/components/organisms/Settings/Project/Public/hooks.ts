@@ -8,8 +8,9 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
+  useProfileQuery,
 } from "@reearth/gql";
-import { useTeam, useProject } from "@reearth/state";
+import { useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
 
 type Params = {
   projectId: string;
@@ -18,13 +19,18 @@ type Params = {
 export default ({ projectId }: Params) => {
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
+  const [, setNotification] = useNotification();
+
+  const [validAlias, setValidAlias] = useState(false);
+  const [projectAlias, setProjectAlias] = useState<string | undefined>();
 
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProject] = useUpdateProjectMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
-  const [validAlias, setValidAlias] = useState(false);
-  const [projectAlias, setProjectAlias] = useState<string | undefined>();
+
   const teamId = currentTeam?.id;
+
+  const { data: profileData } = useProfileQuery();
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "", first: 100 },
@@ -154,23 +160,33 @@ export default ({ projectId }: Params) => {
     [assetModalOpened, setOpenAssets],
   );
 
+  const handleNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification],
+  );
+
   return {
     currentTeam,
     currentProject,
     projectAlias,
     projectStatus: convertStatus(project?.publishmentStatus),
     project,
-    updateProjectBasicAuth,
-    publishProject,
     validAlias,
-    checkProjectAlias,
     validatingAlias,
     loading,
+    assetModalOpened,
+    currentLanguage: profileData?.me?.lang,
+    currentTheme: profileData?.me?.theme,
+    updateProjectBasicAuth,
+    publishProject,
+    checkProjectAlias,
     updatePublicTitle,
     updatePublicDescription,
     updatePublicImage,
-    assetModalOpened,
     toggleAssetModal,
+    handleNotificationChange,
   };
 };
 
