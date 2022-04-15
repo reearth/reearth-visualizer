@@ -22,7 +22,6 @@ type Props = {
   pluginBaseUrl?: string;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
-  wrapContent?: boolean;
 };
 
 export default function Area({
@@ -33,7 +32,6 @@ export default function Area({
   widgets,
   pluginProperty,
   layoutConstraint,
-  wrapContent,
   ...props
 }: Props) {
   const theme = useTheme();
@@ -55,8 +53,9 @@ export default function Area({
       // reverse={area !== "middle" && section === "right"}
       end={section === "right" || area === "bottom"}
       align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
-      style={{ flexWrap: wrapContent ? "wrap" : undefined }}
+      style={{ flexWrap: "wrap" }}
       editorStyle={{
+        flexWrap: "wrap",
         background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
         border:
           area === "middle"

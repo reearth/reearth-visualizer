@@ -52,7 +52,6 @@ export default function Zone({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
-                wrapContent
               />
             ),
           )}

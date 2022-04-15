@@ -64,7 +64,6 @@ export default function MobileZone({
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
-                  wrapContent
                 />
               ),
             )}
