@@ -15,18 +15,17 @@
   "separateMajorMinor": false,
   "packageRules": [
     {
-      "matchPackagePatterns": [
+      "matchPackageNames": [
         "cesium"
       ],
       "groupName": "cesium",
-      "groupSlug": "cesium",
       "schedule": ["before 3am on the fourth day of the month"]
     },
     {
-      "packagePatterns": [
+      "matchPackagePatterns": [
         "*"
       ],
-      "excludePackagePatterns": [
+      "excludePackageNames": [
         "cesium"
       ],
       "groupName": "all dependencies",
