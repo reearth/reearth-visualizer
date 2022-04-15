@@ -1,3 +1,4 @@
+import fileDownload from "js-file-download";
 import { useState, useMemo, ChangeEvent, useEffect, useCallback } from "react";
 
 import type {
@@ -69,6 +70,11 @@ export default () => {
     },
   ];
 
+  const handleFileDownload = (body?: string, filename?: string) => {
+    if (!body) return;
+    fileDownload(body, filename ?? "untitled.js");
+  };
+
   const handleAlignSystemUpdate = (widget: Widget, newLoc: Position) => {
     setAlignSystem(() => {
       const alignment =
@@ -111,7 +117,7 @@ export default () => {
     setShowInfobox(!showInfobox);
   };
 
-  const openFile = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileOpen = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const file = e.currentTarget.files?.[0];
     if (!file) return;
@@ -134,7 +140,7 @@ export default () => {
     };
   }, [sourceCode.body]);
 
-  const reset = useCallback(() => {
+  const handleFileReset = useCallback(() => {
     if (confirm("Are you sure you want to reset?")) {
       setSourceCode(hardSourceCode);
       handleAlignSystemUpdate(widget, defaultPosition);
@@ -155,13 +161,14 @@ export default () => {
     infoboxSize,
     showAlignSystem,
     showInfobox,
-    handleAlignSystemToggle,
-    handleInfoboxToggle,
-    openFile,
-    handleAlignSystemUpdate,
     setSourceCode,
     setMode,
     setInfoboxSize,
-    reset,
+    handleFileOpen,
+    handleFileDownload,
+    handleFileReset,
+    handleAlignSystemToggle,
+    handleAlignSystemUpdate,
+    handleInfoboxToggle,
   };
 };

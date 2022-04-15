@@ -178,6 +178,7 @@
         "graphiql": "^1.5.17",
         "graphql": "^16.3.0",
         "jotai": "^1.5.3",
+        "js-file-download": "^0.4.12",
         "leaflet": "^1.7.1",
         "lodash-es": "^4.17.20",
         "mini-svg-data-uri": "^1.4.3",
