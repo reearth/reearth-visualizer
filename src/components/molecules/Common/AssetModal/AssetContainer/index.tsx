@@ -177,7 +177,13 @@ const AssetContainer: React.FC<Props> = ({
                     <AssetListItem
                       key={a.id}
                       asset={a}
-                      isImage={checkIfFileType(a.url, imageFormats)}
+                      icon={
+                        checkIfFileType(a.url, fileFormats)
+                          ? "file"
+                          : checkIfFileType(a.url, imageFormats)
+                          ? "image"
+                          : "assetNoSupport"
+                      }
                       onCheck={() => onSelect?.(a)}
                       selected={selectedAssets?.includes(a)}
                       checked={initialAsset === a}
@@ -188,7 +194,13 @@ const AssetContainer: React.FC<Props> = ({
                       key={a.id}
                       name={a.name}
                       cardSize={layoutType}
-                      icon={checkIfFileType(a.url, fileFormats) ? "file" : undefined}
+                      icon={
+                        checkIfFileType(a.url, fileFormats)
+                          ? "file"
+                          : checkIfFileType(a.url, imageFormats)
+                          ? undefined
+                          : "assetNoSupport"
+                      }
                       url={a.url}
                       onCheck={() => onSelect?.(a)}
                       selected={selectedAssets?.includes(a)}

@@ -46,6 +46,7 @@ import FilterSize from "./Icons/filterSize.svg";
 import FilterSizeReverse from "./Icons/filterSizeReverse.svg";
 import FilterTime from "./Icons/filterTime.svg";
 import FilterTimeReverse from "./Icons/filterTimeReverse.svg";
+import AssetNoSupport from "./Icons/assetNoSupport.svg";
 
 // Titles/Sections
 import Scene from "./Icons/sceneIcon.svg";
@@ -160,6 +161,7 @@ export default {
   googleDrive: GoogleDriveIcon,
   sheetFile: SheetFileIcon,
   computer: PcIcon,
+  assetNoSupport: AssetNoSupport,
   assetGrid: AssetGrid,
   assetGridSmall: AssetGridSmall,
   assetList: AssetList,
