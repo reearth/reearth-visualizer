@@ -1,13 +1,5 @@
 *                                      @KaWaite
-/.babelrc                              @rot1024
-/.github/                              @rot1024
-/.storybook/                           @rot1024
-/bin/                                  @rot1024
-/cypress/                              @rot1024
-/src/components/atoms/Plugin/          @rot1024
-/src/components/molecules/Visualizer/  @rot1024
-/src/components/organisms/EarthEditor/ @rot1024
-/src/components/organisms/Published/   @rot1024
-/src/util/                             @rot1024
-/tsconfig.json                         @rot1024
-/webpack.config.js                     @rot1024
+/.github/                              @KaWaite @rot1024
+/cypress/                              @KaWaite @rot1024
+/src/components/atoms/Plugin/          @KaWaite @rot1024
+/src/components/molecules/Visualizer/  @KaWaite @rot1024
