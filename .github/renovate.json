@@ -15,7 +15,7 @@
       "enabledManagers": [
         "gomod"
       ],
-      "packagePatterns": [
+      "matchPackagePatterns": [
         "*"
       ],
       "groupName": "dependencies",
@@ -30,7 +30,7 @@
         "dockerfile",
         "docker-compose"
       ],
-      "packagePatterns": [
+      "matchPackagePatterns": [
         "*"
       ],
       "groupName": "docker dependencies",
@@ -44,7 +44,7 @@
       "enabledManagers": [
         "github-actions"
       ],
-      "packagePatterns": [
+      "matchPackagePatterns": [
         "*"
       ],
       "groupName": "github actions dependencies",
