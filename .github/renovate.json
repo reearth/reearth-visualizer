@@ -19,7 +19,7 @@
         "cesium"
       ],
       "groupName": "cesium",
-      "schedule": ["before 3am on the fourth day of the month"]
+      "schedule": ["before 3:00 am on the 4th day of the month"]
     },
     {
       "matchPackagePatterns": [
@@ -30,7 +30,7 @@
       ],
       "groupName": "all dependencies",
       "groupSlug": "all",
-      "schedule": ["before 3am on the fourth day of the month"]
+      "schedule": ["before 3:00 am on the 4th day of the month"]
     }
   ]
 }
