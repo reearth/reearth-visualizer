@@ -59,20 +59,11 @@ func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
 		}
 		algorithm := validator.SignatureAlgorithm(alg)
 
-		// add a trailing slash (auth0-spa-js adds a trailing slash to audiences)
-		aud := append([]string{}, p.AUD...)
-		for i, a := range aud {
-			if !strings.HasSuffix(a, "/") {
-				a += "/"
-			}
-			aud[i] = a
-		}
-
 		v, err := validator.New(
 			provider.KeyFunc,
 			algorithm,
 			issuerURL.String(),
-			aud,
+			p.AUD,
 			validator.WithCustomClaims(func() validator.CustomClaims {
 				return &customClaims{}
 			}),

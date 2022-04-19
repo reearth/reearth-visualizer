@@ -10,7 +10,7 @@ func TestAuth0Config_AuthConfig(t *testing.T) {
 	s := ""
 	assert.Equal(t, &AuthConfig{
 		ISS:      "https://hoge.auth0.com",
-		AUD:      []string{"https://xxx"},
+		AUD:      []string{"xxx"},
 		ClientID: &s,
 	}, Auth0Config{
 		Domain:   "hoge.auth0.com/",
