@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.6.1 - 2022-04-20
+
+### 🔧 Bug Fixes
+
+- Renovate bot not running on schedule ([#136](https://github.com/reearth/reearth-backend/pull/136)) [`82843f`](https://github.com/reearth/reearth-backend/commit/82843f)
+- Aud was changed and jwt could not be validated correctly [`985100`](https://github.com/reearth/reearth-backend/commit/985100)
+- Auth audiences were unintentionally required [`7ec76a`](https://github.com/reearth/reearth-backend/commit/7ec76a)
+
+### ✨ Refactor
+
+- Introduce generics, reorganize GraphQL schema ([#135](https://github.com/reearth/reearth-backend/pull/135)) [`04a098`](https://github.com/reearth/reearth-backend/commit/04a098)
+
+### Miscellaneous Tasks
+
+- Update dependencies ([#134](https://github.com/reearth/reearth-backend/pull/134)) [`1b9b6b`](https://github.com/reearth/reearth-backend/commit/1b9b6b)
+
 ## 0.6.0 - 2022-04-08
 
 ### 🚀 Features
