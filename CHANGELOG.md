@@ -1,7 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.6.0 - 2022-04-07
+## 0.6.1 - 2022-04-20
+
+### 🚀 Features
+
+- Extend project publish settings and dataset import modal functionality through extension API ([#200](https://github.com/reearth/reearth-web/pull/200)) [`96aa56`](https://github.com/reearth/reearth-web/commit/96aa56)
+
+### 🔧 Bug Fixes
+
+- Redirect after esc button in any setting page ([#193](https://github.com/reearth/reearth-web/pull/193)) [`c8ec35`](https://github.com/reearth/reearth-web/commit/c8ec35)
+
+### Miscellaneous Tasks
+
+- Follow GraphQL schema updates ([#209](https://github.com/reearth/reearth-web/pull/209)) [`8d9e75`](https://github.com/reearth/reearth-web/commit/8d9e75)
+- Update all dependencies ([#210](https://github.com/reearth/reearth-web/pull/210)) [`c22b7a`](https://github.com/reearth/reearth-web/commit/c22b7a)
+
+## 0.6.0 - 2022-04-08
 
 ### 🚀 Features
 
