@@ -27,7 +27,7 @@ type SignupParam struct {
 	Sub      *string // required by Auth0
 	Email    string
 	Name     string
-	Password string
+	Password *string
 	Secret   *string
 	User     SignupUserParam
 }

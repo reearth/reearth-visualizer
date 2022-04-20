@@ -85,12 +85,12 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 				Theme:  input.Theme,
 			},
 		})
-	} else if input.Name != nil && input.Email != nil && input.Password != nil {
+	} else if input.Name != nil && input.Email != nil {
 		u, _, err = c.usecase.Signup(ctx, interfaces.SignupParam{
 			Sub:      input.Sub,
 			Name:     *input.Name,
 			Email:    *input.Email,
-			Password: *input.Password,
+			Password: input.Password,
 			Secret:   input.Secret,
 			User: interfaces.SignupUserParam{
 				UserID: input.UserID,

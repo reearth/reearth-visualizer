@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
@@ -47,10 +48,10 @@ func TestUser_Signup(t *testing.T) {
 			signupSecret:    "",
 			authSrvUIDomain: "https://reearth.io",
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -88,7 +89,7 @@ func TestUser_Signup(t *testing.T) {
 			args: interfaces.SignupParam{
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -117,10 +118,10 @@ func TestUser_Signup(t *testing.T) {
 				Verification(user.VerificationFrom(mockcode, mocktime, true)).
 				MustBuild(),
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -135,11 +136,11 @@ func TestUser_Signup(t *testing.T) {
 			signupSecret:    "",
 			authSrvUIDomain: "",
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
-				Secret:   sr("hogehoge"),
+				Password: lo.ToPtr("PAss00!!"),
+				Secret:   lo.ToPtr("hogehoge"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -170,11 +171,11 @@ func TestUser_Signup(t *testing.T) {
 			signupSecret:    "SECRET",
 			authSrvUIDomain: "",
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
-				Secret:   sr("SECRET"),
+				Password: lo.ToPtr("PAss00!!"),
+				Secret:   lo.ToPtr("SECRET"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -209,11 +210,11 @@ func TestUser_Signup(t *testing.T) {
 			signupSecret:    "SECRET",
 			authSrvUIDomain: "",
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
-				Secret:   sr("SECRET!"),
+				Password: lo.ToPtr("PAss00!!"),
+				Secret:   lo.ToPtr("SECRET!"),
 			},
 			wantError: interfaces.ErrSignupInvalidSecret,
 		},
@@ -222,10 +223,10 @@ func TestUser_Signup(t *testing.T) {
 			signupSecret:    "SECRET",
 			authSrvUIDomain: "",
 			args: interfaces.SignupParam{
-				Sub:      sr("SUB"),
+				Sub:      lo.ToPtr("SUB"),
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 			},
 			wantError: interfaces.ErrSignupInvalidSecret,
 		},
@@ -234,7 +235,7 @@ func TestUser_Signup(t *testing.T) {
 			args: interfaces.SignupParam{
 				Email:    "aaa",
 				Name:     "NAME",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 			},
 			wantError: user.ErrInvalidEmail,
 		},
@@ -243,7 +244,7 @@ func TestUser_Signup(t *testing.T) {
 			args: interfaces.SignupParam{
 				Email:    "aaa@bbb.com",
 				Name:     "NAME",
-				Password: "PAss00",
+				Password: lo.ToPtr("PAss00"),
 			},
 			wantError: user.ErrPasswordLength,
 		},
@@ -252,7 +253,7 @@ func TestUser_Signup(t *testing.T) {
 			args: interfaces.SignupParam{
 				Email:    "aaa@bbb.com",
 				Name:     "",
-				Password: "PAss00!!",
+				Password: lo.ToPtr("PAss00!!"),
 			},
 			wantError: interfaces.ErrSignupInvalidName,
 		},
@@ -400,7 +401,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 				AccessToken: "accesstoken",
 				Issuer:      "https://issuer",
 				Sub:         "sub",
-				Secret:      sr("SECRET"),
+				Secret:      lo.ToPtr("SECRET"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -468,7 +469,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 				AccessToken: "accesstoken",
 				Issuer:      "https://issuer",
 				Sub:         "sub",
-				Secret:      sr("SECRET!"),
+				Secret:      lo.ToPtr("SECRET!"),
 				User: interfaces.SignupUserParam{
 					UserID: &uid,
 					TeamID: &tid,
@@ -542,8 +543,4 @@ func TestIssToURL(t *testing.T) {
 	assert.Equal(t, &url.URL{Scheme: "https", Host: "iss.com", Path: ""}, issToURL("https://iss.com/", ""))
 	assert.Equal(t, &url.URL{Scheme: "https", Host: "iss.com", Path: "/hoge"}, issToURL("https://iss.com/hoge", ""))
 	assert.Equal(t, &url.URL{Scheme: "https", Host: "iss.com", Path: "/hoge/foobar"}, issToURL("https://iss.com/hoge", "foobar"))
-}
-
-func sr(s string) *string {
-	return &s
 }

@@ -20,9 +20,6 @@ import (
 )
 
 func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.User, *user.Team, error) {
-	if inp.Password == "" {
-		return nil, nil, interfaces.ErrSignupInvalidPassword
-	}
 	if inp.Name == "" {
 		return nil, nil, interfaces.ErrSignupInvalidName
 	}
@@ -66,7 +63,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 		Email:    inp.Email,
 		Name:     inp.Name,
 		Sub:      auth,
-		Password: &inp.Password,
+		Password: inp.Password,
 		Lang:     inp.User.Lang,
 		Theme:    inp.User.Theme,
 		UserID:   inp.User.UserID,
