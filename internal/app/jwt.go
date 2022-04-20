@@ -59,11 +59,18 @@ func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
 		}
 		algorithm := validator.SignatureAlgorithm(alg)
 
+		var aud []string
+		if p.AUD != nil {
+			aud = p.AUD
+		} else {
+			aud = []string{}
+		}
+
 		v, err := validator.New(
 			provider.KeyFunc,
 			algorithm,
 			issuerURL.String(),
-			p.AUD,
+			aud,
 			validator.WithCustomClaims(func() validator.CustomClaims {
 				return &customClaims{}
 			}),

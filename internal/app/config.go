@@ -221,9 +221,13 @@ func (c Auth0Config) AuthConfig() *AuthConfig {
 		return nil
 	}
 	domain := prepareUrl(c.Domain)
+	var aud []string
+	if len(c.Audience) > 0 {
+		aud = []string{c.Audience}
+	}
 	return &AuthConfig{
 		ISS:      domain,
-		AUD:      []string{c.Audience},
+		AUD:      aud,
 		ClientID: &c.ClientID,
 	}
 }
