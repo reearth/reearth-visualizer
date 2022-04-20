@@ -54,7 +54,7 @@ func (b *Builder) Plugin(plugin *PluginID) *Builder {
 }
 
 func (b *Builder) Extension(extension *PluginExtensionID) *Builder {
-	b.base.extension = extension.CopyRef()
+	b.base.extension = extension.CloneRef()
 	return b
 }
 

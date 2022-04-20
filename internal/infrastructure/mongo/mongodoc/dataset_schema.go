@@ -58,7 +58,7 @@ func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {
 
 	fields := make([]*dataset.SchemaField, 0, len(d.Fields))
 	for _, field := range d.Fields {
-		fid, err := id.DatasetSchemaFieldIDFrom(field.ID)
+		fid, err := id.DatasetFieldIDFrom(field.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -81,7 +81,7 @@ func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {
 		Scene(scene).
 		Fields(fields)
 	if d.RepresentativeField != nil {
-		dsfid, err := id.DatasetSchemaFieldIDFrom(*d.RepresentativeField)
+		dsfid, err := id.DatasetFieldIDFrom(*d.RepresentativeField)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 		ID:                  did,
 		Name:                dataset.Name(),
 		Source:              dataset.Source(),
-		Scene:               id.ID(dataset.Scene()).String(),
+		Scene:               dataset.Scene().String(),
 		RepresentativeField: dataset.RepresentativeFieldID().StringRef(),
 		Dynamic:             dataset.Dynamic(),
 	}
@@ -119,7 +119,7 @@ func NewDatasetSchemas(datasetSchemas []*dataset.Schema, f scene.IDList) ([]inte
 	res := make([]interface{}, 0, len(datasetSchemas))
 	ids := make([]string, 0, len(datasetSchemas))
 	for _, d := range datasetSchemas {
-		if d == nil || f != nil && !f.Includes(d.Scene()) {
+		if d == nil || f != nil && !f.Has(d.Scene()) {
 			continue
 		}
 		r, id := NewDatasetSchema(d)

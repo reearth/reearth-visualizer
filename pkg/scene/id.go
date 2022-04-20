@@ -1,8 +1,6 @@
 package scene
 
 import (
-	"time"
-
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
@@ -15,6 +13,9 @@ type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID
 type TeamID = id.TeamID
+
+type IDList = id.SceneIDList
+type WidgetIDList = id.WidgetIDList
 
 var NewID = id.NewSceneID
 var NewWidgetID = id.NewWidgetID
@@ -52,61 +53,5 @@ var PluginIDFromRef = id.PluginIDFromRef
 var ProjectIDFromRef = id.ProjectIDFromRef
 var TeamIDFromRef = id.TeamIDFromRef
 
-var IDFromRefID = id.SceneIDFromRefID
-var WidgetIDFromRefID = id.WidgetIDFromRefID
-var ClusterIDFromRefID = id.ClusterIDFromRefID
-var LayerIDFromRefID = id.LayerIDFromRefID
-var PropertyIDFromRefID = id.PropertyIDFromRefID
-var ProjectIDFromRefID = id.ProjectIDFromRefID
-var TeamIDFromRefID = id.TeamIDFromRefID
-
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID
-
-func createdAt(i ID) time.Time {
-	return id.ID(i).Timestamp()
-}
-
-type IDList []ID
-
-func (l IDList) Clone() IDList {
-	if l == nil {
-		return nil
-	}
-	return append(IDList{}, l...)
-}
-
-func (l IDList) Filter(ids ...ID) IDList {
-	if l == nil {
-		return nil
-	}
-
-	res := make(IDList, 0, len(l))
-	for _, t := range l {
-		for _, t2 := range ids {
-			if t == t2 {
-				res = append(res, t)
-			}
-		}
-	}
-	return res
-}
-
-func (l IDList) Includes(ids ...ID) bool {
-	for _, t := range l {
-		for _, t2 := range ids {
-			if t == t2 {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func (l IDList) Len() int {
-	return len(l)
-}
-
-func (k IDList) Strings() []string {
-	return id.SceneIDsToStrings(k)
-}

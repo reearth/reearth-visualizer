@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"sort"
 	"sync"
 
 	"github.com/reearth/reearth-backend/pkg/id"
@@ -42,7 +41,7 @@ func (r *Property) FindByID(ctx context.Context, id id.PropertyID) (*property.Pr
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Property) FindByIDs(ctx context.Context, ids []id.PropertyID) (property.List, error) {
+func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (property.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -107,9 +106,7 @@ func (r *Property) FindBySchema(_ context.Context, schemas []id.PropertySchemaID
 			}
 		}
 	}
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].ID().ID().Compare(result[j].ID().ID()) < 0
-	})
+	result.Sort()
 	return result, nil
 }
 
@@ -128,9 +125,7 @@ func (r *Property) FindByPlugin(_ context.Context, plugin id.PluginID, scene id.
 			break
 		}
 	}
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].ID().ID().Compare(result[j].ID().ID()) < 0
-	})
+	result.Sort()
 	return result, nil
 }
 
@@ -184,7 +179,7 @@ func (r *Property) Remove(ctx context.Context, id id.PropertyID) error {
 	return nil
 }
 
-func (r *Property) RemoveAll(ctx context.Context, ids []id.PropertyID) error {
+func (r *Property) RemoveAll(ctx context.Context, ids id.PropertyIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

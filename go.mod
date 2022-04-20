@@ -26,6 +26,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.6.0
+	github.com/samber/lo v1.11.0
 	github.com/sendgrid/sendgrid-go v3.11.1+incompatible
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.8.2
@@ -42,6 +43,7 @@ require (
 	go.opentelemetry.io/otel v1.6.1
 	go.opentelemetry.io/otel/sdk v1.6.1
 	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29
+	golang.org/x/exp v0.0.0-20220407100705-7b9b53b0aca4
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.10
 	google.golang.org/api v0.74.0

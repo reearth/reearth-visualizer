@@ -65,11 +65,8 @@ func NewTag(t tag.Tag) (*TagDocument, string) {
 	var group *TagGroupDocument
 	var item *TagItemDocument
 	if tg := tag.GroupFrom(t); tg != nil {
-		tags := tg.Tags()
-		ids := tags.Tags()
-
 		group = &TagGroupDocument{
-			Tags: id.TagIDsToStrings(ids),
+			Tags: tg.Tags().Strings(),
 		}
 	}
 
@@ -100,7 +97,7 @@ func NewTags(tags []*tag.Tag, f scene.IDList) ([]interface{}, []string) {
 			continue
 		}
 		d2 := *d
-		if f != nil && !f.Includes(d2.Scene()) {
+		if f != nil && !f.Has(d2.Scene()) {
 			continue
 		}
 		r, tid := NewTag(d2)
@@ -151,7 +148,7 @@ func (d *TagDocument) ModelItem() (*tag.Item, error) {
 		Parent(id.TagIDFromRef(d.Item.Parent)).
 		LinkedDatasetSchemaID(id.DatasetSchemaIDFromRef(d.Item.LinkedDatasetSchemaID)).
 		LinkedDatasetID(id.DatasetIDFromRef(d.Item.LinkedDatasetID)).
-		LinkedDatasetFieldID(id.DatasetSchemaFieldIDFromRef(d.Item.LinkedDatasetFieldID)).
+		LinkedDatasetFieldID(id.DatasetFieldIDFromRef(d.Item.LinkedDatasetFieldID)).
 		Build()
 }
 
@@ -164,24 +161,21 @@ func (d *TagDocument) ModelGroup() (*tag.Group, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	sid, err := id.SceneIDFrom(d.Scene)
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]id.TagID, 0, len(d.Group.Tags))
-	for _, lgid := range d.Group.Tags {
-		tagId, err := id.TagIDFrom(lgid)
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, tagId)
+	tags, err := id.TagIDListFrom(d.Group.Tags)
+	if err != nil {
+		return nil, err
 	}
 
 	return tag.NewGroup().
 		ID(tid).
 		Label(d.Label).
 		Scene(sid).
-		Tags(tag.IDListFrom(ids)).
+		Tags(tags).
 		Build()
 }

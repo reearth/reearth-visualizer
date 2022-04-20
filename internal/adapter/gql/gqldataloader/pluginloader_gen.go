@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // PluginLoaderConfig captures the config to create a new PluginLoader
 type PluginLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.PluginID) ([]*gqlmodel.Plugin, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewPluginLoader(config PluginLoaderConfig) *PluginLoader {
 // PluginLoader batches and caches requests
 type PluginLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.PluginID) ([]*gqlmodel.Plugin, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type PluginLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.PluginID]*gqlmodel.Plugin
+	cache map[gqlmodel.ID]*gqlmodel.Plugin
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type PluginLoader struct {
 }
 
 type pluginLoaderBatch struct {
-	keys    []id.PluginID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Plugin
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type pluginLoaderBatch struct {
 }
 
 // Load a Plugin by key, batching and caching will be applied automatically
-func (l *PluginLoader) Load(key id.PluginID) (*gqlmodel.Plugin, error) {
+func (l *PluginLoader) Load(key gqlmodel.ID) (*gqlmodel.Plugin, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Plugin.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PluginLoader) LoadThunk(key id.PluginID) func() (*gqlmodel.Plugin, error) {
+func (l *PluginLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Plugin, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *PluginLoader) LoadThunk(key id.PluginID) func() (*gqlmodel.Plugin, erro
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *PluginLoader) LoadAll(keys []id.PluginID) ([]*gqlmodel.Plugin, []error) {
+func (l *PluginLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error) {
 	results := make([]func() (*gqlmodel.Plugin, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *PluginLoader) LoadAll(keys []id.PluginID) ([]*gqlmodel.Plugin, []error)
 // LoadAllThunk returns a function that when called will block waiting for a Plugins.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PluginLoader) LoadAllThunk(keys []id.PluginID) func() ([]*gqlmodel.Plugin, []error) {
+func (l *PluginLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Plugin, []error) {
 	results := make([]func() (*gqlmodel.Plugin, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *PluginLoader) LoadAllThunk(keys []id.PluginID) func() ([]*gqlmodel.Plug
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *PluginLoader) Prime(key id.PluginID, value *gqlmodel.Plugin) bool {
+func (l *PluginLoader) Prime(key gqlmodel.ID, value *gqlmodel.Plugin) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *PluginLoader) Prime(key id.PluginID, value *gqlmodel.Plugin) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *PluginLoader) Clear(key id.PluginID) {
+func (l *PluginLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *PluginLoader) unsafeSet(key id.PluginID, value *gqlmodel.Plugin) {
+func (l *PluginLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Plugin) {
 	if l.cache == nil {
-		l.cache = map[id.PluginID]*gqlmodel.Plugin{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Plugin{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *pluginLoaderBatch) keyIndex(l *PluginLoader, key id.PluginID) int {
+func (b *pluginLoaderBatch) keyIndex(l *PluginLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

@@ -4,6 +4,7 @@ import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/reearth/reearth-backend/pkg/layer/decoding"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
@@ -12,16 +13,16 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 	}
 
 	return &LayerItem{
-		ID:              l.ID().ID(),
-		SceneID:         l.Scene().ID(),
+		ID:              IDFrom(l.ID()),
+		SceneID:         IDFrom(l.Scene()),
 		Name:            l.Name(),
 		IsVisible:       l.IsVisible(),
-		PropertyID:      l.Property().IDRef(),
-		PluginID:        l.Plugin(),
-		ExtensionID:     l.Extension(),
+		PropertyID:      IDFromRef(l.Property()),
+		PluginID:        IDFromPluginIDRef(l.Plugin()),
+		ExtensionID:     IDFromStringRef(l.Extension()),
 		Infobox:         ToInfobox(l.Infobox(), l.ID(), l.Scene(), l.LinkedDataset()),
-		LinkedDatasetID: l.LinkedDataset().IDRef(),
-		ParentID:        parent.IDRef(),
+		LinkedDatasetID: IDFromRef(l.LinkedDataset()),
+		ParentID:        IDFromRef[id.Layer](parent),
 		Tags:            ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
@@ -31,25 +32,19 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 		return nil
 	}
 
-	laLayers := l.Layers().Layers()
-	layers := make([]*id.ID, 0, len(laLayers))
-	for _, lay := range laLayers {
-		layers = append(layers, lay.IDRef())
-	}
-
 	return &LayerGroup{
-		ID:                    l.ID().ID(),
-		SceneID:               l.Scene().ID(),
+		ID:                    IDFrom(l.ID()),
+		SceneID:               IDFrom(l.Scene()),
 		Name:                  l.Name(),
 		IsVisible:             l.IsVisible(),
-		PropertyID:            l.Property().IDRef(),
-		PluginID:              l.Plugin(),
-		ExtensionID:           l.Extension(),
+		PropertyID:            IDFromRef(l.Property()),
+		PluginID:              IDFromPluginIDRef(l.Plugin()),
+		ExtensionID:           IDFromStringRef(l.Extension()),
 		Infobox:               ToInfobox(l.Infobox(), l.ID(), l.Scene(), nil),
-		LinkedDatasetSchemaID: l.LinkedDatasetSchema().IDRef(),
-		LayerIds:              layers,
+		LinkedDatasetSchemaID: IDFromRef(l.LinkedDatasetSchema()),
+		LayerIds:              util.Map(l.Layers().Layers(), IDFrom[id.Layer]),
 		Root:                  l.IsRoot(),
-		ParentID:              parent.IDRef(),
+		ParentID:              IDFromRef[id.Layer](parent),
 		Tags:                  ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
@@ -58,6 +53,7 @@ func ToLayer(l layer.Layer, parent *id.LayerID) Layer {
 	if l == nil {
 		return nil
 	}
+
 	switch la := l.(type) {
 	case *layer.Item:
 		return ToLayerItem(la, parent)
@@ -68,32 +64,23 @@ func ToLayer(l layer.Layer, parent *id.LayerID) Layer {
 }
 
 func ToLayers(layers layer.List, parent *id.LayerID) []Layer {
-	if len(layers) == 0 {
-		return nil
-	}
-
-	result := make([]Layer, 0, len(layers))
-	for _, l := range layers {
-		if l == nil {
-			continue
-		}
-		result = append(result, ToLayer(*l, parent))
-	}
-
-	return result
+	return util.Map(layers, func(l *layer.Layer) Layer {
+		return ToLayer(*l, parent)
+	})
 }
 
 func ToInfoboxField(ibf *layer.InfoboxField, parentSceneID id.SceneID, parentDatasetID *id.DatasetID) *InfoboxField {
 	if ibf == nil {
 		return nil
 	}
+
 	return &InfoboxField{
-		ID:              ibf.ID().ID(),
-		SceneID:         parentSceneID.ID(),
-		PluginID:        ibf.Plugin(),
-		ExtensionID:     ibf.Extension(),
-		PropertyID:      ibf.Property().ID(),
-		LinkedDatasetID: parentDatasetID.IDRef(),
+		ID:              IDFrom(ibf.ID()),
+		SceneID:         IDFrom(parentSceneID),
+		PluginID:        IDFromPluginID(ibf.Plugin()),
+		ExtensionID:     ID(ibf.Extension()),
+		PropertyID:      IDFrom(ibf.Property()),
+		LinkedDatasetID: IDFromRef[id.Dataset](parentDatasetID),
 	}
 }
 
@@ -108,11 +95,11 @@ func ToInfobox(ib *layer.Infobox, parent id.LayerID, parentSceneID id.SceneID, p
 	}
 
 	return &Infobox{
-		SceneID:         parentSceneID.ID(),
-		PropertyID:      ib.Property().ID(),
+		SceneID:         IDFrom(parentSceneID),
+		PropertyID:      IDFrom(ib.Property()),
 		Fields:          fields,
-		LayerID:         parent.ID(),
-		LinkedDatasetID: parentDatasetID.IDRef(),
+		LayerID:         IDFrom(parent),
+		LinkedDatasetID: IDFromRef[id.Dataset](parentDatasetID),
 	}
 }
 
@@ -122,9 +109,9 @@ func ToMergedLayer(layer *layer.Merged) *MergedLayer {
 	}
 
 	return &MergedLayer{
-		SceneID:    layer.Scene.ID(),
-		OriginalID: layer.Original.ID(),
-		ParentID:   layer.Parent.IDRef(),
+		SceneID:    IDFrom(layer.Scene),
+		OriginalID: IDFrom(layer.Original),
+		ParentID:   IDFromRef(layer.Parent),
 		Infobox:    ToMergedInfobox(layer.Infobox, layer.Scene),
 		Property:   ToMergedPropertyFromMetadata(layer.Property),
 	}
@@ -135,14 +122,11 @@ func ToMergedInfobox(ib *layer.MergedInfobox, sceneID id.SceneID) *MergedInfobox
 		return nil
 	}
 
-	fields := make([]*MergedInfoboxField, 0, len(ib.Fields))
-	for _, f := range ib.Fields {
-		fields = append(fields, ToMergedInfoboxField(f, sceneID))
-	}
-
 	return &MergedInfobox{
-		SceneID:  sceneID.ID(),
-		Fields:   fields,
+		SceneID: IDFrom(sceneID),
+		Fields: util.Map(ib.Fields, func(f *layer.MergedInfoboxField) *MergedInfoboxField {
+			return ToMergedInfoboxField(f, sceneID)
+		}),
 		Property: ToMergedPropertyFromMetadata(ib.Property),
 	}
 }
@@ -153,10 +137,10 @@ func ToMergedInfoboxField(ibf *layer.MergedInfoboxField, sceneID id.SceneID) *Me
 	}
 
 	return &MergedInfoboxField{
-		SceneID:     sceneID.ID(),
-		OriginalID:  ibf.ID.ID(),
-		PluginID:    ibf.Plugin,
-		ExtensionID: ibf.Extension,
+		SceneID:     IDFrom(sceneID),
+		OriginalID:  IDFrom(ibf.ID),
+		PluginID:    IDFromPluginID(ibf.Plugin),
+		ExtensionID: ID(ibf.Extension),
 		Property:    ToMergedPropertyFromMetadata(ibf.Property),
 	}
 }
@@ -181,14 +165,13 @@ func ToLayerTagList(t *layer.TagList, sid id.SceneID) []LayerTag {
 	if t.IsEmpty() {
 		return nil
 	}
-	tags := t.Tags()
-	gtags := make([]LayerTag, 0, len(tags))
-	for _, t := range tags {
-		if gt := ToLayerTag(t); gt != nil {
-			gtags = append(gtags, gt)
+
+	return util.FilterMap(t.Tags(), func(v layer.Tag) *LayerTag {
+		if t := ToLayerTag(v); t != nil {
+			return &t
 		}
-	}
-	return gtags
+		return nil
+	})
 }
 
 func ToLayerTag(l layer.Tag) LayerTag {
@@ -209,7 +192,7 @@ func ToLayerTagItem(t *layer.TagItem) *LayerTagItem {
 		return nil
 	}
 	return &LayerTagItem{
-		TagID: t.ID().ID(),
+		TagID: IDFrom(t.ID()),
 	}
 }
 
@@ -217,15 +200,9 @@ func ToLayerTagGroup(t *layer.TagGroup) *LayerTagGroup {
 	if t == nil {
 		return nil
 	}
-	children := t.Children()
-	tags := make([]*LayerTagItem, 0, len(children))
-	for _, c := range children {
-		if t := ToLayerTagItem(c); t != nil {
-			tags = append(tags, t)
-		}
-	}
+
 	return &LayerTagGroup{
-		TagID:    t.ID().ID(),
-		Children: tags,
+		TagID:    IDFrom(t.ID()),
+		Children: util.FilterMapR(t.Children(), ToLayerTagItem),
 	}
 }

@@ -47,7 +47,7 @@ func TestInitializer_Property(t *testing.T) {
 	initializer.ID = nil
 	actual, err = initializer.Property(sid)
 	assert.NoError(t, err)
-	assert.False(t, actual.ID().IsNil())
+	assert.False(t, actual.ID().IsEmpty())
 }
 
 func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
@@ -128,7 +128,7 @@ func TestInitializerItem_PropertyItem(t *testing.T) {
 	item.ID = nil
 	created, err = item.PropertyItem()
 	assert.NoError(t, err)
-	assert.False(t, created.ID().IsNil())
+	assert.False(t, created.ID().IsEmpty())
 }
 
 func TestInitializerItem_PropertyGroup(t *testing.T) {
@@ -152,7 +152,7 @@ func TestInitializerItem_PropertyGroup(t *testing.T) {
 
 	// check if a new id is generated
 	item.ID = nil
-	assert.False(t, item.PropertyGroup().ID().IsNil())
+	assert.False(t, item.PropertyGroup().ID().IsEmpty())
 }
 
 func TestInitializerItem_PropertyGroupList(t *testing.T) {
@@ -172,7 +172,7 @@ func TestInitializerItem_PropertyGroupList(t *testing.T) {
 
 	// check if a new id is generated
 	item.ID = nil
-	assert.False(t, item.PropertyGroupList().ID().IsNil())
+	assert.False(t, item.PropertyGroupList().ID().IsEmpty())
 }
 
 func TestInitializerGroup_Clone(t *testing.T) {
@@ -223,7 +223,7 @@ func TestInitializerGroup_PropertyGroup(t *testing.T) {
 	item.ID = nil
 	p, err = item.PropertyGroup(parentItem)
 	assert.NoError(t, err)
-	assert.False(t, p.ID().IsNil())
+	assert.False(t, p.ID().IsEmpty())
 }
 
 func TestInitializerField_Clone(t *testing.T) {

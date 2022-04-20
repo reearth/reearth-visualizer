@@ -20,11 +20,8 @@ var SceneIDFrom = id.SceneIDFrom
 var PropertySchemaIDFrom = id.PropertySchemaIDFrom
 
 var IDFromRef = id.PluginIDFromRef
-var ExtensionIDFromRef = id.PluginExtensionIDFromRef
 var SceneIDFromRef = id.SceneIDFromRef
 var PropertySchemaIDFromRef = id.PropertySchemaIDFromRef
-
-var SceneIDFromRefID = id.SceneIDFromRefID
 
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID

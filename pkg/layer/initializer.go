@@ -80,7 +80,7 @@ func (i *Initializer) Clone() *Initializer {
 	return &Initializer{
 		ID:                  i.ID.CopyRef(),
 		Plugin:              i.Plugin.CopyRef(),
-		Extension:           i.Extension.CopyRef(),
+		Extension:           i.Extension.CloneRef(),
 		Name:                i.Name,
 		Infobox:             i.Infobox.Clone(),
 		PropertyID:          i.PropertyID.CopyRef(),

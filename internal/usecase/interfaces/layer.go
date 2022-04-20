@@ -29,7 +29,7 @@ type AddLayerGroupInput struct {
 	ExtensionID           *id.PluginExtensionID
 	Index                 *int
 	LinkedDatasetSchemaID *id.DatasetSchemaID
-	RepresentativeFieldId *id.DatasetSchemaFieldID
+	RepresentativeFieldId *id.DatasetFieldID
 	Name                  string
 }
 

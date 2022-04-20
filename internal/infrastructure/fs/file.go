@@ -43,7 +43,7 @@ func (f *fileRepo) ReadAsset(ctx context.Context, filename string) (io.ReadClose
 }
 
 func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, error) {
-	filename := sanitize.Path(id.New().String() + path.Ext(file.Path))
+	filename := sanitize.Path(newAssetID() + path.Ext(file.Path))
 	if err := f.upload(ctx, filepath.Join(assetDir, filename), file.Content); err != nil {
 		return nil, err
 	}
@@ -184,4 +184,9 @@ func getAssetFileURL(base *url.URL, filename string) *url.URL {
 	b := *base
 	b.Path = path.Join(b.Path, filename)
 	return &b
+}
+
+func newAssetID() string {
+	// TODO: replace
+	return id.NewAssetID().String()
 }

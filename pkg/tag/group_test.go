@@ -16,7 +16,7 @@ func TestGroupBuilder_NewID(t *testing.T) {
 func TestGroupBuilder_Build(t *testing.T) {
 	tid := NewID()
 	sid := NewSceneID()
-	tags := []ID{
+	tags := IDList{
 		NewID(),
 		NewID(),
 	}
@@ -25,7 +25,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 		Name, Label string
 		Id          ID
 		Scene       SceneID
-		Tags        *IDList
+		Tags        IDList
 		Expected    struct {
 			Group Group
 			Error error
@@ -69,9 +69,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 			Id:    tid,
 			Label: "xxx",
 			Scene: sid,
-			Tags: &IDList{
-				tags: tags,
-			},
+			Tags:  tags,
 			Expected: struct {
 				Group Group
 				Error error
@@ -82,9 +80,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 						label:   "xxx",
 						sceneId: sid,
 					},
-					tags: &IDList{
-						tags: tags,
-					},
+					tags: tags,
 				},
 			},
 		},

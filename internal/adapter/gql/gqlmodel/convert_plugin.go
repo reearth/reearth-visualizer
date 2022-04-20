@@ -2,6 +2,7 @@ package gqlmodel
 
 import (
 	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func ToPlugin(p *plugin.Plugin) *Plugin {
@@ -9,29 +10,10 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 		return nil
 	}
 
-	pid := p.ID()
-	pluginExtensions := p.Extensions()
-	extensions := make([]*PluginExtension, 0, len(pluginExtensions))
-	for _, pe := range pluginExtensions {
-		extensions = append(extensions, &PluginExtension{
-			ExtensionID:              pe.ID(),
-			PluginID:                 pid,
-			Type:                     ToPluginExtensionType(pe.Type()),
-			Visualizer:               ToVisualizerRef(pe.Visualizer()),
-			Name:                     pe.Name().String(),
-			Description:              pe.Description().String(),
-			Icon:                     pe.Icon(),
-			SingleOnly:               BoolToRef(pe.SingleOnly()),
-			WidgetLayout:             ToPluginWidgetLayout(pe.WidgetLayout()),
-			PropertySchemaID:         pe.Schema(),
-			AllTranslatedDescription: pe.Description(),
-			AllTranslatedName:        pe.Name(),
-		})
-	}
-
+	pid := IDFromPluginID(p.ID())
 	return &Plugin{
 		ID:                       pid,
-		SceneID:                  pid.Scene().IDRef(),
+		SceneID:                  IDFromRef(p.ID().Scene()),
 		Name:                     p.Name().String(),
 		Description:              p.Description().String(),
 		AllTranslatedDescription: p.Description(),
@@ -39,8 +21,23 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 		Author:                   p.Author(),
 		RepositoryURL:            p.RepositoryURL(),
 		Version:                  p.Version().String(),
-		PropertySchemaID:         p.Schema(),
-		Extensions:               extensions,
+		PropertySchemaID:         IDFromPropertySchemaIDRef(p.Schema()),
+		Extensions: util.Map(p.Extensions(), func(pe *plugin.Extension) *PluginExtension {
+			return &PluginExtension{
+				ExtensionID:              ID(pe.ID()),
+				PluginID:                 pid,
+				Type:                     ToPluginExtensionType(pe.Type()),
+				Visualizer:               ToVisualizerRef(pe.Visualizer()),
+				Name:                     pe.Name().String(),
+				Description:              pe.Description().String(),
+				Icon:                     pe.Icon(),
+				SingleOnly:               BoolToRef(pe.SingleOnly()),
+				WidgetLayout:             ToPluginWidgetLayout(pe.WidgetLayout()),
+				PropertySchemaID:         IDFromPropertySchemaID(pe.Schema()),
+				AllTranslatedDescription: pe.Description(),
+				AllTranslatedName:        pe.Name(),
+			}
+		}),
 	}
 }
 
@@ -60,9 +57,9 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	return PluginExtensionType("")
 }
 
-func ToPluginMetadata(t *plugin.Metadata) (*PluginMetadata, error) {
+func ToPluginMetadata(t *plugin.Metadata) *PluginMetadata {
 	if t == nil {
-		return nil, nil
+		return nil
 	}
 
 	return &PluginMetadata{
@@ -71,7 +68,7 @@ func ToPluginMetadata(t *plugin.Metadata) (*PluginMetadata, error) {
 		ThumbnailURL: t.ThumbnailUrl,
 		Author:       t.Author,
 		CreatedAt:    t.CreatedAt,
-	}, nil
+	}
 }
 
 func ToPluginWidgetLayout(wl *plugin.WidgetLayout) *WidgetLayout {

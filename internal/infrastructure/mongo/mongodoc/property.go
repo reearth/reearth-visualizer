@@ -185,7 +185,7 @@ func NewProperties(properties []*property.Property, f scene.IDList) ([]interface
 	res := make([]interface{}, 0, len(properties))
 	ids := make([]string, 0, len(properties))
 	for _, d := range properties {
-		if d == nil || f != nil && !f.Includes(d.Scene()) {
+		if d == nil || f != nil && !f.Has(d.Scene()) {
 			continue
 		}
 		r, id := NewProperty(d)
@@ -207,7 +207,7 @@ func toModelPropertyField(f *PropertyFieldDocument) *property.Field {
 			var link *property.Link
 			d := id.DatasetIDFromRef(l.Dataset)
 			ds := id.DatasetSchemaIDFromRef(l.Schema)
-			df := id.DatasetSchemaFieldIDFromRef(l.Field)
+			df := id.DatasetFieldIDFromRef(l.Field)
 			if d != nil && ds != nil && df != nil {
 				link = property.NewLink(*d, *ds, *df)
 			} else if ds != nil && df != nil {

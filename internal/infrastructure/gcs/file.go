@@ -71,7 +71,7 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 		return nil, gateway.ErrFileTooLarge
 	}
 
-	sn := sanitize.Path(id.New().String() + path.Ext(file.Path))
+	sn := sanitize.Path(newAssetID() + path.Ext(file.Path))
 	if sn == "" {
 		return nil, gateway.ErrInvalidFile
 	}
@@ -327,4 +327,9 @@ func getGCSObjectNameFromURL(base, u *url.URL) string {
 	}
 
 	return p
+}
+
+func newAssetID() string {
+	// TODO: replace
+	return id.NewAssetID().String()
 }

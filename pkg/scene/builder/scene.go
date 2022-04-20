@@ -108,7 +108,7 @@ func (b *Builder) tags(ctx context.Context, s *scene.Scene) ([]*tagJSON, error) 
 
 func toTag(t tag.Tag, m tag.Map) tagJSON {
 	var tags []tagJSON
-	if children := tag.GroupFrom(t).Tags().Tags(); children != nil {
+	if children := tag.GroupFrom(t).Tags(); children != nil {
 		tags = make([]tagJSON, 0, len(children))
 		for _, tid := range children {
 			t, ok := m[tid]

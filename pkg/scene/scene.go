@@ -30,7 +30,7 @@ func (s *Scene) CreatedAt() time.Time {
 	if s == nil {
 		return time.Time{}
 	}
-	return createdAt(s.id)
+	return s.id.Timestamp()
 }
 
 func (s *Scene) Project() ProjectID {

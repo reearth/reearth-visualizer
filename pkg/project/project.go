@@ -109,7 +109,7 @@ func (p *Project) Team() TeamID {
 }
 
 func (p *Project) CreatedAt() time.Time {
-	return createdAt(p.id)
+	return p.id.Timestamp()
 }
 
 func (p *Project) Visualizer() visualizer.Visualizer {

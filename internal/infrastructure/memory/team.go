@@ -34,7 +34,7 @@ func (r *Team) FindByUser(ctx context.Context, i id.UserID) (user.TeamList, erro
 	return result, nil
 }
 
-func (r *Team) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamList, error) {
+func (r *Team) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -86,7 +86,7 @@ func (r *Team) Remove(ctx context.Context, id id.TeamID) error {
 	return nil
 }
 
-func (r *Team) RemoveAll(ctx context.Context, ids []id.TeamID) error {
+func (r *Team) RemoveAll(ctx context.Context, ids id.TeamIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

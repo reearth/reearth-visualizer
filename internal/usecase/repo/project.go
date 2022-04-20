@@ -10,7 +10,7 @@ import (
 
 type Project interface {
 	Filtered(TeamFilter) Project
-	FindByIDs(context.Context, []id.ProjectID) ([]*project.Project, error)
+	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
 	FindByTeam(context.Context, id.TeamID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)

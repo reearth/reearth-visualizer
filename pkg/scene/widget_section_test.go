@@ -82,9 +82,9 @@ func TestWidgetSection_Find(t *testing.T) {
 			}
 
 			ws := NewWidgetSection()
-			ws.Area(WidgetAreaTop).AddAll([]WidgetID{wid1, wid2, wid3})
-			ws.Area(WidgetAreaMiddle).AddAll([]WidgetID{wid4, wid5})
-			ws.Area(WidgetAreaBottom).AddAll([]WidgetID{wid6, wid7})
+			ws.Area(WidgetAreaTop).AddAll(WidgetIDList{wid1, wid2, wid3})
+			ws.Area(WidgetAreaMiddle).AddAll(WidgetIDList{wid4, wid5})
+			ws.Area(WidgetAreaBottom).AddAll(WidgetIDList{wid6, wid7})
 
 			index, area := ws.Find(tc.Input)
 			assert.Equal(t, tc.Expected1, index)
@@ -100,44 +100,44 @@ func TestWidgetSection_Remove(t *testing.T) {
 		Name     string
 		Area     WidgetAreaType
 		Input    WidgetID
-		Expected []WidgetID
+		Expected WidgetIDList
 		Nil      bool
 	}{
 		{
 			Name:     "top: remove a widget from widget section",
 			Area:     WidgetAreaTop,
 			Input:    wid,
-			Expected: []WidgetID{},
+			Expected: WidgetIDList{},
 		},
 		{
 			Name:     "top: couldn't find widgetId",
 			Area:     WidgetAreaTop,
 			Input:    NewWidgetID(),
-			Expected: []WidgetID{wid},
+			Expected: WidgetIDList{wid},
 		},
 		{
 			Name:     "middle: remove a widget from widget section",
 			Area:     WidgetAreaMiddle,
 			Input:    wid,
-			Expected: []WidgetID{},
+			Expected: WidgetIDList{},
 		},
 		{
 			Name:     "middle: couldn't find widgetId",
 			Area:     WidgetAreaMiddle,
 			Input:    NewWidgetID(),
-			Expected: []WidgetID{wid},
+			Expected: WidgetIDList{wid},
 		},
 		{
 			Name:     "bottom: remove a widget from widget section",
 			Area:     WidgetAreaBottom,
 			Input:    wid,
-			Expected: []WidgetID{},
+			Expected: WidgetIDList{},
 		},
 		{
 			Name:     "bottom: couldn't find widgetId",
 			Area:     WidgetAreaBottom,
 			Input:    NewWidgetID(),
-			Expected: []WidgetID{wid},
+			Expected: WidgetIDList{wid},
 		},
 		{
 			Name:  "nil",

@@ -45,10 +45,10 @@ func (r *datasetSchemaRepo) FindByID(ctx context.Context, id id.DatasetSchemaID)
 	})
 }
 
-func (r *datasetSchemaRepo) FindByIDs(ctx context.Context, ids []id.DatasetSchemaID) (dataset.SchemaList, error) {
+func (r *datasetSchemaRepo) FindByIDs(ctx context.Context, ids id.DatasetSchemaIDList) (dataset.SchemaList, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.DatasetSchemaIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*dataset.Schema, 0, len(ids))
@@ -79,7 +79,7 @@ func (r *datasetSchemaRepo) FindBySceneAll(ctx context.Context, sceneID id.Scene
 
 func (r *datasetSchemaRepo) FindDynamicByID(ctx context.Context, sid id.DatasetSchemaID) (*dataset.Schema, error) {
 	return r.findOne(ctx, bson.M{
-		"id":      id.ID(sid).String(),
+		"id":      sid.String(),
 		"dynamic": true,
 	})
 }
@@ -124,12 +124,12 @@ func (r *datasetSchemaRepo) Remove(ctx context.Context, id id.DatasetSchemaID) e
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *datasetSchemaRepo) RemoveAll(ctx context.Context, ids []id.DatasetSchemaID) error {
+func (r *datasetSchemaRepo) RemoveAll(ctx context.Context, ids id.DatasetSchemaIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{
-		"id": bson.M{"$in": id.DatasetSchemaIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}))
 }
 

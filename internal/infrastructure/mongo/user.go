@@ -29,10 +29,10 @@ func (r *userRepo) init() {
 	}
 }
 
-func (r *userRepo) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, error) {
+func (r *userRepo) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
 	dst := make([]*user.User, 0, len(ids))
 	res, err := r.find(ctx, dst, bson.M{
-		"id": bson.M{"$in": id.UserIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	})
 	if err != nil {
 		return nil, err

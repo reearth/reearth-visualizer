@@ -6,16 +6,22 @@ import (
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func (r *mutationResolver) CreateTagItem(ctx context.Context, input gqlmodel.CreateTagItemInput) (*gqlmodel.CreateTagItemPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	tag, parent, err := usecases(ctx).Tag.CreateItem(ctx, interfaces.CreateTagItemParam{
 		Label:                 input.Label,
-		SceneID:               id.SceneID(input.SceneID),
-		Parent:                id.TagIDFromRefID(input.Parent),
-		LinkedDatasetSchemaID: id.DatasetSchemaIDFromRefID(input.LinkedDatasetSchemaID),
-		LinkedDatasetID:       id.DatasetIDFromRefID(input.LinkedDatasetID),
-		LinkedDatasetField:    id.DatasetSchemaFieldIDFromRefID(input.LinkedDatasetField),
+		SceneID:               sid,
+		Parent:                gqlmodel.ToIDRef[id.Tag](input.Parent),
+		LinkedDatasetSchemaID: gqlmodel.ToIDRef[id.DatasetSchema](input.LinkedDatasetSchemaID),
+		LinkedDatasetID:       gqlmodel.ToIDRef[id.Dataset](input.LinkedDatasetID),
+		LinkedDatasetField:    gqlmodel.ToIDRef[id.DatasetField](input.LinkedDatasetField),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -28,10 +34,20 @@ func (r *mutationResolver) CreateTagItem(ctx context.Context, input gqlmodel.Cre
 }
 
 func (r *mutationResolver) CreateTagGroup(ctx context.Context, input gqlmodel.CreateTagGroupInput) (*gqlmodel.CreateTagGroupPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := util.TryMap(input.Tags, gqlmodel.ToID[id.Tag])
+	if err != nil {
+		return nil, err
+	}
+
 	tag, err := usecases(ctx).Tag.CreateGroup(ctx, interfaces.CreateTagGroupParam{
 		Label:   input.Label,
-		SceneID: id.SceneID(input.SceneID),
-		Tags:    id.TagIDsFromIDRef(input.Tags),
+		SceneID: sid,
+		Tags:    tags,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -42,9 +58,14 @@ func (r *mutationResolver) CreateTagGroup(ctx context.Context, input gqlmodel.Cr
 }
 
 func (r *mutationResolver) UpdateTag(ctx context.Context, input gqlmodel.UpdateTagInput) (*gqlmodel.UpdateTagPayload, error) {
+	tid, err := gqlmodel.ToID[id.Tag](input.TagID)
+	if err != nil {
+		return nil, err
+	}
+
 	tag, err := usecases(ctx).Tag.UpdateTag(ctx, interfaces.UpdateTagParam{
 		Label: input.Label,
-		TagID: id.TagID(input.TagID),
+		TagID: tid,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -55,9 +76,14 @@ func (r *mutationResolver) UpdateTag(ctx context.Context, input gqlmodel.UpdateT
 }
 
 func (r *mutationResolver) AttachTagItemToGroup(ctx context.Context, input gqlmodel.AttachTagItemToGroupInput) (*gqlmodel.AttachTagItemToGroupPayload, error) {
+	iid, gid, err := gqlmodel.ToID2[id.Tag, id.Tag](input.ItemID, input.GroupID)
+	if err != nil {
+		return nil, err
+	}
+
 	tag, err := usecases(ctx).Tag.AttachItemToGroup(ctx, interfaces.AttachItemToGroupParam{
-		ItemID:  id.TagID(input.ItemID),
-		GroupID: id.TagID(input.GroupID),
+		ItemID:  iid,
+		GroupID: gid,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -68,9 +94,14 @@ func (r *mutationResolver) AttachTagItemToGroup(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) DetachTagItemFromGroup(ctx context.Context, input gqlmodel.DetachTagItemFromGroupInput) (*gqlmodel.DetachTagItemFromGroupPayload, error) {
+	iid, gid, err := gqlmodel.ToID2[id.Tag, id.Tag](input.ItemID, input.GroupID)
+	if err != nil {
+		return nil, err
+	}
+
 	tag, err := usecases(ctx).Tag.DetachItemFromGroup(ctx, interfaces.DetachItemToGroupParam{
-		ItemID:  id.TagID(input.ItemID),
-		GroupID: id.TagID(input.GroupID),
+		ItemID:  iid,
+		GroupID: gid,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -81,7 +112,12 @@ func (r *mutationResolver) DetachTagItemFromGroup(ctx context.Context, input gql
 }
 
 func (r *mutationResolver) RemoveTag(ctx context.Context, input gqlmodel.RemoveTagInput) (*gqlmodel.RemoveTagPayload, error) {
-	tagID, layers, err := usecases(ctx).Tag.Remove(ctx, id.TagID(input.TagID), getOperator(ctx))
+	tid, err := gqlmodel.ToID[id.Tag](input.TagID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, layers, err := usecases(ctx).Tag.Remove(ctx, tid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +132,7 @@ func (r *mutationResolver) RemoveTag(ctx context.Context, input gqlmodel.RemoveT
 	}
 
 	return &gqlmodel.RemoveTagPayload{
-		TagID:         tagID.ID(),
+		TagID:         input.TagID,
 		UpdatedLayers: updatedLayers,
 	}, nil
 }

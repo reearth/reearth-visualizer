@@ -7,7 +7,6 @@ import (
 	"github.com/blang/semver"
 )
 
-// PluginID is an ID for Plugin.
 type PluginID struct {
 	name    string
 	version string

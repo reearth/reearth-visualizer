@@ -3,20 +3,22 @@ package gqlmodel
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/tag"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func ToTagItem(ti *tag.Item) *TagItem {
 	if ti == nil {
 		return nil
 	}
+
 	return &TagItem{
-		ID:                    ti.ID().ID(),
-		SceneID:               ti.Scene().ID(),
+		ID:                    IDFrom(ti.ID()),
+		SceneID:               IDFrom(ti.Scene()),
 		Label:                 ti.Label(),
-		ParentID:              ti.Parent().IDRef(),
-		LinkedDatasetID:       ti.LinkedDatasetID().IDRef(),
-		LinkedDatasetSchemaID: ti.LinkedDatasetSchemaID().IDRef(),
-		LinkedDatasetFieldID:  ti.LinkedDatasetFieldID().IDRef(),
+		ParentID:              IDFromRef(ti.Parent()),
+		LinkedDatasetID:       IDFromRef(ti.LinkedDatasetID()),
+		LinkedDatasetSchemaID: IDFromRef(ti.LinkedDatasetSchemaID()),
+		LinkedDatasetFieldID:  IDFromRef(ti.LinkedDatasetFieldID()),
 	}
 }
 
@@ -24,18 +26,12 @@ func ToTagGroup(tg *tag.Group) *TagGroup {
 	if tg == nil {
 		return nil
 	}
-	tags := tg.Tags().Tags()
-	ids := make([]*id.ID, 0, len(tags))
-	for _, tid := range tags {
-		if !tid.IsNil() {
-			ids = append(ids, tid.IDRef())
-		}
-	}
+
 	return &TagGroup{
-		ID:      tg.ID().ID(),
-		SceneID: tg.Scene().ID(),
+		ID:      IDFrom(tg.ID()),
+		SceneID: IDFrom(tg.Scene()),
 		Label:   tg.Label(),
-		TagIds:  ids,
+		TagIds:  util.Map(tg.Tags(), IDFrom[id.Tag]),
 	}
 }
 
@@ -43,6 +39,7 @@ func ToTag(t tag.Tag) Tag {
 	if t == nil {
 		return nil
 	}
+
 	switch ty := t.(type) {
 	case *tag.Item:
 		return ToTagItem(ty)

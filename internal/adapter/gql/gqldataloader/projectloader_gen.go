@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // ProjectLoaderConfig captures the config to create a new ProjectLoader
 type ProjectLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.ProjectID) ([]*gqlmodel.Project, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewProjectLoader(config ProjectLoaderConfig) *ProjectLoader {
 // ProjectLoader batches and caches requests
 type ProjectLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.ProjectID) ([]*gqlmodel.Project, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type ProjectLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.ProjectID]*gqlmodel.Project
+	cache map[gqlmodel.ID]*gqlmodel.Project
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type ProjectLoader struct {
 }
 
 type projectLoaderBatch struct {
-	keys    []id.ProjectID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Project
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type projectLoaderBatch struct {
 }
 
 // Load a Project by key, batching and caching will be applied automatically
-func (l *ProjectLoader) Load(key id.ProjectID) (*gqlmodel.Project, error) {
+func (l *ProjectLoader) Load(key gqlmodel.ID) (*gqlmodel.Project, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Project.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *ProjectLoader) LoadThunk(key id.ProjectID) func() (*gqlmodel.Project, error) {
+func (l *ProjectLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Project, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *ProjectLoader) LoadThunk(key id.ProjectID) func() (*gqlmodel.Project, e
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *ProjectLoader) LoadAll(keys []id.ProjectID) ([]*gqlmodel.Project, []error) {
+func (l *ProjectLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
 	results := make([]func() (*gqlmodel.Project, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *ProjectLoader) LoadAll(keys []id.ProjectID) ([]*gqlmodel.Project, []err
 // LoadAllThunk returns a function that when called will block waiting for a Projects.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *ProjectLoader) LoadAllThunk(keys []id.ProjectID) func() ([]*gqlmodel.Project, []error) {
+func (l *ProjectLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Project, []error) {
 	results := make([]func() (*gqlmodel.Project, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *ProjectLoader) LoadAllThunk(keys []id.ProjectID) func() ([]*gqlmodel.Pr
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *ProjectLoader) Prime(key id.ProjectID, value *gqlmodel.Project) bool {
+func (l *ProjectLoader) Prime(key gqlmodel.ID, value *gqlmodel.Project) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *ProjectLoader) Prime(key id.ProjectID, value *gqlmodel.Project) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *ProjectLoader) Clear(key id.ProjectID) {
+func (l *ProjectLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *ProjectLoader) unsafeSet(key id.ProjectID, value *gqlmodel.Project) {
+func (l *ProjectLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Project) {
 	if l.cache == nil {
-		l.cache = map[id.ProjectID]*gqlmodel.Project{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Project{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *projectLoaderBatch) keyIndex(l *ProjectLoader, key id.ProjectID) int {
+func (b *projectLoaderBatch) keyIndex(l *ProjectLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

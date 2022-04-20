@@ -57,10 +57,7 @@ func (b *GroupBuilder) Scene(sid SceneID) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Tags(tl *IDList) *GroupBuilder {
-	if tl != nil {
-		b.g.tags = tl
-	}
-
+func (b *GroupBuilder) Tags(tl IDList) *GroupBuilder {
+	b.g.tags = tl.Clone()
 	return b
 }

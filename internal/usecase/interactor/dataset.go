@@ -360,7 +360,7 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, op
 		}
 		res = append(res, d)
 		next, done = it.Next(d)
-		if next.ID().IsNil() {
+		if next.IsNil() {
 			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
 		}
 		if done {
@@ -390,7 +390,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 		}
 		res = append(res, d)
 		next, done = it.Next(d)
-		if next.ID().IsNil() {
+		if next.IsNil() {
 			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
 		}
 		if done {
@@ -480,7 +480,7 @@ func (i *Dataset) Sync(ctx context.Context, sceneID id.SceneID, url string, oper
 	if err := i.layerRepo.SaveAll(ctx, result.Layers.List()); err != nil {
 		return nil, nil, err
 	}
-	if err := i.layerRepo.RemoveAll(ctx, result.RemovedLayers.All()); err != nil {
+	if err := i.layerRepo.RemoveAll(ctx, result.RemovedLayers.List()); err != nil {
 		return nil, nil, err
 	}
 	if err := i.datasetRepo.RemoveAll(ctx, result.RemovedDatasets); err != nil {

@@ -14,7 +14,7 @@ func TestNewTag(t *testing.T) {
 	sid := id.NewSceneID()
 	dssid := id.NewDatasetSchemaID()
 	dsid := id.NewDatasetID()
-	dssfid := id.NewDatasetSchemaFieldID()
+	dssfid := id.NewDatasetFieldID()
 	ti, _ := tag.NewItem().
 		NewID().
 		Label("Item").
@@ -26,7 +26,7 @@ func TestNewTag(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
+		Tags(tag.IDList{ti.ID()}).
 		Scene(sid).
 		Build()
 	type args struct {
@@ -47,7 +47,7 @@ func TestNewTag(t *testing.T) {
 			want: &TagDocument{
 				ID:    tg.ID().String(),
 				Label: "group",
-				Scene: sid.ID().String(),
+				Scene: sid.String(),
 				Item:  nil,
 				Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 			},
@@ -61,11 +61,11 @@ func TestNewTag(t *testing.T) {
 			want: &TagDocument{
 				ID:    ti.ID().String(),
 				Label: "Item",
-				Scene: sid.ID().String(),
+				Scene: sid.String(),
 				Item: &TagItemDocument{
-					LinkedDatasetFieldID:  dssfid.RefString(),
-					LinkedDatasetID:       dsid.RefString(),
-					LinkedDatasetSchemaID: dssid.RefString(),
+					LinkedDatasetFieldID:  dssfid.StringRef(),
+					LinkedDatasetID:       dsid.StringRef(),
+					LinkedDatasetSchemaID: dssid.StringRef(),
 				},
 				Group: nil,
 			},
@@ -94,7 +94,7 @@ func TestNewTags(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
+		Tags(id.TagIDList{ti.ID()}).
 		Scene(sid).
 		Build()
 	tgi := tag.Tag(tg)
@@ -121,7 +121,7 @@ func TestNewTags(t *testing.T) {
 				&TagDocument{
 					ID:    tg.ID().String(),
 					Label: "group",
-					Scene: sid.ID().String(),
+					Scene: sid.String(),
 					Item:  nil,
 					Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 				},
@@ -140,7 +140,7 @@ func TestNewTags(t *testing.T) {
 				&TagDocument{
 					ID:    tg.ID().String(),
 					Label: "group",
-					Scene: sid.ID().String(),
+					Scene: sid.String(),
 					Item:  nil,
 					Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 				},
@@ -273,7 +273,7 @@ func TestTagDocument_Model(t *testing.T) {
 	sid := id.NewSceneID()
 	dssid := id.NewDatasetSchemaID()
 	dsid := id.NewDatasetID()
-	dssfid := id.NewDatasetSchemaFieldID()
+	dssfid := id.NewDatasetFieldID()
 	ti, _ := tag.NewItem().
 		NewID().
 		Label("Item").
@@ -285,7 +285,7 @@ func TestTagDocument_Model(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
+		Tags(tag.IDList{ti.ID()}).
 		Scene(sid).
 		Build()
 	type fields struct {
@@ -308,11 +308,11 @@ func TestTagDocument_Model(t *testing.T) {
 			fields: fields{
 				ID:    ti.ID().String(),
 				Label: "Item",
-				Scene: sid.ID().String(),
+				Scene: sid.String(),
 				Item: &TagItemDocument{
-					LinkedDatasetFieldID:  dssfid.RefString(),
-					LinkedDatasetID:       dsid.RefString(),
-					LinkedDatasetSchemaID: dssid.RefString(),
+					LinkedDatasetFieldID:  dssfid.StringRef(),
+					LinkedDatasetID:       dsid.StringRef(),
+					LinkedDatasetSchemaID: dssid.StringRef(),
 				},
 				Group: nil,
 			},
@@ -325,7 +325,7 @@ func TestTagDocument_Model(t *testing.T) {
 			fields: fields{
 				ID:    tg.ID().String(),
 				Label: "group",
-				Scene: sid.ID().String(),
+				Scene: sid.String(),
 				Item:  nil,
 				Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 			},
@@ -374,7 +374,7 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
-		Tags(tag.IDListFrom([]id.TagID{ti.ID()})).
+		Tags(tag.IDList{ti.ID()}).
 		Scene(sid).
 		Build()
 	type fields struct {
@@ -426,7 +426,7 @@ func TestTagDocument_ModelGroup(t *testing.T) {
 			fields: fields{
 				ID:    tg.ID().String(),
 				Label: "group",
-				Scene: sid.ID().String(),
+				Scene: sid.String(),
 				Item:  nil,
 				Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 			},
@@ -459,7 +459,7 @@ func TestTagDocument_ModelItem(t *testing.T) {
 	sid := id.NewSceneID()
 	dssid := id.NewDatasetSchemaID()
 	dsid := id.NewDatasetID()
-	dssfid := id.NewDatasetSchemaFieldID()
+	dssfid := id.NewDatasetFieldID()
 	ti, _ := tag.NewItem().
 		NewID().
 		Label("Item").
@@ -508,9 +508,9 @@ func TestTagDocument_ModelItem(t *testing.T) {
 				Label: ti.Label(),
 				Scene: ti.Scene().String(),
 				Item: &TagItemDocument{
-					LinkedDatasetFieldID:  dssfid.RefString(),
-					LinkedDatasetID:       dsid.RefString(),
-					LinkedDatasetSchemaID: dssid.RefString(),
+					LinkedDatasetFieldID:  dssfid.StringRef(),
+					LinkedDatasetID:       dsid.StringRef(),
+					LinkedDatasetSchemaID: dssid.StringRef(),
 				},
 				Group: nil,
 			},

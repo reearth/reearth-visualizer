@@ -114,7 +114,7 @@ func (m *Members) UsersByRole(role Role) []ID {
 	}
 
 	sort.SliceStable(users, func(a, b int) bool {
-		return users[a].ID().Compare(users[b].ID()) > 0
+		return users[a].Compare(users[b]) > 0
 	})
 
 	return users

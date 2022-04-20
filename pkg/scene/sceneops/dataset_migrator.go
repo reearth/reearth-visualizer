@@ -32,7 +32,7 @@ func (r MigrateDatasetResult) Merge(r2 MigrateDatasetResult) MigrateDatasetResul
 	return MigrateDatasetResult{
 		Layers:        r.Layers.Merge(r2.Layers),
 		Properties:    r.Properties.Merge(r2.Properties),
-		RemovedLayers: r.RemovedLayers.Merge(r2.RemovedLayers),
+		RemovedLayers: r.RemovedLayers.Concat(r2.RemovedLayers),
 	}
 }
 

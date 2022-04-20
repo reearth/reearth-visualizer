@@ -8,6 +8,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth-backend/pkg/util"
+	"github.com/samber/lo"
 )
 
 func (r *mutationResolver) UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error) {
@@ -19,10 +21,19 @@ func (r *mutationResolver) UpdatePropertyValue(ctx context.Context, input gqlmod
 		}
 	}
 
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	pp, pgl, pg, pf, err := usecases(ctx).Property.UpdateValue(ctx, interfaces.UpdatePropertyValueParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(input.SchemaGroupID, input.ItemID, &input.FieldID),
-		Value:      v,
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
+			input.ItemID,
+			gqlmodel.ToStringIDRef[id.PropertyField](&input.FieldID),
+		),
+		Value: v,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -35,9 +46,18 @@ func (r *mutationResolver) UpdatePropertyValue(ctx context.Context, input gqlmod
 }
 
 func (r *mutationResolver) RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	p, err := usecases(ctx).Property.RemoveField(ctx, interfaces.RemovePropertyFieldParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(input.SchemaGroupID, input.ItemID, &input.FieldID),
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
+			input.ItemID,
+			gqlmodel.ToStringIDRef[id.PropertyField](&input.FieldID),
+		),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -49,10 +69,19 @@ func (r *mutationResolver) RemovePropertyField(ctx context.Context, input gqlmod
 }
 
 func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	p, pgl, pg, pf, err := usecases(ctx).Property.UploadFile(ctx, interfaces.UploadFileParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(input.SchemaGroupID, input.ItemID, &input.FieldID),
-		File:       gqlmodel.FromFile(&input.File),
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
+			input.ItemID,
+			gqlmodel.ToStringIDRef[id.PropertyField](&input.FieldID),
+		),
+		File: gqlmodel.FromFile(&input.File),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -65,14 +94,24 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) LinkDatasetToPropertyValue(ctx context.Context, input gqlmodel.LinkDatasetToPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
+	links, err := gqlmodel.FromPropertyFieldLink(input.DatasetSchemaIds, input.DatasetIds, input.DatasetSchemaFieldIds)
+	if err != nil {
+		return nil, err
+	}
+
 	p, pgl, pg, pf, err := usecases(ctx).Property.LinkValue(ctx, interfaces.LinkPropertyValueParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(input.SchemaGroupID, input.ItemID, &input.FieldID),
-		Links: gqlmodel.FromPropertyFieldLink(
-			input.DatasetSchemaIds,
-			input.DatasetIds,
-			input.DatasetSchemaFieldIds,
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
+			input.ItemID,
+			lo.ToPtr(id.PropertyFieldID(input.FieldID)),
 		),
+		Links: links,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -85,9 +124,18 @@ func (r *mutationResolver) LinkDatasetToPropertyValue(ctx context.Context, input
 }
 
 func (r *mutationResolver) UnlinkPropertyValue(ctx context.Context, input gqlmodel.UnlinkPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	p, pgl, pg, pf, err := usecases(ctx).Property.UnlinkValue(ctx, interfaces.UnlinkPropertyValueParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(input.SchemaGroupID, input.ItemID, &input.FieldID),
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
+			input.ItemID,
+			lo.ToPtr(id.PropertyFieldID(input.FieldID)),
+		),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -100,6 +148,11 @@ func (r *mutationResolver) UnlinkPropertyValue(ctx context.Context, input gqlmod
 }
 
 func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.AddPropertyItemInput) (*gqlmodel.PropertyItemPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	var v *property.Value
 	if input.NameFieldType != nil {
 		v = gqlmodel.FromPropertyValueAndType(input.NameFieldValue, *input.NameFieldType)
@@ -109,8 +162,8 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 	}
 
 	p, pgl, pi, err := usecases(ctx).Property.AddItem(ctx, interfaces.AddPropertyItemParam{
-		PropertyID:     id.PropertyID(input.PropertyID),
-		Pointer:        gqlmodel.FromPointer(&input.SchemaGroupID, nil, nil),
+		PropertyID:     pid,
+		Pointer:        gqlmodel.FromPointer(gqlmodel.ToStringIDRef[id.PropertySchemaGroup](&input.SchemaGroupID), nil, nil),
 		Index:          input.Index,
 		NameFieldValue: v,
 	}, getOperator(ctx))
@@ -126,10 +179,19 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 }
 
 func (r *mutationResolver) MovePropertyItem(ctx context.Context, input gqlmodel.MovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	p, pgl, pi, err := usecases(ctx).Property.MoveItem(ctx, interfaces.MovePropertyItemParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(&input.SchemaGroupID, &input.ItemID, nil),
-		Index:      input.Index,
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			lo.ToPtr(id.PropertySchemaGroupID(input.SchemaGroupID)),
+			&input.ItemID,
+			nil,
+		),
+		Index: input.Index,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -142,9 +204,18 @@ func (r *mutationResolver) MovePropertyItem(ctx context.Context, input gqlmodel.
 }
 
 func (r *mutationResolver) RemovePropertyItem(ctx context.Context, input gqlmodel.RemovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error) {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	p, err := usecases(ctx).Property.RemoveItem(ctx, interfaces.RemovePropertyItemParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(&input.SchemaGroupID, &input.ItemID, nil),
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			lo.ToPtr(id.PropertySchemaGroupID(input.SchemaGroupID)),
+			&input.ItemID,
+			nil,
+		),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -156,28 +227,39 @@ func (r *mutationResolver) RemovePropertyItem(ctx context.Context, input gqlmode
 }
 
 func (r *mutationResolver) UpdatePropertyItems(ctx context.Context, input gqlmodel.UpdatePropertyItemInput) (*gqlmodel.PropertyItemPayload, error) {
-	op := make([]interfaces.UpdatePropertyItemsOperationParam, 0, len(input.Operations))
-	for _, o := range input.Operations {
+	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
+	if err != nil {
+		return nil, err
+	}
+
+	operations, err := util.TryMap(input.Operations, func(o *gqlmodel.UpdatePropertyItemOperationInput) (interfaces.UpdatePropertyItemsOperationParam, error) {
 		var v *property.Value
 		if o.NameFieldType != nil {
 			v = gqlmodel.FromPropertyValueAndType(o.NameFieldValue, *o.NameFieldType)
 			if v == nil {
-				return nil, errors.New("invalid name field value")
+				return interfaces.UpdatePropertyItemsOperationParam{}, errors.New("invalid name field value")
 			}
 		}
 
-		op = append(op, interfaces.UpdatePropertyItemsOperationParam{
+		return interfaces.UpdatePropertyItemsOperationParam{
 			Operation:      gqlmodel.FromListOperation(o.Operation),
-			ItemID:         id.PropertyItemIDFromRefID(o.ItemID),
+			ItemID:         gqlmodel.ToIDRef[id.PropertyItem](o.ItemID),
 			Index:          o.Index,
 			NameFieldValue: v,
-		})
+		}, nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	p, err2 := usecases(ctx).Property.UpdateItems(ctx, interfaces.UpdatePropertyItemsParam{
-		PropertyID: id.PropertyID(input.PropertyID),
-		Pointer:    gqlmodel.FromPointer(&input.SchemaGroupID, nil, nil),
-		Operations: op,
+		PropertyID: pid,
+		Pointer: gqlmodel.FromPointer(
+			lo.ToPtr(id.PropertySchemaGroupID(input.SchemaGroupID)),
+			nil,
+			nil,
+		),
+		Operations: operations,
 	}, getOperator(ctx))
 	if err2 != nil {
 		return nil, err2

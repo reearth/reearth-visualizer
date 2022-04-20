@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 type PluginLoader struct {
@@ -17,8 +17,13 @@ func NewPluginLoader(usecase interfaces.Plugin) *PluginLoader {
 	return &PluginLoader{usecase: usecase}
 }
 
-func (c *PluginLoader) Fetch(ctx context.Context, ids []id.PluginID) ([]*gqlmodel.Plugin, []error) {
-	res, err := c.usecase.Fetch(ctx, ids, getOperator(ctx))
+func (c *PluginLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Plugin, []error) {
+	ids2, err := util.TryMap(ids, gqlmodel.ToPluginID)
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.Fetch(ctx, ids2, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -37,30 +42,21 @@ func (c *PluginLoader) FetchPluginMetadata(ctx context.Context) ([]*gqlmodel.Plu
 		return nil, err
 	}
 
-	pluginMetaList := make([]*gqlmodel.PluginMetadata, 0, len(res))
-	for _, md := range res {
-		pm, err := gqlmodel.ToPluginMetadata(md)
-		if err != nil {
-			return nil, err
-		}
-		pluginMetaList = append(pluginMetaList, pm)
-	}
-
-	return pluginMetaList, nil
+	return util.Map(res, gqlmodel.ToPluginMetadata), nil
 }
 
 // data loader
 
 type PluginDataLoader interface {
-	Load(id.PluginID) (*gqlmodel.Plugin, error)
-	LoadAll([]id.PluginID) ([]*gqlmodel.Plugin, []error)
+	Load(gqlmodel.ID) (*gqlmodel.Plugin, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.Plugin, []error)
 }
 
 func (c *PluginLoader) DataLoader(ctx context.Context) PluginDataLoader {
 	return gqldataloader.NewPluginLoader(gqldataloader.PluginLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.PluginID) ([]*gqlmodel.Plugin, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	})
@@ -68,18 +64,18 @@ func (c *PluginLoader) DataLoader(ctx context.Context) PluginDataLoader {
 
 func (c *PluginLoader) OrdinaryDataLoader(ctx context.Context) PluginDataLoader {
 	return &ordinaryPluginLoader{
-		fetch: func(keys []id.PluginID) ([]*gqlmodel.Plugin, []error) {
+		fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	}
 }
 
 type ordinaryPluginLoader struct {
-	fetch func(keys []id.PluginID) ([]*gqlmodel.Plugin, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error)
 }
 
-func (l *ordinaryPluginLoader) Load(key id.PluginID) (*gqlmodel.Plugin, error) {
-	res, errs := l.fetch([]id.PluginID{key})
+func (l *ordinaryPluginLoader) Load(key gqlmodel.ID) (*gqlmodel.Plugin, error) {
+	res, errs := l.fetch([]gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -89,6 +85,6 @@ func (l *ordinaryPluginLoader) Load(key id.PluginID) (*gqlmodel.Plugin, error) {
 	return nil, nil
 }
 
-func (l *ordinaryPluginLoader) LoadAll(keys []id.PluginID) ([]*gqlmodel.Plugin, []error) {
+func (l *ordinaryPluginLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Plugin, []error) {
 	return l.fetch(keys)
 }

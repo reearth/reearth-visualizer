@@ -1,8 +1,12 @@
 package scene
 
+import (
+	"github.com/samber/lo"
+)
+
 // WidgetArea has the widgets and alignment information found in each part area of a section.
 type WidgetArea struct {
-	widgetIds []WidgetID
+	widgetIds WidgetIDList
 	align     WidgetAlignType
 }
 
@@ -22,12 +26,12 @@ func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType) *WidgetArea {
 }
 
 // WidgetIds will return a slice of widget ids from a specific area.
-func (a *WidgetArea) WidgetIDs() []WidgetID {
+func (a *WidgetArea) WidgetIDs() WidgetIDList {
 	if a == nil {
 		return nil
 	}
 
-	return append([]WidgetID{}, a.widgetIds...)
+	return a.widgetIds.Clone()
 }
 
 // Alignment will return the alignment of a specific area.
@@ -43,21 +47,21 @@ func (a *WidgetArea) Find(wid WidgetID) int {
 	if a == nil {
 		return -1
 	}
-
-	for i, w := range a.widgetIds {
-		if w == wid {
-			return i
-		}
-	}
-	return -1
+	return lo.IndexOf(a.widgetIds, wid)
 }
 
 func (a *WidgetArea) Add(wid WidgetID, index int) {
-	if a == nil || wid.Contains(a.widgetIds) {
+	if a == nil || a.widgetIds.Has(wid) {
 		return
 	}
 
-	a.widgetIds = insertWidgetID(a.widgetIds, wid, index)
+	if i := a.widgetIds.Index(wid); i >= 0 {
+		a.widgetIds = a.widgetIds.DeleteAt(i)
+		if i < index {
+			index--
+		}
+	}
+	a.widgetIds = a.widgetIds.Insert(index, wid)
 }
 
 func (a *WidgetArea) AddAll(wids []WidgetID) {
@@ -65,15 +69,7 @@ func (a *WidgetArea) AddAll(wids []WidgetID) {
 		return
 	}
 
-	widgetIds := make([]WidgetID, 0, len(wids))
-	for _, w := range wids {
-		if w.Contains(a.widgetIds) || w.Contains(widgetIds) {
-			continue
-		}
-		widgetIds = append(widgetIds, w)
-	}
-
-	a.widgetIds = widgetIds
+	a.widgetIds = a.widgetIds.AddUniq(wids...)
 }
 
 func (a *WidgetArea) SetAlignment(at WidgetAlignType) {
@@ -95,7 +91,7 @@ func (a *WidgetArea) Remove(wid WidgetID) {
 
 	for i, w := range a.widgetIds {
 		if w == wid {
-			a.widgetIds = removeWidgetID(a.widgetIds, i)
+			a.widgetIds = a.widgetIds.DeleteAt(i)
 			return
 		}
 	}
@@ -107,18 +103,5 @@ func (a *WidgetArea) Move(from, to int) {
 	}
 
 	wid := a.widgetIds[from]
-	a.widgetIds = insertWidgetID(removeWidgetID(a.widgetIds, from), wid, to)
-}
-
-// insertWidgetID is used in moveInt to add the widgetID to a new position(index).
-func insertWidgetID(array []WidgetID, value WidgetID, index int) []WidgetID {
-	if index < 0 {
-		return append(array, value)
-	}
-	return append(array[:index], append([]WidgetID{value}, array[index:]...)...)
-}
-
-// removeWidgetID is used in moveInt to remove the widgetID from original position(index).
-func removeWidgetID(array []WidgetID, index int) []WidgetID {
-	return append(array[:index], array[index+1:]...)
+	a.widgetIds = a.widgetIds.DeleteAt(from).Insert(to, wid)
 }

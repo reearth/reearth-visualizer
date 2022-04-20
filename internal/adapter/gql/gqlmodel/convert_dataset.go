@@ -2,6 +2,7 @@ package gqlmodel
 
 import (
 	"github.com/reearth/reearth-backend/pkg/dataset"
+	"github.com/reearth/reearth-backend/pkg/util"
 	"github.com/reearth/reearth-backend/pkg/value"
 )
 
@@ -16,8 +17,8 @@ func ToDatasetField(f *dataset.Field, parent *dataset.Dataset) *DatasetField {
 	}
 
 	return &DatasetField{
-		SchemaID: parent.Schema().ID(),
-		FieldID:  f.Field().ID(),
+		SchemaID: IDFrom(parent.Schema()),
+		FieldID:  IDFrom(f.Field()),
 		Type:     ToValueType(value.Type(f.Type())),
 		Value:    ToDatasetValue(f.Value()),
 		Source:   f.Source(),
@@ -29,17 +30,13 @@ func ToDataset(ds *dataset.Dataset) *Dataset {
 		return nil
 	}
 
-	dsFields := ds.Fields()
-	fields := make([]*DatasetField, 0, len(dsFields))
-	for _, f := range dsFields {
-		fields = append(fields, ToDatasetField(f, ds))
-	}
-
 	return &Dataset{
-		ID:       ds.ID().ID(),
-		SchemaID: ds.Schema().ID(),
+		ID:       IDFrom(ds.ID()),
+		SchemaID: IDFrom(ds.Schema()),
 		Source:   ds.Source(),
-		Fields:   fields,
+		Fields: util.FilterMapR(ds.Fields(), func(f *dataset.Field) *DatasetField {
+			return ToDatasetField(f, ds)
+		}),
 	}
 }
 
@@ -48,25 +45,21 @@ func ToDatasetSchema(ds *dataset.Schema) *DatasetSchema {
 		return nil
 	}
 
-	dsFields := ds.Fields()
-	fields := make([]*DatasetSchemaField, 0, len(dsFields))
-	for _, f := range dsFields {
-		fields = append(fields, &DatasetSchemaField{
-			ID:       f.ID().ID(),
-			Name:     f.Name(),
-			Type:     ToValueType(value.Type(f.Type())),
-			SchemaID: ds.ID().ID(),
-			Source:   f.Source(),
-			RefID:    f.Ref().IDRef(),
-		})
-	}
-
 	return &DatasetSchema{
-		ID:                    ds.ID().ID(),
+		ID:                    IDFrom(ds.ID()),
 		Source:                ds.Source(),
 		Name:                  ds.Name(),
-		SceneID:               ds.Scene().ID(),
-		RepresentativeFieldID: ds.RepresentativeField().IDRef().IDRef(),
-		Fields:                fields,
+		SceneID:               IDFrom(ds.Scene()),
+		RepresentativeFieldID: IDFromRef(ds.RepresentativeField().IDRef()),
+		Fields: util.Map(ds.Fields(), func(f *dataset.SchemaField) *DatasetSchemaField {
+			return &DatasetSchemaField{
+				ID:       IDFrom(f.ID()),
+				Name:     f.Name(),
+				Type:     ToValueType(value.Type(f.Type())),
+				SchemaID: IDFrom(ds.ID()),
+				Source:   f.Source(),
+				RefID:    IDFromRef(f.Ref()),
+			}
+		}),
 	}
 }

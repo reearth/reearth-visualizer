@@ -78,7 +78,7 @@ func (b *ItemBuilder) Plugin(plugin *PluginID) *ItemBuilder {
 }
 
 func (b *ItemBuilder) Extension(extension *PluginExtensionID) *ItemBuilder {
-	b.l.extension = extension.CopyRef()
+	b.l.extension = extension.CloneRef()
 	return b
 }
 

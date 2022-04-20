@@ -18,18 +18,18 @@ func TestDatasetGraphIterator(t *testing.T) {
 	d32id := NewID()
 
 	d0, _ := New().ID(d0id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d11id.ID()), ""),
-		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d12id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d11id), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d12id), ""),
 	}).Build()
 	d11, _ := New().ID(d11id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d21id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d21id), ""),
 	}).Build()
 	d12, _ := New().ID(d12id).Schema(dsid).Scene(sid).Fields([]*Field{
 		NewField(NewFieldID(), ValueTypeString.ValueFrom("hoge"), ""),
 	}).Build()
 	d21, _ := New().ID(d21id).Schema(dsid).Scene(sid).Fields([]*Field{
-		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d31id.ID()), ""),
-		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d32id.ID()), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d31id), ""),
+		NewField(NewFieldID(), ValueTypeRef.ValueFrom(d32id), ""),
 	}).Build()
 	d31, _ := New().ID(d31id).Schema(dsid).Scene(sid).Fields([]*Field{
 		NewField(NewFieldID(), ValueTypeString.ValueFrom("foo"), ""),

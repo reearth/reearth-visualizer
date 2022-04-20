@@ -82,7 +82,7 @@ func NewWidgetArea(a *scene.WidgetArea) *WidgetAreaDocument {
 	}
 
 	return &WidgetAreaDocument{
-		WidgetIDs: id.WidgetIDsToStrings(a.WidgetIDs()),
+		WidgetIDs: a.WidgetIDs().Strings(),
 		Align:     string(a.Alignment()),
 	}
 }

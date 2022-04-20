@@ -39,10 +39,10 @@ func (r *projectRepo) Filtered(f repo.TeamFilter) repo.Project {
 	}
 }
 
-func (r *projectRepo) FindByIDs(ctx context.Context, ids []id.ProjectID) ([]*project.Project, error) {
+func (r *projectRepo) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.ProjectIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*project.Project, 0, len(ids))

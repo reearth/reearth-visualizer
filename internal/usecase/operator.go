@@ -16,7 +16,7 @@ type Operator struct {
 	OwningScenes   scene.IDList
 }
 
-func (o *Operator) Teams(r user.Role) []id.TeamID {
+func (o *Operator) Teams(r user.Role) user.TeamIDList {
 	if o == nil {
 		return nil
 	}
@@ -45,15 +45,15 @@ func (o *Operator) AllOwningTeams() user.TeamIDList {
 }
 
 func (o *Operator) IsReadableTeam(team ...id.TeamID) bool {
-	return o.AllReadableTeams().Filter(team...).Len() > 0
+	return o.AllReadableTeams().Intersect(team).Len() > 0
 }
 
 func (o *Operator) IsWritableTeam(team ...id.TeamID) bool {
-	return o.AllWritableTeams().Filter(team...).Len() > 0
+	return o.AllWritableTeams().Intersect(team).Len() > 0
 }
 
 func (o *Operator) IsOwningTeam(team ...id.TeamID) bool {
-	return o.AllOwningTeams().Filter(team...).Len() > 0
+	return o.AllOwningTeams().Intersect(team).Len() > 0
 }
 
 func (o *Operator) AllReadableScenes() scene.IDList {
@@ -69,15 +69,15 @@ func (o *Operator) AllOwningScenes() scene.IDList {
 }
 
 func (o *Operator) IsReadableScene(scene ...id.SceneID) bool {
-	return o.AllReadableScenes().Includes(scene...)
+	return o.AllReadableScenes().Has(scene...)
 }
 
 func (o *Operator) IsWritableScene(scene ...id.SceneID) bool {
-	return o.AllWritableScenes().Includes(scene...)
+	return o.AllWritableScenes().Has(scene...)
 }
 
 func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
-	return o.AllOwningScenes().Includes(scene...)
+	return o.AllOwningScenes().Has(scene...)
 }
 
 func (o *Operator) AddNewTeam(team id.TeamID) {

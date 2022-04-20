@@ -16,7 +16,7 @@ func NewRequest() *RequestBuilder {
 }
 
 func (b *RequestBuilder) Build() (*Request, error) {
-	if id.ID(b.r.id).IsNil() {
+	if b.r.id.IsNil() {
 		return nil, id.ErrInvalidID
 	}
 	b.r.createdAt = time.Now()
@@ -37,7 +37,7 @@ func (b *RequestBuilder) ID(id id.AuthRequestID) *RequestBuilder {
 }
 
 func (b *RequestBuilder) NewID() *RequestBuilder {
-	b.r.id = id.AuthRequestID(id.New())
+	b.r.id = id.NewAuthRequestID()
 	return b
 }
 

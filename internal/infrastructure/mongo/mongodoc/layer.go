@@ -92,7 +92,7 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 
 	if lg := layer.GroupFromLayer(l); lg != nil {
 		group = &LayerGroupDocument{
-			Layers:              id.LayerIDsToStrings(lg.Layers().Layers()),
+			Layers:              lg.Layers().Strings(),
 			LinkedDatasetSchema: lg.LinkedDatasetSchema().StringRef(),
 			Root:                lg.IsRoot(),
 		}
@@ -145,7 +145,7 @@ func NewLayers(layers layer.List, f scene.IDList) ([]interface{}, []string) {
 			continue
 		}
 		d2 := *d
-		if d2 == nil || f != nil && !f.Includes(d2.Scene()) {
+		if d2 == nil || f != nil && !f.Has(d2.Scene()) {
 			continue
 		}
 		r, id := NewLayer(d2)

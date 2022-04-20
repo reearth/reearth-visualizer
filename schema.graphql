@@ -49,12 +49,6 @@ scalar DateTime
 scalar URL
 scalar Lang
 scalar FileSize
-scalar PluginID
-scalar PluginExtensionID
-scalar PropertySchemaID
-scalar PropertySchemaGroupID
-scalar PropertySchemaFieldID
-scalar DatasetSchemaFieldID
 scalar TranslatedString
 
 type LatLng {
@@ -163,18 +157,18 @@ type User implements Node {
   id: ID!
   name: String!
   email: String!
+}
+
+type Me {
+  id: ID!
+  name: String!
+  email: String!
   lang: Lang!
   theme: Theme!
   myTeamId: ID!
   auths: [String!]!
   teams: [Team!]! @goField(forceResolver: true)
   myTeam: Team! @goField(forceResolver: true)
-}
-
-type SearchedUser {
-  userId: ID!
-  userName: String!
-  userEmail: String!
 }
 
 type ProjectAliasAvailability {
@@ -256,21 +250,21 @@ enum PublishmentStatus {
 # Plugin
 
 type Plugin {
-  id: PluginID!
+  id: ID!
   sceneId: ID
   name: String!
   version: String!
   description: String!
   author: String!
   repositoryUrl: String!
-  propertySchemaId: PropertySchemaID
+  propertySchemaId: ID
   extensions: [PluginExtension!]!
   scenePlugin(sceneId: ID): ScenePlugin
   allTranslatedDescription: TranslatedString
   allTranslatedName: TranslatedString
   scene: Scene @goField(forceResolver: true)
-  translatedName(lang: String): String! @goField(forceResolver: true)
-  translatedDescription(lang: String): String! @goField(forceResolver: true)
+  translatedName(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
   propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
@@ -332,8 +326,8 @@ enum PluginExtensionType {
 }
 
 type PluginExtension {
-  extensionId: PluginExtensionID!
-  pluginId: PluginID!
+  extensionId: ID!
+  pluginId: ID!
   type: PluginExtensionType!
   name: String!
   description: String!
@@ -341,14 +335,14 @@ type PluginExtension {
   singleOnly: Boolean
   widgetLayout: WidgetLayout
   visualizer: Visualizer
-  propertySchemaId: PropertySchemaID!
+  propertySchemaId: ID!
   allTranslatedName: TranslatedString
   allTranslatedDescription: TranslatedString
   plugin: Plugin @goField(forceResolver: true)
   sceneWidget(sceneId: ID!): SceneWidget @goField(forceResolver: true)
   propertySchema: PropertySchema @goField(forceResolver: true)
-  translatedName(lang: String): String! @goField(forceResolver: true)
-  translatedDescription(lang: String): String! @goField(forceResolver: true)
+  translatedName(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
 }
 
 # Scene
@@ -369,7 +363,6 @@ type Scene implements Node {
   team: Team @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
   rootLayer: LayerGroup @goField(forceResolver: true)
-  lockMode: SceneLockMode! @goField(forceResolver: true)
   datasetSchemas(
     first: Int
     last: Int
@@ -381,18 +374,10 @@ type Scene implements Node {
   clusters: [Cluster!]!
 }
 
-enum SceneLockMode {
-  FREE
-  PENDING
-  DATASET_SYNCING
-  PLUGIN_UPGRADING
-  PUBLISHING
-}
-
 type SceneWidget {
   id: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
   propertyId: ID!
   enabled: Boolean!
   extended: Boolean!
@@ -402,7 +387,7 @@ type SceneWidget {
 }
 
 type ScenePlugin {
-  pluginId: PluginID!
+  pluginId: ID!
   propertyId: ID
   plugin: Plugin @goField(forceResolver: true)
   property: Property @goField(forceResolver: true)
@@ -433,36 +418,36 @@ type WidgetArea {
 # Property
 
 type PropertySchema {
-  id: PropertySchemaID!
+  id: ID!
   groups: [PropertySchemaGroup!]!
   linkableFields: PropertyLinkableFields!
 }
 
 type PropertyLinkableFields {
-  schemaId: PropertySchemaID!
-  latlng: PropertySchemaFieldID
-  url: PropertySchemaFieldID
+  schemaId: ID!
+  latlng: ID
+  url: ID
   latlngField: PropertySchemaField @goField(forceResolver: true)
   urlField: PropertySchemaField @goField(forceResolver: true)
   schema: PropertySchema @goField(forceResolver: true)
 }
 
 type PropertySchemaGroup {
-  schemaGroupId: PropertySchemaGroupID!
-  schemaId: PropertySchemaID!
+  schemaGroupId: ID!
+  schemaId: ID!
   fields: [PropertySchemaField!]!
   isList: Boolean!
   isAvailableIf: PropertyCondition
   title: String
   allTranslatedTitle: TranslatedString
-  representativeFieldId: PropertySchemaFieldID
+  representativeFieldId: ID
   representativeField: PropertySchemaField
   schema: PropertySchema @goField(forceResolver: true)
-  translatedTitle(lang: String): String! @goField(forceResolver: true)
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
 }
 
 type PropertySchemaField {
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
   type: ValueType!
   title: String!
   description: String!
@@ -476,8 +461,8 @@ type PropertySchemaField {
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
   allTranslatedDescription: TranslatedString
-  translatedTitle(lang: String): String! @goField(forceResolver: true)
-  translatedDescription(lang: String): String! @goField(forceResolver: true)
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
 }
 
 enum PropertySchemaFieldUI {
@@ -497,18 +482,18 @@ type PropertySchemaFieldChoice {
   title: String!
   icon: String
   allTranslatedTitle: TranslatedString
-  translatedTitle(lang: String): String! @goField(forceResolver: true)
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
 }
 
 type PropertyCondition {
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
   type: ValueType!
   value: Any
 }
 
 type Property implements Node {
   id: ID!
-  schemaId: PropertySchemaID!
+  schemaId: ID!
   items: [PropertyItem!]!
   schema: PropertySchema @goField(forceResolver: true)
   layer: Layer @goField(forceResolver: true)
@@ -519,8 +504,8 @@ union PropertyItem = PropertyGroup | PropertyGroupList
 
 type PropertyGroup {
   id: ID!
-  schemaId: PropertySchemaID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaId: ID!
+  schemaGroupId: ID!
   fields: [PropertyField!]!
   schema: PropertySchema @goField(forceResolver: true)
   schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
@@ -528,8 +513,8 @@ type PropertyGroup {
 
 type PropertyGroupList {
   id: ID!
-  schemaId: PropertySchemaID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaId: ID!
+  schemaGroupId: ID!
   groups: [PropertyGroup!]!
   schema: PropertySchema @goField(forceResolver: true)
   schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
@@ -538,8 +523,8 @@ type PropertyGroupList {
 type PropertyField {
   id: String!
   parentId: ID!
-  schemaId: PropertySchemaID!
-  fieldId: PropertySchemaFieldID!
+  schemaId: ID!
+  fieldId: ID!
   links: [PropertyFieldLink!]
   type: ValueType!
   value: Any
@@ -563,7 +548,7 @@ type MergedProperty {
   originalId: ID
   parentId: ID
   # note: schemaId will not always be set
-  schemaId: PropertySchemaID
+  schemaId: ID
   linkedDatasetId: ID
   original: Property @goField(forceResolver: true)
   parent: Property @goField(forceResolver: true)
@@ -577,9 +562,9 @@ type MergedPropertyGroup {
   parentPropertyId: ID
   originalId: ID
   parentId: ID
-  schemaGroupId: PropertySchemaGroupID!
+  schemaGroupId: ID!
   # note: schemaId will not always be set
-  schemaId: PropertySchemaID
+  schemaId: ID
   linkedDatasetId: ID
   fields: [MergedPropertyField!]!
   groups: [MergedPropertyGroup!]!
@@ -592,8 +577,8 @@ type MergedPropertyGroup {
 }
 
 type MergedPropertyField {
-  schemaId: PropertySchemaID!
-  fieldId: PropertySchemaFieldID!
+  schemaId: ID!
+  fieldId: ID!
   value: Any
   type: ValueType!
   links: [PropertyFieldLink!]
@@ -662,8 +647,8 @@ interface Layer {
   name: String!
   isVisible: Boolean!
   propertyId: ID
-  pluginId: PluginID
-  extensionId: PluginExtensionID
+  pluginId: ID
+  extensionId: ID
   infobox: Infobox
   # parentId will not be always set
   parentId: ID
@@ -689,8 +674,8 @@ type LayerItem implements Layer {
   name: String!
   isVisible: Boolean!
   propertyId: ID
-  pluginId: PluginID
-  extensionId: PluginExtensionID
+  pluginId: ID
+  extensionId: ID
   infobox: Infobox
   # parentId will not be always set
   parentId: ID
@@ -712,8 +697,8 @@ type LayerGroup implements Layer {
   name: String!
   isVisible: Boolean!
   propertyId: ID
-  pluginId: PluginID
-  extensionId: PluginExtensionID
+  pluginId: ID
+  extensionId: ID
   infobox: Infobox
   # parentId will not be always set
   parentId: ID
@@ -749,8 +734,8 @@ type InfoboxField {
   sceneId: ID!
   layerId: ID!
   propertyId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
   linkedDatasetId: ID
   layer: Layer! @goField(forceResolver: true)
   infobox: Infobox! @goField(forceResolver: true)
@@ -800,8 +785,8 @@ type MergedInfobox {
 type MergedInfoboxField {
   originalId: ID!
   sceneID: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
   property: MergedProperty
   plugin: Plugin @goField(forceResolver: true)
   extension: PluginExtension @goField(forceResolver: true)
@@ -970,8 +955,8 @@ input WidgetLocationInput {
 
 input AddWidgetInput {
   sceneId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
 }
 
 input UpdateWidgetInput {
@@ -996,18 +981,18 @@ input RemoveWidgetInput {
 
 input InstallPluginInput {
   sceneId: ID!
-  pluginId: PluginID!
+  pluginId: ID!
 }
 
 input UninstallPluginInput {
   sceneId: ID!
-  pluginId: PluginID!
+  pluginId: ID!
 }
 
 input UpgradePluginInput {
   sceneId: ID!
-  pluginId: PluginID!
-  toPluginId: PluginID!
+  pluginId: ID!
+  toPluginId: ID!
 }
 
 input SyncDatasetInput {
@@ -1017,33 +1002,33 @@ input SyncDatasetInput {
 
 input UpdatePropertyValueInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID
+  schemaGroupId: ID
   itemId: ID
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
   value: Any
   type: ValueType!
 }
 
 input RemovePropertyFieldInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID
+  schemaGroupId: ID
   itemId: ID
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
 }
 
 input UploadFileToPropertyInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID
+  schemaGroupId: ID
   itemId: ID
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
   file: Upload!
 }
 
 input LinkDatasetToPropertyValueInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID
+  schemaGroupId: ID
   itemId: ID
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
   datasetSchemaIds: [ID!]!
   datasetSchemaFieldIds: [ID!]!
   datasetIds: [ID!]
@@ -1051,14 +1036,14 @@ input LinkDatasetToPropertyValueInput {
 
 input UnlinkPropertyValueInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID
+  schemaGroupId: ID
   itemId: ID
-  fieldId: PropertySchemaFieldID!
+  fieldId: ID!
 }
 
 input AddPropertyItemInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaGroupId: ID!
   index: Int
   nameFieldValue: Any
   nameFieldType: ValueType
@@ -1066,20 +1051,20 @@ input AddPropertyItemInput {
 
 input MovePropertyItemInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaGroupId: ID!
   itemId: ID!
   index: Int!
 }
 
 input RemovePropertyItemInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaGroupId: ID!
   itemId: ID!
 }
 
 input UpdatePropertyItemInput {
   propertyId: ID!
-  schemaGroupId: PropertySchemaGroupID!
+  schemaGroupId: ID!
   operations: [UpdatePropertyItemOperationInput!]!
 }
 
@@ -1093,8 +1078,8 @@ input UpdatePropertyItemOperationInput {
 
 input AddLayerItemInput {
   parentLayerId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
   index: Int
   name: String
   lat: Float
@@ -1103,12 +1088,12 @@ input AddLayerItemInput {
 
 input AddLayerGroupInput {
   parentLayerId: ID!
-  pluginId: PluginID
-  extensionId: PluginExtensionID
+  pluginId: ID
+  extensionId: ID
   index: Int
   linkedDatasetSchemaID: ID
   name: String
-  representativeFieldId: DatasetSchemaFieldID
+  representativeFieldId: ID
 }
 
 input RemoveLayerInput {
@@ -1137,8 +1122,8 @@ input RemoveInfoboxInput {
 
 input AddInfoboxFieldInput {
   layerId: ID!
-  pluginId: PluginID!
-  extensionId: PluginExtensionID!
+  pluginId: ID!
+  extensionId: ID!
   index: Int
 }
 
@@ -1275,7 +1260,7 @@ type RemoveAssetPayload {
 }
 
 type UpdateMePayload {
-  user: User!
+  me: Me!
 }
 
 type SignupPayload {
@@ -1354,7 +1339,7 @@ type InstallPluginPayload {
 }
 
 type UninstallPluginPayload {
-  pluginId: PluginID!
+  pluginId: ID!
   scene: Scene!
 }
 
@@ -1564,13 +1549,13 @@ type DatasetEdge {
 # Query
 
 type Query {
-  me: User
+  me: Me
   node(id: ID!, type: NodeType!): Node
   nodes(id: [ID!]!, type: NodeType!): [Node]!
-  propertySchema(id: PropertySchemaID!): PropertySchema
-  propertySchemas(id: [PropertySchemaID!]!): [PropertySchema!]!
-  plugin(id: PluginID!): Plugin
-  plugins(id: [PluginID!]!): [Plugin!]!
+  propertySchema(id: ID!): PropertySchema
+  propertySchemas(id: [ID!]!): [PropertySchema!]!
+  plugin(id: ID!): Plugin
+  plugins(id: [ID!]!): [Plugin!]!
   layer(id: ID!): Layer
   scene(projectId: ID!): Scene
   assets(
@@ -1601,9 +1586,8 @@ type Query {
     after: Cursor
     before: Cursor
   ): DatasetConnection!
-  sceneLock(sceneId: ID!): SceneLockMode
   dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
-  searchUser(nameOrEmail: String!): SearchedUser
+  searchUser(nameOrEmail: String!): User
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   installablePlugins: [PluginMetadata!]!
 }

@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // SceneLoaderConfig captures the config to create a new SceneLoader
 type SceneLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.SceneID) ([]*gqlmodel.Scene, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Scene, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewSceneLoader(config SceneLoaderConfig) *SceneLoader {
 // SceneLoader batches and caches requests
 type SceneLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.SceneID) ([]*gqlmodel.Scene, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Scene, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type SceneLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.SceneID]*gqlmodel.Scene
+	cache map[gqlmodel.ID]*gqlmodel.Scene
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type SceneLoader struct {
 }
 
 type sceneLoaderBatch struct {
-	keys    []id.SceneID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Scene
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type sceneLoaderBatch struct {
 }
 
 // Load a Scene by key, batching and caching will be applied automatically
-func (l *SceneLoader) Load(key id.SceneID) (*gqlmodel.Scene, error) {
+func (l *SceneLoader) Load(key gqlmodel.ID) (*gqlmodel.Scene, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Scene.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *SceneLoader) LoadThunk(key id.SceneID) func() (*gqlmodel.Scene, error) {
+func (l *SceneLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Scene, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *SceneLoader) LoadThunk(key id.SceneID) func() (*gqlmodel.Scene, error) 
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *SceneLoader) LoadAll(keys []id.SceneID) ([]*gqlmodel.Scene, []error) {
+func (l *SceneLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Scene, []error) {
 	results := make([]func() (*gqlmodel.Scene, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *SceneLoader) LoadAll(keys []id.SceneID) ([]*gqlmodel.Scene, []error) {
 // LoadAllThunk returns a function that when called will block waiting for a Scenes.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *SceneLoader) LoadAllThunk(keys []id.SceneID) func() ([]*gqlmodel.Scene, []error) {
+func (l *SceneLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Scene, []error) {
 	results := make([]func() (*gqlmodel.Scene, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *SceneLoader) LoadAllThunk(keys []id.SceneID) func() ([]*gqlmodel.Scene,
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *SceneLoader) Prime(key id.SceneID, value *gqlmodel.Scene) bool {
+func (l *SceneLoader) Prime(key gqlmodel.ID, value *gqlmodel.Scene) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *SceneLoader) Prime(key id.SceneID, value *gqlmodel.Scene) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *SceneLoader) Clear(key id.SceneID) {
+func (l *SceneLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *SceneLoader) unsafeSet(key id.SceneID, value *gqlmodel.Scene) {
+func (l *SceneLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Scene) {
 	if l.cache == nil {
-		l.cache = map[id.SceneID]*gqlmodel.Scene{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Scene{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *sceneLoaderBatch) keyIndex(l *SceneLoader, key id.SceneID) int {
+func (b *sceneLoaderBatch) keyIndex(l *SceneLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

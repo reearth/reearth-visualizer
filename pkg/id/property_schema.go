@@ -5,9 +5,8 @@ import (
 	"strings"
 )
 
-var schemaIDRe = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9_-]*$|^@$")
+var propertySchemaIDRe = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9_-]*$|^@$")
 
-// PropertySchemaID is an ID for PropertySchema.
 type PropertySchemaID struct {
 	plugin PluginID
 	id     string
@@ -15,7 +14,7 @@ type PropertySchemaID struct {
 
 // NewPropertySchemaID generates a new PropertySchemaID from a plugin ID and name.
 func NewPropertySchemaID(p PluginID, name string) PropertySchemaID {
-	if p.IsNil() || !schemaIDRe.MatchString(name) {
+	if p.IsNil() || !propertySchemaIDRe.MatchString(name) {
 		return PropertySchemaID{}
 	}
 	return PropertySchemaID{plugin: p.Clone(), id: name}
@@ -24,7 +23,7 @@ func NewPropertySchemaID(p PluginID, name string) PropertySchemaID {
 // PropertySchemaIDFrom generates a new PropertySchemaID from a string.
 func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
 	ids := strings.SplitN(id, "/", 2)
-	if len(ids) < 2 || !schemaIDRe.MatchString(ids[len(ids)-1]) {
+	if len(ids) < 2 || !propertySchemaIDRe.MatchString(ids[len(ids)-1]) {
 		return PropertySchemaID{}, ErrInvalidID
 	}
 	pid, err := PluginIDFrom(ids[0])

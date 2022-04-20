@@ -12,11 +12,12 @@ import (
 )
 
 func (r *mutationResolver) CreateScene(ctx context.Context, input gqlmodel.CreateSceneInput) (*gqlmodel.CreateScenePayload, error) {
-	res, err := usecases(ctx).Scene.Create(
-		ctx,
-		id.ProjectID(input.ProjectID),
-		getOperator(ctx),
-	)
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Scene.Create(ctx, pid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -27,10 +28,20 @@ func (r *mutationResolver) CreateScene(ctx context.Context, input gqlmodel.Creat
 }
 
 func (r *mutationResolver) AddWidget(ctx context.Context, input gqlmodel.AddWidgetInput) (*gqlmodel.AddWidgetPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := gqlmodel.ToPluginID(input.PluginID)
+	if err != nil {
+		return nil, err
+	}
+
 	scene, widget, err := usecases(ctx).Scene.AddWidget(
 		ctx,
-		id.SceneID(input.SceneID),
-		input.PluginID,
+		sid,
+		pid,
 		id.PluginExtensionID(input.ExtensionID),
 		getOperator(ctx),
 	)
@@ -45,9 +56,14 @@ func (r *mutationResolver) AddWidget(ctx context.Context, input gqlmodel.AddWidg
 }
 
 func (r *mutationResolver) UpdateWidget(ctx context.Context, input gqlmodel.UpdateWidgetInput) (*gqlmodel.UpdateWidgetPayload, error) {
+	sid, wid, err := gqlmodel.ToID2[id.Scene, id.Widget](input.SceneID, input.WidgetID)
+	if err != nil {
+		return nil, err
+	}
+
 	scene, widget, err := usecases(ctx).Scene.UpdateWidget(ctx, interfaces.UpdateWidgetParam{
-		SceneID:  id.SceneID(input.SceneID),
-		WidgetID: id.WidgetID(input.WidgetID),
+		SceneID:  sid,
+		WidgetID: wid,
 		Enabled:  input.Enabled,
 		Extended: input.Extended,
 		Location: gqlmodel.FromSceneWidgetLocation(input.Location),
@@ -64,9 +80,14 @@ func (r *mutationResolver) UpdateWidget(ctx context.Context, input gqlmodel.Upda
 }
 
 func (r *mutationResolver) RemoveWidget(ctx context.Context, input gqlmodel.RemoveWidgetInput) (*gqlmodel.RemoveWidgetPayload, error) {
+	sid, wid, err := gqlmodel.ToID2[id.Scene, id.Widget](input.SceneID, input.WidgetID)
+	if err != nil {
+		return nil, err
+	}
+
 	scene, err := usecases(ctx).Scene.RemoveWidget(ctx,
-		id.SceneID(input.SceneID),
-		id.WidgetID(input.WidgetID),
+		sid,
+		wid,
 		getOperator(ctx),
 	)
 	if err != nil {
@@ -80,8 +101,13 @@ func (r *mutationResolver) RemoveWidget(ctx context.Context, input gqlmodel.Remo
 }
 
 func (r *mutationResolver) UpdateWidgetAlignSystem(ctx context.Context, input gqlmodel.UpdateWidgetAlignSystemInput) (*gqlmodel.UpdateWidgetAlignSystemPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	scene, err := usecases(ctx).Scene.UpdateWidgetAlignSystem(ctx, interfaces.UpdateWidgetAlignSystemParam{
-		SceneID:  id.SceneID(input.SceneID),
+		SceneID:  sid,
 		Location: *gqlmodel.FromSceneWidgetLocation(input.Location),
 		Align:    gqlmodel.FromWidgetAlignType(input.Align),
 	}, getOperator(ctx))
@@ -95,33 +121,43 @@ func (r *mutationResolver) UpdateWidgetAlignSystem(ctx context.Context, input gq
 }
 
 func (r *mutationResolver) InstallPlugin(ctx context.Context, input gqlmodel.InstallPluginInput) (*gqlmodel.InstallPluginPayload, error) {
-	scene, pl, pr, err := usecases(ctx).Scene.InstallPlugin(ctx,
-		id.SceneID(input.SceneID),
-		input.PluginID,
-		getOperator(ctx),
-	)
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := gqlmodel.ToPluginID(input.PluginID)
+	if err != nil {
+		return nil, err
+	}
+
+	scene, pl, pr, err := usecases(ctx).Scene.InstallPlugin(ctx, sid, pid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.InstallPluginPayload{
 		Scene: gqlmodel.ToScene(scene), ScenePlugin: &gqlmodel.ScenePlugin{
-			PluginID:   pl,
-			PropertyID: pr.IDRef(),
+			PluginID:   gqlmodel.IDFromPluginID(pl),
+			PropertyID: gqlmodel.IDFromRef(pr),
 		},
 	}, nil
 }
 
 func (r *mutationResolver) UploadPlugin(ctx context.Context, input gqlmodel.UploadPluginInput) (*gqlmodel.UploadPluginPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	operator := getOperator(ctx)
 	var p *plugin.Plugin
 	var s *scene.Scene
-	var err error
 
 	if input.File != nil {
-		p, s, err = usecases(ctx).Plugin.Upload(ctx, input.File.File, id.SceneID(input.SceneID), operator)
+		p, s, err = usecases(ctx).Plugin.Upload(ctx, input.File.File, sid, operator)
 	} else if input.URL != nil {
-		p, s, err = usecases(ctx).Plugin.UploadFromRemote(ctx, input.URL, id.SceneID(input.SceneID), operator)
+		p, s, err = usecases(ctx).Plugin.UploadFromRemote(ctx, input.URL, sid, operator)
 	} else {
 		return nil, errors.New("either file or url is required")
 	}
@@ -137,11 +173,17 @@ func (r *mutationResolver) UploadPlugin(ctx context.Context, input gqlmodel.Uplo
 }
 
 func (r *mutationResolver) UninstallPlugin(ctx context.Context, input gqlmodel.UninstallPluginInput) (*gqlmodel.UninstallPluginPayload, error) {
-	scene, err := usecases(ctx).Scene.UninstallPlugin(ctx,
-		id.SceneID(input.SceneID),
-		id.PluginID(input.PluginID),
-		getOperator(ctx),
-	)
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := gqlmodel.ToPluginID(input.PluginID)
+	if err != nil {
+		return nil, err
+	}
+
+	scene, err := usecases(ctx).Scene.UninstallPlugin(ctx, sid, pid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -153,10 +195,20 @@ func (r *mutationResolver) UninstallPlugin(ctx context.Context, input gqlmodel.U
 }
 
 func (r *mutationResolver) UpgradePlugin(ctx context.Context, input gqlmodel.UpgradePluginInput) (*gqlmodel.UpgradePluginPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, topid, err := gqlmodel.ToPluginID2(input.PluginID, input.ToPluginID)
+	if err != nil {
+		return nil, err
+	}
+
 	s, err := usecases(ctx).Scene.UpgradePlugin(ctx,
-		id.SceneID(input.SceneID),
-		input.PluginID,
-		input.ToPluginID,
+		sid,
+		pid,
+		topid,
 		getOperator(ctx),
 	)
 	if err != nil {
@@ -165,12 +217,17 @@ func (r *mutationResolver) UpgradePlugin(ctx context.Context, input gqlmodel.Upg
 
 	return &gqlmodel.UpgradePluginPayload{
 		Scene:       gqlmodel.ToScene(s),
-		ScenePlugin: gqlmodel.ToScenePlugin(s.Plugins().Plugin(input.ToPluginID)),
+		ScenePlugin: gqlmodel.ToScenePlugin(s.Plugins().Plugin(topid)),
 	}, nil
 }
 
 func (r *mutationResolver) AddCluster(ctx context.Context, input gqlmodel.AddClusterInput) (*gqlmodel.AddClusterPayload, error) {
-	s, c, err := usecases(ctx).Scene.AddCluster(ctx, id.SceneID(input.SceneID), input.Name, getOperator(ctx))
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, c, err := usecases(ctx).Scene.AddCluster(ctx, sid, input.Name, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -182,11 +239,16 @@ func (r *mutationResolver) AddCluster(ctx context.Context, input gqlmodel.AddClu
 }
 
 func (r *mutationResolver) UpdateCluster(ctx context.Context, input gqlmodel.UpdateClusterInput) (*gqlmodel.UpdateClusterPayload, error) {
+	sid, cid, err := gqlmodel.ToID2[id.Scene, id.Cluster](input.SceneID, input.ClusterID)
+	if err != nil {
+		return nil, err
+	}
+
 	s, c, err := usecases(ctx).Scene.UpdateCluster(ctx, interfaces.UpdateClusterParam{
-		ClusterID:  id.ClusterID(input.ClusterID),
-		SceneID:    id.SceneID(input.SceneID),
+		ClusterID:  cid,
+		SceneID:    sid,
 		Name:       input.Name,
-		PropertyID: id.PropertyIDFromRefID(input.PropertyID),
+		PropertyID: gqlmodel.ToIDRef[id.Property](input.PropertyID),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -199,7 +261,12 @@ func (r *mutationResolver) UpdateCluster(ctx context.Context, input gqlmodel.Upd
 }
 
 func (r *mutationResolver) RemoveCluster(ctx context.Context, input gqlmodel.RemoveClusterInput) (*gqlmodel.RemoveClusterPayload, error) {
-	s, err := usecases(ctx).Scene.RemoveCluster(ctx, id.SceneID(input.SceneID), id.ClusterID(input.ClusterID), getOperator(ctx))
+	sid, cid, err := gqlmodel.ToID2[id.Scene, id.Cluster](input.SceneID, input.ClusterID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := usecases(ctx).Scene.RemoveCluster(ctx, sid, cid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

@@ -44,10 +44,10 @@ func (r *sceneRepo) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, 
 	})
 }
 
-func (r *sceneRepo) FindByIDs(ctx context.Context, ids []id.SceneID) (scene.List, error) {
+func (r *sceneRepo) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, error) {
 	return r.find(ctx, make(scene.List, 0, len(ids)), bson.M{
 		"id": bson.M{
-			"$in": id.SceneIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	})
 }
@@ -59,8 +59,9 @@ func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID) (*scene.
 }
 
 func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
+	teams2 := id.TeamIDList(teams)
 	if r.f.Readable != nil {
-		teams = user.TeamIDList(teams).Filter(r.f.Readable...)
+		teams2 = teams2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, nil, bson.M{
 		"team": bson.M{"$in": user.TeamIDList(teams).Strings()},

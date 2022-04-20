@@ -40,9 +40,9 @@ func (r *assetRepo) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, 
 	})
 }
 
-func (r *assetRepo) FindByIDs(ctx context.Context, ids []id.AssetID) ([]*asset.Asset, error) {
+func (r *assetRepo) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
 	filter := bson.M{
-		"id": bson.M{"$in": id.AssetIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}
 	dst := make([]*asset.Asset, 0, len(ids))
 	res, err := r.find(ctx, dst, filter)

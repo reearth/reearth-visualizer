@@ -1,8 +1,6 @@
 package project
 
 import (
-	"time"
-
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
@@ -21,11 +19,4 @@ var TeamIDFrom = id.TeamIDFrom
 var IDFromRef = id.ProjectIDFromRef
 var TeamIDFromRef = id.TeamIDFromRef
 
-var IDFromRefID = id.ProjectIDFromRefID
-var TeamIDFromRefID = id.TeamIDFromRefID
-
 var ErrInvalidID = id.ErrInvalidID
-
-func createdAt(i ID) time.Time {
-	return id.ID(i).Timestamp()
-}

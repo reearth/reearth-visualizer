@@ -45,7 +45,7 @@ func TestSceneBuilder(t *testing.T) {
 	ds1 := dataset.New().ID(ds1id).Fields([]*dataset.Field{
 		dataset.NewField(
 			ds1f1,
-			dataset.ValueTypeRef.ValueFrom(ds2id.ID()),
+			dataset.ValueTypeRef.ValueFrom(ds2id),
 			"ds1f1",
 		),
 		dataset.NewField(
@@ -57,7 +57,7 @@ func TestSceneBuilder(t *testing.T) {
 	ds2 := dataset.New().ID(ds2id).Fields([]*dataset.Field{
 		dataset.NewField(
 			ds2f1,
-			dataset.ValueTypeRef.ValueFrom(ds3id.ID()),
+			dataset.ValueTypeRef.ValueFrom(ds3id),
 			"ds2",
 		),
 	}).Scene(sceneID).Schema(dss2id).Source("ds2").MustBuild()
@@ -73,9 +73,9 @@ func TestSceneBuilder(t *testing.T) {
 	tag1 := tag.NewItem().NewID().Label("hoge").Scene(sceneID).MustBuild()
 	tag2 := tag.NewItem().NewID().Label("foo").Scene(sceneID).MustBuild()
 	tag3 := tag.NewItem().NewID().Label("unused").Scene(sceneID).MustBuild()
-	tag4 := tag.NewGroup().NewID().Label("bar").Scene(sceneID).Tags(tag.IDListFrom(([]tag.ID{
+	tag4 := tag.NewGroup().NewID().Label("bar").Scene(sceneID).Tags(tag.IDList{
 		tag1.ID(), tag2.ID(), tag3.ID(),
-	}))).MustBuild()
+	}).MustBuild()
 	tag5 := tag.NewItem().NewID().Label("dummy").Scene(scene.NewID()).MustBuild() // dummy
 	tags := tag.List{tag1, tag2, tag3, tag4, tag5}
 

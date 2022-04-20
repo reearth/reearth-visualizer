@@ -42,7 +42,7 @@ func (r *Scene) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, erro
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByIDs(ctx context.Context, ids []id.SceneID) (scene.List, error) {
+func (r *Scene) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -76,7 +76,7 @@ func (r *Scene) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List,
 
 	result := scene.List{}
 	for _, d := range r.data {
-		if user.TeamIDList(teams).Includes(d.Team()) && r.f.CanRead(d.Team()) {
+		if user.TeamIDList(teams).Has(d.Team()) && r.f.CanRead(d.Team()) {
 			result = append(result, d)
 		}
 	}

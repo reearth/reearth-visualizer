@@ -13,7 +13,7 @@ func (m Map) All() List {
 		res = append(res, t)
 	}
 	sort.SliceStable(res, func(i, j int) bool {
-		return res[i].ID().ID().Compare(res[j].ID().ID()) < 0
+		return res[i].ID().Compare(res[j].ID()) < 0
 	})
 	return res
 }

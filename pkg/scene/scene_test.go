@@ -82,14 +82,14 @@ func TestScene_Properties(t *testing.T) {
 func TestSceneNil(t *testing.T) {
 	var s *Scene
 	assert.Nil(t, s.Properties())
-	assert.True(t, s.ID().IsNil())
+	assert.True(t, s.ID().IsEmpty())
 	assert.Nil(t, s.Widgets())
-	assert.True(t, s.Project().IsNil())
-	assert.True(t, s.Team().IsNil())
-	assert.True(t, s.RootLayer().IsNil())
+	assert.True(t, s.Project().IsEmpty())
+	assert.True(t, s.Team().IsEmpty())
+	assert.True(t, s.RootLayer().IsEmpty())
 	assert.True(t, s.CreatedAt().IsZero())
 	assert.Nil(t, s.Plugins())
-	assert.True(t, s.Property().IsNil())
+	assert.True(t, s.Property().IsEmpty())
 }
 
 func TestScene_Clusters(t *testing.T) {

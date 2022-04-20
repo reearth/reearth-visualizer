@@ -96,11 +96,11 @@ func (f TeamFilter) Merge(g TeamFilter) TeamFilter {
 }
 
 func (f TeamFilter) CanRead(id user.TeamID) bool {
-	return f.Readable == nil || f.Readable.Includes(id)
+	return f.Readable == nil || f.Readable.Has(id)
 }
 
 func (f TeamFilter) CanWrite(id user.TeamID) bool {
-	return f.Writable == nil || f.Writable.Includes(id)
+	return f.Writable == nil || f.Writable.Has(id)
 }
 
 type SceneFilter struct {
@@ -145,9 +145,9 @@ func (f SceneFilter) Clone() SceneFilter {
 }
 
 func (f SceneFilter) CanRead(id scene.ID) bool {
-	return f.Readable == nil || f.Readable.Includes(id)
+	return f.Readable == nil || f.Readable.Has(id)
 }
 
 func (f SceneFilter) CanWrite(id scene.ID) bool {
-	return f.Writable == nil || f.Writable.Includes(id)
+	return f.Writable == nil || f.Writable.Has(id)
 }

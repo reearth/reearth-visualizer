@@ -1,7 +1,5 @@
 package property
 
-import "github.com/reearth/reearth-backend/pkg/id"
-
 type SchemaGroupList struct {
 	groups []*SchemaGroup
 }
@@ -55,7 +53,7 @@ func (p *SchemaGroupList) GroupAndFields() []SchemaGroupAndField {
 	return fields
 }
 
-func (p *SchemaGroupList) Field(id id.PropertySchemaFieldID) *SchemaField {
+func (p *SchemaGroupList) Field(id FieldID) *SchemaField {
 	if p == nil {
 		return nil
 	}
@@ -68,7 +66,7 @@ func (p *SchemaGroupList) Field(id id.PropertySchemaFieldID) *SchemaField {
 	return nil
 }
 
-func (p *SchemaGroupList) Group(id id.PropertySchemaGroupID) *SchemaGroup {
+func (p *SchemaGroupList) Group(id SchemaGroupID) *SchemaGroup {
 	if p == nil {
 		return nil
 	}
@@ -81,7 +79,7 @@ func (p *SchemaGroupList) Group(id id.PropertySchemaGroupID) *SchemaGroup {
 	return nil
 }
 
-func (p *SchemaGroupList) GroupByField(id id.PropertySchemaFieldID) *SchemaGroup {
+func (p *SchemaGroupList) GroupByField(id FieldID) *SchemaGroup {
 	if p == nil {
 		return nil
 	}

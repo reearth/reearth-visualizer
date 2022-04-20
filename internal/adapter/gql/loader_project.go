@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 type ProjectLoader struct {
@@ -18,8 +19,13 @@ func NewProjectLoader(usecase interfaces.Project) *ProjectLoader {
 	return &ProjectLoader{usecase: usecase}
 }
 
-func (c *ProjectLoader) Fetch(ctx context.Context, ids []id.ProjectID) ([]*gqlmodel.Project, []error) {
-	res, err := c.usecase.Fetch(ctx, ids, getOperator(ctx))
+func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
+	ids2, err := util.TryMap(ids, gqlmodel.ToID[id.Project])
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.Fetch(ctx, ids2, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -32,8 +38,13 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []id.ProjectID) ([]*gqlmo
 	return projects, nil
 }
 
-func (c *ProjectLoader) FindByTeam(ctx context.Context, teamID id.TeamID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
-	res, pi, err := c.usecase.FindByTeam(ctx, teamID, usecase.NewPagination(first, last, before, after), getOperator(ctx))
+func (c *ProjectLoader) FindByTeam(ctx context.Context, teamID gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
+	tid, err := gqlmodel.ToID[id.Team](teamID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, pi, err := c.usecase.FindByTeam(ctx, tid, usecase.NewPagination(first, last, before, after), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +55,7 @@ func (c *ProjectLoader) FindByTeam(ctx context.Context, teamID id.TeamID, first 
 		prj := gqlmodel.ToProject(p)
 		edges = append(edges, &gqlmodel.ProjectEdge{
 			Node:   prj,
-			Cursor: usecase.Cursor(prj.ID.String()),
+			Cursor: usecase.Cursor(prj.ID),
 		})
 		nodes = append(nodes, prj)
 	}
@@ -69,15 +80,15 @@ func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string) (*gqlmodel
 // data loaders
 
 type ProjectDataLoader interface {
-	Load(id.ProjectID) (*gqlmodel.Project, error)
-	LoadAll([]id.ProjectID) ([]*gqlmodel.Project, []error)
+	Load(gqlmodel.ID) (*gqlmodel.Project, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.Project, []error)
 }
 
 func (c *ProjectLoader) DataLoader(ctx context.Context) ProjectDataLoader {
 	return gqldataloader.NewProjectLoader(gqldataloader.ProjectLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.ProjectID) ([]*gqlmodel.Project, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	})
@@ -85,18 +96,18 @@ func (c *ProjectLoader) DataLoader(ctx context.Context) ProjectDataLoader {
 
 func (c *ProjectLoader) OrdinaryDataLoader(ctx context.Context) ProjectDataLoader {
 	return &ordinaryProjectLoader{
-		fetch: func(keys []id.ProjectID) ([]*gqlmodel.Project, []error) {
+		fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	}
 }
 
 type ordinaryProjectLoader struct {
-	fetch func(keys []id.ProjectID) ([]*gqlmodel.Project, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error)
 }
 
-func (l *ordinaryProjectLoader) Load(key id.ProjectID) (*gqlmodel.Project, error) {
-	res, errs := l.fetch([]id.ProjectID{key})
+func (l *ordinaryProjectLoader) Load(key gqlmodel.ID) (*gqlmodel.Project, error) {
+	res, errs := l.fetch([]gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -106,6 +117,6 @@ func (l *ordinaryProjectLoader) Load(key id.ProjectID) (*gqlmodel.Project, error
 	return nil, nil
 }
 
-func (l *ordinaryProjectLoader) LoadAll(keys []id.ProjectID) ([]*gqlmodel.Project, []error) {
+func (l *ordinaryProjectLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
 	return l.fetch(keys)
 }

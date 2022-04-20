@@ -10,7 +10,7 @@ import (
 type Property interface {
 	Filtered(SceneFilter) Property
 	FindByID(context.Context, id.PropertyID) (*property.Property, error)
-	FindByIDs(context.Context, []id.PropertyID) (property.List, error)
+	FindByIDs(context.Context, id.PropertyIDList) (property.List, error)
 	FindLinkedAll(context.Context, id.SceneID) (property.List, error)
 	FindByDataset(context.Context, id.DatasetSchemaID, id.DatasetID) (property.List, error)
 	FindBySchema(context.Context, []id.PropertySchemaID, id.SceneID) (property.List, error)
@@ -19,7 +19,7 @@ type Property interface {
 	SaveAll(context.Context, property.List) error
 	UpdateSchemaPlugin(context.Context, id.PluginID, id.PluginID, id.SceneID) error
 	Remove(context.Context, id.PropertyID) error
-	RemoveAll(context.Context, []id.PropertyID) error
+	RemoveAll(context.Context, id.PropertyIDList) error
 	RemoveByScene(context.Context, id.SceneID) error
 }
 

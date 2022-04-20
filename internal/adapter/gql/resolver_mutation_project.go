@@ -10,8 +10,13 @@ import (
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
+	tid, err := gqlmodel.ToID[id.Team](input.TeamID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
-		TeamID:      id.TeamID(input.TeamID),
+		TeamID:      tid,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        input.Name,
 		Description: input.Description,
@@ -37,8 +42,13 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		deleteImageURL = *input.DeleteImageURL
 	}
 
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Project.Update(ctx, interfaces.UpdateProjectParam{
-		ID:                id.ProjectID(input.ProjectID),
+		ID:                pid,
 		Name:              input.Name,
 		Description:       input.Description,
 		Alias:             input.Alias,
@@ -62,8 +72,13 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 }
 
 func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error) {
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Project.Publish(ctx, interfaces.PublishProjectParam{
-		ID:     id.ProjectID(input.ProjectID),
+		ID:     pid,
 		Alias:  input.Alias,
 		Status: gqlmodel.FromPublishmentStatus(input.Status),
 	}, getOperator(ctx))
@@ -75,8 +90,12 @@ func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.Pu
 }
 
 func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error) {
-	err := usecases(ctx).Project.Delete(ctx, id.ProjectID(input.ProjectID), getOperator(ctx))
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := usecases(ctx).Project.Delete(ctx, pid, getOperator(ctx)); err != nil {
 		return nil, err
 	}
 

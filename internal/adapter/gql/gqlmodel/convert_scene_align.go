@@ -3,6 +3,7 @@ package gqlmodel
 import (
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func ToWidgetAlignSystem(sas *scene.WidgetAlignSystem) *WidgetAlignSystem {
@@ -17,6 +18,7 @@ func ToWidgetZone(z *scene.WidgetZone) *WidgetZone {
 	if z == nil {
 		return nil
 	}
+
 	return &WidgetZone{
 		Left:   ToWidgetSection(z.Section(scene.WidgetSectionLeft)),
 		Center: ToWidgetSection(z.Section(scene.WidgetSectionCenter)),
@@ -28,6 +30,7 @@ func ToWidgetSection(s *scene.WidgetSection) *WidgetSection {
 	if s == nil {
 		return nil
 	}
+
 	return &WidgetSection{
 		Top:    ToWidgetArea(s.Area(scene.WidgetAreaTop)),
 		Middle: ToWidgetArea(s.Area(scene.WidgetAreaMiddle)),
@@ -39,13 +42,9 @@ func ToWidgetArea(a *scene.WidgetArea) *WidgetArea {
 	if a == nil {
 		return nil
 	}
-	wids := a.WidgetIDs()
-	ids := make([]*id.ID, 0, len(wids))
-	for _, wid := range wids {
-		ids = append(ids, wid.IDRef())
-	}
+
 	return &WidgetArea{
-		WidgetIds: ids,
+		WidgetIds: util.Map(a.WidgetIDs(), IDFrom[id.Widget]),
 		Align:     ToWidgetAlignType(a.Alignment()),
 	}
 }
@@ -66,6 +65,7 @@ func FromSceneWidgetLocation(l *WidgetLocationInput) *scene.WidgetLocation {
 	if l == nil {
 		return nil
 	}
+
 	return &scene.WidgetLocation{
 		Zone:    FromSceneWidgetZoneType(l.Zone),
 		Section: FromSceneWidgetSectionType(l.Section),

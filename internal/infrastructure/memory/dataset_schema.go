@@ -42,7 +42,7 @@ func (r *DatasetSchema) FindByID(ctx context.Context, id id.DatasetSchemaID) (*d
 	return nil, rerror.ErrNotFound
 }
 
-func (r *DatasetSchema) FindByIDs(ctx context.Context, ids []id.DatasetSchemaID) (dataset.SchemaList, error) {
+func (r *DatasetSchema) FindByIDs(ctx context.Context, ids id.DatasetSchemaIDList) (dataset.SchemaList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -190,7 +190,7 @@ func (r *DatasetSchema) Remove(ctx context.Context, id id.DatasetSchemaID) error
 	return nil
 }
 
-func (r *DatasetSchema) RemoveAll(ctx context.Context, ids []id.DatasetSchemaID) error {
+func (r *DatasetSchema) RemoveAll(ctx context.Context, ids id.DatasetSchemaIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

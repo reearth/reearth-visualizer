@@ -8,10 +8,11 @@ func ToAsset(a *asset.Asset) *Asset {
 	if a == nil {
 		return nil
 	}
+
 	return &Asset{
-		ID:          a.ID().ID(),
+		ID:          IDFrom(a.ID()),
 		CreatedAt:   a.CreatedAt(),
-		TeamID:      a.Team().ID(),
+		TeamID:      IDFrom(a.Team()),
 		Name:        a.Name(),
 		Size:        a.Size(),
 		URL:         a.URL(),
@@ -23,6 +24,7 @@ func AssetSortTypeFrom(ast *AssetSortType) *asset.SortType {
 	if ast == nil {
 		return nil
 	}
+
 	switch *ast {
 	case AssetSortTypeDate:
 		return &asset.SortTypeID

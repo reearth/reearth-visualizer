@@ -8,7 +8,7 @@ import (
 )
 
 type User interface {
-	FindByIDs(context.Context, []id.UserID) ([]*user.User, error)
+	FindByIDs(context.Context, id.UserIDList) ([]*user.User, error)
 	FindByID(context.Context, id.UserID) (*user.User, error)
 	FindByAuth0Sub(context.Context, string) (*user.User, error)
 	FindByEmail(context.Context, string) (*user.User, error)

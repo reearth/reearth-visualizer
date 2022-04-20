@@ -41,7 +41,7 @@ func (r *Layer) FindByID(ctx context.Context, id id.LayerID) (layer.Layer, error
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Layer) FindByIDs(ctx context.Context, ids []id.LayerID) (layer.List, error) {
+func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -56,7 +56,7 @@ func (r *Layer) FindByIDs(ctx context.Context, ids []id.LayerID) (layer.List, er
 	return result, nil
 }
 
-func (r *Layer) FindGroupByIDs(ctx context.Context, ids []id.LayerID) (layer.GroupList, error) {
+func (r *Layer) FindGroupByIDs(ctx context.Context, ids id.LayerIDList) (layer.GroupList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -73,7 +73,7 @@ func (r *Layer) FindGroupByIDs(ctx context.Context, ids []id.LayerID) (layer.Gro
 	return result, nil
 }
 
-func (r *Layer) FindItemByIDs(ctx context.Context, ids []id.LayerID) (layer.ItemList, error) {
+func (r *Layer) FindItemByIDs(ctx context.Context, ids id.LayerIDList) (layer.ItemList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -136,7 +136,7 @@ func (r *Layer) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, s id
 	return result, nil
 }
 
-func (r *Layer) FindParentsByIDs(_ context.Context, ids []id.LayerID) (layer.GroupList, error) {
+func (r *Layer) FindParentsByIDs(_ context.Context, ids id.LayerIDList) (layer.GroupList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -144,7 +144,7 @@ func (r *Layer) FindParentsByIDs(_ context.Context, ids []id.LayerID) (layer.Gro
 	for _, l := range r.data {
 		if lg := layer.ToLayerGroup(l); lg != nil && r.f.CanRead(l.Scene()) {
 			for _, cl := range lg.Layers().Layers() {
-				if cl.Contains(ids) {
+				if ids.Has(cl) {
 					res = append(res, lg)
 				}
 			}
@@ -323,7 +323,7 @@ func (r *Layer) Remove(ctx context.Context, id id.LayerID) error {
 	return nil
 }
 
-func (r *Layer) RemoveAll(ctx context.Context, ids []id.LayerID) error {
+func (r *Layer) RemoveAll(ctx context.Context, ids id.LayerIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

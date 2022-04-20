@@ -122,7 +122,7 @@ func (doc *DatasetDocument) Model() (*dataset.Dataset, error) {
 	}
 	fields := make([]*dataset.Field, 0, len(doc.Fields))
 	for _, field := range doc.Fields {
-		fid, err := id.DatasetSchemaFieldIDFrom(field.Field)
+		fid, err := id.DatasetFieldIDFrom(field.Field)
 		if err != nil {
 			return nil, err
 		}
@@ -147,8 +147,8 @@ func NewDataset(dataset *dataset.Dataset) (*DatasetDocument, string) {
 	var doc DatasetDocument
 	doc.ID = did
 	doc.Source = dataset.Source()
-	doc.Scene = id.ID(dataset.Scene()).String()
-	doc.Schema = id.ID(dataset.Schema()).String()
+	doc.Scene = dataset.Scene().String()
+	doc.Schema = dataset.Schema().String()
 
 	fields := dataset.Fields()
 	doc.Fields = make([]*DatasetFieldDocument, 0, len(fields))
@@ -167,7 +167,7 @@ func NewDatasets(datasets []*dataset.Dataset, f scene.IDList) ([]interface{}, []
 	res := make([]interface{}, 0, len(datasets))
 	ids := make([]string, 0, len(datasets))
 	for _, d := range datasets {
-		if d == nil || f != nil && !f.Includes(d.Scene()) {
+		if d == nil || f != nil && !f.Has(d.Scene()) {
 			continue
 		}
 		r, id := NewDataset(d)

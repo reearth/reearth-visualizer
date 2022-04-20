@@ -93,7 +93,7 @@ func TestInitializer_Layer(t *testing.T) {
 	i.ID = nil
 	actual, err = i.Layer(sid)
 	assert.NoError(t, err)
-	assert.False(t, actual.RootLayer().ID().IsNil())
+	assert.False(t, actual.RootLayer().ID().IsEmpty())
 }
 
 func TestInitializerInfobox_Clone(t *testing.T) {
@@ -183,5 +183,5 @@ func TestInitializerInfoboxField_InfoboxField(t *testing.T) {
 	i.ID = nil
 	actual, _, err = i.InfoboxField(sid)
 	assert.NoError(t, err)
-	assert.False(t, actual.ID().IsNil())
+	assert.False(t, actual.ID().IsEmpty())
 }

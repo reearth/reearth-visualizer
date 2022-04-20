@@ -36,10 +36,10 @@ func (r *sceneLockRepo) GetLock(ctx context.Context, sceneID id.SceneID) (scene.
 	return c.Rows[0], nil
 }
 
-func (r *sceneLockRepo) GetAllLock(ctx context.Context, ids []id.SceneID) ([]scene.LockMode, error) {
+func (r *sceneLockRepo) GetAllLock(ctx context.Context, ids id.SceneIDList) ([]scene.LockMode, error) {
 	filter := bson.D{
 		{Key: "scene", Value: bson.D{
-			{Key: "$in", Value: id.SceneIDsToStrings(ids)},
+			{Key: "$in", Value: ids.Strings()},
 		}},
 	}
 	c := mongodoc.SceneLockConsumer{

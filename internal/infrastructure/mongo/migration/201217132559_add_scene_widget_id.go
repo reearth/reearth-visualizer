@@ -30,7 +30,7 @@ func AddSceneWidgetId(ctx context.Context, c DBClient) error {
 				widgets := make([]mongodoc.SceneWidgetDocument, 0, len(doc.Widgets))
 				for _, w := range doc.Widgets {
 					if w.ID == "" {
-						w.ID = id.New().String()
+						w.ID = id.NewWidgetID().String()
 					}
 					widgets = append(widgets, w)
 				}

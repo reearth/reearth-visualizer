@@ -35,7 +35,7 @@ func TestLinkableField_Validate(t *testing.T) {
 			S:    NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			LF: LinkableFields{
 				URL: &SchemaFieldPointer{
-					Field: id.PropertySchemaFieldID("xx"),
+					Field: FieldID("xx"),
 				},
 			},
 			Expected: false,
@@ -45,7 +45,7 @@ func TestLinkableField_Validate(t *testing.T) {
 			S:    NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			LF: LinkableFields{
 				LatLng: &SchemaFieldPointer{
-					Field: id.PropertySchemaFieldID("xx"),
+					Field: FieldID("xx"),
 				},
 			},
 			Expected: false,

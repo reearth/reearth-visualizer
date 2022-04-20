@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // TagLoaderConfig captures the config to create a new TagLoader
 type TagLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.TagID) ([]*gqlmodel.Tag, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Tag, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewTagLoader(config TagLoaderConfig) *TagLoader {
 // TagLoader batches and caches requests
 type TagLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.TagID) ([]*gqlmodel.Tag, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Tag, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type TagLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.TagID]*gqlmodel.Tag
+	cache map[gqlmodel.ID]*gqlmodel.Tag
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type TagLoader struct {
 }
 
 type tagLoaderBatch struct {
-	keys    []id.TagID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Tag
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type tagLoaderBatch struct {
 }
 
 // Load a Tag by key, batching and caching will be applied automatically
-func (l *TagLoader) Load(key id.TagID) (*gqlmodel.Tag, error) {
+func (l *TagLoader) Load(key gqlmodel.ID) (*gqlmodel.Tag, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Tag.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *TagLoader) LoadThunk(key id.TagID) func() (*gqlmodel.Tag, error) {
+func (l *TagLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Tag, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *TagLoader) LoadThunk(key id.TagID) func() (*gqlmodel.Tag, error) {
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *TagLoader) LoadAll(keys []id.TagID) ([]*gqlmodel.Tag, []error) {
+func (l *TagLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Tag, []error) {
 	results := make([]func() (*gqlmodel.Tag, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *TagLoader) LoadAll(keys []id.TagID) ([]*gqlmodel.Tag, []error) {
 // LoadAllThunk returns a function that when called will block waiting for a Tags.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *TagLoader) LoadAllThunk(keys []id.TagID) func() ([]*gqlmodel.Tag, []error) {
+func (l *TagLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Tag, []error) {
 	results := make([]func() (*gqlmodel.Tag, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *TagLoader) LoadAllThunk(keys []id.TagID) func() ([]*gqlmodel.Tag, []err
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *TagLoader) Prime(key id.TagID, value *gqlmodel.Tag) bool {
+func (l *TagLoader) Prime(key gqlmodel.ID, value *gqlmodel.Tag) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *TagLoader) Prime(key id.TagID, value *gqlmodel.Tag) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *TagLoader) Clear(key id.TagID) {
+func (l *TagLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *TagLoader) unsafeSet(key id.TagID, value *gqlmodel.Tag) {
+func (l *TagLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Tag) {
 	if l.cache == nil {
-		l.cache = map[id.TagID]*gqlmodel.Tag{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Tag{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *tagLoaderBatch) keyIndex(l *TagLoader, key id.TagID) int {
+func (b *tagLoaderBatch) keyIndex(l *TagLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

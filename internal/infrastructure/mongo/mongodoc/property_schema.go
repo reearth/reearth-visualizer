@@ -141,7 +141,7 @@ func NewPropertySchemas(ps []*property.Schema, f scene.IDList) ([]interface{}, [
 		if d == nil {
 			continue
 		}
-		if s := d.Scene(); s != nil && f != nil && !f.Includes(*s) {
+		if s := d.Scene(); s != nil && f != nil && !f.Has(*s) {
 			continue
 		}
 		r, id := NewPropertySchema(d)
@@ -169,7 +169,7 @@ func ToModelPropertySchemaField(f *PropertySchemaFieldDocument) (*property.Schem
 
 	vt := property.ValueType(f.Type)
 	return property.NewSchemaField().
-		ID(id.PropertySchemaFieldID(f.ID)).
+		ID(id.PropertyFieldID(f.ID)).
 		Type(vt).
 		Name(f.Name).
 		Description(f.Description).
@@ -228,7 +228,7 @@ func toModelPropertyCondition(d *PropertyConditonDocument) *property.Condition {
 	}
 
 	return &property.Condition{
-		Field: id.PropertySchemaFieldID(d.Field),
+		Field: id.PropertyFieldID(d.Field),
 		Value: toModelPropertyValue(d.Value, d.Type),
 	}
 }

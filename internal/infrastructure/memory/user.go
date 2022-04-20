@@ -21,7 +21,7 @@ func NewUser() repo.User {
 	}
 }
 
-func (r *User) FindByIDs(ctx context.Context, ids []id.UserID) ([]*user.User, error) {
+func (r *User) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

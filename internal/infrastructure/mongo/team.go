@@ -37,10 +37,10 @@ func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList,
 	})
 }
 
-func (r *teamRepo) FindByIDs(ctx context.Context, ids []id.TeamID) (user.TeamList, error) {
+func (r *teamRepo) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList, error) {
 	dst := make([]*user.Team, 0, len(ids))
 	res, err := r.find(ctx, dst, bson.M{
-		"id": bson.M{"$in": id.TeamIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	})
 	if err != nil {
 		return nil, err
@@ -73,12 +73,12 @@ func (r *teamRepo) Remove(ctx context.Context, id id.TeamID) error {
 	return r.client.RemoveOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *teamRepo) RemoveAll(ctx context.Context, ids []id.TeamID) error {
+func (r *teamRepo) RemoveAll(ctx context.Context, ids id.TeamIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, bson.M{
-		"id": bson.M{"$in": id.TeamIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	})
 }
 

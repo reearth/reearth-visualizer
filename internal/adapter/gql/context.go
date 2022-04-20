@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/user"
+	"golang.org/x/text/language"
 )
 
 type ContextKey string
@@ -31,7 +32,7 @@ func getUser(ctx context.Context) *user.User {
 	return adapter.User(ctx)
 }
 
-func getLang(ctx context.Context, lang *string) string {
+func getLang(ctx context.Context, lang *language.Tag) string {
 	return adapter.Lang(ctx, lang)
 }
 

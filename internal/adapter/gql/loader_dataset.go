@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 type DatasetLoader struct {
@@ -18,8 +19,13 @@ func NewDatasetLoader(usecase interfaces.Dataset) *DatasetLoader {
 	return &DatasetLoader{usecase: usecase}
 }
 
-func (c *DatasetLoader) Fetch(ctx context.Context, ids []id.DatasetID) ([]*gqlmodel.Dataset, []error) {
-	res, err := c.usecase.Fetch(ctx, ids, getOperator(ctx))
+func (c *DatasetLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Dataset, []error) {
+	datasetids, err := util.TryMap(ids, gqlmodel.ToID[id.Dataset])
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.Fetch(ctx, datasetids, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -32,8 +38,13 @@ func (c *DatasetLoader) Fetch(ctx context.Context, ids []id.DatasetID) ([]*gqlmo
 	return datasets, nil
 }
 
-func (c *DatasetLoader) FetchSchema(ctx context.Context, ids []id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error) {
-	res, err := c.usecase.FetchSchema(ctx, ids, getOperator(ctx))
+func (c *DatasetLoader) FetchSchema(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error) {
+	schemaids, err := util.TryMap(ids, gqlmodel.ToID[id.DatasetSchema])
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.FetchSchema(ctx, schemaids, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -46,8 +57,13 @@ func (c *DatasetLoader) FetchSchema(ctx context.Context, ids []id.DatasetSchemaI
 	return schemas, nil
 }
 
-func (c *DatasetLoader) GraphFetch(ctx context.Context, i id.DatasetID, depth int) ([]*gqlmodel.Dataset, []error) {
-	res, err := c.usecase.GraphFetch(ctx, i, depth, getOperator(ctx))
+func (c *DatasetLoader) GraphFetch(ctx context.Context, i gqlmodel.ID, depth int) ([]*gqlmodel.Dataset, []error) {
+	did, err := gqlmodel.ToID[id.Dataset](i)
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.GraphFetch(ctx, did, depth, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -60,8 +76,13 @@ func (c *DatasetLoader) GraphFetch(ctx context.Context, i id.DatasetID, depth in
 	return datasets, nil
 }
 
-func (c *DatasetLoader) GraphFetchSchema(ctx context.Context, i id.ID, depth int) ([]*gqlmodel.DatasetSchema, []error) {
-	res, err := c.usecase.GraphFetchSchema(ctx, id.DatasetSchemaID(i), depth, getOperator(ctx))
+func (c *DatasetLoader) GraphFetchSchema(ctx context.Context, i gqlmodel.ID, depth int) ([]*gqlmodel.DatasetSchema, []error) {
+	did, err := gqlmodel.ToID[id.DatasetSchema](i)
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.GraphFetchSchema(ctx, did, depth, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -74,8 +95,13 @@ func (c *DatasetLoader) GraphFetchSchema(ctx context.Context, i id.ID, depth int
 	return schemas, nil
 }
 
-func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i id.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	res, pi, err := c.usecase.FindSchemaByScene(ctx, id.SceneID(i), usecase.NewPagination(first, last, before, after), getOperator(ctx))
+func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+	sid, err := gqlmodel.ToID[id.Scene](i)
+	if err != nil {
+		return nil, err
+	}
+
+	res, pi, err := c.usecase.FindSchemaByScene(ctx, sid, usecase.NewPagination(first, last, before, after), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +112,7 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i id.ID, first *i
 		ds := gqlmodel.ToDatasetSchema(dataset)
 		edges = append(edges, &gqlmodel.DatasetSchemaEdge{
 			Node:   ds,
-			Cursor: usecase.Cursor(ds.ID.String()),
+			Cursor: usecase.Cursor(ds.ID),
 		})
 		nodes = append(nodes, ds)
 	}
@@ -99,8 +125,13 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i id.ID, first *i
 	}, nil
 }
 
-func (c *DatasetLoader) FindDynamicSchemasByScene(ctx context.Context, sid id.ID) ([]*gqlmodel.DatasetSchema, error) {
-	res, err := c.usecase.FindDynamicSchemaByScene(ctx, id.SceneID(sid))
+func (c *DatasetLoader) FindDynamicSchemasByScene(ctx context.Context, sid gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error) {
+	sceneid, err := gqlmodel.ToID[id.Scene](sid)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.usecase.FindDynamicSchemaByScene(ctx, sceneid)
 	if err != nil {
 		return nil, err
 	}
@@ -113,9 +144,14 @@ func (c *DatasetLoader) FindDynamicSchemasByScene(ctx context.Context, sid id.ID
 	return dss, nil
 }
 
-func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid id.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
+func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
+	schemaid, err := gqlmodel.ToID[id.DatasetSchema](dsid)
+	if err != nil {
+		return nil, err
+	}
+
 	p := usecase.NewPagination(first, last, before, after)
-	res, pi, err2 := c.usecase.FindBySchema(ctx, id.DatasetSchemaID(dsid), p, getOperator(ctx))
+	res, pi, err2 := c.usecase.FindBySchema(ctx, schemaid, p, getOperator(ctx))
 	if err2 != nil {
 		return nil, err2
 	}
@@ -126,7 +162,7 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid id.ID, first *int
 		ds := gqlmodel.ToDataset(dataset)
 		edges = append(edges, &gqlmodel.DatasetEdge{
 			Node:   ds,
-			Cursor: usecase.Cursor(ds.ID.String()),
+			Cursor: usecase.Cursor(ds.ID),
 		})
 		nodes = append(nodes, ds)
 	}
@@ -144,15 +180,15 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid id.ID, first *int
 // data loader
 
 type DatasetDataLoader interface {
-	Load(id.DatasetID) (*gqlmodel.Dataset, error)
-	LoadAll([]id.DatasetID) ([]*gqlmodel.Dataset, []error)
+	Load(gqlmodel.ID) (*gqlmodel.Dataset, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.Dataset, []error)
 }
 
 func (c *DatasetLoader) DataLoader(ctx context.Context) DatasetDataLoader {
 	return gqldataloader.NewDatasetLoader(gqldataloader.DatasetLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.DatasetID) ([]*gqlmodel.Dataset, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Dataset, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	})
@@ -167,8 +203,8 @@ type ordinaryDatasetLoader struct {
 	c   *DatasetLoader
 }
 
-func (l *ordinaryDatasetLoader) Load(key id.DatasetID) (*gqlmodel.Dataset, error) {
-	res, errs := l.c.Fetch(l.ctx, []id.DatasetID{key})
+func (l *ordinaryDatasetLoader) Load(key gqlmodel.ID) (*gqlmodel.Dataset, error) {
+	res, errs := l.c.Fetch(l.ctx, []gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -178,20 +214,20 @@ func (l *ordinaryDatasetLoader) Load(key id.DatasetID) (*gqlmodel.Dataset, error
 	return nil, nil
 }
 
-func (l *ordinaryDatasetLoader) LoadAll(keys []id.DatasetID) ([]*gqlmodel.Dataset, []error) {
+func (l *ordinaryDatasetLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Dataset, []error) {
 	return l.c.Fetch(l.ctx, keys)
 }
 
 type DatasetSchemaDataLoader interface {
-	Load(id.DatasetSchemaID) (*gqlmodel.DatasetSchema, error)
-	LoadAll([]id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error)
+	Load(gqlmodel.ID) (*gqlmodel.DatasetSchema, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error)
 }
 
 func (c *DatasetLoader) SchemaDataLoader(ctx context.Context) DatasetSchemaDataLoader {
 	return gqldataloader.NewDatasetSchemaLoader(gqldataloader.DatasetSchemaLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error) {
 			return c.FetchSchema(ctx, keys)
 		},
 	})
@@ -199,18 +235,18 @@ func (c *DatasetLoader) SchemaDataLoader(ctx context.Context) DatasetSchemaDataL
 
 func (c *DatasetLoader) SchemaOrdinaryDataLoader(ctx context.Context) DatasetSchemaDataLoader {
 	return &ordinaryDatasetSchemaLoader{
-		fetch: func(keys []id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error) {
+		fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error) {
 			return c.FetchSchema(ctx, keys)
 		},
 	}
 }
 
 type ordinaryDatasetSchemaLoader struct {
-	fetch func(keys []id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error)
 }
 
-func (l *ordinaryDatasetSchemaLoader) Load(key id.DatasetSchemaID) (*gqlmodel.DatasetSchema, error) {
-	res, errs := l.fetch([]id.DatasetSchemaID{key})
+func (l *ordinaryDatasetSchemaLoader) Load(key gqlmodel.ID) (*gqlmodel.DatasetSchema, error) {
+	res, errs := l.fetch([]gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -220,6 +256,6 @@ func (l *ordinaryDatasetSchemaLoader) Load(key id.DatasetSchemaID) (*gqlmodel.Da
 	return nil, nil
 }
 
-func (l *ordinaryDatasetSchemaLoader) LoadAll(keys []id.DatasetSchemaID) ([]*gqlmodel.DatasetSchema, []error) {
+func (l *ordinaryDatasetSchemaLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.DatasetSchema, []error) {
 	return l.fetch(keys)
 }

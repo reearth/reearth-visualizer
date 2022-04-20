@@ -48,18 +48,12 @@ var PropertyIDFromRef = id.PropertyIDFromRef
 var DatasetIDFromRef = id.DatasetIDFromRef
 var DatasetSchemaIDFromRef = id.DatasetSchemaIDFromRef
 
-var IDFromRefID = id.LayerIDFromRefID
-var InfoboxFieldIDFromRefID = id.InfoboxFieldIDFromRefID
-var TagIDFromRefID = id.TagIDFromRefID
-var SceneIDFromRefID = id.SceneIDFromRefID
-var PropertyIDFromRefID = id.PropertyIDFromRefID
-var DatasetIDFromRefID = id.DatasetIDFromRefID
-var DatasetSchemaIDFromRefID = id.DatasetSchemaIDFromRefID
-
 type IDSet = id.LayerIDSet
 type InfoboxFIeldIDSet = id.InfoboxFieldIDSet
 type DatasetIDSet = id.DatasetIDSet
+type DatasetIDList = id.DatasetIDList
 type TagIDSet = id.TagIDSet
+type TagIDList = id.TagIDList
 
 var NewIDSet = id.NewLayerIDSet
 var NewInfoboxFIeldIDSet = id.NewInfoboxFieldIDSet
@@ -71,6 +65,6 @@ var ErrInvalidID = id.ErrInvalidID
 
 func sortIDs(a []ID) {
 	sort.SliceStable(a, func(i, j int) bool {
-		return id.ID(a[i]).Compare(id.ID(a[j])) < 0
+		return a[i].Compare(a[j]) < 0
 	})
 }

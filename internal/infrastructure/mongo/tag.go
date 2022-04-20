@@ -44,10 +44,10 @@ func (r *tagRepo) FindByID(ctx context.Context, id id.TagID) (tag.Tag, error) {
 	})
 }
 
-func (r *tagRepo) FindByIDs(ctx context.Context, ids []id.TagID) ([]*tag.Tag, error) {
+func (r *tagRepo) FindByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Tag, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.TagIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*tag.Tag, 0, len(ids))
@@ -75,10 +75,10 @@ func (r *tagRepo) FindItemByID(ctx context.Context, id id.TagID) (*tag.Item, err
 	return r.findItemOne(ctx, filter)
 }
 
-func (r *tagRepo) FindItemByIDs(ctx context.Context, ids []id.TagID) ([]*tag.Item, error) {
+func (r *tagRepo) FindItemByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Item, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.TagIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*tag.Item, 0, len(ids))
@@ -96,10 +96,10 @@ func (r *tagRepo) FindGroupByID(ctx context.Context, id id.TagID) (*tag.Group, e
 	return r.findGroupOne(ctx, filter)
 }
 
-func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids []id.TagID) ([]*tag.Group, error) {
+func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Group, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.TagIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*tag.Group, 0, len(ids))
@@ -143,12 +143,12 @@ func (r *tagRepo) Remove(ctx context.Context, id id.TagID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *tagRepo) RemoveAll(ctx context.Context, ids []id.TagID) error {
+func (r *tagRepo) RemoveAll(ctx context.Context, ids id.TagIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{
-		"id": bson.M{"$in": id.TagIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}))
 }
 
@@ -231,7 +231,7 @@ func (r *tagRepo) findGroups(ctx context.Context, dst []*tag.Group, filter inter
 	return c.GroupRows, nil
 }
 
-func filterTags(ids []id.TagID, rows []*tag.Tag) []*tag.Tag {
+func filterTags(ids id.TagIDList, rows []*tag.Tag) []*tag.Tag {
 	res := make([]*tag.Tag, 0, len(ids))
 	for _, tid := range ids {
 		var r2 *tag.Tag
@@ -249,7 +249,7 @@ func filterTags(ids []id.TagID, rows []*tag.Tag) []*tag.Tag {
 	return res
 }
 
-func filterTagItems(ids []id.TagID, rows []*tag.Item) []*tag.Item {
+func filterTagItems(ids id.TagIDList, rows []*tag.Item) []*tag.Item {
 	res := make([]*tag.Item, 0, len(ids))
 	for _, tid := range ids {
 		var r2 *tag.Item
@@ -264,7 +264,7 @@ func filterTagItems(ids []id.TagID, rows []*tag.Item) []*tag.Item {
 	return res
 }
 
-func filterTagGroups(ids []id.TagID, rows []*tag.Group) []*tag.Group {
+func filterTagGroups(ids id.TagIDList, rows []*tag.Group) []*tag.Group {
 	res := make([]*tag.Group, 0, len(ids))
 	for _, tid := range ids {
 		var r2 *tag.Group

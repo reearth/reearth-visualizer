@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // LayerItemLoaderConfig captures the config to create a new LayerItemLoader
 type LayerItemLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.LayerID) ([]*gqlmodel.LayerItem, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.LayerItem, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewLayerItemLoader(config LayerItemLoaderConfig) *LayerItemLoader {
 // LayerItemLoader batches and caches requests
 type LayerItemLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.LayerID) ([]*gqlmodel.LayerItem, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.LayerItem, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type LayerItemLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.LayerID]*gqlmodel.LayerItem
+	cache map[gqlmodel.ID]*gqlmodel.LayerItem
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type LayerItemLoader struct {
 }
 
 type layerItemLoaderBatch struct {
-	keys    []id.LayerID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.LayerItem
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type layerItemLoaderBatch struct {
 }
 
 // Load a LayerItem by key, batching and caching will be applied automatically
-func (l *LayerItemLoader) Load(key id.LayerID) (*gqlmodel.LayerItem, error) {
+func (l *LayerItemLoader) Load(key gqlmodel.ID) (*gqlmodel.LayerItem, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a LayerItem.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *LayerItemLoader) LoadThunk(key id.LayerID) func() (*gqlmodel.LayerItem, error) {
+func (l *LayerItemLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.LayerItem, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *LayerItemLoader) LoadThunk(key id.LayerID) func() (*gqlmodel.LayerItem,
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *LayerItemLoader) LoadAll(keys []id.LayerID) ([]*gqlmodel.LayerItem, []error) {
+func (l *LayerItemLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.LayerItem, []error) {
 	results := make([]func() (*gqlmodel.LayerItem, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *LayerItemLoader) LoadAll(keys []id.LayerID) ([]*gqlmodel.LayerItem, []e
 // LoadAllThunk returns a function that when called will block waiting for a LayerItems.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *LayerItemLoader) LoadAllThunk(keys []id.LayerID) func() ([]*gqlmodel.LayerItem, []error) {
+func (l *LayerItemLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.LayerItem, []error) {
 	results := make([]func() (*gqlmodel.LayerItem, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *LayerItemLoader) LoadAllThunk(keys []id.LayerID) func() ([]*gqlmodel.La
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *LayerItemLoader) Prime(key id.LayerID, value *gqlmodel.LayerItem) bool {
+func (l *LayerItemLoader) Prime(key gqlmodel.ID, value *gqlmodel.LayerItem) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *LayerItemLoader) Prime(key id.LayerID, value *gqlmodel.LayerItem) bool 
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *LayerItemLoader) Clear(key id.LayerID) {
+func (l *LayerItemLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *LayerItemLoader) unsafeSet(key id.LayerID, value *gqlmodel.LayerItem) {
+func (l *LayerItemLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.LayerItem) {
 	if l.cache == nil {
-		l.cache = map[id.LayerID]*gqlmodel.LayerItem{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.LayerItem{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *layerItemLoaderBatch) keyIndex(l *LayerItemLoader, key id.LayerID) int {
+func (b *layerItemLoaderBatch) keyIndex(l *LayerItemLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

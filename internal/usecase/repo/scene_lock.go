@@ -9,7 +9,7 @@ import (
 
 type SceneLock interface {
 	GetLock(context.Context, id.SceneID) (scene.LockMode, error)
-	GetAllLock(context.Context, []id.SceneID) ([]scene.LockMode, error)
+	GetAllLock(context.Context, id.SceneIDList) ([]scene.LockMode, error)
 	SaveLock(context.Context, id.SceneID, scene.LockMode) error
 	ReleaseAllLock(context.Context) error
 }

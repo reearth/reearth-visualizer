@@ -1,8 +1,6 @@
 package asset
 
 import (
-	"time"
-
 	"github.com/reearth/reearth-backend/pkg/id"
 )
 
@@ -21,11 +19,4 @@ var TeamIDFrom = id.TeamIDFrom
 var IDFromRef = id.AssetIDFromRef
 var TeamIDFromRef = id.TeamIDFromRef
 
-var IDFromRefID = id.AssetIDFromRefID
-var TeamIDFromRefID = id.TeamIDFromRefID
-
 var ErrInvalidID = id.ErrInvalidID
-
-func createdAt(i ID) time.Time {
-	return id.ID(i).Timestamp()
-}

@@ -45,10 +45,10 @@ func (r *datasetRepo) FindByID(ctx context.Context, id id.DatasetID) (*dataset.D
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *datasetRepo) FindByIDs(ctx context.Context, ids []id.DatasetID) (dataset.List, error) {
+func (r *datasetRepo) FindByIDs(ctx context.Context, ids id.DatasetIDList) (dataset.List, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.DatasetIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*dataset.Dataset, 0, len(ids))
@@ -61,17 +61,17 @@ func (r *datasetRepo) FindByIDs(ctx context.Context, ids []id.DatasetID) (datase
 
 func (r *datasetRepo) FindBySchema(ctx context.Context, schemaID id.DatasetSchemaID, pagination *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
 	return r.paginate(ctx, bson.M{
-		"schema": id.ID(schemaID).String(),
+		"schema": schemaID.String(),
 	}, pagination)
 }
 
 func (r *datasetRepo) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchemaID) (dataset.List, error) {
 	return r.find(ctx, nil, bson.M{
-		"schema": id.ID(schemaID).String(),
+		"schema": schemaID.String(),
 	})
 }
 
-func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields []id.DatasetSchemaFieldID) (dataset.List, error) {
+func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	if len(fields) == 0 {
 		d, err := r.FindByID(ctx, did)
 		if err != nil {
@@ -80,14 +80,14 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields []
 		return dataset.List{d}, nil
 	}
 
-	fieldsstr := id.DatasetSchemaFieldIDsToStrings(fields)
+	fieldsstr := fields.Strings()
 	firstField := fieldsstr[0]
 
 	aggfilter := bson.D{}
 	if r.f.Readable != nil {
 		aggfilter = append(aggfilter, bson.E{Key: "$in", Value: []interface{}{
 			"$$g.scene",
-			id.SceneIDsToStrings(r.f.Readable),
+			r.f.Readable.Strings(),
 		}})
 	}
 
@@ -275,12 +275,12 @@ func (r *datasetRepo) Remove(ctx context.Context, id id.DatasetID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *datasetRepo) RemoveAll(ctx context.Context, ids []id.DatasetID) error {
+func (r *datasetRepo) RemoveAll(ctx context.Context, ids id.DatasetIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{
-		"id": bson.M{"$in": id.DatasetIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}))
 }
 

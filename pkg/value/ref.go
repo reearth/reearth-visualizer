@@ -1,6 +1,6 @@
 package value
 
-import "github.com/reearth/reearth-backend/pkg/id"
+import "fmt"
 
 var TypeRef Type = "ref"
 
@@ -13,11 +13,11 @@ func (*propertyRef) I2V(i interface{}) (interface{}, bool) {
 	if v, ok := i.(*string); ok {
 		return *v, true
 	}
-	if v, ok := i.(id.ID); ok {
+	if v, ok := i.(fmt.Stringer); ok {
 		return v.String(), true
 	}
-	if v, ok := i.(*id.ID); ok && v != nil {
-		return v.String(), true
+	if v, ok := i.(*fmt.Stringer); ok && v != nil {
+		return (*v).String(), true
 	}
 	return nil, false
 }

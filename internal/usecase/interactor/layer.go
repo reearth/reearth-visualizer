@@ -345,7 +345,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	}
 
 	// create item layers
-	var representativeFieldID *id.DatasetSchemaFieldID
+	var representativeFieldID *id.DatasetFieldID
 	if inp.RepresentativeFieldId != nil {
 		representativeFieldID = inp.RepresentativeFieldId
 	} else {

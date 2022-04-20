@@ -6,11 +6,17 @@ import (
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 func (r *mutationResolver) UpdateDatasetSchema(ctx context.Context, input gqlmodel.UpdateDatasetSchemaInput) (*gqlmodel.UpdateDatasetSchemaPayload, error) {
+	dsid, err := gqlmodel.ToID[id.DatasetSchema](input.SchemaID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Dataset.UpdateDatasetSchema(ctx, interfaces.UpdateDatasetSchemaParam{
-		SchemaId: id.DatasetSchemaID(input.SchemaID),
+		SchemaId: dsid,
 		Name:     input.Name,
 	}, getOperator(ctx))
 	if err != nil {
@@ -21,8 +27,13 @@ func (r *mutationResolver) UpdateDatasetSchema(ctx context.Context, input gqlmod
 }
 
 func (r *mutationResolver) AddDynamicDatasetSchema(ctx context.Context, input gqlmodel.AddDynamicDatasetSchemaInput) (*gqlmodel.AddDynamicDatasetSchemaPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Dataset.AddDynamicDatasetSchema(ctx, interfaces.AddDynamicDatasetSchemaParam{
-		SceneId: id.SceneID(input.SceneID),
+		SceneId: sid,
 	})
 	if err != nil {
 		return nil, err
@@ -32,8 +43,13 @@ func (r *mutationResolver) AddDynamicDatasetSchema(ctx context.Context, input gq
 }
 
 func (r *mutationResolver) AddDynamicDataset(ctx context.Context, input gqlmodel.AddDynamicDatasetInput) (*gqlmodel.AddDynamicDatasetPayload, error) {
+	dsid, err := gqlmodel.ToID[id.DatasetSchema](input.DatasetSchemaID)
+	if err != nil {
+		return nil, err
+	}
+
 	dss, ds, err := usecases(ctx).Dataset.AddDynamicDataset(ctx, interfaces.AddDynamicDatasetParam{
-		SchemaId: id.DatasetSchemaID(input.DatasetSchemaID),
+		SchemaId: dsid,
 		Author:   input.Author,
 		Content:  input.Content,
 		Lat:      input.Lat,
@@ -48,57 +64,68 @@ func (r *mutationResolver) AddDynamicDataset(ctx context.Context, input gqlmodel
 }
 
 func (r *mutationResolver) SyncDataset(ctx context.Context, input gqlmodel.SyncDatasetInput) (*gqlmodel.SyncDatasetPayload, error) {
-	dss, ds, err := usecases(ctx).Dataset.Sync(ctx, id.SceneID(input.SceneID), input.URL, getOperator(ctx))
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
 	if err != nil {
 		return nil, err
 	}
 
-	schemas := make([]*gqlmodel.DatasetSchema, 0, len(dss))
-	datasets := make([]*gqlmodel.Dataset, 0, len(ds))
-	for _, d := range dss {
-		schemas = append(schemas, gqlmodel.ToDatasetSchema(d))
-	}
-	for _, d := range ds {
-		datasets = append(datasets, gqlmodel.ToDataset(d))
+	dss, ds, err := usecases(ctx).Dataset.Sync(ctx, sid, input.URL, getOperator(ctx))
+	if err != nil {
+		return nil, err
 	}
 
 	return &gqlmodel.SyncDatasetPayload{
 		SceneID:       input.SceneID,
 		URL:           input.URL,
-		DatasetSchema: schemas,
-		Dataset:       datasets,
+		DatasetSchema: util.Map(dss, gqlmodel.ToDatasetSchema),
+		Dataset:       util.Map(ds, gqlmodel.ToDataset),
 	}, nil
 }
 
 func (r *mutationResolver) RemoveDatasetSchema(ctx context.Context, input gqlmodel.RemoveDatasetSchemaInput) (*gqlmodel.RemoveDatasetSchemaPayload, error) {
+	sid, err := gqlmodel.ToID[id.DatasetSchema](input.SchemaID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Dataset.RemoveDatasetSchema(ctx, interfaces.RemoveDatasetSchemaParam{
-		SchemaID: id.DatasetSchemaID(input.SchemaID),
+		SchemaID: sid,
 		Force:    input.Force,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
-	return &gqlmodel.RemoveDatasetSchemaPayload{SchemaID: res.ID()}, nil
+	return &gqlmodel.RemoveDatasetSchemaPayload{SchemaID: gqlmodel.IDFrom(res)}, nil
 }
 
 func (r *mutationResolver) AddDatasetSchema(ctx context.Context, input gqlmodel.AddDatasetSchemaInput) (*gqlmodel.AddDatasetSchemaPayload, error) {
-	res, err2 := usecases(ctx).Dataset.AddDatasetSchema(ctx, interfaces.AddDatasetSchemaParam{
-		SceneId:             id.SceneID(input.SceneID),
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Dataset.AddDatasetSchema(ctx, interfaces.AddDatasetSchemaParam{
+		SceneId:             sid,
 		Name:                input.Name,
-		RepresentativeField: id.DatasetSchemaFieldIDFromRefID(input.Representativefield),
+		RepresentativeField: gqlmodel.ToIDRef[id.DatasetField](input.Representativefield),
 	}, getOperator(ctx))
-	if err2 != nil {
-		return nil, err2
+	if err != nil {
+		return nil, err
 	}
 
 	return &gqlmodel.AddDatasetSchemaPayload{DatasetSchema: gqlmodel.ToDatasetSchema(res)}, nil
 }
 
 func (r *mutationResolver) ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Dataset.ImportDataset(ctx, interfaces.ImportDatasetParam{
-		SceneId:  id.SceneID(input.SceneID),
-		SchemaId: id.DatasetSchemaIDFromRefID(input.DatasetSchemaID),
+		SceneId:  sid,
+		SchemaId: gqlmodel.ToIDRef[id.DatasetSchema](input.DatasetSchemaID),
 		File:     gqlmodel.FromFile(&input.File),
 	}, getOperator(ctx))
 	if err != nil {
@@ -109,12 +136,17 @@ func (r *mutationResolver) ImportDataset(ctx context.Context, input gqlmodel.Imp
 }
 
 func (r *mutationResolver) ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := usecases(ctx).Dataset.ImportDatasetFromGoogleSheet(ctx, interfaces.ImportDatasetFromGoogleSheetParam{
 		Token:     input.AccessToken,
 		FileID:    input.FileID,
 		SheetName: input.SheetName,
-		SceneId:   id.SceneID(input.SceneID),
-		SchemaId:  id.DatasetSchemaIDFromRefID(input.DatasetSchemaID),
+		SceneId:   sid,
+		SchemaId:  gqlmodel.ToIDRef[id.DatasetSchema](input.DatasetSchemaID),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

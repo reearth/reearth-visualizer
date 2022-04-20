@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
+	"golang.org/x/text/language"
 )
 
 func (r *Resolver) PropertySchemaField() PropertySchemaFieldResolver {
@@ -24,14 +25,14 @@ func (r *Resolver) PropertySchemaGroup() PropertySchemaGroupResolver {
 
 type propertySchemaFieldResolver struct{ *Resolver }
 
-func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
+func (r *propertySchemaFieldResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error) {
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
 	return obj.Title, nil
 }
 
-func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *string) (string, error) {
+func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error) {
 	if s, ok := obj.AllTranslatedDescription[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
@@ -66,7 +67,7 @@ func (r *propertySchemaGroupResolver) Schema(ctx context.Context, obj *gqlmodel.
 	return dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 }
 
-func (r *propertySchemaGroupResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaGroup, lang *string) (string, error) {
+func (r *propertySchemaGroupResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaGroup, lang *language.Tag) (string, error) {
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}
@@ -79,7 +80,7 @@ func (r *propertySchemaGroupResolver) TranslatedTitle(ctx context.Context, obj *
 
 type propertySchemaFieldChoiceResolver struct{ *Resolver }
 
-func (r *propertySchemaFieldChoiceResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaFieldChoice, lang *string) (string, error) {
+func (r *propertySchemaFieldChoiceResolver) TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaFieldChoice, lang *language.Tag) (string, error) {
 	if s, ok := obj.AllTranslatedTitle[getLang(ctx, lang)]; ok {
 		return s, nil
 	}

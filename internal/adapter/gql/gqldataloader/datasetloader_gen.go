@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // DatasetLoaderConfig captures the config to create a new DatasetLoader
 type DatasetLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.DatasetID) ([]*gqlmodel.Dataset, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Dataset, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewDatasetLoader(config DatasetLoaderConfig) *DatasetLoader {
 // DatasetLoader batches and caches requests
 type DatasetLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.DatasetID) ([]*gqlmodel.Dataset, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Dataset, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type DatasetLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.DatasetID]*gqlmodel.Dataset
+	cache map[gqlmodel.ID]*gqlmodel.Dataset
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type DatasetLoader struct {
 }
 
 type datasetLoaderBatch struct {
-	keys    []id.DatasetID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Dataset
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type datasetLoaderBatch struct {
 }
 
 // Load a Dataset by key, batching and caching will be applied automatically
-func (l *DatasetLoader) Load(key id.DatasetID) (*gqlmodel.Dataset, error) {
+func (l *DatasetLoader) Load(key gqlmodel.ID) (*gqlmodel.Dataset, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Dataset.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *DatasetLoader) LoadThunk(key id.DatasetID) func() (*gqlmodel.Dataset, error) {
+func (l *DatasetLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Dataset, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *DatasetLoader) LoadThunk(key id.DatasetID) func() (*gqlmodel.Dataset, e
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *DatasetLoader) LoadAll(keys []id.DatasetID) ([]*gqlmodel.Dataset, []error) {
+func (l *DatasetLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Dataset, []error) {
 	results := make([]func() (*gqlmodel.Dataset, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *DatasetLoader) LoadAll(keys []id.DatasetID) ([]*gqlmodel.Dataset, []err
 // LoadAllThunk returns a function that when called will block waiting for a Datasets.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *DatasetLoader) LoadAllThunk(keys []id.DatasetID) func() ([]*gqlmodel.Dataset, []error) {
+func (l *DatasetLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Dataset, []error) {
 	results := make([]func() (*gqlmodel.Dataset, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *DatasetLoader) LoadAllThunk(keys []id.DatasetID) func() ([]*gqlmodel.Da
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *DatasetLoader) Prime(key id.DatasetID, value *gqlmodel.Dataset) bool {
+func (l *DatasetLoader) Prime(key gqlmodel.ID, value *gqlmodel.Dataset) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *DatasetLoader) Prime(key id.DatasetID, value *gqlmodel.Dataset) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *DatasetLoader) Clear(key id.DatasetID) {
+func (l *DatasetLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *DatasetLoader) unsafeSet(key id.DatasetID, value *gqlmodel.Dataset) {
+func (l *DatasetLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Dataset) {
 	if l.cache == nil {
-		l.cache = map[id.DatasetID]*gqlmodel.Dataset{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Dataset{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *datasetLoaderBatch) keyIndex(l *DatasetLoader, key id.DatasetID) int {
+func (b *datasetLoaderBatch) keyIndex(l *DatasetLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

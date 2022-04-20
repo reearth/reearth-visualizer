@@ -1,5 +1,11 @@
 package property
 
+import (
+	"sort"
+
+	"github.com/samber/lo"
+)
+
 type List []*Property
 
 func (l List) IDs() []ID {
@@ -33,6 +39,12 @@ func (l List) Schemas() []SchemaID {
 		schemas = append(schemas, s)
 	}
 	return schemas
+}
+
+func (l List) Sort() {
+	sort.Slice(l, func(i, j int) bool {
+		return l[i].ID().Compare(l[j].ID()) < 0
+	})
 }
 
 func (l List) Map() Map {
@@ -94,12 +106,7 @@ func (m Map) Merge(m2 Map) Map {
 }
 
 func (m Map) Keys() []ID {
-	keys := make([]ID, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sortIDs(keys)
-	return keys
+	return IDList(lo.Keys(m)).Sort()
 }
 
 func (m Map) Len() int {

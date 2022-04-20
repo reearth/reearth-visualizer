@@ -11,7 +11,7 @@ import (
 type DatasetSchema interface {
 	Filtered(SceneFilter) DatasetSchema
 	FindByID(context.Context, id.DatasetSchemaID) (*dataset.Schema, error)
-	FindByIDs(context.Context, []id.DatasetSchemaID) (dataset.SchemaList, error)
+	FindByIDs(context.Context, id.DatasetSchemaIDList) (dataset.SchemaList, error)
 	FindByScene(context.Context, id.SceneID, *usecase.Pagination) (dataset.SchemaList, *usecase.PageInfo, error)
 	FindBySceneAll(context.Context, id.SceneID) (dataset.SchemaList, error)
 	FindBySceneAndSource(context.Context, id.SceneID, string) (dataset.SchemaList, error)
@@ -20,6 +20,6 @@ type DatasetSchema interface {
 	Save(context.Context, *dataset.Schema) error
 	SaveAll(context.Context, dataset.SchemaList) error
 	Remove(context.Context, id.DatasetSchemaID) error
-	RemoveAll(context.Context, []id.DatasetSchemaID) error
+	RemoveAll(context.Context, id.DatasetSchemaIDList) error
 	RemoveByScene(context.Context, id.SceneID) error
 }

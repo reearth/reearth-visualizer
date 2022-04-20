@@ -20,8 +20,8 @@ func (l *PropertyFieldLink) Copy() *PropertyFieldLink {
 	}
 }
 
-func (d *Dataset) Field(id id.ID) *DatasetField {
-	if d == nil || id.IsNil() {
+func (d *Dataset) Field(id ID) *DatasetField {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Fields {
@@ -32,8 +32,8 @@ func (d *Dataset) Field(id id.ID) *DatasetField {
 	return nil
 }
 
-func (d *DatasetSchema) Field(id id.ID) *DatasetSchemaField {
-	if d == nil || id.IsNil() {
+func (d *DatasetSchema) Field(id ID) *DatasetSchemaField {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Fields {
@@ -44,14 +44,14 @@ func (d *DatasetSchema) Field(id id.ID) *DatasetSchemaField {
 	return nil
 }
 
-func (d *Property) Field(id id.PropertySchemaFieldID) *PropertyField {
+func (d *Property) Field(id id.PropertyFieldID) *PropertyField {
 	if d == nil || id == "" {
 		return nil
 	}
 	for _, g := range d.Items {
 		if gi, ok := g.(*PropertyGroup); ok {
 			for _, f := range gi.Fields {
-				if s := getPropertySchemaFieldIDFromGQLPropertyFieldID(f.ID); s == string(id) {
+				if f.ID == string(id) {
 					return f
 				}
 			}
@@ -60,7 +60,7 @@ func (d *Property) Field(id id.PropertySchemaFieldID) *PropertyField {
 	return nil
 }
 
-func (d *PropertySchema) Field(id id.PropertySchemaFieldID) *PropertySchemaField {
+func (d *PropertySchema) Field(id ID) *PropertySchemaField {
 	if d == nil || id == "" {
 		return nil
 	}
@@ -74,7 +74,7 @@ func (d *PropertySchema) Field(id id.PropertySchemaFieldID) *PropertySchemaField
 	return nil
 }
 
-func (d *Plugin) Extension(id id.PluginExtensionID) *PluginExtension {
+func (d *Plugin) Extension(id ID) *PluginExtension {
 	if d == nil || id == "" {
 		return nil
 	}
@@ -86,8 +86,8 @@ func (d *Plugin) Extension(id id.PluginExtensionID) *PluginExtension {
 	return nil
 }
 
-func (d *Infobox) Field(id id.ID) *InfoboxField {
-	if d == nil || id.IsNil() {
+func (d *Infobox) Field(id ID) *InfoboxField {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Fields {
@@ -98,8 +98,8 @@ func (d *Infobox) Field(id id.ID) *InfoboxField {
 	return nil
 }
 
-func (d *MergedInfobox) Field(id id.ID) *MergedInfoboxField {
-	if d == nil || id.IsNil() {
+func (d *MergedInfobox) Field(id ID) *MergedInfoboxField {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Fields {
@@ -110,7 +110,7 @@ func (d *MergedInfobox) Field(id id.ID) *MergedInfoboxField {
 	return nil
 }
 
-func AttachParentLayer(layers []*Layer, parent id.ID) []Layer {
+func AttachParentLayer(layers []*Layer, parent ID) []Layer {
 	if layers == nil {
 		return nil
 	}
@@ -140,19 +140,19 @@ func NewEmptyPageInfo() *PageInfo {
 	return ToPageInfo(usecase.NewPageInfo(0, nil, nil, false, false))
 }
 
-func (d *PropertyGroup) Field(id id.PropertySchemaFieldID) *PropertyField {
+func (d *PropertyGroup) Field(id ID) *PropertyField {
 	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Fields {
-		if s := getPropertySchemaFieldIDFromGQLPropertyFieldID(f.ID); s == string(id) {
+		if f.ID == string(id) {
 			return f
 		}
 	}
 	return nil
 }
 
-func (d *PropertySchema) Group(id id.PropertySchemaGroupID) *PropertySchemaGroup {
+func (d *PropertySchema) Group(id ID) *PropertySchemaGroup {
 	if d == nil || id == "" {
 		return nil
 	}
@@ -164,8 +164,8 @@ func (d *PropertySchema) Group(id id.PropertySchemaGroupID) *PropertySchemaGroup
 	return nil
 }
 
-func (d *Property) Item(id id.ID) PropertyItem {
-	if d == nil || id.IsNil() {
+func (d *Property) Item(id ID) PropertyItem {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Items {
@@ -187,8 +187,8 @@ func (d *Property) Item(id id.ID) PropertyItem {
 	return nil
 }
 
-func (d *PropertyGroupList) Group(id id.ID) *PropertyGroup {
-	if d == nil || id.IsNil() {
+func (d *PropertyGroupList) Group(id ID) *PropertyGroup {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Groups {
@@ -199,7 +199,7 @@ func (d *PropertyGroupList) Group(id id.ID) *PropertyGroup {
 	return nil
 }
 
-func (d *MergedProperty) PropertyID() *id.ID {
+func (d *MergedProperty) PropertyID() *ID {
 	if d.OriginalID != nil {
 		return d.OriginalID
 	} else if d.ParentID != nil {
@@ -208,8 +208,8 @@ func (d *MergedProperty) PropertyID() *id.ID {
 	return nil
 }
 
-func (d *MergedProperty) GroupByOriginal(id id.ID) *MergedPropertyGroup {
-	if d == nil || id.IsNil() {
+func (d *MergedProperty) GroupByOriginal(id ID) *MergedPropertyGroup {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Groups {
@@ -220,8 +220,8 @@ func (d *MergedProperty) GroupByOriginal(id id.ID) *MergedPropertyGroup {
 	return nil
 }
 
-func (d *MergedProperty) GroupByParent(id id.ID) *MergedPropertyGroup {
-	if d == nil || id.IsNil() {
+func (d *MergedProperty) GroupByParent(id ID) *MergedPropertyGroup {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Groups {
@@ -232,7 +232,7 @@ func (d *MergedProperty) GroupByParent(id id.ID) *MergedPropertyGroup {
 	return nil
 }
 
-func (d *MergedPropertyGroup) PropertyID() *id.ID {
+func (d *MergedPropertyGroup) PropertyID() *ID {
 	if d.OriginalID != nil {
 		return d.OriginalID
 	} else if d.ParentID != nil {
@@ -241,8 +241,8 @@ func (d *MergedPropertyGroup) PropertyID() *id.ID {
 	return nil
 }
 
-func (d *MergedPropertyGroup) GroupByOriginal(id id.ID) *MergedPropertyGroup {
-	if d == nil || id.IsNil() {
+func (d *MergedPropertyGroup) GroupByOriginal(id ID) *MergedPropertyGroup {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Groups {
@@ -253,8 +253,8 @@ func (d *MergedPropertyGroup) GroupByOriginal(id id.ID) *MergedPropertyGroup {
 	return nil
 }
 
-func (d *MergedPropertyGroup) GroupByParent(id id.ID) *MergedPropertyGroup {
-	if d == nil || id.IsNil() {
+func (d *MergedPropertyGroup) GroupByParent(id ID) *MergedPropertyGroup {
+	if d == nil || id == "" {
 		return nil
 	}
 	for _, f := range d.Groups {
@@ -265,7 +265,7 @@ func (d *MergedPropertyGroup) GroupByParent(id id.ID) *MergedPropertyGroup {
 	return nil
 }
 
-func (s *Scene) Widget(pluginID id.PluginID, extensionID id.PluginExtensionID) *SceneWidget {
+func (s *Scene) Widget(pluginID, extensionID ID) *SceneWidget {
 	if s == nil {
 		return nil
 	}
@@ -277,7 +277,7 @@ func (s *Scene) Widget(pluginID id.PluginID, extensionID id.PluginExtensionID) *
 	return nil
 }
 
-func (s *Scene) Plugin(pluginID id.PluginID) *ScenePlugin {
+func (s *Scene) Plugin(pluginID ID) *ScenePlugin {
 	if s == nil {
 		return nil
 	}

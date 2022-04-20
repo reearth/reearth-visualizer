@@ -12,8 +12,8 @@ var (
 
 type MergedLayer interface {
 	Common() *MergedLayerCommon
-	AllDatasets() []layer.DatasetID
-	AllTags() []layer.TagID
+	AllDatasets() layer.DatasetIDList
+	AllTags() layer.TagIDList
 }
 
 type MergedLayerGroup struct {
@@ -56,12 +56,12 @@ func (l *MergedLayerItem) Common() *MergedLayerCommon {
 	return &l.MergedLayerCommon
 }
 
-func (l *MergedLayerCommon) Datasets() []layer.DatasetID {
-	return l.datasetIDSet().All()
+func (l *MergedLayerCommon) Datasets() layer.DatasetIDList {
+	return l.datasetIDSet().List()
 }
 
 func (l *MergedLayerCommon) Tags() []layer.TagID {
-	return l.tagIDSet().All()
+	return l.tagIDSet().List()
 }
 
 func (l *MergedLayerCommon) datasetIDSet() *layer.DatasetIDSet {
@@ -86,21 +86,21 @@ func (l *MergedLayerCommon) tagIDSet() *layer.TagIDSet {
 	return res
 }
 
-func (l *MergedLayerItem) AllDatasets() []layer.DatasetID {
+func (l *MergedLayerItem) AllDatasets() layer.DatasetIDList {
 	if l == nil {
 		return nil
 	}
 	return l.Datasets()
 }
 
-func (l *MergedLayerItem) AllTags() []layer.TagID {
+func (l *MergedLayerItem) AllTags() layer.TagIDList {
 	if l == nil {
 		return nil
 	}
 	return l.Tags()
 }
 
-func (l *MergedLayerGroup) AllDatasets() []layer.DatasetID {
+func (l *MergedLayerGroup) AllDatasets() layer.DatasetIDList {
 	if l == nil {
 		return nil
 	}
@@ -108,10 +108,10 @@ func (l *MergedLayerGroup) AllDatasets() []layer.DatasetID {
 	for _, l := range l.Children {
 		d.Add(l.AllDatasets()...)
 	}
-	return d.All()
+	return d.List()
 }
 
-func (l *MergedLayerGroup) AllTags() []layer.TagID {
+func (l *MergedLayerGroup) AllTags() layer.TagIDList {
 	if l == nil {
 		return nil
 	}
@@ -119,5 +119,5 @@ func (l *MergedLayerGroup) AllTags() []layer.TagID {
 	for _, l := range l.Children {
 		d.Add(l.AllTags()...)
 	}
-	return d.All()
+	return d.List()
 }

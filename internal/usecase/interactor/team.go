@@ -185,7 +185,7 @@ func (i *Team) RemoveMember(ctx context.Context, id id.TeamID, u id.UserID, oper
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	if u.ID() == operator.User.ID() {
+	if u == operator.User {
 		return nil, interfaces.ErrOwnerCannotLeaveTheTeam
 	}
 
@@ -229,7 +229,7 @@ func (i *Team) UpdateMember(ctx context.Context, id id.TeamID, u id.UserID, role
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	if u.ID() == operator.User.ID() {
+	if u == operator.User {
 		return nil, interfaces.ErrCannotChangeOwnerRole
 	}
 

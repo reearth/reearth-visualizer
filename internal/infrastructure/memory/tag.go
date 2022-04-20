@@ -41,7 +41,7 @@ func (r *Tag) FindByID(ctx context.Context, tagID id.TagID) (tag.Tag, error) {
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Tag) FindByIDs(ctx context.Context, tids []id.TagID) ([]*tag.Tag, error) {
+func (r *Tag) FindByIDs(ctx context.Context, tids id.TagIDList) ([]*tag.Tag, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -79,7 +79,7 @@ func (r *Tag) FindItemByID(ctx context.Context, tagID id.TagID) (*tag.Item, erro
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Tag) FindItemByIDs(ctx context.Context, tagIDs []id.TagID) ([]*tag.Item, error) {
+func (r *Tag) FindItemByIDs(ctx context.Context, tagIDs id.TagIDList) ([]*tag.Item, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -106,7 +106,7 @@ func (r *Tag) FindGroupByID(ctx context.Context, tagID id.TagID) (*tag.Group, er
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Tag) FindGroupByIDs(ctx context.Context, tagIDs []id.TagID) ([]*tag.Group, error) {
+func (r *Tag) FindGroupByIDs(ctx context.Context, tagIDs id.TagIDList) ([]*tag.Group, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -138,8 +138,7 @@ func (r *Tag) FindGroupByItem(ctx context.Context, tagID id.TagID) (*tag.Group, 
 
 	for _, tg := range r.data {
 		if res := tag.GroupFrom(tg); res != nil {
-			tags := res.Tags()
-			for _, item := range tags.Tags() {
+			for _, item := range res.Tags() {
 				if item == tagID {
 					return res, nil
 				}
@@ -185,7 +184,7 @@ func (r *Tag) Remove(ctx context.Context, id id.TagID) error {
 	return nil
 }
 
-func (r *Tag) RemoveAll(ctx context.Context, ids []id.TagID) error {
+func (r *Tag) RemoveAll(ctx context.Context, ids id.TagIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

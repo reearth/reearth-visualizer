@@ -49,5 +49,5 @@ func (a *Asset) CreatedAt() time.Time {
 	if a == nil {
 		return time.Time{}
 	}
-	return createdAt(a.id)
+	return a.id.Timestamp()
 }

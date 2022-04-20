@@ -19,7 +19,7 @@ func TestBuilder_ID(t *testing.T) {
 
 func TestBuilder_NewID(t *testing.T) {
 	p := New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
-	assert.False(t, p.ID().IsNil())
+	assert.False(t, p.ID().IsEmpty())
 }
 
 func TestBuilder_Schema(t *testing.T) {

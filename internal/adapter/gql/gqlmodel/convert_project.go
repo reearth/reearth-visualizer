@@ -41,7 +41,7 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:                p.ID().ID(),
+		ID:                IDFrom(p.ID()),
 		CreatedAt:         p.CreatedAt(),
 		IsArchived:        p.IsArchived(),
 		IsBasicAuthActive: p.IsBasicAuthActive(),
@@ -54,7 +54,7 @@ func ToProject(p *project.Project) *Project {
 		PublishedAt:       publishedAtRes,
 		UpdatedAt:         p.UpdatedAt(),
 		Visualizer:        Visualizer(p.Visualizer()),
-		TeamID:            p.Team().ID(),
+		TeamID:            IDFrom(p.Team()),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		PublicTitle:       p.PublicTitle(),
 		PublicDescription: p.PublicDescription(),

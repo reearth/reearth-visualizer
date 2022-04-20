@@ -1,7 +1,9 @@
 package layer
 
+import "github.com/reearth/reearth-backend/pkg/id"
+
 type IDList struct {
-	layers []ID
+	layers id.LayerIDList
 	// for checking duplication
 	layerIDs map[ID]struct{}
 }
@@ -208,4 +210,11 @@ func (l *IDList) Empty() {
 
 	l.layers = nil
 	l.layerIDs = nil
+}
+
+func (l *IDList) Strings() []string {
+	if l == nil {
+		return nil
+	}
+	return l.layers.Strings()
 }

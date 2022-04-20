@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // PropertySchemaLoaderConfig captures the config to create a new PropertySchemaLoader
 type PropertySchemaLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.PropertySchemaID) ([]*gqlmodel.PropertySchema, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewPropertySchemaLoader(config PropertySchemaLoaderConfig) *PropertySchemaL
 // PropertySchemaLoader batches and caches requests
 type PropertySchemaLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.PropertySchemaID) ([]*gqlmodel.PropertySchema, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type PropertySchemaLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.PropertySchemaID]*gqlmodel.PropertySchema
+	cache map[gqlmodel.ID]*gqlmodel.PropertySchema
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type PropertySchemaLoader struct {
 }
 
 type propertySchemaLoaderBatch struct {
-	keys    []id.PropertySchemaID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.PropertySchema
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type propertySchemaLoaderBatch struct {
 }
 
 // Load a PropertySchema by key, batching and caching will be applied automatically
-func (l *PropertySchemaLoader) Load(key id.PropertySchemaID) (*gqlmodel.PropertySchema, error) {
+func (l *PropertySchemaLoader) Load(key gqlmodel.ID) (*gqlmodel.PropertySchema, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a PropertySchema.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PropertySchemaLoader) LoadThunk(key id.PropertySchemaID) func() (*gqlmodel.PropertySchema, error) {
+func (l *PropertySchemaLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.PropertySchema, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *PropertySchemaLoader) LoadThunk(key id.PropertySchemaID) func() (*gqlmo
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *PropertySchemaLoader) LoadAll(keys []id.PropertySchemaID) ([]*gqlmodel.PropertySchema, []error) {
+func (l *PropertySchemaLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error) {
 	results := make([]func() (*gqlmodel.PropertySchema, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *PropertySchemaLoader) LoadAll(keys []id.PropertySchemaID) ([]*gqlmodel.
 // LoadAllThunk returns a function that when called will block waiting for a PropertySchemas.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PropertySchemaLoader) LoadAllThunk(keys []id.PropertySchemaID) func() ([]*gqlmodel.PropertySchema, []error) {
+func (l *PropertySchemaLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.PropertySchema, []error) {
 	results := make([]func() (*gqlmodel.PropertySchema, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *PropertySchemaLoader) LoadAllThunk(keys []id.PropertySchemaID) func() (
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *PropertySchemaLoader) Prime(key id.PropertySchemaID, value *gqlmodel.PropertySchema) bool {
+func (l *PropertySchemaLoader) Prime(key gqlmodel.ID, value *gqlmodel.PropertySchema) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *PropertySchemaLoader) Prime(key id.PropertySchemaID, value *gqlmodel.Pr
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *PropertySchemaLoader) Clear(key id.PropertySchemaID) {
+func (l *PropertySchemaLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *PropertySchemaLoader) unsafeSet(key id.PropertySchemaID, value *gqlmodel.PropertySchema) {
+func (l *PropertySchemaLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.PropertySchema) {
 	if l.cache == nil {
-		l.cache = map[id.PropertySchemaID]*gqlmodel.PropertySchema{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.PropertySchema{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *propertySchemaLoaderBatch) keyIndex(l *PropertySchemaLoader, key id.PropertySchemaID) int {
+func (b *propertySchemaLoaderBatch) keyIndex(l *PropertySchemaLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

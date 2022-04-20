@@ -10,7 +10,7 @@ import (
 func TestAsset(t *testing.T) {
 	aid := NewID()
 	tid := NewTeamID()
-	d := createdAt(aid)
+	d := aid.Timestamp()
 
 	tests := []struct {
 		Name     string

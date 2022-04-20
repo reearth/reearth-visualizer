@@ -44,7 +44,7 @@ func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, erro
 	return &asset.Asset{}, rerror.ErrNotFound
 }
 
-func (r *Asset) FindByIDs(ctx context.Context, ids []id.AssetID) ([]*asset.Asset, error) {
+func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -80,7 +80,7 @@ func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetF
 		s := *filter.Sort
 		sort.SliceStable(result, func(i, j int) bool {
 			if s == asset.SortTypeID {
-				return result[i].ID().ID().Compare(result[j].ID().ID()) < 0
+				return result[i].ID().Compare(result[j].ID()) < 0
 			}
 			if s == asset.SortTypeSize {
 				return result[i].Size() < result[j].Size()

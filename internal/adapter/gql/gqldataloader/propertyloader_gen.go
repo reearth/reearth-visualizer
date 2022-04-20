@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // PropertyLoaderConfig captures the config to create a new PropertyLoader
 type PropertyLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.PropertyID) ([]*gqlmodel.Property, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Property, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewPropertyLoader(config PropertyLoaderConfig) *PropertyLoader {
 // PropertyLoader batches and caches requests
 type PropertyLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.PropertyID) ([]*gqlmodel.Property, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Property, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type PropertyLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.PropertyID]*gqlmodel.Property
+	cache map[gqlmodel.ID]*gqlmodel.Property
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type PropertyLoader struct {
 }
 
 type propertyLoaderBatch struct {
-	keys    []id.PropertyID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Property
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type propertyLoaderBatch struct {
 }
 
 // Load a Property by key, batching and caching will be applied automatically
-func (l *PropertyLoader) Load(key id.PropertyID) (*gqlmodel.Property, error) {
+func (l *PropertyLoader) Load(key gqlmodel.ID) (*gqlmodel.Property, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Property.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PropertyLoader) LoadThunk(key id.PropertyID) func() (*gqlmodel.Property, error) {
+func (l *PropertyLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Property, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *PropertyLoader) LoadThunk(key id.PropertyID) func() (*gqlmodel.Property
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *PropertyLoader) LoadAll(keys []id.PropertyID) ([]*gqlmodel.Property, []error) {
+func (l *PropertyLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Property, []error) {
 	results := make([]func() (*gqlmodel.Property, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *PropertyLoader) LoadAll(keys []id.PropertyID) ([]*gqlmodel.Property, []
 // LoadAllThunk returns a function that when called will block waiting for a Propertys.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *PropertyLoader) LoadAllThunk(keys []id.PropertyID) func() ([]*gqlmodel.Property, []error) {
+func (l *PropertyLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Property, []error) {
 	results := make([]func() (*gqlmodel.Property, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *PropertyLoader) LoadAllThunk(keys []id.PropertyID) func() ([]*gqlmodel.
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *PropertyLoader) Prime(key id.PropertyID, value *gqlmodel.Property) bool {
+func (l *PropertyLoader) Prime(key gqlmodel.ID, value *gqlmodel.Property) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *PropertyLoader) Prime(key id.PropertyID, value *gqlmodel.Property) bool
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *PropertyLoader) Clear(key id.PropertyID) {
+func (l *PropertyLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *PropertyLoader) unsafeSet(key id.PropertyID, value *gqlmodel.Property) {
+func (l *PropertyLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Property) {
 	if l.cache == nil {
-		l.cache = map[id.PropertyID]*gqlmodel.Property{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Property{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *propertyLoaderBatch) keyIndex(l *PropertyLoader, key id.PropertyID) int {
+func (b *propertyLoaderBatch) keyIndex(l *PropertyLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

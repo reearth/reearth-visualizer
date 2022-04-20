@@ -224,7 +224,7 @@ func TestBuilder_Build(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
-				updatedAt: createdAt(pid),
+				updatedAt: pid.Timestamp(),
 			},
 		},
 		{
@@ -345,7 +345,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
-				updatedAt: createdAt(pid),
+				updatedAt: pid.Timestamp(),
 			},
 		},
 		{

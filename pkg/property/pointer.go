@@ -13,9 +13,9 @@ func NewPointer(sg *SchemaGroupID, i *ItemID, f *FieldID) *Pointer {
 		return nil
 	}
 	return &Pointer{
-		schemaGroup: sg.CopyRef(),
+		schemaGroup: sg.CloneRef(),
 		item:        i.CopyRef(),
-		field:       f.CopyRef(),
+		field:       f.CloneRef(),
 	}
 }
 
@@ -27,7 +27,7 @@ func PointToEverything() *Pointer {
 // PointField creates a new Pointer pointing the field in properties.
 func PointField(sg *SchemaGroupID, i *ItemID, f FieldID) *Pointer {
 	return &Pointer{
-		schemaGroup: sg.CopyRef(),
+		schemaGroup: sg.CloneRef(),
 		item:        i.CopyRef(),
 		field:       &f,
 	}
@@ -75,9 +75,9 @@ func (p *Pointer) Clone() *Pointer {
 		return nil
 	}
 	return &Pointer{
-		field:       p.field.CopyRef(),
+		field:       p.field.CloneRef(),
 		item:        p.item.CopyRef(),
-		schemaGroup: p.schemaGroup.CopyRef(),
+		schemaGroup: p.schemaGroup.CloneRef(),
 	}
 }
 
@@ -232,7 +232,7 @@ func (p *Pointer) AllFields() *Pointer {
 		return nil
 	}
 	return &Pointer{
-		schemaGroup: p.schemaGroup.CopyRef(),
+		schemaGroup: p.schemaGroup.CloneRef(),
 		item:        p.item.CopyRef(),
 		field:       nil,
 	}
@@ -242,8 +242,8 @@ func (p *Pointer) GetAll() (sg *SchemaGroupID, i *ItemID, f *FieldID) {
 	if p == nil {
 		return
 	}
-	sg = p.schemaGroup.CopyRef()
+	sg = p.schemaGroup.CloneRef()
 	i = p.item.CopyRef()
-	f = p.field.CopyRef()
+	f = p.field.CloneRef()
 	return
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/user"
+	"golang.org/x/text/language"
 )
 
 type ContextKey string
@@ -16,6 +17,8 @@ const (
 	contextAuthInfo ContextKey = "authinfo"
 	contextUsecases ContextKey = "usecases"
 )
+
+var defaultLang = language.English
 
 type AuthInfo struct {
 	Token         string
@@ -52,19 +55,19 @@ func User(ctx context.Context) *user.User {
 	return nil
 }
 
-func Lang(ctx context.Context, lang *string) string {
-	if lang != nil && *lang != "" {
-		return *lang
+func Lang(ctx context.Context, lang *language.Tag) string {
+	if lang != nil && !lang.IsRoot() {
+		return lang.String()
 	}
 
 	u := User(ctx)
 	if u == nil {
-		return "en" // default language
+		return defaultLang.String()
 	}
 
 	l := u.Lang()
 	if l.IsRoot() {
-		return "en" // default language
+		return defaultLang.String()
 	}
 
 	return l.String()

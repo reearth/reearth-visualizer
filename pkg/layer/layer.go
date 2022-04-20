@@ -123,7 +123,7 @@ func (l *layerBase) Extension() *PluginExtensionID {
 	if l == nil {
 		return nil
 	}
-	return l.extension.CopyRef()
+	return l.extension.CloneRef()
 }
 
 func (l *layerBase) Property() *PropertyID {

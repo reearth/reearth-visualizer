@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/scene"
 	"github.com/reearth/reearth-backend/pkg/user"
 	"go.mongodb.org/mongo-driver/bson"
@@ -55,14 +54,14 @@ func applyTeamFilter(filter interface{}, ids user.TeamIDList) interface{} {
 	if ids == nil {
 		return filter
 	}
-	return mongodoc.And(filter, "team", bson.M{"$in": id.TeamIDsToStrings(ids)})
+	return mongodoc.And(filter, "team", bson.M{"$in": ids.Strings()})
 }
 
 func applySceneFilter(filter interface{}, ids scene.IDList) interface{} {
 	if ids == nil {
 		return filter
 	}
-	return mongodoc.And(filter, "scene", bson.M{"$in": id.SceneIDsToStrings(ids)})
+	return mongodoc.And(filter, "scene", bson.M{"$in": ids.Strings()})
 }
 
 func applyOptionalSceneFilter(filter interface{}, ids scene.IDList) interface{} {
@@ -70,7 +69,7 @@ func applyOptionalSceneFilter(filter interface{}, ids scene.IDList) interface{} 
 		return filter
 	}
 	return mongodoc.And(filter, "", bson.M{"$or": []bson.M{
-		{"scene": bson.M{"$in": id.SceneIDsToStrings(ids)}},
+		{"scene": bson.M{"$in": ids.Strings()}},
 		{"scene": nil},
 		{"scene": ""},
 	}})

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 func (r *Resolver) LayerItem() LayerItemResolver {
@@ -46,11 +45,11 @@ func (r *Resolver) LayerTagGroup() LayerTagGroupResolver {
 type infoboxResolver struct{ *Resolver }
 
 func (r *infoboxResolver) Property(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.Property, error) {
-	return dataloaders(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 
 func (r *infoboxResolver) Layer(ctx context.Context, obj *gqlmodel.Infobox) (gqlmodel.Layer, error) {
-	layer, err := dataloaders(ctx).Layer.Load(id.LayerID(obj.LayerID))
+	layer, err := dataloaders(ctx).Layer.Load(obj.LayerID)
 	if err != nil || layer == nil {
 		return nil, err
 	}
@@ -61,11 +60,11 @@ func (r *infoboxResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.Infob
 	if obj.LinkedDatasetID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Dataset.Load(id.DatasetID(*obj.LinkedDatasetID))
+	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
 }
 
 func (r *infoboxResolver) Merged(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.MergedInfobox, error) {
-	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, id.LayerID(obj.LayerID))
+	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, obj.LayerID)
 	if err != nil || ml == nil {
 		return nil, err
 	}
@@ -73,15 +72,16 @@ func (r *infoboxResolver) Merged(ctx context.Context, obj *gqlmodel.Infobox) (*g
 }
 
 func (r *infoboxResolver) Scene(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 func (r *infoboxResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.ScenePlugin, error) {
-	layer, err := dataloaders(ctx).Layer.Load(id.LayerID(obj.LayerID))
+	layer, err := dataloaders(ctx).Layer.Load(obj.LayerID)
 	if err != nil || layer == nil {
 		return nil, err
 	}
-	var pluginID *id.PluginID
+
+	var pluginID *gqlmodel.ID
 	if lg, ok := (*layer).(*gqlmodel.LayerGroup); ok {
 		pluginID = lg.PluginID
 	} else if li, ok := (*layer).(*gqlmodel.LayerItem); ok {
@@ -91,7 +91,7 @@ func (r *infoboxResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.Infobox
 		return nil, nil
 	}
 
-	s, err := dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	s, err := dataloaders(ctx).Scene.Load(obj.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (r *infoboxResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.Infobox
 type infoboxFieldResolver struct{ *Resolver }
 
 func (r *infoboxFieldResolver) Layer(ctx context.Context, obj *gqlmodel.InfoboxField) (gqlmodel.Layer, error) {
-	layer, err := dataloaders(ctx).Layer.Load(id.LayerID(obj.LayerID))
+	layer, err := dataloaders(ctx).Layer.Load(obj.LayerID)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (r *infoboxFieldResolver) Layer(ctx context.Context, obj *gqlmodel.InfoboxF
 }
 
 func (r *infoboxFieldResolver) Infobox(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Infobox, error) {
-	layer, err := dataloaders(ctx).Layer.Load(id.LayerID(obj.LayerID))
+	layer, err := dataloaders(ctx).Layer.Load(obj.LayerID)
 	if err != nil || layer == nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (r *infoboxFieldResolver) Infobox(ctx context.Context, obj *gqlmodel.Infobo
 }
 
 func (r *infoboxFieldResolver) Property(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Property, error) {
-	return dataloaders(ctx).Property.Load(id.PropertyID(obj.PropertyID))
+	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 
 func (r *infoboxFieldResolver) Plugin(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Plugin, error) {
@@ -140,11 +140,11 @@ func (r *infoboxFieldResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.
 	if obj.LinkedDatasetID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Dataset.Load(id.DatasetID(*obj.LinkedDatasetID))
+	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
 }
 
 func (r *infoboxFieldResolver) Merged(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.MergedInfoboxField, error) {
-	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, id.LayerID(obj.LayerID))
+	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, obj.LayerID)
 	if err != nil || ml == nil || ml.Infobox == nil {
 		return nil, err
 	}
@@ -152,11 +152,11 @@ func (r *infoboxFieldResolver) Merged(ctx context.Context, obj *gqlmodel.Infobox
 }
 
 func (r *infoboxFieldResolver) Scene(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 func (r *infoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.ScenePlugin, error) {
-	s, err := dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	s, err := dataloaders(ctx).Scene.Load(obj.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -167,16 +167,16 @@ type layerGroupResolver struct{ *Resolver }
 
 func (r *layerGroupResolver) Parent(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.LayerGroup, error) {
 	if obj.ParentID != nil {
-		return dataloaders(ctx).LayerGroup.Load(id.LayerID(*obj.ParentID))
+		return dataloaders(ctx).LayerGroup.Load(*obj.ParentID)
 	}
-	return loaders(ctx).Layer.FetchParent(ctx, id.LayerID(obj.ID))
+	return loaders(ctx).Layer.FetchParent(ctx, obj.ID)
 }
 
 func (r *layerGroupResolver) Property(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.Property, error) {
 	if obj.PropertyID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Property.Load(id.PropertyID(*obj.PropertyID))
+	return dataloaders(ctx).Property.Load(*obj.PropertyID)
 }
 
 func (r *layerGroupResolver) Plugin(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.Plugin, error) {
@@ -198,18 +198,18 @@ func (r *layerGroupResolver) Extension(ctx context.Context, obj *gqlmodel.LayerG
 }
 
 func (r *layerGroupResolver) ParentLayer(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.LayerGroup, error) {
-	return loaders(ctx).Layer.FetchParent(ctx, id.LayerID(obj.ID))
+	return loaders(ctx).Layer.FetchParent(ctx, obj.ID)
 }
 
 func (r *layerGroupResolver) LinkedDatasetSchema(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.DatasetSchema, error) {
 	if obj.LinkedDatasetSchemaID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).DatasetSchema.Load(id.DatasetSchemaID(*obj.LinkedDatasetSchemaID))
+	return dataloaders(ctx).DatasetSchema.Load(*obj.LinkedDatasetSchemaID)
 }
 
 func (r *layerGroupResolver) Layers(ctx context.Context, obj *gqlmodel.LayerGroup) ([]gqlmodel.Layer, error) {
-	layers, err := dataloaders(ctx).Layer.LoadAll(id.LayerIDsFromIDRef(obj.LayerIds))
+	layers, err := dataloaders(ctx).Layer.LoadAll(obj.LayerIds)
 	if len(err) > 0 && err[0] != nil {
 		return nil, err[0]
 	}
@@ -217,14 +217,14 @@ func (r *layerGroupResolver) Layers(ctx context.Context, obj *gqlmodel.LayerGrou
 }
 
 func (r *layerGroupResolver) Scene(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 func (r *layerGroupResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.ScenePlugin, error) {
 	if obj.PluginID == nil {
 		return nil, nil
 	}
-	s, err := dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	s, err := dataloaders(ctx).Scene.Load(obj.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -235,16 +235,16 @@ type layerItemResolver struct{ *Resolver }
 
 func (r *layerItemResolver) Parent(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.LayerGroup, error) {
 	if obj.ParentID != nil {
-		return dataloaders(ctx).LayerGroup.Load(id.LayerID(*obj.ParentID))
+		return dataloaders(ctx).LayerGroup.Load(*obj.ParentID)
 	}
-	return loaders(ctx).Layer.FetchParent(ctx, id.LayerID(obj.ID))
+	return loaders(ctx).Layer.FetchParent(ctx, obj.ID)
 }
 
 func (r *layerItemResolver) Property(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.Property, error) {
 	if obj.PropertyID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Property.Load(id.PropertyID(*obj.PropertyID))
+	return dataloaders(ctx).Property.Load(*obj.PropertyID)
 }
 
 func (r *layerItemResolver) Plugin(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.Plugin, error) {
@@ -269,25 +269,25 @@ func (r *layerItemResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.Lay
 	if obj.LinkedDatasetID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Dataset.Load(id.DatasetID(*obj.LinkedDatasetID))
+	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
 }
 
 func (r *layerItemResolver) Merged(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.MergedLayer, error) {
 	if obj.ParentID == nil {
-		return loaders(ctx).Layer.FetchParentAndMerged(ctx, id.LayerID(obj.ID))
+		return loaders(ctx).Layer.FetchParentAndMerged(ctx, obj.ID)
 	}
-	return loaders(ctx).Layer.FetchMerged(ctx, id.LayerID(obj.ID), id.LayerIDFromRefID(obj.ParentID))
+	return loaders(ctx).Layer.FetchMerged(ctx, obj.ID, obj.ParentID)
 }
 
 func (r *layerItemResolver) Scene(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 func (r *layerItemResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.ScenePlugin, error) {
 	if obj.PluginID == nil {
 		return nil, nil
 	}
-	s, err := dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	s, err := dataloaders(ctx).Scene.Load(obj.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -297,27 +297,27 @@ func (r *layerItemResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.Layer
 type mergedLayerResolver struct{ *Resolver }
 
 func (r *mergedLayerResolver) Original(ctx context.Context, obj *gqlmodel.MergedLayer) (*gqlmodel.LayerItem, error) {
-	return dataloaders(ctx).LayerItem.Load(id.LayerID(obj.OriginalID))
+	return dataloaders(ctx).LayerItem.Load(obj.OriginalID)
 }
 
 func (r *mergedLayerResolver) Parent(ctx context.Context, obj *gqlmodel.MergedLayer) (*gqlmodel.LayerGroup, error) {
 	if obj.ParentID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).LayerGroup.Load(id.LayerID(*obj.ParentID))
+	return dataloaders(ctx).LayerGroup.Load(*obj.ParentID)
 }
 
 func (r *mergedLayerResolver) Scene(ctx context.Context, obj *gqlmodel.MergedLayer) (*gqlmodel.Scene, error) {
 	if obj.ParentID == nil {
 		return nil, nil
 	}
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 type mergedInfoboxResolver struct{ *Resolver }
 
 func (r *mergedInfoboxResolver) Scene(ctx context.Context, obj *gqlmodel.MergedInfobox) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 type mergedInfoboxFieldResolver struct{ *Resolver }
@@ -335,11 +335,11 @@ func (r *mergedInfoboxFieldResolver) Extension(ctx context.Context, obj *gqlmode
 }
 
 func (r *mergedInfoboxFieldResolver) Scene(ctx context.Context, obj *gqlmodel.MergedInfoboxField) (*gqlmodel.Scene, error) {
-	return dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
 
 func (r *mergedInfoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmodel.MergedInfoboxField) (*gqlmodel.ScenePlugin, error) {
-	s, err := dataloaders(ctx).Scene.Load(id.SceneID(obj.SceneID))
+	s, err := dataloaders(ctx).Scene.Load(obj.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -349,7 +349,7 @@ func (r *mergedInfoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmo
 type layerTagItemResolver struct{ *Resolver }
 
 func (r *layerTagItemResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagItem) (gqlmodel.Tag, error) {
-	t, err := dataloaders(ctx).Tag.Load(id.TagID(obj.TagID))
+	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +359,7 @@ func (r *layerTagItemResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagIt
 type layerTagGroupResolver struct{ *Resolver }
 
 func (r *layerTagGroupResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagGroup) (gqlmodel.Tag, error) {
-	t, err := dataloaders(ctx).Tag.Load(id.TagID(obj.TagID))
+	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
 	if err != nil {
 		return nil, err
 	}

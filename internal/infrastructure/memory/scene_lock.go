@@ -29,7 +29,7 @@ func (r *sceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.Lock
 	return scene.LockModeFree, nil
 }
 
-func (r *sceneLock) GetAllLock(ctx context.Context, sceneID []id.SceneID) ([]scene.LockMode, error) {
+func (r *sceneLock) GetAllLock(ctx context.Context, sceneID id.SceneIDList) ([]scene.LockMode, error) {
 	res := make([]scene.LockMode, 0, len(sceneID))
 	for _, si := range sceneID {
 		if si.IsNil() {

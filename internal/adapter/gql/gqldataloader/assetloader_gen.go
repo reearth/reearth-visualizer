@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/id"
 )
 
 // AssetLoaderConfig captures the config to create a new AssetLoader
 type AssetLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
-	Fetch func(keys []id.AssetID) ([]*gqlmodel.Asset, []error)
+	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Asset, []error)
 
 	// Wait is how long wait before sending a batch
 	Wait time.Duration
@@ -34,7 +33,7 @@ func NewAssetLoader(config AssetLoaderConfig) *AssetLoader {
 // AssetLoader batches and caches requests
 type AssetLoader struct {
 	// this method provides the data for the loader
-	fetch func(keys []id.AssetID) ([]*gqlmodel.Asset, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Asset, []error)
 
 	// how long to done before sending a batch
 	wait time.Duration
@@ -45,7 +44,7 @@ type AssetLoader struct {
 	// INTERNAL
 
 	// lazily created cache
-	cache map[id.AssetID]*gqlmodel.Asset
+	cache map[gqlmodel.ID]*gqlmodel.Asset
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
@@ -56,7 +55,7 @@ type AssetLoader struct {
 }
 
 type assetLoaderBatch struct {
-	keys    []id.AssetID
+	keys    []gqlmodel.ID
 	data    []*gqlmodel.Asset
 	error   []error
 	closing bool
@@ -64,14 +63,14 @@ type assetLoaderBatch struct {
 }
 
 // Load a Asset by key, batching and caching will be applied automatically
-func (l *AssetLoader) Load(key id.AssetID) (*gqlmodel.Asset, error) {
+func (l *AssetLoader) Load(key gqlmodel.ID) (*gqlmodel.Asset, error) {
 	return l.LoadThunk(key)()
 }
 
 // LoadThunk returns a function that when called will block waiting for a Asset.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *AssetLoader) LoadThunk(key id.AssetID) func() (*gqlmodel.Asset, error) {
+func (l *AssetLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Asset, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -114,7 +113,7 @@ func (l *AssetLoader) LoadThunk(key id.AssetID) func() (*gqlmodel.Asset, error) 
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *AssetLoader) LoadAll(keys []id.AssetID) ([]*gqlmodel.Asset, []error) {
+func (l *AssetLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Asset, []error) {
 	results := make([]func() (*gqlmodel.Asset, error), len(keys))
 
 	for i, key := range keys {
@@ -132,7 +131,7 @@ func (l *AssetLoader) LoadAll(keys []id.AssetID) ([]*gqlmodel.Asset, []error) {
 // LoadAllThunk returns a function that when called will block waiting for a Assets.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *AssetLoader) LoadAllThunk(keys []id.AssetID) func() ([]*gqlmodel.Asset, []error) {
+func (l *AssetLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Asset, []error) {
 	results := make([]func() (*gqlmodel.Asset, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -150,7 +149,7 @@ func (l *AssetLoader) LoadAllThunk(keys []id.AssetID) func() ([]*gqlmodel.Asset,
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *AssetLoader) Prime(key id.AssetID, value *gqlmodel.Asset) bool {
+func (l *AssetLoader) Prime(key gqlmodel.ID, value *gqlmodel.Asset) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -164,22 +163,22 @@ func (l *AssetLoader) Prime(key id.AssetID, value *gqlmodel.Asset) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *AssetLoader) Clear(key id.AssetID) {
+func (l *AssetLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *AssetLoader) unsafeSet(key id.AssetID, value *gqlmodel.Asset) {
+func (l *AssetLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Asset) {
 	if l.cache == nil {
-		l.cache = map[id.AssetID]*gqlmodel.Asset{}
+		l.cache = map[gqlmodel.ID]*gqlmodel.Asset{}
 	}
 	l.cache[key] = value
 }
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *assetLoaderBatch) keyIndex(l *AssetLoader, key id.AssetID) int {
+func (b *assetLoaderBatch) keyIndex(l *AssetLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i

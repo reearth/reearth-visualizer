@@ -43,10 +43,10 @@ func (r *propertyRepo) FindByID(ctx context.Context, id id.PropertyID) (*propert
 	})
 }
 
-func (r *propertyRepo) FindByIDs(ctx context.Context, ids []id.PropertyID) (property.List, error) {
+func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (property.List, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.PropertyIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make(property.List, 0, len(ids))
@@ -148,12 +148,12 @@ func (r *propertyRepo) Remove(ctx context.Context, id id.PropertyID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *propertyRepo) RemoveAll(ctx context.Context, ids []id.PropertyID) error {
+func (r *propertyRepo) RemoveAll(ctx context.Context, ids id.PropertyIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{
-		"id": bson.M{"$in": id.PropertyIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}))
 }
 

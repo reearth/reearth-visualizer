@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/asset"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 type AssetLoader struct {
@@ -19,24 +20,27 @@ func NewAssetLoader(usecase interfaces.Asset) *AssetLoader {
 	return &AssetLoader{usecase: usecase}
 }
 
-func (c *AssetLoader) Fetch(ctx context.Context, ids []id.AssetID) ([]*gqlmodel.Asset, []error) {
-	res, err := c.usecase.Fetch(ctx, ids, getOperator(ctx))
+func (c *AssetLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Asset, []error) {
+	ids2, err := util.TryMap(ids, gqlmodel.ToID[id.Asset])
 	if err != nil {
 		return nil, []error{err}
 	}
 
-	assets := make([]*gqlmodel.Asset, 0, len(res))
-	for _, a := range res {
-		assets = append(assets, gqlmodel.ToAsset(a))
+	res, err := c.usecase.Fetch(ctx, ids2, getOperator(ctx))
+	if err != nil {
+		return nil, []error{err}
 	}
 
-	return assets, nil
+	return util.Map(res, gqlmodel.ToAsset), nil
 }
 
-func (c *AssetLoader) FindByTeam(ctx context.Context, teamID id.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
-	p := gqlmodel.ToPagination(pagination)
+func (c *AssetLoader) FindByTeam(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
+	tid, err := gqlmodel.ToID[id.Team](teamID)
+	if err != nil {
+		return nil, err
+	}
 
-	assets, pi, err := c.usecase.FindByTeam(ctx, id.TeamID(teamID), keyword, sort, p, getOperator(ctx))
+	assets, pi, err := c.usecase.FindByTeam(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +51,7 @@ func (c *AssetLoader) FindByTeam(ctx context.Context, teamID id.ID, keyword *str
 		asset := gqlmodel.ToAsset(a)
 		edges = append(edges, &gqlmodel.AssetEdge{
 			Node:   asset,
-			Cursor: usecase.Cursor(asset.ID.String()),
+			Cursor: usecase.Cursor(asset.ID),
 		})
 		nodes = append(nodes, asset)
 	}
@@ -63,15 +67,15 @@ func (c *AssetLoader) FindByTeam(ctx context.Context, teamID id.ID, keyword *str
 // data loader
 
 type AssetDataLoader interface {
-	Load(id.AssetID) (*gqlmodel.Asset, error)
-	LoadAll([]id.AssetID) ([]*gqlmodel.Asset, []error)
+	Load(gqlmodel.ID) (*gqlmodel.Asset, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.Asset, []error)
 }
 
 func (c *AssetLoader) DataLoader(ctx context.Context) AssetDataLoader {
 	return gqldataloader.NewAssetLoader(gqldataloader.AssetLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.AssetID) ([]*gqlmodel.Asset, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Asset, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	})
@@ -86,8 +90,8 @@ type ordinaryAssetLoader struct {
 	c   *AssetLoader
 }
 
-func (l *ordinaryAssetLoader) Load(key id.AssetID) (*gqlmodel.Asset, error) {
-	res, errs := l.c.Fetch(l.ctx, []id.AssetID{key})
+func (l *ordinaryAssetLoader) Load(key gqlmodel.ID) (*gqlmodel.Asset, error) {
+	res, errs := l.c.Fetch(l.ctx, []gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -97,6 +101,6 @@ func (l *ordinaryAssetLoader) Load(key id.AssetID) (*gqlmodel.Asset, error) {
 	return nil, nil
 }
 
-func (l *ordinaryAssetLoader) LoadAll(keys []id.AssetID) ([]*gqlmodel.Asset, []error) {
+func (l *ordinaryAssetLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Asset, []error) {
 	return l.c.Fetch(l.ctx, keys)
 }

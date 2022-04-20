@@ -16,10 +16,10 @@ func (b *Builder) Build() (*Scene, error) {
 	if b.scene.id.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.team.ID().IsNil() {
+	if b.scene.team.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.rootLayer.ID().IsNil() {
+	if b.scene.rootLayer.IsNil() {
 		return nil, ErrInvalidID
 	}
 	if b.scene.widgets == nil {

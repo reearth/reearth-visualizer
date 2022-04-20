@@ -20,7 +20,7 @@ type CreateTagItemParam struct {
 	Parent                *id.TagID
 	LinkedDatasetSchemaID *id.DatasetSchemaID
 	LinkedDatasetID       *id.DatasetID
-	LinkedDatasetField    *id.DatasetSchemaFieldID
+	LinkedDatasetField    *id.DatasetFieldID
 }
 
 type CreateTagGroupParam struct {

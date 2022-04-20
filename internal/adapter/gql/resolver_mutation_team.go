@@ -17,7 +17,12 @@ func (r *mutationResolver) CreateTeam(ctx context.Context, input gqlmodel.Create
 }
 
 func (r *mutationResolver) DeleteTeam(ctx context.Context, input gqlmodel.DeleteTeamInput) (*gqlmodel.DeleteTeamPayload, error) {
-	if err := usecases(ctx).Team.Remove(ctx, id.TeamID(input.TeamID), getOperator(ctx)); err != nil {
+	tid, err := gqlmodel.ToID[id.Team](input.TeamID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := usecases(ctx).Team.Remove(ctx, tid, getOperator(ctx)); err != nil {
 		return nil, err
 	}
 
@@ -25,7 +30,12 @@ func (r *mutationResolver) DeleteTeam(ctx context.Context, input gqlmodel.Delete
 }
 
 func (r *mutationResolver) UpdateTeam(ctx context.Context, input gqlmodel.UpdateTeamInput) (*gqlmodel.UpdateTeamPayload, error) {
-	res, err := usecases(ctx).Team.Update(ctx, id.TeamID(input.TeamID), input.Name, getOperator(ctx))
+	tid, err := gqlmodel.ToID[id.Team](input.TeamID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Team.Update(ctx, tid, input.Name, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +44,12 @@ func (r *mutationResolver) UpdateTeam(ctx context.Context, input gqlmodel.Update
 }
 
 func (r *mutationResolver) AddMemberToTeam(ctx context.Context, input gqlmodel.AddMemberToTeamInput) (*gqlmodel.AddMemberToTeamPayload, error) {
-	res, err := usecases(ctx).Team.AddMember(ctx, id.TeamID(input.TeamID), id.UserID(input.UserID), gqlmodel.FromRole(input.Role), getOperator(ctx))
+	tid, uid, err := gqlmodel.ToID2[id.Team, id.User](input.TeamID, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Team.AddMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +58,12 @@ func (r *mutationResolver) AddMemberToTeam(ctx context.Context, input gqlmodel.A
 }
 
 func (r *mutationResolver) RemoveMemberFromTeam(ctx context.Context, input gqlmodel.RemoveMemberFromTeamInput) (*gqlmodel.RemoveMemberFromTeamPayload, error) {
-	res, err := usecases(ctx).Team.RemoveMember(ctx, id.TeamID(input.TeamID), id.UserID(input.UserID), getOperator(ctx))
+	tid, uid, err := gqlmodel.ToID2[id.Team, id.User](input.TeamID, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Team.RemoveMember(ctx, tid, uid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +72,12 @@ func (r *mutationResolver) RemoveMemberFromTeam(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) UpdateMemberOfTeam(ctx context.Context, input gqlmodel.UpdateMemberOfTeamInput) (*gqlmodel.UpdateMemberOfTeamPayload, error) {
-	res, err := usecases(ctx).Team.UpdateMember(ctx, id.TeamID(input.TeamID), id.UserID(input.UserID), gqlmodel.FromRole(input.Role), getOperator(ctx))
+	tid, uid, err := gqlmodel.ToID2[id.Team, id.User](input.TeamID, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Team.UpdateMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

@@ -83,7 +83,7 @@ func (b *GroupBuilder) Plugin(plugin *PluginID) *GroupBuilder {
 }
 
 func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
-	b.l.extension = extension.CopyRef()
+	b.l.extension = extension.CloneRef()
 	return b
 }
 

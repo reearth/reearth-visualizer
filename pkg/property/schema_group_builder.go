@@ -72,6 +72,6 @@ func (b *SchemaGroupBuilder) Title(title i18n.String) *SchemaGroupBuilder {
 }
 
 func (b *SchemaGroupBuilder) RepresentativeField(representativeField *FieldID) *SchemaGroupBuilder {
-	b.p.representativeField = representativeField.CopyRef()
+	b.p.representativeField = representativeField.CloneRef()
 	return b
 }

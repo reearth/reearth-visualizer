@@ -44,10 +44,10 @@ func (r *layerRepo) FindByID(ctx context.Context, id id.LayerID) (layer.Layer, e
 	})
 }
 
-func (r *layerRepo) FindByIDs(ctx context.Context, ids []id.LayerID) (layer.List, error) {
+func (r *layerRepo) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.LayerIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*layer.Layer, 0, len(ids))
@@ -70,10 +70,10 @@ func (r *layerRepo) FindItemByID(ctx context.Context, id id.LayerID) (*layer.Ite
 	})
 }
 
-func (r *layerRepo) FindItemByIDs(ctx context.Context, ids []id.LayerID) (layer.ItemList, error) {
+func (r *layerRepo) FindItemByIDs(ctx context.Context, ids id.LayerIDList) (layer.ItemList, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.LayerIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*layer.Item, 0, len(ids))
@@ -90,10 +90,10 @@ func (r *layerRepo) FindGroupByID(ctx context.Context, id id.LayerID) (*layer.Gr
 	})
 }
 
-func (r *layerRepo) FindGroupByIDs(ctx context.Context, ids []id.LayerID) (layer.GroupList, error) {
+func (r *layerRepo) FindGroupByIDs(ctx context.Context, ids id.LayerIDList) (layer.GroupList, error) {
 	filter := bson.M{
 		"id": bson.M{
-			"$in": id.LayerIDsToStrings(ids),
+			"$in": ids.Strings(),
 		},
 	}
 	dst := make([]*layer.Group, 0, len(ids))
@@ -111,9 +111,9 @@ func (r *layerRepo) FindGroupBySceneAndLinkedDatasetSchema(ctx context.Context, 
 	})
 }
 
-func (r *layerRepo) FindParentsByIDs(ctx context.Context, ids []id.LayerID) (layer.GroupList, error) {
+func (r *layerRepo) FindParentsByIDs(ctx context.Context, ids id.LayerIDList) (layer.GroupList, error) {
 	return r.findGroups(ctx, nil, bson.M{
-		"group.layers": bson.M{"$in": id.LayerIDsToStrings(ids)},
+		"group.layers": bson.M{"$in": ids.Strings()},
 	})
 }
 
@@ -210,12 +210,12 @@ func (r *layerRepo) Remove(ctx context.Context, id id.LayerID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *layerRepo) RemoveAll(ctx context.Context, ids []id.LayerID) error {
+func (r *layerRepo) RemoveAll(ctx context.Context, ids id.LayerIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{
-		"id": bson.M{"$in": id.LayerIDsToStrings(ids)},
+		"id": bson.M{"$in": ids.Strings()},
 	}))
 }
 

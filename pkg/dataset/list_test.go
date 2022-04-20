@@ -50,8 +50,8 @@ func TestDatasetMapGraphSearchByFields(t *testing.T) {
 	fid2 := NewFieldID()
 	fid3 := NewFieldID()
 	sid := NewSceneID()
-	v1 := ValueTypeRef.ValueFrom(did2.ID())
-	v2 := ValueTypeRef.ValueFrom(did3.ID())
+	v1 := ValueTypeRef.ValueFrom(did2)
+	v2 := ValueTypeRef.ValueFrom(did3)
 	v3 := ValueTypeString.ValueFrom("value")
 	f3 := NewField(fid3, v3, "")
 	d1, _ := New().ID(did1).Scene(sid).Fields([]*Field{

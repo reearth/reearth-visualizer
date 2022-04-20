@@ -60,7 +60,7 @@ func (r *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagin
 	), nil
 }
 
-func (r *Project) FindByIDs(ctx context.Context, ids []id.ProjectID) ([]*project.Project, error) {
+func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

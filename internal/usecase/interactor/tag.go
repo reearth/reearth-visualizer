@@ -102,12 +102,11 @@ func (i *Tag) CreateGroup(ctx context.Context, inp interfaces.CreateTagGroupPara
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	list := tag.IDListFrom(inp.Tags)
 	group, err := tag.NewGroup().
 		NewID().
 		Label(inp.Label).
 		Scene(inp.SceneID).
-		Tags(list).
+		Tags(inp.Tags).
 		Build()
 
 	if err != nil {
@@ -212,7 +211,7 @@ func (i *Tag) DetachItemFromGroup(ctx context.Context, inp interfaces.DetachItem
 		return nil, errors.New("tag item is not attached to the group")
 	}
 
-	tg.Tags().Remove(inp.ItemID)
+	tg.RemoveTag(inp.ItemID)
 	ti.SetParent(nil)
 
 	tgt := tag.Tag(tg)
@@ -276,7 +275,7 @@ func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Oper
 	}
 
 	if group := tag.ToTagGroup(t); group != nil {
-		if len(group.Tags().Tags()) != 0 {
+		if len(group.Tags()) != 0 {
 			return nil, nil, interfaces.ErrNonemptyTagGroupCannotDelete
 		}
 	}
@@ -287,7 +286,7 @@ func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Oper
 			return nil, nil, err
 		}
 		if g != nil {
-			g.Tags().Remove(item.ID())
+			g.RemoveTag(item.ID())
 			if err := i.tagRepo.Save(ctx, g); err != nil {
 				return nil, nil, err
 			}

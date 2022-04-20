@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
 	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth-backend/pkg/util"
 )
 
 type UserLoader struct {
@@ -17,8 +18,13 @@ func NewUserLoader(usecase interfaces.User) *UserLoader {
 	return &UserLoader{usecase: usecase}
 }
 
-func (c *UserLoader) Fetch(ctx context.Context, ids []id.UserID) ([]*gqlmodel.User, []error) {
-	res, err := c.usecase.Fetch(ctx, ids, getOperator(ctx))
+func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.User, []error) {
+	uids, err := util.TryMap(ids, gqlmodel.ToID[id.User])
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	res, err := c.usecase.Fetch(ctx, uids, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -31,27 +37,27 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []id.UserID) ([]*gqlmodel.Us
 	return users, nil
 }
 
-func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.SearchedUser, error) {
+func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
 	res, err := c.usecase.SearchUser(ctx, nameOrEmail, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
-	return gqlmodel.ToSearchedUser(res), nil
+	return gqlmodel.ToUser(res), nil
 }
 
 // data loader
 
 type UserDataLoader interface {
-	Load(id.UserID) (*gqlmodel.User, error)
-	LoadAll([]id.UserID) ([]*gqlmodel.User, []error)
+	Load(gqlmodel.ID) (*gqlmodel.User, error)
+	LoadAll([]gqlmodel.ID) ([]*gqlmodel.User, []error)
 }
 
 func (c *UserLoader) DataLoader(ctx context.Context) UserDataLoader {
 	return gqldataloader.NewUserLoader(gqldataloader.UserLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
-		Fetch: func(keys []id.UserID) ([]*gqlmodel.User, []error) {
+		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.User, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	})
@@ -59,18 +65,18 @@ func (c *UserLoader) DataLoader(ctx context.Context) UserDataLoader {
 
 func (c *UserLoader) OrdinaryDataLoader(ctx context.Context) UserDataLoader {
 	return &ordinaryUserLoader{
-		fetch: func(keys []id.UserID) ([]*gqlmodel.User, []error) {
+		fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.User, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	}
 }
 
 type ordinaryUserLoader struct {
-	fetch func(keys []id.UserID) ([]*gqlmodel.User, []error)
+	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.User, []error)
 }
 
-func (l *ordinaryUserLoader) Load(key id.UserID) (*gqlmodel.User, error) {
-	res, errs := l.fetch([]id.UserID{key})
+func (l *ordinaryUserLoader) Load(key gqlmodel.ID) (*gqlmodel.User, error) {
+	res, errs := l.fetch([]gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
@@ -80,6 +86,6 @@ func (l *ordinaryUserLoader) Load(key id.UserID) (*gqlmodel.User, error) {
 	return nil, nil
 }
 
-func (l *ordinaryUserLoader) LoadAll(keys []id.UserID) ([]*gqlmodel.User, []error) {
+func (l *ordinaryUserLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.User, []error) {
 	return l.fetch(keys)
 }

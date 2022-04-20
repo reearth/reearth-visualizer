@@ -13,7 +13,7 @@ import (
 type AddDatasetSchemaParam struct {
 	SceneId             id.SceneID
 	Name                string
-	RepresentativeField *id.DatasetSchemaFieldID
+	RepresentativeField *id.DatasetFieldID
 }
 
 type AddDynamicDatasetSchemaParam struct {
