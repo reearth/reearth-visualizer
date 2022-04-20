@@ -3,23 +3,23 @@ import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Section from "@reearth/components/molecules/Settings/Section";
-import AddMemberModal from "@reearth/components/molecules/Settings/Workspace/AddMemberModal";
+import AddMemberModal, {
+  User as UserType,
+} from "@reearth/components/molecules/Settings/Workspace/AddMemberModal";
 import MemberList from "@reearth/components/molecules/Settings/Workspace/MemberList";
 import MemberListItem, {
   Role,
 } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import { styled } from "@reearth/theme";
 
-type Me = {
+export type Me = {
   id?: string;
 };
 
+export type User = UserType;
+
 type TeamMember = {
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
+  user?: User;
   userId: string;
   role: Role;
 };
@@ -28,16 +28,10 @@ type Props = {
   me?: Me;
   owner?: boolean;
   members?: TeamMember[];
-  searchedUser?: {
-    userId: string;
-    userName: string;
-    userEmail: string;
-  };
+  searchedUser?: User;
   personal?: boolean;
   searchUser: (nameOrEmail: string) => void;
-  changeSearchedUser: (
-    user: { userId: string; userName: string; userEmail: string } | undefined,
-  ) => void;
+  changeSearchedUser: (user: User | undefined) => void;
   addMembersToTeam: (userIds: string[]) => Promise<void>;
   updateMemberOfTeam: (userId: string, role: Role) => void;
   removeMemberFromTeam: (userId: string) => void;

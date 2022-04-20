@@ -19,7 +19,7 @@ export const UPDATE_ME = gql`
         passwordConfirmation: $passwordConfirmation
       }
     ) {
-      user {
+      me {
         id
         name
         email

@@ -32,9 +32,9 @@ export const DELETE_TEAM = gql`
 export const SEARCH_USER = gql`
   query searchUser($nameOrEmail: String!) {
     searchUser(nameOrEmail: $nameOrEmail) {
-      userId
-      userName
-      userEmail
+      id
+      name
+      email
     }
   }
 `;

@@ -29,9 +29,9 @@ export default (params: Params) => {
 
   const navigate = useNavigate();
   const [searchedUser, changeSearchedUser] = useState<{
-    userId: string;
-    userName: string;
-    userEmail: string;
+    id: string;
+    name: string;
+    email: string;
   }>();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);

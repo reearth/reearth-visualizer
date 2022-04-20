@@ -13,11 +13,11 @@ export const CHANGE_PROPERTY_VALUE = gql`
   mutation ChangePropertyValue(
     $value: Any
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
+    $fieldId: ID!
     $type: ValueType!
-    $lang: String
+    $lang: Lang
   ) {
     updatePropertyValue(
       input: {
@@ -47,12 +47,12 @@ export const LINK_DATASET = gql`
   mutation LinkDataset(
     $propertyId: ID!
     $itemId: ID
-    $schemaGroupId: PropertySchemaGroupID
-    $fieldId: PropertySchemaFieldID!
+    $schemaGroupId: ID
+    $fieldId: ID!
     $datasetSchemaIds: [ID!]!
     $datasetIds: [ID!]
     $datasetFieldIds: [ID!]!
-    $lang: String
+    $lang: Lang
   ) {
     linkDatasetToPropertyValue(
       input: {
@@ -76,10 +76,10 @@ export const LINK_DATASET = gql`
 export const UNLINK_DATASET = gql`
   mutation UnlinkDataset(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lang: String
+    $fieldId: ID!
+    $lang: Lang
   ) {
     unlinkPropertyValue(
       input: {
@@ -104,7 +104,7 @@ export const UNLINK_DATASET = gql`
 `;
 
 export const CREATE_INFOBOX = gql`
-  mutation createInfobox($layerId: ID!, $lang: String) {
+  mutation createInfobox($layerId: ID!, $lang: Lang) {
     createInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -126,7 +126,7 @@ export const CREATE_INFOBOX = gql`
 `;
 
 export const REMOVE_INFOBOX = gql`
-  mutation removeInfobox($layerId: ID!, $lang: String) {
+  mutation removeInfobox($layerId: ID!, $lang: Lang) {
     removeInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -150,11 +150,11 @@ export const REMOVE_INFOBOX = gql`
 export const UPLOAD_FILE_TO_PROPERTY = gql`
   mutation UploadFileToProperty(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
+    $fieldId: ID!
     $file: Upload!
-    $lang: String
+    $lang: Lang
   ) {
     uploadFileToProperty(
       input: {
@@ -182,10 +182,10 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
 export const REMOVE_FIELD = gql`
   mutation RemovePropertyField(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lang: String
+    $fieldId: ID!
+    $lang: Lang
   ) {
     removePropertyField(
       input: {
@@ -212,11 +212,11 @@ export const REMOVE_FIELD = gql`
 export const ADD_PROPERTY_ITEM = gql`
   mutation addPropertyItem(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $index: Int
     $nameFieldValue: Any
     $nameFieldType: ValueType
-    $lang: String
+    $lang: Lang
   ) {
     addPropertyItem(
       input: {
@@ -244,10 +244,10 @@ export const ADD_PROPERTY_ITEM = gql`
 export const MOVE_PROPERTY_ITEM = gql`
   mutation movePropertyItem(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $itemId: ID!
     $index: Int!
-    $lang: String
+    $lang: Lang
   ) {
     movePropertyItem(
       input: {
@@ -272,12 +272,7 @@ export const MOVE_PROPERTY_ITEM = gql`
 `;
 
 export const REMOVE_PROPERTY_ITEM = gql`
-  mutation removePropertyItem(
-    $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
-    $itemId: ID!
-    $lang: String
-  ) {
+  mutation removePropertyItem($propertyId: ID!, $schemaGroupId: ID!, $itemId: ID!, $lang: Lang) {
     removePropertyItem(
       input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }
     ) {
@@ -298,9 +293,9 @@ export const REMOVE_PROPERTY_ITEM = gql`
 export const UPDATE_PROPERTY_ITEMS = gql`
   mutation updatePropertyItems(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $operations: [UpdatePropertyItemOperationInput!]!
-    $lang: String
+    $lang: Lang
   ) {
     updatePropertyItems(
       input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations }
@@ -322,7 +317,7 @@ export const UPDATE_PROPERTY_ITEMS = gql`
 // Queries
 
 export const GET_LAYER_PROPERTY = gql`
-  query GetLayerProperty($layerId: ID!, $lang: String) {
+  query GetLayerProperty($layerId: ID!, $lang: Lang) {
     layer(id: $layerId) {
       id
       ...Layer1Fragment
@@ -333,7 +328,7 @@ export const GET_LAYER_PROPERTY = gql`
 `;
 
 export const GET_SCENE_PROPERTY = gql`
-  query GetSceneProperty($sceneId: ID!, $lang: String) {
+  query GetSceneProperty($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -399,12 +394,7 @@ export const GET_LINKABLE_DATASETS = gql`
 `;
 
 export const ADD_WIDGET = gql`
-  mutation addWidget(
-    $sceneId: ID!
-    $pluginId: PluginID!
-    $extensionId: PluginExtensionID!
-    $lang: String
-  ) {
+  mutation addWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
     addWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
       scene {
         id

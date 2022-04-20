@@ -8,18 +8,18 @@ import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/theme";
 
-type Props = {
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type Props = {
   active: boolean;
   close: () => void;
-  searchedUser?: {
-    userId: string;
-    userName: string;
-    userEmail: string;
-  };
+  searchedUser?: User;
   searchUser: (nameOrEmail: string) => void;
-  changeSearchedUser: (
-    user: { userId: string; userName: string; userEmail: string } | undefined,
-  ) => void;
+  changeSearchedUser: (user: User | undefined) => void;
   addMembersToTeam?: (userIds: string[]) => Promise<void>;
 };
 
@@ -34,7 +34,7 @@ const AddMemberModal: React.FC<Props> = ({
   const intl = useIntl();
   const theme = useTheme();
 
-  const [users, setUsers] = useState<{ userId: string; userName: string; userEmail: string }[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [nameOrEmail, setNameOrEmail] = useState("");
 
   const handleChange = useCallback(
@@ -46,7 +46,7 @@ const AddMemberModal: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    if (searchedUser && !users.find(user => user.userId === searchedUser.userId)) {
+    if (searchedUser && !users.find(user => user.id === searchedUser.id)) {
       setUsers([...users, searchedUser]);
       setNameOrEmail("");
       searchUser("");
@@ -56,7 +56,7 @@ const AddMemberModal: React.FC<Props> = ({
   const removeUser = useCallback(
     (userId: string) => {
       changeSearchedUser(undefined);
-      setUsers(users => users.filter(user => user.userId !== userId));
+      setUsers(users => users.filter(user => user.id !== userId));
     },
     [setUsers, changeSearchedUser],
   );
@@ -69,7 +69,7 @@ const AddMemberModal: React.FC<Props> = ({
   }, [setUsers, setNameOrEmail, changeSearchedUser, close]);
 
   const add = useCallback(async () => {
-    await addMembersToTeam?.(users.map(({ userId }) => userId));
+    await addMembersToTeam?.(users.map(({ id }) => id));
     changeSearchedUser(undefined);
     setUsers([]);
     setNameOrEmail("");
@@ -107,15 +107,15 @@ const AddMemberModal: React.FC<Props> = ({
         onChange={handleChange}
       />
       <UserList>
-        {users.map(({ userId, userName, userEmail }) => (
-          <UserListItem key={userId}>
+        {users.map(({ id, name, email }) => (
+          <UserListItem key={id}>
             <UserIdentity>
-              <Text size="m">{userName}</Text>
+              <Text size="m">{name}</Text>
               <Text size="s" color={theme.infoBox.weakText}>
-                {userEmail}
+                {email}
               </Text>
             </UserIdentity>
-            <RemoveIcon icon="cancel" onClick={() => removeUser(userId)} />
+            <RemoveIcon icon="cancel" onClick={() => removeUser(id)} />
           </UserListItem>
         ))}
       </UserList>

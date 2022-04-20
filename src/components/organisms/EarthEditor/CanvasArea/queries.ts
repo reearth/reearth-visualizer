@@ -163,7 +163,7 @@ const fragments = gql`
 `;
 
 export const GET_LAYERS = gql`
-  query GetLayers($sceneId: ID!, $lang: String) {
+  query GetLayers($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -179,7 +179,7 @@ export const GET_LAYERS = gql`
 `;
 
 export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!, $lang: String) {
+  query GetEarthWidgets($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -285,7 +285,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
 `;
 
 export const MOVE_INFOBOX_FIELD = gql`
-  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: String) {
+  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: Lang) {
     moveInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId, index: $index }) {
       layer {
         id
@@ -298,7 +298,7 @@ export const MOVE_INFOBOX_FIELD = gql`
 `;
 
 export const REMOVE_INFOBOX_FIELD = gql`
-  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: String) {
+  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: Lang) {
     removeInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId }) {
       layer {
         id
@@ -311,7 +311,7 @@ export const REMOVE_INFOBOX_FIELD = gql`
 `;
 
 export const GET_BLOCKS = gql`
-  query getBlocks($sceneId: ID!, $lang: String) {
+  query getBlocks($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -337,10 +337,10 @@ export const GET_BLOCKS = gql`
 export const ADD_INFOBOX_FIELD = gql`
   mutation addInfoboxField(
     $layerId: ID!
-    $pluginId: PluginID!
-    $extensionId: PluginExtensionID!
+    $pluginId: ID!
+    $extensionId: ID!
     $index: Int
-    $lang: String
+    $lang: Lang
   ) {
     addInfoboxField(
       input: { layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index }

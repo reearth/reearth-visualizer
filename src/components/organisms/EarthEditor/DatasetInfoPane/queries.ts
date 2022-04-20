@@ -50,10 +50,10 @@ export const GET_INSTALLED_PLUGINS = gql`
 export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
   mutation addLayerGroupFromDatasetSchema(
     $parentLayerId: ID!
-    $pluginId: PluginID
-    $extensionId: PluginExtensionID
+    $pluginId: ID
+    $extensionId: ID
     $datasetSchemaId: ID
-    $lang: String
+    $lang: Lang
   ) {
     addLayerGroup(
       input: {

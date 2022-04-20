@@ -19,13 +19,7 @@ generates:
         Cursor: string
         URL: string
         Lang: string
-        TranslatedString: '{ [lang in string]?: string } | null'
-        PluginID: string
-        PluginExtensionID: string
-        PropertySchemaID: string
-        PropertySchemaGroupID: string
-        PropertySchemaFieldID: string
-        DatasetSchemaFieldID: string
+        TranslatedString: "{ [lang in string]?: string } | null"
   ./src/gql/graphql.schema.json:
     plugins:
       - introspection
