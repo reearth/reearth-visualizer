@@ -1,5 +1,22 @@
 import { gql } from "@apollo/client";
 
+// import { layerFragment } from "@reearth/gql/fragments";
+
+export const GET_INSTALLED_PLUGINS = gql`
+  query GetScenePluginsForDatasetInfoPane($projectId: ID!) {
+    scene(projectId: $projectId) {
+      id
+      plugins {
+        pluginId
+        plugin {
+          id
+          ...PluginFragment
+        }
+      }
+    }
+  }
+`;
+
 export const INSTALLABLE_PLUGINS = gql`
   query InstallablePlugins {
     installablePlugins {

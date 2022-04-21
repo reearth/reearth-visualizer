@@ -1,9 +1,9 @@
 {
   "schemaPath": "src/gql/graphql.schema.json",
   "documents": [
-    "src/**/queries.ts",
     "src/**/*.graphql",
-    "src/gql/fragments/*.ts"
+    "src/gql/fragments/*.ts",
+    "src/gql/queries/*.ts"
   ],
   "extensions": {
     "endpoints": {

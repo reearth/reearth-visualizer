@@ -1,8 +1,8 @@
 overwrite: true
 schema: http://localhost:8080/api/graphql
 documents:
-  - src/**/queries.ts
   - src/gql/fragments/*.ts
+  - src/gql/queries/*.ts
   - src/**/*.graphql
 generates:
   ./src/gql/graphql-client-api.tsx:

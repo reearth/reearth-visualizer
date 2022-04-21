@@ -97,7 +97,7 @@ overrides:
       node/no-unpublished-require: 'off'
       node/no-unpublished-import: 'off'
   - files:
-      - src/**/queries.ts
+      - src/gql/queries/*.ts
       - src/gql/fragments/*.ts
     plugins:
       - graphql

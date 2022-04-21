@@ -31,6 +31,29 @@ export const GET_SCENE_TAGS = gql`
   }
 `;
 
+export const GET_LAYER_TAGS = gql`
+  query getLayerTags($layerId: ID!) {
+    layer(id: $layerId) {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_TAG_GROUP = gql`
   mutation createTagGroup($sceneId: ID!, $label: String!) {
     createTagGroup(input: { sceneId: $sceneId, label: $label }) {
@@ -136,6 +159,7 @@ export const ATTACH_TAG_TO_LAYER = gql`
     }
   }
 `;
+
 export const DETACH_TAG_FROM_LAYER = gql`
   mutation detachTagFromLayer($tagId: ID!, $layerId: ID!) {
     detachTagFromLayer(input: { tagID: $tagId, layerID: $layerId }) {
@@ -192,29 +216,6 @@ export const UPDATE_TAG = gql`
       tag {
         id
         label
-      }
-    }
-  }
-`;
-
-export const GET_LAYER_TAGS = gql`
-  query getLayerTags($layerId: ID!) {
-    layer(id: $layerId) {
-      id
-      tags {
-        tagId
-        tag {
-          id
-          label
-        }
-        ... on LayerTagGroup {
-          children {
-            tag {
-              id
-              label
-            }
-          }
-        }
       }
     }
   }

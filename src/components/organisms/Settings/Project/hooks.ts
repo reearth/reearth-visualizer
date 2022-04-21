@@ -50,7 +50,6 @@ export default ({ projectId }: Params) => {
     [rawProject],
   );
 
-  // Project Updating
   const [updateProjectMutation] = useUpdateProjectMutation();
   const [archiveProjectMutation] = useArchiveProjectMutation();
   const [deleteProjectMutation] = useDeleteProjectMutation({
@@ -75,8 +74,12 @@ export default ({ projectId }: Params) => {
 
   const updateProjectImageUrl = useCallback(
     (imageUrl?: string) => {
-      if (!projectId || !imageUrl) return;
-      updateProjectMutation({ variables: { projectId, imageUrl } });
+      if (!projectId) return;
+      if (!imageUrl) {
+        updateProjectMutation({ variables: { projectId, deleteImageUrl: true } });
+      } else {
+        updateProjectMutation({ variables: { projectId, imageUrl } });
+      }
     },
     [projectId, updateProjectMutation],
   );

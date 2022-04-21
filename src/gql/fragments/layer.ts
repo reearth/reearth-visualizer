@@ -1,6 +1,240 @@
 import { gql } from "@apollo/client";
 
-import infoboxFragment from "./infobox";
+import { propertyFragment, infoboxFragment } from "@reearth/gql/fragments";
+
+export const LayerSystemFragments = gql`
+  fragment LayerSystemLayer on Layer {
+    id
+    name
+    isVisible
+    pluginId
+    extensionId
+    ... on LayerGroup {
+      linkedDatasetSchemaId
+      layers {
+        id
+      }
+    }
+    ... on LayerItem {
+      linkedDatasetId
+    }
+  }
+
+  fragment LayerSystemLayer1 on Layer {
+    id
+    ...LayerSystemLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...LayerSystemLayer
+      }
+    }
+  }
+
+  fragment LayerSystemLayer2 on Layer {
+    id
+    ...LayerSystemLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...LayerSystemLayer1
+      }
+    }
+  }
+
+  fragment LayerSystemLayer3 on Layer {
+    id
+    ...LayerSystemLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...LayerSystemLayer2
+      }
+    }
+  }
+
+  fragment LayerSystemLayer4 on Layer {
+    id
+    ...LayerSystemLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...LayerSystemLayer3
+      }
+    }
+  }
+
+  fragment LayerSystemLayer5 on Layer {
+    id
+    ...LayerSystemLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...LayerSystemLayer4
+      }
+    }
+  }
+`;
+
+export const EarthLayerFragments = gql`
+  fragment EarthLayerItem on LayerItem {
+    id
+    linkedDatasetId
+    scenePlugin {
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+    merged {
+      parentId
+      property {
+        ...MergedPropertyFragmentWithoutSchema
+      }
+      infobox {
+        property {
+          ...MergedPropertyFragmentWithoutSchema
+        }
+        fields {
+          originalId
+          pluginId
+          extensionId
+          property {
+            ...MergedPropertyFragmentWithoutSchema
+          }
+          scenePlugin {
+            property {
+              id
+              ...PropertyFragment
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fragment EarthLayer on Layer {
+    id
+    name
+    isVisible
+    pluginId
+    extensionId
+    scenePlugin {
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+    propertyId
+    property {
+      id
+      ...PropertyFragmentWithoutSchema
+    }
+    tags {
+      tagId
+      tag {
+        id
+        label
+      }
+      ... on LayerTagGroup {
+        children {
+          tagId
+          tag {
+            id
+            label
+          }
+        }
+      }
+    }
+    infobox {
+      propertyId
+      property {
+        id
+        ...PropertyFragmentWithoutSchema
+      }
+      fields {
+        id
+        pluginId
+        extensionId
+        propertyId
+        scenePlugin {
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        property {
+          id
+          ...PropertyFragmentWithoutSchema
+        }
+      }
+    }
+    ... on LayerGroup {
+      linkedDatasetSchemaId
+      layers {
+        id
+      }
+    }
+    ...EarthLayerItem
+  }
+
+  fragment EarthLayer1 on Layer {
+    id
+    ...EarthLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...EarthLayer
+      }
+    }
+  }
+
+  fragment EarthLayer2 on Layer {
+    id
+    ...EarthLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...EarthLayer1
+      }
+    }
+  }
+
+  fragment EarthLayer3 on Layer {
+    id
+    ...EarthLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...EarthLayer2
+      }
+    }
+  }
+
+  fragment EarthLayer4 on Layer {
+    id
+    ...EarthLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...EarthLayer3
+      }
+    }
+  }
+
+  fragment EarthLayer5 on Layer {
+    id
+    ...EarthLayer
+    ... on LayerGroup {
+      layers {
+        id
+        ...EarthLayer4
+      }
+    }
+  }
+
+  ${propertyFragment}
+`;
 
 export const layerFragment = gql`
   fragment LayerFragment on Layer {
@@ -169,5 +403,3 @@ export const layerFragment = gql`
 
   ${infoboxFragment}
 `;
-
-export default layerFragment;
