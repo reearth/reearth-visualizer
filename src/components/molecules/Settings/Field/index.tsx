@@ -7,18 +7,28 @@ import { metricsSizes } from "@reearth/theme/metrics";
 type Props = {
   className?: string;
   header?: React.ReactNode;
+  subHeader?: React.ReactNode;
   action?: React.ReactNode;
   secondaryAction?: React.ReactNode;
   body?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-const Field: React.FC<Props> = ({ className, header, action, secondaryAction, body, children }) => {
+const Field: React.FC<Props> = ({
+  className,
+  header,
+  subHeader,
+  action,
+  secondaryAction,
+  body,
+  children,
+}) => {
   return (
     <Wrapper className={className}>
       {header && (
         <Header>
           <Text size="m">{header}</Text>
+          {subHeader && <Text size="xs">{subHeader}</Text>}
         </Header>
       )}
       <Content>{body ? <StyledText size="s">{body}</StyledText> : children && children}</Content>

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, PropsWithChildren } from "react";
 
+import Avatar from "@reearth/components/atoms/Avatar";
 import Icon from "@reearth/components/atoms/Icon";
 import TextBox from "@reearth/components/atoms/TextBox";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
@@ -11,6 +12,7 @@ import { metricsSizes } from "@reearth/theme/metrics";
 export type Props<T extends string = string> = {
   className?: string;
   title?: React.ReactNode;
+  subtitle?: React.ReactNode;
   body?: T;
   dropdown?: boolean;
   isImage?: boolean;
@@ -24,6 +26,7 @@ export type Props<T extends string = string> = {
   currentItem?: T;
   imageSrc?: string;
   icon?: string;
+  avatar?: string;
   iHeight?: string;
   multilineTextBox?: boolean;
   disabled?: boolean;
@@ -35,6 +38,7 @@ export type Props<T extends string = string> = {
 export default function EditableItem<T extends string = string>({
   className,
   title,
+  subtitle,
   body,
   dropdown,
   isImage,
@@ -45,6 +49,7 @@ export default function EditableItem<T extends string = string>({
   icon,
   iHeight,
   disabled,
+  avatar,
   onSubmit,
   onEditStart,
   onEditCancel,
@@ -78,6 +83,7 @@ export default function EditableItem<T extends string = string>({
       <Field
         className={className}
         header={title}
+        subHeader={subtitle}
         action={
           <ButtonWrapper>
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
@@ -92,6 +98,7 @@ export default function EditableItem<T extends string = string>({
       <Field
         className={className}
         header={title}
+        subHeader={subtitle}
         action={
           <ButtonWrapper>
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
@@ -111,9 +118,11 @@ export default function EditableItem<T extends string = string>({
     <Field
       className={className}
       header={title}
+      subHeader={subtitle}
       body={body}
       action={
-        !disabled && (
+        !disabled &&
+        !avatar && (
           <ButtonWrapper>
             {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.(undefined)} />}
             <StyledIcon icon="edit" size={20} onClick={startEdit} />
@@ -124,6 +133,8 @@ export default function EditableItem<T extends string = string>({
         <div>
           <Image src={imageSrc || defaultProjectImage} height={iHeight} />
         </div>
+      ) : avatar ? (
+        <Avatar size="large" innerText={avatar} />
       ) : (
         icon && (
           <div>

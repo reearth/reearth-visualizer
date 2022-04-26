@@ -25,6 +25,7 @@ const darkTheme: Theme = {
     link: colors.dark.functional.link,
     brandBlue: colors.brand.bg[1],
     brandRed: colors.brand.bg[2],
+    avatarBg: colors.dark.bg[5],
   },
   dashboard: {
     bg: colors.dark.bg[2],

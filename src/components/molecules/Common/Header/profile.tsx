@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { useIntl } from "react-intl";
 
+import Avatar from "@reearth/components/atoms/Avatar";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
-import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import {
   MenuList,
@@ -31,9 +31,7 @@ const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, curre
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar>
-          <StyledIcon icon="avatar" size={28} />
-        </Avatar>
+        <Avatar color={theme.main.avatarBg} innerText={user.name} />
       </LabelLeft>
       <LabelRight>
         <LabelUserName size="m" weight="bold" color={theme.main.strongText}>
@@ -138,21 +136,6 @@ const LabelTeamName = styled(Text)`
 
 const LabelUserName = styled(Text)`
   margin-bottom: 2px;
-`;
-
-// need to setup avatars with users
-const Avatar = styled.div<{ avatar?: string }>`
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: ${({ theme, avatar }) => (avatar ? `url(${avatar});` : theme.main.highlighted)};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledIcon = styled(Icon)`
-  padding: 0;
 `;
 
 export default HeaderProfile;

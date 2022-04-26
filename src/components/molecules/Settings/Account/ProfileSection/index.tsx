@@ -18,9 +18,10 @@ const ProfileSection: React.FC<Props> = ({ username, updateName }) => {
       <Section title={intl.formatMessage({ defaultMessage: "Profile" })}>
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Profile picture" })}
-          icon="avatar"
+          avatar={username}
           iHeight={"80px"}
         />
+
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Name" })}
           body={username}

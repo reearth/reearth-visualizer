@@ -1,7 +1,7 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-// Components
+import Avatar from "@reearth/components/atoms/Avatar";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
@@ -40,20 +40,10 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
           })}
         </Text>
       ) : (
-        <Flex>
-          <Text
-            size="m"
-            color={theme.main.text}
-            otherProperties={{ margin: `${metricsSizes["s"]}px 0` }}>
-            {intl.formatMessage({ defaultMessage: "Members:" })}
-          </Text>
+        <Flex align="center" justify="flex-start">
           <Flex wrap="wrap">
             {teamMembers.map(member => (
-              <StyledItem key={member.userId}>
-                <Text size="m" color={theme.main.text}>
-                  {member?.user?.name}
-                </Text>
-              </StyledItem>
+              <StyleAvatar key={member.userId} innerText={member.user?.name} />
             ))}
           </Flex>
         </Flex>
@@ -75,8 +65,8 @@ const Wrapper = styled(Flex)`
   }
 `;
 
-const StyledItem = styled.div`
-  margin: ${metricsSizes["s"]}px;
+const StyleAvatar = styled(Avatar)`
+  margin-right: ${metricsSizes["s"]}px;
 `;
 
 export default WorkspaceCell;

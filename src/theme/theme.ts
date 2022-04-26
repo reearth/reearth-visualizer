@@ -38,6 +38,7 @@ export type Theme = {
     link: string;
     brandBlue: string;
     brandRed: string;
+    avatarBg: string;
   };
   dashboard: {
     bg: string;
