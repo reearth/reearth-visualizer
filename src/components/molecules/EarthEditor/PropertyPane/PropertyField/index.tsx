@@ -253,6 +253,7 @@ const StyledPropertyTitleWrapper = styled.div`
 const StyledPropertyFieldWrapper = styled.div`
   flex: 2;
   width: 100%;
+  min-width: 0;
 `;
 
 export default PropertyField;
