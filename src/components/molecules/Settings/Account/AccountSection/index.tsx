@@ -8,7 +8,7 @@ import PasswordModal, {
 import Field from "@reearth/components/molecules/Settings/Field";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
-import { localesWithLabel } from "@reearth/locale";
+import { localesWithLabel } from "@reearth/i18n/legacy";
 import { styled } from "@reearth/theme";
 
 export type Theme = "dark" | "light" | "default";

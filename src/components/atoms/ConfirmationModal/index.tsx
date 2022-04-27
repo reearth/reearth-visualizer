@@ -1,5 +1,6 @@
 import React from "react";
-import { useIntl } from "react-intl";
+
+import { useTranslation } from "@reearth/i18n";
 
 import Button from "../Button";
 import Modal from "../Modal";
@@ -23,7 +24,7 @@ const ConfirmationModal: React.FC<Props> = ({
   isOpen,
   onClose,
 }) => {
-  const intl = useIntl();
+  const { t } = useTranslation();
 
   const handleProceed = () => {
     onProceed();
@@ -37,19 +38,9 @@ const ConfirmationModal: React.FC<Props> = ({
       size="sm"
       onClose={onClose}
       button1={
-        <Button
-          text={buttonAction || intl.formatMessage({ defaultMessage: "Continue" })}
-          onClick={handleProceed}
-          buttonType="danger"
-        />
+        <Button text={buttonAction || t("Continue")} onClick={handleProceed} buttonType="danger" />
       }
-      button2={
-        <Button
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={onCancel ?? onClose}
-          buttonType="secondary"
-        />
-      }>
+      button2={<Button text={t("Cancel")} onClick={onCancel ?? onClose} buttonType="secondary" />}>
       {body}
     </Modal>
   );

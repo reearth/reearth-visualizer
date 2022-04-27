@@ -2,7 +2,7 @@ import { MockedProvider as MockedGqlProvider, MockedResponse } from "@apollo/cli
 import { render as rtlRender } from "@testing-library/react";
 import React from "react";
 
-import { Provider as IntlProvider } from "../locale";
+import { Provider as I18nProvider } from "../i18n";
 import { Provider as ThemeProvider } from "../theme";
 
 const render = (
@@ -14,7 +14,7 @@ const render = (
     return (
       <MockedGqlProvider mocks={queryMocks} addTypename={false}>
         <ThemeProvider>
-          <IntlProvider>{children}</IntlProvider>
+          <I18nProvider>{children}</I18nProvider>
         </ThemeProvider>
       </MockedGqlProvider>
     );

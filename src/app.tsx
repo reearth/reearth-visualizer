@@ -16,7 +16,7 @@ import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList"
 import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
-import { Provider as IntlProvider } from "@reearth/locale";
+import { Provider as I18nProvider } from "@reearth/i18n";
 
 import { Provider as Auth0Provider } from "./auth";
 import RootPage from "./components/pages/Authentication/RootPage";
@@ -44,7 +44,7 @@ const App: React.FC = () => {
     <Auth0Provider>
       <GqlProvider>
         <ThemeProvider>
-          <IntlProvider>
+          <I18nProvider>
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
               <StyledRouter>
@@ -70,7 +70,7 @@ const App: React.FC = () => {
                 <NotFound default />
               </StyledRouter>
             </Suspense>
-          </IntlProvider>
+          </I18nProvider>
         </ThemeProvider>
       </GqlProvider>
     </Auth0Provider>

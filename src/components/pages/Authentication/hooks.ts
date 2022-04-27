@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
-import { intl } from "@reearth/locale";
+import { intl } from "@reearth/i18n/legacy";
 import { useTeam, useNotification } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)

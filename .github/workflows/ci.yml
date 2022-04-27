@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: "14.x"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Get yarn cache directory path
@@ -33,6 +33,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
+      - name: Check translations
+        run: yarn run i18n --fail-on-update
   slack-notification:
     if: always()
     name: Slack Notification

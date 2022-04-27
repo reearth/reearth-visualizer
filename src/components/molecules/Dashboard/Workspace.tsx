@@ -1,6 +1,5 @@
 import { Link } from "@reach/router";
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 import { useMedia } from "react-use";
 
 import Avatar from "@reearth/components/atoms/Avatar";
@@ -9,6 +8,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types";
+import { useTranslation } from "@reearth/i18n";
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -20,7 +20,7 @@ export interface Props {
 }
 
 const Workspace: React.FC<Props> = ({ className, team }) => {
-  const intl = useIntl();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
 
@@ -37,7 +37,7 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
       <Content direction="column" justify="space-between">
         <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
           {team?.name}
-          {intl.formatMessage({ defaultMessage: "'s workspace" })}
+          {t("'s workspace")}
         </Text>
         <Flex>
           <Flex flex={4}>

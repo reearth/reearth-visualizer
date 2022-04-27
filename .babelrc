@@ -13,10 +13,8 @@
   ],
   "plugins": [
     "@emotion",
-    "@babel/proposal-optional-chaining",
-    "@babel/proposal-nullish-coalescing-operator",
     "@babel/plugin-transform-typescript",
-    "react-intl-auto"
+    "react-intl-auto" // delete when migration to i18next is complete
   ],
   "env": {
     "test": {
