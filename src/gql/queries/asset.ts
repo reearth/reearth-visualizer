@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const ASSETS = gql`
-  query Assets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
+export const GET_ASSETS = gql`
+  query GetAssets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
     assets(teamId: $teamId, keyword: $keyword, sort: $sort, pagination: $pagination) {
       edges {
         cursor
