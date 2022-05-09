@@ -4,8 +4,8 @@ import { useIntl } from "react-intl";
 
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
-  useInstallablePluginsQuery,
-  useInstalledPluginsQuery,
+  useGetInstallablePluginsQuery,
+  useGetInstalledPluginsQuery,
   useUninstallPluginMutation,
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
@@ -18,7 +18,7 @@ export default (projectId: string) => {
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
-  const { loading: pluginLoading } = useInstallablePluginsQuery();
+  const { loading: pluginLoading } = useGetInstallablePluginsQuery();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
 
@@ -26,7 +26,7 @@ export default (projectId: string) => {
     data: rawSceneData,
     loading: sceneLoading,
     // refetch: refetchInstalledPlugins,
-  } = useInstalledPluginsQuery({
+  } = useGetInstalledPluginsQuery({
     variables: { projectId: projectId ?? "", lang: intl.locale },
     skip: !projectId,
   });

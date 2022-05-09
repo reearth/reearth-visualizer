@@ -6,7 +6,7 @@ import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 import {
   useMeQuery,
-  useProjectQuery,
+  useGetProjectsQuery,
   useCreateTeamMutation,
   PublishmentStatus,
   useCreateProjectMutation,
@@ -99,7 +99,7 @@ export default (teamId?: string) => {
     [refetch],
   );
 
-  const { data: projectData } = useProjectQuery({
+  const { data: projectData } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

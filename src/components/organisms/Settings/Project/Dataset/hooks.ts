@@ -3,15 +3,15 @@ import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  DatasetSchemasQuery,
+  GetDatasetSchemasQuery,
   useSceneQuery,
-  useDatasetSchemasQuery,
+  useGetDatasetSchemasQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
+type Nodes = NonNullable<GetDatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
@@ -28,7 +28,7 @@ export default (projectId: string) => {
 
   const sceneId = sceneData?.scene?.id;
 
-  const { data } = useDatasetSchemasQuery({
+  const { data } = useGetDatasetSchemasQuery({
     variables: { projectId: projectId ?? "", first: 100 },
     skip: !projectId,
   });

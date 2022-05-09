@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import {
-  useProjectQuery,
+  useGetProjectsQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
@@ -32,7 +32,7 @@ export default ({ projectId }: Params) => {
 
   const { data: profileData } = useProfileQuery();
 
-  const { data } = useProjectQuery({
+  const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

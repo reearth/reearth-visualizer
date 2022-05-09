@@ -40,7 +40,7 @@ export const ADD_CLUSTER = gql`
 `;
 
 export const REMOVE_CLUSTER = gql`
-  mutation removeCluster($sceneId: ID!, $clusterId: ID!) {
+  mutation RemoveCluster($sceneId: ID!, $clusterId: ID!) {
     removeCluster(input: { sceneId: $sceneId, clusterId: $clusterId }) {
       scene {
         id

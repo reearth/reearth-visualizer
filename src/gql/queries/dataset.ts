@@ -32,8 +32,14 @@ export const GET_DATASETS = gql`
   }
 `;
 
-export const DATASET_SCHEMAS = gql`
-  query datasetSchemas($projectId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+export const GET_DATASET_SCHEMAS = gql`
+  query GetDatasetSchemas(
+    $projectId: ID!
+    $first: Int
+    $last: Int
+    $after: Cursor
+    $before: Cursor
+  ) {
     scene(projectId: $projectId) {
       id
       datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
@@ -82,6 +88,25 @@ export const GET_LINKABLE_DATASETS = gql`
   }
 
   ${layerFragment}
+`;
+
+export const IMPORT_DATASET = gql`
+  mutation ImportDataset($file: Upload!, $sceneId: ID!, $datasetSchemaId: ID) {
+    importDataset(input: { file: $file, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId }) {
+      datasetSchema {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const REMOVE_DATASET = gql`
+  mutation RemoveDataset($schemaId: ID!, $force: Boolean) {
+    removeDatasetSchema(input: { schemaId: $schemaId, force: $force }) {
+      schemaId
+    }
+  }
 `;
 
 export const LINK_DATASET = gql`
@@ -166,8 +191,8 @@ export const SYNC_DATASET = gql`
   }
 `;
 
-export const IMPORT_GOOGLE_SHEET_DATASET = gql`
-  mutation importGoogleSheetDataset(
+export const IMPORT_DATASET_FROM_GOOGLE_SHEET = gql`
+  mutation ImportDatasetFromGoogleSheet(
     $accessToken: String!
     $fileId: String!
     $sheetName: String!
@@ -187,33 +212,6 @@ export const IMPORT_GOOGLE_SHEET_DATASET = gql`
         id
         name
       }
-    }
-  }
-`;
-
-export const IMPORT_DATASET = gql`
-  mutation importDataset($file: Upload!, $sceneId: ID!, $datasetSchemaId: ID) {
-    importDataset(input: { file: $file, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId }) {
-      datasetSchema {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const REMOVE_DATASET = gql`
-  mutation RemoveDataset($schemaId: ID!, $force: Boolean) {
-    removeDatasetSchema(input: { schemaId: $schemaId, force: $force }) {
-      schemaId
-    }
-  }
-`;
-
-export const REMOVE_DATASET_SCHEMA = gql`
-  mutation removeDatasetSchema($schemaId: ID!) {
-    removeDatasetSchema(input: { schemaId: $schemaId }) {
-      schemaId
     }
   }
 `;

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  useProjectQuery,
+  useGetProjectsQuery,
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
@@ -20,7 +20,7 @@ export default ({ projectId }: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const { data } = useProjectQuery({
+  const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

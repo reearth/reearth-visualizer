@@ -6,7 +6,7 @@ import {
   useMeQuery,
   useSceneQuery,
   useTeamsQuery,
-  useProjectQuery,
+  useGetProjectsQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
@@ -59,7 +59,7 @@ export default (params: Params) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam, setTeam, teams, teamsData?.me]);
 
-  const { data } = useProjectQuery({
+  const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

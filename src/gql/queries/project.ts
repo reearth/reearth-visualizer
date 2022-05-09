@@ -29,8 +29,8 @@ export const GET_TEAM_PROJECTS = gql`
   }
 `;
 
-export const PROJECT = gql`
-  query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+export const GET_PROJECTS = gql`
+  query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
     projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
       nodes {
         id
@@ -62,46 +62,44 @@ export const CHECK_PROJECT_ALIAS = gql`
     }
   }
 `;
-export const PUBLISH_PROJECT = gql`
-  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
-    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
-      project {
-        id
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
 
-export const UPDATE_PROJECT_BASIC_AUTH = gql`
-  mutation updateProjectBasicAuth(
-    $projectId: ID!
-    $isBasicAuthActive: Boolean
-    $basicAuthUsername: String
-    $basicAuthPassword: String
+export const CREATE_PROJECT = gql`
+  mutation CreateProject(
+    $teamId: ID!
+    $visualizer: Visualizer!
+    $name: String!
+    $description: String!
+    $imageUrl: URL
   ) {
-    updateProject(
+    createProject(
       input: {
-        projectId: $projectId
-        isBasicAuthActive: $isBasicAuthActive
-        basicAuthUsername: $basicAuthUsername
-        basicAuthPassword: $basicAuthPassword
+        teamId: $teamId
+        visualizer: $visualizer
+        name: $name
+        description: $description
+        imageUrl: $imageUrl
       }
     ) {
       project {
         id
         name
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
+        description
+        imageUrl
       }
     }
   }
 `;
 
+export const DELETE_PROJECT = gql`
+  mutation DeleteProject($projectId: ID!) {
+    deleteProject(input: { projectId: $projectId }) {
+      projectId
+    }
+  }
+`;
+
 export const UPDATE_PROJECT = gql`
-  mutation updateProject(
+  mutation UpdateProject(
     $projectId: ID!
     $name: String
     $description: String
@@ -144,8 +142,58 @@ export const UPDATE_PROJECT = gql`
   }
 `;
 
+export const UPDATE_PROJECT_BASIC_AUTH = gql`
+  mutation UpdateProjectBasicAuth(
+    $projectId: ID!
+    $isBasicAuthActive: Boolean
+    $basicAuthUsername: String
+    $basicAuthPassword: String
+  ) {
+    updateProject(
+      input: {
+        projectId: $projectId
+        isBasicAuthActive: $isBasicAuthActive
+        basicAuthUsername: $basicAuthUsername
+        basicAuthPassword: $basicAuthPassword
+      }
+    ) {
+      project {
+        id
+        name
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
+      }
+    }
+  }
+`;
+
+export const UPDATE_PROJECT_ALIAS = gql`
+  mutation UpdateProjectAlias($projectId: ID!, $alias: String!) {
+    updateProject(input: { projectId: $projectId, alias: $alias }) {
+      project {
+        id
+        name
+        alias
+      }
+    }
+  }
+`;
+
+export const PUBLISH_PROJECT = gql`
+  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
+    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
+      project {
+        id
+        alias
+        publishmentStatus
+      }
+    }
+  }
+`;
+
 export const ARCHIVE_PROJECT = gql`
-  mutation archiveProject($projectId: ID!, $archived: Boolean!) {
+  mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {
     updateProject(input: { projectId: $projectId, archived: $archived }) {
       project {
         id
@@ -161,53 +209,6 @@ export const ARCHIVE_PROJECT = gql`
         publicImage
         alias
         publishmentStatus
-      }
-    }
-  }
-`;
-
-export const CREATE_PROJECT = gql`
-  mutation CreateProject(
-    $teamId: ID!
-    $visualizer: Visualizer!
-    $name: String!
-    $description: String!
-    $imageUrl: URL
-  ) {
-    createProject(
-      input: {
-        teamId: $teamId
-        visualizer: $visualizer
-        name: $name
-        description: $description
-        imageUrl: $imageUrl
-      }
-    ) {
-      project {
-        id
-        name
-        description
-        imageUrl
-      }
-    }
-  }
-`;
-
-export const DELETE_PROJECT = gql`
-  mutation deleteProject($projectId: ID!) {
-    deleteProject(input: { projectId: $projectId }) {
-      projectId
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_ALIAS = gql`
-  mutation updateProjectAlias($projectId: ID!, $alias: String!) {
-    updateProject(input: { projectId: $projectId, alias: $alias }) {
-      project {
-        id
-        name
-        alias
       }
     }
   }
