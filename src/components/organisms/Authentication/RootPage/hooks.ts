@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
-import { useTeamsQuery } from "@reearth/gql";
+import { useGetTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
@@ -17,7 +17,7 @@ export default () => {
   const [currentTeam, setTeam] = useTeam();
   const [, setNotification] = useNotification();
 
-  const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
+  const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   const verifySignup = useCallback(

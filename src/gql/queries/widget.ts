@@ -129,7 +129,7 @@ export const GET_EARTH_WIDGETS = gql`
 `;
 
 export const ADD_WIDGET = gql`
-  mutation addWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
+  mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
     addWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
       scene {
         id
@@ -156,7 +156,7 @@ export const ADD_WIDGET = gql`
 `;
 
 export const REMOVE_WIDGET = gql`
-  mutation removeWidget($sceneId: ID!, $widgetId: ID!) {
+  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
     removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
       scene {
         id
@@ -173,7 +173,7 @@ export const REMOVE_WIDGET = gql`
 `;
 
 export const UPDATE_WIDGET = gql`
-  mutation updateWidget(
+  mutation UpdateWidget(
     $sceneId: ID!
     $widgetId: ID!
     $enabled: Boolean
@@ -209,7 +209,7 @@ export const UPDATE_WIDGET = gql`
 `;
 
 export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
-  mutation updateWidgetAlignSystem(
+  mutation UpdateWidgetAlignSystem(
     $sceneId: ID!
     $location: WidgetLocationInput!
     $align: WidgetAreaAlign

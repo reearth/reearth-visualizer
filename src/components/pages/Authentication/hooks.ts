@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCallback, useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
-import { useTeamsQuery } from "@reearth/gql";
+import { useGetTeamsQuery } from "@reearth/gql";
 import { intl } from "@reearth/i18n/legacy";
 import { useTeam, useNotification } from "@reearth/state";
 
@@ -17,7 +17,7 @@ export default () => {
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
-  const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
+  const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {

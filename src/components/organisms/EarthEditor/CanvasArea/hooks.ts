@@ -11,7 +11,7 @@ import {
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
-  useChangePropertyValueMutation,
+  useUpdatePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
   useUpdateWidgetMutation,
@@ -51,7 +51,7 @@ export default (isBuilt?: boolean) => {
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
-  const [changePropertyValue] = useChangePropertyValueMutation();
+  const [updatePropertyValue] = useUpdatePropertyValueMutation();
 
   const onBlockMove = useCallback(
     async (id: string, _fromIndex: number, toIndex: number) => {
@@ -141,7 +141,7 @@ export default (isBuilt?: boolean) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
-      await changePropertyValue({
+      await updatePropertyValue({
         variables: {
           propertyId,
           schemaGroupId,
@@ -152,7 +152,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [changePropertyValue, intl.locale, selectedLayer?.infobox?.blocks],
+    [updatePropertyValue, intl.locale, selectedLayer?.infobox?.blocks],
   );
 
   const onFovChange = useCallback(
@@ -197,7 +197,7 @@ export default (isBuilt?: boolean) => {
       // propertyKey will be "default.location" for example
       const [schemaGroupId, fieldId] = propertyKey.split(".", 2);
 
-      await changePropertyValue({
+      await updatePropertyValue({
         variables: {
           propertyId,
           schemaGroupId,
@@ -210,7 +210,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [changePropertyValue, layers],
+    [updatePropertyValue, layers],
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();

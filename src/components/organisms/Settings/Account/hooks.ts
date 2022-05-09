@@ -2,7 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { useUpdateMeMutation, useProfileQuery, Theme as GQLTheme } from "@reearth/gql";
+import { useUpdateMeMutation, useGetProfileQuery, Theme as GQLTheme } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
@@ -25,7 +25,7 @@ export default () => {
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
-  const { data: profileData } = useProfileQuery();
+  const { data: profileData } = useGetProfileQuery();
   const me = profileData?.me;
   const auths = profileData?.me?.auths;
   const hasPassword = auths?.includes("auth0") ?? false;

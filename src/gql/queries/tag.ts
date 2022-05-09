@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_SCENE_TAGS = gql`
-  query getSceneTags($sceneId: ID!) {
+  query GetSceneTags($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -32,7 +32,7 @@ export const GET_SCENE_TAGS = gql`
 `;
 
 export const GET_LAYER_TAGS = gql`
-  query getLayerTags($layerId: ID!) {
+  query GetLayerTags($layerId: ID!) {
     layer(id: $layerId) {
       id
       tags {
@@ -55,7 +55,7 @@ export const GET_LAYER_TAGS = gql`
 `;
 
 export const CREATE_TAG_GROUP = gql`
-  mutation createTagGroup($sceneId: ID!, $label: String!) {
+  mutation CreateTagGroup($sceneId: ID!, $label: String!) {
     createTagGroup(input: { sceneId: $sceneId, label: $label }) {
       tag {
         id
@@ -70,7 +70,7 @@ export const CREATE_TAG_GROUP = gql`
 `;
 
 export const CREATE_TAG_ITEM = gql`
-  mutation createTagItem(
+  mutation CreateTagItem(
     $sceneId: ID!
     $label: String!
     $parent: ID
@@ -105,8 +105,45 @@ export const CREATE_TAG_ITEM = gql`
   }
 `;
 
+export const REMOVE_TAG = gql`
+  mutation RemoveTag($tagId: ID!) {
+    removeTag(input: { tagID: $tagId }) {
+      tagId
+      updatedLayers {
+        id
+        tags {
+          tagId
+          tag {
+            id
+            label
+          }
+          ... on LayerTagGroup {
+            children {
+              tag {
+                id
+                label
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const UPDATE_TAG = gql`
+  mutation UpdateTag($tagId: ID!, $sceneId: ID!, $label: String) {
+    updateTag(input: { tagId: $tagId, sceneId: $sceneId, label: $label }) {
+      tag {
+        id
+        label
+      }
+    }
+  }
+`;
+
 export const ATTACH_TAG_ITEM_TO_GROUP = gql`
-  mutation attachTagItemToGroup($itemId: ID!, $groupId: ID!) {
+  mutation AttachTagItemToGroup($itemId: ID!, $groupId: ID!) {
     attachTagItemToGroup(input: { itemID: $itemId, groupID: $groupId }) {
       tag {
         id
@@ -121,7 +158,7 @@ export const ATTACH_TAG_ITEM_TO_GROUP = gql`
 `;
 
 export const DETACH_TAG_ITEM_FROM_GROUP = gql`
-  mutation detachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
+  mutation DetachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
     detachTagItemFromGroup(input: { itemID: $itemId, groupID: $groupId }) {
       tag {
         id
@@ -136,7 +173,7 @@ export const DETACH_TAG_ITEM_FROM_GROUP = gql`
 `;
 
 export const ATTACH_TAG_TO_LAYER = gql`
-  mutation attachTagToLayer($tagId: ID!, $layerId: ID!) {
+  mutation AttachTagToLayer($tagId: ID!, $layerId: ID!) {
     attachTagToLayer(input: { tagID: $tagId, layerID: $layerId }) {
       layer {
         id
@@ -161,7 +198,7 @@ export const ATTACH_TAG_TO_LAYER = gql`
 `;
 
 export const DETACH_TAG_FROM_LAYER = gql`
-  mutation detachTagFromLayer($tagId: ID!, $layerId: ID!) {
+  mutation DetachTagFromLayer($tagId: ID!, $layerId: ID!) {
     detachTagFromLayer(input: { tagID: $tagId, layerID: $layerId }) {
       layer {
         id
@@ -180,42 +217,6 @@ export const DETACH_TAG_FROM_LAYER = gql`
             }
           }
         }
-      }
-    }
-  }
-`;
-
-export const REMOVE_TAG = gql`
-  mutation removeTag($tagId: ID!) {
-    removeTag(input: { tagID: $tagId }) {
-      tagId
-      updatedLayers {
-        id
-        tags {
-          tagId
-          tag {
-            id
-            label
-          }
-          ... on LayerTagGroup {
-            children {
-              tag {
-                id
-                label
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-export const UPDATE_TAG = gql`
-  mutation updateTag($tagId: ID!, $sceneId: ID!, $label: String) {
-    updateTag(input: { tagId: $tagId, sceneId: $sceneId, label: $label }) {
-      tag {
-        id
-        label
       }
     }
   }

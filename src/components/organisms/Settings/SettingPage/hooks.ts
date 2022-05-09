@@ -3,9 +3,9 @@ import { useEffect, useCallback, useState } from "react";
 
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
-  useMeQuery,
-  useSceneQuery,
-  useTeamsQuery,
+  useGetMeQuery,
+  useGetProjectSceneQuery,
+  useGetTeamsQuery,
   useGetProjectsQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
@@ -22,7 +22,7 @@ export default (params: Params) => {
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
-  const { refetch } = useMeQuery();
+  const { refetch } = useGetMeQuery();
 
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
@@ -39,14 +39,14 @@ export default (params: Params) => {
     [navigate, refetch, currentTeam?.id],
   );
 
-  const { data: sceneData } = useSceneQuery({
+  const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
   const sceneId = sceneData?.scene?.id;
   const teamId = params.teamId ?? sceneData?.scene?.teamId;
 
-  const { data: teamsData } = useTeamsQuery();
+  const { data: teamsData } = useGetTeamsQuery();
   const user: User = {
     name: teamsData?.me?.name ?? "",
   };

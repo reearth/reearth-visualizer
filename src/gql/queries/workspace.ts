@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const TEAMS = gql`
+export const GET_TEAMS = gql`
   fragment Team on Team {
     id
     name
@@ -16,7 +16,7 @@ export const TEAMS = gql`
     personal
   }
 
-  query teams {
+  query GetTeams {
     me {
       id
       name
@@ -32,9 +32,9 @@ export const TEAMS = gql`
   }
 `;
 
-export const UPDATE_TEAM = gql`
-  mutation updateTeam($teamId: ID!, $name: String!) {
-    updateTeam(input: { teamId: $teamId, name: $name }) {
+export const CREATE_TEAM = gql`
+  mutation CreateTeam($name: String!) {
+    createTeam(input: { name: $name }) {
       team {
         id
         name
@@ -54,15 +54,36 @@ export const UPDATE_TEAM = gql`
 `;
 
 export const DELETE_TEAM = gql`
-  mutation deleteTeam($teamId: ID!) {
+  mutation DeleteTeam($teamId: ID!) {
     deleteTeam(input: { teamId: $teamId }) {
       teamId
     }
   }
 `;
 
+export const UPDATE_TEAM = gql`
+  mutation UpdateTeam($teamId: ID!, $name: String!) {
+    updateTeam(input: { teamId: $teamId, name: $name }) {
+      team {
+        id
+        name
+        members {
+          user {
+            id
+            name
+            email
+          }
+          userId
+          role
+        }
+        personal
+      }
+    }
+  }
+`;
+
 export const ADD_MEMBER_TO_TEAM = gql`
-  mutation addMemberToTeam($teamId: ID!, $userId: ID!, $role: Role!) {
+  mutation AddMemberToTeam($teamId: ID!, $userId: ID!, $role: Role!) {
     addMemberToTeam(input: { teamId: $teamId, userId: $userId, role: $role }) {
       team {
         id
@@ -82,29 +103,8 @@ export const ADD_MEMBER_TO_TEAM = gql`
   }
 `;
 
-export const UPDATE_MEMBER_OF_TEAM = gql`
-  mutation updateMemberOfTeam($teamId: ID!, $userId: ID!, $role: Role!) {
-    updateMemberOfTeam(input: { teamId: $teamId, userId: $userId, role: $role }) {
-      team {
-        id
-        name
-        members {
-          user {
-            id
-            name
-            email
-          }
-          userId
-          role
-        }
-        personal
-      }
-    }
-  }
-`;
-
 export const REMOVE_MEMBER_FROM_TEAM = gql`
-  mutation removeMemberFromTeam($teamId: ID!, $userId: ID!) {
+  mutation RemoveMemberFromTeam($teamId: ID!, $userId: ID!) {
     removeMemberFromTeam(input: { teamId: $teamId, userId: $userId }) {
       team {
         id
@@ -124,9 +124,9 @@ export const REMOVE_MEMBER_FROM_TEAM = gql`
   }
 `;
 
-export const CREATE_TEAM = gql`
-  mutation createTeam($name: String!) {
-    createTeam(input: { name: $name }) {
+export const UPDATE_MEMBER_OF_TEAM = gql`
+  mutation UpdateMemberOfTeam($teamId: ID!, $userId: ID!, $role: Role!) {
+    updateMemberOfTeam(input: { teamId: $teamId, userId: $userId, role: $role }) {
       team {
         id
         name

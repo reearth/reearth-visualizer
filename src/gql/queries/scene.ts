@@ -2,18 +2,8 @@ import { gql } from "@apollo/client";
 
 import { layerFragment } from "@reearth/gql/fragments";
 
-export const SCENE = gql`
-  query Scene($projectId: ID!) {
-    scene(projectId: $projectId) {
-      id
-      projectId
-      teamId
-    }
-  }
-`;
-
 export const GET_SCENE = gql`
-  query getScene($sceneId: ID!) {
+  query GetScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -23,12 +13,12 @@ export const GET_SCENE = gql`
   }
 `;
 
-export const CREATE_SCENE = gql`
-  mutation CreateScene($projectId: ID!) {
-    createScene(input: { projectId: $projectId }) {
-      scene {
-        id
-      }
+export const GET_PROJECT_SCENE = gql`
+  query GetProjectScene($projectId: ID!) {
+    scene(projectId: $projectId) {
+      id
+      projectId
+      teamId
     }
   }
 `;
@@ -55,8 +45,18 @@ export const GET_PRIMITIVES = gql`
   }
 `;
 
+export const CREATE_SCENE = gql`
+  mutation CreateScene($projectId: ID!) {
+    createScene(input: { projectId: $projectId }) {
+      scene {
+        id
+      }
+    }
+  }
+`;
+
 export const ADD_LAYER_ITEM_FROM_PRIMITIVE = gql`
-  mutation addLayerItemFromPrimitive(
+  mutation AddLayerItemFromPrimitive(
     $parentLayerId: ID!
     $pluginId: ID!
     $extensionId: ID!

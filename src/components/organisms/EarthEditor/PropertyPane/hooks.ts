@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 
 import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
 import {
-  useChangePropertyValueMutation,
+  useUpdatePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
   useCreateInfoboxMutation,
@@ -70,7 +70,7 @@ export default (mode: Mode) => {
     locale: intl.locale,
   });
 
-  const [changeValueMutation] = useChangePropertyValueMutation();
+  const [updatePropertyValue] = useUpdatePropertyValueMutation();
   const changeValue = useCallback(
     (
       propertyId: string,
@@ -82,7 +82,7 @@ export default (mode: Mode) => {
     ) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
-      changeValueMutation({
+      updatePropertyValue({
         variables: {
           propertyId,
           itemId,
@@ -94,7 +94,7 @@ export default (mode: Mode) => {
         },
       });
     },
-    [changeValueMutation, intl.locale],
+    [updatePropertyValue, intl.locale],
   );
 
   const [linkDataset] = useLinkDatasetMutation({
@@ -144,7 +144,7 @@ export default (mode: Mode) => {
 
   const removeFile = useCallback(
     (propertyId: string, schemaGroupId: string, itemId: string | undefined, fieldId: string) => {
-      changeValueMutation({
+      updatePropertyValue({
         variables: {
           propertyId,
           fieldId,
@@ -156,7 +156,7 @@ export default (mode: Mode) => {
         },
       });
     },
-    [changeValueMutation, intl.locale],
+    [updatePropertyValue, intl.locale],
   );
 
   const [removeFieldMutation] = useRemovePropertyFieldMutation();

@@ -8,7 +8,7 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-  useProfileQuery,
+  useGetProfileQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
 
@@ -30,7 +30,7 @@ export default ({ projectId }: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const { data: profileData } = useProfileQuery();
+  const { data: profileData } = useGetProfileQuery();
 
   const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },

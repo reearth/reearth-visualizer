@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 
 import {
   GetDatasetSchemasQuery,
-  useSceneQuery,
+  useGetProjectSceneQuery,
   useGetDatasetSchemasQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
@@ -21,7 +21,7 @@ export default (projectId: string) => {
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
-  const { data: sceneData } = useSceneQuery({
+  const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });

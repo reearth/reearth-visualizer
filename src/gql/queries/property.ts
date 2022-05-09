@@ -47,8 +47,38 @@ export const GET_SCENE_PROPERTY = gql`
   }
 `;
 
-export const CHANGE_PROPERTY_VALUE = gql`
-  mutation ChangePropertyValue(
+export const REMOVE_PROPERTY_FIELD = gql`
+  mutation RemovePropertyField(
+    $propertyId: ID!
+    $schemaGroupId: ID
+    $itemId: ID
+    $fieldId: ID!
+    $lang: Lang
+  ) {
+    removePropertyField(
+      input: {
+        propertyId: $propertyId
+        schemaGroupId: $schemaGroupId
+        itemId: $itemId
+        fieldId: $fieldId
+      }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+
+  ${layerFragment}
+`;
+
+export const UPDATE_PROPERTY_VALUE = gql`
+  mutation UpdatePropertyValue(
     $propertyId: ID!
     $schemaGroupId: ID
     $itemId: ID
@@ -65,6 +95,111 @@ export const CHANGE_PROPERTY_VALUE = gql`
         fieldId: $fieldId
         value: $value
         type: $type
+      }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+
+  ${layerFragment}
+`;
+
+export const ADD_PROPERTY_ITEM = gql`
+  mutation AddPropertyItem(
+    $propertyId: ID!
+    $schemaGroupId: ID!
+    $index: Int
+    $nameFieldValue: Any
+    $nameFieldType: ValueType
+    $lang: Lang
+  ) {
+    addPropertyItem(
+      input: {
+        propertyId: $propertyId
+        schemaGroupId: $schemaGroupId
+        index: $index
+        nameFieldValue: $nameFieldValue
+        nameFieldType: $nameFieldType
+      }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+
+  ${layerFragment}
+`;
+
+export const REMOVE_PROPERTY_ITEM = gql`
+  mutation RemovePropertyItem($propertyId: ID!, $schemaGroupId: ID!, $itemId: ID!, $lang: Lang) {
+    removePropertyItem(
+      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+
+  ${layerFragment}
+`;
+
+export const UPDATE_PROPERTY_ITEMS = gql`
+  mutation UpdatePropertyItems(
+    $propertyId: ID!
+    $schemaGroupId: ID!
+    $operations: [UpdatePropertyItemOperationInput!]!
+    $lang: Lang
+  ) {
+    updatePropertyItems(
+      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+
+  ${layerFragment}
+`;
+
+export const MOVE_PROPERTY_ITEM = gql`
+  mutation MovePropertyItem(
+    $propertyId: ID!
+    $schemaGroupId: ID!
+    $itemId: ID!
+    $index: Int!
+    $lang: Lang
+  ) {
+    movePropertyItem(
+      input: {
+        propertyId: $propertyId
+        schemaGroupId: $schemaGroupId
+        itemId: $itemId
+        index: $index
       }
     ) {
       property {
@@ -98,141 +233,6 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
         fieldId: $fieldId
         file: $file
       }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
-export const REMOVE_FIELD = gql`
-  mutation RemovePropertyField(
-    $propertyId: ID!
-    $schemaGroupId: ID
-    $itemId: ID
-    $fieldId: ID!
-    $lang: Lang
-  ) {
-    removePropertyField(
-      input: {
-        propertyId: $propertyId
-        schemaGroupId: $schemaGroupId
-        itemId: $itemId
-        fieldId: $fieldId
-      }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
-export const ADD_PROPERTY_ITEM = gql`
-  mutation addPropertyItem(
-    $propertyId: ID!
-    $schemaGroupId: ID!
-    $index: Int
-    $nameFieldValue: Any
-    $nameFieldType: ValueType
-    $lang: Lang
-  ) {
-    addPropertyItem(
-      input: {
-        propertyId: $propertyId
-        schemaGroupId: $schemaGroupId
-        index: $index
-        nameFieldValue: $nameFieldValue
-        nameFieldType: $nameFieldType
-      }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
-export const MOVE_PROPERTY_ITEM = gql`
-  mutation movePropertyItem(
-    $propertyId: ID!
-    $schemaGroupId: ID!
-    $itemId: ID!
-    $index: Int!
-    $lang: Lang
-  ) {
-    movePropertyItem(
-      input: {
-        propertyId: $propertyId
-        schemaGroupId: $schemaGroupId
-        itemId: $itemId
-        index: $index
-      }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
-export const REMOVE_PROPERTY_ITEM = gql`
-  mutation removePropertyItem($propertyId: ID!, $schemaGroupId: ID!, $itemId: ID!, $lang: Lang) {
-    removePropertyItem(
-      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
-export const UPDATE_PROPERTY_ITEMS = gql`
-  mutation updatePropertyItems(
-    $propertyId: ID!
-    $schemaGroupId: ID!
-    $operations: [UpdatePropertyItemOperationInput!]!
-    $lang: Lang
-  ) {
-    updatePropertyItems(
-      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations }
     ) {
       property {
         id
