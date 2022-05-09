@@ -62,7 +62,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
         </Layers>
         <Input
           value={colorState || ""}
-          placeholder={intl.formatMessage({ defaultMessage: "Not set" })}
+          placeholder={intl.formatMessage({ defaultMessage: "#RRGGBBAA" })}
           onChange={handleHexInput}
           onKeyPress={handleKeyPress}
           onBlur={handleHexSave}
