@@ -14,6 +14,10 @@ When you find a bug, please create a bug issue with the [bug report template](ht
 
 [Here](https://github.com/reearth/reearth/discussions) we have a dedicated area for discussions on all topics.
 
+## Contributing
+
+Before contributing, please make sure you look over the Re:Earth front-end style guide [here](https://github.com/reearth/guides/blob/main/frontend/style.md).
+
 ## License
 
 Distributed under the Apache-2.0 License. See [Apache License 2.0](LICENSE) for more information.
