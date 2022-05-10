@@ -123,7 +123,7 @@ export default (teamId?: string) => {
   }, [projectData?.projects.nodes]);
 
   const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["Project"],
+    refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
   const createProject = useCallback(
