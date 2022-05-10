@@ -79,6 +79,9 @@ extensions:
             title: 最小レベル
           tile_maxLevel:
             title: 最大レベル
+          tile_opacity:
+            title: 不透明性
+            description: NEEDS DESCRIPTION
       atmosphere:
         title: 大気
         description: 地球を覆う大気圏の設定ができます。

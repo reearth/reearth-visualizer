@@ -555,8 +555,8 @@ type Me struct {
 	Email    string       `json:"email"`
 	Lang     language.Tag `json:"lang"`
 	Theme    Theme        `json:"theme"`
-	Auths    []string     `json:"auths"`
 	MyTeamID ID           `json:"myTeamId"`
+	Auths    []string     `json:"auths"`
 	Teams    []*Team      `json:"teams"`
 	MyTeam   *Team        `json:"myTeam"`
 }
@@ -1628,6 +1628,7 @@ const (
 	PropertySchemaFieldUISelection  PropertySchemaFieldUI = "SELECTION"
 	PropertySchemaFieldUIColor      PropertySchemaFieldUI = "COLOR"
 	PropertySchemaFieldUIRange      PropertySchemaFieldUI = "RANGE"
+	PropertySchemaFieldUISlider     PropertySchemaFieldUI = "SLIDER"
 	PropertySchemaFieldUIImage      PropertySchemaFieldUI = "IMAGE"
 	PropertySchemaFieldUIVideo      PropertySchemaFieldUI = "VIDEO"
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
@@ -1640,6 +1641,7 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUISelection,
 	PropertySchemaFieldUIColor,
 	PropertySchemaFieldUIRange,
+	PropertySchemaFieldUISlider,
 	PropertySchemaFieldUIImage,
 	PropertySchemaFieldUIVideo,
 	PropertySchemaFieldUIFile,
@@ -1648,7 +1650,7 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose:
 		return true
 	}
 	return false

@@ -139,6 +139,7 @@
             "selection",
             "buttons",
             "range",
+            "slider",
             "image",
             "video",
             "file",

@@ -7,6 +7,7 @@ const (
 	SchemaFieldUISelection  SchemaFieldUI = "selection"
 	SchemaFieldUIColor      SchemaFieldUI = "color"
 	SchemaFieldUIRange      SchemaFieldUI = "range"
+	SchemaFieldUISlider     SchemaFieldUI = "slider"
 	SchemaFieldUIImage      SchemaFieldUI = "image"
 	SchemaFieldUIVideo      SchemaFieldUI = "video"
 	SchemaFieldUIFile       SchemaFieldUI = "file"
@@ -21,6 +22,7 @@ var (
 		SchemaFieldUISelection,
 		SchemaFieldUIColor,
 		SchemaFieldUIRange,
+		SchemaFieldUISlider,
 		SchemaFieldUIImage,
 		SchemaFieldUIVideo,
 		SchemaFieldUIFile,

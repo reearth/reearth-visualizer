@@ -276,6 +276,8 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUIColor
 	case property.SchemaFieldUIRange:
 		ui2 = PropertySchemaFieldUIRange
+	case property.SchemaFieldUISlider:
+		ui2 = PropertySchemaFieldUISlider
 	case property.SchemaFieldUIImage:
 		ui2 = PropertySchemaFieldUIImage
 	case property.SchemaFieldUIVideo:

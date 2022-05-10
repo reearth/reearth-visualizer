@@ -24,7 +24,7 @@ extensions:
               description: Show elevation when close to the surface.
             - id: terrainType
               type: string
-              title: Terrain Type
+              title: Terrain type
               description: Specify terrain type.
               defaultValue: cesium
               choices:
@@ -89,7 +89,7 @@ extensions:
               description: Enable camera limiter.
             - id: cameraLimitterShowHelper
               type: bool
-              title: Show Helper
+              title: Show helper
               defaultValue: false
               description: Display the limiter boundaries.
             - id: cameraLimitterTargetArea
@@ -118,7 +118,7 @@ extensions:
           fields:
             - id: tile_type
               type: string
-              title: Tile Type
+              title: Tile type
               defaultValue: default
               choices:
                 - key: default
@@ -158,6 +158,14 @@ extensions:
               title: Maximum zoom level
               min: 0
               max: 30
+            - id: tile_opacity
+              type: number
+              title: Opacity
+              description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
+              defaultValue: 1
+              ui: slider
+              min: 0
+              max: 1
         - id: theme
           title: Publish Theme
           description: Set your theme.
@@ -248,20 +256,20 @@ extensions:
               max: 1
             - id: brightness_shift
               type: number
-              title: Fog Brightness
+              title: Fog brightness
               defaultValue: 0.03
               description: "Set brightness of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
             - id: hue_shift
               type: number
-              title: Fog Hue
+              title: Fog hue
               description: "Set hue of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
             - id: surturation_shift
               type: number
-              title: Fog Saturation
+              title: Fog saturation
               description: "Set saturation of the fog. Min: -1 Max: 1"
               min: -1
               max: 1
@@ -300,7 +308,7 @@ extensions:
               title: Title
             - id: showTitle
               type: bool
-              title: Show Title
+              title: Show title
               defaultValue: true
             - id: position
               type: string
@@ -326,7 +334,7 @@ extensions:
                   label: Large
             - id: heightType
               type: string
-              title: Height Type
+              title: Height type
               defaultValue: auto
               choices:
                 - key: auto
@@ -374,7 +382,7 @@ extensions:
               description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
             - id: bgcolor
               type: string
-              title: Background Color
+              title: Background color
               ui: color
             - id: outlineWidth
               type: number
@@ -383,11 +391,11 @@ extensions:
               max: 20
             - id: outlineColor
               type: string
-              title: Outline Color
+              title: Outline color
               ui: color
             - id: useMask
               type: bool
-              title: Use Mask
+              title: Use mask
             - id: typography
               type: typography
               title: Font
@@ -1028,7 +1036,7 @@ extensions:
     schema:
       groups:
         - id: default
-          title: 3D Model
+          title: 3D model
           fields:
             - id: model
               type: url

@@ -6402,8 +6402,8 @@ type Me {
   email: String!
   lang: Lang!
   theme: Theme!
-  auths: [String!]!
   myTeamId: ID!
+  auths: [String!]!
   teams: [Team!]! @goField(forceResolver: true)
   myTeam: Team! @goField(forceResolver: true)
 }
@@ -6708,6 +6708,7 @@ enum PropertySchemaFieldUI {
   SELECTION
   COLOR
   RANGE
+  SLIDER
   IMAGE
   VIDEO
   FILE
@@ -15988,41 +15989,6 @@ func (ec *executionContext) _Me_theme(ctx context.Context, field graphql.Collect
 	return ec.marshalNTheme2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTheme(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Me_auths(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Me",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Auths, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16056,6 +16022,41 @@ func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.Coll
 	res := resTmp.(gqlmodel.ID)
 	fc.Result = res
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚑbackendᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Me_auths(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Me",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Auths, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Me_teams(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
@@ -38446,9 +38447,9 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "auths":
+		case "myTeamId":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Me_auths(ctx, field, obj)
+				return ec._Me_myTeamId(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -38456,9 +38457,9 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "myTeamId":
+		case "auths":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Me_myTeamId(ctx, field, obj)
+				return ec._Me_auths(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
