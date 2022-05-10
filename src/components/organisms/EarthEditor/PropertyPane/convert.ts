@@ -218,6 +218,8 @@ const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] =
       return "multiline";
     case PropertySchemaFieldUi.Range:
       return "range";
+    case PropertySchemaFieldUi.Slider:
+      return "slider";
     case PropertySchemaFieldUi.Selection:
       return "selection";
     case PropertySchemaFieldUi.Video:

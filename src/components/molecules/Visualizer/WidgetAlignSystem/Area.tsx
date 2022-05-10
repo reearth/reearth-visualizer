@@ -53,7 +53,7 @@ export default function Area({
       // reverse={area !== "middle" && section === "right"}
       end={section === "right" || area === "bottom"}
       align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
-      style={{ flexWrap: "wrap" }}
+      style={{ flexWrap: "wrap", pointerEvents: "none" }}
       editorStyle={{
         flexWrap: "wrap",
         background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,

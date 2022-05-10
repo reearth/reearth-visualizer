@@ -1451,6 +1451,7 @@ export enum PropertySchemaFieldUi {
   Multiline = 'MULTILINE',
   Range = 'RANGE',
   Selection = 'SELECTION',
+  Slider = 'SLIDER',
   Video = 'VIDEO'
 }
 

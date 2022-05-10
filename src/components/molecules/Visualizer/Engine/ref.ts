@@ -90,6 +90,7 @@ export type SceneProperty = {
     tile_url?: string;
     tile_maxLevel?: number;
     tile_minLevel?: number;
+    tile_opacity?: number;
   }[];
   terrain?: {
     terrain?: boolean;

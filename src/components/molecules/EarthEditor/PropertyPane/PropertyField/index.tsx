@@ -22,6 +22,7 @@ import NonEditableField from "./NonEditableField";
 import NumberField from "./NumberField";
 import RadioField from "./RadioField";
 import SelectField from "./SelectField";
+import SliderField from "./SliderField";
 import SwitchField from "./SwitchField";
 import TextField from "./TextField";
 import { FieldProps } from "./types";
@@ -53,6 +54,7 @@ export type SchemaField<T extends ValueType = ValueType> = {
     | "selection"
     | "buttons"
     | "range"
+    | "slider"
     | "image"
     | "video"
     | "file"
@@ -190,13 +192,16 @@ const PropertyField: React.FC<Props> = ({
         ) : type === "latlng" ? (
           <LocationField {...commonProps} />
         ) : type === "number" ? (
-          <NumberField
-            {...commonProps}
-            suffix={schema.suffix}
-            range={schema.ui === "range"}
-            max={schema.max}
-            min={schema.min}
-          />
+          schema.ui === "slider" ? (
+            <SliderField {...commonProps} min={schema.min} max={schema.max} />
+          ) : (
+            <NumberField
+              {...commonProps}
+              suffix={schema.suffix}
+              max={schema.max}
+              min={schema.min}
+            />
+          )
         ) : type === "string" ? (
           schema.ui === "color" ? (
             <ColorField {...commonProps} />
