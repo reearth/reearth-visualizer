@@ -8,6 +8,11 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:4.4-focal
+        ports:
+          - 27017:27017
     steps:
       - name: set up
         uses: actions/setup-go@v3
@@ -30,6 +35,8 @@ jobs:
           args: --timeout=10m
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        env:
+          REEARTH_DB: mongodb://localhost
       - name: Send coverage report
         uses: codecov/codecov-action@v2
         with:
