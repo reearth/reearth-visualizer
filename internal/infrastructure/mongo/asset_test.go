@@ -36,7 +36,7 @@ func TestFindByID(t *testing.T) {
 		},
 	}
 
-	initDB := connect(t)
+	init := connect(t)
 
 	for _, tc := range tests {
 		tc := tc
@@ -44,8 +44,7 @@ func TestFindByID(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
-			client, dropDB := initDB()
-			defer dropDB()
+			client := init(t)
 
 			repo := NewAsset(client)
 			ctx := context.Background()
