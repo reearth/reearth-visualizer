@@ -45,6 +45,10 @@ func (r *tagRepo) FindByID(ctx context.Context, id id.TagID) (tag.Tag, error) {
 }
 
 func (r *tagRepo) FindByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Tag, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),

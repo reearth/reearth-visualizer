@@ -48,6 +48,10 @@ func (r *propertySchemaRepo) FindByID(ctx context.Context, id id.PropertySchemaI
 }
 
 func (r *propertySchemaRepo) FindByIDs(ctx context.Context, ids []id.PropertySchemaID) (property.SchemaList, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	// exclude built-in
 	b := property.SchemaMap{}
 	ids2 := make([]id.PropertySchemaID, 0, len(ids))

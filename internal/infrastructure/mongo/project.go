@@ -39,7 +39,17 @@ func (r *projectRepo) Filtered(f repo.TeamFilter) repo.Project {
 	}
 }
 
+func (r *projectRepo) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	return r.findOne(ctx, bson.M{
+		"id": id.String(),
+	})
+}
+
 func (r *projectRepo) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),
@@ -51,12 +61,6 @@ func (r *projectRepo) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*p
 		return nil, err
 	}
 	return filterProjects(ids, res), nil
-}
-
-func (r *projectRepo) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
-	return r.findOne(ctx, bson.M{
-		"id": id.String(),
-	})
 }
 
 func (r *projectRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {

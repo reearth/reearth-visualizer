@@ -45,6 +45,10 @@ func (r *layerRepo) FindByID(ctx context.Context, id id.LayerID) (layer.Layer, e
 }
 
 func (r *layerRepo) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),

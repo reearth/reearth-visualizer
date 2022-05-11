@@ -45,6 +45,10 @@ func (r *sceneRepo) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, 
 }
 
 func (r *sceneRepo) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	return r.find(ctx, make(scene.List, 0, len(ids)), bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),

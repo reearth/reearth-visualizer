@@ -38,6 +38,10 @@ func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList,
 }
 
 func (r *teamRepo) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	dst := make([]*user.Team, 0, len(ids))
 	res, err := r.find(ctx, dst, bson.M{
 		"id": bson.M{"$in": ids.Strings()},

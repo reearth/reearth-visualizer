@@ -44,6 +44,10 @@ func (r *propertyRepo) FindByID(ctx context.Context, id id.PropertyID) (*propert
 }
 
 func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (property.List, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),

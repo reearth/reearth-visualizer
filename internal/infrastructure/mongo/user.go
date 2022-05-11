@@ -30,6 +30,10 @@ func (r *userRepo) init() {
 }
 
 func (r *userRepo) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	dst := make([]*user.User, 0, len(ids))
 	res, err := r.find(ctx, dst, bson.M{
 		"id": bson.M{"$in": ids.Strings()},

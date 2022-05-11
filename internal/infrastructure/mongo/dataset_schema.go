@@ -46,6 +46,10 @@ func (r *datasetSchemaRepo) FindByID(ctx context.Context, id id.DatasetSchemaID)
 }
 
 func (r *datasetSchemaRepo) FindByIDs(ctx context.Context, ids id.DatasetSchemaIDList) (dataset.SchemaList, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),

@@ -41,6 +41,10 @@ func (r *assetRepo) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, 
 }
 
 func (r *assetRepo) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	filter := bson.M{
 		"id": bson.M{"$in": ids.Strings()},
 	}

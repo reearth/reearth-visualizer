@@ -54,6 +54,10 @@ func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plu
 }
 
 func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	// TODO: separate built-in plugins to another repository
 	// exclude built-in
 	b := plugin.Map{}
