@@ -32,7 +32,7 @@ export default (teamId: string) => {
 
   const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["Project"],
+    refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
 

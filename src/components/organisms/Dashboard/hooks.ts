@@ -67,7 +67,7 @@ export default (teamId?: string) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
         setNotification({

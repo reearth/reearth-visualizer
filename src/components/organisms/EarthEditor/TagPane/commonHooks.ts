@@ -109,7 +109,7 @@ export default () => {
           sceneId,
           label,
         },
-        refetchQueries: ["getSceneTags"],
+        refetchQueries: ["GetSceneTags"],
       });
     },
     [createTagGroup, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
@@ -130,7 +130,7 @@ export default () => {
           label,
           parent: tagGroupId === DEFAULT_TAG_ID ? undefined : tagGroupId,
         },
-        refetchQueries: tagGroupId === DEFAULT_TAG_ID ? ["getSceneTags"] : [],
+        refetchQueries: tagGroupId === DEFAULT_TAG_ID ? ["GetSceneTags"] : [],
       });
       return tag;
     },
@@ -168,7 +168,7 @@ export default () => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
         variables: { tagId: tagItemId, layerId: selected.layerId },
-        refetchQueries: ["getLayerTags"],
+        refetchQueries: ["GetLayerTags"],
       });
     },
     [detachTagFromLayer, selected],
@@ -176,7 +176,7 @@ export default () => {
 
   const handleRemoveTagItemFromScene = useCallback(
     async (tagId: string) => {
-      await removeTag({ variables: { tagId }, refetchQueries: ["getSceneTags"] });
+      await removeTag({ variables: { tagId }, refetchQueries: ["GetSceneTags"] });
     },
     [removeTag],
   );
@@ -189,7 +189,7 @@ export default () => {
         setNotification({ type: "error", text: tagErrorMessage.tagGroupHasTags });
         return;
       }
-      await removeTag({ variables: { tagId: tagGroupId }, refetchQueries: ["getSceneTags"] });
+      await removeTag({ variables: { tagId: tagGroupId }, refetchQueries: ["GetSceneTags"] });
     },
     [removeTag, sceneTagGroups, setNotification, tagErrorMessage.tagGroupHasTags],
   );

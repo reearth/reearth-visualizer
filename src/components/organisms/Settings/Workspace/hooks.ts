@@ -74,7 +74,7 @@ export default (params: Params) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = results.data?.createTeam?.team;
       if (results.errors || !results.data?.createTeam) {
@@ -117,7 +117,7 @@ export default (params: Params) => {
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
-    refetchQueries: ["teams"],
+    refetchQueries: ["GetTeams"],
   });
   const deleteTeam = useCallback(async () => {
     if (!teamId) return;
@@ -145,7 +145,7 @@ export default (params: Params) => {
           if (!teamId) return;
           const result = await addMemberToTeamMutation({
             variables: { userId, teamId, role: Role.Reader },
-            refetchQueries: ["teams"],
+            refetchQueries: ["GetTeams"],
           });
           const team = result.data?.addMemberToTeam?.team;
           if (result.errors || !team) {
@@ -202,7 +202,7 @@ export default (params: Params) => {
       if (!teamId) return;
       const result = await removeMemberFromTeamMutation({
         variables: { teamId, userId },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = result.data?.removeMemberFromTeam?.team;
       if (result.errors || !team) {

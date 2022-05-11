@@ -93,7 +93,7 @@ export default (params: Params) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = results.data?.createTeam?.team;
       if (results) {

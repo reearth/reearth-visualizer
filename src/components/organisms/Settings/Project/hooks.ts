@@ -53,7 +53,7 @@ export default ({ projectId }: Params) => {
   const [updateProjectMutation] = useUpdateProjectMutation();
   const [archiveProjectMutation] = useArchiveProjectMutation();
   const [deleteProjectMutation] = useDeleteProjectMutation({
-    refetchQueries: ["Project"],
+    refetchQueries: ["GetProjects"],
   });
 
   const updateProjectName = useCallback(

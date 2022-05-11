@@ -126,7 +126,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
           assetIds.map(async assetId => {
             const result = await removeAssetMutation({
               variables: { assetId },
-              refetchQueries: ["Assets"],
+              refetchQueries: ["GetAssets"],
             });
             if (result.errors || result.data?.removeAsset) {
               setNotification({
