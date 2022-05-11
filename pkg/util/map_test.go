@@ -79,9 +79,9 @@ func TestSyncMap_Range(t *testing.T) {
 	s.Range(func(k string, v int) bool {
 		if k == "a" {
 			vv = v
-			return true
+			return false
 		}
-		return false
+		return true
 	})
 	assert.Equal(t, 1, vv)
 }
