@@ -28,11 +28,13 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub      *string       `json:"sub"`
-	Secret   *string       `json:"secret"`
-	UserID   *id.UserID    `json:"userId"`
-	TeamID   *id.TeamID    `json:"teamId"`
-	Name     *string       `json:"username"`
+	Sub    *string    `json:"sub"`
+	Secret *string    `json:"secret"`
+	UserID *id.UserID `json:"userId"`
+	TeamID *id.TeamID `json:"teamId"`
+	Name   *string    `json:"name"`
+	// Username is an alias of Name
+	Username *string       `json:"username"`
 	Email    *string       `json:"email"`
 	Password *string       `json:"password"`
 	Theme    *user.Theme   `json:"theme"`
@@ -65,10 +67,18 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 	var u *user.User
 	var err error
 
+	name := input.Name
+	if name == nil {
+		name = input.Username
+	}
+	if name == nil {
+		name = input.Email
+	}
+
 	if au := adapter.GetAuthInfo(ctx); au != nil {
-		var name string
-		if input.Name != nil {
-			name = *input.Name
+		var name2 string
+		if name != nil {
+			name2 = *name
 		}
 
 		u, _, err = c.usecase.SignupOIDC(ctx, interfaces.SignupOIDCParam{
@@ -76,7 +86,7 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			AccessToken: au.Token,
 			Issuer:      au.Iss,
 			Email:       au.Email,
-			Name:        name,
+			Name:        name2,
 			Secret:      input.Secret,
 			User: interfaces.SignupUserParam{
 				UserID: input.UserID,
@@ -85,10 +95,10 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 				Theme:  input.Theme,
 			},
 		})
-	} else if input.Name != nil && input.Email != nil {
+	} else if name != nil && input.Email != nil {
 		u, _, err = c.usecase.Signup(ctx, interfaces.SignupParam{
 			Sub:      input.Sub,
-			Name:     *input.Name,
+			Name:     *name,
 			Email:    *input.Email,
 			Password: input.Password,
 			Secret:   input.Secret,
