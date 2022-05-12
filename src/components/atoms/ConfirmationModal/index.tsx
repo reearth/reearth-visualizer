@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useTranslation } from "@reearth/i18n";
+import { useT } from "@reearth/i18n";
 
 import Button from "../Button";
 import Modal from "../Modal";
@@ -24,7 +24,7 @@ const ConfirmationModal: React.FC<Props> = ({
   isOpen,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const t = useT();
 
   const handleProceed = () => {
     onProceed();

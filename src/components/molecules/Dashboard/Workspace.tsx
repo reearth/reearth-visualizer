@@ -8,7 +8,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types";
-import { useTranslation } from "@reearth/i18n";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -20,7 +20,7 @@ export interface Props {
 }
 
 const Workspace: React.FC<Props> = ({ className, team }) => {
-  const { t } = useTranslation();
+  const t = useT();
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
 
