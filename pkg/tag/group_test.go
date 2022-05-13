@@ -3,6 +3,8 @@ package tag
 import (
 	"testing"
 
+	"github.com/reearth/reearth-backend/pkg/id"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -104,6 +106,57 @@ func TestGroupBuilder_Build(t *testing.T) {
 			} else {
 				assert.Equal(t, tc.Expected.Error, err)
 			}
+		})
+	}
+}
+
+func TestGroup_AddTag(t *testing.T) {
+	sid := id.NewSceneID()
+	tid := id.NewTagID()
+	tests := []struct {
+		name     string
+		tag      *Group
+		input    IDList
+		expected IDList
+	}{
+		{
+			name:     "should add a tag",
+			tag:      NewGroup().NewID().Scene(sid).Label("foo").MustBuild(),
+			input:    IDList{tid},
+			expected: IDList{tid},
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(tt *testing.T) {
+			tt.Parallel()
+			tc.tag.AddTag(tc.input...)
+			assert.Equal(tt, tc.tag.tags, tc.expected)
+		})
+	}
+}
+
+func TestGroup_RemoveTag(t *testing.T) {
+	sid := id.NewSceneID()
+	tid := id.NewTagID()
+	tid2 := id.NewTagID()
+	tests := []struct {
+		name     string
+		tag      *Group
+		input    IDList
+		expected IDList
+	}{
+		{
+			name:     "should remove a tag",
+			tag:      NewGroup().NewID().Scene(sid).Label("foo").Tags(IDList{tid, tid2}).MustBuild(),
+			input:    IDList{tid2},
+			expected: IDList{tid},
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(tt *testing.T) {
+			tt.Parallel()
+			tc.tag.RemoveTag(tc.input...)
+			assert.Equal(tt, tc.tag.tags, tc.expected)
 		})
 	}
 }

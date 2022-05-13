@@ -18,3 +18,10 @@ func (g *Group) RemoveTag(ids ...ID) {
 	}
 	g.tags = g.tags.Delete(ids...)
 }
+
+func (g *Group) AddTag(ids ...ID) {
+	if g == nil {
+		return
+	}
+	g.tags = g.tags.Add(ids...)
+}

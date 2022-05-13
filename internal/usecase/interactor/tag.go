@@ -70,7 +70,7 @@ func (i *Tag) CreateItem(ctx context.Context, inp interfaces.CreateTagItemParam,
 	}
 
 	if parent != nil {
-		parent.Tags().Add(item.ID())
+		parent.AddTag(item.ID())
 	}
 
 	itemt := tag.Tag(item)
