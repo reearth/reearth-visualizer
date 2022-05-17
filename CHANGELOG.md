@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.7.0 - 2022-05-16
+
+### 🚀 Features
+
+- Implementation of the avatar feature in workspaces screens ([#206](https://github.com/reearth/reearth-web/pull/206)) [`42d7aa`](https://github.com/reearth/reearth-web/commit/42d7aa)
+- Update placehoder for color field ([#215](https://github.com/reearth/reearth-web/pull/215)) [`c6c6e3`](https://github.com/reearth/reearth-web/commit/c6c6e3)
+- Add opacity field to map tiles ([#220](https://github.com/reearth/reearth-web/pull/220)) [`006a8d`](https://github.com/reearth/reearth-web/commit/006a8d)
+
+### 🔧 Bug Fixes
+
+- Dropdown styles in right panel break when selected item's name is too long [`9a5993`](https://github.com/reearth/reearth-web/commit/9a5993)
+- Dashboard not updating on project creation [`4b5478`](https://github.com/reearth/reearth-web/commit/4b5478)
+- Query names in refetchQueries not updated ([#222](https://github.com/reearth/reearth-web/pull/222)) [`711712`](https://github.com/reearth/reearth-web/commit/711712)
+- Published page uses GraphQL and reports errors [`3e3e45`](https://github.com/reearth/reearth-web/commit/3e3e45)
+
+### ✨ Refactor
+
+- Queries/mutation code into a single directory ([#208](https://github.com/reearth/reearth-web/pull/208)) [`2afc16`](https://github.com/reearth/reearth-web/commit/2afc16)
+- Property, scene, tag, user, widget and workspace gql query files ([#221](https://github.com/reearth/reearth-web/pull/221)) [`3bf421`](https://github.com/reearth/reearth-web/commit/3bf421)
+
+### Miscellaneous Tasks
+
+- Introduce i18next ([#212](https://github.com/reearth/reearth-web/pull/212)) [`0ac0c2`](https://github.com/reearth/reearth-web/commit/0ac0c2)
+- Add reference to style guide in README [`e29024`](https://github.com/reearth/reearth-web/commit/e29024)
+- Add useT hook to i18n ([#223](https://github.com/reearth/reearth-web/pull/223)) [`b96177`](https://github.com/reearth/reearth-web/commit/b96177)
+- Update dependency cesium to ^1.93.0 ([#216](https://github.com/reearth/reearth-web/pull/216)) [`06b563`](https://github.com/reearth/reearth-web/commit/06b563)
+- Update all dependencies ([#226](https://github.com/reearth/reearth-web/pull/226)) [`36fb79`](https://github.com/reearth/reearth-web/commit/36fb79)
+
+### Refactor
+
+- Clean gql pt1 asset ([#217](https://github.com/reearth/reearth-web/pull/217)) [`b88a8c`](https://github.com/reearth/reearth-web/commit/b88a8c)
+- Cluster, dataset, infobox, layer, plugin and project gql query files ([#219](https://github.com/reearth/reearth-web/pull/219)) [`e4dae9`](https://github.com/reearth/reearth-web/commit/e4dae9)
+
 ## 0.6.1 - 2022-04-20
 
 ### 🚀 Features
