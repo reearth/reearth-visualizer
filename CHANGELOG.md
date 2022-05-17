@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.7.0 - 2022-05-13
+
+### 🚀 Features
+
+- Add an opacity slider to map tiles ([#138](https://github.com/reearth/reearth-backend/pull/138)) [`4f72b8`](https://github.com/reearth/reearth-backend/commit/4f72b8)
+
+### 🔧 Bug Fixes
+
+- Signup api requires password field [`a79376`](https://github.com/reearth/reearth-backend/commit/a79376)
+- "$in needs an array" error from mongo FindByIDs ([#142](https://github.com/reearth/reearth-backend/pull/142)) [`58e1b0`](https://github.com/reearth/reearth-backend/commit/58e1b0)
+- Name field is available again in signup api ([#144](https://github.com/reearth/reearth-backend/pull/144)) [`651852`](https://github.com/reearth/reearth-backend/commit/651852)
+
+### ✨ Refactor
+
+- Retry mongo lock ([#145](https://github.com/reearth/reearth-backend/pull/145)) [`ddaeaa`](https://github.com/reearth/reearth-backend/commit/ddaeaa)
+
+### 🧪 Testing
+
+- Add Mongo Asset's [`FindByID`](https://github.com/reearth/reearth-backend/commit/FindByID) unit testing ([#139](https://github.com/reearth/reearth-backend/pull/139)) [`35f9db`](https://github.com/reearth/reearth-backend/commit/35f9db)
+- Refactor mongo connect helper function [`751e66`](https://github.com/reearth/reearth-backend/commit/751e66)
+- Util.SyncMap.Range test sometimes fails ([#143](https://github.com/reearth/reearth-backend/pull/143)) [`c2b969`](https://github.com/reearth/reearth-backend/commit/c2b969)
+
+### Miscellaneous Tasks
+
+- Typo [`secrit`](https://github.com/reearth/reearth-backend/commit/secrit) on env example ([#137](https://github.com/reearth/reearth-backend/pull/137)) [`2c0220`](https://github.com/reearth/reearth-backend/commit/2c0220)
+- Update the go modules ([#146](https://github.com/reearth/reearth-backend/pull/146)) [`89009b`](https://github.com/reearth/reearth-backend/commit/89009b)
+
 ## 0.6.1 - 2022-04-20
 
 ### 🔧 Bug Fixes
