@@ -143,7 +143,7 @@ export default ({
       engineName: engineType || "",
       sceneProperty,
       tags,
-      camera,
+      camera: innerCamera,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
