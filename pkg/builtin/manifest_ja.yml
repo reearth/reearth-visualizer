@@ -35,6 +35,9 @@ extensions:
           ion:
             title: Cesium Icon APIアクセストークン
             description: 自身のCesium IonアカウントからAPIキーを発行し、ここに設定します。Cesium Ionのアセット（タイルデータ、3Dデータなど）の使用が可能になるため、設定を推奨します。
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
       cameraLimiter:
         title: カメラ範囲制限
         description: カメラの移動できる範囲を制限することができます。

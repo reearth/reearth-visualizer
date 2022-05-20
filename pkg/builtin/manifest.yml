@@ -78,6 +78,18 @@ extensions:
               type: string
               title: Cesium Ion API access token
               description: Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.
+            - id: sceneMode
+              type: string
+              title: Scene mode
+              description: Specify scene mode.
+              defaultValue: scene3d
+              choices:
+                - key: scene3d
+                  label: Scene 3D
+                - key: scene2d
+                  label: Scene 2D
+                - key: columbus
+                  label: Columbus View
         - id: cameraLimiter
           title: Camera Limiter
           description: Set the camera limiting box.
