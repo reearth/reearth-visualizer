@@ -98,21 +98,23 @@ export default function Visualizer({
     wrapperRef,
     isDroppable,
     providerProps,
-    selectedLayer,
     selectedLayerId,
+    selectedLayer,
     layerSelectionReason,
+    layerOverriddenProperties,
+    isLayerDragging,
     selectedBlockId,
     innerCamera,
     infobox,
-    layerOverriddenProperties,
+    mergedSceneProperty,
     isLayerHidden,
     selectLayer,
     selectBlock,
     updateCamera,
     handleLayerDrag,
     handleLayerDrop,
-    isLayerDragging,
     handleInfoboxMaskClick,
+    overrideSceneProperty,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -141,17 +143,18 @@ export default function Visualizer({
             editing={widgetAlignEditorActivated}
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
-            sceneProperty={sceneProperty}
+            sceneProperty={mergedSceneProperty}
             pluginProperty={pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginBaseUrl={pluginBaseUrl}
             layoutConstraint={widgets.layoutConstraint}
+            overrideSceneProperty={overrideSceneProperty}
           />
         )}
         <Engine
           ref={engineRef}
-          property={sceneProperty}
+          property={mergedSceneProperty}
           selectedLayerId={selectedLayer?.id}
           layerSelectionReason={layerSelectionReason}
           ready={ready}
@@ -168,7 +171,7 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
-            sceneProperty={sceneProperty}
+            sceneProperty={mergedSceneProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}
@@ -181,7 +184,7 @@ export default function Visualizer({
               <W
                 key={widget.id}
                 widget={widget}
-                sceneProperty={sceneProperty}
+                sceneProperty={mergedSceneProperty}
                 pluginProperty={
                   widget.pluginId && widget.extensionId
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
@@ -190,6 +193,7 @@ export default function Visualizer({
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 pluginBaseUrl={pluginBaseUrl}
+                overrideSceneProperty={overrideSceneProperty}
               />
             ))}
         </Engine>
@@ -198,7 +202,7 @@ export default function Visualizer({
             title={infobox?.title}
             infoboxKey={infobox?.infoboxKey}
             visible={!!infobox?.visible}
-            sceneProperty={sceneProperty}
+            sceneProperty={mergedSceneProperty}
             blocks={infobox?.blocks}
             layer={infobox?.layer}
             selectedBlockId={selectedBlockId}

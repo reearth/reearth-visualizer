@@ -13,6 +13,7 @@ export type Props = {
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
+  overrideSceneProperty?: (pluginId: string, property: any) => void;
 };
 
 const sections = ["left", "center", "right"] as const;
@@ -27,6 +28,7 @@ export default function Zone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  overrideSceneProperty,
   children,
 }: PropsWithChildren<Props>) {
   return (
@@ -52,6 +54,7 @@ export default function Zone({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
+                overrideSceneProperty={overrideSceneProperty}
               />
             ),
           )}

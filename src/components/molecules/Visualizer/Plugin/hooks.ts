@@ -20,6 +20,7 @@ export default function ({
   pluginProperty,
   onRender,
   onResize,
+  overrideSceneProperty,
 }: {
   pluginId?: string;
   extensionId?: string;
@@ -29,6 +30,7 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onRender?: (
     options:
       | {
@@ -53,6 +55,7 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      overrideSceneProperty,
       onRender,
       onResize,
     }) ?? [];
@@ -89,6 +92,7 @@ export function useAPI({
   layer,
   block,
   widget,
+  overrideSceneProperty,
   onRender,
   onResize,
 }: {
@@ -99,6 +103,7 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
+  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onRender?: (
     options:
       | {
@@ -192,6 +197,7 @@ export function useAPI({
           resize(width, height);
           onResize?.(width, height, extended);
         },
+        overrideSceneProperty,
       });
     };
   }, [
@@ -205,6 +211,7 @@ export function useAPI({
     getWidget,
     onRender,
     onResize,
+    overrideSceneProperty,
   ]);
 
   useEffect(() => {

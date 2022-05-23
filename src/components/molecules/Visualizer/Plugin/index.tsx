@@ -32,6 +32,7 @@ export type Props = {
   layer?: Layer;
   widget?: Widget;
   block?: Block;
+  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onClick?: () => void;
   onRender?: (
     options:
@@ -63,6 +64,7 @@ export default function Plugin({
   widget,
   block,
   pluginProperty,
+  overrideSceneProperty,
   onClick,
   onRender,
   onResize,
@@ -76,6 +78,7 @@ export default function Plugin({
     widget,
     block,
     pluginProperty,
+    overrideSceneProperty,
     onRender,
     onResize,
   });

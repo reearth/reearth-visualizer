@@ -36,7 +36,7 @@ export type EngineContext = {
 export type Props = {
   engine: EngineContext;
   engineName: string;
-  sceneProperty?: any;
+  mergedSceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
   layers: LayerStore;
@@ -73,7 +73,7 @@ declare global {
 export function Provider({
   engine: { api, isMarshalable, builtinPrimitives },
   engineName,
-  sceneProperty,
+  mergedSceneProperty,
   tags,
   camera,
   layers,
@@ -100,7 +100,7 @@ export function Provider({
   );
 
   const getLayers = useGet(layers);
-  const getSceneProperty = useGet(sceneProperty);
+  const getSceneProperty = useGet(mergedSceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);

@@ -14,7 +14,10 @@ import type {
   Tag,
 } from "./types";
 
-export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
+export type CommonReearth = Omit<
+  Reearth,
+  "visualizer" | "plugin" | "ui" | "block" | "layer" | "widget"
+> & { visualizer: Omit<Reearth["visualizer"], "overrideProperty"> };
 
 export function exposed({
   render,
@@ -26,6 +29,7 @@ export function exposed({
   layer,
   block,
   widget,
+  overrideSceneProperty,
 }: {
   render: (
     html: string,
@@ -44,6 +48,7 @@ export function exposed({
   layer?: () => Layer | undefined;
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
+  overrideSceneProperty?: (pluginId: string, property: any) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -53,6 +58,11 @@ export function exposed({
     reearth: merge(
       commonReearth,
       {
+        visualizer: {
+          overrideProperty: (property: any) => {
+            overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+          },
+        },
         ui: {
           show: (
             html: string,

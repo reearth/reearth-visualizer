@@ -1,8 +1,8 @@
-import { mergeWith } from "lodash";
 import React, { ComponentType, useMemo } from "react";
 
 import { useContext } from "../Plugin";
 import type { Layer } from "../Plugin";
+import { mergeProperty } from "../utils";
 
 export type { Layer } from "../Plugin";
 
@@ -52,13 +52,4 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   return isHidden || !props.layer?.isVisible ? null : Builtin ? (
     <Builtin {...props} layer={actualLayer} />
   ) : null;
-}
-
-export function mergeProperty(a: any, b: any) {
-  return mergeWith(
-    { ...a },
-    b,
-    (s: any, v: any, _k: string | number | symbol, _obj: any, _src: any, stack: { size: number }) =>
-      stack.size > 0 || Array.isArray(v) ? v ?? s : undefined,
-  );
 }

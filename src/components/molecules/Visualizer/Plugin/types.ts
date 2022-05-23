@@ -220,6 +220,7 @@ export type Visualizer = {
   readonly camera: Camera;
   /** Current scene property */
   readonly property?: any;
+  readonly overrideProperty: (property: any) => void;
 };
 
 type Rect = {
