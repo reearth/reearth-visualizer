@@ -2,9 +2,6 @@ e5c8f: Some error has occurred. Please wait a moment and try again.
 src:
   components:
     atoms:
-      ConfirmationModal:
-        '3528672691': Cancel
-        '3640052215': Continue
       DropHolder:
         '2563828564': Drop here
       NotFound:
@@ -110,11 +107,6 @@ src:
           '3374163063': Description
           '3528672691': Cancel
           '4120989039': Create
-        ProjectMenu:
-          '1235925265': Documentation
-          '2661706411': Datasets
-          '3029638665': Project settings
-          '3873048483': Manage projects
         TeamMenu:
           '2611517824': Workspaces
           '3828443189': New Workspace
@@ -129,7 +121,6 @@ src:
           You have no projects in your workspace. Click the button above in the
           Quick Start to create a project now!
         '1068381306': User guide
-        '2148917173': '''s workspace'
         '3428478975': New workspace
         '3662865152': New project
         '4173541988': Quick Start
@@ -231,12 +222,12 @@ src:
               '4211710217': Capture
             ColorField:
               '1115770113': Save
-              '1533357798': Not set
               '1847234945': Red
               '1936615876': Alpha
               '2090560987': Green
               '3528672691': Cancel
               '3801160378': Blue
+              '3991511329': '#RRGGBBAA'
             LocationField:
               '2222144661': Latitude
               '3067266584': Altitude
@@ -493,7 +484,6 @@ src:
         WorkspaceList:
           WorkspaceCell:
             '808766300': No Title Workspace
-            '3230245813': 'Members:'
             '4106929473': >-
               This is your personal workspace. Your projects and resources will
               be managed in this workspace.

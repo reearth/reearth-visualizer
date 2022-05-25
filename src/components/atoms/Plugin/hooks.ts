@@ -174,7 +174,7 @@ export default function useHook({
   return {
     iFrameHtml,
     iFrameRef,
-    iFrameVisible: iFrameOptions?.visible,
+    iFrameOptions,
     loaded,
   };
 }

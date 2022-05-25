@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Dropdown from "@reearth/components/atoms/Dropdown";
 import Text from "@reearth/components/atoms/Text";
@@ -9,6 +8,7 @@ import {
   MenuList,
   MenuListItem,
 } from "@reearth/components/molecules/Common/MenuList";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
 
   return (
@@ -37,20 +37,26 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
             <MenuListItem>
               <MenuListItemLabel
                 linkTo={`/settings/project/${currentProject.id}`}
-                text={intl.formatMessage({ defaultMessage: "Project settings" })}
+                text={t("Project settings")}
               />
             </MenuListItem>
             <MenuListItem>
               <MenuListItemLabel
                 linkTo={`/settings/project/${currentProject.id}/dataset`}
-                text={intl.formatMessage({ defaultMessage: "Datasets" })}
+                text={t("Datasets")}
+              />
+            </MenuListItem>
+            <MenuListItem>
+              <MenuListItemLabel
+                linkTo={`/settings/project/${currentProject.id}/plugins`}
+                text={t("Plugins")}
               />
             </MenuListItem>
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
                 linkTo={`/settings/workspace/${teamId}/projects`}
-                text={intl.formatMessage({ defaultMessage: "Manage projects" })}
+                text={t("Manage projects")}
               />
             </MenuListItem>
             <Spacer />
@@ -58,7 +64,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
               <MenuListItemLabel
                 icon="help"
                 onClick={() => window.open("http://docs.reearth.io", "_blank", "noopener")}
-                text={intl.formatMessage({ defaultMessage: "Documentation" })}
+                text={t("Documentation")}
               />
             </MenuListItem>
           </MenuList>
