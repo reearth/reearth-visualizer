@@ -82,11 +82,11 @@ extensions:
               type: string
               title: Scene mode
               description: Specify scene mode.
-              defaultValue: scene3d
+              defaultValue: 3d
               choices:
-                - key: scene3d
+                - key: 3d
                   label: Scene 3D
-                - key: scene2d
+                - key: 2d
                   label: Scene 2D
                 - key: columbus
                   label: Columbus View
