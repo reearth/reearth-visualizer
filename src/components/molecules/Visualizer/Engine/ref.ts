@@ -14,11 +14,14 @@ export type EngineRef = {
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
   clusterComponent?: ComponentType<ClusterProps>;
 };
+
+export type SceneMode = "3d" | "2d" | "columbus";
 
 export type FlyToDestination = {
   /** Degrees */
@@ -76,6 +79,7 @@ export type SceneProperty = {
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
+    sceneMode?: SceneMode; // default: scene3d
   };
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;

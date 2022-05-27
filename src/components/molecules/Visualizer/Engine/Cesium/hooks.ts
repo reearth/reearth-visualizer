@@ -130,6 +130,10 @@ export default ({
     [property?.default?.bgcolor],
   );
 
+  useEffect(() => {
+    engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
+  }, [property?.default?.sceneMode, engineAPI]);
+
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
 
