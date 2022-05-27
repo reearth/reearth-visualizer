@@ -433,3 +433,7 @@ func (t *Tx) End(ctx context.Context) error {
 	t.session.EndSession(ctx)
 	return nil
 }
+
+func (t *Tx) IsCommitted() bool {
+	return t.commit
+}

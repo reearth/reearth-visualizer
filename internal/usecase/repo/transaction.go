@@ -13,4 +13,5 @@ type Tx interface {
 	// End finishes the transaction and do commit if Commit() was called once, or else do rollback.
 	// This method is supposed to be called in the uscase layer using defer.
 	End(context.Context) error
+	IsCommitted() bool
 }

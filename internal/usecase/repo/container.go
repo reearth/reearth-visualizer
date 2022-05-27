@@ -32,8 +32,11 @@ type Container struct {
 	User           User
 }
 
-func (c Container) Filtered(team TeamFilter, scene SceneFilter) Container {
-	return Container{
+func (c *Container) Filtered(team TeamFilter, scene SceneFilter) *Container {
+	if c == nil {
+		return c
+	}
+	return &Container{
 		Asset:          c.Asset.Filtered(team),
 		AuthRequest:    c.AuthRequest,
 		Config:         c.Config,

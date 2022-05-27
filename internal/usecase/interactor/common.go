@@ -5,10 +5,9 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-
-	"github.com/reearth/reearth-backend/internal/usecase"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/project"
@@ -46,6 +45,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 	}
 }
 
+// Deprecated: common will be deprecated. Please use the Usecase function instead.
 type common struct{}
 
 func (common) OnlyOperator(op *usecase.Operator) error {
