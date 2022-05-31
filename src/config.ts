@@ -62,7 +62,7 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
-  extensionURLs?: string[];
+  extensionUrls?: string[];
   extensions?: Extensions;
 };
 declare global {
@@ -156,9 +156,8 @@ export default async function loadConfig() {
     );
   }
 
-  if (window.REEARTH_CONFIG?.extensionURLs) {
-    const urls = window.REEARTH_CONFIG.extensionURLs;
-    const extensions = getExtensionsFrom(urls);
+  if (window.REEARTH_CONFIG?.extensionUrls) {
+    const extensions = getExtensionsFrom(window.REEARTH_CONFIG.extensionUrls);
     window.REEARTH_CONFIG.extensions = extensions;
   }
 }
