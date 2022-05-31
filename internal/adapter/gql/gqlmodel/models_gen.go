@@ -1633,6 +1633,7 @@ const (
 	PropertySchemaFieldUIVideo      PropertySchemaFieldUI = "VIDEO"
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
 	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
+	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1646,11 +1647,12 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIVideo,
 	PropertySchemaFieldUIFile,
 	PropertySchemaFieldUICameraPose,
+	PropertySchemaFieldUIDatetime,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime:
 		return true
 	}
 	return false

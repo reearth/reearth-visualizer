@@ -13,6 +13,7 @@ const (
 	SchemaFieldUIFile       SchemaFieldUI = "file"
 	SchemaFieldUILayer      SchemaFieldUI = "layer"
 	SchemaFieldUICameraPose SchemaFieldUI = "camera_pose"
+	SchemaFieldUIDatetTime  SchemaFieldUI = "datetime"
 	// DON'T FORGET ADDING A NEW UI TO schemaFieldUIs ALSO!
 )
 
@@ -28,6 +29,7 @@ var (
 		SchemaFieldUIFile,
 		SchemaFieldUILayer,
 		SchemaFieldUICameraPose,
+		SchemaFieldUIDatetTime,
 		// DON'T FORGET ADDING A NEW UI HERE ALSO!
 	}
 )

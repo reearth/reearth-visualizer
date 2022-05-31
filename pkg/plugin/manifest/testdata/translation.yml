@@ -19,6 +19,8 @@
                           "title": "test field name",
                           "description": "test field desc",
                           "choices": { "test_key": "test choice value" },
+                          "prefix": "P",
+                          "suffix": "S",
                         },
                     },
                 },

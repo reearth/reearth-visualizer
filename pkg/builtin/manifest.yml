@@ -292,7 +292,67 @@ extensions:
               type: bool
               title: Animation
               defaultValue: false
-              description: Enables anmation. If enabled, each 3D models can animate.
+              description: Enables animation play. If enabled, each 3D models can animate.
+            - id: visible
+              type: bool
+              title: Timeline
+              description: Whether the timeline UI is displayed or not
+            - id: current
+              type: string
+              title: Current time
+              ui: datetime
+            - id: start
+              type: string
+              title: Start time
+              description: If nothing is set, it will be set automatically according to the data being displayed.
+              ui: datetime
+            - id: stop
+              type: string
+              title: Stop time
+              description: If nothing is set, it will be set automatically according to the data being displayed.
+              ui: datetime
+            - id: stepType
+              type: string
+              title: Tick type
+              defaultValue: rate
+              description: How to specify the playback speed
+              choices:
+                - key: rate
+                  label: Rate
+                - key: fixed
+                  label: Fixed
+            - id: multiplier
+              type: number
+              title: Multiplier
+              description: Specifies the playback speed as a multiple of the real time speed. Negative values can also be specified. Default is 1x.
+              defaultValue: 1
+              prefix: x
+              availableIf:
+                field: stepType
+                type: string
+                value: rate
+            - id: step
+              type: number
+              title: Step
+              description: Specifies the playback speed in seconds. Each time the screen is repeatedly drawn, it advances by the specified specified number of seconds. Negative values can also be specified. The default is 1 second.
+              defaultValue: 1
+              suffix: s
+              availableIf:
+                field: stepType
+                type: string
+                value: fixed
+            - id: rangeType
+              type: string
+              title: Range
+              description: Specifies the playback speed in seconds. Negative values can also be specified.
+              defaultValue: unbounded
+              choices:
+                - key: unbounded
+                  label: Unbounded
+                - key: clamped
+                  label: Clamped
+                - key: bounced
+                  label: Bounced
         - id: googleAnalytics
           title: Google Analytics
           description: Set your Google Analytics tracking ID and analyze how your published project is being viewed.

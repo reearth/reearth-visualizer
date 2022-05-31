@@ -4,22 +4,28 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTranslationMap_Translated(t *testing.T) {
 	m := TranslationMap{
 		"en": TranslationRoot{
-			Name:        sr("Name"),
-			Description: sr("desc"),
+			Name:        lo.ToPtr("Name"),
+			Description: lo.ToPtr("desc"),
 			Extensions: map[string]TranslationExtension{
 				"a": {
-					Name: sr("ext"),
+					Name: lo.ToPtr("ext"),
 					PropertySchema: TranslationPropertySchema{
 						"default": {
 							Fields: map[string]TranslationPropertySchemaField{
-								"foo":  {Title: sr("foo"), Choices: map[string]string{"A": "AAA", "B": "BBB"}},
-								"hoge": {Title: sr("hoge")},
+								"foo": {
+									Title:   lo.ToPtr("foo"),
+									Choices: map[string]string{"A": "AAA", "B": "BBB"},
+									Prefix:  lo.ToPtr("P"),
+									Suffix:  lo.ToPtr("S"),
+								},
+								"hoge": {Title: lo.ToPtr("hoge")},
 							},
 						},
 					},
@@ -34,42 +40,43 @@ func TestTranslationMap_Translated(t *testing.T) {
 			},
 		},
 		"ja": TranslationRoot{
-			Name: sr("名前"),
+			Name: lo.ToPtr("名前"),
 			Extensions: map[string]TranslationExtension{
 				"a": {
-					Name:        sr("extJA"),
-					Description: sr("DESC!"),
+					Name:        lo.ToPtr("extJA"),
+					Description: lo.ToPtr("DESC!"),
 					PropertySchema: TranslationPropertySchema{
 						"default": {
 							Fields: map[string]TranslationPropertySchemaField{
 								"foo": {
-									Title:       sr("foo!"),
-									Description: sr("DESC"),
+									Title:       lo.ToPtr("foo!"),
+									Description: lo.ToPtr("DESC"),
 									Choices:     map[string]string{"B": "BBB!", "C": "CCC!"},
+									Prefix:      lo.ToPtr("p"),
 								},
-								"bar": {Title: sr("bar!")},
+								"bar": {Title: lo.ToPtr("bar!")},
 							},
 						},
 					},
 				},
 				"b": {
-					Name:           sr("ext2"),
+					Name:           lo.ToPtr("ext2"),
 					PropertySchema: TranslationPropertySchema{},
 				},
 			},
 			Schema: TranslationPropertySchema{
 				"default": {
 					Fields: map[string]TranslationPropertySchemaField{
-						"a": {Title: sr("あ")},
+						"a": {Title: lo.ToPtr("あ")},
 					},
 				},
 			},
 		},
 		"zh-CN": TranslationRoot{
-			Name: sr("命名"),
+			Name: lo.ToPtr("命名"),
 			Schema: TranslationPropertySchema{
 				"another": {
-					Description: sr("描述"),
+					Description: lo.ToPtr("描述"),
 				},
 			},
 		},
@@ -93,6 +100,8 @@ func TestTranslationMap_Translated(t *testing.T) {
 									"B": {"en": "BBB", "ja": "BBB!"},
 									"C": {"ja": "CCC!"},
 								},
+								Prefix: i18n.String{"en": "P", "ja": "p"},
+								Suffix: i18n.String{"en": "S"},
 							},
 							"hoge": {
 								Title: i18n.String{"en": "hoge"},
@@ -177,12 +186,12 @@ func TestTranslatedPropertySchema_setPropertySchema(t *testing.T) {
 		"en": {
 			"a": {
 				Fields: map[string]TranslationPropertySchemaField{
-					"f": {Title: sr("F")},
+					"f": {Title: lo.ToPtr("F")},
 				},
 			},
-			"b": {Title: sr("B")},
+			"b": {Title: lo.ToPtr("B")},
 		},
-		"ja": {"a": {Title: sr("A")}},
+		"ja": {"a": {Title: lo.ToPtr("A")}},
 	})
 	assert.Equal(t, expected, target)
 }

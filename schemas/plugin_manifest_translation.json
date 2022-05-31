@@ -20,6 +20,18 @@
             "null"
           ]
         },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "suffix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "choices": {
           "type": "object",
           "additionalProperties": false,

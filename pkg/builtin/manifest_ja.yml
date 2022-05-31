@@ -121,7 +121,38 @@ extensions:
         fields:
           animation:
             title: アニメーション
-            description: アニメーションを有効にします。3Dモデルのアニメーションが再生されるようになります。
+            description: アニメーションの再生を有効にします。3Dモデルのアニメーションが再生されるようになります。
+          visible:
+            title: タイムライン
+            description: タイムラインのUIを表示します。
+          current:
+            title: 現在時刻
+          start:
+            title: 開始時刻
+            description: 何も設定されていない場合は表示中のデータによって自動的に設定されます。
+          stop:
+            title: 終了時刻
+            description: 何も設定されていない場合は表示中のデータによって自動的に設定されます。
+          stepType:
+            title: 再生速度の種類
+            description: 再生速度の指定方法です。
+            choices:
+              rate: 倍率
+              fixed: 固定
+          multiplier:
+            title: 再生速度
+            description: 再生速度を現実の時間の速さに対する倍率で指定します。マイナス値も指定可能です。デフォルトは1倍です。
+          step:
+            title: 再生速度
+            description: 再生速度を秒で指定します。画面の描画が繰り返される度に指定した指定した秒数分進みます。マイナス値も指定可能です。デフォルトは1秒です。
+            suffix: 秒
+          rangeType:
+            title: 再生終了時
+            description: 現在時刻が終了時刻に達した時の処理方法を指定します。
+            choices:
+              unbounded: 再生を続ける
+              clamped: 停止する
+              bounced: バウンス
       googleAnalytics:
         title: Google Analytics
         description: Google Analyticsを有効にすることで、公開ページがどのように閲覧されているかを分析することが可能です。

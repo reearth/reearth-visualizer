@@ -476,6 +476,7 @@ enum PropertySchemaFieldUI {
   VIDEO
   FILE
   CAMERA_POSE
+  DATETIME
 }
 
 type PropertySchemaFieldChoice {

@@ -12,8 +12,10 @@ type TranslationPropertySchema map[string]TranslationPropertySchemaGroup
 
 type TranslationPropertySchemaField struct {
 	Choices     map[string]string `json:"choices,omitempty"`
-	Description *string           `json:"description,omitempty"`
 	Title       *string           `json:"title,omitempty"`
+	Description *string           `json:"description,omitempty"`
+	Prefix      *string           `json:"prefix,omitempty"`
+	Suffix      *string           `json:"suffix,omitempty"`
 }
 
 type TranslationPropertySchemaGroup struct {
@@ -43,6 +45,8 @@ type TranslatedPropertySchemaField struct {
 	Choices     map[string]i18n.String
 	Description i18n.String
 	Title       i18n.String
+	Prefix      i18n.String
+	Suffix      i18n.String
 }
 
 type TranslatedPropertySchemaGroup struct {
@@ -102,6 +106,7 @@ func (tm TranslationMap) TranslatedRef() *TranslatedRoot {
 	t := tm.Translated()
 	return &t
 }
+
 func (t TranslationRoot) propertySchema(eid string) (res TranslationPropertySchema) {
 	if eid == "" {
 		return t.Schema
@@ -237,6 +242,20 @@ func (t *TranslatedPropertySchema) setPropertySchema(schemas map[string]Translat
 						tf.Description = i18n.String{}
 					}
 					tf.Description[l] = *f.Description
+				}
+
+				if f.Prefix != nil {
+					if tf.Prefix == nil {
+						tf.Prefix = i18n.String{}
+					}
+					tf.Prefix[l] = *f.Prefix
+				}
+
+				if f.Suffix != nil {
+					if tf.Suffix == nil {
+						tf.Suffix = i18n.String{}
+					}
+					tf.Suffix[l] = *f.Suffix
 				}
 
 				if len(f.Choices) > 0 {

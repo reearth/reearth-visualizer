@@ -5,33 +5,36 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
 //go:embed testdata/translation.yml
 var translatedManifest string
 var expected = TranslationRoot{
-	Description: sr("test plugin desc"),
+	Description: lo.ToPtr("test plugin desc"),
 	Extensions: map[string]TranslationExtension{
 		"test_ext": {
-			Name: sr("test ext name"),
+			Name: lo.ToPtr("test ext name"),
 			PropertySchema: TranslationPropertySchema{
 				"test_ps": TranslationPropertySchemaGroup{
-					Description: sr("test ps desc"),
+					Description: lo.ToPtr("test ps desc"),
 					Fields: map[string]TranslationPropertySchemaField{
 						"test_field": {
 							Choices: map[string]string{
 								"test_key": "test choice value"},
-							Description: sr("test field desc"),
-							Title:       sr("test field name"),
+							Description: lo.ToPtr("test field desc"),
+							Title:       lo.ToPtr("test field name"),
+							Prefix:      lo.ToPtr("P"),
+							Suffix:      lo.ToPtr("S"),
 						},
 					},
-					Title: sr("test ps title"),
+					Title: lo.ToPtr("test ps title"),
 				},
 			},
 		},
 	},
-	Name:   sr("test plugin name"),
+	Name:   lo.ToPtr("test plugin name"),
 	Schema: nil,
 }
 
@@ -143,8 +146,4 @@ func TestMustParseTransSystemFromBytes(t *testing.T) {
 			assert.Equal(t, tc.expected, res)
 		})
 	}
-}
-
-func sr(s string) *string {
-	return &s
 }
