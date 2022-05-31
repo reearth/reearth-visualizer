@@ -98,49 +98,51 @@ export function convertPasswordPolicy(passwordPolicy?: {
   );
 }
 
-export function getExtensionsFrom(urls?: string[]): Extensions | undefined {
+// module
+export async function loadExtensions(urls?: string[]): Promise<Extensions | undefined> {
   if (!urls) return undefined;
+
   // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection/hooks.ts
   const publication: Extension<"publication">[] = [];
   // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
   const datasetImport: Extension<"dataset-import">[] = [];
-  (async () => {
-    for (let i = 0; i < urls.length; i++) {
-      try {
-        const newExtensions: Extension[] = (await import(/* webpackIgnore: true */ urls[i]))
-          .default;
-        newExtensions.forEach(ext =>
-          ext.type === "dataset-import"
-            ? datasetImport.push(ext as Extension<"dataset-import">)
-            : ext.type === "publication"
-            ? publication.push(ext as Extension<"publication">)
-            : undefined,
-        );
-      } catch (e) {
-        // ignore
-      }
+
+  for (const url of urls) {
+    try {
+      const newExtensions: Extension[] = (await import(/* webpackIgnore: true */ url)).default;
+      newExtensions.forEach(ext =>
+        ext.type === "dataset-import"
+          ? datasetImport.push(ext as Extension<"dataset-import">)
+          : ext.type === "publication"
+          ? publication.push(ext as Extension<"publication">)
+          : undefined,
+      );
+    } catch (e) {
+      // ignore
     }
-  })();
+  }
+
   return {
     publication,
     datasetImport,
   };
 }
 
-export function importExternal(url: string) {
-  return new Promise((res, rej) => {
-    const script = document.createElement("script");
-    script.src = url;
-    script.async = true;
-    script.onload = () => {
-      if (!window.REEARTH_CONFIG) return;
-      res(window.REEARTH_CONFIG.extensions);
-    };
-    script.onerror = rej;
+// IIFE
+// function importExternal(url: string) {
+//   return new Promise((res, rej) => {
+//     const script = document.createElement("script");
+//     script.src = url;
+//     script.async = true;
+//     script.onload = () => {
+//       if (!window.REEARTH_CONFIG) return;
+//       res(window.REEARTH_CONFIG.extensions);
+//     };
+//     script.onerror = rej;
 
-    document.body.appendChild(script);
-  });
-}
+//     document.body.appendChild(script);
+//   });
+// }
 
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
@@ -157,7 +159,7 @@ export default async function loadConfig() {
   }
 
   if (window.REEARTH_CONFIG?.extensionUrls) {
-    const extensions = getExtensionsFrom(window.REEARTH_CONFIG.extensionUrls);
+    const extensions = await loadExtensions(window.REEARTH_CONFIG.extensionUrls);
     window.REEARTH_CONFIG.extensions = extensions;
   }
 }
