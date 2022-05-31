@@ -74,3 +74,6 @@ const unselectProject = atom(null, (_get, set) => {
   set(isCapturing, false);
 });
 export const useUnselectProject = () => useAtom(unselectProject)[1];
+
+const currentTheme = atom<"light" | "dark">("dark");
+export const useCurrentTheme = () => useAtom(currentTheme);

@@ -22,7 +22,7 @@ interface Props {
   publicationStatus?: Status;
   validAlias?: boolean;
   validatingAlias?: boolean;
-  currentLanguage?: string;
+  currentLang?: string;
   currentTheme?: string;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onAliasValidate?: (alias: string) => void;
@@ -36,7 +36,7 @@ const PublishSection: React.FC<Props> = ({
   publicationStatus,
   validAlias,
   validatingAlias,
-  currentLanguage,
+  currentLang,
   currentTheme,
   onPublish,
   onAliasValidate,
@@ -103,8 +103,8 @@ const PublishSection: React.FC<Props> = ({
                 key={ext.id}
                 projectId={projectId}
                 projectAlias={projectAlias}
-                lang={currentLanguage as "en" | "ja"}
-                theme={currentTheme as "dark" | "light"}
+                lang={currentLang}
+                theme={currentTheme}
                 accessToken={accessToken}
                 onNotificationChange={onNotificationChange}
               />

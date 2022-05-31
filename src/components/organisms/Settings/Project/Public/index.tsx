@@ -28,7 +28,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
     validatingAlias,
     loading,
     assetModalOpened,
-    currentLanguage,
+    currentLang,
     currentTheme,
     updateProjectBasicAuth,
     publishProject,
@@ -77,7 +77,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
             publicationStatus={projectStatus}
             validAlias={validAlias}
             validatingAlias={validatingAlias}
-            currentLanguage={currentLanguage}
+            currentLang={currentLang}
             currentTheme={currentTheme}
             onPublish={publishProject}
             onAliasValidate={checkProjectAlias}

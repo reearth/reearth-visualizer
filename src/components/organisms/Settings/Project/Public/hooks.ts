@@ -8,9 +8,15 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-  useGetProfileQuery,
 } from "@reearth/gql";
-import { useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
+import { useLang as useCurrentLang } from "@reearth/i18n";
+import {
+  useTeam,
+  useProject,
+  useNotification,
+  NotificationType,
+  useCurrentTheme as useCurrentTheme,
+} from "@reearth/state";
 
 type Params = {
   projectId: string;
@@ -29,8 +35,6 @@ export default ({ projectId }: Params) => {
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
 
   const teamId = currentTeam?.id;
-
-  const { data: profileData } = useGetProfileQuery();
 
   const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
@@ -167,6 +171,9 @@ export default ({ projectId }: Params) => {
     [setNotification],
   );
 
+  const currentLang = useCurrentLang();
+  const [currentTheme] = useCurrentTheme();
+
   return {
     currentTeam,
     currentProject,
@@ -177,8 +184,8 @@ export default ({ projectId }: Params) => {
     validatingAlias,
     loading,
     assetModalOpened,
-    currentLanguage: profileData?.me?.lang,
-    currentTheme: profileData?.me?.theme,
+    currentLang,
+    currentTheme,
     updateProjectBasicAuth,
     publishProject,
     checkProjectAlias,

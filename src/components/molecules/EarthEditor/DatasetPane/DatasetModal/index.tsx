@@ -19,6 +19,8 @@ interface Props {
   className?: string;
   isVisible: boolean;
   syncLoading: boolean;
+  currentLang?: string;
+  currentTheme?: string;
   onClose?: () => void;
   handleDatasetAdd?: (url: string | File, schemeId: string | null) => Promise<void>;
   handleGoogleSheetDatasetAdd?: (
@@ -33,6 +35,8 @@ interface Props {
 const DatasetModal: React.FC<Props> = ({
   isVisible,
   syncLoading,
+  currentLang,
+  currentTheme,
   onClose,
   handleDatasetAdd,
   handleGoogleSheetDatasetAdd,
@@ -163,6 +167,8 @@ const DatasetModal: React.FC<Props> = ({
               onReturn={handleReturn}
               onUrlChange={setUrl}
               onNotificationChange={onNotificationChange}
+              theme={currentTheme}
+              lang={currentLang}
             />
           ))}
           {!dataType && (

@@ -13,6 +13,8 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     datasetSchemas,
     loading,
     selectedDatasetSchemaId,
+    currentTheme,
+    currentLang,
     handleDatasetSync,
     handleDatasetImport,
     handleGoogleSheetDatasetImport,
@@ -33,6 +35,8 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       onDatasetRemove={handleDatasetRemove}
       onDatasetSchemaSelect={handleDatasetSchemaSelect}
       onNotificationChange={handleNotificationChange}
+      currentLang={currentLang}
+      currentTheme={currentTheme}
     />
   );
 };

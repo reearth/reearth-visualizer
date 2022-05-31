@@ -13,12 +13,14 @@ import {
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
+import { useLang } from "@reearth/i18n";
 import {
   useSceneId,
   useNotification,
   useSelected,
   useProject,
   NotificationType,
+  useCurrentTheme,
 } from "@reearth/state";
 
 export default () => {
@@ -187,9 +189,14 @@ export default () => {
     [setNotification],
   );
 
+  const currentLang = useLang();
+  const [currentTheme] = useCurrentTheme();
+
   return {
     datasetSchemas,
     loading,
+    currentLang,
+    currentTheme,
     selectedDatasetSchemaId,
     handleDatasetSync,
     handleDatasetImport,

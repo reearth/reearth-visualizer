@@ -1,8 +1,8 @@
 export type ExtensionType = "dataset-import" | "publication";
 
 export type SharedExtensionProps = {
-  theme?: "dark" | "light";
-  lang?: "en" | "ja";
+  theme?: string;
+  lang?: string;
   accessToken?: string;
   onNotificationChange?: (
     type: "error" | "warning" | "info" | "success",

@@ -17,6 +17,8 @@ export type Props = {
   datasetSchemas?: DatasetSchema[];
   loading?: boolean;
   selectedDatasetSchemaId?: string;
+  currentTheme?: string;
+  currentLang?: string;
   onDatasetSync?: (url: string) => void | Promise<void>;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
   onGoogleSheetDatasetImport?: (
@@ -35,6 +37,8 @@ const DatasetPane: React.FC<Props> = ({
   datasetSchemas,
   loading,
   selectedDatasetSchemaId,
+  currentTheme,
+  currentLang,
   onDatasetSync,
   onDatasetImport,
   onGoogleSheetDatasetImport,
@@ -99,6 +103,8 @@ const DatasetPane: React.FC<Props> = ({
         handleGoogleSheetDatasetAdd={handleGoogleSheetDatasetAdd}
         handleDatasetAdd={handleDatasetAdd}
         onNotificationChange={onNotificationChange}
+        currentTheme={currentTheme}
+        currentLang={currentLang}
       />
     </Wrapper>
   );
