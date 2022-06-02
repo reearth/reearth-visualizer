@@ -16,6 +16,7 @@ export type Props = FieldProps<Camera> & {
   isCapturing?: boolean;
   camera?: Camera;
   onlyPose?: boolean;
+  onlyPosition?: boolean;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   onCameraChange?: (camera: Partial<Camera>) => void;
 };
@@ -30,6 +31,7 @@ const CameraField: React.FC<Props> = ({
   camera: cameraState,
   onCameraChange,
   onlyPose,
+  onlyPosition,
 }) => {
   const intl = useIntl();
 
@@ -59,6 +61,7 @@ const CameraField: React.FC<Props> = ({
     onCameraChange,
     disabled,
     onlyPose,
+    onlyPosition,
   });
 
   const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
@@ -142,49 +145,51 @@ const CameraField: React.FC<Props> = ({
             </FormFieldGroup>
           </FormGroup>
         )}
-        <FormGroup>
-          <FormIcon icon="camera" size={16} />
-          <FormFieldGroup>
-            <FormFieldRow>
-              <FormWrapper>
-                <Input
-                  type="number"
-                  value={heading}
-                  step={1}
-                  readOnly={!isCapturing}
-                  onChange={handleHeadingChange}
-                />
-                <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                  {intl.formatMessage({ defaultMessage: "Heading" })}
-                </FloatText>
-              </FormWrapper>
-              <FormWrapper>
-                <Input
-                  type="number"
-                  value={pitch}
-                  step={1}
-                  readOnly={!isCapturing}
-                  onChange={handlePitchChange}
-                />
-                <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                  {intl.formatMessage({ defaultMessage: "Pitch" })}
-                </FloatText>
-              </FormWrapper>
-              <FormWrapper>
-                <Input
-                  type="number"
-                  value={roll}
-                  step={1}
-                  readOnly={!isCapturing}
-                  onChange={handleRollChange}
-                />
-                <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                  {intl.formatMessage({ defaultMessage: "Roll" })}
-                </FloatText>
-              </FormWrapper>
-            </FormFieldRow>
-          </FormFieldGroup>
-        </FormGroup>
+        {!onlyPosition && (
+          <FormGroup>
+            <FormIcon icon="camera" size={16} />
+            <FormFieldGroup>
+              <FormFieldRow>
+                <FormWrapper>
+                  <Input
+                    type="number"
+                    value={heading}
+                    step={1}
+                    readOnly={!isCapturing}
+                    onChange={handleHeadingChange}
+                  />
+                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                    {intl.formatMessage({ defaultMessage: "Heading" })}
+                  </FloatText>
+                </FormWrapper>
+                <FormWrapper>
+                  <Input
+                    type="number"
+                    value={pitch}
+                    step={1}
+                    readOnly={!isCapturing}
+                    onChange={handlePitchChange}
+                  />
+                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                    {intl.formatMessage({ defaultMessage: "Pitch" })}
+                  </FloatText>
+                </FormWrapper>
+                <FormWrapper>
+                  <Input
+                    type="number"
+                    value={roll}
+                    step={1}
+                    readOnly={!isCapturing}
+                    onChange={handleRollChange}
+                  />
+                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                    {intl.formatMessage({ defaultMessage: "Roll" })}
+                  </FloatText>
+                </FormWrapper>
+              </FormFieldRow>
+            </FormFieldGroup>
+          </FormGroup>
+        )}
         <FormGroup>
           {value && !isCapturing && (
             <FormButtonGroup>

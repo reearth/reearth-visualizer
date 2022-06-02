@@ -10,6 +10,7 @@ type Params = {
   cameraState?: Camera;
   disabled?: boolean;
   onlyPose?: boolean;
+  onlyPosition?: boolean;
   onSubmit?: (value: Camera) => void;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   onCameraChange?: (camera: Partial<Camera>) => void;
@@ -21,6 +22,7 @@ export default ({
   cameraState,
   disabled,
   onlyPose,
+  onlyPosition,
   onSubmit,
   onIsCapturingChange,
   onCameraChange,
@@ -171,9 +173,15 @@ export default ({
             roll: cameraValue.roll,
             fov: cameraValue.fov,
           }
+        : onlyPosition
+        ? {
+            lng: cameraValue.lng,
+            lat: cameraValue.lat,
+            height: cameraValue.height,
+          }
         : cameraValue,
     );
-  }, [cameraValue, onCameraChange, onlyPose]);
+  }, [cameraValue, onCameraChange, onlyPose, onlyPosition]);
 
   return {
     wrapperRef,

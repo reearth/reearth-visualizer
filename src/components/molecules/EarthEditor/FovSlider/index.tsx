@@ -10,13 +10,13 @@ import { Camera } from "@reearth/util/value";
 import useHooks from "./hooks";
 
 type Props = {
-  isCapturing?: boolean;
+  visible?: boolean;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   camera?: Camera;
   onFovChange?: (fov: number) => void;
 };
 
-const FovSlider: React.FC<Props> = ({ isCapturing, onIsCapturingChange, camera, onFovChange }) => {
+const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFovChange }) => {
   const intl = useIntl();
 
   const { updateFov, handleClickAway } = useHooks({
@@ -28,7 +28,7 @@ const FovSlider: React.FC<Props> = ({ isCapturing, onIsCapturingChange, camera, 
   const fov = camera?.fov && Math.round(camera?.fov * 1000) / 1000;
   const theme = useTheme();
   return (
-    <StyledFloatedPanel visible={isCapturing} onClickAway={handleClickAway}>
+    <StyledFloatedPanel visible={visible} onClickAway={handleClickAway}>
       <Wrapper data-camera-popup>
         <FovField>
           <Text size="xs" color={theme.main.strongText} otherProperties={{ marginRight: "16px" }}>

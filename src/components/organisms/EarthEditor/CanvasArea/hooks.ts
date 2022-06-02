@@ -24,6 +24,7 @@ import {
 } from "@reearth/gql";
 import {
   useSceneId,
+  useSceneMode,
   useIsCapturing,
   useCamera,
   useSelected,
@@ -43,6 +44,7 @@ import {
 export default (isBuilt?: boolean) => {
   const intl = useIntl();
   const [sceneId] = useSceneId();
+  const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
@@ -160,6 +162,10 @@ export default (isBuilt?: boolean) => {
     [camera, onCameraChange],
   );
 
+  useEffect(() => {
+    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
+  }, [sceneProperty, setSceneMode]);
+
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
@@ -273,6 +279,7 @@ export default (isBuilt?: boolean) => {
     selectedLayer,
     blocks,
     isCapturing,
+    sceneMode,
     camera,
     widgetAlignEditorActivated,
     selectLayer,

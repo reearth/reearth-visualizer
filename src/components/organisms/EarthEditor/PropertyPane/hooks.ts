@@ -24,6 +24,7 @@ import {
   useCamera,
   useTeam,
   useSceneId,
+  useSceneMode,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
 } from "@reearth/state";
@@ -45,6 +46,7 @@ export default (mode: Mode) => {
   const [rootLayerId] = useRootLayerId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
+  const [sceneMode] = useSceneMode();
   const [team] = useTeam();
   const [sceneId] = useSceneId();
   const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
@@ -328,6 +330,7 @@ export default (mode: Mode) => {
     onIsCapturingChange,
     camera,
     onCameraChange,
+    sceneMode,
     addPropertyItem,
     movePropertyItem,
     removePropertyItem,
