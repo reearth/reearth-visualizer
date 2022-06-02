@@ -100,7 +100,7 @@ const Image = styled.img<{
   display: block;
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 100%;
   max-height: ${props =>
     props.infoboxSize === "large"
       ? props.name
