@@ -31,7 +31,8 @@ const defaultImageSize = 50;
 export const drawIcon = (
   c: HTMLCanvasElement,
   image: HTMLImageElement | undefined,
-  imageSize: number | undefined,
+  w: number,
+  h: number,
   crop: "circle" | "rounded" | "none" = "none",
   shadow = false,
   shadowColor = "rgba(0, 0, 0, 0.7)",
@@ -44,14 +45,6 @@ export const drawIcon = (
 
   ctx.save();
 
-  const w =
-    typeof imageSize === "number"
-      ? Math.floor(image.width * imageSize)
-      : Math.min(defaultImageSize, image.width);
-  const h =
-    typeof imageSize === "number"
-      ? Math.floor(image.height * imageSize)
-      : Math.floor((w / image.width) * image.height);
   c.width = w + shadowBlur;
   c.height = h + shadowBlur;
   ctx.shadowBlur = shadowBlur;
@@ -103,25 +96,27 @@ export const useIcon = ({
   shadowBlur?: number;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
-}): [string, HTMLImageElement | undefined] => {
+}): [string, number, number] => {
   const img = useImage(image);
+
+  const w = !img
+    ? 0
+    : typeof imageSize === "number"
+    ? Math.floor(img.width * imageSize)
+    : Math.min(defaultImageSize, img.width);
+  const h = !img
+    ? 0
+    : typeof imageSize === "number"
+    ? Math.floor(img.height * imageSize)
+    : Math.floor((w / img.width) * img.height);
+
   const draw = useCallback(
     can =>
-      drawIcon(
-        can,
-        img,
-        imageSize,
-        crop,
-        shadow,
-        shadowColor,
-        shadowBlur,
-        shadowOffsetX,
-        shadowOffsetY,
-      ),
-    [crop, imageSize, img, shadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY],
+      drawIcon(can, img, w, h, crop, shadow, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY),
+    [crop, h, img, shadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY, w],
   );
   const canvas = useCanvas(draw);
-  return [canvas, img];
+  return [canvas, w, h];
 };
 
 export const ho = (o: "left" | "center" | "right" | undefined): HorizontalOrigin | undefined =>
