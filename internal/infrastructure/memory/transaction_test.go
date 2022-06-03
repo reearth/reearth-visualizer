@@ -14,9 +14,9 @@ func TestTransaction_Committed(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 0, tr.Committed())
 	tx.Commit()
-	assert.Equal(t, 1, tr.Committed())
+	assert.Equal(t, 0, tr.Committed())
 	assert.NoError(t, tx.End(context.Background()))
-	assert.NoError(t, err)
+	assert.Equal(t, 1, tr.Committed())
 }
 
 func TestTransaction_SetBeginError(t *testing.T) {

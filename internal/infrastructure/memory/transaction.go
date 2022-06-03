@@ -43,13 +43,16 @@ func (t *Transaction) Begin() (repo.Tx, error) {
 
 func (t *Tx) Commit() {
 	t.committed = true
-	if t.t != nil {
-		t.t.committed++
-	}
 }
 
 func (t *Tx) End(_ context.Context) error {
-	return t.enderror
+	if t.enderror != nil {
+		return t.enderror
+	}
+	if t.t != nil && t.committed {
+		t.t.committed++
+	}
+	return nil
 }
 
 func (t *Tx) IsCommitted() bool {

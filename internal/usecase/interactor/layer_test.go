@@ -15,7 +15,7 @@ import (
 func TestCreateInfobox(t *testing.T) {
 	ctx := context.Background()
 
-	db := memory.InitRepos(nil)
+	db := memory.New()
 	scene, _ := scene.New().NewID().Team(id.NewTeamID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewLayer(db)

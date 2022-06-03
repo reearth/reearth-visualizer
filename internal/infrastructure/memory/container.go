@@ -4,10 +4,8 @@ import (
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 )
 
-func InitRepos(c *repo.Container) *repo.Container {
-	if c == nil {
-		c = &repo.Container{}
-	}
+func New() *repo.Container {
+	c := &repo.Container{}
 	c.Asset = NewAsset()
 	c.Config = NewConfig()
 	c.DatasetSchema = NewDatasetSchema()

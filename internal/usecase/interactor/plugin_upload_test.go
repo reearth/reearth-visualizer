@@ -89,7 +89,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 
-	repos := memory.InitRepos(nil)
+	repos := memory.New()
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
@@ -148,7 +148,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	eid2 := id.PluginExtensionID("widget2")
 	wid1 := id.NewWidgetID()
 
-	repos := memory.InitRepos(nil)
+	repos := memory.New()
 	mfs := mockFS(map[string]string{
 		"plugins/" + pid.String() + "/hogehoge": "foobar",
 	})
@@ -263,7 +263,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	nlpsid2 := id.NewPropertySchemaID(pid, eid2.String())
 	wid := id.NewWidgetID()
 
-	repos := memory.InitRepos(nil)
+	repos := memory.New()
 	mfs := mockFS(map[string]string{
 		"plugins/" + oldpid.String() + "/hogehoge": "foobar",
 	})

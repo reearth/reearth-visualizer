@@ -14,7 +14,7 @@ import (
 func TestCreateTeam(t *testing.T) {
 	ctx := context.Background()
 
-	db := memory.InitRepos(nil)
+	db := memory.New()
 
 	u := user.New().NewID().Email("aaa@bbb.com").Team(id.NewTeamID()).MustBuild()
 	teamUC := NewTeam(db)

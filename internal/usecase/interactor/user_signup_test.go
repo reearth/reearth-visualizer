@@ -263,7 +263,7 @@ func TestUser_Signup(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			// t.Parallel() cannot be used
-			r := memory.InitRepos(nil)
+			r := memory.New()
 			if tt.createUserBefore != nil {
 				assert.NoError(t, r.User.Save(
 					context.Background(),
@@ -516,7 +516,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			// t.Parallel() cannot be used
-			r := memory.InitRepos(nil)
+			r := memory.New()
 			if tt.createUserBefore != nil {
 				assert.NoError(t, r.User.Save(
 					context.Background(),

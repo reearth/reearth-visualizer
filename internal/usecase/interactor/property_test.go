@@ -15,7 +15,7 @@ import (
 
 func TestProperty_AddItem(t *testing.T) {
 	ctx := context.Background()
-	memory := memory.InitRepos(nil)
+	memory := memory.New()
 
 	team := id.NewTeamID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
@@ -67,7 +67,7 @@ func TestProperty_AddItem(t *testing.T) {
 
 func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
-	memory := memory.InitRepos(nil)
+	memory := memory.New()
 
 	team := id.NewTeamID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
@@ -112,7 +112,7 @@ func TestProperty_RemoveItem(t *testing.T) {
 
 func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 	ctx := context.Background()
-	memory := memory.InitRepos(nil)
+	memory := memory.New()
 
 	team := id.NewTeamID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()

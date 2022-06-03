@@ -47,11 +47,10 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	if inp.File == nil {
 		return nil, interfaces.ErrFileNotIncluded
 	}
-
 	return Run1(
 		ctx, operator, i.repos,
 		Usecase().
-			WithReadableTeams(inp.TeamID).
+			WithWritableTeams(inp.TeamID).
 			Transaction(),
 		func() (*asset.Asset, error) {
 			url, err := i.gateways.File.UploadAsset(ctx, inp.File)
@@ -59,13 +58,22 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 				return nil, err
 			}
 
-			return asset.New().
+			a, err := asset.New().
 				NewID().
 				Team(inp.TeamID).
 				Name(path.Base(inp.File.Path)).
 				Size(inp.File.Size).
 				URL(url.String()).
 				Build()
+			if err != nil {
+				return nil, err
+			}
+
+			if err := i.repos.Asset.Save(ctx, a); err != nil {
+				return nil, err
+			}
+
+			return a, nil
 		})
 }
 
