@@ -69,6 +69,7 @@ type Dataset interface {
 	AddDynamicDatasetSchema(context.Context, AddDynamicDatasetSchemaParam) (*dataset.Schema, error)
 	AddDynamicDataset(context.Context, AddDynamicDatasetParam) (*dataset.Schema, *dataset.Dataset, error)
 	FindBySchema(context.Context, id.DatasetSchemaID, *usecase.Pagination, *usecase.Operator) (dataset.List, *usecase.PageInfo, error)
+	CountBySchema(context.Context, id.DatasetSchemaID) (int, error)
 	FindSchemaByScene(context.Context, id.SceneID, *usecase.Pagination, *usecase.Operator) (dataset.SchemaList, *usecase.PageInfo, error)
 	FindDynamicSchemaByScene(context.Context, id.SceneID) (dataset.SchemaList, error)
 	RemoveDatasetSchema(context.Context, RemoveDatasetSchemaParam, *usecase.Operator) (id.DatasetSchemaID, error)

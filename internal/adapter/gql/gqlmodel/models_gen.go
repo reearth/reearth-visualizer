@@ -316,6 +316,7 @@ type DatasetSchema struct {
 	Name                  string                `json:"name"`
 	SceneID               ID                    `json:"sceneId"`
 	Fields                []*DatasetSchemaField `json:"fields"`
+	TotalCount            int                   `json:"totalCount"`
 	RepresentativeFieldID *ID                   `json:"representativeFieldId"`
 	Dynamic               *bool                 `json:"dynamic"`
 	Datasets              *DatasetConnection    `json:"datasets"`

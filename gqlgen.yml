@@ -27,3 +27,7 @@ models:
     model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Lang
   ID:
     model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.ID
+  DatasetSchema:
+    fields:
+      totalCount:
+        resolver: true

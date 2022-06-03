@@ -405,6 +405,10 @@ func (i *Dataset) FindBySchema(ctx context.Context, ds id.DatasetSchemaID, p *us
 	return i.datasetRepo.FindBySchema(ctx, ds, p)
 }
 
+func (i *Dataset) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int, error) {
+	return i.datasetRepo.CountBySchema(ctx, id)
+}
+
 func (i *Dataset) FindSchemaByScene(ctx context.Context, sid id.SceneID, p *usecase.Pagination, operator *usecase.Operator) (dataset.SchemaList, *usecase.PageInfo, error) {
 	if err := i.CanReadScene(sid, operator); err != nil {
 		return nil, nil, err

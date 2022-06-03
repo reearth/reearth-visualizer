@@ -177,6 +177,20 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, firs
 	return conn, nil
 }
 
+func (c *DatasetLoader) CountBySchema(ctx context.Context, dsid gqlmodel.ID) (int, error) {
+	id, err := gqlmodel.ToID[id.DatasetSchema](dsid)
+	if err != nil {
+		return 0, err
+	}
+
+	cnt, err := c.usecase.CountBySchema(ctx, id)
+	if err != nil {
+		return 0, err
+	}
+
+	return cnt, nil
+}
+
 // data loader
 
 type DatasetDataLoader interface {

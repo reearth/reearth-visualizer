@@ -69,6 +69,16 @@ func (r *datasetRepo) FindBySchema(ctx context.Context, schemaID id.DatasetSchem
 	}, pagination)
 }
 
+func (r *datasetRepo) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int, error) {
+	res, err := r.client.Count(ctx, r.readFilter(bson.M{
+		"schema": id.String(),
+	}))
+	if err != nil {
+		return 0, err
+	}
+	return int(res), nil
+}
+
 func (r *datasetRepo) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchemaID) (dataset.List, error) {
 	return r.find(ctx, nil, bson.M{
 		"schema": schemaID.String(),

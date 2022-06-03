@@ -13,6 +13,7 @@ type Dataset interface {
 	FindByID(context.Context, id.DatasetID) (*dataset.Dataset, error)
 	FindByIDs(context.Context, id.DatasetIDList) (dataset.List, error)
 	FindBySchema(context.Context, id.DatasetSchemaID, *usecase.Pagination) (dataset.List, *usecase.PageInfo, error)
+	CountBySchema(context.Context, id.DatasetSchemaID) (int, error)
 	FindBySchemaAll(context.Context, id.DatasetSchemaID) (dataset.List, error)
 	FindGraph(context.Context, id.DatasetID, id.DatasetFieldIDList) (dataset.List, error)
 	Save(context.Context, *dataset.Dataset) error

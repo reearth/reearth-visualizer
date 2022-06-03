@@ -598,6 +598,7 @@ type DatasetSchema implements Node {
   name: String!
   sceneId: ID!
   fields: [DatasetSchemaField!]!
+  totalCount: Int!
   representativeFieldId: ID
   dynamic: Boolean
   datasets(

@@ -38,6 +38,10 @@ func (r *datasetSchemaResolver) Datasets(ctx context.Context, obj *gqlmodel.Data
 	return loaders(ctx).Dataset.FindBySchema(ctx, obj.ID, first, last, before, after)
 }
 
+func (r *datasetSchemaResolver) TotalCount(ctx context.Context, obj *gqlmodel.DatasetSchema) (int, error) {
+	return loaders(ctx).Dataset.CountBySchema(ctx, obj.ID)
+}
+
 type datasetSchemaFieldResolver struct{ *Resolver }
 
 func (r *datasetSchemaFieldResolver) Schema(ctx context.Context, obj *gqlmodel.DatasetSchemaField) (*gqlmodel.DatasetSchema, error) {

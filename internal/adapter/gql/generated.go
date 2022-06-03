@@ -246,6 +246,7 @@ type ComplexityRoot struct {
 		Scene                 func(childComplexity int) int
 		SceneID               func(childComplexity int) int
 		Source                func(childComplexity int) int
+		TotalCount            func(childComplexity int) int
 	}
 
 	DatasetSchemaConnection struct {
@@ -1080,6 +1081,8 @@ type DatasetFieldResolver interface {
 	ValueRef(ctx context.Context, obj *gqlmodel.DatasetField) (*gqlmodel.Dataset, error)
 }
 type DatasetSchemaResolver interface {
+	TotalCount(ctx context.Context, obj *gqlmodel.DatasetSchema) (int, error)
+
 	Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error)
 	Scene(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.Scene, error)
 	RepresentativeField(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.DatasetSchemaField, error)
@@ -1937,6 +1940,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DatasetSchema.Source(childComplexity), true
+
+	case "DatasetSchema.totalCount":
+		if e.complexity.DatasetSchema.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.DatasetSchema.TotalCount(childComplexity), true
 
 	case "DatasetSchemaConnection.edges":
 		if e.complexity.DatasetSchemaConnection.Edges == nil {
@@ -6906,6 +6916,7 @@ type DatasetSchema implements Node {
   name: String!
   sceneId: ID!
   fields: [DatasetSchemaField!]!
+  totalCount: Int!
   representativeFieldId: ID
   dynamic: Boolean
   datasets(
@@ -9929,6 +9940,8 @@ func (ec *executionContext) fieldContext_AddDatasetSchemaPayload_datasetSchema(c
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -9992,6 +10005,8 @@ func (ec *executionContext) fieldContext_AddDynamicDatasetPayload_datasetSchema(
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -10110,6 +10125,8 @@ func (ec *executionContext) fieldContext_AddDynamicDatasetSchemaPayload_datasetS
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -12835,6 +12852,8 @@ func (ec *executionContext) fieldContext_Dataset_schema(ctx context.Context, fie
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -13461,6 +13480,8 @@ func (ec *executionContext) fieldContext_DatasetField_schema(ctx context.Context
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -13825,6 +13846,50 @@ func (ec *executionContext) fieldContext_DatasetSchema_fields(ctx context.Contex
 				return ec.fieldContext_DatasetSchemaField_ref(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchemaField", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DatasetSchema_totalCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DatasetSchema) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DatasetSchema_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.DatasetSchema().TotalCount(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DatasetSchema_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DatasetSchema",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -14216,6 +14281,8 @@ func (ec *executionContext) fieldContext_DatasetSchemaConnection_nodes(ctx conte
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -14421,6 +14488,8 @@ func (ec *executionContext) fieldContext_DatasetSchemaEdge_node(ctx context.Cont
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -14745,6 +14814,8 @@ func (ec *executionContext) fieldContext_DatasetSchemaField_schema(ctx context.C
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -14808,6 +14879,8 @@ func (ec *executionContext) fieldContext_DatasetSchemaField_ref(ctx context.Cont
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -15110,6 +15183,8 @@ func (ec *executionContext) fieldContext_ImportDatasetPayload_datasetSchema(ctx 
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -17938,6 +18013,8 @@ func (ec *executionContext) fieldContext_LayerGroup_linkedDatasetSchema(ctx cont
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -31542,6 +31619,8 @@ func (ec *executionContext) fieldContext_PropertyFieldLink_datasetSchema(ctx con
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -35374,6 +35453,8 @@ func (ec *executionContext) fieldContext_Query_dynamicDatasetSchemas(ctx context
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -37160,6 +37241,8 @@ func (ec *executionContext) fieldContext_Scene_dynamicDatasetSchemas(ctx context
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -38597,6 +38680,8 @@ func (ec *executionContext) fieldContext_SyncDatasetPayload_datasetSchema(ctx co
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -39382,6 +39467,8 @@ func (ec *executionContext) fieldContext_TagItem_linkedDatasetSchema(ctx context
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -40705,6 +40792,8 @@ func (ec *executionContext) fieldContext_UpdateDatasetSchemaPayload_datasetSchem
 				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
 			case "fields":
 				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
 			case "representativeFieldId":
 				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
 			case "dynamic":
@@ -48427,6 +48516,26 @@ func (ec *executionContext) _DatasetSchema(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "totalCount":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._DatasetSchema_totalCount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "representativeFieldId":
 
 			out.Values[i] = ec._DatasetSchema_representativeFieldId(ctx, field, obj)
