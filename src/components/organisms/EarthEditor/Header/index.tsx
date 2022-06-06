@@ -61,7 +61,7 @@ const Header: React.FC<Props> = ({ className }) => {
         onPreviewOpen={openPreview}
         modalShown={workspaceModalVisible}
         openModal={openWorkspaceModal}
-        handleModalClose={closeWorkspaceModal}
+        onModalClose={closeWorkspaceModal}
       />
       <PublicationModal
         className={className}

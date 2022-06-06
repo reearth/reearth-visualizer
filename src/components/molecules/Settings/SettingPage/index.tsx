@@ -2,16 +2,27 @@ import { Link } from "@reach/router";
 import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
+import { handleScroll } from "@reearth/util/handleScroll";
 
-const SettingPage: React.FC<Props> = ({
+export type SettingPageProps = {
+  loading?: boolean;
+  hasMoreItems?: boolean;
+  onScroll?: () => void;
+} & Props;
+
+const SettingPage: React.FC<SettingPageProps> = ({
   children,
   currentTeam,
   currentProject,
   sceneId,
+  loading,
+  hasMoreItems,
+  onScroll,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +46,10 @@ const SettingPage: React.FC<Props> = ({
           currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
         }
       />
-      <BodyWrapper>
+      <BodyWrapper
+        onScroll={e => {
+          !loading && hasMoreItems && handleScroll(e, onScroll);
+        }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
@@ -54,6 +68,7 @@ const SettingPage: React.FC<Props> = ({
               )}
             </DeviceMenu>
             {children}
+            {hasMoreItems && loading && <StyledLoading relative />}
           </ContentWrapper>
         </RightWrapper>
       </BodyWrapper>
@@ -77,7 +92,7 @@ const Wrapper = styled.div`
 const BodyWrapper = styled.div`
   height: 100%;
   padding-top: 48px;
-  overflow: auto;
+  overflow-y: scroll;
 `;
 
 const LeftWrapper = styled.div`
@@ -155,6 +170,10 @@ const MenuIcon = styled(Icon)`
   &:hover {
     background: ${({ theme }) => theme.main.bg};
   }
+`;
+
+const StyledLoading = styled(Loading)`
+  margin: 52px auto;
 `;
 
 export default SettingPage;

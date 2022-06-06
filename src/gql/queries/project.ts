@@ -32,6 +32,26 @@ export const GET_TEAM_PROJECTS = gql`
 export const GET_PROJECTS = gql`
   query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
     projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
+      edges {
+        node {
+          id
+          name
+          description
+          imageUrl
+          isArchived
+          isBasicAuthActive
+          basicAuthUsername
+          basicAuthPassword
+          publicTitle
+          publicDescription
+          publicImage
+          alias
+          publishmentStatus
+          scene {
+            id
+          }
+        }
+      }
       nodes {
         id
         name
@@ -50,6 +70,13 @@ export const GET_PROJECTS = gql`
           id
         }
       }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
     }
   }
 `;

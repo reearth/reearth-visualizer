@@ -19,15 +19,6 @@ export type Asset = {
   contentType: string;
 };
 
-function handleScroll(
-  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-  onLoadMore?: () => void,
-) {
-  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
-    onLoadMore?.();
-  }
-}
-
 export default ({
   isMultipleSelectable,
   selectedAssets,
@@ -112,7 +103,6 @@ export default ({
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    handleScroll,
     setLayoutType,
     handleUploadToAsset,
     handleReverse,

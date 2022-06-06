@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -9,8 +8,10 @@ import Loading from "@reearth/components/atoms/Loading";
 import SearchBar from "@reearth/components/atoms/SearchBar";
 import Text from "@reearth/components/atoms/Text";
 import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+import { handleScroll } from "@reearth/util/handleScroll";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -73,13 +74,12 @@ const AssetContainer: React.FC<Props> = ({
   onSortChange,
   onSearch,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     layoutType,
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    handleScroll,
     setLayoutType,
     handleUploadToAsset,
     handleReverse,
@@ -103,7 +103,7 @@ const AssetContainer: React.FC<Props> = ({
       <Flex justify={onRemove ? "flex-end" : "center"}>
         <Button
           large
-          text={intl.formatMessage({ defaultMessage: "Upload file" })}
+          text={t("Upload file")}
           icon="upload"
           type="button"
           buttonType={onRemove ? "secondary" : "primary"}
@@ -112,7 +112,7 @@ const AssetContainer: React.FC<Props> = ({
         {onRemove && (
           <Button
             large
-            text={intl.formatMessage({ defaultMessage: "Delete" })}
+            text={t("Delete")}
             icon="bin"
             type="button"
             buttonType="secondary"
@@ -159,13 +159,10 @@ const AssetContainer: React.FC<Props> = ({
           <Template align="center" justify="center">
             <TemplateText size="m" otherProperties={{ textAlign: "center" }}>
               {searchTerm
-                ? intl.formatMessage({
-                    defaultMessage: "No assets match your search.",
-                  })
-                : intl.formatMessage({
-                    defaultMessage:
-                      "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
-                  })}
+                ? t("No assets match your search.")
+                : t(
+                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                  )}
             </TemplateText>
           </Template>
         ) : (

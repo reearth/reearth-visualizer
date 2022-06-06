@@ -1,8 +1,18 @@
 Continue: キャンセル
 Cancel: 続ける
+Upload file: ''
+Delete: ''
+No assets match your search.: ''
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: ''
 Project settings: プロジェクト設定
 Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
 '''s workspace': ' のワークスペース'
+Successfully created workspace!: ''
+Failed to create project.: ''
+Successfully created project!: ''
+Working Projects: ''
+Project List: ''
+New Project: ''

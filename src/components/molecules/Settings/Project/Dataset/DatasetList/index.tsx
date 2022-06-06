@@ -10,7 +10,10 @@ export type Item = {
 
 export type Props = {
   items: Item[];
+  isLoading?: boolean;
+  hasMore?: boolean;
   removeDatasetSchema?: (schemaId: string) => void;
+  onGetMoreDataSets?: () => void;
 };
 
 const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema }) => {
@@ -27,6 +30,7 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 250px 250px 250px;
   grid-gap: 20px;
+  overflow: auto;
 `;
 
 export default DatasetList;

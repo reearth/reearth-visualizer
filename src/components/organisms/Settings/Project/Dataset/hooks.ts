@@ -3,23 +3,27 @@ import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  GetDatasetSchemasQuery,
+  DatasetsListQuery,
   useGetProjectSceneQuery,
-  useGetDatasetSchemasQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
+  useDatasetsListQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-type Nodes = NonNullable<GetDatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
+type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
+
+const datasetPerPage = 20;
 
 export default (projectId: string) => {
   const intl = useIntl();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
+
+  const client = useApolloClient();
 
   const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
@@ -28,15 +32,34 @@ export default (projectId: string) => {
 
   const sceneId = sceneData?.scene?.id;
 
-  const { data } = useGetDatasetSchemasQuery({
-    variables: { projectId: projectId ?? "", first: 100 },
+  const { data, fetchMore, loading, networkStatus } = useDatasetsListQuery({
+    variables: { sceneId: sceneId ?? "", first: datasetPerPage },
     skip: !projectId,
+    notifyOnNetworkStatusChange: true,
   });
 
-  const nodes = data?.scene?.datasetSchemas.nodes ?? [];
+  const nodes = data?.datasetSchemas.edges.map(e => e.node) ?? [];
 
   const datasetSchemas = nodes.filter(Boolean) as DatasetSchemas;
-  const client = useApolloClient();
+
+  const hasMoreDataSets =
+    data?.datasetSchemas?.pageInfo.hasNextPage || data?.datasetSchemas?.pageInfo.hasPreviousPage;
+
+  const isRefetchingDataSets = networkStatus === 3;
+
+  const handleGetMoreDataSets = useCallback(() => {
+    if (hasMoreDataSets) {
+      fetchMore({
+        variables: {
+          after: data?.datasetSchemas?.pageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [data?.datasetSchemas?.pageInfo, fetchMore, hasMoreDataSets]);
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
@@ -87,7 +110,10 @@ export default (projectId: string) => {
     currentTeam,
     currentProject,
     datasetSchemas,
+    datasetLoading: loading ?? isRefetchingDataSets,
+    hasMoreDataSets,
     handleDatasetImport,
     handleRemoveDataset,
+    handleGetMoreDataSets,
   };
 };

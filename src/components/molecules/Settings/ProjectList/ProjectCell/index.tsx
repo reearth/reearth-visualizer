@@ -52,7 +52,15 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
             </Desc>
           </DescriptionWrapper>
         )}
-        <Public status={project.status} />
+        <StatusWrapper>
+          <Public status={project.status} size={"md"} />
+          {project.isArchived && (
+            <ArchiveStatus>
+              <StatusCircle />
+              <Text size={"m"}>Archived</Text>
+            </ArchiveStatus>
+          )}
+        </StatusWrapper>
       </Wrapper>
     </StyledWrapper>
   );
@@ -73,6 +81,8 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   cursor: pointer;
   height: 100%;
   background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
+  border: 1px solid
+    ${props => (props.isHover ? props.theme.main.select : props.theme.main.lightTransparentBg)};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -98,9 +108,30 @@ const Desc = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+const StatusWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 8px;
+`;
 
 const Public = styled(PublicationStatus)`
   color: ${props => props.theme.projectCell.description};
+  margin: 8px;
+`;
+
+const ArchiveStatus = styled.div`
+  display: flex;
+  align-items: center;
+  margin: auto ${metricsSizes["s"]}px auto ${metricsSizes["s"]}px;
+`;
+
+const StatusCircle = styled.div`
+  width: 9px;
+  height: 9px;
+  background: ${props => props.theme.notification.infoBg};
+  border-radius: 50px;
+  margin: auto ${metricsSizes["s"]}px auto 0;
 `;
 
 export default ProjectCell;

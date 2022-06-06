@@ -2429,7 +2429,18 @@ export type GetDatasetSchemasQueryVariables = Exact<{
 }>;
 
 
-export type GetDatasetSchemasQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } } | null };
+export type GetDatasetSchemasQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, edges: Array<{ __typename?: 'DatasetSchemaEdge', node?: { __typename?: 'DatasetSchema', id: string, source: string, name: string } | null }>, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } } | null };
+
+export type DatasetsListQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+}>;
+
+
+export type DatasetsListQuery = { __typename?: 'Query', datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, edges: Array<{ __typename?: 'DatasetSchemaEdge', node?: { __typename?: 'DatasetSchema', id: string, source: string, name: string } | null }>, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type GetLinkableDatasetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -2685,7 +2696,7 @@ export type GetProjectsQueryVariables = Exact<{
 }>;
 
 
-export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null> } };
+export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', totalCount: number, edges: Array<{ __typename?: 'ProjectEdge', node?: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null }>, nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type CheckProjectAliasQueryVariables = Exact<{
   alias: Scalars['String'];
@@ -4198,6 +4209,13 @@ export const GetDatasetSchemasDocument = gql`
   scene(projectId: $projectId) {
     id
     datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+      edges {
+        node {
+          id
+          source
+          name
+        }
+      }
       nodes {
         id
         source
@@ -4246,6 +4264,69 @@ export function useGetDatasetSchemasLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetDatasetSchemasQueryHookResult = ReturnType<typeof useGetDatasetSchemasQuery>;
 export type GetDatasetSchemasLazyQueryHookResult = ReturnType<typeof useGetDatasetSchemasLazyQuery>;
 export type GetDatasetSchemasQueryResult = Apollo.QueryResult<GetDatasetSchemasQuery, GetDatasetSchemasQueryVariables>;
+export const DatasetsListDocument = gql`
+    query datasetsList($sceneId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  datasetSchemas(
+    sceneId: $sceneId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
+    edges {
+      node {
+        id
+        source
+        name
+      }
+    }
+    nodes {
+      id
+      source
+      name
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useDatasetsListQuery__
+ *
+ * To run a query within a React component, call `useDatasetsListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDatasetsListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDatasetsListQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useDatasetsListQuery(baseOptions: Apollo.QueryHookOptions<DatasetsListQuery, DatasetsListQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DatasetsListQuery, DatasetsListQueryVariables>(DatasetsListDocument, options);
+      }
+export function useDatasetsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DatasetsListQuery, DatasetsListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DatasetsListQuery, DatasetsListQueryVariables>(DatasetsListDocument, options);
+        }
+export type DatasetsListQueryHookResult = ReturnType<typeof useDatasetsListQuery>;
+export type DatasetsListLazyQueryHookResult = ReturnType<typeof useDatasetsListLazyQuery>;
+export type DatasetsListQueryResult = Apollo.QueryResult<DatasetsListQuery, DatasetsListQueryVariables>;
 export const GetLinkableDatasetsDocument = gql`
     query GetLinkableDatasets($sceneId: ID!) {
   datasetSchemas(sceneId: $sceneId, first: 100) {
@@ -5459,6 +5540,26 @@ export const GetProjectsDocument = gql`
     after: $after
     before: $before
   ) {
+    edges {
+      node {
+        id
+        name
+        description
+        imageUrl
+        isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
+        publicTitle
+        publicDescription
+        publicImage
+        alias
+        publishmentStatus
+        scene {
+          id
+        }
+      }
+    }
     nodes {
       id
       name
@@ -5477,6 +5578,13 @@ export const GetProjectsDocument = gql`
         id
       }
     }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    totalCount
   }
 }
     `;

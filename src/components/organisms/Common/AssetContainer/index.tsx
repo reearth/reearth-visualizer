@@ -31,7 +31,7 @@ const AssetContainer: React.FC<Props> = ({
     searchTerm,
     selectedAssets,
     selectAsset,
-    getMoreAssets,
+    handleGetMoreAssets,
     createAssets,
     handleSortChange,
     handleSearchTerm,
@@ -78,7 +78,7 @@ const AssetContainer: React.FC<Props> = ({
       smallCardOnly={smallCardOnly}
       onCreateAssets={createAssets}
       onRemove={removeAssets}
-      onGetMore={getMoreAssets}
+      onGetMore={handleGetMoreAssets}
       onSelect={handleSelect}
       onSortChange={handleSortChange}
       onSearch={handleSearchTerm}

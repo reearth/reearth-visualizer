@@ -1,19 +1,38 @@
 import React from "react";
 
+import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
+import { handleScroll } from "@reearth/util/handleScroll";
 
 export * from "./types";
 
 export type Props = {
   className?: string;
   header?: React.ReactNode;
+  isLoading?: boolean;
+  hasMoreProjects?: boolean;
+  onGetMoreProjects?: () => void;
 };
 
-const Dashboard: React.FC<Props> = ({ className, header, children }) => {
+const Dashboard: React.FC<Props> = ({
+  className,
+  header,
+  children,
+  isLoading,
+  hasMoreProjects,
+  onGetMoreProjects,
+}) => {
   return (
-    <Wrapper className={className}>
+    <Wrapper
+      className={className}
+      onScroll={e => {
+        !isLoading && hasMoreProjects && handleScroll(e, onGetMoreProjects);
+      }}>
       {header}
-      <Content>{children}</Content>
+      <Content>
+        {children}
+        {isLoading && hasMoreProjects && <StyledLoading relative />}
+      </Content>
     </Wrapper>
   );
 };
@@ -28,6 +47,9 @@ const Content = styled.div`
   margin: 10px;
   display: flex;
   flex-wrap: wrap;
+`;
+const StyledLoading = styled(Loading)`
+  margin: 52px auto;
 `;
 
 export default Dashboard;

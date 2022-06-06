@@ -1,8 +1,18 @@
 Continue: Continue
 Cancel: Cancel
-Project settings: ''
-Datasets: ''
-Plugins: ''
-Manage projects: ''
-Documentation: ''
+Upload file: Upload file
+Delete: Delete
+No assets match your search.: No assets match your search.
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.
+Project settings: Project settings
+Datasets: Datasets
+Plugins: Plugins
+Manage projects: Manage projects
+Documentation: Documentation
 '''s workspace': '''s workspace'
+Successfully created workspace!: Successfully created workspace!
+Failed to create project.: Failed to create project.
+Successfully created project!: Successfully created project!
+Working Projects: Working Projects
+Project List: Project List
+New Project: New Project

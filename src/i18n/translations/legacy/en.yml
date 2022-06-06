@@ -79,14 +79,8 @@ src:
           '3528672691': Cancel
           '4070151372': Select
           AssetContainer:
-            '710251853': >-
-              You haven't uploaded any assets yet. Click the upload button above
-              and select a compatible file from your computer.
-            '1896833639': No assets match your search.
             '1982191895': File size
             '2906553848': Alphabetical
-            '3645414921': Delete
-            '3863945965': Upload file
             '4205493358': Date
           AssetDeleteModal:
             '2868137144': >-
@@ -447,10 +441,6 @@ src:
           ProjectCell:
             '3038786653': No Title Project
             '4204406466': No Description...
-          ProjectList:
-            '899189507': Current Projects
-            '1355637676': Archived Projects
-            '4146466746': New Project
         SettingsHeader:
           '893550186': (Your personal workspace)
         Workspace:
@@ -507,10 +497,6 @@ src:
           '2700226140': Successfully added one or more assets.
           '3402808678': Failed to delete one or more assets.
           '4222118896': One or more assets were successfully deleted.
-      Dashboard:
-        '118901803': Successfully created project!
-        '1043376506': Failed to create project.
-        '1573629237': Successfully created workspace!
       EarthEditor:
         DataSourcePane:
           '8458775': Successfully deleted the dataset!
@@ -576,10 +562,6 @@ src:
             '2057458630': Plugins
           Public:
             '3135366329': Public
-        ProjectList:
-          '118901803': Successfully created project!
-          '1043376506': Failed to create project.
-          '3336263640': Project List
         Workspace:
           '905470392': Failed to delete member from the workspace.
           '1979109196': Failed to create workspace.
