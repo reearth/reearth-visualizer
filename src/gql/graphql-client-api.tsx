@@ -339,6 +339,7 @@ export type DatasetSchema = Node & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
   source: Scalars['String'];
+  totalCount: Scalars['Int'];
 };
 
 
@@ -1445,6 +1446,7 @@ export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
 export enum PropertySchemaFieldUi {
   CameraPose = 'CAMERA_POSE',
   Color = 'COLOR',
+  Datetime = 'DATETIME',
   File = 'FILE',
   Image = 'IMAGE',
   Layer = 'LAYER',
@@ -2441,6 +2443,17 @@ export type DatasetsListQueryVariables = Exact<{
 
 
 export type DatasetsListQuery = { __typename?: 'Query', datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, edges: Array<{ __typename?: 'DatasetSchemaEdge', node?: { __typename?: 'DatasetSchema', id: string, source: string, name: string } | null }>, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
+
+export type GetDatasetSchemasWithCountQueryVariables = Exact<{
+  projectId: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+}>;
+
+
+export type GetDatasetSchemasWithCountQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string, totalCount: number } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } } | null };
 
 export type GetLinkableDatasetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -4327,6 +4340,60 @@ export function useDatasetsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type DatasetsListQueryHookResult = ReturnType<typeof useDatasetsListQuery>;
 export type DatasetsListLazyQueryHookResult = ReturnType<typeof useDatasetsListLazyQuery>;
 export type DatasetsListQueryResult = Apollo.QueryResult<DatasetsListQuery, DatasetsListQueryVariables>;
+export const GetDatasetSchemasWithCountDocument = gql`
+    query GetDatasetSchemasWithCount($projectId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  scene(projectId: $projectId) {
+    id
+    datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+      nodes {
+        id
+        source
+        name
+        totalCount
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDatasetSchemasWithCountQuery__
+ *
+ * To run a query within a React component, call `useGetDatasetSchemasWithCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDatasetSchemasWithCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDatasetSchemasWithCountQuery({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useGetDatasetSchemasWithCountQuery(baseOptions: Apollo.QueryHookOptions<GetDatasetSchemasWithCountQuery, GetDatasetSchemasWithCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDatasetSchemasWithCountQuery, GetDatasetSchemasWithCountQueryVariables>(GetDatasetSchemasWithCountDocument, options);
+      }
+export function useGetDatasetSchemasWithCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDatasetSchemasWithCountQuery, GetDatasetSchemasWithCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDatasetSchemasWithCountQuery, GetDatasetSchemasWithCountQueryVariables>(GetDatasetSchemasWithCountDocument, options);
+        }
+export type GetDatasetSchemasWithCountQueryHookResult = ReturnType<typeof useGetDatasetSchemasWithCountQuery>;
+export type GetDatasetSchemasWithCountLazyQueryHookResult = ReturnType<typeof useGetDatasetSchemasWithCountLazyQuery>;
+export type GetDatasetSchemasWithCountQueryResult = Apollo.QueryResult<GetDatasetSchemasWithCountQuery, GetDatasetSchemasWithCountQueryVariables>;
 export const GetLinkableDatasetsDocument = gql`
     query GetLinkableDatasets($sceneId: ID!) {
   datasetSchemas(sceneId: $sceneId, first: 100) {

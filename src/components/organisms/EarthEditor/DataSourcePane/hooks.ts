@@ -7,11 +7,11 @@ import {
   DataSource,
 } from "@reearth/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
-  useGetDatasetSchemasQuery,
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
+  useGetDatasetSchemasWithCountQuery,
 } from "@reearth/gql";
 import { useLang } from "@reearth/i18n";
 import {
@@ -30,7 +30,7 @@ export default () => {
   const [sceneId] = useSceneId();
   const [project] = useProject();
 
-  const { data, loading } = useGetDatasetSchemasQuery({
+  const { data, loading } = useGetDatasetSchemasWithCountQuery({
     variables: { projectId: project?.id || "", first: 100 },
   });
 
@@ -57,7 +57,7 @@ export default () => {
                     id: n.id,
                     name: n.name,
                     source: n.source as DataSource,
-                    totalCount: data.scene?.datasetSchemas.totalCount,
+                    totalCount: n.totalCount,
                   }
                 : undefined,
             )
