@@ -117,6 +117,14 @@ export type SceneProperty = {
   };
   timeline?: {
     animation?: boolean;
+    visible?: boolean;
+    current?: string;
+    start?: string;
+    stop?: string;
+    stepType?: "rate" | "fixed";
+    multiplier?: number;
+    step?: number;
+    rangeType?: "unbounded" | "clamped" | "bounced";
   };
   googleAnalytics?: {
     enableGA?: boolean;

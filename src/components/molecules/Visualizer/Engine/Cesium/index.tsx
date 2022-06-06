@@ -2,7 +2,6 @@ import { ArcType, Color, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
-  Clock,
   Globe,
   Fog,
   Sun,
@@ -20,6 +19,7 @@ import {
 
 import type { EngineProps, Ref as EngineRef } from "..";
 
+import Clock from "./core/Clock";
 import Event from "./Event";
 import useHooks from "./hooks";
 
@@ -74,8 +74,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <Viewer
         ref={cesium}
         className={className}
-        animation={false}
-        timeline={false}
+        animation
+        timeline
         fullscreenButton={false}
         homeButton={false}
         geocoder={false}
@@ -100,7 +100,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         shadows={!!property?.atmosphere?.shadows}
         onClick={handleClick}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
-        <Clock shouldAnimate={!!property?.timeline?.animation} />
+        <Clock property={property} />
         <ScreenSpaceEventHandler useDefault>
           {/* remove default click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
