@@ -85,6 +85,7 @@ Cypress.Commands.add("login", () => {
         audience: config.authAudience,
         client_id: config.authClientId,
         grant_type: "password",
+        scope: "openid profile email",
       },
     })
     .then(resp => {
