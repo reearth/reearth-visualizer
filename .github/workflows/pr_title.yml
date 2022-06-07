@@ -1,0 +1,35 @@
+name: PR Title Checker
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        env:
+          PR_TITLE_PREFIX: feat fix docs style refactor pref test build ci chore revert
+          # PR_TITLE_GROUP:
+          PR_TITLE_IGNORE_LABEL: meta
+        with:
+          script: |
+            const prefixes = process.env.PR_TITLE_PREFIX?.split(" ");
+            if (!prefixes?.length) return;
+
+            const ignoreLabels = process.env.PR_TITLE_IGNORE_LABEL?.split(" ");
+
+            const title = context.payload.pull_request.title;
+            const labels = context.payload.pull_request.labels;
+            if (ignoreLabels?.length && labels?.some(l => !ignoreLabels?.includes(l.name))) return;
+
+            const groups = process.env.PR_TITLE_GROUP?.split(" ");
+            const reg = new RegExp(`^(?:${prefixes.join("|")})${groups?.length ? `(?:\\((?:${groups.join("|")})\\))?` : ""}: `, "i");
+            if (!reg.test(title)) {
+              console.error("The pull request title does not follow the conventions.");
+              process.exit(1);
+            }

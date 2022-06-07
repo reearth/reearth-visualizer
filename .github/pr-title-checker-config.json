@@ -1,0 +1,7 @@
+{
+  "CHECKS": {
+    "regexp": "^(?:feat|fix|docs|style|refactor|pref|test|build|ci|chore|revert): ",
+    "regexpFlags": "i",
+    "ignoreLabels" : ["meta"]
+  }
+}
