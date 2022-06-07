@@ -38,7 +38,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
 
   type Tab = "Working";
   const headers = {
-    Working: t("Working Projects") + "(" + (totalProjects ?? 0) + ")",
+    Working: t("Total Projects") + "(" + (totalProjects ?? 0) + ")",
   };
 
   return (

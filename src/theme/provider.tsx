@@ -11,15 +11,15 @@ import lightTheme from "./lightheme";
 
 const Provider: React.FC = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  const [, setThemaType] = useCurrentTheme();
+  const [, setThemeType] = useCurrentTheme();
   const { data } = useGetThemeQuery({ skip: !isAuthenticated });
   const themeType = data?.me?.theme;
   // TODO: switch theme by the system settings
   const actualThemeType = themeType === ("light" as Theme) ? "light" : "dark";
 
   useEffect(() => {
-    setThemaType(actualThemeType);
-  }, [actualThemeType, setThemaType]);
+    setThemeType(actualThemeType);
+  }, [actualThemeType, setThemeType]);
 
   const theme = actualThemeType === "light" ? lightTheme : darkTheme;
 
