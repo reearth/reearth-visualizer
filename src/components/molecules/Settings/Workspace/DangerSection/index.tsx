@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Field from "@reearth/components/molecules/Settings/Field";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import Modal from "./Modal";
@@ -19,19 +19,17 @@ export type Props = {
 const DangerSection: React.FC<Props> = ({ team, deleteTeam }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const intl = useIntl();
+  const t = useT();
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Danger Zone" })}>
-        <Field header={intl.formatMessage({ defaultMessage: "Delete this workspace" })} />
+      <Section title={t("Danger Zone")}>
+        <Field header={t("Delete this workspace")} />
         <Field
-          body={intl.formatMessage({
-            defaultMessage: `Once you delete a workspace, there is no going back. Please be certain.`,
-          })}
+          body={t(`Once you delete a workspace, there is no going back. Please be certain.`)}
           action={
             <Button
               large
-              text={intl.formatMessage({ defaultMessage: "Delete workspace" })}
+              text={t("Delete workspace")}
               buttonType="danger"
               onClick={() => setIsOpen(true)}
             />

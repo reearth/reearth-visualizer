@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useIntl } from "react-intl";
 import nl2br from "react-nl2br";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Markdown from "@reearth/components/atoms/Markdown";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
@@ -34,7 +34,7 @@ const TextBlock: React.FC<Props> = ({
   onChange,
   onClick,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const {
     text,
@@ -121,7 +121,7 @@ const TextBlock: React.FC<Props> = ({
         <Template onDoubleClick={startEditing}>
           <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
           <Text isSelected={isSelected} isHovered={isHovered}>
-            {intl.formatMessage({ defaultMessage: "Double click here to write." })}
+            {t("Double click here to write.")}
           </Text>
         </Template>
       ) : (

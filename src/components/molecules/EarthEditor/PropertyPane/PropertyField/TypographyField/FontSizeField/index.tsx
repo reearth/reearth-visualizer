@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
 import { Option } from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 const sizes = [6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 21, 24, 36, 48, 60, 72] as const;
@@ -22,14 +22,14 @@ type Props = {
 };
 
 const FontSizeField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Select<FontSize>
       className={className}
       value={selectedKey}
       onChange={onChange}
-      placeholder={intl.formatMessage({ defaultMessage: "Font size" })}
+      placeholder={t("Font size")}
       color={color}>
       {sizeItems.map(({ key, label }) => (
         <Option key={key} value={key} label={String(label)}>

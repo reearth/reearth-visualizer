@@ -1,10 +1,10 @@
 import React from "react";
 import { RgbaColorPicker } from "react-colorful";
-import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
 
 import Button from "@reearth/components/atoms/Button";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
 
 import { FieldProps } from "../types";
@@ -15,7 +15,7 @@ import "./styles.css";
 export type Props = FieldProps<string>;
 
 const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const {
     wrapperRef,
@@ -62,7 +62,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
         </Layers>
         <Input
           value={colorState || ""}
-          placeholder={intl.formatMessage({ defaultMessage: "#RRGGBBAA" })}
+          placeholder={t("#RRGGBBAA")}
           onChange={handleHexInput}
           onKeyPress={handleKeyPress}
           onBlur={handleHexSave}
@@ -85,7 +85,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              {intl.formatMessage({ defaultMessage: "Red" })}
+              {t("Red")}
             </PickerText>
           </Field>
           <Field>
@@ -100,7 +100,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              {intl.formatMessage({ defaultMessage: "Green" })}
+              {t("Green")}
             </PickerText>
           </Field>
           <Field>
@@ -115,7 +115,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              {intl.formatMessage({ defaultMessage: "Blue" })}
+              {t("Blue")}
             </PickerText>
           </Field>
           <Field>
@@ -128,21 +128,13 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
-              {intl.formatMessage({ defaultMessage: "Alpha" })}
+              {t("Alpha")}
             </PickerText>
           </Field>
         </RgbaInputWrapper>
         <FormButtonGroup>
-          <Button
-            buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "Cancel" })}
-            onClick={handleClose}
-          />
-          <Button
-            buttonType="primary"
-            text={intl.formatMessage({ defaultMessage: "Save" })}
-            onClick={handleSave}
-          />
+          <Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />
+          <Button buttonType="primary" text={t("Save")} onClick={handleSave} />
         </FormButtonGroup>
       </PickerWrapper>
     </Wrapper>

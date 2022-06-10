@@ -1,12 +1,12 @@
 import { Link } from "@reach/router";
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
@@ -21,7 +21,7 @@ export type Props = {
 };
 
 const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const {
     disabled,
@@ -44,13 +44,10 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           <SentForm direction="column" align="center" justify="space-between">
             <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
             <Text size="l" customColor>
-              {intl.formatMessage({ defaultMessage: "Check Your Email" })}
+              {t("Check Your Email")}
             </Text>
             <Text size="m" customColor>
-              {intl.formatMessage({
-                defaultMessage:
-                  "Please check your inbox for instructions on how to verify your account.",
-              })}
+              {t("Please check your inbox for instructions on how to verify your account.")}
             </Text>
             <StyledButton
               className="form-item"
@@ -59,7 +56,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               border
               color={theme.main.weak}
               background={theme.other.white}
-              text={intl.formatMessage({ defaultMessage: "Resend email" })}
+              text={t("Resend email")}
             />
           </SentForm>
           <StyledLink to={"/login"}>
@@ -68,7 +65,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               color={theme.main.link}
               weight="bold"
               otherProperties={{ marginLeft: "6px" }}>
-              {intl.formatMessage({ defaultMessage: "Go to log in page." })}
+              {t("Go to log in page.")}
             </Text>
           </StyledLink>
         </SentFormWrapper>
@@ -78,11 +75,11 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
 
           <Icon className="form-item" icon="logoColorful" size={60} />
           <Text className="form-item" size="l" customColor>
-            {intl.formatMessage({ defaultMessage: "Create your Account" })}
+            {t("Create your Account")}
           </Text>
           <StyledInput
             className="form-item"
-            placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+            placeholder={t("Email address")}
             color={theme.main.weak}
             value={email}
             autoFocus
@@ -90,7 +87,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           />
           <StyledInput
             className="form-item"
-            placeholder={intl.formatMessage({ defaultMessage: "Username" })}
+            placeholder={t("Username")}
             color={theme.main.weak}
             value={username}
             autoFocus
@@ -99,7 +96,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           <PasswordWrapper direction="column">
             <StyledInput
               className="form-item"
-              placeholder={intl.formatMessage({ defaultMessage: "Password" })}
+              placeholder={t("Password")}
               type="password"
               autoComplete="new-password"
               value={password}
@@ -125,11 +122,11 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
             disabled={disabled}
             color={disabled ? theme.main.text : theme.other.white}
             background={disabled ? theme.main.weak : theme.main.link}
-            text={intl.formatMessage({ defaultMessage: "Continue" })}
+            text={t("Continue")}
           />
           <Footer className="form-item">
             <Text size="xs" color={theme.main.weak}>
-              {intl.formatMessage({ defaultMessage: "Already have an account?" })}
+              {t("Already have an account?")}
             </Text>
             <StyledLink to={"/login"}>
               <Text
@@ -137,7 +134,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
                 color={theme.main.link}
                 weight="bold"
                 otherProperties={{ marginLeft: "6px" }}>
-                {intl.formatMessage({ defaultMessage: "Log in" })}
+                {t("Log in")}
               </Text>
             </StyledLink>
           </Footer>

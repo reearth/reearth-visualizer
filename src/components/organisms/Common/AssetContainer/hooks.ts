@@ -1,6 +1,5 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback, useState, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import {
   GetAssetsQuery,
@@ -10,6 +9,7 @@ import {
   Maybe,
   AssetSortType as GQLSortType,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
@@ -53,7 +53,7 @@ function pagination(
 }
 
 export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?: boolean) => {
-  const intl = useIntl();
+  const t = useT();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
@@ -101,7 +101,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
             if (result.errors || !result.data?.createAsset) {
               setNotification({
                 type: "error",
-                text: intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
+                text: t("Failed to add one or more assets."),
               });
             }
           }),
@@ -109,12 +109,12 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
         if (results) {
           setNotification({
             type: "success",
-            text: intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
+            text: t("Successfully added one or more assets."),
           });
           await refetch();
         }
       })(),
-    [createAssetMutation, setNotification, refetch, teamId, intl],
+    [createAssetMutation, setNotification, refetch, teamId, t],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
@@ -131,9 +131,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
             if (result.errors || result.data?.removeAsset) {
               setNotification({
                 type: "error",
-                text: intl.formatMessage({
-                  defaultMessage: "Failed to delete one or more assets.",
-                }),
+                text: t("Failed to delete one or more assets."),
               });
             }
           }),
@@ -141,14 +139,12 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
         if (results) {
           setNotification({
             type: "info",
-            text: intl.formatMessage({
-              defaultMessage: "One or more assets were successfully deleted.",
-            }),
+            text: t("One or more assets were successfully deleted."),
           });
           selectAsset([]);
         }
       })(),
-    [removeAssetMutation, teamId, setNotification, intl],
+    [removeAssetMutation, teamId, setNotification, t],
   );
 
   const handleSortChange = useCallback(

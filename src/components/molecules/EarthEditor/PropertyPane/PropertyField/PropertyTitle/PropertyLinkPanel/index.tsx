@@ -1,11 +1,11 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -56,7 +56,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
   onDatasetPickerOpen,
   onClear,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     selected,
     pos,
@@ -89,9 +89,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
             <>
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
                 <Text size="xs" color={theme.main.link}>
-                  {linkedDataset
-                    ? intl.formatMessage({ defaultMessage: "Linkable data" })
-                    : intl.formatMessage({ defaultMessage: "Link to dataset" })}
+                  {linkedDataset ? t("Linkable data") : t("Link to dataset")}
                 </Text>
                 <Icon icon="arrowRight" size={16} color={theme.main.link} />
               </Link>
@@ -103,7 +101,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
               size="xs"
               color={theme.main.weak}
               otherProperties={{ padding: `${metricsSizes["s"]}px` }}>
-              {intl.formatMessage({ defaultMessage: "No linked data" })}
+              {t("No linked data")}
             </Text>
           )}
           {!isLinkable && isLinked && !isOverridden && !isTemplate && (
@@ -111,7 +109,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
               size="xs"
               color={theme.main.strongText}
               otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
-              {intl.formatMessage({ defaultMessage: "From" })}
+              {t("From")}
             </Text>
           )}
           <LinkedData>
@@ -119,12 +117,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
               <LinkedDataDetailContent>
                 {isOverridden && (
                   <Text size="xs" color={theme.main.warning}>
-                    {intl.formatMessage({ defaultMessage: "Overridden" })}
+                    {t("Overridden")}
                   </Text>
                 )}
                 {((isLinked && !linkedDataset && !isTemplate) || isOverridden) && (
                   <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.link}>
-                    {intl.formatMessage({ defaultMessage: "Parent." })}
+                    {t("Parent.")}
                     {linkedFieldName}
                   </Text>
                 )}
@@ -152,9 +150,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
           <Divider margin="0" />
           <Link align="center" justify="space-between" onClick={clear}>
             <Text size="xs" color={theme.main.danger}>
-              {isOverridden
-                ? intl.formatMessage({ defaultMessage: "Reset this field" })
-                : intl.formatMessage({ defaultMessage: "Clear this field" })}
+              {isOverridden ? t("Reset this field") : t("Clear this field")}
             </Text>
             <Icon icon="fieldClear" size={16} color={theme.main.danger} />
           </Link>

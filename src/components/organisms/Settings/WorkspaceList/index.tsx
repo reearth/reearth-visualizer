@@ -1,11 +1,11 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Loading from "@reearth/components/atoms/Loading";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import MoleculeWorkspaceList from "@reearth/components/molecules/Settings/WorkspaceList/WorkspaceList";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "../Workspace/hooks";
 
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const WorkspaceList: React.FC<Props> = ({ teamId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     teams,
     currentTeam,
@@ -30,7 +30,7 @@ const WorkspaceList: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage teamId={teamId}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Workspace List" })} />
+      <SettingsHeader title={t("Workspace List")} />
       <MoleculeWorkspaceList
         currentTeam={currentTeam}
         teams={teams}

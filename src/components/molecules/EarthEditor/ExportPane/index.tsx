@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import SelectBox, { Props as SelectBoxProps } from "@reearth/components/atoms/SelectBox";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const ExportPane: React.FC<Props> = ({ className, onExport }) => {
-  const intl = useIntl();
+  const t = useT();
   const [format, setFormat] = useState<Format>(defaultFormat);
 
   const handleExport = useCallback(() => onExport(format), [format, onExport]);
@@ -25,7 +25,7 @@ const ExportPane: React.FC<Props> = ({ className, onExport }) => {
   return (
     <Wrapper className={className}>
       <SelectWrapper>
-        <Label size="s">{intl.formatMessage({ defaultMessage: "Export type" })}</Label>
+        <Label size="s">{t("Export type")}</Label>
         <StyledSelectField
           selected={format}
           items={[
@@ -37,11 +37,7 @@ const ExportPane: React.FC<Props> = ({ className, onExport }) => {
           onChange={f => setFormat(f ?? defaultFormat)}
         />
       </SelectWrapper>
-      <StyledButton
-        buttonType="primary"
-        text={intl.formatMessage({ defaultMessage: "Export" })}
-        onClick={handleExport}
-      />
+      <StyledButton buttonType="primary" text={t("Export")} onClick={handleExport} />
     </Wrapper>
   );
 };

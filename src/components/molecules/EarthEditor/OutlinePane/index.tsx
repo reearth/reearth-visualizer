@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 import Box from "@reearth/components/atoms/Box";
 import ConfirmationModal from "@reearth/components/atoms/ConfirmationModal";
@@ -7,6 +6,7 @@ import Divider from "@reearth/components/atoms/Divider";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import TreeView from "@reearth/components/atoms/TreeView";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -86,7 +86,7 @@ const OutlinePane: React.FC<Props> = ({
   onDrop,
   loading,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [warningOpen, setWarning] = useState(false);
 
   const handleShowWarning = (show: boolean) => setWarning(show);
@@ -188,26 +188,21 @@ const OutlinePane: React.FC<Props> = ({
       </ItemsGroupWrapper>
 
       <ConfirmationModal
-        title={intl.formatMessage({ defaultMessage: "Delete widget" })}
+        title={t("Delete widget")}
         body={
           <>
             <Divider margin="24px" />
             <Box mb={"m"}>
               <Text size="m">
-                {intl.formatMessage({
-                  defaultMessage:
-                    "You are about to delete the selected widget. You will lose all data tied to this widget.",
-                })}
+                {t(
+                  "You are about to delete the selected widget. You will lose all data tied to this widget.",
+                )}
               </Text>
             </Box>
-            <Text size="m">
-              {intl.formatMessage({
-                defaultMessage: "Are you sure you would like to delete this widget?",
-              })}
-            </Text>
+            <Text size="m">{t("Are you sure you would like to delete this widget?")}</Text>
           </>
         }
-        buttonAction={intl.formatMessage({ defaultMessage: "Delete" })}
+        buttonAction={t("Delete")}
         isOpen={warningOpen}
         onClose={() => handleShowWarning(false)}
         onProceed={() => {

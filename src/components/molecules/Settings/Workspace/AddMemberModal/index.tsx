@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 export type User = {
@@ -31,7 +31,7 @@ const AddMemberModal: React.FC<Props> = ({
   changeSearchedUser,
   addMembersToTeam,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
 
   const [users, setUsers] = useState<User[]>([]);
@@ -78,7 +78,7 @@ const AddMemberModal: React.FC<Props> = ({
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Add a team member" })}
+      title={t("Add a team member")}
       size="sm"
       isVisible={active}
       onClose={handleClose}
@@ -86,24 +86,15 @@ const AddMemberModal: React.FC<Props> = ({
         <Button
           large
           buttonType="primary"
-          text={intl.formatMessage({ defaultMessage: "Add" })}
+          text={t("Add")}
           onClick={add}
           disabled={users.length === 0}
         />
       }
-      button2={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={handleClose}
-        />
-      }>
+      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
       <StyledTextBox
         value={nameOrEmail}
-        placeholder={intl.formatMessage({
-          defaultMessage: "Input an email address or a user name",
-        })}
+        placeholder={t("Input an email address or a user name")}
         onChange={handleChange}
       />
       <UserList>

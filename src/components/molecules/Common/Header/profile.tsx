@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import { useIntl } from "react-intl";
 
 import Avatar from "@reearth/components/atoms/Avatar";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
@@ -10,6 +9,7 @@ import {
   MenuListItemLabel,
 } from "@reearth/components/molecules/Common/MenuList";
 import TeamMenu from "@reearth/components/molecules/Common/TeamMenu";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import { User, Team, Project } from "./types";
@@ -53,7 +53,7 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
   onChangeTeam,
   openModal,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const dropDownRef = useRef<DropDownRef>(null);
 
@@ -69,10 +69,7 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
         <ChildrenWrapper>
           <MenuList>
             <MenuListItem>
-              <MenuListItemLabel
-                linkTo={`/settings/account`}
-                text={intl.formatMessage({ defaultMessage: "Account Settings" })}
-              />
+              <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
             </MenuListItem>
             <MenuListItem noHover>
               <TeamMenu
@@ -83,11 +80,7 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
               />
             </MenuListItem>
             <MenuListItem>
-              <MenuListItemLabel
-                icon="logout"
-                onClick={onSignOut}
-                text={intl.formatMessage({ defaultMessage: "Log out" })}
-              />
+              <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
             </MenuListItem>
           </MenuList>
         </ChildrenWrapper>

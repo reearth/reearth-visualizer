@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
@@ -7,6 +6,7 @@ import Text from "@reearth/components/atoms/Text";
 import Field from "@reearth/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/ChangeSiteNameModal";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -43,7 +43,7 @@ const PublishSection: React.FC<Props> = ({
   onNotificationChange,
 }) => {
   const theme = useTheme();
-  const intl = useIntl();
+  const t = useT();
 
   const {
     alias,
@@ -71,19 +71,16 @@ const PublishSection: React.FC<Props> = ({
   return (
     <>
       <Wrapper>
-        <Section title={intl.formatMessage({ defaultMessage: "Site settings" })}>
+        <Section title={t("Site settings")}>
           <StyledText size="m" color={theme.main.strongText}>
-            {intl.formatMessage({ defaultMessage: "Site name" })}
+            {t("Site name")}
           </StyledText>
           <Text size="s">
             {alias
-              ? intl.formatMessage({
-                  defaultMessage: "Access your project, copy or edit the URL below.",
-                })
-              : intl.formatMessage({
-                  defaultMessage:
-                    "Once your project is published from the editor page the URL details will be shown here.",
-                })}
+              ? t("Access your project, copy or edit the URL below.")
+              : t(
+                  "Once your project is published from the editor page the URL details will be shown here.",
+                )}
           </Text>
           {alias && (
             <StyledItem

@@ -1,7 +1,7 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -16,7 +16,7 @@ export type Props = {
 };
 
 const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProject }) => {
-  const intl = useIntl();
+  const t = useT();
   const workspace = currentWorkspace?.name;
   const theme = useTheme();
 
@@ -28,8 +28,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
         {title}
       </Text>
       <Text size="m" color={theme.main.text} otherProperties={{ marginTop: "12px" }}>
-        {currentWorkspace?.personal &&
-          intl.formatMessage({ defaultMessage: "(Your personal workspace)" })}
+        {currentWorkspace?.personal && t("(Your personal workspace)")}
       </Text>
     </Wrapper>
   );

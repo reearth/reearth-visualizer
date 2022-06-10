@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import SelectField from "@reearth/components/atoms/SelectBox";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type PrimitiveItem = { name: string; extensionId: string; icon: string; pluginId: string };
@@ -15,7 +15,7 @@ export type Props = {
 };
 
 const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGroup }) => {
-  const intl = useIntl();
+  const t = useT();
   const [selectedPrimitiveType, selectPrimitiveType] = useState("");
 
   const handlePrimitiveTypeChange = (type: string) => {
@@ -39,7 +39,7 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
     <Flex direction="column">
       <Flex>
         <Flex flex={1}>
-          <Text size="xs">{intl.formatMessage({ defaultMessage: "Layer style" })}</Text>
+          <Text size="xs">{t("Layer style")}</Text>
         </Flex>
         <Flex flex={2}>
           <SelectField
@@ -51,7 +51,7 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
       </Flex>
       <StyledButton
         type="button"
-        text={intl.formatMessage({ defaultMessage: "import" })}
+        text={t("import")}
         buttonType="primary"
         disabled={!selectedPrimitiveType}
         onClick={handleSubmit}

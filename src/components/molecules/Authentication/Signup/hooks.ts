@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { useIntl } from "react-intl";
+
+import { useT } from "@reearth/i18n";
 
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
@@ -12,7 +13,7 @@ export default function ({
   onSignup: (info: { email: string; username: string; password: string }) => Promise<void>;
   passwordPolicy?: PasswordPolicyType;
 }) {
-  const intl = useIntl();
+  const t = useT();
   const [regexMessage, setRegexMessage] = useState("");
   const [username, setUsername] = useState<string>();
   const [email, setEmail] = useState<string>();
@@ -56,41 +57,25 @@ export default function ({
       setPassword(password);
       switch (true) {
         case passwordPolicy?.whitespace?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "No whitespace is allowed.",
-            }),
-          );
+          setRegexMessage(t("No whitespace is allowed."));
           break;
         case passwordPolicy?.tooShort?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "Too short.",
-            }),
-          );
+          setRegexMessage(t("Too short."));
           break;
         case passwordPolicy?.tooLong?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That is terribly long.",
-            }),
-          );
+          setRegexMessage(t("That is terribly long."));
           break;
         case passwordPolicy?.highSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
+          setRegexMessage(t("That password is great!"));
           break;
         case passwordPolicy?.medSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
+          setRegexMessage(t("That password is better."));
           break;
         case passwordPolicy?.lowSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
+          setRegexMessage(t("That password is okay."));
           break;
         default:
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That password confuses me, but might be okay.",
-            }),
-          );
+          setRegexMessage(t("That password confuses me, but might be okay."));
           break;
       }
     },

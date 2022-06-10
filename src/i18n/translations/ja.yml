@@ -1,18 +1,333 @@
 Continue: キャンセル
 Cancel: 続ける
-Upload file: ''
-Delete: ''
-No assets match your search.: ''
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: ''
+Drop here: ここにドロップ
+Notfound: ページが見つかりません
+Published: 一般公開
+Unpublished: 非公開
+not set: 未設定
+Welcome: ようこそ
+Log in to Re:Earth to continue.: Re:Earthにログイン
+Username or email: ユーザー名またはメールアドレス
+Password: パスワード
+Forgot password?: パスワードを忘れましたか？
+Don't have an account?: アカウントをお持ちではありませんか？
+Sign up: 登録
+Check Your Email: メールを確認してください。
+Please check your inbox for instructions on how to verify your account.: アカウントを認証するためのメールを送信しました。メールを確認し指示に従ってください。
+Resend email: メールを再送信
+Go to log in page.: ログイン
+Forgot Your Password?: パスワードを忘れた場合
+Enter your email address and we will send you instructions to reset your password.: パスワードのリセット方法を案内するメールをお送りします。メールアドレスを入力してください。
+Email address: メールアドレス
+Go back to log in page: ログインに戻る
+No whitespace is allowed.: 空白は使用できません。
+Too short.: 短いパスワードです。
+That is terribly long.: 非常に長いパスワードです。
+That password is great!: 良いパスワードです。
+That password is better.: 良いパスワードです。
+That password is okay.: 使用可能なパスワードです。
+That password confuses me, but might be okay.: 使用可能なパスワードです。
+Change Your Password: パスワードの変更
+Enter a new password below to change your password.: 変更後の新しいパスワードを入力してください。
+New password: 新しいパスワード
+Reset password: パスワードをリセット
+Create your Account: アカウントを登録する
+Username: ユーザー名
+Already have an account?: 既にアカウントをお持ちの場合
+Log in: ログイン
+Date: 作成日時順
+File size: サイズ順
+Alphabetical: 名前順
+Upload file: ファイルアップロード
+Delete: 削除
+No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
+You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
+Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
+Assets Library: アセット
+Use URL: URL
+Add video URL: 映像URLを追加
+Save: 保存
+Select Asset: 選択
+Select: 選択
+Resource URL: リソースURL
+Account Settings: アカウント設定
+Log out: ログアウト
+Create New Project: 新規プロジェクト作成
+Create: 作成
+Project Name: プロジェクト名
+Description: プロジェクト概要
+Select thumbnail image: サムネイル画像を選択
 Project settings: プロジェクト設定
 Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
+Workspaces: ワークスペース
+Manage Workspaces: ワークスペースを管理
+New Workspace: 新規ワークスペース
+Create New Workspace: 新規ワークスペース作成
+Workspace Name: ワークスペース名
+You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
+Quick Start: クイックスタート
+User guide: ユーザーガイド
+New project: 新規プロジェクト作成
+New workspace: 新規ワークスペース作成
 '''s workspace': ' のワークスペース'
-Successfully created workspace!: ''
-Failed to create project.: ''
-Successfully created project!: ''
-Total Projects: 全てのプロジェクト
+Layer style: レイヤータイプ
+import: インポート
+Data: データ
+Import to scene: シーンへ追加
+OK: 確認
+You are deleting a dataset. Layers that are linked to this dataset might show errors.: データセットを削除します。このデータセットとリンクされているレイヤーはエラーが発生する可能性があります。
+Please make sure your project doesn't rely on this dataset before proceeding.: プロジェクトがデータセットに依存していないことを確認してください。
+Connect with Google Drive: グーグルドライブと連携
+Re:Earth supports uploading Google Sheets and CSV files.: Re:Earthは、GoogleスプレッドシートやCSVファイルに対応しています。
+sending...: 送信
+Add Dataset: データセットを追加
+Add dataset: データセットを追加
+Upload from your device: アップロード
+Supports CSV, JSON, GIS files: CSV, JSON, GISのファイルに対応
+Google Drive: グーグルドライブ
+Upload CSV file: CSVファイルをアップロード
+Sorry, that service is unavailable at this time.: そのサービスはまだ利用できません。
+Other Source: その他
+No Dataset is here: データセットは存在しません
+Export type: ファイル形式
+Export: エクスポート
+Angle: 角度
+Narrow: 狭い
+Wide: 広い
+Publish: 公開
+Update: 更新する
+Preview: プレビュー
+Unpublish: 非公開にする
+Layer selection: レイヤーを選択
+Selectable Layers: 選択可能なレイヤー
+Add: 追加
+Remove: 削除
+Stories: ストーリー
+Delete selected layer.: 選択中のレイヤーを削除
+Create new folder.: 新規フォルダ作成
+Add Layer.: レイヤーを追加
+Delete the selected item.: 選択中の項目を削除
+Scene: シーン
+Widgets: ウィジェット
+Layers: レイヤー
+Clusters: クラスター
+Delete widget: ウィジェットを削除
+You are about to delete the selected widget. You will lose all data tied to this widget.: ウィジェットを削除しようとしています。ウィジェットに関連するデータも削除されます。
+Are you sure you would like to delete this widget?: 本当にウィジェットを削除しますか？
+Create Infobox: インフォボックス作成
+Dataset: データセット
+Pose Set: 設定済み
+Position Set: 設定済み
+Not Set: 未設定
+Latitude: 緯度
+Longtitude: 経度
+Altitude: 高度
+Heading: ヘッディング
+Pitch: ピッチ
+Roll: ロール
+Check Pose: 確認
+Jump: ジャンプ
+Edit Pose: 編集
+Edit Position: 編集
+Capture: キャプチャ
+'#RRGGBBAA': '#RRGGBBAA'
+Red: 赤
+Green: 緑
+Blue: 青
+Alpha: アルファ
+Longitude: 経度
+This field is linked to {{datasetField}}.: この値は{datasetField}にリンクされています
+This field is not editable currently.: この値は現在変更できません
+Linkable data: リンク先
+Link to dataset: データセットからリンクする
+No linked data: 未リンク
+From: リンク先
+Overridden: 設定を上書き
+Parent.: 親.
+Reset this field: 設定をリセット
+Clear this field: 設定をリセット
+No selectable items: 選択可能なアイテムがありません
+Font family: フォント
+Font size: サイズ
+Field set: 設定
+Not set: 未設定
+Basic: インフォボックス
+Template: テンプレート
+template: テンプレート
+You are deleting the infobox and all its contents. Are you sure you want to do that?: インフォボックスとその内容を削除します。本当によろしいですか？
+List: リスト
+Enable Editor Mode: ウィジェットの配置を編集
+Congratulations!: おめでとうございます！
+Publish your project: プロジェクトを公開する
+Update your project: プロジェクトを更新する
+Ok: 確認
+Your published project will be updated. This means all current changes will overwrite the current published project.: 公開されたプロジェクトが更新されます。公開されているプロジェクトへ現在の内容が上書きされます。
+Your project will be published. This means anybody with the below URL will be able to view this project.: プロジェクトが公開されます。URLを知っている人は誰でもこのプロジェクトを見ることができるようになります。
+Close: 閉じる
+Your project has been published!: プロジェクトが公開されました。
+Public URL: 公開URL
+Copy: コピー
+'* Anyone can see your project with this URL': '*　このリンクを知っているインターネット上の全員が閲覧できます'
+Embed Code: 埋め込み用コード
+'* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
+more options: その他の設定
+Search engine indexing: 検索可能にする
+Your project will be unpublished.: プロジェクトを非公開にする
+This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
+'**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
+Add a tag group: タググループを追加
+Add a tag: タグを追加
+Auto: 自動
+Dark theme: ダークテーマ
+Light theme: ライトテーマ
+Account: アカウント
+Service language: 言語設定
+Color theme: カラーテーマ
+Change Password: パスワードを変更
+Change password: パスワードを変更
+In order to protect your account, make sure your password is unique and strong.: アカウントを安全に保つため、パスワードが十分に安全であることを確かめてください
+New password (for confirmation): 新しいパスワード
+Set your password now: 現在のパスワード
+Profile: プロフィール
+Profile picture: プロフィール画像
+Name: 名前
+Workspace List: ワークスペース一覧
+Assets: アセット
 Project List: プロジェクト一覧
-New Project: 新しいプロジェクト
+Public: 公開設定
+Notice: 通知
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
+Basic Authorization: ベーシック認証
+Enable basic authorization: ベーシック認証を有効化する
+Change site name: サイト名を変更
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
+Danger Zone: 重要操作
+Unarchive this project: 非編集化を解除
+Archive this project: プロジェクトの非編集化
+Unarchive this project to become editable again.: プロジェクトを回復
+Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
+Unarchive project: 非編集化を解除
+Archive project: プロジェクトを非編集化する
+Delete this project: プロジェクトを削除
+Once you delete a project, there is no going back. Please be sure.: プロジェクトを削除すると復元はできません。慎重に行ってください。
+Delete project: プロジェクト削除
+Archiving your project will put it into a state where you cannot edit it or it's settings.: この操作をすると、プロジェクトの編集が行えなくなります。
+Once archived, you can unarchive the repository at any time.: この設定はいつでも戻すことができます。
+This will bring this repository back to a state it can be editted and worked on by you and your team.: 非編集化を解除すると、チームの書き込み権限を持つユーザーによってプロジェクトの編集、設定変更が可能になります。
+This action cannot be undone.: この操作は取り消すことができません。
+This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: 本当にプロジェクトを削除してもよろしいですか。
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
+I am sure I want to delete this project.: このプロジェクトを削除します。
+I am sure I want to archive this project.: 本当に非編集化してもよいですか？
+I am sure I want to unarchive this project.: 本当に非編集化を解除してもよろしいですか？
+Delete this dataset: このデータセットを削除
+Are you sure you want to delete it?: 本当に削除してよろしいですか？
+Uninstall: アンインストール
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
+Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
+Installed: インストール済み
+Install: インストール
+Zip file from PC: PCからZipファイルをアップロード
+Public GitHub repository: GitHubパブリックレポジトリ
+Installed plugins: インストール済みプラグイン
+Import GitHub repository: GitHubレポジトリからインポート
+'Repository url:': 'レポジトリURL:'
+Project Info: プロジェクト情報
+Thumbnail: サムネイル画像
+Public Info: 公開詳細設定
+(These fields will be used for OGP as well as metadata for the public project): これらのフィールドは、SNS等に共有する際や公開プロジェクトの検索等に利用されます。
+Title: ページタイトル
+Site settings: サイト設定
+Site name: サイト名
+Access your project, copy or edit the URL below.: 公開ページにアクセスするには以下のURLをコピーしてください。
+Once your project is published from the editor page the URL details will be shown here.: 編集画面からプロジェクトが公開されると、URLの詳細がここに表示されます。
+This project is published with search engine indexing enabled.: このプロジェクトは、検索エンジンのインデックスを有効にした状態で公開されています。
+This project is published with search engine indexing disabled.: このプロジェクトは、検索エンジンのインデックスを無効にした状態で公開されています。
+This project is not published.: このプロジェクトは、非公開です。
+No Title Project: プロジェクト名未設定
+No Description...: プロジェクト概要未設定
+(Your personal workspace): (パーソナルワークスペース)
+Add a team member: メンバーを追加
+Input an email address or a user name: メールアドレスもしくはユーザー名を入力
+Delete this workspace: ワークスペースを削除
+Once you delete a workspace, there is no going back. Please be certain.: ワークスペースを削除すると復元することはできません。よくお確かめください。
+Delete workspace: ワークスペース削除
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: この操作をすると、このワークスペース及び関連するすべてのプロジェクト・アセット・データセットが永久に削除されます。
+Please type your workspace name to continue.: 操作を続行するにはこのワークスペース名を入力してください。
+I am sure I want to delete this workspace.: ワークスペースを削除します。
+Reader: 閲覧
+Writer: 編集
+Owner: オーナー
+Members: メンバー
+New member: 新規メンバー
+Workspace name: ワークスペース名
+No Title Workspace: 無題のワークスペース
+This is your personal workspace. Your projects and resources will be managed in this workspace.: ここは個人用のワークスペースです。
+All workspaces: すべてのワークスペース
+Double click here to write.: ダブルクリックで入力
+Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
+Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
+Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
+Failed to add one or more assets.: アセットの作成に失敗しました。
+Successfully added one or more assets.: アセットの追加に成功しました。
+Failed to delete one or more assets.: アセットの削除に失敗しまたした。
+One or more assets were successfully deleted.: アセットが削除されました。
+Successfully created workspace!: 新しいワークスペースの作成に成功しました！
+Failed to create project.: プロジェクトの作成に失敗しました。
+Successfully created project!: 新しいプロジェクトの作成に成功しました！
+Successfully created layer group: レイヤーが作成されました。
+Failed to create layer group: レイヤーの作成に失敗しました。
+Successfully added the dataset!: データセットの追加に成功しました。
+Failed to add the dataset.: データセットの追加に失敗しました。
+Successfully deleted the dataset!: ひとつのデータセットが削除されました。
+Failed to delete the dataset.: データセットの削除に失敗しました。
+Failed to publish your project.: プロジェクトの公開に失敗しました。
+Successfully published your project!: プロジェクトの公開に成功しました！
+Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
+Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
+Successfully copied to clipboard!: クリップボードにコピーしました。
+Outline: アウトライン
+Folder: 新規フォルダ
+Layer: レイヤー
+Widget: ウィジェット
+Infobox: インフォボックス
+Tag: タグ
+Same label tag already exist. Please type different label.: 同じラベルのタグがすでに存在します。ラベルを変更してもう一度お試しください。
+Tag group has tags, you need to remove all tags under the tag group: タググループ内のタグをすべて削除してからタググループを削除してください。
+Error: エラー
+Warning: 注意
+Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
+Failed to update account name.: アカウント名の変更に失敗しました。
+Failed to update password.: パスワードの更新に失敗しました。
+Successfully updated password!: パスワードの更新が完了しました。
+Failed to change language.: 言語の変更に失敗しました。
+Failed to change theme.: テーマの変更に失敗しました。
+Failed to delete dataset.: デーだセットの削除に失敗したました。
+Dataset was successfully deleted.: データセットが削除されました。
+Failed to archive project.: プロジェクトの非編集状態に失敗しました。
+Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
+Successfully archived the project.: プロジェクトを非編集状態にしました。
+Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
+Failed to delete project.: プロジェクトの削除に失敗しました。
+Project was successfully deleted.: プロジェクトが削除されました。
+Failed to install plugin.: プラグインのインストールに失敗しました。
+Successfully installed plugin!: プラグインがインストールされました。
+Failed to uninstall plugin.: プラグインの削除に失敗しました。
+Successfully removed plugin.: プラグインが削除されました。
+Total Projects: 全てのプロジェクト
+New Project: 新規プロジェクト
+Failed to create workspace.: ワークスペースの作成に失敗しました。
+Sucessfully created a workspace!: 新しいワークスペースの作成に成功しました！
+Failed to update workspace name.: ワークスペース名の変更に失敗しました。
+You have changed the workspace's name.: ワークスペース名を変更しました。
+Failed to delete workspace.: ワークスペースの削除に失敗しました。
+Workspace was successfully deleted.: ワークスペースを削除しました。
+Failed to add one or more members.: メンバーの追加に失敗しました。
+Successfully added member(s) to the workspace!: このワークスペースに新しいメンバーを追加しました。
+Failed to delete member from the workspace.: メンバーの削除に失敗しました。
+Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
+Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。

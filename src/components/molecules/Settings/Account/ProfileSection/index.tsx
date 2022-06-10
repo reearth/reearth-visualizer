@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -11,22 +11,14 @@ export type Props = {
 };
 
 const ProfileSection: React.FC<Props> = ({ username, updateName }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Profile" })}>
-        <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Profile picture" })}
-          avatar={username}
-          iHeight={"80px"}
-        />
+      <Section title={t("Profile")}>
+        <EditableItem title={t("Profile picture")} avatar={username} iHeight={"80px"} />
 
-        <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Name" })}
-          body={username}
-          onSubmit={updateName}
-        />
+        <EditableItem title={t("Name")} body={username} onSubmit={updateName} />
       </Section>
     </Wrapper>
   );

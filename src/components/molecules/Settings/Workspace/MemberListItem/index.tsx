@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Avatar from "@reearth/components/atoms/Avatar";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import { useT } from "@reearth/i18n";
 import { metricsSizes, styled } from "@reearth/theme";
 
 import EditableItem from "../../Project/EditableItem";
@@ -26,7 +26,7 @@ export type Props = {
 };
 
 const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRemove }) => {
-  const intl = useIntl();
+  const t = useT();
   const saveEdit = useCallback(
     (role?: string) => {
       if (!role) return;
@@ -36,9 +36,9 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
   );
 
   const roles = [
-    { key: "READER", label: intl.formatMessage({ defaultMessage: "Reader" }) },
-    { key: "WRITER", label: intl.formatMessage({ defaultMessage: "Writer" }) },
-    { key: "OWNER", label: intl.formatMessage({ defaultMessage: "Owner" }) },
+    { key: "READER", label: t("Reader") },
+    { key: "WRITER", label: t("Writer") },
+    { key: "OWNER", label: t("Owner") },
   ];
 
   return (

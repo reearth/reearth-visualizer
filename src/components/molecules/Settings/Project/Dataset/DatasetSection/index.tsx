@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
 import Button from "@reearth/components/atoms/Button";
@@ -7,6 +6,7 @@ import DatasetList, {
   Item,
 } from "@reearth/components/molecules/Settings/Project/Dataset/DatasetList";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 type Props = {
@@ -20,7 +20,7 @@ const DatasetSection: React.FC<Props> = ({
   removeDatasetSchema,
   onDatasetImport,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const handleFileSelect = useFileInput(files => onDatasetImport?.(files[0], null), {
     multiple: false,
     accept: "text/csv",
@@ -28,14 +28,9 @@ const DatasetSection: React.FC<Props> = ({
 
   return (
     <Section
-      title={intl.formatMessage({ defaultMessage: "Dataset" })}
+      title={t("Dataset")}
       actions={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Add Dataset" })}
-          onClick={handleFileSelect}
-        />
+        <Button large buttonType="secondary" text={t("Add Dataset")} onClick={handleFileSelect} />
       }>
       <StyledDatasetList items={datasetSchemas} removeDatasetSchema={removeDatasetSchema} />
     </Section>

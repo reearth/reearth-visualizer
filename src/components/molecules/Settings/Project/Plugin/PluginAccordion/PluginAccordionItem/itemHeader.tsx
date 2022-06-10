@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 import Box from "@reearth/components/atoms/Box";
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { fonts, styled } from "@reearth/theme";
 
 import DeleteModal from "./deleteModal";
@@ -24,7 +24,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   isInstalled,
   onUninstall,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const handleMouseEnter = () => {
@@ -50,13 +50,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
         type="button"
         large
         icon={isInstalled ? (hovered ? "bin" : "check") : "install"}
-        text={
-          isInstalled
-            ? hovered
-              ? intl.formatMessage({ defaultMessage: "Uninstall" })
-              : intl.formatMessage({ defaultMessage: "Installed" })
-            : intl.formatMessage({ defaultMessage: "Install" })
-        }
+        text={isInstalled ? (hovered ? t("Uninstall") : t("Installed")) : t("Install")}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={isInstalled ? () => setIsModalOpen(true) : undefined}

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { useIntl } from "react-intl";
 
+import { useT } from "@reearth/i18n";
 import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
 export type DataSource = RawDataSource;
@@ -23,7 +23,7 @@ export default (
     datasetSchemaId: string | null,
   ) => void | Promise<void>,
 ) => {
-  const intl = useIntl();
+  const t = useT();
 
   const [datasetSyncOpen, setDatasetSyncOpen] = useState(false);
   const [datasetSyncLoading, setDatasetSyncLoading] = useState(false);
@@ -61,8 +61,10 @@ export default (
   const handleDatasetSortByHost = (datasetSchemas || []).reduce<Record<string, DatasetSchema[]>>(
     (acc, ac) => {
       const host = parseHost(ac.source);
-      const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
-
+      const identifier = host || t("Other Source");
+      if (!identifier) {
+        return acc;
+      }
       acc[identifier] = [...(acc[identifier] || []), ac];
       return acc;
     },

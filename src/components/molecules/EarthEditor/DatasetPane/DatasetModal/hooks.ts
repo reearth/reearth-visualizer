@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
-import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
 import { useAuth } from "@reearth/auth";
+import { useT } from "@reearth/i18n";
 
 import { SheetParameter } from "./Gdrive";
 
@@ -18,7 +18,7 @@ export default (
   onClose?: () => void,
 ) => {
   const { getAccessToken } = useAuth();
-  const intl = useIntl();
+  const t = useT();
 
   const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
   const extensions = window.REEARTH_CONFIG?.extensions?.datasetImport;
@@ -31,11 +31,11 @@ export default (
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
-      return intl.formatMessage({ defaultMessage: "sending..." });
+      return t("sending...");
     } else {
-      return intl.formatMessage({ defaultMessage: "Add Dataset" });
+      return t("Add Dataset");
     }
-  }, [syncLoading, intl]);
+  }, [syncLoading, t]);
 
   const extensionTypes = useMemo(() => {
     if (!extensions) return;

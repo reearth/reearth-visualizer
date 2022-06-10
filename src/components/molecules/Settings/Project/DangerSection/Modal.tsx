@@ -1,12 +1,12 @@
 import { useNavigate } from "@reach/router";
 import React, { useEffect, useState, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { fonts, styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -39,7 +39,7 @@ const DangerModal: React.FC<Props> = ({
   const [disabled, setDisabled] = useState(true);
   const [text, setText] = useState<string>();
   const navigate = useNavigate();
-  const intl = useIntl();
+  const t = useT();
 
   const handleAction = useCallback(() => {
     if (!project || disabled) return;
@@ -62,10 +62,10 @@ const DangerModal: React.FC<Props> = ({
     <Modal
       title={
         actionType === "delete"
-          ? intl.formatMessage({ defaultMessage: "Delete project" })
+          ? t("Delete project")
           : actionType === "archive"
-          ? intl.formatMessage({ defaultMessage: "Archive project" })
-          : intl.formatMessage({ defaultMessage: "Unarchive project" })
+          ? t("Archive project")
+          : t("Unarchive project")
       }
       isVisible={isVisible}
       size="sm"
@@ -76,53 +76,47 @@ const DangerModal: React.FC<Props> = ({
       {actionType === "archive" && (
         <>
           <Description size="s" color={theme.main.text}>
-            {intl.formatMessage({
-              defaultMessage: `Archiving your project will put it into a state where you cannot edit it or it's settings.`,
-            })}
+            {t(
+              `Archiving your project will put it into a state where you cannot edit it or it's settings.`,
+            )}
           </Description>
           <Description size="s" color={theme.main.text}>
-            {intl.formatMessage({
-              defaultMessage: `Once archived, you can unarchive the repository at any time.`,
-            })}
+            {t(`Once archived, you can unarchive the repository at any time.`)}
           </Description>
         </>
       )}
       {actionType === "unarchive" && (
         <Description size="s" color={theme.main.text}>
-          {intl.formatMessage({
-            defaultMessage: `This will bring this repository back to a state it can be editted and worked on by you and your team.`,
-          })}
+          {t(
+            `This will bring this repository back to a state it can be editted and worked on by you and your team.`,
+          )}
         </Description>
       )}
       {actionType === "delete" && (
         <>
           <Description size="s" color={theme.main.text}>
-            {intl.formatMessage({
-              defaultMessage: `This action cannot be undone.`,
-            })}
+            {t(`This action cannot be undone.`)}
           </Description>
           <Description size="s" color={theme.main.text}>
-            {intl.formatMessage({
-              defaultMessage: `This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.`,
-            })}
+            {t(
+              `This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.`,
+            )}
           </Description>
         </>
       )}
       <Divider />
       <Subtitle size="s" color={theme.main.text} weight="bold">
-        {intl.formatMessage({
-          defaultMessage: `Please type your project name to continue.`,
-        })}
+        {t(`Please type your project name to continue.`)}
       </Subtitle>
       <StyledTextBox borderColor={theme.main.border} value={text} onChange={setText} />
       <RedButton
         large
         text={
           actionType === "delete"
-            ? intl.formatMessage({ defaultMessage: "I am sure I want to delete this project." })
+            ? t("I am sure I want to delete this project.")
             : actionType === "archive"
-            ? intl.formatMessage({ defaultMessage: "I am sure I want to archive this project." })
-            : intl.formatMessage({ defaultMessage: "I am sure I want to unarchive this project." })
+            ? t("I am sure I want to archive this project.")
+            : t("I am sure I want to unarchive this project.")
         }
         buttonType="danger"
         disabled={disabled}

@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";
 import { Option, Props as OptionProps } from "@reearth/components/atoms/SelectOption";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 const safeFonts = {
@@ -34,14 +34,14 @@ type Props = {
 };
 
 const FontFamilyField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Select
       className={className}
       value={selectedKey}
       onChange={onChange}
-      placeholder={intl.formatMessage({ defaultMessage: "Font family" })}
+      placeholder={t("Font family")}
       color={color}>
       {safeFontItems.map(({ key, label }) => (
         <StyledOption key={key} fontFamily={key} value={key} label={label}>

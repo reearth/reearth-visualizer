@@ -1,6 +1,5 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
@@ -9,10 +8,12 @@ import {
   useUninstallPluginMutation,
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
+import { useLang, useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 export default (projectId: string) => {
-  const intl = useIntl();
+  const t = useT();
+  const locale = useLang();
   const client = useApolloClient();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
@@ -27,7 +28,7 @@ export default (projectId: string) => {
     loading: sceneLoading,
     // refetch: refetchInstalledPlugins,
   } = useGetInstalledPluginsQuery({
-    variables: { projectId: projectId ?? "", lang: intl.locale },
+    variables: { projectId: projectId ?? "", lang: locale },
     skip: !projectId,
   });
 
@@ -61,18 +62,18 @@ export default (projectId: string) => {
         await client.resetStore();
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to install plugin." }),
+          text: t("Failed to install plugin."),
         });
       } else {
         setNotification({
           type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
+          text: t("Successfully installed plugin!"),
         });
         // await refetchInstalledPlugins();
         client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, intl, client],
+    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
   );
 
   const installFromPublicRepo = useCallback(
@@ -85,18 +86,18 @@ export default (projectId: string) => {
       if (results.errors || !results.data?.uploadPlugin) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to install plugin." }),
+          text: t("Failed to install plugin."),
         });
       } else {
         setNotification({
           type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
+          text: t("Successfully installed plugin!"),
         });
         // await refetchInstalledPlugins();
         await client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, intl, client],
+    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
   );
 
   const uninstallPlugin = useCallback(
@@ -109,18 +110,18 @@ export default (projectId: string) => {
       if (results.errors || !results.data?.uninstallPlugin) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to uninstall plugin." }),
+          text: t("Failed to uninstall plugin."),
         });
       } else {
         setNotification({
           type: "info",
-          text: intl.formatMessage({ defaultMessage: "Successfully removed plugin." }),
+          text: t("Successfully removed plugin."),
         });
         await client.resetStore();
         // await refetchInstalledPlugins();
       }
     },
-    [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, intl, client],
+    [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, t, client],
   );
 
   const loading = sceneLoading || pluginLoading;

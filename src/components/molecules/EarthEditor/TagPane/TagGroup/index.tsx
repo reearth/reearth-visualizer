@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState, useMemo } from "react";
-import { useIntl } from "react-intl";
 import { useClickAway } from "react-use";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
@@ -8,6 +7,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Tag from "@reearth/components/atoms/Tag";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 export type Tag = {
@@ -47,7 +47,7 @@ const TagGroup: React.FC<Props> = ({
   onTitleEdit,
 }) => {
   const theme = useTheme();
-  const intl = useIntl();
+  const t = useT();
   const [editing, setEditing] = useState(false);
   const titleRef = useRef(null);
   useClickAway(titleRef, () => setEditing(false));
@@ -125,7 +125,7 @@ const TagGroup: React.FC<Props> = ({
         onSelect={handleSelectTag}
         creatable
         onCreate={onTagAdd}
-        placeholder={intl.formatMessage({ defaultMessage: "Add a tag" })}
+        placeholder={t("Add a tag")}
       />
     </Wrapper>
   );

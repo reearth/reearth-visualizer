@@ -1,17 +1,17 @@
 import { Link } from "@reach/router";
 import React, { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
 
 const Login: React.FC = () => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const [username, setUsername] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -41,10 +41,10 @@ const Login: React.FC = () => {
     <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
       <Text className="form-item" size="l" customColor>
-        {intl.formatMessage({ defaultMessage: "Welcome" })}
+        {t("Welcome")}
       </Text>
       <Text className="form-item" size="s" customColor>
-        {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
+        {t("Log in to Re:Earth to continue.")}
       </Text>
       <StyledForm
         id="login-form"
@@ -58,7 +58,7 @@ const Login: React.FC = () => {
         <StyledInput
           className="form-item"
           name="username"
-          placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
+          placeholder={t("Username or email")}
           color={theme.main.weak}
           value={username}
           autoFocus
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
         <StyledInput
           className="form-item"
           name="password"
-          placeholder={intl.formatMessage({ defaultMessage: "Password" })}
+          placeholder={t("Password")}
           type="password"
           autoComplete="new-password"
           color={theme.main.weak}
@@ -81,7 +81,7 @@ const Login: React.FC = () => {
               size="xs"
               color={theme.main.link}
               otherProperties={{ display: "inline-block" }}>
-              {intl.formatMessage({ defaultMessage: "Forgot password?" })}
+              {t("Forgot password?")}
             </Text>
           </StyledLink>
         </div>
@@ -92,12 +92,12 @@ const Login: React.FC = () => {
           disabled={disabled}
           color={disabled ? theme.main.text : theme.other.white}
           background={disabled ? theme.main.weak : theme.main.link}
-          text={intl.formatMessage({ defaultMessage: "Continue" })}
+          text={t("Continue")}
         />
       </StyledForm>
       <Footer className="form-item">
         <Text size="xs" color={theme.main.weak}>
-          {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
+          {t("Don't have an account?")}
         </Text>
         <StyledLink to={"/signup"}>
           <Text
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
             color={theme.main.link}
             weight="bold"
             otherProperties={{ marginLeft: "6px" }}>
-            {intl.formatMessage({ defaultMessage: "Sign up" })}
+            {t("Sign up")}
           </Text>
         </StyledLink>
       </Footer>

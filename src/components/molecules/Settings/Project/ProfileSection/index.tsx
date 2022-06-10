@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -27,24 +27,20 @@ const ProfileSection: React.FC<Props> = ({
   assetModal,
   toggleAssetModal,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Project Info" })}>
+      <Section title={t("Project Info")}>
+        <EditableItem title={t("Name")} body={currentProject?.name} onSubmit={updateProjectName} />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Name" })}
-          body={currentProject?.name}
-          onSubmit={updateProjectName}
-        />
-        <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Description" })}
+          title={t("Description")}
           body={currentProject?.description}
           multilineTextBox={true}
           onSubmit={updateProjectDescription}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Thumbnail" })}
+          title={t("Thumbnail")}
           onSubmit={updateProjectImageUrl}
           imageSrc={currentProject?.imageUrl as string}
           isImage

@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 import DatasetSection from "@reearth/components/molecules/Settings/Project/Dataset/DatasetSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const Dataset: React.FC<Props> = ({ projectId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     currentTeam,
     currentProject,
@@ -32,10 +32,7 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
       loading={datasetLoading}
       hasMoreItems={hasMoreDataSets}
       onScroll={handleGetMoreDataSets}>
-      <SettingsHeader
-        title={intl.formatMessage({ defaultMessage: "Dataset" })}
-        currentProject={currentProject?.name}
-      />
+      <SettingsHeader title={t("Dataset")} currentProject={currentProject?.name} />
       {!currentProject?.isArchived ? (
         <DatasetSection
           datasetSchemas={datasetSchemas}

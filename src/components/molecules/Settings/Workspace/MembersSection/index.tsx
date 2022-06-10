@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Section from "@reearth/components/molecules/Settings/Section";
@@ -10,6 +9,7 @@ import MemberList from "@reearth/components/molecules/Settings/Workspace/MemberL
 import MemberListItem, {
   Role,
 } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Me = {
@@ -49,7 +49,7 @@ const MembersSection: React.FC<Props> = ({
   updateMemberOfTeam,
   removeMemberFromTeam,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const [isAdding, setIsAdding] = useState(false);
 
@@ -59,13 +59,13 @@ const MembersSection: React.FC<Props> = ({
   return (
     <Wrapper>
       <Section
-        title={intl.formatMessage({ defaultMessage: "Members" })}
+        title={t("Members")}
         actions={
           !personal &&
           owner === true && (
             <Button
               large
-              text={intl.formatMessage({ defaultMessage: "New member" })}
+              text={t("New member")}
               onClick={startAdd}
               buttonType="secondary"
               icon="memberAdd"

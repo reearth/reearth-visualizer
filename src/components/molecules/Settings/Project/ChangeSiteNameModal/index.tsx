@@ -1,11 +1,11 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -28,37 +28,29 @@ const ChangeSiteNameModal: React.FC<Props> = ({
   handlePublish,
   disabled,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Change site name" })}
+      title={t("Change site name")}
       isVisible={show}
       onClose={onClose}
       size="sm"
       button1={
         <Button
           large
-          text={intl.formatMessage({ defaultMessage: "Save" })}
+          text={t("Save")}
           buttonType="primary"
           onClick={handlePublish}
           disabled={disabled}
         />
       }
-      button2={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          buttonType="secondary"
-          onClick={onClose}
-        />
-      }>
+      button2={<Button large text={t("Cancel")} buttonType="secondary" onClick={onClose} />}>
       <Divider margin="5px" />
       <Content>
         <Text size="m">
-          {intl.formatMessage({
-            defaultMessage:
-              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
-          })}
+          {t(
+            "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
+          )}
         </Text>
         <TextBox prefix={url?.[0]} suffix={url?.[1]} value={alias ?? ""} onChange={onAliasChange} />
       </Content>

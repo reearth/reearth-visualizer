@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme, metricsSizes } from "@reearth/theme";
 
 export type PasswordPolicy = {
@@ -43,7 +43,7 @@ const PasswordModal: React.FC<Props> = ({
   passwordPolicy,
   updatePassword,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
 
   const [password, setPassword] = useState("");
@@ -56,45 +56,29 @@ const PasswordModal: React.FC<Props> = ({
       setPassword(password ?? "");
       switch (true) {
         case passwordPolicy?.whitespace?.test(password ?? ""):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "No whitespace is allowed.",
-            }),
-          );
+          setRegexMessage(t("No whitespace is allowed."));
           break;
         case passwordPolicy?.tooShort?.test(password ?? ""):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "Too short.",
-            }),
-          );
+          setRegexMessage(t("Too short."));
           break;
         case passwordPolicy?.tooLong?.test(password ?? ""):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That is terribly long.",
-            }),
-          );
+          setRegexMessage(t("That is terribly long."));
           break;
         case passwordPolicy?.highSecurity?.test(password ?? ""):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
+          setRegexMessage(t("That password is great!"));
           break;
         case passwordPolicy?.medSecurity?.test(password ?? ""):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
+          setRegexMessage(t("That password is better."));
           break;
         case passwordPolicy?.lowSecurity?.test(password ?? ""):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
+          setRegexMessage(t("That password is okay."));
           break;
         default:
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That password confuses me, but might be okay.",
-            }),
-          );
+          setRegexMessage(t("That password confuses me, but might be okay."));
           break;
       }
     },
-    [intl, password], // eslint-disable-line react-hooks/exhaustive-deps
+    [t, password], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleClose = useCallback(() => {
@@ -126,7 +110,7 @@ const PasswordModal: React.FC<Props> = ({
   return (
     <Modal
       size="sm"
-      title={intl.formatMessage({ defaultMessage: "Change Password" })}
+      title={t("Change Password")}
       isVisible={isVisible}
       onClose={handleClose}
       button1={
@@ -134,7 +118,7 @@ const PasswordModal: React.FC<Props> = ({
           large
           disabled={disabled}
           buttonType="primary"
-          text={intl.formatMessage({ defaultMessage: "Change password" })}
+          text={t("Change password")}
           onClick={handleSave}
         />
       }>
@@ -142,13 +126,11 @@ const PasswordModal: React.FC<Props> = ({
         <div>
           <SubText>
             <Text size="m">
-              {intl.formatMessage({
-                defaultMessage: `In order to protect your account, make sure your password is unique and strong.`,
-              })}
+              {t(`In order to protect your account, make sure your password is unique and strong.`)}
             </Text>
           </SubText>
           <PasswordField direction="column">
-            <Text size="m">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
+            <Text size="m">{t("New password")}</Text>
             <TextBox
               type="password"
               borderColor={theme.main.border}
@@ -167,9 +149,7 @@ const PasswordModal: React.FC<Props> = ({
             <PasswordMessage size="xs">{password ? regexMessage : undefined}</PasswordMessage>
           </PasswordField>
           <PasswordField direction="column">
-            <Text size="m">
-              {intl.formatMessage({ defaultMessage: "New password (for confirmation)" })}
-            </Text>
+            <Text size="m">{t("New password (for confirmation)")}</Text>
             <TextBox
               type="password"
               borderColor={theme.main.border}
@@ -182,7 +162,7 @@ const PasswordModal: React.FC<Props> = ({
         </div>
       ) : (
         <div>
-          <Text size="s">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
+          <Text size="s">{t("New password")}</Text>
           <TextBox
             type="password"
             borderColor={theme.main.border}
@@ -193,7 +173,7 @@ const PasswordModal: React.FC<Props> = ({
             large
             disabled={disabled}
             buttonType="primary"
-            text={intl.formatMessage({ defaultMessage: "Set your password now" })}
+            text={t("Set your password now")}
             onClick={handleSave}
           />
         </div>

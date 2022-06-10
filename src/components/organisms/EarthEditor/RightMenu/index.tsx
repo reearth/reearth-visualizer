@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
 import DatasetInfoPane from "@reearth/components/organisms/EarthEditor/DatasetInfoPane";
 import ExportPane from "@reearth/components/organisms/EarthEditor/ExportPane";
+import { useT } from "@reearth/i18n";
 
 import PropertyPane from "../PropertyPane";
 import TagPane from "../TagPane";
@@ -23,18 +23,18 @@ export type Mode = LayerMode | WidgetMode | SceneMode;
 const RightMenu: React.FC = () => {
   const { isCapturing, selectedBlock, selectedTab, selected, reset } = useHooks();
 
-  const intl = useIntl();
+  const t = useT();
   const labels = useMemo(
     () => ({
-      layer: intl.formatMessage({ defaultMessage: "Layer" }),
-      widget: intl.formatMessage({ defaultMessage: "Widget" }),
-      widgets: intl.formatMessage({ defaultMessage: "Widgets" }),
-      scene: intl.formatMessage({ defaultMessage: "Scene" }),
-      infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
-      tag: intl.formatMessage({ defaultMessage: "Tag" }),
-      export: intl.formatMessage({ defaultMessage: "Export" }),
+      layer: t("Layer"),
+      widget: t("Widget"),
+      widgets: t("Widgets"),
+      scene: t("Scene"),
+      infobox: t("Infobox"),
+      tag: t("Tag"),
+      export: t("Export"),
     }),
-    [intl],
+    [t],
   );
 
   return (

@@ -1,5 +1,4 @@
 import React, { useRef, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
@@ -14,6 +13,7 @@ import {
   MenuListItemLabel,
 } from "@reearth/components/molecules/Common/MenuList";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 // Proxy dependent types
@@ -41,18 +41,12 @@ const Header: React.FC<Props> = ({
   onPreviewOpen,
   ...props
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const dropDownRef = useRef<DropDownRef>(null);
 
   const publicationButtonText = useMemo(() => {
-    return currentProjectStatus === "unpublished"
-      ? intl.formatMessage({
-          defaultMessage: "Publish",
-        })
-      : intl.formatMessage({
-          defaultMessage: "Update",
-        });
-  }, [intl, currentProjectStatus]);
+    return currentProjectStatus === "unpublished" ? t("Publish") : t("Update");
+  }, [t, currentProjectStatus]);
 
   const disableUnpublish = useMemo(() => {
     return currentProjectStatus === "unpublished" ? true : false;
@@ -63,7 +57,7 @@ const Header: React.FC<Props> = ({
   const right = (
     <RightArea justify="flex-end" align="center">
       <PreviewButton
-        text={intl.formatMessage({ defaultMessage: "Preview" })}
+        text={t("Preview")}
         buttonType="secondary"
         onClick={onPreviewOpen}
         margin="0 12px 0 0"></PreviewButton>
@@ -88,7 +82,7 @@ const Header: React.FC<Props> = ({
                       ? () => onPublishmentStatusClick?.("unpublishing")
                       : undefined
                   }
-                  text={intl.formatMessage({ defaultMessage: "Unpublish" })}
+                  text={t("Unpublish")}
                 />
               </MenuListItem>
 

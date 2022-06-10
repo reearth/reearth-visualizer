@@ -1,16 +1,16 @@
 import { useNavigate } from "@reach/router";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useNotification } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 
 export default () => {
-  const intl = useIntl();
+  const t = useT();
   const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
@@ -28,22 +28,18 @@ export default () => {
       if (res.status === 200) {
         setNotification({
           type: "success",
-          text: intl.formatMessage({
-            defaultMessage: "Your account has been successfully verified! Feel free to login now.",
-          }),
+          text: t("Your account has been successfully verified! Feel free to login now."),
         });
         navigate("/login");
       } else {
         setNotification({
           type: "error",
-          text: intl.formatMessage({
-            defaultMessage: "Could not verify your signup. Please start the process over.",
-          }),
+          text: t("Could not verify your signup. Please start the process over."),
         });
         navigate("/signup");
       }
     },
-    [intl, navigate, setNotification],
+    [t, navigate, setNotification],
   );
 
   useEffect(() => {

@@ -1,12 +1,12 @@
 import { useNavigate } from "@reach/router";
 import React, { useEffect, useState, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -26,7 +26,7 @@ const DangerModal: React.FC<Props> = ({ team, isVisible, deleteTeam, onClose }) 
   const [disabled, setDisabled] = useState(true);
   const [text, setText] = useState<string>();
   const navigate = useNavigate();
-  const intl = useIntl();
+  const t = useT();
 
   const handleDeletion = useCallback(() => {
     if (team && deleteTeam && !disabled) {
@@ -41,34 +41,26 @@ const DangerModal: React.FC<Props> = ({ team, isVisible, deleteTeam, onClose }) 
   const theme = useTheme();
 
   return (
-    <Modal
-      title={intl.formatMessage({ defaultMessage: "Delete workspace" })}
-      isVisible={isVisible}
-      size="sm"
-      onClose={onClose}>
+    <Modal title={t("Delete workspace")} isVisible={isVisible} size="sm" onClose={onClose}>
       <Subtitle size="s" color={theme.main.text} weight="bold" center>
         {team?.name}
       </Subtitle>
       <Description size="s" color={theme.main.text}>
-        {intl.formatMessage({
-          defaultMessage: `This action cannot be undone.`,
-        })}
+        {t(`This action cannot be undone.`)}
       </Description>
       <Description size="s" color={theme.main.text}>
-        {intl.formatMessage({
-          defaultMessage: `This will permanently delete the workspace and all related projects, assets and datasets for all team members.`,
-        })}
+        {t(
+          `This will permanently delete the workspace and all related projects, assets and datasets for all team members.`,
+        )}
       </Description>
       <Divider />
       <Subtitle size="s" color={theme.main.text} weight="bold">
-        {intl.formatMessage({
-          defaultMessage: `Please type your workspace name to continue.`,
-        })}
+        {t(`Please type your workspace name to continue.`)}
       </Subtitle>
       <StyledTextBox borderColor={theme.main.border} value={text} onChange={setText} />
       <RedButton
         large
-        text={intl.formatMessage({ defaultMessage: "I am sure I want to delete this workspace." })}
+        text={t("I am sure I want to delete this workspace.")}
         buttonType="danger"
         disabled={disabled}
         onClick={handleDeletion}

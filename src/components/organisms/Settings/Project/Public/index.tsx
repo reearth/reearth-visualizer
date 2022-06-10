@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
@@ -9,6 +8,7 @@ import StatusSection from "@reearth/components/molecules/Settings/Project/Status
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Public: React.FC<Props> = ({ projectId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     currentTeam,
     currentProject,
@@ -42,10 +42,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={projectId}>
-      <SettingsHeader
-        currentProject={currentProject?.name}
-        title={intl.formatMessage({ defaultMessage: "Public" })}
-      />
+      <SettingsHeader currentProject={currentProject?.name} title={t("Public")} />
       {!project?.isArchived ? (
         <>
           <StatusSection projectStatus={projectStatus} />

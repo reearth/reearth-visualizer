@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Field from "@reearth/components/molecules/Settings/Field";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -24,30 +24,27 @@ const ProfileSection: React.FC<Props> = ({
   //   updateProjectDescription,
   owner,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper>
       <Section>
         {currentTeam?.personal || owner === false ? (
-          <Field
-            header={intl.formatMessage({ defaultMessage: "Workspace name" })}
-            body={currentTeam?.name}
-          />
+          <Field header={t("Workspace name")} body={currentTeam?.name} />
         ) : (
           <EditableItem
-            title={intl.formatMessage({ defaultMessage: "Workspace name" })}
+            title={t("Workspace name")}
             body={currentTeam?.name}
             onSubmit={updateTeamName}
           />
           // {/* <EditableItem
-          //   title={intl.formatMessage({ defaultMessage: "Description" })}
+          //   title={t("Description")}
           //   body={currentTeam?.description}
           //   multilineTextBox={true}
           //   onSubmit={updateTeamDescription}
           // /> */}
           // {/* <EditableItem
-          //   title={intl.formatMessage({ defaultMessage: "Owner" })}
+          //   title={t("Owner")}
           //   body={currentTeam?.owner}
           //   onSubmit={updateTeamName}
           // /> */}

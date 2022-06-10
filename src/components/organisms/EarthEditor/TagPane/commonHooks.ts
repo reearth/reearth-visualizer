@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
 import { DEFAULT_TAG_ID } from "@reearth/components/molecules/EarthEditor/TagPane/common";
@@ -14,6 +13,7 @@ import {
   useRemoveTagMutation,
   useUpdateTagMutation,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useNotification, useSceneId, useSelected } from "@reearth/state";
 
 export default () => {
@@ -21,14 +21,10 @@ export default () => {
   const [sceneId] = useSceneId();
   const [selected] = useSelected();
   const [, setNotification] = useNotification();
-  const intl = useIntl();
+  const t = useT();
   const tagErrorMessage = {
-    alreadyExist: intl.formatMessage({
-      defaultMessage: "Same label tag already exist. Please type different label.",
-    }),
-    tagGroupHasTags: intl.formatMessage({
-      defaultMessage: "Tag group has tags, you need to remove all tags under the tag group",
-    }),
+    alreadyExist: t("Same label tag already exist. Please type different label."),
+    tagGroupHasTags: t("Tag group has tags, you need to remove all tags under the tag group"),
   };
   const { loading: sceneTagLoading, data: sceneData } = useGetSceneTagsQuery({
     variables: { sceneId: sceneId || "" },

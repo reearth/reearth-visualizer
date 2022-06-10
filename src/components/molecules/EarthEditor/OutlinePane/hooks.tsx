@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import { Item as TreeViewItemType } from "@reearth/components/atoms/TreeView";
 import { arrayEquals } from "@reearth/components/atoms/TreeView/util";
+import { useT } from "@reearth/i18n";
 
 import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "../LayerTreeViewItem";
 
@@ -126,7 +126,7 @@ export default ({
   onLayerGroupCreate?: () => void;
   handleShowWarning?: (show: boolean) => void;
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
 
   const select = useCallback(
@@ -191,10 +191,10 @@ export default ({
     }
   }, [selectedLayerId, onLayerRemove]);
 
-  const sceneTitle = intl.formatMessage({ defaultMessage: "Scene" });
-  const widgetTitle = intl.formatMessage({ defaultMessage: "Widgets" });
-  const layerTitle = intl.formatMessage({ defaultMessage: "Layers" });
-  const clusterTitle = intl.formatMessage({ defaultMessage: "Clusters" });
+  const sceneTitle = t("Scene");
+  const widgetTitle = t("Widgets");
+  const layerTitle = t("Layers");
+  const clusterTitle = t("Clusters");
 
   const sceneWidgetsItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
     () => ({

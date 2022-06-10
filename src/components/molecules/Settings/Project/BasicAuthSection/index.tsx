@@ -1,6 +1,6 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import Section from "../../Section";
@@ -20,23 +20,23 @@ const BasicAuthSection: React.FC<Props> = ({
   basicAuthUsername,
   basicAuthPassword,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Basic Authorization" })}>
+      <Section title={t("Basic Authorization")}>
         <ToggleItem
-          title={intl.formatMessage({ defaultMessage: "Enable basic authorization" })}
+          title={t("Enable basic authorization")}
           checked={!!isBasicAuthActive}
           onChange={() => onSave(!isBasicAuthActive, basicAuthUsername, basicAuthPassword)}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Username" })}
+          title={t("Username")}
           body={basicAuthUsername}
           multilineTextBox={false}
           onSubmit={username => onSave(isBasicAuthActive, username, basicAuthPassword)}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Password" })}
+          title={t("Password")}
           body={basicAuthPassword}
           multilineTextBox={false}
           onSubmit={password => onSave(isBasicAuthActive, basicAuthUsername, password)}

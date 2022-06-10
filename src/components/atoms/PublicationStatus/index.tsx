@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
-// Theme
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
+// Theme
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -24,11 +24,8 @@ const PublicationStatus: React.FC<PublishStatusProps> = ({
   alias,
   size,
 }) => {
-  const intl = useIntl();
-  const text =
-    status === "published" || status === "limited"
-      ? intl.formatMessage({ defaultMessage: "Published" })
-      : intl.formatMessage({ defaultMessage: "Unpublished" });
+  const t = useT();
+  const text = status === "published" || status === "limited" ? t("Published") : t("Unpublished");
 
   return (
     <StyledStatus className={className}>

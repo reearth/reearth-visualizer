@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
-import { intl } from "@reearth/i18n/legacy";
+import { useT } from "@reearth/i18n";
 import { useTeam, useNotification } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)
@@ -16,6 +16,7 @@ export default () => {
   const [currentTeam, setTeam] = useTeam();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
+  const t = useT();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
@@ -98,14 +99,12 @@ export default () => {
           text:
             err?.response?.data?.error ||
             err?.data?.error ||
-            intl.formatMessage({
-              defaultMessage: "Some error has occurred. Please wait a moment and try again.",
-            }),
+            t("Some error has occurred. Please wait a moment and try again."),
         });
         throw err;
       }
     },
-    [isAuthenticated, setNotification],
+    [isAuthenticated, setNotification, t],
   );
 
   const handlePasswordResetRequest = useCallback(

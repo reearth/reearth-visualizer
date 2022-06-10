@@ -1,20 +1,19 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 const ArchivedMessage: React.FC = () => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Notice" })}>
+      <Section title={t("Notice")}>
         <Description>
-          {intl.formatMessage({
-            defaultMessage:
-              "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.",
-          })}
+          {t(
+            "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.",
+          )}
         </Description>
       </Section>
     </Wrapper>

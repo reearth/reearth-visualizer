@@ -1,9 +1,9 @@
 import React, { useMemo, ComponentType } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import GroupWrapper from "@reearth/components/atoms/TabCard";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
@@ -116,7 +116,7 @@ const PropertyPane: React.FC<Props> = ({
   ...props
 }) => {
   const theme = useTheme();
-  const intl = useIntl();
+  const t = useT();
   const visibleItems = items?.filter(i => {
     if (!i.only) return true;
     const res = searchField(items, i.only.field);
@@ -165,14 +165,12 @@ const PropertyPane: React.FC<Props> = ({
           {infoboxCreatable && (
             <StyledButton
               buttonType="primary"
-              text={intl.formatMessage({ defaultMessage: "Create Infobox" })}
+              text={t("Create Infobox")}
               onClick={onCreateInfobox}
             />
           )}
           {mode === "layer" && props.isTemplate && (
-            <GroupWrapper
-              className={className}
-              name={intl.formatMessage({ defaultMessage: "Dataset" })}>
+            <GroupWrapper className={className} name={t("Dataset")}>
               <Text size="xs" color={theme.main.strongText}>
                 {props.title}
               </Text>

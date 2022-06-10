@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme, metricsSizes } from "@reearth/theme";
 
 export type Props = {
@@ -14,25 +14,13 @@ export type Props = {
 };
 
 const DatasetDeleteModal: React.FC<Props> = ({ onRemove, setModal, openModal }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   return (
     <Modal
-      button1={
-        <Button
-          large
-          buttonType="danger"
-          text={intl.formatMessage({ defaultMessage: "OK" })}
-          onClick={() => onRemove?.()}
-        />
-      }
+      button1={<Button large buttonType="danger" text={t("OK")} onClick={() => onRemove?.()} />}
       button2={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={() => setModal?.(false)}
-        />
+        <Button large buttonType="secondary" text={t("Cancel")} onClick={() => setModal?.(false)} />
       }
       size="sm"
       isVisible={openModal}
@@ -42,19 +30,13 @@ const DatasetDeleteModal: React.FC<Props> = ({ onRemove, setModal, openModal }) 
         size="m"
         color={theme.main.text}
         otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
-        {intl.formatMessage({
-          defaultMessage:
-            "You are deleting a dataset. Layers that are linked to this dataset might show errors.",
-        })}
+        {t("You are deleting a dataset. Layers that are linked to this dataset might show errors.")}
       </Text>
       <Text
         size="m"
         color={theme.main.text}
         otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
-        {intl.formatMessage({
-          defaultMessage:
-            "Please make sure your project doesn't rely on this dataset before proceeding.",
-        })}
+        {t("Please make sure your project doesn't rely on this dataset before proceeding.")}
       </Text>
     </Modal>
   );

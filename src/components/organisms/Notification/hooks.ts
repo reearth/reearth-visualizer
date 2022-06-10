@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
-import { useIntl } from "react-intl";
 
+import { useT } from "@reearth/i18n";
 import { useError, useNotification, Notification } from "@reearth/state";
 
 export const notificationTimeout = 5000;
 
 export default () => {
-  const intl = useIntl();
+  const t = useT();
   const [error, setError] = useError();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
-  const errorMessage = intl.formatMessage({ defaultMessage: "Error" });
-  const warningMessage = intl.formatMessage({ defaultMessage: "Warning" });
-  const noticeMessage = intl.formatMessage({ defaultMessage: "Notice" });
+  const errorMessage = t("Error");
+  const warningMessage = t("Warning");
+  const noticeMessage = t("Notice");
 
   const notificationHeading =
     notification?.type === "error"
@@ -33,10 +33,10 @@ export default () => {
     setNotification({
       type: "error",
       heading: errorMessage,
-      text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again later." }),
+      text: t("Something went wrong. Please try again later."),
     });
     setError(undefined);
-  }, [error, setError, errorMessage, setNotification, intl]);
+  }, [error, setError, errorMessage, setNotification, t]);
 
   useEffect(() => {
     if (!notification) return;

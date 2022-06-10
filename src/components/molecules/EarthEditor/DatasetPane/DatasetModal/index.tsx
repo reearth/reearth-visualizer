@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Card from "@reearth/components/atoms/Card";
@@ -8,6 +7,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import Gdrive from "./Gdrive";
@@ -43,7 +43,7 @@ const DatasetModal: React.FC<Props> = ({
   onNotificationChange,
 }) => {
   const theme = useTheme();
-  const intl = useIntl();
+  const t = useT();
 
   const {
     url,
@@ -65,7 +65,7 @@ const DatasetModal: React.FC<Props> = ({
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Add dataset" })}
+      title={t("Add dataset")}
       isVisible={isVisible}
       onClose={handleClose}
       button1={
@@ -77,14 +77,7 @@ const DatasetModal: React.FC<Props> = ({
           buttonType="primary"
         />
       }
-      button2={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={handleClose}
-          buttonType="secondary"
-        />
-      }>
+      button2={<Button large text={t("Cancel")} onClick={handleClose} buttonType="secondary" />}>
       {!dataType ? (
         <ConnectSection>
           <Content>
@@ -92,8 +85,8 @@ const DatasetModal: React.FC<Props> = ({
               id="csv"
               icon="computer"
               iconSize="50px"
-              text={intl.formatMessage({ defaultMessage: "Upload from your device" })}
-              subtext={intl.formatMessage({ defaultMessage: "Supports CSV, JSON, GIS files" })}
+              text={t("Upload from your device")}
+              subtext={t("Supports CSV, JSON, GIS files")}
               margin={56}
               border="dashed"
               borderColor={theme.main.border}
@@ -104,7 +97,7 @@ const DatasetModal: React.FC<Props> = ({
                 id="gdrive"
                 icon="googleDrive"
                 iconSize="50px"
-                text={intl.formatMessage({ defaultMessage: "Google Drive" })}
+                text={t("Google Drive")}
                 margin={56}
                 border="dashed"
                 borderColor={theme.main.border}
@@ -147,7 +140,7 @@ const DatasetModal: React.FC<Props> = ({
                 size="m"
                 color={theme.main.strongText}
                 otherProperties={{ textAlign: "center" }}>
-                {intl.formatMessage({ defaultMessage: "Upload CSV file" })}
+                {t("Upload CSV file")}
               </Subtitle>
               <Divider margin="24px" />
               <Content>
@@ -178,9 +171,7 @@ const DatasetModal: React.FC<Props> = ({
               </Button>
 
               <Subtitle size="m" color={theme.main.strongText}>
-                {intl.formatMessage({
-                  defaultMessage: "Sorry, that service is unavailable at this time.",
-                })}
+                {t("Sorry, that service is unavailable at this time.")}
               </Subtitle>
               <Divider margin="24px" />
             </>

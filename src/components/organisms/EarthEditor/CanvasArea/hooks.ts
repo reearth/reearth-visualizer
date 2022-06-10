@@ -1,5 +1,4 @@
 import { useMemo, useEffect, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import { ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import {
@@ -22,6 +21,7 @@ import {
   WidgetAreaAlign,
   ValueType,
 } from "@reearth/gql";
+import { useLang } from "@reearth/i18n";
 import {
   useSceneId,
   useSceneMode,
@@ -42,7 +42,7 @@ import {
 } from "./convert";
 
 export default (isBuilt?: boolean) => {
-  const intl = useIntl();
+  const lang = useLang();
   const [sceneId] = useSceneId();
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
@@ -63,11 +63,11 @@ export default (isBuilt?: boolean) => {
           layerId: selected.layerId,
           infoboxFieldId: id,
           index: toIndex,
-          lang: intl.locale,
+          lang,
         },
       });
     },
-    [intl.locale, moveInfoboxField, selected],
+    [lang, moveInfoboxField, selected],
   );
 
   const onBlockRemove = useCallback(
@@ -77,19 +77,19 @@ export default (isBuilt?: boolean) => {
         variables: {
           layerId: selected.layerId,
           infoboxFieldId: id,
-          lang: intl.locale,
+          lang,
         },
       });
     },
-    [intl.locale, removeInfoboxField, selected],
+    [lang, removeInfoboxField, selected],
   );
 
   const { data: layerData } = useGetLayersQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
   });
   const { data: sceneData } = useGetEarthWidgetsQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
   });
 
@@ -150,11 +150,11 @@ export default (isBuilt?: boolean) => {
           fieldId: fid,
           type: gvt,
           value: valueToGQL(v, vt),
-          lang: intl.locale,
+          lang,
         },
       });
     },
-    [updatePropertyValue, intl.locale, selectedLayer?.infobox?.blocks],
+    [updatePropertyValue, lang, selectedLayer?.infobox?.blocks],
   );
 
   const onFovChange = useCallback(
@@ -169,7 +169,7 @@ export default (isBuilt?: boolean) => {
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
   });
   const blocks = useMemo(() => convertToBlocks(blockData), [blockData]);
@@ -182,7 +182,7 @@ export default (isBuilt?: boolean) => {
           pluginId: b.pluginId,
           extensionId: b.extensionId,
           index: p ? i + (p === "bottom" ? 1 : 0) : undefined,
-          lang: intl.locale,
+          lang,
         },
       });
     }

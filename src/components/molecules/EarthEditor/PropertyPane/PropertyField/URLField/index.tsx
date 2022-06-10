@@ -1,8 +1,8 @@
 import React, { useCallback, useState, ComponentType } from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import { Props as AssetModalPropsType } from "@reearth/components/molecules/Common/AssetModal";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import TextField from "../TextField";
@@ -27,7 +27,7 @@ const URLField: React.FC<Props> = ({
   assetModal: AssetModal,
   onChange,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
   const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
 
@@ -48,9 +48,9 @@ const URLField: React.FC<Props> = ({
       <InputWrapper>
         <StyledTextField
           name={name}
-          value={value ? intl.formatMessage({ defaultMessage: "Field set" }) : undefined}
+          value={value ? t("Field set") : undefined}
           onChange={onChange}
-          placeholder={intl.formatMessage({ defaultMessage: "Not set" })}
+          placeholder={t("Not set")}
           linked={linked}
           overridden={overridden}
           disabled

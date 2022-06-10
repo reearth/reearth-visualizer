@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
 import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import { DEFAULT_TAG_ID } from "../common";
@@ -34,7 +34,7 @@ const SceneTagPane: React.FC<Props> = ({
   onTagItemRemove,
   onTagGroupUpdate,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <Wrapper className={className} direction="column">
       {allTagGroups?.map(tg => (
@@ -54,11 +54,7 @@ const SceneTagPane: React.FC<Props> = ({
           />
         </Box>
       ))}
-      <AutoComplete
-        onCreate={onTagGroupAdd}
-        creatable
-        placeholder={intl.formatMessage({ defaultMessage: "Add a tag group" })}
-      />
+      <AutoComplete onCreate={onTagGroupAdd} creatable placeholder={t("Add a tag group")} />
     </Wrapper>
   );
 };

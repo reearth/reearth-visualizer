@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
 import {
@@ -17,6 +16,7 @@ import {
   useUpdatePropertyItemsMutation,
   ListOperation,
 } from "@reearth/gql";
+import { useLang } from "@reearth/i18n";
 import {
   useSelected,
   useRootLayerId,
@@ -40,7 +40,7 @@ export type FieldPointer = {
 };
 
 export default (mode: Mode) => {
-  const intl = useIntl();
+  const lang = useLang();
   const [selected] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
@@ -69,7 +69,7 @@ export default (mode: Mode) => {
     rootLayerId,
     selectedBlock,
     selected,
-    locale: intl.locale,
+    locale: lang,
   });
 
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
@@ -92,11 +92,11 @@ export default (mode: Mode) => {
           fieldId,
           value: valueToGQL(v, vt),
           type: gvt,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [updatePropertyValue, intl.locale],
+    [updatePropertyValue, lang],
   );
 
   const [linkDataset] = useLinkDatasetMutation({
@@ -121,11 +121,11 @@ export default (mode: Mode) => {
           datasetSchemaIds: [schema],
           datasetIds: dataset ? [dataset] : null,
           datasetFieldIds: [field],
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [intl.locale, linkDataset],
+    [lang, linkDataset],
   );
 
   const [uploadFileMutation] = useUploadFileToPropertyMutation();
@@ -138,10 +138,10 @@ export default (mode: Mode) => {
       file: File,
     ) => {
       uploadFileMutation({
-        variables: { propertyId, itemId, schemaGroupId, fieldId, file, lang: intl.locale },
+        variables: { propertyId, itemId, schemaGroupId, fieldId, file, lang: lang },
       });
     },
-    [intl.locale, uploadFileMutation],
+    [lang, uploadFileMutation],
   );
 
   const removeFile = useCallback(
@@ -154,11 +154,11 @@ export default (mode: Mode) => {
           schemaGroupId,
           type: GQLValueType.Url,
           value: null,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [updatePropertyValue, intl.locale],
+    [updatePropertyValue, lang],
   );
 
   const [removeFieldMutation] = useRemovePropertyFieldMutation();
@@ -170,37 +170,37 @@ export default (mode: Mode) => {
           fieldId,
           itemId,
           schemaGroupId,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [intl.locale, removeFieldMutation],
+    [lang, removeFieldMutation],
   );
 
   const [createInfoboxMutation] = useCreateInfoboxMutation();
   const createInfobox = useCallback(() => {
     if (selected?.type !== "layer") return;
     return createInfoboxMutation({
-      variables: { layerId: selected.layerId, lang: intl.locale },
+      variables: { layerId: selected.layerId, lang: lang },
     });
-  }, [createInfoboxMutation, selected, intl.locale]);
+  }, [createInfoboxMutation, selected, lang]);
 
   const [removeInfoboxMutation] = useRemoveInfoboxMutation();
   const removeInfobox = useCallback(() => {
     if (selected?.type !== "layer") return;
     return removeInfoboxMutation({
-      variables: { layerId: selected.layerId, lang: intl.locale },
+      variables: { layerId: selected.layerId, lang: lang },
     });
-  }, [removeInfoboxMutation, selected, intl.locale]);
+  }, [removeInfoboxMutation, selected, lang]);
 
   const [removeInfoboxFieldMutation] = useRemoveInfoboxFieldMutation();
   const removeInfoboxField = useCallback(() => {
     if (!selectedBlock || selected?.type !== "layer") return;
     selectBlock(undefined);
     return removeInfoboxFieldMutation({
-      variables: { layerId: selected.layerId, infoboxFieldId: selectedBlock, lang: intl.locale },
+      variables: { layerId: selected.layerId, infoboxFieldId: selectedBlock, lang: lang },
     });
-  }, [selectedBlock, selected, selectBlock, removeInfoboxFieldMutation, intl.locale]);
+  }, [selectedBlock, selected, selectBlock, removeInfoboxFieldMutation, lang]);
 
   const onCameraChange = useCallback(
     (value: Partial<Camera>) => {
@@ -223,11 +223,11 @@ export default (mode: Mode) => {
           schemaGroupId,
           nameFieldValue: toGQLSimpleValue(value),
           nameFieldType: valueType ? valueTypeToGQL(valueType) : undefined,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [addPropertyItemMutation, intl.locale],
+    [addPropertyItemMutation, lang],
   );
 
   const [movePropertyItemMutation] = useMovePropertyItemMutation();
@@ -245,11 +245,11 @@ export default (mode: Mode) => {
           schemaGroupId,
           itemId,
           index: to,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [intl.locale, movePropertyItemMutation],
+    [lang, movePropertyItemMutation],
   );
 
   const [removePropertyItemMutation] = useRemovePropertyItemMutation();
@@ -260,11 +260,11 @@ export default (mode: Mode) => {
           propertyId,
           schemaGroupId,
           itemId,
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [intl.locale, removePropertyItemMutation],
+    [lang, removePropertyItemMutation],
   );
 
   const onWidgetEditorActivate = useCallback(
@@ -302,11 +302,11 @@ export default (mode: Mode) => {
             nameFieldValue: item.layerId,
             nameFieldType: item.layerId ? GQLValueType.Ref : undefined,
           })),
-          lang: intl.locale,
+          lang: lang,
         },
       });
     },
-    [intl.locale, updatePropertyItemsMutation],
+    [lang, updatePropertyItemsMutation],
   );
 
   return {

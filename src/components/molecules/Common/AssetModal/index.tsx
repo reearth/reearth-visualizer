@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect, ComponentType } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
@@ -7,6 +6,7 @@ import Modal from "@reearth/components/atoms/Modal";
 import TabularModal from "@reearth/components/atoms/TabularModal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -42,15 +42,15 @@ const AssetModal: React.FC<Props> = ({
   toggleAssetModal,
   assetContainer: AssetContainer,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [showURL, setShowURL] = useState(false);
   const [selectedTab, selectTab] = useState<Tabs>("assets");
   const [textUrl, setTextUrl] = useState(showURL && initialAssetUrl ? initialAssetUrl : undefined);
   const [selectedAssetUrl, selectAssetUrl] = useState(initialAssetUrl ?? undefined);
 
   const labels: { [t in Tabs]: string } = {
-    assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
-    url: intl.formatMessage({ defaultMessage: "Use URL" }),
+    assets: t("Assets Library"),
+    url: t("Use URL"),
   };
 
   const handleShowURL = useCallback(
@@ -90,24 +90,12 @@ const AssetModal: React.FC<Props> = ({
   return videoOnly ? (
     <Modal
       size="sm"
-      title={intl.formatMessage({ defaultMessage: "Add video URL" })}
+      title={t("Add video URL")}
       isVisible={isOpen}
       onClose={handleModalClose}
-      button1={
-        <Button
-          large
-          buttonType="primary"
-          text={intl.formatMessage({ defaultMessage: "Save" })}
-          onClick={handleSave}
-        />
-      }
+      button1={<Button large buttonType="primary" text={t("Save")} onClick={handleSave} />}
       button2={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={handleModalClose}
-        />
+        <Button large buttonType="secondary" text={t("Cancel")} onClick={handleModalClose} />
       }>
       <Wrapper>
         <StyledTextField value={textUrl} onChange={handleTextUrlChange} />
@@ -115,7 +103,7 @@ const AssetModal: React.FC<Props> = ({
     </Modal>
   ) : (
     <TabularModal<Tabs>
-      title={intl.formatMessage({ defaultMessage: "Select Asset" })}
+      title={t("Select Asset")}
       isVisible={isOpen}
       size="lg"
       onClose={handleModalClose}
@@ -123,21 +111,9 @@ const AssetModal: React.FC<Props> = ({
       tabLabels={labels}
       currentTab={selectedTab}
       setCurrentTab={selectTab}
-      button1={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Select" })}
-          buttonType="primary"
-          onClick={handleSave}
-        />
-      }
+      button1={<Button large text={t("Select")} buttonType="primary" onClick={handleSave} />}
       button2={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          buttonType="secondary"
-          onClick={handleModalClose}
-        />
+        <Button large text={t("Cancel")} buttonType="secondary" onClick={handleModalClose} />
       }>
       {selectedTab === "assets" && AssetContainer && (
         <AssetContainer
@@ -151,7 +127,7 @@ const AssetModal: React.FC<Props> = ({
       )}
       {selectedTab === "url" && (
         <TextContainer align="center">
-          <Title size="s">{intl.formatMessage({ defaultMessage: "Resource URL" })}</Title>
+          <Title size="s">{t("Resource URL")}</Title>
           <StyledTextField value={textUrl} onChange={handleTextUrlChange} />
         </TextContainer>
       )}

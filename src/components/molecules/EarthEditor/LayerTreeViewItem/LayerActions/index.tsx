@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
@@ -23,7 +23,7 @@ const LayerActions: React.FC<Props> = ({
   onLayerImport,
   onLayerGroupCreate,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const importLayer = useFileInput(
     (files: FileList) => {
       const file = files[0];
@@ -56,23 +56,17 @@ const LayerActions: React.FC<Props> = ({
             onLayerRemove?.(selectedLayerId);
           }
         }}>
-        <HelpButton
-          descriptionTitle={intl.formatMessage({ defaultMessage: "Delete selected layer." })}
-          balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Delete selected layer.")} balloonDirection="bottom">
           <StyledIcon icon="bin" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>
       <Action disabled={!rootLayerId} onClick={onLayerGroupCreate}>
-        <HelpButton
-          descriptionTitle={intl.formatMessage({ defaultMessage: "Create new folder." })}
-          balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Create new folder.")} balloonDirection="bottom">
           <StyledIcon icon="folderAdd" size={16} />
         </HelpButton>
       </Action>
       <Action disabled={!rootLayerId} onClick={importLayer}>
-        <HelpButton
-          descriptionTitle={intl.formatMessage({ defaultMessage: "Add Layer." })}
-          balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Add Layer.")} balloonDirection="bottom">
           <StyledIcon icon="layerAdd" size={16} />
         </HelpButton>
       </Action>

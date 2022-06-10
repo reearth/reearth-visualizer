@@ -13,8 +13,7 @@
   ],
   "plugins": [
     "@emotion",
-    "@babel/plugin-transform-typescript",
-    "react-intl-auto" // delete when migration to i18next is complete
+    "@babel/plugin-transform-typescript"
   ],
   "env": {
     "test": {

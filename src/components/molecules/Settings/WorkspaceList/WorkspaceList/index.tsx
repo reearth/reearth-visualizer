@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Text from "@reearth/components/atoms/Text";
 import WorkspaceCell from "@reearth/components/molecules/Settings/WorkspaceList/WorkspaceCell";
 import { Team as TeamType } from "@reearth/gql/graphql-client-api";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 export type Team = TeamType;
@@ -29,7 +29,7 @@ const WorkspaceList: React.FC<Props> = ({
   onWorkspaceSelect,
   onCreationButtonClick,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const filteredWorkspaces = useMemo(
     () =>
       filterQuery
@@ -43,15 +43,12 @@ const WorkspaceList: React.FC<Props> = ({
     <>
       <SubHeader>
         <Text size="m" color={theme.main.text} weight="normal">
-          {title ||
-            `${intl.formatMessage({ defaultMessage: "All workspaces" })} (${
-              filteredWorkspaces?.length || 0
-            })`}
+          {title || `${t("All workspaces")} (${filteredWorkspaces?.length || 0})`}
         </Text>
         <Button
           large
           buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "New Workspace" })}
+          text={t("New Workspace")}
           onClick={onCreationButtonClick}
         />
       </SubHeader>

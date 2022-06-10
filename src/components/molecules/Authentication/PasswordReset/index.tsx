@@ -1,12 +1,12 @@
 import { Link } from "@reach/router";
 import React, { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
@@ -27,7 +27,7 @@ const PasswordReset: React.FC<Props> = ({
   onNewPasswordSubmit,
   passwordPolicy,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -73,13 +73,10 @@ const PasswordReset: React.FC<Props> = ({
           <SentForm direction="column" align="center" justify="space-between">
             <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
             <Text size="l" customColor>
-              {intl.formatMessage({ defaultMessage: "Check Your Email" })}
+              {t("Check Your Email")}
             </Text>
             <Text size="m" customColor>
-              {intl.formatMessage({
-                defaultMessage:
-                  "Please check your inbox for instructions on how to verify your account.",
-              })}
+              {t("Please check your inbox for instructions on how to verify your account.")}
             </Text>
             <StyledButton
               className="form-item"
@@ -88,7 +85,7 @@ const PasswordReset: React.FC<Props> = ({
               border
               color={theme.main.weak}
               background={theme.other.white}
-              text={intl.formatMessage({ defaultMessage: "Resend email" })}
+              text={t("Resend email")}
             />
           </SentForm>
           <StyledLink to={"/login"}>
@@ -97,7 +94,7 @@ const PasswordReset: React.FC<Props> = ({
               color={theme.main.link}
               weight="bold"
               otherProperties={{ marginLeft: "6px" }}>
-              {intl.formatMessage({ defaultMessage: "Go to log in page." })}
+              {t("Go to log in page.")}
             </Text>
           </StyledLink>
         </SentFormWrapper>
@@ -106,17 +103,16 @@ const PasswordReset: React.FC<Props> = ({
           {loading && <Loading overlay />}
           <Icon className="form-item" icon="logoColorful" size={60} />
           <Text className="form-item" size="l" customColor>
-            {intl.formatMessage({ defaultMessage: "Forgot Your Password?" })}
+            {t("Forgot Your Password?")}
           </Text>
           <Text className="form-item" size="s" customColor>
-            {intl.formatMessage({
-              defaultMessage:
-                "Enter your email address and we will send you instructions to reset your password.",
-            })}
+            {t(
+              "Enter your email address and we will send you instructions to reset your password.",
+            )}
           </Text>
           <StyledInput
             className="form-item"
-            placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+            placeholder={t("Email address")}
             color={theme.main.weak}
             value={email}
             autoFocus
@@ -129,11 +125,11 @@ const PasswordReset: React.FC<Props> = ({
             disabled={disabled}
             color={disabled ? theme.main.text : theme.other.white}
             background={disabled ? theme.main.weak : theme.main.link}
-            text={intl.formatMessage({ defaultMessage: "Continue" })}
+            text={t("Continue")}
           />
           <StyledLink to={"/login"}>
             <Text size="xs" color={theme.main.link} weight="bold">
-              {intl.formatMessage({ defaultMessage: "Go back to log in page" })}
+              {t("Go back to log in page")}
             </Text>
           </StyledLink>
         </>

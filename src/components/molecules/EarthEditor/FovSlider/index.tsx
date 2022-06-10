@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
 import Slider from "@reearth/components/atoms/Slider";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFovChange }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const { updateFov, handleClickAway } = useHooks({
     onIsCapturingChange,
@@ -32,7 +32,7 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
       <Wrapper data-camera-popup>
         <FovField>
           <Text size="xs" color={theme.main.strongText} otherProperties={{ marginRight: "16px" }}>
-            {intl.formatMessage({ defaultMessage: "Angle" })}
+            {t("Angle")}
           </Text>
           <FieldForm>
             <FieldSlider>
@@ -45,8 +45,8 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
               />
             </FieldSlider>
             <FieldDescriptions>
-              <Text size="xs">{intl.formatMessage({ defaultMessage: "Narrow" })}</Text>
-              <Text size="xs">{intl.formatMessage({ defaultMessage: "Wide" })}</Text>
+              <Text size="xs">{t("Narrow")}</Text>
+              <Text size="xs">{t("Wide")}</Text>
             </FieldDescriptions>
           </FieldForm>
         </FovField>

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { ValueTypes, ValueType } from "@reearth/util/value";
 
@@ -73,7 +73,7 @@ const Infobox: React.FC<Props> = ({
     handleBlockInsert,
   } = useHooks(onBlockInsert);
   const theme = useTheme();
-  const intl = useIntl();
+  const t = useT();
   const [isReadyToRender, setIsReadyToRender] = useState(false);
   const blocks = overridenBlocks ?? layer?.infobox?.blocks;
   const property = layer?.infobox?.property;
@@ -149,11 +149,7 @@ const Infobox: React.FC<Props> = ({
           <NoContentInfo>
             <InnerWrapper size="xs" color={theme.infoBox.weakText}>
               <StyledIcon icon="arrowLong" />
-              <span>
-                {intl.formatMessage({
-                  defaultMessage: `Move mouse here and click "+" to add content`,
-                })}
-              </span>
+              <span>{t(`Move mouse here and click "+" to add content`)}</span>
             </InnerWrapper>
           </NoContentInfo>
         </>

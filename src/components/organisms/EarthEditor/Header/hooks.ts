@@ -1,6 +1,5 @@
 import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
@@ -14,12 +13,13 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
   const { logout } = useAuth();
-  const intl = useIntl();
+  const t = useT();
 
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
@@ -131,27 +131,21 @@ export default () => {
       if (result.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to publish your project." }),
+          text: t("Failed to publish your project."),
         });
       } else {
         setNotification({
           type: s === "limited" ? "success" : s == "published" ? "success" : "info",
           text:
             s === "limited"
-              ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
+              ? t("Successfully published your project!")
               : s == "published"
-              ? intl.formatMessage({
-                  defaultMessage:
-                    "Successfully published your project with search engine indexing!",
-                })
-              : intl.formatMessage({
-                  defaultMessage:
-                    "Successfully unpublished your project. Now nobody can access your project.",
-                }),
+              ? t("Successfully published your project with search engine indexing!")
+              : t("Successfully unpublished your project. Now nobody can access your project."),
         });
       }
     },
-    [project, publishProjectMutation, intl, setNotification],
+    [project, publishProjectMutation, t, setNotification],
   );
 
   const changeTeam = useCallback(
@@ -192,9 +186,9 @@ export default () => {
   const handleCopyToClipBoard = useCallback(() => {
     setNotification({
       type: "info",
-      text: intl.formatMessage({ defaultMessage: "Successfully copied to clipboard!" }),
+      text: t("Successfully copied to clipboard!"),
     });
-  }, [intl, setNotification]);
+  }, [t, setNotification]);
 
   return {
     teams,

@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { Icons } from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import { PluginInstallWay } from "..";
@@ -26,20 +26,20 @@ const PluginInstall: React.FC<Props> = ({
   installByUploadingZipFile,
   uninstallPlugin,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const installChoices: { text: string; mode: PluginInstallWay; icon: Icons }[] = [
     {
-      text: intl.formatMessage({ defaultMessage: "Zip file from PC" }),
+      text: t("Zip file from PC"),
       mode: "install-zip",
       icon: "uploadZipPlugin",
     },
     {
-      text: intl.formatMessage({ defaultMessage: "Public GitHub repository" }),
+      text: t("Public GitHub repository"),
       mode: "install-public-repo",
       icon: "publicGitHubRepo",
     },
     // {
-    //   text: intl.formatMessage({ defaultMessage: "Private GitHub repository" }),
+    //   text: t("Private GitHub repository"),
     //   mode: "install-private-repo",
     //   icon: "privateGitHubRepo",
     // },
@@ -61,7 +61,7 @@ const PluginInstall: React.FC<Props> = ({
       <SectionTitle>
         <Box mh="m">
           <Text weight="bold" size="m">
-            {intl.formatMessage({ defaultMessage: "Installed plugins" })}
+            {t("Installed plugins")}
           </Text>
         </Box>
       </SectionTitle>

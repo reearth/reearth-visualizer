@@ -1,20 +1,370 @@
 Continue: Continue
 Cancel: Cancel
+Drop here: Drop here
+Notfound: Notfound
+Published: Published
+Unpublished: Unpublished
+not set: not set
+Welcome: Welcome
+Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
+Username or email: Username or email
+Password: Password
+Forgot password?: Forgot password?
+Don't have an account?: Don't have an account?
+Sign up: Sign up
+Check Your Email: Check Your Email
+Please check your inbox for instructions on how to verify your account.: Please check your inbox for instructions on how to verify your account.
+Resend email: Resend email
+Go to log in page.: Go to log in page.
+Forgot Your Password?: Forgot Your Password?
+Enter your email address and we will send you instructions to reset your password.: >-
+  Enter your email address and we will send you instructions to reset your
+  password.
+Email address: Email address
+Go back to log in page: Go back to log in page
+No whitespace is allowed.: No whitespace is allowed.
+Too short.: Too short.
+That is terribly long.: That is terribly long.
+That password is great!: That password is great!
+That password is better.: That password is better.
+That password is okay.: That password is okay.
+That password confuses me, but might be okay.: That password confuses me, but might be okay.
+Change Your Password: Change Your Password
+Enter a new password below to change your password.: Enter a new password below to change your password.
+New password: New password
+Reset password: Reset password
+Create your Account: Create your Account
+Username: Username
+Already have an account?: Already have an account?
+Log in: Log in
+Date: Date
+File size: File size
+Alphabetical: Alphabetical
 Upload file: Upload file
 Delete: Delete
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
+You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
+Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
+Assets Library: Assets Library
+Use URL: Use URL
+Add video URL: Add video URL
+Save: Save
+Select Asset: Select Asset
+Select: Select
+Resource URL: Resource URL
+Account Settings: Account Settings
+Log out: Log out
+Create New Project: Create New Project
+Create: Create
+Project Name: Project Name
+Description: Description
+Select thumbnail image: Select thumbnail image
 Project settings: Project settings
 Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
+Workspaces: Workspaces
+Manage Workspaces: Manage Workspaces
+New Workspace: New Workspace
+Create New Workspace: Create New Workspace
+Workspace Name: Workspace Name
+You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
+  You have no projects in your workspace. Click the button above in the Quick
+  Start to create a project now!
+Quick Start: Quick Start
+User guide: User guide
+New project: New project
+New workspace: New workspace
 '''s workspace': '''s workspace'
+Layer style: Layer style
+import: import
+Data: Data
+Import to scene: Import to scene
+OK: OK
+You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
+  You are deleting a dataset. Layers that are linked to this dataset might show
+  errors.
+Please make sure your project doesn't rely on this dataset before proceeding.: Please make sure your project doesn't rely on this dataset before proceeding.
+Connect with Google Drive: Connect with Google Drive
+Re:Earth supports uploading Google Sheets and CSV files.: Re:Earth supports uploading Google Sheets and CSV files.
+sending...: sending...
+Add Dataset: Add Dataset
+Add dataset: Add dataset
+Upload from your device: Upload from your device
+Supports CSV, JSON, GIS files: Supports CSV, JSON, GIS files
+Google Drive: Google Drive
+Upload CSV file: Upload CSV file
+Sorry, that service is unavailable at this time.: Sorry, that service is unavailable at this time.
+Other Source: Other Source
+No Dataset is here: No Dataset is here
+Export type: Export type
+Export: Export
+Angle: Angle
+Narrow: Narrow
+Wide: Wide
+Publish: Publish
+Update: Update
+Preview: Preview
+Unpublish: Unpublish
+Layer selection: Layer selection
+Selectable Layers: Selectable Layers
+Add: Add
+Remove: Remove
+Stories: Stories
+Delete selected layer.: Delete selected layer.
+Create new folder.: Create new folder.
+Add Layer.: Add Layer.
+Delete the selected item.: Delete the selected item.
+Scene: Scene
+Widgets: Widgets
+Layers: Layers
+Clusters: Clusters
+Delete widget: Delete widget
+You are about to delete the selected widget. You will lose all data tied to this widget.: >-
+  You are about to delete the selected widget. You will lose all data tied to
+  this widget.
+Are you sure you would like to delete this widget?: Are you sure you would like to delete this widget?
+Create Infobox: Create Infobox
+Dataset: Dataset
+Pose Set: Pose Set
+Position Set: Position Set
+Not Set: Not Set
+Latitude: Latitude
+Longtitude: Longtitude
+Altitude: Altitude
+Heading: Heading
+Pitch: Pitch
+Roll: Roll
+Check Pose: Check Pose
+Jump: Jump
+Edit Pose: Edit Pose
+Edit Position: Edit Position
+Capture: Capture
+'#RRGGBBAA': '#RRGGBBAA'
+Red: Red
+Green: Green
+Blue: Blue
+Alpha: Alpha
+Longitude: Longitude
+This field is linked to {{datasetField}}.: This field is linked to {{datasetField}}.
+This field is not editable currently.: This field is not editable currently.
+Linkable data: Linkable data
+Link to dataset: Link to dataset
+No linked data: No linked data
+From: From
+Overridden: Overridden
+Parent.: Parent.
+Reset this field: Reset this field
+Clear this field: Clear this field
+No selectable items: No selectable items
+Font family: Font family
+Font size: Font size
+Field set: Field set
+Not set: Not set
+Basic: Basic
+Template: Template
+template: template
+You are deleting the infobox and all its contents. Are you sure you want to do that?: >-
+  You are deleting the infobox and all its contents. Are you sure you want to do
+  that?
+List: List
+Enable Editor Mode: Enable Editor Mode
+Congratulations!: Congratulations!
+Publish your project: Publish your project
+Update your project: Update your project
+Ok: Ok
+Your published project will be updated. This means all current changes will overwrite the current published project.: >-
+  Your published project will be updated. This means all current changes will
+  overwrite the current published project.
+Your project will be published. This means anybody with the below URL will be able to view this project.: >-
+  Your project will be published. This means anybody with the below URL will be
+  able to view this project.
+Close: Close
+Your project has been published!: Your project has been published!
+Public URL: Public URL
+Copy: Copy
+'* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
+Embed Code: Embed Code
+'* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
+more options: more options
+Search engine indexing: Search engine indexing
+Your project will be unpublished.: Your project will be unpublished.
+This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
+'**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
+Add a tag group: Add a tag group
+Add a tag: Add a tag
+Auto: Auto
+Dark theme: Dark theme
+Light theme: Light theme
+Account: Account
+Service language: Service language
+Color theme: Color theme
+Change Password: Change Password
+Change password: Change password
+In order to protect your account, make sure your password is unique and strong.: >-
+  In order to protect your account, make sure your password is unique and
+  strong.
+New password (for confirmation): New password (for confirmation)
+Set your password now: Set your password now
+Profile: Profile
+Profile picture: Profile picture
+Name: Name
+Workspace List: Workspace List
+Assets: Assets
+Project List: Project List
+Public: Public
+Notice: Notice
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
+  Most project settings are hidden when the project is archived. Please
+  unarchive the project to view and edit these settings.
+Basic Authorization: Basic Authorization
+Enable basic authorization: Enable basic authorization
+Change site name: Change site name
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
+  You are about to change the site name for your project. Only alphanumeric
+  characters and hyphens are allows.
+Danger Zone: Danger Zone
+Unarchive this project: Unarchive this project
+Archive this project: Archive this project
+Unarchive this project to become editable again.: Unarchive this project to become editable again.
+Mark this project as archived and read-only: Mark this project as archived and read-only
+Unarchive project: Unarchive project
+Archive project: Archive project
+Delete this project: Delete this project
+Once you delete a project, there is no going back. Please be sure.: Once you delete a project, there is no going back. Please be sure.
+Delete project: Delete project
+Archiving your project will put it into a state where you cannot edit it or it's settings.: >-
+  Archiving your project will put it into a state where you cannot edit it or
+  it's settings.
+Once archived, you can unarchive the repository at any time.: Once archived, you can unarchive the repository at any time.
+This will bring this repository back to a state it can be editted and worked on by you and your team.: >-
+  This will bring this repository back to a state it can be editted and worked
+  on by you and your team.
+This action cannot be undone.: This action cannot be undone.
+This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: >-
+  This will permanently delete the project. If the project was published, this
+  also means websites and domains referencing the project will not be able to
+  access it anymore.
+Please type your project name to continue.: Please type your project name to continue.
+I am sure I want to delete this project.: I am sure I want to delete this project.
+I am sure I want to archive this project.: I am sure I want to archive this project.
+I am sure I want to unarchive this project.: I am sure I want to unarchive this project.
+Delete this dataset: Delete this dataset
+Are you sure you want to delete it?: Are you sure you want to delete it?
+Uninstall: Uninstall
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
+  You are uninstalling the selected plugin. The data used by this plugin may
+  also be deleted.
+Please be sure before uninstalling.: Please be sure before uninstalling.
+Installed: Installed
+Install: Install
+Zip file from PC: Zip file from PC
+Public GitHub repository: Public GitHub repository
+Installed plugins: Installed plugins
+Import GitHub repository: Import GitHub repository
+'Repository url:': 'Repository url:'
+Project Info: Project Info
+Thumbnail: Thumbnail
+Public Info: Public Info
+(These fields will be used for OGP as well as metadata for the public project): (These fields will be used for OGP as well as metadata for the public project)
+Title: Title
+Site settings: Site settings
+Site name: Site name
+Access your project, copy or edit the URL below.: Access your project, copy or edit the URL below.
+Once your project is published from the editor page the URL details will be shown here.: >-
+  Once your project is published from the editor page the URL details will be
+  shown here.
+This project is published with search engine indexing enabled.: This project is published with search engine indexing enabled.
+This project is published with search engine indexing disabled.: This project is published with search engine indexing disabled.
+This project is not published.: This project is not published.
+No Title Project: No Title Project
+No Description...: No Description...
+(Your personal workspace): (Your personal workspace)
+Add a team member: Add a team member
+Input an email address or a user name: Input an email address or a user name
+Delete this workspace: Delete this workspace
+Once you delete a workspace, there is no going back. Please be certain.: Once you delete a workspace, there is no going back. Please be certain.
+Delete workspace: Delete workspace
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: >-
+  This will permanently delete the workspace and all related projects, assets
+  and datasets for all team members.
+Please type your workspace name to continue.: Please type your workspace name to continue.
+I am sure I want to delete this workspace.: I am sure I want to delete this workspace.
+Reader: Reader
+Writer: Writer
+Owner: Owner
+Members: Members
+New member: New member
+Workspace name: Workspace name
+No Title Workspace: No Title Workspace
+This is your personal workspace. Your projects and resources will be managed in this workspace.: >-
+  This is your personal workspace. Your projects and resources will be managed
+  in this workspace.
+All workspaces: All workspaces
+Double click here to write.: Double click here to write.
+Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
+Your account has been successfully verified! Feel free to login now.: Your account has been successfully verified! Feel free to login now.
+Could not verify your signup. Please start the process over.: Could not verify your signup. Please start the process over.
+Failed to add one or more assets.: Failed to add one or more assets.
+Successfully added one or more assets.: Successfully added one or more assets.
+Failed to delete one or more assets.: Failed to delete one or more assets.
+One or more assets were successfully deleted.: One or more assets were successfully deleted.
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Successfully created project!: Successfully created project!
+Successfully created layer group: Successfully created layer group
+Failed to create layer group: Failed to create layer group
+Successfully added the dataset!: Successfully added the dataset!
+Failed to add the dataset.: Failed to add the dataset.
+Successfully deleted the dataset!: Successfully deleted the dataset!
+Failed to delete the dataset.: Failed to delete the dataset.
+Failed to publish your project.: Failed to publish your project.
+Successfully published your project!: Successfully published your project!
+Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
+Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
+Successfully copied to clipboard!: Successfully copied to clipboard!
+Outline: Outline
+Folder: Folder
+Layer: Layer
+Widget: Widget
+Infobox: Infobox
+Tag: Tag
+Same label tag already exist. Please type different label.: Same label tag already exist. Please type different label.
+Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
+Error: Error
+Warning: Warning
+Something went wrong. Please try again later.: Something went wrong. Please try again later.
+Failed to update account name.: Failed to update account name.
+Failed to update password.: Failed to update password.
+Successfully updated password!: Successfully updated password!
+Failed to change language.: Failed to change language.
+Failed to change theme.: Failed to change theme.
+Failed to delete dataset.: Failed to delete dataset.
+Dataset was successfully deleted.: Dataset was successfully deleted.
+Failed to archive project.: Failed to archive project.
+Failed to unarchive project.: Failed to unarchive project.
+Successfully archived the project.: Successfully archived the project.
+Successfully unarchived the project. You can now edit this project.: Successfully unarchived the project. You can now edit this project.
+Failed to delete project.: Failed to delete project.
+Project was successfully deleted.: Project was successfully deleted.
+Failed to install plugin.: Failed to install plugin.
+Successfully installed plugin!: Successfully installed plugin!
+Failed to uninstall plugin.: Failed to uninstall plugin.
+Successfully removed plugin.: Successfully removed plugin.
 Total Projects: Total Projects
-Project List: Project List
 New Project: New Project
+Failed to create workspace.: Failed to create workspace.
+Sucessfully created a workspace!: Sucessfully created a workspace!
+Failed to update workspace name.: Failed to update workspace name.
+You have changed the workspace's name.: You have changed the workspace's name.
+Failed to delete workspace.: Failed to delete workspace.
+Workspace was successfully deleted.: Workspace was successfully deleted.
+Failed to add one or more members.: Failed to add one or more members.
+Successfully added member(s) to the workspace!: Successfully added member(s) to the workspace!
+Failed to delete member from the workspace.: Failed to delete member from the workspace.
+Successfully removed member from the workspace.: Successfully removed member from the workspace.
+Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.

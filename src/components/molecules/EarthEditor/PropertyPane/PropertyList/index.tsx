@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import LayerMultipleSelectionModal from "../../LayerMultipleSelectionModal";
@@ -49,7 +49,7 @@ const PropertyList: React.FC<Props> = ({
   onItemRemove,
   onItemsUpdate,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     layerModalActive,
     selectedLayers,
@@ -77,7 +77,7 @@ const PropertyList: React.FC<Props> = ({
     <Wrapper className={className}>
       <Header>
         <Text size="xs" otherProperties={{ flex: 1 }}>
-          {name} {intl.formatMessage({ defaultMessage: "List" })}
+          {name} {t("List")}
         </Text>
         <AddItemIcon icon="plus" size={16} onClick={addItem} />
         <RemoveItemIcon icon="bin" size={16} onClick={removeItem} />

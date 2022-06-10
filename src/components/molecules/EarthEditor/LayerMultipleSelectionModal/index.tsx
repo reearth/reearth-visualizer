@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TreeView, { Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -40,35 +40,19 @@ const LayerMultipleSelectionModal: React.FC<Props> = ({
     dropRightLayer,
     TreeViewItem,
   } = useHooks({ active, layers, selected, onSelect });
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Layer selection" })}
+      title={t("Layer selection")}
       size="md"
       isVisible={active}
       onClose={onClose}
-      button1={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Save" })}
-          onClick={ok}
-          buttonType="primary"
-        />
-      }
-      button2={
-        <Button
-          large
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={onClose}
-          buttonType="secondary"
-        />
-      }>
+      button1={<Button large text={t("Save")} onClick={ok} buttonType="primary" />}
+      button2={<Button large text={t("Cancel")} onClick={onClose} buttonType="secondary" />}>
       <Main>
         <Pane>
-          <TreeViewTitle size="s">
-            {intl.formatMessage({ defaultMessage: "Selectable Layers" })}
-          </TreeViewTitle>
+          <TreeViewTitle size="s">{t("Selectable Layers")}</TreeViewTitle>
           <StyledTreeView
             item={leftLayers}
             selected={selectedLeftLayers}
@@ -82,7 +66,7 @@ const LayerMultipleSelectionModal: React.FC<Props> = ({
         <CenterPane>
           <Button
             large
-            text={intl.formatMessage({ defaultMessage: "Add" })}
+            text={t("Add")}
             icon="arrowLongRight"
             iconRight
             buttonType="primary"
@@ -90,16 +74,14 @@ const LayerMultipleSelectionModal: React.FC<Props> = ({
           />
           <Button
             large
-            text={intl.formatMessage({ defaultMessage: "Remove" })}
+            text={t("Remove")}
             icon="arrowLongLeft"
             buttonType="primary"
             onClick={removeLayers}
           />
         </CenterPane>
         <Pane>
-          <TreeViewTitle size="s">
-            {intl.formatMessage({ defaultMessage: "Stories" })}
-          </TreeViewTitle>
+          <TreeViewTitle size="s">{t("Stories")}</TreeViewTitle>
           <StyledTreeView
             item={rightLayers}
             selected={selectedRightLayers}

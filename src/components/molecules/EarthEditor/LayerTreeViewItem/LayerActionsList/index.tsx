@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
@@ -8,6 +7,7 @@ import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { Layer } from "@reearth/components/molecules/EarthEditor/LayerTreeViewItem/Layer";
+import { useT } from "@reearth/i18n";
 import { styled, metricsSizes } from "@reearth/theme";
 
 export type Props = {
@@ -25,7 +25,7 @@ const LayerActionsList: React.FC<Props> = ({
   onRemove,
   onWarning,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const [visibleMenu, setVisibleMenu] = useState(false);
 
@@ -57,9 +57,7 @@ const LayerActionsList: React.FC<Props> = ({
       <Action
         disabled={!selectedLayerId}
         onClick={() => onWarning?.(true) ?? (selectedLayerId && onRemove?.(selectedLayerId))}>
-        <HelpButton
-          descriptionTitle={intl.formatMessage({ defaultMessage: "Delete the selected item." })}
-          balloonDirection="top">
+        <HelpButton descriptionTitle={t("Delete the selected item.")} balloonDirection="top">
           <StyledIcon icon="bin" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>

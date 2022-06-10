@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import PasswordModal, {
@@ -8,7 +7,7 @@ import PasswordModal, {
 import Field from "@reearth/components/molecules/Settings/Field";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
-import { localesWithLabel } from "@reearth/i18n/legacy";
+import { useT, localesWithLabel } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Theme = "dark" | "light" | "default";
@@ -34,26 +33,26 @@ const ProfileSection: React.FC<Props> = ({
   updateLanguage,
   updateTheme,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
 
   const langItems = useMemo(
     () => [
-      { key: "und", label: intl.formatMessage({ defaultMessage: "Auto" }) },
+      { key: "und", label: t("Auto") },
       ...Object.keys(localesWithLabel).map(l => ({
         key: l as keyof typeof localesWithLabel,
         label: localesWithLabel[l as keyof typeof localesWithLabel],
       })),
     ],
-    [intl],
+    [t],
   );
 
   const themeItems: { key: Theme; label: string; icon: string }[] = useMemo(
     () => [
-      { key: "dark", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
-      { key: "light", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+      { key: "dark", label: t("Dark theme"), icon: "moon" },
+      { key: "light", label: t("Light theme"), icon: "sun" },
     ],
-    [intl],
+    [t],
   );
 
   const currentThemeLabel = useMemo(
@@ -84,15 +83,15 @@ const ProfileSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Account" })}>
-        <Field header={intl.formatMessage({ defaultMessage: "Email address" })} body={email} />
+      <Section title={t("Account")}>
+        <Field header={t("Email address")} body={email} />
         <Field
-          header={intl.formatMessage({ defaultMessage: "Password" })}
+          header={t("Password")}
           body={"**********"}
           action={<StyledIcon icon="edit" size={20} onClick={() => setIsOpen(!isOpen)} />}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Service language" })}
+          title={t("Service language")}
           dropdown
           dropdownItems={langItems}
           currentItem={lang || "und"}
@@ -100,7 +99,7 @@ const ProfileSection: React.FC<Props> = ({
           onSubmit={updateLanguage}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Color theme" })}
+          title={t("Color theme")}
           dropdown
           dropdownItems={themeItems}
           currentItem={appTheme}

@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, css, useTheme } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
@@ -33,7 +33,7 @@ const CameraField: React.FC<Props> = ({
   onlyPose,
   onlyPosition,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const {
     wrapperRef,
@@ -87,11 +87,7 @@ const CameraField: React.FC<Props> = ({
           size="xs"
           color={value ? theme.properties.contentsFloatText : theme.properties.contentsText}
           onClick={value ? openPopup : undefined}>
-          {value
-            ? onlyPose
-              ? intl.formatMessage({ defaultMessage: "Pose Set" })
-              : intl.formatMessage({ defaultMessage: "Position Set" })
-            : intl.formatMessage({ defaultMessage: "Not Set" })}
+          {value ? (onlyPose ? t("Pose Set") : t("Position Set")) : t("Not Set")}
         </StyledText>
         {value ? (
           <StyledIcon icon="bin" size={16} onClick={onDelete} />
@@ -114,7 +110,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleLatChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Latitude" })}
+                    {t("Latitude")}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
@@ -126,7 +122,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleLngChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Longtitude" })}
+                    {t("Longtitude")}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
@@ -138,7 +134,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleAltitudeChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Altitude" })}
+                    {t("Altitude")}
                   </FloatText>
                 </FormWrapper>
               </FormFieldRow>
@@ -159,7 +155,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleHeadingChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Heading" })}
+                    {t("Heading")}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
@@ -171,7 +167,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handlePitchChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Pitch" })}
+                    {t("Pitch")}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
@@ -183,7 +179,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleRollChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
-                    {intl.formatMessage({ defaultMessage: "Roll" })}
+                    {t("Roll")}
                   </FloatText>
                 </FormWrapper>
               </FormFieldRow>
@@ -195,11 +191,7 @@ const CameraField: React.FC<Props> = ({
             <FormButtonGroup>
               <Button
                 buttonType="secondary"
-                text={
-                  onlyPose
-                    ? intl.formatMessage({ defaultMessage: "Check Pose" })
-                    : intl.formatMessage({ defaultMessage: "Jump" })
-                }
+                text={onlyPose ? t("Check Pose") : t("Jump")}
                 onClick={jump}
               />
             </FormButtonGroup>
@@ -207,28 +199,16 @@ const CameraField: React.FC<Props> = ({
         </FormGroup>
         <FormGroup>
           <FormButtonGroup>
-            <Button
-              buttonType="secondary"
-              text={intl.formatMessage({ defaultMessage: "Cancel" })}
-              onClick={handleClickCancelButton}
-            />
+            <Button buttonType="secondary" text={t("Cancel")} onClick={handleClickCancelButton} />
             {!isCapturing && (
               <Button
                 buttonType="primary"
-                text={
-                  value && onlyPose
-                    ? intl.formatMessage({ defaultMessage: "Edit Pose" })
-                    : intl.formatMessage({ defaultMessage: "Edit Position" })
-                }
+                text={value && onlyPose ? t("Edit Pose") : t("Edit Position")}
                 onClick={startCapture}
               />
             )}
             {isCapturing && (
-              <Button
-                buttonType="primary"
-                text={intl.formatMessage({ defaultMessage: "Capture" })}
-                onClick={handleClickSubmitButton}
-              />
+              <Button buttonType="primary" text={t("Capture")} onClick={handleClickSubmitButton} />
             )}
           </FormButtonGroup>
         </FormGroup>

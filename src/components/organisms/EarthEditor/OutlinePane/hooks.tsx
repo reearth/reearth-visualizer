@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import {
   Format,
@@ -28,6 +27,7 @@ import {
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
+import { useLang, useT } from "@reearth/i18n";
 import {
   useSceneId,
   useSelected,
@@ -49,7 +49,8 @@ const convertFormat = (format: Format) => {
 };
 
 export default () => {
-  const intl = useIntl();
+  const t = useT();
+  const locale = useLang();
   const [sceneId] = useSceneId();
   const [selected, select] = useSelected();
   const [, selectBlock] = useSelectedBlock();
@@ -62,12 +63,12 @@ export default () => {
   });
 
   const { loading: WidgetLoading, data: widgetData } = useGetWidgetsQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: locale },
     skip: !sceneId,
   });
 
   const { data: clusterData } = useGetClustersQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: locale },
     skip: !sceneId,
   });
 
@@ -292,10 +293,10 @@ export default () => {
       variables: {
         parentLayerId: parentLayer?.id ?? rootLayerId,
         index: layerIndex?.[layerIndex.length - 1],
-        name: intl.formatMessage({ defaultMessage: "Folder" }),
+        name: t("Folder"),
       },
     });
-  }, [rootLayerId, data?.layer, selected, addLayerGroupMutation, intl]);
+  }, [rootLayerId, data?.layer, selected, addLayerGroupMutation, t]);
 
   const handleDrop = useCallback(
     (layerId: string, index: number, childrenCount: number) => ({
@@ -316,7 +317,7 @@ export default () => {
           sceneId,
           pluginId,
           extensionId,
-          lang: intl.locale,
+          lang: locale,
         },
         refetchQueries: ["GetEarthWidgets", "GetWidgets"],
       });
@@ -329,7 +330,7 @@ export default () => {
         });
       }
     },
-    [addWidgetMutation, intl.locale, sceneId, select],
+    [addWidgetMutation, locale, sceneId, select],
   );
 
   const removeWidget = useCallback(
@@ -392,7 +393,7 @@ export default () => {
       variables: {
         sceneId,
         name,
-        lang: intl.locale,
+        lang: locale,
       },
       refetchQueries: ["GetClusters"],
     });
@@ -402,7 +403,7 @@ export default () => {
         clusterId: data.addCluster.cluster.id,
       });
     }
-  }, [addClusterMutation, intl.locale, sceneId, select]);
+  }, [addClusterMutation, locale, sceneId, select]);
 
   const removeCluster = useCallback(
     async (clusterId: string) => {

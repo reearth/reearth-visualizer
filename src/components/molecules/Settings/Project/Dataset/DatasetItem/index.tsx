@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
+import { useT } from "@reearth/i18n";
 import { styled, fonts } from "@reearth/theme";
 
 export type Item = {};
@@ -16,7 +16,7 @@ export type Props = {
 };
 
 const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,7 +49,7 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
         </Meta>
       </Wrapper>
       <Modal
-        title={intl.formatMessage({ defaultMessage: "Delete this dataset" })}
+        title={t("Delete this dataset")}
         isVisible={isVisible}
         size="sm"
         onClose={onClose}
@@ -57,19 +57,12 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
           <Button
             large
             buttonType="danger"
-            text={intl.formatMessage({ defaultMessage: "Delete" })}
+            text={t("Delete")}
             onClick={handleRemoveDatasetSchema}
           />
         }
-        button2={
-          <Button
-            large
-            buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "Cancel" })}
-            onClick={onClose}
-          />
-        }>
-        {intl.formatMessage({ defaultMessage: "Are you sure you want to delete it?" })}
+        button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={onClose} />}>
+        {t("Are you sure you want to delete it?")}
       </Modal>
     </>
   );

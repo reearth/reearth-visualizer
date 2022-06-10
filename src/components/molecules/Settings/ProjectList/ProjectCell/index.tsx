@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 // Components
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -29,7 +29,7 @@ export type Props = {
 };
 
 const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const [isHover, setHover] = useState(false);
 
@@ -41,14 +41,12 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
         <Title size="l" color={theme.projectCell.title}>
-          {project.name ? project.name : intl.formatMessage({ defaultMessage: "No Title Project" })}
+          {project.name ? project.name : t("No Title Project")}
         </Title>
         {isHover && (
           <DescriptionWrapper>
             <Desc size="s" color={theme.projectCell.description} isParagraph={true}>
-              {project.description
-                ? project.description
-                : intl.formatMessage({ defaultMessage: "No Description..." })}
+              {project.description ? project.description : t("No Description...")}
             </Desc>
           </DescriptionWrapper>
         )}

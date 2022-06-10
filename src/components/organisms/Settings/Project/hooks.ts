@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
 
 import {
   useGetProjectsQuery,
@@ -7,6 +6,7 @@ import {
   useArchiveProjectMutation,
   useDeleteProjectMutation,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useNotification } from "@reearth/state";
 
 type Params = {
@@ -14,7 +14,7 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const intl = useIntl();
+  const t = useT();
   const [, setNotification] = useNotification();
   const [currentTeam] = useTeam();
 
@@ -91,25 +91,18 @@ export default ({ projectId }: Params) => {
       if (results.errors) {
         setNotification({
           type: "error",
-          text: archived
-            ? intl.formatMessage({
-                defaultMessage: "Failed to archive project.",
-              })
-            : intl.formatMessage({ defaultMessage: "Failed to unarchive project." }),
+          text: archived ? t("Failed to archive project.") : t("Failed to unarchive project."),
         });
       } else {
         setNotification({
           type: "info",
           text: archived
-            ? intl.formatMessage({ defaultMessage: "Successfully archived the project." })
-            : intl.formatMessage({
-                defaultMessage:
-                  "Successfully unarchived the project. You can now edit this project.",
-              }),
+            ? t("Successfully archived the project.")
+            : t("Successfully unarchived the project. You can now edit this project."),
         });
       }
     },
-    [projectId, intl, setNotification, archiveProjectMutation],
+    [projectId, t, setNotification, archiveProjectMutation],
   );
 
   const deleteProject = useCallback(async () => {
@@ -118,15 +111,15 @@ export default ({ projectId }: Params) => {
     if (results.errors) {
       setNotification({
         type: "error",
-        text: intl.formatMessage({ defaultMessage: "Failed to delete project." }),
+        text: t("Failed to delete project."),
       });
     } else {
       setNotification({
         type: "info",
-        text: intl.formatMessage({ defaultMessage: "Project was successfully deleted." }),
+        text: t("Project was successfully deleted."),
       });
     }
-  }, [projectId, intl, setNotification, deleteProjectMutation]);
+  }, [projectId, t, setNotification, deleteProjectMutation]);
 
   const [assetModalOpened, setOpenAssets] = useState(false);
 

@@ -1,12 +1,12 @@
 import { mapValues } from "lodash-es";
 import React, { useState, useMemo, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
 import GroupWrapper from "@reearth/components/atoms/TabCard";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { ExtendedFuncProps2 } from "@reearth/types";
@@ -142,7 +142,7 @@ const PropertyItem: React.FC<Props> = ({
   onRemoveFile,
   ...props
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   const theme = useTheme();
 
@@ -257,7 +257,7 @@ const PropertyItem: React.FC<Props> = ({
     if (item) onItemAdd?.(item.schemaGroup);
   }, [onItemAdd, item]);
 
-  const itemTitle = intl.formatMessage({ defaultMessage: "Basic" });
+  const itemTitle = t("Basic");
   const handleDelete = useCallback(() => {
     if (!onRemovePane) return;
     if (item?.title === itemTitle) {
@@ -272,9 +272,9 @@ const PropertyItem: React.FC<Props> = ({
       className={className}
       name={
         mode === "layer" && isTemplate
-          ? intl.formatMessage({ defaultMessage: "Template" })
+          ? t("Template")
           : isTemplate
-          ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
+          ? `${item?.title} ${t("template")}`
           : item?.title
       }>
       {isList && !!item && (
@@ -309,25 +309,13 @@ const PropertyItem: React.FC<Props> = ({
       {onRemovePane && (
         <StyledButton buttonType="primary" onClick={handleDelete}>
           <TrashIcon icon="bin" size={16} />
-          {intl.formatMessage({ defaultMessage: "Delete" })}
+          {t("Delete")}
         </StyledButton>
       )}
       <Modal
-        button1={
-          <Button
-            large
-            buttonType="danger"
-            text={intl.formatMessage({ defaultMessage: "OK" })}
-            onClick={onRemovePane}
-          />
-        }
+        button1={<Button large buttonType="danger" text={t("OK")} onClick={onRemovePane} />}
         button2={
-          <Button
-            large
-            buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "Cancel" })}
-            onClick={() => setModal(false)}
-          />
+          <Button large buttonType="secondary" text={t("Cancel")} onClick={() => setModal(false)} />
         }
         size="sm"
         isVisible={openModal}
@@ -337,10 +325,9 @@ const PropertyItem: React.FC<Props> = ({
           size="m"
           color={theme.main.text}
           otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
-          {intl.formatMessage({
-            defaultMessage:
-              "You are deleting the infobox and all its contents. Are you sure you want to do that?",
-          })}
+          {t(
+            "You are deleting the infobox and all its contents. Are you sure you want to do that?",
+          )}
         </Text>
       </Modal>
     </GroupWrapper>

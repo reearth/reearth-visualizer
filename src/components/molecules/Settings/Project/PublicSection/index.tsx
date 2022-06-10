@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -27,29 +27,28 @@ const PublicSection: React.FC<Props> = ({
   assetModal,
   toggleAssetModal,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper>
       <Section
-        title={intl.formatMessage({ defaultMessage: "Public Info" })}
-        subtitle={intl.formatMessage({
-          defaultMessage:
-            "(These fields will be used for OGP as well as metadata for the public project)",
-        })}>
+        title={t("Public Info")}
+        subtitle={t(
+          "(These fields will be used for OGP as well as metadata for the public project)",
+        )}>
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Title" })}
+          title={t("Title")}
           body={currentProject?.publicTitle}
           onSubmit={updatePublicTitle}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Description" })}
+          title={t("Description")}
           body={currentProject?.publicDescription}
           multilineTextBox={true}
           onSubmit={updatePublicDescription}
         />
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Thumbnail" })}
+          title={t("Thumbnail")}
           onSubmit={updatePublicImage}
           imageSrc={currentProject?.publicImage}
           isImage

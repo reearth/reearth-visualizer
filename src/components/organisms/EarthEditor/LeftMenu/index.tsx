@@ -1,7 +1,7 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
+import { useT } from "@reearth/i18n";
 
 import DatasetPane from "../DataSourcePane";
 import OutlinePane from "../OutlinePane";
@@ -13,10 +13,10 @@ import useHooks from "./hooks";
 const LeftMenu: React.FC = () => {
   const { isCapturing } = useHooks();
 
-  const intl = useIntl();
+  const t = useT();
   const labels = {
-    outline: intl.formatMessage({ defaultMessage: "Outline" }),
-    dataset: intl.formatMessage({ defaultMessage: "Dataset" }),
+    outline: t("Outline"),
+    dataset: t("Dataset"),
   };
 
   return (

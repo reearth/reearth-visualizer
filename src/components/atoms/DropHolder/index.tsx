@@ -1,6 +1,6 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export interface Props {
@@ -8,11 +8,11 @@ export interface Props {
 }
 
 const DropHolder: React.FC<Props> = ({ className }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <DraggableView className={className}>
-      <DragMessage>{intl.formatMessage({ defaultMessage: "Drop here" })}</DragMessage>
+      <DragMessage>{t("Drop here")}</DragMessage>
     </DraggableView>
   );
 };

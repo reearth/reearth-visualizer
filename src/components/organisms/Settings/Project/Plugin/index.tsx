@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 import PluginSection from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     currentProject,
     installedPlugins,
@@ -27,10 +27,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
 
   return (
     <SettingPage projectId={projectId}>
-      <SettingsHeader
-        title={intl.formatMessage({ defaultMessage: "Plugins" })}
-        currentProject={currentProject?.name}
-      />
+      <SettingsHeader title={t("Plugins")} currentProject={currentProject?.name} />
       {!currentProject?.isArchived ? (
         <PluginSection
           loading={loading}

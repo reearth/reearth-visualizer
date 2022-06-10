@@ -20,6 +20,8 @@ export const availableLanguages = Object.keys(resources);
 i18n.use(LanguageDetector).use(initReactI18next).init({
   resources,
   fallbackLng: "en",
+  // allow keys to be phrases having `:`, `.`
+  nsSeparator: false,
   keySeparator: false,
   returnEmptyString: false,
 });

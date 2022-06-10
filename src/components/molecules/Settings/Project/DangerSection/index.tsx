@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Field from "@reearth/components/molecules/Settings/Field";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -29,18 +29,16 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
     setIsOpen(true);
   };
 
-  const intl = useIntl();
+  const t = useT();
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Danger Zone" })}>
-        {/* <Field header={intl.formatMessage({ defaultMessage: "Transfer ownership" })} />
+      <Section title={t("Danger Zone")}>
+        {/* <Field header={t("Transfer ownership")} />
         <Field
-          body={intl.formatMessage({
-            defaultMessage: `Transfer this project to another user or to an organization where you have the ability to create repositories.`,
-          })}
+          body={t(`Transfer this project to another user or to an organization where you have the ability to create repositories.`)}
           action={
             <RedButton
-              text={intl.formatMessage({ defaultMessage: "Transfer" })}
+              text={t("Transfer")}
               buttonType="bordered"
               isRadius
               // onClick={handleTransfer}
@@ -51,45 +49,31 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
         />
         <Divider /> */}
         <Field
-          header={
-            project?.isArchived
-              ? intl.formatMessage({ defaultMessage: "Unarchive this project" })
-              : intl.formatMessage({ defaultMessage: "Archive this project" })
-          }
+          header={project?.isArchived ? t("Unarchive this project") : t("Archive this project")}
         />
         <Field
           body={
             project?.isArchived
-              ? intl.formatMessage({
-                  defaultMessage: "Unarchive this project to become editable again.",
-                })
-              : intl.formatMessage({
-                  defaultMessage: "Mark this project as archived and read-only",
-                })
+              ? t("Unarchive this project to become editable again.")
+              : t("Mark this project as archived and read-only")
           }
           action={
             <Button
               large
-              text={
-                project?.isArchived
-                  ? intl.formatMessage({ defaultMessage: "Unarchive project" })
-                  : intl.formatMessage({ defaultMessage: "Archive project" })
-              }
+              text={project?.isArchived ? t("Unarchive project") : t("Archive project")}
               onClick={() => openModal(project?.isArchived ? "unarchive" : "archive")}
               buttonType="danger"
             />
           }
         />
         <Divider />
-        <Field header={intl.formatMessage({ defaultMessage: "Delete this project" })} />
+        <Field header={t("Delete this project")} />
         <Field
-          body={intl.formatMessage({
-            defaultMessage: `Once you delete a project, there is no going back. Please be sure.`,
-          })}
+          body={t(`Once you delete a project, there is no going back. Please be sure.`)}
           action={
             <Button
               large
-              text={intl.formatMessage({ defaultMessage: "Delete project" })}
+              text={t("Delete project")}
               buttonType="danger"
               onClick={() => openModal("delete")}
             />

@@ -12,8 +12,8 @@ module.exports = ({ config }) => {
   };
 
   config.module.rules.push({
-    test: /\.yml$/,
-    use: [{ loader: "json-loader" }, { loader: "yaml-flat-loader" }],
+    test: /\.ya?ml$/,
+    use: [{ loader: "yaml-loader" }],
   });
 
   config.plugins.push(

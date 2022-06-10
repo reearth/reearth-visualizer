@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Text from "@reearth/components/atoms/Text";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -11,11 +11,11 @@ export type Props = {
 };
 
 const WidgetAlignSystemToggle: React.FC<Props> = ({ checked, onChange }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <ToggleWrapper>
       <Text size="xs" otherProperties={{ userSelect: "none" }}>
-        {intl.formatMessage({ defaultMessage: "Enable Editor Mode" })}
+        {t("Enable Editor Mode")}
       </Text>
       <ToggleButton checked={checked} onChange={onChange} />
     </ToggleWrapper>

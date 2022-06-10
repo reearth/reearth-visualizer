@@ -1,8 +1,8 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import SelectCore, { OptionElement } from "./core";
@@ -38,7 +38,7 @@ const Select = <Value extends string | number>(
   }: Props<Value>,
   ref: React.Ref<HTMLDivElement>,
 ) => {
-  const intl = useIntl();
+  const t = useT();
   const isValidElement = (object: {} | null | undefined): object is OptionElement<Value> =>
     React.isValidElement(object);
   const options = React.Children.toArray(children).filter(isValidElement);
@@ -55,7 +55,7 @@ const Select = <Value extends string | number>(
       selectComponent={
         <SelectWrapper>
           <Selected inactive={inactive} size="xs" color={!selectedValue ? theme.main.weak : color}>
-            {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
+            {selectedLabel || placeholder || t("not set")}
           </Selected>
           <StyledDownArrow icon="arrowSelect" />
         </SelectWrapper>

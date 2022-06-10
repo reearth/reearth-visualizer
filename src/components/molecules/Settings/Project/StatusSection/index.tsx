@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import PublicationStatus, { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import Field from "@reearth/components/molecules/Settings/Field";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 export type Props = {
@@ -12,20 +12,16 @@ export type Props = {
 };
 
 const StatusSection: React.FC<Props> = ({ projectStatus }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
 
   const Message = useMemo(() => {
     return projectStatus === "published"
-      ? intl.formatMessage({
-          defaultMessage: "This project is published with search engine indexing enabled.",
-        })
+      ? t("This project is published with search engine indexing enabled.")
       : projectStatus === "limited"
-      ? intl.formatMessage({
-          defaultMessage: "This project is published with search engine indexing disabled.",
-        })
-      : intl.formatMessage({ defaultMessage: "This project is not published." });
-  }, [intl, projectStatus]);
+      ? t("This project is published with search engine indexing disabled.")
+      : t("This project is not published.");
+  }, [t, projectStatus]);
 
   return (
     <Wrapper>

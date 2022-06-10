@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
+
+import { useT } from "@reearth/i18n";
 
 export type SortType = "date" | "name" | "size";
 
@@ -40,17 +41,17 @@ export default ({
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string | undefined) => void;
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const sortOptions: { key: SortType; label: string }[] = useMemo(
     () => [
-      { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
-      { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
-      { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+      { key: "date", label: t("Date") },
+      { key: "size", label: t("File size") },
+      { key: "name", label: t("Alphabetical") },
     ],
-    [intl],
+    [t],
   );
 
   const iconChoice =

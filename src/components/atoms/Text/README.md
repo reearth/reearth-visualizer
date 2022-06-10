@@ -31,7 +31,7 @@ import Text from "@reearth/components/atoms/Text";
     onClick={() => window.location.assign("http://docs.reearth.io")}>
   <MapIcon icon="map" />
   <Text size="m" weight="bold" customColor>
-    {intl.formatMessage({ defaultMessage: "User guide" })}
+    {t("User guide")}
   </Text>
   </LongBannerButton>
 

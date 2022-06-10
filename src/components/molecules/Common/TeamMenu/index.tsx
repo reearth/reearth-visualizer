@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { useIntl } from "react-intl";
 
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import Flex from "@reearth/components/atoms/Flex";
@@ -10,6 +9,7 @@ import {
   MenuList,
   MenuListItem,
 } from "@reearth/components/molecules/Common/MenuList";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal }) => {
-  const intl = useIntl();
+  const t = useT();
   const dropDownRef = useRef<DropDownRef>(null);
 
   const handleTeamChange = useCallback(
@@ -31,7 +31,7 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
     [onChangeTeam],
   );
 
-  const label = <MenuListItemLabel text={intl.formatMessage({ defaultMessage: "Workspaces" })} />;
+  const label = <MenuListItemLabel text={t("Workspaces")} />;
   const theme = useTheme();
 
   return (
@@ -61,15 +61,11 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
             <MenuListItemLabel
               icon="workspaces"
               linkTo={`/settings/workspaces`}
-              text={intl.formatMessage({ defaultMessage: "Manage Workspaces" })}
+              text={t("Manage Workspaces")}
             />
           </MenuListItem>
           <MenuListItem>
-            <MenuListItemLabel
-              icon="workspaceAdd"
-              onClick={openModal}
-              text={intl.formatMessage({ defaultMessage: "New Workspace" })}
-            />
+            <MenuListItemLabel icon="workspaceAdd" onClick={openModal} text={t("New Workspace")} />
           </MenuListItem>
         </MenuList>
       </DropdownInner>

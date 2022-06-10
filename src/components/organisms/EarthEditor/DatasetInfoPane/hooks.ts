@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import {
   useAddLayerGroupFromDatasetSchemaMutation,
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
@@ -17,7 +17,7 @@ export default () => {
   const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
   const [rootLayerId, _] = useRootLayerId();
   const [, setNotification] = useNotification();
-  const intl = useIntl();
+  const t = useT();
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
@@ -48,12 +48,8 @@ export default () => {
     return plugins ? processPrimitives(plugins) : [];
   }, [rawScene?.scene?.plugins]);
 
-  const messageCreateLayerGroupSuccess = intl.formatMessage({
-    defaultMessage: "Successfully created layer group",
-  });
-  const messageCreateLayerGroupError = intl.formatMessage({
-    defaultMessage: "Failed to create layer group",
-  });
+  const messageCreateLayerGroupSuccess = t("Successfully created layer group");
+  const messageCreateLayerGroupError = t("Failed to create layer group");
 
   const handleAddLayerGroupFromDatasetSchema = useCallback(
     async (pluginId: string, extensionId: string) => {

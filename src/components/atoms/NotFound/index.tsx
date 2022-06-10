@@ -1,9 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
+
+import { useT } from "@reearth/i18n";
 
 const NotFound: React.FC = () => {
-  const intl = useIntl();
-  return <div>{intl.formatMessage({ defaultMessage: "Notfound" })}</div>;
+  const t = useT();
+  return <div>{t("Notfound")}</div>;
 };
 
 export default NotFound;

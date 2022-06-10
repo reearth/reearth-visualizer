@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -9,6 +8,7 @@ import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import AssetCard from "@reearth/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/components/molecules/Common/AssetModal/AssetListItem";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -23,7 +23,7 @@ export type Props = {
 };
 
 const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
 
   const {
@@ -43,7 +43,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
         <Flex justify="center" align="center">
           <GdriveIcon size={32} icon="googleDrive" />
           <Text size="m" color={theme.main.strongText} weight="bold">
-            {intl.formatMessage({ defaultMessage: "Connect with Google Drive" })}
+            {t("Connect with Google Drive")}
           </Text>
         </Flex>
         <Divider margin="24px" />
@@ -84,9 +84,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
               size="m"
               color={theme.infoBox.weakText}
               otherProperties={{ marginBottom: metricsSizes["m"] + "px" }}>
-              {intl.formatMessage({
-                defaultMessage: "Re:Earth supports uploading Google Sheets and CSV files.",
-              })}
+              {t("Re:Earth supports uploading Google Sheets and CSV files.")}
             </Text>
 
             {isLoading ? (

@@ -1,19 +1,19 @@
 import { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/gql";
+import { useLang } from "@reearth/i18n";
 import { useSceneId, useSelected } from "@reearth/state";
 
 // ポリゴンやポリラインは現在編集できないため、それらを新規レイヤーとして追加しても何も表示されない
 const hiddenExtensions = ["reearth/polyline", "reearth/polygon", "reearth/rect"];
 
 export default () => {
-  const intl = useIntl();
+  const lang = useLang();
   const [sceneId] = useSceneId();
   const [, select] = useSelected();
 
   const { loading, data } = useGetPrimitivesQuery({
-    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
   });
 
@@ -60,7 +60,7 @@ export default () => {
                       lng: location.lng,
                     }
                   : {}),
-                lang: intl.locale,
+                lang: lang,
               },
               refetchQueries: ["GetLayers"],
             });
@@ -71,7 +71,7 @@ export default () => {
             }
           },
         })),
-    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, intl.locale],
+    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, lang],
   );
 
   return {

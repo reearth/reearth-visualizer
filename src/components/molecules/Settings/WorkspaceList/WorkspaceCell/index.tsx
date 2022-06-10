@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Avatar from "@reearth/components/atoms/Avatar";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -19,7 +19,7 @@ export type Props = {
 };
 
 const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect }) => {
-  const intl = useIntl();
+  const t = useT();
   const teamMembers = team.members;
   const theme = useTheme();
 
@@ -30,14 +30,13 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
       justify="space-between"
       onClick={() => onSelect?.(team)}>
       <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
-        {team.name ? team.name : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
+        {team.name ? team.name : t("No Title Workspace")}
       </Text>
       {personal ? (
         <Text size="m" color={theme.main.weak}>
-          {intl.formatMessage({
-            defaultMessage:
-              "This is your personal workspace. Your projects and resources will be managed in this workspace.",
-          })}
+          {t(
+            "This is your personal workspace. Your projects and resources will be managed in this workspace.",
+          )}
         </Text>
       ) : (
         <Flex align="center" justify="flex-start">

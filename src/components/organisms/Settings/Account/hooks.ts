@@ -1,8 +1,8 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import { useUpdateMeMutation, useGetProfileQuery, Theme as GQLTheme } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
@@ -19,7 +19,7 @@ function toGQLEnum(val?: Theme) {
 }
 
 export default () => {
-  const intl = useIntl();
+  const t = useT();
   const [, setNotification] = useNotification();
   const client = useApolloClient();
   const [currentTeam] = useTeam();
@@ -40,11 +40,11 @@ export default () => {
       if (username.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to update account name." }),
+          text: t("Failed to update account name."),
         });
       }
     },
-    [updateMeMutation, intl, setNotification],
+    [updateMeMutation, t, setNotification],
   );
 
   const updatePassword = useCallback(
@@ -53,16 +53,16 @@ export default () => {
       if (newPassword.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to update password." }),
+          text: t("Failed to update password."),
         });
       } else {
         setNotification({
           type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully updated password!" }),
+          text: t("Successfully updated password!"),
         });
       }
     },
-    [updateMeMutation, intl, setNotification],
+    [updateMeMutation, t, setNotification],
   );
 
   const updateLanguage = useCallback(
@@ -72,13 +72,13 @@ export default () => {
       if (language.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to change language." }),
+          text: t("Failed to change language."),
         });
       } else {
         await client.resetStore();
       }
     },
-    [updateMeMutation, intl, setNotification, client],
+    [updateMeMutation, t, setNotification, client],
   );
 
   const updateTheme = useCallback(
@@ -87,11 +87,11 @@ export default () => {
       if (newTheme.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to change theme." }),
+          text: t("Failed to change theme."),
         });
       }
     },
-    [updateMeMutation, intl, setNotification],
+    [updateMeMutation, t, setNotification],
   );
 
   return {

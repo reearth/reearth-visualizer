@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import { PasswordPolicy as PasswordPolicyType } from "../common";
@@ -21,7 +21,7 @@ const NewPasswordForm: React.FC<Props> = ({
   passwordPolicy,
   newPasswordToken,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const [newPassword, setNewPassword] = useState<string>("");
   const [email, setEmail] = useState<string>();
@@ -42,41 +42,25 @@ const NewPasswordForm: React.FC<Props> = ({
       setNewPassword(password);
       switch (true) {
         case passwordPolicy?.whitespace?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "No whitespace is allowed.",
-            }),
-          );
+          setRegexMessage(t("No whitespace is allowed."));
           break;
         case passwordPolicy?.tooShort?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "Too short.",
-            }),
-          );
+          setRegexMessage(t("Too short."));
           break;
         case passwordPolicy?.tooLong?.test(password):
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That is terribly long.",
-            }),
-          );
+          setRegexMessage(t("That is terribly long."));
           break;
         case passwordPolicy?.highSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
+          setRegexMessage(t("That password is great!"));
           break;
         case passwordPolicy?.medSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
+          setRegexMessage(t("That password is better."));
           break;
         case passwordPolicy?.lowSecurity?.test(password):
-          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
+          setRegexMessage(t("That password is okay."));
           break;
         default:
-          setRegexMessage(
-            intl.formatMessage({
-              defaultMessage: "That password confuses me, but might be okay.",
-            }),
-          );
+          setRegexMessage(t("That password confuses me, but might be okay."));
           break;
       }
     },
@@ -102,16 +86,14 @@ const NewPasswordForm: React.FC<Props> = ({
   return (
     <>
       <Text className="form-item" size="l" customColor>
-        {intl.formatMessage({ defaultMessage: "Change Your Password" })}
+        {t("Change Your Password")}
       </Text>
       <Text className="form-item" size="s" customColor>
-        {intl.formatMessage({
-          defaultMessage: "Enter a new password below to change your password.",
-        })}
+        {t("Enter a new password below to change your password.")}
       </Text>
       <StyledInput
         className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+        placeholder={t("Email address")}
         color={theme.main.weak}
         value={email}
         autoFocus
@@ -121,7 +103,7 @@ const NewPasswordForm: React.FC<Props> = ({
         <StyledInput
           className="form-item"
           name="password"
-          placeholder={intl.formatMessage({ defaultMessage: "New password" })}
+          placeholder={t("New password")}
           type="password"
           autoComplete="new-password"
           color={theme.main.weak}
@@ -139,7 +121,7 @@ const NewPasswordForm: React.FC<Props> = ({
         disabled={disabled}
         color={disabled ? theme.main.text : theme.other.white}
         background={disabled ? theme.main.weak : theme.main.link}
-        text={intl.formatMessage({ defaultMessage: "Reset password" })}
+        text={t("Reset password")}
       />
     </>
   );

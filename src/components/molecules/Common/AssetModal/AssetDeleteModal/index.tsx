@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -16,37 +16,21 @@ export interface Props {
 }
 
 const AssetDeleteModal: React.FC<Props> = ({ isVisible, onClose, handleRemove }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <Modal
       title="Delete assets"
       isVisible={isVisible}
       size="sm"
       onClose={onClose}
-      button1={
-        <Button
-          text={intl.formatMessage({ defaultMessage: "Delete" })}
-          buttonType="danger"
-          onClick={handleRemove}
-        />
-      }
-      button2={
-        <Button
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          buttonType="secondary"
-          onClick={onClose}
-        />
-      }>
+      button1={<Button text={t("Delete")} buttonType="danger" onClick={handleRemove} />}
+      button2={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}>
       <Divider margin="0" />
       <Message size="m">
-        {intl.formatMessage({
-          defaultMessage: "You are about to delete one or more assets from the current workspace.",
-        })}
+        {t("You are about to delete one or more assets from the current workspace.")}
       </Message>
       <Message size="m">
-        {intl.formatMessage({
-          defaultMessage: "Please make sure no selected assets are in use. This cannot be undone.",
-        })}
+        {t("Please make sure no selected assets are in use. This cannot be undone.")}
       </Message>
     </Modal>
   );

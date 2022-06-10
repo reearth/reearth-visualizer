@@ -1,17 +1,17 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import AccountSection from "@reearth/components/molecules/Settings/Account/AccountSection";
 import ProfileSection from "@reearth/components/molecules/Settings/Account/ProfileSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
 export type Props = {};
 
 const Account: React.FC<Props> = () => {
-  const intl = useIntl();
+  const t = useT();
   const {
     currentTeam,
     currentProject,
@@ -26,7 +26,7 @@ const Account: React.FC<Props> = () => {
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Account" })} />
+      <SettingsHeader title={t("Account")} />
       <ProfileSection username={me?.name} updateName={updateName} />
       {me && (
         <AccountSection

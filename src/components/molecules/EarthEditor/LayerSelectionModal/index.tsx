@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import TreeView, { Item, Props as TreeViewProps } from "@reearth/components/atoms/TreeView";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import LayerTreeViewItem, { Layer as LayerType } from "../LayerTreeViewItem";
@@ -58,28 +58,16 @@ const LayerSelectionModal: React.FC<Props> = ({
     }
   }, [active]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Layer selection" })}
+      title={t("Layer selection")}
       size="md"
       isVisible={active}
       onClose={onClose}
-      button1={
-        <Button
-          text={intl.formatMessage({ defaultMessage: "Save" })}
-          onClick={ok}
-          buttonType="primary"
-        />
-      }
-      button2={
-        <Button
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={onClose}
-          buttonType="secondary"
-        />
-      }>
+      button1={<Button text={t("Save")} onClick={ok} buttonType="primary" />}
+      button2={<Button text={t("Cancel")} onClick={onClose} buttonType="secondary" />}>
       <Main>
         <StyledTreeView
           item={item}

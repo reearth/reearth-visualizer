@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { useIntl } from "react-intl";
 import { useMedia } from "react-use";
 
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
@@ -8,6 +7,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme, metrics, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -34,7 +34,7 @@ const QuickStart: React.FC<Props> = ({
   toggleAssetModal,
   onAssetSelect,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
 
@@ -51,7 +51,7 @@ const QuickStart: React.FC<Props> = ({
     <StyledDashboardBlock className={className} grow={4}>
       <Content direction="column" justify="space-around">
         <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
-          {intl.formatMessage({ defaultMessage: "Quick Start" })}
+          {t("Quick Start")}
         </Text>
         <LongBannerButton
           align="center"
@@ -59,7 +59,7 @@ const QuickStart: React.FC<Props> = ({
           onClick={() => window.open("http://docs.reearth.io")}>
           <MapIcon icon="map" />
           <Text size="m" weight="bold" customColor>
-            {intl.formatMessage({ defaultMessage: "User guide" })}
+            {t("User guide")}
           </Text>
         </LongBannerButton>
         <Flex justify="space-between">
@@ -70,7 +70,7 @@ const QuickStart: React.FC<Props> = ({
             onClick={() => setProjCreateOpen(true)}>
             <StyledIcon icon="newProject" size={70} />
             <Text size="m" weight="bold" customColor>
-              {intl.formatMessage({ defaultMessage: "New project" })}
+              {t("New project")}
             </Text>
           </HeroBannerButton>
           <BannerButton
@@ -80,7 +80,7 @@ const QuickStart: React.FC<Props> = ({
             onClick={() => setWorkCreateOpen(true)}>
             <StyledIcon icon="newWorkspace" size={70} />
             <Text size="m" weight="bold" customColor>
-              {intl.formatMessage({ defaultMessage: "New workspace" })}
+              {t("New workspace")}
             </Text>
           </BannerButton>
         </Flex>

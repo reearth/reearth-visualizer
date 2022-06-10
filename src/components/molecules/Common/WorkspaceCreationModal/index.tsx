@@ -1,11 +1,11 @@
 import { useFormik } from "formik";
 import React, { useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
@@ -26,7 +26,7 @@ const initialValues: FormValues = {
 };
 
 const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) => {
-  const intl = useIntl();
+  const t = useT();
   const formik = useFormik({
     initialValues,
     onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
@@ -48,31 +48,24 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Create New Workspace" })}
+      title={t("Create New Workspace")}
       isVisible={open}
       onClose={handleClose}
       button1={
         <Button
           large
           buttonType="primary"
-          text={intl.formatMessage({ defaultMessage: "Create" })}
+          text={t("Create")}
           disabled={!formik.values.name}
           onClick={formik.submitForm}
         />
       }
-      button2={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={handleClose}
-        />
-      }>
+      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
       {formik.isSubmitting && <Loading overlay />}
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
           <Text size="s" color={theme.main.text} otherProperties={{ flex: 1, margin: "1em 0" }}>
-            {intl.formatMessage({ defaultMessage: "Workspace Name" })}
+            {t("Workspace Name")}
           </Text>
           <StyledInput
             type="text"

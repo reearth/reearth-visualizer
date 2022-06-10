@@ -1,6 +1,5 @@
 import { useFormik } from "formik";
 import React, { useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -8,6 +7,7 @@ import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
@@ -40,7 +40,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   assetModal,
   toggleAssetModal,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const formik = useFormik({
     initialValues,
     onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
@@ -73,32 +73,25 @@ const ProjectCreationModal: React.FC<Props> = ({
 
   return (
     <Modal
-      title={intl.formatMessage({ defaultMessage: "Create New Project" })}
+      title={t("Create New Project")}
       isVisible={open}
       onClose={handleClose}
       button1={
         <Button
           large
           buttonType="primary"
-          text={intl.formatMessage({ defaultMessage: "Create" })}
+          text={t("Create")}
           disabled={!formik.values.name}
           onClick={handleCreate}
         />
       }
-      button2={
-        <Button
-          large
-          buttonType="secondary"
-          text={intl.formatMessage({ defaultMessage: "Cancel" })}
-          onClick={handleClose}
-        />
-      }>
+      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
       {formik.isSubmitting && <Loading overlay />}
       <Divider margin="20px" />
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
-            {intl.formatMessage({ defaultMessage: "Project Name" })}
+            {t("Project Name")}
           </Text>
           <StyledInput
             type="text"
@@ -110,7 +103,7 @@ const ProjectCreationModal: React.FC<Props> = ({
         </FormInputWrapper>
         <FormInputWrapper>
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
-            {intl.formatMessage({ defaultMessage: "Description" })}
+            {t("Description")}
           </Text>
           <StyledTextArea
             rows={5}
@@ -122,7 +115,7 @@ const ProjectCreationModal: React.FC<Props> = ({
         </FormInputWrapper>
         <FormInputWrapper>
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
-            {intl.formatMessage({ defaultMessage: "Select thumbnail image" })}
+            {t("Select thumbnail image")}
           </Text>
           <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetModal} />
         </FormInputWrapper>

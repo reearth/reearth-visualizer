@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -9,6 +8,7 @@ import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -50,7 +50,7 @@ const PublicationModal: React.FC<Props> = ({
   validatingAlias,
   url,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const {
     handlePublish,
@@ -88,49 +88,33 @@ const PublicationModal: React.FC<Props> = ({
 
   const modalTitleText = useMemo(() => {
     return statusChanged
-      ? intl.formatMessage({
-          defaultMessage: "Congratulations!",
-        })
+      ? t("Congratulations!")
       : publishing === "publishing"
-      ? intl.formatMessage({
-          defaultMessage: "Publish your project",
-        })
+      ? t("Publish your project")
       : publishing === "updating"
-      ? intl.formatMessage({
-          defaultMessage: "Update your project",
-        })
+      ? t("Update your project")
       : "";
-  }, [intl, statusChanged, publishing]);
+  }, [t, statusChanged, publishing]);
 
   const primaryButtonText = useMemo(() => {
     return statusChanged
-      ? intl.formatMessage({
-          defaultMessage: "Ok",
-        })
+      ? t("Ok")
       : publishing === "publishing"
-      ? intl.formatMessage({
-          defaultMessage: "Publish",
-        })
+      ? t("Publish")
       : publishing === "updating"
-      ? intl.formatMessage({
-          defaultMessage: "Update",
-        })
-      : intl.formatMessage({
-          defaultMessage: "Continue",
-        });
-  }, [intl, statusChanged, publishing]);
+      ? t("Update")
+      : t("Continue");
+  }, [t, statusChanged, publishing]);
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
-      ? intl.formatMessage({
-          defaultMessage:
-            "Your published project will be updated. This means all current changes will overwrite the current published project.",
-        })
-      : intl.formatMessage({
-          defaultMessage:
-            "Your project will be published. This means anybody with the below URL will be able to view this project.",
-        });
-  }, [intl, publishing]);
+      ? t(
+          "Your published project will be updated. This means all current changes will overwrite the current published project.",
+        )
+      : t(
+          "Your project will be published. This means anybody with the below URL will be able to view this project.",
+        );
+  }, [t, publishing]);
 
   return (
     <Modal
@@ -150,60 +134,33 @@ const PublicationModal: React.FC<Props> = ({
       }
       button2={
         !statusChanged ? (
-          <Button
-            text={intl.formatMessage({ defaultMessage: "Cancel" })}
-            buttonType="secondary"
-            onClick={handleClose}
-          />
+          <Button text={t("Cancel")} buttonType="secondary" onClick={handleClose} />
         ) : (
-          <Button
-            text={intl.formatMessage({ defaultMessage: "Close" })}
-            buttonType="secondary"
-            onClick={handleClose}
-          />
+          <Button text={t("Close")} buttonType="secondary" onClick={handleClose} />
         )
       }>
       {statusChanged ? (
         <Section>
-          <Subtitle size="m">
-            {intl.formatMessage({
-              defaultMessage: "Your project has been published!",
-            })}
-          </Subtitle>
-          <Subtitle size="m">
-            {intl.formatMessage({
-              defaultMessage: "Public URL",
-            })}
-          </Subtitle>
+          <Subtitle size="m">{t("Your project has been published!")}</Subtitle>
+          <Subtitle size="m">{t("Public URL")}</Subtitle>
           <InputField
-            button1={intl.formatMessage({
-              defaultMessage: "Copy",
-            })}
+            button1={t("Copy")}
             value={purl}
             actioned={copiedKey?.url}
             onButtonClick1={handleCopyToClipBoard("url", purl)}
             link
-            subMessage={intl.formatMessage({
-              defaultMessage: "* Anyone can see your project with this URL",
-            })}
+            subMessage={t("* Anyone can see your project with this URL")}
           />
-          <Subtitle size="m">
-            {intl.formatMessage({
-              defaultMessage: "Embed Code",
-            })}
-          </Subtitle>
+          <Subtitle size="m">{t("Embed Code")}</Subtitle>
           <InputField
-            button1={intl.formatMessage({
-              defaultMessage: "Copy",
-            })}
+            button1={t("Copy")}
             value={embedCode}
             actioned={copiedKey?.embedCode}
             onButtonClick1={handleCopyToClipBoard("embedCode", embedCode)}
             link
-            subMessage={intl.formatMessage({
-              defaultMessage:
-                "* Please use this code if you want to embed your project into a webpage",
-            })}
+            subMessage={t(
+              "* Please use this code if you want to embed your project into a webpage",
+            )}
           />
         </Section>
       ) : publishing !== "unpublishing" ? (
@@ -222,15 +179,11 @@ const PublicationModal: React.FC<Props> = ({
           </Section>
           <OptionsToggle onClick={() => setOptions(!showOptions)}>
             <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
-            <Text size="s">{intl.formatMessage({ defaultMessage: "more options" })}</Text>
+            <Text size="s">{t("more options")}</Text>
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
             <Flex>
-              <Subtitle size="m">
-                {intl.formatMessage({
-                  defaultMessage: "Search engine indexing",
-                })}
-              </Subtitle>
+              <Subtitle size="m">{t("Search engine indexing")}</Subtitle>
               <ToggleButton checked={searchIndex} onChange={onSearchIndexChange} />
             </Flex>
           </HideableSection>
@@ -238,19 +191,12 @@ const PublicationModal: React.FC<Props> = ({
       ) : (
         <Section>
           <StyledIcon icon="alert" color={theme.main.warning} />
+          <Subtitle size="m">{t("Your project will be unpublished.")}</Subtitle>
           <Subtitle size="m">
-            {intl.formatMessage({ defaultMessage: "Your project will be unpublished." })}
-          </Subtitle>
-          <Subtitle size="m">
-            {intl.formatMessage({
-              defaultMessage:
-                "This means that anybody with the URL will become unable to view this project.",
-            })}
+            {t("This means that anybody with the URL will become unable to view this project.")}
           </Subtitle>
           <Text size="m" color={theme.main.warning}>
-            {intl.formatMessage({
-              defaultMessage: "**Warning**: This includes websites where this project is embedded.",
-            })}
+            {t("**Warning**: This includes websites where this project is embedded.")}
           </Text>
         </Section>
       )}

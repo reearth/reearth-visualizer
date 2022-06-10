@@ -1,9 +1,9 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Flex from "@reearth/components/atoms/Flex";
 import TabCard from "@reearth/components/atoms/TabCard";
 import Table from "@reearth/components/atoms/Table";
+import { useT } from "@reearth/i18n";
 import { useTheme } from "@reearth/theme";
 
 import DatasetPropertyItem, {
@@ -26,11 +26,11 @@ const DatasetInfoPane: React.FC<Props> = ({
   primitiveItems,
   onCreateLayerGroup,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   return (
     <Flex direction="column">
-      <TabCard name={intl.formatMessage({ defaultMessage: "Data" })}>
+      <TabCard name={t("Data")}>
         <Flex direction="column">
           {/* <Box mv="l">
             <Text size="xs">from PC file</Text>
@@ -44,14 +44,14 @@ const DatasetInfoPane: React.FC<Props> = ({
           />
           {/* <Button
             type="button"
-            text={intl.formatMessage({ defaultMessage: "Update" })}
+            text={t("Update")}
             buttonType="secondary"
             icon="update"
             onClick={onDatasetUpdate}
           /> */}
         </Flex>
       </TabCard>
-      <TabCard name={intl.formatMessage({ defaultMessage: "Import to scene" })}>
+      <TabCard name={t("Import to scene")}>
         <DatasetPropertyItem
           primitiveItems={primitiveItems}
           onCreateLayerGroup={onCreateLayerGroup}

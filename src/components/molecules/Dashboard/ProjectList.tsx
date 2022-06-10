@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Icon from "@reearth/components/atoms/Icon";
 import Project from "@reearth/components/molecules/Dashboard/Project";
 import { Project as ProjectType } from "@reearth/components/molecules/Dashboard/types";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export interface Props {
@@ -13,7 +13,7 @@ export interface Props {
 }
 
 const ProjectList: React.FC<Props> = ({ className, projects }) => {
-  const intl = useIntl();
+  const t = useT();
   return (
     <StyledDashboardBlock className={className}>
       {projects?.length ? (
@@ -28,10 +28,9 @@ const ProjectList: React.FC<Props> = ({ className, projects }) => {
         <Template>
           <Icon icon="noProjects" />
           <Text>
-            {intl.formatMessage({
-              defaultMessage:
-                "You have no projects in your workspace. Click the button above in the Quick Start to create a project now!",
-            })}
+            {t(
+              "You have no projects in your workspace. Click the button above in the Quick Start to create a project now!",
+            )}
           </Text>
         </Template>
       )}

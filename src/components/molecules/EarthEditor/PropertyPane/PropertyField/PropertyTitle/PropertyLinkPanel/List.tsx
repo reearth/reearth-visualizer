@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
-import { useIntl } from "react-intl";
 
 import Divider from "@reearth/components/atoms/Divider";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const List: React.FC<Props> = ({ className, items, selectableType, onSelect, selectedItem }) => {
-  const intl = useIntl();
+  const t = useT();
   const sType = selectableType === "url" ? "string" : selectableType;
   const visibleItems =
     items?.filter(item => !sType || ("type" in item && item.type === sType)) ?? [];
@@ -33,9 +33,7 @@ const List: React.FC<Props> = ({ className, items, selectableType, onSelect, sel
           <Divider margin="0" />
         </Fragment>
       ))}
-      {visibleItems.length === 0 && (
-        <NoContent>{intl.formatMessage({ defaultMessage: "No selectable items" })}</NoContent>
-      )}
+      {visibleItems.length === 0 && <NoContent>{t("No selectable items")}</NoContent>}
     </Wrapper>
   );
 };

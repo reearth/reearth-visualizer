@@ -1,10 +1,10 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import DatasetHeader from "./DatasetHeader";
@@ -46,7 +46,7 @@ const DatasetPane: React.FC<Props> = ({
   onDatasetSchemaSelect,
   onNotificationChange,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   const {
     datasetSyncOpen,
@@ -64,7 +64,7 @@ const DatasetPane: React.FC<Props> = ({
         <Button
           buttonType="primary"
           icon="datasetAdd"
-          text={intl.formatMessage({ defaultMessage: "Add Dataset" })}
+          text={t("Add Dataset")}
           onClick={openDatasetModal}
         />
       </Flex>
@@ -90,7 +90,7 @@ const DatasetPane: React.FC<Props> = ({
           <NoDataset wrap="wrap" justify="center" align="center">
             {/* TODO 画像入れたい */}
             <Text size="2xs" color={theme.main.text} otherProperties={{ textAlign: "center" }}>
-              {intl.formatMessage({ defaultMessage: "No Dataset is here" })}
+              {t("No Dataset is here")}
             </Text>
           </NoDataset>
         )}

@@ -1,7 +1,7 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Text from "@reearth/components/atoms/Text";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import { FieldProps } from "../types";
@@ -12,7 +12,7 @@ export type Props = FieldProps<any> & {
 };
 
 const NonEditableField: React.FC<Props> = ({ className, linkedDatasetFieldName }) => {
-  const intl = useIntl();
+  const t = useT();
   const theme = useTheme();
   return (
     <Wrapper
@@ -20,15 +20,8 @@ const NonEditableField: React.FC<Props> = ({ className, linkedDatasetFieldName }
       color={linkedDatasetFieldName ? theme.main.link : theme.layers.smallText}
       className={className}>
       {linkedDatasetFieldName
-        ? intl.formatMessage(
-            {
-              defaultMessage: "This field is linked to {datasetField}.",
-            },
-            { datasetField: linkedDatasetFieldName },
-          )
-        : intl.formatMessage({
-            defaultMessage: "This field is not editable currently.",
-          })}
+        ? t("This field is linked to {{datasetField}}.", { datasetField: linkedDatasetFieldName })
+        : t("This field is not editable currently.")}
     </Wrapper>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
+import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 import NumberField from "../NumberField";
@@ -33,12 +33,12 @@ const LocationField: React.FC<Props> = ({
   overridden,
   disabled,
 }) => {
-  const intl = useIntl();
+  const t = useT();
 
   return (
     <Wrapper className={className}>
       <NumberField
-        name={intl.formatMessage({ defaultMessage: "Latitude" })}
+        name={t("Latitude")}
         value={value?.lat}
         onChange={v =>
           onChange && v !== undefined && !isNaN(v) && onChange({ lat: v, lng: value?.lng ?? 0 })
@@ -50,7 +50,7 @@ const LocationField: React.FC<Props> = ({
         max={LngLatMinMax["latMax"]}
       />
       <NumberField
-        name={intl.formatMessage({ defaultMessage: "Longitude" })}
+        name={t("Longitude")}
         value={value?.lng}
         onChange={v =>
           onChange && v !== undefined && !isNaN(v) && onChange({ lat: value?.lat ?? 0, lng: v })
@@ -63,7 +63,7 @@ const LocationField: React.FC<Props> = ({
       />
       {isAltitudeEnabled && (
         <NumberField
-          name={intl.formatMessage({ defaultMessage: "Altitude" })}
+          name={t("Altitude")}
           value={value?.height}
           linked={linked}
           overridden={overridden}
