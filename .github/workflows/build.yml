@@ -3,15 +3,16 @@ on:
   workflow_run:
     workflows: [ci]
     types: [completed]
-    branches: [main]
+    branches: [main, release]
 jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.info.outputs.new_tag }}
+      branch: ${{ steps.info.outputs.branch }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info
@@ -22,6 +23,7 @@ jobs:
           if [[ ! -z "$TAG" ]]; then
             echo "::set-output name=new_tag::$TAG"
           fi
+          echo "::set-output name=branch::`git branch --show-current`"
       - name: Show info
         env:
           NEW_TAG: ${{ steps.info.outputs.new_tag }}
@@ -32,14 +34,14 @@ jobs:
     needs:
       - info
     steps:
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
-      - uses: actions/checkout@v2
+          node-version: lts/*
+      - uses: actions/checkout@v3
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -62,7 +64,7 @@ jobs:
     needs:
       - info
       - build
-    if: "!needs.info.outputs.new_tag"
+    if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
     env:
       ARTIFACT: reearth-web.tar.gz
       ARTIFACT_NEW: reearth-web_nightly.tar.gz
@@ -90,7 +92,7 @@ jobs:
     needs:
       - info
       - build
-    if: needs.info.outputs.new_tag
+    if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
     env:
       ARTIFACT: reearth-web.tar.gz
       ARTIFACT_NEW: reearth-web_${{ needs.info.outputs.new_tag }}.tar.gz
