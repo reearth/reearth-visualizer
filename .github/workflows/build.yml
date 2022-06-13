@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: [ci]
     type: [completed]
-    branches: [main]
+    branches: [main, release]
 jobs:
   info:
     name: Collect information
@@ -13,6 +13,7 @@ jobs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       new_tag: ${{ steps.info.outputs.new_tag }}
       new_tag_short: ${{ steps.info.outputs.new_tag_short }}
+      branch: ${{ steps.info.outputs.branch }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -28,12 +29,14 @@ jobs:
             echo "::set-output name=new_tag::$TAG"
             echo "::set-output name=new_tag_short::${TAG#v}"
           fi
+          echo "::set-output name=branch::`git branch --show-current`"
       - name: Show info
         env:
           SHA_SHORT: ${{ steps.info.outputs.sha_short }}
           NEW_TAG: ${{ steps.info.outputs.new_tag }}
           NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
-        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT"
+          BRANCH: ${{ steps.info.outputs.branch }}
+        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, branch=$BRANCH"
   build:
     name: Build and release
     runs-on: ubuntu-latest
@@ -51,17 +54,17 @@ jobs:
         with:
           go-version: 1.18
       - name: Run GoReleaser for nightly
-        if: "!needs.info.outputs.new_tag"
+        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist --snapshot
         env:
           GORELEASER_CURRENT_TAG: 0.0.0
       - name: Rename artifacts
-        if: "!needs.info.outputs.new_tag"
+        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
         run: for f in dist/${NAME}_*.*; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_nightly/'); done
       - name: Create GitHub release for nightly
-        if: "!needs.info.outputs.new_tag"
+        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag" }}
         uses: ncipollo/release-action@v1
         with:
           artifacts: dist/${{ env.NAME }}_*.*
@@ -72,20 +75,20 @@ jobs:
           prerelease: true
           allowUpdates: true
       - name: Run GoReleaser
-        if: needs.info.outputs.new_tag
+        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist
         env:
           GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.new_tag }}
       - name: Download latest changelog
-        if: needs.info.outputs.new_tag
+        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
           name: changelog-${{ needs.info.outputs.new_tag }}
       - name: Create GitHub release
-        if: needs.info.outputs.new_tag
+        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
         uses: ncipollo/release-action@v1
         with:
           artifacts: dist/${{ env.NAME }}_*.*
@@ -113,7 +116,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push nightly
-        if: "!needs.info.outputs.new_tag"
+        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
         id: docker_build
         uses: docker/build-push-action@v2
         with:
@@ -126,7 +129,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Get Docker tags
         id: tags
-        if: needs.info.outputs.new_tag
+        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
         env:
           TAG: ${{ needs.info.outputs.new_tag_short }}
         run: |
@@ -138,7 +141,7 @@ jobs:
           fi
           echo "::set-output name=tags::$TAGS"
       - name: Build and push release
-        if: needs.info.outputs.new_tag
+        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
         uses: docker/build-push-action@v2
         with:
           context: .
