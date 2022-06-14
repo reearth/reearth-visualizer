@@ -4,7 +4,7 @@ on:
 jobs:
   stage:
     runs-on: ubuntu-latest
-    if: github.ref === "refs/heads/main"
+    if: github.ref == "refs/heads/main"
     steps:
       - name: git config
         env:
