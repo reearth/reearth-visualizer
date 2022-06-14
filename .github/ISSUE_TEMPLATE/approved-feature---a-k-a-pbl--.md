@@ -2,7 +2,7 @@
 name: Approved feature ( a.k.a PBL )
 about: Template for approved features
 title: ''
-labels: feature request
+labels: PBL
 assignees: ''
 
 ---
