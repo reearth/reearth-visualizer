@@ -4,7 +4,7 @@ on:
 jobs:
   stage:
     runs-on: ubuntu-latest
-    if: github.ref === "refs/heads/main"
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: git config
         env:
@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
       - name: Checkout release branch
-        run: git checkout release
+        run: git switch release || git switch -c release
       - name: Merge main branch to release branch
         run: git merge -X theirs main
       - name: Git push
