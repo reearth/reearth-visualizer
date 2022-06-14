@@ -31,7 +31,7 @@ jobs:
       - name: rsync
         run: gsutil -m -h "Cache-Control:no-store" rsync -dr reearth-web/ ${{ env.GCS_DEST }}
   slack-notification:
-    if: always()
+    if: success() || failure()
     name: Slack Notification
     needs:
       - deploy_test

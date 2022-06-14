@@ -38,7 +38,7 @@ jobs:
       - name: Check translations
         run: yarn run i18n --fail-on-update
   slack-notification:
-    if: always()
+    if: success() || failure()
     name: Slack Notification
     needs:
       - ci
