@@ -127,7 +127,7 @@ jobs:
           NAME: ${{ needs.info.outputs.name }}
           SHA: ${{ needs.info.outputs.sha_short }}
         run: |
-          if [[ -z $TAG ]]; then
+          if [[ -n $TAG ]]; then
             PLATFORMS=linux/amd64,linux/arm64
             VERSION=$TAG
             TAGS=$IMAGE_NAME:$TAG
