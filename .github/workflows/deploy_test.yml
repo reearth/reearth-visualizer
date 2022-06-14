@@ -1,11 +1,8 @@
 name: deploy_test
 on:
-  workflow_run:
-    workflows: [build]
-    types: [completed]
-    branches: [main]
+  workflow_dispatch:
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 env:
   IMAGE: reearth/reearth-backend:nightly
@@ -17,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-backend'
     steps:
-      - uses: google-github-actions/setup-gcloud@v0
+      - uses: google-github-actions/auth@v0
         with:
-          project_id: ${{ secrets.GCP_PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
       - name: Configure docker
         run: gcloud auth configure-docker --quiet
       - name: docker push
@@ -33,20 +30,19 @@ jobs:
         run: |
           gcloud run deploy reearth-backend \
             --image $IMAGE_GCP \
-            --project ${{ secrets.GCP_PROJECT }} \
             --region $GCP_REGION \
             --platform managed \
             --quiet
   slack-notification:
     name: Slack Notification
-    if: github.event.repository.full_name == 'reearth/reearth-backend' && always()
+    if: github.event.repository.full_name == 'reearth/reearth-backend' && (success() || failure())
     needs:
       - deploy_test
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
-        if: success() || failure()
+        if: always()
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
