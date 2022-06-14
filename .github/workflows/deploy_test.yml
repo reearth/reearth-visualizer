@@ -16,6 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-web'
     steps:
+      - name: Print head branch
+        run: echo $BRANCH
+        env:
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
       - uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: ${{ secrets.GCP_PROJECT }}

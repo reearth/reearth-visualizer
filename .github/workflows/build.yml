@@ -14,7 +14,6 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-web'
     outputs:
       tag: ${{ steps.info.outputs.tag }}
-      branch: ${{ steps.info.outputs.branch }}
       name: ${{ steps.info.outputs.name }}
     steps:
       - uses: actions/checkout@v3
@@ -24,14 +23,14 @@ jobs:
         run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
+        env:
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
         # The tag name should be retrieved lazily, as tagging may be delayed.
         run: |
           TAG=$(git tag --points-at HEAD)
           if [[ ! -z "$TAG" ]]; then
             echo "::set-output name=tag::$TAG"
           fi
-          BRANCH=$(git branch --show-current)
-          echo "::set-output name=branch::$BRANCH"
           if [[ "$BRANCH" = "release" ]]; then
             echo "::set-output name=name::rc"
           else
@@ -40,15 +39,14 @@ jobs:
       - name: Show info
         env:
           tag: ${{ steps.info.outputs.tag }}
-          BRANCH: ${{ steps.info.outputs.branch }}
           NAME: ${{ steps.info.outputs.name }}
-        run: echo "tag=$tag, branch=$BRANCH, name=$NAME"
+        run: echo "tag=$tag, name=$NAME"
   build:
     name: Build
     runs-on: ubuntu-latest
     needs:
       - info
-    if: needs.info.outputs.branch == 'main' || needs.info.outputs.branch == 'release'
+    if: github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'release'
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -107,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - info
-    if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
+    if: github.event.workflow_run.head_branch == 'release' && needs.info.outputs.tag
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.tag }}.tar.gz
     steps:
