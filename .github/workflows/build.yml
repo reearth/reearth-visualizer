@@ -4,13 +4,18 @@ on:
     workflows: [ci]
     types: [completed]
     branches: [main, release]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-web'
     outputs:
-      new_tag: ${{ steps.info.outputs.new_tag }}
+      tag: ${{ steps.info.outputs.tag }}
       branch: ${{ steps.info.outputs.branch }}
+      name: ${{ steps.info.outputs.name }}
     steps:
       - uses: actions/checkout@v3
       - name: Fetch tags
@@ -21,18 +26,27 @@ jobs:
         run: |
           TAG=$(git tag --points-at HEAD)
           if [[ ! -z "$TAG" ]]; then
-            echo "::set-output name=new_tag::$TAG"
+            echo "::set-output name=tag::$TAG"
           fi
-          echo "::set-output name=branch::`git branch --show-current`"
+          BRANCH=$(git branch --show-current)
+          echo "::set-output name=branch::$BRANCH"
+          if [[ "$BRANCH" = "release" ]]; then
+            echo "::set-output name=name::rc"
+          else
+            echo "::set-output name=name::nightly"
+          fi
       - name: Show info
         env:
-          NEW_TAG: ${{ steps.info.outputs.new_tag }}
-        run: echo new_tag=$NEW_TAG
+          tag: ${{ steps.info.outputs.tag }}
+          BRANCH: ${{ steps.info.outputs.branch }}
+          NAME: ${{ steps.info.outputs.name }}
+        run: echo "tag=$tag, branch=$BRANCH, name=$NAME"
   build:
     name: Build
     runs-on: ubuntu-latest
     needs:
       - info
+    if: needs.info.outputs.branch == 'main' || needs.info.outputs.branch == 'release'
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -58,70 +72,68 @@ jobs:
         with:
           name: build
           path: reearth-web.tar.gz
-  nightly:
-    name: Release nightly
+  release_nightly:
+    name: Release nightly/rc
     runs-on: ubuntu-latest
     needs:
       - info
       - build
-    if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
+    if: "!needs.info.outputs.tag"
     env:
-      ARTIFACT: reearth-web.tar.gz
-      ARTIFACT_NEW: reearth-web_nightly.tar.gz
-      ARTIFACT_CONTENTTYPE: application/gzip
+      ARTIFACT: reearth-web_${{ steps.info.outputs.name }}.tar.gz
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: build
       - name: Rename artifact
-        run: mv ${{ env.ARTIFACT }} ${{ env.ARTIFACT_NEW }}
-      - name: Release nightly
+        run: mv reearth-web.tar.gz $ARTIFACT
+      - name: Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: ${{ env.ARTIFACT_NEW }}
-          artifactContentType: ${{ env.ARTIFACT_CONTENTTYPE }}
+          artifacts: ${{ env.ARTIFACT }}
+          artifactContentType: application/gzip
           commit: ${{ github.sha }}
-          name: Nightly release
+          name: ${{ steps.info.outputs.name }}
+          tag: ${{ steps.info.outputs.name }}
           body: ${{ github.sha }}
           prerelease: true
-          tag: nightly
   release:
     name: Release
     runs-on: ubuntu-latest
     needs:
       - info
-      - build
-    if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
+    if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
     env:
-      ARTIFACT: reearth-web.tar.gz
-      ARTIFACT_NEW: reearth-web_${{ needs.info.outputs.new_tag }}.tar.gz
-      ARTIFACT_CONTENTTYPE: application/gzip
+      ARTIFACT: reearth-web_${{ needs.info.outputs.tag }}.tar.gz
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: build
-      - name: Rename artifact
-        run: mv ${{ env.ARTIFACT }} ${{ env.ARTIFACT_NEW }}
       - name: Download latest changelog
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
-          name: changelog-${{ needs.info.outputs.new_tag }}
-      - name: Create GitHub release
+          name: changelog-${{ needs.info.outputs.tag }}
+      - name: Download latest artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          commit: ${{ github.sha }}
+          name: build
+      - name: Rename artifact
+        run: mv reearth-web.tar.gz $ARTIFACT
+      - name: Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ env.ARTIFACT_NEW }}
-          artifactContentType: ${{ env.ARTIFACT_CONTENTTYPE }}
+          artifacts: ${{ env.ARTIFACT }}
+          artifactContentType: application/gzip
           commit: ${{ github.sha }}
-          name: ${{ needs.info.outputs.new_tag }}
-          tag: ${{ needs.info.outputs.new_tag }}
+          name: ${{ needs.info.outputs.tag }}
+          tag: ${{ needs.info.outputs.tag }}
           bodyFile: CHANGELOG_latest.md
   slack-notification-nightly:
     if: failure()
     name: Slack Notification
     needs:
-      - nightly
+      - release_nightly
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification

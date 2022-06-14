@@ -13,5 +13,6 @@
     "deps": "Miscellaneous Tasks",
     "ci": false,
     "revert": false
-  }
+  },
+  "titleVersionPrefix": "remove"
 }
