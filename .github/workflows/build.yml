@@ -18,6 +18,8 @@ jobs:
       name: ${{ steps.info.outputs.name }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info
@@ -52,6 +54,8 @@ jobs:
         with:
           node-version: lts/*
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -94,8 +98,8 @@ jobs:
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
           commit: ${{ github.sha }}
-          name: ${{ steps.info.outputs.name }}
-          tag: ${{ steps.info.outputs.name }}
+          name: ${{ needs.info.outputs.name }}
+          tag: ${{ needs.info.outputs.name }}
           body: ${{ github.sha }}
           prerelease: true
   release:
