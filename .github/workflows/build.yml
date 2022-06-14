@@ -65,12 +65,12 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
-      - name: Run GoReleaser for nightly/rc
+      - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist --snapshot
         env:
-          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || needs.info.outputs.sha_short }}
+          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
       - name: Rename artifacts
         if: "!needs.info.outputs.tag"
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
@@ -120,9 +120,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Get Docker tags
-        id: tags
-        if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
+      - name: Get options
+        id: options
         env:
           TAG: ${{ needs.info.outputs.tag_short }}
           NAME: ${{ needs.info.outputs.name }}
@@ -149,9 +148,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: ${{ steps.tags.outputs.platforms }}
+          platforms: ${{ steps.options.outputs.platforms }}
           push: true
-          build-args: VERSION=${{ steps.tags.outputs.version }}
-          tags: ${{ steps.tags.outputs.tags }}
+          build-args: VERSION=${{ steps.options.outputs.version }}
+          tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
