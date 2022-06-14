@@ -11,7 +11,8 @@
     ],
     "./schemas/plugin_manifest_translation.json": [
       "/pkg/builtin/manifest_*.yml"
-    ]
+    ],
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/build.yml"
   },
   "json.schemas": [
     {

@@ -4,6 +4,9 @@ on:
     workflows: [ci]
     type: [completed]
     branches: [main, release]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   info:
     name: Collect information
@@ -11,9 +14,10 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-backend'
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
-      new_tag: ${{ steps.info.outputs.new_tag }}
-      new_tag_short: ${{ steps.info.outputs.new_tag_short }}
+      tag: ${{ steps.info.outputs.tag }}
+      tag_short: ${{ steps.info.outputs.tag_short }}
       branch: ${{ steps.info.outputs.branch }}
+      name: ${{ steps.info.outputs.name }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -26,24 +30,32 @@ jobs:
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           TAG=$(git tag --points-at HEAD)
           if [[ ! -z "$TAG" ]]; then
-            echo "::set-output name=new_tag::$TAG"
-            echo "::set-output name=new_tag_short::${TAG#v}"
+            echo "::set-output name=tag::$TAG"
+            echo "::set-output name=tag_short::${TAG#v}"
           fi
-          echo "::set-output name=branch::`git branch --show-current`"
+          BRANCH=$(git branch --show-current)
+          echo "::set-output name=branch::$BRANCH"
+          if [[ "$BRANCH" = "release" ]]; then
+            echo "::set-output name=name::rc"
+          else
+            echo "::set-output name=name::nightly"
+          fi
       - name: Show info
         env:
           SHA_SHORT: ${{ steps.info.outputs.sha_short }}
-          NEW_TAG: ${{ steps.info.outputs.new_tag }}
-          NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
+          TAG: ${{ steps.info.outputs.tag }}
+          TAG_SHORT: ${{ steps.info.outputs.tag_short }}
           BRANCH: ${{ steps.info.outputs.branch }}
-        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, branch=$BRANCH"
+          NAME: ${{ steps.info.outputs.name }}
+        run: echo "sha_short=$SHA_SHORT, tag=$TAG, tag_short=$TAG_SHORT, branch=$BRANCH, name=$NAME"
   build:
     name: Build and release
     runs-on: ubuntu-latest
     needs:
       - info
+    if: needs.info.outputs.branch == 'main' || needs.info.outputs.branch == 'release'
     env:
-      NAME: reearth-backend
+      ARTIFACTS: dist/reearth-backend_*.*
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -53,101 +65,93 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
-      - name: Run GoReleaser for nightly
-        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
+      - name: Run GoReleaser for nightly/rc
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist --snapshot
         env:
-          GORELEASER_CURRENT_TAG: 0.0.0
+          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || needs.info.outputs.sha_short }}
       - name: Rename artifacts
-        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
-        run: for f in dist/${NAME}_*.*; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_nightly/'); done
-      - name: Create GitHub release for nightly
-        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag" }}
+        if: "!needs.info.outputs.tag"
+        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+      - name: Release nightly/rc
+        if: "!needs.info.outputs.tag"
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/${{ env.NAME }}_*.*
+          allowUpdates: true
+          artifacts: ${{ env.ARTIFACTS }}
           commit: ${{ github.sha }}
-          name: Nightly
-          tag: nightly
+          name: ${{ needs.info.outputs.name }}
+          tag: ${{ needs.info.outputs.name }}
           body: ${{ github.sha }}
           prerelease: true
-          allowUpdates: true
-      - name: Run GoReleaser
-        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          args: release --rm-dist
-        env:
-          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.new_tag }}
       - name: Download latest changelog
-        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
+        if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
-          name: changelog-${{ needs.info.outputs.new_tag }}
+          name: changelog-${{ needs.info.outputs.tag }}
       - name: Create GitHub release
-        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
+        if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/${{ env.NAME }}_*.*
+          artifacts: ${{ env.ARTIFACTS }}
           commit: ${{ github.sha }}
-          name: ${{ needs.info.outputs.new_tag }}
-          tag: ${{ needs.info.outputs.new_tag }}
+          name: ${{ needs.info.outputs.tag }}
+          tag: ${{ needs.info.outputs.tag }}
           bodyFile: CHANGELOG_latest.md
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     needs:
       - info
+    if: needs.info.outputs.branch == 'main' || needs.info.outputs.branch == 'release'
     env:
       IMAGE_NAME: reearth/reearth-backend
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push nightly
-        if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          build-args: VERSION=0.0.0-SNAPSHOT-${{ needs.info.outputs.sha_short }}
-          tags: ${{ env.IMAGE_NAME }}:nightly
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       - name: Get Docker tags
         id: tags
-        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
+        if: needs.info.outputs.branch == 'release' && needs.info.outputs.tag
         env:
-          TAG: ${{ needs.info.outputs.new_tag_short }}
+          TAG: ${{ needs.info.outputs.tag_short }}
+          NAME: ${{ needs.info.outputs.name }}
+          SHA: ${{ needs.info.outputs.sha_short }}
         run: |
-          TAGS=$IMAGE_NAME:$TAG
-          if [[ ! $TAG =~ '-' ]]; then
-            TAGS+=,${IMAGE_NAME}:${TAG%.*}
-            TAGS+=,${IMAGE_NAME}:${TAG%%.*}
-            TAGS+=,${IMAGE_NAME}:latest
+          if [[ -z $TAG ]]; then
+            PLATFORMS=linux/amd64,linux/arm64
+            VERSION=$TAG
+            TAGS=$IMAGE_NAME:$TAG
+            if [[ ! $TAG =~ '-' ]]; then
+              TAGS+=,${IMAGE_NAME}:${TAG%.*}
+              TAGS+=,${IMAGE_NAME}:${TAG%%.*}
+              TAGS+=,${IMAGE_NAME}:latest
+            fi
+          else
+            PLATFORMS=linux/amd64
+            VERSION=$SHA
+            TAGS=$IMAGE_NAME:$NAME
           fi
+          echo "::set-output name=platforms::$PLATFORMS"
+          echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
-      - name: Build and push release
-        if: ${{ needs.info.outputs.branch == 'release' && needs.info.outputs.new_tag }}
-        uses: docker/build-push-action@v2
+      - name: Build and push docker image
+        uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ steps.tags.outputs.platforms }}
           push: true
-          build-args: VERSION=${{ needs.info.outputs.new_tag_short }}
+          build-args: VERSION=${{ steps.tags.outputs.version }}
           tags: ${{ steps.tags.outputs.tags }}
-          cache-from: type=registry,ref=${IMAGE_NAME}:latest
-          cache-to: type=inline
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

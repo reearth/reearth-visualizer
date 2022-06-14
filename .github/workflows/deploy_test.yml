@@ -4,6 +4,9 @@ on:
     workflows: [build]
     types: [completed]
     branches: [main]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 env:
   IMAGE: reearth/reearth-backend:nightly
   IMAGE_GCP: us.gcr.io/reearth-oss/reearth-backend:nightly
