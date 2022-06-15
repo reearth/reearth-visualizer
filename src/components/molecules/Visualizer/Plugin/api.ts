@@ -59,6 +59,7 @@ export function exposed({
       commonReearth,
       {
         visualizer: {
+          ...commonReearth.visualizer,
           overrideProperty: (property: any) => {
             overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
           },
