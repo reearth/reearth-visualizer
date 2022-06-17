@@ -54,7 +54,11 @@ jobs:
           git add CHANGELOG.md package.json
           git commit -am "$TAG"
           git tag $TAG
-          git push
-          git push --tags
+          git push --atomic origin release $TAG
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0
       # - name: Commit and push CHANGELOG to main
-      #   run: git switch main && git cherry-pick release && git push
+      #   run: git cherry-pick release && git push
