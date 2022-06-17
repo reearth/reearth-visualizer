@@ -10,7 +10,7 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
-    if: "!startsWith(github.event.head_commit.message, 'v')"
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     steps:
       - uses: actions/setup-node@v3
         with:
