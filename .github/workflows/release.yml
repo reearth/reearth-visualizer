@@ -34,7 +34,7 @@ jobs:
         with:
           version: ${{ github.event.inputs.version }}
           repo: ${{ github.repository }}
-          latest: true
+          latest: CHANGELOG_latest.md
       - name: Update package.json version
         env:
           VERSION: ${{ steps.changelog.outputs.version }}
