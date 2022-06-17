@@ -60,5 +60,5 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      # - name: Commit and push CHANGELOG to main
-      #   run: git cherry-pick release && git push
+      - name: Commit and push CHANGELOG to main
+        run: git cherry-pick release && git push
