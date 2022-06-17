@@ -2,7 +2,6 @@ name: CI
 on:
   push:
     branches: [main, release]
-    tags-ignore: ["*"]
   pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,6 +10,7 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'v')"
     services:
       mongo:
         image: mongo:4.4-focal
@@ -45,7 +45,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage.txt
   slack-notification:
-    if: github.event.repository.full_name == 'reearth/reearth-backend' && always()
+    if: github.event.repository.full_name == 'reearth/reearth-backend' && success() || failure()
     name: Slack Notification
     needs:
       - ci
@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Slack Notification
         uses: Gamesight/slack-workflow-status@master
-        if: success() || failure()
+        if: always()
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
