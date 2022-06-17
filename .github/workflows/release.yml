@@ -56,5 +56,5 @@ jobs:
           git tag $TAG
           git push
           git push --tags
-      - name: Commit and push CHANGELOG to main
-        run: git switch main && git cherry-pick release && git push
+      # - name: Commit and push CHANGELOG to main
+      #   run: git switch main && git cherry-pick release && git push

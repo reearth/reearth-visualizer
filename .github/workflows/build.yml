@@ -79,7 +79,7 @@ jobs:
     needs:
       - info
       - build
-    if: "!needs.info.outputs.tag"
+    if: needs.info.outputs.tag == ''
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
@@ -110,21 +110,23 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - info
-    if: github.event.workflow_run.head_branch == 'release' && needs.info.outputs.tag
+    if: github.event.workflow_run.head_branch == 'release' && needs.info.outputs.tag != ''
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.tag }}.tar.gz
     steps:
+      - name: Download latest artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          name: build
+          branch: release
+          workflow_conclusion: success
+          check_artifacts: true
       - name: Download latest changelog
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
           name: changelog-${{ needs.info.outputs.tag }}
-      - name: Download latest artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build.yml
-          branch: release
-          name: build
       - name: Rename artifact
         run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
@@ -141,18 +143,6 @@ jobs:
     name: Slack Notification
     needs:
       - release_nightly
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-  slack-notification-release:
-    if: failure()
-    name: Slack Notification
-    needs:
       - release
     runs-on: ubuntu-latest
     steps:
