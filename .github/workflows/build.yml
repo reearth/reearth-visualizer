@@ -75,9 +75,9 @@ jobs:
           GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
       - name: Rename artifacts
         if: "!needs.info.outputs.tag"
-        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ env.NAME }}/'); done
-        env:
-          NAME: ${{ needs.info.outputs.name }}
+        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+      - name: List artifacts
+        run: ls -l dist
       - name: Release nightly/rc
         if: "!needs.info.outputs.tag"
         uses: ncipollo/release-action@v1
