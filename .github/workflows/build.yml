@@ -122,7 +122,7 @@ jobs:
           file: reearth-web_rc.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Rename artifact
-        run: mv reearth-web.tar.gz $ARTIFACT
+        run: mv reearth-web_rc.tar.gz $ARTIFACT
       - name: Download latest changelog
         uses: dawidd6/action-download-artifact@v2
         with:
