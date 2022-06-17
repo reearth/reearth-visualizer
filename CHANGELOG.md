@@ -1,6 +1,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.0 - 2022-06-17
+
+### 🚀 Features
+
+- Add a basic timeline UI ([#232](https://github.com/reearth/reearth-web/pull/232)) [`fc9732`](https://github.com/reearth/reearth-web/commit/fc9732)
+- Add infinite scroll for project lists and datasets in dashboard and setting pages ([#225](https://github.com/reearth/reearth-web/pull/225)) [`28d377`](https://github.com/reearth/reearth-web/commit/28d377)
+- Adapt camera field to support 2d mode ([#233](https://github.com/reearth/reearth-web/pull/233)) [`172de5`](https://github.com/reearth/reearth-web/commit/172de5)
+- Add scene property overriding to Re:Earth API ([#224](https://github.com/reearth/reearth-web/pull/224)) [`b07603`](https://github.com/reearth/reearth-web/commit/b07603)
+
+### 🔧 Bug Fixes
+
+- Some plugin APIs were missing ([#248](https://github.com/reearth/reearth-web/pull/248)) [`c83262`](https://github.com/reearth/reearth-web/commit/c83262)
+- Slight shift when capture a new position ([#246](https://github.com/reearth/reearth-web/pull/246)) [`182406`](https://github.com/reearth/reearth-web/commit/182406)
+- Dataset counts are displayed incorrectly in dataset pane ([#235](https://github.com/reearth/reearth-web/pull/235)) [`45a0c8`](https://github.com/reearth/reearth-web/commit/45a0c8)
+- Labeling hidden by marker symbol ([#238](https://github.com/reearth/reearth-web/pull/238)) [`99c378`](https://github.com/reearth/reearth-web/commit/99c378)
+- Vertical position style in infobox image block ([#236](https://github.com/reearth/reearth-web/pull/236)) [`647cf8`](https://github.com/reearth/reearth-web/commit/647cf8)
+- Unexpected values for theme and lang props of extension components [`723486`](https://github.com/reearth/reearth-web/commit/723486)
+- Wait until all extensions are loaded [`dfe2aa`](https://github.com/reearth/reearth-web/commit/dfe2aa)
+- Iframe not correctly sizing to plugin ([#230](https://github.com/reearth/reearth-web/pull/230)) [`500ce8`](https://github.com/reearth/reearth-web/commit/500ce8)
+- Plugin API cameramove event is not emitted in published pages ([#227](https://github.com/reearth/reearth-web/pull/227)) [`7a11b3`](https://github.com/reearth/reearth-web/commit/7a11b3)
+
+### ✨ Refactor
+
+- Migrate to react-intl from react-i18next ([#240](https://github.com/reearth/reearth-web/pull/240)) [`404743`](https://github.com/reearth/reearth-web/commit/404743)
+
+### 🧪 Testing
+
+- Disable util/raf tests that do not always succeed [`45a450`](https://github.com/reearth/reearth-web/commit/45a450)
+- Fix unit test for utils/raf [`a060d9`](https://github.com/reearth/reearth-web/commit/a060d9)
+- Fix Cypress login test fails ([#241](https://github.com/reearth/reearth-web/pull/241)) [`a5dbfb`](https://github.com/reearth/reearth-web/commit/a5dbfb)
+
+### Miscellaneous Tasks
+
+- Upgrade dependency cesium-dnd to 1.1.0 ([#244](https://github.com/reearth/reearth-web/pull/244)) [`ba6b51`](https://github.com/reearth/reearth-web/commit/ba6b51)
+- Fix typos [`f98005`](https://github.com/reearth/reearth-web/commit/f98005)
+- Update config so extensionUrls can be declared in .env file for local development ([#237](https://github.com/reearth/reearth-web/pull/237)) [`545b9e`](https://github.com/reearth/reearth-web/commit/545b9e)
+
 ## 0.7.0 - 2022-05-16
 
 ### 🚀 Features
