@@ -24,7 +24,8 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
@@ -50,8 +51,14 @@ jobs:
           TAG: ${{ steps.changelog.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
-          git add CHANGELOG.md
+          git add CHANGELOG.md package.json
           git commit -am "$TAG"
           git tag $TAG
           git push
           git push --tags
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: Commit and push CHANGELOG to main
+        run: git cherry-pick release && git push

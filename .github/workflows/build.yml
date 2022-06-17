@@ -123,7 +123,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build.yml
-          commit: ${{ github.sha }}
+          branch: release
           name: build
       - name: Rename artifact
         run: mv reearth-web.tar.gz $ARTIFACT
