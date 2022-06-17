@@ -56,9 +56,5 @@ jobs:
           git tag $TAG
           git push
           git push --tags
-      - name: Checkout main branch
-        uses: actions/checkout@v3
-        with:
-          ref: main
       - name: Commit and push CHANGELOG to main
-        run: git cherry-pick release && git push
+        run: git switch main && git cherry-pick release && git push
