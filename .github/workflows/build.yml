@@ -69,13 +69,15 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          args: release --rm-dist --snapshot
+          args: release --rm-dist $SNAPSHOT
         env:
+          SNAPSHOT: ${{ !needs.info.outputs.tag && '--snapshot' || '' }}
           GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
       - name: Rename artifacts
+        if: "!needs.info.outputs.tag"
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${NAME}/'); done
         env:
-          NAME: ${{ needs.info.outputs.tag || needs.info.outputs.name }}
+          NAME: ${{ needs.info.outputs.name }}
       - name: Release nightly/rc
         if: "!needs.info.outputs.tag"
         uses: ncipollo/release-action@v1
