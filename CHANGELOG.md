@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.0 - 2022-06-17
+
+### 🚀 Features
+
+- Add totalCount field to DatasetSchema type of GraphQL schema ([#154](https://github.com/reearth/reearth-backend/pull/154)) [`ab6334`](https://github.com/reearth/reearth-backend/commit/ab6334)
+- Add timeline settings to scene property ([#153](https://github.com/reearth/reearth-backend/pull/153)) [`602ec0`](https://github.com/reearth/reearth-backend/commit/602ec0)
+
+### 🔧 Bug Fixes
+
+- Assets are not saved when files are uploaded ([#155](https://github.com/reearth/reearth-backend/pull/155)) [`e444e4`](https://github.com/reearth/reearth-backend/commit/e444e4)
+
+### ✨ Refactor
+
+- Declarative description of use case structure (asset only) ([#151](https://github.com/reearth/reearth-backend/pull/151)) [`c6e98c`](https://github.com/reearth/reearth-backend/commit/c6e98c)
+
+### Miscellaneous Tasks
+
+- Update go modules ([#150](https://github.com/reearth/reearth-backend/pull/150)) [`6372bc`](https://github.com/reearth/reearth-backend/commit/6372bc)
+
 ## 0.7.0 - 2022-05-13
 
 ### 🚀 Features
