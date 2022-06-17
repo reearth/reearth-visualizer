@@ -122,7 +122,8 @@ jobs:
           name: build
           branch: release
           workflow_conclusion: success
-          search_artifacts: true
+          check_artifacts: true
+          github_token: ${{ secrets.GPT }}
       - name: Download latest changelog
         uses: dawidd6/action-download-artifact@v2
         with:
