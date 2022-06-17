@@ -1,5 +1,5 @@
-import { useNavigate } from "@reach/router";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hooks";
 import { useTeam, useProject } from "@reearth/state";
@@ -28,7 +28,7 @@ export default (params: Params) => {
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
-      navigate(`/settings/workspace/${currentTeam?.id}/asset`);
+      navigate(`/settings/workspaces/${currentTeam?.id}/asset`);
     }
   }, [params, currentTeam, navigate]);
 

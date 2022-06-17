@@ -1,6 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import React from "react";
-import type { PropsWithChildren } from "react";
+import type { ReactNode } from "react";
 
 import type { ProviderProps } from "./Plugin";
 import { Provider as PluginProvider } from "./Plugin";
@@ -52,7 +51,7 @@ const layers: Layer[] = [
   },
 ];
 
-export function Provider({ children }: PropsWithChildren<{}>) {
+export function Provider({ children }: { children?: ReactNode }) {
   return <PluginProvider {...context}>{children}</PluginProvider>;
 }
 

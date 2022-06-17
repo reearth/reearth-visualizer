@@ -1,9 +1,10 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import { styled } from "@reearth/theme";
 
 export interface Props {
   className?: string;
+  children?: ReactNode;
   grow?: number;
 }
 

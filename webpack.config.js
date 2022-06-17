@@ -47,7 +47,6 @@ module.exports = (env, args = {}) => {
         "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
       },
       historyApiFallback: true,
-      hot: true,
       open: true,
       // host: "local-ip",
       port: 3000,

@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
@@ -7,6 +7,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
+  children?: ReactNode;
   title?: string;
   subtitle?: string;
   actions?: React.ReactNode;

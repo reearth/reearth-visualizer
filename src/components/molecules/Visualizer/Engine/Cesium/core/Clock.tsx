@@ -1,5 +1,5 @@
 import { ClockRange, ClockStep, JulianDate } from "cesium";
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
 import type { SceneProperty } from "../../ref";

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from "react";
+import { ReactNode, ReactElement } from "react";
 
 import Scroll from "../Scroll";
 
@@ -15,6 +15,7 @@ export type Props<T = unknown, R extends Element = Element> = Omit<
   "index" | "selectedIndex" | "depth" | "onSelect" | "parentItemId"
 > & {
   className?: string;
+  children?: ReactNode;
   item: Item<T>;
   selected?: string[];
   expanded?: string[];
@@ -30,7 +31,7 @@ export default function TreeView<T = unknown, R extends Element = Element>({
   onSelect,
   onExpand,
   ...props
-}: PropsWithChildren<Props<T, R>>): ReactElement | null {
+}: Props<T, R>): ReactElement | null {
   const { selectedIds, expandedIds, select, expand } = useHooks({
     item,
     selected,

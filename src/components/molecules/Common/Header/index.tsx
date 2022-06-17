@@ -1,5 +1,5 @@
-import { Link } from "@reach/router";
-import React from "react";
+import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
@@ -12,6 +12,7 @@ export type { User, Team, Project } from "./types";
 
 export interface Props {
   className?: string;
+  children?: ReactNode;
   user?: User;
   currentTeam?: Team;
   currentProject?: Project;

@@ -1,5 +1,5 @@
-import { Link } from "@reach/router";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
 import Avatar from "@reearth/components/atoms/Avatar";
@@ -46,7 +46,7 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
             ))}
             {excessMembers > 0 && <Avatar innerText={excessMembers} />}
           </Flex>
-          <StyledLink to={`/settings/workspace/${team?.id}`}>
+          <StyledLink to={`/settings/workspaces/${team?.id}`}>
             <Icon icon="settings" />
           </StyledLink>
         </Flex>

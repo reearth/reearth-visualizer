@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 
 import Flex from "@reearth/components/atoms/Flex";

@@ -1,11 +1,12 @@
-import { Link } from "@reach/router";
-import React from "react";
+import { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
 
 import Text from "@reearth/components/atoms/Text";
 import { styled, fonts, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
+  children?: ReactNode;
   name: string;
   to: string;
   level?: 1 | 2 | 3;
@@ -13,14 +14,19 @@ export type Props = {
 
 const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
   const theme = useTheme();
+
   return (
     <>
       <LinkItem
         to={to}
-        getProps={({ isCurrent }) =>
-          isCurrent && {
-            style: { background: theme.main.select, color: theme.main.strongText },
-          }
+        end
+        style={({ isActive }) =>
+          isActive
+            ? {
+                background: theme.main.select,
+                color: theme.main.strongText,
+              }
+            : {}
         }>
         <StyledText size="m" customColor level={level}>
           {name}
@@ -31,7 +37,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
   );
 };
 
-const LinkItem = styled(Link)`
+const LinkItem = styled(NavLink)`
   display: flex;
   padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
   color: ${({ theme }) => theme.main.text};

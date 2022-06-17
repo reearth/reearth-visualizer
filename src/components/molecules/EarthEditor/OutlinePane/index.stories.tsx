@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import deepFind from "@reearth/util/deepFind";
 

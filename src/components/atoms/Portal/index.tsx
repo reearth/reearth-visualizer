@@ -1,7 +1,7 @@
-import React, { useLayoutEffect } from "react";
+import React, { ReactNode, useLayoutEffect } from "react";
 import ReactDOM from "react-dom";
 
-const Portal: React.FC = ({ children }) => {
+const Portal: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const [node, setNode] = React.useState<HTMLElement>();
 
   useLayoutEffect(() => {

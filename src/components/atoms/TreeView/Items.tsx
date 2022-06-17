@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 
 import Item from "./Item";
 import type { Item as ItemType, InnerProps } from "./types";

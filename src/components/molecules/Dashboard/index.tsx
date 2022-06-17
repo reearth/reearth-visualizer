@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
@@ -8,7 +8,8 @@ export * from "./types";
 
 export type Props = {
   className?: string;
-  header?: React.ReactNode;
+  children?: ReactNode;
+  header?: ReactNode;
   isLoading?: boolean;
   hasMoreProjects?: boolean;
   onGetMoreProjects?: () => void;

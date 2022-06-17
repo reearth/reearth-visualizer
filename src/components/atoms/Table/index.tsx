@@ -1,5 +1,4 @@
-import React from "react";
-
+import Text from "@reearth/components/atoms/Text";
 import theme, { fonts, styled } from "@reearth/theme";
 import { TypographySize } from "@reearth/theme/fonts";
 
@@ -54,7 +53,7 @@ export default function Table<T>({
         <tr>
           {headers?.map((h, i) => (
             <StyledTh key={i} width={columnWidth}>
-              {h}
+              <StyledText size="xs">{h}</StyledText>
             </StyledTh>
           ))}
         </tr>
@@ -64,7 +63,11 @@ export default function Table<T>({
           return (
             <tr key={i}>
               {headers?.map((h, i) => {
-                return <StyledTd key={i}>{item[h]}</StyledTd>;
+                return (
+                  <StyledTd key={i}>
+                    <StyledText size="xs">{item[h]}</StyledText>
+                  </StyledTd>
+                );
               })}
             </tr>
           );
@@ -102,14 +105,15 @@ const StyledTable = styled.table<{
 
 const StyledTh = styled.th<{ width?: string }>`
   padding: ${({ theme }) => theme.metrics.s}px;
-  font-weight: ${fonts.weight.normal};
   width: ${({ width }) => width};
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const StyledTd = styled.td`
+  width: ${({ width }) => width};
   padding: ${({ theme }) => theme.metrics.s}px;
+`;
+
+const StyledText = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
 `;

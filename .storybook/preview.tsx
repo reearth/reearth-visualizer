@@ -5,7 +5,7 @@ import {
   ApolloLink,
   Observable,
 } from "@apollo/client";
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 
 import { Provider as I18nProvider } from "../src/i18n";
 import { Provider as ThemeProvider } from "../src/theme";

@@ -40,7 +40,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           {team && (
             <NavigationItem
               level={2}
-              to={`/settings/workspace/${team.id}`}
+              to={`/settings/workspaces/${team.id}`}
               key={team.id}
               name={team.name as string}>
               <NavigationItem
@@ -56,7 +56,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           {project && !project.isArchived && (
             <NavigationItem
               level={2}
-              to={`/settings/project/${project.id}`}
+              to={`/settings/projects/${project.id}`}
               name={project.name as string}>
               <NavigationItem
                 level={3}

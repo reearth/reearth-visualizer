@@ -1,4 +1,4 @@
-import React, { forwardRef, PropsWithChildren, Ref, useCallback, useMemo } from "react";
+import { forwardRef, ReactNode, Ref, useCallback, useMemo } from "react";
 
 import type { ItemProps, DropType, Item } from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
@@ -9,6 +9,7 @@ export type Layer<T = unknown> = LayerType<T>;
 
 export type Props<T = unknown> = ItemProps<Layer<T>> & {
   className?: string;
+  children?: ReactNode;
   rootLayerId?: string;
   selectedLayerId?: string;
   visibilityShown?: boolean;
@@ -48,7 +49,7 @@ function LayerTreeViewItem<T = unknown>(
     onRemove,
     onGroupCreate,
     onImport,
-  }: PropsWithChildren<Props<T>>,
+  }: Props<T>,
   ref: Ref<HTMLDivElement>,
 ) {
   const handleClick = useCallback(() => {

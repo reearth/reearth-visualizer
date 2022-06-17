@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties } from "react";
 
 import { useTheme } from "@reearth/theme";
 import { FontWeight, typography, TypographySize } from "@reearth/theme/fonts";
@@ -9,7 +9,7 @@ type ChangeableProperties = Omit<CSSProperties, NonChangeableProperties>;
 
 export type TextProps = {
   className?: string;
-  children: React.ReactNode;
+  children: any;
   color?: string;
   customColor?: boolean;
   size: TypographySize;

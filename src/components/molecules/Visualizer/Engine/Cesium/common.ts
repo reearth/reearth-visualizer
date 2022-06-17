@@ -111,7 +111,7 @@ export const useIcon = ({
     : Math.floor((w / img.width) * img.height);
 
   const draw = useCallback(
-    can =>
+    (can: HTMLCanvasElement) =>
       drawIcon(can, img, w, h, crop, shadow, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY),
     [crop, h, img, shadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY, w],
   );

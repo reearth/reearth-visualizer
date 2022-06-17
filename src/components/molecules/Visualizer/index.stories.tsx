@@ -1,5 +1,5 @@
 import { Meta, Story } from "@storybook/react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 

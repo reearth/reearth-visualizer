@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@emotion/react";
-import React, { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 import { useAuth } from "@reearth/auth";
 import { Theme, useGetThemeQuery } from "@reearth/gql";
@@ -9,7 +9,7 @@ import darkTheme from "./darkTheme";
 import GlobalStyle from "./globalstyle";
 import lightTheme from "./lightheme";
 
-const Provider: React.FC = ({ children }) => {
+const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const [, setThemeType] = useCurrentTheme();
   const { data } = useGetThemeQuery({ skip: !isAuthenticated });

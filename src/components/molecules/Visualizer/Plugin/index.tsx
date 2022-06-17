@@ -1,5 +1,3 @@
-import React from "react";
-
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";

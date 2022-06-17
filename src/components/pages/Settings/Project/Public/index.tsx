@@ -1,17 +1,20 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
 import { AuthenticationRequiredPage } from "@reearth/auth";
 import Public from "@reearth/components/organisms/Settings/Project/Public";
 
 export type Props = {
   path?: string;
-  projectId?: string;
 };
 
-const PublicPage: React.FC<Props> = ({ projectId = "" }) => (
-  <AuthenticationRequiredPage>
-    <Public projectId={projectId} />
-  </AuthenticationRequiredPage>
-);
+const PublicPage: React.FC<Props> = () => {
+  const { projectId = "" } = useParams();
+  return (
+    <AuthenticationRequiredPage>
+      <Public projectId={projectId} />
+    </AuthenticationRequiredPage>
+  );
+};
 
 export default PublicPage;

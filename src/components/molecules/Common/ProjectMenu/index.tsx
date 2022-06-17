@@ -36,26 +36,26 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
           <MenuList>
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/project/${currentProject.id}`}
+                linkTo={`/settings/projects/${currentProject.id}`}
                 text={t("Project settings")}
               />
             </MenuListItem>
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/project/${currentProject.id}/dataset`}
+                linkTo={`/settings/projects/${currentProject.id}/dataset`}
                 text={t("Datasets")}
               />
             </MenuListItem>
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/project/${currentProject.id}/plugins`}
+                linkTo={`/settings/projects/${currentProject.id}/plugins`}
                 text={t("Plugins")}
               />
             </MenuListItem>
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/workspace/${teamId}/projects`}
+                linkTo={`/settings/workspaces/${teamId}/projects`}
                 text={t("Manage projects")}
               />
             </MenuListItem>

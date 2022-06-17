@@ -1,11 +1,12 @@
 import { Meta } from "@storybook/react";
-import React, { CSSProperties } from "react";
+import { ReactNode, CSSProperties } from "react";
 
 import Resizable from ".";
 
-const Container: React.FC<{ style?: CSSProperties }> = ({ children, style }) => (
-  <div style={{ display: "flex", height: 400, ...style }}>{children}</div>
-);
+const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
+  children,
+  style,
+}) => <div style={{ display: "flex", height: 400, ...style }}>{children}</div>;
 const Pane = <div style={{ flex: 1, background: "#ffffff" }} />;
 const Content = <div style={{ width: "100%", height: "100%", background: "#ffffff" }}></div>;
 

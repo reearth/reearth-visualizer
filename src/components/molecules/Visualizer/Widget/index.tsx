@@ -1,4 +1,4 @@
-import React, { ComponentType, useCallback, useMemo } from "react";
+import { ComponentType, useCallback, useMemo } from "react";
 
 import Plugin, {
   Widget as RawWidget,

@@ -1,4 +1,4 @@
-import L, { LeafletMouseEvent } from "leaflet";
+import L from "leaflet";
 import React, { useMemo, useCallback, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
@@ -83,8 +83,7 @@ export default function LocationBlock({
           zIndex: 1,
         }}
         center={location ?? defaultCenter}
-        zoom={13}
-        onclick={(e: LeafletMouseEvent) => handleChange(e.latlng)}>
+        zoom={13}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

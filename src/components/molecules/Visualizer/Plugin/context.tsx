@@ -1,7 +1,7 @@
 import type { Options } from "quickjs-emscripten-sync";
-import React, {
+import {
   createContext,
-  PropsWithChildren,
+  ReactNode,
   useCallback,
   useContext as useReactContext,
   useEffect,
@@ -34,6 +34,7 @@ export type EngineContext = {
 };
 
 export type Props = {
+  children?: ReactNode;
   engine: EngineContext;
   engineName: string;
   mergedSceneProperty?: any;
@@ -92,7 +93,7 @@ export function Provider({
   zoomOut,
   viewport,
   children,
-}: PropsWithChildren<Props>): JSX.Element {
+}: Props): JSX.Element {
   const [ev, emit] = useMemo(
     () => events<Pick<ReearthEventType, "cameramove" | "select">>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps

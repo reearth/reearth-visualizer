@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
@@ -8,8 +8,8 @@ import Flex from "../Flex";
 
 export type Props = {
   className?: string;
+  children?: ReactNode;
   name?: string;
-  children?: React.ReactNode;
 };
 
 const TabCard: React.FC<Props> = ({ className, name, children }) => {

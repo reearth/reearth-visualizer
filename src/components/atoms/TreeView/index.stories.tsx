@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { forwardRef, PropsWithChildren, Ref, useState } from "react";
+import { forwardRef, Ref, useState } from "react";
 
 import { ItemProps } from "./types";
 
@@ -112,7 +112,7 @@ function ItemInnerComponent(
     dropType,
     shown,
     children,
-  }: PropsWithChildren<ItemProps<Content>>,
+  }: ItemProps<Content>,
   ref: Ref<HTMLDivElement>,
 ) {
   return (

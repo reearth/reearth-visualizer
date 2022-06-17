@@ -1,10 +1,10 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
-const AuthPage: React.FC = ({ children }) => {
+const AuthPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return (
     <Wrapper>
       {children && (

@@ -1,16 +1,17 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import { styled } from "@reearth/theme";
 
 import useHooks from "./hooks";
 
-interface Props {
+type Props = {
+  children?: ReactNode;
   direction: "vertical" | "horizontal";
   gutter: "start" | "end";
   size: number;
   minSize?: number;
   maxSize?: number;
-}
+};
 
 const Resizable: React.FC<Props> = ({
   direction,

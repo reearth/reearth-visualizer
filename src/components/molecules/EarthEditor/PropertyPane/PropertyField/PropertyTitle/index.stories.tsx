@@ -1,9 +1,11 @@
 import { Meta } from "@storybook/react";
-import React from "react";
+import { ReactNode } from "react";
 
 import PropertyTitle from ".";
 
-const Wrapper: React.FC = ({ children }) => <div style={{ padding: "32px" }}>{children}</div>;
+const Wrapper: React.FC<{ children?: ReactNode }> = ({ children }) => (
+  <div style={{ padding: "32px" }}>{children}</div>
+);
 
 export default {
   title: "molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle",

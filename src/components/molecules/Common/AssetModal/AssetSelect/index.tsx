@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
@@ -27,7 +27,7 @@ const AssetSelect = <Value extends string | number = string>({
   const [hidden, setHidden] = useState(true);
 
   const handleChange = useCallback(
-    key => {
+    (key: Value) => {
       onChange?.(key);
       setHidden(false);
     },

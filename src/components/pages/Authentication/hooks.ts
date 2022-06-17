@@ -1,6 +1,6 @@
-import { useLocation, useNavigate } from "@reach/router";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";

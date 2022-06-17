@@ -1,9 +1,9 @@
-import React, { CSSProperties } from "react";
+import { ReactNode, CSSProperties } from "react";
 
 export type Props = {
   className?: string;
   onClick?: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
   testId?: string;
 } & FlexOptions;
 

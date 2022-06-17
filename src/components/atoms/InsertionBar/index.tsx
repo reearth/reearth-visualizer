@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, ReactNode } from "react";
 import { usePopper } from "react-popper";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -11,7 +11,7 @@ export interface Props {
   pos?: "top" | "bottom";
   mode?: "hidden" | "dragging" | "visible";
   onButtonClick?: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const InsertionBar: React.FC<Props> = ({

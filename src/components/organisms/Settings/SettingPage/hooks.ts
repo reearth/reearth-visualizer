@@ -1,5 +1,5 @@
-import { useNavigate } from "@reach/router";
 import { useEffect, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
@@ -34,7 +34,7 @@ export default (params: Params) => {
       if (r) {
         refetch();
       }
-      navigate(`/settings/workspace/${currentTeam?.id}`);
+      navigate(`/settings/workspaces/${currentTeam?.id}`);
     },
     [navigate, refetch, currentTeam?.id],
   );

@@ -1,5 +1,5 @@
 import { groupBy } from "lodash-es";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";

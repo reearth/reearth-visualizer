@@ -1,4 +1,4 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
+import { ReactNode, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { useClickAway } from "react-use";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -8,13 +8,13 @@ type Direction = "right" | "down" | "none";
 
 export type Props = {
   isOpen?: boolean;
-  label: React.ReactNode;
+  label: ReactNode;
   openOnClick?: boolean;
   direction?: Direction;
   hasIcon?: boolean;
   noHoverStyle?: boolean;
   centered?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export type Ref = {

@@ -1,5 +1,5 @@
-import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import {
@@ -52,7 +52,7 @@ export default (params: Params) => {
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
-      navigate(`/settings/workspace/${currentTeam?.id}`);
+      navigate(`/settings/workspaces/${currentTeam?.id}`);
     }
   }, [params, currentTeam, navigate]);
 
@@ -223,7 +223,7 @@ export default (params: Params) => {
     (team: Team) => {
       if (team.id) {
         setTeam(team);
-        navigate(`/settings/workspace/${team.id}`);
+        navigate(`/settings/workspaces/${team.id}`);
       }
     },
     [navigate, setTeam],

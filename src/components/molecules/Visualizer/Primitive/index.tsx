@@ -1,4 +1,4 @@
-import React, { ComponentType, useMemo } from "react";
+import { ComponentType, useMemo } from "react";
 
 import { useContext } from "../Plugin";
 import type { Layer } from "../Plugin";

@@ -1,5 +1,5 @@
-import { Link } from "@reach/router";
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";

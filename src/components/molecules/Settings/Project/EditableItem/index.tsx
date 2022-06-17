@@ -1,4 +1,4 @@
-import React, { useState, useCallback, PropsWithChildren } from "react";
+import React, { useState, useCallback } from "react";
 
 import Avatar from "@reearth/components/atoms/Avatar";
 import Icon from "@reearth/components/atoms/Icon";
@@ -53,7 +53,7 @@ export default function EditableItem<T extends string = string>({
   onSubmit,
   onEditStart,
   onEditCancel,
-}: PropsWithChildren<Props<T>>): JSX.Element | null {
+}: Props<T>): JSX.Element | null {
   const [isEditting, setIsEditting] = useState(false);
   const [inputState, setInputState] = useState(currentItem || body);
 

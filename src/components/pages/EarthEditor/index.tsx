@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
 import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEditorPage";
@@ -13,10 +14,10 @@ import useHooks from "./hooks";
 
 export type Props = {
   path?: string;
-  sceneId?: string;
 };
 
-const EarthEditor: React.FC<Props> = ({ sceneId }) => {
+const EarthEditor: React.FC<Props> = () => {
+  const { sceneId } = useParams();
   const { loading, loaded } = useHooks(sceneId);
 
   return (

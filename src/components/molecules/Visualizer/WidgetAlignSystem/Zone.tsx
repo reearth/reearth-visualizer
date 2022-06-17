@@ -1,10 +1,11 @@
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
+  children?: ReactNode;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -30,7 +31,7 @@ export default function Zone({
   isBuilt,
   overrideSceneProperty,
   children,
-}: PropsWithChildren<Props>) {
+}: Props) {
   return (
     <>
       {sections.map(s => (

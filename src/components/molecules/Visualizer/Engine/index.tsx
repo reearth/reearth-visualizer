@@ -1,6 +1,5 @@
-import React, {
+import {
   ForwardRefRenderFunction,
-  PropsWithChildren,
   ComponentType,
   PropsWithoutRef,
   ReactNode,
@@ -40,7 +39,7 @@ export type EngineProps = {
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;
-export type Props = PropsWithChildren<EngineProps & { engine?: Engine }>;
+export type Props = EngineProps & { engine?: Engine };
 export type Ref = EngineRef;
 export type Engine = keyof typeof engines;
 

@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import { useAuth } from "@reearth/auth";
 import MoleculesSettingPage from "@reearth/components/molecules/Settings/SettingPage";
@@ -7,6 +7,7 @@ import useHooks from "./hooks";
 
 type Props = {
   className?: string;
+  children?: ReactNode;
   teamId?: string;
   projectId?: string;
   loading?: boolean;

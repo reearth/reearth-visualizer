@@ -1,5 +1,5 @@
-import { Router, Redirect } from "@reach/router";
 import React, { Suspense } from "react";
+import { BrowserRouter as Router, useRoutes, Navigate } from "react-router-dom";
 
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
@@ -39,6 +39,32 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
   });
 }
 
+function AppRoutes() {
+  const routes = useRoutes([
+    { path: "/", element: <RootPage /> },
+    { path: "/login", element: <LoginPage /> },
+    { path: "/signup", element: <SignupPage /> },
+    { path: "/password-reset", element: <PasswordResetPage /> },
+    { path: "/dashboard/:teamId", element: <Dashboard /> },
+    { path: "/edit/:sceneId", element: <EarthEditor /> },
+    { path: "/edit/:sceneId/preview", element: <Preview /> },
+    { path: "/settings", element: <Navigate to="/settings/account" /> },
+    { path: "/settings/account", element: <AccountSettings /> },
+    { path: "/settings/workspaces", element: <WorkspaceList /> },
+    { path: "/settings/workspaces/:teamId", element: <WorkspaceSettings /> },
+    { path: "/settings/workspaces/:teamId/projects", element: <SettingsProjectList /> },
+    { path: "/settings/workspaces/:teamId/asset", element: <AssetSettings /> },
+    { path: "/settings/projects/:projectId", element: <ProjectSettings /> },
+    { path: "/settings/projects/:projectId/public", element: <PublicSettings /> },
+    { path: "/settings/projects/:projectId/dataset", element: <DatasetSettings /> },
+    { path: "/settings/projects/:projectId/plugins", element: <PluginSettings /> },
+    { path: "/plugin-editor", element: <PluginEditor /> },
+    { path: "/graphql", element: process.env.NODE_ENV !== "production" && <GraphQLPlayground /> },
+    { path: "*", element: <NotFound /> },
+  ]);
+  return routes;
+}
+
 const App: React.FC = () => {
   return (
     <Auth0Provider>
@@ -48,26 +74,7 @@ const App: React.FC = () => {
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
               <StyledRouter>
-                <RootPage path="/" />
-                <LoginPage path="/login" />
-                <SignupPage path="/signup" />
-                <PasswordResetPage path="/password-reset" />
-                <Dashboard path="/dashboard/:teamId" />
-                <EarthEditor path="/edit/:sceneId" />
-                <Preview path="/edit/:sceneId/preview" />
-                <Redirect from="/settings" to="/settings/account" />
-                <AccountSettings path="/settings/account" />
-                <WorkspaceList path="/settings/workspaces" />
-                <WorkspaceSettings path="/settings/workspace/:teamId" />
-                <SettingsProjectList path="/settings/workspace/:teamId/projects" />
-                <AssetSettings path="/settings/workspace/:teamId/asset" />
-                <ProjectSettings path="/settings/project/:projectId" />
-                <PublicSettings path="/settings/project/:projectId/public" />
-                <DatasetSettings path="/settings/project/:projectId/dataset" />
-                <PluginSettings path="/settings/project/:projectId/plugins" />
-                <PluginEditor path="/plugin-editor" />
-                {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
-                <NotFound default />
+                <AppRoutes />
               </StyledRouter>
             </Suspense>
           </I18nProvider>

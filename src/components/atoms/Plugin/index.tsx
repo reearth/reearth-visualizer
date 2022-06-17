@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  ForwardRefRenderFunction,
-  IframeHTMLAttributes,
-  ReactNode,
-} from "react";
+import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
 
 import useHook, { IFrameAPI, RefType } from "./hooks";
 import IFrame, { AutoResize as AutoResizeType } from "./IFrame";

@@ -1,5 +1,5 @@
 import { ScreenSpaceEventType } from "cesium";
-import React, { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";

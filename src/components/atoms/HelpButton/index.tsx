@@ -1,5 +1,5 @@
 import { Placement as PopperPlacement } from "@popperjs/core";
-import React, { useRef, useState, useEffect } from "react";
+import { ReactNode, useRef, useState, useEffect } from "react";
 import { usePopper } from "react-popper";
 
 import { styled } from "@reearth/theme";
@@ -18,7 +18,7 @@ export type Props = {
     imagePath: string;
     alt?: string;
   };
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 const HelpButton: React.FC<Props> = ({

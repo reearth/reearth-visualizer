@@ -1,8 +1,9 @@
-import { PropsWithoutRef, RefAttributes } from "react";
+import { PropsWithoutRef, ReactNode, RefAttributes } from "react";
 
 export type DropType = "top" | "bottom" | "topOfChildren" | "bottomOfChildren";
 
 export type ItemProps<T = unknown> = {
+  children?: ReactNode;
   item: Item<T>;
   index: number[];
   selected: boolean;

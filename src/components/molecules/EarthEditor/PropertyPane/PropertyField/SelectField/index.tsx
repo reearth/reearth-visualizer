@@ -1,5 +1,3 @@
-import React from "react";
-
 import SelectBox, { Item as ItemType } from "@reearth/components/atoms/SelectBox";
 import { useTheme } from "@reearth/theme";
 

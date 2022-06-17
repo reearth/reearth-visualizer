@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { BoundingSphere, Cartesian3 } from "cesium";
-import React from "react";
+import { ReactNode } from "react";
 import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
 import type { SceneProperty } from "..";
@@ -14,6 +14,7 @@ export const location = { lat: 35.652832, lng: 139.839478, height: 1000 };
 
 // For storybook
 export const V: React.FC<{
+  children?: ReactNode;
   location?: { lat: number; lng: number };
   lookAt?: { lat: number; lng: number; height: number; range: number };
   property?: SceneProperty;

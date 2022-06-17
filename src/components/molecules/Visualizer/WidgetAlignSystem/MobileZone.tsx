@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState, useMemo } from "react";
+import { ReactNode, useState, useMemo } from "react";
 import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -9,6 +9,7 @@ import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
+  children?: ReactNode;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -32,7 +33,7 @@ export default function MobileZone({
   isEditable,
   isBuilt,
   children,
-}: PropsWithChildren<Props>) {
+}: Props) {
   const filteredSections = useMemo(() => {
     return sections.filter(s => !!zone?.[s] || (s === "center" && children));
   }, [zone, children]);

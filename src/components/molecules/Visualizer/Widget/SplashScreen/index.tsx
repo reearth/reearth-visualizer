@@ -1,5 +1,5 @@
 import { useTransition, TransitionStatus } from "@rot1024/use-transition";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTimeoutFn } from "react-use";
 
 import { styled } from "@reearth/theme";

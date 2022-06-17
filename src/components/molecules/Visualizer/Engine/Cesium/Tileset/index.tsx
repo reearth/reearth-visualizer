@@ -1,5 +1,5 @@
 import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle } from "cesium";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";

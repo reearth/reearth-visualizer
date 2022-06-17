@@ -1,6 +1,6 @@
 import { useApolloClient } from "@apollo/client";
-import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {
@@ -158,7 +158,7 @@ export default (teamId: string) => {
     (project: Project) => {
       if (project.id) {
         setProject(project);
-        navigate(`/settings/project/${project.id}`);
+        navigate(`/settings/projects/${project.id}`);
       }
     },
     [navigate, setProject],

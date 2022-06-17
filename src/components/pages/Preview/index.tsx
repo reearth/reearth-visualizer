@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
@@ -9,10 +10,10 @@ import { PublishedAppProvider as ThemeProvider } from "../../../theme";
 
 export type Props = {
   path?: string;
-  sceneId?: string;
 };
 
-const PreviewPage: React.FC<Props> = ({ sceneId }) => {
+const PreviewPage: React.FC<Props> = () => {
+  const { sceneId } = useParams();
   const [sceneId2, setSceneId] = useSceneId();
 
   useEffect(() => {

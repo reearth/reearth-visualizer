@@ -1,5 +1,5 @@
-import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@reearth/auth";
 import { Status } from "@reearth/components/atoms/PublicationStatus";

@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
@@ -9,6 +9,7 @@ export type Type = "primary" | "secondary" | "danger";
 
 export interface Props {
   className?: string;
+  children?: ReactNode;
   large?: boolean;
   type?: "reset" | "button" | "submit" | undefined;
   buttonType?: Type;

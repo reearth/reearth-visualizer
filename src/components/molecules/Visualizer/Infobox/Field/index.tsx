@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import { ReactNode, useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import InsertionBar from "@reearth/components/atoms/InsertionBar";
@@ -7,6 +7,7 @@ import { styled } from "@reearth/theme";
 import useHooks from "./hooks";
 
 export type Props = {
+  children?: ReactNode;
   id?: string;
   index?: number;
   isEditable?: boolean;
@@ -32,7 +33,7 @@ export default function Field({
   dragDisabled,
   onMove,
   onInsert,
-}: PropsWithChildren<Props>): JSX.Element | null {
+}: Props): JSX.Element | null {
   const { dragRef, dropRef, isHovered, isDragging, previewRef } = useHooks({
     id,
     index,

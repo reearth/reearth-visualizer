@@ -91,7 +91,8 @@ export default (
     onClose?.();
   }, [onClose, handleSetDataType]);
 
-  const handleSheetSelect = useCallback(sheet => {
+  const handleSheetSelect = useCallback((sheet?: SheetParameter) => {
+    if (!sheet) return;
     setSheet(sheet);
   }, []);
 

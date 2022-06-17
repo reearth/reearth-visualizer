@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
 import { useAuthenticationRequired } from "./hooks";
 
@@ -7,9 +7,7 @@ export { default as useAuth, useCleanUrl, useAuthenticationRequired } from "./ho
 
 export { withAuthenticationRequired } from "@auth0/auth0-react";
 
-export function AuthenticationRequiredPage({
-  children,
-}: PropsWithChildren<unknown>): JSX.Element | null {
+export const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const [isAuthenticated] = useAuthenticationRequired(); // TODO: show error
   return isAuthenticated && children ? <>{children}</> : null;
-}
+};

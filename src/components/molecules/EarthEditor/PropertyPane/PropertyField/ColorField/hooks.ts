@@ -26,7 +26,7 @@ export default ({ value, onChange }: Params) => {
     return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
   };
 
-  const handleChange = useCallback(newColor => {
+  const handleChange = useCallback((newColor: RGBA) => {
     const color = getHexString(newColor);
     if (!color) return;
     setColor(color);

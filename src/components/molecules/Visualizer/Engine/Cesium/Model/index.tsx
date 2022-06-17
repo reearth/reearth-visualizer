@@ -5,7 +5,7 @@ import {
   Transforms,
   Entity as CesiumEntity,
 } from "cesium";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
 
 import { toColor } from "@reearth/util/value";

@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import { ComponentType } from "react";
 
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";

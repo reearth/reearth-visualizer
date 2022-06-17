@@ -1,9 +1,11 @@
 import { Meta, Story } from "@storybook/react";
-import React from "react";
+import { ReactNode } from "react";
 
 import PropertyList, { Props, Layer } from ".";
 
-const Wrapper: React.FC = ({ children }) => <div style={{ width: 300 }}>{children}</div>;
+const Wrapper: React.FC<{ children?: ReactNode }> = ({ children }) => (
+  <div style={{ width: 300 }}>{children}</div>
+);
 
 export default {
   title: "molecules/EarthEditor/PropertyPane/PropertyList",

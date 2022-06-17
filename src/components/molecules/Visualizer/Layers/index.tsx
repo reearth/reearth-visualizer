@@ -1,4 +1,4 @@
-import React, { ComponentType, useMemo, useCallback } from "react";
+import { ComponentType, useMemo, useCallback } from "react";
 
 import { ClusterProperty, ClusterProps } from "../Engine";
 import P from "../Primitive";

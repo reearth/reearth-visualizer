@@ -1,5 +1,3 @@
-import React from "react";
-
 import Error from "@reearth/components/molecules/Published/Error";
 import Visualizer from "@reearth/components/molecules/Visualizer";
 

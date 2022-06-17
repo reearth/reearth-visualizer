@@ -1,12 +1,14 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
-import React from "react";
+import { ReactNode } from "react";
 
 import { Camera as settings } from "@reearth/util/value";
 
 import PropertyField, { Layer as LayerType } from ".";
 
-const Wrapper: React.FC = ({ children }) => <div style={{ padding: "32px" }}>{children}</div>;
+const Wrapper: React.FC<{ children?: ReactNode }> = ({ children }) => (
+  <div style={{ padding: "32px" }}>{children}</div>
+);
 
 const choices = [
   { key: "a", label: "a", icon: "scene" },

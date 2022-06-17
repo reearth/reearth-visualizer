@@ -1,10 +1,8 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import { styled } from "@reearth/theme";
 
-export type Props = {};
-
-const MemberList: React.FC<Props> = ({ children }) => {
+const MemberList: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return <Wrapper>{children}</Wrapper>;
 };
 

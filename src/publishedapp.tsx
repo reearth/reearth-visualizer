@@ -1,5 +1,3 @@
-import React from "react";
-
 import PublishedPage from "@reearth/components/pages/Published";
 
 import { PublishedProvider as I18nProvider } from "./i18n";

@@ -1,7 +1,7 @@
 import { Auth0Provider } from "@auth0/auth0-react";
-import React from "react";
+import { ReactNode } from "react";
 
-const Provider: React.FC = ({ children }) => {
+const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const domain = window.REEARTH_CONFIG?.auth0Domain;
   const clientId = window.REEARTH_CONFIG?.auth0ClientId;
   const audience = window.REEARTH_CONFIG?.auth0Audience;

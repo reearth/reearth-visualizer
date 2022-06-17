@@ -1,6 +1,5 @@
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
-import React from "react";
 
 import { Provider } from "../storybook";
 

@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import RadioButton, { RadioButtonProps } from "@reearth/components/atoms/RadioButton";
 import Text from "@reearth/components/atoms/Text";
@@ -6,8 +6,8 @@ import { styled, useTheme } from "@reearth/theme";
 
 export type RadioLabelProps = RadioButtonProps & {
   label: string;
-  children?: React.ReactNode;
-  inlineChildren?: React.ReactNode;
+  children?: ReactNode;
+  inlineChildren?: ReactNode;
   disabled?: boolean;
 };
 

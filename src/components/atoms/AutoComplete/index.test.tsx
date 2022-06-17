@@ -1,6 +1,5 @@
 /* eslint-disable testing-library/no-wait-for-multiple-assertions */
 /* eslint-disable testing-library/no-unnecessary-act */
-import React from "react";
 
 import { act, fireEvent, render, screen, waitFor } from "@reearth/test/utils";
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 import { render, screen } from "@reearth/test/utils";
 
 import NotificationBanner, { Notification } from ".";

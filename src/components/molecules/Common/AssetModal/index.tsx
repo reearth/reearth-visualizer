@@ -62,7 +62,8 @@ const AssetModal: React.FC<Props> = ({
     [videoOnly, selectedAssetUrl],
   );
 
-  const handleTextUrlChange = useCallback(text => {
+  const handleTextUrlChange = useCallback((text?: string) => {
+    if (!text) return;
     setTextUrl(text);
   }, []);
 

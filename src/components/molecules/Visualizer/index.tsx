@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
@@ -36,35 +36,34 @@ export type {
 } from "./WidgetAlignSystem";
 export { LayerStore };
 
-export type Props = PropsWithChildren<
-  {
-    rootLayerId?: string;
-    layers?: LayerStore;
-    widgets?: {
-      floatingWidgets?: Widget[];
-      alignSystem?: WidgetAlignSystemType;
-      layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
-    };
-    sceneProperty?: SceneProperty;
-    tags?: Tag[];
-    pluginProperty?: { [key: string]: any };
-    clusterProperty?: ClusterProperty[];
-    selectedLayerId?: string;
-    selectedBlockId?: string;
-    pluginBaseUrl?: string;
-    isPublished?: boolean;
-    widgetAlignEditorActivated?: boolean;
-    onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
-    onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
-    renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-    onLayerSelect?: (id?: string) => void;
-    onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
-  } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
-    Pick<
-      InfoboxProps,
-      "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
-    >
->;
+export type Props = {
+  children?: ReactNode;
+  rootLayerId?: string;
+  layers?: LayerStore;
+  widgets?: {
+    floatingWidgets?: Widget[];
+    alignSystem?: WidgetAlignSystemType;
+    layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+  };
+  sceneProperty?: SceneProperty;
+  tags?: Tag[];
+  pluginProperty?: { [key: string]: any };
+  clusterProperty?: ClusterProperty[];
+  selectedLayerId?: string;
+  selectedBlockId?: string;
+  pluginBaseUrl?: string;
+  isPublished?: boolean;
+  widgetAlignEditorActivated?: boolean;
+  onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
+  onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
+  renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
+  onLayerSelect?: (id?: string) => void;
+  onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
+} & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
+  Pick<
+    InfoboxProps,
+    "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
+  >;
 
 export default function Visualizer({
   ready,

@@ -1,10 +1,10 @@
 import { Meta } from "@storybook/react";
-import React from "react";
+import { ReactNode } from "react";
 
 import Dropdown from ".";
 
-const Wrapper: React.FC = props => (
-  <div style={{ width: "100px", height: "60px" }}>{props.children}</div>
+const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
+  <div style={{ width: "100px", height: "60px" }}>{children}</div>
 );
 
 export default {

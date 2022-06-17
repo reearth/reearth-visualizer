@@ -1,4 +1,4 @@
-import React, { useCallback, useState, ReactElement, useRef, useEffect } from "react";
+import { useCallback, useState, ReactElement, useRef, useEffect } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 import Items from "./Items";

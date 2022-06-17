@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import Wrapper from "@reearth/components/atoms/Modal/ModalFrame";
 import Text from "@reearth/components/atoms/Text";
@@ -7,9 +7,9 @@ import { styled, useTheme } from "@reearth/theme";
 interface Props {
   title?: string;
   size?: "sm" | "md" | "lg";
-  button1?: React.ReactNode;
-  button2?: React.ReactNode;
-  children?: React.ReactNode;
+  button1?: ReactNode;
+  button2?: ReactNode;
+  children?: ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
 }

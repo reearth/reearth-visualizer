@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 
 import { useAuth } from "@reearth/auth";

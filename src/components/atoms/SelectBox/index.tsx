@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Select from "@reearth/components/atoms/Select";

@@ -272,7 +272,7 @@ export default () => {
     if (!rootLayerId) return;
 
     const layers: (Maybe<GQLLayer> | undefined)[] =
-      data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
+      data?.layer?.__typename === "LayerGroup" ? (data.layer.layers as GQLLayer[]) : [];
     const children = (l: Maybe<GQLLayer> | undefined) =>
       l?.__typename == "LayerGroup" ? l.layers : undefined;
 

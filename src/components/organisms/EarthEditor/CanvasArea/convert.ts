@@ -21,7 +21,7 @@ import {
   MergedPropertyGroupCommonFragmentFragment,
   EarthLayerFragment,
   EarthLayerItemFragment,
-  EarthLayer5Fragment,
+  EarthLayerCommonFragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
   WidgetZone as WidgetZoneType,
@@ -134,7 +134,18 @@ const processMergedInfobox = (
   };
 };
 
-const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined => {
+type GQLLayer = Maybe<
+  (
+    | {
+        __typename?: "LayerGroup";
+        layers?: GQLLayer[];
+      }
+    | EarthLayerItemFragment
+  ) &
+    EarthLayerCommonFragment
+>;
+
+const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -152,7 +163,7 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
+        ? layer.layers?.map(processLayer).filter((l): l is Layer => !!l)
         : undefined,
   };
 };

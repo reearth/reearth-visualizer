@@ -1,5 +1,5 @@
-import { Link } from "@reach/router";
 import React from "react";
+import { Link } from "react-router-dom";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";

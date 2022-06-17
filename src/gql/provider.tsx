@@ -5,7 +5,7 @@ import { onError } from "@apollo/client/link/error";
 import { SentryLink } from "apollo-link-sentry";
 import { createUploadLink } from "apollo-upload-client";
 import { isEqual } from "lodash-es";
-import React from "react";
+import { ReactNode } from "react";
 
 import { useAuth } from "@reearth/auth";
 import { reportError } from "@reearth/sentry";
@@ -46,7 +46,7 @@ function offsetFromCursor(items: any, cursor: string, readField: ReadFieldFuncti
   return -1;
 }
 
-const Provider: React.FC = ({ children }) => {
+const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";

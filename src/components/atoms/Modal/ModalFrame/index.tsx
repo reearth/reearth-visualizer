@@ -1,11 +1,12 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
-import React, { useRef, useCallback } from "react";
+import { ReactNode, useRef, useCallback } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 export type Props = {
+  children?: ReactNode;
   title?: string;
   size?: "sm" | "md" | "lg";
   isVisible?: boolean;

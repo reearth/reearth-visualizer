@@ -1,9 +1,10 @@
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
 import Modal from "@reearth/components/atoms/Modal";
 import { styled } from "@reearth/theme";
 
 export type Props<Tab extends string = string> = {
+  children?: ReactNode;
   title?: string;
   size?: "sm" | "md" | "lg";
   button1?: React.ReactNode;
@@ -28,7 +29,7 @@ export default function TabularModal<Tab extends string = string>({
   isVisible,
   children,
   onClose,
-}: PropsWithChildren<Props<Tab>>) {
+}: Props<Tab>) {
   return (
     <Modal
       title={title}

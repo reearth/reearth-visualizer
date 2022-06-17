@@ -1,6 +1,6 @@
 import { useApolloClient } from "@apollo/client";
-import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";

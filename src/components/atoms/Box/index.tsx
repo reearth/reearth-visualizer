@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties } from "react";
 
 import { styled } from "@reearth/theme";
 import { MetricsSizes, metricsSizes } from "@reearth/theme/metrics";
