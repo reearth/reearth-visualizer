@@ -11,9 +11,6 @@ on:
           - patch
           - minor
           - major
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
 jobs:
   release:
     name: Release
@@ -46,7 +43,7 @@ jobs:
         with:
           name: changelog-${{ steps.changelog.outputs.version }}
           path: CHANGELOG_latest.md
-      - name: Commit & push
+      - name: Commit & push to release
         env:
           TAG: ${{ steps.changelog.outputs.version }}
         run: |
@@ -55,10 +52,5 @@ jobs:
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          fetch-depth: 0
-      - name: Commit and push CHANGELOG to main
-        run: git cherry-pick release && git push
+      - name: Commit & push to main
+        run: git switch main && git cherry-pick release && git push
