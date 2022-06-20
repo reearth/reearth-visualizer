@@ -34,7 +34,7 @@ export default (projectId: string) => {
 
   const { data, fetchMore, loading, networkStatus } = useDatasetsListQuery({
     variables: { sceneId: sceneId ?? "", first: datasetPerPage },
-    skip: !projectId,
+    skip: !sceneId,
     notifyOnNetworkStatusChange: true,
   });
 
