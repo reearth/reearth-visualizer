@@ -45,14 +45,14 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
               name={team.name as string}>
               <NavigationItem
                 level={3}
-                to={`/settings/workspace/${team.id}/asset`}
+                to={`/settings/workspaces/${team.id}/asset`}
                 name={t("Assets")}
               />
             </NavigationItem>
           )}
         </NavigationItem>
         <Divider margin="0" />
-        <NavigationItem to={`/settings/workspace/${team?.id}/projects`} name={t("Project List")}>
+        <NavigationItem to={`/settings/workspaces/${team?.id}/projects`} name={t("Project List")}>
           {project && !project.isArchived && (
             <NavigationItem
               level={2}
@@ -60,17 +60,17 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
               name={project.name as string}>
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/public`}
+                to={`/settings/projects/${project.id}/public`}
                 name={t("Public")}
               />
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/dataset`}
+                to={`/settings/projects/${project.id}/dataset`}
                 name={t("Dataset")}
               />
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/plugins`}
+                to={`/settings/projects/${project.id}/plugins`}
                 name={t("Plugins")}
               />
             </NavigationItem>

@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 
 import loadConfig from "./config";
 import App from "./publishedapp";
+import "./wdyr";
 
 loadConfig().finally(() => {
   const element = document.getElementById("root");

@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import App from "./app";
 import loadConfig from "./config";
 import { initialize as initializeSentry } from "./sentry";
+import "./wdyr";
 
 window.React = React;
 window.ReactDOM = ReactDOM;
