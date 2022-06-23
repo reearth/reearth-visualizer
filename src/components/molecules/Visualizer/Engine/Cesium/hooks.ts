@@ -172,14 +172,12 @@ export default ({
   }, []);
 
   // call onCameraChange event after moving camera
-  const emittedCamera = useRef<Camera>();
   const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
-      emittedCamera.current = c;
       onCameraChange?.(c);
     }
   }, [camera, onCameraChange]);
@@ -191,14 +189,6 @@ export default ({
   const handleCameraMoveEnd = useCallback(() => {
     updateCamera();
   }, [updateCamera]);
-
-  // camera
-  useEffect(() => {
-    if (camera && (!emittedCamera.current || emittedCamera.current !== camera)) {
-      engineAPI.flyTo(camera, { duration: 0 });
-      emittedCamera.current = undefined;
-    }
-  }, [camera, engineAPI]);
 
   // manage layer selection
   useEffect(() => {

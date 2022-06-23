@@ -79,8 +79,8 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
       const fov = prevCamera.current?.fov ?? defaultFOV;
       flyTo?.({ fov }, { duration: 0 });
     }
-    // skip camera flight when selected layer was changed by storytelling widget
-    startTransition(!isSelected, storytelling.current ? !isSelected : !cameraRef.current);
+    // skip camera flight when is not selected
+    startTransition(!isSelected, !isSelected);
   }, [flyTo, startTransition, isSelected]);
 
   const transition = useTransition(
