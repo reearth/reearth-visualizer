@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, ComponentType } from "react";
+import React, { useCallback, useState, ComponentType } from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
@@ -82,11 +82,6 @@ const AssetModal: React.FC<Props> = ({
     resetValues();
     toggleAssetModal?.(false);
   }, [toggleAssetModal, resetValues]);
-
-  useEffect(() => {
-    resetValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialAssetUrl, showURL]);
 
   return videoOnly ? (
     <Modal
