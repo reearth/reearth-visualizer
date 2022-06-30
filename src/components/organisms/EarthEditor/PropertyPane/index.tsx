@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType, useCallback } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
@@ -46,9 +46,11 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     updatePropertyItems,
   } = useHooks(mode);
 
-  const AssetModalComponent: ComponentType<AssetModalProps> = ({ ...props }) => (
-    <AssetModal teamId={teamId} {...props} />
+  const AssetModalComponent: ComponentType<AssetModalProps> = useCallback(
+    ({ ...props }) => <AssetModal teamId={teamId} {...props} />,
+    [teamId],
   );
+
   return (
     <>
       {pane && (

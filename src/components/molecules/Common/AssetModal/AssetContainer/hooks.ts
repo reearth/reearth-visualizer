@@ -99,16 +99,25 @@ export default ({
     [onSearch],
   );
 
+  const setLayoutTypeSmall = useCallback(() => setLayoutType("small"), []);
+  const setLayoutTypeMedium = useCallback(() => setLayoutType("medium"), []);
+  const setLayoutTypeList = useCallback(() => setLayoutType("list"), []);
+  const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
+  const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
+
   return {
     layoutType,
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    setLayoutType,
+    setLayoutTypeSmall,
+    setLayoutTypeMedium,
+    setLayoutTypeList,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    setDeleteModalVisible,
+    openDeleteModal,
+    closeDeleteModal,
     handleRemove,
   };
 };
