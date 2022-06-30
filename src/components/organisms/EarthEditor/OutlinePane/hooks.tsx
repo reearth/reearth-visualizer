@@ -209,6 +209,7 @@ export default () => {
           destLayerId,
           index: i,
         },
+        refetchQueries: ["GetLayers"],
       });
     },
     [moveLayerMutation],
@@ -295,6 +296,7 @@ export default () => {
         index: layerIndex?.[layerIndex.length - 1],
         name: t("Folder"),
       },
+      refetchQueries: ["GetLayers"],
     });
   }, [rootLayerId, data?.layer, selected, addLayerGroupMutation, t]);
 
