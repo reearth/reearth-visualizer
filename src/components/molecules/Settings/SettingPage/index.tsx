@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -7,7 +7,7 @@ import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
-import { handleScroll } from "@reearth/util/handleScroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export type SettingPageProps = {
   loading?: boolean;
@@ -30,6 +30,12 @@ const SettingPage: React.FC<SettingPageProps> = ({
     setIsOpen(o => !o);
   };
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (wrapperRef.current && !loading && hasMoreItems) autoFillPage(wrapperRef, onScroll);
+  }, [hasMoreItems, loading, onScroll]);
+
   return (
     <Wrapper>
       <StyledHeader
@@ -47,8 +53,9 @@ const SettingPage: React.FC<SettingPageProps> = ({
         }
       />
       <BodyWrapper
+        ref={wrapperRef}
         onScroll={e => {
-          !loading && hasMoreItems && handleScroll(e, onScroll);
+          !loading && hasMoreItems && onScrollToBottom(e, onScroll);
         }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
