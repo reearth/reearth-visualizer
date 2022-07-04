@@ -85,6 +85,21 @@ extensions:
           tile_opacity:
             title: 不透明性
             description: NEEDS DESCRIPTION
+      indicator:
+        title: インディケーター
+        description: レイヤー選択時に表示されるインディケーターのスタイルを設定します
+        fields:
+          indicator_type:
+            title: タイプ
+            description: インディケーターの見た目を設定します
+            choices:
+              default: デフォルト
+              crosshair: 十字線
+              custom: カスタム
+          indicator_image:
+            title: 画像URL
+          indicator_image_scale:
+            title: 画像サイズ
       atmosphere:
         title: 大気
         description: 地球を覆う大気圏の設定ができます。

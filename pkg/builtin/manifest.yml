@@ -178,6 +178,37 @@ extensions:
               ui: slider
               min: 0
               max: 1
+        - id: indicator
+          title: Indicator
+          description: Set the style of indicator shown when selecting a layer on the map.
+          fields:
+            - id: indicator_type
+              type: string
+              title: Type
+              defaultValue: default
+              description: Choose how the indicator will look.
+              choices:
+                - key: default
+                  label: Default
+                - key: crosshair
+                  label: Crosshair
+                - key: custom
+                  label: Custom
+            - id: indicator_image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: indicator_type
+                type: string
+                value: custom
+            - id: indicator_image_scale
+              type: number
+              title: Image scale
+              availableIf:
+                field: indicator_type
+                type: string
+                value: custom
         - id: theme
           title: Publish Theme
           description: Set your theme.
@@ -366,6 +397,10 @@ extensions:
               type: string
               title: Tracking ID
               description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
+      linkable:
+        url:
+          schemaGroupId: indicator
+          fieldId: indicator_image
   - id: infobox
     name: Infobox
     type: infobox
