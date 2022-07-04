@@ -60,6 +60,16 @@ export default ({
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
 
+  // indicator
+  const selectionIndicator = useMemo(
+    () =>
+      !!(
+        property?.indicator?.indicator_type == undefined ||
+        property?.indicator?.indicator_type == "default"
+      ),
+    [property?.indicator?.indicator_type],
+  );
+
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
       ?.map(
@@ -301,6 +311,7 @@ export default ({
     limiterDimensions,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    selectionIndicator,
     handleMount,
     handleUnmount,
     handleClick,

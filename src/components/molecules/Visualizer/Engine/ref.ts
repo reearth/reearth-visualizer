@@ -22,6 +22,7 @@ export type EngineRef = {
 };
 
 export type SceneMode = "3d" | "2d" | "columbus";
+export type IndicatorTypes = "default" | "crosshair" | "custom";
 
 export type FlyToDestination = {
   /** Degrees */
@@ -87,6 +88,11 @@ export type SceneProperty = {
     cameraLimitterTargetArea?: Camera;
     cameraLimitterTargetWidth?: number;
     cameraLimitterTargetLength?: number;
+  };
+  indicator?: {
+    indicator_type: IndicatorTypes;
+    indicator_image?: string;
+    indicator_image_scale?: number;
   };
   tiles?: {
     id: string;
