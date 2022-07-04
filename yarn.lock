@@ -7098,10 +7098,10 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium@^1.94.3:
-  version "1.94.3"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.94.3.tgz#00579cd1477b160ecda36e38e9a78096c46f68b7"
-  integrity sha512-F4/gP1pYkE4tNE/Z5v13Sw4QeTJ3QuvxpIxM7spJmHKI2AutbTjfPp3yXQCaorFAS44eGLUkIyV/mTR8YD3/HA==
+cesium@^1.95.0:
+  version "1.95.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.95.0.tgz#8a9036c58b9818406586259d3720a05f24e87a69"
+  integrity sha512-59U0lZD/wmSJa4t9FcK1/sp6PyCpx7h8c4giLd8VM7LJDL6w0G0o4QGlZ4TSJTBe4VIClf+qPDUf47wyBu4YoA==
 
 chalk@2.4.1:
   version "2.4.1"
