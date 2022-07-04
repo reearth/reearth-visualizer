@@ -16,7 +16,7 @@ const sampleItems: { value: string; label: string }[] = [
   },
 ];
 
-test("component should be renered", async () => {
+test("component should be rendered", async () => {
   await act(async () => {
     render(<AutoComplete />);
   });
@@ -40,43 +40,45 @@ test("component should be inputtable", async () => {
   expect(screen.getByText("hoge")).toBeInTheDocument();
 });
 
-describe("Ccomponent should be searchable", () => {
+describe("component should be searchable", () => {
   test("component should leave selects hit", async () => {
     await act(async () => {
       render(<AutoComplete items={sampleItems} />);
-      const input = screen.getByRole("textbox");
-      fireEvent.change(input, { target: { value: "hoge" } });
-      expect(screen.getByText("hoge")).toBeInTheDocument();
     });
+
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "hoge" } });
+    expect(screen.getByText("hoge")).toBeInTheDocument();
   });
 
   test("component shouldn't leave selects which don't hit inputted text", async () => {
     await act(async () => {
       render(<AutoComplete items={sampleItems} />);
-      const input = screen.getByRole("textbox");
-      fireEvent.change(input, { target: { value: "hoge" } });
-      await waitFor(() => {
-        expect(screen.queryByText("fuga")).not.toBeInTheDocument();
-      });
+    });
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "hoge" } });
+    await waitFor(() => {
+      expect(screen.queryByText("fuga")).not.toBeInTheDocument();
     });
   });
 
   test("component should trigger onSelect function with click event", async () => {
+    let handleSelect: jest.Mock<void, [value: string]>;
     await act(async () => {
-      const handleSelect = jest.fn((value: string) => {
+      handleSelect = jest.fn((value: string) => {
         console.log(value);
       });
       render(<AutoComplete items={sampleItems} onSelect={handleSelect} />);
-      const input = screen.getByRole("textbox");
-      await act(async () => {
-        fireEvent.change(input, { target: { value: "hoge" } });
-        const option = screen.getByText(/hoge/);
-        fireEvent.click(option);
-      });
-      await waitFor(() => {
-        expect(handleSelect).toBeCalled();
-        expect(handleSelect.mock.calls[0][0]).toBe("hoge");
-      });
+    });
+    const input = screen.getByRole("textbox");
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "hoge" } });
+      const option = screen.getByText(/hoge/);
+      fireEvent.click(option);
+    });
+    await waitFor(() => {
+      expect(handleSelect).toBeCalled();
+      expect(handleSelect.mock.calls[0][0]).toBe("hoge");
     });
   });
 });
