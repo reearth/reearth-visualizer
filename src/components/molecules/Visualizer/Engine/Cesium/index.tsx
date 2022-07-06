@@ -54,7 +54,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     limiterDimensions,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
-    selectionIndicator,
     handleMount,
     handleUnmount,
     handleClick,
@@ -88,7 +87,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         navigationHelpButton={false}
         projectionPicker={false}
         sceneModePicker={false}
-        selectionIndicator={selectionIndicator}
         creditContainer={creditContainer}
         style={{
           width: small ? "300px" : "auto",

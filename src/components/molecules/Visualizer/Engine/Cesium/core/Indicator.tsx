@@ -27,6 +27,15 @@ export default function Indicator({ className, property }: Props): JSX.Element |
   const [img, w, h] = useIcon({ image: indicator_image, imageSize: indicator_image_scale });
 
   useEffect(() => {
+    !(!indicator_type || indicator_type === "default")
+      ? viewer?.selectionIndicator.viewModel.selectionIndicatorElement.setAttribute(
+          "hidden",
+          "true",
+        )
+      : viewer?.selectionIndicator.viewModel.selectionIndicatorElement.removeAttribute("hidden");
+  }, [indicator_type, viewer, viewer?.selectionIndicator]);
+
+  useEffect(() => {
     if (!viewer) return;
     const handleTick = () => {
       if (viewer.isDestroyed()) return;
