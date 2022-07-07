@@ -64,7 +64,7 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 mkdir reearth
 cd reearth
 curl -O https://raw.githubusercontent.com/reearth/reearth/main/docker-compose.yml
-docker-compose up -d
+docker compose up -d
 # visit http://localhost:8080
 ```
 
