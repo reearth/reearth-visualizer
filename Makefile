@@ -11,21 +11,9 @@ run-app:
 	go run ./cmd/reearth
 
 run-db:
-	docker-compose up -d reearth-mongo
+	docker compose up -d reearth-mongo
 
-gen:
-	go generate ./...
-
-gen/gql:
+gql:
 	go generate ./internal/adapter/gql
 
-gen/builtin:
-	go generate ./pkg/builtin
-
-gen/manifest:
-	go generate ./pkg/plugin/manifest
-
-gen/id:
-	go generate ./pkg/id
-
-.PHONY: lint test build run-app run-db gen gen/gql gen/builtin gen/manifest gen/id
+.PHONY: lint test build run-app run-db gql
