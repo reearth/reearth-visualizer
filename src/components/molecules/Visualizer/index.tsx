@@ -9,7 +9,7 @@ import { LatLng } from "@reearth/util/value";
 import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
-import Layers, { LayerStore } from "./Layers";
+import Layers, { LayerStore, Layer } from "./Layers";
 import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
@@ -39,7 +39,7 @@ export { LayerStore };
 export type Props = {
   children?: ReactNode;
   rootLayerId?: string;
-  layers?: LayerStore;
+  rootLayer?: Layer;
   widgets?: {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
@@ -58,7 +58,7 @@ export type Props = {
   onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
   onLayerSelect?: (id?: string) => void;
-  onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
+  onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,
@@ -68,7 +68,7 @@ export type Props = {
 export default function Visualizer({
   ready,
   rootLayerId,
-  layers,
+  rootLayer,
   widgets,
   sceneProperty,
   tags,
@@ -99,6 +99,7 @@ export default function Visualizer({
     providerProps,
     selectedLayerId,
     selectedLayer,
+    layers,
     layerSelectionReason,
     layerOverriddenProperties,
     isLayerDragging,
@@ -109,6 +110,7 @@ export default function Visualizer({
     isLayerHidden,
     selectLayer,
     selectBlock,
+    changeBlock,
     updateCamera,
     handleLayerDrag,
     handleLayerDrop,
@@ -120,7 +122,7 @@ export default function Visualizer({
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    layers,
+    rootLayer,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
@@ -128,6 +130,7 @@ export default function Visualizer({
     tags,
     onLayerSelect,
     onBlockSelect,
+    onBlockChange,
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
@@ -208,7 +211,7 @@ export default function Visualizer({
             pluginProperty={pluginProperty}
             isBuilt={props.isBuilt}
             isEditable={props.isEditable && !!infobox?.isEditable}
-            onBlockChange={onBlockChange}
+            onBlockChange={changeBlock}
             onBlockDelete={onBlockDelete}
             onBlockMove={onBlockMove}
             onBlockInsert={onBlockInsert}

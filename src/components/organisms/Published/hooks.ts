@@ -9,7 +9,6 @@ import type {
   Alignment,
   ClusterProperty,
 } from "@reearth/components/molecules/Visualizer";
-import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
 import { PublishedData, WidgetZone, WidgetSection, WidgetArea, Layer as RawLayer } from "./types";
 
@@ -28,14 +27,12 @@ export default (alias?: string) => {
     [data],
   );
 
-  const layers = useMemo<LayerStore | undefined>(
-    () =>
-      new LayerStore({
-        id: "",
-        children: data?.layers?.map(processLayer),
-      }),
-    [data],
-  );
+  const rootLayer = useMemo(() => {
+    return {
+      id: "",
+      children: data?.layers?.map(processLayer) ?? [],
+    };
+  }, [data]);
 
   const tags = data?.tags; // Currently no need to convert tags
 
@@ -173,7 +170,7 @@ export default (alias?: string) => {
     alias: actualAlias,
     sceneProperty,
     pluginProperty,
-    layers,
+    rootLayer,
     tags,
     clusterProperty,
     widgets,

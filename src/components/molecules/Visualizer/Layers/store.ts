@@ -6,9 +6,10 @@ export type { Layer } from "../Primitive";
 
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
+type AddedLayerData = { layer: Layer; parentId?: string };
 
 export class LayerStore {
-  constructor(root: Layer) {
+  constructor(root?: Layer) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.#prototype = objectFromGetter<Omit<Layer, "id">>(
@@ -23,11 +24,12 @@ export class LayerStore {
         "title",
         "type",
         "tags",
+        "creator",
       ],
       function (key) {
-        const id = (this as any).id;
+        const id: string = (this as any).id;
         if (this !== self.#proot && !id) throw new Error("layer ID is not specified");
-        const target = this === self.#proot ? self.#root : self.#map.get(id);
+        const target: Layer | undefined = this === self.#proot ? self.#root : self.#map.get(id);
 
         if (key === "children") {
           return target?.children?.map(c => self.#pmap.get(c.id));
@@ -47,9 +49,11 @@ export class LayerStore {
       },
     );
 
-    this.#root = root;
-    this.#proot = this.#pluginLayer(root);
-    this.#flattenLayers = flattenLayers(root?.children ?? []);
+    this.#addedLayersData = [];
+
+    this.#root = root ?? { id: "", children: [] };
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
   }
@@ -60,6 +64,7 @@ export class LayerStore {
   #map: Map<string, Layer>;
   #pmap: Map<string, PluginLayer>;
   #prototype: Readonly<Omit<Layer, "id">>;
+  #addedLayersData: AddedLayerData[];
 
   #pluginLayer(layer: Layer): PluginLayer {
     // use getter and setter
@@ -67,6 +72,77 @@ export class LayerStore {
     l.id = layer.id;
     return l;
   }
+
+  #usedIds: Set<string> = new Set();
+  #newId = () => {
+    const genResId = () =>
+      "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
+        return ((Math.random() * 16) | 0).toString(16);
+      });
+    let id;
+    do {
+      id = genResId();
+    } while (this.#usedIds.has(id));
+    this.#usedIds.add(id);
+    return id;
+  };
+
+  #insertLayer = (layerData: AddedLayerData, save = false) => {
+    const tar = layerData.parentId ? this.#map.get(layerData.parentId) : this.#root;
+    if (!tar?.children) return;
+    tar.children.push(layerData.layer);
+    flattenLayers([layerData.layer]).forEach(l => {
+      this.#map.set(l.id, l);
+      this.#pmap.set(l.id, this.#pluginLayer(l));
+    });
+    if (save && !tar.creator) this.#addedLayersData.push(layerData);
+    return layerData.layer.id;
+  };
+
+  #processLayer = (layer: Omit<Layer, "id">, creator?: string): Layer => {
+    const { children, ...self } = layer;
+    return {
+      ...self,
+      ...(self.infobox
+        ? {
+            infobox: {
+              ...self.infobox,
+              blocks: self.infobox.blocks?.map(b => ({ ...b, id: this.#newId() })),
+            },
+          }
+        : {}),
+      id: this.#newId(),
+      pluginId: "reearth",
+      creator,
+      children: children?.map(cl => this.#processLayer(cl, creator)),
+    };
+  };
+
+  add = (layer: Omit<Layer, "id">, parentId?: string, creator?: string) => {
+    const id = this.#insertLayer(
+      {
+        layer: this.#processLayer(layer, creator ?? "window"),
+        parentId,
+      },
+      true,
+    );
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    return id;
+  };
+
+  setRootLayer = (root: Layer | undefined) => {
+    this.#root = root ?? { id: "", children: [] };
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
+    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+
+    if (this.#addedLayersData) {
+      this.#addedLayersData.forEach(ld => this.#insertLayer(ld));
+      this.#proot = this.#pluginLayer(this.#root);
+      this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    }
+  };
 
   isLayer = (obj: any): obj is PluginLayer => {
     return typeof obj === "object" && Object.getPrototypeOf(obj) === this.#prototype;
@@ -156,4 +232,4 @@ function flattenLayers(layers: Layer[] | undefined): Layer[] {
   );
 }
 
-export const empty = new LayerStore({ id: "" });
+export const empty = new LayerStore();

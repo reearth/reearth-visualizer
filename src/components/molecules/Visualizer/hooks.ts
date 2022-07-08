@@ -2,10 +2,10 @@ import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { omit } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
-import { useSet } from "react-use";
+import { useSet, useUpdate } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
-import { Camera, LatLng } from "@reearth/util/value";
+import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
 
 import type {
   OverriddenInfobox,
@@ -14,7 +14,7 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
-import { LayerStore, emptyLayerStore } from "./Layers";
+import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
 import { mergeProperty } from "./utils";
@@ -25,7 +25,7 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
-  layers = emptyLayerStore,
+  rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   camera,
@@ -33,6 +33,7 @@ export default ({
   tags,
   onLayerSelect,
   onBlockSelect,
+  onBlockChange,
   onCameraChange,
   onLayerDrop,
 }: {
@@ -41,7 +42,7 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
-  layers?: LayerStore;
+  rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
   camera?: Camera;
@@ -49,8 +50,16 @@ export default ({
   tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
+  onBlockChange?: <T extends keyof ValueTypes>(
+    blockId: string,
+    schemaGroupId: string,
+    fid: string,
+    v: ValueTypes[T],
+    vt: T,
+    selectedLayer?: Layer,
+  ) => void;
   onCameraChange?: (c: Camera) => void;
-  onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
+  onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
@@ -101,13 +110,15 @@ export default ({
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
+    layers,
     selectLayer,
     hideLayers,
     isLayerHidden,
     showLayers,
+    addLayer,
     overrideLayerProperty,
   } = useLayers({
-    layers,
+    rootLayer,
     selected: outerSelectedLayerId,
     onSelect: onLayerSelect,
   });
@@ -120,6 +131,19 @@ export default ({
       selectBlock();
     }
   }, [isEditable, isBuilt, selectBlock]);
+
+  const changeBlock = useCallback(
+    <T extends ValueType>(
+      blockId: string,
+      schemaItemId: string,
+      fieldId: string,
+      value: ValueTypes[T],
+      type: T,
+    ) => {
+      onBlockChange?.(blockId, schemaItemId, fieldId, value, type, selectedLayer);
+    },
+    [onBlockChange, selectedLayer],
+  );
 
   // camera
   const [innerCamera, setInnerCamera] = useState(camera);
@@ -143,9 +167,10 @@ export default ({
   const handleLayerDrop = useCallback(
     (id: string, key: string, latlng: LatLng | undefined) => {
       setIsLayerDragging(false);
-      if (latlng) onLayerDrop?.(id, key, latlng);
+      const layer = layers.findById(id);
+      if (latlng && layer) onLayerDrop?.(layer, key, latlng);
     },
-    [onLayerDrop],
+    [onLayerDrop, layers],
   );
 
   // GA
@@ -169,6 +194,7 @@ export default ({
       layerOverriddenProperties,
       showLayer: showLayers,
       hideLayer: hideLayers,
+      addLayer,
       selectLayer,
       overrideLayerProperty,
     },
@@ -191,6 +217,7 @@ export default ({
     providerProps,
     selectedLayerId,
     selectedLayer,
+    layers,
     layerSelectionReason,
     layerOverriddenProperties,
     isLayerDragging,
@@ -201,6 +228,7 @@ export default ({
     isLayerHidden,
     selectLayer,
     selectBlock,
+    changeBlock,
     updateCamera,
     handleLayerDrag,
     handleLayerDrop,
@@ -210,31 +238,48 @@ export default ({
 };
 
 function useLayers({
-  layers,
+  rootLayer,
   selected: outerSelectedPrimitiveId,
   onSelect,
 }: {
-  layers: LayerStore;
+  rootLayer?: Layer;
   selected?: string;
   onSelect?: (id?: string, options?: SelectLayerOptions) => void;
 }) {
   const [selectedLayerId, innerSelectLayer] = useState<string | undefined>();
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
+  const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
+  const forceUpdate = useUpdate();
+
+  useEffect(() => {
+    layers.setRootLayer(rootLayer);
+    forceUpdate();
+  }, [layers, rootLayer, forceUpdate]);
 
   const selectedLayer = useMemo(
-    () => (selectedLayerId ? layers.findById(selectedLayerId) : undefined),
+    () => (selectedLayerId ? layers?.findById(selectedLayerId) : undefined),
     [selectedLayerId, layers],
   );
 
   const selectLayer = useCallback(
     (id?: string, { reason, overriddenInfobox }: SelectLayerOptions = {}) => {
+      if (!id || !layers.findById(id)) return;
       innerSelectLayer(id);
       onSelect?.(id);
       setSelectionReason(reason);
       setPrimitiveOverridenInfobox(overriddenInfobox);
     },
-    [onSelect],
+    [onSelect, layers],
+  );
+
+  const addLayer = useCallback(
+    (layer: Layer, parentId?: string, creator?: string) => {
+      const id = layers.add(layer, parentId, creator);
+      forceUpdate();
+      return id;
+    },
+    [layers, forceUpdate],
   );
 
   const blocks = useMemo(
@@ -303,6 +348,7 @@ function useLayers({
   }, []);
 
   return {
+    layers,
     selectedLayer,
     selectedLayerId,
     layerSelectionReason,
@@ -313,6 +359,7 @@ function useLayers({
     selectLayer,
     showLayers,
     hideLayers,
+    addLayer,
     overrideLayerProperty,
   };
 }

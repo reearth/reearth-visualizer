@@ -20,7 +20,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     sceneProperty,
     pluginProperty,
     clusterProperty,
-    layers,
+    rootLayer,
     widgets,
     tags,
     selectedLayerId,
@@ -57,7 +57,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
-      layers={layers}
+      rootLayer={rootLayer}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
@@ -67,7 +67,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       pluginProperty={pluginProperty}
       clusterProperty={clusterProperty}
       camera={camera}
-      ready={isBuilt || (!!layers && !!widgets)}
+      ready={isBuilt || (!!rootLayer && !!widgets)}
       onLayerSelect={selectLayer}
       widgetAlignEditorActivated={widgetAlignEditorActivated}
       onCameraChange={onCameraChange}

@@ -1,6 +1,5 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
 import {
-  LayerStore,
   Layer,
   Widget,
   Block,
@@ -13,7 +12,6 @@ import {
   Tag,
 } from "@reearth/components/molecules/Visualizer";
 import {
-  GetLayersQuery,
   GetBlocksQuery,
   Maybe,
   MergedPropertyGroupFragmentFragment,
@@ -145,7 +143,7 @@ type GQLLayer = Maybe<
     EarthLayerCommonFragment
 >;
 
-const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
+export const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -272,15 +270,6 @@ export const convertWidgets = (
     },
     layoutConstraint,
   };
-};
-
-export const convertLayers = (data: GetLayersQuery | undefined): LayerStore | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
-    return;
-  }
-  const rl = processLayer(data.node.rootLayer);
-  if (!rl) return;
-  return new LayerStore(rl);
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {

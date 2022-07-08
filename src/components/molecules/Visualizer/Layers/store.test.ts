@@ -80,3 +80,81 @@ test("root", () => {
 
   expect(store.root).toBe(root);
 });
+
+test("add", () => {
+  const store = new LayerStore({
+    id: "",
+    children: [
+      {
+        id: "a",
+        isVisible: true,
+        title: "aaaa",
+      },
+      { id: "b", isVisible: true, title: "bbbb" },
+    ],
+  });
+  const id = store.add({
+    isVisible: true,
+    title: "cccc",
+    infobox: {
+      blocks: [
+        {
+          id: "d",
+          extensionId: "textblock",
+        },
+      ],
+    },
+  });
+  const root = store.root;
+  expect(root.children?.length).toBe(3);
+  expect(root.children?.[2].id).toBe(id);
+  expect(root.children?.[2].title).toBe("cccc");
+  expect(root.children?.[2].infobox?.blocks?.[0]?.id).not.toBe("d");
+});
+
+test("setRootLayer", () => {
+  const store = new LayerStore({
+    id: "",
+    children: [
+      {
+        id: "a",
+        isVisible: true,
+        title: "aaaa",
+      },
+      { id: "b", isVisible: true, title: "bbbb" },
+    ],
+  });
+  store.setRootLayer({
+    id: "",
+    children: [
+      {
+        id: "c",
+        isVisible: true,
+        title: "cccc",
+      },
+      { id: "d", isVisible: true, title: "dddd", type: "marker" },
+    ],
+  });
+  const root = store.root;
+  expect(root.children?.length).toBe(2);
+  expect(root.children?.[0].id).toBe("c");
+  expect(root.children?.[0].title).toBe("cccc");
+  expect(root.children?.[1].type).toBe("");
+});
+
+test("isLayer", () => {
+  const root = {
+    id: "",
+    children: [
+      {
+        id: "a",
+        isVisible: true,
+        title: "aaaa",
+        children: [{ id: "b", isVisible: true, title: "bbbb" }],
+      },
+    ],
+  };
+  const store = new LayerStore(root);
+  const isLayer = store.isLayer(store.root.children?.[0]);
+  expect(isLayer).toBe(true);
+});

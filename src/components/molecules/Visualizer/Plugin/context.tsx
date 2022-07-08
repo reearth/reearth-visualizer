@@ -47,6 +47,7 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
+  addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
@@ -84,6 +85,7 @@ export function Provider({
   layerOverriddenProperties,
   showLayer,
   hideLayer,
+  addLayer,
   selectLayer,
   overrideLayerProperty,
   layersInViewport,
@@ -129,6 +131,7 @@ export function Provider({
         layerOverriddenProperties: getLayerOverriddenProperties,
         showLayer,
         hideLayer,
+        addLayer,
         selectLayer,
         overrideLayerProperty,
         layersInViewport,
@@ -156,6 +159,7 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
+      addLayer,
       overrideLayerProperty,
       layersInViewport,
       flyTo,

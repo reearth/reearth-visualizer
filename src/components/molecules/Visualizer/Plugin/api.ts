@@ -64,6 +64,15 @@ export function exposed({
             overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
           },
         },
+        layers: merge(commonReearth.layers, {
+          add: (layer: Layer, parentId?: string) => {
+            commonReearth.layers.add(
+              layer,
+              parentId,
+              plugin ? `${plugin.id}/${plugin.extensionId}` : "",
+            );
+          },
+        }),
         ui: {
           show: (
             html: string,
@@ -134,6 +143,7 @@ export function commonReearth({
   selectLayer,
   showLayer,
   hideLayer,
+  addLayer,
   overrideLayerProperty,
   flyTo,
   lookAt,
@@ -155,6 +165,7 @@ export function commonReearth({
   layersInViewport: () => GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
+  addLayer: GlobalThis["reearth"]["layers"]["add"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
@@ -240,6 +251,9 @@ export function commonReearth({
       },
       get walk() {
         return layers().walk;
+      },
+      get add() {
+        return addLayer;
       },
     },
     ...events,

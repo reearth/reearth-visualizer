@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { ClusterProperty } from "@reearth/components/molecules/Visualizer";
+import { ClusterProperty, Layer } from "@reearth/components/molecules/Visualizer";
 import {
   Location,
   Alignment,
@@ -34,11 +34,11 @@ import {
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import {
-  convertLayers,
   convertWidgets,
   convertToBlocks,
   convertProperty,
   processSceneTags,
+  processLayer,
 } from "./convert";
 
 export default (isBuilt?: boolean) => {
@@ -99,8 +99,15 @@ export default (isBuilt?: boolean) => {
 
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
-  const layers = useMemo(() => convertLayers(layerData), [layerData]);
-  const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
+
+  const rootLayer = useMemo(
+    () =>
+      layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
+        ? processLayer(layerData?.node.rootLayer)
+        : undefined,
+    [layerData],
+  );
+
   const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
@@ -123,9 +130,8 @@ export default (isBuilt?: boolean) => {
   );
 
   const selectLayer = useCallback(
-    (id?: string) =>
-      select(id && !!layers?.findById(id) ? { layerId: id, type: "layer" } : undefined),
-    [layers, select],
+    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
+    [select],
   );
 
   const onBlockChange = useCallback(
@@ -135,6 +141,7 @@ export default (isBuilt?: boolean) => {
       fid: string,
       v: ValueTypes[T],
       vt: T,
+      selectedLayer?: Layer,
     ) => {
       const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
         ?.propertyId as string | undefined;
@@ -154,7 +161,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [updatePropertyValue, lang, selectedLayer?.infobox?.blocks],
+    [updatePropertyValue, lang],
   );
 
   const onFovChange = useCallback(
@@ -195,9 +202,8 @@ export default (isBuilt?: boolean) => {
   }, [isBuilt, title]);
 
   const handleDropLayer = useCallback(
-    async (layerId: string, propertyKey: string, position: LatLng) => {
-      const layer = layers?.findById(layerId);
-      const propertyId = layer?.propertyId;
+    async (layer: Layer, propertyKey: string, position: LatLng) => {
+      const propertyId = layer.propertyId;
       if (!propertyId) return;
 
       // propertyKey will be "default.location" for example
@@ -216,7 +222,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [updatePropertyValue, layers],
+    [updatePropertyValue],
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
@@ -275,8 +281,7 @@ export default (isBuilt?: boolean) => {
     clusterProperty,
     tags,
     widgets,
-    layers,
-    selectedLayer,
+    rootLayer,
     blocks,
     isCapturing,
     sceneMode,

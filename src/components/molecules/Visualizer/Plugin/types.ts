@@ -74,6 +74,7 @@ export type Layers = {
   ) => T | undefined;
   readonly isLayer: (obj: any) => obj is Layer;
   readonly overrideProperty: (id: string, property: any) => void;
+  readonly add: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
 };
 
 export type SelectLayerOptions = {
@@ -99,6 +100,7 @@ export type Layer<P = any, IBP = any> = {
   propertyId?: string;
   tags?: Tag[];
   readonly children?: Layer<P, IBP>[];
+  creator?: string;
 };
 
 export type Tag = {

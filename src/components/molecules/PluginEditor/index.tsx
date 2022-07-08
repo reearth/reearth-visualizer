@@ -2,7 +2,7 @@ import MonacoEditor from "@monaco-editor/react";
 import React from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import Visualizer, { LayerStore } from "@reearth/components/molecules/Visualizer";
+import Visualizer from "@reearth/components/molecules/Visualizer";
 import { styled } from "@reearth/theme";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
@@ -51,66 +51,64 @@ const PluginEditor: React.FC = () => {
                 }
               : {}),
           }}
-          layers={
-            new LayerStore({
-              id: "",
-              children: [
-                {
-                  id: "pluginprimitive",
-                  pluginId: "reearth",
-                  extensionId: "marker",
-                  isVisible: true,
-                  property: {
-                    default: {
-                      location: { lat: 0, lng: 139 },
-                      height: 0,
-                    },
+          rootLayer={{
+            id: "",
+            children: [
+              {
+                id: "pluginprimitive",
+                pluginId: "reearth",
+                extensionId: "marker",
+                isVisible: true,
+                property: {
+                  default: {
+                    location: { lat: 0, lng: 139 },
+                    height: 0,
                   },
-                  infobox: showInfobox
-                    ? {
-                        property: {
-                          default: {
-                            title: "Cool info",
-                            bgcolor: "#56051fff",
-                            size: infoboxSize,
-                          },
-                        },
-                        blocks: [
-                          ...(mode === "block"
-                            ? [
-                                {
-                                  id: "xxx",
-                                  __REEARTH_SOURCECODE: sourceCode.body,
-                                } as any,
-                              ]
-                            : []),
-                          {
-                            id: "yyy",
-                            pluginId: "plugins",
-                            extensionId: "block",
-                            property: {
-                              location: { lat: 0, lng: 139 },
-                            },
-                          },
-                        ],
-                      }
-                    : undefined,
                 },
-                ...(mode === "primitive"
-                  ? [
-                      {
-                        id: "xxx",
-                        __REEARTH_SOURCECODE: sourceCode.body,
-                        isVisible: true,
-                        property: {
-                          location: { lat: 0, lng: 130 },
+                infobox: showInfobox
+                  ? {
+                      property: {
+                        default: {
+                          title: "Cool info",
+                          bgcolor: "#56051fff",
+                          size: infoboxSize,
                         },
-                      } as any,
-                    ]
-                  : []),
-              ],
-            })
-          }
+                      },
+                      blocks: [
+                        ...(mode === "block"
+                          ? [
+                              {
+                                id: "xxx",
+                                __REEARTH_SOURCECODE: sourceCode.body,
+                              } as any,
+                            ]
+                          : []),
+                        {
+                          id: "yyy",
+                          pluginId: "plugins",
+                          extensionId: "block",
+                          property: {
+                            location: { lat: 0, lng: 139 },
+                          },
+                        },
+                      ],
+                    }
+                  : undefined,
+              },
+              ...(mode === "primitive"
+                ? [
+                    {
+                      id: "xxx",
+                      __REEARTH_SOURCECODE: sourceCode.body,
+                      isVisible: true,
+                      property: {
+                        location: { lat: 0, lng: 130 },
+                      },
+                    } as any,
+                  ]
+                : []),
+            ],
+          }}
         />
         <div
           style={{
