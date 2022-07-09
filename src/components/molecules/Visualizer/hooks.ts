@@ -1,8 +1,8 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { omit } from "lodash";
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReducer } from "react";
 import { initialize, pageview } from "react-ga";
-import { useSet, useUpdate } from "react-use";
+import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
@@ -250,16 +250,18 @@ function useLayers({
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
   const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
-  const forceUpdate = useUpdate();
+  const updateReducer = useCallback((num: number): number => (num + 1) % 1_000_000, []);
+  const [layersRenderKey, forceUpdate] = useReducer(updateReducer, 0);
 
   useEffect(() => {
     layers.setRootLayer(rootLayer);
     forceUpdate();
-  }, [layers, rootLayer, forceUpdate]);
+  }, [layers, rootLayer]);
 
   const selectedLayer = useMemo(
     () => (selectedLayerId ? layers?.findById(selectedLayerId) : undefined),
-    [selectedLayerId, layers],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedLayerId, layers, layersRenderKey],
   );
 
   const selectLayer = useCallback(
@@ -278,7 +280,7 @@ function useLayers({
       forceUpdate();
       return id;
     },
-    [layers, forceUpdate],
+    [layers],
   );
 
   const blocks = useMemo(

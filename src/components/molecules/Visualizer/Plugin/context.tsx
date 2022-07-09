@@ -172,8 +172,14 @@ export function Provider({
 
   useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
     {
-      select: selectedLayer ? [selectedLayer.id] : undefined,
-      cameramove: camera ? [camera] : undefined,
+      select: useMemo<[layerId: string | undefined]>(
+        () => (selectedLayer ? [selectedLayer.id] : [undefined]),
+        [selectedLayer],
+      ),
+      cameramove: useMemo<[camera: CameraPosition] | undefined>(
+        () => (camera ? [camera] : undefined),
+        [camera],
+      ),
     },
     emit,
   );
