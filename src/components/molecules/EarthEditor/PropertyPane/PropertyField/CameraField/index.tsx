@@ -63,10 +63,8 @@ const CameraField: React.FC<Props> = ({
     onlyPose,
     onlyPosition,
   });
+  const theme = useTheme();
 
-  const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
-  const lng = typeof camera?.lng === "number" ? Math.round(camera?.lng * 1000) / 1000 : "";
-  const height = typeof camera?.height === "number" ? Math.round(camera?.height) : "";
   const heading =
     typeof camera?.heading === "number"
       ? Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000
@@ -79,7 +77,7 @@ const CameraField: React.FC<Props> = ({
     typeof camera?.roll === "number"
       ? Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000
       : "";
-  const theme = useTheme();
+
   return (
     <Wrapper ref={wrapperRef} onClick={value ? undefined : startCapture} data-camera-popup>
       <CameraWrapper ref={cameraWrapperRef}>
@@ -104,7 +102,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={lat}
+                    value={camera?.lat}
                     step={0.01}
                     readOnly={!isCapturing}
                     onChange={handleLatChange}
@@ -116,7 +114,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={lng}
+                    value={camera?.lng}
                     step={0.01}
                     readOnly={!isCapturing}
                     onChange={handleLngChange}
@@ -128,7 +126,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={height}
+                    value={camera?.height}
                     step={1000}
                     readOnly={!isCapturing}
                     onChange={handleAltitudeChange}
@@ -310,6 +308,13 @@ const Input = styled.input`
   width: 100%;
   padding: 5px;
   box-sizing: border-box;
+  -moz-appearance: textfield;
+
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
 
 const FloatText = styled(Text)`
