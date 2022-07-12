@@ -95,7 +95,8 @@ export default function ({
       ...story,
       title: story.title || (story.layer && findLayerById?.(story.layer)?.title) || "",
     }));
-  }, [findLayerById, storiesData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [findLayerById, storiesData, reearth?.layers?.layers]);
 
   const selectAt = useCallback(
     (index: number) => {
