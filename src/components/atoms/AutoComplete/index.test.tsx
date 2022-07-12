@@ -65,9 +65,7 @@ describe("component should be searchable", () => {
   test("component should trigger onSelect function with click event", async () => {
     let handleSelect: jest.Mock<void, [value: string]>;
     await act(async () => {
-      handleSelect = jest.fn((value: string) => {
-        console.log(value);
-      });
+      handleSelect = jest.fn();
       render(<AutoComplete items={sampleItems} onSelect={handleSelect} />);
     });
     const input = screen.getByRole("textbox");

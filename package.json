@@ -53,6 +53,14 @@
         "testPathIgnorePatterns": [
             "<rootDir>/cypress/",
             "<rootDir>/node_modules/"
+        ],
+        "collectCoverageFrom": [
+            "src/**/*.{js,jsx,mjs,ts,tsx}",
+            "!src/**/*.stories.{js,jsx,mjs,ts,tsx}",
+            "!src/**/*.d.ts",
+            "!src/test/**/*",
+            "!src/gql/graphql-client-api.tsx",
+            "!**/node_modules/**"
         ]
     },
     "devDependencies": {
