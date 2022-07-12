@@ -9,6 +9,12 @@ export const LayerSystemFragments = gql`
     isVisible
     pluginId
     extensionId
+    ... on LayerGroup {
+      linkedDatasetSchemaId
+      layers {
+        id
+      }
+    }
     ... on LayerItem {
       linkedDatasetId
     }
@@ -125,6 +131,12 @@ export const EarthLayerFragments = gql`
           id
           ...PropertyFragmentWithoutSchema
         }
+      }
+    }
+    ... on LayerGroup {
+      linkedDatasetSchemaId
+      layers {
+        id
       }
     }
   }

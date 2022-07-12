@@ -265,7 +265,7 @@ export const convertLinkableDatasets = (
     .filter((s): s is DatasetSchema => !!s);
 };
 
-type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
+type GQLLayer = GetLayersFromLayerIdQuery["layer"] & {
   linkedDatasetSchemaId?: string | null;
   linkedDatasetId?: string | null;
   layers?: (GQLLayer | null | undefined)[];
@@ -273,8 +273,7 @@ type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> 
 };
 
 export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Layer[] {
-  const layers: Maybe<GQLLayer>[] =
-    data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
+  const layers = data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
 
   function mapper(layer: Maybe<GQLLayer> | undefined): Layer | undefined {
     if (!layer) return undefined;
@@ -282,7 +281,7 @@ export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Laye
       id: layer.id,
       title: layer.name,
       visible: layer.isVisible,
-      linked: layer.__typename === "LayerGroup" && !!layer.linkedDatasetSchemaId,
+      linked: !!layer.linkedDatasetSchemaId,
       ...(layer.__typename === "LayerGroup"
         ? {
             group: true,
@@ -293,14 +292,14 @@ export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Laye
           }
         : {
             group: false,
-            linked: layer.__typename === "LayerItem" && !!layer.linkedDatasetId,
+            linked: !!layer.linkedDatasetId,
             icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
           }),
     };
   }
 
   return layers
-    .map(mapper)
+    .map(l => mapper(l as GQLLayer))
     .filter((l): l is Layer => !!l)
     .reverse();
 }

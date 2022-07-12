@@ -125,7 +125,7 @@ export default () => {
   const layers = useMemo(
     () =>
       (data?.layer?.__typename === "LayerGroup" ? data.layer.layers : undefined)
-        ?.map(convertLayer)
+        ?.map(l => convertLayer(l as GQLLayer))
         .filter((l): l is Layer => !!l)
         .reverse() ?? [],
     [data?.layer],

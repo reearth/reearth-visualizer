@@ -19,12 +19,12 @@ import {
   MergedPropertyGroupCommonFragmentFragment,
   EarthLayerFragment,
   EarthLayerItemFragment,
-  EarthLayerCommonFragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
+  EarthLayer5Fragment,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
@@ -132,18 +132,7 @@ const processMergedInfobox = (
   };
 };
 
-type GQLLayer = Maybe<
-  (
-    | {
-        __typename?: "LayerGroup";
-        layers?: GQLLayer[];
-      }
-    | EarthLayerItemFragment
-  ) &
-    EarthLayerCommonFragment
->;
-
-export const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
+export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -161,7 +150,9 @@ export const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(processLayer).filter((l): l is Layer => !!l)
+        ? layer.layers
+            ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
+            .filter((l): l is Layer => !!l)
         : undefined,
   };
 };
