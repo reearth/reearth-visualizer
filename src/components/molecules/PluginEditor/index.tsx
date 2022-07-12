@@ -6,28 +6,28 @@ import Visualizer from "@reearth/components/molecules/Visualizer";
 import { styled } from "@reearth/theme";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
-import useHooks from "./hooks";
+import useHooks, { positions } from "./hooks";
 
 const PluginEditor: React.FC = () => {
   const {
     sourceCode,
-    widget,
     currentPosition,
-    positions,
     mode,
-    alignSystem,
+    widgets,
     infoboxSize,
     showAlignSystem,
     showInfobox,
+    rootLayer,
     setSourceCode,
     setMode,
     setInfoboxSize,
-    handleFileOpen,
-    handleFileDownload,
-    handleFileReset,
+    handleOpen,
+    handleDownload,
+    handleReset,
     handleAlignSystemToggle,
-    handleAlignSystemUpdate,
+    setCurrentPosition,
     handleInfoboxToggle,
+    handleRun,
   } = useHooks();
 
   return (
@@ -44,71 +44,8 @@ const PluginEditor: React.FC = () => {
           isBuilt={false}
           small={false}
           style={{ width: "100%" }}
-          widgets={{
-            ...(mode === "widget"
-              ? {
-                  alignSystem,
-                }
-              : {}),
-          }}
-          rootLayer={{
-            id: "",
-            children: [
-              {
-                id: "pluginprimitive",
-                pluginId: "reearth",
-                extensionId: "marker",
-                isVisible: true,
-                property: {
-                  default: {
-                    location: { lat: 0, lng: 139 },
-                    height: 0,
-                  },
-                },
-                infobox: showInfobox
-                  ? {
-                      property: {
-                        default: {
-                          title: "Cool info",
-                          bgcolor: "#56051fff",
-                          size: infoboxSize,
-                        },
-                      },
-                      blocks: [
-                        ...(mode === "block"
-                          ? [
-                              {
-                                id: "xxx",
-                                __REEARTH_SOURCECODE: sourceCode.body,
-                              } as any,
-                            ]
-                          : []),
-                        {
-                          id: "yyy",
-                          pluginId: "plugins",
-                          extensionId: "block",
-                          property: {
-                            location: { lat: 0, lng: 139 },
-                          },
-                        },
-                      ],
-                    }
-                  : undefined,
-              },
-              ...(mode === "primitive"
-                ? [
-                    {
-                      id: "xxx",
-                      __REEARTH_SOURCECODE: sourceCode.body,
-                      isVisible: true,
-                      property: {
-                        location: { lat: 0, lng: 130 },
-                      },
-                    } as any,
-                  ]
-                : []),
-            ],
-          }}
+          widgets={widgets}
+          rootLayer={rootLayer}
         />
         <div
           style={{
@@ -120,155 +57,146 @@ const PluginEditor: React.FC = () => {
           }}>
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
               background: "#171618",
               padding: "5px 15px",
             }}>
-            <div id="title" style={{ flex: 1 }}>
-              <h3>Plugin editor navigation</h3>
-              <p>Upload your plugin</p>
-              <input type="file" onChange={handleFileOpen}></input>
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  margin: "20px 0",
-                }}>
-                <SaveButton
-                  onClick={() => handleFileDownload(sourceCode.body, sourceCode.fileName)}>
-                  Save {sourceCode.fileName}
-                </SaveButton>
-                <Button
-                  onClick={handleFileReset}
-                  style={{ background: "orange", padding: "3px 6px", marginLeft: "20px" }}>
-                  Reset
-                </Button>
-              </div>
-            </div>
+            <h3>Plugin Editor</h3>
             <div
-              id="options"
-              style={{ display: "flex", flexDirection: "column", flex: 1, margin: "4px 0" }}>
-              <p>Options</p>
-              <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
-                Widget Align System Positions
-              </Button>
-              <div
-                style={{
-                  display: "flex",
-                  maxHeight: `${showAlignSystem ? "100px" : "0"}`,
-                  paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
-                  overflow: "hidden",
-                  transition: "all 1s",
-                  borderBottom: `${showAlignSystem ? "1px solid white" : "none"}`,
-                }}>
-                {positions.map((p, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}>
-                    {Object.keys(p).map(k => (
-                      <Button
-                        key={k}
-                        selected={
-                          currentPosition.section === p[k].section &&
-                          currentPosition.area === p[k].area
-                        }
-                        onClick={() =>
-                          handleAlignSystemUpdate(widget, {
-                            section: p[k].section,
-                            area: p[k].area,
-                          })
-                        }>
-                        {k}
-                      </Button>
-                    ))}
-                  </div>
-                ))}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "20px",
+              }}>
+              <div id="title" style={{ flex: 1 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                  }}>
+                  <LargeButton style={{ background: "orange" }} onClick={handleRun}>
+                    Run
+                  </LargeButton>
+                  <LargeButton onClick={handleDownload}>Download</LargeButton>
+                  <LargeButton onClick={handleReset} style={{ padding: "3px 6px" }}>
+                    Reset
+                  </LargeButton>
+                </div>
+                <LargeButton onClick={handleOpen}>Upload your plugin</LargeButton>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
-                <Button selected={showInfobox} onClick={handleInfoboxToggle}>
-                  Toggle Infobox
+              <div
+                id="options"
+                style={{ display: "flex", flexDirection: "column", flex: 1, margin: "4px 0" }}>
+                <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
+                  Widget Align System Positions
                 </Button>
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    maxHeight: `${showInfobox ? "100px" : "0"}`,
+                    maxHeight: `${showAlignSystem ? "100px" : "0"}`,
                     paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
                     overflow: "hidden",
                     transition: "all 1s",
-                    borderBottom: `${showInfobox ? "1px solid white" : "none"}`,
+                    borderBottom: `${showAlignSystem ? "1px solid white" : "none"}`,
                   }}>
-                  <Button
-                    selected={infoboxSize === "small"}
-                    onClick={() => setInfoboxSize("small")}>
-                    Small
+                  {positions.map((p, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}>
+                      {Object.keys(p).map(k => (
+                        <Button
+                          key={k}
+                          selected={
+                            currentPosition.section === p[k].section &&
+                            currentPosition.area === p[k].area
+                          }
+                          onClick={() =>
+                            setCurrentPosition({
+                              section: p[k].section,
+                              area: p[k].area,
+                            })
+                          }>
+                          {k}
+                        </Button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
+                  <Button selected={showInfobox} onClick={handleInfoboxToggle}>
+                    Toggle Infobox
                   </Button>
-                  <Button
-                    selected={infoboxSize === "medium"}
-                    onClick={() => setInfoboxSize("medium")}>
-                    Medium
-                  </Button>
-                  <Button
-                    selected={infoboxSize === "large"}
-                    onClick={() => setInfoboxSize("large")}>
-                    Large
-                  </Button>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      maxHeight: `${showInfobox ? "100px" : "0"}`,
+                      paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
+                      overflow: "hidden",
+                      transition: "all 1s",
+                      borderBottom: `${showInfobox ? "1px solid white" : "none"}`,
+                    }}>
+                    <Button
+                      selected={infoboxSize === "small"}
+                      onClick={() => setInfoboxSize("small")}>
+                      Small
+                    </Button>
+                    <Button
+                      selected={infoboxSize === "medium"}
+                      onClick={() => setInfoboxSize("medium")}>
+                      Medium
+                    </Button>
+                    <Button
+                      selected={infoboxSize === "large"}
+                      onClick={() => setInfoboxSize("large")}>
+                      Large
+                    </Button>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}>
+                  <p>Extension type</p>
+                  <select
+                    value={mode}
+                    onChange={e =>
+                      setMode(e.currentTarget.value as "block" | "widget" | "primitive")
+                    }>
+                    <option value="block">Block</option>
+                    <option value="widget">Widget</option>
+                  </select>
                 </div>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}>
-                <p>Extension type</p>
-                <select
-                  value={mode}
-                  onChange={e =>
-                    setMode(e.currentTarget.value as "block" | "widget" | "primitive")
-                  }>
-                  <option value="block">Block</option>
-                  <option value="widget">Widget</option>
-                </select>
-              </div>
-            </div>
-            <div
-              style={{
-                flex: 2,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "0 40px",
-              }}>
               <Icon icon="logo" />
             </div>
           </div>
           <MonacoEditor
             height="100%"
             language="javascript"
-            value={sourceCode.body}
-            onChange={value => {
-              setSourceCode(sc => ({ ...sc, body: value }));
-            }}
-            theme={"vs-dark"}
-            options={{
-              bracketPairColorization: {
-                enabled: true,
-              },
-              automaticLayout: true,
-              minimap: {
-                enabled: false,
-              },
-            }}
+            value={sourceCode}
+            onChange={setSourceCode}
+            theme="vs-dark"
+            options={options}
           />
         </div>
       </div>
     </DndProvider>
   );
+};
+
+const options = {
+  bracketPairColorization: {
+    enabled: true,
+  },
+  automaticLayout: true,
+  minimap: {
+    enabled: false,
+  },
 };
 
 export default PluginEditor;
@@ -285,6 +213,10 @@ const Button = styled.button<{ selected?: boolean }>`
   }
 `;
 
-const SaveButton = styled(Button)`
+const LargeButton = styled(Button)`
+  & + & {
+    margin-left: 5px;
+  }
+
   padding: 6px 8px;
 `;
