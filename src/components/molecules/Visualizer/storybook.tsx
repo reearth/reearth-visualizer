@@ -77,6 +77,7 @@ export const context: ProviderProps = {
   zoomIn: act("zoomIn"),
   zoomOut: act("zoomOut"),
   overrideLayerProperty: act("overrideLayerProperty"),
+  overrideSceneProperty: act("overrideSceneProperty"),
   layersInViewport: act("layersInViewport"),
   viewport: act("viewport"),
 };

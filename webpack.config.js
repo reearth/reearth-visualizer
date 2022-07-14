@@ -153,6 +153,7 @@ module.exports = (env, args = {}) => {
       new webpack.DefinePlugin({
         CESIUM_BASE_URL: JSON.stringify("/cesium"),
         REEARTH_WEB_VERSION: pkg.version,
+        "process.env.QTS_DEBUG": "false",
       }),
       new CopyWebpackPlugin({
         patterns: [
@@ -179,6 +180,8 @@ module.exports = (env, args = {}) => {
     resolve: {
       alias: {
         "@reearth": path.resolve(__dirname, "src/"),
+        // For quickjs-emscripten
+        crypto: "crypto-js",
       },
       extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
       // For quickjs-emscripten

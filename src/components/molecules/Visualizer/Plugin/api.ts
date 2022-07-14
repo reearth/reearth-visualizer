@@ -14,10 +14,7 @@ import type {
   Tag,
 } from "./types";
 
-export type CommonReearth = Omit<
-  Reearth,
-  "visualizer" | "plugin" | "ui" | "block" | "layer" | "widget"
-> & { visualizer: Omit<Reearth["visualizer"], "overrideProperty"> };
+export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
 
 export function exposed({
   render,
@@ -58,19 +55,22 @@ export function exposed({
     reearth: merge(
       commonReearth,
       {
-        visualizer: {
-          ...commonReearth.visualizer,
-          overrideProperty: (property: any) => {
-            overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+        visualizer: merge(commonReearth.visualizer, {
+          get overrideProperty() {
+            return (property: any) => {
+              overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+            };
           },
-        },
+        }),
         layers: merge(commonReearth.layers, {
-          add: (layer: Layer, parentId?: string) => {
-            commonReearth.layers.add(
-              layer,
-              parentId,
-              plugin ? `${plugin.id}/${plugin.extensionId}` : "",
-            );
+          get add() {
+            return (layer: Layer, parentId?: string) => {
+              commonReearth.layers.add(
+                layer,
+                parentId,
+                plugin ? `${plugin.id}/${plugin.extensionId}` : "",
+              );
+            };
           },
         }),
         ui: {
@@ -103,15 +103,11 @@ export function exposed({
         },
         ...events,
       },
-      plugin?.extensionType === "primitive"
+      plugin?.extensionType === "block"
         ? {
             get layer() {
               return layer?.();
             },
-          }
-        : {},
-      plugin?.extensionType === "block"
-        ? {
             get block() {
               return block?.();
             },
@@ -145,6 +141,7 @@ export function commonReearth({
   hideLayer,
   addLayer,
   overrideLayerProperty,
+  overrideSceneProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -167,6 +164,7 @@ export function commonReearth({
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   addLayer: GlobalThis["reearth"]["layers"]["add"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
+  overrideSceneProperty: GlobalThis["reearth"]["visualizer"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
@@ -193,6 +191,7 @@ export function commonReearth({
       get property() {
         return sceneProperty();
       },
+      overrideProperty: overrideSceneProperty,
     },
     layers: {
       get layersInViewport() {

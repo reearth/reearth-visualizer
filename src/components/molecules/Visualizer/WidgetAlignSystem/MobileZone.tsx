@@ -15,6 +15,7 @@ export type Props = {
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
+  editing?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
@@ -32,6 +33,7 @@ export default function MobileZone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  editing,
   children,
 }: Props) {
   const filteredSections = useMemo(() => {
@@ -65,6 +67,7 @@ export default function MobileZone({
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
+                  editing={editing}
                 />
               ),
             )}

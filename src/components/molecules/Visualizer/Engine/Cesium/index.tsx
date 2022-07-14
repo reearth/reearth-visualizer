@@ -6,7 +6,6 @@ import {
   Fog,
   Sun,
   SkyAtmosphere,
-  ImageryLayer,
   Scene,
   SkyBox,
   Camera,
@@ -20,6 +19,7 @@ import {
 import type { EngineProps, Ref as EngineRef } from "..";
 
 import Clock from "./core/Clock";
+import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
 import Event from "./Event";
 import useHooks from "./hooks";
@@ -49,7 +49,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     terrainProvider,
     terrainProperty,
     backgroundColor,
-    imageryLayers,
     cesium,
     limiterDimensions,
     cameraViewOuterBoundaries,
@@ -103,6 +102,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         onClick={handleClick}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock property={property} />
+        <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={property?.default?.ion} />
         <Entity>
           <Indicator property={property} />
         </Entity>
@@ -123,7 +123,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           percentageChanged={0.2}
           onMoveEnd={handleCameraMoveEnd}
         />
-
         {limiterDimensions && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
             <PolylineGraphics
@@ -161,15 +160,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           terrainExaggerationRelativeHeight={terrainProperty.terrainExaggerationRelativeHeight}
           terrainExaggeration={terrainProperty.terrainExaggeration}
         />
-        {imageryLayers?.map(({ id, provider, min, max, opacity }) => (
-          <ImageryLayer
-            key={id}
-            imageryProvider={provider}
-            minimumTerrainLevel={min}
-            maximumTerrainLevel={max}
-            alpha={opacity}
-          />
-        ))}
         {ready ? children : null}
       </Viewer>
     </>

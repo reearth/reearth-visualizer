@@ -8091,6 +8091,11 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
+crypto-js@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
+
 css-box-model@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/css-box-model/-/css-box-model-1.2.1.tgz#59951d3b81fd6b2074a62d49444415b0d2b4d7c1"
@@ -16382,15 +16387,15 @@ quick-temp@^0.1.8:
     rimraf "^2.5.4"
     underscore.string "~3.3.4"
 
-quickjs-emscripten-sync@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.2.0.tgz#7bfc1b1fa3fee6b264162bfbc884fc6c363ffa69"
-  integrity sha512-fQep7mjCz0LAXkIvT/W6cuDply4HaSbDoOk/QlvSvvcE0RoVIkr+4XH3QWoCMxS7q51jyS0DDA9NnrPGZXmzKQ==
+quickjs-emscripten-sync@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.4.0.tgz#f1f155feac2ca135f9e07dc53466dcd57d7054b9"
+  integrity sha512-3ESHBgc4PuDGEQc+h4Sh6YV2ax+fSVNYackvaPinUlDZ+ZevuigPfxsaoj68aOSwPP/dtaIOpbpNkxOdetQc0w==
 
-quickjs-emscripten@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/quickjs-emscripten/-/quickjs-emscripten-0.15.0.tgz#636b87d09a9ae79772fca20cce8ad74a1c1a5542"
-  integrity sha512-7b32VY45/Rmo/S81W0VcHnsPW9yvCbGOCjf+xl8XYcQIL/FmbfmwroJPnyXHRYC0HO8mk8cTkvsMC+0bR/NrJA==
+quickjs-emscripten@^0.21.0:
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten/-/quickjs-emscripten-0.21.0.tgz#d6a7e81b311babb1a1c95d3257d56f0c5e4e48b2"
+  integrity sha512-tx0o6Ig3K3ehLBaw+p/DnPKrY88gsVpFf9VirEPZNrf/q1egzXOpBuqiHOlFIp9OghWovdeCH+J7jqc/YjYALA==
 
 raf-schd@^4.0.2:
   version "4.0.3"

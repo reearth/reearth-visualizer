@@ -1,12 +1,16 @@
 import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
 
-import useHook, { IFrameAPI, RefType } from "./hooks";
+import useHook, {
+  defaultIsMarshalable,
+  type IFrameAPI as IFrameAPIType,
+  type RefType,
+} from "./hooks";
 import IFrame, { AutoResize as AutoResizeType } from "./IFrame";
 
-export { defaultIsMarshalable } from "./hooks";
-export type { IFrameAPI } from "./hooks";
+export { defaultIsMarshalable };
 export type AutoResize = AutoResizeType;
 export type Ref = RefType;
+export type IFrameAPI = IFrameAPIType;
 
 export type Props = {
   className?: string;
@@ -46,7 +50,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
   },
   ref,
 ) => {
-  const { iFrameRef, iFrameHtml, iFrameOptions } = useHook({
+  const { iFrameRef, iFrameHtml, iFrameOptions, handleIFrameLoad } = useHook({
     iframeCanBeVisible: canBeVisible,
     skip,
     src,
@@ -66,11 +70,12 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
       html={iFrameHtml}
       width={iFrameOptions?.width}
       height={iFrameOptions?.height}
-      ref={iFrameRef}
       visible={iFrameOptions?.visible}
-      onMessage={onMessage}
       iFrameProps={iFrameProps}
+      ref={iFrameRef}
+      onMessage={onMessage}
       onClick={onClick}
+      onLoad={handleIFrameLoad}
     />
   ) : renderPlaceholder ? (
     <>{renderPlaceholder}</>

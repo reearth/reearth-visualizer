@@ -159,8 +159,9 @@ export default function useHook({
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
     () => ({
+      ...iFrameProps,
       style: {
-        display: visible ? undefined : "none",
+        display: visible ? "block" : "none",
         width: visible
           ? !autoResize || autoResize == "height-only"
             ? "100%"
@@ -173,7 +174,6 @@ export default function useHook({
           : "0px",
         ...iFrameProps?.style,
       },
-      ...iFrameProps,
     }),
     [autoResize, iFrameProps, iFrameSize, visible],
   );

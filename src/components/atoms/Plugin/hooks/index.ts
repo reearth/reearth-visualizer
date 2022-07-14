@@ -2,7 +2,9 @@ import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle, Ref } from "react";
 
-import type { Ref as IFrameRef } from "./IFrame";
+import type { Ref as IFrameRef } from "../IFrame";
+
+import { usePostMessage } from "./usePostMessage";
 
 export type IFrameAPI = {
   render: (
@@ -42,7 +44,7 @@ export const defaultIsMarshalable = (obj: any): boolean => {
 };
 
 const defaultOnError = (err: any) => {
-  console.error("plugin error", err?.message || err);
+  console.error("plugin error", err);
 };
 
 export default function useHook({
@@ -60,11 +62,15 @@ export default function useHook({
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
+  const [iFrameLoaded, setIFrameLoaded] = useState(false);
   const [code, setCode] = useState("");
   const iFrameRef = useRef<IFrameRef>(null);
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
     [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
+  const postMessage = usePostMessage(iFrameRef, !loaded || !iFrameLoaded);
+
+  const handleIFrameLoad = useCallback(() => setIFrameLoaded(true), []);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -81,7 +87,7 @@ export default function useHook({
         if (!arena.current) return;
         try {
           arena.current.executePendingJobs();
-          if (arena.current.vm.hasPendingJob()) {
+          if (arena.current.context.runtime.hasPendingJob()) {
             eventLoop.current = window.setTimeout(eventLoopCb, 0);
           }
         } catch (err) {
@@ -103,11 +109,9 @@ export default function useHook({
       resize: (width, height) => {
         iFrameRef.current?.resize(width, height);
       },
-      postMessage: msg => {
-        iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
-      },
+      postMessage,
     }),
-    [iframeCanBeVisible],
+    [iframeCanBeVisible, postMessage],
   );
 
   useEffect(() => {
@@ -124,8 +128,8 @@ export default function useHook({
     onPreInit?.();
 
     (async () => {
-      const vm = (await getQuickJS()).createVm();
-      arena.current = new Arena(vm, {
+      const ctx = (await getQuickJS()).newContext();
+      arena.current = new Arena(ctx, {
         isMarshalable: target =>
           defaultIsMarshalable(target) ||
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
@@ -143,22 +147,26 @@ export default function useHook({
     return () => {
       onDispose?.();
       setIFrameState(["", undefined]);
+      setLoaded(false);
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
       }
       if (arena.current) {
         try {
           arena.current.dispose();
-          arena.current.vm.dispose();
+          arena.current.context.dispose();
         } catch (err) {
-          console.error(err);
+          console.debug("quickjs-emscripten dispose error", err);
         } finally {
           arena.current = undefined;
-          setLoaded(false);
         }
       }
     };
   }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
+
+  useEffect(() => {
+    if (!loaded) setIFrameLoaded(false);
+  }, [loaded]);
 
   useImperativeHandle(
     ref,
@@ -176,5 +184,6 @@ export default function useHook({
     iFrameRef,
     iFrameOptions,
     loaded,
+    handleIFrameLoad,
   };
 }

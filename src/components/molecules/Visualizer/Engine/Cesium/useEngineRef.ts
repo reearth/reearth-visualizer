@@ -9,14 +9,6 @@ import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
 import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
 
-const exposedFunctions = Object.values(Cesium).filter(
-  (e): e is (...args: any[]) => any => typeof e === "function",
-);
-
-const isMarshalable = (t: any): boolean | "json" => {
-  return exposedFunctions.some(v => t instanceof v);
-};
-
 export default function useEngineRef(
   ref: Ref<EngineRef>,
   cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
@@ -25,7 +17,6 @@ export default function useEngineRef(
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
-      isMarshalable,
       requestRender: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;

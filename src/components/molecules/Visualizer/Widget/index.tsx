@@ -23,7 +23,7 @@ export type Props<PP = any, SP = any> = {
   pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
+  iFrameProps?: PluginProps["iFrameProps"];
   onExtend?: (id: string, extended: boolean | undefined) => void;
 };
 
@@ -38,8 +38,8 @@ export default function WidgetComponent<PP = any, SP = any>({
   extended,
   pluginBaseUrl,
   layout,
+  iFrameProps,
   onExtend,
-  overrideSceneProperty,
   ...props
 }: Props<PP, SP>) {
   const { align, location } = layout ?? {};
@@ -96,9 +96,9 @@ export default function WidgetComponent<PP = any, SP = any>({
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
       widget={w}
+      iFrameProps={iFrameProps}
       onRender={handleRender}
       onResize={handleResize}
-      overrideSceneProperty={overrideSceneProperty}
     />
   );
 }

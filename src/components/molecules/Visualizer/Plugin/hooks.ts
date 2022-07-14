@@ -5,8 +5,10 @@ import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
+import { useGet } from "../utils";
+
 import { exposed } from "./api";
-import { useGet, useContext } from "./context";
+import { useContext } from "./context";
 import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
@@ -20,7 +22,6 @@ export default function ({
   pluginProperty,
   onRender,
   onResize,
-  overrideSceneProperty,
 }: {
   pluginId?: string;
   extensionId?: string;
@@ -30,7 +31,6 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onRender?: (
     options:
       | {
@@ -55,7 +55,6 @@ export default function ({
       layer,
       widget,
       pluginProperty,
-      overrideSceneProperty,
       onRender,
       onResize,
     }) ?? [];
@@ -92,7 +91,6 @@ export function useAPI({
   layer,
   block,
   widget,
-  overrideSceneProperty,
   onRender,
   onResize,
 }: {
@@ -103,7 +101,6 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onRender?: (
     options:
       | {
@@ -160,15 +157,8 @@ export function useAPI({
   }, []);
 
   const isMarshalable = useCallback(
-    (target: any) => {
-      if (defaultIsMarshalable(target)) return true;
-      if (ctx?.reearth.layers.isLayer(target)) return true;
-      if (typeof ctx?.engine.isMarshalable === "function") {
-        return ctx.engine.isMarshalable(target);
-      }
-      return ctx?.engine.isMarshalable || false;
-    },
-    [ctx?.engine, ctx?.reearth.layers],
+    (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
+    [ctx?.reearth.layers],
   );
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
@@ -197,11 +187,12 @@ export function useAPI({
           resize(width, height);
           onResize?.(width, height, extended);
         },
-        overrideSceneProperty,
+        overrideSceneProperty: ctx.overrideSceneProperty,
       });
     };
   }, [
     ctx?.reearth,
+    ctx?.overrideSceneProperty,
     extensionId,
     extensionType,
     pluginId,
@@ -211,12 +202,11 @@ export function useAPI({
     getWidget,
     onRender,
     onResize,
-    overrideSceneProperty,
   ]);
 
   useEffect(() => {
     event.current?.[1]("update");
-  }, [block, layer, widget]);
+  }, [block, layer, widget, ctx?.reearth.visualizer.property]);
 
   return {
     staticExposed,

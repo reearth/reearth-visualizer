@@ -8,7 +8,7 @@ import {
   Ion,
 } from "cesium";
 
-export default {
+export const tiles = {
   default: () =>
     new IonImageryProvider({
       assetId: IonWorldImageryStyle.AERIAL,
