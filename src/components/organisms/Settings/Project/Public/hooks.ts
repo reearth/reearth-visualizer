@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import {
-  useGetProjectsQuery,
+  useGetProjectQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
@@ -34,37 +34,31 @@ export default ({ projectId }: Params) => {
   const [updateProject] = useUpdateProjectMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
 
-  const teamId = currentTeam?.id;
-
-  const { data } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
-    skip: !teamId,
+  const { data } = useGetProjectQuery({
+    variables: { projectId: projectId ?? "" },
+    skip: !projectId,
   });
 
-  const rawProject = useMemo(
-    () => data?.projects.nodes.find(p => p?.id === projectId),
-    [data, projectId],
-  );
   const project = useMemo(
     () =>
-      rawProject?.id
+      data?.node?.__typename === "Project"
         ? {
-            id: rawProject.id,
-            name: rawProject.name,
-            description: rawProject.description,
-            imageUrl: rawProject.imageUrl,
-            publicTitle: rawProject.publicTitle ?? undefined,
-            publicDescription: rawProject.publicDescription ?? undefined,
-            publicImage: rawProject.publicImage ?? undefined,
-            isArchived: rawProject.isArchived,
-            isBasicAuthActive: rawProject.isBasicAuthActive,
-            basicAuthUsername: rawProject.basicAuthUsername,
-            basicAuthPassword: rawProject.basicAuthPassword,
-            alias: rawProject.alias,
-            publishmentStatus: rawProject.publishmentStatus,
+            id: data.node.id,
+            name: data.node.name,
+            description: data.node.description,
+            imageUrl: data.node.imageUrl,
+            publicTitle: data.node.publicTitle ?? undefined,
+            publicDescription: data.node.publicDescription ?? undefined,
+            publicImage: data.node.publicImage ?? undefined,
+            isArchived: data.node.isArchived,
+            isBasicAuthActive: data.node.isBasicAuthActive,
+            basicAuthUsername: data.node.basicAuthUsername,
+            basicAuthPassword: data.node.basicAuthPassword,
+            alias: data.node.alias,
+            publishmentStatus: data.node.publishmentStatus,
           }
         : undefined,
-    [rawProject],
+    [data?.node],
   );
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { User } from "@reearth/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import {
   useGetTeamsQuery,
-  useGetProjectQuery,
+  useGetProjectBySceneQuery,
   PublishmentStatus,
   usePublishProjectMutation,
   useCheckProjectAliasLazyQuery,
@@ -42,7 +42,7 @@ export default () => {
   const { data: teamsData } = useGetTeamsQuery();
   const teams = teamsData?.me?.teams;
 
-  const { data } = useGetProjectQuery({
+  const { data } = useGetProjectBySceneQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
   });

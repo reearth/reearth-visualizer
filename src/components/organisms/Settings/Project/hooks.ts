@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 import {
-  useGetProjectsQuery,
+  useGetProjectQuery,
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
@@ -18,36 +18,30 @@ export default ({ projectId }: Params) => {
   const [, setNotification] = useNotification();
   const [currentTeam] = useTeam();
 
-  const teamId = currentTeam?.id;
-
-  const { data } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
-    skip: !teamId,
+  const { data } = useGetProjectQuery({
+    variables: { projectId: projectId ?? "" },
+    skip: !projectId,
   });
 
-  const rawProject = useMemo(
-    () => data?.projects.nodes.find(p => p?.id === projectId),
-    [data, projectId],
-  );
   const project = useMemo(
     () =>
-      rawProject?.id
+      data?.node?.__typename === "Project"
         ? {
-            id: rawProject.id,
-            name: rawProject.name,
-            description: rawProject.description,
-            publicTitle: rawProject.publicTitle,
-            publicDescription: rawProject.publicDescription,
-            isArchived: rawProject.isArchived,
-            isBasicAuthActive: rawProject.isBasicAuthActive,
-            basicAuthUsername: rawProject.basicAuthUsername,
-            basicAuthPassword: rawProject.basicAuthPassword,
-            imageUrl: rawProject.imageUrl,
-            alias: rawProject.alias,
-            publishmentStatus: rawProject.publishmentStatus,
+            id: data.node.id,
+            name: data.node.name,
+            description: data.node.description,
+            publicTitle: data.node.publicTitle,
+            publicDescription: data.node.publicDescription,
+            isArchived: data.node.isArchived,
+            isBasicAuthActive: data.node.isBasicAuthActive,
+            basicAuthUsername: data.node.basicAuthUsername,
+            basicAuthPassword: data.node.basicAuthPassword,
+            imageUrl: data.node.imageUrl,
+            alias: data.node.alias,
+            publishmentStatus: data.node.publishmentStatus,
           }
         : undefined,
-    [rawProject],
+    [data?.node],
   );
 
   const [updateProjectMutation] = useUpdateProjectMutation();
