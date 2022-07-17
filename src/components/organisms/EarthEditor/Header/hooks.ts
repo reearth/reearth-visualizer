@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@reearth/auth";
@@ -47,7 +47,13 @@ export default () => {
     skip: !sceneId,
   });
   const teamId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
-  const project = data?.node?.__typename === "Scene" ? data.node.project : undefined;
+  const project = useMemo(
+    () =>
+      data?.node?.__typename === "Scene" && data.node.project
+        ? { ...data.node.project, sceneId: data.node.id }
+        : undefined,
+    [data?.node],
+  );
 
   const user: User = {
     name: teamsData?.me?.name || "",
@@ -87,12 +93,18 @@ export default () => {
   }, [teams, currentTeam, teamId, setTeam]);
 
   useEffect(() => {
-    if (currentProject || !project) return;
-    setProject({
-      id: project.id,
-      name: project.name,
-    });
-  }, [project, currentProject, setProject]);
+    setProject(p =>
+      p?.id !== project?.id
+        ? project
+          ? {
+              id: project.id,
+              name: project.name,
+              sceneId: project.sceneId,
+            }
+          : undefined
+        : p,
+    );
+  }, [project, setProject]);
 
   // publication modal
   useEffect(() => {

@@ -2698,6 +2698,13 @@ export type GetProjectQueryVariables = Exact<{
 
 export type GetProjectQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
+export type GetProjectWithSceneIdQueryVariables = Exact<{
+  projectId: Scalars['ID'];
+}>;
+
+
+export type GetProjectWithSceneIdQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+
 export type GetProjectBySceneQueryVariables = Exact<{
   sceneId: Scalars['ID'];
 }>;
@@ -5583,6 +5590,47 @@ export function useGetProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
 export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
 export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
+export const GetProjectWithSceneIdDocument = gql`
+    query GetProjectWithSceneId($projectId: ID!) {
+  node(id: $projectId, type: PROJECT) {
+    id
+    ... on Project {
+      ...ProjectFragment
+      scene {
+        id
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __useGetProjectWithSceneIdQuery__
+ *
+ * To run a query within a React component, call `useGetProjectWithSceneIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectWithSceneIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectWithSceneIdQuery({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useGetProjectWithSceneIdQuery(baseOptions: Apollo.QueryHookOptions<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>(GetProjectWithSceneIdDocument, options);
+      }
+export function useGetProjectWithSceneIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>(GetProjectWithSceneIdDocument, options);
+        }
+export type GetProjectWithSceneIdQueryHookResult = ReturnType<typeof useGetProjectWithSceneIdQuery>;
+export type GetProjectWithSceneIdLazyQueryHookResult = ReturnType<typeof useGetProjectWithSceneIdLazyQuery>;
+export type GetProjectWithSceneIdQueryResult = Apollo.QueryResult<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>;
 export const GetProjectBySceneDocument = gql`
     query GetProjectByScene($sceneId: ID!) {
   node(id: $sceneId, type: SCENE) {
@@ -5861,22 +5909,11 @@ export const UpdateProjectDocument = gql`
   ) {
     project {
       id
-      name
-      description
-      imageUrl
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      publicImage
-      alias
-      publishmentStatus
+      ...ProjectFragment
     }
   }
 }
-    `;
+    ${ProjectFragmentFragmentDoc}`;
 export type UpdateProjectMutationFn = Apollo.MutationFunction<UpdateProjectMutation, UpdateProjectMutationVariables>;
 
 /**

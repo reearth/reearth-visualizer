@@ -6,7 +6,7 @@ import {
   useGetMeQuery,
   useGetProjectSceneQuery,
   useGetTeamsQuery,
-  useGetProjectsQuery,
+  useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
@@ -59,19 +59,26 @@ export default (params: Params) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam, setTeam, teams, teamsData?.me]);
 
-  const { data } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
-    skip: !teamId,
+  const { data } = useGetProjectWithSceneIdQuery({
+    variables: { projectId: projectId ?? "" },
+    skip: !projectId,
   });
+  const project = data?.node?.__typename === "Project" ? data.node : undefined;
 
   useEffect(() => {
-    if (!data) return;
-    const project = data?.projects.nodes.find(node => node?.id === params.projectId) ?? undefined;
-
-    if (project?.id !== currentProject?.id) {
-      setProject(project);
-    }
-  }, [data, params, currentProject, setProject]);
+    setProject(p =>
+      p?.id !== project?.id
+        ? project
+          ? {
+              id: project.id,
+              name: project.name,
+              isArchived: project.isArchived,
+              sceneId: project.scene?.id,
+            }
+          : undefined
+        : p,
+    );
+  }, [project, setProject]);
 
   const changeTeam = useCallback(
     (teamId: string) => {

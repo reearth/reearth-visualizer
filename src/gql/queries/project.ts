@@ -15,6 +15,22 @@ export const GET_PROJECT = gql`
   ${projectFragment}
 `;
 
+export const GET_PROJECT_WITH_SCENE_ID = gql`
+  query GetProjectWithSceneId($projectId: ID!) {
+    node(id: $projectId, type: PROJECT) {
+      id
+      ... on Project {
+        ...ProjectFragment
+        scene {
+          id
+        }
+      }
+    }
+  }
+
+  ${projectFragment}
+`;
+
 export const GET_PROJECT_BY_SCENE = gql`
   query GetProjectByScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
@@ -147,21 +163,12 @@ export const UPDATE_PROJECT = gql`
     ) {
       project {
         id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
+        ...ProjectFragment
       }
     }
   }
+
+  ${projectFragment}
 `;
 
 export const UPDATE_PROJECT_BASIC_AUTH = gql`
