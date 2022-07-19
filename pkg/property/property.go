@@ -266,8 +266,11 @@ func (p *Property) RemoveField(ptr *Pointer) {
 		return
 	}
 
-	if group := ToGroup(p.Item(ptr)); group != nil {
+	item := p.Item(ptr)
+	if group := ToGroup(item); group != nil {
 		group.RemoveField(fid)
+	} else if groupList := ToGroupList(item); groupList != nil {
+		groupList.RemoveFields(ptr)
 	}
 }
 

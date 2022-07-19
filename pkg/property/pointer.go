@@ -216,7 +216,7 @@ func (p *Pointer) Test(sg SchemaGroupID, i ItemID, f FieldID) bool {
 }
 
 func (p *Pointer) TestItem(sg SchemaGroupID, i ItemID) bool {
-	return p.TestSchemaGroup(sg) && (p.item == nil || *p.item == i)
+	return p.TestSchemaGroup(sg) && (p.item == nil || p.item.Equal(i))
 }
 
 func (p *Pointer) TestSchemaGroup(sg SchemaGroupID) bool {
