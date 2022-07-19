@@ -1,0 +1,15 @@
+prefixes:
+  feat: 🚀 Features
+  fix: 🔧 Bug Fixes
+  docs: 📖 Documentation
+  doc: 📖 Documentation
+  perf: ⚡️ Performance
+  refactor: ✨ Refactor
+  style: 🎨 Styling
+  test: 🧪 Testing
+  chore: Miscellaneous Tasks
+  build: Miscellaneous Tasks
+  deps: Miscellaneous Tasks
+  ci: false
+  revert: false
+titleVersionPrefix: remove
