@@ -3,31 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## 0.9.0 - 2022-07-20
 
-### chore
-
-- Update Makefile to remove unused targets [`67780b`](https://github.com/reearth/reearth-backend/commit/67780b)
-
-### ci
-
-- Fix release workflow [`0e2daa`](https://github.com/reearth/reearth-backend/commit/0e2daa)
-- Update changelog config [`62dede`](https://github.com/reearth/reearth-backend/commit/62dede)
-- Simplify if in build workflow [`164eba`](https://github.com/reearth/reearth-backend/commit/164eba)
-
-### feat
+### 🚀 Features
 
 - Change layer indicators from preset list from backend side ([#158](https://github.com/reearth/reearth-backend/pull/158)) [`0267f1`](https://github.com/reearth/reearth-backend/commit/0267f1)
 
-### fix
+### 🔧 Bug Fixes
 
 - Property fields in a property list cannot be removed ([#160](https://github.com/reearth/reearth-backend/pull/160)) [`358237`](https://github.com/reearth/reearth-backend/commit/358237)
 
-### test
+### 🧪 Testing
 
 - Unit test for mongo auth request repo ([#159](https://github.com/reearth/reearth-backend/pull/159)) [`5afc81`](https://github.com/reearth/reearth-backend/commit/5afc81)
 
-### 
+### Miscellaneous Tasks
 
-- V0.8.0 [`64d646`](https://github.com/reearth/reearth-backend/commit/64d646)
+- Update Makefile to remove unused targets [`67780b`](https://github.com/reearth/reearth-backend/commit/67780b)
 
 ## 0.8.0 - 2022-06-17
 
