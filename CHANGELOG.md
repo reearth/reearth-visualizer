@@ -1,6 +1,58 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.9.0 - 2022-07-20
+
+### chore
+
+- Update dependency cesium to ^1.95.0 ([#262](https://github.com/reearth/reearth-web/pull/262)) [`845e2a`](https://github.com/reearth/reearth-web/commit/845e2a)
+- Upgrade cesium [`363071`](https://github.com/reearth/reearth-web/commit/363071)
+- Upgrade to React 18 and switch to React Router ([#234](https://github.com/reearth/reearth-web/pull/234)) [`b0e8e6`](https://github.com/reearth/reearth-web/commit/b0e8e6)
+
+### ci
+
+- Update changelog config [`0c1df2`](https://github.com/reearth/reearth-web/commit/0c1df2)
+- Fix ci and build workflows [`e98a73`](https://github.com/reearth/reearth-web/commit/e98a73)
+
+### feat
+
+- Plugin API to add layers ([#258](https://github.com/reearth/reearth-web/pull/258)) [`6468e2`](https://github.com/reearth/reearth-web/commit/6468e2)
+- Change layer indicators from preset list ([#245](https://github.com/reearth/reearth-web/pull/245)) [`db185e`](https://github.com/reearth/reearth-web/commit/db185e)
+
+### fix
+
+- Some menu not displayed at sidebar in proejct setting page [`7c0705`](https://github.com/reearth/reearth-web/commit/7c0705)
+- Nothing displayed at project setting page when there are many projects [`0a6744`](https://github.com/reearth/reearth-web/commit/0a6744)
+- Plugins do not work as expected, update quickjs-emscripten ([#276](https://github.com/reearth/reearth-web/pull/276)) [`9336e6`](https://github.com/reearth/reearth-web/commit/9336e6)
+- Plugin editor changes do not take effect until run button is clicked ([#274](https://github.com/reearth/reearth-web/pull/274)) [`39fdb2`](https://github.com/reearth/reearth-web/commit/39fdb2)
+- Storytelling widget does not get layers&[#39](https://github.com/reearth/reearth-web/pull/39); title ([#273](https://github.com/reearth/reearth-web/pull/273)) [`5ff72b`](https://github.com/reearth/reearth-web/commit/5ff72b)
+- Dataset icon not showing in layer list ([#275](https://github.com/reearth/reearth-web/pull/275)) [`8dbc88`](https://github.com/reearth/reearth-web/commit/8dbc88)
+- Show full camera values in camera property field popup ([#270](https://github.com/reearth/reearth-web/pull/270)) [`7d3eac`](https://github.com/reearth/reearth-web/commit/7d3eac)
+- Plugin dimensions and iframe issues ([#271](https://github.com/reearth/reearth-web/pull/271)) [`f3a52a`](https://github.com/reearth/reearth-web/commit/f3a52a)
+- Camera jump not working ([#269](https://github.com/reearth/reearth-web/pull/269)) [`48bbfe`](https://github.com/reearth/reearth-web/commit/48bbfe)
+- Layer select state not update properly ([#268](https://github.com/reearth/reearth-web/pull/268)) [`5f7c69`](https://github.com/reearth/reearth-web/commit/5f7c69)
+- Unselect layer not work properly ([#266](https://github.com/reearth/reearth-web/pull/266)) [`eb41da`](https://github.com/reearth/reearth-web/commit/eb41da)
+- Layer drag and drop does not work with indicators ([#265](https://github.com/reearth/reearth-web/pull/265)) [`12ae04`](https://github.com/reearth/reearth-web/commit/12ae04)
+- Testing-library react 18 warnings ([#263](https://github.com/reearth/reearth-web/pull/263)) [`4c9076`](https://github.com/reearth/reearth-web/commit/4c9076)
+- Auto fetch more items in dashboard page , project list , dataset page for big screens ([#255](https://github.com/reearth/reearth-web/pull/255)) [`fb8bf9`](https://github.com/reearth/reearth-web/commit/fb8bf9)
+- Asset modal flushes when camera limiter is enabled ([#261](https://github.com/reearth/reearth-web/pull/261)) [`204629`](https://github.com/reearth/reearth-web/commit/204629)
+- Not being able to override an image from the asset modal ([#260](https://github.com/reearth/reearth-web/pull/260)) [`1d3c3f`](https://github.com/reearth/reearth-web/commit/1d3c3f)
+- Layers pane does not update after move layer or create folder  ([#259](https://github.com/reearth/reearth-web/pull/259)) [`336d98`](https://github.com/reearth/reearth-web/commit/336d98)
+- Cesium flashes on camera change ([#257](https://github.com/reearth/reearth-web/pull/257)) [`ad2c0e`](https://github.com/reearth/reearth-web/commit/ad2c0e)
+- Router typos ([#252](https://github.com/reearth/reearth-web/pull/252)) [`19fcb6`](https://github.com/reearth/reearth-web/commit/19fcb6)
+- Dataset page showing errors on page refreshing  ([#253](https://github.com/reearth/reearth-web/pull/253)) [`3f48e9`](https://github.com/reearth/reearth-web/commit/3f48e9)
+
+### test
+
+- Fix test coverage target ([#272](https://github.com/reearth/reearth-web/pull/272)) [`b9db10`](https://github.com/reearth/reearth-web/commit/b9db10)
+
+### 
+
+- Merge commit &[#39](https://github.com/reearth/reearth-web/pull/39);0c1df2cdd88be54ef1e2677f0735e49d2922b210&[#39](https://github.com/reearth/reearth-web/pull/39); into release [`ced402`](https://github.com/reearth/reearth-web/commit/ced402)
+- Merge commit &[#39](https://github.com/reearth/reearth-web/pull/39);7c0705fa9e08a2944071994ba774770841fca583&[#39](https://github.com/reearth/reearth-web/pull/39); into release [`cb8505`](https://github.com/reearth/reearth-web/commit/cb8505)
+- Merge commit &[#39](https://github.com/reearth/reearth-web/pull/39);0a674497067bb9147190d9d1a6d4ed9bf95e02e7&[#39](https://github.com/reearth/reearth-web/pull/39); into release [`3a3a9f`](https://github.com/reearth/reearth-web/commit/3a3a9f)
+- V0.8.0 [`748c2c`](https://github.com/reearth/reearth-web/commit/748c2c)
+
 ## 0.8.0 - 2022-06-17
 
 ### 🚀 Features
