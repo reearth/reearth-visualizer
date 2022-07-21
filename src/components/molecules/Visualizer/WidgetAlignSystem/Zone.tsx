@@ -9,7 +9,6 @@ export type Props = {
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  editing?: boolean;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -28,7 +27,6 @@ export default function Zone({
   sceneProperty,
   pluginProperty,
   pluginBaseUrl,
-  editing,
   isEditable,
   isBuilt,
   children,
@@ -56,7 +54,6 @@ export default function Zone({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
-                editing={editing}
               />
             ),
           )}

@@ -23,7 +23,6 @@ export type Props<PP = any, SP = any> = {
   pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
-  iFrameProps?: PluginProps["iFrameProps"];
   onExtend?: (id: string, extended: boolean | undefined) => void;
 };
 
@@ -38,8 +37,8 @@ export default function WidgetComponent<PP = any, SP = any>({
   extended,
   pluginBaseUrl,
   layout,
-  iFrameProps,
   onExtend,
+  editing,
   ...props
 }: Props<PP, SP>) {
   const { align, location } = layout ?? {};
@@ -84,7 +83,9 @@ export default function WidgetComponent<PP = any, SP = any>({
     : "both";
 
   return Builtin ? (
-    <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
+    <div style={{ pointerEvents: editing ? "none" : "auto" }}>
+      <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
+    </div>
   ) : (
     <Plugin
       autoResize={autoResize}
@@ -96,7 +97,7 @@ export default function WidgetComponent<PP = any, SP = any>({
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
       widget={w}
-      iFrameProps={iFrameProps}
+      iFrameProps={{ style: { pointerEvents: editing ? "none" : "auto" } }}
       onRender={handleRender}
       onResize={handleResize}
     />

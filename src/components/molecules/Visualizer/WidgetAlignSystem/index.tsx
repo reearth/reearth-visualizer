@@ -81,8 +81,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}
-            editing={editing}>
+            layoutConstraint={layoutConstraint}>
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
@@ -93,7 +92,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 isEditable={isEditable}
                 isBuilt={isBuilt}
                 layoutConstraint={layoutConstraint}
-                editing={editing}
               />
             )}
           </MobileZone>
@@ -106,8 +104,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}
-            editing={editing}>
+            layoutConstraint={layoutConstraint}>
             <ZoneComponent
               zoneName="inner"
               zone={alignSystem?.inner}
@@ -117,7 +114,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
               isEditable={isEditable}
               isBuilt={isBuilt}
               layoutConstraint={layoutConstraint}
-              editing={editing}
             />
           </ZoneComponent>
         )}

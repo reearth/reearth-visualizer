@@ -1,5 +1,5 @@
 import { omit, pick } from "lodash-es";
-import { useCallback, useMemo, useState, CSSProperties } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
@@ -15,7 +15,6 @@ type Props = {
   area: "top" | "middle" | "bottom";
   align: Alignment;
   widgets?: Widget[];
-  editing?: boolean;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -33,7 +32,6 @@ export default function Area({
   widgets,
   pluginProperty,
   layoutConstraint,
-  editing,
   ...props
 }: Props) {
   const theme = useTheme();
@@ -81,7 +79,7 @@ export default function Area({
             index={i}
             extended={extended ?? widget.extended}
             extendable={extendable2}
-            style={editing ? undefined : pointerEventsAutoStyle}>
+            style={{ pointerEvents: "none" }}>
             {({ editing }) => (
               <W
                 widget={widget}
@@ -94,7 +92,6 @@ export default function Area({
                 extended={extended}
                 editing={editing}
                 onExtend={handleExtend}
-                iFrameProps={editing ? undefined : iFrameProps}
                 {...props}
               />
             )}
@@ -104,9 +101,6 @@ export default function Area({
     </GridArea>
   ) : null;
 }
-
-const pointerEventsAutoStyle: CSSProperties = { pointerEvents: "auto" };
-const iFrameProps = { style: pointerEventsAutoStyle };
 
 function useOverriddenExtended({
   layout,
