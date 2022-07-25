@@ -111,7 +111,7 @@ export default function useHook({
                 ? typeof width === "number"
                   ? width
                   : width + "px"
-                : "html.offsetWidth + horizontalMargin + scrollbarW"
+                : "html.offsetWidth + horizontalMargin"
             };
             const height = ${
               height
