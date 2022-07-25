@@ -216,7 +216,7 @@
         "react-use": "^17.4.0",
         "regenerator-runtime": "^0.13.7",
         "remark-gfm": "^3.0.1",
-        "resium": "^1.14.3",
+        "resium": "^1.15.0",
         "tinycolor2": "^1.4.2",
         "ts-easing": "^0.2.0",
         "use-callback-ref": "^1.3.0",
