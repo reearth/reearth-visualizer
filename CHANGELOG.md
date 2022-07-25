@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - Cesium flashes on camera change ([#257](https://github.com/reearth/reearth-web/pull/257)) [`ad2c0e`](https://github.com/reearth/reearth-web/commit/ad2c0e)
 - Router typos ([#252](https://github.com/reearth/reearth-web/pull/252)) [`19fcb6`](https://github.com/reearth/reearth-web/commit/19fcb6)
 - Dataset page showing errors on page refreshing  ([#253](https://github.com/reearth/reearth-web/pull/253)) [`3f48e9`](https://github.com/reearth/reearth-web/commit/3f48e9)
+
 ### 🧪 Testing
 
 - Fix test coverage target ([#272](https://github.com/reearth/reearth-web/pull/272)) [`b9db10`](https://github.com/reearth/reearth-web/commit/b9db10)
