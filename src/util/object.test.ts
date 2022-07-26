@@ -1,3 +1,5 @@
+import { expect, test, vi } from "vitest";
+
 import { delayedObject, merge, objectFromGetter } from "./object";
 
 test("delayedObject", () => {
@@ -27,7 +29,7 @@ test("delayedObject", () => {
 });
 
 test("objectFromGetter", () => {
-  const fn = jest.fn((k: "a" | "b"): "a!" | "b!" => (k === "a" ? "a!" : "b!"));
+  const fn = vi.fn((k: "a" | "b"): "a!" | "b!" => (k === "a" ? "a!" : "b!"));
   const obj = objectFromGetter<{ a: "a!"; b: "b!" }>(["a", "b"], fn);
 
   expect(obj.a).toBe("a!");

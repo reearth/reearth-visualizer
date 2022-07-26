@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import deepGet from "./deepGet";
 
 test("find an element", () => {

@@ -1,4 +1,3 @@
-import { check } from "prettier";
 import React from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
@@ -37,7 +36,7 @@ const AssetCard: React.FC<Props> = ({
       direction="column"
       selected={selected}
       cardSize={cardSize}
-      onClick={() => onCheck?.(!check)}>
+      onClick={() => onCheck?.(!checked)}>
       <ImgWrapper cardSize={cardSize}>
         {!icon ? <PreviewImage url={url} /> : <Icon icon={icon} size={iconSize} />}
       </ImgWrapper>

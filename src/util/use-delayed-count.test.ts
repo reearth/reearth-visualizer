@@ -1,9 +1,10 @@
 import { renderHook, act } from "@testing-library/react";
+import { expect, test, vi } from "vitest";
 
 import { useDelayedCount } from "./use-delayed-count";
 
 test("normal", async () => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 
   const { result } = renderHook(() => useDelayedCount([100, 200, 300]));
   expect(result.current[0]).toBe(0);
@@ -22,24 +23,24 @@ test("normal", async () => {
   expect(result.current[1]).toBe(0);
 
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(2);
   expect(result.current[1]).toBe(1);
 
   act(() => {
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
   });
   expect(result.current[0]).toBe(3);
   expect(result.current[1]).toBe(2);
 
   act(() => {
-    jest.advanceTimersByTime(300);
+    vi.advanceTimersByTime(300);
   });
   expect(result.current[0]).toBe(4);
   expect(result.current[1]).toBe(3);
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(4);
   expect(result.current[1]).toBe(3);
@@ -57,31 +58,31 @@ test("normal", async () => {
   expect(result.current[1]).toBe(4);
 
   act(() => {
-    jest.advanceTimersByTime(300);
+    vi.advanceTimersByTime(300);
   });
   expect(result.current[0]).toBe(2);
   expect(result.current[1]).toBe(3);
 
   act(() => {
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
   });
   expect(result.current[0]).toBe(1);
   expect(result.current[1]).toBe(2);
 
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(0);
   expect(result.current[1]).toBe(1);
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(0);
   expect(result.current[1]).toBe(1);
 });
 
 test("different durations", async () => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 
   const { result } = renderHook(() => useDelayedCount([[100, 300]]));
   expect(result.current[0]).toBe(0);
@@ -94,7 +95,7 @@ test("different durations", async () => {
   expect(result.current[1]).toBe(0);
 
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(2);
   expect(result.current[1]).toBe(1);
@@ -106,19 +107,19 @@ test("different durations", async () => {
   expect(result.current[1]).toBe(2);
 
   act(() => {
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
   });
   expect(result.current[0]).toBe(1);
   expect(result.current[1]).toBe(2);
   act(() => {
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
   });
   expect(result.current[0]).toBe(0);
   expect(result.current[1]).toBe(1);
 });
 
 test("skip", async () => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 
   const { result } = renderHook(() => useDelayedCount([100, 200, 300]));
   expect(result.current[0]).toBe(0);

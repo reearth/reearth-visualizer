@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { fireEvent, render, screen } from "@reearth/test/utils";
 
 import Accordion, { AccordionItemType } from "./index";
@@ -15,24 +17,24 @@ const sampleContents: AccordionItemType[] = [
   },
 ];
 
-test("Accordion component should be rendered", () => {
+test("should be rendered", () => {
   render(<Accordion items={sampleContents} />);
 });
 
-test("Accordion component should display items header", () => {
+test("should display items header", () => {
   render(<Accordion items={sampleContents} />);
   expect(screen.getByTestId("atoms-accordion")).toBeInTheDocument();
   expect(screen.getByText(/heading1/)).toBeInTheDocument();
   expect(screen.getByText(/heading2/)).toBeInTheDocument();
 });
 
-test("Accordion component should display items content", () => {
+test("should display items content", () => {
   render(<Accordion items={sampleContents} />);
   expect(screen.getByText(/content1/)).toBeInTheDocument();
   expect(screen.getByText(/content2/)).toBeInTheDocument();
 });
 
-test("Accordion component should open when header button is clicked", () => {
+test("should open when header button is clicked", () => {
   render(<Accordion items={sampleContents} />);
   expect(screen.getAllByTestId("atoms-accordion-item-content")[0]).not.toBeVisible();
   fireEvent.click(screen.getAllByTestId("atoms-accordion-item-header")[0]);

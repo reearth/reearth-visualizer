@@ -1,10 +1,11 @@
 import { renderHook } from "@testing-library/react";
+import { expect, test, vi } from "vitest";
 
 import { type Tile, useImageryProviders } from "./Imagery";
 
 test("useImageryProviders", () => {
-  const provider = jest.fn((url?: string): any => ({ hoge: url }));
-  const provider2 = jest.fn((url?: string): any => ({ hoge2: url }));
+  const provider = vi.fn((url?: string): any => ({ hoge: url }));
+  const provider2 = vi.fn((url?: string): any => ({ hoge2: url }));
   const presets = { default: provider, foobar: provider2 };
   const { result, rerender } = renderHook(
     ({ tiles, cesiumIonAccessToken }: { tiles: Tile[]; cesiumIonAccessToken?: string }) =>

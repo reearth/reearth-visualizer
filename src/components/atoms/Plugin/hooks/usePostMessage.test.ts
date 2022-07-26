@@ -1,4 +1,5 @@
 import { renderHook } from "@testing-library/react";
+import { expect, test, vi } from "vitest";
 
 import { usePostMessage } from "./usePostMessage";
 
@@ -7,7 +8,7 @@ test("usePostMessage", () => {
   const nullIFrame: P = { current: null };
   const iFrame: P = {
     current: {
-      postMessage: jest.fn(),
+      postMessage: vi.fn(),
       resize: () => {},
     },
   };

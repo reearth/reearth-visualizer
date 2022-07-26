@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { validateUrl } from "./hooks";
 
 test("should validate url", () => {

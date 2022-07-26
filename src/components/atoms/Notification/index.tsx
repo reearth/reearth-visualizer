@@ -28,7 +28,12 @@ const NotificationBanner: React.FC<Props> = ({
   const theme = useTheme();
 
   return (
-    <StyledNotificationBanner visible={visible} type={notification?.type} direction="column">
+    <StyledNotificationBanner
+      aria-hidden={!visible}
+      role="banner"
+      visible={visible}
+      type={notification?.type}
+      direction="column">
       <HeadingArea justify="space-between">
         <Text
           size="m"
@@ -38,6 +43,7 @@ const NotificationBanner: React.FC<Props> = ({
           {notification?.heading}
         </Text>
         <CloseBtn
+          role="button"
           icon="cancel"
           size={20}
           onClick={() => {
@@ -74,7 +80,7 @@ const StyledNotificationBanner = styled(Flex)<{
   z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.notificationBar : 0)};
   opacity: ${({ visible }) => (visible ? "1" : "0")};
   transition: all 0.5s;
-  pointer-event: ${({ visible }) => (visible ? "auto" : "none")};
+  pointer-events: ${({ visible }) => (visible ? "auto" : "none")};
 `;
 
 const HeadingArea = styled(Flex)`

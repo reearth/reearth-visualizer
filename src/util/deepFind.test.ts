@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import deepFind from "./deepFind";
 
 test("find an element", () => {

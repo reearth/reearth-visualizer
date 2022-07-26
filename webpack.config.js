@@ -104,8 +104,13 @@ module.exports = (env, args = {}) => {
           loader: "yaml-loader",
         },
         {
-          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css|ya?ml)$/],
+          resourceQuery: /raw/,
+          type: "asset/source",
+        },
+        {
+          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css|ya?ml)$|\?raw$/],
           loader: "file-loader",
+          resourceQuery: { not: [/raw/] },
           options: {
             name: "assets/[name].[contenthash:8].[ext]",
           },

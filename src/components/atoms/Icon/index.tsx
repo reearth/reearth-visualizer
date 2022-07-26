@@ -1,8 +1,9 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { ComponentProps, CSSProperties, memo, useMemo } from "react";
-import { ReactSVG } from "react-svg";
+import React, { AriaAttributes, AriaRole, CSSProperties, memo, useMemo } from "react";
+import SVG from "react-inlinesvg";
 
 import { styled } from "@reearth/theme";
+import { ariaProps } from "@reearth/util/aria";
 
 import Icons from "./icons";
 
@@ -15,30 +16,54 @@ export type Props = {
   alt?: string;
   color?: string;
   style?: CSSProperties;
+  role?: AriaRole;
   onClick?: () => void;
-};
+} & AriaAttributes;
 
-const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, onClick }) => {
+const Icon: React.FC<Props> = ({
+  className,
+  icon,
+  alt,
+  style,
+  color,
+  size,
+  role,
+  onClick,
+  ...props
+}) => {
   const src = useMemo(
     () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
     [icon],
   );
   if (!icon) return null;
 
+  const aria = ariaProps(props);
   const sizeStr = typeof size === "number" ? `${size}px` : size;
   if (!src) {
-    return <StyledImg src={icon} alt={alt} style={style} size={sizeStr} onClick={onClick} />;
+    return (
+      <StyledImg
+        className={className}
+        src={icon}
+        alt={alt}
+        style={style}
+        role={role}
+        size={sizeStr}
+        onClick={onClick}
+        {...aria}
+      />
+    );
   }
 
   return (
     <StyledSvg
       className={className}
       src={src}
-      color={color}
       style={style}
-      alt={alt}
+      role={role}
+      color={color}
       size={sizeStr}
       onClick={onClick}
+      {...aria}
     />
   );
 };
@@ -48,21 +73,12 @@ const StyledImg = styled.img<{ size?: string }>`
   height: ${({ size }) => size};
 `;
 
-const SVG: React.FC<
-  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style">
-> = props => {
-  return <ReactSVG {...props} wrapper="span" />;
-};
-
 const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
   font-size: 0;
-  color: ${({ color }) => color};
   display: inline-block;
-
-  svg {
-    width: ${({ size }) => size};
-    height: ${({ size }) => size};
-  }
+  width: ${({ size }) => size};
+  height: ${({ size }) => size};
+  color: ${({ color }) => color};
 `;
 
 export default memo(Icon);

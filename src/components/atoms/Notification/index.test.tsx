@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { render, screen } from "@reearth/test/utils";
 
 import NotificationBanner, { Notification } from ".";
@@ -8,21 +10,13 @@ const sampleNotification: Notification = {
   text: "This is a notification for something super cool.",
 };
 
-test("Notification component should be rendered", () => {
-  render(<NotificationBanner />);
-});
-
-test("Notification component should display notification heading", () => {
+test("should display notification heading", () => {
   render(<NotificationBanner visible notification={sampleNotification} />);
   expect(screen.getByText(/Notice/)).toBeInTheDocument();
+  expect(screen.getByText(/This is a notification for something super cool./)).toBeInTheDocument();
 });
 
-test("Notification component should display notification text", () => {
-  render(<NotificationBanner visible notification={sampleNotification} />);
-  expect(screen.getByText(/This is a notification/)).toBeInTheDocument();
-});
-
-test("Notification component should not display anything", () => {
+test("should not display anything", () => {
   render(<NotificationBanner notification={sampleNotification} />);
-  expect(screen.getByText(/This is a notification/)).not.toBeVisible();
+  expect(screen.getByText(/This is a notification for something super cool./)).not.toBeVisible();
 });

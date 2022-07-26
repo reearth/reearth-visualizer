@@ -1,4 +1,6 @@
-import { render, screen, fireEvent } from "../../../test/utils";
+import { expect, test, vi } from "vitest";
+
+import { render, screen, fireEvent } from "@reearth/test/utils";
 
 import Tag from ".";
 
@@ -13,7 +15,7 @@ test("component should render text and icon", () => {
 });
 
 test("component should fire event", () => {
-  const handleRemove = jest.fn();
+  const handleRemove = vi.fn();
   render(<Tag icon="bin" id="tag" label="tag" onRemove={handleRemove} />);
   fireEvent.click(screen.getByTestId("atoms-tag-event-trigger"));
   expect(handleRemove).toHaveBeenCalled();

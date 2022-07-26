@@ -1,4 +1,6 @@
 /* eslint-disable testing-library/await-async-query */
+import { expect, test } from "vitest";
+
 import { LayerStore } from "./store";
 
 test("findById", () => {

@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { Item } from "./types";
 import { isAncestor, searchItems } from "./util";
 

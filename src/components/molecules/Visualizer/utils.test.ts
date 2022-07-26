@@ -1,4 +1,5 @@
 import { renderHook, act } from "@testing-library/react";
+import { expect, test } from "vitest";
 
 import { mergeProperty, useOverriddenProperty, useGet } from "./utils";
 

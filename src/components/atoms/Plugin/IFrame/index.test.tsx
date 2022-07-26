@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { expect, test } from "vitest";
 
 import Component from ".";
 
@@ -40,7 +41,7 @@ test("works", async () => {
 //   const html = `<script>window.addEventListener("message", e => parent.postMessage(e.data, "*"));</script>`;
 //   const [promise, resolve] = deferred();
 //   const [promise2, resolve2] = deferred();
-//   const onMessage = jest.fn<void, [any]>(() => resolve2());
+//   const onMessage = vi.fn<[any], void>(() => resolve2());
 //   render(<Component ref={ref} html={html} onLoad={resolve} onMessage={onMessage} />);
 
 //   await promise;

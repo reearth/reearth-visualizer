@@ -1,6 +1,6 @@
-// import React from "react";
-// import { render } from "@reearth/test/utils";
-// import { screen } from "@testing-library/react";
+import { test } from "vitest";
+// import { expect, test, vi } from "vitest";
+// import { screem, render } from "@reearth/test/utils";
 
 // import PluginSection, { PluginItem } from "./index";
 
@@ -24,9 +24,9 @@
 // ];
 
 // test("plugin section should display plugins", () => {
-//   const installFromPublicRepo = jest.fn();
-//   const installByUploadingZipFile = jest.fn();
-//   const uninstallPlugin = jest.fn();
+//   const installFromPublicRepo = vi.fn();
+//   const installByUploadingZipFile = vi.fn();
+//   const uninstallPlugin = vi.fn();
 //   render(
 //     <PluginSection
 //       plugins={samplePlugins}
@@ -39,4 +39,5 @@
 //   expect(screen.getByText(/Hoge/)).toBeInTheDocument();
 // });
 // TODO: Fix this test
+
 test("dummy test", () => {});

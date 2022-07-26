@@ -1,4 +1,3 @@
-import { check } from "prettier";
 import React from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
@@ -27,7 +26,7 @@ export type Props = {
 const AssetListItem: React.FC<Props> = ({ asset, selected, checked, icon, onCheck }) => {
   const theme = useTheme();
   return (
-    <ListItem key={asset.id} align="center" selected={selected} onClick={() => onCheck?.(!check)}>
+    <ListItem key={asset.id} align="center" selected={selected} onClick={() => onCheck?.(!checked)}>
       <Icon
         icon={checked ? "checkCircle" : icon}
         size={16}

@@ -1,10 +1,12 @@
+import { expect, test, vi } from "vitest";
+
 import events, { mergeEvents } from "./event";
 
 test("works", () => {
   const [{ on, off }, emit] = events();
 
-  const ev1 = jest.fn();
-  const ev2 = jest.fn();
+  const ev1 = vi.fn();
+  const ev2 = vi.fn();
   on("aaa", ev1);
   on("aaa", ev2);
 
@@ -27,7 +29,7 @@ test("works", () => {
 test("once", () => {
   const [{ once }, emit] = events();
 
-  const ev1 = jest.fn();
+  const ev1 = vi.fn();
   once("aaa", ev1);
 
   emit("bbb");
@@ -42,7 +44,7 @@ test("once", () => {
 });
 
 test("mergeEvents", () => {
-  const cb = jest.fn();
+  const cb = vi.fn();
   const [ev1, emit1] = events<{ a: [number]; c: [] }>();
   const [ev2, emit2] = events<{ a: [number]; b: [] }>();
   ev2.on("a", cb);

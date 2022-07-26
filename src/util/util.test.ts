@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { partitionObject } from "./util";
 
 test("partition object", () => {
