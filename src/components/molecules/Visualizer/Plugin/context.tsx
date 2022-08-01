@@ -10,6 +10,7 @@ import {
 import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
+import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";
@@ -24,6 +25,7 @@ import type {
   FlyToDestination,
   LookAtDestination,
   Tag,
+  MouseEvent,
 } from "./types";
 
 export type EngineContext = {
@@ -55,6 +57,7 @@ export type Props = {
   zoomOut: (amount: number) => void;
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
+  onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
 };
 
 export type Context = {
@@ -95,10 +98,11 @@ export function Provider({
   zoomIn,
   zoomOut,
   viewport,
+  onMouseEvent,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () => events<Pick<ReearthEventType, "cameramove" | "select">>(),
+    () => events<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -179,7 +183,7 @@ export function Provider({
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
+  useEmit<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
@@ -192,6 +196,35 @@ export function Provider({
     },
     emit,
   );
+
+  useEffect(() => {
+    const eventHandles: {
+      [index in keyof MouseEvents]: keyof MouseEventHandles;
+    } = {
+      click: "onClick",
+      doubleclick: "onDoubleClick",
+      mousedown: "onMouseDown",
+      mouseup: "onMouseUp",
+      rightclick: "onRightClick",
+      rightdown: "onRightDown",
+      rightup: "onRightUp",
+      middleclick: "onMiddleClick",
+      middledown: "onMiddleDown",
+      middleup: "onMiddleUp",
+      mousemove: "onMouseMove",
+      mouseenter: "onMouseEnter",
+      mouseleave: "onMouseLeave",
+      pinchstart: "onPinchStart",
+      pinchend: "onPinchEnd",
+      pinchmove: "onPinchMove",
+      wheel: "onWheel",
+    };
+    (Object.keys(eventHandles) as (keyof MouseEvents)[]).forEach((event: keyof MouseEvents) => {
+      onMouseEvent(eventHandles[event], (props: MouseEvent) => {
+        emit(event, props);
+      });
+    });
+  }, [emit, onMouseEvent]);
 
   // expose plugin API for developers
   useEffect(() => {

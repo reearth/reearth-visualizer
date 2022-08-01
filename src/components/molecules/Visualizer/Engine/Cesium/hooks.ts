@@ -9,9 +9,16 @@ import { useCustomCompareCallback } from "use-custom-compare";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
+import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
+import {
+  getCamera,
+  isDraggable,
+  isSelectable,
+  layerIdField,
+  getLocationFromScreenXY,
+} from "./common";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
@@ -173,8 +180,68 @@ export default ({
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
 
+  const handleMouseEvent = useCallback(
+    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
+      if (engineAPI.mouseEventCallbacks[type]) {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const position = e.position || e.startPosition;
+        const props: MouseEvent = {
+          x: position?.x,
+          y: position?.y,
+          ...(position ? getLocationFromScreenXY(viewer.scene, position.x, position.y) ?? {} : {}),
+        };
+        const layerId = getLayerId(target);
+        if (layerId) props.layerId = layerId;
+        engineAPI.mouseEventCallbacks[type]?.(props);
+      }
+    },
+    [engineAPI],
+  );
+
+  const handleMouseWheel = useCallback(
+    (delta: number) => {
+      engineAPI.mouseEventCallbacks.wheel?.({ delta });
+    },
+    [engineAPI],
+  );
+
+  const mouseEventHandles = useMemo(() => {
+    const mouseEvents: { [index in keyof MouseEvents]: undefined | any } = {
+      click: undefined,
+      doubleclick: undefined,
+      mousedown: undefined,
+      mouseup: undefined,
+      rightclick: undefined,
+      rightdown: undefined,
+      rightup: undefined,
+      middleclick: undefined,
+      middledown: undefined,
+      middleup: undefined,
+      mousemove: undefined,
+      mouseenter: undefined,
+      mouseleave: undefined,
+      pinchstart: undefined,
+      pinchend: undefined,
+      pinchmove: undefined,
+      wheel: undefined,
+    };
+    (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
+      mouseEvents[type] =
+        type === "wheel"
+          ? (delta: number) => {
+              handleMouseWheel(delta);
+            }
+          : (e: CesiumMovementEvent, target: RootEventTarget) => {
+              handleMouseEvent(type as keyof MouseEvents, e, target);
+            };
+    });
+    return mouseEvents;
+  }, [handleMouseEvent, handleMouseWheel]);
+
   const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
+      mouseEventHandles.click?.(_, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
@@ -198,7 +265,7 @@ export default ({
 
       onLayerSelect?.();
     },
-    [onLayerSelect],
+    [onLayerSelect, mouseEventHandles],
   );
 
   // E2E test
@@ -278,6 +345,7 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
+    mouseEventHandles,
   };
 };
 
@@ -305,4 +373,13 @@ function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity |
     }
   }
   return entity;
+}
+
+function getLayerId(target: RootEventTarget) {
+  if (target && "id" in target && target.id instanceof Entity) {
+    return target.id.id;
+  } else if (target && target instanceof Cesium3DTileFeature) {
+    return (target.primitive as any)?.[layerIdField];
+  }
+  return undefined;
 }

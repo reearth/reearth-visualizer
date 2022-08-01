@@ -58,6 +58,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
+    mouseEventHandles,
   } = useHooks({
     ref,
     property,
@@ -99,7 +100,23 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           !property?.timeline?.animation && !isLayerDraggable ? Infinity : undefined
         }
         shadows={!!property?.atmosphere?.shadows}
-        onClick={handleClick}>
+        onClick={handleClick}
+        onDoubleClick={mouseEventHandles.doubleclick}
+        onMouseDown={mouseEventHandles.mousedown}
+        onMouseUp={mouseEventHandles.mouseup}
+        onRightClick={mouseEventHandles.rightclick}
+        onRightDown={mouseEventHandles.rightdown}
+        onRightUp={mouseEventHandles.rightup}
+        onMiddleClick={mouseEventHandles.middleclick}
+        onMiddleDown={mouseEventHandles.middledown}
+        onMiddleUp={mouseEventHandles.middleup}
+        onMouseMove={mouseEventHandles.mousemove}
+        onMouseEnter={mouseEventHandles.mouseenter}
+        onMouseLeave={mouseEventHandles.mouseleave}
+        onPinchStart={mouseEventHandles.pinchstart}
+        onPinchEnd={mouseEventHandles.pinchend}
+        onPinchMove={mouseEventHandles.pinchmove}
+        onWheel={mouseEventHandles.wheel}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock property={property} />
         <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={property?.default?.ion} />

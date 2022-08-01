@@ -32,12 +32,39 @@ export type Reearth = {
   ) => void;
 };
 
+export type MouseEvent = {
+  x?: number;
+  y?: number;
+  lat?: number;
+  lng?: number;
+  height?: number;
+  layerId?: string;
+  delta?: number;
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: CameraPosition];
   select: [layerId: string | undefined];
   message: [message: any];
+  click: [props: MouseEvent];
+  doubleclick: [props: MouseEvent];
+  mousedown: [props: MouseEvent];
+  mouseup: [props: MouseEvent];
+  rightclick: [props: MouseEvent];
+  rightdown: [props: MouseEvent];
+  rightup: [props: MouseEvent];
+  middleclick: [props: MouseEvent];
+  middledown: [props: MouseEvent];
+  middleup: [props: MouseEvent];
+  mousemove: [props: MouseEvent];
+  mouseenter: [props: MouseEvent];
+  mouseleave: [props: MouseEvent];
+  pinchstart: [props: MouseEvent];
+  pinchend: [props: MouseEvent];
+  pinchmove: [props: MouseEvent];
+  wheel: [props: MouseEvent];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
