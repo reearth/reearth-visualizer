@@ -139,7 +139,7 @@ func allowedOrigins(cfg *ServerConfig) []string {
 	}
 	origins := append([]string{}, cfg.Config.Origins...)
 	if cfg.Debug {
-		origins = append(origins, "http://localhost:3000", "http://localhost:8080")
+		origins = append(origins, "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080")
 	}
 	return origins
 }
