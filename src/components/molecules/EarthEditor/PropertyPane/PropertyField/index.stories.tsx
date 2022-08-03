@@ -95,7 +95,7 @@ export const UrlWithValue = () => (
   <Wrapper>
     <PropertyField
       schema={{ id: "Title", type: "url" }}
-      field={{ id: "Title", type: "url", value: `${process.env.PUBLIC_URL}/sample.svg` }}
+      field={{ id: "Title", type: "url", value: `/sample.svg` }}
       onChange={action("onChange")}
     />
   </Wrapper>

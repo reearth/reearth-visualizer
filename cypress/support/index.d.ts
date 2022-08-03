@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 /// <reference types="@testing-library/cypress" />
 
 import type { Viewer } from "cesium";
 import type { Interception } from "cypress/types/net-stubbing";
-
-export default {};
 
 declare global {
   namespace Cypress {

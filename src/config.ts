@@ -1,3 +1,5 @@
+import { Viewer } from "cesium";
+
 export type ExtensionType = "dataset-import" | "publication";
 
 export type SharedExtensionProps = {
@@ -68,6 +70,8 @@ export type Config = {
 declare global {
   interface Window {
     REEARTH_CONFIG?: Config;
+    REEARTH_E2E_ACCESS_TOKEN?: string;
+    REEARTH_E2E_CESIUM_VIEWER?: any;
   }
 }
 
@@ -109,7 +113,7 @@ export async function loadExtensions(urls?: string[]): Promise<Extensions | unde
 
   for (const url of urls) {
     try {
-      const newExtensions: Extension[] = (await import(/* webpackIgnore: true */ url)).default;
+      const newExtensions: Extension[] = (await import(/* @vite-ignore */ url)).default;
       newExtensions.forEach(ext =>
         ext.type === "dataset-import"
           ? datasetImport.push(ext as Extension<"dataset-import">)
@@ -161,5 +165,21 @@ export default async function loadConfig() {
   if (window.REEARTH_CONFIG?.extensionUrls) {
     const extensions = await loadExtensions(window.REEARTH_CONFIG.extensionUrls);
     window.REEARTH_CONFIG.extensions = extensions;
+  }
+}
+
+export function config(): Config | undefined {
+  return window.REEARTH_CONFIG;
+}
+
+export function e2eAccessToken(): string | undefined {
+  return window.REEARTH_E2E_ACCESS_TOKEN;
+}
+
+export function setE2ECesiumViewer(viewer: Viewer | undefined) {
+  if (viewer) {
+    window.REEARTH_E2E_CESIUM_VIEWER = viewer;
+  } else {
+    delete window.REEARTH_E2E_CESIUM_VIEWER;
   }
 }

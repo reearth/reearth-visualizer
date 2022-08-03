@@ -42,5 +42,5 @@ Plugin.args = {
   isSelected: false,
   isBuilt: false,
   isEditable: false,
-  pluginBaseUrl: process.env.PUBLIC_URL,
+  pluginBaseUrl: "",
 };

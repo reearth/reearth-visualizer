@@ -4,7 +4,7 @@ import React from "react";
 
 const enabled = false;
 
-if (process.env.NODE_ENV === "development" && enabled) {
+if (import.meta.env.DEV && enabled) {
   const whyDidYouRender = require("@welldone-software/why-did-you-render");
   whyDidYouRender(React, {
     trackAllPureComponents: true,

@@ -12,7 +12,7 @@ export const Default: Story<PluginAccordionProps> = args => <Component {...args}
 Default.args = {
   items: [
     {
-      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
+      thumbnailUrl: `/sample.svg`,
       title: "Sample",
       isInstalled: true,
       bodyMarkdown: "# Hoge ## Hoge",
@@ -20,7 +20,7 @@ Default.args = {
       pluginId: "id1",
     },
     {
-      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
+      thumbnailUrl: `/sample.svg`,
       title: "Sample2",
       isInstalled: false,
       bodyMarkdown: "# Fuga ## Fuga",

@@ -1,23 +1,36 @@
 /// <reference types="vite/client" />
 /// <reference types="vitest" />
 
+import { readFileSync } from "fs";
 import { resolve } from "path";
 
 import yaml from "@rollup/plugin-yaml";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { readEnv } from "read-env";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
 
 export default defineConfig({
-  envPrefix: "REEARTH_",
-  plugins: [react(), yaml(), cesium()],
+  envPrefix: "REEARTH_WEB_",
+  plugins: [react(), yaml(), cesium(), serverHeaders(), config()],
+  define: {
+    "process.env.QTS_DEBUG": "false", // quickjs-emscripten
+  },
+  server: {
+    port: 3000,
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        published: resolve(__dirname, "published.html"),
+      },
+    },
+  },
   resolve: {
     alias: [
+      { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
       { find: "@reearth", replacement: resolve(__dirname, "src") },
-      {
-        find: /^~/,
-        replacement: "",
-      },
     ],
   },
   test: {
@@ -28,6 +41,7 @@ export default defineConfig({
       include: ["src/**/*.ts", "src/**/*.tsx"],
       exclude: [
         "src/**/*.d.ts",
+        "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
         "src/gql/graphql-client-api.tsx",
         "src/test/**/*",
@@ -36,3 +50,58 @@ export default defineConfig({
     },
   },
 });
+
+function serverHeaders(): Plugin {
+  return {
+    name: "server-headers",
+    configureServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        res.setHeader("Service-Worker-Allowed", "/");
+        next();
+      });
+    },
+  };
+}
+
+function config(): Plugin {
+  return {
+    name: "reearth-config",
+    async configureServer(server) {
+      const configRes = JSON.stringify(
+        {
+          api: "http://localhost:8080/api",
+          published: "/published.html?alias={}",
+          ...readEnv("REEARTH_WEB", {
+            source: loadEnv(
+              server.config.mode,
+              server.config.envDir ?? process.cwd(),
+              server.config.envPrefix,
+            ),
+          }),
+          ...loadJSON("./reearth-config.json"),
+        },
+        null,
+        2,
+      );
+
+      server.middlewares.use((req, res, next) => {
+        if (req.method === "GET" && req.url === "/reearth_config.json") {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.write(configRes);
+          res.end();
+        } else {
+          next();
+        }
+      });
+    },
+  };
+}
+
+function loadJSON(path: string): any {
+  try {
+    return JSON.parse(readFileSync(path, "utf8")) || {};
+  } catch (err) {
+    return {};
+  }
+}

@@ -70,7 +70,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Pack
-        run: mv build reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
+        run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
       - uses: actions/upload-artifact@v2
         with:
           name: build

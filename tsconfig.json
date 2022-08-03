@@ -5,17 +5,18 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "lib": [
-      "esnext",
-      "dom"
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
     ],
     "noEmit": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "noImplicitReturns": true,
     "pretty": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext",
+    "target": "ESNext",
     "baseUrl": ".",
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -23,9 +24,6 @@
       "@reearth/*": [
         "src/*"
       ],
-      "*": [
-        "src/@types/*"
-      ]
     },
     "plugins": [
       {
@@ -34,6 +32,11 @@
     ]
   },
   "include": [
-    "src"
-  ]
+    "src",
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

@@ -5,7 +5,7 @@ import Balloon from ".";
 const descriptionTitle = "Title";
 const descriptionText = "Description";
 const img = {
-  imagePath: `${process.env.PUBLIC_URL}/sample.svg`,
+  imagePath: "/sample.svg",
   alt: "sample image",
 };
 

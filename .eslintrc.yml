@@ -53,5 +53,4 @@ overrides:
   - files:
       - cypress/**/*
     extends:
-      - reearth/node
       - plugin:cypress/recommended

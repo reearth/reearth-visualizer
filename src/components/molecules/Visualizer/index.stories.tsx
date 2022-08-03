@@ -103,7 +103,7 @@ const widgets: { floatingWidgets: Widget[]; alignSystem?: WidgetAlignSystem } = 
           overlayEnabled: true,
           overlayDuration: 2,
           overlayTransitionDuration: 1,
-          overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+          overlayImage: `/sample.svg`,
           overlayImageW: 648,
           overlayImageH: 432,
           overlayBgcolor: "#fff8",
@@ -380,5 +380,5 @@ export const Plugin: Story<Props> = args => {
 Plugin.args = {
   ...Default.args,
   selectedLayerId: "pluginprimitive",
-  pluginBaseUrl: process.env.PUBLIC_URL,
+  pluginBaseUrl: "",
 };

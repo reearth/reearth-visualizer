@@ -24,7 +24,7 @@ Default.args = {
     property: {
       default: {
         location,
-        photoOverlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+        photoOverlayImage: `/sample.svg`,
         camera: {
           ...location,
           fov: CesiumMath.toRadians(30),
@@ -48,7 +48,7 @@ Selected.args = {
     property: {
       default: {
         location,
-        photoOverlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+        photoOverlayImage: `/sample.svg`,
         camera: {
           ...location,
           fov: CesiumMath.toRadians(30),

@@ -37,26 +37,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: E2E test
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           browser: chrome
-          headless: true
           record: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_BASE_URL: https://test.reearth.dev
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          REEARTH_WEB_API: https://api.test.reearth.dev/api
-          REEARTH_WEB_AUTH0_AUDIENCE: ${{ secrets.REEARTH_WEB_AUTH0_AUDIENCE }}
-          REEARTH_WEB_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_WEB_AUTH0_CLIENT_ID }}
-          REEARTH_WEB_AUTH0_DOMAIN: ${{ secrets.REEARTH_WEB_AUTH0_DOMAIN }}
-          REEARTH_WEB_E2E_USER_ID: ${{ secrets.REEARTH_WEB_E2E_USER_ID }}
-          REEARTH_WEB_E2E_TEAM_ID: ${{ secrets.REEARTH_WEB_E2E_TEAM_ID }}
-          REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
-          REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
-          REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
-          REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
+          CYPRESS_REEARTH_WEB_API: https://api.test.reearth.dev/api
+          CYPRESS_REEARTH_WEB_AUTH0_AUDIENCE: ${{ secrets.REEARTH_WEB_AUTH0_AUDIENCE }}
+          CYPRESS_REEARTH_WEB_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_WEB_AUTH0_CLIENT_ID }}
+          CYPRESS_REEARTH_WEB_AUTH0_DOMAIN: ${{ secrets.REEARTH_WEB_AUTH0_DOMAIN }}
+          CYPRESS_REEARTH_WEB_E2E_USER_ID: ${{ secrets.REEARTH_WEB_E2E_USER_ID }}
+          CYPRESS_REEARTH_WEB_E2E_TEAM_ID: ${{ secrets.REEARTH_WEB_E2E_TEAM_ID }}
+          CYPRESS_REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
+          CYPRESS_REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
+          CYPRESS_REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
+          CYPRESS_REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:

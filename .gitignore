@@ -3,7 +3,7 @@ Thumbs.db
 node_modules
 *.log
 /coverage
-/build
+/dist
 /vendor
 /storybook-static
 __screenshots__

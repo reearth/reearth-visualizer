@@ -1,3 +1,5 @@
+/// <reference types="../../support" />
+
 import { userName, teamId } from "../common";
 
 beforeEach(() => {

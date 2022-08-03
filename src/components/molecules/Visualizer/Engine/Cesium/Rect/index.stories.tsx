@@ -53,7 +53,7 @@ Image.args = {
       default: {
         rect: { west: 139, east: 140, north: 36, south: 35 },
         style: "image",
-        image: `${process.env.PUBLIC_URL}/sample.png`,
+        image: `/sample.png`,
       },
     },
   },

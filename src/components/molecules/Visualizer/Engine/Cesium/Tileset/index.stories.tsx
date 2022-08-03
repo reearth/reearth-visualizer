@@ -25,7 +25,7 @@ Default.args = {
     isVisible: true,
     property: {
       default: {
-        tileset: `${process.env.PUBLIC_URL}/tileset/tileset.json`,
+        tileset: `/tileset/tileset.json`,
       },
     },
   },

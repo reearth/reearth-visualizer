@@ -49,7 +49,7 @@ function AppRoutes() {
     { path: "/settings/projects/:projectId/dataset", element: <DatasetSettings /> },
     { path: "/settings/projects/:projectId/plugins", element: <PluginSettings /> },
     { path: "/plugin-editor", element: <PluginEditor /> },
-    { path: "/graphql", element: process.env.NODE_ENV !== "production" && <GraphQLPlayground /> },
+    { path: "/graphql", element: import.meta.env.DEV && <GraphQLPlayground /> },
     ...redirects,
     { path: "*", element: <NotFound /> },
   ]);

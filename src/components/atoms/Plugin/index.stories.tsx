@@ -15,7 +15,7 @@ export const Default: Story<Props> = args => <Component {...args} />;
 let cb: (message: any) => void | undefined;
 
 Default.args = {
-  src: `${process.env.PUBLIC_URL}/plugins/plugin.js`,
+  src: `/plugins/plugin.js`,
   canBeVisible: true,
   iFrameProps: {
     style: {
@@ -49,7 +49,7 @@ Default.args = {
 export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
 
 HiddenIFrame.args = {
-  src: `${process.env.PUBLIC_URL}/plugins/hidden.js`,
+  src: `/plugins/hidden.js`,
   canBeVisible: true,
   iFrameProps: {
     style: {

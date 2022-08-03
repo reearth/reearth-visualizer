@@ -1,6 +1,6 @@
 [build]
-  publish = "build"
-  command = "yarn build:preview && (cd build && curl -O https://test.reearth.dev/reearth_config.json)"
+  publish = "dist"
+  command = "yarn build:preview && (cd dist && curl -O https://test.reearth.dev/reearth_config.json)"
 
 [[redirects]]
   from = "/*"

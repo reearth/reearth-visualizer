@@ -31,7 +31,7 @@ Default.args = {
         location,
         scale: 1000,
         heading: 130,
-        model: `${process.env.PUBLIC_URL}/BoxAnimated.glb`,
+        model: `/BoxAnimated.glb`,
       },
     },
   },
@@ -52,7 +52,7 @@ Appearance.args = {
       default: {
         location,
         scale: 1000,
-        model: `${process.env.PUBLIC_URL}/BoxAnimated.glb`,
+        model: `/BoxAnimated.glb`,
         animation: false,
       },
       appearance: {

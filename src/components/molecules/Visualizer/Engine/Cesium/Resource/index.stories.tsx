@@ -26,7 +26,7 @@ Default.args = {
     isVisible: true,
     property: {
       default: {
-        url: `${process.env.PUBLIC_URL}/sample.geojson`,
+        url: `/sample.geojson`,
       },
     },
   },

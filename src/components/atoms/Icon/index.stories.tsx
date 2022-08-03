@@ -12,9 +12,7 @@ export default {
 
 export const Default = () => <Icon icon="layer" alt="icon" size={20} />;
 export const Color = () => <Icon icon="layer" color="red" alt="icon" size={20} />;
-export const Image = () => (
-  <Icon icon={`${process.env.PUBLIC_URL}/sample.svg`} alt="icon" size={20} />
-);
+export const Image = () => <Icon icon={`/sample.svg`} alt="icon" size={20} />;
 export const Svg = () => <Icon icon={icon} alt="icon" size={20} />;
 export const Wrapped = () => (
   <Icon icon={icon} alt="icon" size={20} style={{ background: "green" }} />

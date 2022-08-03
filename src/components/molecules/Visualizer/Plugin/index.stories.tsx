@@ -21,7 +21,7 @@ export const Default: Story<Props> = args => (
 Default.args = {
   pluginId: "plugins",
   extensionId: "plugin",
-  pluginBaseUrl: process.env.PUBLIC_URL,
+  pluginBaseUrl: "",
   visible: true,
 };
 

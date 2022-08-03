@@ -1,36 +1,7 @@
+/// <reference types="." />
+
 import "@testing-library/cypress/add-commands";
-import "./types";
 import * as config from "./config";
-
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-// ***********************************************
-// ⚠️ DON'T FORGET TO ADD A NEW TYPE DEFINITION TO types.ts!
-// ***********************************************
 
 Cypress.Commands.add("init", () => {
   Cypress.log({
@@ -40,8 +11,7 @@ Cypress.Commands.add("init", () => {
 
   cy.intercept(`${config.api}/graphql`).as("graphql");
 
-  return cy
-    .login()
+  cy.login()
     .then(token =>
       cy.request({
         method: "POST",
@@ -97,12 +67,12 @@ Cypress.Commands.add("login", () => {
     });
 });
 
-Cypress.Commands.add("loginAndVisit", (url: string, options?: Partial<Cypress.VisitOptions>) => {
+Cypress.Commands.add("loginAndVisit", (url, options) => {
   Cypress.log({
     name: "loginAndVisit",
   });
 
-  return cy.login().then(token => {
+  cy.login().then(token => {
     return cy.visit(url, {
       ...options,
       failOnStatusCode: false,
@@ -120,10 +90,12 @@ Cypress.Commands.add("waitForGraphQL", () =>
   }),
 );
 
-Cypress.Commands.add("cesiumViewer", () => cy.window().then(w => w.REEARTH_E2E_CESIUM_VIEWER));
+Cypress.Commands.add("cesiumViewer", () => {
+  cy.window().then(w => w.REEARTH_E2E_CESIUM_VIEWER);
+});
 
 function oauthDomain(u: string | undefined): string {
-  if (!u) return u;
+  if (!u) return "";
   if (!u.startsWith("https://") && !u.startsWith("http://")) {
     u = "https://" + u;
   }

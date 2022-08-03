@@ -5,9 +5,10 @@ import { onError } from "@apollo/client/link/error";
 import { SentryLink } from "apollo-link-sentry";
 import { createUploadLink } from "apollo-upload-client";
 import { isEqual } from "lodash-es";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { useAuth } from "@reearth/auth";
+import { e2eAccessToken } from "@reearth/config";
 import { reportError } from "@reearth/sentry";
 import { useError } from "@reearth/state";
 
@@ -55,7 +56,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
   const authLink = setContext(async (_, { headers }) => {
     // get the authentication token from local storage if it exists
-    const accessToken = window.REEARTH_E2E_ACCESS_TOKEN || (await getAccessToken());
+    const accessToken = e2eAccessToken() || (await getAccessToken());
     // return the headers to the context so httpLink can read them
     return {
       headers: {
@@ -114,7 +115,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     uri: endpoint,
     link: ApolloLink.from([errorLink, sentryLink, authLink, uploadLink]),
     cache,
-    connectToDevTools: process.env.NODE_ENV === "development",
+    connectToDevTools: import.meta.env.DEV,
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

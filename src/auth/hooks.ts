@@ -1,6 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 
+import { e2eAccessToken } from "@reearth/config";
+
 export const errorKey = "reeartherror";
 
 export default function useAuth() {
@@ -8,7 +10,7 @@ export default function useAuth() {
     useAuth0();
 
   return {
-    isAuthenticated: !!window.REEARTH_E2E_ACCESS_TOKEN || (isAuthenticated && !error),
+    isAuthenticated: !!e2eAccessToken() || (isAuthenticated && !error),
     isLoading,
     error: error?.message,
     getAccessToken: () => getAccessTokenSilently(),

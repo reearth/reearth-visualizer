@@ -26,7 +26,7 @@ Default.args = {
         overlayDuration: 2,
         overlayTransitionDuration: 1,
         overlayDelay: 0.5,
-        overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+        overlayImage: `/sample.svg`,
         overlayImageW: 648,
         overlayImageH: 432,
         overlayBgcolor: "#fff8",
