@@ -18,6 +18,7 @@ const configPrefix = "reearth"
 
 type Config struct {
 	Port           string `default:"8080" envconfig:"PORT"`
+	ServerHost     string
 	Host           string `default:"http://localhost:8080"`
 	Host_Web       string
 	Dev            bool
