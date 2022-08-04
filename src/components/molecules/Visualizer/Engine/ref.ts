@@ -28,9 +28,6 @@ export type MouseEvents = {
   mousemove: ((props: MouseEvent) => void) | undefined;
   mouseenter: ((props: MouseEvent) => void) | undefined;
   mouseleave: ((props: MouseEvent) => void) | undefined;
-  pinchstart: ((props: MouseEvent) => void) | undefined;
-  pinchend: ((props: MouseEvent) => void) | undefined;
-  pinchmove: ((props: MouseEvent) => void) | undefined;
   wheel: ((props: MouseEvent) => void) | undefined;
 };
 
@@ -48,9 +45,6 @@ export type MouseEventHandles = {
   onMouseMove: (fn: MouseEvents["mousemove"]) => void;
   onMouseEnter: (fn: MouseEvents["mouseenter"]) => void;
   onMouseLeave: (fn: MouseEvents["mouseleave"]) => void;
-  onPinchStart: (fn: MouseEvents["pinchstart"]) => void;
-  onPinchEnd: (fn: MouseEvents["pinchend"]) => void;
-  onPinchMove: (fn: MouseEvents["pinchmove"]) => void;
   onWheel: (fn: MouseEvents["wheel"]) => void;
 };
 

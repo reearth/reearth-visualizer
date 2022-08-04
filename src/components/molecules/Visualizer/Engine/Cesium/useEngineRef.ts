@@ -29,9 +29,6 @@ export default function useEngineRef(
     mousemove: undefined,
     mouseenter: undefined,
     mouseleave: undefined,
-    pinchstart: undefined,
-    pinchend: undefined,
-    pinchmove: undefined,
     wheel: undefined,
   });
   const e = useMemo((): EngineRef => {
@@ -149,15 +146,6 @@ export default function useEngineRef(
       },
       onMouseLeave: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.mouseleave = cb;
-      },
-      onPinchStart: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.pinchstart = cb;
-      },
-      onPinchEnd: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.pinchend = cb;
-      },
-      onPinchMove: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.pinchmove = cb;
       },
       onWheel: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.wheel = cb;

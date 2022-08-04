@@ -61,9 +61,6 @@ export type ReearthEventType = {
   mousemove: [props: MouseEvent];
   mouseenter: [props: MouseEvent];
   mouseleave: [props: MouseEvent];
-  pinchstart: [props: MouseEvent];
-  pinchend: [props: MouseEvent];
-  pinchmove: [props: MouseEvent];
   wheel: [props: MouseEvent];
 };
 

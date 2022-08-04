@@ -120,32 +120,69 @@ test("bind mouse events", () => {
   expect(fn).toHaveBeenCalledTimes(13);
   expect(fn).toHaveBeenCalledWith(props);
 
-  result.current.current?.onPinchStart(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchstart).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchstart?.(props);
-  expect(fn).toHaveBeenCalledTimes(14);
-  expect(fn).toHaveBeenCalledWith(props);
-
-  result.current.current?.onPinchEnd(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchend).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchend?.(props);
-  expect(fn).toHaveBeenCalledTimes(15);
-  expect(fn).toHaveBeenCalledWith(props);
-
-  result.current.current?.onPinchMove(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchmove).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchmove?.(props);
-  expect(fn).toHaveBeenCalledTimes(16);
-  expect(fn).toHaveBeenCalledWith(props);
-
   result.current.current?.onWheel(fn);
   expect(result.current.current?.mouseEventCallbacks.wheel).toBe(fn);
 
   const wheelProps = { delta: 1 };
   result.current.current?.mouseEventCallbacks.wheel?.(wheelProps);
-  expect(fn).toHaveBeenCalledTimes(17);
+  expect(fn).toHaveBeenCalledTimes(14);
   expect(fn).toHaveBeenCalledWith(wheelProps);
+});
+
+const mockRequestRender = vi.fn();
+test("requestRender", () => {
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        scene: {
+          requestRender: mockRequestRender,
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+  result.current.current?.requestRender();
+  expect(mockRequestRender).toHaveBeenCalledTimes(1);
+});
+
+const mockZoomIn = vi.fn(amount => amount);
+const mockZoomOut = vi.fn(amount => amount);
+test("zoom", () => {
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        scene: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          camera: {
+            zoomIn: mockZoomIn,
+            zoomOut: mockZoomOut,
+          },
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.zoomIn(10);
+  expect(mockZoomIn).toHaveBeenCalledTimes(1);
+  expect(mockZoomIn).toHaveBeenCalledWith(10);
+
+  result.current.current?.zoomOut(20);
+  expect(mockZoomOut).toHaveBeenCalledTimes(1);
+  expect(mockZoomOut).toHaveBeenCalledWith(20);
 });

@@ -156,9 +156,6 @@ export function useAPI({
         "mousemove",
         "mouseenter",
         "mouseleave",
-        "pinchstart",
-        "pinchend",
-        "pinchmove",
         "wheel",
       ]);
     }

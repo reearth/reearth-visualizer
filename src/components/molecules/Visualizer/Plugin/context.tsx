@@ -214,9 +214,6 @@ export function Provider({
       mousemove: "onMouseMove",
       mouseenter: "onMouseEnter",
       mouseleave: "onMouseLeave",
-      pinchstart: "onPinchStart",
-      pinchend: "onPinchEnd",
-      pinchmove: "onPinchMove",
       wheel: "onWheel",
     };
     (Object.keys(eventHandles) as (keyof MouseEvents)[]).forEach((event: keyof MouseEvents) => {

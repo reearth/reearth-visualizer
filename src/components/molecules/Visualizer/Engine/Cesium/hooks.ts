@@ -222,9 +222,6 @@ export default ({
       mousemove: undefined,
       mouseenter: undefined,
       mouseleave: undefined,
-      pinchstart: undefined,
-      pinchend: undefined,
-      pinchmove: undefined,
       wheel: undefined,
     };
     (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
