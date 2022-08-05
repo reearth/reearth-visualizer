@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import { defineConfig } from "cypress";
 import { parse } from "dotenv";
 
-const env = parse(readFileSync(".env")) || {};
+const env = parse(read(".env") ?? "") || {};
 
 module.exports = defineConfig({
   component: {
@@ -18,3 +18,11 @@ module.exports = defineConfig({
   },
   fixturesFolder: false,
 });
+
+function read(path: string): string | undefined {
+  try {
+    return readFileSync(path, "utf8");
+  } catch {
+    return undefined;
+  }
+}
