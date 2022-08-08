@@ -904,3 +904,6 @@ extensions:
           clusterLabelTypography:
             title: ラベル
             description: ラベルのスタイルを指定します。
+  timeline:
+    name: タイムライン
+    description: 時系列データを表示するために、時刻を変更したり時間を再生したりすることができます。

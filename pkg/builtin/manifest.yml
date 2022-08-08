@@ -1918,3 +1918,15 @@ extensions:
               title: Layer
               type: ref
               ui: layer
+  - id: timeline
+    type: widget
+    name: Timeline
+    description: A timeline widget that allows for viewing layers and data at specific points in time.
+    singleOnly: true
+    widgetLayout:
+      extendable:
+        horizontally: true
+      defaultLocation:
+        zone: outer
+        section: center
+        area: bottom
