@@ -135,6 +135,12 @@ import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
 
+// Timeline
+import Timeline from "./Icons/timeline.svg";
+import PlayRight from "./Icons/play-right.svg";
+import PlayLeft from "./Icons/play-left.svg";
+import Ellipse from "./Icons/ellipse.svg";
+
 export default {
   outline: Layer,
   layer: Layer,
@@ -248,4 +254,8 @@ export default {
   plugin: Plugin,
   tag: Tag,
   crosshair: Crosshair,
+  ellipse: Ellipse,
+  playRight: PlayRight,
+  playLeft: PlayLeft,
+  timeline: Timeline,
 };
