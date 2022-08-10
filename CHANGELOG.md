@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.10.0 - 2022-08-10
+
+### 🚀 Features
+
+- Add mouse events to plugin API ([#280](https://github.com/reearth/reearth-web/pull/280)) [`9445f0`](https://github.com/reearth/reearth-web/commit/9445f0)
+
+### 🔧 Bug Fixes
+
+- Select not working after pinch event on ipad ([#290](https://github.com/reearth/reearth-web/pull/290)) [`821504`](https://github.com/reearth/reearth-web/commit/821504)
+- Translation for modal buttons [`7eead9`](https://github.com/reearth/reearth-web/commit/7eead9)
+- Plugin widget&[#39](https://github.com/reearth/reearth-web/pull/39);s width using iframe&[#39](https://github.com/reearth/reearth-web/pull/39);s default ([#283](https://github.com/reearth/reearth-web/pull/283)) [`572da0`](https://github.com/reearth/reearth-web/commit/572da0)
+- Pointer events issues around widgets ([#279](https://github.com/reearth/reearth-web/pull/279)) [`219ea4`](https://github.com/reearth/reearth-web/commit/219ea4)
+
+### 🎨 Styling
+
+- Fix icons of plugin install buttons ([#289](https://github.com/reearth/reearth-web/pull/289)) [`af7a1b`](https://github.com/reearth/reearth-web/commit/af7a1b)
+
+### 🧪 Testing
+
+- Introduce vitest ([#284](https://github.com/reearth/reearth-web/pull/284)) [`2152e0`](https://github.com/reearth/reearth-web/commit/2152e0)
+
+### Miscellaneous Tasks
+
+- Migrate to Vite, upgrade Cypress to v10 ([#287](https://github.com/reearth/reearth-web/pull/287)) [`50f2b6`](https://github.com/reearth/reearth-web/commit/50f2b6)
+- Simplify ESLint config ([#282](https://github.com/reearth/reearth-web/pull/282)) [`b3570a`](https://github.com/reearth/reearth-web/commit/b3570a)
+- Upgrade resium to v1.15.0 ([#281](https://github.com/reearth/reearth-web/pull/281)) [`bd3968`](https://github.com/reearth/reearth-web/commit/bd3968)
+- Cosme changelog [`05084e`](https://github.com/reearth/reearth-web/commit/05084e)
+- Fix changelog [`48de86`](https://github.com/reearth/reearth-web/commit/48de86)
+
 ## 0.9.0 - 2022-07-20
 
 ### 🚀 Features
