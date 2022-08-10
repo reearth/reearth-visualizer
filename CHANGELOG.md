@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.10.0 - 2022-08-10
+
+### 🚀 Features
+
+- Configurable server host [`61b03a`](https://github.com/reearth/reearth-backend/commit/61b03a)
+
+### Miscellaneous Tasks
+
+- Add new frontend endpoint (for Vite@3) [`70fed0`](https://github.com/reearth/reearth-backend/commit/70fed0)
+- Fix changelog [skip ci] [`895a64`](https://github.com/reearth/reearth-backend/commit/895a64)
+
 ## 0.9.0 - 2022-07-20
 
 ### 🚀 Features
