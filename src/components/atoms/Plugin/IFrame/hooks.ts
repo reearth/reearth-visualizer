@@ -131,30 +131,27 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    // exec scripts
-    Array.from(doc.body.querySelectorAll("script"))
-      .map<[HTMLScriptElement, HTMLScriptElement]>(oldScript => {
-        const newScript = document.createElement("script");
-        for (const attr of Array.from(oldScript.attributes)) {
-          newScript.setAttribute(attr.name, attr.value);
+    const onScriptsLoaded = () => {
+      // post pending messages
+      if (pendingMesages.current.length) {
+        for (const msg of pendingMesages.current) {
+          win.postMessage(msg, "*");
         }
-        newScript.appendChild(document.createTextNode(oldScript.innerText));
-        return [oldScript, newScript];
-      })
-      .forEach(([oldScript, newScript]) => {
-        oldScript.parentNode?.replaceChild(newScript, oldScript);
-      });
-
-    // post pending messages
-    if (pendingMesages.current.length) {
-      for (const msg of pendingMesages.current) {
-        win.postMessage(msg, "*");
+        pendingMesages.current = [];
       }
-      pendingMesages.current = [];
-    }
+      loaded.current = true;
+      onLoad?.();
+    };
 
-    loaded.current = true;
-    onLoad?.();
+    // exec scripts
+    const scripts = doc.body.querySelectorAll("script");
+    if (scripts) {
+      execScripts(scripts, false)
+        .finally(() => execScripts(scripts, true))
+        .finally(onScriptsLoaded);
+    } else {
+      onScriptsLoaded();
+    }
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
@@ -201,4 +198,33 @@ export default function useHook({
     props,
     onLoad: onIframeLoad,
   };
+}
+
+function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
+  const isAsync = (script: HTMLScriptElement) =>
+    script.getAttribute("type") === "module" ||
+    script.getAttribute("async") ||
+    script.getAttribute("defer");
+
+  return Array.from(scripts)
+    .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
+    .reduce((chain, oldScript) => {
+      return chain.then(() => runScript(oldScript));
+    }, Promise.resolve());
+}
+
+function runScript(oldScript: HTMLScriptElement) {
+  return new Promise<void>((resolve, rejected) => {
+    const newScript = document.createElement("script");
+    for (const attr of Array.from(oldScript.attributes)) {
+      newScript.setAttribute(attr.name, attr.value);
+    }
+    newScript.appendChild(document.createTextNode(oldScript.innerText));
+    newScript.onload = () => resolve();
+    newScript.onerror = () => rejected();
+    oldScript.parentNode?.replaceChild(newScript, oldScript);
+    if (!newScript.getAttribute("src")) {
+      resolve();
+    }
+  });
 }
