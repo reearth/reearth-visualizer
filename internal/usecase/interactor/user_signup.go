@@ -256,17 +256,17 @@ func getOpenIDConfiguration(ctx context.Context, iss string) (c OpenIDConfigurat
 		err = err2
 		return
 	}
-
+	defer func() {
+		_ = res.Body.Close()
+	}()
 	if res.StatusCode != http.StatusOK {
 		err = errors.New("could not get user info")
 		return
 	}
-
 	if err2 := json.NewDecoder(res.Body).Decode(&c); err2 != nil {
 		err = fmt.Errorf("could not get user info: %w", err2)
 		return
 	}
-
 	return
 }
 
@@ -295,6 +295,9 @@ func getUserInfo(ctx context.Context, url, accessToken string) (ui UserInfo, err
 		err = err2
 		return
 	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		err = errors.New("could not get user info")

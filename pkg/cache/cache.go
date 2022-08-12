@@ -7,22 +7,22 @@ import (
 )
 
 // Cache holds data can be accessed synchronously. The data will be automatically updated when it expires.
-type Cache struct {
-	updater   func(context.Context, interface{}) (interface{}, error)
+type Cache[T any] struct {
+	updater   func(context.Context, T) (T, error)
 	expiresIn time.Duration
 	updatedAt time.Time
 	lock      sync.Mutex
-	data      interface{}
+	data      T
 	now       func() time.Time
 }
 
-func New(updater func(context.Context, interface{}) (interface{}, error), expiresIn time.Duration) *Cache {
-	return &Cache{updater: updater, expiresIn: expiresIn}
+func New[T any](updater func(context.Context, T) (T, error), expiresIn time.Duration) *Cache[T] {
+	return &Cache[T]{updater: updater, expiresIn: expiresIn}
 }
 
-func (c *Cache) Get(ctx context.Context) (interface{}, error) {
+func (c *Cache[T]) Get(ctx context.Context) (res T, _ error) {
 	if c == nil {
-		return nil, nil
+		return
 	}
 
 	c.lock.Lock()
@@ -36,7 +36,7 @@ func (c *Cache) Get(ctx context.Context) (interface{}, error) {
 	return c.data, nil
 }
 
-func (c *Cache) update(ctx context.Context) error {
+func (c *Cache[T]) update(ctx context.Context) error {
 	var err error
 	data, err := c.updater(ctx, c.data)
 	if err != nil {
@@ -48,7 +48,7 @@ func (c *Cache) update(ctx context.Context) error {
 	return nil
 }
 
-func (c *Cache) currentTime() time.Time {
+func (c *Cache[T]) currentTime() time.Time {
 	if c.now == nil {
 		return time.Now()
 	}

@@ -24,6 +24,14 @@ func NewPlugin() repo.Plugin {
 	}
 }
 
+func NewPluginWith(items ...*plugin.Plugin) repo.Plugin {
+	r := NewPlugin()
+	for _, i := range items {
+		_ = r.Save(nil, i)
+	}
+	return r
+}
+
 func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {
 	return &Plugin{
 		// note data is shared between the source repo and mutex cannot work well

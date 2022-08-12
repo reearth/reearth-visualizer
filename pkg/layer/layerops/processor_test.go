@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth-backend/pkg/id"
 	"github.com/reearth/reearth-backend/pkg/layer"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,9 +16,9 @@ func TestProcessor_UninstallPlugin(t *testing.T) {
 	ibf1 := layer.NewInfoboxField().NewID().Plugin(pid).Extension("a").Property(layer.NewPropertyID()).MustBuild()
 	ibf2 := layer.NewInfoboxField().NewID().Plugin(pid2).Extension("a").Property(layer.NewPropertyID()).MustBuild()
 	ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, layer.NewPropertyID())
-	l1 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&pid).MustBuild()
-	l2 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&pid2).MustBuild()
-	l3 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&pid2).Infobox(ib).MustBuild()
+	l1 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).MustBuild()
+	l2 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).MustBuild()
+	l3 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).Infobox(ib).MustBuild()
 	l4 := layer.NewGroup().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Layers(layer.NewIDList([]layer.ID{l1.ID(), l2.ID()})).MustBuild()
 	l5 := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{l3.ID(), l4.ID()})).MustBuild()
 
@@ -28,11 +29,8 @@ func TestProcessor_UninstallPlugin(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, UninstallPluginResult{
-		ModifiedLayers:    layer.List{l3.LayerRef(), l4.LayerRef()},
-		RemovedLayers:     layer.NewIDList([]layer.ID{l1.ID()}),
-		RemovedProperties: []layer.PropertyID{ibf1.Property(), *l1.Property()},
+		ModifiedLayers:    layer.List{l3.LayerRef()},
+		RemovedProperties: []layer.PropertyID{ibf1.Property()},
 	}, res)
-
-	assert.Equal(t, layer.NewIDList([]layer.ID{l2.ID()}), l4.Layers())
 	assert.Equal(t, []*layer.InfoboxField{ibf2}, ib.Fields())
 }

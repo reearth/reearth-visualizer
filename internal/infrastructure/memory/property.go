@@ -23,6 +23,14 @@ func NewProperty() repo.Property {
 	}
 }
 
+func NewPropertyWith(items ...*property.Property) repo.Property {
+	r := NewProperty()
+	for _, i := range items {
+		_ = r.Save(nil, i)
+	}
+	return r
+}
+
 func (r *Property) Filtered(f repo.SceneFilter) repo.Property {
 	return &Property{
 		// note data is shared between the source repo and mutex cannot work well

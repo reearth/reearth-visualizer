@@ -268,14 +268,6 @@ type Plugin {
   propertySchema: PropertySchema @goField(forceResolver: true)
 }
 
-type PluginMetadata {
-  name: String!
-  description: String!
-  author: String!
-  thumbnailUrl: String!
-  createdAt: DateTime!
-}
-
 enum WidgetAreaAlign {
   START
   CENTERED
@@ -1592,7 +1584,6 @@ type Query {
   dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
   searchUser(nameOrEmail: String!): User
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
-  installablePlugins: [PluginMetadata!]!
 }
 
 # Mutation

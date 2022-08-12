@@ -36,15 +36,6 @@ func (c *PluginLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmode
 	return plugins, nil
 }
 
-func (c *PluginLoader) FetchPluginMetadata(ctx context.Context) ([]*gqlmodel.PluginMetadata, error) {
-	res, err := c.usecase.FetchPluginMetadata(ctx, getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return util.Map(res, gqlmodel.ToPluginMetadata), nil
-}
-
 // data loader
 
 type PluginDataLoader interface {

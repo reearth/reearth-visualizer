@@ -12,6 +12,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/reearth/reearth-backend/pkg/auth"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 const configPrefix = "reearth"
@@ -33,6 +35,7 @@ type Config struct {
 	Tracer         string
 	TracerSample   float64
 	GCS            GCSConfig
+	Marketplace    MarketplaceConfig
 	AssetBaseURL   string `default:"http://localhost:8080/assets"`
 	Origins        []string
 	Web            WebConfig
@@ -300,4 +303,35 @@ func addHTTPScheme(host string) string {
 		host = "http://" + host
 	}
 	return host
+}
+
+type MarketplaceConfig struct {
+	Endpoint string
+	OAuth    OAuthClientCredentialsConfig
+}
+
+type OAuthClientCredentialsConfig struct {
+	ClientID     string
+	ClientSecret string
+	TokenURL     string
+	Scopes       []string
+	Audience     []string
+}
+
+func (c OAuthClientCredentialsConfig) Config() clientcredentials.Config {
+	var params url.Values
+	if len(c.Audience) > 0 {
+		params = url.Values{
+			"audience": c.Audience,
+		}
+	}
+
+	return clientcredentials.Config{
+		ClientID:       c.ClientID,
+		ClientSecret:   c.ClientSecret,
+		TokenURL:       c.TokenURL,
+		Scopes:         c.Scopes,
+		AuthStyle:      oauth2.AuthStyleInParams,
+		EndpointParams: params,
+	}
 }

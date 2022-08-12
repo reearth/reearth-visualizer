@@ -24,7 +24,7 @@ import (
 type Published struct {
 	project      repo.Project
 	file         gateway.File
-	indexHTML    *cache.Cache
+	indexHTML    *cache.Cache[string]
 	indexHTMLStr string
 }
 
@@ -40,23 +40,23 @@ func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *
 	return &Published{
 		project: project,
 		file:    file,
-		indexHTML: cache.New(func(c context.Context, i interface{}) (interface{}, error) {
+		indexHTML: cache.New(func(c context.Context, i string) (string, error) {
 			req, err := http.NewRequestWithContext(c, http.MethodGet, indexHTMLURL.String(), nil)
 			if err != nil {
-				return nil, err
+				return "", err
 			}
 			res, err := http.DefaultClient.Do(req)
 			if err != nil {
 				log.Errorf("published index: conn err: %s", err)
-				return nil, errors.New("failed to fetch HTML")
-			}
-			if res.StatusCode >= 300 {
-				log.Errorf("published index: status err: %d", res.StatusCode)
-				return nil, errors.New("failed to fetch HTML")
+				return "", errors.New("failed to fetch HTML")
 			}
 			defer func() {
 				_ = res.Body.Close()
 			}()
+			if res.StatusCode >= 300 {
+				log.Errorf("published index: status err: %d", res.StatusCode)
+				return "", errors.New("failed to fetch HTML")
+			}
 			str, err := io.ReadAll(res.Body)
 			if err != nil {
 				log.Errorf("published index: read err: %s", err)
@@ -99,7 +99,7 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 		if err != nil {
 			return "", err
 		}
-		html = htmli.(string)
+		html = htmli
 	}
 	return renderIndex(html, u.String(), md), nil
 }

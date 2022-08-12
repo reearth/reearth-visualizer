@@ -15,7 +15,6 @@ import (
 
 type AddLayerItemInput struct {
 	ParentLayerID   id.LayerID
-	PluginID        *id.PluginID
 	ExtensionID     *id.PluginExtensionID
 	Index           *int
 	LinkedDatasetID *id.DatasetID
@@ -25,7 +24,6 @@ type AddLayerItemInput struct {
 
 type AddLayerGroupInput struct {
 	ParentLayerID         id.LayerID
-	PluginID              *id.PluginID
 	ExtensionID           *id.PluginExtensionID
 	Index                 *int
 	LinkedDatasetSchemaID *id.DatasetSchemaID

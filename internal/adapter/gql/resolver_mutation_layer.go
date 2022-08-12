@@ -15,18 +15,20 @@ func (r *mutationResolver) AddLayerItem(ctx context.Context, input gqlmodel.AddL
 		return nil, err
 	}
 
-	pid, err := gqlmodel.ToPluginID(input.PluginID)
-	if err != nil {
-		return nil, err
-	}
+	// layers are no longer extendable with plugins
+	// pid, err := gqlmodel.ToPluginID(input.PluginID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	layer, parent, err := usecases(ctx).Layer.AddItem(ctx, interfaces.AddLayerItemInput{
 		ParentLayerID: lid,
-		PluginID:      &pid,
-		ExtensionID:   lo.ToPtr(id.PluginExtensionID(input.ExtensionID)),
-		Index:         input.Index,
-		Name:          gqlmodel.RefToString(input.Name),
-		LatLng:        gqlmodel.ToPropertyLatLng(input.Lat, input.Lng),
+		// layers are no longer extendable with plugins
+		// PluginID:      &pid,
+		ExtensionID: lo.ToPtr(id.PluginExtensionID(input.ExtensionID)),
+		Index:       input.Index,
+		Name:        gqlmodel.RefToString(input.Name),
+		LatLng:      gqlmodel.ToPropertyLatLng(input.Lat, input.Lng),
 		// LinkedDatasetID: input.LinkedDatasetID,
 	}, getOperator(ctx))
 	if err != nil {
@@ -47,8 +49,9 @@ func (r *mutationResolver) AddLayerGroup(ctx context.Context, input gqlmodel.Add
 	}
 
 	layer, parent, err := usecases(ctx).Layer.AddGroup(ctx, interfaces.AddLayerGroupInput{
-		ParentLayerID:         lid,
-		PluginID:              gqlmodel.ToPluginIDRef(input.PluginID),
+		ParentLayerID: lid,
+		// layers are no longer extendable with plugins
+		// PluginID:           gqlmodel.ToPluginIDRef(input.PluginID),
 		ExtensionID:           gqlmodel.ToStringIDRef[id.PluginExtension](input.ExtensionID),
 		Index:                 input.Index,
 		Name:                  gqlmodel.RefToString(input.Name),

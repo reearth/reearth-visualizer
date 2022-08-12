@@ -14,6 +14,16 @@ func TestErrInternal(t *testing.T) {
 	assert.EqualError(t, err, "internal")
 	assert.IsType(t, err, &Error{})
 	assert.Same(t, werr, errors.Unwrap(err))
+
+	err2 := ErrInternalByWith("a", werr)
+	assert.EqualError(t, err2, "a")
+	assert.IsType(t, err2, &Error{})
+	assert.Same(t, werr, errors.Unwrap(err2))
+
+	err3 := ErrInternalByWithError(errors.New("x"), werr)
+	assert.EqualError(t, err3, "x")
+	assert.IsType(t, err3, &Error{})
+	assert.Same(t, werr, errors.Unwrap(err3))
 }
 
 func TestError(t *testing.T) {

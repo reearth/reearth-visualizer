@@ -22,6 +22,14 @@ func NewLayer() repo.Layer {
 	}
 }
 
+func NewLayerWith(items ...layer.Layer) repo.Layer {
+	r := NewLayer()
+	for _, i := range items {
+		_ = r.Save(nil, i)
+	}
+	return r
+}
+
 func (r *Layer) Filtered(f repo.SceneFilter) repo.Layer {
 	return &Layer{
 		// note data is shared between the source repo and mutex cannot work well

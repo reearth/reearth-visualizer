@@ -36,6 +36,14 @@ func (m *SyncMap[K, V]) LoadOrStore(key K, value V) (vv V, _ bool) {
 	return vv, ok
 }
 
+func (m *SyncMap[K, V]) LoadAndDelete(key K) (vv V, ok bool) {
+	v, ok := m.m.LoadAndDelete(key)
+	if ok {
+		vv = v.(V)
+	}
+	return vv, ok
+}
+
 func (m *SyncMap[K, V]) Delete(key K) {
 	m.m.Delete(key)
 }
@@ -123,4 +131,27 @@ func (m *SyncMap[K, V]) Len() (i int) {
 		return true
 	})
 	return
+}
+
+type LockMap[T any] struct {
+	m SyncMap[T, *sync.Mutex]
+}
+
+func (m *LockMap[T]) Lock(k T) func() {
+	nl := &sync.Mutex{}
+	l, ok := m.m.LoadOrStore(k, nl)
+	if ok {
+		l.Lock()
+	} else {
+		nl.Lock()
+	}
+	return func() {
+		m.Unlock(k)
+	}
+}
+
+func (m *LockMap[T]) Unlock(k T) {
+	if l, ok := m.m.LoadAndDelete(k); ok {
+		l.Unlock()
+	}
 }

@@ -13,7 +13,9 @@ func New() *Builder {
 }
 
 func (b *Builder) Build() (*Plugin, error) {
-	// TODO: check extensions duplication ...etc
+	if b.p.id.IsNil() {
+		return nil, ErrInvalidID
+	}
 	return b.p, nil
 }
 

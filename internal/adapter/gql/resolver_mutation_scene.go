@@ -131,14 +131,14 @@ func (r *mutationResolver) InstallPlugin(ctx context.Context, input gqlmodel.Ins
 		return nil, err
 	}
 
-	scene, pl, pr, err := usecases(ctx).Scene.InstallPlugin(ctx, sid, pid, getOperator(ctx))
+	scene, pr, err := usecases(ctx).Scene.InstallPlugin(ctx, sid, pid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.InstallPluginPayload{
 		Scene: gqlmodel.ToScene(scene), ScenePlugin: &gqlmodel.ScenePlugin{
-			PluginID:   gqlmodel.IDFromPluginID(pl),
+			PluginID:   input.PluginID,
 			PropertyID: gqlmodel.IDFromRef(pr),
 		},
 	}, nil

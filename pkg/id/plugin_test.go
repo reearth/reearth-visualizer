@@ -568,7 +568,67 @@ func TestPluginID_Equal(t *testing.T) {
 			assert.Equal(t, tc.expected, tc.input2.Equal(tc.input1))
 		})
 	}
+}
 
+func TestPluginID_NameEqual(t *testing.T) {
+	tests := []struct {
+		name     string
+		input1   PluginID
+		input2   PluginID
+		expected bool
+	}{
+		{
+			name:     "system",
+			input1:   MustPluginID("reearth"),
+			input2:   MustPluginID("reearth"),
+			expected: true,
+		},
+		{
+			name:     "system and normal",
+			input1:   MustPluginID("reearth"),
+			input2:   MustPluginID("Test~1.0.0"),
+			expected: false,
+		},
+		{
+			name:     "same",
+			input1:   MustPluginID("Test~1.0.0"),
+			input2:   MustPluginID("Test~1.0.0"),
+			expected: true,
+		},
+		{
+			name:     "diff version",
+			input1:   MustPluginID("Test~1.0.0"),
+			input2:   MustPluginID("Test~1.0.1"),
+			expected: true,
+		},
+		{
+			name:     "diff name",
+			input1:   MustPluginID("Test0~1.0.0"),
+			input2:   MustPluginID("Test1~1.0.0"),
+			expected: false,
+		},
+		{
+			name:     "same scene",
+			input1:   MustPluginID("01fbprc3j929w0a3h16nh8rqy6~Test~1.0.0"),
+			input2:   MustPluginID("01fbprc3j929w0a3h16nh8rqy6~Test~1.0.0"),
+			expected: true,
+		},
+		{
+			name:     "diff scene",
+			input1:   MustPluginID("01fbprc3j929w0a3h16nh8rqy6~Test~1.0.0"),
+			input2:   MustPluginID("01fbprc3j929w0a3h16nh8rqy7~Test~1.0.0"),
+			expected: false,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.expected, tc.input1.NameEqual(tc.input2))
+			assert.Equal(t, tc.expected, tc.input2.NameEqual(tc.input1))
+		})
+	}
 }
 
 func TestPluginID_MarshalText(t *testing.T) {

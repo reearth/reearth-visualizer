@@ -24,6 +24,14 @@ func NewScene() repo.Scene {
 	}
 }
 
+func NewSceneWith(items ...*scene.Scene) repo.Scene {
+	r := NewScene()
+	for _, i := range items {
+		_ = r.Save(nil, i)
+	}
+	return r
+}
+
 func (r *Scene) Filtered(f repo.TeamFilter) repo.Scene {
 	return &Scene{
 		// note data is shared between the source repo and mutex cannot work well

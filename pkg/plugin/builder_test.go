@@ -15,19 +15,19 @@ func TestBuilder_ID(t *testing.T) {
 
 func TestBuilder_Name(t *testing.T) {
 	var b = New()
-	res := b.Name(i18n.StringFrom("fooo")).MustBuild()
+	res := b.ID(MustID("aaa~1.1.1")).Name(i18n.StringFrom("fooo")).MustBuild()
 	assert.Equal(t, i18n.StringFrom("fooo"), res.Name())
 }
 
 func TestBuilder_Author(t *testing.T) {
 	var b = New()
-	res := b.Author("xxx").MustBuild()
+	res := b.ID(MustID("aaa~1.1.1")).Author("xxx").MustBuild()
 	assert.Equal(t, "xxx", res.Author())
 }
 
 func TestBuilder_Description(t *testing.T) {
 	var b = New()
-	res := b.Description(i18n.StringFrom("ddd")).MustBuild()
+	res := b.ID(MustID("aaa~1.1.1")).Description(i18n.StringFrom("ddd")).MustBuild()
 	assert.Equal(t, i18n.StringFrom("ddd"), res.Description())
 }
 
@@ -52,7 +52,7 @@ func TestBuilder_Schema(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res := New().Schema(tt.sid).MustBuild()
+			res := New().ID(MustID("aaa~1.1.1")).Schema(tt.sid).MustBuild()
 			assert.Equal(t, tt.expected, res.Schema())
 		})
 	}
@@ -64,13 +64,13 @@ func TestBuilder_Extensions(t *testing.T) {
 		NewExtension().ID("xxx").MustBuild(),
 		NewExtension().ID("yyy").MustBuild(),
 	}
-	res := b.Extensions(ext).MustBuild()
+	res := b.ID(MustID("aaa~1.1.1")).Extensions(ext).MustBuild()
 	assert.Equal(t, ext, res.Extensions())
 }
 
 func TestBuilder_RepositoryURL(t *testing.T) {
 	var b = New()
-	res := b.RepositoryURL("hoge").MustBuild()
+	res := b.ID(MustID("aaa~1.1.1")).RepositoryURL("hoge").MustBuild()
 	assert.Equal(t, "hoge", res.RepositoryURL())
 }
 

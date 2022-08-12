@@ -21,5 +21,4 @@ type Plugin interface {
 	Fetch(context.Context, []id.PluginID, *usecase.Operator) ([]*plugin.Plugin, error)
 	Upload(context.Context, io.Reader, id.SceneID, *usecase.Operator) (*plugin.Plugin, *scene.Scene, error)
 	UploadFromRemote(context.Context, *url.URL, id.SceneID, *usecase.Operator) (*plugin.Plugin, *scene.Scene, error)
-	FetchPluginMetadata(context.Context, *usecase.Operator) ([]*plugin.Metadata, error)
 }

@@ -17,13 +17,13 @@ func TestPlugin_Extension(t *testing.T) {
 		{
 			name:     "exiting extension",
 			key:      "yyy",
-			plugin:   New().Extensions([]*Extension{NewExtension().ID("xxx").MustBuild(), NewExtension().ID("yyy").MustBuild()}).MustBuild(),
+			plugin:   New().ID(MustID("aaa~1.1.1")).Extensions([]*Extension{NewExtension().ID("xxx").MustBuild(), NewExtension().ID("yyy").MustBuild()}).MustBuild(),
 			expected: NewExtension().ID("yyy").MustBuild(),
 		},
 		{
 			name:     "not exiting extension",
 			key:      "zzz",
-			plugin:   New().Extensions([]*Extension{NewExtension().ID("xxx").MustBuild(), NewExtension().ID("yyy").MustBuild()}).MustBuild(),
+			plugin:   New().ID(MustID("aaa~1.1.1")).Extensions([]*Extension{NewExtension().ID("xxx").MustBuild(), NewExtension().ID("yyy").MustBuild()}).MustBuild(),
 			expected: nil,
 		},
 		{
@@ -55,12 +55,12 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 	}{
 		{
 			name:     "normal",
-			plugin:   New().Schema(&ps1).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
+			plugin:   New().ID(MustID("aaa~1.1.1")).Schema(&ps1).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
 			expected: []PropertySchemaID{ps1, ps2, ps3},
 		},
 		{
 			name:     "no plugin property schema",
-			plugin:   New().Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
+			plugin:   New().ID(MustID("aaa~1.1.1")).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
 			expected: []PropertySchemaID{ps2, ps3},
 		},
 		{
@@ -80,7 +80,7 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 }
 
 func TestPlugin_Author(t *testing.T) {
-	p := New().Author("xx").MustBuild()
+	p := New().ID(MustID("aaa~1.1.1")).Author("xx").MustBuild()
 	assert.Equal(t, "xx", p.Author())
 }
 

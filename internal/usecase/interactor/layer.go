@@ -184,7 +184,11 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		return nil, nil, interfaces.ErrCannotAddLayerToLinkedLayerGroup
 	}
 
-	plugin, extension, err := i.getPlugin(ctx, parentLayer.Scene(), inp.PluginID, inp.ExtensionID)
+	var pid *id.PluginID
+	if inp.ExtensionID != nil {
+		pid = &id.OfficialPluginID
+	}
+	plugin, extension, err := i.getPlugin(ctx, parentLayer.Scene(), pid, inp.ExtensionID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -264,7 +268,11 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	var extensionSchemaID id.PropertySchemaID
 	var propertySchema *property.Schema
 
-	plug, extension, err := i.getPlugin(ctx, parentLayer.Scene(), inp.PluginID, inp.ExtensionID)
+	var pid *id.PluginID
+	if inp.ExtensionID != nil {
+		pid = &id.OfficialPluginID
+	}
+	plug, extension, err := i.getPlugin(ctx, parentLayer.Scene(), pid, inp.ExtensionID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -301,10 +309,8 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	} else {
 		builder = builder.Name(inp.Name)
 	}
-	if inp.PluginID != nil {
-		builder = builder.Plugin(inp.PluginID)
-	}
-	if inp.PluginID != nil && inp.ExtensionID != nil {
+	if inp.ExtensionID != nil {
+		builder = builder.Plugin(&id.OfficialPluginID)
 		propertySchema, err = i.propertySchemaRepo.FindByID(ctx, extensionSchemaID)
 		if err != nil {
 			return nil, nil, err

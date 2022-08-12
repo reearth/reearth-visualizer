@@ -19,10 +19,22 @@ var (
 )
 
 func ErrInternalBy(err error) error {
-	log.Errorf("internal error: %s", err.Error())
+	return errInternalBy(errInternal, err)
+}
+
+func ErrInternalByWith(label string, err error) error {
+	return errInternalBy(errors.New(label), err)
+}
+
+func ErrInternalByWithError(label, err error) error {
+	return errInternalBy(label, err)
+}
+
+func errInternalBy(label, err error) *Error {
+	log.Errorf("%s: %s", label.Error(), err.Error())
 	debug.PrintStack()
 	return &Error{
-		Label:  errInternal,
+		Label:  label,
 		Err:    err,
 		Hidden: true,
 	}

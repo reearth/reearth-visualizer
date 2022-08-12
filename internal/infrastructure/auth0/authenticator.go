@@ -2,32 +2,25 @@ package auth0
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth-backend/pkg/rerror"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 type Auth0 struct {
-	domain         string
+	base           string
 	client         *http.Client
-	clientID       string
-	clientSecret   string
-	token          string
-	expireAt       time.Time
-	lock           sync.Mutex
-	current        func() time.Time
 	disableLogging bool
-}
-
-func currentTime() time.Time {
-	return time.Now()
 }
 
 type response struct {
@@ -37,9 +30,6 @@ type response struct {
 	Email            string `json:"email"`
 	EmailVerified    bool   `json:"email_verified"`
 	Message          string `json:"message"`
-	Token            string `json:"access_token"`
-	Scope            string `json:"scope"`
-	ExpiresIn        int64  `json:"expires_in"`
 	ErrorDescription string `json:"error_description"`
 }
 
@@ -65,15 +55,24 @@ func (u response) Error() string {
 }
 
 func New(domain, clientID, clientSecret string) *Auth0 {
+	base := urlFromDomain(domain)
+	conf := clientcredentials.Config{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		TokenURL:     base + "oauth/token",
+		Scopes:       []string{"read:users", "update:users"},
+		AuthStyle:    oauth2.AuthStyleInParams,
+		EndpointParams: url.Values{
+			"audience": []string{base + "api/v2/"},
+		},
+	}
 	return &Auth0{
-		domain:       urlFromDomain(domain),
-		clientID:     clientID,
-		clientSecret: clientSecret,
+		base:   base,
+		client: conf.Client(context.Background()),
 	}
 }
 
 func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway.AuthenticatorUser, err error) {
-	err = a.updateToken()
 	if err != nil {
 		return
 	}
@@ -94,12 +93,9 @@ func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway
 	}
 
 	var r response
-	r, err = a.exec(http.MethodPatch, "api/v2/users/"+p.ID, a.token, payload)
+	r, err = a.exec(http.MethodPatch, "api/v2/users/"+p.ID, payload)
 	if err != nil {
-		if !a.disableLogging {
-			log.Errorf("auth0: update user: %+v", err)
-		}
-		err = errors.New("failed to update user")
+		err = rerror.ErrInternalByWith("failed to update user", err)
 		return
 	}
 
@@ -107,69 +103,10 @@ func (a *Auth0) UpdateUser(p gateway.AuthenticatorUpdateUserParam) (data gateway
 	return
 }
 
-func (a *Auth0) needsFetchToken() bool {
-	if a == nil {
-		return false
-	}
-	if a.current == nil {
-		a.current = currentTime
-	}
-	return a.expireAt.IsZero() || a.expireAt.Sub(a.current()) <= time.Hour
-}
-
-func (a *Auth0) updateToken() error {
-	if a == nil || !a.needsFetchToken() {
-		return nil
-	}
-
-	if a.clientID == "" || a.clientSecret == "" || a.domain == "" {
-		return errors.New("auth0 is not set up")
-	}
-
-	a.lock.Lock()
-	defer a.lock.Unlock()
-
-	if !a.needsFetchToken() {
-		return nil
-	}
-
-	r, err := a.exec(http.MethodPost, "oauth/token", "", map[string]string{
-		"client_id":     a.clientID,
-		"client_secret": a.clientSecret,
-		"audience":      urlFromDomain(a.domain) + "api/v2/",
-		"grant_type":    "client_credentials",
-		"scope":         "read:users update:users",
-	})
-	if err != nil {
-		if !a.disableLogging {
-			log.Errorf("auth0: access token error: %+v", err)
-		}
-		return errors.New("failed to auth")
-	}
-
-	if a.current == nil {
-		a.current = currentTime
-	}
-
-	if r.Token == "" {
-		if !a.disableLogging {
-			log.Errorf("auth0: no token: %+v", r)
-		}
-		return errors.New("failed to auth")
-	}
-	a.token = r.Token
-	a.expireAt = a.current().Add(time.Duration(r.ExpiresIn * int64(time.Second)))
-
-	return nil
-}
-
-func (a *Auth0) exec(method, path, token string, b interface{}) (r response, err error) {
-	if a == nil || a.domain == "" {
+func (a *Auth0) exec(method, path string, b any) (r response, err error) {
+	if a == nil || a.base == "" {
 		err = errors.New("auth0: domain is not set")
 		return
-	}
-	if a.client == nil {
-		a.client = http.DefaultClient
 	}
 
 	var body io.Reader = nil
@@ -187,16 +124,11 @@ func (a *Auth0) exec(method, path, token string, b interface{}) (r response, err
 	}
 
 	var req *http.Request
-	req, err = http.NewRequest(method, urlFromDomain(a.domain)+path, body)
+	req, err = http.NewRequest(method, a.base+path, body)
 	if err != nil {
 		return
 	}
-
 	req.Header.Set("Content-Type", "application/json")
-	if token != "" {
-		req.Header.Set("Authorization", "Bearer "+token)
-	}
-
 	resp, err := a.client.Do(req)
 	if err != nil {
 		return
@@ -233,8 +165,5 @@ func urlFromDomain(path string) string {
 	if !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
 		path = "https://" + path
 	}
-	if path[len(path)-1] != '/' {
-		path += "/"
-	}
-	return path
+	return strings.TrimSuffix(path, "/") + "/"
 }

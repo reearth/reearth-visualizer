@@ -38,7 +38,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, rerror.ErrInternalBy(errors.New("scene is nil"))
 	}
 
-	if oldPluginID.Equal(newPluginID) || oldPluginID.Name() != newPluginID.Name() {
+	if oldPluginID.Equal(newPluginID) || !oldPluginID.NameEqual(newPluginID) {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
 

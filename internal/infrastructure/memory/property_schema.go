@@ -22,6 +22,14 @@ func NewPropertySchema() repo.PropertySchema {
 	return &PropertySchema{}
 }
 
+func NewPropertySchemaWith(items ...*property.Schema) repo.PropertySchema {
+	r := NewPropertySchema()
+	for _, i := range items {
+		_ = r.Save(nil, i)
+	}
+	return r
+}
+
 func (r *PropertySchema) initMap() {
 	if r.data == nil {
 		r.data = map[string]*property.Schema{}

@@ -57,20 +57,6 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	return PluginExtensionType("")
 }
 
-func ToPluginMetadata(t *plugin.Metadata) *PluginMetadata {
-	if t == nil {
-		return nil
-	}
-
-	return &PluginMetadata{
-		Name:         t.Name,
-		Description:  t.Description,
-		ThumbnailURL: t.ThumbnailUrl,
-		Author:       t.Author,
-		CreatedAt:    t.CreatedAt,
-	}
-}
-
 func ToPluginWidgetLayout(wl *plugin.WidgetLayout) *WidgetLayout {
 	if wl == nil {
 		return nil

@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/reearth/reearth-backend/internal/infrastructure/mailer"
-
-	"github.com/reearth/reearth-backend/internal/infrastructure/github"
-	"github.com/reearth/reearth-backend/internal/infrastructure/google"
-	"github.com/spf13/afero"
-
 	"github.com/reearth/reearth-backend/internal/infrastructure/auth0"
 	"github.com/reearth/reearth-backend/internal/infrastructure/fs"
 	"github.com/reearth/reearth-backend/internal/infrastructure/gcs"
+	"github.com/reearth/reearth-backend/internal/infrastructure/google"
+	"github.com/reearth/reearth-backend/internal/infrastructure/mailer"
+	"github.com/reearth/reearth-backend/internal/infrastructure/marketplace"
 	mongorepo "github.com/reearth/reearth-backend/internal/infrastructure/mongo"
 	"github.com/reearth/reearth-backend/internal/usecase/gateway"
 	"github.com/reearth/reearth-backend/internal/usecase/repo"
 	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/spf13/afero"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
@@ -66,14 +64,16 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	// Auth0
 	gateways.Authenticator = auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
 
-	// github
-	gateways.PluginRegistry = github.NewPluginRegistry()
-
 	// google
 	gateways.Google = google.NewGoogle()
 
 	// mailer
 	gateways.Mailer = initMailer(conf)
+
+	// Marketplace
+	if conf.Marketplace.Endpoint != "" {
+		gateways.PluginRegistry = marketplace.New(conf.Marketplace.Endpoint, conf.Marketplace.OAuth.Config())
+	}
 
 	// release lock of all scenes
 	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
