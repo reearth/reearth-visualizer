@@ -1246,15 +1246,6 @@ export enum PluginExtensionType {
   Widget = 'WIDGET'
 }
 
-export type PluginMetadata = {
-  __typename?: 'PluginMetadata';
-  author: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  name: Scalars['String'];
-  thumbnailUrl: Scalars['String'];
-};
-
 export type Project = Node & {
   __typename?: 'Project';
   alias: Scalars['String'];
@@ -1496,7 +1487,6 @@ export type Query = {
   datasetSchemas: DatasetSchemaConnection;
   datasets: DatasetConnection;
   dynamicDatasetSchemas: Array<DatasetSchema>;
-  installablePlugins: Array<PluginMetadata>;
   layer?: Maybe<Layer>;
   me?: Maybe<Me>;
   node?: Maybe<Node>;
@@ -2660,11 +2650,6 @@ export type GetScenePluginsForDatasetInfoPaneQueryVariables = Exact<{
 
 
 export type GetScenePluginsForDatasetInfoPaneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, plugin?: { __typename?: 'Plugin', id: string, name: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, name: string, description: string, icon: string, translatedName: string }> } | null }> } | null };
-
-export type GetInstallablePluginsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetInstallablePluginsQuery = { __typename?: 'Query', installablePlugins: Array<{ __typename?: 'PluginMetadata', name: string, description: string, thumbnailUrl: string, author: string, createdAt: Date }> };
 
 export type GetInstalledPluginsQueryVariables = Exact<{
   projectId: Scalars['ID'];
@@ -5387,44 +5372,6 @@ export function useGetScenePluginsForDatasetInfoPaneLazyQuery(baseOptions?: Apol
 export type GetScenePluginsForDatasetInfoPaneQueryHookResult = ReturnType<typeof useGetScenePluginsForDatasetInfoPaneQuery>;
 export type GetScenePluginsForDatasetInfoPaneLazyQueryHookResult = ReturnType<typeof useGetScenePluginsForDatasetInfoPaneLazyQuery>;
 export type GetScenePluginsForDatasetInfoPaneQueryResult = Apollo.QueryResult<GetScenePluginsForDatasetInfoPaneQuery, GetScenePluginsForDatasetInfoPaneQueryVariables>;
-export const GetInstallablePluginsDocument = gql`
-    query GetInstallablePlugins {
-  installablePlugins {
-    name
-    description
-    thumbnailUrl
-    author
-    createdAt
-  }
-}
-    `;
-
-/**
- * __useGetInstallablePluginsQuery__
- *
- * To run a query within a React component, call `useGetInstallablePluginsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetInstallablePluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetInstallablePluginsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetInstallablePluginsQuery(baseOptions?: Apollo.QueryHookOptions<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>(GetInstallablePluginsDocument, options);
-      }
-export function useGetInstallablePluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>(GetInstallablePluginsDocument, options);
-        }
-export type GetInstallablePluginsQueryHookResult = ReturnType<typeof useGetInstallablePluginsQuery>;
-export type GetInstallablePluginsLazyQueryHookResult = ReturnType<typeof useGetInstallablePluginsLazyQuery>;
-export type GetInstallablePluginsQueryResult = Apollo.QueryResult<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>;
 export const GetInstalledPluginsDocument = gql`
     query GetInstalledPlugins($projectId: ID!, $lang: Lang) {
   scene(projectId: $projectId) {

@@ -15,18 +15,6 @@ export const GET_SCENE_PLUGINS_FOR_DATASET_INFO_PANE = gql`
   }
 `;
 
-export const GET_INSTALLABLE_PLUGINS = gql`
-  query GetInstallablePlugins {
-    installablePlugins {
-      name
-      description
-      thumbnailUrl
-      author
-      createdAt
-    }
-  }
-`;
-
 export const GET_INSTALLED_PLUGINS = gql`
   query GetInstalledPlugins($projectId: ID!, $lang: Lang) {
     scene(projectId: $projectId) {

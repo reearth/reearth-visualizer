@@ -3,7 +3,6 @@ import { useCallback, useMemo } from "react";
 
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
-  useGetInstallablePluginsQuery,
   useGetInstalledPluginsQuery,
   useUninstallPluginMutation,
   useUploadPluginMutation,
@@ -19,7 +18,6 @@ export default (projectId: string) => {
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
-  const { loading: pluginLoading } = useGetInstallablePluginsQuery();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
 
@@ -124,7 +122,7 @@ export default (projectId: string) => {
     [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, t, client],
   );
 
-  const loading = sceneLoading || pluginLoading;
+  const loading = sceneLoading;
   return {
     currentTeam,
     currentProject,
