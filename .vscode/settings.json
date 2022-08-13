@@ -6,26 +6,26 @@
   "yaml.validate": true,
   "yaml.hover": true,
   "yaml.schemas": {
-    "./schemas/plugin_manifest.json": [
-      "/pkg/builtin/manifest.yml"
+    "./server/schemas/plugin_manifest.json": [
+      "/server/pkg/builtin/manifest.yml"
     ],
-    "./schemas/plugin_manifest_translation.json": [
-      "/pkg/builtin/manifest_*.yml"
+    "./server/schemas/plugin_manifest_translation.json": [
+      "/server/pkg/builtin/manifest_*.yml"
     ],
     "https://json.schemastore.org/github-workflow.json": ".github/workflows/build.yml"
   },
   "json.schemas": [
     {
       "fileMatch": [
-        "/pkg/builtin/manifest.json"
+        "/server/pkg/builtin/manifest.json"
       ],
-      "url": "./schemas/plugin_manifest.json"
+      "url": "./server/schemas/plugin_manifest.json"
     },
     {
       "fileMatch": [
-        "/pkg/builtin/manifest_*.json"
+        "/server/pkg/builtin/manifest_*.json"
       ],
-      "url": "./schemas/plugin_manifest_translation.json"
+      "url": "./server/schemas/plugin_manifest_translation.json"
     }
   ]
 }

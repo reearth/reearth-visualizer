@@ -1,47 +1,28 @@
 const { readFileSync, writeFileSync } = require("fs");
 
-const repos = ["web", "backend"];
-const header = "# Changelog\nAll notable changes to this project will be documented in this file.";
-
-module.exports = async ({ github, tag }) => {
-  const newTag = removeVFromTag(tag);
-  const releases = await Promise.all(repos.map(r => github.rest.repos.getReleaseByTag({
+module.exports = async ({ github }) => {
+  const newTag = removeVFromTag(process.env.TAG);
+  const release = await github.rest.repos.getReleaseByTag({
     owner: "reearth",
-    repo: "reearth-" + r,
+    repo: "reearth-web",
     tag: `v${newTag}`,
-  })));
+  });
+  const webChangelogLatest = "### Web\n\n" + release.data.body;
 
-  // generate CHANGELOG_latest.md
-  const changelogLatest = repos.flatMap((r, i) =>
-    [`## reearth-${r}`, releases[i].data.body]
-  ).join("\n");
-  writeFileSync("CHANGELOG_latest.md", changelogLatest);
+  const changelogLatest = readFileSync("CHANGELOG_latest.md", "utf8");
+  const newChangelogLatest = webChangelogLatest + "\n\n" + changelogLatest;
+  writeFileSync("CHANGELOG_latest.md", newChangelogLatest);
 
-  // insert new changelog to CHANGELOG.md
-  let changelog = "";
-  try {
-    changelog = readFileSync("CHANGELOG.md", "utf-8");
-  } catch {
-    // ignore
-  }
-  const pos = changelog.indexOf("## "); // first version section
-  const newChangelog = `${formatHeader(tag)}\n\n${changelogLatest.replace(/^#/gm, "##")}`;
-  if (pos >= 0) {
-    changelog = changelog.slice(0, pos) + newChangelog + "\n\n" + changelog.slice(pos);
-  } else {
-    changelog = [header, newChangelog].join("\n\n")
-  }
-  writeFileSync("CHANGELOG.md", changelog);
+  const changelog = readFileSync("CHANGELOG.md", "utf8");
+  const newChangelog = insert(webChangelogLatest + "\n\n", changelog, changelog.indexOf("### "));
+  writeFileSync("CHANGELOG.md", newChangelog);
 };
-
-function formatHeader(version, date) {
-  return `## ${removeVFromTag(version)} - ${formatDate(date)}`;
-}
-
-function formatDate(d = new Date()) {
-  return `${d.getUTCFullYear()}-${("0" + (d.getUTCMonth() + 1)).slice(-2)}-${("0" + d.getUTCDate()).slice(-2)}`;
-}
 
 function removeVFromTag(t) {
   return t.replace("v", "");
+}
+
+function insert(insert, source, pos) {
+  if (pos < 0) pos = 0;
+  return source.slice(0, pos) + insert + source.slice(pos);
 }

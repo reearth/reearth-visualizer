@@ -35,25 +35,14 @@ jobs:
         with:
           version: v1.45 # v1.46 reports an error
           args: --timeout=10m
+          working-directory: server
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:
           REEARTH_DB: mongodb://localhost
+        working-directory: server
       - name: Send coverage report
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage.txt
-  slack-notification:
-    if: github.event.repository.full_name == 'reearth/reearth-backend' && success() || failure()
-    name: Slack Notification
-    needs:
-      - ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

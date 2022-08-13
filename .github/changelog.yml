@@ -12,4 +12,8 @@ prefixes:
   deps: Miscellaneous Tasks
   ci: false
   revert: false
+scopes:
+  web: Web
+  server: Server
+  "": Misc
 titleVersionPrefix: remove

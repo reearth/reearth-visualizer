@@ -1,4 +1,4 @@
-project_name: reearth-backend
+project_name: reearth
 before:
   hooks:
     - go mod tidy

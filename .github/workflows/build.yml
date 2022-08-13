@@ -11,7 +11,7 @@ jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth-backend' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
+    if: github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       tag: ${{ steps.info.outputs.tag }}
@@ -56,7 +56,7 @@ jobs:
       - info
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
-      ARTIFACTS: dist/reearth-backend_*.*
+      ARTIFACTS: server/dist/reearth_*.*,reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,18 +67,27 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: reearth/reearth-web
+          version: tags/${{ needs.info.outputs.name }}
+          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist ${{ env.SNAPSHOT }}
+          workdir: server
         env:
           SNAPSHOT: ${{ !needs.info.outputs.tag && '--snapshot' || '' }}
           GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
       - name: Rename artifacts
         if: needs.info.outputs.name
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+        working-directory: server
       - name: List artifacts
-        run: ls -l dist
+        run: ls -l server/dist
       - name: Release nightly/rc
         if: needs.info.outputs.name
         uses: ncipollo/release-action@v1
@@ -112,7 +121,7 @@ jobs:
       - info
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
-      IMAGE_NAME: reearth/reearth-backend
+      IMAGE_NAME: reearth/reearth
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -151,10 +160,18 @@ jobs:
           echo "::set-output name=platforms::$PLATFORMS"
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: reearth/reearth-web
+          version: tags/${{ needs.info.outputs.name }}
+          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract reearth-web
+        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz && mv reearth-web web/dist
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
-          context: .
           platforms: ${{ steps.options.outputs.platforms }}
           push: true
           build-args: VERSION=${{ steps.options.outputs.version }}

@@ -1,9 +1,11 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 ## 0.10.0 - 2022-08-10
 
 ### reearth-web
+
 #### 🚀 Features
 
 - Add mouse events to plugin API ([#280](https://github.com/reearth/reearth-web/pull/280)) [`9445f0`](https://github.com/reearth/reearth-web/commit/9445f0)
@@ -30,7 +32,9 @@ All notable changes to this project will be documented in this file.
 - Upgrade resium to v1.15.0 ([#281](https://github.com/reearth/reearth-web/pull/281)) [`bd3968`](https://github.com/reearth/reearth-web/commit/bd3968)
 - Cosme changelog [`05084e`](https://github.com/reearth/reearth-web/commit/05084e)
 - Fix changelog [`48de86`](https://github.com/reearth/reearth-web/commit/48de86)
+
 ### reearth-backend
+
 #### 🚀 Features
 
 - Configurable server host [`61b03a`](https://github.com/reearth/reearth-backend/commit/61b03a)
@@ -43,6 +47,7 @@ All notable changes to this project will be documented in this file.
 ## 0.9.0 - 2022-07-20
 
 ### reearth-web
+
 #### 🚀 Features
 
 - Plugin API to add layers ([#258](https://github.com/reearth/reearth-web/pull/258)) [`6468e2`](https://github.com/reearth/reearth-web/commit/6468e2)
@@ -82,6 +87,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to React 18 and switch to React Router ([#234](https://github.com/reearth/reearth-web/pull/234)) [`b0e8e6`](https://github.com/reearth/reearth-web/commit/b0e8e6)
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Change layer indicators from preset list from backend side ([#158](https://github.com/reearth/reearth-backend/pull/158)) [`0267f1`](https://github.com/reearth/reearth-backend/commit/0267f1)
@@ -102,6 +108,7 @@ All notable changes to this project will be documented in this file.
 ## 0.8.0 - 2022-06-17
 
 ### reearth-web
+
 #### 🚀 Features
 
 - Add a basic timeline UI ([#232](https://github.com/reearth/reearth-web/pull/232)) [`fc9732`](https://github.com/reearth/reearth-web/commit/fc9732)
@@ -136,7 +143,9 @@ All notable changes to this project will be documented in this file.
 - Upgrade dependency cesium-dnd to 1.1.0 ([#244](https://github.com/reearth/reearth-web/pull/244)) [`ba6b51`](https://github.com/reearth/reearth-web/commit/ba6b51)
 - Fix typos [`f98005`](https://github.com/reearth/reearth-web/commit/f98005)
 - Update config so extensionUrls can be declared in .env file for local development ([#237](https://github.com/reearth/reearth-web/pull/237)) [`545b9e`](https://github.com/reearth/reearth-web/commit/545b9e)
+
 ### reearth-backend
+
 #### 🚀 Features
 
 - Add totalCount field to DatasetSchema type of GraphQL schema ([#154](https://github.com/reearth/reearth-backend/pull/154)) [`ab6334`](https://github.com/reearth/reearth-backend/commit/ab6334)
@@ -190,6 +199,7 @@ All notable changes to this project will be documented in this file.
 - Cluster, dataset, infobox, layer, plugin and project gql query files ([#219](https://github.com/reearth/reearth-web/pull/219)) [`e4dae9`](https://github.com/reearth/reearth-web/commit/e4dae9)
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Add an opacity slider to map tiles ([#138](https://github.com/reearth/reearth-backend/pull/138)) [`4f72b8`](https://github.com/reearth/reearth-backend/commit/4f72b8)
@@ -233,6 +243,7 @@ All notable changes to this project will be documented in this file.
 - Update all dependencies ([#210](https://github.com/reearth/reearth-web/pull/210)) [`c22b7a`](https://github.com/reearth/reearth-web/commit/c22b7a)
 
 ### reearth-backend
+
 #### 🔧 Bug Fixes
 
 - Renovate bot not running on schedule ([#136](https://github.com/reearth/reearth-backend/pull/136)) [`82843f`](https://github.com/reearth/reearth-backend/commit/82843f)
@@ -278,6 +289,7 @@ All notable changes to this project will be documented in this file.
 - Set default auth config to start app with zero configuration ([#191](https://github.com/reearth/reearth-web/pull/191)) [`d5a2aa`](https://github.com/reearth/reearth-web/commit/d5a2aa)
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Authentication system ([#108](https://github.com/reearth/reearth-backend/pull/108)) [`b89c32`](https://github.com/reearth/reearth-backend/commit/b89c32)
@@ -352,6 +364,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade dependencies ([#175](https://github.com/reearth/reearth-web/pull/175)) [`dba959`](https://github.com/reearth/reearth-web/commit/dba959)
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Implement property.Diff and plugin/manifest.Diff ([#107](https://github.com/reearth/reearth-backend/pull/107)) [`700269`](https://github.com/reearth/reearth-backend/commit/700269)
@@ -379,6 +392,7 @@ All notable changes to this project will be documented in this file.
 ## 0.4.0 - 2022-01-27
 
 ### reearth-web
+
 #### 🚀 Features
 
 - Add "clamp to filed" option to file primitive ([#155](https://github.com/reearth/reearth-web/pull/155)) [`2e83ba`](https://github.com/reearth/reearth-web/commit/2e83ba)
@@ -402,6 +416,7 @@ All notable changes to this project will be documented in this file.
 - Layer clustering feature (GraphQL) ([#159](https://github.com/reearth/reearth-web/pull/159)) [`4365b8`](https://github.com/reearth/reearth-web/commit/4365b8)
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Add "clamp to ground" option to file primitive ([#95](https://github.com/reearth/reearth-backend/pull/95)) [`559194`](https://github.com/reearth/reearth-backend/commit/559194)
@@ -481,6 +496,7 @@ All notable changes to this project will be documented in this file.
 ## 0.2.0 - 2021-11-18
 
 #### reearth-web
+
 #### 🚀 Features
 
 - Widget align system for mobile ([#115](https://github.com/reearth/reearth-web/pull/115)) [`afa4ba`](https://github.com/reearth/reearth-web/commit/afa4ba)
@@ -506,6 +522,7 @@ All notable changes to this project will be documented in this file.
 
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Support opentelemetry ([#68](https://github.com/reearth/reearth-backend/pull/68)) [`25c581`](https://github.com/reearth/reearth-backend/commit/25c581)
@@ -531,6 +548,7 @@ All notable changes to this project will be documented in this file.
 ## 0.1.0 - 2021-11-02
 
 ### reearth-web
+
 #### 🚀 Features
 
 - Support Auth0 audience ([#2](https://github.com/reearth/reearth-web/pull/2)) [`0ad0f6`](https://github.com/reearth/reearth-web/commit/0ad0f6)
@@ -667,6 +685,7 @@ All notable changes to this project will be documented in this file.
 
 
 ### reearth-backend
+
 #### 🚀 Features
 
 - Support Auth0 audience ([#3](https://github.com/reearth/reearth-backend/pull/3)) [`c3758e`](https://github.com/reearth/reearth-backend/commit/c3758e)
@@ -770,4 +789,3 @@ All notable changes to this project will be documented in this file.
 - Fix release workflow, fix build comment [skip ci] [`cfc79a`](https://github.com/reearth/reearth-backend/commit/cfc79a)
 - Fix renaming file names in release workflow [`96f0b3`](https://github.com/reearth/reearth-backend/commit/96f0b3)
 - Fix and refactor release workflow [skip ci] [`d5466b`](https://github.com/reearth/reearth-backend/commit/d5466b)
-
