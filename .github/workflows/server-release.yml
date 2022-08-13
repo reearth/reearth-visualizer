@@ -1,0 +1,53 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: false
+        description: 'Next version (NOTE: Switch the branch to "release"!)'
+        type: choice
+        default: minor
+        options:
+          - patch
+          - minor
+          - major
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/release'
+    steps:
+      - name: git config
+        env:
+          GPT_USER: ${{ secrets.GPT_USER }}
+        run: |
+          git config --global user.name $GPT_USER
+          git config --global pull.rebase false
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GPT }}
+      - id: changelog
+        name: Generate CHANGELOG
+        uses: reearth/changelog-action@main
+        with:
+          version: ${{ github.event.inputs.version }}
+          repo: ${{ github.repository }}
+          latest: CHANGELOG_latest.md
+      - name: Upload latest CHANGELOG
+        uses: actions/upload-artifact@v3
+        with:
+          name: changelog-${{ steps.changelog.outputs.version }}
+          path: CHANGELOG_latest.md
+      - name: Commit & push to release
+        env:
+          TAG: ${{ steps.changelog.outputs.version }}
+        run: |
+          rm CHANGELOG_latest.md
+          git add CHANGELOG.md
+          git commit -am "$TAG"
+          git tag $TAG
+          git push --atomic origin release $TAG
+      - name: Commit & push to main
+        run: git switch main && git cherry-pick release && git push

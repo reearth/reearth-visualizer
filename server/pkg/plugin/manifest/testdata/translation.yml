@@ -1,0 +1,30 @@
+{
+  "description": "test plugin desc",
+  "name": "test plugin name",
+  "extensions":
+    {
+      "test_ext":
+        {
+          "name": "test ext name",
+          "propertySchema":
+            {
+              "test_ps":
+                {
+                  "description": "test ps desc",
+                  "title": "test ps title",
+                  "fields":
+                    {
+                      "test_field":
+                        {
+                          "title": "test field name",
+                          "description": "test field desc",
+                          "choices": { "test_key": "test choice value" },
+                          "prefix": "P",
+                          "suffix": "S",
+                        },
+                    },
+                },
+            },
+        },
+    },
+}

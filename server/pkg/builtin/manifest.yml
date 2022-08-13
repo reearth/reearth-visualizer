@@ -1,0 +1,1932 @@
+id: reearth
+system: true
+name: Re:Earth Official Plugin
+description: Official Plugin
+author: Re:Earth
+extensions:
+  - id: cesium
+    name: Cesium
+    description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
+    visualizer: cesium
+    type: visualizer
+    schema:
+      groups:
+        - id: default
+          title: Scene
+          fields:
+            - id: camera
+              type: camera
+              title: Initial camera position
+              description: The starting position of your project.
+            - id: terrain
+              type: bool
+              title: Terrain
+              description: Show elevation when close to the surface.
+            - id: terrainType
+              type: string
+              title: Terrain type
+              description: Specify terrain type.
+              defaultValue: cesium
+              choices:
+                - key: cesium
+                  label: Cesium World Terrain
+                - key: arcgis
+                  label: ArcGIS Terrain
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: terrainExaggeration
+              type: number
+              title: Terrain exaggeration
+              description: A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.
+              defaultValue: 1
+              suffix: x
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: terrainExaggerationRelativeHeight
+              type: number
+              title: Terrain exaggeration relative height
+              description: The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.
+              defaultValue: 0
+              suffix: m
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Hide objects under terrain
+              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: skybox
+              type: bool
+              title: Sky
+              defaultValue: true
+              description: Show the stars.
+            - id: bgcolor
+              type: string
+              title: Background color
+              description: With Sky disabled, choose a background color.
+              ui: color
+            - id: ion
+              type: string
+              title: Cesium Ion API access token
+              description: Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.
+            - id: sceneMode
+              type: string
+              title: Scene mode
+              description: Specify scene mode.
+              defaultValue: 3d
+              choices:
+                - key: 3d
+                  label: Scene 3D
+                - key: 2d
+                  label: Scene 2D
+                - key: columbus
+                  label: Columbus View
+        - id: cameraLimiter
+          title: Camera Limiter
+          description: Set the camera limiting box.
+          fields:
+            - id: cameraLimitterEnabled
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable camera limiter.
+            - id: cameraLimitterShowHelper
+              type: bool
+              title: Show helper
+              defaultValue: false
+              description: Display the limiter boundaries.
+            - id: cameraLimitterTargetArea
+              type: camera
+              title: Target max height
+              description: The base position of the camera movement range. This position is the center point of the limit box in the horizontal and depth directions, and is the maximum height of the movable range. The camera will not be able to zoom out beyond the height specified here.
+            - id: cameraLimitterTargetWidth
+              type: number
+              title: Target width
+              description: Specifies the width (longitude direction) of the box that represents the limiter boundaries.
+              min: 5
+              defaultValue: 1000000
+              suffix: m
+            - id: cameraLimitterTargetLength
+              type: number
+              title: Target length
+              description: Specifies the depth (latitude direction) of the box that represents the limiter boundaries.
+              min: 5
+              defaultValue: 1000000
+              suffix: m
+        - id: tiles
+          title: Tiles
+          description: You may change the look of the Earth by obtaining map tile data and setting it here.
+          list: true
+          representativeField: tile_type
+          fields:
+            - id: tile_type
+              type: string
+              title: Tile type
+              defaultValue: default
+              choices:
+                - key: default
+                  label: Default
+                - key: default_label
+                  label: Labelled
+                - key: default_road
+                  label: Road Map
+                - key: stamen_watercolor
+                  label: Stamen Watercolor
+                - key: stamen_toner
+                  label: Stamen Toner
+                - key: open_street_map
+                  label: Open Street Map
+                - key: esri_world_topo
+                  label: ESRI Topography
+                - key: black_marble
+                  label: Earth at night
+                - key: japan_gsi_standard
+                  label: Japan GSI Standard Map
+                - key: url
+                  label: URL
+            - id: tile_url
+              type: string
+              title: Tile map URL
+              availableIf:
+                field: tile_type
+                type: string
+                value: url
+            - id: tile_minLevel
+              type: number
+              title: Minimum zoom level
+              min: 0
+              max: 30
+            - id: tile_maxLevel
+              type: number
+              title: Maximum zoom level
+              min: 0
+              max: 30
+            - id: tile_opacity
+              type: number
+              title: Opacity
+              description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
+              defaultValue: 1
+              ui: slider
+              min: 0
+              max: 1
+        - id: indicator
+          title: Indicator
+          description: Set the style of indicator shown when selecting a layer on the map.
+          fields:
+            - id: indicator_type
+              type: string
+              title: Type
+              defaultValue: default
+              description: Choose how the indicator will look.
+              choices:
+                - key: default
+                  label: Default
+                - key: crosshair
+                  label: Crosshair
+                - key: custom
+                  label: Custom
+            - id: indicator_image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: indicator_type
+                type: string
+                value: custom
+            - id: indicator_image_scale
+              type: number
+              title: Image scale
+              availableIf:
+                field: indicator_type
+                type: string
+                value: custom
+        - id: theme
+          title: Publish Theme
+          description: Set your theme.
+          fields:
+            - id: themeType
+              type: string
+              title: Theme
+              defaultValue: dark
+              description: Select the theme.
+              choices:
+                - key: dark
+                  label: Re:Earth Dark
+                - key: light
+                  label: Re:Earth Light
+                - key: forest
+                  label: Forest
+                - key: custom
+                  label: Custom theme
+            - id: themeTextColor
+              type: string
+              ui: color
+              title: Text color
+              description: Select a color.
+              defaultValue: "#434343"
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
+            - id: themeSelectColor
+              type: string
+              ui: color
+              title: Select color
+              description: Select a color.
+              defaultValue: "#C52C63"
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
+            - id: themeBackgroundColor
+              type: string
+              ui: color
+              title: Background color
+              description: Select a color.
+              defaultValue: "#DFE5F0"
+              availableIf:
+                field: themeType
+                type: string
+                value: custom
+        - id: atmosphere
+          title: Atmospheric Conditions
+          description: Set the look and feel of the Earth.
+          fields:
+            - id: enable_sun
+              type: bool
+              title: Sun
+              defaultValue: true
+              description: Display the Sun.
+            - id: enable_lighting
+              type: bool
+              title: Lighting
+              defaultValue: false
+              description: Display natural lighting from the sun.
+            - id: ground_atmosphere
+              type: bool
+              title: Ground atmosphere
+              defaultValue: true
+              description: Display a lower atmospheric layer.
+            - id: sky_atmosphere
+              type: bool
+              title: Sky atmosphere
+              defaultValue: true
+              description: Display an upper atmospheric layer.
+            - id: shadows
+              type: bool
+              title: Shadow
+              description: Display shadows on the Earth. Shadows for each layers should be also enabled to see them.
+            - id: fog
+              type: bool
+              title: Fog
+              defaultValue: true
+              description: Display customizable fog.
+            - id: fog_density
+              type: number
+              title: Fog density
+              defaultValue: 2.0e-4
+              description: "Set a thickness to the fog. Min: 0 Max: 1"
+              min: 0
+              max: 1
+            - id: brightness_shift
+              type: number
+              title: Fog brightness
+              defaultValue: 0.03
+              description: "Set brightness of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+            - id: hue_shift
+              type: number
+              title: Fog hue
+              description: "Set hue of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+            - id: surturation_shift
+              type: number
+              title: Fog saturation
+              description: "Set saturation of the fog. Min: -1 Max: 1"
+              min: -1
+              max: 1
+        - id: timeline
+          title: Timeline
+          fields:
+            - id: animation
+              type: bool
+              title: Animation
+              defaultValue: false
+              description: Enables animation play. If enabled, each 3D models can animate.
+            - id: visible
+              type: bool
+              title: Timeline
+              description: Whether the timeline UI is displayed or not
+            - id: current
+              type: string
+              title: Current time
+              ui: datetime
+            - id: start
+              type: string
+              title: Start time
+              description: If nothing is set, it will be set automatically according to the data being displayed.
+              ui: datetime
+            - id: stop
+              type: string
+              title: Stop time
+              description: If nothing is set, it will be set automatically according to the data being displayed.
+              ui: datetime
+            - id: stepType
+              type: string
+              title: Tick type
+              defaultValue: rate
+              description: How to specify the playback speed
+              choices:
+                - key: rate
+                  label: Rate
+                - key: fixed
+                  label: Fixed
+            - id: multiplier
+              type: number
+              title: Multiplier
+              description: Specifies the playback speed as a multiple of the real time speed. Negative values can also be specified. Default is 1x.
+              defaultValue: 1
+              prefix: x
+              availableIf:
+                field: stepType
+                type: string
+                value: rate
+            - id: step
+              type: number
+              title: Step
+              description: Specifies the playback speed in seconds. Each time the screen is repeatedly drawn, it advances by the specified specified number of seconds. Negative values can also be specified. The default is 1 second.
+              defaultValue: 1
+              suffix: s
+              availableIf:
+                field: stepType
+                type: string
+                value: fixed
+            - id: rangeType
+              type: string
+              title: Range
+              description: Specifies the playback speed in seconds. Negative values can also be specified.
+              defaultValue: unbounded
+              choices:
+                - key: unbounded
+                  label: Unbounded
+                - key: clamped
+                  label: Clamped
+                - key: bounced
+                  label: Bounced
+        - id: googleAnalytics
+          title: Google Analytics
+          description: Set your Google Analytics tracking ID and analyze how your published project is being viewed.
+          fields:
+            - id: enableGA
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable Google Analytics
+            - id: trackingId
+              type: string
+              title: Tracking ID
+              description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
+      linkable:
+        url:
+          schemaGroupId: indicator
+          fieldId: indicator_image
+  - id: infobox
+    name: Infobox
+    type: infobox
+    description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: showTitle
+              type: bool
+              title: Show title
+              defaultValue: true
+            - id: position
+              type: string
+              title: Position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: middle
+                  label: Middle
+                - key: left
+                  label: Left
+            - id: size
+              type: string
+              title: Width
+              defaultValue: small
+              choices:
+                - key: small
+                  label: Small
+                - key: medium
+                  label: Medium
+                - key: large
+                  label: Large
+            - id: heightType
+              type: string
+              title: Height type
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: manual
+                  label: Manual
+            - id: height
+              type: number
+              title: Height
+              min: 284
+              max: 2048
+              suffix: px
+              description: "This sets the infobox height. Min: 284  Max: 2048"
+              availableIf:
+                field: heightType
+                type: string
+                value: manual
+            - id: infoboxPaddingTop
+              type: number
+              title: Top padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the top of the infobox and the title. Min: 0  Max: 40"
+            - id: infoboxPaddingBottom
+              type: number
+              title: Bottom padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the bottom of the infobox and the last block. Min: 0  Max: 40"
+            - id: infoboxPaddingLeft
+              type: number
+              title: Left padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the left side of the infobox and the title and blocks. Min: 0  Max: 40"
+            - id: infoboxPaddingRight
+              type: number
+              title: Right padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
+            - id: bgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: outlineWidth
+              type: number
+              title: Outline width
+              suffix: px
+              max: 20
+            - id: outlineColor
+              type: string
+              title: Outline color
+              ui: color
+            - id: useMask
+              type: bool
+              title: Use mask
+            - id: typography
+              type: typography
+              title: Font
+  - id: marker
+    visualizer: cesium
+    type: primitive
+    name: Marker
+    description: A standard map marker.
+    schema:
+      groups:
+        - id: default
+          title: Marker
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: heightReference
+              type: string
+              title: Height standard
+              description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
+              defaultValue: none
+              choices:
+                - key: none
+                  label: Absolute
+                - key: clamp
+                  label: Clamp to ground
+                - key: relative
+                  label: Relative to ground
+            - id: style
+              type: string
+              title: Style
+              defaultValue: image
+              choices:
+                - key: point
+                  label: Point
+                - key: image
+                  label: Icon
+            - id: pointColor
+              type: string
+              title: Point color
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: pointSize
+              type: number
+              title: Point size
+              defaultValue: 10
+              min: 0
+              suffix: px
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: pointOutlineColor
+              type: string
+              title: Point outline color
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: pointOutlineWidth
+              type: number
+              title: Point outline width
+              availableIf:
+                field: style
+                type: string
+                value: point
+            - id: image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageSize
+              type: number
+              title: Image scale
+              defaultValue: 1
+              min: 0
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageHorizontalOrigin
+              type: string
+              title: Image horizontal origin
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageVerticalOrigin
+              type: string
+              title: Image vertical origin
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: baseline
+                  label: Baseline
+                - key: bottom
+                  label: Bottom
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageColor
+              type: string
+              title: Image color
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageCrop
+              type: string
+              title: Image crop
+              defaultValue: none
+              choices:
+                - key: none
+                  label: None
+                # - key: rounded
+                #   label: Rounded
+                - key: circle
+                  label: Circle
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadow
+              type: bool
+              title: Image shadow
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadowColor
+              type: string
+              title: Shadow color
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadowBlur
+              type: number
+              title: Shadow radius
+              defaultValue: 3
+              suffix: px
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadowPositionX
+              type: number
+              title: Shadow X
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: imageShadowPositionY
+              type: number
+              title: Shadow Y
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: style
+                type: string
+                value: image
+            - id: label
+              type: bool
+              title: Label
+            - id: labelText
+              type: string
+              title: Label text
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelPosition
+              type: string
+              title: Label position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: left
+                  label: Left
+                - key: top
+                  label: Top
+                - key: bottom
+                  label: Bottom
+                - key: righttop
+                  label: Right top
+                - key: rightbottom
+                  label: Right bottom
+                - key: lefttop
+                  label: Left top
+                - key: leftbottom
+                  label: Left bottom
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelTypography
+              type: typography
+              title: Label font
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelBackground
+              type: bool
+              title: Label background
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: extrude
+              type: bool
+              title: Extruded
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: location
+        url:
+          schemaGroupId: default
+          fieldId: image
+  - id: polyline
+    visualizer: cesium
+    type: primitive
+    name: Polyline
+    description: Polyline primitive
+    schema:
+      groups:
+        - id: default
+          title: Polyline
+          fields:
+            - id: coordinates
+              type: coordinates
+              title: Coordinates
+            - id: strokeColor
+              type: string
+              title: Stroke color
+              ui: color
+            - id: strokeWidth
+              type: number
+              title: Stroke width
+              min: 0
+              defaultValue: 1
+              suffix: px
+  - id: polygon
+    visualizer: cesium
+    type: primitive
+    name: Polygon
+    description: Polygon primitive
+    schema:
+      groups:
+        - id: default
+          title: Polygon
+          fields:
+            - id: polygon
+              type: polygon
+              title: Polygon
+            - id: fill
+              type: bool
+              title: Fill
+              defaultValue: true
+            - id: fillColor
+              type: string
+              title: Fill color
+              ui: color
+              availableIf:
+                field: fill
+                type: bool
+                value: true
+            - id: stroke
+              type: bool
+              title: Stroke
+            - id: strokeColor
+              type: string
+              title: Stroke color
+              ui: color
+              availableIf:
+                field: stroke
+                type: bool
+                value: true
+            - id: strokeWidth
+              type: number
+              title: Stroke width
+              min: 0
+              defaultValue: 1
+              suffix: px
+              availableIf:
+                field: stroke
+                type: bool
+                value: true
+  - id: rect
+    visualizer: cesium
+    type: primitive
+    name: Rectangle
+    description: Rectangle primitive
+    schema:
+      groups:
+        - id: default
+          title: Rectangle
+          fields:
+            - id: rect
+              type: rect
+              title: Rect
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: extrudedHeight
+              type: number
+              title: Extruded height
+              min: 0
+            - id: style
+              type: string
+              title: Style
+              defaultValue: color
+              choices:
+                - key: color
+                  label: Color
+                - key: image
+                  label: Image
+            - id: fillColor
+              type: string
+              title: Fill
+              ui: color
+              availableIf:
+                field: style
+                type: string
+                value: color
+            - id: image
+              type: url
+              title: Image URL
+              ui: image
+              availableIf:
+                field: style
+                type: string
+                value: image
+  - id: photooverlay
+    visualizer: cesium
+    type: primitive
+    name: Photo overlay
+    description: An Icon marker that allows you to set a photo that will appear after reaching its location.
+    schema:
+      groups:
+        - id: default
+          title: Photo overlay
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: height
+              type: number
+              title: Height
+            - id: heightReference
+              type: string
+              title: Height standard
+              description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
+              defaultValue: none
+              choices:
+                - key: none
+                  label: Absolute
+                - key: clamp
+                  label: Clamp to ground
+                - key: relative
+                  label: Relative to ground
+            - id: camera
+              type: camera
+              title: Camera
+              description: Set the camera position for the overlay.
+            - id: image
+              type: url
+              ui: image
+              title: Icon
+            - id: imageSize
+              type: number
+              title: Icon size
+              prefix: x
+              defaultValue: 1
+            - id: imageHorizontalOrigin
+              type: string
+              title: Image horizontal origin
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+            - id: imageVerticalOrigin
+              type: string
+              title: Image vertical origin
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: baseline
+                  label: Baseline
+                - key: bottom
+                  label: Bottom
+            - id: imageCrop
+              type: string
+              title: Icon crop
+              defaultValue: none
+              choices:
+                - key: none
+                  label: None
+                # - key: rounded
+                #   label: Rounded
+                - key: circle
+                  label: Circle
+            - id: imageShadow
+              type: bool
+              title: Icon shadow
+            - id: imageShadowColor
+              type: string
+              title: Shadow color
+              ui: color
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowBlur
+              type: number
+              title: Shadow radius
+              defaultValue: 3
+              suffix: px
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionX
+              type: number
+              title: Shadow X
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: imageShadowPositionY
+              type: number
+              title: Shadow Y
+              suffix: px
+              defaultValue: 0
+              availableIf:
+                field: imageShadow
+                type: bool
+                value: true
+            - id: photoOverlayImage
+              type: url
+              title: Photo
+              ui: image
+            - id: photoOverlayDescription
+              type: string
+              ui: multiline
+              title: Photo description
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: location
+  # - id: rect
+  #   visualizer: cesium
+  #   type: primitive
+  #   name: Rectangle
+  #   description: A rectangle
+  #   schema:
+  #     groups:
+  #       - id: default
+  #         title: Rectangle
+  #         fields:
+  #           - id: rect
+  #             type: rect
+  #             title: Rectangle
+  #           - id: height
+  #             type: number
+  #             title: Height
+  #             defaultValue: 0
+  #             min: 0
+  #             suffix: m
+  #           - id: heightReference
+  #             type: string
+  #             title: Height standard
+  #             description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
+  #             defaultValue: none
+  #             choices:
+  #               - key: none
+  #                 label: Absolute
+  #               - key: clamp
+  #                 label: Clamp to ground
+  #               - key: relative
+  #                 label: Relative to ground
+  #           - id: extrudedHeight
+  #             type: bool
+  #             title: Extruded
+  #           - id: style
+  #             type: string
+  #             title: Style
+  #             defaultValue: color
+  #             choices:
+  #               - key: color
+  #                 label: Color
+  #               - key: image
+  #                 label: Image
+  #           - id: fillColor
+  #             type: string
+  #             title: Fill
+  #             ui: color
+  #             availableIf:
+  #               field: style
+  #               type: string
+  #               value: color
+  #           - id: image
+  #             type: url
+  #             title: Image
+  #             ui: image
+  #             availableIf:
+  #               field: style
+  #               type: string
+  #               value: image
+  #           - id: outlineColor
+  #             type: string
+  #             title: Fill
+  #             ui: color
+  #           - id: outlineWidth
+  #             type: number
+  #             title: Outline width
+  #             suffix: px
+  #           - id: shadows
+  #             type: string
+  #             title: Shadows
+  #             description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
+  #             defaultValue: disabled
+  #             choices:
+  #               - key: disabled
+  #                 label: Disabled
+  #               - key: enabled
+  #                 label: Enabled
+  #               - key: cast_only
+  #                 label: Cast only
+  #               - key: receive_only
+  #                 label: Receive only
+  - id: ellipsoid
+    visualizer: cesium
+    type: primitive
+    name: Sphere
+    description: A 3D ellipsoid
+    schema:
+      groups:
+        - id: default
+          title: Ellipsoid
+          fields:
+            - id: position
+              type: latlng
+              title: Position
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: heightReference
+              type: string
+              title: Height standard
+              description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
+              defaultValue: none
+              choices:
+                - key: none
+                  label: Absolute
+                - key: clamp
+                  label: Clamp to ground
+                - key: relative
+                  label: Relative to ground
+            - id: radius
+              type: number
+              title: Radius
+              defaultValue: 1000
+              min: 0
+              suffix: m
+            - id: fillColor
+              type: string
+              title: Fill
+              ui: color
+            - id: shadows
+              type: string
+              title: Shadows
+              description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
+              defaultValue: disabled
+              choices:
+                - key: disabled
+                  label: Disabled
+                - key: enabled
+                  label: Enabled
+                - key: cast_only
+                  label: Cast only
+                - key: receive_only
+                  label: Receive only
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: position
+  - id: model
+    visualizer: cesium
+    type: primitive
+    name: 3D Model
+    description: A 3D model
+    schema:
+      groups:
+        - id: default
+          title: 3D model
+          fields:
+            - id: model
+              type: url
+              title: URL
+              description: only glTF format is supported
+            - id: location
+              type: latlng
+              title: Location
+            - id: height
+              type: number
+              title: Height
+              defaultValue: 0
+              min: 0
+              suffix: m
+            - id: heightReference
+              type: string
+              title: Height standard
+              description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
+              defaultValue: none
+              choices:
+                - key: none
+                  label: Absolute
+                - key: clamp
+                  label: Clamp to ground
+                - key: relative
+                  label: Relative to ground
+            - id: heading
+              type: number
+              title: Heading
+              suffix: °
+              defaultValue: 0
+            - id: pitch
+              type: number
+              title: Pitch
+              suffix: °
+              defaultValue: 0
+            - id: roll
+              type: number
+              title: Roll
+              suffix: °
+              defaultValue: 0
+            - id: scale
+              type: number
+              title: Scale
+              description: Displays the 3D model equally multiplied by the set value.
+              prefix: x
+              defaultValue: 1
+            - id: maximumScale
+              type: number
+              title: Max scale
+              prefix: x
+            - id: minimumPixelSize
+              type: number
+              title: Min size
+              suffix: px
+            - id: animation
+              type: bool
+              title: Animation
+              description: Enables aniamtion. The scene animation should also be enabled.
+              defaultValue: true
+        - id: appearance
+          title: Appearance
+          fields:
+            - id: shadows
+              type: string
+              title: Shadows
+              description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
+              defaultValue: disabled
+              choices:
+                - key: disabled
+                  label: Disabled
+                - key: enabled
+                  label: Enabled
+                - key: cast_only
+                  label: Cast only
+                - key: receive_only
+                  label: Receive only
+            - id: colorBlend
+              type: string
+              title: Color blend
+              defaultValue: none
+              choices:
+                - key: none
+                  label: None
+                - key: highlight
+                  label: Highlight
+                - key: replace
+                  label: Replace
+                - key: mix
+                  label: Mix
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: colorBlendAmount
+              type: number
+              title: Color blend amount
+              description: O
+              min: 0
+              max: 1
+              defaultValue: 1
+              availableIf:
+                field: colorBlend
+                type: string
+                value: mix
+            - id: lightColor
+              type: string
+              title: Light color
+              ui: color
+            - id: silhouette
+              type: bool
+              title: Silhouette
+            - id: silhouetteColor
+              type: string
+              title: Silhouette color
+              ui: color
+              availableIf:
+                field: silhouette
+                type: bool
+                value: true
+            - id: silhouetteSize
+              type: number
+              title: Silhouette size
+              defaultValue: 1
+              suffix: px
+              availableIf:
+                field: silhouette
+                type: bool
+                value: true
+      linkable:
+        latlng:
+          schemaGroupId: default
+          fieldId: location
+  - id: tileset
+    visualizer: cesium
+    type: primitive
+    name: 3D Tiles
+    description: 3D tiles in "3D Tiles" format
+    schema:
+      groups:
+        - id: default
+          title: Model
+          fields:
+            - id: tileset
+              type: url
+              title: Tileset URL
+              description: A path to tileset.json in 3D tiles
+            - id: styleUrl
+              type: url
+              title: Styling URL
+              description: Optional. A path to a JSON file in 3D Tiles styles
+            - id: shadows
+              type: string
+              title: Shadows
+              description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
+              defaultValue: disabled
+              choices:
+                - key: disabled
+                  label: Disabled
+                - key: enabled
+                  label: Enabled
+                - key: cast_only
+                  label: Cast only
+                - key: receive_only
+                  label: Receive only
+  - id: resource
+    visualizer: cesium
+    type: primitive
+    name: File
+    description: Import your own primitives to be used instead of Re:Earth's built in ones.
+    schema:
+      groups:
+        - id: default
+          title: File
+          fields:
+            - id: url
+              type: url
+              title: File URL
+              ui: file
+            - id: type
+              type: string
+              title: File format
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: kml
+                  label: KML
+                - key: geojson
+                  label: GeoJSON / TopoJSON
+                - key: czml
+                  label: CZML
+            - id: clampToGround
+              type: bool
+              title: Clamp to ground
+              description: Option to attach the primitive to the ground (keeps primitive on top of the map even with terrain enabled).
+              defaultValue: false
+  - id: textblock
+    type: block
+    name: Text
+    description: Text block
+    schema:
+      groups:
+        - id: default
+          title: Text block
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+            - id: markdown
+              type: bool
+              title: Use markdown
+            - id: paddingTop
+              type: number
+              title: Top padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the top edge of the text block and the uppermost text. Min: 0  Max: 40"
+            - id: paddingBottom
+              type: number
+              title: Bottom padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the bottom edge of the text block and the last text. Min: 0  Max: 40"
+            - id: paddingLeft
+              type: number
+              title: Left padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the left edge of the text block and the text. Min: 0  Max: 40"
+            - id: paddingRight
+              type: number
+              title: Right padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the right edge of the text block and the text. Min: 0  Max: 40"
+            - id: typography
+              type: typography
+              title: Font
+  - id: imageblock
+    type: block
+    name: Image
+    description: Image block
+    schema:
+      groups:
+        - id: default
+          title: Image block
+          fields:
+            - id: image
+              type: url
+              title: Image
+              ui: image
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+            - id: imageSize
+              type: string
+              title: Image size
+              defaultValue: cover
+              choices:
+                - key: cover
+                  label: Cover
+                - key: contain
+                  label: Contain
+            - id: imagePositionX
+              type: string
+              title: Image horizontal position
+              defaultValue: center
+              choices:
+                - key: left
+                  label: Left
+                - key: center
+                  label: Center
+                - key: right
+                  label: Right
+            - id: imagePositionY
+              type: string
+              title: Image vertical position
+              defaultValue: center
+              choices:
+                - key: top
+                  label: Top
+                - key: center
+                  label: Center
+                - key: bottom
+                  label: Bottom
+      linkable:
+        url:
+          schemaGroupId: default
+          fieldId: image
+  - id: videoblock
+    type: block
+    name: Video
+    description: Video block
+    schema:
+      groups:
+        - id: default
+          title: Video block
+          fields:
+            - id: url
+              type: url
+              title: Video URL
+              ui: video
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+  - id: locationblock
+    type: block
+    name: Location
+    description: Location block
+    schema:
+      groups:
+        - id: default
+          title: Location block
+          fields:
+            - id: location
+              type: latlng
+              title: Location
+            - id: title
+              type: string
+              title: Title
+            - id: fullSize
+              type: bool
+              title: Full size
+  - id: dlblock
+    type: block
+    name: Table
+    description: Table block
+    schema:
+      groups:
+        - id: default
+          title: Table block
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: typography
+              type: typography
+              title: Font
+        - id: items
+          list: true
+          title: Items
+          fields:
+            - id: item_title
+              type: string
+              title: Title
+            - id: item_datatype
+              type: string
+              title: Type
+              defaultValue: string
+              choices:
+                - key: string
+                  label: String
+                - key: number
+                  label: Number
+            - id: item_datastr
+              type: string
+              title: Data
+              availableIf:
+                field: item_datatype
+                type: string
+                value: string
+            - id: item_datanum
+              type: number
+              title: Data
+              availableIf:
+                field: item_datatype
+                type: string
+                value: number
+  # - id: navigator
+  #   type: widget
+  #   title: Navigator
+  #   description: Navigator widget
+  - id: menu
+    type: widget
+    name: Menu (legacy)
+    description: Menu widgets
+    singleOnly: true
+    widgetLayout:
+      floating: true
+    schema:
+      groups:
+        - id: buttons
+          title: Buttons
+          list: true
+          fields:
+            - id: buttonInvisible
+              type: bool
+              title: Hide
+            - id: buttonTitle
+              type: string
+              title: Title
+            - id: buttonPosition
+              type: string
+              title: Position
+              defaultValue: topleft
+              choices:
+                - key: topleft
+                  label: Top-Left
+                - key: topright
+                  label: Top-Right
+                - key: bottomleft
+                  label: Bottom-Left
+                - key: bottomright
+                  label: Bottom-Right
+            - id: buttonStyle
+              type: string
+              title: Style
+              defaultValue: text
+              choices:
+                - key: text
+                  label: Text only
+                - key: icon
+                  label: Icon only
+                - key: texticon
+                  label: Text and icon
+            - id: buttonIcon
+              type: url
+              title: Icon
+              ui: image
+            - id: buttonColor
+              type: string
+              title: Text color
+              ui: color
+            - id: buttonBgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: buttonType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: menu
+                  label: Menu
+                - key: camera
+                  label: Camera flight
+            - id: buttonLink
+              type: url
+              title: Link
+              availableIf:
+                field: buttonType
+                type: string
+                value: link
+            - id: buttonCamera
+              type: camera
+              title: Camera flight
+              availableIf:
+                field: buttonType
+                type: string
+                value: camera
+        - id: menu
+          title: Menu
+          list: true
+          fields:
+            - id: menuTitle
+              type: string
+              title: Title
+            - id: menuIcon
+              type: url
+              title: Icon
+            - id: menuType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: camera
+                  label: Camera
+                - key: border
+                  label: Break
+            - id: menuLink
+              type: url
+              title: Link
+              availableIf:
+                field: menuType
+                type: string
+                value: link
+            - id: menuCamera
+              type: camera
+              title: Camera
+              availableIf:
+                field: menuType
+                type: string
+                value: camera
+  - id: button
+    type: widget
+    name: Button
+    description: Button widget
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: top
+    schema:
+      groups:
+        - id: default
+          title: Button
+          fields:
+            - id: buttonTitle
+              type: string
+              title: Title
+            - id: buttonStyle
+              type: string
+              title: Style
+              defaultValue: text
+              choices:
+                - key: text
+                  label: Text only
+                - key: icon
+                  label: Icon only
+                - key: texticon
+                  label: Text and icon
+            - id: buttonIcon
+              type: url
+              title: Icon
+              ui: image
+            - id: buttonColor
+              type: string
+              title: Text color
+              ui: color
+            - id: buttonBgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: buttonType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: menu
+                  label: Menu
+                - key: camera
+                  label: Camera flight
+            - id: buttonLink
+              type: url
+              title: Link
+              availableIf:
+                field: buttonType
+                type: string
+                value: link
+            - id: buttonCamera
+              type: camera
+              title: Camera flight
+              availableIf:
+                field: buttonType
+                type: string
+                value: camera
+        - id: menu
+          title: Menu
+          list: true
+          availableIf:
+            field: buttonType
+            type: string
+            value: menu
+          fields:
+            - id: menuTitle
+              type: string
+              title: Title
+            - id: menuIcon
+              type: url
+              title: Icon
+            - id: menuType
+              type: string
+              title: Type
+              defaultValue: link
+              choices:
+                - key: link
+                  label: Link
+                - key: camera
+                  label: Camera
+                - key: border
+                  label: Break
+            - id: menuLink
+              type: url
+              title: Link
+              availableIf:
+                field: menuType
+                type: string
+                value: link
+            - id: menuCamera
+              type: camera
+              title: Camera
+              availableIf:
+                field: menuType
+                type: string
+                value: camera
+  - id: splashscreen
+    type: widget
+    name: Splash screen
+    description: A unique start screen that will display on load of your archive(ex. display the archive's title).
+    singleOnly: true
+    widgetLayout:
+      floating: true
+    schema:
+      groups:
+        - id: overlay
+          title: Overlay screen
+          fields:
+            - id: overlayEnabled
+              type: bool
+              title: Enabled
+            - id: overlayDelay
+              type: number
+              title: Delay
+              suffix: s
+              min: 0
+            - id: overlayDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+            - id: overlayTransitionDuration
+              type: number
+              title: Fade out
+              suffix: s
+              min: 0
+            - id: overlayImage
+              type: url
+              title: Image
+              ui: image
+            - id: overlayImageW
+              type: number
+              title: Image width
+              suffix: px
+            - id: overlayImageH
+              type: number
+              title: Image height
+              suffix: px
+            - id: overlayBgcolor
+              type: string
+              title: Background color
+              ui: color
+        - id: camera
+          title: Camera flight sequence
+          list: true
+          fields:
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+            - id: cameraDelay
+              type: number
+              title: Delay
+              suffix: s
+              min: 0
+  - id: storytelling
+    type: widget
+    name: Storytelling
+    description: SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.
+    singleOnly: true
+    widgetLayout:
+      extendable:
+        horizontally: true
+      defaultLocation:
+        zone: outer
+        section: left
+        area: bottom
+    schema:
+      groups:
+        - id: default
+          title: Storytelling
+          fields:
+            - id: duration
+              title: Duration
+              type: number
+              suffix: s
+              defaultValue: 3
+            - id: range
+              title: Range
+              type: number
+              suffix: m
+              defaultValue: 50000
+            - id: camera
+              title: Camera pose
+              type: camera
+              ui: camera_pose
+            - id: autoStart
+              title: Auto start
+              type: bool
+        - id: stories
+          title: Stories
+          representativeField: layer
+          list: true
+          fields:
+            - id: layer
+              title: Layer
+              type: ref
+              ui: layer
+            - id: layerDuration
+              title: Duration
+              type: number
+              suffix: s
+            - id: layerRange
+              title: Range
+              type: number
+              suffix: m
+            - id: layerCamera
+              title: Camera position
+              type: camera
+  - id: cluster
+    name: Cluster
+    type: cluster
+    description: Defines how layers are clustered together and displayed on earth.
+    schema:
+      groups:
+        - id: default
+          title: Cluster
+          fields:
+            - id: clusterPixelRange
+              type: number
+              description: Sets the minimum range between layers to get clustered together.
+              title: Pixel range
+              defaultValue: 15
+              min: 1
+              max: 200
+              suffix: px
+            - id: clusterMinSize
+              type: number
+              title: Minimum cluster size
+              description: The minimum number of layers that can be clustered.
+              defaultValue: 3
+              min: 2
+              max: 20
+            - id: clusterImage
+              type: url
+              title: Image
+              description: Sets the image of cluster entity.
+              ui: image
+            - id: clusterImageWidth
+              type: number
+              title: Width
+              suffix: px
+              description: Sets the image width.
+            - id: clusterImageHeight
+              type: number
+              title: Height
+              suffix: px
+              description: Sets the image height.
+            - id: clusterLabelTypography
+              type: typography
+              title: Font
+        - id: layers
+          title: Layers
+          representativeField: layer
+          list: true
+          fields:
+            - id: layer
+              title: Layer
+              type: ref
+              ui: layer
+  - id: timeline
+    type: widget
+    name: Timeline
+    description: A timeline widget that allows for viewing layers and data at specific points in time.
+    singleOnly: true
+    widgetLayout:
+      extendable:
+        horizontally: true
+      defaultLocation:
+        zone: outer
+        section: center
+        area: bottom
