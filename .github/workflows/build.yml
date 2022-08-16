@@ -1,17 +1,18 @@
 name: build
 on:
-  workflow_run:
-    workflows: [ci]
-    types: [completed]
-    branches: [main, release]
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
+  pull_request: # TEMP
+#   workflow_run:
+#     workflows: [ci]
+#     types: [completed]
+#     branches: [main, release]
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+#   cancel-in-progress: true
 jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
+    # if: github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       tag: ${{ steps.info.outputs.tag }}
@@ -26,22 +27,25 @@ jobs:
         run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
-        env:
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        # env:
+        #   BRANCH: ${{ github.event.workflow_run.head_branch }}
         # The tag name should be retrieved lazily, as tagging may be delayed.
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          if [[ "$BRANCH" = "release" ]]; then
-            TAG=$(git tag --points-at HEAD)
-            if [[ ! -z "$TAG" ]]; then
-              echo "::set-output name=tag::$TAG"
-              echo "::set-output name=tag_short::${TAG#v}"
-            else
-              echo "::set-output name=name::rc"
-            fi
-          else
-            echo "::set-output name=name::nightly"
-          fi
+          echo "::set-output name=name::nightly"
+        # TEMP
+        # temp: |
+        #   if [[ "$BRANCH" = "release" ]]; then
+        #     TAG=$(git tag --points-at HEAD)
+        #     if [[ ! -z "$TAG" ]]; then
+        #       echo "::set-output name=tag::$TAG"
+        #       echo "::set-output name=tag_short::${TAG#v}"
+        #     else
+        #       echo "::set-output name=name::rc"
+        #     fi
+        #   else
+        #     echo "::set-output name=name::nightly"
+        #   fi
       - name: Show info
         env:
           SHA_SHORT: ${{ steps.info.outputs.sha_short }}
@@ -56,7 +60,7 @@ jobs:
       - info
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
-      ARTIFACTS: server/dist/reearth_*.*
+      ARTIFACTS: dist/reearth_*.*
       ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - name: Checkout
@@ -100,21 +104,21 @@ jobs:
           tag: ${{ needs.info.outputs.name }}
           body: ${{ github.sha }}
           prerelease: true
-      - name: Download latest changelog
-        if: needs.info.outputs.tag
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: release.yml
-          name: changelog-${{ needs.info.outputs.tag }}
-      - name: Create GitHub release
-        if: needs.info.outputs.tag
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
-          commit: ${{ github.sha }}
-          name: ${{ needs.info.outputs.tag }}
-          tag: ${{ needs.info.outputs.tag }}
-          bodyFile: CHANGELOG_latest.md
+      # - name: Download latest changelog
+      #   if: needs.info.outputs.tag
+      #   uses: dawidd6/action-download-artifact@v2
+      #   with:
+      #     workflow: release.yml
+      #     name: changelog-${{ needs.info.outputs.tag }}
+      # - name: Create GitHub release
+      #   if: needs.info.outputs.tag
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
+      #     commit: ${{ github.sha }}
+      #     name: ${{ needs.info.outputs.tag }}
+      #     tag: ${{ needs.info.outputs.tag }}
+      #     bodyFile: CHANGELOG_latest.md
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
@@ -174,14 +178,15 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           platforms: ${{ steps.options.outputs.platforms }}
-          push: true
+          # push: true
+          push: false
           build-args: VERSION=${{ steps.options.outputs.version }}
           tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Invoke deploy_test workflow
-        uses: benc-uk/workflow-dispatch@v1
-        if: needs.info.outputs.name == 'nightly'
-        with:
-          workflow: deploy_test
-          token: ${{ secrets.GPT }}
+      # - name: Invoke deploy_test workflow
+      #   uses: benc-uk/workflow-dispatch@v1
+      #   if: needs.info.outputs.name == 'nightly'
+      #   with:
+      #     workflow: deploy_test
+      #     token: ${{ secrets.GPT }}
