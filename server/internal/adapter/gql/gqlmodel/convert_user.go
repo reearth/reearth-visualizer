@@ -2,7 +2,7 @@ package gqlmodel
 
 import (
 	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearth/server/pkg/util"
+	"github.com/reearth/reearthx/util"
 )
 
 func ToUser(u *user.User) *User {

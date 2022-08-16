@@ -18,8 +18,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/auth"
 	config2 "github.com/reearth/reearth/server/pkg/config"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/log"
 	"gopkg.in/square/go-jose.v2"
 )
 

@@ -9,7 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/rerror"
 )
 
 type Plugin struct {

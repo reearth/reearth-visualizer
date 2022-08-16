@@ -8,7 +8,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2/clientcredentials"
 )
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/rerror"
 )
 
 // NOTE: implemented but it does not work expectedly

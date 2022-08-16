@@ -12,8 +12,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearth/server/pkg/log"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 

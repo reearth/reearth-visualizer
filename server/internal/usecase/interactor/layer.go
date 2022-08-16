@@ -21,9 +21,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/rerror"
 	"github.com/reearth/reearth/server/pkg/shp"
 	"github.com/reearth/reearth/server/pkg/tag"
+	"github.com/reearth/reearthx/rerror"
 )
 
 // TODO: レイヤー作成のドメインロジックがここに多く漏れ出しているのでドメイン層に移す

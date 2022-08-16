@@ -5,8 +5,8 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/util"
 	"github.com/reearth/reearth/server/pkg/value"
+	"github.com/reearth/reearthx/util"
 )
 
 func ToPropertyValue(v *property.Value) *interface{} {

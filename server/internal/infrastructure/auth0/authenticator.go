@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearth/server/pkg/log"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )

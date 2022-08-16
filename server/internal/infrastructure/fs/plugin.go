@@ -10,7 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 )
 

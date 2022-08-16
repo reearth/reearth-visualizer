@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/rerror"
 )
 
 func (r *Resolver) Project() ProjectResolver {

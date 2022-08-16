@@ -14,8 +14,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/plugin/repourl"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/rerror"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/rerror"
 )
 
 var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB

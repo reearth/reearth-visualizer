@@ -15,8 +15,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/rerror"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/rerror"
 )
 
 func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.User, *user.Team, error) {

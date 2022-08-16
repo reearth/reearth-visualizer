@@ -10,9 +10,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 )
 
 type pluginRepo struct {

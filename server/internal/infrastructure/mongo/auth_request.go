@@ -7,7 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearthx/log"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

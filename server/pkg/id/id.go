@@ -1,6 +1,6 @@
 package id
 
-import "github.com/reearth/reearth/server/pkg/id/idx"
+import "github.com/reearth/reearthx/idx"
 
 type Asset struct{}
 type AuthRequest struct{}

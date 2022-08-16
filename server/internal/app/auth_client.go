@@ -7,8 +7,8 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/rerror"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/rerror"
 )
 
 func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
