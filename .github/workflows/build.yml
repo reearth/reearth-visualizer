@@ -53,71 +53,71 @@ jobs:
           TAG_SHORT: ${{ steps.info.outputs.tag_short }}
           NAME: ${{ steps.info.outputs.name }}
         run: echo "sha_short=$SHA_SHORT, tag=$TAG, tag_short=$TAG_SHORT, name=$NAME"
-  build:
-    name: Build and release
-    runs-on: ubuntu-latest
-    needs:
-      - info
-    if: needs.info.outputs.name || needs.info.outputs.tag
-    env:
-      ARTIFACTS: server/dist/reearth_*.*
-      ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
-      - name: Fetch reearth-web release
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          repo: reearth/reearth-web
-          version: tags/${{ needs.info.outputs.name }}
-          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          args: release --rm-dist ${{ env.SNAPSHOT }}
-          workdir: server
-        env:
-          SNAPSHOT: ${{ !needs.info.outputs.tag && '--snapshot' || '' }}
-          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
-      - name: Rename artifacts
-        if: needs.info.outputs.name
-        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
-      - name: List artifacts
-        run: ls -l server/dist
-      - name: Release nightly/rc
-        if: needs.info.outputs.name
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
-          commit: ${{ github.sha }}
-          name: ${{ needs.info.outputs.name }}
-          tag: ${{ needs.info.outputs.name }}
-          body: ${{ github.sha }}
-          prerelease: true
-      # - name: Download latest changelog
-      #   if: needs.info.outputs.tag
-      #   uses: dawidd6/action-download-artifact@v2
-      #   with:
-      #     workflow: release.yml
-      #     name: changelog-${{ needs.info.outputs.tag }}
-      # - name: Create GitHub release
-      #   if: needs.info.outputs.tag
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
-      #     commit: ${{ github.sha }}
-      #     name: ${{ needs.info.outputs.tag }}
-      #     tag: ${{ needs.info.outputs.tag }}
-      #     bodyFile: CHANGELOG_latest.md
+  # build:
+  #   name: Build and release
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - info
+  #   if: needs.info.outputs.name || needs.info.outputs.tag
+  #   env:
+  #     ARTIFACTS: server/dist/reearth_*.*
+  #     ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #         ref: ${{ github.event.workflow_run.head_sha }}
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v3
+  #       with:
+  #         go-version: 1.18
+  #     - name: Fetch reearth-web release
+  #       uses: dsaltares/fetch-gh-release-asset@master
+  #       with:
+  #         repo: reearth/reearth-web
+  #         version: tags/${{ needs.info.outputs.name }}
+  #         file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Run GoReleaser
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         args: release --rm-dist ${{ env.SNAPSHOT }}
+  #         workdir: server
+  #       env:
+  #         SNAPSHOT: ${{ !needs.info.outputs.tag && '--snapshot' || '' }}
+  #         GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
+  #     - name: Rename artifacts
+  #       if: needs.info.outputs.name
+  #       run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+  #     - name: List artifacts
+  #       run: ls -l server/dist
+  #     - name: Release nightly/rc
+  #       if: needs.info.outputs.name
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         allowUpdates: true
+  #         artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
+  #         commit: ${{ github.sha }}
+  #         name: ${{ needs.info.outputs.name }}
+  #         tag: ${{ needs.info.outputs.name }}
+  #         body: ${{ github.sha }}
+  #         prerelease: true
+  #     - name: Download latest changelog
+  #       if: needs.info.outputs.tag
+  #       uses: dawidd6/action-download-artifact@v2
+  #       with:
+  #         workflow: release.yml
+  #         name: changelog-${{ needs.info.outputs.tag }}
+  #     - name: Create GitHub release
+  #       if: needs.info.outputs.tag
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
+  #         commit: ${{ github.sha }}
+  #         name: ${{ needs.info.outputs.tag }}
+  #         tag: ${{ needs.info.outputs.tag }}
+  #         bodyFile: CHANGELOG_latest.md
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
@@ -172,9 +172,7 @@ jobs:
           file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract reearth-web
-        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz && mkdir -p web && mv reearth-web web/dist
-      - name: Ls
-        run: ls; echo "--"; ls web; echo "---"; ls web/dist
+        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
