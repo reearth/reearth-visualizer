@@ -1,0 +1,24 @@
+name: Stage
+on:
+  workflow_dispatch:
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: git config
+        env:
+          GPT_USER: ${{ secrets.GPT_USER }}
+        run: |
+          git config --global user.name $GPT_USER
+          git config --global pull.rebase false
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GPT }}
+      - name: Checkout release branch
+        run: git switch release || git switch -c release
+      - name: Merge main branch to release branch
+        run: git merge -X theirs main
+      - name: Git push
+        run: git push origin release

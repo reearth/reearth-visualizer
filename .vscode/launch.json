@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch server",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "cwd": "${workspaceRoot}/server",
+      "program": "${workspaceRoot}/server/cmd/reearth",
+      "env": {},
+      "args": []
+    }
+  ]
+}

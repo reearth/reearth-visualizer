@@ -1,5 +1,7 @@
+.DS_Store
 /mongo
 /data
-/web
+/server/web
+/server/coverage.txt
 /.env
 /.env.*

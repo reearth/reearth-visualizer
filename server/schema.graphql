@@ -1,0 +1,1696 @@
+# Built-in
+
+scalar Upload
+scalar Any
+
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+# Meta Type
+
+scalar Cursor
+
+interface Node {
+  id: ID!
+}
+
+enum NodeType {
+  ASSET
+  USER
+  TEAM
+  PROJECT
+  PLUGIN
+  SCENE
+  PROPERTY_SCHEMA
+  PROPERTY
+  DATASET_SCHEMA
+  DATASET
+  LAYER_GROUP
+  LAYER_ITEM
+}
+
+type PageInfo {
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+# Basic types
+
+scalar DateTime
+scalar URL
+scalar Lang
+scalar FileSize
+scalar TranslatedString
+
+type LatLng {
+  lat: Float!
+  lng: Float!
+}
+
+type LatLngHeight {
+  lat: Float!
+  lng: Float!
+  height: Float!
+}
+
+type Camera {
+  lat: Float!
+  lng: Float!
+  altitude: Float!
+  heading: Float!
+  pitch: Float!
+  roll: Float!
+  fov: Float!
+}
+
+type Typography {
+  fontFamily: String
+  fontWeight: String
+  fontSize: Int
+  color: String
+  textAlign: TextAlign
+  bold: Boolean
+  italic: Boolean
+  underline: Boolean
+}
+
+type Rect {
+  west: Float!
+  south: Float!
+  east: Float!
+  north: Float!
+}
+
+input Pagination{
+  first: Int
+  last: Int
+  after: Cursor
+  before: Cursor
+}
+
+enum TextAlign {
+  LEFT
+  CENTER
+  RIGHT
+  JUSTIFY
+  JUSTIFY_ALL
+}
+
+enum ValueType {
+  BOOL
+  NUMBER
+  STRING
+  REF
+  URL
+  LATLNG
+  LATLNGHEIGHT
+  CAMERA
+  TYPOGRAPHY
+  COORDINATES
+  POLYGON
+  RECT
+}
+
+enum ListOperation {
+  ADD
+  MOVE
+  REMOVE
+}
+
+enum Theme {
+  DEFAULT
+  LIGHT
+  DARK
+}
+
+# Asset
+
+type Asset implements Node {
+  id: ID!
+  createdAt: DateTime!
+  teamId: ID!
+  name: String!
+  size: FileSize!
+  url: String!
+  contentType: String!
+  team: Team @goField(forceResolver: true)
+}
+
+enum AssetSortType {
+  DATE
+  SIZE
+  NAME
+}
+
+# User
+
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Me {
+  id: ID!
+  name: String!
+  email: String!
+  lang: Lang!
+  theme: Theme!
+  myTeamId: ID!
+  auths: [String!]!
+  teams: [Team!]! @goField(forceResolver: true)
+  myTeam: Team! @goField(forceResolver: true)
+}
+
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+type Team implements Node {
+  id: ID!
+  name: String!
+  members: [TeamMember!]!
+  personal: Boolean!
+  assets(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): AssetConnection! @goField(forceResolver: true)
+  projects(
+    includeArchived: Boolean
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): ProjectConnection! @goField(forceResolver: true)
+}
+
+type TeamMember {
+  userId: ID!
+  role: Role!
+  user: User @goField(forceResolver: true)
+}
+
+enum Role {
+  # a role who can read project
+  READER
+  # a role who can read and write project
+  WRITER
+  # a eole who can have full controll of project
+  OWNER
+}
+
+# Project
+
+type Project implements Node {
+  id: ID!
+  isArchived: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+  name: String!
+  description: String!
+  alias: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+  imageUrl: URL
+  teamId: ID!
+  visualizer: Visualizer!
+  publishmentStatus: PublishmentStatus!
+  team: Team @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+}
+
+enum Visualizer {
+  CESIUM
+}
+
+enum PublishmentStatus {
+  PUBLIC
+  LIMITED
+  PRIVATE
+}
+
+# Plugin
+
+type Plugin {
+  id: ID!
+  sceneId: ID
+  name: String!
+  version: String!
+  description: String!
+  author: String!
+  repositoryUrl: String!
+  propertySchemaId: ID
+  extensions: [PluginExtension!]!
+  scenePlugin(sceneId: ID): ScenePlugin
+  allTranslatedDescription: TranslatedString
+  allTranslatedName: TranslatedString
+  scene: Scene @goField(forceResolver: true)
+  translatedName(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
+  propertySchema: PropertySchema @goField(forceResolver: true)
+}
+
+enum WidgetAreaAlign {
+  START
+  CENTERED
+  END
+}
+
+enum WidgetZoneType {
+  INNER
+  OUTER
+}
+
+enum WidgetSectionType {
+  LEFT
+  CENTER
+  RIGHT
+}
+
+enum WidgetAreaType {
+  TOP
+  MIDDLE
+  BOTTOM
+}
+
+type WidgetLocation {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+type WidgetExtendable {
+  vertically: Boolean!
+  horizontally: Boolean!
+}
+
+type WidgetLayout {
+  extendable: WidgetExtendable!
+  extended: Boolean!
+  floating: Boolean!
+  defaultLocation: WidgetLocation
+}
+
+enum PluginExtensionType {
+  PRIMITIVE
+  WIDGET
+  BLOCK
+  VISUALIZER
+  INFOBOX
+}
+
+type PluginExtension {
+  extensionId: ID!
+  pluginId: ID!
+  type: PluginExtensionType!
+  name: String!
+  description: String!
+  icon: String!
+  singleOnly: Boolean
+  widgetLayout: WidgetLayout
+  visualizer: Visualizer
+  propertySchemaId: ID!
+  allTranslatedName: TranslatedString
+  allTranslatedDescription: TranslatedString
+  plugin: Plugin @goField(forceResolver: true)
+  sceneWidget(sceneId: ID!): SceneWidget @goField(forceResolver: true)
+  propertySchema: PropertySchema @goField(forceResolver: true)
+  translatedName(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
+}
+
+# Scene
+
+type Scene implements Node {
+  id: ID!
+  projectId: ID!
+  teamId: ID!
+  propertyId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  rootLayerId: ID!
+  widgets: [SceneWidget!]!
+  plugins: [ScenePlugin!]!
+  widgetAlignSystem: WidgetAlignSystem
+  dynamicDatasetSchemas: [DatasetSchema!]!
+  project: Project @goField(forceResolver: true)
+  team: Team @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  rootLayer: LayerGroup @goField(forceResolver: true)
+  datasetSchemas(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetSchemaConnection! @goField(forceResolver: true)
+  tagIds: [ID!]!
+  tags: [Tag!]! @goField(forceResolver: true)
+  clusters: [Cluster!]!
+}
+
+type SceneWidget {
+  id: ID!
+  pluginId: ID!
+  extensionId: ID!
+  propertyId: ID!
+  enabled: Boolean!
+  extended: Boolean!
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+}
+
+type ScenePlugin {
+  pluginId: ID!
+  propertyId: ID
+  plugin: Plugin @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+}
+
+type WidgetAlignSystem {
+  inner: WidgetZone
+  outer: WidgetZone
+}
+
+type WidgetZone {
+  left: WidgetSection
+  center: WidgetSection
+  right: WidgetSection
+}
+
+type WidgetSection {
+  top: WidgetArea
+  middle: WidgetArea
+  bottom: WidgetArea
+}
+
+type WidgetArea {
+  widgetIds: [ID!]!
+  align: WidgetAreaAlign!
+}
+
+# Property
+
+type PropertySchema {
+  id: ID!
+  groups: [PropertySchemaGroup!]!
+  linkableFields: PropertyLinkableFields!
+}
+
+type PropertyLinkableFields {
+  schemaId: ID!
+  latlng: ID
+  url: ID
+  latlngField: PropertySchemaField @goField(forceResolver: true)
+  urlField: PropertySchemaField @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+}
+
+type PropertySchemaGroup {
+  schemaGroupId: ID!
+  schemaId: ID!
+  fields: [PropertySchemaField!]!
+  isList: Boolean!
+  isAvailableIf: PropertyCondition
+  title: String
+  allTranslatedTitle: TranslatedString
+  representativeFieldId: ID
+  representativeField: PropertySchemaField
+  schema: PropertySchema @goField(forceResolver: true)
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
+}
+
+type PropertySchemaField {
+  fieldId: ID!
+  type: ValueType!
+  title: String!
+  description: String!
+  prefix: String
+  suffix: String
+  defaultValue: Any
+  ui: PropertySchemaFieldUI
+  min: Float
+  max: Float
+  choices: [PropertySchemaFieldChoice!]
+  isAvailableIf: PropertyCondition
+  allTranslatedTitle: TranslatedString
+  allTranslatedDescription: TranslatedString
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
+  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
+}
+
+enum PropertySchemaFieldUI {
+  LAYER
+  MULTILINE
+  SELECTION
+  COLOR
+  RANGE
+  SLIDER
+  IMAGE
+  VIDEO
+  FILE
+  CAMERA_POSE
+  DATETIME
+}
+
+type PropertySchemaFieldChoice {
+  key: String!
+  title: String!
+  icon: String
+  allTranslatedTitle: TranslatedString
+  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
+}
+
+type PropertyCondition {
+  fieldId: ID!
+  type: ValueType!
+  value: Any
+}
+
+type Property implements Node {
+  id: ID!
+  schemaId: ID!
+  items: [PropertyItem!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  layer: Layer @goField(forceResolver: true)
+  merged: MergedProperty @goField(forceResolver: true)
+}
+
+union PropertyItem = PropertyGroup | PropertyGroupList
+
+type PropertyGroup {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  fields: [PropertyField!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
+}
+
+type PropertyGroupList {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  groups: [PropertyGroup!]!
+  schema: PropertySchema @goField(forceResolver: true)
+  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
+}
+
+type PropertyField {
+  id: String!
+  parentId: ID!
+  schemaId: ID!
+  fieldId: ID!
+  links: [PropertyFieldLink!]
+  type: ValueType!
+  value: Any
+  parent: Property @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  field: PropertySchemaField @goField(forceResolver: true)
+  actualValue: Any @goField(forceResolver: true)
+}
+
+type PropertyFieldLink {
+  datasetId: ID
+  datasetSchemaId: ID!
+  datasetSchemaFieldId: ID!
+  dataset: Dataset @goField(forceResolver: true)
+  datasetField: DatasetField @goField(forceResolver: true)
+  datasetSchema: DatasetSchema @goField(forceResolver: true)
+  datasetSchemaField: DatasetSchemaField @goField(forceResolver: true)
+}
+
+type MergedProperty {
+  originalId: ID
+  parentId: ID
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  original: Property @goField(forceResolver: true)
+  parent: Property @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  groups: [MergedPropertyGroup!]! @goField(forceResolver: true)
+}
+
+type MergedPropertyGroup {
+  originalPropertyId: ID
+  parentPropertyId: ID
+  originalId: ID
+  parentId: ID
+  schemaGroupId: ID!
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  fields: [MergedPropertyField!]!
+  groups: [MergedPropertyGroup!]!
+  originalProperty: Property @goField(forceResolver: true)
+  parentProperty: Property @goField(forceResolver: true)
+  original: PropertyGroup @goField(forceResolver: true)
+  parent: PropertyGroup @goField(forceResolver: true)
+  schema: PropertySchema @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+}
+
+type MergedPropertyField {
+  schemaId: ID!
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+  links: [PropertyFieldLink!]
+  overridden: Boolean!
+  schema: PropertySchema @goField(forceResolver: true)
+  field: PropertySchemaField @goField(forceResolver: true)
+  actualValue: Any @goField(forceResolver: true)
+}
+
+# Dataset
+
+type DatasetSchema implements Node {
+  id: ID!
+  source: String!
+  name: String!
+  sceneId: ID!
+  fields: [DatasetSchemaField!]!
+  totalCount: Int!
+  representativeFieldId: ID
+  dynamic: Boolean
+  datasets(
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetConnection! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  representativeField: DatasetSchemaField @goField(forceResolver: true)
+}
+
+type DatasetSchemaField implements Node {
+  id: ID!
+  source: String!
+  name: String!
+  type: ValueType!
+  schemaId: ID!
+  refId: ID
+  schema: DatasetSchema @goField(forceResolver: true)
+  ref: DatasetSchema @goField(forceResolver: true)
+}
+
+type Dataset implements Node {
+  id: ID!
+  source: String!
+  schemaId: ID!
+  fields: [DatasetField!]!
+  schema: DatasetSchema @goField(forceResolver: true)
+  name: String @goField(forceResolver: true)
+}
+
+type DatasetField {
+  fieldId: ID!
+  schemaId: ID!
+  source: String!
+  type: ValueType!
+  value: Any
+  schema: DatasetSchema @goField(forceResolver: true)
+  field: DatasetSchemaField @goField(forceResolver: true)
+  valueRef: Dataset @goField(forceResolver: true)
+}
+
+# Layer
+
+interface Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  parent: LayerGroup
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+  scenePlugin: ScenePlugin
+  tags: [LayerTag!]!
+}
+
+enum LayerEncodingFormat {
+  KML
+  CZML
+  GEOJSON
+  SHAPE
+  REEARTH
+}
+
+type LayerItem implements Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetId: ID
+  tags: [LayerTag!]!
+  parent: LayerGroup @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedLayer @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
+}
+
+type LayerGroup implements Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetSchemaId: ID
+  root: Boolean!
+  layerIds: [ID!]!
+  tags: [LayerTag!]!
+  parent: LayerGroup @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
+  layers: [Layer]! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
+}
+
+type Infobox {
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  fields: [InfoboxField!]!
+  linkedDatasetId: ID
+  layer: Layer! @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedInfobox @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+}
+
+type InfoboxField {
+  id: ID!
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  linkedDatasetId: ID
+  layer: Layer! @goField(forceResolver: true)
+  infobox: Infobox! @goField(forceResolver: true)
+  property: Property @goField(forceResolver: true)
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  merged: MergedInfoboxField @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
+}
+
+interface LayerTag {
+  tagId: ID!
+  tag: Tag
+}
+
+type LayerTagItem implements LayerTag {
+  tagId: ID!
+  tag: Tag @goField(forceResolver: true)
+}
+
+type LayerTagGroup implements LayerTag {
+  tagId: ID!
+  children: [LayerTagItem!]!
+  tag: Tag @goField(forceResolver: true)
+}
+
+type MergedLayer {
+  originalId: ID!
+  parentId: ID
+  sceneID: ID!
+  property: MergedProperty
+  infobox: MergedInfobox
+  original: LayerItem @goField(forceResolver: true)
+  parent: LayerGroup @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+}
+
+type MergedInfobox {
+  sceneID: ID!
+  property: MergedProperty
+  fields: [MergedInfoboxField!]!
+  scene: Scene @goField(forceResolver: true)
+}
+
+type MergedInfoboxField {
+  originalId: ID!
+  sceneID: ID!
+  pluginId: ID!
+  extensionId: ID!
+  property: MergedProperty
+  plugin: Plugin @goField(forceResolver: true)
+  extension: PluginExtension @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  scenePlugin: ScenePlugin @goField(forceResolver: true)
+}
+
+interface Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  layers: [Layer!]! @goField(forceResolver: true)
+}
+
+type TagItem implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  parentId: ID
+  linkedDatasetID: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetFieldID: ID
+  linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
+  linkedDataset: Dataset @goField(forceResolver: true)
+  linkedDatasetField: DatasetField @goField(forceResolver: true)
+  parent: TagGroup @goField(forceResolver: true)
+  layers: [Layer!]! @goField(forceResolver: true)
+}
+
+type TagGroup implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  tagIds: [ID!]
+  tags: [TagItem!]! @goField(forceResolver: true)
+  scene: Scene @goField(forceResolver: true)
+  layers: [Layer!]! @goField(forceResolver: true)
+}
+
+type Cluster {
+  id: ID!
+  name: String!
+  propertyId: ID!
+  property: Property @goField(forceResolver: true)
+}
+
+# InputType
+
+input CreateAssetInput {
+  teamId: ID!
+  file: Upload!
+}
+
+input RemoveAssetInput {
+  assetId: ID!
+}
+
+input SignupInput {
+  lang: Lang
+  theme: Theme
+  userId: ID
+  teamId: ID
+  secret: String
+}
+
+input UpdateMeInput {
+  name: String
+  email: String
+  lang: Lang
+  theme: Theme
+  password: String
+  passwordConfirmation: String
+}
+
+input RemoveMyAuthInput {
+  auth: String!
+}
+
+input DeleteMeInput {
+  userId: ID!
+}
+
+input CreateTeamInput {
+  name: String!
+}
+
+input UpdateTeamInput {
+  teamId: ID!
+  name: String!
+}
+
+input AddMemberToTeamInput {
+  teamId: ID!
+  userId: ID!
+  role: Role!
+}
+
+input RemoveMemberFromTeamInput {
+  teamId: ID!
+  userId: ID!
+}
+
+input UpdateMemberOfTeamInput {
+  teamId: ID!
+  userId: ID!
+  role: Role!
+}
+
+input DeleteTeamInput {
+  teamId: ID!
+}
+
+input CreateProjectInput {
+  teamId: ID!
+  visualizer: Visualizer!
+  name: String
+  description: String
+  imageUrl: URL
+  alias: String
+  archived: Boolean
+}
+
+input UpdateProjectInput {
+  projectId: ID!
+  name: String
+  description: String
+  archived: Boolean
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  imageUrl: URL
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deleteImageUrl: Boolean
+  deletePublicImage: Boolean
+}
+
+input UploadPluginInput {
+  sceneId: ID!
+  file: Upload
+  url: URL
+}
+
+input CreateSceneInput {
+  projectId: ID!
+}
+
+input PublishProjectInput {
+  projectId: ID!
+  alias: String
+  status: PublishmentStatus!
+}
+
+input DeleteProjectInput {
+  projectId: ID!
+}
+
+input WidgetLocationInput {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+input AddWidgetInput {
+  sceneId: ID!
+  pluginId: ID!
+  extensionId: ID!
+}
+
+input UpdateWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+  enabled: Boolean
+  location: WidgetLocationInput
+  extended: Boolean
+  index: Int
+}
+
+input UpdateWidgetAlignSystemInput {
+  sceneId: ID!
+  location: WidgetLocationInput!
+  align: WidgetAreaAlign
+}
+
+input RemoveWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+}
+
+input InstallPluginInput {
+  sceneId: ID!
+  pluginId: ID!
+}
+
+input UninstallPluginInput {
+  sceneId: ID!
+  pluginId: ID!
+}
+
+input UpgradePluginInput {
+  sceneId: ID!
+  pluginId: ID!
+  toPluginId: ID!
+}
+
+input SyncDatasetInput {
+  sceneId: ID!
+  url: String!
+}
+
+input UpdatePropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+}
+
+input RemovePropertyFieldInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+}
+
+input UploadFileToPropertyInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  file: Upload!
+}
+
+input LinkDatasetToPropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  datasetSchemaIds: [ID!]!
+  datasetSchemaFieldIds: [ID!]!
+  datasetIds: [ID!]
+}
+
+input UnlinkPropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+}
+
+input AddPropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
+}
+
+input MovePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  itemId: ID!
+  index: Int!
+}
+
+input RemovePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  itemId: ID!
+}
+
+input UpdatePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  operations: [UpdatePropertyItemOperationInput!]!
+}
+
+input UpdatePropertyItemOperationInput {
+  operation: ListOperation!
+  itemId: ID
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
+}
+
+input AddLayerItemInput {
+  parentLayerId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  index: Int
+  name: String
+  lat: Float
+  lng: Float
+}
+
+input AddLayerGroupInput {
+  parentLayerId: ID!
+  pluginId: ID
+  extensionId: ID
+  index: Int
+  linkedDatasetSchemaID: ID
+  name: String
+  representativeFieldId: ID
+}
+
+input RemoveLayerInput {
+  layerId: ID!
+}
+
+input UpdateLayerInput {
+  layerId: ID!
+  name: String
+  visible: Boolean
+}
+
+input MoveLayerInput {
+  layerId: ID!
+  destLayerId: ID
+  index: Int
+}
+
+input CreateInfoboxInput {
+  layerId: ID!
+}
+
+input RemoveInfoboxInput {
+  layerId: ID!
+}
+
+input AddInfoboxFieldInput {
+  layerId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  index: Int
+}
+
+input MoveInfoboxFieldInput {
+  layerId: ID!
+  infoboxFieldId: ID!
+  index: Int!
+}
+
+input RemoveInfoboxFieldInput {
+  layerId: ID!
+  infoboxFieldId: ID!
+}
+
+input UpdateDatasetSchemaInput {
+  schemaId: ID!
+  name: String!
+}
+
+input AddDynamicDatasetSchemaInput {
+  sceneId: ID!
+}
+
+input AddDynamicDatasetInput {
+  datasetSchemaId: ID!
+  author: String!
+  content: String!
+  lat: Float
+  lng: Float
+  target: String
+}
+
+input RemoveDatasetSchemaInput {
+  schemaId: ID!
+  force: Boolean
+}
+
+input ImportLayerInput {
+  layerId: ID!
+  file: Upload!
+  format: LayerEncodingFormat!
+}
+
+input ImportDatasetInput {
+  file: Upload!
+  sceneId: ID!
+  datasetSchemaId: ID
+}
+
+input ImportDatasetFromGoogleSheetInput {
+  accessToken: String!
+  fileId: String!
+  sheetName: String!
+  sceneId: ID!
+  datasetSchemaId: ID
+}
+
+input AddDatasetSchemaInput {
+  sceneId: ID!
+  name: String!
+  representativefield: ID
+}
+
+input CreateTagItemInput {
+  sceneId: ID!
+  label: String!
+  parent: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetID: ID
+  linkedDatasetField: ID
+}
+
+input CreateTagGroupInput {
+  sceneId: ID!
+  label: String!
+  tags: [ID!]
+}
+
+input UpdateTagInput {
+  tagId: ID!
+  sceneId: ID!
+  label: String
+}
+
+input AttachTagItemToGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input DetachTagItemFromGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input AttachTagToLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input DetachTagFromLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input RemoveTagInput {
+  tagID: ID!
+}
+
+input AddClusterInput {
+  sceneId: ID!
+  name: String!
+}
+
+input UpdateClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+  name: String
+  propertyId: ID
+}
+
+input RemoveClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+}
+
+# Payload
+
+type CreateAssetPayload {
+  asset: Asset!
+}
+
+type RemoveAssetPayload {
+  assetId: ID!
+}
+
+type UpdateMePayload {
+  me: Me!
+}
+
+type SignupPayload {
+  user: User!
+  team: Team!
+}
+
+type DeleteMePayload {
+  userId: ID!
+}
+
+type CreateTeamPayload {
+  team: Team!
+}
+
+type UpdateTeamPayload {
+  team: Team!
+}
+
+type AddMemberToTeamPayload {
+  team: Team!
+}
+
+type RemoveMemberFromTeamPayload {
+  team: Team!
+}
+
+type UpdateMemberOfTeamPayload {
+  team: Team!
+}
+
+type DeleteTeamPayload {
+  teamId: ID!
+}
+
+type ProjectPayload {
+  project: Project!
+}
+
+type DeleteProjectPayload {
+  projectId: ID!
+}
+
+type UploadPluginPayload {
+  plugin: Plugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type CreateScenePayload {
+  scene: Scene!
+}
+
+type AddWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetAlignSystemPayload {
+  scene: Scene!
+}
+
+type RemoveWidgetPayload {
+  scene: Scene!
+  widgetId: ID!
+}
+
+type InstallPluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type UninstallPluginPayload {
+  pluginId: ID!
+  scene: Scene!
+}
+
+type UpgradePluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type SyncDatasetPayload {
+  sceneId: ID!
+  url: String!
+  datasetSchema: [DatasetSchema!]!
+  dataset: [Dataset!]!
+}
+
+type PropertyFieldPayload {
+  property: Property!
+  propertyField: PropertyField
+}
+
+type PropertyItemPayload {
+  property: Property!
+  propertyItem: PropertyItem
+}
+
+type AddLayerItemPayload {
+  layer: LayerItem!
+  parentLayer: LayerGroup!
+  index: Int
+}
+
+type AddLayerGroupPayload {
+  layer: LayerGroup!
+  parentLayer: LayerGroup!
+  index: Int
+}
+
+type RemoveLayerPayload {
+  layerId: ID!
+  parentLayer: LayerGroup!
+}
+
+type UpdateLayerPayload {
+  layer: Layer!
+}
+
+type MoveLayerPayload {
+  layerId: ID!
+  fromParentLayer: LayerGroup!
+  toParentLayer: LayerGroup!
+  index: Int!
+}
+
+type CreateInfoboxPayload {
+  layer: Layer!
+}
+
+type RemoveInfoboxPayload {
+  layer: Layer!
+}
+
+type AddInfoboxFieldPayload {
+  infoboxField: InfoboxField!
+  layer: Layer!
+}
+
+type MoveInfoboxFieldPayload {
+  infoboxFieldId: ID!
+  layer: Layer!
+  index: Int!
+}
+
+type RemoveInfoboxFieldPayload {
+  infoboxFieldId: ID!
+  layer: Layer!
+}
+
+type UpdateDatasetSchemaPayload {
+  datasetSchema: DatasetSchema
+}
+
+type RemoveDatasetSchemaPayload {
+  schemaId: ID!
+}
+
+type AddDynamicDatasetSchemaPayload {
+  datasetSchema: DatasetSchema
+}
+
+type AddDynamicDatasetPayload {
+  datasetSchema: DatasetSchema
+  dataset: Dataset
+}
+
+type ImportLayerPayload {
+  layers: [Layer!]!
+  parentLayer: LayerGroup!
+}
+
+type ImportDatasetPayload {
+  datasetSchema: DatasetSchema!
+}
+
+type AddDatasetSchemaPayload {
+  datasetSchema: DatasetSchema
+}
+
+type CreateTagItemPayload {
+  tag: TagItem!
+  parent: TagGroup
+}
+
+type CreateTagGroupPayload {
+  tag: TagGroup!
+}
+
+type AttachTagItemToGroupPayload {
+  tag: TagGroup!
+}
+
+type DetachTagItemFromGroupPayload {
+  tag: TagGroup!
+}
+
+type UpdateTagPayload {
+  tag: Tag!
+}
+
+type AttachTagToLayerPayload {
+  layer: Layer!
+}
+
+type DetachTagFromLayerPayload {
+  layer: Layer!
+}
+
+type RemoveTagPayload {
+  tagId: ID!
+  updatedLayers: [Layer!]!
+}
+
+type AddClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type UpdateClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type RemoveClusterPayload {
+  scene: Scene!
+  clusterId: ID!
+}
+
+# Connection
+
+type AssetConnection {
+  edges: [AssetEdge!]!
+  nodes: [Asset]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AssetEdge {
+  cursor: Cursor!
+  node: Asset
+}
+
+type ProjectConnection {
+  edges: [ProjectEdge!]!
+  nodes: [Project]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProjectEdge {
+  cursor: Cursor!
+  node: Project
+}
+
+type DatasetSchemaConnection {
+  edges: [DatasetSchemaEdge!]!
+  nodes: [DatasetSchema]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DatasetSchemaEdge {
+  cursor: Cursor!
+  node: DatasetSchema
+}
+
+type DatasetConnection {
+  edges: [DatasetEdge!]!
+  nodes: [Dataset]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DatasetEdge {
+  cursor: Cursor!
+  node: Dataset
+}
+
+# Query
+
+type Query {
+  me: Me
+  node(id: ID!, type: NodeType!): Node
+  nodes(id: [ID!]!, type: NodeType!): [Node]!
+  propertySchema(id: ID!): PropertySchema
+  propertySchemas(id: [ID!]!): [PropertySchema!]!
+  plugin(id: ID!): Plugin
+  plugins(id: [ID!]!): [Plugin!]!
+  layer(id: ID!): Layer
+  scene(projectId: ID!): Scene
+  assets(
+    teamId: ID!
+    keyword: String
+    sort: AssetSortType
+    pagination: Pagination
+  ): AssetConnection!
+  projects(
+    teamId: ID!
+    includeArchived: Boolean
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): ProjectConnection!
+  datasetSchemas(
+    sceneId: ID!
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetSchemaConnection!
+  datasets(
+    datasetSchemaId: ID!
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): DatasetConnection!
+  dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
+  searchUser(nameOrEmail: String!): User
+  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+}
+
+# Mutation
+
+type Mutation {
+  # Asset
+  createAsset(input: CreateAssetInput!): CreateAssetPayload
+  removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
+
+  # User
+  signup(input: SignupInput!): SignupPayload
+  updateMe(input: UpdateMeInput!): UpdateMePayload
+  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
+  deleteMe(input: DeleteMeInput!): DeleteMePayload
+
+  # Team
+  createTeam(input: CreateTeamInput!): CreateTeamPayload
+  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
+  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
+  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
+  removeMemberFromTeam(
+    input: RemoveMemberFromTeamInput!
+  ): RemoveMemberFromTeamPayload
+  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+
+  # Project
+  createProject(input: CreateProjectInput!): ProjectPayload
+  updateProject(input: UpdateProjectInput!): ProjectPayload
+  publishProject(input: PublishProjectInput!): ProjectPayload
+  deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+
+  # Scene
+  createScene(input: CreateSceneInput!): CreateScenePayload
+  addWidget(input: AddWidgetInput!): AddWidgetPayload
+  updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+  updateWidgetAlignSystem(
+    input: UpdateWidgetAlignSystemInput!
+  ): UpdateWidgetAlignSystemPayload
+  removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
+  installPlugin(input: InstallPluginInput!): InstallPluginPayload
+  uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
+  upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
+  addCluster(input: AddClusterInput!): AddClusterPayload
+  updateCluster(input: UpdateClusterInput!): UpdateClusterPayload
+  removeCluster(input: RemoveClusterInput!): RemoveClusterPayload
+
+  # Dataset
+  updateDatasetSchema(
+    input: UpdateDatasetSchemaInput!
+  ): UpdateDatasetSchemaPayload
+  syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
+  addDynamicDatasetSchema(
+    input: AddDynamicDatasetSchemaInput!
+  ): AddDynamicDatasetSchemaPayload
+  addDynamicDataset(input: AddDynamicDatasetInput!): AddDynamicDatasetPayload
+  removeDatasetSchema(
+    input: RemoveDatasetSchemaInput!
+  ): RemoveDatasetSchemaPayload
+  importDataset(input: ImportDatasetInput!): ImportDatasetPayload
+  importDatasetFromGoogleSheet(
+    input: ImportDatasetFromGoogleSheetInput!
+  ): ImportDatasetPayload
+  addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
+
+  # Property
+  updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
+  removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
+  uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(
+    input: LinkDatasetToPropertyValueInput!
+  ): PropertyFieldPayload
+  unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
+  addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
+  movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
+  removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
+  updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
+
+  # Layer
+  addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
+  addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
+  removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
+  updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
+  moveLayer(input: MoveLayerInput!): MoveLayerPayload
+  createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
+  removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
+  addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
+  moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
+  removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
+  importLayer(input: ImportLayerInput!): ImportLayerPayload
+  attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
+  detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
+
+  # Tag
+  createTagItem(input: CreateTagItemInput!): CreateTagItemPayload
+  createTagGroup(input: CreateTagGroupInput!): CreateTagGroupPayload
+  attachTagItemToGroup(
+    input: AttachTagItemToGroupInput!
+  ): AttachTagItemToGroupPayload
+  detachTagItemFromGroup(
+    input: DetachTagItemFromGroupInput!
+  ): DetachTagItemFromGroupPayload
+  updateTag(input: UpdateTagInput!): UpdateTagPayload
+  removeTag(input: RemoveTagInput!): RemoveTagPayload
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

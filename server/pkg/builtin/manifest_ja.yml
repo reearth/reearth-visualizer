@@ -1,0 +1,909 @@
+name: Re:Earth公式プラグイン
+description: 公式プラグイン
+extensions:
+  cesium:
+    name: Cesium
+    description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
+    propertySchema:
+      default:
+        title: シーン
+        fields:
+          camera:
+            title: カメラ初期位置
+            description: ページロード後最初に表示するカメラの位置を設定します。
+          terrain:
+            title: 地形
+            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          terrainType:
+            title: 地形の種類
+            description: 地形の種類を指定します。
+          terrainExaggeration:
+            title: 地形の強調
+            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
+          terrainExaggerationRelativeHeight:
+            title: 地形の強調の基準
+            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
+          depthTestAgainstTerrain:
+            title: 地形の下を非表示
+            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
+          skybox:
+            title: 宇宙の表示
+            description: 宇宙空間の表示を切り替えます。
+          bgcolor:
+            title: 背景色
+            description: 宇宙空間が非表示の場合の、背景色を設定します。
+          ion:
+            title: Cesium Icon APIアクセストークン
+            description: 自身のCesium IonアカウントからAPIキーを発行し、ここに設定します。Cesium Ionのアセット（タイルデータ、3Dデータなど）の使用が可能になるため、設定を推奨します。
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
+      cameraLimiter:
+        title: カメラ範囲制限
+        description: カメラの移動できる範囲を制限することができます。
+        fields:
+          cameraLimitterEnabled:
+            title: 有効
+            description: カメラの範囲制限を有効にします。
+          cameraLimitterShowHelper:
+            title: 範囲を表示
+            description: カメラの移動範囲を表すボックスを表示します。
+          cameraLimitterTargetArea:
+            title: 基準位置
+            description: 移動範囲の基準となる位置です。この位置が制限範囲を表すボックスの横方向と奥行き方向の中心点となり、かつ移動可能範囲における最大の高さとなります。ここで指定した高さ以上にカメラをズームアウトすることができなくなります。
+          cameraLimitterTargetWidth:
+            title: 軽度の範囲
+            description: 制限範囲を表すボックスの幅（経度の方向）を指定します。
+          cameraLimitterTargetLength:
+            title: 緯度の範囲
+            description: 制限範囲を表すボックスの奥行き（緯度の方向）を指定します。
+      tiles:
+        title: タイル
+        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
+        fields:
+          tile_title:
+            title: 名前
+          tile_type:
+            title: 種類
+            choices:
+              default: デフォルト
+              default_label: ラベル付き地図
+              default_road: 道路地図
+              stamen_watercolor: Stamen Watercolor
+              stamen_toner: Stamen Toner
+              open_street_map: Open Street Map
+              esri_world_topo: ESRI Topography
+              black_marble: Black Marble
+              japan_gsi_standard: 地理院地図 標準地図
+              url: URL
+          tile_url:
+            title: URL
+          tile_minLevel:
+            title: 最小レベル
+          tile_maxLevel:
+            title: 最大レベル
+          tile_opacity:
+            title: 不透明性
+            description: NEEDS DESCRIPTION
+      indicator:
+        title: インディケーター
+        description: レイヤー選択時に表示されるインディケーターのスタイルを設定します
+        fields:
+          indicator_type:
+            title: タイプ
+            description: インディケーターの見た目を設定します
+            choices:
+              default: デフォルト
+              crosshair: 十字線
+              custom: カスタム
+          indicator_image:
+            title: 画像URL
+          indicator_image_scale:
+            title: 画像サイズ
+      atmosphere:
+        title: 大気
+        description: 地球を覆う大気圏の設定ができます。
+        fields:
+          enable_sun:
+            title: 太陽
+            description: 宇宙空間に存在する太陽の表示を切り替えます。
+          enable_lighting:
+            title: 太陽光
+            description: 太陽光のON/OFFを切り替えることで、昼夜を表現することができます。
+          ground_atmosphere:
+            title: 地表の大気
+            description: 地表の大気圏のON/OFFを切り替えます。
+          sky_atmosphere:
+            title: 上空の大気
+            description: 地球を覆う大気圏のON/OFFを切り替えます。
+          shadows:
+            title: 影
+            description: オブジェクトが落とす影を表示します。併せて各レイヤーの影の設定をそれぞれ有効にする必要があります。
+          fog:
+            title: 霧
+            description: 霧のON/OFFを切り替えます。
+          fog_density:
+            title: 濃度
+            description: 霧の濃度を0以上から設定します。
+          brightness_shift:
+            title: 明度
+          hue_shift:
+            title: 色相
+          surturation_shift:
+            title: 彩度
+      timeline:
+        title: タイムライン
+        fields:
+          animation:
+            title: アニメーション
+            description: アニメーションの再生を有効にします。3Dモデルのアニメーションが再生されるようになります。
+          visible:
+            title: タイムライン
+            description: タイムラインのUIを表示します。
+          current:
+            title: 現在時刻
+          start:
+            title: 開始時刻
+            description: 何も設定されていない場合は表示中のデータによって自動的に設定されます。
+          stop:
+            title: 終了時刻
+            description: 何も設定されていない場合は表示中のデータによって自動的に設定されます。
+          stepType:
+            title: 再生速度の種類
+            description: 再生速度の指定方法です。
+            choices:
+              rate: 倍率
+              fixed: 固定
+          multiplier:
+            title: 再生速度
+            description: 再生速度を現実の時間の速さに対する倍率で指定します。マイナス値も指定可能です。デフォルトは1倍です。
+          step:
+            title: 再生速度
+            description: 再生速度を秒で指定します。画面の描画が繰り返される度に指定した指定した秒数分進みます。マイナス値も指定可能です。デフォルトは1秒です。
+            suffix: 秒
+          rangeType:
+            title: 再生終了時
+            description: 現在時刻が終了時刻に達した時の処理方法を指定します。
+            choices:
+              unbounded: 再生を続ける
+              clamped: 停止する
+              bounced: バウンス
+      googleAnalytics:
+        title: Google Analytics
+        description: Google Analyticsを有効にすることで、公開ページがどのように閲覧されているかを分析することが可能です。
+        fields:
+          enableGA:
+            title: 有効
+            description: Google Analyticsを有効にします。
+          trackingCode:
+            title: トラッキングID
+            description: ここにグーグルアナリティクスのトラッキングIDを貼り付けることで、公開プロジェクトにこのコードが埋め込まれます。
+      theme:
+        title: 公開用テーマ
+        description: 公開用のテーマを設定することができます。
+        fields:
+          themeType:
+            title: テーマ
+            description: テーマの種類を選択します。より細かくテーマを指定したい場合はカスタムを選択します。
+            choices:
+              dark: Re:Earth ダーク
+              light: Re:Earth ライト
+              forest: 森
+              custom: カスタム
+          themeTextColor:
+            title: 文字色
+            description: 文字色を設定します。
+          themeSelectColor:
+            title: 選択色
+            description: 選択色を設定します。
+          themeBackgroundColor:
+            title: 背景色
+            description: 背景色を設定します。
+  infobox:
+    name: インフォボックス
+    description: 閲覧者が地図上のレイヤーをクリックした時に表示されるボックスです。テキストや画像、動画などのコンテンツを表示することができます。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          title:
+            title: タイトル
+          showTitle:
+            title: タイトル表示
+          position:
+            title: 位置
+            choices:
+              right: 右
+              middle: 中央
+              left: 左
+          size:
+            title: サイズ
+            choices:
+              small: 小
+              medium: 中
+              large: 大
+          heightType:
+            title: 高さ設定
+            choices:
+              auto: 自動
+              manual: 手動
+          height:
+            title: 高さ
+            description: インフォボックスの高さを設定します。最小284px・最大2048px
+          infoboxPaddingTop:
+            title: 余白上
+            description: "上端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingBottom:
+            title: 余白下
+            description: "下端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingLeft:
+            title: 余白左
+            description: "左端の余白を設定します。最小0px・最大40px"
+          infoboxPaddingRight:
+            title: 余白右
+            description: "右端の余白を設定します。最小px・最大40px"
+          bgcolor:
+            title: 背景色
+          outlineWidth:
+            title: 線幅
+          outlineColor:
+            title: 線色
+          useMask:
+            title: 背景オーバーレイ
+          typography:
+            title: フォント
+  marker:
+    name: マーカー
+    description: マーカーにはテキストや画像を紐づけることができ、閲覧者はマーカーをクリックすることでコンテンツを見ることができます。
+    propertySchema:
+      default:
+        title: マーカー
+        fields:
+          location:
+            title: 位置
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          style:
+            title: 表示方法
+            choices:
+              point: 点
+              image: アイコン
+          pointColor:
+            title: 点の色
+          pointSize:
+            title: 点の大きさ
+          pointOutlineColor:
+            title: 点の線の色
+          pointOutlineWidth:
+            title: 点の線の幅
+          image:
+            title: 画像URL
+          imageSize:
+            title: 画像サイズ
+          imageColor:
+            title: 画像の色
+          imageCrop:
+            title: 切り抜き
+            choices:
+              none: なし
+              circle: 円形
+          imageHorizontalOrigin:
+            title: 画像の中心横
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imageVerticalOrigin:
+            title: 画像の中心縦
+            choices:
+              top: 上
+              center: 中央
+              baseline: ベースライン
+              bottom: 下
+          imageShadow:
+            title: 画像の影
+          imageShadowColor:
+            title: 画像の影色
+          imageShadowBlur:
+            title: 画像の影半径
+          imageShadowPositionX:
+            title: 画像の影X
+          imageShadowPositionY:
+            title: 画像の影Y
+          label:
+            title: ラベル
+          labelText:
+            title: ラベルの文字
+          labelPosition:
+            title: ラベルの位置
+            choices:
+              right: 右
+              left: 左
+              top: 上
+              bottom: 下
+              righttop: 右上
+              rightbottom: 右下
+              lefttop: 左上
+              leftbottom: 左下
+          labelTypography:
+            title: ラベルフォント
+          labelBackground:
+            title: ラベルの背景
+          extrude:
+            title: 地面から線を伸ばす
+  polyline:
+    name: 直線
+    propertySchema:
+      default:
+        title: 直線
+        fields:
+          coordinates:
+            title: 頂点
+          strokeColor:
+            title: 線色
+          strokeWidth:
+            title: 線幅
+  polygon:
+    name: ポリゴン
+    propertySchema:
+      default:
+        title: ポリゴン
+        fields:
+          polygon:
+            title: ポリゴン
+          fill:
+            title: 塗り
+          fillColor:
+            title: 塗り色
+          stroke:
+            title: 線
+          strokeColor:
+            title: 線色
+          strokeWidth:
+            title: 線幅
+  rect:
+    name: 長方形
+    propertySchema:
+      default:
+        title: 長方形
+        fields:
+          rect:
+            title: 長方形
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          extrudedHeight:
+            title: 高さ
+          style:
+            title: スタイル
+            choices:
+              color: 色
+              image: 画像
+          fillColor:
+            title: 塗り色
+          image:
+            title: 画像URL
+          outlineColor:
+            title: 線の色
+          outlineWidth:
+            title: 線の幅
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+  photooverlay:
+    name: フォトオーバーレイ
+    description: フォトオーバーレイを選択すると、設定した画像をモーダル形式で画面上に被せて表示することができます。
+    propertySchema:
+      default:
+        title: フォトオーバーレイ
+        fields:
+          location:
+            title: 位置
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          camera:
+            title: カメラ
+            description: クリックされたときに移動するカメラの設定をします。
+          image:
+            title: アイコン
+          imageSize:
+            title: アイコンサイズ
+          imageHorizontalOrigin:
+            title: アイコンの中心横
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imageVerticalOrigin:
+            title: アイコンの中心縦
+            choices:
+              top: 上
+              center: 中央
+              baseline: ベースライン
+              bottom: 下
+          imageCrop:
+            title: 切り抜き
+            choices:
+              none: なし
+              circle: 円形
+          imageShadow:
+            title: アイコンの影
+          imageShadowColor:
+            title: 影色
+          imageShadowBlur:
+            title: 影半径
+          imageShadowPositionX:
+            title: 影X
+          imageShadowPositionY:
+            title: 影Y
+          photoOverlayImage:
+            title: オーバレイ画像
+          photoOverlayDescription:
+            title: オーバレイ画像の説明
+  ellipsoid:
+    name: 球体
+    description: 立体的な球体を地図上に表示できます。
+    propertySchema:
+      default:
+        title: 球体
+        fields:
+          position:
+            title: 位置
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          radius:
+            title: 半径
+          fillColor:
+            title: 塗り色
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+  model:
+    name: 3Dモデル
+    description: glTF形式の3Dモデルを読み込んで表示することができます。地図上に追加後、URLを指定することで読み込まれます。
+    propertySchema:
+      default:
+        title: 3Dモデル
+        fields:
+          model:
+            title: URL
+            description: glTF形式のみ対応しています。
+          location:
+            title: 位置
+          height:
+            title: 高度
+          heightReference:
+            title: 高度の基準
+            description: 地形を基準とした相対的な高度にすることができます。デフォルトではWGS84楕円体からの絶対的な高度になります。
+            choices:
+              none: デフォルト
+              clamp: 地表に固定
+              relative: 地表からの高度
+          heading:
+            title: ヘッディング
+          pitch:
+            title: ピッチ
+          roll:
+            title: ロール
+          scale:
+            title: スケール
+            description: 3Dモデルを設定値分等倍して表示します。
+          maximumScale:
+            title: 最大スケール
+          minimumPixelSize:
+            title: 最小表示サイズ
+          animation:
+            title: アニメーション
+            description: アニメーションを有効にします。必ずシーンのアニメーションの設定も有効にしてください。
+      appearance:
+        title: 外観
+        fields:
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+          colorBlend:
+            title: 色のブレンド
+            choices:
+              none: 無効
+              highlight: ハイライト
+              replace: 置き換え
+              mix: 混合
+          color:
+            title: 色
+          colorBlendAmount:
+            title: 色の混合量
+          lightColor:
+            title: 照明色
+          silhouette:
+            title: シルエット
+          silhouetteColor:
+            title: シルエット色
+          silhouetteSize:
+            title: シルエットサイズ
+  tileset:
+    name: 3Dタイル
+    description: 3D Tiles形式の3Dタイルを表示することができます。
+    propertySchema:
+      default:
+        title: 3Dタイル
+        fields:
+          tileset:
+            title: タイルセットURL
+            description: 3Dタイルデータ内の tileset.json のURL
+          styleUrl:
+            title: スタイルURL
+            description: 3D Tiles styles が記述されたJSONのURL。スタイルを適用することができます。設定は任意です。
+          shadows:
+            title: 影
+            description: 影を表示します。必ずシーンの影の設定も有効にしてください。レンダリングが重くなることがあります。
+            choices:
+              disabled: 無効
+              enabled: 有効
+              cast_only: 影を落とすだけ
+              receive_only: 影を落とされるだけ
+  resource:
+    name: ファイル
+    description: 外部からデータをインポートすることができます。地図上に追加後、URLを指定することで外部データが読み込まれます。
+    propertySchema:
+      default:
+        title: ファイル
+        fields:
+          url:
+            title: ファイル URL
+            choices:
+              auto: 自動
+              kml: KML
+              geojson: GeoJSON / TopoJSON
+              czml: CZML
+          clampToGround:
+            title: 地表に固定
+            description: 地表の凹凸に沿うようにポリゴンなどのデータを表示します。
+  textblock:
+    name: テキスト
+    description: Text block
+    propertySchema:
+      default:
+        title: テキストブロック
+        fields:
+          title:
+            title: タイトル
+          text:
+            title: コンテンツ
+          markdown:
+            title: マークダウン
+          paddingTop:
+            title: 余白上
+            description: "上端の余白を設定します。最小0px・最大40ox"
+          paddingBottom:
+            title: 余白下
+            description: "下端の余白を設定します。最小0px・最大40ox"
+          paddingLeft:
+            title: 余白左
+            description: "左端の余白を設定します。最小0px・最大40ox"
+          paddingRight:
+            title: 余白右
+            description: "右端の余白を設定します。最小0px・最大40ox"
+          typography:
+            title: フォント
+  imageblock:
+    name: 画像
+    description: 画像ブロック
+    propertySchema:
+      default:
+        title: 画像ブロック
+        fields:
+          image:
+            title: 画像
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+          imageSize:
+            title: 画像サイズ
+            choices:
+              cover: カバー
+              contain: 含む
+          imagePositionX:
+            title: 水平位置
+            choices:
+              left: 左
+              center: 中央
+              right: 右
+          imagePositionY:
+            title: 垂直位置
+            choices:
+              top: 上
+              center: 中央
+              bottom: 下
+  videoblock:
+    name: 動画
+    description: 動画ブロック
+    propertySchema:
+      default:
+        title: 動画ブロック
+        fields:
+          url:
+            title: 動画 URL
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+  locationblock:
+    name: 位置情報
+    description: 位置情報ブロック
+    propertySchema:
+      default:
+        title: 位置情報ブロック
+        fields:
+          location:
+            title: 位置情報
+          title:
+            title: タイトル
+          fullSize:
+            title: フルサイズ
+  dlblock:
+    name: 表
+    description: 表ブロック
+    propertySchema:
+      default:
+        title: 表ブロック
+        fields:
+          title:
+            title: タイトル
+          typography:
+            title: フォント
+      items:
+        title: アイテム
+        fields:
+          item_title:
+            title: タイトル
+          item_datatype:
+            title: 種類
+            choices:
+              string: 文字
+              number: 数字
+          item_datastr:
+            title: データ(文字)
+          item_datanum:
+            title: データ(数字)
+  menu:
+    name: メニュー (廃止予定)
+    description: |
+      シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
+      ・リンク：ボタン自体が外部サイトへのリンクになります。
+      ・メニュー：追加したメニューを開きます。
+      ・カメラアクション：クリック時にカメラを移動します。
+    propertySchema:
+      buttons:
+        title: ボタン
+        fields:
+          buttonInvisible:
+            title: 非表示
+          buttonTitle:
+            title: タイトル
+          buttonPosition:
+            title: 表示位置
+            choices:
+              topleft: 上左
+              topright: 上右
+              bottomleft: 下左
+              bottomright: 下右
+          buttonStyle:
+            title: 表示方法
+            choices:
+              text: テキストのみ
+              icon: アイコンのみ
+              texticon: テキスト＋アイコン
+          buttonIcon:
+            title: アイコン
+          buttonColor:
+            title: テキスト色
+          buttonBgcolor:
+            title: 背景色
+          buttonType:
+            title: アクション
+            choices:
+              link: リンク
+              menu: メニュー開閉
+              camera: カメラ移動
+          buttonLink:
+            title: リンク
+          buttonCamera:
+            title: カメラ
+      menu:
+        title: メニュー
+        fields:
+          menuTitle:
+            title: タイトル
+          menuIcon:
+            title: アイコン
+          menuType:
+            title: アクション
+            choices:
+              link: リンク
+              camera: カメラ移動
+              border: 区切り線
+          menuLink:
+            title: リンク
+          menuCamera:
+            title: カメラ
+  button:
+    name: ボタン
+    description: |
+      シーンにボタンを設置し、メニューを表示します。追加したボタンに設定されたアクションタイプによって動作が変わります。
+      　・リンク：ボタン自体が外部サイトへのリンクになります。
+      　・メニュー：追加したメニューを開きます。
+      　・カメラアクション：クリック時にカメラを移動します。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          buttonTitle:
+            title: タイトル
+          buttonStyle:
+            title: 表示方法
+            choices:
+              text: テキストのみ
+              icon: アイコンのみ
+              texticon: テキスト＋アイコン
+          buttonIcon:
+            title: アイコン
+          buttonColor:
+            title: テキスト色
+          buttonBgcolor:
+            title: 背景色
+          buttonType:
+            title: アクション
+            choices:
+              link: リンク
+              menu: メニュー開閉
+              camera: カメラ移動
+          buttonLink:
+            title: リンク
+          buttonCamera:
+            title: カメラ
+      menu:
+        title: メニュー
+        fields:
+          menuTitle:
+            title: タイトル
+          menuIcon:
+            title: アイコン
+          menuType:
+            title: アクション
+            choices:
+              link: リンク
+              camera: カメラ移動
+              border: 区切り線
+          menuLink:
+            title: リンク
+          menuCamera:
+            title: カメラ
+  splashscreen:
+    name: スプラッシュスクリーン
+    description: ページロード後、最初に表示される演出を設定できます。例えば、プロジェクトのタイトルを閲覧者に見せたり、カメラを移動させることができます。
+    propertySchema:
+      overlay:
+        title: オーバーレイ
+        fields:
+          overlayEnabled:
+            title: 有効
+          overlayDelay:
+            title: 開始時間
+          overlayDuration:
+            title: 表示時間
+          overlayTransitionDuration:
+            title: フェード時間
+          overlayImage:
+            title: オーバーレイ画像
+          overlayImageW:
+            title: 画像幅
+          overlayImageH:
+            title: 画像高さ
+          overlayBgcolor:
+            title: 背景色
+      camera:
+        title: カメラアニメーション
+        fields:
+          cameraPosition:
+            title: カメラ位置
+          cameraDuration:
+            title: カメラ移動時間
+          cameraDelay:
+            title: カメラ待機時間
+  storytelling:
+    name: ストーリーテリング
+    description: ストーリーテリング機能を使えば、データ間の繋がりや時系列をもとに、順番に資料を閲覧してもらうことが可能です。使用するには、右パネルから地球上のレイヤーに順番を付与します。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          duration:
+            title: カメラ移動時間
+          range:
+            title: 画角
+          camera:
+            title: カメラ
+          autoStart:
+            title: 自動再生
+      stories:
+        title: ストーリー
+        fields:
+          layer:
+            title: レイヤー
+          layerDuration:
+            title: 移動時間
+          layerRange:
+            title: カメラ画角
+          layerCamera:
+            title: カメラ
+  cluster:
+    name: クラスタ
+    description: レイヤーを自動的にまとめて表示することが可能なクラスタを設定します。
+    propertySchema:
+      default:
+        title: クラスタ
+        fields:
+          clusterPixelRange:
+            title: 最小範囲
+            description: 画面上の何ピクセル分の範囲にあるレイヤーをクラスタにまとめるかを最小値で指定します。
+          clusterMinSize:
+            title: 最小サイズ
+            description: クラスタが表示されるのに必要な最小のレイヤー数
+          clusterImage:
+            title: 画像
+            description: 画面上で表示されるクラスタの画像を指定します。
+          clusterImageWidth:
+            title: 画像幅
+            description: 画像の幅をピクセルで指定します。
+          clusterImageHeight:
+            title: 画像高さ
+            description: 画像の高さをピクセルで指定します。
+          clusterLabelTypography:
+            title: ラベル
+            description: ラベルのスタイルを指定します。
+  timeline:
+    name: タイムライン
+    description: 時系列データを表示するために、時刻を変更したり時間を再生したりすることができます。

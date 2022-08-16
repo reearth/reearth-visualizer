@@ -1,0 +1,435 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Re:Earth reset password</title>
+    <style>
+        /* -------------------------------------
+            GLOBAL RESETS
+        ------------------------------------- */
+
+        @font-face {
+            font-family: 'Hiragino Kaku Gothic Pro';
+            src: url("./HiraginoKakuGothicProW3.otf") format("opentype");
+        }
+
+
+        /*All the styling goes here*/
+
+        img {
+            border: none;
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic Pro', Helvetica, sans-serif;
+            background-color: #FFF;
+            -webkit-font-smoothing: antialiased;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        table {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            min-width: 100%;
+            width: 100%;
+        }
+
+        table td {
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+
+        /* -------------------------------------
+              BODY & CONTAINER
+          ------------------------------------- */
+
+        .body {
+            background-color: #FFF;
+            width: 100%;
+        }
+
+
+        /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
+
+        .container {
+            display: block;
+            Margin: 0 auto !important;
+            /* makes it centered */
+            max-width: 475px;
+            padding: 10px;
+            width: 475px;
+        }
+
+
+        /* This should also be a block element, so that it will fill 100% of the .container */
+
+        .content {
+            box-sizing: border-box;
+            display: block;
+            Margin: 0 auto;
+            max-width: 580px;
+            padding: 0;
+        }
+
+
+        /* -------------------------------------
+              HEADER, FOOTER, MAIN
+          ------------------------------------- */
+
+        .main {
+            background: #ffffff;
+            border-radius: 3px;
+            width: 100%;
+        }
+
+        .header {
+            padding: 24px 0;
+        }
+
+        .wrapper {
+            padding: 24px 0;
+        }
+
+        .footer {
+            clear: both;
+            Margin-top: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer td,
+        .footer p,
+        .footer span,
+        .footer a {
+            color: #cccccc;
+            font-size: 14px;
+            line-height: 21px;
+            text-align: center;
+        }
+
+
+        /* -------------------------------------
+              TYPOGRAPHY
+          ------------------------------------- */
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #06090f;
+            font-weight: 400;
+            line-height: 1.4;
+            margin: 0;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 35px;
+            font-weight: 300;
+            text-align: center;
+            text-transform: capitalize;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        p+p,
+        ul,
+        ol {
+            font-size: 14px;
+            font-weight: normal;
+            line-height: 21px;
+            margin-top: 24px;
+            margin-bottom: 0;
+        }
+
+        p li,
+        ul li,
+        ol li {
+            list-style-position: inside;
+            margin-left: 5px;
+        }
+
+        p.greeting {
+            margin-bottom: 14px;
+        }
+
+        a {
+            color: #e95623;
+            text-decoration: underline;
+        }
+
+
+        /* -------------------------------------
+              BUTTONS
+          ------------------------------------- */
+
+        a.btn {
+            font-family: sans-serif;
+            text-align: center;
+            background: linear-gradient(72.17deg, #DF3013 14.04%, #1E2086 86.96%);
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: #FFF;
+            cursor: pointer;
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 0;
+            padding: 12px 12px;
+            text-decoration: none;
+            text-transform: capitalize;
+            margin: 24px 0;
+        }
+
+        .btn a:hover {
+            background: linear-gradient(162deg, #DF3013 14.04%, #1E2086 86.96%)
+        }
+
+        a.discord-button img {
+            margin-top: 4px;
+            height: 32px;
+            width: 98.69px;
+        }
+
+
+        /* -------------------------------------
+              OTHER STYLES THAT MIGHT BE USEFUL
+          ------------------------------------- */
+
+        .last {
+            margin-bottom: 0;
+        }
+
+        .first {
+            margin-top: 0;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .align-left {
+            text-align: left;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .mt0 {
+            margin-top: 0;
+        }
+
+        .mb0 {
+            margin-bottom: 0;
+        }
+
+        .preheader {
+            color: transparent;
+            display: none;
+            height: 0;
+            max-height: 0;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            mso-hide: all;
+            visibility: hidden;
+            width: 0;
+        }
+
+        hr {
+            border: 0;
+            border-bottom: 1px solid #f6f6f6;
+            Margin: 20px 0;
+        }
+
+
+        /* -------------------------------------
+              RESPONSIVE AND MOBILE FRIENDLY STYLES
+          ------------------------------------- */
+
+        @media only screen and (max-width: 620px) {
+            table[class=body] h1 {
+                font-size: 28px !important;
+                margin-bottom: 10px !important;
+            }
+            table[class=body] p,
+            table[class=body] ul,
+            table[class=body] ol,
+            table[class=body] td,
+            table[class=body] span,
+            table[class=body] a {
+                font-size: 16px !important;
+            }
+            table[class=body] .content {
+                padding: 0 !important;
+            }
+            table[class=body] .container {
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            table[class=body] .main {
+                border-left-width: 0 !important;
+                border-radius: 0 !important;
+                border-right-width: 0 !important;
+            }
+            table[class=body] .btn table {
+                width: 100% !important;
+            }
+            table[class=body] .btn a {
+                width: 100% !important;
+            }
+            table[class=body] .img-responsive {
+                height: auto !important;
+                max-width: 100% !important;
+                width: auto !important;
+            }
+        }
+
+
+        /* -------------------------------------
+              PRESERVE THESE STYLES IN THE HEAD
+          ------------------------------------- */
+
+        @media all {
+            .ExternalClass {
+                width: 100%;
+            }
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div {
+                line-height: 100%;
+            }
+            .apple-link a {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important;
+            }
+            .btn-primary table td:hover {
+                background: linear-gradient(72.17deg, #DF3013 14.04%, #1E2086 86.96%);
+                border-radius: 8px;
+            }
+            .btn-primary a:hover {
+                background-color: #d5075d !important;
+                border-color: #d5075d !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+        <tr>
+            <td>&nbsp;</td>
+            <td class="container">
+                <div class="header">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td class="align-center" width="100%">
+                                <img src="./logo.png" height="80" alt="Re:Earth">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="content">
+
+                    <!-- START CENTERED WHITE CONTAINER -->
+                    <span class="preheader">This is preheader text. Some clients will show this text as a
+                        preview.</span>
+                    <table role="presentation" class="main">
+                        <tr>
+                            <td style="border: none;border-top: 1px solid #E9551880;padding: 0;" width="100%"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="wrapper" role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            <p class="greeting">Hi {{ .UserName }}：</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>{{ .Message }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr align="center">
+                                        <td> <a class="btn" href="{{ .ActionURL }}" target="_blank">{{ .ActionLabel }}</a> </td>
+                                    </tr>
+                                    <tr>
+                                        <tr>
+                                            <td>
+                                                <p>{{ .Suffix }}</p>
+                                            </td>
+                                        </tr>
+                                </table>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;border-top: 1px solid #E9551880;padding: 0;" width="100%"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="wrapper" role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <p>If any problems, please contact the Re:Earth team: <br><a href="mailto:info@reearth.io">info@reearth.io</a> </p>
+                                                <p>You can also find us on discord! Feel free to join and ask any questions.
+                                                    <br>
+                                                    <a class="discord-button" href=""><img src="discord-button.png" alt="Discord button"></a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                    </table>
+
+
+                    <div class="footer">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <span>
+                                        2021
+                                        <br>
+                                        © Re:Earth contributors
+                                        <br>
+                                        All rights reserved.
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </td>
+            <td>&nbsp;</td>
+            </tr>
+    </table>
+</body>
+</html>

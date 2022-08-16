@@ -1,0 +1,60 @@
+package gqlmodel
+
+import (
+	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth-backend/pkg/util"
+)
+
+func ToSceneWidget(w *scene.Widget) *SceneWidget {
+	if w == nil {
+		return nil
+	}
+
+	return &SceneWidget{
+		ID:          IDFrom(w.ID()),
+		PluginID:    IDFromPluginID(w.Plugin()),
+		ExtensionID: ID(w.Extension()),
+		PropertyID:  IDFrom(w.Property()),
+		Enabled:     w.Enabled(),
+		Extended:    w.Extended(),
+	}
+}
+
+func ToScenePlugin(sp *scene.Plugin) *ScenePlugin {
+	if sp == nil {
+		return nil
+	}
+
+	return &ScenePlugin{
+		PluginID:   IDFromPluginID(sp.Plugin()),
+		PropertyID: IDFromRef(sp.Property()),
+	}
+}
+
+func ToCluster(c *scene.Cluster) *Cluster {
+	return &Cluster{
+		ID:         IDFrom(c.ID()),
+		Name:       c.Name(),
+		PropertyID: IDFrom(c.Property()),
+	}
+}
+
+func ToScene(scene *scene.Scene) *Scene {
+	if scene == nil {
+		return nil
+	}
+
+	return &Scene{
+		ID:                IDFrom(scene.ID()),
+		ProjectID:         IDFrom(scene.Project()),
+		PropertyID:        IDFrom(scene.Property()),
+		TeamID:            IDFrom(scene.Team()),
+		RootLayerID:       IDFrom(scene.RootLayer()),
+		CreatedAt:         scene.CreatedAt(),
+		UpdatedAt:         scene.UpdatedAt(),
+		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),
+		Clusters:          util.Map(scene.Clusters().Clusters(), ToCluster),
+		Widgets:           util.Map(scene.Widgets().Widgets(), ToSceneWidget),
+		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
+	}
+}
