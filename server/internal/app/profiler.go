@@ -2,7 +2,7 @@ package app
 
 import (
 	"cloud.google.com/go/profiler"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/pkg/log"
 )
 
 func initProfiler(kind string, version string) {

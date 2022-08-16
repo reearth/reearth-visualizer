@@ -1,7 +1,7 @@
 package kml
 
 import (
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Collection struct {

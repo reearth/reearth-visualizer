@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/reearth/reearth-backend/pkg/file"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (

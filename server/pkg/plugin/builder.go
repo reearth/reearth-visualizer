@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/i18n"
 )
 
 type Builder struct {

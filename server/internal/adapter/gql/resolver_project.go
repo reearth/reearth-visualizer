@@ -3,8 +3,8 @@ package gql
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/pkg/rerror"
 )
 
 func (r *Resolver) Project() ProjectResolver {

@@ -4,15 +4,15 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/layer/layerops"
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/scene"
-	"github.com/reearth/reearth-backend/pkg/scene/sceneops"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer/layerops"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 )
 
 func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.PluginID, operator *usecase.Operator) (_ *scene.Scene, _ *id.PropertyID, err error) {

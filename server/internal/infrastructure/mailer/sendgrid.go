@@ -1,7 +1,7 @@
 package mailer
 
 import (
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )

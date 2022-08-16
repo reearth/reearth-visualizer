@@ -1,9 +1,9 @@
 package builder
 
 import (
-	"github.com/reearth/reearth-backend/pkg/layer/encoding"
-	"github.com/reearth/reearth-backend/pkg/layer/merging"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/layer/encoding"
+	"github.com/reearth/reearth/server/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 var _ encoding.Encoder = &encoder{}

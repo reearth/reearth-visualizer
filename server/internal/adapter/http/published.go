@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 )
 
 type PublishedController struct {

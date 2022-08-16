@@ -5,9 +5,9 @@ import (
 	"errors"
 	"io"
 
-	"github.com/reearth/reearth-backend/pkg/czml"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/layer/merging"
 )
 
 type CZMLEncoder struct {

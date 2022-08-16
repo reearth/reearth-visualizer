@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/labstack/gommon/log"
-	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

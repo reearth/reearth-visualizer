@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reearth/reearth-backend/pkg/i18n"
-	"github.com/reearth/reearth-backend/pkg/plugin"
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/visualizer"
+	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)

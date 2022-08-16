@@ -14,12 +14,12 @@ import (
 
 	"github.com/caos/oidc/pkg/oidc"
 	"github.com/caos/oidc/pkg/op"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/auth"
-	config2 "github.com/reearth/reearth-backend/pkg/config"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/auth"
+	config2 "github.com/reearth/reearth/server/pkg/config"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/user"
 	"gopkg.in/square/go-jose.v2"
 )
 

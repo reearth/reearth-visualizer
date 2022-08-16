@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/project"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/rerror"
 )
 
 type Project struct {

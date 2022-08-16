@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/tag"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/tag"
 )
 
 type Tag interface {

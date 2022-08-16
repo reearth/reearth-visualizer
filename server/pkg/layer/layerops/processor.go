@@ -3,7 +3,7 @@ package layerops
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/layer"
 )
 
 type Processor struct {

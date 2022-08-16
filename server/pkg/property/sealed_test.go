@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/stretchr/testify/assert"
 )
 

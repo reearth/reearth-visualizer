@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/user"
 	"golang.org/x/text/language"
 )
 

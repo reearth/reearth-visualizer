@@ -3,8 +3,8 @@ package mongodoc
 import (
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/asset"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/asset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

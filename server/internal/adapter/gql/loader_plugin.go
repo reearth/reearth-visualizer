@@ -3,10 +3,10 @@ package gql
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/internal/adapter/gql/gqldataloader"
-	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/util"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/util"
 )
 
 type PluginLoader struct {

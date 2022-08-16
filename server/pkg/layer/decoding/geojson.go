@@ -6,8 +6,8 @@ import (
 	"io"
 
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type GeoStyle struct {

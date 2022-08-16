@@ -5,9 +5,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/user"
-	user1 "github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/user"
+	user1 "github.com/reearth/reearth/server/pkg/user"
 )
 
 type PasswordResetDocument struct {

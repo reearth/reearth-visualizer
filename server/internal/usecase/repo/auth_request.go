@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/auth"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/auth"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type AuthRequest interface {

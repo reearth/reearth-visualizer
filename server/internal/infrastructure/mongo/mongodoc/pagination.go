@@ -3,7 +3,7 @@ package mongodoc
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase"
 )
 
 type Pagination struct {

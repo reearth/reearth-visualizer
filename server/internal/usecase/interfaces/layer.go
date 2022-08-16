@@ -5,12 +5,12 @@ import (
 	"errors"
 	"io"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/pkg/file"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/layer/decoding"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/layer/decoding"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type AddLayerItemInput struct {

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/shp"
+	"github.com/reearth/reearth/server/pkg/shp"
 	"github.com/stretchr/testify/assert"
 )
 

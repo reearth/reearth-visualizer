@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/stretchr/testify/assert"
 )
 

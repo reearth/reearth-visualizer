@@ -5,12 +5,12 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/rerror"
 )
 
 type layerRepo struct {

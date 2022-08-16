@@ -3,7 +3,7 @@ package property
 import (
 	"net/url"
 
-	"github.com/reearth/reearth-backend/pkg/value"
+	"github.com/reearth/reearth/server/pkg/value"
 )
 
 type LatLng = value.LatLng

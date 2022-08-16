@@ -3,7 +3,7 @@ package memory
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 )
 
 type Transaction struct {

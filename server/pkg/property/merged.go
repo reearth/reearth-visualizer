@@ -3,7 +3,7 @@ package property
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 // Merged represents a merged property from two properties

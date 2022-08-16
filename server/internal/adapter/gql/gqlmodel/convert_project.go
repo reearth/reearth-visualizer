@@ -3,7 +3,7 @@ package gqlmodel
 import (
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth/server/pkg/project"
 )
 
 func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {

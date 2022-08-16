@@ -2,7 +2,7 @@ package plugin
 
 import (
 	"github.com/blang/semver"
-	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/i18n"
 )
 
 type Plugin struct {

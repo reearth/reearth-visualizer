@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/smtp"
 
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 )
 
 type smtpMailer struct {

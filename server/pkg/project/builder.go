@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/visualizer"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 type Builder struct {

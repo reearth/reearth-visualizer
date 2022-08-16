@@ -3,7 +3,7 @@ package sceneops
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene"
 )
 
 type PluginInstaller struct {

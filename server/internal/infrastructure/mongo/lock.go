@@ -7,9 +7,9 @@ import (
 
 	"github.com/avast/retry-go/v4"
 	"github.com/google/uuid"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/rerror"
 	lock "github.com/square/mongo-lock"
 	"go.mongodb.org/mongo-driver/mongo"
 )

@@ -3,7 +3,7 @@ package gql
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/stretchr/testify/assert"
 )
 

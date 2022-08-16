@@ -3,8 +3,8 @@ package merging
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Merger struct {

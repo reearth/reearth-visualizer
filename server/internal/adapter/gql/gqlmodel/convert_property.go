@@ -3,10 +3,10 @@ package gqlmodel
 import (
 	"strings"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/util"
-	"github.com/reearth/reearth-backend/pkg/value"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/util"
+	"github.com/reearth/reearth/server/pkg/value"
 )
 
 func ToPropertyValue(v *property.Value) *interface{} {

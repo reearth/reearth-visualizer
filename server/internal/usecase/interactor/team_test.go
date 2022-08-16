@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-backend/internal/infrastructure/memory"
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/internal/infrastructure/memory"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/stretchr/testify/assert"
 )
 

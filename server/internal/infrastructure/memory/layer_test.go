@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/tag"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/tag"
 	"github.com/stretchr/testify/assert"
 )
 

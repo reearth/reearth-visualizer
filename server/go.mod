@@ -1,4 +1,4 @@
-module github.com/reearth/reearth-backend
+module github.com/reearth/reearth/server
 
 require (
 	cloud.google.com/go/profiler v0.3.0

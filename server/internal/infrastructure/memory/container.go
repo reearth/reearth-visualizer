@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 )
 
 func New() *repo.Container {

@@ -1,6 +1,6 @@
 package user
 
-import "github.com/reearth/reearth-backend/pkg/id"
+import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.UserID
 type TeamID = id.TeamID

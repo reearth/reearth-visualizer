@@ -10,8 +10,8 @@ import (
 	"github.com/caos/oidc/pkg/op"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/reearth/reearth-backend/pkg/auth"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/pkg/auth"
+	"github.com/reearth/reearth/server/pkg/log"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )

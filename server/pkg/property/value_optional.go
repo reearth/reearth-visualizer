@@ -1,6 +1,6 @@
 package property
 
-import "github.com/reearth/reearth-backend/pkg/value"
+import "github.com/reearth/reearth/server/pkg/value"
 
 type OptionalValue struct {
 	ov value.Optional

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/caos/oidc/pkg/oidc"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var essentialScopes = []string{"openid", "profile", "email"}

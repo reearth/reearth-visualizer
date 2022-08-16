@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/project"
-	"github.com/reearth/reearth-backend/pkg/visualizer"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 type CreateProjectParam struct {

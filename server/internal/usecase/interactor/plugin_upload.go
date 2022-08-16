@@ -6,16 +6,16 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/plugin"
-	"github.com/reearth/reearth-backend/pkg/plugin/manifest"
-	"github.com/reearth/reearth-backend/pkg/plugin/pluginpack"
-	"github.com/reearth/reearth-backend/pkg/plugin/repourl"
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/plugin/manifest"
+	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
+	"github.com/reearth/reearth/server/pkg/plugin/repourl"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearth/server/pkg/scene"
 )
 
 var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB

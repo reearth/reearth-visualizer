@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	"github.com/reearth/reearth-backend/internal/usecase/interactor"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/interactor"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 )
 
 func UsecaseMiddleware(r *repo.Container, g *gateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {

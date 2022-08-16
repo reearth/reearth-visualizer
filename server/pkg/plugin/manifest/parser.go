@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/goccy/go-yaml"
-	"github.com/reearth/reearth-backend/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/plugin"
 )
 
 var (

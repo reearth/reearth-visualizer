@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/plugin"
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/rerror"
-	"github.com/reearth/reearth-backend/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/rerror"
+	"github.com/reearth/reearth/server/pkg/scene"
 )
 
 type PluginMigrator struct {

@@ -3,8 +3,8 @@ package encoding
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/layer/merging"
 )
 
 type Exporter struct {

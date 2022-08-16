@@ -11,9 +11,9 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/rerror"
 	"github.com/stretchr/testify/assert"
 )
 

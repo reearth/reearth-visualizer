@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 // Group represents a group of property

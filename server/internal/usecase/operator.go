@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/scene"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/user"
 )
 
 type Operator struct {

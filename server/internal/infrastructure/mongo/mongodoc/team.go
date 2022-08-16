@@ -1,8 +1,8 @@
 package mongodoc
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/user"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

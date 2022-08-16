@@ -5,7 +5,7 @@ import (
 	"runtime/debug"
 
 	"github.com/pkg/errors"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/pkg/log"
 )
 
 var (

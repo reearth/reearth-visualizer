@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/config"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/config"
 )
 
 type Config struct {

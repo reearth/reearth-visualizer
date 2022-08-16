@@ -1,6 +1,6 @@
 package mongodoc
 
-import "github.com/reearth/reearth-backend/pkg/config"
+import "github.com/reearth/reearth/server/pkg/config"
 
 type ConfigDocument struct {
 	Migration int64

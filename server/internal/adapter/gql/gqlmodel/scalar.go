@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth-backend/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase"
 	"golang.org/x/text/language"
 )
 

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2/clientcredentials"
 )

@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/auth"
+	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/stretchr/testify/assert"
 )
 

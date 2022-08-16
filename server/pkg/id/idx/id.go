@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/oklog/ulid"
-	"github.com/reearth/reearth-backend/pkg/util"
+	"github.com/reearth/reearth/server/pkg/util"
 	"github.com/samber/lo"
 )
 

@@ -4,10 +4,10 @@ import (
 	"io"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/file"
-	"github.com/reearth/reearth-backend/pkg/visualizer"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 func RefToIndex(i *int) int {

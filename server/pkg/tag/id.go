@@ -1,6 +1,6 @@
 package tag
 
-import "github.com/reearth/reearth-backend/pkg/id"
+import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.TagID
 type SceneID = id.SceneID

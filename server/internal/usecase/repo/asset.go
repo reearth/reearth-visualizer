@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth-backend/internal/usecase"
-	"github.com/reearth/reearth-backend/pkg/asset"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/asset"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type AssetFilter struct {

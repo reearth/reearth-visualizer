@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/property"
-	"github.com/reearth/reearth-backend/pkg/scene"
-	"github.com/reearth/reearth-backend/pkg/tag"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/tag"
 )
 
 type sceneJSON struct {

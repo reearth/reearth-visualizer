@@ -1,8 +1,8 @@
 package property
 
 import (
-	"github.com/reearth/reearth-backend/pkg/dataset"
-	"github.com/reearth/reearth-backend/pkg/value"
+	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/value"
 )
 
 type ValueAndDatasetValue struct {

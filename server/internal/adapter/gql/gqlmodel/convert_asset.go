@@ -1,7 +1,7 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth-backend/pkg/asset"
+	"github.com/reearth/reearth/server/pkg/asset"
 )
 
 func ToAsset(a *asset.Asset) *Asset {

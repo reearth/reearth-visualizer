@@ -14,10 +14,10 @@ import (
 	"github.com/golang/gddo/httputil/header"
 	"github.com/gorilla/mux"
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/usecase/interactor"
-	"github.com/reearth/reearth-backend/internal/usecase/interfaces"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/internal/usecase/interactor"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/user"
 )
 
 const (

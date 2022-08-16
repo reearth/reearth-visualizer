@@ -1,7 +1,7 @@
 package idx
 
 import (
-	"github.com/reearth/reearth-backend/pkg/util"
+	"github.com/reearth/reearth/server/pkg/util"
 	"golang.org/x/exp/slices"
 )
 

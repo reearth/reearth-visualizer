@@ -11,11 +11,11 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	"github.com/reearth/reearth-backend/pkg/file"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/rerror"
 	"google.golang.org/api/iterator"
 )
 

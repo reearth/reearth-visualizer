@@ -11,8 +11,8 @@ import (
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/pkg/log"
 )
 
 type contextKey string

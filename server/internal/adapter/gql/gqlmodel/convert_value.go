@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/reearth/reearth-backend/pkg/value"
+	"github.com/reearth/reearth/server/pkg/value"
 )
 
 func valueInterfaceToGqlValue(v interface{}) interface{} {

@@ -9,8 +9,8 @@ import (
 	"net/textproto"
 	"strings"
 
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/pkg/log"
 )
 
 func verifyEmails(contacts []gateway.Contact) ([]string, error) {

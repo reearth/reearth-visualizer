@@ -3,7 +3,7 @@ package encoding
 import (
 	"io"
 
-	"github.com/reearth/reearth-backend/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/layer/merging"
 )
 
 var encoders = map[string]func(w io.Writer) Encoder{

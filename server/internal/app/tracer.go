@@ -5,7 +5,7 @@ import (
 	"io"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/pkg/log"
 	jaeger "github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"

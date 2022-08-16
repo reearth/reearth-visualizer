@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/reearth/reearth-backend/internal/infrastructure/mongo/mongodoc"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/rerror"
 )
 
 type DBClient = *mongodoc.Client

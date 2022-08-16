@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/visualizer"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
 

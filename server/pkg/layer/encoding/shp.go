@@ -4,11 +4,11 @@ import (
 	"errors"
 	"io"
 
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/layer/merging"
-	"github.com/reearth/reearth-backend/pkg/property"
-	shp "github.com/reearth/reearth-backend/pkg/shp"
-	wsc "github.com/reearth/reearth-backend/pkg/writer"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/property"
+	shp "github.com/reearth/reearth/server/pkg/shp"
+	wsc "github.com/reearth/reearth/server/pkg/writer"
 )
 
 type SHPEncoder struct {

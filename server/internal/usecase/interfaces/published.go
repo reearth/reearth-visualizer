@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/reearth/reearth-backend/pkg/project"
+	"github.com/reearth/reearth/server/pkg/project"
 )
 
 type ProjectPublishedMetadata struct {

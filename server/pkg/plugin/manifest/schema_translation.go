@@ -1,6 +1,6 @@
 package manifest
 
-import "github.com/reearth/reearth-backend/pkg/i18n"
+import "github.com/reearth/reearth/server/pkg/i18n"
 
 type TranslationExtension struct {
 	Description    *string                   `json:"description,omitempty"`

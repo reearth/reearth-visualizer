@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth-backend/pkg/asset"
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/asset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 

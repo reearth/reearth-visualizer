@@ -3,7 +3,7 @@ package property
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/i18n"
 )
 
 type SchemaFieldBuilder struct {

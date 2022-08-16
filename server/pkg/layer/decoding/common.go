@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/reearth/reearth-backend/pkg/builtin"
-	"github.com/reearth/reearth-backend/pkg/czml"
-	"github.com/reearth/reearth-backend/pkg/kml"
-	"github.com/reearth/reearth-backend/pkg/layer"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/kml"
+	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 var (

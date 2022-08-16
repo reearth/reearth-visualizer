@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/plugin/pluginpack"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
+	"github.com/reearth/reearth/server/pkg/rerror"
 	"golang.org/x/oauth2/clientcredentials"
 )
 

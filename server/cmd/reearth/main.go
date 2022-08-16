@@ -1,6 +1,6 @@
 package main
 
-import "github.com/reearth/reearth-backend/internal/app"
+import "github.com/reearth/reearth/server/internal/app"
 
 var version = ""
 

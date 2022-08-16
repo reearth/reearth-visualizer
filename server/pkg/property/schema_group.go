@@ -1,7 +1,7 @@
 package property
 
 import (
-	"github.com/reearth/reearth-backend/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/i18n"
 )
 
 // SchemaGroup represents a group of property that has some fields

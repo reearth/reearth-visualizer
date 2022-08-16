@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/adapter"
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/rerror"
 )
 
 func ExportLayer() echo.HandlerFunc {

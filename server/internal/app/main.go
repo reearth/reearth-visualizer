@@ -6,9 +6,9 @@ import (
 	"os/signal"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	"github.com/reearth/reearth-backend/internal/usecase/repo"
-	"github.com/reearth/reearth-backend/pkg/log"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/log"
 )
 
 func Start(debug bool, version string) {

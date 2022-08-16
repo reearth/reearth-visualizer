@@ -10,9 +10,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/reearth/reearth-backend/internal/usecase/gateway"
-	"github.com/reearth/reearth-backend/pkg/log"
-	"github.com/reearth/reearth-backend/pkg/rerror"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/pkg/log"
+	"github.com/reearth/reearth/server/pkg/rerror"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )

@@ -5,7 +5,7 @@ package layer
 import (
 	"errors"
 
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type InfoboxField struct {

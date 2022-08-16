@@ -1,6 +1,6 @@
 package dataset
 
-import "github.com/reearth/reearth-backend/pkg/id"
+import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.DatasetID
 type FieldID = id.DatasetFieldID

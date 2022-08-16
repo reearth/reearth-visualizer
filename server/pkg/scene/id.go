@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type ID = id.SceneID

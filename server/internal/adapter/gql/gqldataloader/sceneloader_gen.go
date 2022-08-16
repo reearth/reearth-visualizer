@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 )
 
 // SceneLoaderConfig captures the config to create a new SceneLoader

@@ -1,9 +1,9 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth-backend/pkg/id"
-	"github.com/reearth/reearth-backend/pkg/scene"
-	"github.com/reearth/reearth-backend/pkg/util"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/util"
 )
 
 func ToWidgetAlignSystem(sas *scene.WidgetAlignSystem) *WidgetAlignSystem {

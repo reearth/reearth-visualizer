@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reearth/reearth-backend/pkg/builtin"
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Infobox struct {

@@ -1,7 +1,7 @@
 package layer
 
 import (
-	"github.com/reearth/reearth-backend/pkg/property"
+	"github.com/reearth/reearth/server/pkg/property"
 )
 
 // Merged represents a merged layer from two layers

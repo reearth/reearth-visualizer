@@ -3,8 +3,8 @@ package repo
 import (
 	"testing"
 
-	"github.com/reearth/reearth-backend/pkg/scene"
-	"github.com/reearth/reearth-backend/pkg/user"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/stretchr/testify/assert"
 )
 
