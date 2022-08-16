@@ -56,7 +56,8 @@ jobs:
       - info
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
-      ARTIFACTS: server/dist/reearth_*.*,reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      ARTIFACTS: server/dist/reearth_*.*
+      ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -93,7 +94,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: ${{ env.ARTIFACTS }}
+          artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
           commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.name }}
           tag: ${{ needs.info.outputs.name }}
@@ -109,7 +110,7 @@ jobs:
         if: needs.info.outputs.tag
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ env.ARTIFACTS }}
+          artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
           commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.tag }}
           tag: ${{ needs.info.outputs.tag }}
@@ -168,7 +169,7 @@ jobs:
           file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract reearth-web
-        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz && mv reearth-web web/dist
+        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz && mkdir -p web && mv reearth-web web/dist
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
