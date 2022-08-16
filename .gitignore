@@ -3,5 +3,7 @@
 /data
 /server/web
 /server/coverage.txt
+/server/reearth
+/web/dist
 /.env
 /.env.*
