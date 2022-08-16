@@ -51,7 +51,7 @@
       "groupSlug": "github-actions",
       "semanticCommitType": "ci",
       "schedule": [
-        "before 3am on the fourth day of the month"
+        "before 3:00 am on the 4th day of the month"
       ]
     }
   ]
