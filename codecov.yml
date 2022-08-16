@@ -1,0 +1,13 @@
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+ignore:
+  - server/**/*_gen.go
+  - server/**/*_test.go
+  - server/**/doc.go
+  - server/**/testdata
+  - server/internal/adapter/gql/generated.go
+  - server/main.go
+  - server/tools
+  - server/tools.go
