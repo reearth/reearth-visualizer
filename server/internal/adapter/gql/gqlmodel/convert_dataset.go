@@ -2,8 +2,8 @@ package gqlmodel
 
 import (
 	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/util"
 	"github.com/reearth/reearth/server/pkg/value"
+	"github.com/reearth/reearthx/util"
 )
 
 func ToDatasetValue(v *dataset.Value) *interface{} {

@@ -8,7 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/util"
+	"github.com/reearth/reearthx/util"
 )
 
 type DatasetLoader struct {

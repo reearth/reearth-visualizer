@@ -1,5 +1,5 @@
 package id
 
-import "github.com/reearth/reearth/server/pkg/id/idx"
+import "github.com/reearth/reearthx/idx"
 
 var ErrInvalidID = idx.ErrInvalidID

@@ -3,7 +3,7 @@ package gqlmodel
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/tag"
-	"github.com/reearth/reearth/server/pkg/util"
+	"github.com/reearth/reearthx/util"
 )
 
 func ToTagItem(ti *tag.Item) *TagItem {
