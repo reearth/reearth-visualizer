@@ -60,7 +60,7 @@ jobs:
       - info
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
-      ARTIFACTS: dist/reearth_*.*
+      ARTIFACTS: server/dist/reearth_*.*
       ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - name: Checkout
@@ -90,7 +90,6 @@ jobs:
       - name: Rename artifacts
         if: needs.info.outputs.name
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
-        working-directory: server
       - name: List artifacts
         run: ls -l server/dist
       - name: Release nightly/rc
@@ -174,6 +173,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract reearth-web
         run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz && mkdir -p web && mv reearth-web web/dist
+      - name: Ls
+        run: ls; echo "--"; ls web; echo "---"; ls web/dist
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
