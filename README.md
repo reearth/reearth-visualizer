@@ -25,8 +25,6 @@
   <a href="https://discord.gg/XJhYkQQDAu">Discord</a>
 </p>
 
-Re:Earth consist of 2 repositories. Don't forget to check out our [front-end](https://github.com/reearth/reearth-web) and [back-end](https://github.com/reearth/reearth-backend) repositories 👍
-
 💡 **We are hiring full-time OSS comitters!** (senior, front-end, back-end) https://eukarya.io/join/en
 
 https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
@@ -46,7 +44,7 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 | Name | Status | Coverage | Contributors |
 | --------- | --------- | --------- | --------- |
 | [reearth-web](https://github.com/reearth/reearth-web) | [![main](https://github.com/reearth/reearth-web/actions/workflows/ci.yml/badge.svg)](https://github.com/reearth/reearth-web/actions/workflows/ci.yml) | [![codecov](https://codecov.io/gh/reearth/reearth-web/branch/main/graph/badge.svg?token=ZFLXJY1WLW)](https://codecov.io/gh/reearth/reearth-web) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth-web)](https://GitHub.com/reearth/reearth-web/graphs/contributors/) |
-| [reearth-backend](https://github.com/reearth/reearth-web) | [![main](https://github.com/reearth/reearth-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/reearth/reearth-backend/actions/workflows/ci.yml) | [![codecov](https://codecov.io/gh/reearth/reearth-backend/branch/main/graph/badge.svg?token=4UV79645UP)](https://codecov.io/gh/reearth/reearth-backend) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth-backend)](https://GitHub.com/reearth/reearth-backend/graphs/contributors/) |
+| [reearth-backend](https://github.com/reearth/reearth/tree/main/server) | [![main](https://github.com/reearth/reearth/actions/workflows/ci.yml/badge.svg)](https://github.com/reearth/reearth/actions/workflows/ci.yml) | [![codecov](https://codecov.io/gh/reearth/reearth/branch/main/graph/badge.svg)](https://codecov.io/gh/reearth/reearth) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth)](https://GitHub.com/reearth/reearth/graphs/contributors/) |
 
 ## Built With
 
@@ -82,7 +80,7 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-### Browser
+### Web Browsers
 
 | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
 | --------- | --------- | --------- | --------- | --------- | --------- |
