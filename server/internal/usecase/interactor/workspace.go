@@ -6,20 +6,19 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 )
 
-type Team struct {
+type Workspace struct {
 	common
-	teamRepo    repo.Team
+	teamRepo    repo.Workspace
 	projectRepo repo.Project
 	userRepo    repo.User
 	transaction repo.Transaction
 }
 
-func NewTeam(r *repo.Container) interfaces.Team {
-	return &Team{
+func NewWorkspace(r *repo.Container) interfaces.Workspace {
+	return &Workspace{
 		teamRepo:    r.Team,
 		projectRepo: r.Project,
 		userRepo:    r.User,
@@ -27,7 +26,7 @@ func NewTeam(r *repo.Container) interfaces.Team {
 	}
 }
 
-func (i *Team) Fetch(ctx context.Context, ids []id.TeamID, operator *usecase.Operator) ([]*user.Team, error) {
+func (i *Workspace) Fetch(ctx context.Context, ids []workspace.ID, operator *usecase.Operator) ([]*workspace.Workspace, error) {
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err
 	}
@@ -36,7 +35,7 @@ func (i *Team) Fetch(ctx context.Context, ids []id.TeamID, operator *usecase.Ope
 	return res2, err
 }
 
-func (i *Team) FindByUser(ctx context.Context, id id.UserID, operator *usecase.Operator) ([]*user.Team, error) {
+func (i *Workspace) FindByUser(ctx context.Context, id workspace.UserID, operator *usecase.Operator) ([]*workspace.Workspace, error) {
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err
 	}
@@ -45,7 +44,7 @@ func (i *Team) FindByUser(ctx context.Context, id id.UserID, operator *usecase.O
 	return res2, err
 }
 
-func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID, operator *usecase.Operator) (_ *user.Team, err error) {
+func (i *Workspace) Create(ctx context.Context, name string, firstUser workspace.UserID, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -56,7 +55,7 @@ func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID, ope
 		}
 	}()
 
-	team, err := user.NewTeam().
+	team, err := workspace.New().
 		NewID().
 		Name(name).
 		Build()
@@ -64,7 +63,7 @@ func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID, ope
 		return nil, err
 	}
 
-	if err := team.Members().Join(firstUser, user.RoleOwner); err != nil {
+	if err := team.Members().Join(firstUser, workspace.RoleOwner); err != nil {
 		return nil, err
 	}
 
@@ -77,7 +76,7 @@ func (i *Team) Create(ctx context.Context, name string, firstUser id.UserID, ope
 	return team, nil
 }
 
-func (i *Team) Update(ctx context.Context, id id.TeamID, name string, operator *usecase.Operator) (_ *user.Team, err error) {
+func (i *Workspace) Update(ctx context.Context, id workspace.ID, name string, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -97,9 +96,9 @@ func (i *Team) Update(ctx context.Context, id id.TeamID, name string, operator *
 		return nil, err
 	}
 	if team.IsPersonal() {
-		return nil, user.ErrCannotModifyPersonalTeam
+		return nil, workspace.ErrCannotModifyPersonalTeam
 	}
-	if team.Members().GetRole(operator.User) != user.RoleOwner {
+	if team.Members().GetRole(operator.User) != workspace.RoleOwner {
 		return nil, interfaces.ErrOperationDenied
 	}
 
@@ -114,7 +113,7 @@ func (i *Team) Update(ctx context.Context, id id.TeamID, name string, operator *
 	return team, nil
 }
 
-func (i *Team) AddMember(ctx context.Context, id id.TeamID, u id.UserID, role user.Role, operator *usecase.Operator) (_ *user.Team, err error) {
+func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.UserID, role workspace.Role, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -134,9 +133,9 @@ func (i *Team) AddMember(ctx context.Context, id id.TeamID, u id.UserID, role us
 		return nil, err
 	}
 	if team.IsPersonal() {
-		return nil, user.ErrCannotModifyPersonalTeam
+		return nil, workspace.ErrCannotModifyPersonalTeam
 	}
-	if team.Members().GetRole(operator.User) != user.RoleOwner {
+	if team.Members().GetRole(operator.User) != workspace.RoleOwner {
 		return nil, interfaces.ErrOperationDenied
 	}
 
@@ -159,7 +158,7 @@ func (i *Team) AddMember(ctx context.Context, id id.TeamID, u id.UserID, role us
 	return team, nil
 }
 
-func (i *Team) RemoveMember(ctx context.Context, id id.TeamID, u id.UserID, operator *usecase.Operator) (_ *user.Team, err error) {
+func (i *Workspace) RemoveMember(ctx context.Context, id workspace.ID, u workspace.UserID, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -179,14 +178,14 @@ func (i *Team) RemoveMember(ctx context.Context, id id.TeamID, u id.UserID, oper
 		return nil, err
 	}
 	if team.IsPersonal() {
-		return nil, user.ErrCannotModifyPersonalTeam
+		return nil, workspace.ErrCannotModifyPersonalTeam
 	}
-	if team.Members().GetRole(operator.User) != user.RoleOwner {
+	if team.Members().GetRole(operator.User) != workspace.RoleOwner {
 		return nil, interfaces.ErrOperationDenied
 	}
 
 	if u == operator.User {
-		return nil, interfaces.ErrOwnerCannotLeaveTheTeam
+		return nil, interfaces.ErrOwnerCannotLeaveWorkspace
 	}
 
 	err = team.Members().Leave(u)
@@ -203,7 +202,7 @@ func (i *Team) RemoveMember(ctx context.Context, id id.TeamID, u id.UserID, oper
 	return team, nil
 }
 
-func (i *Team) UpdateMember(ctx context.Context, id id.TeamID, u id.UserID, role user.Role, operator *usecase.Operator) (_ *user.Team, err error) {
+func (i *Workspace) UpdateMember(ctx context.Context, id workspace.ID, u workspace.UserID, role workspace.Role, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -223,9 +222,9 @@ func (i *Team) UpdateMember(ctx context.Context, id id.TeamID, u id.UserID, role
 		return nil, err
 	}
 	if team.IsPersonal() {
-		return nil, user.ErrCannotModifyPersonalTeam
+		return nil, workspace.ErrCannotModifyPersonalTeam
 	}
-	if team.Members().GetRole(operator.User) != user.RoleOwner {
+	if team.Members().GetRole(operator.User) != workspace.RoleOwner {
 		return nil, interfaces.ErrOperationDenied
 	}
 
@@ -247,7 +246,7 @@ func (i *Team) UpdateMember(ctx context.Context, id id.TeamID, u id.UserID, role
 	return team, nil
 }
 
-func (i *Team) Remove(ctx context.Context, id id.TeamID, operator *usecase.Operator) (err error) {
+func (i *Workspace) Remove(ctx context.Context, id workspace.ID, operator *usecase.Operator) (err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -267,9 +266,9 @@ func (i *Team) Remove(ctx context.Context, id id.TeamID, operator *usecase.Opera
 		return err
 	}
 	if team.IsPersonal() {
-		return user.ErrCannotModifyPersonalTeam
+		return workspace.ErrCannotModifyPersonalTeam
 	}
-	if team.Members().GetRole(operator.User) != user.RoleOwner {
+	if team.Members().GetRole(operator.User) != workspace.RoleOwner {
 		return interfaces.ErrOperationDenied
 	}
 
@@ -278,7 +277,7 @@ func (i *Team) Remove(ctx context.Context, id id.TeamID, operator *usecase.Opera
 		return err
 	}
 	if projects > 0 {
-		return interfaces.ErrCannotDeleteTeam
+		return interfaces.ErrCannotDeleteWorkspace
 	}
 
 	err = i.teamRepo.Remove(ctx, id)
@@ -290,12 +289,12 @@ func (i *Team) Remove(ctx context.Context, id id.TeamID, operator *usecase.Opera
 	return
 }
 
-func (i *Team) filterTeams(teams []*user.Team, operator *usecase.Operator, err error) ([]*user.Team, error) {
+func (i *Workspace) filterTeams(teams []*workspace.Workspace, operator *usecase.Operator, err error) ([]*workspace.Workspace, error) {
 	if err != nil {
 		return nil, err
 	}
 	if operator == nil {
-		return make([]*user.Team, len(teams)), nil
+		return make([]*workspace.Workspace, len(teams)), nil
 	}
 	for i, t := range teams {
 		if t == nil || !operator.IsReadableTeam(t.ID()) {

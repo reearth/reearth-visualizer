@@ -1,43 +1,45 @@
-package user
+package userops
 
 import (
+	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"golang.org/x/text/language"
 )
 
 type InitParams struct {
 	Email    string
 	Name     string
-	Sub      *Auth
+	Sub      *user.Auth
 	Password *string
 	Lang     *language.Tag
-	Theme    *Theme
-	UserID   *ID
-	TeamID   *TeamID
+	Theme    *user.Theme
+	UserID   *user.ID
+	TeamID   *workspace.ID
 }
 
-func Init(p InitParams) (*User, *Team, error) {
+func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 	if p.UserID == nil {
-		p.UserID = NewID().Ref()
+		p.UserID = user.NewID().Ref()
 	}
 	if p.TeamID == nil {
-		p.TeamID = NewTeamID().Ref()
+		p.TeamID = workspace.NewID().Ref()
 	}
 	if p.Lang == nil {
 		p.Lang = &language.Tag{}
 	}
 	if p.Theme == nil {
-		t := ThemeDefault
+		t := user.ThemeDefault
 		p.Theme = &t
 	}
 	if p.Sub == nil {
-		p.Sub = GenReearthSub(p.UserID.String())
+		p.Sub = user.GenReearthSub(p.UserID.String())
 	}
 
-	b := New().
+	b := user.New().
 		ID(*p.UserID).
 		Name(p.Name).
 		Email(p.Email).
-		Auths([]Auth{*p.Sub}).
+		Auths([]user.Auth{*p.Sub}).
 		Lang(*p.Lang).
 		Theme(*p.Theme)
 	if p.Password != nil {
@@ -49,10 +51,10 @@ func Init(p InitParams) (*User, *Team, error) {
 	}
 
 	// create a user's own team
-	t, err := NewTeam().
+	t, err := workspace.New().
 		ID(*p.TeamID).
 		Name(p.Name).
-		Members(map[ID]Role{u.ID(): RoleOwner}).
+		Members(map[user.ID]workspace.Role{u.ID(): workspace.RoleOwner}).
 		Personal(true).
 		Build()
 	if err != nil {

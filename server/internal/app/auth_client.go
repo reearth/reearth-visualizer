@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -96,9 +97,9 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 		return nil, err
 	}
 
-	readableTeams := teams.FilterByUserRole(uid, user.RoleReader).IDs()
-	writableTeams := teams.FilterByUserRole(uid, user.RoleWriter).IDs()
-	owningTeams := teams.FilterByUserRole(uid, user.RoleOwner).IDs()
+	readableTeams := teams.FilterByUserRole(uid, workspace.RoleReader).IDs()
+	writableTeams := teams.FilterByUserRole(uid, workspace.RoleWriter).IDs()
+	owningTeams := teams.FilterByUserRole(uid, workspace.RoleOwner).IDs()
 
 	return &usecase.Operator{
 		User:           uid,

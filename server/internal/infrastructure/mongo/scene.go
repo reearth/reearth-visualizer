@@ -62,8 +62,8 @@ func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID) (*scene.
 	})
 }
 
-func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
-	teams2 := id.TeamIDList(teams)
+func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.WorkspaceID) (scene.List, error) {
+	teams2 := id.WorkspaceIDList(teams)
 	if r.f.Readable != nil {
 		teams2 = teams2.Intersect(r.f.Readable)
 	}

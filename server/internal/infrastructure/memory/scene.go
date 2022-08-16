@@ -78,7 +78,7 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
+func (r *Scene) FindByTeam(ctx context.Context, teams ...id.WorkspaceID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

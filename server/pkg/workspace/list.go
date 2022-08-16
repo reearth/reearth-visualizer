@@ -1,15 +1,15 @@
-package user
+package workspace
 
-type TeamList []*Team
+type List []*Workspace
 
-func (l TeamList) FilterByID(ids ...TeamID) TeamList {
+func (l List) FilterByID(ids ...ID) List {
 	if l == nil {
 		return nil
 	}
 
-	res := make(TeamList, 0, len(l))
+	res := make(List, 0, len(l))
 	for _, id := range ids {
-		var t2 *Team
+		var t2 *Workspace
 		for _, t := range l {
 			if t.ID() == id {
 				t2 = t
@@ -22,12 +22,12 @@ func (l TeamList) FilterByID(ids ...TeamID) TeamList {
 	}
 	return res
 }
-func (l TeamList) FilterByUserRole(u ID, r Role) TeamList {
+func (l List) FilterByUserRole(u UserID, r Role) List {
 	if l == nil || u.IsNil() || r == "" {
 		return nil
 	}
 
-	res := make(TeamList, 0, len(l))
+	res := make(List, 0, len(l))
 	for _, t := range l {
 		tr := t.Members().GetRole(u)
 		if tr == r {
@@ -37,12 +37,12 @@ func (l TeamList) FilterByUserRole(u ID, r Role) TeamList {
 	return res
 }
 
-func (l TeamList) FilterByUserRoleIncluding(u ID, r Role) TeamList {
+func (l List) FilterByUserRoleIncluding(u UserID, r Role) List {
 	if l == nil || u.IsNil() || r == "" {
 		return nil
 	}
 
-	res := make(TeamList, 0, len(l))
+	res := make(List, 0, len(l))
 	for _, t := range l {
 		tr := t.Members().GetRole(u)
 		if tr.Includes(r) {
@@ -52,12 +52,12 @@ func (l TeamList) FilterByUserRoleIncluding(u ID, r Role) TeamList {
 	return res
 }
 
-func (l TeamList) IDs() []TeamID {
+func (l List) IDs() []ID {
 	if l == nil {
 		return nil
 	}
 
-	res := make([]TeamID, 0, len(l))
+	res := make([]ID, 0, len(l))
 	for _, t := range l {
 		res = append(res, t.ID())
 	}

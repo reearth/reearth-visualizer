@@ -61,7 +61,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return result, nil
 }
 
-func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *Asset) FindByTeam(ctx context.Context, id id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}

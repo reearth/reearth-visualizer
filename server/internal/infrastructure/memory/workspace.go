@@ -6,26 +6,26 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
 )
 
-type Team struct {
+type Workspace struct {
 	lock sync.Mutex
-	data map[id.TeamID]*user.Team
+	data map[id.WorkspaceID]*workspace.Workspace
 }
 
-func NewTeam() repo.Team {
-	return &Team{
-		data: map[id.TeamID]*user.Team{},
+func NewWorkspace() repo.Workspace {
+	return &Workspace{
+		data: map[id.WorkspaceID]*workspace.Workspace{},
 	}
 }
 
-func (r *Team) FindByUser(ctx context.Context, i id.UserID) (user.TeamList, error) {
+func (r *Workspace) FindByUser(ctx context.Context, i id.UserID) (workspace.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := user.TeamList{}
+	result := workspace.List{}
 	for _, d := range r.data {
 		if d.Members().ContainsUser(i) {
 			result = append(result, d)
@@ -34,11 +34,11 @@ func (r *Team) FindByUser(ctx context.Context, i id.UserID) (user.TeamList, erro
 	return result, nil
 }
 
-func (r *Team) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList, error) {
+func (r *Workspace) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (workspace.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := user.TeamList{}
+	result := workspace.List{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
 			result = append(result, d)
@@ -49,7 +49,7 @@ func (r *Team) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList,
 	return result, nil
 }
 
-func (r *Team) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
+func (r *Workspace) FindByID(ctx context.Context, id id.WorkspaceID) (*workspace.Workspace, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -60,7 +60,7 @@ func (r *Team) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Team) Save(ctx context.Context, t *user.Team) error {
+func (r *Workspace) Save(ctx context.Context, t *workspace.Workspace) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -68,7 +68,7 @@ func (r *Team) Save(ctx context.Context, t *user.Team) error {
 	return nil
 }
 
-func (r *Team) SaveAll(ctx context.Context, teams []*user.Team) error {
+func (r *Workspace) SaveAll(ctx context.Context, teams []*workspace.Workspace) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -78,7 +78,7 @@ func (r *Team) SaveAll(ctx context.Context, teams []*user.Team) error {
 	return nil
 }
 
-func (r *Team) Remove(ctx context.Context, id id.TeamID) error {
+func (r *Workspace) Remove(ctx context.Context, id id.WorkspaceID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -86,7 +86,7 @@ func (r *Team) Remove(ctx context.Context, id id.TeamID) error {
 	return nil
 }
 
-func (r *Team) RemoveAll(ctx context.Context, ids id.TeamIDList) error {
+func (r *Workspace) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

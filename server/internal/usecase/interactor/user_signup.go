@@ -16,10 +16,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/user/userops"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
 )
 
-func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.User, *user.Team, error) {
+func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.User, *workspace.Workspace, error) {
 	if inp.Name == "" {
 		return nil, nil, interfaces.ErrSignupInvalidName
 	}
@@ -59,7 +61,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 	if inp.Sub != nil {
 		auth = user.AuthFromAuth0Sub(*inp.Sub).Ref()
 	}
-	u, team, err := user.Init(user.InitParams{
+	u, team, err := userops.Init(userops.InitParams{
 		Email:    inp.Email,
 		Name:     inp.Name,
 		Sub:      auth,
@@ -88,7 +90,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 	return u, team, nil
 }
 
-func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (u *user.User, _ *user.Team, err error) {
+func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (u *user.User, _ *workspace.Workspace, err error) {
 	if err := i.verifySignupSecret(inp.Secret); err != nil {
 		return nil, nil, err
 	}
@@ -132,7 +134,7 @@ func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (
 	}
 
 	// Initialize user and team
-	u, team, err := user.Init(user.InitParams{
+	u, team, err := userops.Init(userops.InitParams{
 		Email:  email,
 		Name:   name,
 		Sub:    user.AuthFromAuth0Sub(sub).Ref(),
@@ -163,7 +165,7 @@ func (i *User) verifySignupSecret(secret *string) error {
 	return nil
 }
 
-func (i *User) userAlreadyExists(ctx context.Context, userID *id.UserID, sub *string, name *string, teamID *id.TeamID) (*user.User, *user.Team, error) {
+func (i *User) userAlreadyExists(ctx context.Context, userID *id.UserID, sub *string, name *string, teamID *id.WorkspaceID) (*user.User, *workspace.Workspace, error) {
 	// Check if user already exists
 	var existedUser *user.User
 	var err error

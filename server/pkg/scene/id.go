@@ -12,7 +12,7 @@ type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID
-type TeamID = id.TeamID
+type TeamID = id.WorkspaceID
 
 type IDList = id.SceneIDList
 type WidgetIDList = id.WidgetIDList
@@ -24,7 +24,7 @@ var NewLayerID = id.NewLayerID
 var NewPropertyID = id.NewPropertyID
 var NewPluginID = id.NewPluginID
 var NewProjectID = id.NewProjectID
-var NewTeamID = id.NewTeamID
+var NewTeamID = id.NewWorkspaceID
 
 var MustID = id.MustSceneID
 var MustWidgetID = id.MustWidgetID
@@ -33,7 +33,7 @@ var MustLayerID = id.MustLayerID
 var MustPropertyID = id.MustPropertyID
 var MustPluginID = id.MustPluginID
 var MustProjectID = id.MustProjectID
-var MustTeamID = id.MustTeamID
+var MustTeamID = id.MustWorkspaceID
 
 var IDFrom = id.SceneIDFrom
 var WidgetIDFrom = id.WidgetIDFrom
@@ -42,7 +42,7 @@ var LayerIDFrom = id.LayerIDFrom
 var PropertyIDFrom = id.PropertyIDFrom
 var PluginIDFrom = id.PluginIDFrom
 var ProjectIDFrom = id.ProjectIDFrom
-var TeamIDFrom = id.TeamIDFrom
+var TeamIDFrom = id.WorkspaceIDFrom
 
 var IDFromRef = id.SceneIDFromRef
 var WidgetIDFromRef = id.WidgetIDFromRef
@@ -51,7 +51,7 @@ var LayerIDFromRef = id.LayerIDFromRef
 var PropertyIDFromRef = id.PropertyIDFromRef
 var PluginIDFromRef = id.PluginIDFromRef
 var ProjectIDFromRef = id.ProjectIDFromRef
-var TeamIDFromRef = id.TeamIDFromRef
+var TeamIDFromRef = id.WorkspaceIDFromRef
 
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID

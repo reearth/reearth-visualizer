@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -23,7 +24,7 @@ import (
 type User struct {
 	common
 	userRepo          repo.User
-	teamRepo          repo.Team
+	teamRepo          repo.Workspace
 	projectRepo       repo.Project
 	sceneRepo         repo.Scene
 	sceneLockRepo     repo.SceneLock
@@ -111,7 +112,7 @@ func (i *User) Fetch(ctx context.Context, ids []id.UserID, operator *usecase.Ope
 		if err != nil {
 			return res, err
 		}
-		teamIDs := make([]id.TeamID, 0, len(teams))
+		teamIDs := make([]id.WorkspaceID, 0, len(teams))
 		for _, t := range teams {
 			if t != nil {
 				teamIDs = append(teamIDs, t.ID())
@@ -259,7 +260,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		}
 	}()
 
-	var team *user.Team
+	var team *workspace.Workspace
 
 	u, err = i.userRepo.FindByID(ctx, operator.User)
 	if err != nil {
@@ -424,8 +425,8 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 		File:    i.file,
 		Project: i.projectRepo,
 	}
-	updatedTeams := make([]*user.Team, 0, len(teams))
-	deletedTeams := []id.TeamID{}
+	updatedTeams := make([]*workspace.Workspace, 0, len(teams))
+	deletedTeams := []id.WorkspaceID{}
 
 	for _, team := range teams {
 		if !team.IsPersonal() && !team.Members().IsOnlyOwner(u.ID()) {

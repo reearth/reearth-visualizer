@@ -151,7 +151,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.TeamIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}

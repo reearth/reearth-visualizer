@@ -7,29 +7,29 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type teamRepo struct {
+type workspaceRepo struct {
 	client *mongodoc.ClientCollection
 }
 
-func NewTeam(client *mongodoc.Client) repo.Team {
-	r := &teamRepo{client: client.WithCollection("team")}
+func NewWorkspace(client *mongodoc.Client) repo.Workspace {
+	r := &workspaceRepo{client: client.WithCollection("team")} // DON'T CHANGE NAME
 	r.init()
 	return r
 }
 
-func (r *teamRepo) init() {
+func (r *workspaceRepo) init() {
 	i := r.client.CreateIndex(context.Background(), nil)
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "team", i)
 	}
 }
 
-func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList, error) {
+func (r *workspaceRepo) FindByUser(ctx context.Context, id id.UserID) (workspace.List, error) {
 	return r.find(ctx, nil, bson.M{
 		"members." + strings.Replace(id.String(), ".", "", -1): bson.M{
 			"$exists": true,
@@ -37,12 +37,12 @@ func (r *teamRepo) FindByUser(ctx context.Context, id id.UserID) (user.TeamList,
 	})
 }
 
-func (r *teamRepo) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamList, error) {
+func (r *workspaceRepo) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (workspace.List, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
-	dst := make([]*user.Team, 0, len(ids))
+	dst := make([]*workspace.Workspace, 0, len(ids))
 	res, err := r.find(ctx, dst, bson.M{
 		"id": bson.M{"$in": ids.Strings()},
 	})
@@ -52,16 +52,16 @@ func (r *teamRepo) FindByIDs(ctx context.Context, ids id.TeamIDList) (user.TeamL
 	return filterTeams(ids, res), nil
 }
 
-func (r *teamRepo) FindByID(ctx context.Context, id id.TeamID) (*user.Team, error) {
+func (r *workspaceRepo) FindByID(ctx context.Context, id id.WorkspaceID) (*workspace.Workspace, error) {
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *teamRepo) Save(ctx context.Context, team *user.Team) error {
+func (r *workspaceRepo) Save(ctx context.Context, team *workspace.Workspace) error {
 	doc, id := mongodoc.NewTeam(team)
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *teamRepo) SaveAll(ctx context.Context, teams []*user.Team) error {
+func (r *workspaceRepo) SaveAll(ctx context.Context, teams []*workspace.Workspace) error {
 	if len(teams) == 0 {
 		return nil
 	}
@@ -73,11 +73,11 @@ func (r *teamRepo) SaveAll(ctx context.Context, teams []*user.Team) error {
 	return r.client.SaveAll(ctx, ids, docs2)
 }
 
-func (r *teamRepo) Remove(ctx context.Context, id id.TeamID) error {
+func (r *workspaceRepo) Remove(ctx context.Context, id id.WorkspaceID) error {
 	return r.client.RemoveOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *teamRepo) RemoveAll(ctx context.Context, ids id.TeamIDList) error {
+func (r *workspaceRepo) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -86,7 +86,7 @@ func (r *teamRepo) RemoveAll(ctx context.Context, ids id.TeamIDList) error {
 	})
 }
 
-func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter interface{}) (user.TeamList, error) {
+func (r *workspaceRepo) find(ctx context.Context, dst []*workspace.Workspace, filter interface{}) (workspace.List, error) {
 	c := mongodoc.TeamConsumer{
 		Rows: dst,
 	}
@@ -96,8 +96,8 @@ func (r *teamRepo) find(ctx context.Context, dst []*user.Team, filter interface{
 	return c.Rows, nil
 }
 
-func (r *teamRepo) findOne(ctx context.Context, filter interface{}) (*user.Team, error) {
-	dst := make([]*user.Team, 0, 1)
+func (r *workspaceRepo) findOne(ctx context.Context, filter interface{}) (*workspace.Workspace, error) {
+	dst := make([]*workspace.Workspace, 0, 1)
 	c := mongodoc.TeamConsumer{
 		Rows: dst,
 	}
@@ -107,6 +107,6 @@ func (r *teamRepo) findOne(ctx context.Context, filter interface{}) (*user.Team,
 	return c.Rows[0], nil
 }
 
-func filterTeams(ids []id.TeamID, rows user.TeamList) user.TeamList {
+func filterTeams(ids []id.WorkspaceID, rows workspace.List) workspace.List {
 	return rows.FilterByID(ids...)
 }

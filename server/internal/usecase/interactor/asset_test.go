@@ -48,7 +48,7 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		WritableTeams: id.TeamIDList{tid},
+		WritableTeams: id.WorkspaceIDList{tid},
 	})
 
 	want := asset.New().

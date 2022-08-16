@@ -1,16 +1,16 @@
-package user
+package workspace
 
 type TeamBuilder struct {
-	t        *Team
-	members  map[ID]Role
+	t        *Workspace
+	members  map[UserID]Role
 	personal bool
 }
 
-func NewTeam() *TeamBuilder {
-	return &TeamBuilder{t: &Team{}}
+func New() *TeamBuilder {
+	return &TeamBuilder{t: &Workspace{}}
 }
 
-func (b *TeamBuilder) Build() (*Team, error) {
+func (b *TeamBuilder) Build() (*Workspace, error) {
 	if b.t.id.IsNil() {
 		return nil, ErrInvalidID
 	}
@@ -23,7 +23,7 @@ func (b *TeamBuilder) Build() (*Team, error) {
 	return b.t, nil
 }
 
-func (b *TeamBuilder) MustBuild() *Team {
+func (b *TeamBuilder) MustBuild() *Workspace {
 	r, err := b.Build()
 	if err != nil {
 		panic(err)
@@ -31,13 +31,13 @@ func (b *TeamBuilder) MustBuild() *Team {
 	return r
 }
 
-func (b *TeamBuilder) ID(id TeamID) *TeamBuilder {
+func (b *TeamBuilder) ID(id ID) *TeamBuilder {
 	b.t.id = id
 	return b
 }
 
 func (b *TeamBuilder) NewID() *TeamBuilder {
-	b.t.id = NewTeamID()
+	b.t.id = NewID()
 	return b
 }
 
@@ -46,7 +46,7 @@ func (b *TeamBuilder) Name(name string) *TeamBuilder {
 	return b
 }
 
-func (b *TeamBuilder) Members(members map[ID]Role) *TeamBuilder {
+func (b *TeamBuilder) Members(members map[UserID]Role) *TeamBuilder {
 	b.members = members
 	return b
 }

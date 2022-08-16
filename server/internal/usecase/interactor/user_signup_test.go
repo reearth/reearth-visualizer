@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
@@ -23,7 +24,7 @@ import (
 func TestUser_Signup(t *testing.T) {
 	user.DefaultPasswordEncoder = &user.NoopPasswordEncoder{}
 	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	tid := id.NewWorkspaceID()
 	mocktime := time.Time{}
 	mockcode := "CODECODE"
 
@@ -37,7 +38,7 @@ func TestUser_Signup(t *testing.T) {
 		createUserBefore *user.User
 		args             interfaces.SignupParam
 		wantUser         *user.User
-		wantTeam         *user.Team
+		wantTeam         *workspace.Workspace
 		wantMailTo       []gateway.Contact
 		wantMailSubject  string
 		wantMailContent  string
@@ -66,10 +67,10 @@ func TestUser_Signup(t *testing.T) {
 				PasswordPlainText("PAss00!!").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("NAME").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
@@ -155,10 +156,10 @@ func TestUser_Signup(t *testing.T) {
 				PasswordPlainText("PAss00!!").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("NAME").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
@@ -194,10 +195,10 @@ func TestUser_Signup(t *testing.T) {
 				Theme(user.ThemeDark).
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("NAME").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
@@ -313,7 +314,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 
 	user.DefaultPasswordEncoder = &user.NoopPasswordEncoder{}
 	uid := id.NewUserID()
-	tid := id.NewTeamID()
+	tid := id.NewWorkspaceID()
 	mocktime := time.Time{}
 	mockcode := "CODECODE"
 
@@ -327,7 +328,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 		createUserBefore *user.User
 		args             interfaces.SignupOIDCParam
 		wantUser         *user.User
-		wantTeam         *user.Team
+		wantTeam         *workspace.Workspace
 		wantMail         *mailer.Mail
 		wantMailTo       string
 		wantMailSubject  string
@@ -353,10 +354,10 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("x@y.z").
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("NAME").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantError: nil,
@@ -383,10 +384,10 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Auths([]user.Auth{{Provider: "", Sub: "sub"}}).
 				Email("aaa@bbb.com").
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("name").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantError: nil,
@@ -414,10 +415,10 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Auths([]user.Auth{{Provider: "", Sub: "sub"}}).
 				Email("aaa@bbb.com").
 				MustBuild(),
-			wantTeam: user.NewTeam().
+			wantTeam: workspace.New().
 				ID(tid).
 				Name("name").
-				Members(map[id.UserID]user.Role{uid: user.RoleOwner}).
+				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
 			wantError: nil,

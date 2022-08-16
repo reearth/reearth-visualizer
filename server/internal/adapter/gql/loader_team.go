@@ -11,10 +11,10 @@ import (
 )
 
 type TeamLoader struct {
-	usecase interfaces.Team
+	usecase interfaces.Workspace
 }
 
-func NewTeamLoader(usecase interfaces.Team) *TeamLoader {
+func NewTeamLoader(usecase interfaces.Workspace) *TeamLoader {
 	return &TeamLoader{usecase: usecase}
 }
 

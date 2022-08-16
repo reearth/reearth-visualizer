@@ -14,14 +14,14 @@ import (
 )
 
 func TestUc_checkPermission(t *testing.T) {
-	tid := id.NewTeamID()
+	tid := id.NewWorkspaceID()
 	sid := id.NewSceneID()
 
 	tests := []struct {
 		name           string
 		op             *usecase.Operator
-		readableTeams  id.TeamIDList
-		writableTeams  id.TeamIDList
+		readableTeams  id.WorkspaceIDList
+		writableTeams  id.WorkspaceIDList
 		readableScenes id.SceneIDList
 		writableScenes id.SceneIDList
 		wantErr        bool
@@ -32,38 +32,38 @@ func TestUc_checkPermission(t *testing.T) {
 		},
 		{
 			name:          "nil operator 2",
-			readableTeams: id.TeamIDList{id.NewTeamID()},
+			readableTeams: id.WorkspaceIDList{id.NewWorkspaceID()},
 			wantErr:       false,
 		},
 		{
 			name:          "can read a team",
-			readableTeams: id.TeamIDList{tid},
+			readableTeams: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				ReadableTeams: id.TeamIDList{tid},
+				ReadableTeams: id.WorkspaceIDList{tid},
 			},
 			wantErr: true,
 		},
 		{
 			name:          "cannot read a team",
-			readableTeams: id.TeamIDList{id.NewTeamID()},
+			readableTeams: id.WorkspaceIDList{id.NewWorkspaceID()},
 			op: &usecase.Operator{
-				ReadableTeams: id.TeamIDList{},
+				ReadableTeams: id.WorkspaceIDList{},
 			},
 			wantErr: true,
 		},
 		{
 			name:          "can write a team",
-			writableTeams: id.TeamIDList{tid},
+			writableTeams: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				WritableTeams: id.TeamIDList{tid},
+				WritableTeams: id.WorkspaceIDList{tid},
 			},
 			wantErr: true,
 		},
 		{
 			name:          "cannot write a team",
-			writableTeams: id.TeamIDList{tid},
+			writableTeams: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				WritableTeams: id.TeamIDList{},
+				WritableTeams: id.WorkspaceIDList{},
 			},
 			wantErr: true,
 		},
@@ -122,7 +122,7 @@ func TestUc_checkPermission(t *testing.T) {
 }
 
 func TestUc(t *testing.T) {
-	teams := id.TeamIDList{id.NewTeamID(), id.NewTeamID(), id.NewTeamID()}
+	teams := id.WorkspaceIDList{id.NewWorkspaceID(), id.NewWorkspaceID(), id.NewWorkspaceID()}
 	scenes := id.SceneIDList{id.NewSceneID(), id.NewSceneID(), id.NewSceneID()}
 	assert.Equal(t, &uc{}, Usecase())
 	assert.Equal(t, &uc{readableTeams: teams}, (&uc{}).WithReadableTeams(teams...))

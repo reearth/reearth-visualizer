@@ -29,7 +29,7 @@ func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecas
 	return i.repos.Asset.FindByIDs(ctx, assets)
 }
 
-func (i *Asset) FindByTeam(ctx context.Context, tid id.TeamID, keyword *string, sort *asset.SortType, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (i *Asset) FindByTeam(ctx context.Context, tid id.WorkspaceID, keyword *string, sort *asset.SortType, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
 	return Run2(
 		ctx, operator, i.repos,
 		Usecase().WithReadableTeams(tid),

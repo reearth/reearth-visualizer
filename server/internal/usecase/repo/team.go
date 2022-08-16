@@ -3,16 +3,15 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 )
 
-type Team interface {
-	FindByUser(context.Context, id.UserID) (user.TeamList, error)
-	FindByIDs(context.Context, id.TeamIDList) (user.TeamList, error)
-	FindByID(context.Context, id.TeamID) (*user.Team, error)
-	Save(context.Context, *user.Team) error
-	SaveAll(context.Context, []*user.Team) error
-	Remove(context.Context, id.TeamID) error
-	RemoveAll(context.Context, id.TeamIDList) error
+type Workspace interface {
+	FindByUser(context.Context, workspace.UserID) (workspace.List, error)
+	FindByIDs(context.Context, workspace.IDList) (workspace.List, error)
+	FindByID(context.Context, workspace.ID) (*workspace.Workspace, error)
+	Save(context.Context, *workspace.Workspace) error
+	SaveAll(context.Context, []*workspace.Workspace) error
+	Remove(context.Context, workspace.ID) error
+	RemoveAll(context.Context, workspace.IDList) error
 }

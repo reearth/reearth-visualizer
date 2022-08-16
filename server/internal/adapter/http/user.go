@@ -28,11 +28,11 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub    *string    `json:"sub"`
-	Secret *string    `json:"secret"`
-	UserID *id.UserID `json:"userId"`
-	TeamID *id.TeamID `json:"teamId"`
-	Name   *string    `json:"name"`
+	Sub    *string         `json:"sub"`
+	Secret *string         `json:"secret"`
+	UserID *id.UserID      `json:"userId"`
+	TeamID *id.WorkspaceID `json:"teamId"`
+	Name   *string         `json:"name"`
 	// Username is an alias of Name
 	Username *string       `json:"username"`
 	Email    *string       `json:"email"`
@@ -51,10 +51,10 @@ type VerifyUserOutput struct {
 }
 
 type CreateUserInput struct {
-	Sub    string     `json:"sub"`
-	Secret string     `json:"secret"`
-	UserID *id.UserID `json:"userId"`
-	TeamID *id.TeamID `json:"teamId"`
+	Sub    string          `json:"sub"`
+	Secret string          `json:"secret"`
+	UserID *id.UserID      `json:"userId"`
+	TeamID *id.WorkspaceID `json:"teamId"`
 }
 
 type SignupOutput struct {

@@ -2,7 +2,7 @@ package mongodoc
 
 import (
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -18,7 +18,7 @@ type TeamDocument struct {
 }
 
 type TeamConsumer struct {
-	Rows user.TeamList
+	Rows workspace.List
 }
 
 func (c *TeamConsumer) Consume(raw bson.Raw) error {
@@ -38,7 +38,7 @@ func (c *TeamConsumer) Consume(raw bson.Raw) error {
 	return nil
 }
 
-func NewTeam(team *user.Team) (*TeamDocument, string) {
+func NewTeam(team *workspace.Workspace) (*TeamDocument, string) {
 	membersDoc := map[string]TeamMemberDocument{}
 	for user, r := range team.Members().Members() {
 		membersDoc[user.String()] = TeamMemberDocument{
@@ -54,23 +54,23 @@ func NewTeam(team *user.Team) (*TeamDocument, string) {
 	}, id
 }
 
-func (d *TeamDocument) Model() (*user.Team, error) {
-	tid, err := id.TeamIDFrom(d.ID)
+func (d *TeamDocument) Model() (*workspace.Workspace, error) {
+	tid, err := id.WorkspaceIDFrom(d.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	members := map[id.UserID]user.Role{}
+	members := map[id.UserID]workspace.Role{}
 	if d.Members != nil {
 		for uid, member := range d.Members {
 			uid, err := id.UserIDFrom(uid)
 			if err != nil {
 				return nil, err
 			}
-			members[uid] = user.Role(member.Role)
+			members[uid] = workspace.Role(member.Role)
 		}
 	}
-	return user.NewTeam().
+	return workspace.New().
 		ID(tid).
 		Name(d.Name).
 		Members(members).
@@ -78,7 +78,7 @@ func (d *TeamDocument) Model() (*user.Team, error) {
 		Build()
 }
 
-func NewTeams(teams []*user.Team) ([]*TeamDocument, []string) {
+func NewTeams(teams []*workspace.Workspace) ([]*TeamDocument, []string) {
 	res := make([]*TeamDocument, 0, len(teams))
 	ids := make([]string, 0, len(teams))
 	for _, d := range teams {

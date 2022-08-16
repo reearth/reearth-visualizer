@@ -35,7 +35,7 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 	c.Property = NewProperty(client)
 	c.Scene = NewScene(client)
 	c.Tag = NewTag(client)
-	c.Team = NewTeam(client)
+	c.Team = NewWorkspace(client)
 	c.User = NewUser(client)
 	c.SceneLock = NewSceneLock(client)
 	c.Transaction = NewTransaction(client)

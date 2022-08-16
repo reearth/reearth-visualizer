@@ -26,7 +26,7 @@ func TestFindByID(t *testing.T) {
 				Asset: asset.New().
 					NewID().
 					CreatedAt(time.Now()).
-					Team(id.NewTeamID()).
+					Team(id.NewWorkspaceID()).
 					Name("name").
 					Size(10).
 					URL("hxxps://https://reearth.io/").

@@ -23,7 +23,7 @@ type Project struct {
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
 	userRepo          repo.User
-	teamRepo          repo.Team
+	teamRepo          repo.Workspace
 	sceneRepo         repo.Scene
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
@@ -56,7 +56,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *useca
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
+func (i *Project) FindByTeam(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
 	return i.projectRepo.FindByTeam(ctx, id, p)
 }
 

@@ -11,8 +11,8 @@ import (
 
 type uc struct {
 	tx             bool
-	readableTeams  id.TeamIDList
-	writableTeams  id.TeamIDList
+	readableTeams  id.WorkspaceIDList
+	writableTeams  id.WorkspaceIDList
 	readableScenes id.SceneIDList
 	writableScenes id.SceneIDList
 }
@@ -21,13 +21,13 @@ func Usecase() *uc {
 	return &uc{}
 }
 
-func (u *uc) WithReadableTeams(ids ...id.TeamID) *uc {
-	u.readableTeams = id.TeamIDList(ids).Clone()
+func (u *uc) WithReadableTeams(ids ...id.WorkspaceID) *uc {
+	u.readableTeams = id.WorkspaceIDList(ids).Clone()
 	return u
 }
 
-func (u *uc) WithWritableTeams(ids ...id.TeamID) *uc {
-	u.writableTeams = id.TeamIDList(ids).Clone()
+func (u *uc) WithWritableTeams(ids ...id.WorkspaceID) *uc {
+	u.writableTeams = id.WorkspaceIDList(ids).Clone()
 	return u
 }
 

@@ -17,7 +17,7 @@ func TestProperty_AddItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
+	team := id.NewWorkspaceID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{
 		property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild(),
@@ -69,7 +69,7 @@ func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
+	team := id.NewWorkspaceID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).
@@ -114,7 +114,7 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
+	team := id.NewWorkspaceID()
 	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
 	psf := property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{psf}).MustBuild()
@@ -136,7 +136,7 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 		transaction:        memory.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableTeams:  []id.TeamID{team},
+		WritableTeams:  []id.WorkspaceID{team},
 		WritableScenes: []id.SceneID{scene.ID()},
 	}
 

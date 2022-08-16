@@ -63,7 +63,7 @@ func (r *projectRepo) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*p
 	return filterProjects(ids, res), nil
 }
 
-func (r *projectRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *projectRepo) FindByTeam(ctx context.Context, id id.WorkspaceID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
@@ -85,7 +85,7 @@ func (r *projectRepo) FindByPublicName(ctx context.Context, name string) (*proje
 	})
 }
 
-func (r *projectRepo) CountByTeam(ctx context.Context, team id.TeamID) (int, error) {
+func (r *projectRepo) CountByTeam(ctx context.Context, team id.WorkspaceID) (int, error) {
 	count, err := r.client.Count(ctx, bson.M{
 		"team": team.String(),
 	})

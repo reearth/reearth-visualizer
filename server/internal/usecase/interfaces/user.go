@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"golang.org/x/text/language"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -46,7 +47,7 @@ type SignupUserParam struct {
 	UserID *id.UserID
 	Lang   *language.Tag
 	Theme  *user.Theme
-	TeamID *id.TeamID
+	TeamID *id.WorkspaceID
 }
 
 type GetUserByCredentials struct {
@@ -65,8 +66,8 @@ type UpdateMeParam struct {
 
 type User interface {
 	Fetch(context.Context, []id.UserID, *usecase.Operator) ([]*user.User, error)
-	Signup(context.Context, SignupParam) (*user.User, *user.Team, error)
-	SignupOIDC(context.Context, SignupOIDCParam) (*user.User, *user.Team, error)
+	Signup(context.Context, SignupParam) (*user.User, *workspace.Workspace, error)
+	SignupOIDC(context.Context, SignupOIDCParam) (*user.User, *workspace.Workspace, error)
 	CreateVerification(context.Context, string) error
 	VerifyUser(context.Context, string) (*user.User, error)
 	GetUserByCredentials(context.Context, GetUserByCredentials) (*user.User, error)

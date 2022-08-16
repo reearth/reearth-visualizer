@@ -6,31 +6,31 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateTeam(t *testing.T) {
+func TestWorkspace_Create(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
 
-	u := user.New().NewID().Email("aaa@bbb.com").Team(id.NewTeamID()).MustBuild()
-	teamUC := NewTeam(db)
+	u := user.New().NewID().Email("aaa@bbb.com").Team(workspace.NewID()).MustBuild()
+	uc := NewWorkspace(db)
 	op := &usecase.Operator{User: u.ID()}
-	team, err := teamUC.Create(ctx, "team name", u.ID(), op)
+	ws, err := uc.Create(ctx, "workspace name", u.ID(), op)
 
 	assert.Nil(t, err)
-	assert.NotNil(t, team)
+	assert.NotNil(t, ws)
 
-	resultTeams, _ := teamUC.Fetch(ctx, []id.TeamID{team.ID()}, &usecase.Operator{
-		ReadableTeams: []id.TeamID{team.ID()},
+	resultTeams, _ := uc.Fetch(ctx, []workspace.ID{ws.ID()}, &usecase.Operator{
+		ReadableTeams: []workspace.ID{ws.ID()},
 	})
 
 	assert.NotNil(t, resultTeams)
 	assert.NotEmpty(t, resultTeams)
-	assert.Equal(t, resultTeams[0].ID(), team.ID())
-	assert.Equal(t, resultTeams[0].Name(), "team name")
+	assert.Equal(t, resultTeams[0].ID(), ws.ID())
+	assert.Equal(t, resultTeams[0].Name(), "workspace name")
 	assert.Equal(t, user.TeamIDList{resultTeams[0].ID()}, op.OwningTeams)
 }

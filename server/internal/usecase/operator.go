@@ -4,6 +4,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 )
 
 type Operator struct {
@@ -16,17 +17,17 @@ type Operator struct {
 	OwningScenes   scene.IDList
 }
 
-func (o *Operator) Teams(r user.Role) user.TeamIDList {
+func (o *Operator) Teams(r workspace.Role) user.TeamIDList {
 	if o == nil {
 		return nil
 	}
-	if r == user.RoleReader {
+	if r == workspace.RoleReader {
 		return o.ReadableTeams
 	}
-	if r == user.RoleWriter {
+	if r == workspace.RoleWriter {
 		return o.WritableTeams
 	}
-	if r == user.RoleOwner {
+	if r == workspace.RoleOwner {
 		return o.OwningTeams
 	}
 	return nil
@@ -44,15 +45,15 @@ func (o *Operator) AllOwningTeams() user.TeamIDList {
 	return o.OwningTeams
 }
 
-func (o *Operator) IsReadableTeam(team ...id.TeamID) bool {
+func (o *Operator) IsReadableTeam(team ...id.WorkspaceID) bool {
 	return o.AllReadableTeams().Intersect(team).Len() > 0
 }
 
-func (o *Operator) IsWritableTeam(team ...id.TeamID) bool {
+func (o *Operator) IsWritableTeam(team ...id.WorkspaceID) bool {
 	return o.AllWritableTeams().Intersect(team).Len() > 0
 }
 
-func (o *Operator) IsOwningTeam(team ...id.TeamID) bool {
+func (o *Operator) IsOwningTeam(team ...id.WorkspaceID) bool {
 	return o.AllOwningTeams().Intersect(team).Len() > 0
 }
 
@@ -80,11 +81,11 @@ func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
 	return o.AllOwningScenes().Has(scene...)
 }
 
-func (o *Operator) AddNewTeam(team id.TeamID) {
+func (o *Operator) AddNewTeam(team id.WorkspaceID) {
 	o.OwningTeams = append(o.OwningTeams, team)
 }
 
-func (o *Operator) AddNewScene(team id.TeamID, scene id.SceneID) {
+func (o *Operator) AddNewScene(team id.WorkspaceID, scene id.SceneID) {
 	if o.IsOwningTeam(team) {
 		o.OwningScenes = append(o.OwningScenes, scene)
 	} else if o.IsWritableTeam(team) {

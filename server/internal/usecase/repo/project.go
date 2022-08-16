@@ -12,14 +12,14 @@ type Project interface {
 	Filtered(TeamFilter) Project
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
-	FindByTeam(context.Context, id.TeamID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
+	FindByTeam(context.Context, id.WorkspaceID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
-	CountByTeam(context.Context, id.TeamID) (int, error)
+	CountByTeam(context.Context, id.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error
 }
 
-func IterateProjectsByTeam(repo Project, ctx context.Context, tid id.TeamID, batch int, callback func([]*project.Project) error) error {
+func IterateProjectsByTeam(repo Project, ctx context.Context, tid id.WorkspaceID, batch int, callback func([]*project.Project) error) error {
 	pagination := usecase.NewPagination(&batch, nil, nil, nil)
 
 	for {

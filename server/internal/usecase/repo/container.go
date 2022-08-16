@@ -27,7 +27,7 @@ type Container struct {
 	Scene          Scene
 	SceneLock      SceneLock
 	Tag            Tag
-	Team           Team
+	Team           Workspace
 	Transaction    Transaction
 	User           User
 }

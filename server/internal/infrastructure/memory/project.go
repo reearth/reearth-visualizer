@@ -32,7 +32,7 @@ func (r *Project) Filtered(f repo.TeamFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByTeam(ctx context.Context, id id.TeamID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *Project) FindByTeam(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -100,7 +100,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) CountByTeam(ctx context.Context, team id.TeamID) (c int, err error) {
+func (r *Project) CountByTeam(ctx context.Context, team id.WorkspaceID) (c int, err error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
