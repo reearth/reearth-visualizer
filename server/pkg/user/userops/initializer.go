@@ -7,22 +7,22 @@ import (
 )
 
 type InitParams struct {
-	Email    string
-	Name     string
-	Sub      *user.Auth
-	Password *string
-	Lang     *language.Tag
-	Theme    *user.Theme
-	UserID   *user.ID
-	TeamID   *workspace.ID
+	Email       string
+	Name        string
+	Sub         *user.Auth
+	Password    *string
+	Lang        *language.Tag
+	Theme       *user.Theme
+	UserID      *user.ID
+	WorkspaceID *workspace.ID
 }
 
 func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 	if p.UserID == nil {
 		p.UserID = user.NewID().Ref()
 	}
-	if p.TeamID == nil {
-		p.TeamID = workspace.NewID().Ref()
+	if p.WorkspaceID == nil {
+		p.WorkspaceID = workspace.NewID().Ref()
 	}
 	if p.Lang == nil {
 		p.Lang = &language.Tag{}
@@ -50,9 +50,9 @@ func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 		return nil, nil, err
 	}
 
-	// create a user's own team
+	// create a user's own workspace
 	t, err := workspace.New().
-		ID(*p.TeamID).
+		ID(*p.WorkspaceID).
 		Name(p.Name).
 		Members(map[user.ID]workspace.Role{u.ID(): workspace.RoleOwner}).
 		Personal(true).
@@ -60,7 +60,7 @@ func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	u.UpdateTeam(t.ID())
+	u.UpdateWorkspace(t.ID())
 
 	return u, t, err
 }

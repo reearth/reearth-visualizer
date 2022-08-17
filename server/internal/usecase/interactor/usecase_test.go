@@ -18,52 +18,52 @@ func TestUc_checkPermission(t *testing.T) {
 	sid := id.NewSceneID()
 
 	tests := []struct {
-		name           string
-		op             *usecase.Operator
-		readableTeams  id.WorkspaceIDList
-		writableTeams  id.WorkspaceIDList
-		readableScenes id.SceneIDList
-		writableScenes id.SceneIDList
-		wantErr        bool
+		name               string
+		op                 *usecase.Operator
+		readableWorkspaces id.WorkspaceIDList
+		writableWorkspaces id.WorkspaceIDList
+		readableScenes     id.SceneIDList
+		writableScenes     id.SceneIDList
+		wantErr            bool
 	}{
 		{
 			name:    "nil operator",
 			wantErr: false,
 		},
 		{
-			name:          "nil operator 2",
-			readableTeams: id.WorkspaceIDList{id.NewWorkspaceID()},
-			wantErr:       false,
+			name:               "nil operator 2",
+			readableWorkspaces: id.WorkspaceIDList{id.NewWorkspaceID()},
+			wantErr:            false,
 		},
 		{
-			name:          "can read a team",
-			readableTeams: id.WorkspaceIDList{tid},
+			name:               "can read a workspace",
+			readableWorkspaces: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				ReadableTeams: id.WorkspaceIDList{tid},
+				ReadableWorkspaces: id.WorkspaceIDList{tid},
 			},
 			wantErr: true,
 		},
 		{
-			name:          "cannot read a team",
-			readableTeams: id.WorkspaceIDList{id.NewWorkspaceID()},
+			name:               "cannot read a workspace",
+			readableWorkspaces: id.WorkspaceIDList{id.NewWorkspaceID()},
 			op: &usecase.Operator{
-				ReadableTeams: id.WorkspaceIDList{},
+				ReadableWorkspaces: id.WorkspaceIDList{},
 			},
 			wantErr: true,
 		},
 		{
-			name:          "can write a team",
-			writableTeams: id.WorkspaceIDList{tid},
+			name:               "can write a workspace",
+			writableWorkspaces: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				WritableTeams: id.WorkspaceIDList{tid},
+				WritableWorkspaces: id.WorkspaceIDList{tid},
 			},
 			wantErr: true,
 		},
 		{
-			name:          "cannot write a team",
-			writableTeams: id.WorkspaceIDList{tid},
+			name:               "cannot write a workspace",
+			writableWorkspaces: id.WorkspaceIDList{tid},
 			op: &usecase.Operator{
-				WritableTeams: id.WorkspaceIDList{},
+				WritableWorkspaces: id.WorkspaceIDList{},
 			},
 			wantErr: true,
 		},
@@ -106,10 +106,10 @@ func TestUc_checkPermission(t *testing.T) {
 			t.Parallel()
 
 			e := &uc{
-				readableTeams:  tt.readableTeams,
-				writableTeams:  tt.writableTeams,
-				readableScenes: tt.readableScenes,
-				writableScenes: tt.writableScenes,
+				readableWorkspaces: tt.readableWorkspaces,
+				writableWorkspaces: tt.writableWorkspaces,
+				readableScenes:     tt.readableScenes,
+				writableScenes:     tt.writableScenes,
 			}
 			got := e.checkPermission(tt.op)
 			if tt.wantErr {
@@ -122,11 +122,11 @@ func TestUc_checkPermission(t *testing.T) {
 }
 
 func TestUc(t *testing.T) {
-	teams := id.WorkspaceIDList{id.NewWorkspaceID(), id.NewWorkspaceID(), id.NewWorkspaceID()}
+	workspaces := id.WorkspaceIDList{id.NewWorkspaceID(), id.NewWorkspaceID(), id.NewWorkspaceID()}
 	scenes := id.SceneIDList{id.NewSceneID(), id.NewSceneID(), id.NewSceneID()}
 	assert.Equal(t, &uc{}, Usecase())
-	assert.Equal(t, &uc{readableTeams: teams}, (&uc{}).WithReadableTeams(teams...))
-	assert.Equal(t, &uc{writableTeams: teams}, (&uc{}).WithWritableTeams(teams...))
+	assert.Equal(t, &uc{readableWorkspaces: workspaces}, (&uc{}).WithReadableWorkspaces(workspaces...))
+	assert.Equal(t, &uc{writableWorkspaces: workspaces}, (&uc{}).WithWritableWorkspaces(workspaces...))
 	assert.Equal(t, &uc{readableScenes: scenes}, (&uc{}).WithReadablScenes(scenes...))
 	assert.Equal(t, &uc{writableScenes: scenes}, (&uc{}).WithWritableScenes(scenes...))
 	assert.Equal(t, &uc{tx: true}, (&uc{}).Transaction())

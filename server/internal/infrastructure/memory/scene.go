@@ -15,7 +15,7 @@ import (
 type Scene struct {
 	lock sync.Mutex
 	data map[id.SceneID]*scene.Scene
-	f    repo.TeamFilter
+	f    repo.WorkspaceFilter
 }
 
 func NewScene() repo.Scene {
@@ -32,7 +32,7 @@ func NewSceneWith(items ...*scene.Scene) repo.Scene {
 	return r
 }
 
-func (r *Scene) Filtered(f repo.TeamFilter) repo.Scene {
+func (r *Scene) Filtered(f repo.WorkspaceFilter) repo.Scene {
 	return &Scene{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
@@ -44,7 +44,7 @@ func (r *Scene) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, erro
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if s, ok := r.data[id]; ok && r.f.CanRead(s.Team()) {
+	if s, ok := r.data[id]; ok && r.f.CanRead(s.Workspace()) {
 		return s, nil
 	}
 	return nil, rerror.ErrNotFound
@@ -56,7 +56,7 @@ func (r *Scene) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, 
 
 	result := scene.List{}
 	for _, id := range ids {
-		if d, ok := r.data[id]; ok && r.f.CanRead(d.Team()) {
+		if d, ok := r.data[id]; ok && r.f.CanRead(d.Workspace()) {
 			result = append(result, d)
 			continue
 		}
@@ -71,20 +71,20 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	defer r.lock.Unlock()
 
 	for _, d := range r.data {
-		if d.Project() == id && r.f.CanRead(d.Team()) {
+		if d.Project() == id && r.f.CanRead(d.Workspace()) {
 			return d, nil
 		}
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByTeam(ctx context.Context, teams ...id.WorkspaceID) (scene.List, error) {
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := scene.List{}
 	for _, d := range r.data {
-		if user.TeamIDList(teams).Has(d.Team()) && r.f.CanRead(d.Team()) {
+		if user.WorkspaceIDList(workspaces).Has(d.Workspace()) && r.f.CanRead(d.Workspace()) {
 			result = append(result, d)
 		}
 	}
@@ -92,7 +92,7 @@ func (r *Scene) FindByTeam(ctx context.Context, teams ...id.WorkspaceID) (scene.
 }
 
 func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {
-	if !r.f.CanWrite(s.Team()) {
+	if !r.f.CanWrite(s.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 
@@ -108,7 +108,7 @@ func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if s, ok := r.data[id]; ok && r.f.CanWrite(s.Team()) {
+	if s, ok := r.data[id]; ok && r.f.CanWrite(s.Workspace()) {
 		delete(r.data, id)
 	}
 

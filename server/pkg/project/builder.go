@@ -122,8 +122,8 @@ func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
 	return b
 }
 
-func (b *Builder) Team(team TeamID) *Builder {
-	b.p.team = team
+func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+	b.p.workspace = workspace
 	return b
 }
 

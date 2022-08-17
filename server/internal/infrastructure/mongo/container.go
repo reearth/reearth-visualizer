@@ -35,7 +35,7 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 	c.Property = NewProperty(client)
 	c.Scene = NewScene(client)
 	c.Tag = NewTag(client)
-	c.Team = NewWorkspace(client)
+	c.Workspace = NewWorkspace(client)
 	c.User = NewUser(client)
 	c.SceneLock = NewSceneLock(client)
 	c.Transaction = NewTransaction(client)
@@ -50,7 +50,7 @@ func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databas
 	return nil
 }
 
-func applyTeamFilter(filter interface{}, ids user.TeamIDList) interface{} {
+func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}

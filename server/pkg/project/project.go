@@ -30,7 +30,7 @@ type Project struct {
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
-	team              TeamID
+	workspace         WorkspaceID
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
 }
@@ -104,8 +104,8 @@ func (p *Project) PublishmentStatus() PublishmentStatus {
 	return p.publishmentStatus
 }
 
-func (p *Project) Team() TeamID {
-	return p.team
+func (p *Project) Workspace() WorkspaceID {
+	return p.workspace
 }
 
 func (p *Project) CreatedAt() time.Time {
@@ -183,8 +183,8 @@ func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {
 	p.publicNoIndex = publicNoIndex
 }
 
-func (p *Project) UpdateTeam(team TeamID) {
-	p.team = team
+func (p *Project) UpdateWorkspace(workspace WorkspaceID) {
+	p.workspace = workspace
 }
 
 func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {

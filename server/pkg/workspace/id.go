@@ -2,8 +2,9 @@ package workspace
 
 import "github.com/reearth/reearth/server/pkg/id"
 
-type UserID = id.UserID
 type ID = id.WorkspaceID
+type PolicyID = string
+type UserID = id.UserID
 
 var NewID = id.NewWorkspaceID
 var NewUserID = id.NewUserID

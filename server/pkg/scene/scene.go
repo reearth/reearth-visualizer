@@ -10,7 +10,7 @@ var ErrSceneIsLocked error = errors.New("scene is locked")
 type Scene struct {
 	id        ID
 	project   ProjectID
-	team      TeamID
+	workspace WorkspaceID
 	rootLayer LayerID
 	widgets   *Widgets
 	plugins   *Plugins
@@ -40,11 +40,11 @@ func (s *Scene) Project() ProjectID {
 	return s.project
 }
 
-func (s *Scene) Team() TeamID {
+func (s *Scene) Workspace() WorkspaceID {
 	if s == nil {
-		return TeamID{}
+		return WorkspaceID{}
 	}
-	return s.team
+	return s.workspace
 }
 
 func (s *Scene) Property() PropertyID {
@@ -87,18 +87,6 @@ func (s *Scene) SetUpdatedAt(updatedAt time.Time) {
 		return
 	}
 	s.updatedAt = updatedAt
-}
-
-func (s *Scene) IsTeamIncluded(teams []TeamID) bool {
-	if s == nil || teams == nil {
-		return false
-	}
-	for _, t := range teams {
-		if t == s.team {
-			return true
-		}
-	}
-	return false
 }
 
 func (s *Scene) Properties() []PropertyID {

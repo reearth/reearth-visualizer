@@ -21,7 +21,7 @@ func TestInit(t *testing.T) {
 		UID                   *user.ID
 		TID                   *workspace.ID
 		ExpectedUser          *user.User
-		ExpectedTeam          *workspace.Workspace
+		ExpectedWorkspace     *workspace.Workspace
 		Err                   error
 	}{
 		{
@@ -38,10 +38,10 @@ func TestInit(t *testing.T) {
 				ID(uid).
 				Email("xx@yy.zz").
 				Name("nnn").
-				Team(tid).
+				Workspace(tid).
 				Auths([]user.Auth{expectedSub}).
 				MustBuild(),
-			ExpectedTeam: workspace.New().
+			ExpectedWorkspace: workspace.New().
 				ID(tid).
 				Name("nnn").
 				Members(map[user.ID]workspace.Role{uid: workspace.RoleOwner}).
@@ -50,7 +50,7 @@ func TestInit(t *testing.T) {
 			Err: nil,
 		},
 		{
-			Name:     "Success nil team id",
+			Name:     "Success nil workspace id",
 			Email:    "xx@yy.zz",
 			Username: "nnn",
 			Sub: user.Auth{
@@ -63,10 +63,10 @@ func TestInit(t *testing.T) {
 				ID(uid).
 				Email("xx@yy.zz").
 				Name("nnn").
-				Team(tid).
+				Workspace(tid).
 				Auths([]user.Auth{expectedSub}).
 				MustBuild(),
-			ExpectedTeam: workspace.New().
+			ExpectedWorkspace: workspace.New().
 				NewID().
 				Name("nnn").
 				Members(map[user.ID]workspace.Role{uid: workspace.RoleOwner}).
@@ -88,10 +88,10 @@ func TestInit(t *testing.T) {
 				NewID().
 				Email("xx@yy.zz").
 				Name("nnn").
-				Team(tid).
+				Workspace(tid).
 				Auths([]user.Auth{expectedSub}).
 				MustBuild(),
-			ExpectedTeam: workspace.New().
+			ExpectedWorkspace: workspace.New().
 				ID(tid).
 				Name("nnn").
 				Members(map[user.ID]workspace.Role{uid: workspace.RoleOwner}).
@@ -104,20 +104,20 @@ func TestInit(t *testing.T) {
 		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
-			user, team, err := Init(InitParams{
-				Email:  tt.Email,
-				Name:   tt.Username,
-				Sub:    &tt.Sub,
-				UserID: tt.UID,
-				TeamID: tt.TID,
+			user, workspace, err := Init(InitParams{
+				Email:       tt.Email,
+				Name:        tt.Username,
+				Sub:         &tt.Sub,
+				UserID:      tt.UID,
+				WorkspaceID: tt.TID,
 			})
 			if tt.Err == nil {
 				assert.Equal(t, tt.ExpectedUser.Email(), user.Email())
 				assert.Equal(t, tt.ExpectedUser.Name(), user.Name())
 				assert.Equal(t, tt.ExpectedUser.Auths(), user.Auths())
 
-				assert.Equal(t, tt.ExpectedTeam.Name(), team.Name())
-				assert.Equal(t, tt.ExpectedTeam.IsPersonal(), team.IsPersonal())
+				assert.Equal(t, tt.ExpectedWorkspace.Name(), workspace.Name())
+				assert.Equal(t, tt.ExpectedWorkspace.IsPersonal(), workspace.IsPersonal())
 			} else {
 				assert.Equal(t, tt.Err, err)
 			}

@@ -18,7 +18,7 @@ type PropertyField struct{}
 type PropertySchemaGroup struct{}
 type Scene struct{}
 type Tag struct{}
-type Team struct{}
+type Workspace struct{}
 type User struct{}
 type Widget struct{}
 
@@ -38,7 +38,7 @@ func (PropertyField) Type() string       { return "propertyField" }
 func (PropertySchemaGroup) Type() string { return "propertySchemaGroup" }
 func (Scene) Type() string               { return "scene" }
 func (Tag) Type() string                 { return "tag" }
-func (Team) Type() string                { return "team" }
+func (Workspace) Type() string           { return "workspace" }
 func (User) Type() string                { return "user" }
 func (Widget) Type() string              { return "widget" }
 
@@ -55,7 +55,7 @@ type PropertyID = idx.ID[Property]
 type PropertyItemID = idx.ID[PropertyItem]
 type SceneID = idx.ID[Scene]
 type TagID = idx.ID[Tag]
-type WorkspaceID = idx.ID[Team]
+type WorkspaceID = idx.ID[Workspace]
 type UserID = idx.ID[User]
 type WidgetID = idx.ID[Widget]
 
@@ -76,7 +76,7 @@ var NewPropertyID = idx.New[Property]
 var NewPropertyItemID = idx.New[PropertyItem]
 var NewSceneID = idx.New[Scene]
 var NewTagID = idx.New[Tag]
-var NewWorkspaceID = idx.New[Team]
+var NewWorkspaceID = idx.New[Workspace]
 var NewUserID = idx.New[User]
 var NewWidgetID = idx.New[Widget]
 
@@ -93,7 +93,7 @@ var MustPropertyID = idx.Must[Property]
 var MustPropertyItemID = idx.Must[PropertyItem]
 var MustSceneID = idx.Must[Scene]
 var MustTagID = idx.Must[Tag]
-var MustWorkspaceID = idx.Must[Team]
+var MustWorkspaceID = idx.Must[Workspace]
 var MustUserID = idx.Must[User]
 var MustWidgetID = idx.Must[Widget]
 
@@ -110,7 +110,7 @@ var PropertyIDFrom = idx.From[Property]
 var PropertyItemIDFrom = idx.From[PropertyItem]
 var SceneIDFrom = idx.From[Scene]
 var TagIDFrom = idx.From[Tag]
-var WorkspaceIDFrom = idx.From[Team]
+var WorkspaceIDFrom = idx.From[Workspace]
 var UserIDFrom = idx.From[User]
 var WidgetIDFrom = idx.From[Widget]
 
@@ -127,7 +127,7 @@ var PropertyIDFromRef = idx.FromRef[Property]
 var PropertyItemIDFromRef = idx.FromRef[PropertyItem]
 var SceneIDFromRef = idx.FromRef[Scene]
 var TagIDFromRef = idx.FromRef[Tag]
-var WorkspaceIDFromRef = idx.FromRef[Team]
+var WorkspaceIDFromRef = idx.FromRef[Workspace]
 var UserIDFromRef = idx.FromRef[User]
 var WidgetIDFromRef = idx.FromRef[Widget]
 
@@ -148,7 +148,7 @@ type PropertyIDList = idx.List[Property]
 type PropertyItemIDList = idx.List[PropertyItem]
 type SceneIDList = idx.List[Scene]
 type TagIDList = idx.List[Tag]
-type WorkspaceIDList = idx.List[Team]
+type WorkspaceIDList = idx.List[Workspace]
 type UserIDList = idx.List[User]
 type WidgetIDList = idx.List[Widget]
 
@@ -165,7 +165,7 @@ var PropertyIDListFrom = idx.ListFrom[Property]
 var PropertyItemIDListFrom = idx.ListFrom[PropertyItem]
 var SceneIDListFrom = idx.ListFrom[Scene]
 var TagIDListFrom = idx.ListFrom[Tag]
-var TeamIDListFrom = idx.ListFrom[Team]
+var WorkspaceIDListFrom = idx.ListFrom[Workspace]
 var UserIDListFrom = idx.ListFrom[User]
 var WidgetIDListFrom = idx.ListFrom[Widget]
 
@@ -182,7 +182,7 @@ type PropertyIDSet = idx.Set[Property]
 type PropertyItemIDSet = idx.Set[PropertyItem]
 type SceneIDSet = idx.Set[Scene]
 type TagIDSet = idx.Set[Tag]
-type TeamIDSet = idx.Set[Team]
+type WorkspaceIDSet = idx.Set[Workspace]
 type UserIDSet = idx.Set[User]
 type WidgetIDSet = idx.Set[Widget]
 
@@ -199,6 +199,6 @@ var NewPropertyIDSet = idx.NewSet[Property]
 var NewPropertyItemIDSet = idx.NewSet[PropertyItem]
 var NewSceneIDSet = idx.NewSet[Scene]
 var NewTagIDSet = idx.NewSet[Tag]
-var NewTeamIDSet = idx.NewSet[Team]
+var NewWorkspaceIDSet = idx.NewSet[Workspace]
 var NewUserIDSet = idx.NewSet[User]
 var NewWidgetIDSet = idx.NewSet[Widget]

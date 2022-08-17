@@ -14,7 +14,7 @@ func (r *Resolver) Query() QueryResolver {
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sortType *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
-	return loaders(ctx).Asset.FindByTeam(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
+	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.Me, error) {
@@ -77,7 +77,7 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 		}
 		return result, err
 	case gqlmodel.NodeTypeTeam:
-		result, err := dataloaders.Team.Load(i)
+		result, err := dataloaders.Workspace.Load(i)
 		if result == nil {
 			return nil, nil
 		}
@@ -176,7 +176,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 		}
 		return nodes, nil
 	case gqlmodel.NodeTypeTeam:
-		data, err := dataloaders.Team.LoadAll(ids)
+		data, err := dataloaders.Workspace.LoadAll(ids)
 		if len(err) > 0 && err[0] != nil {
 			return nil, err[0]
 		}
@@ -237,7 +237,7 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 }
 
 func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByTeam(ctx, teamID, first, last, before, after)
+	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, first, last, before, after)
 }
 
 func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {

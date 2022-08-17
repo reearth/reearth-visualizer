@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTeamList_FilterByID(t *testing.T) {
+func TestList_FilterByID(t *testing.T) {
 	tid1 := NewID()
 	tid2 := NewID()
 	t1 := &Workspace{id: tid1}
@@ -19,7 +19,7 @@ func TestTeamList_FilterByID(t *testing.T) {
 	assert.Equal(t, List(nil), List(nil).FilterByID(tid1))
 }
 
-func TestTeamList_FilterByUserRole(t *testing.T) {
+func TestList_FilterByUserRole(t *testing.T) {
 	uid := NewUserID()
 	tid1 := NewID()
 	tid2 := NewID()
@@ -46,7 +46,7 @@ func TestTeamList_FilterByUserRole(t *testing.T) {
 	assert.Equal(t, List(nil), List(nil).FilterByUserRole(uid, RoleOwner))
 }
 
-func TestTeamList_FilterByUserRoleIncluding(t *testing.T) {
+func TestList_FilterByUserRoleIncluding(t *testing.T) {
 	uid := NewUserID()
 	tid1 := NewID()
 	tid2 := NewID()
@@ -72,7 +72,7 @@ func TestTeamList_FilterByUserRoleIncluding(t *testing.T) {
 	assert.Equal(t, List{t2}, List{t1, t2}.FilterByUserRoleIncluding(uid, RoleOwner))
 	assert.Equal(t, List(nil), List(nil).FilterByUserRoleIncluding(uid, RoleOwner))
 }
-func TestTeamList_IDs(t *testing.T) {
+func TestList_IDs(t *testing.T) {
 	tid1 := NewID()
 	tid2 := NewID()
 	t1 := &Workspace{id: tid1}

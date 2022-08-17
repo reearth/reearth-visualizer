@@ -16,7 +16,7 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, config interacto
 		if op := adapter.Operator(ctx); op != nil && r != nil {
 			// apply filters to repos
 			r2 = r.Filtered(
-				repo.TeamFilterFromOperator(op),
+				repo.WorkspaceFilterFromOperator(op),
 				repo.SceneFilterFromOperator(op),
 			)
 		} else {

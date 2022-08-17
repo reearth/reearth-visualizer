@@ -85,7 +85,7 @@ func mockFS(files map[string]string) afero.Fs {
 func TestPlugin_Upload_New(t *testing.T) {
 	// upload a new plugin
 	ctx := context.Background()
-	team := id.NewWorkspaceID()
+	ws := id.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 
@@ -93,7 +93,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
-	scene := scene.New().ID(sid).Team(team).RootLayer(id.NewLayerID()).MustBuild()
+	scene := scene.New().ID(sid).Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
@@ -106,8 +106,8 @@ func TestPlugin_Upload_New(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableTeams:  []id.WorkspaceID{team},
-		WritableScenes: []id.SceneID{sid},
+		WritableWorkspaces: []id.WorkspaceID{ws},
+		WritableScenes:     []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -141,7 +141,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	// old plugin files should be deleted
 
 	ctx := context.Background()
-	team := id.NewWorkspaceID()
+	ws := id.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 	eid1 := id.PluginExtensionID("marker")
@@ -166,7 +166,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid1.Ref()).Property(p1.IDRef()).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
-	scene := scene.New().ID(sid).Team(team).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
+	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(pid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
 		scene.MustWidget(wid1, pid, eid2, p2.ID(), false, false),
@@ -188,8 +188,8 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableTeams:  []id.WorkspaceID{team},
-		WritableScenes: []id.SceneID{sid},
+		WritableWorkspaces: []id.WorkspaceID{ws},
+		WritableScenes:     []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -253,7 +253,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	// plugin ID of property and layers should be updated
 
 	ctx := context.Background()
-	team := id.NewWorkspaceID()
+	ws := id.NewWorkspaceID()
 	sid := id.NewSceneID()
 	oldpid := id.MustPluginID("testplugin~1.0.0").WithScene(sid.Ref())
 	pid := mockPluginID.WithScene(sid.Ref())
@@ -292,7 +292,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	}, oldp2.ID())
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid1.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
-	scene := scene.New().ID(sid).Team(team).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
+	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(oldpid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
 		scene.MustWidget(wid, oldpid, eid2, oldp4.ID(), true, false),
@@ -314,8 +314,8 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableTeams:  []id.WorkspaceID{team},
-		WritableScenes: []id.SceneID{sid},
+		WritableWorkspaces: []id.WorkspaceID{ws},
+		WritableScenes:     []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())

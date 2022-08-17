@@ -8,53 +8,53 @@ import (
 )
 
 type Operator struct {
-	User           user.ID
-	ReadableTeams  user.TeamIDList
-	WritableTeams  user.TeamIDList
-	OwningTeams    user.TeamIDList
-	ReadableScenes scene.IDList
-	WritableScenes scene.IDList
-	OwningScenes   scene.IDList
+	User               user.ID
+	ReadableWorkspaces user.WorkspaceIDList
+	WritableWorkspaces user.WorkspaceIDList
+	OwningWorkspaces   user.WorkspaceIDList
+	ReadableScenes     scene.IDList
+	WritableScenes     scene.IDList
+	OwningScenes       scene.IDList
 }
 
-func (o *Operator) Teams(r workspace.Role) user.TeamIDList {
+func (o *Operator) Workspaces(r workspace.Role) user.WorkspaceIDList {
 	if o == nil {
 		return nil
 	}
 	if r == workspace.RoleReader {
-		return o.ReadableTeams
+		return o.ReadableWorkspaces
 	}
 	if r == workspace.RoleWriter {
-		return o.WritableTeams
+		return o.WritableWorkspaces
 	}
 	if r == workspace.RoleOwner {
-		return o.OwningTeams
+		return o.OwningWorkspaces
 	}
 	return nil
 }
 
-func (o *Operator) AllReadableTeams() user.TeamIDList {
-	return append(o.ReadableTeams, o.AllWritableTeams()...)
+func (o *Operator) AllReadableWorkspaces() user.WorkspaceIDList {
+	return append(o.ReadableWorkspaces, o.AllWritableWorkspaces()...)
 }
 
-func (o *Operator) AllWritableTeams() user.TeamIDList {
-	return append(o.WritableTeams, o.AllOwningTeams()...)
+func (o *Operator) AllWritableWorkspaces() user.WorkspaceIDList {
+	return append(o.WritableWorkspaces, o.AllOwningWorkspaces()...)
 }
 
-func (o *Operator) AllOwningTeams() user.TeamIDList {
-	return o.OwningTeams
+func (o *Operator) AllOwningWorkspaces() user.WorkspaceIDList {
+	return o.OwningWorkspaces
 }
 
-func (o *Operator) IsReadableTeam(team ...id.WorkspaceID) bool {
-	return o.AllReadableTeams().Intersect(team).Len() > 0
+func (o *Operator) IsReadableWorkspace(ws ...id.WorkspaceID) bool {
+	return o.AllReadableWorkspaces().Intersect(ws).Len() > 0
 }
 
-func (o *Operator) IsWritableTeam(team ...id.WorkspaceID) bool {
-	return o.AllWritableTeams().Intersect(team).Len() > 0
+func (o *Operator) IsWritableWorkspace(ws ...id.WorkspaceID) bool {
+	return o.AllWritableWorkspaces().Intersect(ws).Len() > 0
 }
 
-func (o *Operator) IsOwningTeam(team ...id.WorkspaceID) bool {
-	return o.AllOwningTeams().Intersect(team).Len() > 0
+func (o *Operator) IsOwningWorkspace(ws ...id.WorkspaceID) bool {
+	return o.AllOwningWorkspaces().Intersect(ws).Len() > 0
 }
 
 func (o *Operator) AllReadableScenes() scene.IDList {
@@ -81,14 +81,14 @@ func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
 	return o.AllOwningScenes().Has(scene...)
 }
 
-func (o *Operator) AddNewTeam(team id.WorkspaceID) {
-	o.OwningTeams = append(o.OwningTeams, team)
+func (o *Operator) AddNewWorkspace(ws id.WorkspaceID) {
+	o.OwningWorkspaces = append(o.OwningWorkspaces, ws)
 }
 
-func (o *Operator) AddNewScene(team id.WorkspaceID, scene id.SceneID) {
-	if o.IsOwningTeam(team) {
+func (o *Operator) AddNewScene(ws id.WorkspaceID, scene id.SceneID) {
+	if o.IsOwningWorkspace(ws) {
 		o.OwningScenes = append(o.OwningScenes, scene)
-	} else if o.IsWritableTeam(team) {
+	} else if o.IsWritableWorkspace(ws) {
 		o.WritableScenes = append(o.WritableScenes, scene)
 	}
 }

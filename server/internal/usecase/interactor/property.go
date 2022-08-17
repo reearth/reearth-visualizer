@@ -203,7 +203,7 @@ func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFilePara
 
 	asset, err := asset.New().
 		NewID().
-		Team(propertyScene.Team()).
+		Workspace(propertyScene.Workspace()).
 		Name(path.Base(inp.File.Path)).
 		Size(inp.File.Size).
 		URL(url.String()).

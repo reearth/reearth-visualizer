@@ -44,10 +44,10 @@ type SignupOIDCParam struct {
 }
 
 type SignupUserParam struct {
-	UserID *id.UserID
-	Lang   *language.Tag
-	Theme  *user.Theme
-	TeamID *id.WorkspaceID
+	UserID      *id.UserID
+	Lang        *language.Tag
+	Theme       *user.Theme
+	WorkspaceID *id.WorkspaceID
 }
 
 type GetUserByCredentials struct {

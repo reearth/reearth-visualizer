@@ -38,7 +38,7 @@ func TestUser_Signup(t *testing.T) {
 		createUserBefore *user.User
 		args             interfaces.SignupParam
 		wantUser         *user.User
-		wantTeam         *workspace.Workspace
+		wantWorkspace    *workspace.Workspace
 		wantMailTo       []gateway.Contact
 		wantMailSubject  string
 		wantMailContent  string
@@ -54,20 +54,20 @@ func TestUser_Signup(t *testing.T) {
 				Name:     "NAME",
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("aaa@bbb.com").
 				PasswordPlainText("PAss00!!").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -84,7 +84,7 @@ func TestUser_Signup(t *testing.T) {
 			authSrvUIDomain: "",
 			createUserBefore: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Email("aaa@bbb.com").
 				MustBuild(),
 			args: interfaces.SignupParam{
@@ -92,17 +92,17 @@ func TestUser_Signup(t *testing.T) {
 				Name:     "NAME",
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Email("aaa@bbb.com").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam:        nil,
+			wantWorkspace:   nil,
 			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: ""}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
@@ -114,7 +114,7 @@ func TestUser_Signup(t *testing.T) {
 			authSrvUIDomain: "",
 			createUserBefore: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Email("aaa@bbb.com").
 				Verification(user.VerificationFrom(mockcode, mocktime, true)).
 				MustBuild(),
@@ -124,13 +124,13 @@ func TestUser_Signup(t *testing.T) {
 				Name:     "NAME",
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
-			wantUser:  nil,
-			wantTeam:  nil,
-			wantError: interfaces.ErrUserAlreadyExists,
+			wantUser:      nil,
+			wantWorkspace: nil,
+			wantError:     interfaces.ErrUserAlreadyExists,
 		},
 		{
 			name:            "without secret 2",
@@ -143,20 +143,20 @@ func TestUser_Signup(t *testing.T) {
 				Password: lo.ToPtr("PAss00!!"),
 				Secret:   lo.ToPtr("hogehoge"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("aaa@bbb.com").
 				PasswordPlainText("PAss00!!").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -178,15 +178,15 @@ func TestUser_Signup(t *testing.T) {
 				Password: lo.ToPtr("PAss00!!"),
 				Secret:   lo.ToPtr("SECRET"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
-					Lang:   &language.Japanese,
-					Theme:  user.ThemeDark.Ref(),
+					UserID:      &uid,
+					WorkspaceID: &tid,
+					Lang:        &language.Japanese,
+					Theme:       user.ThemeDark.Ref(),
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("aaa@bbb.com").
@@ -195,7 +195,7 @@ func TestUser_Signup(t *testing.T) {
 				Theme(user.ThemeDark).
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -274,9 +274,9 @@ func TestUser_Signup(t *testing.T) {
 			m := mailer.NewMock()
 			g := &gateway.Container{Mailer: m}
 			uc := NewUser(r, g, tt.signupSecret, tt.authSrvUIDomain)
-			user, team, err := uc.Signup(context.Background(), tt.args)
+			user, ws, err := uc.Signup(context.Background(), tt.args)
 			assert.Equal(t, tt.wantUser, user)
-			assert.Equal(t, tt.wantTeam, team)
+			assert.Equal(t, tt.wantWorkspace, ws)
 			assert.Equal(t, tt.wantError, err)
 			mails := m.Mails()
 			if tt.wantMailSubject == "" {
@@ -328,7 +328,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 		createUserBefore *user.User
 		args             interfaces.SignupOIDCParam
 		wantUser         *user.User
-		wantTeam         *workspace.Workspace
+		wantWorkspace    *workspace.Workspace
 		wantMail         *mailer.Mail
 		wantMailTo       string
 		wantMailSubject  string
@@ -343,18 +343,18 @@ func TestUser_SignupOIDC(t *testing.T) {
 				AccessToken: "accesstoken",
 				Issuer:      "https://issuer",
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("x@y.z").
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -373,18 +373,18 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Issuer:      "https://issuer",
 				Sub:         "sub",
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("name").
 				Auths([]user.Auth{{Provider: "", Sub: "sub"}}).
 				Email("aaa@bbb.com").
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("name").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -404,18 +404,18 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Sub:         "sub",
 				Secret:      lo.ToPtr("SECRET"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Team(tid).
+				Workspace(tid).
 				Name("name").
 				Auths([]user.Auth{{Provider: "", Sub: "sub"}}).
 				Email("aaa@bbb.com").
 				MustBuild(),
-			wantTeam: workspace.New().
+			wantWorkspace: workspace.New().
 				ID(tid).
 				Name("name").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
@@ -435,8 +435,8 @@ func TestUser_SignupOIDC(t *testing.T) {
 				AccessToken: "accesstoken",
 				Issuer:      "https://issuer",
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantError: interfaces.ErrUserAlreadyExists,
@@ -454,8 +454,8 @@ func TestUser_SignupOIDC(t *testing.T) {
 				AccessToken: "accesstoken",
 				Issuer:      "https://issuer",
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantError: interfaces.ErrUserAlreadyExists,
@@ -472,8 +472,8 @@ func TestUser_SignupOIDC(t *testing.T) {
 				Sub:         "sub",
 				Secret:      lo.ToPtr("SECRET!"),
 				User: interfaces.SignupUserParam{
-					UserID: &uid,
-					TeamID: &tid,
+					UserID:      &uid,
+					WorkspaceID: &tid,
 				},
 			},
 			wantError: interfaces.ErrSignupInvalidSecret,
@@ -527,9 +527,9 @@ func TestUser_SignupOIDC(t *testing.T) {
 			m := mailer.NewMock()
 			g := &gateway.Container{Mailer: m}
 			uc := NewUser(r, g, tt.signupSecret, tt.authSrvUIDomain)
-			user, team, err := uc.SignupOIDC(context.Background(), tt.args)
+			user, ws, err := uc.SignupOIDC(context.Background(), tt.args)
 			assert.Equal(t, tt.wantUser, user)
-			assert.Equal(t, tt.wantTeam, team)
+			assert.Equal(t, tt.wantWorkspace, ws)
 			assert.Equal(t, tt.wantError, err)
 			assert.Empty(t, m.Mails())
 		})

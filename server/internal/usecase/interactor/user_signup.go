@@ -39,8 +39,8 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 		}
 	}()
 
-	// Check if user and team already exists
-	existedUser, existedTeam, err := i.userAlreadyExists(ctx, inp.User.UserID, inp.Sub, &inp.Name, inp.User.TeamID)
+	// Check if user and workspace already exists
+	existedUser, existedWorkspace, err := i.userAlreadyExists(ctx, inp.User.UserID, inp.Sub, &inp.Name, inp.User.WorkspaceID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -51,25 +51,25 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 			if err := i.createVerification(ctx, existedUser); err != nil {
 				return nil, nil, err
 			}
-			return existedUser, existedTeam, nil
+			return existedUser, existedWorkspace, nil
 		}
 		return nil, nil, interfaces.ErrUserAlreadyExists
 	}
 
-	// Initialize user and team
+	// Initialize user and workspace
 	var auth *user.Auth
 	if inp.Sub != nil {
 		auth = user.AuthFromAuth0Sub(*inp.Sub).Ref()
 	}
-	u, team, err := userops.Init(userops.InitParams{
-		Email:    inp.Email,
-		Name:     inp.Name,
-		Sub:      auth,
-		Password: inp.Password,
-		Lang:     inp.User.Lang,
-		Theme:    inp.User.Theme,
-		UserID:   inp.User.UserID,
-		TeamID:   inp.User.TeamID,
+	u, ws, err := userops.Init(userops.InitParams{
+		Email:       inp.Email,
+		Name:        inp.Name,
+		Sub:         auth,
+		Password:    inp.Password,
+		Lang:        inp.User.Lang,
+		Theme:       inp.User.Theme,
+		UserID:      inp.User.UserID,
+		WorkspaceID: inp.User.WorkspaceID,
 	})
 	if err != nil {
 		return nil, nil, err
@@ -78,7 +78,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 	if err := i.userRepo.Save(ctx, u); err != nil {
 		return nil, nil, err
 	}
-	if err := i.teamRepo.Save(ctx, team); err != nil {
+	if err := i.workspaceRepo.Save(ctx, ws); err != nil {
 		return nil, nil, err
 	}
 
@@ -87,7 +87,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 	}
 
 	tx.Commit()
-	return u, team, nil
+	return u, ws, nil
 }
 
 func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (u *user.User, _ *workspace.Workspace, err error) {
@@ -126,22 +126,22 @@ func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (
 		}
 	}()
 
-	// Check if user and team already exists
-	if existedUser, existedTeam, err := i.userAlreadyExists(ctx, inp.User.UserID, &sub, &name, inp.User.TeamID); err != nil {
+	// Check if user and workspace already exists
+	if existedUser, existedWS, err := i.userAlreadyExists(ctx, inp.User.UserID, &sub, &name, inp.User.WorkspaceID); err != nil {
 		return nil, nil, err
-	} else if existedUser != nil || existedTeam != nil {
+	} else if existedUser != nil || existedWS != nil {
 		return nil, nil, interfaces.ErrUserAlreadyExists
 	}
 
-	// Initialize user and team
-	u, team, err := userops.Init(userops.InitParams{
-		Email:  email,
-		Name:   name,
-		Sub:    user.AuthFromAuth0Sub(sub).Ref(),
-		Lang:   inp.User.Lang,
-		Theme:  inp.User.Theme,
-		UserID: inp.User.UserID,
-		TeamID: inp.User.TeamID,
+	// Initialize user and ws
+	u, ws, err := userops.Init(userops.InitParams{
+		Email:       email,
+		Name:        name,
+		Sub:         user.AuthFromAuth0Sub(sub).Ref(),
+		Lang:        inp.User.Lang,
+		Theme:       inp.User.Theme,
+		UserID:      inp.User.UserID,
+		WorkspaceID: inp.User.WorkspaceID,
 	})
 	if err != nil {
 		return nil, nil, err
@@ -150,12 +150,12 @@ func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (
 	if err := i.userRepo.Save(ctx, u); err != nil {
 		return nil, nil, err
 	}
-	if err := i.teamRepo.Save(ctx, team); err != nil {
+	if err := i.workspaceRepo.Save(ctx, ws); err != nil {
 		return nil, nil, err
 	}
 
 	tx.Commit()
-	return u, team, nil
+	return u, ws, nil
 }
 
 func (i *User) verifySignupSecret(secret *string) error {
@@ -165,7 +165,7 @@ func (i *User) verifySignupSecret(secret *string) error {
 	return nil
 }
 
-func (i *User) userAlreadyExists(ctx context.Context, userID *id.UserID, sub *string, name *string, teamID *id.WorkspaceID) (*user.User, *workspace.Workspace, error) {
+func (i *User) userAlreadyExists(ctx context.Context, userID *id.UserID, sub *string, name *string, workspaceID *id.WorkspaceID) (*user.User, *workspace.Workspace, error) {
 	// Check if user already exists
 	var existedUser *user.User
 	var err error
@@ -189,16 +189,16 @@ func (i *User) userAlreadyExists(ctx context.Context, userID *id.UserID, sub *st
 	}
 
 	if existedUser != nil {
-		team, err := i.teamRepo.FindByID(ctx, existedUser.Team())
+		ws, err := i.workspaceRepo.FindByID(ctx, existedUser.Workspace())
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, err
 		}
-		return existedUser, team, nil
+		return existedUser, ws, nil
 	}
 
-	// Check if team already exists
-	if teamID != nil {
-		existed, err := i.teamRepo.FindByID(ctx, *teamID)
+	// Check if workspace already exists
+	if workspaceID != nil {
+		existed, err := i.workspaceRepo.FindByID(ctx, *workspaceID)
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, err
 		}

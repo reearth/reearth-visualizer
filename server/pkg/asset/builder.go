@@ -16,8 +16,8 @@ func (b *Builder) Build() (*Asset, error) {
 	if b.a.id.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.a.team.IsNil() {
-		return nil, ErrEmptyTeamID
+	if b.a.workspace.IsNil() {
+		return nil, ErrEmptyWorkspaceID
 	}
 	if b.a.url == "" {
 		return nil, ErrEmptyURL
@@ -49,8 +49,8 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Team(team TeamID) *Builder {
-	b.a.team = team
+func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+	b.a.workspace = workspace
 	return b
 }
 

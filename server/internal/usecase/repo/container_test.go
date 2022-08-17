@@ -8,23 +8,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTeamFilter_Merge(t *testing.T) {
-	a := user.NewTeamID()
-	b := user.NewTeamID()
-	assert.Equal(t, TeamFilter{
-		Readable: user.TeamIDList{a, b},
-		Writable: user.TeamIDList{b, a},
-	}, TeamFilter{
-		Readable: user.TeamIDList{a},
-		Writable: user.TeamIDList{b},
-	}.Merge(TeamFilter{
-		Readable: user.TeamIDList{b},
-		Writable: user.TeamIDList{a},
+func TestWorkspaceFilter_Merge(t *testing.T) {
+	a := user.NewWorkspaceID()
+	b := user.NewWorkspaceID()
+	assert.Equal(t, WorkspaceFilter{
+		Readable: user.WorkspaceIDList{a, b},
+		Writable: user.WorkspaceIDList{b, a},
+	}, WorkspaceFilter{
+		Readable: user.WorkspaceIDList{a},
+		Writable: user.WorkspaceIDList{b},
+	}.Merge(WorkspaceFilter{
+		Readable: user.WorkspaceIDList{b},
+		Writable: user.WorkspaceIDList{a},
 	}))
-	assert.Equal(t, TeamFilter{Readable: user.TeamIDList{}}, TeamFilter{}.Merge(TeamFilter{Readable: user.TeamIDList{}}))
-	assert.Equal(t, TeamFilter{Readable: user.TeamIDList{}}, TeamFilter{Readable: user.TeamIDList{}}.Merge(TeamFilter{}))
-	assert.Equal(t, TeamFilter{Writable: user.TeamIDList{}}, TeamFilter{}.Merge(TeamFilter{Writable: user.TeamIDList{}}))
-	assert.Equal(t, TeamFilter{Writable: user.TeamIDList{}}, TeamFilter{Writable: user.TeamIDList{}}.Merge(TeamFilter{}))
+	assert.Equal(t, WorkspaceFilter{Readable: user.WorkspaceIDList{}}, WorkspaceFilter{}.Merge(WorkspaceFilter{Readable: user.WorkspaceIDList{}}))
+	assert.Equal(t, WorkspaceFilter{Readable: user.WorkspaceIDList{}}, WorkspaceFilter{Readable: user.WorkspaceIDList{}}.Merge(WorkspaceFilter{}))
+	assert.Equal(t, WorkspaceFilter{Writable: user.WorkspaceIDList{}}, WorkspaceFilter{}.Merge(WorkspaceFilter{Writable: user.WorkspaceIDList{}}))
+	assert.Equal(t, WorkspaceFilter{Writable: user.WorkspaceIDList{}}, WorkspaceFilter{Writable: user.WorkspaceIDList{}}.Merge(WorkspaceFilter{}))
 }
 
 func TestSceneFilter_Merge(t *testing.T) {

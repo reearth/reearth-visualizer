@@ -15,7 +15,7 @@ import (
 type Project struct {
 	lock sync.Mutex
 	data map[id.ProjectID]*project.Project
-	f    repo.TeamFilter
+	f    repo.WorkspaceFilter
 }
 
 func NewProject() repo.Project {
@@ -24,7 +24,7 @@ func NewProject() repo.Project {
 	}
 }
 
-func (r *Project) Filtered(f repo.TeamFilter) repo.Project {
+func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	return &Project{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
@@ -32,13 +32,13 @@ func (r *Project) Filtered(f repo.TeamFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByTeam(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := []*project.Project{}
 	for _, d := range r.data {
-		if d.Team() == id {
+		if d.Workspace() == id {
 			result = append(result, d)
 		}
 	}
@@ -66,7 +66,7 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 
 	result := []*project.Project{}
 	for _, id := range ids {
-		if d, ok := r.data[id]; ok && r.f.CanRead(d.Team()) {
+		if d, ok := r.data[id]; ok && r.f.CanRead(d.Workspace()) {
 			result = append(result, d)
 			continue
 		}
@@ -79,7 +79,7 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Proje
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if p, ok := r.data[id]; ok && r.f.CanRead(p.Team()) {
+	if p, ok := r.data[id]; ok && r.f.CanRead(p.Workspace()) {
 		return p, nil
 	}
 	return nil, rerror.ErrNotFound
@@ -93,19 +93,19 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		return nil, nil
 	}
 	for _, p := range r.data {
-		if p.MatchWithPublicName(name) && r.f.CanRead(p.Team()) {
+		if p.MatchWithPublicName(name) && r.f.CanRead(p.Workspace()) {
 			return p, nil
 		}
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) CountByTeam(ctx context.Context, team id.WorkspaceID) (c int, err error) {
+func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (c int, err error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	for _, p := range r.data {
-		if p.Team() == team && r.f.CanRead(p.Team()) {
+		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) {
 			c++
 		}
 	}
@@ -113,7 +113,7 @@ func (r *Project) CountByTeam(ctx context.Context, team id.WorkspaceID) (c int, 
 }
 
 func (r *Project) Save(ctx context.Context, p *project.Project) error {
-	if !r.f.CanWrite(p.Team()) {
+	if !r.f.CanWrite(p.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 
@@ -129,7 +129,7 @@ func (r *Project) Remove(ctx context.Context, id id.ProjectID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if p, ok := r.data[id]; ok && r.f.CanRead(p.Team()) {
+	if p, ok := r.data[id]; ok && r.f.CanRead(p.Workspace()) {
 		delete(r.data, id)
 	}
 	return nil

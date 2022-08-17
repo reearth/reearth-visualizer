@@ -79,8 +79,8 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	if err != nil {
 		return nil, err
 	}
-	team := prj.Team()
-	if err := i.CanWriteTeam(team, operator); err != nil {
+	ws := prj.Workspace()
+	if err := i.CanWriteWorkspace(ws, operator); err != nil {
 		return nil, err
 	}
 
@@ -109,7 +109,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	res, err := scene.New().
 		ID(sceneID).
 		Project(pid).
-		Team(prj.Team()).
+		Workspace(prj.Workspace()).
 		Property(p.ID()).
 		RootLayer(rootLayer.ID()).
 		Plugins(ps).
@@ -136,7 +136,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	operator.AddNewScene(team, sceneID)
+	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
 	return res, err
 }
@@ -156,7 +156,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -252,7 +252,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	if err2 != nil {
 		return nil, nil, err2
 	}
-	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(scene.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -334,7 +334,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	if err2 != nil {
 		return nil, err2
 	}
-	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(scene.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
@@ -371,7 +371,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	if err2 != nil {
 		return nil, err2
 	}
-	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(scene.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
@@ -414,7 +414,7 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -458,7 +458,7 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -496,7 +496,7 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, err
 	}
 

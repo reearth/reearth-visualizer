@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	ErrUserAlreadyJoined        = errors.New("user already joined")
-	ErrCannotModifyPersonalTeam = errors.New("personal team cannot be modified")
-	ErrTeamWithProjects         = errors.New("target team still has some project")
-	ErrTargetUserNotInTheTeam   = errors.New("target user does not exist in the team")
+	ErrUserAlreadyJoined             = errors.New("user already joined")
+	ErrCannotModifyPersonalWorkspace = errors.New("personal workspace cannot be modified")
+	ErrWorkspaceWithProjects         = errors.New("target workspace still has some project")
+	ErrTargetUserNotInWorkspace      = errors.New("target user does not exist in the workspace")
 )
 
 type Members struct {
@@ -66,7 +66,7 @@ func (m *Members) GetRole(u UserID) Role {
 
 func (m *Members) UpdateRole(u UserID, role Role) error {
 	if m.fixed {
-		return ErrCannotModifyPersonalTeam
+		return ErrCannotModifyPersonalWorkspace
 	}
 	if role == Role("") {
 		return nil
@@ -74,14 +74,14 @@ func (m *Members) UpdateRole(u UserID, role Role) error {
 	if _, ok := m.members[u]; ok {
 		m.members[u] = role
 	} else {
-		return ErrTargetUserNotInTheTeam
+		return ErrTargetUserNotInWorkspace
 	}
 	return nil
 }
 
 func (m *Members) Join(u UserID, role Role) error {
 	if m.fixed {
-		return ErrCannotModifyPersonalTeam
+		return ErrCannotModifyPersonalWorkspace
 	}
 	if _, ok := m.members[u]; ok {
 		return ErrUserAlreadyJoined
@@ -95,12 +95,12 @@ func (m *Members) Join(u UserID, role Role) error {
 
 func (m *Members) Leave(u UserID) error {
 	if m.fixed {
-		return ErrCannotModifyPersonalTeam
+		return ErrCannotModifyPersonalWorkspace
 	}
 	if _, ok := m.members[u]; ok {
 		delete(m.members, u)
 	} else {
-		return ErrTargetUserNotInTheTeam
+		return ErrTargetUserNotInWorkspace
 	}
 	return nil
 }

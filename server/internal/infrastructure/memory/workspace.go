@@ -68,11 +68,11 @@ func (r *Workspace) Save(ctx context.Context, t *workspace.Workspace) error {
 	return nil
 }
 
-func (r *Workspace) SaveAll(ctx context.Context, teams []*workspace.Workspace) error {
+func (r *Workspace) SaveAll(ctx context.Context, workspaces []*workspace.Workspace) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	for _, t := range teams {
+	for _, t := range workspaces {
 		r.data[t.ID()] = t
 	}
 	return nil

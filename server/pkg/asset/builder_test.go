@@ -9,14 +9,14 @@ import (
 
 func TestBuilder_Build(t *testing.T) {
 	aid := NewID()
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
 		id          ID
 		name        string
 		createdAt   time.Time
-		team        TeamID
+		workspace   WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -33,7 +33,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          aid,
-				team:        tid,
+				workspace:   tid,
 				name:        "xxx",
 				size:        10,
 				url:         "tt://xxx.zz",
@@ -42,7 +42,7 @@ func TestBuilder_Build(t *testing.T) {
 			expected: &Asset{
 				id:          aid,
 				createdAt:   d,
-				team:        tid,
+				workspace:   tid,
 				size:        10,
 				name:        "xxx",
 				url:         "tt://xxx.zz",
@@ -54,7 +54,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        0,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -66,7 +66,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "",
 				contentType: "bbb",
@@ -74,23 +74,23 @@ func TestBuilder_Build(t *testing.T) {
 			err: ErrEmptyURL,
 		},
 		{
-			name: "failed empty team",
+			name: "failed empty workspace",
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				team:        TeamID{},
+				workspace:   WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: ErrEmptyTeamID,
+			err: ErrEmptyWorkspaceID,
 		},
 		{
 			name: "failed invalid Id",
 			args: args{
 				id:          ID{},
 				createdAt:   d,
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -108,7 +108,7 @@ func TestBuilder_Build(t *testing.T) {
 				CreatedAt(tt.args.createdAt).
 				Name(tt.args.name).
 				Size(tt.args.size).
-				Team(tt.args.team).
+				Workspace(tt.args.workspace).
 				ContentType(tt.args.contentType).
 				URL(tt.args.url).
 				Build()
@@ -125,14 +125,14 @@ func TestBuilder_Build(t *testing.T) {
 
 func TestBuilder_MustBuild(t *testing.T) {
 	aid := NewID()
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
 		id          ID
 		name        string
 		createdAt   time.Time
-		team        TeamID
+		workspace   WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -149,7 +149,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          aid,
-				team:        tid,
+				workspace:   tid,
 				name:        "xxx",
 				size:        10,
 				url:         "tt://xxx.zz",
@@ -158,7 +158,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			expected: &Asset{
 				id:          aid,
 				createdAt:   d,
-				team:        tid,
+				workspace:   tid,
 				size:        10,
 				name:        "xxx",
 				url:         "tt://xxx.zz",
@@ -170,7 +170,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        0,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -182,7 +182,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "",
 				contentType: "bbb",
@@ -190,23 +190,23 @@ func TestBuilder_MustBuild(t *testing.T) {
 			err: ErrEmptyURL,
 		},
 		{
-			name: "failed empty team",
+			name: "failed empty workspace",
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				team:        TeamID{},
+				workspace:   WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: ErrEmptyTeamID,
+			err: ErrEmptyWorkspaceID,
 		},
 		{
 			name: "failed invalid Id",
 			args: args{
 				createdAt:   d,
 				id:          ID{},
-				team:        NewTeamID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -227,7 +227,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					CreatedAt(tt.args.createdAt).
 					Name(tt.args.name).
 					Size(tt.args.size).
-					Team(tt.args.team).
+					Workspace(tt.args.workspace).
 					ContentType(tt.args.contentType).
 					URL(tt.args.url).
 					MustBuild()
@@ -243,6 +243,6 @@ func TestBuilder_MustBuild(t *testing.T) {
 }
 
 func TestNewID(t *testing.T) {
-	a := New().NewID().URL("tt://xxx.bb").Team(NewTeamID()).Size(10).MustBuild()
+	a := New().NewID().URL("tt://xxx.bb").Workspace(NewWorkspaceID()).Size(10).MustBuild()
 	assert.False(t, a.id.IsNil())
 }

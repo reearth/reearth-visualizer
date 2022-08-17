@@ -101,10 +101,10 @@ func TestBuilder_Visualizer(t *testing.T) {
 	assert.Equal(t, visualizer.VisualizerCesium, res.Visualizer())
 }
 
-func TestBuilder_Team(t *testing.T) {
+func TestBuilder_Workspace(t *testing.T) {
 	var tb = New().NewID()
-	res := tb.Team(NewTeamID()).MustBuild()
-	assert.NotNil(t, res.Team())
+	res := tb.Workspace(NewWorkspaceID()).MustBuild()
+	assert.NotNil(t, res.Workspace())
 }
 
 func TestBuilder_PublicImage(t *testing.T) {
@@ -156,7 +156,7 @@ func TestBuilder_Build(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := NewID()
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 
 	type args struct {
 		name, description  string
@@ -169,7 +169,7 @@ func TestBuilder_Build(t *testing.T) {
 		publishedAt        time.Time
 		imageURL           *url.URL
 		publicNoIndex      bool
-		team               TeamID
+		workspace          WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
 	}
@@ -195,7 +195,7 @@ func TestBuilder_Build(t *testing.T) {
 				publishedAt:       d,
 				imageURL:          i,
 				publicNoIndex:     true,
-				team:              tid,
+				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
@@ -212,7 +212,7 @@ func TestBuilder_Build(t *testing.T) {
 				publishedAt:       d,
 				imageURL:          i,
 				publicNoIndex:     true,
-				team:              tid,
+				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
@@ -255,7 +255,7 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt(tt.args.updatedAt).
 				PublishedAt(tt.args.publishedAt).
 				PublicImage(tt.args.publicImage).
-				Team(tt.args.team).
+				Workspace(tt.args.workspace).
 				ImageURL(tt.args.imageURL).
 				Name(tt.args.name).
 				Alias(tt.args.alias).
@@ -277,7 +277,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := NewID()
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 
 	type args struct {
 		name, description  string
@@ -290,7 +290,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		publishedAt        time.Time
 		imageURL           *url.URL
 		publicNoIndex      bool
-		team               TeamID
+		workspace          WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
 	}
@@ -316,7 +316,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publishedAt:       d,
 				imageURL:          i,
 				publicNoIndex:     true,
-				team:              tid,
+				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
@@ -333,7 +333,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publishedAt:       d,
 				imageURL:          i,
 				publicNoIndex:     true,
-				team:              tid,
+				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
 			},
@@ -378,7 +378,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					UpdatedAt(tt.args.updatedAt).
 					PublishedAt(tt.args.publishedAt).
 					PublicImage(tt.args.publicImage).
-					Team(tt.args.team).
+					Workspace(tt.args.workspace).
 					ImageURL(tt.args.imageURL).
 					Name(tt.args.name).
 					Alias(tt.args.alias).

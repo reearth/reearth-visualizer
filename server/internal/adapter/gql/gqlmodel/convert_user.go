@@ -29,7 +29,7 @@ func ToMe(u *user.User) *Me {
 		Email:    u.Email(),
 		Lang:     u.Lang(),
 		Theme:    Theme(u.Theme()),
-		MyTeamID: IDFrom(u.Team()),
+		MyTeamID: IDFrom(u.Workspace()),
 		Auths: util.Map(u.Auths(), func(a user.Auth) string {
 			return a.Provider
 		}),

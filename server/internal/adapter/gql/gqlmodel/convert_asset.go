@@ -12,7 +12,7 @@ func ToAsset(a *asset.Asset) *Asset {
 	return &Asset{
 		ID:          IDFrom(a.ID()),
 		CreatedAt:   a.CreatedAt(),
-		TeamID:      IDFrom(a.Team()),
+		TeamID:      IDFrom(a.Workspace()),
 		Name:        a.Name(),
 		Size:        a.Size(),
 		URL:         a.URL(),

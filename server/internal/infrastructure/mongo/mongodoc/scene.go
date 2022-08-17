@@ -13,7 +13,7 @@ import (
 type SceneDocument struct {
 	ID          string
 	Project     string
-	Team        string
+	Team        string // DON'T CHANGE NAME'
 	RootLayer   string
 	Widgets     []SceneWidgetDocument
 	AlignSystem *WidgetAlignSystemDocument
@@ -127,7 +127,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 	return &SceneDocument{
 		ID:          id,
 		Project:     scene.Project().String(),
-		Team:        scene.Team().String(),
+		Team:        scene.Workspace().String(),
 		RootLayer:   scene.RootLayer().String(),
 		Widgets:     widgetsDoc,
 		Plugins:     pluginsDoc,
@@ -220,7 +220,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	return scene.New().
 		ID(sid).
 		Project(projectID).
-		Team(tid).
+		Workspace(tid).
 		RootLayer(lid).
 		Clusters(cl).
 		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).

@@ -6,18 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTeam_ID(t *testing.T) {
+func TestWorkspace_ID(t *testing.T) {
 	tid := NewID()
 	tm := New().ID(tid).MustBuild()
 	assert.Equal(t, tid, tm.ID())
 }
 
-func TestTeam_Name(t *testing.T) {
+func TestWorkspace_Name(t *testing.T) {
 	tm := New().NewID().Name("ttt").MustBuild()
 	assert.Equal(t, "ttt", tm.Name())
 }
 
-func TestTeam_Members(t *testing.T) {
+func TestWorkspace_Members(t *testing.T) {
 	m := map[UserID]Role{
 		NewUserID(): RoleOwner,
 	}
@@ -25,12 +25,12 @@ func TestTeam_Members(t *testing.T) {
 	assert.Equal(t, m, tm.Members().Members())
 }
 
-func TestTeam_IsPersonal(t *testing.T) {
+func TestWorkspace_IsPersonal(t *testing.T) {
 	tm := New().NewID().Personal(true).MustBuild()
 	assert.Equal(t, true, tm.IsPersonal())
 }
 
-func TestTeam_Rename(t *testing.T) {
+func TestWorkspace_Rename(t *testing.T) {
 	tm := New().NewID().Name("ttt").MustBuild()
 	tm.Rename("ccc")
 	assert.Equal(t, "ccc", tm.Name())

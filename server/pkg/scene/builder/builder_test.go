@@ -410,7 +410,7 @@ func TestSceneBuilder(t *testing.T) {
 	scene := scene.New().
 		ID(sceneID).
 		Project(scene.NewProjectID()).
-		Team(scene.NewTeamID()).
+		Workspace(scene.NewWorkspaceID()).
 		Property(scenep.ID()).
 		Widgets(scene.NewWidgets([]*scene.Widget{
 			sceneWidget1, sceneWidget2,

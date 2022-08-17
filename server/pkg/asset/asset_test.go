@@ -9,7 +9,7 @@ import (
 
 func TestAsset(t *testing.T) {
 	aid := NewID()
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	d := aid.Timestamp()
 
 	tests := []struct {
@@ -17,10 +17,10 @@ func TestAsset(t *testing.T) {
 		Expected struct {
 			ID          ID
 			CreatedAt   time.Time
-			Team        TeamID
+			Workspace   WorkspaceID
 			Name        string
 			Size        int64
-			Url         string
+			URL         string
 			ContentType string
 		}
 		Actual *Asset
@@ -29,21 +29,21 @@ func TestAsset(t *testing.T) {
 			Expected: struct {
 				ID          ID
 				CreatedAt   time.Time
-				Team        TeamID
+				Workspace   WorkspaceID
 				Name        string
 				Size        int64
-				Url         string
+				URL         string
 				ContentType string
 			}{
 				ID:          aid,
 				CreatedAt:   d,
-				Team:        tid,
+				Workspace:   tid,
 				Size:        10,
-				Url:         "tt://xxx.xx",
+				URL:         "tt://xxx.xx",
 				Name:        "xxx",
 				ContentType: "test",
 			},
-			Actual: New().ID(aid).CreatedAt(d).ContentType("test").Team(tid).Size(10).Name("xxx").URL("tt://xxx.xx").MustBuild(),
+			Actual: New().ID(aid).CreatedAt(d).ContentType("test").Workspace(tid).Size(10).Name("xxx").URL("tt://xxx.xx").MustBuild(),
 		},
 	}
 
@@ -54,8 +54,8 @@ func TestAsset(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tc.Expected.ID, tc.Actual.ID())
 			assert.Equal(t, tc.Expected.CreatedAt, tc.Actual.CreatedAt())
-			assert.Equal(t, tc.Expected.Team, tc.Actual.Team())
-			assert.Equal(t, tc.Expected.Url, tc.Actual.URL())
+			assert.Equal(t, tc.Expected.Workspace, tc.Actual.Workspace())
+			assert.Equal(t, tc.Expected.URL, tc.Actual.URL())
 			assert.Equal(t, tc.Expected.Size, tc.Actual.Size())
 			assert.Equal(t, tc.Expected.Name, tc.Actual.Name())
 			assert.Equal(t, tc.Expected.ContentType, tc.Actual.ContentType())

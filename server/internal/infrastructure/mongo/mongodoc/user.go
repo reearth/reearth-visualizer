@@ -21,7 +21,7 @@ type UserDocument struct {
 	Email         string
 	Auth0Sub      string
 	Auth0SubList  []string
-	Team          string
+	Team          string // DON'T CHANGE NAME
 	Lang          string
 	Theme         string
 	Password      []byte
@@ -86,7 +86,7 @@ func NewUser(user *user1.User) (*UserDocument, string) {
 		Name:          user.Name(),
 		Email:         user.Email(),
 		Auth0SubList:  authsdoc,
-		Team:          user.Team().String(),
+		Team:          user.Workspace().String(),
 		Lang:          user.Lang().String(),
 		Theme:         string(user.Theme()),
 		Verification:  v,
@@ -121,7 +121,7 @@ func (d *UserDocument) Model() (*user1.User, error) {
 		Name(d.Name).
 		Email(d.Email).
 		Auths(auths).
-		Team(tid).
+		Workspace(tid).
 		LangFrom(d.Lang).
 		Verification(v).
 		EncodedPassword(d.Password).

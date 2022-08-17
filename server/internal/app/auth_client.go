@@ -88,27 +88,27 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 	}
 
 	uid := u.ID()
-	teams, err := cfg.Repos.Team.FindByUser(ctx, uid)
+	workspaces, err := cfg.Repos.Workspace.FindByUser(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
-	scenes, err := cfg.Repos.Scene.FindByTeam(ctx, teams.IDs()...)
+	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, workspaces.IDs()...)
 	if err != nil {
 		return nil, err
 	}
 
-	readableTeams := teams.FilterByUserRole(uid, workspace.RoleReader).IDs()
-	writableTeams := teams.FilterByUserRole(uid, workspace.RoleWriter).IDs()
-	owningTeams := teams.FilterByUserRole(uid, workspace.RoleOwner).IDs()
+	readableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleReader).IDs()
+	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
+	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
 
 	return &usecase.Operator{
-		User:           uid,
-		ReadableTeams:  readableTeams,
-		WritableTeams:  writableTeams,
-		OwningTeams:    owningTeams,
-		ReadableScenes: scenes.FilterByTeam(readableTeams...).IDs(),
-		WritableScenes: scenes.FilterByTeam(writableTeams...).IDs(),
-		OwningScenes:   scenes.FilterByTeam(owningTeams...).IDs(),
+		User:               uid,
+		ReadableWorkspaces: readableWorkspaces,
+		WritableWorkspaces: writableWorkspaces,
+		OwningWorkspaces:   owningWorkspaces,
+		ReadableScenes:     scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
+		WritableScenes:     scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
+		OwningScenes:       scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
 	}, nil
 }
 

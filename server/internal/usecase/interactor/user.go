@@ -24,7 +24,7 @@ import (
 type User struct {
 	common
 	userRepo          repo.User
-	teamRepo          repo.Workspace
+	workspaceRepo     repo.Workspace
 	projectRepo       repo.Project
 	sceneRepo         repo.Scene
 	sceneLockRepo     repo.SceneLock
@@ -81,7 +81,7 @@ func init() {
 func NewUser(r *repo.Container, g *gateway.Container, signupSecret, authSrcUIDomain string) interfaces.User {
 	return &User{
 		userRepo:          r.User,
-		teamRepo:          r.Team,
+		workspaceRepo:     r.Workspace,
 		projectRepo:       r.Project,
 		sceneRepo:         r.Scene,
 		sceneLockRepo:     r.SceneLock,
@@ -108,17 +108,17 @@ func (i *User) Fetch(ctx context.Context, ids []id.UserID, operator *usecase.Ope
 	}
 	// filter
 	for k, u := range res {
-		teams, err := i.teamRepo.FindByUser(ctx, u.ID())
+		workspaces, err := i.workspaceRepo.FindByUser(ctx, u.ID())
 		if err != nil {
 			return res, err
 		}
-		teamIDs := make([]id.WorkspaceID, 0, len(teams))
-		for _, t := range teams {
+		workspaceIDs := make([]id.WorkspaceID, 0, len(workspaces))
+		for _, t := range workspaces {
 			if t != nil {
-				teamIDs = append(teamIDs, t.ID())
+				workspaceIDs = append(workspaceIDs, t.ID())
 			}
 		}
-		if !operator.IsReadableTeam(teamIDs...) {
+		if !operator.IsReadableWorkspace(workspaceIDs...) {
 			res[k] = nil
 		}
 	}
@@ -260,7 +260,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		}
 	}()
 
-	var team *workspace.Workspace
+	var ws *workspace.Workspace
 
 	u, err = i.userRepo.FindByID(ctx, operator.User)
 	if err != nil {
@@ -279,16 +279,16 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		oldName := u.Name()
 		u.UpdateName(*p.Name)
 
-		team, err = i.teamRepo.FindByID(ctx, u.Team())
+		ws, err = i.workspaceRepo.FindByID(ctx, u.Workspace())
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		}
 
-		tn := team.Name()
+		tn := ws.Name()
 		if tn == "" || tn == oldName {
-			team.Rename(*p.Name)
+			ws.Rename(*p.Name)
 		} else {
-			team = nil
+			ws = nil
 		}
 	}
 	if p.Email != nil {
@@ -326,8 +326,8 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		}
 	}
 
-	if team != nil {
-		err = i.teamRepo.Save(ctx, team)
+	if ws != nil {
+		err = i.workspaceRepo.Save(ctx, ws)
 		if err != nil {
 			return nil, err
 		}
@@ -408,7 +408,7 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 		return nil
 	}
 
-	teams, err := i.teamRepo.FindByUser(ctx, u.ID())
+	workspaces, err := i.workspaceRepo.FindByUser(ctx, u.ID())
 	if err != nil {
 		return err
 	}
@@ -425,18 +425,18 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 		File:    i.file,
 		Project: i.projectRepo,
 	}
-	updatedTeams := make([]*workspace.Workspace, 0, len(teams))
-	deletedTeams := []id.WorkspaceID{}
+	updatedWS := make([]*workspace.Workspace, 0, len(workspaces))
+	deletedWS := []id.WorkspaceID{}
 
-	for _, team := range teams {
-		if !team.IsPersonal() && !team.Members().IsOnlyOwner(u.ID()) {
-			_ = team.Members().Leave(u.ID())
-			updatedTeams = append(updatedTeams, team)
+	for _, ws := range workspaces {
+		if !ws.IsPersonal() && !ws.Members().IsOnlyOwner(u.ID()) {
+			_ = ws.Members().Leave(u.ID())
+			updatedWS = append(updatedWS, ws)
 			continue
 		}
 
 		// Delete all projects
-		err := repo.IterateProjectsByTeam(i.projectRepo, ctx, team.ID(), 50, func(projects []*project.Project) error {
+		err := repo.IterateProjectsByWorkspace(i.projectRepo, ctx, ws.ID(), 50, func(projects []*project.Project) error {
 			for _, prj := range projects {
 				if err := deleter.Delete(ctx, prj, true, operator); err != nil {
 					return err
@@ -448,16 +448,16 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 			return err
 		}
 
-		deletedTeams = append(deletedTeams, team.ID())
+		deletedWS = append(deletedWS, ws.ID())
 	}
 
-	// Save teams
-	if err := i.teamRepo.SaveAll(ctx, updatedTeams); err != nil {
+	// Save workspaces
+	if err := i.workspaceRepo.SaveAll(ctx, updatedWS); err != nil {
 		return err
 	}
 
-	// Delete teams
-	if err := i.teamRepo.RemoveAll(ctx, deletedTeams); err != nil {
+	// Delete workspaces
+	if err := i.workspaceRepo.RemoveAll(ctx, deletedWS); err != nil {
 		return err
 	}
 

@@ -23,7 +23,7 @@ type Project struct {
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
 	userRepo          repo.User
-	teamRepo          repo.Workspace
+	workspaceRepo     repo.Workspace
 	sceneRepo         repo.Scene
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
@@ -40,7 +40,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		assetRepo:         r.Asset,
 		projectRepo:       r.Project,
 		userRepo:          r.User,
-		teamRepo:          r.Team,
+		workspaceRepo:     r.Workspace,
 		sceneRepo:         r.Scene,
 		propertyRepo:      r.Property,
 		layerRepo:         r.Layer,
@@ -56,12 +56,12 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *useca
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByTeam(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
-	return i.projectRepo.FindByTeam(ctx, id, p)
+func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
+	return i.projectRepo.FindByWorkspace(ctx, id, p)
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	if err := i.CanWriteTeam(p.TeamID, operator); err != nil {
+	if err := i.CanWriteWorkspace(p.WorkspaceID, operator); err != nil {
 		return nil, err
 	}
 
@@ -77,7 +77,7 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 
 	pb := project.New().
 		NewID().
-		Team(p.TeamID).
+		Workspace(p.WorkspaceID).
 		Visualizer(p.Visualizer)
 	if p.Name != nil {
 		pb = pb.Name(*p.Name)
@@ -124,7 +124,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
@@ -229,7 +229,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
@@ -344,7 +344,7 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	if err != nil {
 		return err
 	}
-	if err := i.CanWriteTeam(prj.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return err
 	}
 

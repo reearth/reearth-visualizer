@@ -25,7 +25,7 @@ func NewWorkspace(client *mongodoc.Client) repo.Workspace {
 func (r *workspaceRepo) init() {
 	i := r.client.CreateIndex(context.Background(), nil)
 	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "team", i)
+		log.Infof("mongo: %s: index created: %s", "workspace", i)
 	}
 }
 
@@ -49,24 +49,24 @@ func (r *workspaceRepo) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (
 	if err != nil {
 		return nil, err
 	}
-	return filterTeams(ids, res), nil
+	return filterWorkspaces(ids, res), nil
 }
 
 func (r *workspaceRepo) FindByID(ctx context.Context, id id.WorkspaceID) (*workspace.Workspace, error) {
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *workspaceRepo) Save(ctx context.Context, team *workspace.Workspace) error {
-	doc, id := mongodoc.NewTeam(team)
+func (r *workspaceRepo) Save(ctx context.Context, ws *workspace.Workspace) error {
+	doc, id := mongodoc.NewWorkspace(ws)
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *workspaceRepo) SaveAll(ctx context.Context, teams []*workspace.Workspace) error {
-	if len(teams) == 0 {
+func (r *workspaceRepo) SaveAll(ctx context.Context, workspaces []*workspace.Workspace) error {
+	if len(workspaces) == 0 {
 		return nil
 	}
-	docs, ids := mongodoc.NewTeams(teams)
-	docs2 := make([]interface{}, 0, len(teams))
+	docs, ids := mongodoc.NewWorkspaces(workspaces)
+	docs2 := make([]interface{}, 0, len(workspaces))
 	for _, d := range docs {
 		docs2 = append(docs2, d)
 	}
@@ -87,7 +87,7 @@ func (r *workspaceRepo) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) e
 }
 
 func (r *workspaceRepo) find(ctx context.Context, dst []*workspace.Workspace, filter interface{}) (workspace.List, error) {
-	c := mongodoc.TeamConsumer{
+	c := mongodoc.WorkspaceConsumer{
 		Rows: dst,
 	}
 	if err := r.client.Find(ctx, filter, &c); err != nil {
@@ -98,7 +98,7 @@ func (r *workspaceRepo) find(ctx context.Context, dst []*workspace.Workspace, fi
 
 func (r *workspaceRepo) findOne(ctx context.Context, filter interface{}) (*workspace.Workspace, error) {
 	dst := make([]*workspace.Workspace, 0, 1)
-	c := mongodoc.TeamConsumer{
+	c := mongodoc.WorkspaceConsumer{
 		Rows: dst,
 	}
 	if err := r.client.FindOne(ctx, filter, &c); err != nil {
@@ -107,6 +107,6 @@ func (r *workspaceRepo) findOne(ctx context.Context, filter interface{}) (*works
 	return c.Rows[0], nil
 }
 
-func filterTeams(ids []id.WorkspaceID, rows workspace.List) workspace.List {
+func filterWorkspaces(ids []id.WorkspaceID, rows workspace.List) workspace.List {
 	return rows.FilterByID(ids...)
 }

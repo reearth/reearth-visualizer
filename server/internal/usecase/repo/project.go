@@ -9,21 +9,21 @@ import (
 )
 
 type Project interface {
-	Filtered(TeamFilter) Project
+	Filtered(WorkspaceFilter) Project
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
-	FindByTeam(context.Context, id.WorkspaceID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
+	FindByWorkspace(context.Context, id.WorkspaceID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
-	CountByTeam(context.Context, id.WorkspaceID) (int, error)
+	CountByWorkspace(context.Context, id.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error
 }
 
-func IterateProjectsByTeam(repo Project, ctx context.Context, tid id.WorkspaceID, batch int, callback func([]*project.Project) error) error {
+func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.WorkspaceID, batch int, callback func([]*project.Project) error) error {
 	pagination := usecase.NewPagination(&batch, nil, nil, nil)
 
 	for {
-		projects, info, err := repo.FindByTeam(ctx, tid, pagination)
+		projects, info, err := repo.FindByWorkspace(ctx, tid, pagination)
 		if err != nil {
 			return err
 		}

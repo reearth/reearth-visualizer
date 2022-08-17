@@ -10,13 +10,13 @@ import (
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	tid, err := gqlmodel.ToID[id.Team](input.TeamID)
+	tid, err := gqlmodel.ToID[id.Workspace](input.TeamID)
 	if err != nil {
 		return nil, err
 	}
 
 	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
-		TeamID:      tid,
+		WorkspaceID: tid,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        input.Name,
 		Description: input.Description,

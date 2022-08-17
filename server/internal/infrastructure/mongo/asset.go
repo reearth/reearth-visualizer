@@ -18,7 +18,7 @@ import (
 
 type assetRepo struct {
 	client *mongodoc.ClientCollection
-	f      repo.TeamFilter
+	f      repo.WorkspaceFilter
 }
 
 func NewAsset(client *mongodoc.Client) repo.Asset {
@@ -27,7 +27,7 @@ func NewAsset(client *mongodoc.Client) repo.Asset {
 	return r
 }
 
-func (r *assetRepo) Filtered(f repo.TeamFilter) repo.Asset {
+func (r *assetRepo) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	return &assetRepo{
 		client: r.client,
 		f:      r.f.Merge(f),
@@ -56,7 +56,7 @@ func (r *assetRepo) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset
 	return filterAssets(ids, res), nil
 }
 
-func (r *assetRepo) FindByTeam(ctx context.Context, id id.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *assetRepo) FindByWorkspace(ctx context.Context, id id.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
@@ -75,7 +75,7 @@ func (r *assetRepo) FindByTeam(ctx context.Context, id id.WorkspaceID, uFilter r
 }
 
 func (r *assetRepo) Save(ctx context.Context, asset *asset.Asset) error {
-	if !r.f.CanWrite(asset.Team()) {
+	if !r.f.CanWrite(asset.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 	doc, id := mongodoc.NewAsset(asset)
@@ -147,9 +147,9 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 }
 
 func (r *assetRepo) readFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Readable)
+	return applyWorkspaceFilter(filter, r.f.Readable)
 }
 
 func (r *assetRepo) writeFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Writable)
+	return applyWorkspaceFilter(filter, r.f.Writable)
 }

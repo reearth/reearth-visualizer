@@ -15,8 +15,8 @@ type AssetFilter struct {
 }
 
 type Asset interface {
-	Filtered(TeamFilter) Asset
-	FindByTeam(context.Context, id.WorkspaceID, AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error)
+	Filtered(WorkspaceFilter) Asset
+	FindByWorkspace(context.Context, id.WorkspaceID, AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error)
 	FindByID(context.Context, id.AssetID) (*asset.Asset, error)
 	FindByIDs(context.Context, id.AssetIDList) ([]*asset.Asset, error)
 	Save(context.Context, *asset.Asset) error

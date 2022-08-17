@@ -6,34 +6,34 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTeamBuilder_ID(t *testing.T) {
+func TestBuilder_ID(t *testing.T) {
 	tid := NewID()
 	tm := New().ID(tid).MustBuild()
 	assert.Equal(t, tid, tm.ID())
 }
 
-func TestTeamBuilder_Members(t *testing.T) {
+func TestBuilder_Members(t *testing.T) {
 	m := map[UserID]Role{NewUserID(): RoleOwner}
 	tm := New().NewID().Members(m).MustBuild()
 	assert.Equal(t, m, tm.Members().Members())
 }
 
-func TestTeamBuilder_Personal(t *testing.T) {
+func TestBuilder_Personal(t *testing.T) {
 	tm := New().NewID().Personal(true).MustBuild()
 	assert.True(t, tm.IsPersonal())
 }
 
-func TestTeamBuilder_Name(t *testing.T) {
+func TestBuilder_Name(t *testing.T) {
 	tm := New().NewID().Name("xxx").MustBuild()
 	assert.Equal(t, "xxx", tm.Name())
 }
 
-func TestTeamBuilder_NewID(t *testing.T) {
+func TestBuilder_NewID(t *testing.T) {
 	tm := New().NewID().MustBuild()
 	assert.NotNil(t, tm.ID())
 }
 
-func TestTeamBuilder_Build(t *testing.T) {
+func TestBuilder_Build(t *testing.T) {
 	tid := NewID()
 	uid := NewUserID()
 
@@ -51,7 +51,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 		Err      error
 	}{
 		{
-			Name: "success create team",
+			Name: "success create workspace",
 			Args: args{
 				ID:       tid,
 				Name:     "xxx",
@@ -67,7 +67,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 				},
 			},
 		}, {
-			Name: "success create team with nil members",
+			Name: "success create workspace with nil members",
 			Args: args{
 				ID:   tid,
 				Name: "xxx",
@@ -106,7 +106,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 	}
 }
 
-func TestTeamBuilder_MustBuild(t *testing.T) {
+func TestBuilder_MustBuild(t *testing.T) {
 	tid := NewID()
 	uid := NewUserID()
 
@@ -124,7 +124,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 		Err      error
 	}{
 		{
-			Name: "success create team",
+			Name: "success create workspace",
 			Args: args{
 				ID:       tid,
 				Name:     "xxx",
@@ -140,7 +140,7 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 				},
 			},
 		}, {
-			Name: "success create team with nil members",
+			Name: "success create workspace with nil members",
 			Args: args{
 				ID:   tid,
 				Name: "xxx",
