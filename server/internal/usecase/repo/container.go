@@ -27,17 +27,17 @@ type Container struct {
 	Scene          Scene
 	SceneLock      SceneLock
 	Tag            Tag
-	Team           Team
+	Workspace      Workspace
 	Transaction    Transaction
 	User           User
 }
 
-func (c *Container) Filtered(team TeamFilter, scene SceneFilter) *Container {
+func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
 	if c == nil {
 		return c
 	}
 	return &Container{
-		Asset:          c.Asset.Filtered(team),
+		Asset:          c.Asset.Filtered(workspace),
 		AuthRequest:    c.AuthRequest,
 		Config:         c.Config,
 		DatasetSchema:  c.DatasetSchema.Filtered(scene),
@@ -45,39 +45,39 @@ func (c *Container) Filtered(team TeamFilter, scene SceneFilter) *Container {
 		Layer:          c.Layer.Filtered(scene),
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
-		Project:        c.Project.Filtered(team),
+		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
 		Property:       c.Property.Filtered(scene),
-		Scene:          c.Scene.Filtered(team),
+		Scene:          c.Scene.Filtered(workspace),
 		SceneLock:      c.SceneLock,
 		Tag:            c.Tag.Filtered(scene),
-		Team:           c.Team,
+		Workspace:      c.Workspace,
 		Transaction:    c.Transaction,
 		User:           c.User,
 	}
 }
 
-type TeamFilter struct {
-	Readable user.TeamIDList
-	Writable user.TeamIDList
+type WorkspaceFilter struct {
+	Readable user.WorkspaceIDList
+	Writable user.WorkspaceIDList
 }
 
-func TeamFilterFromOperator(o *usecase.Operator) TeamFilter {
-	return TeamFilter{
-		Readable: o.AllReadableTeams(),
-		Writable: o.AllWritableTeams(),
+func WorkspaceFilterFromOperator(o *usecase.Operator) WorkspaceFilter {
+	return WorkspaceFilter{
+		Readable: o.AllReadableWorkspaces(),
+		Writable: o.AllWritableWorkspaces(),
 	}
 }
 
-func (f TeamFilter) Clone() TeamFilter {
-	return TeamFilter{
+func (f WorkspaceFilter) Clone() WorkspaceFilter {
+	return WorkspaceFilter{
 		Readable: f.Readable.Clone(),
 		Writable: f.Writable.Clone(),
 	}
 }
 
-func (f TeamFilter) Merge(g TeamFilter) TeamFilter {
-	var r, w user.TeamIDList
+func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
+	var r, w user.WorkspaceIDList
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
 			r = append(g.Readable[:0:0], g.Readable...)
@@ -92,17 +92,17 @@ func (f TeamFilter) Merge(g TeamFilter) TeamFilter {
 			w = append(f.Writable, g.Writable...)
 		}
 	}
-	return TeamFilter{
+	return WorkspaceFilter{
 		Readable: r,
 		Writable: w,
 	}
 }
 
-func (f TeamFilter) CanRead(id user.TeamID) bool {
+func (f WorkspaceFilter) CanRead(id user.WorkspaceID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f TeamFilter) CanWrite(id user.TeamID) bool {
+func (f WorkspaceFilter) CanWrite(id user.WorkspaceID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }
 

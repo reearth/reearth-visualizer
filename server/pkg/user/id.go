@@ -3,20 +3,20 @@ package user
 import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.UserID
-type TeamID = id.TeamID
+type WorkspaceID = id.WorkspaceID
 
 var NewID = id.NewUserID
-var NewTeamID = id.NewTeamID
+var NewWorkspaceID = id.NewWorkspaceID
 
 var MustID = id.MustUserID
-var MustTeamID = id.MustTeamID
+var MustWorkspaceID = id.MustWorkspaceID
 
 var IDFrom = id.UserIDFrom
-var TeamIDFrom = id.TeamIDFrom
+var WorkspaceIDFrom = id.WorkspaceIDFrom
 
 var IDFromRef = id.UserIDFromRef
-var TeamIDFromRef = id.TeamIDFromRef
+var WorkspaceIDFromRef = id.WorkspaceIDFromRef
 
 var ErrInvalidID = id.ErrInvalidID
 
-type TeamIDList = id.TeamIDList
+type WorkspaceIDList = id.WorkspaceIDList

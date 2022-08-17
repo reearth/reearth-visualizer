@@ -11,7 +11,7 @@ import (
 type AssetDocument struct {
 	ID          string
 	CreatedAt   time.Time
-	Team        string
+	Team        string // DON'T CHANGE NAME'
 	Name        string
 	Size        int64
 	URL         string
@@ -44,7 +44,7 @@ func NewAsset(asset *asset.Asset) (*AssetDocument, string) {
 	return &AssetDocument{
 		ID:          aid,
 		CreatedAt:   asset.CreatedAt(),
-		Team:        asset.Team().String(),
+		Team:        asset.Workspace().String(),
 		Name:        asset.Name(),
 		Size:        asset.Size(),
 		URL:         asset.URL(),
@@ -57,7 +57,7 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.TeamIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 	return asset.New().
 		ID(aid).
 		CreatedAt(d.CreatedAt).
-		Team(tid).
+		Workspace(tid).
 		Name(d.Name).
 		Size(d.Size).
 		URL(d.URL).

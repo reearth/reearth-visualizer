@@ -40,7 +40,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 		Published: published,
 		Scene:     NewScene(r, g),
 		Tag:       NewTag(r),
-		Team:      NewTeam(r),
+		Workspace: NewWorkspace(r),
 		User:      NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
 	}
 }
@@ -55,21 +55,21 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanReadTeam(t id.TeamID, op *usecase.Operator) error {
+func (i common) CanReadWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	if !op.IsReadableTeam(t) {
+	if !op.IsReadableWorkspace(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil
 }
 
-func (i common) CanWriteTeam(t id.TeamID, op *usecase.Operator) error {
+func (i common) CanWriteWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
-	if !op.IsWritableTeam(t) {
+	if !op.IsWritableWorkspace(t) {
 		return interfaces.ErrOperationDenied
 	}
 	return nil

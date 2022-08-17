@@ -1,4 +1,4 @@
-package user
+package workspace
 
 import (
 	"testing"
@@ -6,77 +6,77 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTeamBuilder_ID(t *testing.T) {
-	tid := NewTeamID()
-	tm := NewTeam().ID(tid).MustBuild()
+func TestBuilder_ID(t *testing.T) {
+	tid := NewID()
+	tm := New().ID(tid).MustBuild()
 	assert.Equal(t, tid, tm.ID())
 }
 
-func TestTeamBuilder_Members(t *testing.T) {
-	m := map[ID]Role{NewID(): RoleOwner}
-	tm := NewTeam().NewID().Members(m).MustBuild()
+func TestBuilder_Members(t *testing.T) {
+	m := map[UserID]Role{NewUserID(): RoleOwner}
+	tm := New().NewID().Members(m).MustBuild()
 	assert.Equal(t, m, tm.Members().Members())
 }
 
-func TestTeamBuilder_Personal(t *testing.T) {
-	tm := NewTeam().NewID().Personal(true).MustBuild()
+func TestBuilder_Personal(t *testing.T) {
+	tm := New().NewID().Personal(true).MustBuild()
 	assert.True(t, tm.IsPersonal())
 }
 
-func TestTeamBuilder_Name(t *testing.T) {
-	tm := NewTeam().NewID().Name("xxx").MustBuild()
+func TestBuilder_Name(t *testing.T) {
+	tm := New().NewID().Name("xxx").MustBuild()
 	assert.Equal(t, "xxx", tm.Name())
 }
 
-func TestTeamBuilder_NewID(t *testing.T) {
-	tm := NewTeam().NewID().MustBuild()
+func TestBuilder_NewID(t *testing.T) {
+	tm := New().NewID().MustBuild()
 	assert.NotNil(t, tm.ID())
 }
 
-func TestTeamBuilder_Build(t *testing.T) {
-	tid := NewTeamID()
-	uid := NewID()
+func TestBuilder_Build(t *testing.T) {
+	tid := NewID()
+	uid := NewUserID()
 
 	type args struct {
-		ID       TeamID
+		ID       ID
 		Name     string
 		Personal bool
-		Members  map[ID]Role
+		Members  map[UserID]Role
 	}
 
 	tests := []struct {
 		Name     string
 		Args     args
-		Expected *Team
+		Expected *Workspace
 		Err      error
 	}{
 		{
-			Name: "success create team",
+			Name: "success create workspace",
 			Args: args{
 				ID:       tid,
 				Name:     "xxx",
 				Personal: true,
-				Members:  map[ID]Role{uid: RoleOwner},
+				Members:  map[UserID]Role{uid: RoleOwner},
 			},
-			Expected: &Team{
+			Expected: &Workspace{
 				id:   tid,
 				name: "xxx",
 				members: &Members{
-					members: map[ID]Role{uid: RoleOwner},
+					members: map[UserID]Role{uid: RoleOwner},
 					fixed:   true,
 				},
 			},
 		}, {
-			Name: "success create team with nil members",
+			Name: "success create workspace with nil members",
 			Args: args{
 				ID:   tid,
 				Name: "xxx",
 			},
-			Expected: &Team{
+			Expected: &Workspace{
 				id:   tid,
 				name: "xxx",
 				members: &Members{
-					members: map[ID]Role{},
+					members: map[UserID]Role{},
 					fixed:   false,
 				},
 			},
@@ -91,7 +91,7 @@ func TestTeamBuilder_Build(t *testing.T) {
 		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
-			res, err := NewTeam().
+			res, err := New().
 				ID(tt.Args.ID).
 				Members(tt.Args.Members).
 				Personal(tt.Args.Personal).
@@ -106,50 +106,50 @@ func TestTeamBuilder_Build(t *testing.T) {
 	}
 }
 
-func TestTeamBuilder_MustBuild(t *testing.T) {
-	tid := NewTeamID()
-	uid := NewID()
+func TestBuilder_MustBuild(t *testing.T) {
+	tid := NewID()
+	uid := NewUserID()
 
 	type args struct {
-		ID       TeamID
+		ID       ID
 		Name     string
 		Personal bool
-		Members  map[ID]Role
+		Members  map[UserID]Role
 	}
 
 	tests := []struct {
 		Name     string
 		Args     args
-		Expected *Team
+		Expected *Workspace
 		Err      error
 	}{
 		{
-			Name: "success create team",
+			Name: "success create workspace",
 			Args: args{
 				ID:       tid,
 				Name:     "xxx",
 				Personal: true,
-				Members:  map[ID]Role{uid: RoleOwner},
+				Members:  map[UserID]Role{uid: RoleOwner},
 			},
-			Expected: &Team{
+			Expected: &Workspace{
 				id:   tid,
 				name: "xxx",
 				members: &Members{
-					members: map[ID]Role{uid: RoleOwner},
+					members: map[UserID]Role{uid: RoleOwner},
 					fixed:   true,
 				},
 			},
 		}, {
-			Name: "success create team with nil members",
+			Name: "success create workspace with nil members",
 			Args: args{
 				ID:   tid,
 				Name: "xxx",
 			},
-			Expected: &Team{
+			Expected: &Workspace{
 				id:   tid,
 				name: "xxx",
 				members: &Members{
-					members: map[ID]Role{},
+					members: map[UserID]Role{},
 					fixed:   false,
 				},
 			},
@@ -165,9 +165,9 @@ func TestTeamBuilder_MustBuild(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
 
-			build := func() *Team {
+			build := func() *Workspace {
 				t.Helper()
-				return NewTeam().ID(tt.Args.ID).Members(tt.Args.Members).Personal(tt.Args.Personal).Name(tt.Args.Name).MustBuild()
+				return New().ID(tt.Args.ID).Members(tt.Args.Members).Personal(tt.Args.Personal).Name(tt.Args.Name).MustBuild()
 			}
 
 			if tt.Err != nil {

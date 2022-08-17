@@ -10,16 +10,16 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
-type TeamLoader struct {
-	usecase interfaces.Team
+type WorkspaceLoader struct {
+	usecase interfaces.Workspace
 }
 
-func NewTeamLoader(usecase interfaces.Team) *TeamLoader {
-	return &TeamLoader{usecase: usecase}
+func NewWorkspaceLoader(usecase interfaces.Workspace) *WorkspaceLoader {
+	return &WorkspaceLoader{usecase: usecase}
 }
 
-func (c *TeamLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
-	uids, err := util.TryMap(ids, gqlmodel.ToID[id.Team])
+func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
+	uids, err := util.TryMap(ids, gqlmodel.ToID[id.Workspace])
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -29,14 +29,14 @@ func (c *TeamLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 		return nil, []error{err}
 	}
 
-	teams := make([]*gqlmodel.Team, 0, len(res))
+	workspaces := make([]*gqlmodel.Team, 0, len(res))
 	for _, t := range res {
-		teams = append(teams, gqlmodel.ToTeam(t))
+		workspaces = append(workspaces, gqlmodel.ToTeam(t))
 	}
-	return teams, nil
+	return workspaces, nil
 }
 
-func (c *TeamLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*gqlmodel.Team, error) {
+func (c *WorkspaceLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*gqlmodel.Team, error) {
 	userid, err := gqlmodel.ToID[id.User](uid)
 	if err != nil {
 		return nil, err
@@ -46,22 +46,22 @@ func (c *TeamLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*gqlmod
 	if err != nil {
 		return nil, err
 	}
-	teams := make([]*gqlmodel.Team, 0, len(res))
+	workspaces := make([]*gqlmodel.Team, 0, len(res))
 	for _, t := range res {
-		teams = append(teams, gqlmodel.ToTeam(t))
+		workspaces = append(workspaces, gqlmodel.ToTeam(t))
 	}
-	return teams, nil
+	return workspaces, nil
 }
 
 // data loader
 
-type TeamDataLoader interface {
+type WorkspaceDataLoader interface {
 	Load(gqlmodel.ID) (*gqlmodel.Team, error)
 	LoadAll([]gqlmodel.ID) ([]*gqlmodel.Team, []error)
 }
 
-func (c *TeamLoader) DataLoader(ctx context.Context) TeamDataLoader {
-	return gqldataloader.NewTeamLoader(gqldataloader.TeamLoaderConfig{
+func (c *WorkspaceLoader) DataLoader(ctx context.Context) WorkspaceDataLoader {
+	return gqldataloader.NewWorkspaceLoader(gqldataloader.WorkspaceLoaderConfig{
 		Wait:     dataLoaderWait,
 		MaxBatch: dataLoaderMaxBatch,
 		Fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
@@ -70,19 +70,19 @@ func (c *TeamLoader) DataLoader(ctx context.Context) TeamDataLoader {
 	})
 }
 
-func (c *TeamLoader) OrdinaryDataLoader(ctx context.Context) TeamDataLoader {
-	return &ordinaryTeamLoader{
+func (c *WorkspaceLoader) OrdinaryDataLoader(ctx context.Context) WorkspaceDataLoader {
+	return &ordinaryWorkspaceLoader{
 		fetch: func(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
 			return c.Fetch(ctx, keys)
 		},
 	}
 }
 
-type ordinaryTeamLoader struct {
+type ordinaryWorkspaceLoader struct {
 	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error)
 }
 
-func (l *ordinaryTeamLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
+func (l *ordinaryWorkspaceLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
 	res, errs := l.fetch([]gqlmodel.ID{key})
 	if len(errs) > 0 {
 		return nil, errs[0]
@@ -93,6 +93,6 @@ func (l *ordinaryTeamLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
 	return nil, nil
 }
 
-func (l *ordinaryTeamLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
+func (l *ordinaryWorkspaceLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
 	return l.fetch(keys)
 }

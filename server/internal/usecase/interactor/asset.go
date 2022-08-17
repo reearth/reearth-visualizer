@@ -29,12 +29,12 @@ func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecas
 	return i.repos.Asset.FindByIDs(ctx, assets)
 }
 
-func (i *Asset) FindByTeam(ctx context.Context, tid id.TeamID, keyword *string, sort *asset.SortType, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (i *Asset) FindByWorkspace(ctx context.Context, tid id.WorkspaceID, keyword *string, sort *asset.SortType, p *usecase.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecase.PageInfo, error) {
 	return Run2(
 		ctx, operator, i.repos,
-		Usecase().WithReadableTeams(tid),
+		Usecase().WithReadableWorkspaces(tid),
 		func() ([]*asset.Asset, *usecase.PageInfo, error) {
-			return i.repos.Asset.FindByTeam(ctx, tid, repo.AssetFilter{
+			return i.repos.Asset.FindByWorkspace(ctx, tid, repo.AssetFilter{
 				Sort:       sort,
 				Keyword:    keyword,
 				Pagination: p,
@@ -50,7 +50,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	return Run1(
 		ctx, operator, i.repos,
 		Usecase().
-			WithWritableTeams(inp.TeamID).
+			WithWritableWorkspaces(inp.WorkspaceID).
 			Transaction(),
 		func() (*asset.Asset, error) {
 			url, err := i.gateways.File.UploadAsset(ctx, inp.File)
@@ -60,7 +60,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 
 			a, err := asset.New().
 				NewID().
-				Team(inp.TeamID).
+				Workspace(inp.WorkspaceID).
 				Name(path.Base(inp.File.Path)).
 				Size(inp.File.Size).
 				URL(url.String()).
@@ -87,7 +87,7 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 				return aid, err
 			}
 
-			if ok := operator.IsWritableTeam(asset.Team()); !ok {
+			if ok := operator.IsWritableWorkspace(asset.Workspace()); !ok {
 				return aid, interfaces.ErrOperationDenied
 			}
 

@@ -32,15 +32,15 @@ func (l List) FilterByID(ids ...ID) List {
 	return res
 }
 
-func (l List) FilterByTeam(teams ...TeamID) List {
+func (l List) FilterByWorkspace(workspaces ...WorkspaceID) List {
 	if l == nil {
 		return nil
 	}
 
 	res := make(List, 0, len(l))
 	for _, s := range l {
-		st := s.Team()
-		for _, t := range teams {
+		st := s.Workspace()
+		for _, t := range workspaces {
 			if t == st {
 				res = append(res, s)
 				break

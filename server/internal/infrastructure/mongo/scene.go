@@ -15,7 +15,7 @@ import (
 
 type sceneRepo struct {
 	client *mongodoc.ClientCollection
-	f      repo.TeamFilter
+	f      repo.WorkspaceFilter
 }
 
 func NewScene(client *mongodoc.Client) repo.Scene {
@@ -31,7 +31,7 @@ func (r *sceneRepo) init() {
 	}
 }
 
-func (r *sceneRepo) Filtered(f repo.TeamFilter) repo.Scene {
+func (r *sceneRepo) Filtered(f repo.WorkspaceFilter) repo.Scene {
 	return &sceneRepo{
 		client: r.client,
 		f:      r.f.Merge(f),
@@ -62,13 +62,13 @@ func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID) (*scene.
 	})
 }
 
-func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.List, error) {
-	teams2 := id.TeamIDList(teams)
+func (r *sceneRepo) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
+	workspaces2 := id.WorkspaceIDList(workspaces)
 	if r.f.Readable != nil {
-		teams2 = teams2.Intersect(r.f.Readable)
+		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, nil, bson.M{
-		"team": bson.M{"$in": user.TeamIDList(teams).Strings()},
+		"team": bson.M{"$in": user.WorkspaceIDList(workspaces).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err
@@ -77,7 +77,7 @@ func (r *sceneRepo) FindByTeam(ctx context.Context, teams ...id.TeamID) (scene.L
 }
 
 func (r *sceneRepo) Save(ctx context.Context, scene *scene.Scene) error {
-	if !r.f.CanWrite(scene.Team()) {
+	if !r.f.CanWrite(scene.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 	doc, id := mongodoc.NewScene(scene)
@@ -110,9 +110,9 @@ func (r *sceneRepo) findOne(ctx context.Context, filter interface{}) (*scene.Sce
 }
 
 func (r *sceneRepo) readFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Readable)
+	return applyWorkspaceFilter(filter, r.f.Readable)
 }
 
 func (r *sceneRepo) writeFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Writable)
+	return applyWorkspaceFilter(filter, r.f.Writable)
 }

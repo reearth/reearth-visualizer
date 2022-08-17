@@ -28,11 +28,11 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub    *string    `json:"sub"`
-	Secret *string    `json:"secret"`
-	UserID *id.UserID `json:"userId"`
-	TeamID *id.TeamID `json:"teamId"`
-	Name   *string    `json:"name"`
+	Sub         *string         `json:"sub"`
+	Secret      *string         `json:"secret"`
+	UserID      *id.UserID      `json:"userId"`
+	WorkspaceID *id.WorkspaceID `json:"teamId"`
+	Name        *string         `json:"name"`
 	// Username is an alias of Name
 	Username *string       `json:"username"`
 	Email    *string       `json:"email"`
@@ -51,10 +51,10 @@ type VerifyUserOutput struct {
 }
 
 type CreateUserInput struct {
-	Sub    string     `json:"sub"`
-	Secret string     `json:"secret"`
-	UserID *id.UserID `json:"userId"`
-	TeamID *id.TeamID `json:"teamId"`
+	Sub         string          `json:"sub"`
+	Secret      string          `json:"secret"`
+	UserID      *id.UserID      `json:"userId"`
+	WorkspaceID *id.WorkspaceID `json:"teamId"`
 }
 
 type SignupOutput struct {
@@ -89,10 +89,10 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			Name:        name2,
 			Secret:      input.Secret,
 			User: interfaces.SignupUserParam{
-				UserID: input.UserID,
-				TeamID: input.TeamID,
-				Lang:   input.Lang,
-				Theme:  input.Theme,
+				UserID:      input.UserID,
+				WorkspaceID: input.WorkspaceID,
+				Lang:        input.Lang,
+				Theme:       input.Theme,
 			},
 		})
 	} else if name != nil && input.Email != nil {
@@ -103,10 +103,10 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			Password: input.Password,
 			Secret:   input.Secret,
 			User: interfaces.SignupUserParam{
-				UserID: input.UserID,
-				TeamID: input.TeamID,
-				Lang:   input.Lang,
-				Theme:  input.Theme,
+				UserID:      input.UserID,
+				WorkspaceID: input.WorkspaceID,
+				Lang:        input.Lang,
+				Theme:       input.Theme,
 			},
 		})
 	} else {

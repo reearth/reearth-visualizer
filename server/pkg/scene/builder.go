@@ -16,7 +16,7 @@ func (b *Builder) Build() (*Scene, error) {
 	if b.scene.id.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.team.IsNil() {
+	if b.scene.workspace.IsNil() {
 		return nil, ErrInvalidID
 	}
 	if b.scene.rootLayer.IsNil() {
@@ -57,8 +57,8 @@ func (b *Builder) Project(prj ProjectID) *Builder {
 	return b
 }
 
-func (b *Builder) Team(team TeamID) *Builder {
-	b.scene.team = team
+func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+	b.scene.workspace = workspace
 	return b
 }
 

@@ -16,7 +16,7 @@ import (
 type Asset struct {
 	lock sync.Mutex
 	data map[id.AssetID]*asset.Asset
-	f    repo.TeamFilter
+	f    repo.WorkspaceFilter
 }
 
 func NewAsset() repo.Asset {
@@ -25,7 +25,7 @@ func NewAsset() repo.Asset {
 	}
 }
 
-func (r *Asset) Filtered(f repo.TeamFilter) repo.Asset {
+func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	return &Asset{
 		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
@@ -38,7 +38,7 @@ func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, erro
 	defer r.lock.Unlock()
 
 	d, ok := r.data[id]
-	if ok && r.f.CanRead(d.Team()) {
+	if ok && r.f.CanRead(d.Workspace()) {
 		return d, nil
 	}
 	return &asset.Asset{}, rerror.ErrNotFound
@@ -51,7 +51,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	result := []*asset.Asset{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok {
-			if r.f.CanRead(d.Team()) {
+			if r.f.CanRead(d.Workspace()) {
 				result = append(result, d)
 				continue
 			}
@@ -61,7 +61,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return result, nil
 }
 
-func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
@@ -71,7 +71,7 @@ func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetF
 
 	result := []*asset.Asset{}
 	for _, d := range r.data {
-		if d.Team() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
+		if d.Workspace() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
 			result = append(result, d)
 		}
 	}
@@ -110,7 +110,7 @@ func (r *Asset) FindByTeam(ctx context.Context, id id.TeamID, filter repo.AssetF
 }
 
 func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {
-	if !r.f.CanWrite(a.Team()) {
+	if !r.f.CanWrite(a.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 
@@ -125,7 +125,7 @@ func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if a, ok := r.data[id]; ok && r.f.CanWrite(a.Team()) {
+	if a, ok := r.data[id]; ok && r.f.CanWrite(a.Workspace()) {
 		delete(r.data, id)
 	}
 

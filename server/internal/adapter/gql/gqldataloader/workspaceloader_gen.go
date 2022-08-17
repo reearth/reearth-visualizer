@@ -9,8 +9,8 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 )
 
-// TeamLoaderConfig captures the config to create a new TeamLoader
-type TeamLoaderConfig struct {
+// WorkspaceLoaderConfig captures the config to create a new WorkspaceLoader
+type WorkspaceLoaderConfig struct {
 	// Fetch is a method that provides the data for the loader
 	Fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error)
 
@@ -21,17 +21,17 @@ type TeamLoaderConfig struct {
 	MaxBatch int
 }
 
-// NewTeamLoader creates a new TeamLoader given a fetch, wait, and maxBatch
-func NewTeamLoader(config TeamLoaderConfig) *TeamLoader {
-	return &TeamLoader{
+// NewWorkspaceLoader creates a new WorkspaceLoader given a fetch, wait, and maxBatch
+func NewWorkspaceLoader(config WorkspaceLoaderConfig) *WorkspaceLoader {
+	return &WorkspaceLoader{
 		fetch:    config.Fetch,
 		wait:     config.Wait,
 		maxBatch: config.MaxBatch,
 	}
 }
 
-// TeamLoader batches and caches requests
-type TeamLoader struct {
+// WorkspaceLoader batches and caches requests
+type WorkspaceLoader struct {
 	// this method provides the data for the loader
 	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error)
 
@@ -62,15 +62,15 @@ type teamLoaderBatch struct {
 	done    chan struct{}
 }
 
-// Load a Team by key, batching and caching will be applied automatically
-func (l *TeamLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
+// Load a Workspace by key, batching and caching will be applied automatically
+func (l *WorkspaceLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
 	return l.LoadThunk(key)()
 }
 
-// LoadThunk returns a function that when called will block waiting for a Team.
+// LoadThunk returns a function that when called will block waiting for a Workspace.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *TeamLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Team, error) {
+func (l *WorkspaceLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Team, error) {
 	l.mu.Lock()
 	if it, ok := l.cache[key]; ok {
 		l.mu.Unlock()
@@ -113,7 +113,7 @@ func (l *TeamLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Team, error) {
 
 // LoadAll fetches many keys at once. It will be broken into appropriate sized
 // sub batches depending on how the loader is configured
-func (l *TeamLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
+func (l *WorkspaceLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
 	results := make([]func() (*gqlmodel.Team, error), len(keys))
 
 	for i, key := range keys {
@@ -128,10 +128,10 @@ func (l *TeamLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
 	return teams, errors
 }
 
-// LoadAllThunk returns a function that when called will block waiting for a Teams.
+// LoadAllThunk returns a function that when called will block waiting for a Workspaces.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
-func (l *TeamLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Team, []error) {
+func (l *WorkspaceLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Team, []error) {
 	results := make([]func() (*gqlmodel.Team, error), len(keys))
 	for i, key := range keys {
 		results[i] = l.LoadThunk(key)
@@ -149,7 +149,7 @@ func (l *TeamLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Team, 
 // Prime the cache with the provided key and value. If the key already exists, no change is made
 // and false is returned.
 // (To forcefully prime the cache, clear the key first with loader.clear(key).prime(key, value).)
-func (l *TeamLoader) Prime(key gqlmodel.ID, value *gqlmodel.Team) bool {
+func (l *WorkspaceLoader) Prime(key gqlmodel.ID, value *gqlmodel.Team) bool {
 	l.mu.Lock()
 	var found bool
 	if _, found = l.cache[key]; !found {
@@ -163,13 +163,13 @@ func (l *TeamLoader) Prime(key gqlmodel.ID, value *gqlmodel.Team) bool {
 }
 
 // Clear the value at key from the cache, if it exists
-func (l *TeamLoader) Clear(key gqlmodel.ID) {
+func (l *WorkspaceLoader) Clear(key gqlmodel.ID) {
 	l.mu.Lock()
 	delete(l.cache, key)
 	l.mu.Unlock()
 }
 
-func (l *TeamLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Team) {
+func (l *WorkspaceLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Team) {
 	if l.cache == nil {
 		l.cache = map[gqlmodel.ID]*gqlmodel.Team{}
 	}
@@ -178,7 +178,7 @@ func (l *TeamLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Team) {
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *teamLoaderBatch) keyIndex(l *TeamLoader, key gqlmodel.ID) int {
+func (b *teamLoaderBatch) keyIndex(l *WorkspaceLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i
@@ -202,7 +202,7 @@ func (b *teamLoaderBatch) keyIndex(l *TeamLoader, key gqlmodel.ID) int {
 	return pos
 }
 
-func (b *teamLoaderBatch) startTimer(l *TeamLoader) {
+func (b *teamLoaderBatch) startTimer(l *WorkspaceLoader) {
 	time.Sleep(l.wait)
 	l.mu.Lock()
 
@@ -218,7 +218,7 @@ func (b *teamLoaderBatch) startTimer(l *TeamLoader) {
 	b.end(l)
 }
 
-func (b *teamLoaderBatch) end(l *TeamLoader) {
+func (b *teamLoaderBatch) end(l *WorkspaceLoader) {
 	b.data, b.error = l.fetch(b.keys)
 	close(b.done)
 }

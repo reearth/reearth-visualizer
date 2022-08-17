@@ -89,8 +89,8 @@ func TestScene_InstallPlugin(t *testing.T) {
 			assert := assert.New(t)
 			ctx := context.Background()
 
-			tid := id.NewTeamID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Team(tid).MustBuild()
+			tid := id.NewWorkspaceID()
+			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
 			}
@@ -113,7 +113,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableTeams: id.TeamIDList{tid},
+					WritableWorkspaces: id.WorkspaceIDList{tid},
 				}
 			}
 			gotSc, gotPrid, err := uc.InstallPlugin(ctx, sid, tt.args.pluginID, o)
@@ -217,8 +217,8 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			l2 := layer.New().NewID().Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
 			lr := memory.NewLayerWith(l1, l2)
 
-			tid := id.NewTeamID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Team(tid).MustBuild()
+			tid := id.NewWorkspaceID()
+			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
 			sw, _ := scene.NewWidget(scene.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
@@ -240,7 +240,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableTeams: id.TeamIDList{tid},
+					WritableWorkspaces: id.WorkspaceIDList{tid},
 				}
 			}
 			gotSc, err := uc.UninstallPlugin(ctx, sid, tt.args.pluginID, o)
@@ -351,8 +351,8 @@ func TestScene_UpgradePlugin(t *testing.T) {
 
 			dsr := memory.NewDataset()
 
-			tid := id.NewTeamID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Team(tid).MustBuild()
+			tid := id.NewWorkspaceID()
+			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
 
@@ -369,7 +369,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableTeams: id.TeamIDList{tid},
+					WritableWorkspaces: id.WorkspaceIDList{tid},
 				}
 			}
 			gotSc, err := uc.UpgradePlugin(ctx, sid, tt.args.old, tt.args.new, o)

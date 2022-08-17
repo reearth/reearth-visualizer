@@ -23,10 +23,10 @@ func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInpu
 		Name:        au.Name,
 		Secret:      input.Secret,
 		User: interfaces.SignupUserParam{
-			Lang:   input.Lang,
-			Theme:  gqlmodel.ToTheme(input.Theme),
-			UserID: gqlmodel.ToIDRef[id.User](input.UserID),
-			TeamID: gqlmodel.ToIDRef[id.Team](input.TeamID),
+			Lang:        input.Lang,
+			Theme:       gqlmodel.ToTheme(input.Theme),
+			UserID:      gqlmodel.ToIDRef[id.User](input.UserID),
+			WorkspaceID: gqlmodel.ToIDRef[id.Workspace](input.TeamID),
 		},
 	})
 	if err != nil {

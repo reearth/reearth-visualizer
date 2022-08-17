@@ -14,7 +14,7 @@ func (r *Resolver) Project() ProjectResolver {
 type projectResolver struct{ *Resolver }
 
 func (r *projectResolver) Team(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Team, error) {
-	return dataloaders(ctx).Team.Load(obj.TeamID)
+	return dataloaders(ctx).Workspace.Load(obj.TeamID)
 }
 
 func (r *projectResolver) Scene(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Scene, error) {

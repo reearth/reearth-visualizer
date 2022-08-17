@@ -26,6 +26,6 @@ type Container struct {
 	Published Published
 	Scene     Scene
 	Tag       Tag
-	Team      Team
+	Workspace Workspace
 	User      User
 }

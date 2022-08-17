@@ -17,8 +17,8 @@ func TestProperty_AddItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
-	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
+	ws := id.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{
 		property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild(),
 	}).MustBuild()
@@ -69,8 +69,8 @@ func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
-	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
+	ws := id.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).
 		Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
@@ -114,8 +114,8 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	team := id.NewTeamID()
-	scene := scene.New().NewID().Team(team).RootLayer(id.NewLayerID()).MustBuild()
+	ws := id.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psf := property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{psf}).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).
@@ -136,8 +136,8 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 		transaction:        memory.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableTeams:  []id.TeamID{team},
-		WritableScenes: []id.SceneID{scene.ID()},
+		WritableWorkspaces: []id.WorkspaceID{ws},
+		WritableScenes:     []id.SceneID{scene.ID()},
 	}
 
 	np, npl, npg, npf, err := uc.UpdateValue(ctx, interfaces.UpdatePropertyValueParam{

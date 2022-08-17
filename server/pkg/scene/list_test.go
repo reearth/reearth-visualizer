@@ -19,20 +19,20 @@ func TestList_FilterByID(t *testing.T) {
 	assert.Equal(t, List(nil), List(nil).FilterByID(sid1))
 }
 
-func TestList_FilterByTeam(t *testing.T) {
-	tid1 := NewTeamID()
-	tid2 := NewTeamID()
-	t1 := &Scene{id: NewID(), team: tid1}
-	t2 := &Scene{id: NewID(), team: tid2}
+func TestList_FilterByWorkspace(t *testing.T) {
+	tid1 := NewWorkspaceID()
+	tid2 := NewWorkspaceID()
+	t1 := &Scene{id: NewID(), workspace: tid1}
+	t2 := &Scene{id: NewID(), workspace: tid2}
 
-	assert.Equal(t, List{t1}, List{t1, t2}.FilterByTeam(tid1))
-	assert.Equal(t, List{t2}, List{t1, t2}.FilterByTeam(tid2))
-	assert.Equal(t, List{t1, t2}, List{t1, t2}.FilterByTeam(tid1, tid2))
-	assert.Equal(t, List{}, List{t1, t2}.FilterByTeam(NewTeamID()))
-	assert.Equal(t, List(nil), List(nil).FilterByTeam(tid1))
+	assert.Equal(t, List{t1}, List{t1, t2}.FilterByWorkspace(tid1))
+	assert.Equal(t, List{t2}, List{t1, t2}.FilterByWorkspace(tid2))
+	assert.Equal(t, List{t1, t2}, List{t1, t2}.FilterByWorkspace(tid1, tid2))
+	assert.Equal(t, List{}, List{t1, t2}.FilterByWorkspace(NewWorkspaceID()))
+	assert.Equal(t, List(nil), List(nil).FilterByWorkspace(tid1))
 }
 
-func TestTeamList_IDs(t *testing.T) {
+func TestList_IDs(t *testing.T) {
 	sid1 := NewID()
 	sid2 := NewID()
 	t1 := &Scene{id: sid1}

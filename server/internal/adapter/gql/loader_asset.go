@@ -34,13 +34,13 @@ func (c *AssetLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel
 	return util.Map(res, gqlmodel.ToAsset), nil
 }
 
-func (c *AssetLoader) FindByTeam(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
-	tid, err := gqlmodel.ToID[id.Team](teamID)
+func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
+	tid, err := gqlmodel.ToID[id.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	assets, pi, err := c.usecase.FindByTeam(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
+	assets, pi, err := c.usecase.FindByWorkspace(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

@@ -13,9 +13,9 @@ func (r *Resolver) Me() MeResolver {
 type meResolver struct{ *Resolver }
 
 func (r *meResolver) MyTeam(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Team, error) {
-	return dataloaders(ctx).Team.Load(obj.MyTeamID)
+	return dataloaders(ctx).Workspace.Load(obj.MyTeamID)
 }
 
 func (r *meResolver) Teams(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Team, error) {
-	return loaders(ctx).Team.FindByUser(ctx, obj.ID)
+	return loaders(ctx).Workspace.FindByUser(ctx, obj.ID)
 }

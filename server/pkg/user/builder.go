@@ -70,8 +70,8 @@ func (b *Builder) PasswordPlainText(p string) *Builder {
 	return b
 }
 
-func (b *Builder) Team(team TeamID) *Builder {
-	b.u.team = team
+func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+	b.u.workspace = workspace
 	return b
 }
 

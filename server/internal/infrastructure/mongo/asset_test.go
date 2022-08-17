@@ -26,7 +26,7 @@ func TestFindByID(t *testing.T) {
 				Asset: asset.New().
 					NewID().
 					CreatedAt(time.Now()).
-					Team(id.NewTeamID()).
+					Workspace(id.NewWorkspaceID()).
 					Name("name").
 					Size(10).
 					URL("hxxps://https://reearth.io/").
@@ -55,7 +55,7 @@ func TestFindByID(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.Expected.Asset.ID(), got.ID())
 			assert.Equal(t, tc.Expected.Asset.CreatedAt(), got.CreatedAt())
-			assert.Equal(t, tc.Expected.Asset.Team(), got.Team())
+			assert.Equal(t, tc.Expected.Asset.Workspace(), got.Workspace())
 			assert.Equal(t, tc.Expected.Asset.URL(), got.URL())
 			assert.Equal(t, tc.Expected.Asset.Size(), got.Size())
 			assert.Equal(t, tc.Expected.Asset.Name(), got.Name())

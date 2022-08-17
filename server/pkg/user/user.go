@@ -16,7 +16,7 @@ type User struct {
 	name          string
 	email         string
 	password      EncodedPassword
-	team          TeamID
+	workspace     WorkspaceID
 	auths         []Auth
 	lang          language.Tag
 	theme         Theme
@@ -36,8 +36,8 @@ func (u *User) Email() string {
 	return u.email
 }
 
-func (u *User) Team() TeamID {
-	return u.team
+func (u *User) Workspace() WorkspaceID {
+	return u.workspace
 }
 
 func (u *User) Lang() language.Tag {
@@ -64,8 +64,8 @@ func (u *User) UpdateEmail(email string) error {
 	return nil
 }
 
-func (u *User) UpdateTeam(team TeamID) {
-	u.team = team
+func (u *User) UpdateWorkspace(workspace WorkspaceID) {
+	u.workspace = workspace
 }
 
 func (u *User) UpdateLang(lang language.Tag) {

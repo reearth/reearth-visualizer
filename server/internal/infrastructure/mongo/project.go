@@ -16,7 +16,7 @@ import (
 
 type projectRepo struct {
 	client *mongodoc.ClientCollection
-	f      repo.TeamFilter
+	f      repo.WorkspaceFilter
 }
 
 func NewProject(client *mongodoc.Client) repo.Project {
@@ -32,7 +32,7 @@ func (r *projectRepo) init() {
 	}
 }
 
-func (r *projectRepo) Filtered(f repo.TeamFilter) repo.Project {
+func (r *projectRepo) Filtered(f repo.WorkspaceFilter) repo.Project {
 	return &projectRepo{
 		client: r.client,
 		f:      r.f.Merge(f),
@@ -63,7 +63,7 @@ func (r *projectRepo) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*p
 	return filterProjects(ids, res), nil
 }
 
-func (r *projectRepo) FindByTeam(ctx context.Context, id id.TeamID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *projectRepo) FindByWorkspace(ctx context.Context, id id.WorkspaceID, pagination *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecase.EmptyPageInfo(), nil
 	}
@@ -85,15 +85,15 @@ func (r *projectRepo) FindByPublicName(ctx context.Context, name string) (*proje
 	})
 }
 
-func (r *projectRepo) CountByTeam(ctx context.Context, team id.TeamID) (int, error) {
+func (r *projectRepo) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
 	count, err := r.client.Count(ctx, bson.M{
-		"team": team.String(),
+		"team": ws.String(),
 	})
 	return int(count), err
 }
 
 func (r *projectRepo) Save(ctx context.Context, project *project.Project) error {
-	if !r.f.CanWrite(project.Team()) {
+	if !r.f.CanWrite(project.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 	doc, id := mongodoc.NewProject(project)
@@ -150,9 +150,9 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 }
 
 func (r *projectRepo) readFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Readable)
+	return applyWorkspaceFilter(filter, r.f.Readable)
 }
 
 func (r *projectRepo) writeFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Writable)
+	return applyWorkspaceFilter(filter, r.f.Writable)
 }

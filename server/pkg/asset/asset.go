@@ -6,15 +6,15 @@ import (
 )
 
 var (
-	ErrEmptyTeamID = errors.New("require team id")
-	ErrEmptyURL    = errors.New("require valid url")
-	ErrEmptySize   = errors.New("file size cannot be zero")
+	ErrEmptyWorkspaceID = errors.New("require workspace id")
+	ErrEmptyURL         = errors.New("require valid url")
+	ErrEmptySize        = errors.New("file size cannot be zero")
 )
 
 type Asset struct {
 	id          ID
 	createdAt   time.Time
-	team        TeamID
+	workspace   WorkspaceID
 	name        string // file name
 	size        int64  // file size
 	url         string
@@ -25,8 +25,8 @@ func (a *Asset) ID() ID {
 	return a.id
 }
 
-func (a *Asset) Team() TeamID {
-	return a.team
+func (a *Asset) Workspace() WorkspaceID {
+	return a.workspace
 }
 
 func (a *Asset) Name() string {

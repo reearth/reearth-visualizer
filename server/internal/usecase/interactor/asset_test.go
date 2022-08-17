@@ -20,7 +20,7 @@ import (
 
 func TestAsset_Create(t *testing.T) {
 	ctx := context.Background()
-	tid := asset.NewTeamID()
+	tid := asset.NewWorkspaceID()
 	aid := asset.NewID()
 	newID := asset.NewID
 	asset.NewID = func() asset.ID { return aid }
@@ -40,7 +40,7 @@ func TestAsset_Create(t *testing.T) {
 	buf := bytes.NewBufferString("Hello")
 	buflen := int64(buf.Len())
 	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
-		TeamID: tid,
+		WorkspaceID: tid,
 		File: &file.File{
 			Content:     io.NopCloser(buf),
 			Path:        "hoge.txt",
@@ -48,12 +48,12 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		WritableTeams: id.TeamIDList{tid},
+		WritableWorkspaces: id.WorkspaceIDList{tid},
 	})
 
 	want := asset.New().
 		ID(aid).
-		Team(tid).
+		Workspace(tid).
 		URL(res.URL()).
 		CreatedAt(aid.Timestamp()).
 		Name("hoge.txt").

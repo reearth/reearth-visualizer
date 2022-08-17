@@ -10,24 +10,24 @@ import (
 )
 
 type uc struct {
-	tx             bool
-	readableTeams  id.TeamIDList
-	writableTeams  id.TeamIDList
-	readableScenes id.SceneIDList
-	writableScenes id.SceneIDList
+	tx                 bool
+	readableWorkspaces id.WorkspaceIDList
+	writableWorkspaces id.WorkspaceIDList
+	readableScenes     id.SceneIDList
+	writableScenes     id.SceneIDList
 }
 
 func Usecase() *uc {
 	return &uc{}
 }
 
-func (u *uc) WithReadableTeams(ids ...id.TeamID) *uc {
-	u.readableTeams = id.TeamIDList(ids).Clone()
+func (u *uc) WithReadableWorkspaces(ids ...id.WorkspaceID) *uc {
+	u.readableWorkspaces = id.WorkspaceIDList(ids).Clone()
 	return u
 }
 
-func (u *uc) WithWritableTeams(ids ...id.TeamID) *uc {
-	u.writableTeams = id.TeamIDList(ids).Clone()
+func (u *uc) WithWritableWorkspaces(ids ...id.WorkspaceID) *uc {
+	u.writableWorkspaces = id.WorkspaceIDList(ids).Clone()
 	return u
 }
 
@@ -102,11 +102,11 @@ func Run3[A, B, C any](ctx context.Context, op *usecase.Operator, r *repo.Contai
 
 func (u *uc) checkPermission(op *usecase.Operator) error {
 	ok := true
-	if u.readableTeams != nil {
-		ok = op.IsReadableTeam(u.readableTeams...)
+	if u.readableWorkspaces != nil {
+		ok = op.IsReadableWorkspace(u.readableWorkspaces...)
 	}
-	if ok && u.writableTeams != nil {
-		ok = op.IsWritableTeam(u.writableTeams...)
+	if ok && u.writableWorkspaces != nil {
+		ok = op.IsWritableWorkspace(u.writableWorkspaces...)
 	}
 	if ok && u.readableScenes != nil {
 		ok = op.IsReadableScene(u.readableScenes...)

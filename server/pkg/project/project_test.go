@@ -174,10 +174,10 @@ func TestProject_UpdatePublicTitle(t *testing.T) {
 	assert.Equal(t, "ttt", p.PublicTitle())
 }
 
-func TestProject_UpdateTeam(t *testing.T) {
+func TestProject_UpdateWorkspace(t *testing.T) {
 	p := &Project{}
-	p.UpdateTeam(NewTeamID())
-	assert.NotNil(t, p.Team())
+	p.UpdateWorkspace(NewWorkspaceID())
+	assert.NotNil(t, p.Workspace())
 }
 
 func TestProject_UpdateVisualizer(t *testing.T) {

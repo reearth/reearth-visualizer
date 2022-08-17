@@ -17,7 +17,7 @@ func New() *repo.Container {
 	c.Property = NewProperty()
 	c.Scene = NewScene()
 	c.Tag = NewTag()
-	c.Team = NewTeam()
+	c.Workspace = NewWorkspace()
 	c.User = NewUser()
 	c.SceneLock = NewSceneLock()
 	c.Transaction = NewTransaction()

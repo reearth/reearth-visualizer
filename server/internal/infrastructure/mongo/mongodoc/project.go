@@ -27,7 +27,7 @@ type ProjectDocument struct {
 	PublicDescription string
 	PublicImage       string
 	PublicNoIndex     bool
-	Team              string
+	Team              string // DON'T CHANGE NAME'
 	Visualizer        string
 	PublishmentStatus string
 }
@@ -77,7 +77,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		PublicDescription: project.PublicDescription(),
 		PublicImage:       project.PublicImage(),
 		PublicNoIndex:     project.PublicNoIndex(),
-		Team:              project.Team().String(),
+		Team:              project.Workspace().String(),
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 	}, pid
@@ -88,7 +88,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.TeamIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
 		PublicNoIndex(d.PublicNoIndex).
-		Team(tid).
+		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
 		Build()

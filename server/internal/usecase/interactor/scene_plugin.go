@@ -30,7 +30,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
 
@@ -95,7 +95,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(scene.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(scene.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
@@ -185,7 +185,7 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteTeam(s.Team(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, err
 	}
 

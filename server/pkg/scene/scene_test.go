@@ -7,53 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestScene_IsTeamIncluded(t *testing.T) {
-	tid := NewTeamID()
-
-	tests := []struct {
-		Name     string
-		Teams    []TeamID
-		S        *Scene
-		Expected bool
-	}{
-		{
-			Name:     "nil scene",
-			Teams:    []TeamID{NewTeamID()},
-			S:        nil,
-			Expected: false,
-		},
-		{
-			Name:     "nil teams",
-			Teams:    nil,
-			S:        New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).MustBuild(),
-			Expected: false,
-		},
-		{
-			Name:     "teams exist",
-			Teams:    []TeamID{tid},
-			S:        New().NewID().Team(tid).RootLayer(NewLayerID()).MustBuild(),
-			Expected: true,
-		},
-		{
-			Name:     "teams not exist",
-			Teams:    []TeamID{tid},
-			S:        New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).MustBuild(),
-			Expected: false,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.S.IsTeamIncluded(tc.Teams)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
 func TestScene_SetUpdatedAt(t *testing.T) {
-	s := New().NewID().Team(NewTeamID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
+	s := New().NewID().Workspace(NewWorkspaceID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
 	s.SetUpdatedAt(time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC))
 	assert.Equal(t, time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC), s.UpdatedAt())
 	s = nil
@@ -66,7 +21,7 @@ func TestScene_Properties(t *testing.T) {
 	pid2 := NewPropertyID()
 	s := New().
 		NewID().
-		Team(NewTeamID()).
+		Workspace(NewWorkspaceID()).
 		RootLayer(NewLayerID()).
 		Property(pid1).
 		Widgets(
@@ -85,7 +40,7 @@ func TestSceneNil(t *testing.T) {
 	assert.True(t, s.ID().IsEmpty())
 	assert.Nil(t, s.Widgets())
 	assert.True(t, s.Project().IsEmpty())
-	assert.True(t, s.Team().IsEmpty())
+	assert.True(t, s.Workspace().IsEmpty())
 	assert.True(t, s.RootLayer().IsEmpty())
 	assert.True(t, s.CreatedAt().IsZero())
 	assert.Nil(t, s.Plugins())

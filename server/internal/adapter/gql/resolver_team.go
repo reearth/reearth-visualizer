@@ -18,7 +18,7 @@ func (r *Resolver) TeamMember() TeamMemberResolver {
 type teamResolver struct{ *Resolver }
 
 func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
-	return loaders(ctx).Asset.FindByTeam(ctx, obj.ID, nil, nil, &gqlmodel.Pagination{
+	return loaders(ctx).Asset.FindByWorkspace(ctx, obj.ID, nil, nil, &gqlmodel.Pagination{
 		First:  first,
 		Last:   last,
 		After:  after,
@@ -27,7 +27,7 @@ func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *in
 }
 
 func (r *teamResolver) Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByTeam(ctx, obj.ID, first, last, before, after)
+	return loaders(ctx).Project.FindByWorkspace(ctx, obj.ID, first, last, before, after)
 }
 
 type teamMemberResolver struct{ *Resolver }

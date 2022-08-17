@@ -5,18 +5,18 @@ import (
 )
 
 type ID = id.ProjectID
-type TeamID = id.TeamID
+type WorkspaceID = id.WorkspaceID
 
 var NewID = id.NewProjectID
-var NewTeamID = id.NewTeamID
+var NewWorkspaceID = id.NewWorkspaceID
 
 var MustID = id.MustProjectID
-var MustTeamID = id.MustTeamID
+var MustWorkspaceID = id.MustWorkspaceID
 
 var IDFrom = id.ProjectIDFrom
-var TeamIDFrom = id.TeamIDFrom
+var WorkspaceIDFrom = id.WorkspaceIDFrom
 
 var IDFromRef = id.ProjectIDFromRef
-var TeamIDFromRef = id.TeamIDFromRef
+var WorkspaceIDFromRef = id.WorkspaceIDFromRef
 
 var ErrInvalidID = id.ErrInvalidID

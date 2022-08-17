@@ -8,26 +8,26 @@ import (
 )
 
 func TestBuilder_IDs(t *testing.T) {
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	lid := NewLayerID()
-	b := New().NewID().RootLayer(lid).Team(tid).MustBuild()
+	b := New().NewID().RootLayer(lid).Workspace(tid).MustBuild()
 	assert.NotNil(t, b.ID())
-	assert.Equal(t, tid, b.Team())
+	assert.Equal(t, tid, b.Workspace())
 	assert.Equal(t, lid, b.RootLayer())
 	sid := NewID()
-	b2 := New().ID(sid).RootLayer(lid).Team(tid).MustBuild()
+	b2 := New().ID(sid).RootLayer(lid).Workspace(tid).MustBuild()
 	assert.Equal(t, sid, b2.ID())
 }
 
 func TestBuilder_UpdatedAt(t *testing.T) {
 	ti := time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC)
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).UpdatedAt(ti).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).UpdatedAt(ti).MustBuild()
 	assert.Equal(t, ti, b.UpdatedAt())
 }
 
 func TestBuilder_Property(t *testing.T) {
 	pid := NewPropertyID()
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Property(pid).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Property(pid).MustBuild()
 	assert.Equal(t, pid, b.Property())
 }
 
@@ -35,13 +35,13 @@ func TestBuilder_Plugins(t *testing.T) {
 	ps := NewPlugins([]*Plugin{
 		NewPlugin(OfficialPluginID, NewPropertyID().Ref()),
 	})
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Plugins(ps).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Plugins(ps).MustBuild()
 	assert.Equal(t, ps, b.Plugins())
 }
 
 func TestBuilder_Project(t *testing.T) {
 	pid := NewProjectID()
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Project(pid).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Project(pid).MustBuild()
 	assert.Equal(t, pid, b.Project())
 }
 
@@ -49,12 +49,12 @@ func TestBuilder_Widgets(t *testing.T) {
 	ws := NewWidgets([]*Widget{
 		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", NewPropertyID(), true, false),
 	}, nil)
-	b := New().NewID().RootLayer(NewLayerID()).Team(NewTeamID()).Widgets(ws).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Widgets(ws).MustBuild()
 	assert.Equal(t, ws, b.Widgets())
 }
 
 func TestBuilder_Build(t *testing.T) {
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	sid := NewID()
 	pid := NewProjectID()
 	ppid := NewPropertyID()
@@ -69,7 +69,7 @@ func TestBuilder_Build(t *testing.T) {
 	type args struct {
 		ID        ID
 		Project   ProjectID
-		Team      TeamID
+		Workspace WorkspaceID
 		RootLayer LayerID
 		Widgets   *Widgets
 		Plugins   *Plugins
@@ -88,7 +88,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        ID{},
 				Project:   pid,
-				Team:      tid,
+				Workspace: tid,
 				RootLayer: lid,
 				Widgets:   ws,
 				Plugins:   ps,
@@ -98,11 +98,11 @@ func TestBuilder_Build(t *testing.T) {
 			Err: ErrInvalidID,
 		},
 		{
-			Name: "fail nil team id",
+			Name: "fail nil workspace id",
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Team:      TeamID{},
+				Workspace: WorkspaceID{},
 				RootLayer: lid,
 				Widgets:   ws,
 				Plugins:   ps,
@@ -116,7 +116,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Team:      tid,
+				Workspace: tid,
 				RootLayer: LayerID{},
 				Widgets:   ws,
 				Plugins:   ps,
@@ -130,7 +130,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Team:      tid,
+				Workspace: tid,
 				RootLayer: lid,
 				Widgets:   ws,
 				Plugins:   ps,
@@ -140,7 +140,7 @@ func TestBuilder_Build(t *testing.T) {
 			Expected: &Scene{
 				id:        sid,
 				project:   pid,
-				team:      tid,
+				workspace: tid,
 				rootLayer: lid,
 				widgets:   ws,
 				plugins:   ps,
@@ -161,7 +161,7 @@ func TestBuilder_Build(t *testing.T) {
 				Plugins(tt.Args.Plugins).
 				Property(tt.Args.Property).
 				RootLayer(tt.Args.RootLayer).
-				Team(tt.Args.Team).
+				Workspace(tt.Args.Workspace).
 				UpdatedAt(tt.Args.UpdatedAt).
 				Build()
 
@@ -175,7 +175,7 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	tid := NewTeamID()
+	tid := NewWorkspaceID()
 	sid := NewID()
 	pid := NewProjectID()
 	ppid := NewPropertyID()
@@ -191,7 +191,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	type args struct {
 		ID                ID
 		Project           ProjectID
-		Team              TeamID
+		Workspace         WorkspaceID
 		RootLayer         LayerID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
@@ -211,7 +211,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                ID{},
 				Project:           pid,
-				Team:              tid,
+				Workspace:         tid,
 				RootLayer:         lid,
 				Widgets:           ws,
 				WidgetAlignSystem: was,
@@ -222,11 +222,11 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Err: ErrInvalidID,
 		},
 		{
-			Name: "fail nil team id",
+			Name: "fail nil workspace id",
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Team:              TeamID{},
+				Workspace:         WorkspaceID{},
 				RootLayer:         lid,
 				Widgets:           ws,
 				WidgetAlignSystem: was,
@@ -241,7 +241,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Team:              tid,
+				Workspace:         tid,
 				RootLayer:         LayerID{},
 				Widgets:           ws,
 				WidgetAlignSystem: was,
@@ -256,7 +256,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Team:              tid,
+				Workspace:         tid,
 				RootLayer:         lid,
 				Widgets:           ws,
 				WidgetAlignSystem: was,
@@ -267,7 +267,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Expected: &Scene{
 				id:        sid,
 				project:   pid,
-				team:      tid,
+				workspace: tid,
 				rootLayer: lid,
 				widgets:   ws,
 				plugins:   ps,
@@ -291,7 +291,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					Plugins(tt.Args.Plugins).
 					Property(tt.Args.Property).
 					RootLayer(tt.Args.RootLayer).
-					Team(tt.Args.Team).
+					Workspace(tt.Args.Workspace).
 					UpdatedAt(tt.Args.UpdatedAt).
 					MustBuild()
 			}
