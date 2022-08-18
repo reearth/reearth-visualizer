@@ -41,6 +41,8 @@ type Layer struct {
 	sceneRepo          repo.Scene
 	sceneLockRepo      repo.SceneLock
 	transaction        repo.Transaction
+	policyRepo         repo.Policy
+	workspaceRepo      repo.Workspace
 }
 
 func NewLayer(r *repo.Container) interfaces.Layer {
@@ -56,6 +58,8 @@ func NewLayer(r *repo.Container) interfaces.Layer {
 		sceneRepo:          r.Scene,
 		sceneLockRepo:      r.SceneLock,
 		transaction:        r.Transaction,
+		policyRepo:         r.Policy,
+		workspaceRepo:      r.Workspace,
 	}
 }
 
@@ -175,6 +179,30 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 		return nil, nil, err
 	}
 
+	s, err := i.sceneRepo.FindByID(ctx, parentLayer.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+		s, err := i.layerRepo.CountByScene(ctx, s.ID())
+		if err != nil {
+			return nil, nil, err
+		}
+		if err := p.EnforceLayerCount(s); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	// check scene lock
 	if err := i.CheckSceneLock(ctx, parentLayer.Scene()); err != nil {
 		return nil, nil, err
@@ -254,6 +282,38 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	parentLayer, err := i.layerRepo.FindGroupByID(ctx, inp.ParentLayerID)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, parentLayer.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+		s, err := i.layerRepo.CountByScene(ctx, s.ID())
+		if err != nil {
+			return nil, nil, err
+		}
+		dsc := 0
+		if inp.LinkedDatasetSchemaID != nil {
+			dsc, err = i.datasetRepo.CountBySchema(ctx, *inp.LinkedDatasetSchemaID)
+			if err != nil {
+				return nil, nil, err
+			}
+		}
+
+		if err := p.EnforceLayerCount(s + dsc); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	// check scene lock

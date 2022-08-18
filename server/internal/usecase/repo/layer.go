@@ -24,6 +24,7 @@ type Layer interface {
 	FindByProperty(context.Context, id.PropertyID) (layer.Layer, error)
 	FindByScene(context.Context, id.SceneID) (layer.List, error)
 	FindByTag(context.Context, id.TagID) (layer.List, error)
+	CountByScene(context.Context, id.SceneID) (int, error)
 	Save(context.Context, layer.Layer) error
 	SaveAll(context.Context, layer.List) error
 	UpdatePlugin(context.Context, id.PluginID, id.PluginID) error

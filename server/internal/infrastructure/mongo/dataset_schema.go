@@ -117,7 +117,7 @@ func (r *datasetSchemaRepo) Save(ctx context.Context, datasetSchema *dataset.Sch
 }
 
 func (r *datasetSchemaRepo) SaveAll(ctx context.Context, datasetSchemas dataset.SchemaList) error {
-	if datasetSchemas == nil || len(datasetSchemas) == 0 {
+	if len(datasetSchemas) == 0 {
 		return nil
 	}
 	docs, ids := mongodoc.NewDatasetSchemas(datasetSchemas, r.f.Writable)

@@ -53,6 +53,26 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 			WithWritableWorkspaces(inp.WorkspaceID).
 			Transaction(),
 		func() (*asset.Asset, error) {
+			ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
+			if err != nil {
+				return nil, err
+			}
+
+			// enforce policy
+			if policyID := operator.Policy(ws.Policy()); policyID != nil {
+				p, err := i.repos.Policy.FindByID(ctx, *policyID)
+				if err != nil {
+					return nil, err
+				}
+				s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
+				if err != nil {
+					return nil, err
+				}
+				if err := p.EnforceAssetStorageSize(s + inp.File.Size); err != nil {
+					return nil, err
+				}
+			}
+
 			url, err := i.gateways.File.UploadAsset(ctx, inp.File)
 			if err != nil {
 				return nil, err

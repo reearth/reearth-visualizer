@@ -68,7 +68,7 @@ func (r *sceneRepo) FindByWorkspace(ctx context.Context, workspaces ...id.Worksp
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, nil, bson.M{
-		"team": bson.M{"$in": user.WorkspaceIDList(workspaces).Strings()},
+		"team": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err

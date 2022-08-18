@@ -175,6 +175,17 @@ func (r *layerRepo) FindByTag(ctx context.Context, tagID id.TagID) (layer.List, 
 	})
 }
 
+func (r *layerRepo) CountByScene(ctx context.Context, sid id.SceneID) (int, error) {
+	if !r.f.CanRead(sid) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	c, err := r.client.Count(ctx, bson.M{
+		"scene": sid.String(),
+	})
+	return int(c), err
+}
+
 func (r *layerRepo) Save(ctx context.Context, layer layer.Layer) error {
 	if !r.f.CanWrite(layer.Scene()) {
 		return repo.ErrOperationDenied
@@ -184,7 +195,7 @@ func (r *layerRepo) Save(ctx context.Context, layer layer.Layer) error {
 }
 
 func (r *layerRepo) SaveAll(ctx context.Context, layers layer.List) error {
-	if layers == nil || len(layers) == 0 {
+	if len(layers) == 0 {
 		return nil
 	}
 	docs, ids := mongodoc.NewLayers(layers, r.f.Writable)

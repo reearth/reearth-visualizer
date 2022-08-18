@@ -109,6 +109,22 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter r
 	), nil
 }
 
+func (r *Asset) TotalSizeByWorkspace(_ context.Context, wid id.WorkspaceID) (t int64, err error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(wid) {
+		return 0, nil
+	}
+
+	for _, a := range r.data {
+		if a.Workspace().Equal(wid) {
+			t += a.Size()
+		}
+	}
+	return t, nil
+}
+
 func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {
 	if !r.f.CanWrite(a.Workspace()) {
 		return repo.ErrOperationDenied

@@ -86,8 +86,26 @@ func (r *projectRepo) FindByPublicName(ctx context.Context, name string) (*proje
 }
 
 func (r *projectRepo) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+	if !r.f.CanRead(ws) {
+		return 0, repo.ErrOperationDenied
+	}
+
 	count, err := r.client.Count(ctx, bson.M{
 		"team": ws.String(),
+	})
+	return int(count), err
+}
+
+func (r *projectRepo) CountPublicByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+	if !r.f.CanRead(ws) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	count, err := r.client.Count(ctx, bson.M{
+		"team": ws.String(),
+		"publishmentstatus": bson.M{
+			"$in": []string{"public", "limited"},
+		},
 	})
 	return int(count), err
 }
