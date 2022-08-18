@@ -14,7 +14,6 @@ func TestNewPolicy(t *testing.T) {
 		MemberCount:           lo.ToPtr(100),
 		PublishedProjectCount: lo.ToPtr(0),
 		LayerCount:            nil,
-		DatasetCount:          nil,
 		AssetStorageSize:      nil,
 	}
 	p := NewPolicy(opts)
@@ -108,25 +107,6 @@ func TestPolicy_EnforceLayerCount(t *testing.T) {
 	})
 }
 
-func TestPolicy_EnforceDatasetCount(t *testing.T) {
-	tests := []policyTest[int]{
-		{limit: 0, arg: 0, fail: true},
-		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
-		{limit: 1, arg: 2, fail: true},
-		{limit: 2, arg: 1, fail: false},
-		{limit: 2, arg: 2, fail: true},
-		{limitNil: true, arg: 100, fail: false},
-		{policyNil: true, arg: 100, fail: false},
-	}
-
-	testPolicy(t, tests, func(d int) PolicyOption {
-		return PolicyOption{DatasetCount: lo.ToPtr(d)}
-	}, func(p *Policy, a int) error {
-		return p.EnforceDatasetCount(a)
-	})
-}
-
 func TestPolicy_EnforceAssetStorageSize(t *testing.T) {
 	tests := []policyTest[int64]{
 		{limit: 0, arg: 0, fail: true},
@@ -184,7 +164,6 @@ func TestPolicy_Clone(t *testing.T) {
 			MemberCount:           lo.ToPtr(1),
 			PublishedProjectCount: lo.ToPtr(1),
 			LayerCount:            lo.ToPtr(1),
-			DatasetCount:          lo.ToPtr(1),
 			AssetStorageSize:      lo.ToPtr(int64(1)),
 		},
 	}

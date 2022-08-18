@@ -18,7 +18,6 @@ type PolicyOption struct {
 	MemberCount           *int
 	PublishedProjectCount *int
 	LayerCount            *int
-	DatasetCount          *int
 	AssetStorageSize      *int64
 }
 
@@ -46,10 +45,6 @@ func (p *Policy) EnforceLayerCount(count int) error {
 	return p.error(p == nil || p.opts.LayerCount == nil || *p.opts.LayerCount > count)
 }
 
-func (p *Policy) EnforceDatasetCount(count int) error {
-	return p.error(p == nil || p.opts.DatasetCount == nil || *p.opts.DatasetCount > count)
-}
-
 func (p *Policy) EnforceAssetStorageSize(size int64) error {
 	return p.error(p == nil || p.opts.AssetStorageSize == nil || *p.opts.AssetStorageSize > size)
 }
@@ -75,7 +70,6 @@ func (p PolicyOption) Clone() PolicyOption {
 		MemberCount:           util.CloneRef(p.MemberCount),
 		PublishedProjectCount: util.CloneRef(p.PublishedProjectCount),
 		LayerCount:            util.CloneRef(p.LayerCount),
-		DatasetCount:          util.CloneRef(p.DatasetCount),
 		AssetStorageSize:      util.CloneRef(p.AssetStorageSize),
 	}
 }

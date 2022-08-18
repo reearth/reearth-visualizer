@@ -11,7 +11,6 @@ type PolicyDocument struct {
 	PublishedProjectCount *int
 	MemberCount           *int
 	LayerCount            *int
-	DatasetCount          *int
 	AssetStorageSize      *int64
 }
 
@@ -22,7 +21,6 @@ func (d PolicyDocument) Model() *workspace.Policy {
 		PublishedProjectCount: d.PublishedProjectCount,
 		MemberCount:           d.MemberCount,
 		LayerCount:            d.LayerCount,
-		DatasetCount:          d.DatasetCount,
 		AssetStorageSize:      d.AssetStorageSize,
 	})
 }
