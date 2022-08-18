@@ -14,6 +14,7 @@ type Policy struct {
 
 type PolicyOption struct {
 	ID                    PolicyID
+	ProjectCount          *int
 	MemberCount           *int
 	PublishedProjectCount *int
 	LayerCount            *int
@@ -27,6 +28,10 @@ func NewPolicy(opts PolicyOption) *Policy {
 
 func (p *Policy) ID() PolicyID {
 	return p.opts.ID
+}
+
+func (p *Policy) EnforceProjectCount(count int) error {
+	return p.error(p == nil || p.opts.ProjectCount == nil || *p.opts.ProjectCount > count)
 }
 
 func (p *Policy) EnforceMemberCount(count int) error {

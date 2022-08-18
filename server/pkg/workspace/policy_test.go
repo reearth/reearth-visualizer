@@ -51,6 +51,25 @@ func TestPolicy_EnforceMemberCount(t *testing.T) {
 	})
 }
 
+func TestPolicy_EnforceProjectCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: true},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: true},
+		{limit: 1, arg: 2, fail: true},
+		{limit: 2, arg: 1, fail: false},
+		{limit: 2, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) PolicyOption {
+		return PolicyOption{ProjectCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforceProjectCount(a)
+	})
+}
+
 func TestPolicy_EnforcePublishedProjectCount(t *testing.T) {
 	tests := []policyTest[int]{
 		{limit: 0, arg: 0, fail: true},

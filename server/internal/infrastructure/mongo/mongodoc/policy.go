@@ -7,8 +7,9 @@ import (
 
 type PolicyDocument struct {
 	ID                    workspace.PolicyID
-	MemberCount           *int
+	ProjectCount          *int
 	PublishedProjectCount *int
+	MemberCount           *int
 	LayerCount            *int
 	DatasetCount          *int
 	AssetStorageSize      *int64
@@ -17,8 +18,9 @@ type PolicyDocument struct {
 func (d PolicyDocument) Model() *workspace.Policy {
 	return workspace.NewPolicy(workspace.PolicyOption{
 		ID:                    d.ID,
-		MemberCount:           d.MemberCount,
+		ProjectCount:          d.ProjectCount,
 		PublishedProjectCount: d.PublishedProjectCount,
+		MemberCount:           d.MemberCount,
 		LayerCount:            d.LayerCount,
 		DatasetCount:          d.DatasetCount,
 		AssetStorageSize:      d.AssetStorageSize,
