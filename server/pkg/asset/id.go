@@ -20,3 +20,8 @@ var IDFromRef = id.AssetIDFromRef
 var WorkspaceIDFromRef = id.WorkspaceIDFromRef
 
 var ErrInvalidID = id.ErrInvalidID
+
+func MockNewID(i ID) func() {
+	NewID = func() ID { return i }
+	return func() { NewID = id.NewAssetID }
+}
