@@ -15,7 +15,7 @@ func TestPolicy_Load(t *testing.T) {
 		ID:          workspace.PolicyID("a"),
 		MemberCount: lo.ToPtr(1),
 	})
-	r := NewPolicyWith([]*workspace.Policy{p})
+	r := NewPolicyWith(p)
 
 	ctx := context.Background()
 	got, err := r.FindByID(ctx, workspace.PolicyID("a"))

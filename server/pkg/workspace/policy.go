@@ -71,6 +71,7 @@ func (p *Policy) Clone() *Policy {
 func (p PolicyOption) Clone() PolicyOption {
 	return PolicyOption{
 		ID:                    p.ID,
+		ProjectCount:          util.CloneRef(p.ProjectCount),
 		MemberCount:           util.CloneRef(p.MemberCount),
 		PublishedProjectCount: util.CloneRef(p.PublishedProjectCount),
 		LayerCount:            util.CloneRef(p.LayerCount),

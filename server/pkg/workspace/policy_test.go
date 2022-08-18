@@ -174,3 +174,21 @@ func testPolicy[T any](t *testing.T, tests []policyTest[T], f func(d T) PolicyOp
 		)
 	}
 }
+
+func TestPolicy_Clone(t *testing.T) {
+	assert.Nil(t, (*Policy)(nil).Clone())
+	p := &Policy{
+		opts: PolicyOption{
+			ID:                    PolicyID("x"),
+			ProjectCount:          lo.ToPtr(1),
+			MemberCount:           lo.ToPtr(1),
+			PublishedProjectCount: lo.ToPtr(1),
+			LayerCount:            lo.ToPtr(1),
+			DatasetCount:          lo.ToPtr(1),
+			AssetStorageSize:      lo.ToPtr(int64(1)),
+		},
+	}
+	got := p.Clone()
+	assert.Equal(t, p, got)
+	assert.NotSame(t, p, got)
+}

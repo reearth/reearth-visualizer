@@ -16,9 +16,12 @@ func NewPolicy() *Policy {
 	return &Policy{}
 }
 
-func NewPolicyWith(policies []*workspace.Policy) *Policy {
+func NewPolicyWith(policies ...*workspace.Policy) *Policy {
 	r := NewPolicy()
 	for _, p := range policies {
+		if p == nil {
+			continue
+		}
 		r.m.Store(p.ID(), p.Clone())
 	}
 	return r
