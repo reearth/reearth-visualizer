@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/reearth/reearth/server/pkg/auth"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
@@ -38,6 +39,7 @@ type Config struct {
 	Marketplace    MarketplaceConfig
 	AssetBaseURL   string `default:"http://localhost:8080/assets"`
 	Origins        []string
+	Policy         PolicyConfig
 	Web            WebConfig
 	SignupSecret   string
 	SignupDisabled bool
@@ -334,4 +336,8 @@ func (c OAuthClientCredentialsConfig) Config() clientcredentials.Config {
 		AuthStyle:      oauth2.AuthStyleInParams,
 		EndpointParams: params,
 	}
+}
+
+type PolicyConfig struct {
+	Default *workspace.PolicyID
 }

@@ -75,6 +75,11 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 		}
 	}()
 
+	_, err = i.workspaceRepo.FindByID(ctx, p.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
 	pb := project.New().
 		NewID().
 		Workspace(p.WorkspaceID).

@@ -3,7 +3,6 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/config"
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"github.com/reearth/reearthx/util"
 )
 
 type ConfigDocument struct {
@@ -19,8 +18,7 @@ type Auth struct {
 
 func NewConfig(c config.Config) ConfigDocument {
 	d := ConfigDocument{
-		DefaultPolicy: util.CloneRef(c.DefaultPolicy),
-		Migration:     c.Migration,
+		Migration: c.Migration,
 	}
 
 	if c.Auth != nil {
@@ -39,8 +37,7 @@ func (c *ConfigDocument) Model() *config.Config {
 	}
 
 	cfg := &config.Config{
-		DefaultPolicy: util.CloneRef(c.DefaultPolicy),
-		Migration:     c.Migration,
+		Migration: c.Migration,
 	}
 
 	if c.Auth != nil {
