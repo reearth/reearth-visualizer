@@ -26,6 +26,13 @@ func NewClient(database string, c *mongo.Client) *Client {
 	}
 }
 
+func NewClientWithDatabase(c *mongo.Database) *Client {
+	return &Client{
+		database: c.Name(),
+		client:   c.Client(),
+	}
+}
+
 func (c *Client) WithCollection(col string) *ClientCollection {
 	return &ClientCollection{
 		Client:         c,

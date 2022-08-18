@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Migration     int64
 	Auth          *Auth
-	DefaultPolicy workspace.PolicyID
+	DefaultPolicy *workspace.PolicyID
 }
 
 type Auth struct {

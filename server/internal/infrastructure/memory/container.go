@@ -5,22 +5,24 @@ import (
 )
 
 func New() *repo.Container {
-	c := &repo.Container{}
-	c.Asset = NewAsset()
-	c.Config = NewConfig()
-	c.DatasetSchema = NewDatasetSchema()
-	c.Dataset = NewDataset()
-	c.Layer = NewLayer()
-	c.Plugin = NewPlugin()
-	c.Project = NewProject()
-	c.PropertySchema = NewPropertySchema()
-	c.Property = NewProperty()
-	c.Scene = NewScene()
-	c.Tag = NewTag()
-	c.Workspace = NewWorkspace()
-	c.User = NewUser()
-	c.SceneLock = NewSceneLock()
-	c.Transaction = NewTransaction()
-	c.Lock = NewLock()
-	return c
+	return &repo.Container{
+		Asset:          NewAsset(),
+		Config:         NewConfig(),
+		DatasetSchema:  NewDatasetSchema(),
+		Dataset:        NewDataset(),
+		Layer:          NewLayer(),
+		Plugin:         NewPlugin(),
+		Project:        NewProject(),
+		PropertySchema: NewPropertySchema(),
+		Property:       NewProperty(),
+		Scene:          NewScene(),
+		Tag:            NewTag(),
+		Workspace:      NewWorkspace(),
+		User:           NewUser(),
+		SceneLock:      NewSceneLock(),
+		Transaction:    NewTransaction(),
+		AuthRequest:    NewAuthRequest(),
+		Policy:         NewPolicy(),
+		Lock:           NewLock(),
+	}
 }

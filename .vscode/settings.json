@@ -1,6 +1,9 @@
 {
-  "editor.formatOnSave": true,
+  // "go.testEnvVars": {
+  //   "REEARTH_DB": "mongodb://localhost"
+  // },
   "go.lintTool": "golangci-lint",
+  "editor.formatOnSave": true,
   "yaml.format.enable": true,
   "yaml.completion": true,
   "yaml.validate": true,

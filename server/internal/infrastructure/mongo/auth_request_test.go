@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/caos/oidc/pkg/oidc"
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/stretchr/testify/assert"
 )
@@ -48,8 +49,7 @@ func TestAuthRequestRepo(t *testing.T) {
 			t.Parallel()
 
 			client := init(t)
-
-			repo := NewAuthRequest(client)
+			repo := NewAuthRequest(mongodoc.NewClientWithDatabase(client))
 
 			ctx := context.Background()
 			err := repo.Save(ctx, tt.Expected.AuthRequest)

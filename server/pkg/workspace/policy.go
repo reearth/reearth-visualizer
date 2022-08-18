@@ -56,6 +56,13 @@ func (*Policy) error(ok bool) error {
 	return nil
 }
 
+func (p *Policy) Clone() *Policy {
+	if p == nil {
+		return nil
+	}
+	return &Policy{opts: p.opts.Clone()}
+}
+
 func (p PolicyOption) Clone() PolicyOption {
 	return PolicyOption{
 		ID:                    p.ID,

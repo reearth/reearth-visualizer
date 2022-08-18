@@ -12,42 +12,45 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func InitRepos(ctx context.Context, c *repo.Container, mc *mongo.Client, databaseName string) error {
+func New(ctx context.Context, mc *mongo.Client, databaseName string) (*repo.Container, error) {
 	if databaseName == "" {
 		databaseName = "reearth"
 	}
 
 	lock, err := NewLock(mc.Database(databaseName).Collection("locks"))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	client := mongodoc.NewClient(databaseName, mc)
-	c.Asset = NewAsset(client)
-	c.AuthRequest = NewAuthRequest(client)
-	c.Config = NewConfig(client, lock)
-	c.DatasetSchema = NewDatasetSchema(client)
-	c.Dataset = NewDataset(client)
-	c.Layer = NewLayer(client)
-	c.Plugin = NewPlugin(client)
-	c.Project = NewProject(client)
-	c.PropertySchema = NewPropertySchema(client)
-	c.Property = NewProperty(client)
-	c.Scene = NewScene(client)
-	c.Tag = NewTag(client)
-	c.Workspace = NewWorkspace(client)
-	c.User = NewUser(client)
-	c.SceneLock = NewSceneLock(client)
-	c.Transaction = NewTransaction(client)
-	c.Lock = lock
+	c := &repo.Container{
+		Asset:          NewAsset(client),
+		AuthRequest:    NewAuthRequest(client),
+		Config:         NewConfig(client, lock),
+		DatasetSchema:  NewDatasetSchema(client),
+		Dataset:        NewDataset(client),
+		Layer:          NewLayer(client),
+		Plugin:         NewPlugin(client),
+		Project:        NewProject(client),
+		PropertySchema: NewPropertySchema(client),
+		Property:       NewProperty(client),
+		Scene:          NewScene(client),
+		Tag:            NewTag(client),
+		Workspace:      NewWorkspace(client),
+		User:           NewUser(client),
+		SceneLock:      NewSceneLock(client),
+		Transaction:    NewTransaction(client),
+		Policy:         NewPolicy(client),
+		Lock:           lock,
+	}
 
 	// migration
 	m := migration.Client{Client: client, Config: c.Config}
 	if err := m.Migrate(ctx); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return c, nil
 }
 
 func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {

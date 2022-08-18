@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
@@ -46,7 +47,7 @@ func TestFindByID(t *testing.T) {
 
 			client := init(t)
 
-			repo := NewAsset(client)
+			repo := NewAsset(mongodoc.NewClientWithDatabase(client))
 			ctx := context.Background()
 			err := repo.Save(ctx, tc.Expected.Asset)
 			assert.NoError(t, err)

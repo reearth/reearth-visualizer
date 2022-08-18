@@ -30,6 +30,7 @@ type Container struct {
 	Workspace      Workspace
 	Transaction    Transaction
 	User           User
+	Policy         Policy
 }
 
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
@@ -45,15 +46,16 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Layer:          c.Layer.Filtered(scene),
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
+		Policy:         c.Policy,
 		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
 		Property:       c.Property.Filtered(scene),
 		Scene:          c.Scene.Filtered(workspace),
 		SceneLock:      c.SceneLock,
 		Tag:            c.Tag.Filtered(scene),
-		Workspace:      c.Workspace,
 		Transaction:    c.Transaction,
 		User:           c.User,
+		Workspace:      c.Workspace,
 	}
 }
 
