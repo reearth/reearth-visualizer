@@ -17,6 +17,13 @@ func (r *Resolver) TeamMember() TeamMemberResolver {
 
 type teamResolver struct{ *Resolver }
 
+func (r *teamResolver) Policy(ctx context.Context, obj *gqlmodel.Team) (*gqlmodel.Policy, error) {
+	if obj.PolicyID == nil {
+		return nil, nil
+	}
+	return single(loaders(ctx).Policy.Fetch(ctx, []gqlmodel.ID{*obj.PolicyID}))
+}
+
 func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
 	return loaders(ctx).Asset.FindByWorkspace(ctx, obj.ID, nil, nil, &gqlmodel.Pagination{
 		First:  first,

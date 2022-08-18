@@ -29,6 +29,10 @@ func (p *Policy) ID() PolicyID {
 	return p.opts.ID
 }
 
+func (p *Policy) Option() PolicyOption {
+	return p.opts.Clone()
+}
+
 func (p *Policy) EnforceProjectCount(count int) error {
 	return p.error(p == nil || p.opts.ProjectCount == nil || *p.opts.ProjectCount > count)
 }

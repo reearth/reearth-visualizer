@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
+	"golang.org/x/exp/slices"
 )
 
 type Policy struct {
@@ -33,4 +34,12 @@ func (r *Policy) FindByID(_ context.Context, id workspace.PolicyID) (*workspace.
 		return nil, rerror.ErrNotFound
 	}
 	return p.Clone(), nil
+}
+
+func (r *Policy) FindByIDs(_ context.Context, ids []workspace.PolicyID) ([]*workspace.Policy, error) {
+	policies := r.m.LoadAll(ids...)
+	slices.SortStableFunc(policies, func(a, b *workspace.Policy) bool {
+		return a.ID() < b.ID()
+	})
+	return util.Map(policies, func(p *workspace.Policy) *workspace.Policy { return p.Clone() }), nil
 }

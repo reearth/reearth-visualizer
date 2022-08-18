@@ -18,16 +18,20 @@ models:
   FileSize:
     model: github.com/99designs/gqlgen/graphql.Int64
   Cursor:
-    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Cursor
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Cursor
   URL:
-    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.URL
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.URL
   TranslatedString:
-    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Map
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Map
   Lang:
-    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.Lang
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Lang
   ID:
-    model: github.com/reearth/reearth-backend/internal/adapter/gql/gqlmodel.ID
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID
   DatasetSchema:
     fields:
       totalCount:
+        resolver: true
+  Team:
+    fields:
+      policy:
         resolver: true

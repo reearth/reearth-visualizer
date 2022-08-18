@@ -18,6 +18,7 @@ type Loaders struct {
 	Dataset   *DatasetLoader
 	Layer     *LayerLoader
 	Plugin    *PluginLoader
+	Policy    *PolicyLoader
 	Project   *ProjectLoader
 	Property  *PropertyLoader
 	Scene     *SceneLoader
@@ -34,6 +35,7 @@ type DataLoaders struct {
 	LayerGroup     LayerGroupDataLoader
 	Layer          LayerDataLoader
 	Plugin         PluginDataLoader
+	Policy         PolicyDataLoader
 	Project        ProjectDataLoader
 	Property       PropertyDataLoader
 	PropertySchema PropertySchemaDataLoader
@@ -55,6 +57,7 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Dataset:   NewDatasetLoader(usecases.Dataset),
 		Layer:     NewLayerLoader(usecases.Layer),
 		Plugin:    NewPluginLoader(usecases.Plugin),
+		Policy:    NewPolicyLoader(usecases.Workspace),
 		Project:   NewProjectLoader(usecases.Project),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
@@ -111,4 +114,16 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 		TagItem:        l.Tag.ItemDataLoader(ctx),
 		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
+}
+
+func single[T any](d []T, e []error) (t T, err error) {
+	if len(e) > 0 {
+		err = e[0]
+		return
+	}
+	if len(d) > 0 {
+		t = d[0]
+		return
+	}
+	return
 }

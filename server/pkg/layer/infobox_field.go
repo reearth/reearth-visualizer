@@ -1,5 +1,3 @@
-//go:generate go run github.com/reearth/reearth-backend/tools/cmd/idgen --name InfoboxField --output ../id
-
 package layer
 
 import (

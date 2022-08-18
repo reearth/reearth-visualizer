@@ -37,6 +37,10 @@ func (i *Workspace) Fetch(ctx context.Context, ids []workspace.ID, operator *use
 	return res2, err
 }
 
+func (i *Workspace) FetchPolicy(ctx context.Context, ids []workspace.PolicyID) ([]*workspace.Policy, error) {
+	return i.policyRepo.FindByIDs(ctx, ids)
+}
+
 func (i *Workspace) FindByUser(ctx context.Context, id workspace.UserID, operator *usecase.Operator) ([]*workspace.Workspace, error) {
 	if err := i.OnlyOperator(operator); err != nil {
 		return nil, err

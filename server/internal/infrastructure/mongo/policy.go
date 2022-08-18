@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -32,6 +33,14 @@ func (r *Policy) FindByID(ctx context.Context, id workspace.PolicyID) (*workspac
 	})
 }
 
+func (r *Policy) FindByIDs(ctx context.Context, ids []workspace.PolicyID) ([]*workspace.Policy, error) {
+	return r.find(ctx, bson.M{
+		"id": bson.M{
+			"$in": util.Map(ids, func(id workspace.PolicyID) string { return id.String() }),
+		},
+	})
+}
+
 func (r *Policy) findOne(ctx context.Context, filter interface{}) (*workspace.Policy, error) {
 	dst := make([]*workspace.Policy, 0, 1)
 	c := mongodoc.PolicyConsumer{
@@ -41,4 +50,15 @@ func (r *Policy) findOne(ctx context.Context, filter interface{}) (*workspace.Po
 		return nil, err
 	}
 	return c.Rows[0], nil
+}
+
+func (r *Policy) find(ctx context.Context, filter interface{}) ([]*workspace.Policy, error) {
+	dst := make([]*workspace.Policy, 0, 1)
+	c := mongodoc.PolicyConsumer{
+		Rows: dst,
+	}
+	if err := r.c.Find(ctx, filter, &c); err != nil {
+		return nil, err
+	}
+	return c.Rows, nil
 }

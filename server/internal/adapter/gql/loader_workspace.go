@@ -31,7 +31,7 @@ func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 
 	workspaces := make([]*gqlmodel.Team, 0, len(res))
 	for _, t := range res {
-		workspaces = append(workspaces, gqlmodel.ToTeam(t))
+		workspaces = append(workspaces, gqlmodel.ToWorkspace(t))
 	}
 	return workspaces, nil
 }
@@ -48,7 +48,7 @@ func (c *WorkspaceLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*g
 	}
 	workspaces := make([]*gqlmodel.Team, 0, len(res))
 	for _, t := range res {
-		workspaces = append(workspaces, gqlmodel.ToTeam(t))
+		workspaces = append(workspaces, gqlmodel.ToWorkspace(t))
 	}
 	return workspaces, nil
 }
