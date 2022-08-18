@@ -1,10 +1,15 @@
 package config
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/reearth/reearth/server/pkg/workspace"
+)
 
 type Config struct {
-	Migration int64
-	Auth      *Auth
+	Migration     int64
+	Auth          *Auth
+	DefaultPolicy workspace.PolicyID
 }
 
 type Auth struct {
