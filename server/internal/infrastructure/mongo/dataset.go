@@ -278,7 +278,7 @@ func (r *datasetRepo) Save(ctx context.Context, dataset *dataset.Dataset) error 
 }
 
 func (r *datasetRepo) SaveAll(ctx context.Context, datasetList dataset.List) error {
-	if datasetList == nil || len(datasetList) == 0 {
+	if len(datasetList) == 0 {
 		return nil
 	}
 	docs, ids := mongodoc.NewDatasets(datasetList, r.f.Writable)

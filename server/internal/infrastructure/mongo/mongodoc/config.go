@@ -1,10 +1,14 @@
 package mongodoc
 
-import "github.com/reearth/reearth/server/pkg/config"
+import (
+	"github.com/reearth/reearth/server/pkg/config"
+	"github.com/reearth/reearth/server/pkg/workspace"
+)
 
 type ConfigDocument struct {
-	Migration int64
-	Auth      *Auth
+	Migration     int64
+	Auth          *Auth
+	DefaultPolicy *workspace.PolicyID
 }
 
 type Auth struct {
@@ -16,12 +20,14 @@ func NewConfig(c config.Config) ConfigDocument {
 	d := ConfigDocument{
 		Migration: c.Migration,
 	}
+
 	if c.Auth != nil {
 		d.Auth = &Auth{
 			Cert: c.Auth.Cert,
 			Key:  c.Auth.Key,
 		}
 	}
+
 	return d
 }
 
@@ -29,14 +35,17 @@ func (c *ConfigDocument) Model() *config.Config {
 	if c == nil {
 		return &config.Config{}
 	}
-	m := &config.Config{
+
+	cfg := &config.Config{
 		Migration: c.Migration,
 	}
+
 	if c.Auth != nil {
-		m.Auth = &config.Auth{
+		cfg.Auth = &config.Auth{
 			Cert: c.Auth.Cert,
 			Key:  c.Auth.Key,
 		}
 	}
-	return m
+
+	return cfg
 }

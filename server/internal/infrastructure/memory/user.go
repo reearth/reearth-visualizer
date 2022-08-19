@@ -4,7 +4,6 @@ import (
 	"context"
 	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/rerror"
@@ -15,10 +14,18 @@ type User struct {
 	data map[id.UserID]*user.User
 }
 
-func NewUser() repo.User {
+func NewUser() *User {
 	return &User{
 		data: map[id.UserID]*user.User{},
 	}
+}
+
+func NewUserWith(users ...*user.User) *User {
+	r := NewUser()
+	for _, u := range users {
+		r.data[u.ID()] = u
+	}
+	return r
 }
 
 func (r *User) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {

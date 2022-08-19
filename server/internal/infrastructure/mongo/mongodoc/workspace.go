@@ -15,6 +15,7 @@ type WorkspaceDocument struct {
 	Name     string
 	Members  map[string]WorkspaceMemberDocument
 	Personal bool
+	Policy   *workspace.PolicyID
 }
 
 type WorkspaceConsumer struct {
@@ -51,6 +52,7 @@ func NewWorkspace(ws *workspace.Workspace) (*WorkspaceDocument, string) {
 		Name:     ws.Name(),
 		Members:  membersDoc,
 		Personal: ws.IsPersonal(),
+		Policy:   ws.Policy(),
 	}, id
 }
 
@@ -75,6 +77,7 @@ func (d *WorkspaceDocument) Model() (*workspace.Workspace, error) {
 		Name(d.Name).
 		Members(members).
 		Personal(d.Personal).
+		Policy(d.Policy).
 		Build()
 }
 

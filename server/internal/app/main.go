@@ -12,7 +12,7 @@ import (
 )
 
 func Start(debug bool, version string) {
-	log.Infof("reearth-backend %s", version)
+	log.Infof("reearth %s", version)
 
 	ctx := context.Background()
 

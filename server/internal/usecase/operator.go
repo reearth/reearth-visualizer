@@ -5,6 +5,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/util"
 )
 
 type Operator struct {
@@ -15,6 +16,7 @@ type Operator struct {
 	ReadableScenes     scene.IDList
 	WritableScenes     scene.IDList
 	OwningScenes       scene.IDList
+	DefaultPolicy      *workspace.PolicyID
 }
 
 func (o *Operator) Workspaces(r workspace.Role) user.WorkspaceIDList {
@@ -91,4 +93,14 @@ func (o *Operator) AddNewScene(ws id.WorkspaceID, scene id.SceneID) {
 	} else if o.IsWritableWorkspace(ws) {
 		o.WritableScenes = append(o.WritableScenes, scene)
 	}
+}
+
+func (o *Operator) Policy(p *workspace.PolicyID) *workspace.PolicyID {
+	if p == nil && o.DefaultPolicy != nil && *o.DefaultPolicy != "" {
+		return util.CloneRef(o.DefaultPolicy)
+	}
+	if p != nil && *p == "" {
+		return nil
+	}
+	return p
 }

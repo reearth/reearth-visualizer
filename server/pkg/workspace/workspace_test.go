@@ -15,6 +15,8 @@ func TestWorkspace_ID(t *testing.T) {
 func TestWorkspace_Name(t *testing.T) {
 	tm := New().NewID().Name("ttt").MustBuild()
 	assert.Equal(t, "ttt", tm.Name())
+	tm.Rename("ccc")
+	assert.Equal(t, "ccc", tm.Name())
 }
 
 func TestWorkspace_Members(t *testing.T) {
@@ -30,8 +32,8 @@ func TestWorkspace_IsPersonal(t *testing.T) {
 	assert.Equal(t, true, tm.IsPersonal())
 }
 
-func TestWorkspace_Rename(t *testing.T) {
+func TestWorkspace_Policy(t *testing.T) {
 	tm := New().NewID().Name("ttt").MustBuild()
-	tm.Rename("ccc")
-	assert.Equal(t, "ccc", tm.Name())
+	tm.SetPolicy(PolicyID("ccc").Ref())
+	assert.Equal(t, PolicyID("ccc").Ref(), tm.Policy())
 }

@@ -7,13 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/uuid"
 )
 
-func connect(t *testing.T) func(*testing.T) *mongodoc.Client {
+func connect(t *testing.T) func(*testing.T) *mongo.Database {
 	t.Helper()
 
 	// Skip unit testing if "REEARTH_DB" is not configured
@@ -31,17 +30,17 @@ func connect(t *testing.T) func(*testing.T) *mongodoc.Client {
 			SetConnectTimeout(time.Second*10),
 	)
 
-	return func(t *testing.T) *mongodoc.Client {
+	return func(t *testing.T) *mongo.Database {
 		t.Helper()
 
 		database, _ := uuid.New()
 		databaseName := "reearth-test-" + hex.EncodeToString(database[:])
-		client := mongodoc.NewClient(databaseName, c)
+		d := c.Database(databaseName)
 
 		t.Cleanup(func() {
-			_ = c.Database(databaseName).Drop(context.Background())
+			_ = d.Drop(context.Background())
 		})
 
-		return client
+		return d
 	}
 }

@@ -1,27 +1,38 @@
 package workspace
 
+import "github.com/reearth/reearthx/util"
+
 type Workspace struct {
 	id      ID
 	name    string
 	members *Members
+	policy  *PolicyID
 }
 
-func (t *Workspace) ID() ID {
-	return t.id
+func (w *Workspace) ID() ID {
+	return w.id
 }
 
-func (t *Workspace) Name() string {
-	return t.name
+func (w *Workspace) Name() string {
+	return w.name
 }
 
-func (t *Workspace) Members() *Members {
-	return t.members
+func (w *Workspace) Members() *Members {
+	return w.members
 }
 
-func (t *Workspace) IsPersonal() bool {
-	return t.members.Fixed()
+func (w *Workspace) IsPersonal() bool {
+	return w.members.Fixed()
 }
 
-func (t *Workspace) Rename(name string) {
-	t.name = name
+func (w *Workspace) Policy() *PolicyID {
+	return util.CloneRef(w.policy)
+}
+
+func (w *Workspace) Rename(name string) {
+	w.name = name
+}
+
+func (w *Workspace) SetPolicy(policy *PolicyID) {
+	w.policy = util.CloneRef(policy)
 }

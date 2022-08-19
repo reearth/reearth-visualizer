@@ -5,9 +5,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestFindByID(t *testing.T) {
@@ -46,7 +49,7 @@ func TestFindByID(t *testing.T) {
 
 			client := init(t)
 
-			repo := NewAsset(client)
+			repo := NewAsset(mongodoc.NewClientWithDatabase(client))
 			ctx := context.Background()
 			err := repo.Save(ctx, tc.Expected.Asset)
 			assert.NoError(t, err)
@@ -62,4 +65,28 @@ func TestFindByID(t *testing.T) {
 			assert.Equal(t, tc.Expected.Asset.ContentType(), got.ContentType())
 		})
 	}
+}
+
+func TestAsset_TotalSizeByWorkspace(t *testing.T) {
+	c := connect(t)(t)
+	ctx := context.Background()
+	wid := id.NewWorkspaceID()
+	wid2 := id.NewWorkspaceID()
+	_, _ = c.Collection("asset").InsertMany(ctx, []any{
+		bson.M{"id": "x", "team": wid.String(), "size": 10000000},
+		bson.M{"id": "y", "team": wid.String(), "size": 1},
+		bson.M{"id": "z", "team": "x", "size": 1},
+	})
+
+	r := NewAsset(mongodoc.NewClientWithDatabase(c))
+	got, err := r.TotalSizeByWorkspace(ctx, wid)
+	assert.Equal(t, int64(10000001), got)
+	assert.NoError(t, err)
+
+	r = r.Filtered(repo.WorkspaceFilter{
+		Readable: id.WorkspaceIDList{wid2},
+	})
+	got, err = r.TotalSizeByWorkspace(ctx, wid)
+	assert.Equal(t, repo.ErrOperationDenied, err)
+	assert.Zero(t, got)
 }

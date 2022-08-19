@@ -36,6 +36,10 @@ func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *use
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	if !r.f.CanRead(id) {
+		return nil, nil, nil
+	}
+
 	result := []*project.Project{}
 	for _, d := range r.data {
 		if d.Workspace() == id {
@@ -58,6 +62,22 @@ func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *use
 		true,
 		true,
 	), nil
+}
+
+func (r *Project) FindIDsByWorkspace(ctx context.Context, id id.WorkspaceID) (res []project.ID, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(id) {
+		return nil, nil
+	}
+
+	for _, d := range r.data {
+		if d.Workspace().Equal(id) {
+			res = append(res, d.ID())
+		}
+	}
+	return
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
@@ -100,13 +120,25 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (c int, err error) {
+func (r *Project) CountByWorkspace(_ context.Context, ws id.WorkspaceID) (n int, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	for _, p := range r.data {
 		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) {
-			c++
+			n++
+		}
+	}
+	return
+}
+
+func (r *Project) CountPublicByWorkspace(_ context.Context, ws id.WorkspaceID) (n int, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, p := range r.data {
+		if p.Workspace().Equal(ws) && r.f.CanRead(p.Workspace()) && p.PublishmentStatus() == project.PublishmentStatusPublic {
+			n++
 		}
 	}
 	return

@@ -74,6 +74,32 @@ func (r *assetRepo) FindByWorkspace(ctx context.Context, id id.WorkspaceID, uFil
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
+func (r *assetRepo) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (int64, error) {
+	if !r.f.CanRead(wid) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	c, err := r.client.Collection().Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"team": wid.String()}},
+		{"$group": bson.M{"_id": nil, "size": bson.M{"$sum": "$size"}}},
+	})
+	if err != nil {
+		return 0, rerror.ErrInternalBy(err)
+	}
+	defer func() {
+		_ = c.Close(ctx)
+	}()
+	_ = c.Next(ctx)
+	type resp struct {
+		Size int64
+	}
+	var res resp
+	if err := c.Decode(&res); err != nil {
+		return 0, rerror.ErrInternalBy(err)
+	}
+	return res.Size, nil
+}
+
 func (r *assetRepo) Save(ctx context.Context, asset *asset.Asset) error {
 	if !r.f.CanWrite(asset.Workspace()) {
 		return repo.ErrOperationDenied

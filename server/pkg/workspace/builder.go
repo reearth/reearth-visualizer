@@ -1,5 +1,7 @@
 package workspace
 
+import "github.com/reearth/reearthx/util"
+
 type Builder struct {
 	t        *Workspace
 	members  map[UserID]Role
@@ -53,5 +55,10 @@ func (b *Builder) Members(members map[UserID]Role) *Builder {
 
 func (b *Builder) Personal(p bool) *Builder {
 	b.personal = p
+	return b
+}
+
+func (b *Builder) Policy(p *PolicyID) *Builder {
+	b.t.policy = util.CloneRef(p)
 	return b
 }

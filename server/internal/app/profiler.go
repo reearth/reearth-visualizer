@@ -19,7 +19,7 @@ func initProfiler(kind string, version string) {
 
 func initGCPProfiler(version string) {
 	if err := profiler.Start(profiler.Config{
-		Service:        "reearth-backend",
+		Service:        "reearth",
 		ServiceVersion: version,
 	}); err != nil {
 		log.Fatalln(err)

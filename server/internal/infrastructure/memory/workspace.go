@@ -4,7 +4,6 @@ import (
 	"context"
 	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
@@ -15,10 +14,18 @@ type Workspace struct {
 	data map[id.WorkspaceID]*workspace.Workspace
 }
 
-func NewWorkspace() repo.Workspace {
+func NewWorkspace() *Workspace {
 	return &Workspace{
 		data: map[id.WorkspaceID]*workspace.Workspace{},
 	}
+}
+
+func NewWorkspaceWith(workspaces ...*workspace.Workspace) *Workspace {
+	r := NewWorkspace()
+	for _, ws := range workspaces {
+		r.data[ws.ID()] = ws
+	}
+	return r
 }
 
 func (r *Workspace) FindByUser(ctx context.Context, i id.UserID) (workspace.List, error) {

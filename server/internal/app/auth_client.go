@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/util"
 )
 
 func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
@@ -109,6 +110,7 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 		ReadableScenes:     scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
 		WritableScenes:     scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
 		OwningScenes:       scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
+		DefaultPolicy:      util.CloneRef(cfg.Config.Policy.Default),
 	}, nil
 }
 

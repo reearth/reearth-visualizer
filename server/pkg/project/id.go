@@ -20,3 +20,10 @@ var IDFromRef = id.ProjectIDFromRef
 var WorkspaceIDFromRef = id.WorkspaceIDFromRef
 
 var ErrInvalidID = id.ErrInvalidID
+
+func MockNewID(pid ID) func() {
+	NewID = func() ID { return pid }
+	return func() {
+		NewID = id.NewProjectID
+	}
+}

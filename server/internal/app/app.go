@@ -34,7 +34,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	e.Use(
 		logger.Hook(),
 		middleware.Recover(),
-		otelecho.Middleware("reearth-backend"),
+		otelecho.Middleware("reearth"),
 	)
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
@@ -65,7 +65,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	gqldev := cfg.Debug || cfg.Config.Dev
 	if gqldev {
 		e.GET("/graphql", echo.WrapHandler(
-			playground.Handler("reearth-backend", "/api/graphql"),
+			playground.Handler("reearth", "/api/graphql"),
 		))
 		log.Infof("gql: GraphQL Playground is available")
 	}

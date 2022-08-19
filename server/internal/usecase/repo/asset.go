@@ -19,6 +19,7 @@ type Asset interface {
 	FindByWorkspace(context.Context, id.WorkspaceID, AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error)
 	FindByID(context.Context, id.AssetID) (*asset.Asset, error)
 	FindByIDs(context.Context, id.AssetIDList) ([]*asset.Asset, error)
+	TotalSizeByWorkspace(context.Context, id.WorkspaceID) (int64, error)
 	Save(context.Context, *asset.Asset) error
 	Remove(context.Context, id.AssetID) error
 }

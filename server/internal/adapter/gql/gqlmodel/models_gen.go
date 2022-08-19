@@ -719,6 +719,14 @@ type PluginExtension struct {
 	TranslatedDescription    string              `json:"translatedDescription"`
 }
 
+type Policy struct {
+	ProjectCount          *int   `json:"projectCount"`
+	MemberCount           *int   `json:"memberCount"`
+	PublishedProjectCount *int   `json:"publishedProjectCount"`
+	LayerCount            *int   `json:"layerCount"`
+	AssetStorageSize      *int64 `json:"assetStorageSize"`
+}
+
 type Project struct {
 	ID                ID                `json:"id"`
 	IsArchived        bool              `json:"isArchived"`
@@ -1109,6 +1117,8 @@ type Team struct {
 	Name     string             `json:"name"`
 	Members  []*TeamMember      `json:"members"`
 	Personal bool               `json:"personal"`
+	PolicyID *ID                `json:"policyId"`
+	Policy   *Policy            `json:"policy"`
 	Assets   *AssetConnection   `json:"assets"`
 	Projects *ProjectConnection `json:"projects"`
 }

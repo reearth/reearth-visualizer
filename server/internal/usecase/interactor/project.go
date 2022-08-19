@@ -31,6 +31,7 @@ type Project struct {
 	datasetSchemaRepo repo.DatasetSchema
 	tagRepo           repo.Tag
 	transaction       repo.Transaction
+	policyRepo        repo.Policy
 	file              gateway.File
 }
 
@@ -48,6 +49,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		datasetSchemaRepo: r.DatasetSchema,
 		tagRepo:           r.Tag,
 		transaction:       r.Transaction,
+		policyRepo:        r.Policy,
 		file:              gr.File,
 	}
 }
@@ -74,6 +76,28 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 			err = err2
 		}
 	}()
+
+	ws, err := i.workspaceRepo.FindByID(ctx, p.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+
+		projectCount, err := i.projectRepo.CountByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.EnforceProjectCount(projectCount); err != nil {
+			return nil, err
+		}
+	}
 
 	pb := project.New().
 		NewID().
@@ -231,6 +255,26 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	}
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
+	if err != nil {
+		return nil, err
+	}
+
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+		if err := p.EnforcePublishedProjectCount(s); err != nil {
+			return nil, err
+		}
 	}
 
 	s, err := i.sceneRepo.FindByProject(ctx, params.ID)

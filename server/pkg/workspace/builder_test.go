@@ -33,6 +33,11 @@ func TestBuilder_NewID(t *testing.T) {
 	assert.NotNil(t, tm.ID())
 }
 
+func TestBuilder_Policy(t *testing.T) {
+	tm := New().NewID().Policy(PolicyID("aaa").Ref()).MustBuild()
+	assert.Equal(t, PolicyID("aaa").Ref(), tm.Policy())
+}
+
 func TestBuilder_Build(t *testing.T) {
 	tid := NewID()
 	uid := NewUserID()

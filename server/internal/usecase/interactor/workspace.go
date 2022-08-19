@@ -13,14 +13,16 @@ type Workspace struct {
 	common
 	workspaceRepo repo.Workspace
 	projectRepo   repo.Project
+	policyRepo    repo.Policy
 	userRepo      repo.User
 	transaction   repo.Transaction
 }
 
-func NewWorkspace(r *repo.Container) interfaces.Workspace {
+func NewWorkspace(r *repo.Container) *Workspace {
 	return &Workspace{
 		workspaceRepo: r.Workspace,
 		projectRepo:   r.Project,
+		policyRepo:    r.Policy,
 		userRepo:      r.User,
 		transaction:   r.Transaction,
 	}
@@ -33,6 +35,10 @@ func (i *Workspace) Fetch(ctx context.Context, ids []workspace.ID, operator *use
 	res, err := i.workspaceRepo.FindByIDs(ctx, ids)
 	res2, err := i.filterWorkspaces(res, operator, err)
 	return res2, err
+}
+
+func (i *Workspace) FetchPolicy(ctx context.Context, ids []workspace.PolicyID) ([]*workspace.Policy, error) {
+	return i.policyRepo.FindByIDs(ctx, ids)
 }
 
 func (i *Workspace) FindByUser(ctx context.Context, id workspace.UserID, operator *usecase.Operator) ([]*workspace.Workspace, error) {
@@ -124,8 +130,13 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 		}
 	}()
 
-	if operator == nil {
+	if operator == nil || !operator.IsOwningWorkspace(id) {
 		return nil, interfaces.ErrOperationDenied
+	}
+
+	_, err = i.userRepo.FindByID(ctx, u)
+	if err != nil {
+		return nil, err
 	}
 
 	ws, err := i.workspaceRepo.FindByID(ctx, id)
@@ -135,22 +146,23 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 	if ws.IsPersonal() {
 		return nil, workspace.ErrCannotModifyPersonalWorkspace
 	}
-	if ws.Members().GetRole(operator.User) != workspace.RoleOwner {
-		return nil, interfaces.ErrOperationDenied
+
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		if err := p.EnforceMemberCount(ws.Members().Count()); err != nil {
+			return nil, err
+		}
 	}
 
-	_, err = i.userRepo.FindByID(ctx, u)
-	if err != nil {
+	if err := ws.Members().Join(u, role); err != nil {
 		return nil, err
 	}
 
-	err = ws.Members().Join(u, role)
-	if err != nil {
-		return nil, err
-	}
-
-	err = i.workspaceRepo.Save(ctx, ws)
-	if err != nil {
+	if err := i.workspaceRepo.Save(ctx, ws); err != nil {
 		return nil, err
 	}
 

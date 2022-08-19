@@ -1,6 +1,8 @@
 package config
 
-import "sort"
+import (
+	"sort"
+)
 
 type Config struct {
 	Migration int64

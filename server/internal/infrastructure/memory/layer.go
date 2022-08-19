@@ -282,6 +282,22 @@ func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID) (layer.List, erro
 	return res, nil
 }
 
+func (r *Layer) CountByScene(_ context.Context, sid id.SceneID) (n int, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(sid) {
+		return
+	}
+
+	for _, d := range r.data {
+		if d.Scene().Equal(sid) {
+			n++
+		}
+	}
+	return
+}
+
 func (r *Layer) Save(ctx context.Context, l layer.Layer) error {
 	if !r.f.CanWrite(l.Scene()) {
 		return repo.ErrOperationDenied

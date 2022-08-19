@@ -181,6 +181,8 @@ type Team implements Node {
   name: String!
   members: [TeamMember!]!
   personal: Boolean!
+  policyId: ID
+  policy: Policy
   assets(
     first: Int
     last: Int
@@ -200,6 +202,14 @@ type TeamMember {
   userId: ID!
   role: Role!
   user: User @goField(forceResolver: true)
+}
+
+type Policy {
+	projectCount: Int
+	memberCount: Int
+	publishedProjectCount: Int
+	layerCount: Int
+	assetStorageSize: FileSize
 }
 
 enum Role {

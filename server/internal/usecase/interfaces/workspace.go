@@ -16,6 +16,7 @@ var (
 
 type Workspace interface {
 	Fetch(context.Context, []workspace.ID, *usecase.Operator) ([]*workspace.Workspace, error)
+	FetchPolicy(context.Context, []workspace.PolicyID) ([]*workspace.Policy, error)
 	FindByUser(context.Context, workspace.UserID, *usecase.Operator) ([]*workspace.Workspace, error)
 	Create(context.Context, string, workspace.UserID, *usecase.Operator) (*workspace.Workspace, error)
 	Update(context.Context, workspace.ID, string, *usecase.Operator) (*workspace.Workspace, error)

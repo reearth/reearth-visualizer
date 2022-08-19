@@ -33,7 +33,7 @@ func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInpu
 		return nil, err
 	}
 
-	return &gqlmodel.SignupPayload{User: gqlmodel.ToUser(u), Team: gqlmodel.ToTeam(t)}, nil
+	return &gqlmodel.SignupPayload{User: gqlmodel.ToUser(u), Team: gqlmodel.ToWorkspace(t)}, nil
 }
 
 func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMeInput) (*gqlmodel.UpdateMePayload, error) {
