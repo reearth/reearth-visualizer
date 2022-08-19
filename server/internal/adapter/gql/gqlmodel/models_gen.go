@@ -721,7 +721,7 @@ type PluginExtension struct {
 
 type Policy struct {
 	ProjectCount          *int   `json:"projectCount"`
-	NemberCount           *int   `json:"nemberCount"`
+	MemberCount           *int   `json:"memberCount"`
 	PublishedProjectCount *int   `json:"publishedProjectCount"`
 	LayerCount            *int   `json:"layerCount"`
 	AssetStorageSize      *int64 `json:"assetStorageSize"`

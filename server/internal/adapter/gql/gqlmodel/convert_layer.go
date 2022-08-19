@@ -22,7 +22,7 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		ExtensionID:     IDFromStringRef(l.Extension()),
 		Infobox:         ToInfobox(l.Infobox(), l.ID(), l.Scene(), l.LinkedDataset()),
 		LinkedDatasetID: IDFromRef(l.LinkedDataset()),
-		ParentID:        IDFromRef[id.Layer](parent),
+		ParentID:        IDFromRef(parent),
 		Tags:            ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }

@@ -50,10 +50,13 @@ func FromRole(r Role) workspace.Role {
 }
 
 func ToPolicy(p *workspace.Policy) *Policy {
+	if p == nil {
+		return nil
+	}
 	o := p.Option()
 	return &Policy{
 		ProjectCount:          o.ProjectCount,
-		NemberCount:           o.LayerCount,
+		MemberCount:           o.MemberCount,
 		PublishedProjectCount: o.PublishedProjectCount,
 		LayerCount:            o.LayerCount,
 		AssetStorageSize:      o.AssetStorageSize,

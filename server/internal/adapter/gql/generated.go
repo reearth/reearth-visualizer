@@ -619,7 +619,7 @@ type ComplexityRoot struct {
 	Policy struct {
 		AssetStorageSize      func(childComplexity int) int
 		LayerCount            func(childComplexity int) int
-		NemberCount           func(childComplexity int) int
+		MemberCount           func(childComplexity int) int
 		ProjectCount          func(childComplexity int) int
 		PublishedProjectCount func(childComplexity int) int
 	}
@@ -4210,12 +4210,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Policy.LayerCount(childComplexity), true
 
-	case "Policy.nemberCount":
-		if e.complexity.Policy.NemberCount == nil {
+	case "Policy.memberCount":
+		if e.complexity.Policy.MemberCount == nil {
 			break
 		}
 
-		return e.complexity.Policy.NemberCount(childComplexity), true
+		return e.complexity.Policy.MemberCount(childComplexity), true
 
 	case "Policy.projectCount":
 		if e.complexity.Policy.ProjectCount == nil {
@@ -6532,7 +6532,7 @@ type TeamMember {
 
 type Policy {
 	projectCount: Int
-	nemberCount: Int
+	memberCount: Int
 	publishedProjectCount: Int
 	layerCount: Int
 	assetStorageSize: FileSize
@@ -28723,8 +28723,8 @@ func (ec *executionContext) fieldContext_Policy_projectCount(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_nemberCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_nemberCount(ctx, field)
+func (ec *executionContext) _Policy_memberCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_memberCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -28737,7 +28737,7 @@ func (ec *executionContext) _Policy_nemberCount(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.NemberCount, nil
+		return obj.MemberCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28751,7 +28751,7 @@ func (ec *executionContext) _Policy_nemberCount(ctx context.Context, field graph
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Policy_nemberCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Policy_memberCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Policy",
 		Field:      field,
@@ -39938,8 +39938,8 @@ func (ec *executionContext) fieldContext_Team_policy(ctx context.Context, field 
 			switch field.Name {
 			case "projectCount":
 				return ec.fieldContext_Policy_projectCount(ctx, field)
-			case "nemberCount":
-				return ec.fieldContext_Policy_nemberCount(ctx, field)
+			case "memberCount":
+				return ec.fieldContext_Policy_memberCount(ctx, field)
 			case "publishedProjectCount":
 				return ec.fieldContext_Policy_publishedProjectCount(ctx, field)
 			case "layerCount":
@@ -52116,9 +52116,9 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 
 			out.Values[i] = ec._Policy_projectCount(ctx, field, obj)
 
-		case "nemberCount":
+		case "memberCount":
 
-			out.Values[i] = ec._Policy_nemberCount(ctx, field, obj)
+			out.Values[i] = ec._Policy_memberCount(ctx, field, obj)
 
 		case "publishedProjectCount":
 

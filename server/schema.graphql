@@ -206,7 +206,7 @@ type TeamMember {
 
 type Policy {
 	projectCount: Int
-	nemberCount: Int
+	memberCount: Int
 	publishedProjectCount: Int
 	layerCount: Int
 	assetStorageSize: FileSize
