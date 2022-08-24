@@ -124,6 +124,7 @@ const RightWrapper = styled.div`
 const ContentWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
   > * {
     margin-bottom: 32px;
   }
@@ -132,8 +133,9 @@ const ContentWrapper = styled.div`
 const DeviceMenu = styled.div`
   padding: 0;
   width: 100%;
-  height: 24px;
+  min-height: 24px;
   display: none;
+  position: absolute;
   @media only screen and (max-width: 1024px) {
     display: flex;
     flex-direction: column;
