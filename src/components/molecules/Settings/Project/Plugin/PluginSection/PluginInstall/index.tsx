@@ -7,9 +7,10 @@ import Text from "@reearth/components/atoms/Text";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
-import { PluginInstallWay } from "..";
+import { PluginActions } from "..";
 import PluginAccordion, { PluginItem } from "../../PluginAccordion";
 
+import MarketplacePublish from "./MarketplacePublish";
 import PublicRepo from "./PublicRepo";
 import ZipUpload from "./ZipUpload";
 
@@ -27,7 +28,7 @@ const PluginInstall: React.FC<Props> = ({
   uninstallPlugin,
 }) => {
   const t = useT();
-  const installChoices: { text: string; mode: PluginInstallWay; icon: Icons }[] = [
+  const actionChoices: { text: string; mode: PluginActions; icon: Icons }[] = [
     {
       text: t("Zip file from PC"),
       mode: "install-zip",
@@ -38,6 +39,11 @@ const PluginInstall: React.FC<Props> = ({
       mode: "install-public-repo",
       icon: "publicGitHubRepo",
     },
+    {
+      text: t("Publish your plugin in the Marketplace"),
+      mode: "market-publish",
+      icon: "marketplace",
+    },
     // {
     //   text: t("Private GitHub repository"),
     //   mode: "install-private-repo",
@@ -47,32 +53,49 @@ const PluginInstall: React.FC<Props> = ({
 
   return (
     <>
-      <Box p="2xl">
-        <Flex gap={28}>
-          {installChoices.map(c => {
+      <Box pv="2xl">
+        <StyledFlex gap={28} justify="space-between" wrap="wrap">
+          {actionChoices.map(c => {
             return c.mode === "install-public-repo" ? (
-              <PublicRepo icon={c.icon} buttonText={c.text} onSend={installFromPublicRepo} />
+              <PublicRepo
+                key={c.mode}
+                icon={c.icon}
+                buttonText={c.text}
+                onSend={installFromPublicRepo}
+              />
             ) : c.mode === "install-zip" ? (
-              <ZipUpload icon={c.icon} buttonText={c.text} onSend={installByUploadingZipFile} />
+              <ZipUpload
+                key={c.mode}
+                icon={c.icon}
+                buttonText={c.text}
+                onSend={installByUploadingZipFile}
+              />
+            ) : c.mode === "market-publish" ? (
+              <MarketplacePublish key={c.mode} icon={c.icon} buttonText={c.text} />
             ) : null;
           })}
-        </Flex>
+        </StyledFlex>
       </Box>
-      <SectionTitle>
-        <Box mh="m">
-          <Text weight="bold" size="m">
-            {t("Installed plugins")}
-          </Text>
-        </Box>
-      </SectionTitle>
-      <PluginAccordion items={installedPlugins} uninstallPlugin={uninstallPlugin} />
+      <StyledBox pb="s">
+        <StyledText weight="bold" size="m" customColor>
+          {t("Installed")}
+        </StyledText>
+      </StyledBox>
+      <PluginAccordion plugins={installedPlugins} uninstallPlugin={uninstallPlugin} />
     </>
   );
 };
 
-const SectionTitle = styled.div`
+const StyledFlex = styled(Flex)`
+  width: 782px;
+`;
+
+const StyledBox = styled(Box)`
   border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
-  padding-bottom: ${props => props.theme.metrics.xl}px;
+`;
+
+const StyledText = styled(Text)`
+  color: ${({ theme }) => theme.text.pale};
 `;
 
 export default PluginInstall;

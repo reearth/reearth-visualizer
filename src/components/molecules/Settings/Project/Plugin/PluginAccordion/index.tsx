@@ -17,29 +17,35 @@ export type PluginItem = {
 
 export type PluginAccordionProps = {
   className?: string;
-  items?: PluginItem[];
+  plugins?: PluginItem[];
   uninstallPlugin: (pluginId: string) => void;
 };
 
-const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items, uninstallPlugin }) => {
+const PluginAccordion: React.FC<PluginAccordionProps> = ({
+  className,
+  plugins,
+  uninstallPlugin,
+}) => {
   const theme = useTheme();
-  return items ? (
+  return plugins ? (
     <Accordion
       className={className}
       allowMultipleExpanded
       itemBgColor={theme.main.lighterBg}
-      items={items?.map(item => {
+      items={plugins?.map(p => {
+        const version = p.pluginId.split("~")[2] ?? "x.x.x";
         return {
-          id: item.title,
+          id: p.title,
           heading: (
             <PluginAccordionItemHeader
               // thumbnail={item.thumbnailUrl}
-              title={item.title}
-              isInstalled={item.isInstalled}
-              onUninstall={() => uninstallPlugin(item.pluginId)}
+              title={p.title}
+              version={version}
+              isInstalled={p.isInstalled}
+              onUninstall={() => uninstallPlugin(p.pluginId)}
             />
           ),
-          content: <PluginAccordionItemBody>{item.bodyMarkdown}</PluginAccordionItemBody>,
+          content: <PluginAccordionItemBody>{p.bodyMarkdown}</PluginAccordionItemBody>,
         };
       })}
     />

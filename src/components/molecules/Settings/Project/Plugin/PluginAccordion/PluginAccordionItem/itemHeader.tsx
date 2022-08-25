@@ -13,6 +13,7 @@ export type PluginItemProps = {
   className?: string;
   thumbnail?: string;
   title?: string;
+  version?: string;
   isInstalled?: boolean;
   onUninstall: () => void;
 };
@@ -21,6 +22,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   className,
   thumbnail,
   title,
+  version,
   isInstalled,
   onUninstall,
 }) => {
@@ -36,14 +38,17 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   return (
     <Wrapper align="center" justify="space-between" className={className}>
       <Flex align="center">
-        {thumbnail && (
-          <Box borderRadius={8} mh="m">
-            <Thumbnail src={thumbnail} alt="plugin thumbnail" />
-          </Box>
-        )}
-        <Text size="l" weight="bold">
-          {title}
-        </Text>
+        <TitleWrapper>
+          {thumbnail && (
+            <Box borderRadius={8} mh="m">
+              <Thumbnail src={thumbnail} alt="plugin thumbnail" />
+            </Box>
+          )}
+          <Text size="m" weight="bold" otherProperties={{ marginRight: "20px", maxWidth: "200px" }}>
+            {title}
+          </Text>
+        </TitleWrapper>
+        <Text size="m">v{version}</Text>
       </Flex>
       <StyledButton
         buttonType={isInstalled && hovered ? "danger" : "secondary"}
@@ -70,6 +75,11 @@ const Wrapper = styled(Flex)`
   padding: ${props => `${props.theme.metrics.xl}px 0`};
 `;
 
+const TitleWrapper = styled(Flex)`
+  width: 250px;
+  margin-right: 32px;
+`;
+
 const Thumbnail = styled.img`
   border-radius: 8px;
   width: 64px;
@@ -78,8 +88,10 @@ const Thumbnail = styled.img`
 
 const StyledButton = styled(Button)`
   font-weight: ${fonts.weight.bold};
+  width: 153px;
   border-radius: ${props => props.theme.metrics.s}px;
   padding: ${({ theme }) => `${theme.metrics.s}px ${theme.metrics["2xl"]}`};
+  transition: all 0.3s;
 `;
 
 export default PluginAccordionItemHeader;

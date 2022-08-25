@@ -1,9 +1,11 @@
 import { useApolloClient } from "@apollo/client";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useAuth } from "@reearth/auth";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useGetInstalledPluginsQuery,
+  useInstallPluginMutation,
   useUninstallPluginMutation,
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
@@ -17,20 +19,51 @@ export default (projectId: string) => {
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
+  const { getAccessToken } = useAuth();
+  const [accessToken, setAccessToken] = useState<string>();
 
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
+
+  const [installPluginMutation] = useInstallPluginMutation();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
 
-  const {
-    data: rawSceneData,
-    loading: sceneLoading,
-    // refetch: refetchInstalledPlugins,
-  } = useGetInstalledPluginsQuery({
+  const extensions = useMemo(
+    () => ({
+      library: window.REEARTH_CONFIG?.extensions?.pluginLibrary,
+      installed: window.REEARTH_CONFIG?.extensions?.pluginInstalled,
+    }),
+    [],
+  );
+
+  const { data: rawSceneData, loading: sceneLoading } = useGetInstalledPluginsQuery({
     variables: { projectId: projectId ?? "", lang: locale },
     skip: !projectId,
   });
 
-  const installedPlugins = useMemo(() => {
+  const sceneId = useMemo(() => rawSceneData?.scene?.id, [rawSceneData]);
+
+  const marketplacePluginIds = useMemo(
+    () =>
+      rawSceneData
+        ? rawSceneData?.scene?.plugins
+            .filter(p => p.plugin?.id !== "reearth" && !sceneId)
+            .map<{ id: string; version: string }>(p => {
+              const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
+              return {
+                id,
+                version,
+              };
+            })
+        : [],
+    [],
+  );
+
+  const personalPlugins = useMemo(() => {
     return rawSceneData
       ? rawSceneData?.scene?.plugins
           .filter(p => p.plugin?.id !== "reearth")
@@ -45,9 +78,27 @@ export default (projectId: string) => {
       : [];
   }, [rawSceneData]);
 
-  const installByUploadingZipFile = useCallback(
+  const handleInstallByMarketplace = useCallback(async (pluginId: string) => {
+    if (!sceneId) return;
+    const results = await installPluginMutation({
+      variables: { sceneId, pluginId },
+    });
+    if (results.errors || !results.data?.installPlugin?.scenePlugin) {
+      setNotification({
+        type: "error",
+        text: t("Failed to install plugin."),
+      });
+    } else {
+      setNotification({
+        type: "success",
+        text: t("Successfully installed plugin!"),
+      });
+      await client.resetStore();
+    }
+  }, []);
+
+  const handleInstallByUploadingZipFile = useCallback(
     async (files: FileList) => {
-      const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
       const results = await Promise.all(
         Array.from(files).map(f =>
@@ -67,16 +118,14 @@ export default (projectId: string) => {
           type: "success",
           text: t("Successfully installed plugin!"),
         });
-        // await refetchInstalledPlugins();
         client.resetStore();
       }
     },
     [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
   );
 
-  const installFromPublicRepo = useCallback(
+  const handleInstallFromPublicRepo = useCallback(
     async (repoUrl: string) => {
-      const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
       const results = await uploadPluginMutation({
         variables: { sceneId: sceneId, url: repoUrl },
@@ -91,7 +140,6 @@ export default (projectId: string) => {
           type: "success",
           text: t("Successfully installed plugin!"),
         });
-        // await refetchInstalledPlugins();
         await client.resetStore();
       }
     },
@@ -127,9 +175,13 @@ export default (projectId: string) => {
     currentTeam,
     currentProject,
     loading,
-    installedPlugins,
-    installByUploadingZipFile,
-    installFromPublicRepo,
+    marketplacePluginIds,
+    personalPlugins,
+    extensions,
+    accessToken,
+    handleInstallByMarketplace,
+    handleInstallByUploadingZipFile,
+    handleInstallFromPublicRepo,
     uninstallPlugin,
   };
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Text from "@reearth/components/atoms/Text";
-import { styled, useTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 
 import Divider from "../Divider";
 
@@ -36,8 +36,6 @@ const TabSection = <T extends string>({
     select(selected);
   }, [selected]);
 
-  const theme = useTheme();
-
   return (
     <Wrapper className={className} menuAlignment={menuAlignment}>
       <TabHeader>
@@ -49,9 +47,13 @@ const TabSection = <T extends string>({
               select(m);
               onChange?.(m);
             }}>
-            <Text size="m" color={selectedTab === m ? theme.main.select : theme.main.text}>
+            <StyledText
+              size="m"
+              selected={selectedTab === m}
+              customColor
+              otherProperties={{ marginBottom: "12px" }}>
               {headers?.[m] ?? m}
-            </Text>
+            </StyledText>
           </TabTitle>
         ))}
         {<ActionWrapper expanded={true}>{headerAction}</ActionWrapper>}
@@ -73,7 +75,6 @@ const TabHeader = styled.div<{ menuAlignment?: MenuAlignment }>`
   display: flex;
   flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "column" : "row")} nowrap;
   align-items: space-between;
-  gap: 24px;
   padding: 0px;
   width: 100%;
   height: 100%;
@@ -82,8 +83,12 @@ const TabHeader = styled.div<{ menuAlignment?: MenuAlignment }>`
 const TabTitle = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   user-select: none;
-  border-bottom: 2px solid ${({ selected, theme }) => (selected ? theme.main.select : "none")};
-  opacity: ${({ selected }) => (selected ? "1" : "0.7")};
+  border-bottom: 1px solid ${({ selected, theme }) => (selected ? theme.main.select : "none")};
+  padding: 0 12px;
+`;
+
+const StyledText = styled(Text)<{ selected?: boolean }>`
+  color: ${({ theme, selected }) => (selected ? theme.main.select : theme.main.text)};
 `;
 
 const ActionWrapper = styled.div<{ expanded?: boolean }>`

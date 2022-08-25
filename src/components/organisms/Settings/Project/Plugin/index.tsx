@@ -18,10 +18,14 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
     currentProject,
-    installedPlugins,
+    marketplacePluginIds,
+    personalPlugins,
     loading,
-    installFromPublicRepo,
-    installByUploadingZipFile,
+    extensions,
+    accessToken,
+    handleInstallByMarketplace,
+    handleInstallByUploadingZipFile,
+    handleInstallFromPublicRepo,
     uninstallPlugin,
   } = useHooks(projectId);
 
@@ -31,9 +35,13 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       {!currentProject?.isArchived ? (
         <PluginSection
           loading={loading}
-          installedPlugins={installedPlugins}
-          installFromPublicRepo={installFromPublicRepo}
-          installByUploadingZipFile={installByUploadingZipFile}
+          marketplacePluginIds={marketplacePluginIds}
+          personalPlugins={personalPlugins}
+          extensions={extensions}
+          accessToken={accessToken}
+          onInstallByMarketplace={handleInstallByMarketplace}
+          onInstallByUploadingZipFile={handleInstallByUploadingZipFile}
+          onInstallFromPublicRepo={handleInstallFromPublicRepo}
           uninstallPlugin={uninstallPlugin}
         />
       ) : (

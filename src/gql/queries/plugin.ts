@@ -35,6 +35,17 @@ export const GET_INSTALLED_PLUGINS = gql`
   }
 `;
 
+export const INSTALL_PLUGIN = gql`
+  mutation InstallPlugin($sceneId: ID!, $pluginId: ID!) {
+    installPlugin(input: { sceneId: $sceneId, pluginId: $pluginId }) {
+      scenePlugin {
+        pluginId
+        propertyId
+      }
+    }
+  }
+`;
+
 export const UPLOAD_PLUGIN = gql`
   mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
     uploadPlugin(input: { sceneId: $sceneId, file: $file, url: $url }) {

@@ -10,7 +10,7 @@ export default {
 export const Default: Story<PluginAccordionProps> = args => <Component {...args} />;
 
 Default.args = {
-  items: [
+  plugins: [
     {
       thumbnailUrl: `/sample.svg`,
       title: "Sample",

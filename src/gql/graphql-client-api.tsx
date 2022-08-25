@@ -1246,6 +1246,15 @@ export enum PluginExtensionType {
   Widget = 'WIDGET'
 }
 
+export type Policy = {
+  __typename?: 'Policy';
+  assetStorageSize?: Maybe<Scalars['FileSize']>;
+  layerCount?: Maybe<Scalars['Int']>;
+  memberCount?: Maybe<Scalars['Int']>;
+  projectCount?: Maybe<Scalars['Int']>;
+  publishedProjectCount?: Maybe<Scalars['Int']>;
+};
+
 export type Project = Node & {
   __typename?: 'Project';
   alias: Scalars['String'];
@@ -1835,6 +1844,8 @@ export type Team = Node & {
   members: Array<TeamMember>;
   name: Scalars['String'];
   personal: Scalars['Boolean'];
+  policy?: Maybe<Policy>;
+  policyId?: Maybe<Scalars['ID']>;
   projects: ProjectConnection;
 };
 
@@ -2658,6 +2669,14 @@ export type GetInstalledPluginsQueryVariables = Exact<{
 
 
 export type GetInstalledPluginsQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, version: string, name: string, description: string, translatedName: string, translatedDescription: string, author: string, repositoryUrl: string } | null }> } | null };
+
+export type InstallPluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['ID'];
+}>;
+
+
+export type InstallPluginMutation = { __typename?: 'Mutation', installPlugin?: { __typename?: 'InstallPluginPayload', scenePlugin: { __typename?: 'ScenePlugin', pluginId: string, propertyId?: string | null } } | null };
 
 export type UploadPluginMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -5420,6 +5439,43 @@ export function useGetInstalledPluginsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetInstalledPluginsQueryHookResult = ReturnType<typeof useGetInstalledPluginsQuery>;
 export type GetInstalledPluginsLazyQueryHookResult = ReturnType<typeof useGetInstalledPluginsLazyQuery>;
 export type GetInstalledPluginsQueryResult = Apollo.QueryResult<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>;
+export const InstallPluginDocument = gql`
+    mutation InstallPlugin($sceneId: ID!, $pluginId: ID!) {
+  installPlugin(input: {sceneId: $sceneId, pluginId: $pluginId}) {
+    scenePlugin {
+      pluginId
+      propertyId
+    }
+  }
+}
+    `;
+export type InstallPluginMutationFn = Apollo.MutationFunction<InstallPluginMutation, InstallPluginMutationVariables>;
+
+/**
+ * __useInstallPluginMutation__
+ *
+ * To run a mutation, you first call `useInstallPluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInstallPluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [installPluginMutation, { data, loading, error }] = useInstallPluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      pluginId: // value for 'pluginId'
+ *   },
+ * });
+ */
+export function useInstallPluginMutation(baseOptions?: Apollo.MutationHookOptions<InstallPluginMutation, InstallPluginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InstallPluginMutation, InstallPluginMutationVariables>(InstallPluginDocument, options);
+      }
+export type InstallPluginMutationHookResult = ReturnType<typeof useInstallPluginMutation>;
+export type InstallPluginMutationResult = Apollo.MutationResult<InstallPluginMutation>;
+export type InstallPluginMutationOptions = Apollo.BaseMutationOptions<InstallPluginMutation, InstallPluginMutationVariables>;
 export const UploadPluginDocument = gql`
     mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
   uploadPlugin(input: {sceneId: $sceneId, file: $file, url: $url}) {

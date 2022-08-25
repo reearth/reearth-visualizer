@@ -131,6 +131,7 @@ import Plugin from "./Icons/plugin.svg";
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
+import Marketplace from "./Icons/marketplace.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
@@ -250,6 +251,7 @@ export default {
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,
   publicGitHubRepo: PublicGitHubRepo,
+  marketplace: Marketplace,
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,

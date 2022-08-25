@@ -5,11 +5,11 @@ Notfound: ページが見つかりません
 Published: 一般公開
 Unpublished: 非公開
 not set: 未設定
-Open timeline: 'タイムラインを開く'
-Close timeline: 'タイムラインを閉じる'
-Playback timeline: 'タイムラインを逆再生する'
-Play timeline: 'タイムラインを再生する'
-ellipse: '円錐'
+Close timeline: タイムラインを閉じる
+Playback timeline: タイムラインを逆再生する
+Play timeline: タイムラインを再生する
+ellipse: 円錐
+Open timeline: タイムラインを開く
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
 Username or email: ユーザー名またはメールアドレス
@@ -236,9 +236,12 @@ You are uninstalling the selected plugin. The data used by this plugin may also 
 Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
 Installed: インストール済み
 Install: インストール
+Plugin Marketplace: プラグインマーケットプレイス
+Public Installed: 公開インストール済み
+Personal Installed: 個人インストール済み
 Zip file from PC: PCからZipファイルをアップロード
 Public GitHub repository: GitHubパブリックレポジトリ
-Installed plugins: インストール済みプラグイン
+Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
 Import GitHub repository: GitHubレポジトリからインポート
 'Repository url:': 'レポジトリURL:'
 Project Info: プロジェクト情報

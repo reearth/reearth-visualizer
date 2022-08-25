@@ -24,7 +24,7 @@ export type Props = {
 const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg }) => {
   const theme = useTheme();
   return (
-    <Box m="2xl" key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
+    <Box mv="2xl" key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
       <AccordionItemComponent>
         <AccordionItemHeading>
           <StyledAccordionItemButton data-testid="atoms-accordion-item-header">
@@ -34,7 +34,7 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
                   {({ expanded }) => (
                     <>
                       <StyledIcon
-                        color={theme.main.text}
+                        color={theme.text.pale}
                         icon="arrowToggle"
                         size={16}
                         open={!!expanded}
@@ -58,6 +58,7 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
 const StyledIcon = styled(Icon)<{ open: boolean }>`
   transition: transform 0.15s ease;
   transform: ${({ open }) => open && "translateY(10%) rotate(90deg)"};
+  margin-right: 24px;
 `;
 
 const StyledAccordionItemButton = styled(AccordionItemButton)`
