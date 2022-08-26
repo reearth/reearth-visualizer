@@ -17,6 +17,7 @@ import {
   ShadowMode,
   Entity,
   PropertyBag,
+  JulianDate,
 } from "cesium";
 import { useCallback } from "react";
 
@@ -353,7 +354,7 @@ export function isSelectable(e: Entity | undefined): boolean {
 }
 
 export function isDraggable(e: Entity): string | undefined {
-  return e.properties?.getValue(undefined as any)?.[draggableTag];
+  return e.properties?.getValue(new JulianDate())?.[draggableTag];
 }
 
 export function attachTag(entity: Entity | undefined, tag: string, value: any) {
@@ -362,6 +363,9 @@ export function attachTag(entity: Entity | undefined, tag: string, value: any) {
     entity.properties = new PropertyBag({ [tag]: value });
   } else if (typeof value === "undefined") {
     entity.properties?.removeProperty(tag);
+  } else if (entity.properties?.hasProperty(tag)) {
+    entity.properties?.removeProperty(tag);
+    entity.properties?.addProperty(tag, value);
   } else {
     entity.properties?.addProperty(tag, value);
   }
