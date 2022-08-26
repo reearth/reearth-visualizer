@@ -4,6 +4,9 @@ import domMatchers, { type TestingLibraryMatchers } from "@testing-library/jest-
 import { cleanup } from "@testing-library/react";
 import { afterEach, expect } from "vitest";
 
+// Vitest on GitHub Actions requires TransformStream to run tests with Cesium
+import "web-streams-polyfill/es2018";
+
 declare global {
   namespace Vi {
     interface JestAssertion<T = any>

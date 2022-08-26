@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: lts/*
-      - uses: actions/checkout@v3
+          node-version-file: '.nvmrc'
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
