@@ -74,7 +74,8 @@ const useTimelineInteraction = ({
 
       const scrollThreshold = 30;
       const scrollAmount = 20;
-      const clientX = e.clientX;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clientX = e.clientX - rect.x;
       const curTar = e.currentTarget;
       const clientWidth = curTar.clientWidth;
 
@@ -124,31 +125,39 @@ const useTimelineInteraction = ({
 
 type TimelinePlayerOptions = {
   currentTime: number;
-  onPlay?: TimeEventHandler;
-  range: Range;
+  onPlay?: (isPlaying: boolean) => void;
+  onPlayReversed?: (isPlaying: boolean) => void;
+  onSpeedChange?: (speed: number) => void;
 };
 
-const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions) => {
-  const [playSpeed, setPlaySpeed] = useState(1.0);
+const useTimelinePlayer = ({
+  currentTime,
+  onPlay,
+  onPlayReversed,
+  onSpeedChange,
+}: TimelinePlayerOptions) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
-  const playTimerRef = useRef<NodeJS.Timer | null>(null);
-  const onPlaySpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
-    setPlaySpeed(parseInt(e.currentTarget.value, 10) / 10);
+  const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+    onSpeedChange?.(parseInt(e.currentTarget.value, 10));
   }, []);
   const toggleIsPlaying = useCallback(() => {
     if (isPlayingReversed) {
       setIsPlayingReversed(false);
+      onPlayReversed?.(false);
     }
     setIsPlaying(p => !p);
-  }, [isPlayingReversed]);
+    onPlay?.(!isPlaying);
+  }, [isPlayingReversed, isPlaying]);
   const toggleIsPlayingReversed = useCallback(() => {
     if (isPlaying) {
       setIsPlaying(false);
+      onPlay?.(false);
     }
     setIsPlayingReversed(p => !p);
-  }, [isPlaying]);
+    onPlayReversed?.(!isPlayingReversed);
+  }, [isPlaying, isPlayingReversed]);
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
     const lastIdx = textDate.lastIndexOf(" ");
@@ -161,35 +170,8 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
     syncCurrentTimeRef.current = currentTime;
   }, [currentTime]);
 
-  useEffect(() => {
-    const clearPlayTimer = () => {
-      if (playTimerRef.current) {
-        clearInterval(playTimerRef.current);
-      }
-    };
-
-    if ((!isPlaying && !isPlayingReversed) || !onPlay) {
-      return clearPlayTimer;
-    }
-
-    const defaultInterval = 10;
-
-    playTimerRef.current = setInterval(() => {
-      const interval = EPOCH_SEC * playSpeed;
-      if (isPlaying) {
-        onPlay(Math.min(syncCurrentTimeRef.current + interval, range.end));
-      }
-      if (isPlayingReversed) {
-        onPlay(Math.max(syncCurrentTimeRef.current - interval, range.start));
-      }
-    }, defaultInterval);
-
-    return clearPlayTimer;
-  }, [playSpeed, onPlay, isPlaying, isPlayingReversed, range]);
-
   return {
-    playSpeed,
-    onPlaySpeedChange,
+    onSpeedChange: handleOnSpeedChange,
     formattedCurrentTime,
     isPlaying,
     isPlayingReversed,
@@ -238,10 +220,20 @@ type Option = {
   range?: { [K in keyof Range]?: Range[K] };
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
-  onPlay?: TimeEventHandler;
+  onPlay?: (isPlaying: boolean) => void;
+  onPlayReversed?: (isPlaying: boolean) => void;
+  onSpeedChange?: (speed: number) => void;
 };
 
-export const useTimeline = ({ currentTime, range: _range, onClick, onDrag, onPlay }: Option) => {
+export const useTimeline = ({
+  currentTime,
+  range: _range,
+  onClick,
+  onDrag,
+  onPlay,
+  onPlayReversed,
+  onSpeedChange,
+}: Option) => {
   const [zoom, setZoom] = useState(1);
   const range = useMemo(() => {
     const range = getRange(_range);
@@ -282,7 +274,7 @@ export const useTimeline = ({ currentTime, range: _range, onClick, onDrag, onPla
   }, [currentTime, start, scaleCount, hoursCount, gapHorizontal, scaleInterval, strongScaleHours]);
 
   const events = useTimelineInteraction({ range, zoom, setZoom, gapHorizontal, onClick, onDrag });
-  const player = useTimelinePlayer({ currentTime, onPlay, range });
+  const player = useTimelinePlayer({ currentTime, onPlay, onPlayReversed, onSpeedChange });
 
   return {
     startDate,

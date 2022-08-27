@@ -1,4 +1,4 @@
-import { ClockRange, ClockStep, JulianDate } from "cesium";
+import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium";
 import { useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
@@ -6,9 +6,10 @@ import type { SceneProperty } from "../../ref";
 
 export type Props = {
   property?: SceneProperty;
+  onTick?: (clock: CesiumClock) => void;
 };
 
-export default function ReearthClock({ property }: Props): JSX.Element | null {
+export default function ReearthClock({ property, onTick }: Props): JSX.Element | null {
   const { animation, visible, start, stop, current, stepType, rangeType, multiplier, step } =
     property?.timeline ?? {};
   const startTime = useMemo(() => (start ? JulianDate.fromIso8601(start) : undefined), [start]);
@@ -46,6 +47,7 @@ export default function ReearthClock({ property }: Props): JSX.Element | null {
       clockStep={clockStep}
       multiplier={clockMultiplier}
       clockRange={rangeType ? rangeTypes[rangeType] : undefined}
+      onTick={onTick}
     />
   );
 }

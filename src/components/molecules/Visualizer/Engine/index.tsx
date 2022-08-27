@@ -10,7 +10,7 @@ import {
 
 import type { Camera, LatLng } from "@reearth/util/value";
 
-import { SelectLayerOptions } from "../Plugin/types";
+import { Clock, SelectLayerOptions } from "../Plugin/types";
 
 import Cesium from "./Cesium";
 import type { EngineRef, SceneProperty } from "./ref";
@@ -25,6 +25,7 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
@@ -32,10 +33,12 @@ export type EngineProps = {
   layerSelectionReason?: string;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
+  onTick?: (clock: Clock) => void;
   isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   isLayerDragging?: boolean;
+  shouldRender?: boolean;
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;

@@ -7,7 +7,7 @@ import Plugin, {
   Props as PluginProps,
 } from "../Plugin";
 
-import builtin from "./builtin";
+import builtin, { isBuiltinWidget } from "./builtin";
 
 export type { WidgetLayout } from "../Plugin";
 
@@ -73,8 +73,8 @@ export default function WidgetComponent<PP = any, SP = any>({
 
   if (!w) return null;
 
-  const Builtin =
-    w?.pluginId && w.extensionId ? builtin[`${w.pluginId}/${w.extensionId}`] : undefined;
+  const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
+  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin[builtinWidgetId] : undefined;
 
   const autoResize = w?.extended?.vertically
     ? "width-only"

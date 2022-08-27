@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { expect, test, vi } from "vitest";
+import { expect, test, vi, vitest } from "vitest";
 
-import { render, screen, fireEvent, waitFor } from "@reearth/test/utils";
+import { render, screen, fireEvent } from "@reearth/test/utils";
 
 import {
   PADDING_HORIZONTAL,
@@ -17,7 +17,12 @@ const CURRENT_TIME = new Date("2022-07-03T00:00:00.000").getTime();
 // This is width when range is one day.
 const SCROLL_WIDTH = 2208;
 
-const TimelineWrapper: React.FC<{ isOpened?: boolean }> = ({ isOpened = true }) => {
+const TimelineWrapper: React.FC<{
+  isOpened?: boolean;
+  onPlay?: () => void;
+  onPlayReversed?: () => void;
+  onSpeedChange?: (speed: number) => void;
+}> = ({ isOpened = true, onPlay, onPlayReversed, onSpeedChange }) => {
   const [currentTime, setCurrentTime] = useState(CURRENT_TIME);
   return (
     <Timeline
@@ -25,7 +30,9 @@ const TimelineWrapper: React.FC<{ isOpened?: boolean }> = ({ isOpened = true }) 
       range={{ start: CURRENT_TIME }}
       onClick={setCurrentTime}
       onDrag={setCurrentTime}
-      onPlay={setCurrentTime}
+      onPlay={onPlay}
+      onPlayReversed={onPlayReversed}
+      onSpeedChange={onSpeedChange}
       isOpened={isOpened}
     />
   );
@@ -125,39 +132,47 @@ test("it should get correct strongScaleHours from amount of scroll", () => {
   ).toBe(GAP_HORIZONTAL);
 });
 
-test("it should move the knob when play button is clicked and back the move when playback button is clicked", async () => {
-  render(<TimelineWrapper />);
-  const initialPosition = 0;
-  const movedPosition = initialPosition + 1;
-
-  // Check initial position
-  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
-    initialPosition,
-  );
+test("it should invoke onPlay or onPlayReversed when play button is clicked", async () => {
+  const mockOnPlay = vitest.fn();
+  const mockOnPlayReversed = vitest.fn();
+  render(<TimelineWrapper onPlay={mockOnPlay} onPlayReversed={mockOnPlayReversed} />);
 
   // TODO: get element by label text
   // Click play button
   fireEvent.click(screen.getAllByRole("button")[2]);
-
-  // Check knob move to `expectedLeft`.
-  await waitFor(
-    () =>
-      expect(
-        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
-      ).toBeGreaterThan(movedPosition),
-    { timeout: 1500 },
-  );
+  expect(mockOnPlay).toBeCalledWith(true);
+  // Click play button again
+  fireEvent.click(screen.getAllByRole("button")[2]);
+  expect(mockOnPlay).toBeCalledWith(false);
 
   // TODO: get element by label text
   // Click playback button
   fireEvent.click(screen.getAllByRole("button")[1]);
+  expect(mockOnPlayReversed).toBeCalledWith(true);
+  // Click playback button again
+  fireEvent.click(screen.getAllByRole("button")[1]);
+  expect(mockOnPlayReversed).toBeCalledWith(false);
 
-  // Check knob back to initialPosition.
-  await waitFor(
-    () =>
-      expect(
-        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
-      ).toBeLessThan(movedPosition),
-    { timeout: 1500 },
-  );
+  // Click play button
+  fireEvent.click(screen.getAllByRole("button")[2]);
+  expect(mockOnPlay).toBeCalledWith(true);
+  // And click playback button
+  fireEvent.click(screen.getAllByRole("button")[1]);
+  expect(mockOnPlayReversed).toBeCalledWith(true);
+  expect(mockOnPlay).toBeCalledWith(false);
+  // Finally click play button
+  fireEvent.click(screen.getAllByRole("button")[2]);
+  expect(mockOnPlay).toBeCalledWith(true);
+  expect(mockOnPlayReversed).toBeCalledWith(false);
+});
+
+test("it should invoke onSpeedChange when speed range is changed", async () => {
+  const mockOnSpeedChange = vitest.fn();
+  render(<TimelineWrapper onSpeedChange={mockOnSpeedChange} />);
+
+  // TODO: get element by label text
+  // Click play button
+  fireEvent.input(screen.getAllByRole("slider")[0], { target: { value: 100 } });
+
+  expect(mockOnSpeedChange).toBeCalledWith(100);
 });

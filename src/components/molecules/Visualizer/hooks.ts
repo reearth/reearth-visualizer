@@ -16,7 +16,13 @@ import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
-import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
+import type {
+  CameraOptions,
+  Clock,
+  FlyToDestination,
+  LookAtDestination,
+  Tag,
+} from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
 export default ({
@@ -29,12 +35,14 @@ export default ({
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   camera,
+  clock,
   sceneProperty,
   tags,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
   onCameraChange,
+  onTick,
   onLayerDrop,
 }: {
   engineType?: string;
@@ -46,6 +54,7 @@ export default ({
   selectedLayerId?: string;
   selectedBlockId?: string;
   camera?: Camera;
+  clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
@@ -59,6 +68,7 @@ export default ({
     selectedLayer?: Layer,
   ) => void;
   onCameraChange?: (c: Camera) => void;
+  onTick?: (c: Clock) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
@@ -145,6 +155,20 @@ export default ({
     [onCameraChange],
   );
 
+  // clock
+  const [innerClock, setInnerClock] = useState(clock);
+  useEffect(() => {
+    setInnerClock(clock);
+  }, [clock]);
+
+  const updateClock = useCallback(
+    (clock: Clock) => {
+      setInnerClock(clock);
+      onTick?.(clock);
+    },
+    [onTick],
+  );
+
   // dnd
   const [isLayerDragging, setIsLayerDragging] = useState(false);
   const handleLayerDrag = useCallback(() => {
@@ -174,6 +198,7 @@ export default ({
       sceneProperty: overriddenSceneProperty,
       tags,
       camera: innerCamera,
+      clock: innerClock,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
@@ -210,6 +235,7 @@ export default ({
     isLayerDragging,
     selectedBlockId,
     innerCamera,
+    innerClock,
     infobox,
     overriddenSceneProperty,
     isLayerHidden,
@@ -217,6 +243,7 @@ export default ({
     selectBlock,
     changeBlock,
     updateCamera,
+    updateClock,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,

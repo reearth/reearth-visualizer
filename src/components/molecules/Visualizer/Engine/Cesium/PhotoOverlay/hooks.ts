@@ -28,11 +28,8 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
   exitPhotoOverlay: () => void;
 } {
   const ctx = useContext();
-  const flyTo = ctx?.reearth.visualizer.camera.flyTo;
-  const getCamera = useCallback(
-    () => ctx?.reearth.visualizer.camera.position,
-    [ctx?.reearth.visualizer],
-  );
+  const flyTo = ctx?.reearth.camera.flyTo;
+  const getCamera = useCallback(() => ctx?.reearth.camera.position, [ctx?.reearth.camera]);
 
   // mode 0 = idle, 1 = idle<->fly, 2 = fly<->fov, 3 = fov<->photo, 4 = photo
   const [mode, prevMode, startTransition] = useDelayedCount(durations);

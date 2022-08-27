@@ -12,6 +12,10 @@ import {
   Tag,
 } from "@reearth/components/molecules/Visualizer";
 import {
+  BuiltinWidgets,
+  isBuiltinWidget,
+} from "@reearth/components/molecules/Visualizer/Widget/builtin";
+import {
   GetBlocksQuery,
   Maybe,
   MergedPropertyGroupFragmentFragment,
@@ -164,6 +168,7 @@ export const convertWidgets = (
       floatingWidgets: Widget[];
       alignSystem: WidgetAlignSystem;
       layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
+      ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
     }
   | undefined => {
   if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
@@ -253,6 +258,18 @@ export const convertWidgets = (
     };
   };
 
+  const ownBuiltinWidgets = data.node.widgets.reduce<{
+    [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K];
+  }>((res, next) => {
+    const id = `${next.pluginId}/${next.extensionId}`;
+    return isBuiltinWidget(id)
+      ? {
+          ...res,
+          [id]: true,
+        }
+      : res;
+  }, {});
+
   return {
     floatingWidgets,
     alignSystem: {
@@ -260,6 +277,7 @@ export const convertWidgets = (
       inner: widgetZone(data.node.widgetAlignSystem.inner),
     },
     layoutConstraint,
+    ownBuiltinWidgets,
   };
 };
 

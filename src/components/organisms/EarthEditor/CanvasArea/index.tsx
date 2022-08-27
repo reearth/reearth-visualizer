@@ -28,6 +28,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     isCapturing,
     sceneMode,
     camera,
+    clock,
     widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
@@ -39,6 +40,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
+    onTick,
     onFovChange,
     handleDropLayer,
   } = useHooks(isBuilt);
@@ -67,10 +69,12 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       pluginProperty={pluginProperty}
       clusterProperty={clusterProperty}
       camera={camera}
+      clock={clock}
       ready={isBuilt || (!!rootLayer && !!widgets)}
       onLayerSelect={selectLayer}
       widgetAlignEditorActivated={widgetAlignEditorActivated}
       onCameraChange={onCameraChange}
+      onTick={onTick}
       onWidgetUpdate={onWidgetUpdate}
       onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
       onBlockSelect={selectBlock}

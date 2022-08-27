@@ -1,5 +1,6 @@
 import { atom, useAtom } from "jotai";
 
+import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
@@ -33,6 +34,9 @@ export const useIsCapturing = () => useAtom(isCapturing);
 
 const camera = atom<Camera | undefined>(undefined);
 export const useCamera = () => useAtom(camera);
+
+const clock = atom<Clock | undefined>(undefined);
+export const useClock = () => useAtom(clock);
 
 export type SceneMode = "3d" | "2d" | "columbus";
 const sceneMode = atom<SceneMode>("3d");

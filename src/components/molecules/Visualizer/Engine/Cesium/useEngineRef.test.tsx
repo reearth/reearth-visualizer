@@ -1,9 +1,10 @@
 import { renderHook } from "@testing-library/react";
-import type { Viewer as CesiumViewer } from "cesium";
+import { ClockStep, JulianDate, Viewer as CesiumViewer } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
 
+import { Clock } from "../../Plugin/types";
 import { EngineRef } from "../ref";
 
 import useEngineRef from "./useEngineRef";
@@ -185,4 +186,92 @@ test("zoom", () => {
   result.current.current?.zoomOut(20);
   expect(mockZoomOut).toHaveBeenCalledTimes(1);
   expect(mockZoomOut).toHaveBeenCalledWith(20);
+});
+
+test("getClock", () => {
+  const tickTime = JulianDate.fromIso8601("2022-01-13");
+  const mockAddEventHandler: any = vi.fn(_cb => {});
+  const mockRemoveEventHandler: any = vi.fn(_cb => {});
+  const mockTick = vi.fn(() => tickTime);
+
+  const startTime = JulianDate.fromIso8601("2022-01-11");
+  const stopTime = JulianDate.fromIso8601("2022-01-15");
+  const currentTime = JulianDate.fromIso8601("2022-01-14");
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        clock: {
+          startTime,
+          stopTime,
+          tick: mockTick,
+          currentTime,
+          shouldAnimate: false,
+          multiplier: 1,
+          clockStep: ClockStep.SYSTEM_CLOCK,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          // TODO: should test cesium event
+          onTick: {
+            addEventListener: mockAddEventHandler,
+            removeEventListener: mockRemoveEventHandler,
+          },
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return { engineRef, cesium };
+  });
+
+  expect(result.current.engineRef.current?.getClock()?.startTime).toEqual(
+    JulianDate.toDate(startTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.stopTime).toEqual(
+    JulianDate.toDate(stopTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
+    JulianDate.toDate(currentTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.playing).toBeFalsy();
+  expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeFalsy();
+  expect(result.current.engineRef.current?.getClock()?.speed).toBe(1);
+  expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(1);
+  expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
+    ClockStep.SYSTEM_CLOCK,
+  );
+
+  const nextTickTime = result.current.engineRef.current?.getClock()?.tick();
+
+  expect(nextTickTime).toEqual(JulianDate.toDate(tickTime));
+
+  const nextStartTime = JulianDate.fromIso8601("2022-01-10");
+  const nextStopTime = JulianDate.fromIso8601("2022-01-16");
+  const nextCurrentTime = JulianDate.fromIso8601("2022-01-11");
+  const clock = result.current.engineRef.current?.getClock() || ({} as Clock);
+  clock.startTime = JulianDate.toDate(nextStartTime);
+  clock.stopTime = JulianDate.toDate(nextStopTime);
+  clock.currentTime = JulianDate.toDate(nextCurrentTime);
+  clock.playing = true;
+  clock.speed = 2;
+  expect(result.current.engineRef.current?.getClock()?.startTime).toEqual(
+    JulianDate.toDate(nextStartTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.stopTime).toEqual(
+    JulianDate.toDate(nextStopTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
+    JulianDate.toDate(nextCurrentTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.playing).toBeTruthy();
+  expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeTruthy();
+  expect(result.current.engineRef.current?.getClock()?.speed).toBe(2);
+  expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(2);
+  expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
+    ClockStep.SYSTEM_CLOCK_MULTIPLIER,
+  );
 });

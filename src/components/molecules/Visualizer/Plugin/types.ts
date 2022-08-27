@@ -12,12 +12,17 @@ export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
   readonly visualizer: Visualizer;
+  /** Current visualization engine type. Currently only "cesium" is available. */
+  readonly engineName: string;
+  readonly camera: Camera;
+  readonly clock?: Clock;
   readonly ui: UI;
   readonly plugin: Plugin;
   readonly layers: Layers;
   readonly layer?: Layer;
   readonly widget?: Widget;
   readonly block?: Block;
+  readonly scene: Scene;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -62,6 +67,7 @@ export type ReearthEventType = {
   mouseenter: [props: MouseEvent];
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
+  tick: [props: Date];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -70,6 +76,12 @@ export type Plugin = {
   readonly extensionId: string;
   readonly extensionType: string;
   readonly property?: any;
+};
+
+export type Scene = {
+  /** Current scene property */
+  readonly property?: any;
+  readonly overrideProperty: (property: any) => void;
 };
 
 /** You can operate and get data about layers. */
@@ -239,13 +251,15 @@ export type UI = {
   ) => void;
 };
 
-/** The API for the visualizer. This works regardless of the visualization engine you are using, which ensures the versatility of the plugin. It is recommended that you use this API whenever possible, and call the visualization engine's own low-layer API only when there is something you cannot do. */
+/** Deprecated. */
 export type Visualizer = {
-  /** Current visualization engine type. Currently only "cesium" is available. */
+  /** use `reearth.engine` instead. */
   readonly engine: string;
+  /** use `reearth.camera` instead. */
   readonly camera: Camera;
-  /** Current scene property */
+  /** use `reearth.scene.property` instead. */
   readonly property?: any;
+  /** use `reearth.scene.overrideProperty` instead. */
   readonly overrideProperty: (property: any) => void;
 };
 
@@ -346,3 +360,16 @@ export type CameraOptions = {
 
 /** Cesium API: available only when the plugin is a primitive */
 export type Cesium = {};
+
+export type Clock = {
+  startTime: Date;
+  stopTime: Date;
+  currentTime: Date;
+  playing: boolean;
+  paused: boolean;
+  /** Speed of time. Specifies a multiplier for the speed of time in reality. Default is 1. */
+  speed: number;
+  readonly tick: () => Date;
+  readonly play: () => void;
+  readonly pause: () => void;
+};

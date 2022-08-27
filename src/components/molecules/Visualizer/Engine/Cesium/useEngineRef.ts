@@ -8,7 +8,7 @@ import type { MouseEvents, MouseEvent } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
-import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
+import { getLocationFromScreenXY, flyTo, lookAt, getCamera, getClock } from "./common";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -107,6 +107,12 @@ export default function useEngineRef(
             viewer?.scene?.morphTo3D(duration);
             break;
         }
+      },
+      getClock: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
+        const clock: Cesium.Clock = viewer.clock;
+        return getClock(clock);
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;

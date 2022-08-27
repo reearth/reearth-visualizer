@@ -17,13 +17,17 @@ import {
   ShadowMode,
   Entity,
   PropertyBag,
+  Clock as CesiumClock,
   JulianDate,
+  ClockStep,
 } from "cesium";
 import { useCallback } from "react";
 
 import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
+
+import { Clock } from "../../Plugin/types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -313,6 +317,71 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   const { heading, pitch, roll } = camera;
   const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
   return { lng, lat, height, heading, pitch, roll, fov };
+};
+
+export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
+  if (!clock) return undefined;
+  return {
+    // Getter
+    get startTime() {
+      return JulianDate.toDate(clock.startTime);
+    },
+    get stopTime() {
+      return JulianDate.toDate(clock.stopTime);
+    },
+    get currentTime() {
+      return JulianDate.toDate(clock.currentTime);
+    },
+    get tick() {
+      return () => JulianDate.toDate(clock.tick());
+    },
+    get playing() {
+      return clock.shouldAnimate;
+    },
+    get paused() {
+      return !clock.shouldAnimate;
+    },
+    get speed() {
+      return clock.multiplier;
+    },
+
+    // Setter
+    set startTime(d: Date) {
+      clock["startTime"] = JulianDate.fromDate(d);
+    },
+    set stopTime(d: Date) {
+      clock["stopTime"] = JulianDate.fromDate(d);
+    },
+    set currentTime(d: Date) {
+      clock["currentTime"] = JulianDate.fromDate(d);
+    },
+    set tick(cb: () => Date) {
+      clock["tick"] = () => JulianDate.fromDate(cb());
+    },
+    set playing(v: boolean) {
+      clock["shouldAnimate"] = v;
+    },
+    set paused(v: boolean) {
+      clock["shouldAnimate"] = !v;
+    },
+    set speed(v: number) {
+      clock["multiplier"] = v;
+      // Force multiplier
+      clock["clockStep"] = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    },
+
+    // methods
+    get play() {
+      return () => {
+        clock["shouldAnimate"] = true;
+      };
+    },
+    get pause() {
+      return () => {
+        clock["shouldAnimate"] = false;
+      };
+    },
+  };
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>

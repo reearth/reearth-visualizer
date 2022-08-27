@@ -15589,10 +15589,10 @@ quick-temp@^0.1.8:
     rimraf "^2.5.4"
     underscore.string "~3.3.4"
 
-quickjs-emscripten-sync@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.4.0.tgz#f1f155feac2ca135f9e07dc53466dcd57d7054b9"
-  integrity sha512-3ESHBgc4PuDGEQc+h4Sh6YV2ax+fSVNYackvaPinUlDZ+ZevuigPfxsaoj68aOSwPP/dtaIOpbpNkxOdetQc0w==
+quickjs-emscripten-sync@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.5.1.tgz#c75810ed3256a14e7e9433885b84840d4e06c875"
+  integrity sha512-Enp5mJ5rkFEOaf0un2ZZMyvF4/VOdyEJYJZrQxnuIf2SEc96lyfplF47mrgoWIAyedjIdSDyFXuPVwyXeY50xw==
 
 quickjs-emscripten@0.21.0:
   version "0.21.0"

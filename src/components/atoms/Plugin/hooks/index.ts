@@ -39,7 +39,8 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     ((typeof obj !== "object" || obj === null) && typeof obj !== "function") ||
     Array.isArray(obj) ||
     Object.getPrototypeOf(obj) === Function.prototype ||
-    Object.getPrototypeOf(obj) === Object.prototype
+    Object.getPrototypeOf(obj) === Object.prototype ||
+    obj instanceof Date
   );
 };
 

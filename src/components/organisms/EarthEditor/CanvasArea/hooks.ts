@@ -30,6 +30,7 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
+  useClock,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
@@ -47,6 +48,7 @@ export default (isBuilt?: boolean) => {
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
+  const [clock, onTick] = useClock();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
@@ -286,6 +288,7 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     sceneMode,
     camera,
+    clock,
     widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
@@ -297,6 +300,7 @@ export default (isBuilt?: boolean) => {
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
+    onTick,
     onFovChange,
     handleDropLayer,
   };

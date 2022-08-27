@@ -14,6 +14,7 @@ import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
+import { BuiltinWidgets, TIMELINE_BUILTIN_WIDGET_ID } from "./Widget/builtin";
 import WidgetAlignSystem, {
   Props as WidgetAlignSystemProps,
   WidgetAlignSystem as WidgetAlignSystemType,
@@ -44,6 +45,7 @@ export type Props = {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
     layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+    ownBuiltinWidgets?: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
   };
   sceneProperty?: SceneProperty;
   tags?: Tag[];
@@ -105,6 +107,7 @@ export default function Visualizer({
     isLayerDragging,
     selectedBlockId,
     innerCamera,
+    innerClock,
     infobox,
     overriddenSceneProperty,
     isLayerHidden,
@@ -112,6 +115,7 @@ export default function Visualizer({
     selectBlock,
     changeBlock,
     updateCamera,
+    updateClock,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
@@ -125,12 +129,14 @@ export default function Visualizer({
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
+    clock: props.clock,
     sceneProperty,
     tags,
     onLayerSelect,
     onBlockSelect,
     onBlockChange,
     onCameraChange: props.onCameraChange,
+    onTick: props.onTick,
     onLayerDrop,
   });
 
@@ -159,10 +165,13 @@ export default function Visualizer({
           layerSelectionReason={layerSelectionReason}
           ready={ready}
           camera={innerCamera}
+          clock={innerClock}
           isLayerDragging={isLayerDragging}
           isLayerDraggable={props.isEditable}
+          shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
           onLayerSelect={selectLayer}
           onCameraChange={updateCamera}
+          onTick={updateClock}
           onLayerDrop={handleLayerDrop}
           onLayerDrag={handleLayerDrag}
           {...props}>

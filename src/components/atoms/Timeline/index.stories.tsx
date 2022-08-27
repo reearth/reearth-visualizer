@@ -36,7 +36,6 @@ export const Movable: Story<Props> = () => {
       currentTime={currentTime}
       onClick={setCurrentTime}
       onDrag={setCurrentTime}
-      onPlay={setCurrentTime}
       isOpened={isOpened}
       onOpen={() => setIsOpened(true)}
       onClose={() => setIsOpened(false)}
