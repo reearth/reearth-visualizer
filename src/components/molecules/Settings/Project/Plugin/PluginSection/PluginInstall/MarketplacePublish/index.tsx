@@ -9,13 +9,14 @@ export type Props = {
   icon: Icons;
   buttonText: string;
   loading?: boolean;
+  url: string;
 };
 
-const MarketplacePublish: React.FC<Props> = ({ className, icon, buttonText }) => {
+const MarketplacePublish: React.FC<Props> = ({ className, icon, buttonText, url }) => {
   return (
     <StyledFlex
       className={className}
-      onClick={() => alert("going to the marketplace")}
+      onClick={() => window.open(url, "_blank", "noopener")}
       justify="center"
       align="center">
       <StyledIcon icon={icon} size={91} />

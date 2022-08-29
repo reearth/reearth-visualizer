@@ -7,7 +7,6 @@ import { styled } from "@reearth/theme";
 
 export type Props = {
   children?: ReactNode;
-  title?: string;
   size?: "sm" | "md" | "lg";
   isVisible?: boolean;
   onClose?: () => void;
@@ -31,9 +30,11 @@ const Modal: React.FC<Props> = ({ size, isVisible, onClose, children }) => {
   return state === "unmounted" ? null : (
     <Bg state={state}>
       <Wrapper ref={ref} size={size}>
-        <CloseButton onClick={handleClose}>
-          <Icon icon="cancel" />
-        </CloseButton>
+        {onClose && (
+          <CloseButton onClick={handleClose}>
+            <Icon icon="cancel" />
+          </CloseButton>
+        )}
         <InnerWrapper>{children}</InnerWrapper>
       </Wrapper>
     </Bg>

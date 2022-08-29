@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { convertPasswordPolicy } from "./config";
+import { convertPasswordPolicy } from ".";
 
 test("convert password policy to regular expression", () => {
   const passwordPolicy = {

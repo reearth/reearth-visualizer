@@ -5,7 +5,7 @@ import Box from "@reearth/components/atoms/Box";
 import Loading from "@reearth/components/atoms/Loading";
 import TabSection from "@reearth/components/atoms/TabSection";
 import { PluginItem as PluginItemType } from "@reearth/components/molecules/Settings/Project/Plugin/PluginAccordion";
-import { Extension } from "@reearth/config";
+import { Extension } from "@reearth/config/extensions";
 import { useT } from "@reearth/i18n";
 
 import PluginInstall from "./PluginInstall";

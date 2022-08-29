@@ -92,7 +92,7 @@ const PublishSection: React.FC<Props> = ({
             />
           )}
         </Section>
-        {extensions && accessToken ? (
+        {extensions && extensions.length > 0 && accessToken ? (
           <>
             <Divider margin="0" />
             {extensions.map(ext => (

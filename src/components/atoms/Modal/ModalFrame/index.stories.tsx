@@ -11,7 +11,6 @@ export default {
 export const Default: Story<Props> = args => <Modal {...args} />;
 
 Default.args = {
-  title: "Title",
   size: "sm",
   isVisible: true,
 };

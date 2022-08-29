@@ -17,6 +17,7 @@ type Props = {
 };
 
 const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
+  const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const theme = useTheme();
 
@@ -59,14 +60,18 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
                 text={t("Manage projects")}
               />
             </MenuListItem>
-            <Spacer />
-            <MenuListItem>
-              <MenuListItemLabel
-                icon="help"
-                onClick={() => window.open("http://docs.reearth.io", "_blank", "noopener")}
-                text={t("Documentation")}
-              />
-            </MenuListItem>
+            {documentationUrl && (
+              <>
+                <Spacer />
+                <MenuListItem>
+                  <MenuListItemLabel
+                    icon="help"
+                    onClick={() => window.open(documentationUrl, "_blank", "noopener")}
+                    text={t("Documentation")}
+                  />
+                </MenuListItem>
+              </>
+            )}
           </MenuList>
         </DropdownInner>
       </Dropdown>

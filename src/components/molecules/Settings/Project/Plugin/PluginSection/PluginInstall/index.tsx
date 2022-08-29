@@ -28,7 +28,8 @@ const PluginInstall: React.FC<Props> = ({
   uninstallPlugin,
 }) => {
   const t = useT();
-  const actionChoices: { text: string; mode: PluginActions; icon: Icons }[] = [
+
+  const actionChoices: { text: string; mode: PluginActions; icon: Icons; url?: string }[] = [
     {
       text: t("Zip file from PC"),
       mode: "install-zip",
@@ -43,6 +44,7 @@ const PluginInstall: React.FC<Props> = ({
       text: t("Publish your plugin in the Marketplace"),
       mode: "market-publish",
       icon: "marketplace",
+      url: window.REEARTH_CONFIG?.marketplaceUrl,
     },
     // {
     //   text: t("Private GitHub repository"),
@@ -70,8 +72,8 @@ const PluginInstall: React.FC<Props> = ({
                 buttonText={c.text}
                 onSend={installByUploadingZipFile}
               />
-            ) : c.mode === "market-publish" ? (
-              <MarketplacePublish key={c.mode} icon={c.icon} buttonText={c.text} />
+            ) : c.mode === "market-publish" && c.url ? (
+              <MarketplacePublish key={c.mode} icon={c.icon} buttonText={c.text} url={c.url} />
             ) : null;
           })}
         </StyledFlex>
