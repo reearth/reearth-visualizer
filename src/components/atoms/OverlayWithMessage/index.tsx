@@ -17,7 +17,7 @@ const OverlayWithMessage: React.FC<Props> = ({ title, content, icon, show }) => 
   return (
     <>
       <Overlay show={show} strong />
-      <Wrapper>
+      <Wrapper show={show}>
         <Content direction="column" align="center" show={show}>
           <Icon icon={icon} size={60} color={theme.main.danger} />
           <Text size="l" color={theme.main.strongText}>
@@ -32,12 +32,13 @@ const OverlayWithMessage: React.FC<Props> = ({ title, content, icon, show }) => 
 
 export default OverlayWithMessage;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ show?: boolean }>`
   position: absolute;
   top: 35%;
   left: 0;
   right: 0;
   z-index: 1;
+  ${({ show }) => !show && "pointer-events: none;"}
 `;
 
 const Content = styled(Flex)<{ show?: boolean }>`
