@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
+import BrowserWidthWarning from "@reearth/components/molecules/Common/BrowserWidthWarning";
 import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEditorPage";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
 import Header from "@reearth/components/organisms/EarthEditor/Header";
@@ -22,6 +23,7 @@ const EarthEditor: React.FC<Props> = () => {
 
   return (
     <AuthenticationRequiredPage>
+      <BrowserWidthWarning />
       <DndProvider>
         <EarthEditorPage
           loading={loading}

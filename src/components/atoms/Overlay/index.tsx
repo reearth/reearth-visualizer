@@ -2,6 +2,7 @@ import { styled } from "@reearth/theme";
 
 type Props = {
   show?: boolean;
+  strong?: boolean;
 };
 
 const Overlay = styled.div<Props>`
@@ -9,7 +10,7 @@ const Overlay = styled.div<Props>`
   width: 100%;
   height: 100%;
   background: ${props => props.theme.modal.overlayBg};
-  opacity: ${({ show }) => (show ? 0.3 : 0)};
+  opacity: ${({ show, strong }) => (show ? (strong ? 0.7 : 0.3) : 0)};
   visibility: ${({ show }) => (show ? "visible" : "hidden")};
   transition: all 0.2s;
   transition-timing-function: ${({ show }) => (show ? "ease-in" : "ease-out")};

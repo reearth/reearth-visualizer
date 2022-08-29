@@ -125,6 +125,7 @@ import Sun from "./Icons/sun.svg";
 import CheckCircle2 from "./Icons/checkCircle2.svg";
 import MailCircle from "./Icons/mailCircle.svg";
 import Tag from "./Icons/tag.svg";
+import Resize from "./Icons/resize.svg";
 
 // Plug-ins
 import Plugin from "./Icons/plugin.svg";
@@ -255,6 +256,7 @@ export default {
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,
+  resize: Resize,
   crosshair: Crosshair,
   ellipse: Ellipse,
   playRight: PlayRight,
