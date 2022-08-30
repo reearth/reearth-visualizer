@@ -49,7 +49,7 @@ func (b *Builder) IsVisibleRef(visible *bool) *Builder {
 }
 
 func (b *Builder) Plugin(plugin *PluginID) *Builder {
-	b.base.plugin = plugin.CopyRef()
+	b.base.plugin = plugin.CloneRef()
 	return b
 }
 
@@ -59,7 +59,7 @@ func (b *Builder) Extension(extension *PluginExtensionID) *Builder {
 }
 
 func (b *Builder) Property(p *PropertyID) *Builder {
-	b.base.property = p.CopyRef()
+	b.base.property = p.CloneRef()
 	return b
 }
 

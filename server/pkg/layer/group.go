@@ -104,7 +104,7 @@ func (l *Group) LinkedDatasetSchema() *DatasetSchemaID {
 	if l == nil {
 		return nil
 	}
-	return l.linkedDatasetSchema.CopyRef()
+	return l.linkedDatasetSchema.CloneRef()
 }
 
 func (l *Group) Link(ds DatasetSchemaID) {

@@ -56,6 +56,6 @@ func (b *SchemaFieldBuilder) Source(source string) *SchemaFieldBuilder {
 }
 
 func (b *SchemaFieldBuilder) Ref(ref *SchemaID) *SchemaFieldBuilder {
-	b.d.ref = ref.CopyRef()
+	b.d.ref = ref.CloneRef()
 	return b
 }

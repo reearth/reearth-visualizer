@@ -34,7 +34,7 @@ func (p *Plugins) Plugins() []*Plugin {
 func (p *Plugins) Property(id PluginID) *PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
-			return p.property.CopyRef()
+			return p.property.CloneRef()
 		}
 	}
 	return nil
@@ -98,9 +98,9 @@ func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool
 		if p2.plugin.Equal(from) {
 			var newpr *PropertyID
 			if !deleteProperty {
-				newpr = pr.CopyRef()
+				newpr = pr.CloneRef()
 				if newpr == nil {
-					newpr = p2.property.CopyRef()
+					newpr = p2.property.CloneRef()
 				}
 			}
 			p.plugins[i] = &Plugin{plugin: to, property: newpr}

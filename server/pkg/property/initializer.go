@@ -28,7 +28,7 @@ func (p *Initializer) Clone() *Initializer {
 	}
 
 	return &Initializer{
-		ID:     p.ID.CopyRef(),
+		ID:     p.ID.CloneRef(),
 		Schema: p.Schema,
 		Items:  items,
 	}
@@ -117,7 +117,7 @@ func (p *InitializerItem) Clone() *InitializerItem {
 	}
 
 	return &InitializerItem{
-		ID:         p.ID.CopyRef(),
+		ID:         p.ID.CloneRef(),
 		SchemaItem: p.SchemaItem,
 		Groups:     groups,
 		Fields:     fields,
@@ -199,7 +199,7 @@ func (p *InitializerGroup) Clone() *InitializerGroup {
 	}
 
 	return &InitializerGroup{
-		ID:     p.ID.CopyRef(),
+		ID:     p.ID.CloneRef(),
 		Fields: fields,
 	}
 }
@@ -292,7 +292,7 @@ func (p *InitializerLink) Clone() *InitializerLink {
 	}
 
 	return &InitializerLink{
-		Dataset: p.Dataset.CopyRef(),
+		Dataset: p.Dataset.CloneRef(),
 		Schema:  p.Schema,
 		Field:   p.Field,
 	}

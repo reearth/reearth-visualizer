@@ -291,7 +291,7 @@ func (r *Layer) CountByScene(_ context.Context, sid id.SceneID) (n int, _ error)
 	}
 
 	for _, d := range r.data {
-		if d.Scene().Equal(sid) {
+		if d.Scene() == sid {
 			n++
 		}
 	}

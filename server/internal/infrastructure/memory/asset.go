@@ -118,7 +118,7 @@ func (r *Asset) TotalSizeByWorkspace(_ context.Context, wid id.WorkspaceID) (t i
 	}
 
 	for _, a := range r.data {
-		if a.Workspace().Equal(wid) {
+		if a.Workspace() == wid {
 			t += a.Size()
 		}
 	}

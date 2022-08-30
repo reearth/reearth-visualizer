@@ -49,10 +49,10 @@ func Seal(ctx context.Context, p *Merged, d dataset.GraphLoader) (*Sealed, error
 	}
 
 	return &Sealed{
-		Original:      p.Original.CopyRef(),
-		Parent:        p.Parent.CopyRef(),
+		Original:      p.Original.CloneRef(),
+		Parent:        p.Parent.CloneRef(),
 		Schema:        p.Schema,
-		LinkedDataset: p.LinkedDataset.CopyRef(),
+		LinkedDataset: p.LinkedDataset.CloneRef(),
 		Items:         items,
 	}, nil
 }
@@ -72,10 +72,10 @@ func sealedItemFrom(ctx context.Context, g *MergedGroup, d dataset.GraphLoader) 
 	}
 
 	item = &SealedItem{
-		Original:      g.Original.CopyRef(),
-		Parent:        g.Parent.CopyRef(),
+		Original:      g.Original.CloneRef(),
+		Parent:        g.Parent.CloneRef(),
 		SchemaGroup:   g.SchemaGroup,
-		LinkedDataset: g.LinkedDataset.CopyRef(),
+		LinkedDataset: g.LinkedDataset.CloneRef(),
 	}
 
 	if len(g.Groups) > 0 {

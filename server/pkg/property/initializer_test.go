@@ -258,7 +258,7 @@ func TestInitializerField_PropertyField(t *testing.T) {
 
 	expected := NewField(field.Field).
 		Value(NewOptionalValue(field.Type, field.Value)).
-		Links(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CopyRef(), field.Links[0].Schema, field.Links[0].Field)})).
+		Links(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CloneRef(), field.Links[0].Schema, field.Links[0].Field)})).
 		MustBuild()
 
 	assert.Equal(t, expected, field.PropertyField())
@@ -283,7 +283,7 @@ func TestInitializerLink_PropertyLink(t *testing.T) {
 		Field:   NewDatasetFieldID(),
 	}
 
-	expected := NewLink(*link.Dataset.CopyRef(), link.Schema, link.Field)
+	expected := NewLink(*link.Dataset.CloneRef(), link.Schema, link.Field)
 
 	assert.Equal(t, expected, link.PropertyLink())
 }

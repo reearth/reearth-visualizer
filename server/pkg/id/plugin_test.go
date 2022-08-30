@@ -492,7 +492,7 @@ func TestPluginID_CopyRef(t *testing.T) {
 
 	ref := pluginID.Ref()
 
-	ref2 := ref.CopyRef()
+	ref2 := ref.CloneRef()
 
 	assert.Equal(t, *ref, pluginID)
 	assert.Equal(t, *ref2, pluginID)

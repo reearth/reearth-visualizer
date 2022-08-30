@@ -46,10 +46,10 @@ func Merge(o Layer, p *Group) *Merged {
 
 	return &Merged{
 		Original:    o.ID(),
-		Parent:      p.IDRef().CopyRef(),
+		Parent:      p.IDRef().CloneRef(),
 		Scene:       o.Scene(),
 		Name:        o.Name(),
-		PluginID:    o.Plugin().CopyRef(),
+		PluginID:    o.Plugin().CloneRef(),
 		ExtensionID: o.Extension().CloneRef(),
 		Property: &property.MergedMetadata{
 			Original:      o.Property(),

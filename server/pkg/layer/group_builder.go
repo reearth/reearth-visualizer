@@ -78,7 +78,7 @@ func (b *GroupBuilder) IsVisible(visible bool) *GroupBuilder {
 }
 
 func (b *GroupBuilder) Plugin(plugin *PluginID) *GroupBuilder {
-	b.l.plugin = plugin.CopyRef()
+	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
@@ -88,7 +88,7 @@ func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
 }
 
 func (b *GroupBuilder) Property(property *PropertyID) *GroupBuilder {
-	b.l.property = property.CopyRef()
+	b.l.property = property.CloneRef()
 	return b
 }
 
@@ -103,7 +103,7 @@ func (b *GroupBuilder) Infobox(infobox *Infobox) *GroupBuilder {
 }
 
 func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *DatasetSchemaID) *GroupBuilder {
-	b.l.linkedDatasetSchema = linkedDatasetSchema.CopyRef()
+	b.l.linkedDatasetSchema = linkedDatasetSchema.CloneRef()
 	return b
 }
 

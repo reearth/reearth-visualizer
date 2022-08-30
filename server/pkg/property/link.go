@@ -287,21 +287,21 @@ func (l *Link) Dataset() *DatasetID {
 	if l == nil {
 		return nil
 	}
-	return l.dataset.CopyRef()
+	return l.dataset.CloneRef()
 }
 
 func (l *Link) DatasetSchema() *DatasetSchemaID {
 	if l == nil {
 		return nil
 	}
-	return l.schema.CopyRef()
+	return l.schema.CloneRef()
 }
 
 func (l *Link) DatasetSchemaField() *DatasetFieldID {
 	if l == nil {
 		return nil
 	}
-	return l.field.CopyRef()
+	return l.field.CloneRef()
 }
 
 func (l *Link) Value(ds *dataset.Dataset) *dataset.Value {
@@ -365,7 +365,7 @@ func (l *Link) ApplyDataset(ds *DatasetID) *Link {
 		return l.Clone()
 	}
 	return &Link{
-		dataset: ds.CopyRef(),
+		dataset: ds.CloneRef(),
 		schema:  l.DatasetSchema(),
 		field:   l.DatasetSchemaField(),
 	}

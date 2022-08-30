@@ -73,7 +73,7 @@ func (r *Project) FindIDsByWorkspace(ctx context.Context, id id.WorkspaceID) (re
 	}
 
 	for _, d := range r.data {
-		if d.Workspace().Equal(id) {
+		if d.Workspace() == id {
 			res = append(res, d.ID())
 		}
 	}
@@ -137,7 +137,7 @@ func (r *Project) CountPublicByWorkspace(_ context.Context, ws id.WorkspaceID) (
 	defer r.lock.Unlock()
 
 	for _, p := range r.data {
-		if p.Workspace().Equal(ws) && r.f.CanRead(p.Workspace()) && p.PublishmentStatus() == project.PublishmentStatusPublic {
+		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) && p.PublishmentStatus() == project.PublishmentStatusPublic {
 			n++
 		}
 	}
