@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,7 +31,7 @@ func TestAsset_Create(t *testing.T) {
 	mfs := afero.NewMemMapFs()
 	f, _ := fs.NewFile(mfs, "")
 
-	transaction := memory.NewTransaction()
+	transaction := &usecasex.NopTransaction{}
 	uc := &Asset{
 		repos: &repo.Container{
 			Asset:       memory.NewAsset(),
@@ -69,7 +70,7 @@ func TestAsset_Create(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, want, res)
-	assert.Equal(t, 1, transaction.Committed())
+	assert.True(t, transaction.IsCommitted())
 	a, _ := uc.repos.Asset.FindByID(ctx, aid)
 	assert.Equal(t, want, a)
 }

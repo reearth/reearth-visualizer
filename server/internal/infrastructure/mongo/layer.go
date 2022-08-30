@@ -10,22 +10,24 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/samber/lo"
 )
 
 type layerRepo struct {
-	client *mongodoc.ClientCollection
+	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewLayer(client *mongodoc.Client) repo.Layer {
+func NewLayer(client *mongox.Client) repo.Layer {
 	r := &layerRepo{client: client.WithCollection("layer")}
 	r.init()
 	return r
 }
 
 func (r *layerRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"plugin", "extension", "scene", "group.layers", "tags.id", "tags.tags.id"})
+	i := r.client.CreateIndex(context.Background(), []string{"plugin", "extension", "scene", "group.layers", "tags.id", "tags.tags.id"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "layer", i)
 	}
@@ -205,7 +207,7 @@ func (r *layerRepo) SaveAll(ctx context.Context, layers layer.List) error {
 func (r *layerRepo) UpdatePlugin(ctx context.Context, old, new id.PluginID) error {
 	return r.client.UpdateManyMany(
 		ctx,
-		[]mongodoc.Update{
+		[]mongox.Update{
 			{
 				Filter: r.writeFilter(bson.M{"plugin": old.String()}),
 				Update: bson.M{"plugin": new.String()},
@@ -241,7 +243,7 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 	filter := bson.D{
 		{Key: "scene", Value: sceneID.String()},
 	}
-	_, err := r.client.Collection().DeleteMany(ctx, filter)
+	_, err := r.client.Client().DeleteMany(ctx, filter)
 	if err != nil {
 		return rerror.ErrInternalBy(err)
 	}
@@ -249,13 +251,11 @@ func (r *layerRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error
 }
 
 func (r *layerRepo) find(ctx context.Context, dst layer.List, filter interface{}) (layer.List, error) {
-	c := mongodoc.LayerConsumer{
-		Rows: dst,
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows, nil
+	return lo.ToSlicePtr(c.Result), nil
 }
 
 func (r *layerRepo) findOne(ctx context.Context, filter interface{}) (layer.Layer, error) {
@@ -263,10 +263,10 @@ func (r *layerRepo) findOne(ctx context.Context, filter interface{}) (layer.Laye
 	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
 		return nil, err
 	}
-	if len(c.Rows) == 0 {
+	if len(c.Result) == 0 {
 		return nil, rerror.ErrNotFound
 	}
-	return *c.Rows[0], nil
+	return c.Result[0], nil
 }
 
 func (r *layerRepo) findItemOne(ctx context.Context, filter interface{}) (*layer.Item, error) {
@@ -274,10 +274,10 @@ func (r *layerRepo) findItemOne(ctx context.Context, filter interface{}) (*layer
 	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
 		return nil, err
 	}
-	if len(c.ItemRows) == 0 {
+	if len(c.Result) == 0 {
 		return nil, rerror.ErrNotFound
 	}
-	return c.ItemRows[0], nil
+	return layer.ToLayerItem(c.Result[0]), nil
 }
 
 func (r *layerRepo) findGroupOne(ctx context.Context, filter interface{}) (*layer.Group, error) {
@@ -285,36 +285,26 @@ func (r *layerRepo) findGroupOne(ctx context.Context, filter interface{}) (*laye
 	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
 		return nil, err
 	}
-	if len(c.GroupRows) == 0 {
+	if len(c.Result) == 0 {
 		return nil, rerror.ErrNotFound
 	}
-	return c.GroupRows[0], nil
+	return layer.ToLayerGroup(c.Result[0]), nil
 }
 
 func (r *layerRepo) findItems(ctx context.Context, dst layer.ItemList, filter interface{}) (layer.ItemList, error) {
-	c := mongodoc.LayerConsumer{
-		ItemRows: dst,
-	}
-	if c.ItemRows != nil {
-		c.Rows = make(layer.List, 0, len(c.ItemRows))
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.ItemRows, nil
+	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerItemList(), nil
 }
 
 func (r *layerRepo) findGroups(ctx context.Context, dst layer.GroupList, filter interface{}) (layer.GroupList, error) {
-	c := mongodoc.LayerConsumer{
-		GroupRows: dst,
-	}
-	if c.GroupRows != nil {
-		c.Rows = make(layer.List, 0, len(c.GroupRows))
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.GroupRows, nil
+	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerGroupList(), nil
 }
 
 func filterLayers(ids []id.LayerID, rows []*layer.Layer) []*layer.Layer {

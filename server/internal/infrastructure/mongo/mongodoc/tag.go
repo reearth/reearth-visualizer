@@ -3,11 +3,10 @@ package mongodoc
 import (
 	"errors"
 
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type TagDocument struct {
@@ -29,36 +28,10 @@ type TagGroupDocument struct {
 	Tags []string
 }
 
-type TagConsumer struct {
-	Rows      []*tag.Tag
-	GroupRows []*tag.Group
-	ItemRows  []*tag.Item
-}
+type TagConsumer = mongox.SliceFuncConsumer[*TagDocument, tag.Tag]
 
-func (c *TagConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc TagDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	ti, tg, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	if ti != nil {
-		var t tag.Tag = ti
-		c.Rows = append(c.Rows, &t)
-		c.ItemRows = append(c.ItemRows, ti)
-	}
-	if tg != nil {
-		var t tag.Tag = tg
-		c.Rows = append(c.Rows, &t)
-		c.GroupRows = append(c.GroupRows, tg)
-	}
-	return nil
+func NewTagConsumer() *TagConsumer {
+	return NewComsumer[*TagDocument, tag.Tag]()
 }
 
 func NewTag(t tag.Tag) (*TagDocument, string) {
@@ -107,24 +80,24 @@ func NewTags(tags []*tag.Tag, f scene.IDList) ([]interface{}, []string) {
 	return res, ids
 }
 
-func (d *TagDocument) Model() (*tag.Item, *tag.Group, error) {
+func (d *TagDocument) Model() (tag.Tag, error) {
 	if d.Item != nil {
 		ti, err := d.ModelItem()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return ti, nil, nil
+		return ti, nil
 	}
 
 	if d.Group != nil {
 		tg, err := d.ModelGroup()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return nil, tg, nil
+		return tg, nil
 	}
 
-	return nil, nil, errors.New("invalid tag")
+	return nil, errors.New("invalid tag")
 }
 
 func (d *TagDocument) ModelItem() (*tag.Item, error) {

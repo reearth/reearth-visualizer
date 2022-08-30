@@ -3,7 +3,7 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type PluginDocument struct {
@@ -47,25 +47,10 @@ type WidgetLocationDocument struct {
 	Area    string
 }
 
-type PluginConsumer struct {
-	Rows []*plugin.Plugin
-}
+type PluginConsumer = mongox.SliceFuncConsumer[*PluginDocument, *plugin.Plugin]
 
-func (c *PluginConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc PluginDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	plugin, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, plugin)
-	return nil
+func NewPluginConsumer() *PluginConsumer {
+	return NewComsumer[*PluginDocument, *plugin.Plugin]()
 }
 
 func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {

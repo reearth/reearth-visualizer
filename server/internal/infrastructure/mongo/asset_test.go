@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -39,7 +40,7 @@ func TestFindByID(t *testing.T) {
 		},
 	}
 
-	init := connect(t)
+	init := mongotest.Connect(t)
 
 	for _, tc := range tests {
 		tc := tc
@@ -49,7 +50,7 @@ func TestFindByID(t *testing.T) {
 
 			client := init(t)
 
-			repo := NewAsset(mongodoc.NewClientWithDatabase(client))
+			repo := NewAsset(mongox.NewClientWithDatabase(client))
 			ctx := context.Background()
 			err := repo.Save(ctx, tc.Expected.Asset)
 			assert.NoError(t, err)
@@ -68,7 +69,7 @@ func TestFindByID(t *testing.T) {
 }
 
 func TestAsset_TotalSizeByWorkspace(t *testing.T) {
-	c := connect(t)(t)
+	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 	wid := id.NewWorkspaceID()
 	wid2 := id.NewWorkspaceID()
@@ -78,15 +79,15 @@ func TestAsset_TotalSizeByWorkspace(t *testing.T) {
 		bson.M{"id": "z", "team": "x", "size": 1},
 	})
 
-	r := NewAsset(mongodoc.NewClientWithDatabase(c))
+	r := NewAsset(mongox.NewClientWithDatabase(c))
 	got, err := r.TotalSizeByWorkspace(ctx, wid)
 	assert.Equal(t, int64(10000001), got)
 	assert.NoError(t, err)
 
-	r = r.Filtered(repo.WorkspaceFilter{
+	r2 := r.Filtered(repo.WorkspaceFilter{
 		Readable: id.WorkspaceIDList{wid2},
 	})
-	got, err = r.TotalSizeByWorkspace(ctx, wid)
+	got, err = r2.TotalSizeByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
 	assert.Zero(t, got)
 }

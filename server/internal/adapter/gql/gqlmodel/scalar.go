@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 	"golang.org/x/text/language"
 )
 
@@ -50,17 +50,17 @@ func UnmarshalLang(v interface{}) (language.Tag, error) {
 	return language.Tag{}, errors.New("invalid lang")
 }
 
-func MarshalCursor(t usecase.Cursor) graphql.Marshaler {
+func MarshalCursor(t usecasex.Cursor) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		_, _ = io.WriteString(w, strconv.Quote(string(t)))
 	})
 }
 
-func UnmarshalCursor(v interface{}) (usecase.Cursor, error) {
+func UnmarshalCursor(v interface{}) (usecasex.Cursor, error) {
 	if tmpStr, ok := v.(string); ok {
-		return usecase.Cursor(tmpStr), nil
+		return usecasex.Cursor(tmpStr), nil
 	}
-	return usecase.Cursor(""), errors.New("invalid cursor")
+	return usecasex.Cursor(""), errors.New("invalid cursor")
 }
 
 func MarshalMap(val map[string]string) graphql.Marshaler {

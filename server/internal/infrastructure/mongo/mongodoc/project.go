@@ -4,11 +4,10 @@ import (
 	"net/url"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type ProjectDocument struct {
@@ -32,25 +31,10 @@ type ProjectDocument struct {
 	PublishmentStatus string
 }
 
-type ProjectConsumer struct {
-	Rows []*project.Project
-}
+type ProjectConsumer = mongox.SliceFuncConsumer[*ProjectDocument, *project.Project]
 
-func (c *ProjectConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc ProjectDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	project, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, project)
-	return nil
+func NewProjectConsumer() *ProjectConsumer {
+	return NewComsumer[*ProjectDocument, *project.Project]()
 }
 
 func NewProject(project *project.Project) (*ProjectDocument, string) {

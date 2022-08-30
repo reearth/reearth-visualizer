@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 	"golang.org/x/text/language"
 )
 
@@ -170,8 +170,8 @@ type AssetConnection struct {
 }
 
 type AssetEdge struct {
-	Cursor usecase.Cursor `json:"cursor"`
-	Node   *Asset         `json:"node"`
+	Cursor usecasex.Cursor `json:"cursor"`
+	Node   *Asset          `json:"node"`
 }
 
 type AttachTagItemToGroupInput struct {
@@ -295,8 +295,8 @@ type DatasetConnection struct {
 }
 
 type DatasetEdge struct {
-	Cursor usecase.Cursor `json:"cursor"`
-	Node   *Dataset       `json:"node"`
+	Cursor usecasex.Cursor `json:"cursor"`
+	Node   *Dataset        `json:"node"`
 }
 
 type DatasetField struct {
@@ -334,8 +334,8 @@ type DatasetSchemaConnection struct {
 }
 
 type DatasetSchemaEdge struct {
-	Cursor usecase.Cursor `json:"cursor"`
-	Node   *DatasetSchema `json:"node"`
+	Cursor usecasex.Cursor `json:"cursor"`
+	Node   *DatasetSchema  `json:"node"`
 }
 
 type DatasetSchemaField struct {
@@ -667,17 +667,17 @@ type MovePropertyItemInput struct {
 }
 
 type PageInfo struct {
-	StartCursor     *usecase.Cursor `json:"startCursor"`
-	EndCursor       *usecase.Cursor `json:"endCursor"`
-	HasNextPage     bool            `json:"hasNextPage"`
-	HasPreviousPage bool            `json:"hasPreviousPage"`
+	StartCursor     *usecasex.Cursor `json:"startCursor"`
+	EndCursor       *usecasex.Cursor `json:"endCursor"`
+	HasNextPage     bool             `json:"hasNextPage"`
+	HasPreviousPage bool             `json:"hasPreviousPage"`
 }
 
 type Pagination struct {
-	First  *int            `json:"first"`
-	Last   *int            `json:"last"`
-	After  *usecase.Cursor `json:"after"`
-	Before *usecase.Cursor `json:"before"`
+	First  *int             `json:"first"`
+	Last   *int             `json:"last"`
+	After  *usecasex.Cursor `json:"after"`
+	Before *usecasex.Cursor `json:"before"`
 }
 
 type Plugin struct {
@@ -766,8 +766,8 @@ type ProjectConnection struct {
 }
 
 type ProjectEdge struct {
-	Cursor usecase.Cursor `json:"cursor"`
-	Node   *Project       `json:"node"`
+	Cursor usecasex.Cursor `json:"cursor"`
+	Node   *Project        `json:"node"`
 }
 
 type ProjectPayload struct {

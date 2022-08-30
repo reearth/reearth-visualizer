@@ -8,23 +8,24 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type propertyRepo struct {
-	client *mongodoc.ClientCollection
+	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewProperty(client *mongodoc.Client) repo.Property {
+func NewProperty(client *mongox.Client) repo.Property {
 	r := &propertyRepo{client: client.WithCollection("property")}
 	r.init()
 	return r
 }
 
 func (r *propertyRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"})
+	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "property", i)
 	}
@@ -53,8 +54,7 @@ func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (pr
 			"$in": ids.Strings(),
 		},
 	}
-	dst := make(property.List, 0, len(ids))
-	res, err := r.find(ctx, dst, filter)
+	res, err := r.find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (pr
 }
 
 func (r *propertyRepo) FindLinkedAll(ctx context.Context, id id.SceneID) (property.List, error) {
-	return r.find(ctx, nil, bson.M{
+	return r.find(ctx, bson.M{
 		"scene": id.String(),
 		"fields": bson.M{
 			"$elemMatch": bson.M{
@@ -77,7 +77,7 @@ func (r *propertyRepo) FindLinkedAll(ctx context.Context, id id.SceneID) (proper
 }
 
 func (r *propertyRepo) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
-	return r.find(ctx, nil, bson.M{
+	return r.find(ctx, bson.M{
 		"$or": []bson.M{
 			{"fields.links.dataset": did.String()}, // for compatibility
 			{"items.fields.links.dataset": did.String()},
@@ -103,7 +103,7 @@ func (r *propertyRepo) FindBySchema(ctx context.Context, psids []id.PropertySche
 		})
 	}
 	filter := bson.M{"$and": filters}
-	return r.find(ctx, nil, filter)
+	return r.find(ctx, filter)
 }
 
 func (r *propertyRepo) FindByPlugin(ctx context.Context, pid id.PluginID, sid id.SceneID) (property.List, error) {
@@ -117,7 +117,7 @@ func (r *propertyRepo) FindByPlugin(ctx context.Context, pid id.PluginID, sid id
 		"schemaplugin": pid.String(),
 		"scene":        sid.String(),
 	}
-	return r.find(ctx, nil, filter)
+	return r.find(ctx, filter)
 }
 
 func (r *propertyRepo) Save(ctx context.Context, property *property.Property) error {
@@ -165,7 +165,7 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	if !r.f.CanWrite(sceneID) {
 		return nil
 	}
-	_, err := r.client.Collection().DeleteMany(ctx, bson.M{
+	_, err := r.client.Client().DeleteMany(ctx, bson.M{
 		"scene": sceneID.String(),
 	})
 	if err != nil {
@@ -174,25 +174,20 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	return nil
 }
 
-func (r *propertyRepo) find(ctx context.Context, dst property.List, filter interface{}) (property.List, error) {
-	c := mongodoc.PropertyConsumer{
-		Rows: dst,
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+func (r *propertyRepo) find(ctx context.Context, filter any) (property.List, error) {
+	c := mongodoc.NewPropertyConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows, nil
+	return c.Result, nil
 }
 
-func (r *propertyRepo) findOne(ctx context.Context, filter interface{}) (*property.Property, error) {
-	dst := make(property.List, 0, 1)
-	c := mongodoc.PropertyConsumer{
-		Rows: dst,
-	}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+func (r *propertyRepo) findOne(ctx context.Context, filter any) (*property.Property, error) {
+	c := mongodoc.NewPropertyConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows[0], nil
+	return c.Result[0], nil
 }
 
 func filterProperties(ids []id.PropertyID, rows property.List) property.List {
@@ -210,10 +205,10 @@ func filterProperties(ids []id.PropertyID, rows property.List) property.List {
 	return res
 }
 
-func (r *propertyRepo) readFilter(filter interface{}) interface{} {
+func (r *propertyRepo) readFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Readable)
 }
 
-func (r *propertyRepo) writeFilter(filter interface{}) interface{} {
+func (r *propertyRepo) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)
 }

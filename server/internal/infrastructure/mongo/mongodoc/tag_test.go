@@ -256,12 +256,7 @@ func TestFuncConsumer_Consume(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			c := &TagConsumer{
-				Rows:      tc.fields.Rows,
-				GroupRows: tc.fields.GroupRows,
-				ItemRows:  tc.fields.ItemRows,
-			}
-
+			c := NewTagConsumer()
 			if err := c.Consume(tc.args.raw); tc.wantErr {
 				assert.Error(t, err)
 			}
@@ -299,8 +294,7 @@ func TestTagDocument_Model(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    *tag.Item
-		want1   *tag.Group
+		want    tag.Tag
 		wantErr bool
 	}{
 		{
@@ -317,7 +311,6 @@ func TestTagDocument_Model(t *testing.T) {
 				Group: nil,
 			},
 			want:    ti,
-			want1:   nil,
 			wantErr: false,
 		},
 		{
@@ -329,15 +322,13 @@ func TestTagDocument_Model(t *testing.T) {
 				Item:  nil,
 				Group: &TagGroupDocument{Tags: []string{ti.ID().String()}},
 			},
-			want:    nil,
-			want1:   tg,
+			want:    tg,
 			wantErr: false,
 		},
 		{
 			name:    "fail: invalid tag",
 			fields:  fields{},
 			want:    nil,
-			want1:   nil,
 			wantErr: true,
 		},
 	}
@@ -353,12 +344,11 @@ func TestTagDocument_Model(t *testing.T) {
 				Item:  tc.fields.Item,
 				Group: tc.fields.Group,
 			}
-			got, got1, err := d.Model()
+			got, err := d.Model()
 			if tc.wantErr {
 				assert.Error(t, err)
 			} else {
 				assert.Equal(t, tc.want, got)
-				assert.Equal(t, tc.want1, got1)
 			}
 		})
 	}

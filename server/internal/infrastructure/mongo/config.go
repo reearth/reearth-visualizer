@@ -15,22 +15,22 @@ import (
 
 const configLockName = "config"
 
-type configRepo struct {
-	client *mongodoc.ClientCollection
+type Config struct {
+	client *mongo.Collection
 	lock   repo.Lock
 }
 
-func NewConfig(client *mongodoc.Client, lock repo.Lock) repo.Config {
-	return &configRepo{client: client.WithCollection("config"), lock: lock}
+func NewConfig(client *mongo.Collection, lock repo.Lock) *Config {
+	return &Config{client: client, lock: lock}
 }
 
-func (r *configRepo) LockAndLoad(ctx context.Context) (cfg *config.Config, err error) {
+func (r *Config) LockAndLoad(ctx context.Context) (cfg *config.Config, err error) {
 	if err := r.lock.Lock(ctx, configLockName); err != nil {
 		return nil, err
 	}
 
 	cfgd := &mongodoc.ConfigDocument{}
-	if err := r.client.Collection().FindOne(ctx, bson.M{}).Decode(cfgd); err != nil {
+	if err := r.client.FindOne(ctx, bson.M{}).Decode(cfgd); err != nil {
 		if !errors.Is(err, mongo.ErrNilDocument) && !errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, rerror.ErrInternalBy(err)
 		}
@@ -38,9 +38,9 @@ func (r *configRepo) LockAndLoad(ctx context.Context) (cfg *config.Config, err e
 	return cfgd.Model(), nil
 }
 
-func (r *configRepo) Save(ctx context.Context, cfg *config.Config) error {
+func (r *Config) Save(ctx context.Context, cfg *config.Config) error {
 	if cfg != nil {
-		if _, err := r.client.Collection().UpdateOne(
+		if _, err := r.client.UpdateOne(
 			ctx,
 			bson.M{},
 			bson.M{"$set": mongodoc.NewConfig(*cfg)},
@@ -53,14 +53,14 @@ func (r *configRepo) Save(ctx context.Context, cfg *config.Config) error {
 	return nil
 }
 
-func (r *configRepo) SaveAndUnlock(ctx context.Context, cfg *config.Config) error {
+func (r *Config) SaveAndUnlock(ctx context.Context, cfg *config.Config) error {
 	if err := r.Save(ctx, cfg); err != nil {
 		return err
 	}
 	return r.Unlock(ctx)
 }
 
-func (r *configRepo) Unlock(ctx context.Context) error {
+func (r *Config) Unlock(ctx context.Context) error {
 	if err := r.lock.Unlock(ctx, configLockName); err != nil && !errors.Is(err, repo.ErrNotLocked) {
 		return err
 	}

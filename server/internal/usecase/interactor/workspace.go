@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Workspace struct {
@@ -15,7 +16,7 @@ type Workspace struct {
 	projectRepo   repo.Project
 	policyRepo    repo.Policy
 	userRepo      repo.User
-	transaction   repo.Transaction
+	transaction   usecasex.Transaction
 }
 
 func NewWorkspace(r *repo.Container) *Workspace {

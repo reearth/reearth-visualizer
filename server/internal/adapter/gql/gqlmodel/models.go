@@ -1,8 +1,8 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func (LayerItem) IsNode() {}
@@ -137,7 +137,7 @@ func AttachParentLayer(layers []*Layer, parent ID) []Layer {
 }
 
 func NewEmptyPageInfo() *PageInfo {
-	return ToPageInfo(usecase.NewPageInfo(0, nil, nil, false, false))
+	return ToPageInfo(usecasex.NewPageInfo(0, nil, nil, false, false))
 }
 
 func (d *PropertyGroup) Field(id ID) *PropertyField {

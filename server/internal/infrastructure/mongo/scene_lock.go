@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,10 +16,10 @@ import (
 )
 
 type sceneLockRepo struct {
-	client *mongodoc.ClientCollection
+	client *mongox.ClientCollection
 }
 
-func NewSceneLock(client *mongodoc.Client) repo.SceneLock {
+func NewSceneLock(client *mongox.Client) repo.SceneLock {
 	return &sceneLockRepo{client: client.WithCollection("sceneLock")}
 }
 
@@ -55,7 +56,7 @@ func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock s
 	filter := bson.D{{Key: "scene", Value: sceneID.String()}}
 	doc := mongodoc.NewSceneLock(sceneID, lock)
 	upsert := true
-	if _, err2 := r.client.Collection().UpdateOne(ctx, filter, bson.D{
+	if _, err2 := r.client.Client().UpdateOne(ctx, filter, bson.D{
 		{Key: "$set", Value: doc},
 	}, &options.UpdateOptions{
 		Upsert: &upsert,
@@ -66,7 +67,7 @@ func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock s
 }
 
 func (r *sceneLockRepo) ReleaseAllLock(ctx context.Context) error {
-	if _, err2 := r.client.Collection().DeleteMany(ctx, bson.D{}); err2 != nil {
+	if _, err2 := r.client.Client().DeleteMany(ctx, bson.D{}); err2 != nil {
 		if err2 != mongo.ErrNilDocument && err2 != mongo.ErrNoDocuments {
 			return rerror.ErrInternalBy(err2)
 		}

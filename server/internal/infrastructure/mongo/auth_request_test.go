@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/caos/oidc/pkg/oidc"
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/auth"
+	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,14 +43,14 @@ func TestAuthRequestRepo(t *testing.T) {
 		},
 	}
 
-	init := connect(t)
+	init := mongotest.Connect(t)
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
 
 			client := init(t)
-			repo := NewAuthRequest(mongodoc.NewClientWithDatabase(client))
+			repo := NewAuthRequest(mongox.NewClientWithDatabase(client))
 
 			ctx := context.Background()
 			err := repo.Save(ctx, tt.Expected.AuthRequest)

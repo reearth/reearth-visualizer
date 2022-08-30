@@ -6,11 +6,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Asset struct {
@@ -61,9 +61,9 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return result, nil
 }
 
-func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
+func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
-		return nil, usecase.EmptyPageInfo(), nil
+		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
 	r.lock.Lock()
@@ -92,15 +92,15 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter r
 		})
 	}
 
-	var startCursor, endCursor *usecase.Cursor
+	var startCursor, endCursor *usecasex.Cursor
 	if len(result) > 0 {
-		_startCursor := usecase.Cursor(result[0].ID().String())
-		_endCursor := usecase.Cursor(result[len(result)-1].ID().String())
+		_startCursor := usecasex.Cursor(result[0].ID().String())
+		_endCursor := usecasex.Cursor(result[len(result)-1].ID().String())
 		startCursor = &_startCursor
 		endCursor = &_endCursor
 	}
 
-	return result, usecase.NewPageInfo(
+	return result, usecasex.NewPageInfo(
 		len(r.data),
 		startCursor,
 		endCursor,

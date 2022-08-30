@@ -5,9 +5,9 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -38,13 +38,13 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 	return projects, nil
 }
 
-func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
+func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, first *int, last *int, before *usecasex.Cursor, after *usecasex.Cursor) (*gqlmodel.ProjectConnection, error) {
 	tid, err := gqlmodel.ToID[id.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, pi, err := c.usecase.FindByWorkspace(ctx, tid, usecase.NewPagination(first, last, before, after), getOperator(ctx))
+	res, pi, err := c.usecase.FindByWorkspace(ctx, tid, usecasex.NewPagination(first, last, before, after), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, f
 		prj := gqlmodel.ToProject(p)
 		edges = append(edges, &gqlmodel.ProjectEdge{
 			Node:   prj,
-			Cursor: usecase.Cursor(prj.ID),
+			Cursor: usecasex.Cursor(prj.ID),
 		})
 		nodes = append(nodes, prj)
 	}
@@ -64,7 +64,7 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, f
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount(),
+		TotalCount: pi.TotalCount,
 	}, nil
 }
 

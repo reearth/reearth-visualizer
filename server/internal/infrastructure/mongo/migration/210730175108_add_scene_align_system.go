@@ -9,13 +9,14 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func AddSceneAlignSystem(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("scene")
 
-	return col.Find(ctx, bson.D{}, &mongodoc.BatchConsumer{
+	return col.Find(ctx, bson.D{}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			ids := make([]string, 0, len(rows))

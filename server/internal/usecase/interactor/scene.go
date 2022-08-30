@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Scene struct {
@@ -27,7 +28,7 @@ type Scene struct {
 	pluginRepo         repo.Plugin
 	layerRepo          repo.Layer
 	datasetRepo        repo.Dataset
-	transaction        repo.Transaction
+	transaction        usecasex.Transaction
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
 }

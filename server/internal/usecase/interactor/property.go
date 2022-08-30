@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Property struct {
@@ -23,8 +24,8 @@ type Property struct {
 	datasetSchemaRepo  repo.DatasetSchema
 	sceneRepo          repo.Scene
 	assetRepo          repo.Asset
-	transaction        repo.Transaction
 	file               gateway.File
+	transaction        usecasex.Transaction
 }
 
 func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {

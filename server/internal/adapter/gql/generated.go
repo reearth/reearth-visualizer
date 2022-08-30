@@ -16,7 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 	"golang.org/x/text/language"
@@ -236,7 +236,7 @@ type ComplexityRoot struct {
 	}
 
 	DatasetSchema struct {
-		Datasets              func(childComplexity int, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		Datasets              func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		Dynamic               func(childComplexity int) int
 		Fields                func(childComplexity int) int
 		ID                    func(childComplexity int) int
@@ -795,8 +795,8 @@ type ComplexityRoot struct {
 	Query struct {
 		Assets                func(childComplexity int, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) int
 		CheckProjectAlias     func(childComplexity int, alias string) int
-		DatasetSchemas        func(childComplexity int, sceneID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
-		Datasets              func(childComplexity int, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		DatasetSchemas        func(childComplexity int, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		Datasets              func(childComplexity int, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		DynamicDatasetSchemas func(childComplexity int, sceneID gqlmodel.ID) int
 		Layer                 func(childComplexity int, id gqlmodel.ID) int
 		Me                    func(childComplexity int) int
@@ -804,7 +804,7 @@ type ComplexityRoot struct {
 		Nodes                 func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin                func(childComplexity int, id gqlmodel.ID) int
 		Plugins               func(childComplexity int, id []gqlmodel.ID) int
-		Projects              func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		Projects              func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		PropertySchema        func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas       func(childComplexity int, id []gqlmodel.ID) int
 		Scene                 func(childComplexity int, projectID gqlmodel.ID) int
@@ -862,7 +862,7 @@ type ComplexityRoot struct {
 	Scene struct {
 		Clusters              func(childComplexity int) int
 		CreatedAt             func(childComplexity int) int
-		DatasetSchemas        func(childComplexity int, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		DatasetSchemas        func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		DynamicDatasetSchemas func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		Plugins               func(childComplexity int) int
@@ -938,14 +938,14 @@ type ComplexityRoot struct {
 	}
 
 	Team struct {
-		Assets   func(childComplexity int, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		Assets   func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		ID       func(childComplexity int) int
 		Members  func(childComplexity int) int
 		Name     func(childComplexity int) int
 		Personal func(childComplexity int) int
 		Policy   func(childComplexity int) int
 		PolicyID func(childComplexity int) int
-		Projects func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) int
+		Projects func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 	}
 
 	TeamMember struct {
@@ -1084,7 +1084,7 @@ type DatasetFieldResolver interface {
 type DatasetSchemaResolver interface {
 	TotalCount(ctx context.Context, obj *gqlmodel.DatasetSchema) (int, error)
 
-	Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error)
+	Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error)
 	Scene(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.Scene, error)
 	RepresentativeField(ctx context.Context, obj *gqlmodel.DatasetSchema) (*gqlmodel.DatasetSchemaField, error)
 }
@@ -1309,9 +1309,9 @@ type QueryResolver interface {
 	Layer(ctx context.Context, id gqlmodel.ID) (gqlmodel.Layer, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
 	Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error)
-	DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
-	Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error)
+	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
+	DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
+	Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error)
 	DynamicDatasetSchemas(ctx context.Context, sceneID gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error)
 	SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
@@ -1321,7 +1321,7 @@ type SceneResolver interface {
 	Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error)
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
 	RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error)
-	DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
+	DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 
 	Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.Tag, error)
 }
@@ -1348,8 +1348,8 @@ type TagItemResolver interface {
 }
 type TeamResolver interface {
 	Policy(ctx context.Context, obj *gqlmodel.Team) (*gqlmodel.Policy, error)
-	Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error)
-	Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error)
+	Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error)
+	Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
 }
 type TeamMemberResolver interface {
 	User(ctx context.Context, obj *gqlmodel.TeamMember) (*gqlmodel.User, error)
@@ -1877,7 +1877,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.DatasetSchema.Datasets(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.DatasetSchema.Datasets(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "DatasetSchema.dynamic":
 		if e.complexity.DatasetSchema.Dynamic == nil {
@@ -5083,7 +5083,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.DatasetSchemas(childComplexity, args["sceneId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Query.DatasetSchemas(childComplexity, args["sceneId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Query.datasets":
 		if e.complexity.Query.Datasets == nil {
@@ -5095,7 +5095,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Datasets(childComplexity, args["datasetSchemaId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Query.Datasets(childComplexity, args["datasetSchemaId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Query.dynamicDatasetSchemas":
 		if e.complexity.Query.DynamicDatasetSchemas == nil {
@@ -5186,7 +5186,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
@@ -5386,7 +5386,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Scene.DatasetSchemas(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Scene.DatasetSchemas(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Scene.dynamicDatasetSchemas":
 		if e.complexity.Scene.DynamicDatasetSchemas == nil {
@@ -5776,7 +5776,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Team.Assets(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Team.Assets(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Team.id":
 		if e.complexity.Team.ID == nil {
@@ -5830,7 +5830,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Team.Projects(childComplexity, args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecase.Cursor), args["before"].(*usecase.Cursor)), true
+		return e.complexity.Team.Projects(childComplexity, args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "TeamMember.role":
 		if e.complexity.TeamMember.Role == nil {
@@ -8059,19 +8059,19 @@ func (ec *executionContext) field_DatasetSchema_datasets_args(ctx context.Contex
 		}
 	}
 	args["last"] = arg1
-	var arg2 *usecase.Cursor
+	var arg2 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9292,19 +9292,19 @@ func (ec *executionContext) field_Query_datasetSchemas_args(ctx context.Context,
 		}
 	}
 	args["last"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg3
-	var arg4 *usecase.Cursor
+	var arg4 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9343,19 +9343,19 @@ func (ec *executionContext) field_Query_datasets_args(ctx context.Context, rawAr
 		}
 	}
 	args["last"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg3
-	var arg4 *usecase.Cursor
+	var arg4 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9511,19 +9511,19 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		}
 	}
 	args["last"] = arg3
-	var arg4 *usecase.Cursor
+	var arg4 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg4
-	var arg5 *usecase.Cursor
+	var arg5 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg5, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg5, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9613,19 +9613,19 @@ func (ec *executionContext) field_Scene_datasetSchemas_args(ctx context.Context,
 		}
 	}
 	args["last"] = arg1
-	var arg2 *usecase.Cursor
+	var arg2 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9655,19 +9655,19 @@ func (ec *executionContext) field_Team_assets_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg1
-	var arg2 *usecase.Cursor
+	var arg2 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9706,19 +9706,19 @@ func (ec *executionContext) field_Team_projects_args(ctx context.Context, rawArg
 		}
 	}
 	args["last"] = arg2
-	var arg3 *usecase.Cursor
+	var arg3 *usecasex.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["after"] = arg3
-	var arg4 *usecase.Cursor
+	var arg4 *usecasex.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, tmp)
+		arg4, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11518,9 +11518,9 @@ func (ec *executionContext) _AssetEdge_cursor(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usecase.Cursor)
+	res := resTmp.(usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_AssetEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13165,9 +13165,9 @@ func (ec *executionContext) _DatasetEdge_cursor(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usecase.Cursor)
+	res := resTmp.(usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_DatasetEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14012,7 +14012,7 @@ func (ec *executionContext) _DatasetSchema_datasets(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.DatasetSchema().Datasets(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.DatasetSchema().Datasets(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14445,9 +14445,9 @@ func (ec *executionContext) _DatasetSchemaEdge_cursor(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usecase.Cursor)
+	res := resTmp.(usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_DatasetSchemaEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -26896,9 +26896,9 @@ func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*usecase.Cursor)
+	res := resTmp.(*usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -26937,9 +26937,9 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*usecase.Cursor)
+	res := resTmp.(*usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -30207,9 +30207,9 @@ func (ec *executionContext) _ProjectEdge_cursor(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usecase.Cursor)
+	res := resTmp.(usecasex.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -35241,7 +35241,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35306,7 +35306,7 @@ func (ec *executionContext) _Query_datasetSchemas(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().DatasetSchemas(rctx, fc.Args["sceneId"].(gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Query().DatasetSchemas(rctx, fc.Args["sceneId"].(gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35371,7 +35371,7 @@ func (ec *executionContext) _Query_datasets(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Datasets(rctx, fc.Args["datasetSchemaId"].(gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Query().Datasets(rctx, fc.Args["datasetSchemaId"].(gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37524,7 +37524,7 @@ func (ec *executionContext) _Scene_datasetSchemas(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().DatasetSchemas(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Scene().DatasetSchemas(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39967,7 +39967,7 @@ func (ec *executionContext) _Team_assets(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Team().Assets(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Team().Assets(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -40032,7 +40032,7 @@ func (ec *executionContext) _Team_projects(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Team().Projects(rctx, obj, fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecase.Cursor), fc.Args["before"].(*usecase.Cursor))
+		return ec.resolvers.Team().Projects(rctx, obj, fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -46025,7 +46025,7 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-			it.After, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, v)
+			it.After, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46033,7 +46033,7 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-			it.Before, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx, v)
+			it.Before, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -56435,12 +56435,12 @@ func (ec *executionContext) unmarshalNCreateTeamInput2githubᚗcomᚋreearthᚋr
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx context.Context, v interface{}) (usecase.Cursor, error) {
+func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, v interface{}) (usecasex.Cursor, error) {
 	res, err := gqlmodel.UnmarshalCursor(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCursor2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx context.Context, sel ast.SelectionSet, v usecase.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, sel ast.SelectionSet, v usecasex.Cursor) graphql.Marshaler {
 	res := gqlmodel.MarshalCursor(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59360,7 +59360,7 @@ func (ec *executionContext) marshalOCreateTeamPayload2ᚖgithubᚗcomᚋreearth�
 	return ec._CreateTeamPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx context.Context, v interface{}) (*usecase.Cursor, error) {
+func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, v interface{}) (*usecasex.Cursor, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -59368,7 +59368,7 @@ func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearth
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋusecaseᚐCursor(ctx context.Context, sel ast.SelectionSet, v *usecase.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, sel ast.SelectionSet, v *usecasex.Cursor) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

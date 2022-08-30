@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type AddDatasetSchemaParam struct {
@@ -68,9 +69,9 @@ type Dataset interface {
 	GraphFetchSchema(context.Context, id.DatasetSchemaID, int, *usecase.Operator) (dataset.SchemaList, error)
 	AddDynamicDatasetSchema(context.Context, AddDynamicDatasetSchemaParam) (*dataset.Schema, error)
 	AddDynamicDataset(context.Context, AddDynamicDatasetParam) (*dataset.Schema, *dataset.Dataset, error)
-	FindBySchema(context.Context, id.DatasetSchemaID, *usecase.Pagination, *usecase.Operator) (dataset.List, *usecase.PageInfo, error)
+	FindBySchema(context.Context, id.DatasetSchemaID, *usecasex.Pagination, *usecase.Operator) (dataset.List, *usecasex.PageInfo, error)
 	CountBySchema(context.Context, id.DatasetSchemaID) (int, error)
-	FindSchemaByScene(context.Context, id.SceneID, *usecase.Pagination, *usecase.Operator) (dataset.SchemaList, *usecase.PageInfo, error)
+	FindSchemaByScene(context.Context, id.SceneID, *usecasex.Pagination, *usecase.Operator) (dataset.SchemaList, *usecasex.PageInfo, error)
 	FindDynamicSchemaByScene(context.Context, id.SceneID) (dataset.SchemaList, error)
 	RemoveDatasetSchema(context.Context, RemoveDatasetSchemaParam, *usecase.Operator) (id.DatasetSchemaID, error)
 	UpdateDatasetSchema(context.Context, UpdateDatasetSchemaParam, *usecase.Operator) (*dataset.Schema, error)

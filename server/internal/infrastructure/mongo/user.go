@@ -10,20 +10,21 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type userRepo struct {
-	client *mongodoc.ClientCollection
+	client *mongox.ClientCollection
 }
 
-func NewUser(client *mongodoc.Client) repo.User {
+func NewUser(client *mongox.Client) repo.User {
 	r := &userRepo{client: client.WithCollection("user")}
 	r.init()
 	return r
 }
 
 func (r *userRepo) init() {
-	i := r.client.CreateUniqueIndex(context.Background(), []string{"email", "name", "auth0sublist"}, []string{"name"})
+	i := r.client.CreateIndex(context.Background(), []string{"email", "name", "auth0sublist"}, []string{"id", "name"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "user", i)
 	}
@@ -34,8 +35,7 @@ func (r *userRepo) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.Us
 		return nil, nil
 	}
 
-	dst := make([]*user.User, 0, len(ids))
-	res, err := r.find(ctx, dst, bson.M{
+	res, err := r.find(ctx, bson.M{
 		"id": bson.M{"$in": ids.Strings()},
 	})
 	if err != nil {
@@ -101,24 +101,20 @@ func (r *userRepo) Remove(ctx context.Context, user id.UserID) error {
 	return r.client.RemoveOne(ctx, bson.M{"id": user.String()})
 }
 
-func (r *userRepo) find(ctx context.Context, dst []*user.User, filter interface{}) ([]*user.User, error) {
-	c := mongodoc.UserConsumer{
-		Rows: dst,
-	}
-	if err := r.client.Find(ctx, filter, &c); err != nil {
+func (r *userRepo) find(ctx context.Context, filter any) ([]*user.User, error) {
+	c := mongodoc.NewUserConsumer()
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	return c.Rows, nil
+	return c.Result, nil
 }
 
-func (r *userRepo) findOne(ctx context.Context, filter interface{}) (*user.User, error) {
-	c := mongodoc.UserConsumer{
-		Rows: make([]*user.User, 0, 1),
-	}
-	if err := r.client.FindOne(ctx, filter, &c); err != nil {
+func (r *userRepo) findOne(ctx context.Context, filter any) (*user.User, error) {
+	c := mongodoc.NewUserConsumer()
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	return c.Rows[0], nil
+	return c.Result[0], nil
 }
 
 func filterUsers(ids []id.UserID, rows []*user.User) []*user.User {

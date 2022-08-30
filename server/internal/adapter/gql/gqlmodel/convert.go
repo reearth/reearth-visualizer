@@ -4,10 +4,10 @@ import (
 	"io"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func RefToIndex(i *int) int {
@@ -35,15 +35,15 @@ func BoolToRef(b bool) *bool {
 	return &b
 }
 
-func ToPageInfo(p *usecase.PageInfo) *PageInfo {
+func ToPageInfo(p *usecasex.PageInfo) *PageInfo {
 	if p == nil {
 		return &PageInfo{}
 	}
 	return &PageInfo{
-		StartCursor:     p.StartCursor(),
-		EndCursor:       p.EndCursor(),
-		HasNextPage:     p.HasNextPage(),
-		HasPreviousPage: p.HasPreviousPage(),
+		StartCursor:     p.StartCursor,
+		EndCursor:       p.EndCursor,
+		HasNextPage:     p.HasNextPage,
+		HasPreviousPage: p.HasPreviousPage,
 	}
 }
 
@@ -86,11 +86,11 @@ func FromListOperation(op ListOperation) interfaces.ListOperation {
 	return interfaces.ListOperation("")
 }
 
-func ToPagination(pagination *Pagination) *usecase.Pagination {
+func ToPagination(pagination *Pagination) *usecasex.Pagination {
 	if pagination == nil {
 		return nil
 	}
-	return &usecase.Pagination{
+	return &usecasex.Pagination{
 		Before: pagination.Before,
 		After:  pagination.After,
 		First:  pagination.First,

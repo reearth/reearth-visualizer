@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/labstack/gommon/log"
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func RemovePreviewToken(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("project")
 
-	return col.Find(ctx, bson.D{}, &mongodoc.BatchConsumer{
+	return col.Find(ctx, bson.D{}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 

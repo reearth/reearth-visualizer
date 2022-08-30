@@ -3,11 +3,10 @@ package mongodoc
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	user1 "github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type PasswordResetDocument struct {
@@ -35,25 +34,10 @@ type UserVerificationDoc struct {
 	Verified   bool
 }
 
-type UserConsumer struct {
-	Rows []*user1.User
-}
+type UserConsumer = mongox.SliceFuncConsumer[*UserDocument, *user.User]
 
-func (u *UserConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc UserDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	user, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	u.Rows = append(u.Rows, user)
-	return nil
+func NewUserConsumer() *UserConsumer {
+	return NewComsumer[*UserDocument, *user.User]()
 }
 
 func NewUser(user *user1.User) (*UserDocument, string) {

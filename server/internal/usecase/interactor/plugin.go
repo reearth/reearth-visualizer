@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Plugin struct {
@@ -19,8 +20,8 @@ type Plugin struct {
 	propertyRepo       repo.Property
 	layerRepo          repo.Layer
 	file               gateway.File
-	transaction        repo.Transaction
 	pluginRegistry     gateway.PluginRegistry
+	transaction        usecasex.Transaction
 }
 
 func NewPlugin(r *repo.Container, gr *gateway.Container) interfaces.Plugin {

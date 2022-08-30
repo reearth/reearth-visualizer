@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ func TestProject_Create(t *testing.T) {
 	uc := &Project{
 		projectRepo:   memory.NewProject(),
 		workspaceRepo: memory.NewWorkspace(),
-		transaction:   memory.NewTransaction(),
+		transaction:   &usecasex.NopTransaction{},
 		policyRepo:    memory.NewPolicyWith(po),
 	}
 

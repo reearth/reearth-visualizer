@@ -3,16 +3,16 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Project interface {
 	Filtered(WorkspaceFilter) Project
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
-	FindByWorkspace(context.Context, id.WorkspaceID, *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error)
+	FindByWorkspace(context.Context, id.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	CountByWorkspace(context.Context, id.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, id.WorkspaceID) (int, error)
@@ -21,7 +21,7 @@ type Project interface {
 }
 
 func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.WorkspaceID, batch int, callback func([]*project.Project) error) error {
-	pagination := usecase.NewPagination(&batch, nil, nil, nil)
+	pagination := usecasex.NewPagination(&batch, nil, nil, nil)
 
 	for {
 		projects, info, err := repo.FindByWorkspace(ctx, tid, pagination)
@@ -36,11 +36,11 @@ func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.Worksp
 			return err
 		}
 
-		if !info.HasNextPage() {
+		if !info.HasNextPage {
 			break
 		}
 
-		c := usecase.Cursor(projects[len(projects)-1].ID().String())
+		c := usecasex.Cursor(projects[len(projects)-1].ID().String())
 		pagination.After = &c
 	}
 

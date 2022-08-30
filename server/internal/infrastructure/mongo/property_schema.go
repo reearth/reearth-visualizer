@@ -10,22 +10,23 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type propertySchemaRepo struct {
-	client *mongodoc.ClientCollection
+	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewPropertySchema(client *mongodoc.Client) repo.PropertySchema {
+func NewPropertySchema(client *mongox.Client) repo.PropertySchema {
 	r := &propertySchemaRepo{client: client.WithCollection("propertySchema")}
 	r.init()
 	return r
 }
 
 func (r *propertySchemaRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+	i := r.client.CreateIndex(context.Background(), nil, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "propertySchema", i)
 	}
@@ -122,31 +123,26 @@ func (r *propertySchemaRepo) RemoveAll(ctx context.Context, ids []id.PropertySch
 	}))
 }
 
-func (r *propertySchemaRepo) find(ctx context.Context, dst property.SchemaList, filter interface{}) (property.SchemaList, error) {
-	c := mongodoc.PropertySchemaConsumer{
-		Rows: dst,
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+func (r *propertySchemaRepo) find(ctx context.Context, dst property.SchemaList, filter any) (property.SchemaList, error) {
+	c := mongodoc.NewPropertySchemaConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows, nil
+	return c.Result, nil
 }
 
-func (r *propertySchemaRepo) findOne(ctx context.Context, filter interface{}) (*property.Schema, error) {
-	dst := make(property.SchemaList, 0, 1)
-	c := mongodoc.PropertySchemaConsumer{
-		Rows: dst,
-	}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+func (r *propertySchemaRepo) findOne(ctx context.Context, filter any) (*property.Schema, error) {
+	c := mongodoc.NewPropertySchemaConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows[0], nil
+	return c.Result[0], nil
 }
 
-func (r *propertySchemaRepo) readFilter(filter interface{}) interface{} {
+func (r *propertySchemaRepo) readFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Readable)
 }
 
-func (r *propertySchemaRepo) writeFilter(filter interface{}) interface{} {
+func (r *propertySchemaRepo) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)
 }

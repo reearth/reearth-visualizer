@@ -1,11 +1,10 @@
 package mongodoc
 
 import (
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type DatasetSchemaDocument struct {
@@ -25,25 +24,10 @@ type DatasetSchemaFieldDocument struct {
 	Source string
 }
 
-type DatasetSchemaConsumer struct {
-	Rows []*dataset.Schema
-}
+type DatasetSchemaConsumer = mongox.SliceFuncConsumer[*DatasetSchemaDocument, *dataset.Schema]
 
-func (c *DatasetSchemaConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc DatasetSchemaDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	dataset, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, dataset)
-	return nil
+func NewDatasetSchemaConsumer() *DatasetSchemaConsumer {
+	return NewComsumer[*DatasetSchemaDocument, *dataset.Schema]()
 }
 
 func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {

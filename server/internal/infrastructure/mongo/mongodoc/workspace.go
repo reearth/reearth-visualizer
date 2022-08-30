@@ -3,7 +3,7 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type WorkspaceMemberDocument struct {
@@ -18,25 +18,10 @@ type WorkspaceDocument struct {
 	Policy   *workspace.PolicyID
 }
 
-type WorkspaceConsumer struct {
-	Rows workspace.List
-}
+type WorkspaceConsumer = mongox.SliceFuncConsumer[*WorkspaceDocument, *workspace.Workspace]
 
-func (c *WorkspaceConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc WorkspaceDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	project, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, project)
-	return nil
+func NewWorkspaceConsumer() *WorkspaceConsumer {
+	return NewComsumer[*WorkspaceDocument, *workspace.Workspace]()
 }
 
 func NewWorkspace(ws *workspace.Workspace) (*WorkspaceDocument, string) {

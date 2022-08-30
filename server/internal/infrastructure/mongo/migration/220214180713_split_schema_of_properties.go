@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -14,7 +15,7 @@ func SplitSchemaOfProperties(ctx context.Context, c DBClient) error {
 
 	return col.Find(ctx, bson.M{
 		"schema": bson.M{"$exists": true},
-	}, &mongodoc.BatchConsumer{
+	}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			ids := make([]string, 0, len(rows))

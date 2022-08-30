@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type DatasetDocument struct {
@@ -29,25 +30,10 @@ type DatasetExtendedDocument struct {
 	Depth int
 }
 
-type DatasetConsumer struct {
-	Rows []*dataset.Dataset
-}
+type DatasetConsumer = mongox.SliceFuncConsumer[*DatasetDocument, *dataset.Dataset]
 
-func (c *DatasetConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc DatasetDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	dataset, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, dataset)
-	return nil
+func NewDatasetConsumer() *DatasetConsumer {
+	return NewComsumer[*DatasetDocument, *dataset.Dataset]()
 }
 
 type DatasetMapConsumer struct {
@@ -76,12 +62,12 @@ func (c *DatasetMapConsumer) Consume(raw bson.Raw) error {
 type DatasetBatchConsumer struct {
 	Size     int
 	Callback func([]*dataset.Dataset) error
-	consumer *BatchConsumer
+	consumer *mongox.BatchConsumer
 }
 
 func (c *DatasetBatchConsumer) Consume(raw bson.Raw) error {
 	if c.consumer == nil {
-		c.consumer = &BatchConsumer{
+		c.consumer = &mongox.BatchConsumer{
 			Size: c.Size,
 			Callback: func(rows []bson.Raw) error {
 				datasets := make([]*dataset.Dataset, 0, len(rows))

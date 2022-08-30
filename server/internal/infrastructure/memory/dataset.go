@@ -4,11 +4,11 @@ import (
 	"context"
 	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Dataset struct {
@@ -59,7 +59,7 @@ func (r *Dataset) FindByIDs(ctx context.Context, ids id.DatasetIDList) (dataset.
 	return result, nil
 }
 
-func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
+func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -70,15 +70,15 @@ func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *us
 		}
 	}
 
-	var startCursor, endCursor *usecase.Cursor
+	var startCursor, endCursor *usecasex.Cursor
 	if len(result) > 0 {
-		_startCursor := usecase.Cursor(result[0].ID().String())
-		_endCursor := usecase.Cursor(result[len(result)-1].ID().String())
+		_startCursor := usecasex.Cursor(result[0].ID().String())
+		_endCursor := usecasex.Cursor(result[len(result)-1].ID().String())
 		startCursor = &_startCursor
 		endCursor = &_endCursor
 	}
 
-	return result, usecase.NewPageInfo(
+	return result, usecasex.NewPageInfo(
 		len(r.data),
 		startCursor,
 		endCursor,
