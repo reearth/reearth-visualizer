@@ -108,6 +108,8 @@ require (
 	github.com/xdg-go/stringprep v1.0.3 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
+	github.com/zitadel/logging v0.3.3 // indirect
+	github.com/zitadel/oidc v1.5.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.opentelemetry.io/contrib v1.7.0 // indirect
 	go.opentelemetry.io/otel/trace v1.7.0 // indirect
