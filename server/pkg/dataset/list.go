@@ -3,14 +3,14 @@ package dataset
 type List []*Dataset
 
 func (l List) First() *Dataset {
-	if l == nil || len(l) == 0 {
+	if len(l) == 0 {
 		return nil
 	}
 	return l[0]
 }
 
 func (l List) Last() *Dataset {
-	if l == nil || len(l) == 0 {
+	if len(l) == 0 {
 		return nil
 	}
 	return l[len(l)-1]

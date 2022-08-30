@@ -17,7 +17,7 @@ type DatasetSchema struct {
 	f    repo.SceneFilter
 }
 
-func NewDatasetSchema() repo.DatasetSchema {
+func NewDatasetSchema() *DatasetSchema {
 	return &DatasetSchema{
 		data: map[id.DatasetSchemaID]*dataset.Schema{},
 	}

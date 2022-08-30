@@ -5,7 +5,7 @@ import "sort"
 type Map map[ID]Tag
 
 func (m Map) All() List {
-	if m == nil || len(m) == 0 {
+	if len(m) == 0 {
 		return nil
 	}
 	res := make(List, 0, len(m))

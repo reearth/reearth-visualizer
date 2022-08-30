@@ -18,16 +18,17 @@ type Scene struct {
 	f    repo.WorkspaceFilter
 }
 
-func NewScene() repo.Scene {
+func NewScene() *Scene {
 	return &Scene{
 		data: map[id.SceneID]*scene.Scene{},
 	}
 }
 
-func NewSceneWith(items ...*scene.Scene) repo.Scene {
+func NewSceneWith(items ...*scene.Scene) *Scene {
 	r := NewScene()
+	ctx := context.Background()
 	for _, i := range items {
-		_ = r.Save(nil, i)
+		_ = r.Save(ctx, i)
 	}
 	return r
 }

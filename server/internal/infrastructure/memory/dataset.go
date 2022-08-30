@@ -17,7 +17,7 @@ type Dataset struct {
 	f    repo.SceneFilter
 }
 
-func NewDataset() repo.Dataset {
+func NewDataset() *Dataset {
 	return &Dataset{
 		data: map[id.DatasetID]*dataset.Dataset{},
 	}

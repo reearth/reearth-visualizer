@@ -18,14 +18,15 @@ type PropertySchema struct {
 	f    repo.SceneFilter
 }
 
-func NewPropertySchema() repo.PropertySchema {
+func NewPropertySchema() *PropertySchema {
 	return &PropertySchema{}
 }
 
-func NewPropertySchemaWith(items ...*property.Schema) repo.PropertySchema {
+func NewPropertySchemaWith(items ...*property.Schema) *PropertySchema {
 	r := NewPropertySchema()
+	ctx := context.Background()
 	for _, i := range items {
-		_ = r.Save(nil, i)
+		_ = r.Save(ctx, i)
 	}
 	return r
 }

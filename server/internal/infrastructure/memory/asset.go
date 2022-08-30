@@ -19,7 +19,7 @@ type Asset struct {
 	f    repo.WorkspaceFilter
 }
 
-func NewAsset() repo.Asset {
+func NewAsset() *Asset {
 	return &Asset{
 		data: map[id.AssetID]*asset.Asset{},
 	}
