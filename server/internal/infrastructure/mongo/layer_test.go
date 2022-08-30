@@ -29,10 +29,10 @@ func TestLayer_CountByScene(t *testing.T) {
 	assert.Equal(t, 3, got)
 	assert.NoError(t, err)
 
-	r = r.Filtered(repo.SceneFilter{
+	r2 := r.Filtered(repo.SceneFilter{
 		Readable: id.SceneIDList{sid2},
 	})
-	got, err = r.CountByScene(ctx, sid)
+	got, err = r2.CountByScene(ctx, sid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
 	assert.Zero(t, got)
 }

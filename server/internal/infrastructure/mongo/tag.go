@@ -14,38 +14,38 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type tagRepo struct {
+type Tag struct {
 	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewTag(client *mongox.Client) repo.Tag {
-	r := &tagRepo{client: client.WithCollection("tag")}
+func NewTag(client *mongox.Client) *Tag {
+	r := &Tag{client: client.WithCollection("tag")}
 	r.init()
 	return r
 }
 
-func (r *tagRepo) init() {
+func (r *Tag) init() {
 	i := r.client.CreateIndex(context.Background(), []string{"scene", "group.tags", "item.parent"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "tag", i)
 	}
 }
 
-func (r *tagRepo) Filtered(f repo.SceneFilter) repo.Tag {
-	return &tagRepo{
+func (r *Tag) Filtered(f repo.SceneFilter) repo.Tag {
+	return &Tag{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *tagRepo) FindByID(ctx context.Context, id id.TagID) (tag.Tag, error) {
+func (r *Tag) FindByID(ctx context.Context, id id.TagID) (tag.Tag, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
 	})
 }
 
-func (r *tagRepo) FindByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Tag, error) {
+func (r *Tag) FindByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Tag, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -62,7 +62,7 @@ func (r *tagRepo) FindByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Tag, 
 	return filterTags(ids, res), nil
 }
 
-func (r *tagRepo) FindByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
+func (r *Tag) FindByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
 	if !r.f.CanRead(id) {
 		return nil, nil
 	}
@@ -72,14 +72,14 @@ func (r *tagRepo) FindByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, e
 	return r.find(ctx, filter)
 }
 
-func (r *tagRepo) FindItemByID(ctx context.Context, id id.TagID) (*tag.Item, error) {
+func (r *Tag) FindItemByID(ctx context.Context, id id.TagID) (*tag.Item, error) {
 	filter := bson.M{
 		"id": id.String(),
 	}
 	return r.findItemOne(ctx, filter)
 }
 
-func (r *tagRepo) FindItemByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Item, error) {
+func (r *Tag) FindItemByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Item, error) {
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),
@@ -92,14 +92,14 @@ func (r *tagRepo) FindItemByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.I
 	return filterTagItems(ids, res), nil
 }
 
-func (r *tagRepo) FindGroupByID(ctx context.Context, id id.TagID) (*tag.Group, error) {
+func (r *Tag) FindGroupByID(ctx context.Context, id id.TagID) (*tag.Group, error) {
 	filter := bson.M{
 		"id": id.String(),
 	}
 	return r.findGroupOne(ctx, filter)
 }
 
-func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Group, error) {
+func (r *Tag) FindGroupByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.Group, error) {
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),
@@ -112,20 +112,20 @@ func (r *tagRepo) FindGroupByIDs(ctx context.Context, ids id.TagIDList) ([]*tag.
 	return filterTagGroups(ids, res), nil
 }
 
-func (r *tagRepo) FindRootsByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
+func (r *Tag) FindRootsByScene(ctx context.Context, id id.SceneID) ([]*tag.Tag, error) {
 	return r.find(ctx, bson.M{
 		"scene":       id.String(),
 		"item.parent": nil,
 	})
 }
 
-func (r *tagRepo) FindGroupByItem(ctx context.Context, tagID id.TagID) (*tag.Group, error) {
+func (r *Tag) FindGroupByItem(ctx context.Context, tagID id.TagID) (*tag.Group, error) {
 	return r.findGroupOne(ctx, bson.M{
 		"group.tags": tagID.String(),
 	})
 }
 
-func (r *tagRepo) Save(ctx context.Context, tag tag.Tag) error {
+func (r *Tag) Save(ctx context.Context, tag tag.Tag) error {
 	if !r.f.CanWrite(tag.Scene()) {
 		return repo.ErrOperationDenied
 	}
@@ -133,7 +133,7 @@ func (r *tagRepo) Save(ctx context.Context, tag tag.Tag) error {
 	return r.client.SaveOne(ctx, tid, doc)
 }
 
-func (r *tagRepo) SaveAll(ctx context.Context, tags []*tag.Tag) error {
+func (r *Tag) SaveAll(ctx context.Context, tags []*tag.Tag) error {
 	if tags == nil {
 		return nil
 	}
@@ -141,11 +141,11 @@ func (r *tagRepo) SaveAll(ctx context.Context, tags []*tag.Tag) error {
 	return r.client.SaveAll(ctx, ids, docs)
 }
 
-func (r *tagRepo) Remove(ctx context.Context, id id.TagID) error {
+func (r *Tag) Remove(ctx context.Context, id id.TagID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *tagRepo) RemoveAll(ctx context.Context, ids id.TagIDList) error {
+func (r *Tag) RemoveAll(ctx context.Context, ids id.TagIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -154,7 +154,7 @@ func (r *tagRepo) RemoveAll(ctx context.Context, ids id.TagIDList) error {
 	}))
 }
 
-func (r *tagRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+func (r *Tag) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	_, err := r.client.Client().DeleteMany(ctx, bson.M{
 		"scene": sceneID.String(),
 	})
@@ -164,7 +164,7 @@ func (r *tagRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	return nil
 }
 
-func (r *tagRepo) find(ctx context.Context, filter any) ([]*tag.Tag, error) {
+func (r *Tag) find(ctx context.Context, filter any) ([]*tag.Tag, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func (r *tagRepo) find(ctx context.Context, filter any) ([]*tag.Tag, error) {
 	return lo.ToSlicePtr(c.Result), nil
 }
 
-func (r *tagRepo) findOne(ctx context.Context, filter any) (tag.Tag, error) {
+func (r *Tag) findOne(ctx context.Context, filter any) (tag.Tag, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func (r *tagRepo) findOne(ctx context.Context, filter any) (tag.Tag, error) {
 	return c.Result[0], nil
 }
 
-func (r *tagRepo) findItemOne(ctx context.Context, filter any) (*tag.Item, error) {
+func (r *Tag) findItemOne(ctx context.Context, filter any) (*tag.Item, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -191,7 +191,7 @@ func (r *tagRepo) findItemOne(ctx context.Context, filter any) (*tag.Item, error
 	return tag.ToTagItem(c.Result[0]), nil
 }
 
-func (r *tagRepo) findGroupOne(ctx context.Context, filter any) (*tag.Group, error) {
+func (r *Tag) findGroupOne(ctx context.Context, filter any) (*tag.Group, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (r *tagRepo) findGroupOne(ctx context.Context, filter any) (*tag.Group, err
 	return tag.ToTagGroup(c.Result[0]), nil
 }
 
-func (r *tagRepo) findItems(ctx context.Context, filter any) ([]*tag.Item, error) {
+func (r *Tag) findItems(ctx context.Context, filter any) ([]*tag.Item, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (r *tagRepo) findItems(ctx context.Context, filter any) ([]*tag.Item, error
 	return tag.List(c.Result).Items(), nil
 }
 
-func (r *tagRepo) findGroups(ctx context.Context, filter any) ([]*tag.Group, error) {
+func (r *Tag) findGroups(ctx context.Context, filter any) ([]*tag.Group, error) {
 	c := mongodoc.NewTagConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -263,10 +263,10 @@ func filterTagGroups(ids id.TagIDList, rows []*tag.Group) []*tag.Group {
 	return res
 }
 
-func (r *tagRepo) readFilter(filter any) any {
+func (r *Tag) readFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Readable)
 }
 
-func (r *tagRepo) writeFilter(filter any) any {
+func (r *Tag) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)
 }

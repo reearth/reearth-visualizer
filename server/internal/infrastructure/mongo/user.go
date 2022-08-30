@@ -6,31 +6,30 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 )
 
-type userRepo struct {
+type User struct {
 	client *mongox.ClientCollection
 }
 
-func NewUser(client *mongox.Client) repo.User {
-	r := &userRepo{client: client.WithCollection("user")}
+func NewUser(client *mongox.Client) *User {
+	r := &User{client: client.WithCollection("user")}
 	r.init()
 	return r
 }
 
-func (r *userRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"email", "name", "auth0sublist"}, []string{"id", "name"})
+func (r *User) init() {
+	i := r.client.CreateIndex(context.Background(), nil, []string{"id", "email", "name", "auth0sublist"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "user", i)
 	}
 }
 
-func (r *userRepo) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
+func (r *User) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -44,11 +43,11 @@ func (r *userRepo) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.Us
 	return filterUsers(ids, res), nil
 }
 
-func (r *userRepo) FindByID(ctx context.Context, id2 id.UserID) (*user.User, error) {
+func (r *User) FindByID(ctx context.Context, id2 id.UserID) (*user.User, error) {
 	return r.findOne(ctx, bson.M{"id": id2.String()})
 }
 
-func (r *userRepo) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User, error) {
+func (r *User) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{
 		"$or": []bson.M{
 			{"auth0sub": auth0sub},
@@ -63,15 +62,15 @@ func (r *userRepo) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.U
 	})
 }
 
-func (r *userRepo) FindByEmail(ctx context.Context, email string) (*user.User, error) {
+func (r *User) FindByEmail(ctx context.Context, email string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{"email": email})
 }
 
-func (r *userRepo) FindByName(ctx context.Context, name string) (*user.User, error) {
+func (r *User) FindByName(ctx context.Context, name string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{"name": name})
 }
 
-func (r *userRepo) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user.User, error) {
+func (r *User) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{
 		"$or": []bson.M{
 			{"email": nameOrEmail},
@@ -80,28 +79,28 @@ func (r *userRepo) FindByNameOrEmail(ctx context.Context, nameOrEmail string) (*
 	})
 }
 
-func (r *userRepo) FindByVerification(ctx context.Context, code string) (*user.User, error) {
+func (r *User) FindByVerification(ctx context.Context, code string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{
 		"verification.code": code,
 	})
 }
 
-func (r *userRepo) FindByPasswordResetRequest(ctx context.Context, pwdResetToken string) (*user.User, error) {
+func (r *User) FindByPasswordResetRequest(ctx context.Context, pwdResetToken string) (*user.User, error) {
 	return r.findOne(ctx, bson.M{
 		"passwordreset.token": pwdResetToken,
 	})
 }
 
-func (r *userRepo) Save(ctx context.Context, user *user.User) error {
+func (r *User) Save(ctx context.Context, user *user.User) error {
 	doc, id := mongodoc.NewUser(user)
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *userRepo) Remove(ctx context.Context, user id.UserID) error {
+func (r *User) Remove(ctx context.Context, user id.UserID) error {
 	return r.client.RemoveOne(ctx, bson.M{"id": user.String()})
 }
 
-func (r *userRepo) find(ctx context.Context, filter any) ([]*user.User, error) {
+func (r *User) find(ctx context.Context, filter any) ([]*user.User, error) {
 	c := mongodoc.NewUserConsumer()
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
@@ -109,7 +108,7 @@ func (r *userRepo) find(ctx context.Context, filter any) ([]*user.User, error) {
 	return c.Result, nil
 }
 
-func (r *userRepo) findOne(ctx context.Context, filter any) (*user.User, error) {
+func (r *User) findOne(ctx context.Context, filter any) (*user.User, error) {
 	c := mongodoc.NewUserConsumer()
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err

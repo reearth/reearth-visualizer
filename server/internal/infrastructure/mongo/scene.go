@@ -14,38 +14,38 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type sceneRepo struct {
+type Scene struct {
 	client *mongox.ClientCollection
 	f      repo.WorkspaceFilter
 }
 
-func NewScene(client *mongox.Client) repo.Scene {
-	r := &sceneRepo{client: client.WithCollection("scene")}
+func NewScene(client *mongox.Client) *Scene {
+	r := &Scene{client: client.WithCollection("scene")}
 	r.init()
 	return r
 }
 
-func (r *sceneRepo) init() {
+func (r *Scene) init() {
 	i := r.client.CreateIndex(context.Background(), []string{"project"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "scene", i)
 	}
 }
 
-func (r *sceneRepo) Filtered(f repo.WorkspaceFilter) repo.Scene {
-	return &sceneRepo{
+func (r *Scene) Filtered(f repo.WorkspaceFilter) repo.Scene {
+	return &Scene{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *sceneRepo) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, error) {
+func (r *Scene) FindByID(ctx context.Context, id id.SceneID) (*scene.Scene, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
 	})
 }
 
-func (r *sceneRepo) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, error) {
+func (r *Scene) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.List, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -57,13 +57,13 @@ func (r *sceneRepo) FindByIDs(ctx context.Context, ids id.SceneIDList) (scene.Li
 	})
 }
 
-func (r *sceneRepo) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scene, error) {
+func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scene, error) {
 	return r.findOne(ctx, bson.M{
 		"project": id.String(),
 	})
 }
 
-func (r *sceneRepo) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
 	workspaces2 := id.WorkspaceIDList(workspaces)
 	if r.f.Readable != nil {
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
@@ -77,7 +77,7 @@ func (r *sceneRepo) FindByWorkspace(ctx context.Context, workspaces ...id.Worksp
 	return res, nil
 }
 
-func (r *sceneRepo) Save(ctx context.Context, scene *scene.Scene) error {
+func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
 	if !r.f.CanWrite(scene.Workspace()) {
 		return repo.ErrOperationDenied
 	}
@@ -85,11 +85,11 @@ func (r *sceneRepo) Save(ctx context.Context, scene *scene.Scene) error {
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *sceneRepo) Remove(ctx context.Context, id id.SceneID) error {
+func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *sceneRepo) find(ctx context.Context, filter interface{}) ([]*scene.Scene, error) {
+func (r *Scene) find(ctx context.Context, filter interface{}) ([]*scene.Scene, error) {
 	c := mongodoc.NewSceneConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func (r *sceneRepo) find(ctx context.Context, filter interface{}) ([]*scene.Scen
 	return c.Result, nil
 }
 
-func (r *sceneRepo) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
+func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
 	c := mongodoc.NewSceneConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -105,10 +105,10 @@ func (r *sceneRepo) findOne(ctx context.Context, filter any) (*scene.Scene, erro
 	return c.Result[0], nil
 }
 
-func (r *sceneRepo) readFilter(filter any) any {
+func (r *Scene) readFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Readable)
 }
 
-func (r *sceneRepo) writeFilter(filter any) any {
+func (r *Scene) writeFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Writable)
 }

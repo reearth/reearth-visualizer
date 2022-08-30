@@ -20,7 +20,7 @@ type Lock struct {
 	locks  sync.Map
 }
 
-func NewLock(c *mongo.Collection) (repo.Lock, error) {
+func NewLock(c *mongo.Collection) (*Lock, error) {
 	hostid := uuid.NewString()
 
 	l := lock.NewClient(c)

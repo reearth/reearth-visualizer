@@ -29,10 +29,10 @@ func TestProject_CountByWorkspace(t *testing.T) {
 	assert.Equal(t, 3, got)
 	assert.NoError(t, err)
 
-	r = r.Filtered(repo.WorkspaceFilter{
+	r2 := r.Filtered(repo.WorkspaceFilter{
 		Readable: id.WorkspaceIDList{wid2},
 	})
-	got, err = r.CountByWorkspace(ctx, wid)
+	got, err = r2.CountByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
 	assert.Zero(t, got)
 }
@@ -54,10 +54,10 @@ func TestProject_CountPublicByWorkspace(t *testing.T) {
 	assert.Equal(t, 2, got)
 	assert.NoError(t, err)
 
-	r = r.Filtered(repo.WorkspaceFilter{
+	r2 := r.Filtered(repo.WorkspaceFilter{
 		Readable: id.WorkspaceIDList{wid2},
 	})
-	got, err = r.CountPublicByWorkspace(ctx, wid)
+	got, err = r2.CountPublicByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
 	assert.Zero(t, got)
 }

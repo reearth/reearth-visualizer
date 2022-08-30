@@ -13,38 +13,38 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type propertyRepo struct {
+type Property struct {
 	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewProperty(client *mongox.Client) repo.Property {
-	r := &propertyRepo{client: client.WithCollection("property")}
+func NewProperty(client *mongox.Client) *Property {
+	r := &Property{client: client.WithCollection("property")}
 	r.init()
 	return r
 }
 
-func (r *propertyRepo) init() {
+func (r *Property) init() {
 	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "property", i)
 	}
 }
 
-func (r *propertyRepo) Filtered(f repo.SceneFilter) repo.Property {
-	return &propertyRepo{
+func (r *Property) Filtered(f repo.SceneFilter) repo.Property {
+	return &Property{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *propertyRepo) FindByID(ctx context.Context, id id.PropertyID) (*property.Property, error) {
+func (r *Property) FindByID(ctx context.Context, id id.PropertyID) (*property.Property, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
 	})
 }
 
-func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (property.List, error) {
+func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (property.List, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -61,7 +61,7 @@ func (r *propertyRepo) FindByIDs(ctx context.Context, ids id.PropertyIDList) (pr
 	return filterProperties(ids, res), nil
 }
 
-func (r *propertyRepo) FindLinkedAll(ctx context.Context, id id.SceneID) (property.List, error) {
+func (r *Property) FindLinkedAll(ctx context.Context, id id.SceneID) (property.List, error) {
 	return r.find(ctx, bson.M{
 		"scene": id.String(),
 		"fields": bson.M{
@@ -76,7 +76,7 @@ func (r *propertyRepo) FindLinkedAll(ctx context.Context, id id.SceneID) (proper
 	})
 }
 
-func (r *propertyRepo) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
+func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
 	return r.find(ctx, bson.M{
 		"$or": []bson.M{
 			{"fields.links.dataset": did.String()}, // for compatibility
@@ -89,7 +89,7 @@ func (r *propertyRepo) FindByDataset(ctx context.Context, sid id.DatasetSchemaID
 	})
 }
 
-func (r *propertyRepo) FindBySchema(ctx context.Context, psids []id.PropertySchemaID, sid id.SceneID) (property.List, error) {
+func (r *Property) FindBySchema(ctx context.Context, psids []id.PropertySchemaID, sid id.SceneID) (property.List, error) {
 	if len(psids) == 0 || !r.f.CanRead(sid) {
 		return nil, nil
 	}
@@ -106,7 +106,7 @@ func (r *propertyRepo) FindBySchema(ctx context.Context, psids []id.PropertySche
 	return r.find(ctx, filter)
 }
 
-func (r *propertyRepo) FindByPlugin(ctx context.Context, pid id.PluginID, sid id.SceneID) (property.List, error) {
+func (r *Property) FindByPlugin(ctx context.Context, pid id.PluginID, sid id.SceneID) (property.List, error) {
 	if !r.f.CanRead(sid) {
 		return nil, rerror.ErrNotFound
 	}
@@ -120,7 +120,7 @@ func (r *propertyRepo) FindByPlugin(ctx context.Context, pid id.PluginID, sid id
 	return r.find(ctx, filter)
 }
 
-func (r *propertyRepo) Save(ctx context.Context, property *property.Property) error {
+func (r *Property) Save(ctx context.Context, property *property.Property) error {
 	if !r.f.CanWrite(property.Scene()) {
 		return repo.ErrOperationDenied
 	}
@@ -128,7 +128,7 @@ func (r *propertyRepo) Save(ctx context.Context, property *property.Property) er
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *propertyRepo) SaveAll(ctx context.Context, properties property.List) error {
+func (r *Property) SaveAll(ctx context.Context, properties property.List) error {
 	if len(properties) == 0 {
 		return nil
 	}
@@ -136,7 +136,7 @@ func (r *propertyRepo) SaveAll(ctx context.Context, properties property.List) er
 	return r.client.SaveAll(ctx, ids, docs)
 }
 
-func (r *propertyRepo) UpdateSchemaPlugin(ctx context.Context, old, new id.PluginID, s id.SceneID) error {
+func (r *Property) UpdateSchemaPlugin(ctx context.Context, old, new id.PluginID, s id.SceneID) error {
 	if !r.f.CanWrite(s) {
 		return nil
 	}
@@ -148,11 +148,11 @@ func (r *propertyRepo) UpdateSchemaPlugin(ctx context.Context, old, new id.Plugi
 	})
 }
 
-func (r *propertyRepo) Remove(ctx context.Context, id id.PropertyID) error {
+func (r *Property) Remove(ctx context.Context, id id.PropertyID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *propertyRepo) RemoveAll(ctx context.Context, ids id.PropertyIDList) error {
+func (r *Property) RemoveAll(ctx context.Context, ids id.PropertyIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -161,7 +161,7 @@ func (r *propertyRepo) RemoveAll(ctx context.Context, ids id.PropertyIDList) err
 	}))
 }
 
-func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+func (r *Property) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	if !r.f.CanWrite(sceneID) {
 		return nil
 	}
@@ -174,7 +174,7 @@ func (r *propertyRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) er
 	return nil
 }
 
-func (r *propertyRepo) find(ctx context.Context, filter any) (property.List, error) {
+func (r *Property) find(ctx context.Context, filter any) (property.List, error) {
 	c := mongodoc.NewPropertyConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -182,7 +182,7 @@ func (r *propertyRepo) find(ctx context.Context, filter any) (property.List, err
 	return c.Result, nil
 }
 
-func (r *propertyRepo) findOne(ctx context.Context, filter any) (*property.Property, error) {
+func (r *Property) findOne(ctx context.Context, filter any) (*property.Property, error) {
 	c := mongodoc.NewPropertyConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -205,10 +205,10 @@ func filterProperties(ids []id.PropertyID, rows property.List) property.List {
 	return res
 }
 
-func (r *propertyRepo) readFilter(filter any) any {
+func (r *Property) readFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Readable)
 }
 
-func (r *propertyRepo) writeFilter(filter any) any {
+func (r *Property) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)
 }

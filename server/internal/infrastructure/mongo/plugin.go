@@ -16,32 +16,32 @@ import (
 	"github.com/reearth/reearthx/rerror"
 )
 
-type pluginRepo struct {
+type Plugin struct {
 	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewPlugin(client *mongox.Client) repo.Plugin {
-	r := &pluginRepo{client: client.WithCollection("plugin")}
+func NewPlugin(client *mongox.Client) *Plugin {
+	r := &Plugin{client: client.WithCollection("plugin")}
 	r.init()
 	return r
 }
 
-func (r *pluginRepo) init() {
+func (r *Plugin) init() {
 	i := r.client.CreateIndex(context.Background(), []string{"scene"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "plugin", i)
 	}
 }
 
-func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
-	return &pluginRepo{
+func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {
+	return &Plugin{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plugin, error) {
+func (r *Plugin) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plugin, error) {
 	// TODO: separate built-in plugins to another repository
 	if p := builtin.GetPlugin(pid); p != nil {
 		return p, nil
@@ -54,7 +54,7 @@ func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plu
 	})
 }
 
-func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -86,7 +86,7 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugi
 	return res.Concat(b.List()).MapToIDs(ids), nil
 }
 
-func (r *pluginRepo) Save(ctx context.Context, plugin *plugin.Plugin) error {
+func (r *Plugin) Save(ctx context.Context, plugin *plugin.Plugin) error {
 	if plugin.ID().System() {
 		return errors.New("cannnot save system plugin")
 	}
@@ -97,11 +97,11 @@ func (r *pluginRepo) Save(ctx context.Context, plugin *plugin.Plugin) error {
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *pluginRepo) Remove(ctx context.Context, id id.PluginID) error {
+func (r *Plugin) Remove(ctx context.Context, id id.PluginID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *pluginRepo) find(ctx context.Context, filter any) ([]*plugin.Plugin, error) {
+func (r *Plugin) find(ctx context.Context, filter any) ([]*plugin.Plugin, error) {
 	c := mongodoc.NewPluginConsumer()
 	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (r *pluginRepo) find(ctx context.Context, filter any) ([]*plugin.Plugin, er
 	return c.Result, nil
 }
 
-func (r *pluginRepo) findOne(ctx context.Context, filter any) (*plugin.Plugin, error) {
+func (r *Plugin) findOne(ctx context.Context, filter any) (*plugin.Plugin, error) {
 	c := mongodoc.NewPluginConsumer()
 	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
@@ -117,10 +117,10 @@ func (r *pluginRepo) findOne(ctx context.Context, filter any) (*plugin.Plugin, e
 	return c.Result[0], nil
 }
 
-func (r *pluginRepo) readFilter(filter any) any {
+func (r *Plugin) readFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Readable)
 }
 
-func (r *pluginRepo) writeFilter(filter any) any {
+func (r *Plugin) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)
 }
