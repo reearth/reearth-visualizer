@@ -23,7 +23,7 @@ func NewUser(client *mongox.Client) *User {
 }
 
 func (r *User) init() {
-	i := r.client.CreateIndex(context.Background(), nil, []string{"id", "email", "name", "auth0sublist"})
+	i := r.client.CreateIndex(context.Background(), []string{"auth0sublist"}, []string{"id", "email", "name"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "user", i)
 	}

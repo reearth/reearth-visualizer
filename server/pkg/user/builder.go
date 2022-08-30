@@ -95,7 +95,11 @@ func (b *Builder) LangFrom(lang string) *Builder {
 }
 
 func (b *Builder) Auths(auths []Auth) *Builder {
-	b.u.auths = append([]Auth{}, auths...)
+	if auths == nil {
+		b.u.auths = nil
+	} else {
+		b.u.auths = append([]Auth{}, auths...)
+	}
 	return b
 }
 

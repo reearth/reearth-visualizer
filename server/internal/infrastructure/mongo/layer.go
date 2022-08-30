@@ -259,8 +259,8 @@ func (r *Layer) find(ctx context.Context, dst layer.List, filter interface{}) (l
 }
 
 func (r *Layer) findOne(ctx context.Context, filter interface{}) (layer.Layer, error) {
-	c := mongodoc.LayerConsumer{}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {
@@ -270,8 +270,8 @@ func (r *Layer) findOne(ctx context.Context, filter interface{}) (layer.Layer, e
 }
 
 func (r *Layer) findItemOne(ctx context.Context, filter interface{}) (*layer.Item, error) {
-	c := mongodoc.LayerConsumer{}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {
@@ -281,8 +281,8 @@ func (r *Layer) findItemOne(ctx context.Context, filter interface{}) (*layer.Ite
 }
 
 func (r *Layer) findGroupOne(ctx context.Context, filter interface{}) (*layer.Group, error) {
-	c := mongodoc.LayerConsumer{}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+	c := mongodoc.NewLayerConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {

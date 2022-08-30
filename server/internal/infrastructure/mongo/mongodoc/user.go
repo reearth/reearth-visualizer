@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/user"
 	user1 "github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/util"
 )
 
 type PasswordResetDocument struct {
@@ -20,7 +21,7 @@ type UserDocument struct {
 	Email         string
 	Auth0Sub      string
 	Auth0SubList  []string
-	Team          string // DON'T CHANGE NAME
+	Workspace     string `bson:"team"` // DON'T CHANGE NAME
 	Lang          string
 	Theme         string
 	Password      []byte
@@ -70,7 +71,7 @@ func NewUser(user *user1.User) (*UserDocument, string) {
 		Name:          user.Name(),
 		Email:         user.Email(),
 		Auth0SubList:  authsdoc,
-		Team:          user.Workspace().String(),
+		Workspace:     user.Workspace().String(),
 		Lang:          user.Lang().String(),
 		Theme:         string(user.Theme()),
 		Verification:  v,
@@ -84,14 +85,12 @@ func (d *UserDocument) Model() (*user1.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.WorkspaceIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}
-	auths := make([]user.Auth, 0, len(d.Auth0SubList))
-	for _, s := range d.Auth0SubList {
-		auths = append(auths, user.AuthFromAuth0Sub(s))
-	}
+
+	auths := util.Map(d.Auth0SubList, func(s string) user.Auth { return user.AuthFromAuth0Sub(s) })
 	if d.Auth0Sub != "" {
 		auths = append(auths, user.AuthFromAuth0Sub(d.Auth0Sub))
 	}
