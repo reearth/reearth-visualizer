@@ -65,7 +65,7 @@ export default function Plugin({
   onRender,
   onResize,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
+  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError } = useHooks({
     pluginId,
     extensionId,
     extensionType,
@@ -89,7 +89,6 @@ export default function Plugin({
       isMarshalable={isMarshalable}
       exposed={exposed}
       onError={onError}
-      onMessage={onMessage}
       onPreInit={onPreInit}
       onDispose={onDispose}
       onClick={onClick}

@@ -1,7 +1,7 @@
 import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
+import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
@@ -46,7 +46,7 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
-  const { staticExposed, isMarshalable, onPreInit, onDispose, onMessage } =
+  const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
       extensionId,
       extensionType,
@@ -77,7 +77,6 @@ export default function ({
     isMarshalable,
     exposed: staticExposed,
     onError,
-    onMessage,
     onPreInit,
     onDispose,
   };
@@ -118,7 +117,6 @@ export function useAPI({
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
   isMarshalable: Options["isMarshalable"] | undefined;
-  onMessage: (message: any) => void;
   onPreInit: () => void;
   onDispose: () => void;
 } {
@@ -170,10 +168,6 @@ export function useAPI({
     event.current = undefined;
   }, []);
 
-  const onMessage = useCallback((msg: any) => {
-    event.current?.[1]("message", msg);
-  }, []);
-
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
     [ctx?.reearth.layers],
@@ -181,10 +175,32 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ postMessage, render, resize }: IFrameAPI) => {
+    return ({ main: { postMessage, render, resize }, messages }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
-        events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
+        events: {
+          on: (type, e) => {
+            if (type === "message") {
+              messages.on(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+          off: (type, e) => {
+            if (type === "message") {
+              messages.off(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+          once: (type, e) => {
+            if (type === "message") {
+              messages.once(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+        },
         plugin: {
           id: pluginId,
           extensionType,
@@ -229,7 +245,6 @@ export function useAPI({
   return {
     staticExposed,
     isMarshalable,
-    onMessage,
     onPreInit,
     onDispose,
   };

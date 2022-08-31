@@ -24,7 +24,7 @@ Default.args = {
       backgroundColor: "#fff",
     },
   },
-  exposed: ({ render, postMessage }) => ({
+  exposed: ({ main: { render, postMessage } }) => ({
     console: {
       log: action("console.log"),
     },
@@ -58,7 +58,7 @@ HiddenIFrame.args = {
       backgroundColor: "#fff",
     },
   },
-  exposed: ({ render, postMessage }) => ({
+  exposed: ({ main: { render, postMessage } }) => ({
     console: {
       log: action("console.log"),
     },
@@ -133,5 +133,5 @@ AutoResize.args = {
   `,
   autoResize: "both",
   canBeVisible: true,
-  exposed: ({ render, resize }) => ({ render, resize }),
+  exposed: ({ main: { render, resize } }) => ({ render, resize }),
 };
