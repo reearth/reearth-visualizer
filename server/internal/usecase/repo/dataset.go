@@ -3,16 +3,16 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Dataset interface {
 	Filtered(SceneFilter) Dataset
 	FindByID(context.Context, id.DatasetID) (*dataset.Dataset, error)
 	FindByIDs(context.Context, id.DatasetIDList) (dataset.List, error)
-	FindBySchema(context.Context, id.DatasetSchemaID, *usecase.Pagination) (dataset.List, *usecase.PageInfo, error)
+	FindBySchema(context.Context, id.DatasetSchemaID, *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error)
 	CountBySchema(context.Context, id.DatasetSchemaID) (int, error)
 	FindBySchemaAll(context.Context, id.DatasetSchemaID) (dataset.List, error)
 	FindGraph(context.Context, id.DatasetID, id.DatasetFieldIDList) (dataset.List, error)

@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -69,7 +70,7 @@ func TestWorkspace_AddMember(t *testing.T) {
 		Policy:      memory.NewPolicyWith(p),
 		User:        memory.NewUserWith(u, u2),
 		Workspace:   memory.NewWorkspaceWith(ws),
-		Transaction: &memory.Transaction{},
+		Transaction: &usecasex.NopTransaction{},
 	})
 
 	// normal

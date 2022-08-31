@@ -1,11 +1,10 @@
 package mongodoc
 
 import (
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type PropertySchemaDocument struct {
@@ -59,25 +58,10 @@ type PropertyConditonDocument struct {
 	Value interface{}
 }
 
-type PropertySchemaConsumer struct {
-	Rows []*property.Schema
-}
+type PropertySchemaConsumer = mongox.SliceFuncConsumer[*PropertySchemaDocument, *property.Schema]
 
-func (c *PropertySchemaConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc PropertySchemaDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	propertySchema, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, propertySchema)
-	return nil
+func NewPropertySchemaConsumer() *PropertySchemaConsumer {
+	return NewComsumer[*PropertySchemaDocument, *property.Schema]()
 }
 
 func NewPropertySchemaField(f *property.SchemaField) *PropertySchemaFieldDocument {

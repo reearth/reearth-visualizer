@@ -24,6 +24,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/shp"
 	"github.com/reearth/reearth/server/pkg/tag"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 // TODO: レイヤー作成のドメインロジックがここに多く漏れ出しているのでドメイン層に移す
@@ -40,9 +41,9 @@ type Layer struct {
 	datasetSchemaRepo  repo.DatasetSchema
 	sceneRepo          repo.Scene
 	sceneLockRepo      repo.SceneLock
-	transaction        repo.Transaction
 	policyRepo         repo.Policy
 	workspaceRepo      repo.Workspace
+	transaction        usecasex.Transaction
 }
 
 func NewLayer(r *repo.Container) interfaces.Layer {

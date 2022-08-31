@@ -5,24 +5,24 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type sceneLockRepo struct {
-	client *mongodoc.ClientCollection
+type SceneLock struct {
+	client *mongox.ClientCollection
 }
 
-func NewSceneLock(client *mongodoc.Client) repo.SceneLock {
-	return &sceneLockRepo{client: client.WithCollection("sceneLock")}
+func NewSceneLock(client *mongox.Client) *SceneLock {
+	return &SceneLock{client: client.WithCollection("sceneLock")}
 }
 
-func (r *sceneLockRepo) GetLock(ctx context.Context, sceneID id.SceneID) (scene.LockMode, error) {
+func (r *SceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.LockMode, error) {
 	filter := bson.D{
 		{Key: "scene", Value: sceneID.String()},
 	}
@@ -36,7 +36,7 @@ func (r *sceneLockRepo) GetLock(ctx context.Context, sceneID id.SceneID) (scene.
 	return c.Rows[0], nil
 }
 
-func (r *sceneLockRepo) GetAllLock(ctx context.Context, ids id.SceneIDList) ([]scene.LockMode, error) {
+func (r *SceneLock) GetAllLock(ctx context.Context, ids id.SceneIDList) ([]scene.LockMode, error) {
 	filter := bson.D{
 		{Key: "scene", Value: bson.D{
 			{Key: "$in", Value: ids.Strings()},
@@ -51,11 +51,11 @@ func (r *sceneLockRepo) GetAllLock(ctx context.Context, ids id.SceneIDList) ([]s
 	return c.Rows, nil
 }
 
-func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock scene.LockMode) error {
+func (r *SceneLock) SaveLock(ctx context.Context, sceneID id.SceneID, lock scene.LockMode) error {
 	filter := bson.D{{Key: "scene", Value: sceneID.String()}}
 	doc := mongodoc.NewSceneLock(sceneID, lock)
 	upsert := true
-	if _, err2 := r.client.Collection().UpdateOne(ctx, filter, bson.D{
+	if _, err2 := r.client.Client().UpdateOne(ctx, filter, bson.D{
 		{Key: "$set", Value: doc},
 	}, &options.UpdateOptions{
 		Upsert: &upsert,
@@ -65,8 +65,8 @@ func (r *sceneLockRepo) SaveLock(ctx context.Context, sceneID id.SceneID, lock s
 	return nil
 }
 
-func (r *sceneLockRepo) ReleaseAllLock(ctx context.Context) error {
-	if _, err2 := r.client.Collection().DeleteMany(ctx, bson.D{}); err2 != nil {
+func (r *SceneLock) ReleaseAllLock(ctx context.Context) error {
+	if _, err2 := r.client.Client().DeleteMany(ctx, bson.D{}); err2 != nil {
 		if err2 != mongo.ErrNilDocument && err2 != mongo.ErrNoDocuments {
 			return rerror.ErrInternalBy(err2)
 		}

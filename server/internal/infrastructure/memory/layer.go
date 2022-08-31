@@ -16,7 +16,7 @@ type Layer struct {
 	f    repo.SceneFilter
 }
 
-func NewLayer() repo.Layer {
+func NewLayer() *Layer {
 	return &Layer{
 		data: map[id.LayerID]layer.Layer{},
 	}
@@ -24,8 +24,9 @@ func NewLayer() repo.Layer {
 
 func NewLayerWith(items ...layer.Layer) repo.Layer {
 	r := NewLayer()
+	ctx := context.Background()
 	for _, i := range items {
-		_ = r.Save(nil, i)
+		_ = r.Save(ctx, i)
 	}
 	return r
 }
@@ -291,7 +292,7 @@ func (r *Layer) CountByScene(_ context.Context, sid id.SceneID) (n int, _ error)
 	}
 
 	for _, d := range r.data {
-		if d.Scene().Equal(sid) {
+		if d.Scene() == sid {
 			n++
 		}
 	}

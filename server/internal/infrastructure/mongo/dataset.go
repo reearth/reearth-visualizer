@@ -7,45 +7,46 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 )
 
-type datasetRepo struct {
-	client *mongodoc.ClientCollection
+type Dataset struct {
+	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewDataset(client *mongodoc.Client) repo.Dataset {
-	r := &datasetRepo{client: client.WithCollection("dataset")}
+func NewDataset(client *mongox.Client) *Dataset {
+	r := &Dataset{client: client.WithCollection("dataset")}
 	r.init()
 	return r
 }
 
-func (r *datasetRepo) Filtered(f repo.SceneFilter) repo.Dataset {
-	return &datasetRepo{
+func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {
+	return &Dataset{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *datasetRepo) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"})
+func (r *Dataset) init() {
+	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"}, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "dataset", i)
 	}
 }
 
-func (r *datasetRepo) FindByID(ctx context.Context, id id.DatasetID) (*dataset.Dataset, error) {
+func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID) (*dataset.Dataset, error) {
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *datasetRepo) FindByIDs(ctx context.Context, ids id.DatasetIDList) (dataset.List, error) {
+func (r *Dataset) FindByIDs(ctx context.Context, ids id.DatasetIDList) (dataset.List, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -63,13 +64,13 @@ func (r *datasetRepo) FindByIDs(ctx context.Context, ids id.DatasetIDList) (data
 	return filterDatasets(ids, res), nil
 }
 
-func (r *datasetRepo) FindBySchema(ctx context.Context, schemaID id.DatasetSchemaID, pagination *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
+func (r *Dataset) FindBySchema(ctx context.Context, schemaID id.DatasetSchemaID, pagination *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
 	return r.paginate(ctx, bson.M{
 		"schema": schemaID.String(),
 	}, pagination)
 }
 
-func (r *datasetRepo) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int, error) {
+func (r *Dataset) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int, error) {
 	res, err := r.client.Count(ctx, r.readFilter(bson.M{
 		"schema": id.String(),
 	}))
@@ -79,13 +80,13 @@ func (r *datasetRepo) CountBySchema(ctx context.Context, id id.DatasetSchemaID) 
 	return int(res), nil
 }
 
-func (r *datasetRepo) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchemaID) (dataset.List, error) {
+func (r *Dataset) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchemaID) (dataset.List, error) {
 	return r.find(ctx, nil, bson.M{
 		"schema": schemaID.String(),
 	})
 }
 
-func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
+func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	if len(fields) == 0 {
 		d, err := r.FindByID(ctx, did)
 		if err != nil {
@@ -229,7 +230,7 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields id
 		}},
 	}
 
-	cursor, err2 := r.client.Collection().Aggregate(ctx, pipeline)
+	cursor, err2 := r.client.Client().Aggregate(ctx, pipeline)
 	if err2 != nil {
 		return nil, rerror.ErrInternalBy(err2)
 	}
@@ -269,7 +270,7 @@ func (r *datasetRepo) FindGraph(ctx context.Context, did id.DatasetID, fields id
 	return res, nil
 }
 
-func (r *datasetRepo) Save(ctx context.Context, dataset *dataset.Dataset) error {
+func (r *Dataset) Save(ctx context.Context, dataset *dataset.Dataset) error {
 	if !r.f.CanWrite(dataset.Scene()) {
 		return repo.ErrOperationDenied
 	}
@@ -277,7 +278,7 @@ func (r *datasetRepo) Save(ctx context.Context, dataset *dataset.Dataset) error 
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *datasetRepo) SaveAll(ctx context.Context, datasetList dataset.List) error {
+func (r *Dataset) SaveAll(ctx context.Context, datasetList dataset.List) error {
 	if len(datasetList) == 0 {
 		return nil
 	}
@@ -285,11 +286,11 @@ func (r *datasetRepo) SaveAll(ctx context.Context, datasetList dataset.List) err
 	return r.client.SaveAll(ctx, ids, docs)
 }
 
-func (r *datasetRepo) Remove(ctx context.Context, id id.DatasetID) error {
+func (r *Dataset) Remove(ctx context.Context, id id.DatasetID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *datasetRepo) RemoveAll(ctx context.Context, ids id.DatasetIDList) error {
+func (r *Dataset) RemoveAll(ctx context.Context, ids id.DatasetIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -298,11 +299,11 @@ func (r *datasetRepo) RemoveAll(ctx context.Context, ids id.DatasetIDList) error
 	}))
 }
 
-func (r *datasetRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	if !r.f.CanWrite(sceneID) {
 		return nil
 	}
-	_, err := r.client.Collection().DeleteMany(ctx, bson.D{
+	_, err := r.client.Client().DeleteMany(ctx, bson.D{
 		{Key: "scene", Value: sceneID.String()},
 	})
 	if err != nil {
@@ -311,34 +312,29 @@ func (r *datasetRepo) RemoveByScene(ctx context.Context, sceneID id.SceneID) err
 	return nil
 }
 
-func (r *datasetRepo) find(ctx context.Context, dst dataset.List, filter interface{}) (dataset.List, error) {
-	c := mongodoc.DatasetConsumer{
-		Rows: dst,
-	}
-	if err2 := r.client.Find(ctx, r.readFilter(filter), &c); err2 != nil {
+func (r *Dataset) find(ctx context.Context, dst dataset.List, filter interface{}) (dataset.List, error) {
+	c := mongodoc.NewDatasetConsumer()
+	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
 		return nil, rerror.ErrInternalBy(err2)
 	}
-	return c.Rows, nil
+	return c.Result, nil
 }
 
-func (r *datasetRepo) findOne(ctx context.Context, filter interface{}) (*dataset.Dataset, error) {
-	dst := make([]*dataset.Dataset, 0, 1)
-	c := mongodoc.DatasetConsumer{
-		Rows: dst,
-	}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+func (r *Dataset) findOne(ctx context.Context, filter interface{}) (*dataset.Dataset, error) {
+	c := mongodoc.NewDatasetConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows[0], nil
+	return c.Result[0], nil
 }
 
-func (r *datasetRepo) paginate(ctx context.Context, filter bson.M, pagination *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
+func (r *Dataset) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
 	var c mongodoc.DatasetConsumer
 	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, &c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}
-	return c.Rows, pageInfo, nil
+	return c.Result, pageInfo, nil
 }
 
 func filterDatasets(ids []id.DatasetID, rows []*dataset.Dataset) []*dataset.Dataset {
@@ -356,10 +352,10 @@ func filterDatasets(ids []id.DatasetID, rows []*dataset.Dataset) []*dataset.Data
 	return res
 }
 
-func (r *datasetRepo) readFilter(filter interface{}) interface{} {
+func (r *Dataset) readFilter(filter interface{}) interface{} {
 	return applySceneFilter(filter, r.f.Readable)
 }
 
-func (r *datasetRepo) writeFilter(filter interface{}) interface{} {
+func (r *Dataset) writeFilter(filter interface{}) interface{} {
 	return applySceneFilter(filter, r.f.Writable)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type LayerDocument struct {
@@ -53,36 +53,10 @@ type LayerTagDocument struct {
 
 type LayerTagListDocument []LayerTagDocument
 
-type LayerConsumer struct {
-	Rows      []*layer.Layer
-	GroupRows []*layer.Group
-	ItemRows  []*layer.Item
-}
+type LayerConsumer = mongox.SliceFuncConsumer[*LayerDocument, layer.Layer]
 
-func (c *LayerConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc LayerDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	li, lg, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	if li != nil {
-		var layer layer.Layer = li
-		c.Rows = append(c.Rows, &layer)
-		c.ItemRows = append(c.ItemRows, li)
-	}
-	if lg != nil {
-		var layer layer.Layer = lg
-		c.Rows = append(c.Rows, &layer)
-		c.GroupRows = append(c.GroupRows, lg)
-	}
-	return nil
+func NewLayerConsumer() *LayerConsumer {
+	return NewComsumer[*LayerDocument, layer.Layer]()
 }
 
 func NewLayer(l layer.Layer) (*LayerDocument, string) {
@@ -155,22 +129,22 @@ func NewLayers(layers layer.List, f scene.IDList) ([]interface{}, []string) {
 	return res, ids
 }
 
-func (d *LayerDocument) Model() (*layer.Item, *layer.Group, error) {
+func (d *LayerDocument) Model() (layer.Layer, error) {
 	if d.Item != nil {
 		li, err := d.ModelItem()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return li, nil, nil
+		return li, nil
 	}
 	if d.Group != nil {
 		lg, err := d.ModelGroup()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return nil, lg, nil
+		return lg, nil
 	}
-	return nil, nil, errors.New("invalid layer")
+	return nil, errors.New("invalid layer")
 }
 
 func (d *LayerDocument) ModelItem() (*layer.Item, error) {

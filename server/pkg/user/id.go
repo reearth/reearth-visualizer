@@ -4,6 +4,7 @@ import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.UserID
 type WorkspaceID = id.WorkspaceID
+type IDList = id.UserIDList
 
 var NewID = id.NewUserID
 var NewWorkspaceID = id.NewWorkspaceID

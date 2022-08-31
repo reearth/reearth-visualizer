@@ -49,7 +49,7 @@ func NewPluginID(name string, version string, scene *SceneID) (PluginID, error) 
 	return PluginID{
 		name:    name,
 		version: version,
-		scene:   scene.CopyRef(),
+		scene:   scene.CloneRef(),
 	}, nil
 }
 
@@ -109,7 +109,7 @@ func (d PluginID) WithScene(sid *SceneID) PluginID {
 		name:    d.name,
 		version: d.version,
 		sys:     d.sys,
-		scene:   sid.CopyRef(),
+		scene:   sid.CloneRef(),
 	}
 }
 
@@ -119,7 +119,7 @@ func (d PluginID) Clone() PluginID {
 		name:    d.name,
 		version: d.version,
 		sys:     d.sys,
-		scene:   d.scene.CopyRef(),
+		scene:   d.scene.CloneRef(),
 	}
 }
 
@@ -152,7 +152,7 @@ func (d PluginID) System() bool {
 
 // Scene returns a scene ID of the plugin. It indicates this plugin is private and available for only the specific scene.
 func (d PluginID) Scene() *SceneID {
-	return d.scene.CopyRef()
+	return d.scene.CloneRef()
 }
 
 // Validate returns true if id is valid.
@@ -181,7 +181,7 @@ func (d PluginID) Ref() *PluginID {
 	return &d2
 }
 
-func (d *PluginID) CopyRef() *PluginID {
+func (d *PluginID) CloneRef() *PluginID {
 	if d == nil {
 		return nil
 	}

@@ -2,84 +2,62 @@ package memory
 
 import (
 	"context"
-	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
+	"github.com/reearth/reearthx/util"
 )
 
 type Dataset struct {
-	lock sync.Mutex
-	data map[id.DatasetID]*dataset.Dataset
+	data *util.SyncMap[id.DatasetID, *dataset.Dataset]
 	f    repo.SceneFilter
 }
 
-func NewDataset() repo.Dataset {
+func NewDataset() *Dataset {
 	return &Dataset{
-		data: map[id.DatasetID]*dataset.Dataset{},
+		data: util.SyncMapFrom[id.DatasetID, *dataset.Dataset](nil),
 	}
 }
 
 func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {
 	return &Dataset{
-		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
 		f:    r.f.Merge(f),
 	}
 }
 
-func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID) (*dataset.Dataset, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	p, ok := r.data[id]
+func (r *Dataset) FindByID(_ context.Context, id id.DatasetID) (*dataset.Dataset, error) {
+	p, ok := r.data.Load(id)
 	if ok && r.f.CanRead(p.Scene()) {
 		return p, nil
 	}
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Dataset) FindByIDs(ctx context.Context, ids id.DatasetIDList) (dataset.List, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := dataset.List{}
-	for _, id := range ids {
-		if d, ok := r.data[id]; ok {
-			if r.f.CanRead(d.Scene()) {
-				result = append(result, d)
-				continue
-			}
-		}
-		result = append(result, nil)
-	}
-	return result, nil
+func (r *Dataset) FindByIDs(_ context.Context, ids id.DatasetIDList) (dataset.List, error) {
+	return r.data.FindAll(func(k id.DatasetID, v *dataset.Dataset) bool {
+		return ids.Has(k) && r.f.CanRead(v.Scene())
+	}), nil
 }
 
-func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *usecase.Pagination) (dataset.List, *usecase.PageInfo, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
+func (r *Dataset) FindBySchema(_ context.Context, s id.DatasetSchemaID, p *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
+	result := r.data.FindAll(func(k id.DatasetID, v *dataset.Dataset) bool {
+		return v.Schema() == s && r.f.CanRead(v.Scene())
+	})
 
-	result := dataset.List{}
-	for _, d := range r.data {
-		if d.Schema() == id && r.f.CanRead(d.Scene()) {
-			result = append(result, d)
-		}
-	}
-
-	var startCursor, endCursor *usecase.Cursor
+	var startCursor, endCursor *usecasex.Cursor
 	if len(result) > 0 {
-		_startCursor := usecase.Cursor(result[0].ID().String())
-		_endCursor := usecase.Cursor(result[len(result)-1].ID().String())
+		_startCursor := usecasex.Cursor(result[0].ID().String())
+		_endCursor := usecasex.Cursor(result[len(result)-1].ID().String())
 		startCursor = &_startCursor
 		endCursor = &_endCursor
 	}
 
-	return result, usecase.NewPageInfo(
-		len(r.data),
+	return result, usecasex.NewPageInfo(
+		len(result),
 		startCursor,
 		endCursor,
 		true,
@@ -87,116 +65,100 @@ func (r *Dataset) FindBySchema(ctx context.Context, id id.DatasetSchemaID, p *us
 	), nil
 }
 
-func (r *Dataset) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	n := 0
-	for _, dataset := range r.data {
-		if dataset.Schema() == id {
-			if r.f.CanRead(dataset.Scene()) {
-				n++
-			}
-		}
-	}
-	return n, nil
+func (r *Dataset) CountBySchema(_ context.Context, s id.DatasetSchemaID) (int, error) {
+	return r.data.CountAll(func(k id.DatasetID, v *dataset.Dataset) bool {
+		return v.Schema() == s && r.f.CanRead(v.Scene())
+	}), nil
 }
 
-func (r *Dataset) FindBySchemaAll(ctx context.Context, id id.DatasetSchemaID) (dataset.List, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := dataset.List{}
-	for _, d := range r.data {
-		if d.Schema() == id && r.f.CanRead(d.Scene()) {
-			result = append(result, d)
-		}
-	}
-	return result, nil
+func (r *Dataset) FindBySchemaAll(_ context.Context, s id.DatasetSchemaID) (dataset.List, error) {
+	return r.data.FindAll(func(k id.DatasetID, v *dataset.Dataset) bool {
+		return v.Schema() == s && r.f.CanRead(v.Scene())
+	}), nil
 }
 
-func (r *Dataset) FindGraph(ctx context.Context, i id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
+func (r *Dataset) FindGraph(_ context.Context, i id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	result := make(dataset.List, 0, len(fields))
 	next := i
 	for _, nextField := range fields {
-		if d := r.data[next]; d != nil && r.f.CanRead(d.Scene()) {
-			result = append(result, d)
-			if f := d.Field(nextField); f != nil {
-				if f.Type() == dataset.ValueTypeRef {
-					if l := f.Value().ValueRef(); l != nil {
-						if did, err := id.DatasetIDFrom(*l); err == nil {
-							next = did
-							continue
+		found := false
+		r.data.Range(func(k id.DatasetID, v *dataset.Dataset) bool {
+			if d, _ := r.data.Load(next); d != nil && r.f.CanRead(d.Scene()) {
+				result = append(result, d)
+				if f := d.Field(nextField); f != nil {
+					if f.Type() == dataset.ValueTypeRef {
+						if l := f.Value().ValueRef(); l != nil {
+							if did, err := id.DatasetIDFrom(*l); err == nil {
+								next = did
+								found = true
+								return false
+							}
 						}
 					}
 				}
 			}
+			return true
+		})
+		if !found {
+			break
 		}
 	}
+
 	return result, nil
 }
 
-func (r *Dataset) Save(ctx context.Context, d *dataset.Dataset) error {
+func (r *Dataset) Save(_ context.Context, d *dataset.Dataset) error {
 	if !r.f.CanWrite(d.Scene()) {
 		return repo.ErrOperationDenied
 	}
 
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	r.data[d.ID()] = d
+	r.data.Store(d.ID(), d)
 	return nil
 }
 
-func (r *Dataset) SaveAll(ctx context.Context, dl dataset.List) error {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
+func (r *Dataset) SaveAll(_ context.Context, dl dataset.List) error {
 	for _, d := range dl {
 		if r.f.CanWrite(d.Scene()) {
-			r.data[d.ID()] = d
+			r.data.Store(d.ID(), d)
 		}
 	}
 	return nil
 }
 
-func (r *Dataset) Remove(ctx context.Context, id id.DatasetID) error {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	if d, ok := r.data[id]; ok && r.f.CanWrite(d.Scene()) {
-		delete(r.data, id)
+func (r *Dataset) Remove(_ context.Context, i id.DatasetID) error {
+	d, _ := r.data.Load(i)
+	if d == nil {
+		return nil
 	}
+
+	if !r.f.CanWrite(d.Scene()) {
+		return repo.ErrOperationDenied
+	}
+
+	r.data.Delete(i)
 	return nil
 }
 
-func (r *Dataset) RemoveAll(ctx context.Context, ids id.DatasetIDList) error {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	for _, id := range ids {
-		if d, ok := r.data[id]; ok && r.f.CanWrite(d.Scene()) {
-			delete(r.data, id)
+func (r *Dataset) RemoveAll(_ context.Context, ids id.DatasetIDList) error {
+	r.data.Range(func(k id.DatasetID, v *dataset.Dataset) bool {
+		if ids.Has(k) && r.f.CanWrite(v.Scene()) {
+			r.data.Delete(k)
 		}
-	}
+		return true
+	})
 	return nil
 }
 
-func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+func (r *Dataset) RemoveByScene(_ context.Context, sceneID id.SceneID) error {
 	if !r.f.CanWrite(sceneID) {
 		return nil
 	}
 
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	for did, d := range r.data {
-		if d.Scene() == sceneID {
-			delete(r.data, did)
+	r.data.Range(func(k id.DatasetID, v *dataset.Dataset) bool {
+		if v.Scene() == sceneID {
+			r.data.Delete(k)
 		}
-	}
+		return true
+	})
 	return nil
 }

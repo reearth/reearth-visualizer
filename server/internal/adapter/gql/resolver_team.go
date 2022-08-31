@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Team() TeamResolver {
@@ -24,7 +24,7 @@ func (r *teamResolver) Policy(ctx context.Context, obj *gqlmodel.Team) (*gqlmode
 	return single(loaders(ctx).Policy.Fetch(ctx, []gqlmodel.ID{*obj.PolicyID}))
 }
 
-func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.AssetConnection, error) {
+func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error) {
 	return loaders(ctx).Asset.FindByWorkspace(ctx, obj.ID, nil, nil, &gqlmodel.Pagination{
 		First:  first,
 		Last:   last,
@@ -33,7 +33,7 @@ func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *in
 	})
 }
 
-func (r *teamResolver) Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
+func (r *teamResolver) Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, obj.ID, first, last, before, after)
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 const (
@@ -43,36 +44,21 @@ type PropertyItemDocument struct {
 	Fields      []*PropertyFieldDocument
 }
 
-type PropertyConsumer struct {
-	Rows []*property.Property
-}
+type PropertyConsumer = mongox.SliceFuncConsumer[*PropertyDocument, *property.Property]
 
-func (c *PropertyConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc PropertyDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	property, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, property)
-	return nil
+func NewPropertyConsumer() *PropertyConsumer {
+	return NewComsumer[*PropertyDocument, *property.Property]()
 }
 
 type PropertyBatchConsumer struct {
 	Size     int
 	Callback func([]*property.Property) error
-	consumer *BatchConsumer
+	consumer *mongox.BatchConsumer
 }
 
 func (c *PropertyBatchConsumer) Consume(raw bson.Raw) error {
 	if c.consumer == nil {
-		c.consumer = &BatchConsumer{
+		c.consumer = &mongox.BatchConsumer{
 			Size: c.Size,
 			Callback: func(rows []bson.Raw) error {
 				properties := make([]*property.Property, 0, len(rows))
@@ -313,5 +299,5 @@ func (doc *PropertyDocument) Model() (*property.Property, error) {
 }
 
 func toModelPropertyValue(v interface{}, t string) *property.Value {
-	return property.ValueType(t).ValueFrom(convertDToM(v))
+	return property.ValueType(t).ValueFrom(mongox.DToM(v))
 }

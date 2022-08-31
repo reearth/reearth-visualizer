@@ -8,7 +8,7 @@ type Plugin struct {
 func NewPlugin(plugin PluginID, property *PropertyID) *Plugin {
 	return &Plugin{
 		plugin:   plugin,
-		property: property.CopyRef(),
+		property: property.CloneRef(),
 	}
 }
 
@@ -30,7 +30,7 @@ func (s *Plugin) Property() *PropertyID {
 	if s == nil {
 		return nil
 	}
-	return s.property.CopyRef()
+	return s.property.CloneRef()
 }
 
 func (s *Plugin) Clone() *Plugin {
@@ -39,6 +39,6 @@ func (s *Plugin) Clone() *Plugin {
 	}
 	return &Plugin{
 		plugin:   s.plugin.Clone(),
-		property: s.property.CopyRef(),
+		property: s.property.CloneRef(),
 	}
 }

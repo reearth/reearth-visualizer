@@ -17,7 +17,7 @@ type Tag struct {
 	f    repo.SceneFilter
 }
 
-func NewTag() repo.Tag {
+func NewTag() *Tag {
 	return &Tag{
 		data: map[id.TagID]tag.Tag{},
 	}

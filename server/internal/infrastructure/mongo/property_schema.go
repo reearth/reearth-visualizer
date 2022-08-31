@@ -10,35 +10,36 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type propertySchemaRepo struct {
-	client *mongodoc.ClientCollection
+type PropertySchema struct {
+	client *mongox.ClientCollection
 	f      repo.SceneFilter
 }
 
-func NewPropertySchema(client *mongodoc.Client) repo.PropertySchema {
-	r := &propertySchemaRepo{client: client.WithCollection("propertySchema")}
+func NewPropertySchema(client *mongox.Client) *PropertySchema {
+	r := &PropertySchema{client: client.WithCollection("propertySchema")}
 	r.init()
 	return r
 }
 
-func (r *propertySchemaRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil)
+func (r *PropertySchema) init() {
+	i := r.client.CreateIndex(context.Background(), nil, []string{"id"})
 	if len(i) > 0 {
 		log.Infof("mongo: %s: index created: %s", "propertySchema", i)
 	}
 }
 
-func (r *propertySchemaRepo) Filtered(f repo.SceneFilter) repo.PropertySchema {
-	return &propertySchemaRepo{
+func (r *PropertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
+	return &PropertySchema{
 		client: r.client,
 		f:      r.f.Merge(f),
 	}
 }
 
-func (r *propertySchemaRepo) FindByID(ctx context.Context, id id.PropertySchemaID) (*property.Schema, error) {
+func (r *PropertySchema) FindByID(ctx context.Context, id id.PropertySchemaID) (*property.Schema, error) {
 	if ps := builtin.GetPropertySchema(id); ps != nil {
 		return ps, nil
 	}
@@ -47,7 +48,7 @@ func (r *propertySchemaRepo) FindByID(ctx context.Context, id id.PropertySchemaI
 	return r.findOne(ctx, filter)
 }
 
-func (r *propertySchemaRepo) FindByIDs(ctx context.Context, ids []id.PropertySchemaID) (property.SchemaList, error) {
+func (r *PropertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaID) (property.SchemaList, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -80,7 +81,7 @@ func (r *propertySchemaRepo) FindByIDs(ctx context.Context, ids []id.PropertySch
 	return res.Concat(b.List()).MapToIDs(ids), nil
 }
 
-func (r *propertySchemaRepo) Save(ctx context.Context, m *property.Schema) error {
+func (r *PropertySchema) Save(ctx context.Context, m *property.Schema) error {
 	if m.ID().Plugin().System() {
 		return errors.New("cannnot save system property schema")
 	}
@@ -92,7 +93,7 @@ func (r *propertySchemaRepo) Save(ctx context.Context, m *property.Schema) error
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *propertySchemaRepo) SaveAll(ctx context.Context, m property.SchemaList) error {
+func (r *PropertySchema) SaveAll(ctx context.Context, m property.SchemaList) error {
 	savable := make(property.SchemaList, 0, len(m))
 	for _, ps := range m {
 		if ps.ID().Plugin().System() {
@@ -109,11 +110,11 @@ func (r *propertySchemaRepo) SaveAll(ctx context.Context, m property.SchemaList)
 	return r.client.SaveAll(ctx, ids, docs)
 }
 
-func (r *propertySchemaRepo) Remove(ctx context.Context, id id.PropertySchemaID) error {
+func (r *PropertySchema) Remove(ctx context.Context, id id.PropertySchemaID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
 }
 
-func (r *propertySchemaRepo) RemoveAll(ctx context.Context, ids []id.PropertySchemaID) error {
+func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaID) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -122,31 +123,26 @@ func (r *propertySchemaRepo) RemoveAll(ctx context.Context, ids []id.PropertySch
 	}))
 }
 
-func (r *propertySchemaRepo) find(ctx context.Context, dst property.SchemaList, filter interface{}) (property.SchemaList, error) {
-	c := mongodoc.PropertySchemaConsumer{
-		Rows: dst,
-	}
-	if err := r.client.Find(ctx, r.readFilter(filter), &c); err != nil {
+func (r *PropertySchema) find(ctx context.Context, dst property.SchemaList, filter any) (property.SchemaList, error) {
+	c := mongodoc.NewPropertySchemaConsumer()
+	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows, nil
+	return c.Result, nil
 }
 
-func (r *propertySchemaRepo) findOne(ctx context.Context, filter interface{}) (*property.Schema, error) {
-	dst := make(property.SchemaList, 0, 1)
-	c := mongodoc.PropertySchemaConsumer{
-		Rows: dst,
-	}
-	if err := r.client.FindOne(ctx, r.readFilter(filter), &c); err != nil {
+func (r *PropertySchema) findOne(ctx context.Context, filter any) (*property.Schema, error) {
+	c := mongodoc.NewPropertySchemaConsumer()
+	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
 		return nil, err
 	}
-	return c.Rows[0], nil
+	return c.Result[0], nil
 }
 
-func (r *propertySchemaRepo) readFilter(filter interface{}) interface{} {
+func (r *PropertySchema) readFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Readable)
 }
 
-func (r *propertySchemaRepo) writeFilter(filter interface{}) interface{} {
+func (r *PropertySchema) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)
 }

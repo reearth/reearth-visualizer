@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -14,9 +15,9 @@ import (
 
 func TestPolicy_FindByID(t *testing.T) {
 	ctx := context.Background()
-	init := connect(t)
+	init := mongotest.Connect(t)
 	client := init(t)
-	r := NewPolicy(mongodoc.NewClientWithDatabase(client))
+	r := NewPolicy(mongox.NewClientWithDatabase(client))
 
 	_, _ = client.Collection("policy").InsertOne(ctx, bson.M{
 		"id":          "policy",
@@ -37,9 +38,9 @@ func TestPolicy_FindByID(t *testing.T) {
 
 func TestPolicy_FindByIDs(t *testing.T) {
 	ctx := context.Background()
-	init := connect(t)
+	init := mongotest.Connect(t)
 	client := init(t)
-	r := NewPolicy(mongodoc.NewClientWithDatabase(client))
+	r := NewPolicy(mongox.NewClientWithDatabase(client))
 
 	_, _ = client.Collection("policy").InsertMany(ctx, []any{
 		bson.M{

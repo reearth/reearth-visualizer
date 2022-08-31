@@ -5,11 +5,11 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -136,10 +136,10 @@ func TestRun(t *testing.T) {
 	ctx := context.Background()
 	err := errors.New("test")
 	a, b, c := &struct{}{}, &struct{}{}, &struct{}{}
-	tr := memory.NewTransaction()
-	r := &repo.Container{Transaction: tr}
 
 	// regular1: without tx
+	tr := &usecasex.NopTransaction{}
+	r := &repo.Container{Transaction: tr}
 	gota, gotb, gotc, goterr := Run3(
 		ctx, nil, r,
 		Usecase(),
@@ -151,9 +151,11 @@ func TestRun(t *testing.T) {
 	assert.Same(t, b, gotb)
 	assert.Same(t, c, gotc)
 	assert.Nil(t, goterr)
-	assert.Equal(t, 0, tr.Committed()) // not committed
+	assert.False(t, tr.IsCommitted()) // not IsCommitted
 
 	// regular2: with tx
+	tr = &usecasex.NopTransaction{}
+	r.Transaction = tr
 	_ = Run0(
 		ctx, nil, r,
 		Usecase().Transaction(),
@@ -161,9 +163,11 @@ func TestRun(t *testing.T) {
 			return nil
 		},
 	)
-	assert.Equal(t, 1, tr.Committed()) // committed
+	assert.True(t, tr.IsCommitted())
 
 	// iregular1: the usecase returns an error
+	tr = &usecasex.NopTransaction{}
+	r.Transaction = tr
 	goterr = Run0(
 		ctx, nil, r,
 		Usecase().Transaction(),
@@ -172,11 +176,13 @@ func TestRun(t *testing.T) {
 		},
 	)
 	assert.Same(t, err, goterr)
-	assert.Equal(t, 1, tr.Committed()) // not committed
+	assert.False(t, tr.IsCommitted())
 
 	// iregular2: tx.Begin returns an error
-	tr.SetBeginError(err)
-	tr.SetEndError(nil)
+	tr = &usecasex.NopTransaction{}
+	r.Transaction = tr
+	tr.BeginError = err
+	tr.CommitError = nil
 	goterr = Run0(
 		ctx, nil, r,
 		Usecase().Transaction(),
@@ -185,11 +191,13 @@ func TestRun(t *testing.T) {
 		},
 	)
 	assert.Same(t, err, goterr)
-	assert.Equal(t, 1, tr.Committed()) // not committed
+	assert.False(t, tr.IsCommitted())
 
 	// iregular3: tx.End returns an error
-	tr.SetBeginError(nil)
-	tr.SetEndError(err)
+	tr = &usecasex.NopTransaction{}
+	r.Transaction = tr
+	tr.BeginError = nil
+	tr.CommitError = err
 	goterr = Run0(
 		ctx, nil, r,
 		Usecase().Transaction(),
@@ -198,5 +206,5 @@ func TestRun(t *testing.T) {
 		},
 	)
 	assert.Same(t, err, goterr)
-	assert.Equal(t, 1, tr.Committed()) // fails
+	assert.True(t, tr.IsCommitted())
 }

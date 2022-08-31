@@ -1,7 +1,5 @@
 {
-  // "go.testEnvVars": {
-  //   "REEARTH_DB": "mongodb://localhost"
-  // },
+  "go.testEnvFile": "${workspaceRoot}/.env",
   "go.lintTool": "golangci-lint",
   "editor.formatOnSave": true,
   "yaml.format.enable": true,

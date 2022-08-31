@@ -2,7 +2,7 @@ package mongodoc
 
 import (
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type PolicyDocument struct {
@@ -25,20 +25,10 @@ func (d PolicyDocument) Model() *workspace.Policy {
 	})
 }
 
-type PolicyConsumer struct {
-	Rows []*workspace.Policy
-}
+type PolicyConsumer = mongox.SliceFuncConsumer[*PolicyDocument, *workspace.Policy]
 
-func (c *PolicyConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc PolicyDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	p := doc.Model()
-	c.Rows = append(c.Rows, p)
-	return nil
+func NewPolicyConsumer() *PolicyConsumer {
+	return mongox.NewSliceFuncConsumer(func(d *PolicyDocument) (*workspace.Policy, error) {
+		return d.Model(), nil
+	})
 }

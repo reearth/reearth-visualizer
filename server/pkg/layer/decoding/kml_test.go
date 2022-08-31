@@ -162,238 +162,238 @@ func TestKMLDecoder_Decode(t *testing.T) {
 	assert.Nil(t, point.Value().Value())
 }
 
-//func TestKMLCoordinatesToLatLng(t *testing.T) {
-//	tests := []struct {
-//		name, cords    string
-//		expectedLatLng *property.LatLng
-//		expectedHeight float64
-//		err            error
-//	}{
-//		{
-//			name: "Valid LatLng", cords: "-122.0822035425683,37.42228990140251,43",
-//			expectedLatLng: &property.LatLng{
-//				Lng: -122.0822035425683,
-//				Lat: 37.42228990140251,
+//	func TestKMLCoordinatesToLatLng(t *testing.T) {
+//		tests := []struct {
+//			name, cords    string
+//			expectedLatLng *property.LatLng
+//			expectedHeight float64
+//			err            error
+//		}{
+//			{
+//				name: "Valid LatLng", cords: "-122.0822035425683,37.42228990140251,43",
+//				expectedLatLng: &property.LatLng{
+//					Lng: -122.0822035425683,
+//					Lat: 37.42228990140251,
+//				},
+//				expectedHeight: 43,
+//				err:            nil,
 //			},
-//			expectedHeight: 43,
-//			err:            nil,
-//		},
-//		{
-//			name: "Failed to parse Lat", cords: "-122.0822035425683,xxx,43",
-//			expectedLatLng: nil,
-//			expectedHeight: 0,
-//			err:            strconv.ErrSyntax,
-//		},
-//		{
-//			name: "Failed to parse Lng", cords: "xxx,-122.0822035425683,43",
-//			expectedLatLng: nil,
-//			expectedHeight: 0,
-//			err:            strconv.ErrSyntax,
-//		},
-//		{
-//			name: "Failed to parse Height", cords: "-122.0822035425683,43,xxx",
-//			expectedLatLng: nil,
-//			expectedHeight: 0,
-//			err:            strconv.ErrSyntax,
-//		},
+//			{
+//				name: "Failed to parse Lat", cords: "-122.0822035425683,xxx,43",
+//				expectedLatLng: nil,
+//				expectedHeight: 0,
+//				err:            strconv.ErrSyntax,
+//			},
+//			{
+//				name: "Failed to parse Lng", cords: "xxx,-122.0822035425683,43",
+//				expectedLatLng: nil,
+//				expectedHeight: 0,
+//				err:            strconv.ErrSyntax,
+//			},
+//			{
+//				name: "Failed to parse Height", cords: "-122.0822035425683,43,xxx",
+//				expectedLatLng: nil,
+//				expectedHeight: 0,
+//				err:            strconv.ErrSyntax,
+//			},
+//		}
+//		for _, tt := range tests {
+//			tt := tt
+//			t.Run(tt.name, func(t *testing.T) {
+//				t.Parallel()
+//				ll, h, err := coordinatesToLatLngHeight(tt.cords)
+//				if tt.err == nil {
+//					assert.True(t, reflect.DeepEqual(ll, tt.expectedLatLng))
+//					assert.Equal(t, tt.expectedHeight, h)
+//				} else {
+//					assert.Equal(t, tt.err, err)
+//				}
+//			})
+//		}
 //	}
-//	for _, tt := range tests {
-//		tt := tt
-//		t.Run(tt.name, func(t *testing.T) {
-//			t.Parallel()
-//			ll, h, err := coordinatesToLatLngHeight(tt.cords)
-//			if tt.err == nil {
-//				assert.True(t, reflect.DeepEqual(ll, tt.expectedLatLng))
-//				assert.Equal(t, tt.expectedHeight, h)
-//			} else {
-//				assert.Equal(t, tt.err, err)
-//			}
-//		})
-//	}
-//}
 //
-//func TestKMLCoordinatesToLatLngList(t *testing.T) {
-//	tests := []struct {
-//		name, cords string
-//		expected    []property.LatLngHeight
-//		err         error
-//	}{
-//		{
-//			name: "Valid Cords", cords: ` -112.0814237830345,36.10677870477137,0
-//  											-112.0870267752693,36.0905099328766,0 `,
-//			expected: []property.LatLngHeight{
-//				{
-//					Lat:    36.10677870477137,
-//					Lng:    -112.0814237830345,
-//					Height: 0,
-//				},
-//				{
-//					Lat:    36.0905099328766,
-//					Lng:    -112.0870267752693,
-//					Height: 0,
-//				},
-//			},
-//			err: nil,
-//		},
-//		{
-//			name: "Failed to parse Lng", cords: ` xxx,36.10677870477137,0
-//  											-112.0870267752693,36.0905099328766,0 `,
-//			expected: nil,
-//			err:      strconv.ErrSyntax,
-//		},
-//		{
-//			name: "Failed to parse Lat", cords: ` -112.0814237830345,xxx,0
-//  											-112.0870267752693,36.0905099328766,0 `,
-//			expected: nil,
-//			err:      strconv.ErrSyntax,
-//		},
-//		{
-//			name: "Failed to parse Height", cords: ` -112.0814237830345,36.10677870477137,xxx
-//  											-112.0870267752693,36.0905099328766,0 `,
-//			expected: nil,
-//			err:      strconv.ErrSyntax,
-//		},
-//	}
-//	for _, tt := range tests {
-//		tt := tt
-//		t.Run(tt.name, func(t *testing.T) {
-//			t.Parallel()
-//			res, err := coordinatesToLatLngHeightList(tt.cords)
-//			if tt.err == nil {
-//				assert.True(t, reflect.DeepEqual(res, tt.expected))
-//			} else {
-//				assert.Equal(t, tt.err, err)
-//			}
-//		})
-//	}
-//}
-//func TestKMLGetPolygon(t *testing.T) {
-//	cl1 := []property.LatLngHeight{
-//		{
-//			Lng:    36,
-//			Lat:    -112,
-//			Height: 0,
-//		},
-//		{
-//			Lng:    34,
-//			Lat:    -112,
-//			Height: 0,
-//		},
-//		{
-//			Lng:    35,
-//			Lat:    -111,
-//			Height: 0,
-//		},
-//	}
-//	cl2 := []property.LatLngHeight{
-//		{
-//			Lng:    35,
-//			Lat:    -111,
-//			Height: 10,
-//		},
-//		{
-//			Lng:    32,
-//			Lat:    -109,
-//			Height: 10,
-//		},
-//		{
-//			Lng:    34,
-//			Lat:    -119,
-//			Height: 10,
-//		},
-//	}
-//	expected := [][]property.LatLngHeight{cl1, cl2}
-//	tests := []struct {
-//		name     string
-//		polygon  *kml.Polygon
-//		expected [][]property.LatLngHeight
-//		err      error
-//	}{
-//		{
-//			name: "Valid Polygon",
-//			polygon: &kml.Polygon{
-//				OuterBoundaryIs: kml.BoundaryIs{
-//					LinearRing: kml.LinearRing{
-//						Coordinates: ` 36,-112,0
-//  										34,-112,0
-//										35,-111,0`,
+//	func TestKMLCoordinatesToLatLngList(t *testing.T) {
+//		tests := []struct {
+//			name, cords string
+//			expected    []property.LatLngHeight
+//			err         error
+//		}{
+//			{
+//				name: "Valid Cords", cords: ` -112.0814237830345,36.10677870477137,0
+//	 											-112.0870267752693,36.0905099328766,0 `,
+//				expected: []property.LatLngHeight{
+//					{
+//						Lat:    36.10677870477137,
+//						Lng:    -112.0814237830345,
+//						Height: 0,
+//					},
+//					{
+//						Lat:    36.0905099328766,
+//						Lng:    -112.0870267752693,
+//						Height: 0,
 //					},
 //				},
-//				InnerBoundaryIs: []kml.BoundaryIs{
-//					{
+//				err: nil,
+//			},
+//			{
+//				name: "Failed to parse Lng", cords: ` xxx,36.10677870477137,0
+//	 											-112.0870267752693,36.0905099328766,0 `,
+//				expected: nil,
+//				err:      strconv.ErrSyntax,
+//			},
+//			{
+//				name: "Failed to parse Lat", cords: ` -112.0814237830345,xxx,0
+//	 											-112.0870267752693,36.0905099328766,0 `,
+//				expected: nil,
+//				err:      strconv.ErrSyntax,
+//			},
+//			{
+//				name: "Failed to parse Height", cords: ` -112.0814237830345,36.10677870477137,xxx
+//	 											-112.0870267752693,36.0905099328766,0 `,
+//				expected: nil,
+//				err:      strconv.ErrSyntax,
+//			},
+//		}
+//		for _, tt := range tests {
+//			tt := tt
+//			t.Run(tt.name, func(t *testing.T) {
+//				t.Parallel()
+//				res, err := coordinatesToLatLngHeightList(tt.cords)
+//				if tt.err == nil {
+//					assert.True(t, reflect.DeepEqual(res, tt.expected))
+//				} else {
+//					assert.Equal(t, tt.err, err)
+//				}
+//			})
+//		}
+//	}
+//
+//	func TestKMLGetPolygon(t *testing.T) {
+//		cl1 := []property.LatLngHeight{
+//			{
+//				Lng:    36,
+//				Lat:    -112,
+//				Height: 0,
+//			},
+//			{
+//				Lng:    34,
+//				Lat:    -112,
+//				Height: 0,
+//			},
+//			{
+//				Lng:    35,
+//				Lat:    -111,
+//				Height: 0,
+//			},
+//		}
+//		cl2 := []property.LatLngHeight{
+//			{
+//				Lng:    35,
+//				Lat:    -111,
+//				Height: 10,
+//			},
+//			{
+//				Lng:    32,
+//				Lat:    -109,
+//				Height: 10,
+//			},
+//			{
+//				Lng:    34,
+//				Lat:    -119,
+//				Height: 10,
+//			},
+//		}
+//		expected := [][]property.LatLngHeight{cl1, cl2}
+//		tests := []struct {
+//			name     string
+//			polygon  *kml.Polygon
+//			expected [][]property.LatLngHeight
+//			err      error
+//		}{
+//			{
+//				name: "Valid Polygon",
+//				polygon: &kml.Polygon{
+//					OuterBoundaryIs: kml.BoundaryIs{
 //						LinearRing: kml.LinearRing{
-//							Coordinates: ` 35,-111,10
-//										32,-109,10
-//										34,-119,10 `,
+//							Coordinates: ` 36,-112,0
+//	 										34,-112,0
+//											35,-111,0`,
+//						},
+//					},
+//					InnerBoundaryIs: []kml.BoundaryIs{
+//						{
+//							LinearRing: kml.LinearRing{
+//								Coordinates: ` 35,-111,10
+//											32,-109,10
+//											34,-119,10 `,
+//							},
 //						},
 //					},
 //				},
+//				expected: expected,
+//				err:      nil,
 //			},
-//			expected: expected,
-//			err:      nil,
-//		},
-//		{
-//			name: "Failed to parse Outer",
-//			polygon: &kml.Polygon{
-//				OuterBoundaryIs: kml.BoundaryIs{
-//					LinearRing: kml.LinearRing{
-//						Coordinates: ` xxx,-112,0
-//  										34,-112,0
-//										35,-111,0`,
-//					},
-//				},
-//				InnerBoundaryIs: []kml.BoundaryIs{
-//					{
+//			{
+//				name: "Failed to parse Outer",
+//				polygon: &kml.Polygon{
+//					OuterBoundaryIs: kml.BoundaryIs{
 //						LinearRing: kml.LinearRing{
-//							Coordinates: ` 35,-111,10
-//										32,-109,10
-//										34,-119,10 `,
+//							Coordinates: ` xxx,-112,0
+//	 										34,-112,0
+//											35,-111,0`,
+//						},
+//					},
+//					InnerBoundaryIs: []kml.BoundaryIs{
+//						{
+//							LinearRing: kml.LinearRing{
+//								Coordinates: ` 35,-111,10
+//											32,-109,10
+//											34,-119,10 `,
+//							},
 //						},
 //					},
 //				},
+//				expected: nil,
+//				err:      strconv.ErrSyntax,
 //			},
-//			expected: nil,
-//			err:      strconv.ErrSyntax,
-//		},
-//		{
-//			name: "Failed to parse Inner",
-//			polygon: &kml.Polygon{
-//				OuterBoundaryIs: kml.BoundaryIs{
-//					LinearRing: kml.LinearRing{
-//						Coordinates: ` 36,-112,0
-//  										34,-112,0
-//										35,-111,0`,
-//					},
-//				},
-//				InnerBoundaryIs: []kml.BoundaryIs{
-//					{
+//			{
+//				name: "Failed to parse Inner",
+//				polygon: &kml.Polygon{
+//					OuterBoundaryIs: kml.BoundaryIs{
 //						LinearRing: kml.LinearRing{
-//							Coordinates: ` xxx,-111,10
-//										32,-109,10
-//										34,-119,10 `,
+//							Coordinates: ` 36,-112,0
+//	 										34,-112,0
+//											35,-111,0`,
+//						},
+//					},
+//					InnerBoundaryIs: []kml.BoundaryIs{
+//						{
+//							LinearRing: kml.LinearRing{
+//								Coordinates: ` xxx,-111,10
+//											32,-109,10
+//											34,-119,10 `,
+//							},
 //						},
 //					},
 //				},
+//
+//				expected: nil,
+//				err:      strconv.ErrSyntax,
 //			},
-//
-//			expected: nil,
-//			err:      strconv.ErrSyntax,
-//		},
+//		}
+//		for _, tt := range tests {
+//			tt := tt
+//			t.Run(tt.name, func(t *testing.T) {
+//				t.Parallel()
+//				res, err := getPolygon(tt.polygon)
+//				if tt.err == nil {
+//					assert.True(t, reflect.DeepEqual(res, tt.expected))
+//				} else {
+//					assert.Equal(t, tt.err, err)
+//				}
+//			})
+//		}
 //	}
-//	for _, tt := range tests {
-//		tt := tt
-//		t.Run(tt.name, func(t *testing.T) {
-//			t.Parallel()
-//			res, err := getPolygon(tt.polygon)
-//			if tt.err == nil {
-//				assert.True(t, reflect.DeepEqual(res, tt.expected))
-//			} else {
-//				assert.Equal(t, tt.err, err)
-//			}
-//		})
-//	}
-//}
-//
 func TestKMLparseKML(t *testing.T) {
 	s := layer.NewSceneID()
 

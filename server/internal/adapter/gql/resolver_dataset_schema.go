@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) DatasetSchema() DatasetSchemaResolver {
@@ -34,7 +34,7 @@ func (r *datasetSchemaResolver) RepresentativeField(ctx context.Context, obj *gq
 	return nil, nil
 }
 
-func (r *datasetSchemaResolver) Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
+func (r *datasetSchemaResolver) Datasets(ctx context.Context, obj *gqlmodel.DatasetSchema, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
 	return loaders(ctx).Dataset.FindBySchema(ctx, obj.ID, first, last, before, after)
 }
 

@@ -4,77 +4,55 @@ import (
 	"context"
 	"sort"
 	"strings"
-	"sync"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
+	"github.com/reearth/reearthx/util"
 )
 
 type Asset struct {
-	lock sync.Mutex
-	data map[id.AssetID]*asset.Asset
+	data *util.SyncMap[id.AssetID, *asset.Asset]
 	f    repo.WorkspaceFilter
 }
 
-func NewAsset() repo.Asset {
+func NewAsset() *Asset {
 	return &Asset{
-		data: map[id.AssetID]*asset.Asset{},
+		data: util.SyncMapFrom[id.AssetID, *asset.Asset](nil),
 	}
 }
 
 func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	return &Asset{
-		// note data is shared between the source repo and mutex cannot work well
 		data: r.data,
 		f:    r.f.Merge(f),
 	}
 }
 
-func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	d, ok := r.data[id]
+func (r *Asset) FindByID(_ context.Context, id id.AssetID) (*asset.Asset, error) {
+	d, ok := r.data.Load(id)
 	if ok && r.f.CanRead(d.Workspace()) {
 		return d, nil
 	}
 	return &asset.Asset{}, rerror.ErrNotFound
 }
 
-func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := []*asset.Asset{}
-	for _, id := range ids {
-		if d, ok := r.data[id]; ok {
-			if r.f.CanRead(d.Workspace()) {
-				result = append(result, d)
-				continue
-			}
-		}
-		result = append(result, nil)
-	}
-	return result, nil
+func (r *Asset) FindByIDs(_ context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
+	return r.data.FindAll(func(k id.AssetID, v *asset.Asset) bool {
+		return ids.Has(k) && r.f.CanRead(v.Workspace())
+	}), nil
 }
 
-func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecase.PageInfo, error) {
-	if !r.f.CanRead(id) {
-		return nil, usecase.EmptyPageInfo(), nil
+func (r *Asset) FindByWorkspace(_ context.Context, wid id.WorkspaceID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+	if !r.f.CanRead(wid) {
+		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := []*asset.Asset{}
-	for _, d := range r.data {
-		if d.Workspace() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
-			result = append(result, d)
-		}
-	}
+	result := r.data.FindAll(func(k id.AssetID, v *asset.Asset) bool {
+		return v.Workspace() == wid && (filter.Keyword == nil || strings.Contains(v.Name(), *filter.Keyword))
+	})
 
 	if filter.Sort != nil {
 		s := *filter.Sort
@@ -92,16 +70,16 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter r
 		})
 	}
 
-	var startCursor, endCursor *usecase.Cursor
+	var startCursor, endCursor *usecasex.Cursor
 	if len(result) > 0 {
-		_startCursor := usecase.Cursor(result[0].ID().String())
-		_endCursor := usecase.Cursor(result[len(result)-1].ID().String())
+		_startCursor := usecasex.Cursor(result[0].ID().String())
+		_endCursor := usecasex.Cursor(result[len(result)-1].ID().String())
 		startCursor = &_startCursor
 		endCursor = &_endCursor
 	}
 
-	return result, usecase.NewPageInfo(
-		len(r.data),
+	return result, usecasex.NewPageInfo(
+		len(result),
 		startCursor,
 		endCursor,
 		true,
@@ -110,40 +88,38 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, filter r
 }
 
 func (r *Asset) TotalSizeByWorkspace(_ context.Context, wid id.WorkspaceID) (t int64, err error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
 	if !r.f.CanRead(wid) {
 		return 0, nil
 	}
 
-	for _, a := range r.data {
-		if a.Workspace().Equal(wid) {
-			t += a.Size()
+	r.data.Range(func(k id.AssetID, v *asset.Asset) bool {
+		if v.Workspace() == wid {
+			t += v.Size()
 		}
-	}
-	return t, nil
+		return true
+	})
+	return
 }
 
-func (r *Asset) Save(ctx context.Context, a *asset.Asset) error {
+func (r *Asset) Save(_ context.Context, a *asset.Asset) error {
 	if !r.f.CanWrite(a.Workspace()) {
 		return repo.ErrOperationDenied
 	}
 
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	r.data[a.ID()] = a
+	r.data.Store(a.ID(), a)
 	return nil
 }
 
-func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	if a, ok := r.data[id]; ok && r.f.CanWrite(a.Workspace()) {
-		delete(r.data, id)
+func (r *Asset) Remove(_ context.Context, id id.AssetID) error {
+	a, _ := r.data.Load(id)
+	if a == nil {
+		return nil
 	}
 
+	if !r.f.CanWrite(a.Workspace()) {
+		return repo.ErrOperationDenied
+	}
+
+	r.data.Delete(id)
 	return nil
 }

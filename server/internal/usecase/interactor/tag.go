@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/tag"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Tag struct {
@@ -18,7 +19,7 @@ type Tag struct {
 	tagRepo     repo.Tag
 	layerRepo   repo.Layer
 	sceneRepo   repo.Scene
-	transaction repo.Transaction
+	transaction usecasex.Transaction
 }
 
 func NewTag(r *repo.Container) interfaces.Tag {

@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -107,7 +108,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 				sceneRepo:    sr,
 				pluginRepo:   pr,
 				propertyRepo: prr,
-				transaction:  memory.NewTransaction(),
+				transaction:  &usecasex.NopTransaction{},
 			}
 
 			o := tt.args.operator
@@ -234,7 +235,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 				layerRepo:          lr,
 				propertySchemaRepo: psr,
 				file:               fsg,
-				transaction:        memory.NewTransaction(),
+				transaction:        &usecasex.NopTransaction{},
 			}
 
 			o := tt.args.operator
@@ -363,7 +364,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 				propertySchemaRepo: psr,
 				layerRepo:          lr,
 				datasetRepo:        dsr,
-				transaction:        memory.NewTransaction(),
+				transaction:        &usecasex.NopTransaction{},
 			}
 
 			o := tt.args.operator

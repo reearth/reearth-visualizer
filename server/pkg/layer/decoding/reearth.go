@@ -235,7 +235,7 @@ func (p *ReearthPropertyItem) propertyItem(key property.SchemaGroupID) *property
 type ReearthPropertyGroup map[property.FieldID]*ReearthPropertyField
 
 func (p ReearthPropertyGroup) propertyGroup() *property.InitializerGroup {
-	if p == nil || len(p) == 0 {
+	if len(p) == 0 {
 		return nil
 	}
 

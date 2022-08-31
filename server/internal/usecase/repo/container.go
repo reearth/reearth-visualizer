@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 var (
@@ -28,9 +29,9 @@ type Container struct {
 	SceneLock      SceneLock
 	Tag            Tag
 	Workspace      Workspace
-	Transaction    Transaction
 	User           User
 	Policy         Policy
+	Transaction    usecasex.Transaction
 }
 
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {

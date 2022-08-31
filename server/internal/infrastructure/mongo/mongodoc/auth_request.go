@@ -6,7 +6,7 @@ import (
 	"github.com/caos/oidc/pkg/oidc"
 	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/reearth/reearth/server/pkg/id"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type AuthRequestDocument struct {
@@ -30,25 +30,10 @@ type CodeChallengeDocument struct {
 	Method    string
 }
 
-type AuthRequestConsumer struct {
-	Rows []*auth.Request
-}
+type AuthRequestConsumer = mongox.SliceFuncConsumer[*AuthRequestDocument, *auth.Request]
 
-func (a *AuthRequestConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc AuthRequestDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	request, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	a.Rows = append(a.Rows, request)
-	return nil
+func NewAuthRequestConsumer() *AuthRequestConsumer {
+	return NewComsumer[*AuthRequestDocument, *auth.Request]()
 }
 
 func NewAuthRequest(req *auth.Request) (*AuthRequestDocument, string) {

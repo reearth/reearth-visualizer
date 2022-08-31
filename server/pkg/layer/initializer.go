@@ -78,18 +78,18 @@ func (i *Initializer) Clone() *Initializer {
 	}
 
 	return &Initializer{
-		ID:                  i.ID.CopyRef(),
-		Plugin:              i.Plugin.CopyRef(),
+		ID:                  i.ID.CloneRef(),
+		Plugin:              i.Plugin.CloneRef(),
 		Extension:           i.Extension.CloneRef(),
 		Name:                i.Name,
 		Infobox:             i.Infobox.Clone(),
-		PropertyID:          i.PropertyID.CopyRef(),
+		PropertyID:          i.PropertyID.CloneRef(),
 		Property:            i.Property.Clone(),
 		Layers:              layers,
 		LayerIDs:            layerIDs,
 		IsVisible:           isVisible,
-		LinkedDatasetSchema: i.LinkedDatasetSchema.CopyRef(),
-		LinkedDataset:       i.LinkedDataset.CopyRef(),
+		LinkedDatasetSchema: i.LinkedDatasetSchema.CloneRef(),
+		LinkedDataset:       i.LinkedDataset.CloneRef(),
 	}
 }
 
@@ -193,7 +193,7 @@ func (i *InitializerInfobox) Clone() *InitializerInfobox {
 	}
 
 	return &InitializerInfobox{
-		PropertyID: i.PropertyID.CopyRef(),
+		PropertyID: i.PropertyID.CloneRef(),
 		Property:   i.Property.Clone(),
 		Fields:     fields,
 	}
@@ -252,10 +252,10 @@ func (i *InitializerInfoboxField) Clone() *InitializerInfoboxField {
 	}
 
 	return &InitializerInfoboxField{
-		ID:         i.ID.CopyRef(),
+		ID:         i.ID.CloneRef(),
 		Plugin:     i.Plugin,
 		Extension:  i.Extension,
-		PropertyID: i.PropertyID.CopyRef(),
+		PropertyID: i.PropertyID.CloneRef(),
 		Property:   i.Property.Clone(),
 	}
 }

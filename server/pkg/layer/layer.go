@@ -116,7 +116,7 @@ func (l *layerBase) Plugin() *PluginID {
 	if l == nil {
 		return nil
 	}
-	return l.plugin.CopyRef()
+	return l.plugin.CloneRef()
 }
 
 func (l *layerBase) Extension() *PluginExtensionID {
@@ -130,7 +130,7 @@ func (l *layerBase) Property() *PropertyID {
 	if l == nil {
 		return nil
 	}
-	return l.property.CopyRef()
+	return l.property.CloneRef()
 }
 
 func (l *layerBase) HasInfobox() bool {
@@ -176,7 +176,7 @@ func (l *layerBase) SetPlugin(plugin *PluginID) {
 	if l == nil {
 		return
 	}
-	l.plugin = plugin.CopyRef()
+	l.plugin = plugin.CloneRef()
 }
 
 func (l *layerBase) Properties() []PropertyID {

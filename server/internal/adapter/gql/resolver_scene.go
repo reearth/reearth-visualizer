@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Scene() SceneResolver {
@@ -53,7 +53,7 @@ func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gq
 	return layerGroup, nil
 }
 
-func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
 }
 

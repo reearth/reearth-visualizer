@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type User struct {
@@ -32,7 +33,7 @@ type User struct {
 	propertyRepo      repo.Property
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
-	transaction       repo.Transaction
+	transaction       usecasex.Transaction
 	file              gateway.File
 	authenticator     gateway.Authenticator
 	mailer            gateway.Mailer

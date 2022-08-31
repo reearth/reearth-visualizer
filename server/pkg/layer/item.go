@@ -108,7 +108,7 @@ func (l *Item) LinkedDataset() *DatasetID {
 	if l == nil {
 		return nil
 	}
-	return l.linkedDataset.CopyRef()
+	return l.linkedDataset.CloneRef()
 }
 
 func (l *Item) Link(ds DatasetID) {

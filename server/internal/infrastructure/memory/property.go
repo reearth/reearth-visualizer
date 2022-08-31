@@ -17,16 +17,17 @@ type Property struct {
 	f    repo.SceneFilter
 }
 
-func NewProperty() repo.Property {
+func NewProperty() *Property {
 	return &Property{
 		data: property.Map{},
 	}
 }
 
-func NewPropertyWith(items ...*property.Property) repo.Property {
+func NewPropertyWith(items ...*property.Property) *Property {
 	r := NewProperty()
+	ctx := context.Background()
 	for _, i := range items {
-		_ = r.Save(nil, i)
+		_ = r.Save(ctx, i)
 	}
 	return r
 }

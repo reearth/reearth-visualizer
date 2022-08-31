@@ -12,7 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/reearth/reearthx/util"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +28,7 @@ func TestProject_Create(t *testing.T) {
 	uc := &Project{
 		projectRepo:   memory.NewProject(),
 		workspaceRepo: memory.NewWorkspace(),
-		transaction:   memory.NewTransaction(),
+		transaction:   &usecasex.NopTransaction{},
 		policyRepo:    memory.NewPolicyWith(po),
 	}
 
@@ -44,7 +44,7 @@ func TestProject_Create(t *testing.T) {
 		Visualizer:  visualizer.VisualizerCesium,
 		Name:        lo.ToPtr("aaa"),
 		Description: lo.ToPtr("bbb"),
-		ImageURL:    util.Unwrap(url.Parse("https://example.com/hoge.gif")),
+		ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
 		Alias:       lo.ToPtr("aliasalias"),
 		Archived:    lo.ToPtr(false),
 	}, &usecase.Operator{
@@ -55,14 +55,14 @@ func TestProject_Create(t *testing.T) {
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
-		ImageURL(util.Unwrap(url.Parse("https://example.com/hoge.gif"))).
+		ImageURL(lo.Must(url.Parse("https://example.com/hoge.gif"))).
 		Alias("aliasalias").
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
 		MustBuild()
 	assert.NoError(t, err)
 	assert.Equal(t, want, got)
-	assert.Equal(t, want, util.Unwrap(uc.projectRepo.FindByID(ctx, pid)))
+	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pid)))
 
 	// nonexistent workspace
 	got, err = uc.Create(ctx, interfaces.CreateProjectParam{

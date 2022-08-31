@@ -8,6 +8,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type SceneDocument struct {
@@ -43,25 +44,10 @@ type SceneClusterDocument struct {
 	Property string
 }
 
-type SceneConsumer struct {
-	Rows scene.List
-}
+type SceneConsumer = mongox.SliceFuncConsumer[*SceneDocument, *scene.Scene]
 
-func (c *SceneConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc SceneDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	scene, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, scene)
-	return nil
+func NewSceneConsumer() *SceneConsumer {
+	return NewComsumer[*SceneDocument, *scene.Scene]()
 }
 
 type SceneIDDocument struct {

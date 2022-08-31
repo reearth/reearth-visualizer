@@ -12,33 +12,33 @@ func (i *Item) Parent() *ID {
 	if i == nil {
 		return nil
 	}
-	return i.parent.CopyRef()
+	return i.parent.CloneRef()
 }
 
 func (i *Item) LinkedDatasetFieldID() *DatasetFieldID {
 	if i == nil {
 		return nil
 	}
-	return i.linkedDatasetFieldID.CopyRef()
+	return i.linkedDatasetFieldID.CloneRef()
 }
 
 func (i *Item) LinkedDatasetID() *DatasetID {
 	if i == nil {
 		return nil
 	}
-	return i.linkedDatasetID.CopyRef()
+	return i.linkedDatasetID.CloneRef()
 }
 
 func (i *Item) LinkedDatasetSchemaID() *DatasetSchemaID {
 	if i == nil {
 		return nil
 	}
-	return i.linkedDatasetSchemaID.CopyRef()
+	return i.linkedDatasetSchemaID.CloneRef()
 }
 
 func (i *Item) SetParent(p *ID) {
 	if i == nil {
 		return
 	}
-	i.parent = p.CopyRef()
+	i.parent = p.CloneRef()
 }

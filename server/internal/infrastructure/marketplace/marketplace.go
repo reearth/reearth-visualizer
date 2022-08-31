@@ -16,7 +16,6 @@ var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
 
 type Marketplace struct {
 	endpoint string
-	conf     clientcredentials.Config
 	client   *http.Client
 }
 

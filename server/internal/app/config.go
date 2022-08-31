@@ -12,6 +12,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
@@ -106,6 +107,22 @@ type AuthSrvDNConfig struct {
 	ST         []string
 	Street     []string
 	PostalCode []string
+}
+
+func (a *AuthSrvDNConfig) AuthServerDNConfig() *authserver.DNConfig {
+	if a == nil {
+		return nil
+	}
+	return &authserver.DNConfig{
+		CommonName:         a.CN,
+		Organization:       a.O,
+		OrganizationalUnit: a.OU,
+		Country:            a.C,
+		Province:           a.ST,
+		StreetAddress:      a.Street,
+		Locality:           a.L,
+		PostalCode:         a.PostalCode,
+	}
 }
 
 type GraphQLConfig struct {

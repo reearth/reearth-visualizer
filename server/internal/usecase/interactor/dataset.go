@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/layer/layerops"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -33,10 +34,10 @@ type Dataset struct {
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
 	pluginRepo        repo.Plugin
-	transaction       repo.Transaction
 	datasource        gateway.DataSource
 	file              gateway.File
 	google            gateway.Google
+	transaction       usecasex.Transaction
 }
 
 func NewDataset(r *repo.Container, gr *gateway.Container) interfaces.Dataset {
@@ -401,7 +402,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 	return res, nil
 }
 
-func (i *Dataset) FindBySchema(ctx context.Context, ds id.DatasetSchemaID, p *usecase.Pagination, operator *usecase.Operator) (dataset.List, *usecase.PageInfo, error) {
+func (i *Dataset) FindBySchema(ctx context.Context, ds id.DatasetSchemaID, p *usecasex.Pagination, operator *usecase.Operator) (dataset.List, *usecasex.PageInfo, error) {
 	return i.datasetRepo.FindBySchema(ctx, ds, p)
 }
 
@@ -409,7 +410,7 @@ func (i *Dataset) CountBySchema(ctx context.Context, id id.DatasetSchemaID) (int
 	return i.datasetRepo.CountBySchema(ctx, id)
 }
 
-func (i *Dataset) FindSchemaByScene(ctx context.Context, sid id.SceneID, p *usecase.Pagination, operator *usecase.Operator) (dataset.SchemaList, *usecase.PageInfo, error) {
+func (i *Dataset) FindSchemaByScene(ctx context.Context, sid id.SceneID, p *usecasex.Pagination, operator *usecase.Operator) (dataset.SchemaList, *usecasex.PageInfo, error) {
 	if err := i.CanReadScene(sid, operator); err != nil {
 		return nil, nil, err
 	}

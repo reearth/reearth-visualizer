@@ -58,7 +58,7 @@ func (b *ItemBuilder) Scene(sid SceneID) *ItemBuilder {
 }
 
 func (b *ItemBuilder) Parent(p *ID) *ItemBuilder {
-	b.i.parent = p.CopyRef()
+	b.i.parent = p.CloneRef()
 	return b
 }
 

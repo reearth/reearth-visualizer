@@ -73,7 +73,7 @@ func (b *ItemBuilder) IsVisible(visible bool) *ItemBuilder {
 }
 
 func (b *ItemBuilder) Plugin(plugin *PluginID) *ItemBuilder {
-	b.l.plugin = plugin.CopyRef()
+	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
@@ -83,7 +83,7 @@ func (b *ItemBuilder) Extension(extension *PluginExtensionID) *ItemBuilder {
 }
 
 func (b *ItemBuilder) Property(p *PropertyID) *ItemBuilder {
-	b.l.property = p.CopyRef()
+	b.l.property = p.CloneRef()
 	return b
 }
 
@@ -93,7 +93,7 @@ func (b *ItemBuilder) Infobox(infobox *Infobox) *ItemBuilder {
 }
 
 func (b *ItemBuilder) LinkedDataset(linkedDataset *DatasetID) *ItemBuilder {
-	b.l.linkedDataset = linkedDataset.CopyRef()
+	b.l.linkedDataset = linkedDataset.CloneRef()
 	return b
 }
 

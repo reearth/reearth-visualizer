@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Project struct {
@@ -30,7 +31,7 @@ type Project struct {
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
 	tagRepo           repo.Tag
-	transaction       repo.Transaction
+	transaction       usecasex.Transaction
 	policyRepo        repo.Policy
 	file              gateway.File
 }
@@ -58,7 +59,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *useca
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination, operator *usecase.Operator) ([]*project.Project, *usecase.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 	return i.projectRepo.FindByWorkspace(ctx, id, p)
 }
 

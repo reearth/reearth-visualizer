@@ -4,18 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
-type DBClient = *mongodoc.Client
+type DBClient = *mongox.Client
 
 type MigrationFunc = func(context.Context, DBClient) error
 
 type Client struct {
-	Client *mongodoc.Client
+	Client *mongox.Client
 	Config repo.Config
 }
 
@@ -35,7 +36,7 @@ func (c Client) Migrate(ctx context.Context) (err error) {
 		return nil
 	}
 
-	var tx repo.Tx
+	var tx usecasex.Tx
 	defer func() {
 		if tx != nil {
 			if err2 := tx.End(ctx); err == nil && err2 != nil {

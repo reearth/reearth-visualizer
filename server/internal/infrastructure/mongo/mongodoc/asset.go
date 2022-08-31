@@ -5,7 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type AssetDocument struct {
@@ -18,25 +18,10 @@ type AssetDocument struct {
 	ContentType string
 }
 
-type AssetConsumer struct {
-	Rows []*asset.Asset
-}
+type AssetConsumer = mongox.SliceFuncConsumer[*AssetDocument, *asset.Asset]
 
-func (c *AssetConsumer) Consume(raw bson.Raw) error {
-	if raw == nil {
-		return nil
-	}
-
-	var doc AssetDocument
-	if err := bson.Unmarshal(raw, &doc); err != nil {
-		return err
-	}
-	asset, err := doc.Model()
-	if err != nil {
-		return err
-	}
-	c.Rows = append(c.Rows, asset)
-	return nil
+func NewAssetConsumer() *AssetConsumer {
+	return NewComsumer[*AssetDocument, *asset.Asset]()
 }
 
 func NewAsset(asset *asset.Asset) (*AssetDocument, string) {

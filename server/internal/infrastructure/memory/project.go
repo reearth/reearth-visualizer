@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Project struct {
@@ -32,7 +32,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecase.Pagination) ([]*project.Project, *usecase.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -47,15 +47,15 @@ func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *use
 		}
 	}
 
-	var startCursor, endCursor *usecase.Cursor
+	var startCursor, endCursor *usecasex.Cursor
 	if len(result) > 0 {
-		_startCursor := usecase.Cursor(result[0].ID().String())
-		_endCursor := usecase.Cursor(result[len(result)-1].ID().String())
+		_startCursor := usecasex.Cursor(result[0].ID().String())
+		_endCursor := usecasex.Cursor(result[len(result)-1].ID().String())
 		startCursor = &_startCursor
 		endCursor = &_endCursor
 	}
 
-	return result, usecase.NewPageInfo(
+	return result, usecasex.NewPageInfo(
 		len(r.data),
 		startCursor,
 		endCursor,
@@ -73,7 +73,7 @@ func (r *Project) FindIDsByWorkspace(ctx context.Context, id id.WorkspaceID) (re
 	}
 
 	for _, d := range r.data {
-		if d.Workspace().Equal(id) {
+		if d.Workspace() == id {
 			res = append(res, d.ID())
 		}
 	}
@@ -137,7 +137,7 @@ func (r *Project) CountPublicByWorkspace(_ context.Context, ws id.WorkspaceID) (
 	defer r.lock.Unlock()
 
 	for _, p := range r.data {
-		if p.Workspace().Equal(ws) && r.f.CanRead(p.Workspace()) && p.PublishmentStatus() == project.PublishmentStatusPublic {
+		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) && p.PublishmentStatus() == project.PublishmentStatusPublic {
 			n++
 		}
 	}

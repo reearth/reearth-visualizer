@@ -44,19 +44,7 @@ func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *Server
 		GrantTypeRefreshToken: true,
 	}
 
-	var dn *interactor.AuthDNConfig = nil
-	if cfg.Config.AuthSrv.DN != nil {
-		dn = &interactor.AuthDNConfig{
-			CommonName:         cfg.Config.AuthSrv.DN.CN,
-			Organization:       cfg.Config.AuthSrv.DN.O,
-			OrganizationalUnit: cfg.Config.AuthSrv.DN.OU,
-			Country:            cfg.Config.AuthSrv.DN.C,
-			Locality:           cfg.Config.AuthSrv.DN.L,
-			Province:           cfg.Config.AuthSrv.DN.ST,
-			StreetAddress:      cfg.Config.AuthSrv.DN.Street,
-			PostalCode:         cfg.Config.AuthSrv.DN.PostalCode,
-		}
-	}
+	dn := (*interactor.AuthDNConfig)(cfg.Config.AuthSrv.DN.AuthServerDNConfig())
 
 	storage, err := interactor.NewAuthStorage(
 		ctx,

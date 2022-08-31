@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -236,11 +236,11 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.ProjectConnection, error) {
+func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, first, last, before, after)
 }
 
-func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
 }
 
@@ -248,7 +248,7 @@ func (r *queryResolver) DynamicDatasetSchemas(ctx context.Context, sceneID gqlmo
 	return loaders(ctx).Dataset.FindDynamicSchemasByScene(ctx, sceneID)
 }
 
-func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecase.Cursor, before *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
+func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
 	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
 }
 

@@ -3,7 +3,7 @@ package mongodoc
 import (
 	"errors"
 
-	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/usecasex"
 )
 
 type Pagination struct {
@@ -13,7 +13,7 @@ type Pagination struct {
 	Last   *int
 }
 
-func PaginationFrom(pagination *usecase.Pagination) *Pagination {
+func PaginationFrom(pagination *usecasex.Pagination) *Pagination {
 	if pagination == nil {
 		return nil
 	}

@@ -5,9 +5,9 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -95,13 +95,13 @@ func (c *DatasetLoader) GraphFetchSchema(ctx context.Context, i gqlmodel.ID, dep
 	return schemas, nil
 }
 
-func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, first *int, last *int, before *usecasex.Cursor, after *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
 	sid, err := gqlmodel.ToID[id.Scene](i)
 	if err != nil {
 		return nil, err
 	}
 
-	res, pi, err := c.usecase.FindSchemaByScene(ctx, sid, usecase.NewPagination(first, last, before, after), getOperator(ctx))
+	res, pi, err := c.usecase.FindSchemaByScene(ctx, sid, usecasex.NewPagination(first, last, before, after), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, fi
 		ds := gqlmodel.ToDatasetSchema(dataset)
 		edges = append(edges, &gqlmodel.DatasetSchemaEdge{
 			Node:   ds,
-			Cursor: usecase.Cursor(ds.ID),
+			Cursor: usecasex.Cursor(ds.ID),
 		})
 		nodes = append(nodes, ds)
 	}
@@ -121,7 +121,7 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, fi
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount(),
+		TotalCount: pi.TotalCount,
 	}, nil
 }
 
@@ -144,13 +144,13 @@ func (c *DatasetLoader) FindDynamicSchemasByScene(ctx context.Context, sid gqlmo
 	return dss, nil
 }
 
-func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, first *int, last *int, before *usecase.Cursor, after *usecase.Cursor) (*gqlmodel.DatasetConnection, error) {
+func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, first *int, last *int, before *usecasex.Cursor, after *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
 	schemaid, err := gqlmodel.ToID[id.DatasetSchema](dsid)
 	if err != nil {
 		return nil, err
 	}
 
-	p := usecase.NewPagination(first, last, before, after)
+	p := usecasex.NewPagination(first, last, before, after)
 	res, pi, err2 := c.usecase.FindBySchema(ctx, schemaid, p, getOperator(ctx))
 	if err2 != nil {
 		return nil, err2
@@ -162,7 +162,7 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, firs
 		ds := gqlmodel.ToDataset(dataset)
 		edges = append(edges, &gqlmodel.DatasetEdge{
 			Node:   ds,
-			Cursor: usecase.Cursor(ds.ID),
+			Cursor: usecasex.Cursor(ds.ID),
 		})
 		nodes = append(nodes, ds)
 	}
@@ -171,7 +171,7 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, firs
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount(),
+		TotalCount: pi.TotalCount,
 	}
 
 	return conn, nil

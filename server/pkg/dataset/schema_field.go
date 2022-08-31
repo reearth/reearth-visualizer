@@ -59,6 +59,6 @@ func (d *SchemaField) Clone() *SchemaField {
 		name:     d.name,
 		dataType: d.dataType,
 		source:   d.source,
-		ref:      d.ref.CopyRef(),
+		ref:      d.ref.CloneRef(),
 	}
 }

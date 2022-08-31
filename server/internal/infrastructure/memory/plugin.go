@@ -18,16 +18,17 @@ type Plugin struct {
 	f    repo.SceneFilter
 }
 
-func NewPlugin() repo.Plugin {
+func NewPlugin() *Plugin {
 	return &Plugin{
 		data: []*plugin.Plugin{},
 	}
 }
 
-func NewPluginWith(items ...*plugin.Plugin) repo.Plugin {
+func NewPluginWith(items ...*plugin.Plugin) *Plugin {
 	r := NewPlugin()
+	ctx := context.Background()
 	for _, i := range items {
-		_ = r.Save(nil, i)
+		_ = r.Save(ctx, i)
 	}
 	return r
 }
