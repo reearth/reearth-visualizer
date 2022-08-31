@@ -3,7 +3,6 @@ package app
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +23,7 @@ func TestAuth0Config_AuthConfig(t *testing.T) {
 }
 
 func TestReadConfig(t *testing.T) {
-	clientID := auth.ClientID
+	clientID := authServerDefaultClientID
 	localAuth := AuthConfig{
 		ISS:      "http://localhost:8080",
 		AUD:      []string{"http://localhost:8080"},

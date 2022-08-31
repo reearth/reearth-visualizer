@@ -7,13 +7,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/caos/oidc/pkg/op"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/reearth/reearth/server/pkg/auth"
 	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
+	"github.com/samber/lo"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -89,12 +88,10 @@ func (c AuthSrvConfig) AuthConfig(debug bool, host string) *AuthConfig {
 		aud = []string{domain}
 	}
 
-	clientID := auth.ClientID
-
 	return &AuthConfig{
 		ISS:      domain,
 		AUD:      aud,
-		ClientID: &clientID,
+		ClientID: lo.ToPtr(authServerDefaultClientID),
 	}
 }
 
@@ -162,13 +159,6 @@ func ReadConfig(debug bool) (*Config, error) {
 
 	var c Config
 	err := envconfig.Process(configPrefix, &c)
-
-	// overwrite env vars
-	if !c.AuthSrv.Disabled && (c.Dev || c.AuthSrv.Dev || c.AuthSrv.Domain == "") {
-		if _, ok := os.LookupEnv(op.OidcDevMode); !ok {
-			_ = os.Setenv(op.OidcDevMode, "1")
-		}
-	}
 
 	// default values
 	if debug {

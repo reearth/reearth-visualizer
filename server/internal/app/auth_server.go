@@ -13,7 +13,7 @@ import (
 	"github.com/zitadel/oidc/pkg/oidc"
 )
 
-const defaultClientID = "reearth-authsrv-client-default"
+const authServerDefaultClientID = "reearth-authsrv-client-default"
 
 var ErrInvalidEmailORPassword = errors.New("wrong email or password")
 
@@ -21,7 +21,7 @@ func authServer(ctx context.Context, e *echo.Echo, cfg *AuthSrvConfig, repos *re
 	authserver.Endpoint(ctx, authserver.EndpointConfig{
 		URL:             cfg.DomainURL(),
 		WebURL:          cfg.UIDomainURL(),
-		DefaultClientID: defaultClientID,
+		DefaultClientID: authServerDefaultClientID,
 		Dev:             cfg.Dev,
 		Key:             cfg.Key,
 		DN:              cfg.DN.AuthServerDNConfig(),

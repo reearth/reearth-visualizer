@@ -8,7 +8,6 @@ require (
 	github.com/auth0/go-jwt-middleware/v2 v2.0.1
 	github.com/avast/retry-go/v4 v4.0.4
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/caos/oidc v1.2.0
 	github.com/goccy/go-yaml v1.9.5
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
@@ -62,7 +61,6 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
-	github.com/caos/logging v0.0.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/trifles v0.0.0-20200705224438-cafc02a1ee2b // indirect

@@ -69,7 +69,7 @@ func TestEndpoint(t *testing.T) {
 	verifier, challenge := randomCodeChallenge()
 	res := send(http.MethodGet, ts.URL+"/authorize", false, map[string]string{
 		"response_type":         "code",
-		"client_id":             defaultClientID,
+		"client_id":             authServerDefaultClientID,
 		"redirect_uri":          "https://web.example.com",
 		"scope":                 "openid email profile",
 		"state":                 "hogestate",
@@ -111,7 +111,7 @@ func TestEndpoint(t *testing.T) {
 	res2 := send(http.MethodPost, ts.URL+"/oauth/token", true, map[string]string{
 		"grant_type":    "authorization_code",
 		"redirect_uri":  "https://web.example.com",
-		"client_id":     defaultClientID,
+		"client_id":     authServerDefaultClientID,
 		"code":          code,
 		"code_verifier": verifier,
 	}, nil)
