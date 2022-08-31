@@ -18,7 +18,12 @@ const authServerDefaultClientID = "reearth-authsrv-client-default"
 var ErrInvalidEmailORPassword = errors.New("wrong email or password")
 
 func authServer(ctx context.Context, e *echo.Echo, cfg *AuthSrvConfig, repos *repo.Container) {
+	if cfg.Disabled {
+		return
+	}
+
 	authserver.Endpoint(ctx, authserver.EndpointConfig{
+		Issuer:          cfg.Issuer,
 		URL:             cfg.DomainURL(),
 		WebURL:          cfg.UIDomainURL(),
 		DefaultClientID: authServerDefaultClientID,
@@ -36,7 +41,7 @@ type authServerUser struct {
 }
 
 func (r *authServerUser) Sub(ctx context.Context, email, password, authRequestID string) (string, error) {
-	u, err := r.User.FindByEmail(ctx, email)
+	u, err := r.User.FindByNameOrEmail(ctx, email)
 	if err != nil {
 		if errors.Is(rerror.ErrNotFound, err) {
 			return "", ErrInvalidEmailORPassword

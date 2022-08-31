@@ -23,7 +23,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.8.0
-	github.com/reearth/reearthx v0.0.0-20220831100021-2f805821d3b5
+	github.com/reearth/reearthx v0.0.0-20220831124713-1b1373700421
 	github.com/samber/lo v1.27.0
 	github.com/sendgrid/sendgrid-go v3.11.1+incompatible
 	github.com/sirupsen/logrus v1.8.1

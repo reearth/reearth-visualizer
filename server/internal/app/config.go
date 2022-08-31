@@ -65,6 +65,7 @@ type Auth0Config struct {
 type AuthSrvConfig struct {
 	Dev      bool
 	Disabled bool
+	Issuer   string
 	Domain   string
 	UIDomain string
 	Key      string
@@ -164,20 +165,24 @@ func ReadConfig(debug bool) (*Config, error) {
 	if debug {
 		c.Dev = true
 	}
+
 	c.Host = addHTTPScheme(c.Host)
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
 	} else {
 		c.Host_Web = addHTTPScheme(c.Host_Web)
 	}
+
 	if c.AuthSrv.Domain == "" {
 		c.AuthSrv.Domain = c.Host
 	} else {
 		c.AuthSrv.Domain = addHTTPScheme(c.AuthSrv.Domain)
 	}
+
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
 	}
+
 	if c.AuthSrv.UIDomain == "" {
 		c.AuthSrv.UIDomain = c.Host_Web
 	} else {
