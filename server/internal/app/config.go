@@ -298,16 +298,16 @@ func (c Config) HostWebURL() *url.URL {
 	return u
 }
 
-func (c Config) AuthServeDomainURL() *url.URL {
-	u, err := url.Parse(c.AuthSrv.Domain)
+func (c AuthSrvConfig) DomainURL() *url.URL {
+	u, err := url.Parse(c.Domain)
 	if err != nil {
 		u = nil
 	}
 	return u
 }
 
-func (c Config) AuthServeUIDomainURL() *url.URL {
-	u, err := url.Parse(c.AuthSrv.UIDomain)
+func (c AuthSrvConfig) UIDomainURL() *url.URL {
+	u, err := url.Parse(c.UIDomain)
 	if err != nil {
 		u = nil
 	}

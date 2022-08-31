@@ -3,6 +3,7 @@ package userops
 import (
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/samber/lo"
 	"golang.org/x/text/language"
 )
 
@@ -32,7 +33,7 @@ func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 		p.Theme = &t
 	}
 	if p.Sub == nil {
-		p.Sub = user.GenReearthSub(p.UserID.String())
+		p.Sub = lo.ToPtr(user.NewReearthAuth(p.UserID.String()))
 	}
 
 	b := user.New().
@@ -41,7 +42,8 @@ func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 		Email(p.Email).
 		Auths([]user.Auth{*p.Sub}).
 		Lang(*p.Lang).
-		Theme(*p.Theme)
+		Theme(*p.Theme).
+		Workspace(*p.WorkspaceID)
 	if p.Password != nil {
 		b = b.PasswordPlainText(*p.Password)
 	}
@@ -60,7 +62,6 @@ func Init(p InitParams) (*user.User, *workspace.Workspace, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	u.UpdateWorkspace(t.ID())
 
 	return u, t, err
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,7 +27,7 @@ func New(ctx context.Context, mc *mongo.Client, databaseName string) (*repo.Cont
 	client := mongox.NewClientWithDatabase(db)
 	c := &repo.Container{
 		Asset:          NewAsset(client),
-		AuthRequest:    NewAuthRequest(client),
+		AuthRequest:    authserver.NewMongo(client.WithCollection("authRequest")),
 		Config:         NewConfig(db.Collection("config"), lock),
 		DatasetSchema:  NewDatasetSchema(client),
 		Dataset:        NewDataset(client),

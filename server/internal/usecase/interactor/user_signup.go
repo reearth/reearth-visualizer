@@ -59,7 +59,7 @@ func (i *User) Signup(ctx context.Context, inp interfaces.SignupParam) (*user.Us
 	// Initialize user and workspace
 	var auth *user.Auth
 	if inp.Sub != nil {
-		auth = user.AuthFromAuth0Sub(*inp.Sub).Ref()
+		auth = user.AuthFrom(*inp.Sub).Ref()
 	}
 	u, ws, err := userops.Init(userops.InitParams{
 		Email:       inp.Email,
@@ -137,7 +137,7 @@ func (i *User) SignupOIDC(ctx context.Context, inp interfaces.SignupOIDCParam) (
 	u, ws, err := userops.Init(userops.InitParams{
 		Email:       email,
 		Name:        name,
-		Sub:         user.AuthFromAuth0Sub(sub).Ref(),
+		Sub:         user.AuthFrom(sub).Ref(),
 		Lang:        inp.User.Lang,
 		Theme:       inp.User.Theme,
 		UserID:      inp.User.UserID,

@@ -58,7 +58,11 @@ var (
 	authTextTMPL *textTmpl.Template
 	authHTMLTMPL *htmlTmpl.Template
 
-	passwordResetMailContent mailContent
+	passwordResetMailContent = mailContent{
+		Message:     "Thank you for using Re:Earth. We've received a request to reset your password. If this was you, please click the link below to confirm and change your password.",
+		Suffix:      "If you did not mean to reset your password, then you can ignore this email.",
+		ActionLabel: "Confirm to reset your password",
+	}
 )
 
 func init() {
@@ -70,12 +74,6 @@ func init() {
 	authHTMLTMPL, err = htmlTmpl.New("passwordReset").Parse(autHTMLTMPLStr)
 	if err != nil {
 		log.Panicf("password reset email template parse error: %s\n", err)
-	}
-
-	passwordResetMailContent = mailContent{
-		Message:     "Thank you for using Re:Earth. We’ve received a request to reset your password. If this was you, please click the link below to confirm and change your password.",
-		Suffix:      "If you did not mean to reset your password, then you can ignore this email.",
-		ActionLabel: "Confirm to reset your password",
 	}
 }
 
@@ -304,7 +302,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		u.UpdateTheme(*p.Theme)
 	}
 
-	if p.Password != nil && u.HasAuthProvider("reearth") {
+	if p.Password != nil && u.Auths().HasProvider(user.ProviderReearth) {
 		if err := u.SetPassword(*p.Password); err != nil {
 			return nil, err
 		}
@@ -365,8 +363,7 @@ func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *
 
 	u.RemoveAuthByProvider(authProvider)
 
-	err = i.userRepo.Save(ctx, u)
-	if err != nil {
+	if err = i.userRepo.Save(ctx, u); err != nil {
 		return nil, err
 	}
 

@@ -19,7 +19,7 @@ type UserDocument struct {
 	ID            string
 	Name          string
 	Email         string
-	Auth0Sub      string
+	Auth0Sub      string `bson:"auth0sub,omitempty"`
 	Auth0SubList  []string
 	Workspace     string `bson:"team"` // DON'T CHANGE NAME
 	Lang          string
@@ -90,9 +90,9 @@ func (d *UserDocument) Model() (*user1.User, error) {
 		return nil, err
 	}
 
-	auths := util.Map(d.Auth0SubList, func(s string) user.Auth { return user.AuthFromAuth0Sub(s) })
+	auths := util.Map(d.Auth0SubList, func(s string) user.Auth { return user.AuthFrom(s) })
 	if d.Auth0Sub != "" {
-		auths = append(auths, user.AuthFromAuth0Sub(d.Auth0Sub))
+		auths = append(auths, user.AuthFrom(d.Auth0Sub))
 	}
 	var v *user.Verification
 	if d.Verification != nil {

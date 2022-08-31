@@ -39,15 +39,36 @@ func (r *Config) LockAndLoad(ctx context.Context) (cfg *config.Config, err error
 }
 
 func (r *Config) Save(ctx context.Context, cfg *config.Config) error {
-	if cfg != nil {
-		if _, err := r.client.UpdateOne(
-			ctx,
-			bson.M{},
-			bson.M{"$set": mongodoc.NewConfig(*cfg)},
-			(&options.UpdateOptions{}).SetUpsert(true),
-		); err != nil {
-			return rerror.ErrInternalBy(err)
-		}
+	if cfg == nil {
+		return nil
+	}
+
+	if _, err := r.client.UpdateOne(
+		ctx,
+		bson.M{},
+		bson.M{"$set": mongodoc.NewConfig(*cfg)},
+		(&options.UpdateOptions{}).SetUpsert(true),
+	); err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+
+	return nil
+}
+
+func (r *Config) SaveAuth(ctx context.Context, cfg *config.Auth) error {
+	if cfg == nil {
+		return nil
+	}
+
+	if _, err := r.client.UpdateOne(
+		ctx,
+		bson.M{},
+		bson.M{"$set": bson.M{
+			"auth": mongodoc.NewConfigAuth(cfg),
+		}},
+		(&options.UpdateOptions{}).SetUpsert(true),
+	); err != nil {
+		return rerror.ErrInternalBy(err)
 	}
 
 	return nil

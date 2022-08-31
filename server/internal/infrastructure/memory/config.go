@@ -31,6 +31,16 @@ func (r *Config) Save(ctx context.Context, c *config.Config) error {
 	return nil
 }
 
+func (r *Config) SaveAuth(ctx context.Context, c *config.Auth) error {
+	if c != nil {
+		if r.data == nil {
+			r.data = &config.Config{}
+		}
+		r.data.Auth = c
+	}
+	return nil
+}
+
 func (r *Config) SaveAndUnlock(ctx context.Context, c *config.Config) error {
 	_ = r.Save(ctx, c)
 	return r.Unlock(ctx)

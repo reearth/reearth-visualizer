@@ -18,6 +18,9 @@ func (b *Builder) Build() (*User, error) {
 	if b.u.id.IsNil() {
 		return nil, ErrInvalidID
 	}
+	if b.u.workspace.IsNil() {
+		return nil, ErrInvalidID
+	}
 	if b.u.theme == "" {
 		b.u.theme = ThemeDefault
 	}

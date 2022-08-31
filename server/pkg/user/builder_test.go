@@ -10,35 +10,35 @@ import (
 
 func TestBuilder_ID(t *testing.T) {
 	uid := NewID()
-	b := New().ID(uid).Email("aaa@bbb.com").MustBuild()
+	b := New().ID(uid).Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	assert.Equal(t, uid, b.ID())
 	assert.Nil(t, b.passwordReset)
 }
 
 func TestBuilder_Name(t *testing.T) {
-	b := New().NewID().Name("xxx").Email("aaa@bbb.com").MustBuild()
+	b := New().NewID().Name("xxx").Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	assert.Equal(t, "xxx", b.Name())
 }
 
 func TestBuilder_NewID(t *testing.T) {
-	b := New().NewID().Email("aaa@bbb.com").MustBuild()
+	b := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	assert.NotNil(t, b.ID())
 }
 
 func TestBuilder_Workspace(t *testing.T) {
-	tid := NewWorkspaceID()
-	b := New().NewID().Email("aaa@bbb.com").Workspace(tid).MustBuild()
-	assert.Equal(t, tid, b.Workspace())
+	wid := NewWorkspaceID()
+	b := New().NewID().Email("aaa@bbb.com").Workspace(wid).MustBuild()
+	assert.Equal(t, wid, b.Workspace())
 }
 
 func TestBuilder_Auths(t *testing.T) {
-	b := New().NewID().Email("aaa@bbb.com").Auths([]Auth{
+	b := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Auths([]Auth{
 		{
 			Provider: "xxx",
 			Sub:      "aaa",
 		},
 	}).MustBuild()
-	assert.Equal(t, []Auth{
+	assert.Equal(t, Auths{
 		{
 			Provider: "xxx",
 			Sub:      "aaa",
@@ -47,13 +47,13 @@ func TestBuilder_Auths(t *testing.T) {
 }
 
 func TestBuilder_Email(t *testing.T) {
-	b := New().NewID().Email("xx@yy.zz").MustBuild()
+	b := New().NewID().Email("xx@yy.zz").Workspace(NewWorkspaceID()).MustBuild()
 	assert.Equal(t, "xx@yy.zz", b.Email())
 }
 
 func TestBuilder_Lang(t *testing.T) {
 	l := language.Make("en")
-	b := New().NewID().Email("aaa@bbb.com").Lang(l).MustBuild()
+	b := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Lang(l).MustBuild()
 	assert.Equal(t, l, b.Lang())
 }
 
@@ -83,7 +83,7 @@ func TestBuilder_LangFrom(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			b := New().NewID().Email("aaa@bbb.com").LangFrom(tc.Lang).MustBuild()
+			b := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).LangFrom(tc.Lang).MustBuild()
 			assert.Equal(t, tc.Expected, b.Lang())
 		})
 	}
@@ -100,7 +100,7 @@ func TestBuilder_Build(t *testing.T) {
 	DefaultPasswordEncoder = &NoopPasswordEncoder{}
 
 	uid := NewID()
-	tid := NewWorkspaceID()
+	wid := NewWorkspaceID()
 	pass := MustEncodedPassword("abcDEF0!")
 
 	type args struct {
@@ -124,7 +124,7 @@ func TestBuilder_Build(t *testing.T) {
 				Email:       "xx@yy.zz",
 				Lang:        "en",
 				ID:          uid,
-				Workspace:   tid,
+				Workspace:   wid,
 				PasswordBin: pass,
 				Auths: []Auth{
 					{
@@ -135,7 +135,7 @@ func TestBuilder_Build(t *testing.T) {
 			},
 			Expected: &User{
 				id:        uid,
-				workspace: tid,
+				workspace: wid,
 				email:     "xx@yy.zz",
 				name:      "xxx",
 				password:  pass,
@@ -143,10 +143,24 @@ func TestBuilder_Build(t *testing.T) {
 				lang:      language.English,
 				theme:     ThemeDefault,
 			},
-		}, {
-			Name:     "failed invalid id",
-			Expected: nil,
-			Err:      ErrInvalidID,
+		},
+		{
+			Name: "failed invalid id",
+			Err:  ErrInvalidID,
+		},
+		{
+			Name: "ID missing",
+			Args: args{
+				Workspace: wid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "workspace ID missing",
+			Args: args{
+				ID: uid,
+			},
+			Err: ErrInvalidID,
 		},
 	}
 

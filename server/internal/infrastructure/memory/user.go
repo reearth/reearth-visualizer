@@ -71,7 +71,7 @@ func (r *User) FindByAuth0Sub(ctx context.Context, auth0sub string) (*user.User,
 	}
 
 	for _, u := range r.data {
-		if u.ContainAuth(user.AuthFromAuth0Sub(auth0sub)) {
+		if u.Auths().Has(auth0sub) {
 			return u, nil
 		}
 	}

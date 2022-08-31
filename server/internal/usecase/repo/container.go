@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -15,7 +16,7 @@ var (
 
 type Container struct {
 	Asset          Asset
-	AuthRequest    AuthRequest
+	AuthRequest    authserver.RequestRepo
 	Config         Config
 	DatasetSchema  DatasetSchema
 	Dataset        Dataset
