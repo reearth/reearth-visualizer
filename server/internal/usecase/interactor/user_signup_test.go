@@ -24,7 +24,7 @@ import (
 func TestUser_Signup(t *testing.T) {
 	user.DefaultPasswordEncoder = &user.NoopPasswordEncoder{}
 	uid := id.NewUserID()
-	tid := id.NewWorkspaceID()
+	wid := id.NewWorkspaceID()
 	mocktime := time.Time{}
 	mockcode := "CODECODE"
 
@@ -55,20 +55,20 @@ func TestUser_Signup(t *testing.T) {
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID:      &uid,
-					WorkspaceID: &tid,
+					WorkspaceID: &wid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Name("NAME").
-				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
+				Auths([]user.Auth{{Sub: "SUB"}}).
 				Email("aaa@bbb.com").
 				PasswordPlainText("PAss00!!").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
 			wantWorkspace: workspace.New().
-				ID(tid).
+				ID(wid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
@@ -84,7 +84,7 @@ func TestUser_Signup(t *testing.T) {
 			authSrvUIDomain: "",
 			createUserBefore: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Email("aaa@bbb.com").
 				MustBuild(),
 			args: interfaces.SignupParam{
@@ -93,12 +93,12 @@ func TestUser_Signup(t *testing.T) {
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID:      &uid,
-					WorkspaceID: &tid,
+					WorkspaceID: &wid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Email("aaa@bbb.com").
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
@@ -114,7 +114,7 @@ func TestUser_Signup(t *testing.T) {
 			authSrvUIDomain: "",
 			createUserBefore: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Email("aaa@bbb.com").
 				Verification(user.VerificationFrom(mockcode, mocktime, true)).
 				MustBuild(),
@@ -125,7 +125,7 @@ func TestUser_Signup(t *testing.T) {
 				Password: lo.ToPtr("PAss00!!"),
 				User: interfaces.SignupUserParam{
 					UserID:      &uid,
-					WorkspaceID: &tid,
+					WorkspaceID: &wid,
 				},
 			},
 			wantUser:      nil,
@@ -144,12 +144,12 @@ func TestUser_Signup(t *testing.T) {
 				Secret:   lo.ToPtr("hogehoge"),
 				User: interfaces.SignupUserParam{
 					UserID:      &uid,
-					WorkspaceID: &tid,
+					WorkspaceID: &wid,
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("aaa@bbb.com").
@@ -157,7 +157,7 @@ func TestUser_Signup(t *testing.T) {
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
 			wantWorkspace: workspace.New().
-				ID(tid).
+				ID(wid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
@@ -179,14 +179,14 @@ func TestUser_Signup(t *testing.T) {
 				Secret:   lo.ToPtr("SECRET"),
 				User: interfaces.SignupUserParam{
 					UserID:      &uid,
-					WorkspaceID: &tid,
+					WorkspaceID: &wid,
 					Lang:        &language.Japanese,
 					Theme:       user.ThemeDark.Ref(),
 				},
 			},
 			wantUser: user.New().
 				ID(uid).
-				Workspace(tid).
+				Workspace(wid).
 				Name("NAME").
 				Auths([]user.Auth{{Provider: "", Sub: "SUB"}}).
 				Email("aaa@bbb.com").
@@ -196,7 +196,7 @@ func TestUser_Signup(t *testing.T) {
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
 			wantWorkspace: workspace.New().
-				ID(tid).
+				ID(wid).
 				Name("NAME").
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
@@ -274,10 +274,12 @@ func TestUser_Signup(t *testing.T) {
 			m := mailer.NewMock()
 			g := &gateway.Container{Mailer: m}
 			uc := NewUser(r, g, tt.signupSecret, tt.authSrvUIDomain)
+
 			user, ws, err := uc.Signup(context.Background(), tt.args)
 			assert.Equal(t, tt.wantUser, user)
 			assert.Equal(t, tt.wantWorkspace, ws)
 			assert.Equal(t, tt.wantError, err)
+
 			mails := m.Mails()
 			if tt.wantMailSubject == "" {
 				assert.Empty(t, mails)
@@ -430,6 +432,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 			createUserBefore: user.New().
 				ID(uid).
 				Email("aaa@bbb.com").
+				Workspace(user.NewWorkspaceID()).
 				MustBuild(),
 			args: interfaces.SignupOIDCParam{
 				AccessToken: "accesstoken",
@@ -448,6 +451,7 @@ func TestUser_SignupOIDC(t *testing.T) {
 			createUserBefore: user.New().
 				ID(uid).
 				Email("aaa@bbb.com").
+				Workspace(user.NewWorkspaceID()).
 				Verification(user.VerificationFrom(mockcode, mocktime, true)).
 				MustBuild(),
 			args: interfaces.SignupOIDCParam{

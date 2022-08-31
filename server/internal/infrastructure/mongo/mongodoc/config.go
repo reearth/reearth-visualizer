@@ -17,18 +17,20 @@ type Auth struct {
 }
 
 func NewConfig(c config.Config) ConfigDocument {
-	d := ConfigDocument{
+	return ConfigDocument{
 		Migration: c.Migration,
+		Auth:      NewConfigAuth(c.Auth),
 	}
+}
 
-	if c.Auth != nil {
-		d.Auth = &Auth{
-			Cert: c.Auth.Cert,
-			Key:  c.Auth.Key,
-		}
+func NewConfigAuth(c *config.Auth) *Auth {
+	if c == nil {
+		return nil
 	}
-
-	return d
+	return &Auth{
+		Cert: c.Cert,
+		Key:  c.Key,
+	}
 }
 
 func (c *ConfigDocument) Model() *config.Config {

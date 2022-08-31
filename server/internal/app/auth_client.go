@@ -62,7 +62,7 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			// save a new sub
 			if u != nil && au != nil {
-				if err := addAuth0SubToUser(ctx, u, user.AuthFromAuth0Sub(au.Sub), cfg); err != nil {
+				if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
 					return err
 				}
 			}

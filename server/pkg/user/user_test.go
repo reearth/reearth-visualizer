@@ -20,7 +20,7 @@ func TestUser(t *testing.T) {
 			Name      string
 			Email     string
 			Workspace WorkspaceID
-			Auths     []Auth
+			Auths     Auths
 			Lang      language.Tag
 		}
 	}{
@@ -31,7 +31,7 @@ func TestUser(t *testing.T) {
 				Name("xxx").
 				LangFrom("en").
 				Email("ff@xx.zz").
-				Auths([]Auth{{
+				Auths(Auths{{
 					Provider: "aaa",
 					Sub:      "sss",
 				}}).MustBuild(),
@@ -40,14 +40,14 @@ func TestUser(t *testing.T) {
 				Name      string
 				Email     string
 				Workspace WorkspaceID
-				Auths     []Auth
+				Auths     Auths
 				Lang      language.Tag
 			}{
 				Id:        uid,
 				Name:      "xxx",
 				Email:     "ff@xx.zz",
 				Workspace: tid,
-				Auths: []Auth{{
+				Auths: Auths{{
 					Provider: "aaa",
 					Sub:      "sss",
 				}},
@@ -70,296 +70,87 @@ func TestUser(t *testing.T) {
 	}
 }
 
-func TestUser_AddAuth(t *testing.T) {
-	tests := []struct {
-		Name     string
-		User     *User
-		A        Auth
-		Expected bool
-	}{
-		{
-			Name:     "nil user",
-			User:     nil,
-			Expected: false,
-		},
-		{
-			Name: "add new auth",
-			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
-			A: Auth{
-				Provider: "xxx",
-				Sub:      "zzz",
-			},
-			Expected: true,
-		},
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			A: Auth{
-				Provider: "xxx",
-				Sub:      "zzz",
-			},
-			Expected: false,
-		},
-	}
+func TestUser_Auths(t *testing.T) {
+	var u *User
+	assert.Equal(t, Auths(nil), u.Auths())
 
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.User.AddAuth(tc.A)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
-func TestUser_RemoveAuth(t *testing.T) {
-	tests := []struct {
-		Name     string
-		User     *User
-		A        Auth
-		Expected bool
-	}{
-		{
-			Name:     "nil user",
-			User:     nil,
-			Expected: false,
-		},
-		{
-			Name: "remove auth0",
-			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
-			A: Auth{
-				Provider: "auth0",
-				Sub:      "zzz",
-			},
-			Expected: false,
-		},
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			A: Auth{
-				Provider: "xxx",
-				Sub:      "zzz",
-			},
-			Expected: true,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.User.RemoveAuth(tc.A)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
-func TestUser_ContainAuth(t *testing.T) {
-	tests := []struct {
-		Name     string
-		User     *User
-		A        Auth
-		Expected bool
-	}{
-		{
-			Name:     "nil user",
-			User:     nil,
-			Expected: false,
-		},
-		{
-			Name: "not existing auth",
-			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
-			A: Auth{
-				Provider: "auth0",
-				Sub:      "zzz",
-			},
-			Expected: false,
-		},
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			A: Auth{
-				Provider: "xxx",
-				Sub:      "zzz",
-			},
-			Expected: true,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.User.ContainAuth(tc.A)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
-func TestUser_HasAuthProvider(t *testing.T) {
-	tests := []struct {
-		Name     string
-		User     *User
-		P        string
-		Expected bool
-	}{
-		{
-			Name:     "nil user",
-			User:     nil,
-			Expected: false,
-		},
-		{
-			Name:     "not existing auth",
-			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
-			P:        "auth0",
-			Expected: false,
-		},
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			P:        "xxx",
-			Expected: true,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.User.HasAuthProvider(tc.P)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
-func TestUser_RemoveAuthByProvider(t *testing.T) {
-	tests := []struct {
-		Name     string
-		User     *User
-		Provider string
-		Expected bool
-	}{
-		{
-			Name:     "nil user",
-			User:     nil,
-			Expected: false,
-		},
-		{
-			Name:     "remove auth0",
-			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
-			Provider: "auth0",
-			Expected: false,
-		},
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			Provider: "xxx",
-			Expected: true,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tc.User.RemoveAuthByProvider(tc.Provider)
-			assert.Equal(t, tc.Expected, res)
-		})
-	}
-}
-
-func TestUser_ClearAuths(t *testing.T) {
-	u := New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
+	u = New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Auths(Auths{{
 		Provider: "xxx",
 		Sub:      "zzz",
 	}}).MustBuild()
-	u.ClearAuths()
+	assert.Equal(t, Auths{{
+		Provider: "xxx",
+		Sub:      "zzz",
+	}}, u.Auths())
+
+	u.Auths().Get("zzz").Provider = "yyy"
+	// should not change
+	assert.Equal(t, Auths{{
+		Provider: "xxx",
+		Sub:      "zzz",
+	}}, u.Auths())
+}
+
+func TestUser_SetAuths(t *testing.T) {
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Auths(Auths{{
+		Provider: "xxx",
+		Sub:      "zzz",
+	}}).MustBuild()
+	u.SetAuths(nil)
 	assert.Equal(t, 0, len(u.Auths()))
 }
 
-func TestUser_Auths(t *testing.T) {
-	var u *User
-	assert.Equal(t, []Auth(nil), u.Auths())
+func TestUser_AddAuth(t *testing.T) {
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
+	assert.True(t, u.AddAuth(Auth{Provider: "a", Sub: "zzz"}))
+	assert.False(t, u.AddAuth(Auth{Provider: "b", Sub: "zzz"}))
+	assert.Equal(t, Auths{{Provider: "a", Sub: "zzz"}}, u.auths)
+}
+
+func TestUser_RemoveAuth(t *testing.T) {
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Auths(Auths{{
+		Provider: "xxx",
+		Sub:      "zzz",
+	}}).MustBuild()
+	assert.True(t, u.RemoveAuth("zzz"))
+	assert.False(t, u.RemoveAuth("aaa"))
+	assert.Equal(t, Auths{}, u.auths)
+}
+
+func TestUser_RemoveAuthByProvider(t *testing.T) {
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).Auths(Auths{{
+		Provider: "xxx",
+		Sub:      "zzz",
+	}}).MustBuild()
+	assert.True(t, u.RemoveAuthByProvider("xxx"))
+	assert.False(t, u.RemoveAuthByProvider("xxx"))
+	assert.Equal(t, Auths{}, u.auths)
 }
 
 func TestUser_UpdateEmail(t *testing.T) {
-	u := New().NewID().Email("abc@abc.com").MustBuild()
+	u := New().NewID().Email("abc@abc.com").Workspace(NewWorkspaceID()).MustBuild()
 	assert.NoError(t, u.UpdateEmail("abc@xyz.com"))
 	assert.Equal(t, "abc@xyz.com", u.Email())
 	assert.Error(t, u.UpdateEmail("abcxyz"))
 }
 
 func TestUser_UpdateLang(t *testing.T) {
-	u := New().NewID().Email("aaa@bbb.com").MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	u.UpdateLang(language.Make("en"))
 	assert.Equal(t, language.Make("en"), u.Lang())
 }
 
 func TestUser_UpdateWorkspace(t *testing.T) {
 	tid := NewWorkspaceID()
-	u := New().NewID().Email("aaa@bbb.com").MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	u.UpdateWorkspace(tid)
 	assert.Equal(t, tid, u.Workspace())
 }
 
 func TestUser_UpdateName(t *testing.T) {
-	u := New().NewID().Email("aaa@bbb.com").MustBuild()
+	u := New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild()
 	u.UpdateName("xxx")
 	assert.Equal(t, "xxx", u.Name())
-}
-
-func TestUser_GetAuthByProvider(t *testing.T) {
-	testCases := []struct {
-		Name     string
-		User     *User
-		Provider string
-		Expected *Auth
-	}{
-		{
-			Name: "existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			Provider: "xxx",
-			Expected: &Auth{
-				Provider: "xxx",
-				Sub:      "zzz",
-			},
-		},
-		{
-			Name: "not existing auth",
-			User: New().NewID().Email("aaa@bbb.com").Auths([]Auth{{
-				Provider: "xxx",
-				Sub:      "zzz",
-			}}).MustBuild(),
-			Provider: "yyy",
-			Expected: nil,
-		},
-	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.Name, func(tt *testing.T) {
-			tt.Parallel()
-			res := tc.User.GetAuthByProvider(tc.Provider)
-			assert.Equal(tt, tc.Expected, res)
-		})
-	}
 }
 
 func TestUser_MatchPassword(t *testing.T) {
@@ -457,19 +248,19 @@ func TestUser_SetPassword(t *testing.T) {
 }
 
 func TestUser_PasswordReset(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		Name     string
 		User     *User
 		Expected *PasswordReset
 	}{
 		{
 			Name:     "not password request",
-			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild(),
 			Expected: nil,
 		},
 		{
 			Name: "create new password request over existing one",
-			User: New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Unix(0, 0)}).MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).PasswordReset(&PasswordReset{"xzy", time.Unix(0, 0)}).MustBuild(),
 			Expected: &PasswordReset{
 				Token:     "xzy",
 				CreatedAt: time.Unix(0, 0),
@@ -477,7 +268,7 @@ func TestUser_PasswordReset(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.Name, func(tt *testing.T) {
 			tt.Parallel()
@@ -495,13 +286,13 @@ func TestUser_SetPasswordReset(t *testing.T) {
 	}{
 		{
 			Name:     "nil",
-			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},
 		{
 			Name: "nil",
-			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -513,7 +304,7 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name: "create new password request",
-			User: New().NewID().Email("aaa@bbb.com").MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -525,7 +316,7 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name: "create new password request over existing one",
-			User: New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
+			User: New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
 			Pr: &PasswordReset{
 				Token:     "xyz",
 				CreatedAt: time.Unix(1, 1),
@@ -537,13 +328,13 @@ func TestUser_SetPasswordReset(t *testing.T) {
 		},
 		{
 			Name:     "remove none existing password request",
-			User:     New().NewID().Email("aaa@bbb.com").MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},
 		{
 			Name:     "remove existing password request",
-			User:     New().NewID().Email("aaa@bbb.com").PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
+			User:     New().NewID().Email("aaa@bbb.com").Workspace(NewWorkspaceID()).PasswordReset(&PasswordReset{"xzy", time.Now()}).MustBuild(),
 			Pr:       nil,
 			Expected: nil,
 		},

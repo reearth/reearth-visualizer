@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/mail"
 
+	"golang.org/x/exp/slices"
 	"golang.org/x/text/language"
 )
 
@@ -17,7 +18,7 @@ type User struct {
 	email         string
 	password      EncodedPassword
 	workspace     WorkspaceID
-	auths         []Auth
+	auths         Auths
 	lang          language.Tag
 	theme         Theme
 	verification  *Verification
@@ -80,88 +81,42 @@ func (u *User) Verification() *Verification {
 	return u.verification
 }
 
-func (u *User) Auths() []Auth {
+func (u *User) Auths() Auths {
 	if u == nil {
 		return nil
 	}
-	return append([]Auth{}, u.auths...)
+	return slices.Clone(u.auths)
 }
 
-func (u *User) ContainAuth(a Auth) bool {
-	if u == nil {
-		return false
-	}
-	for _, b := range u.auths {
-		if a == b || a.Provider == b.Provider {
-			return true
-		}
-	}
-	return false
-}
-
-func (u *User) HasAuthProvider(p string) bool {
-	if u == nil {
-		return false
-	}
-	for _, b := range u.auths {
-		if b.Provider == p {
-			return true
-		}
-	}
-	return false
+func (u *User) SetAuths(a Auths) {
+	u.auths = slices.Clone(a)
 }
 
 func (u *User) AddAuth(a Auth) bool {
-	if u == nil {
-		return false
-	}
-	if !u.ContainAuth(a) {
-		u.auths = append(u.auths, a)
+	auths := u.auths.Add(a)
+	if len(auths) != len(u.auths) {
+		u.auths = auths
 		return true
 	}
 	return false
 }
 
-func (u *User) RemoveAuth(a Auth) bool {
-	if u == nil || a.IsAuth0() {
-		return false
-	}
-	for i, b := range u.auths {
-		if a == b {
-			u.auths = append(u.auths[:i], u.auths[i+1:]...)
-			return true
-		}
+func (u *User) RemoveAuth(sub string) bool {
+	auths := u.auths.Remove(sub)
+	if len(auths) != len(u.auths) {
+		u.auths = auths
+		return true
 	}
 	return false
 }
 
-func (u *User) GetAuthByProvider(provider string) *Auth {
-	if u == nil || u.auths == nil {
-		return nil
-	}
-	for _, b := range u.auths {
-		if provider == b.Provider {
-			return &b
-		}
-	}
-	return nil
-}
-
-func (u *User) RemoveAuthByProvider(provider string) bool {
-	if u == nil || provider == "auth0" {
-		return false
-	}
-	for i, b := range u.auths {
-		if provider == b.Provider {
-			u.auths = append(u.auths[:i], u.auths[i+1:]...)
-			return true
-		}
+func (u *User) RemoveAuthByProvider(p string) bool {
+	auths := u.auths.RemoveByProvider(p)
+	if len(auths) != len(u.auths) {
+		u.auths = auths
+		return true
 	}
 	return false
-}
-
-func (u *User) ClearAuths() {
-	u.auths = []Auth{}
 }
 
 func (u *User) SetPassword(pass string) error {

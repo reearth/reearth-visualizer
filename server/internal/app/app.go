@@ -86,10 +86,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}))
 
 	// auth srv
-	if !cfg.Config.AuthSrv.Disabled {
-		auth := e.Group("")
-		authEndPoints(ctx, e, auth, cfg)
-	}
+	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
 	// apis
 	api := e.Group("/api")

@@ -2,274 +2,111 @@ package app
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/json"
 	"errors"
-	"net/http"
-	"net/url"
-	"os"
-	"strconv"
 
-	"github.com/caos/oidc/pkg/op"
-	"github.com/golang/gddo/httputil/header"
-	"github.com/gorilla/mux"
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/config"
 	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/authserver"
+	"github.com/reearth/reearthx/rerror"
+	"github.com/zitadel/oidc/pkg/oidc"
 )
 
-const (
-	loginEndpoint  = "api/login"
-	logoutEndpoint = "api/logout"
-	jwksEndpoint   = ".well-known/jwks.json"
-	authProvider   = "reearth"
-)
+const authServerDefaultClientID = "reearth-authsrv-client-default"
 
-func authEndPoints(ctx context.Context, e *echo.Echo, r *echo.Group, cfg *ServerConfig) {
-	userUsecase := interactor.NewUser(cfg.Repos, cfg.Gateways, cfg.Config.SignupSecret, cfg.Config.Host_Web)
+var ErrInvalidEmailORPassword = errors.New("wrong email or password")
 
-	domain := cfg.Config.AuthServeDomainURL()
-	if domain == nil || domain.String() == "" {
-		log.Panicf("auth: not valid auth domain: %s", domain)
-	}
-	domain.Path = "/"
-
-	uidomain := cfg.Config.AuthServeUIDomainURL()
-
-	config := &op.Config{
-		Issuer:                domain.String(),
-		CryptoKey:             sha256.Sum256([]byte(cfg.Config.AuthSrv.Key)),
-		GrantTypeRefreshToken: true,
+func authServer(ctx context.Context, e *echo.Echo, cfg *AuthSrvConfig, repos *repo.Container) {
+	if cfg.Disabled {
+		return
 	}
 
-	dn := (*interactor.AuthDNConfig)(cfg.Config.AuthSrv.DN.AuthServerDNConfig())
+	authserver.Endpoint(ctx, authserver.EndpointConfig{
+		Issuer:          cfg.Issuer,
+		URL:             cfg.DomainURL(),
+		WebURL:          cfg.UIDomainURL(),
+		DefaultClientID: authServerDefaultClientID,
+		Dev:             cfg.Dev,
+		Key:             cfg.Key,
+		DN:              cfg.DN.AuthServerDNConfig(),
+		UserRepo:        &authServerUser{User: repos.User},
+		ConfigRepo:      &authServerConfig{Config: repos.Config},
+		RequestRepo:     repos.AuthRequest,
+	}, e.Group(""))
+}
 
-	storage, err := interactor.NewAuthStorage(
-		ctx,
-		&interactor.StorageConfig{
-			Domain:       domain.String(),
-			ClientDomain: cfg.Config.Host_Web,
-			Debug:        cfg.Debug,
-			DN:           dn,
-		},
-		cfg.Repos.AuthRequest,
-		cfg.Repos.Config,
-		userUsecase.GetUserBySubject,
-	)
+type authServerUser struct {
+	User repo.User
+}
+
+func (r *authServerUser) Sub(ctx context.Context, email, password, authRequestID string) (string, error) {
+	u, err := r.User.FindByNameOrEmail(ctx, email)
 	if err != nil {
-		log.Fatalf("auth: init failed: %s\n", err)
+		if errors.Is(rerror.ErrNotFound, err) {
+			return "", ErrInvalidEmailORPassword
+		}
+		return "", err
 	}
 
-	handler, err := op.NewOpenIDProvider(
-		ctx,
-		config,
-		storage,
-		op.WithHttpInterceptors(jsonToFormHandler()),
-		op.WithHttpInterceptors(setURLVarsHandler()),
-		op.WithCustomEndSessionEndpoint(op.NewEndpoint(logoutEndpoint)),
-		op.WithCustomKeysEndpoint(op.NewEndpoint(jwksEndpoint)),
-	)
+	ok, err := u.MatchPassword(password)
 	if err != nil {
-		log.Fatalf("auth: init failed: %s\n", err)
+		return "", err
 	}
 
-	router := handler.HttpHandler().(*mux.Router)
-
-	if err := router.Walk(muxToEchoMapper(r)); err != nil {
-		log.Fatalf("auth: walk failed: %s\n", err)
+	if !ok {
+		return "", ErrInvalidEmailORPassword
 	}
 
-	// Actual login endpoint
-	r.POST(loginEndpoint, login(ctx, domain, uidomain, storage, userUsecase))
-
-	r.GET(logoutEndpoint, logout())
-
-	// used for auth0/auth0-react; the logout endpoint URL is hard-coded
-	// can be removed when the mentioned issue is solved
-	// https://github.com/auth0/auth0-spa-js/issues/845
-	r.GET("v2/logout", logout())
-
-	debugMsg := ""
-	if dev, ok := os.LookupEnv(op.OidcDevMode); ok {
-		if isDev, _ := strconv.ParseBool(dev); isDev {
-			debugMsg = " with debug mode"
-		}
+	a := u.Auths().GetByProvider(user.ProviderReearth)
+	if a == nil || a.Sub == "" {
+		return "", ErrInvalidEmailORPassword
 	}
-	log.Infof("auth: oidc server started%s at %s", debugMsg, domain.String())
+
+	return a.Sub, nil
 }
 
-func setURLVarsHandler() func(handler http.Handler) http.Handler {
-	return func(handler http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != "/authorize/callback" {
-				handler.ServeHTTP(w, r)
-				return
-			}
-
-			r2 := mux.SetURLVars(r, map[string]string{"id": r.URL.Query().Get("id")})
-			handler.ServeHTTP(w, r2)
-		})
+func (r *authServerUser) Info(ctx context.Context, sub string, scopes []string, ui oidc.UserInfoSetter) error {
+	u, err := r.User.FindByAuth0Sub(ctx, sub)
+	if err != nil {
+		return err
 	}
+
+	ui.SetEmail(u.Email(), u.Verification().IsVerified())
+	ui.SetLocale(u.Lang())
+	ui.SetName(u.Name())
+	return nil
 }
 
-func jsonToFormHandler() func(handler http.Handler) http.Handler {
-	return func(handler http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != "/oauth/token" {
-				handler.ServeHTTP(w, r)
-				return
-			}
-
-			if r.Header.Get("Content-Type") != "" {
-				value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-				if value != "application/json" {
-					// Content-Type header is not application/json
-					handler.ServeHTTP(w, r)
-					return
-				}
-			}
-
-			if err := r.ParseForm(); err != nil {
-				return
-			}
-
-			var result map[string]string
-
-			if err := json.NewDecoder(r.Body).Decode(&result); err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-
-			for key, value := range result {
-				r.Form.Set(key, value)
-			}
-
-			handler.ServeHTTP(w, r)
-		})
-	}
+type authServerConfig struct {
+	Config repo.Config
 }
 
-func muxToEchoMapper(r *echo.Group) func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-	return func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-		path, err := route.GetPathTemplate()
-		if err != nil {
-			return err
-		}
+func (c *authServerConfig) Load(ctx context.Context) (*authserver.Config, error) {
+	cfg, err := c.Config.LockAndLoad(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if cfg.Auth == nil {
+		return nil, nil
+	}
 
-		methods, err := route.GetMethods()
-		if err != nil {
-			r.Any(path, echo.WrapHandler(route.GetHandler()))
-			return nil
-		}
+	return &authserver.Config{
+		Cert: cfg.Auth.Cert,
+		Key:  cfg.Auth.Key,
+	}, nil
+}
 
-		for _, method := range methods {
-			r.Add(method, path, echo.WrapHandler(route.GetHandler()))
-		}
-
+func (c *authServerConfig) Save(ctx context.Context, cfg *authserver.Config) error {
+	if cfg == nil {
 		return nil
 	}
+	return c.Config.SaveAuth(ctx, &config.Auth{
+		Cert: cfg.Cert,
+		Key:  cfg.Key,
+	})
 }
 
-type loginForm struct {
-	Email         string `json:"username" form:"username"`
-	Password      string `json:"password" form:"password"`
-	AuthRequestID string `json:"id" form:"id"`
-}
-
-func login(ctx context.Context, url, uiurl *url.URL, storage op.Storage, userUsecase interfaces.User) func(ctx echo.Context) error {
-	return func(ec echo.Context) error {
-		request := new(loginForm)
-		err := ec.Bind(request)
-		if err != nil {
-			log.Errorln("auth: filed to parse login request")
-			return ec.Redirect(
-				http.StatusFound,
-				redirectURL(uiurl, "/login", "", "Bad request!"),
-			)
-		}
-
-		if _, err := storage.AuthRequestByID(ctx, request.AuthRequestID); err != nil {
-			log.Errorf("auth: filed to parse login request: %s\n", err)
-			return ec.Redirect(
-				http.StatusFound,
-				redirectURL(uiurl, "/login", "", "Bad request!"),
-			)
-		}
-
-		if len(request.Email) == 0 || len(request.Password) == 0 {
-			log.Errorln("auth: one of credentials are not provided")
-			return ec.Redirect(
-				http.StatusFound,
-				redirectURL(uiurl, "/login", request.AuthRequestID, "Bad request!"),
-			)
-		}
-
-		// check user credentials from db
-		u, err := userUsecase.GetUserByCredentials(ctx, interfaces.GetUserByCredentials{
-			Email:    request.Email,
-			Password: request.Password,
-		})
-		var auth *user.Auth
-		if err == nil {
-			auth = u.GetAuthByProvider(authProvider)
-			if auth == nil {
-				err = errors.New("The account is not signed up with Re:Earth")
-			}
-		}
-		if err != nil {
-			log.Errorf("auth: wrong credentials: %s\n", err)
-			return ec.Redirect(
-				http.StatusFound,
-				redirectURL(uiurl, "/login", request.AuthRequestID, "Login failed; Invalid user ID or password."),
-			)
-		}
-
-		// Complete the auth request && set the subject
-		err = storage.(*interactor.AuthStorage).CompleteAuthRequest(ctx, request.AuthRequestID, auth.Sub)
-		if err != nil {
-			log.Errorf("auth: failed to complete the auth request: %s\n", err)
-			return ec.Redirect(
-				http.StatusFound,
-				redirectURL(uiurl, "/login", request.AuthRequestID, "Bad request!"),
-			)
-		}
-
-		return ec.Redirect(
-			http.StatusFound,
-			redirectURL(url, "/authorize/callback", request.AuthRequestID, ""),
-		)
-	}
-}
-
-func logout() func(ec echo.Context) error {
-	return func(ec echo.Context) error {
-		u := ec.QueryParam("returnTo")
-		return ec.Redirect(http.StatusTemporaryRedirect, u)
-	}
-}
-
-func redirectURL(u *url.URL, p string, requestID, err string) string {
-	v := cloneURL(u)
-	if p != "" {
-		v.Path = p
-	}
-	queryValues := u.Query()
-	queryValues.Set("id", requestID)
-	if err != "" {
-		queryValues.Set("error", err)
-	}
-	v.RawQuery = queryValues.Encode()
-	return v.String()
-}
-
-func cloneURL(u *url.URL) *url.URL {
-	return &url.URL{
-		Scheme: u.Scheme,
-		Opaque: u.Opaque,
-		User:   u.User,
-		Host:   u.Host,
-		Path:   u.Path,
-	}
+func (c *authServerConfig) Unlock(ctx context.Context) error {
+	return c.Config.Unlock(ctx)
 }
