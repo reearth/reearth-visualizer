@@ -329,8 +329,8 @@ func (r *Dataset) findOne(ctx context.Context, filter interface{}) (*dataset.Dat
 }
 
 func (r *Dataset) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
-	var c mongodoc.DatasetConsumer
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, &c)
+	c := mongodoc.NewDatasetConsumer()
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}
