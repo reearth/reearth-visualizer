@@ -170,6 +170,7 @@ jobs:
           version: tags/${{ needs.info.outputs.name }}
           file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
+          target: server/
       - name: Extract reearth-web
         run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz
       - run: mv reearth-web web; ls
