@@ -176,6 +176,7 @@ jobs:
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
+          context: server
           platforms: ${{ steps.options.outputs.platforms }}
           push: true
           build-args: VERSION=${{ steps.options.outputs.version }}
