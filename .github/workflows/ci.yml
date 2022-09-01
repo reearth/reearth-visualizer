@@ -17,48 +17,32 @@ jobs:
         ports:
           - 27017:27017
     steps:
-      # - name: set up
-      #   uses: actions/setup-go@v3
-      #   with:
-      #     go-version: "1.19"
+      - name: set up
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.19"
       - name: checkout
         uses: actions/checkout@v3
-      # - name: cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/go/pkg/mod
-      #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-go-
-      # - name: golangci-lint
-      #   uses: golangci/golangci-lint-action@v3
-      #   with:
-      #     version: v1.49
-      #     args: --timeout=10m
-      #     working-directory: server
-      # - name: test
-      #   run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
-      #   env:
-      #     REEARTH_DB: mongodb://localhost
-      #   working-directory: server
-      #
-      - name: ls
-        run: ls
-        working-directory: server
-      - name: Fetch reearth-web release
-        uses: dsaltares/fetch-gh-release-asset@master
+      - name: cache
+        uses: actions/cache@v3
         with:
-          repo: reearth/reearth-web
-          version: tags/nightly
-          file: reearth-web_nightly.tar.gz
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target: server/reearth-web.tar.gz
-      - name: Extract reearth-web
-        run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.49
+          args: --timeout=10m
+          working-directory: server
+      - name: test
+        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        env:
+          REEARTH_DB: mongodb://localhost
         working-directory: server
-      #
-      # - name: Send coverage report
-      #   uses: codecov/codecov-action@v2
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     file: coverage.txt
+      - name: Send coverage report
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage.txt
