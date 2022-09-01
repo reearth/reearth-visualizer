@@ -42,6 +42,8 @@ jobs:
           REEARTH_DB: mongodb://localhost
         working-directory: server
       #
+      - name: ls
+        run: ls; mkdir -p server
       - name: Fetch reearth-web release
         uses: dsaltares/fetch-gh-release-asset@master
         with:
@@ -49,7 +51,7 @@ jobs:
           version: tags/nightly
           file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
-          target: server/
+          target: server/reearth-web_nightly.tar.gz
       - name: Extract reearth-web
         run: tar -xvf reearth-web_nightly.tar.gz; mv reearth-web web; ls
         working-directory: server
