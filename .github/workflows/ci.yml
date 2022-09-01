@@ -17,30 +17,30 @@ jobs:
         ports:
           - 27017:27017
     steps:
-      - name: set up
-        uses: actions/setup-go@v3
-        with:
-          go-version: "1.19"
+      # - name: set up
+      #   uses: actions/setup-go@v3
+      #   with:
+      #     go-version: "1.19"
       - name: checkout
         uses: actions/checkout@v3
-      - name: cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.49
-          args: --timeout=10m
-          working-directory: server
-      - name: test
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
-        env:
-          REEARTH_DB: mongodb://localhost
-        working-directory: server
+      # - name: cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-go-
+      # - name: golangci-lint
+      #   uses: golangci/golangci-lint-action@v3
+      #   with:
+      #     version: v1.49
+      #     args: --timeout=10m
+      #     working-directory: server
+      # - name: test
+      #   run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+      #   env:
+      #     REEARTH_DB: mongodb://localhost
+      #   working-directory: server
       #
       - name: ls
         run: ls
@@ -57,8 +57,8 @@ jobs:
         run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
         working-directory: server
       #
-      - name: Send coverage report
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.txt
+      # - name: Send coverage report
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     file: coverage.txt
