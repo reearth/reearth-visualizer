@@ -170,10 +170,8 @@ jobs:
           version: tags/${{ needs.info.outputs.name }}
           file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
-          target: server/
       - name: Extract reearth-web
-        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz
-      - run: mv reearth-web web; ls
+        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:
