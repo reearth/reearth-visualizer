@@ -122,6 +122,9 @@ jobs:
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
       IMAGE_NAME: reearth/reearth
+    defaults:
+      run:
+        working-directory: server
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -169,6 +172,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract reearth-web
         run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      - run: mv reearth-web web; ls
       - name: Build and push docker image
         uses: docker/build-push-action@v3
         with:

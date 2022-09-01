@@ -1,7 +1,7 @@
 version: '3'
 services:
   reearth:
-    image: reearth/reearth:latest
+    image: reearth/reearth:nightly
     environment:
       REEARTH_DB: mongodb://reearth-mongo
     ports:
