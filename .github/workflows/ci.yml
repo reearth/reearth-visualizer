@@ -46,12 +46,12 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth-web
-          version: tags/${{ needs.info.outputs.name }}
-          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+          version: tags/nightly
+          file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/
       - name: Extract reearth-web
-        run: tar -xvf reearth-web_${{ needs.info.outputs.name }}.tar.gz; mv reearth-web web; ls
+        run: tar -xvf reearth-web_nightly.tar.gz; mv reearth-web web; ls
         working-directory: server
       #
       - name: Send coverage report
