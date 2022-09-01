@@ -43,7 +43,8 @@ jobs:
         working-directory: server
       #
       - name: ls
-        run: ls; mkdir -p server
+        run: ls
+        working-directory: server
       - name: Fetch reearth-web release
         uses: dsaltares/fetch-gh-release-asset@master
         with:
@@ -51,9 +52,9 @@ jobs:
           version: tags/nightly
           file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
-          target: server/reearth-web_nightly.tar.gz
+          target: server/reearth-web.tar.gz
       - name: Extract reearth-web
-        run: tar -xvf reearth-web_nightly.tar.gz; mv reearth-web web; ls
+        run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
         working-directory: server
       #
       - name: Send coverage report
