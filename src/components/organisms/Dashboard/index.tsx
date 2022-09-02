@@ -2,6 +2,7 @@ import { useAuth } from "@reearth/auth";
 import MoleculeHeader from "@reearth/components/molecules/Common/Header";
 import MoleculeDashboard from "@reearth/components/molecules/Dashboard";
 import Logo from "@reearth/components/molecules/Dashboard/Logo";
+import MarketplaceButton from "@reearth/components/molecules/Dashboard/MarketplaceButton";
 import ProjectList from "@reearth/components/molecules/Dashboard/ProjectList";
 import QuickStart from "@reearth/components/molecules/Dashboard/QuickStart";
 import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
@@ -72,6 +73,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           />
         }
       />
+      <MarketplaceButton />
       <Logo />
       <ProjectList projects={projects} />
     </MoleculeDashboard>

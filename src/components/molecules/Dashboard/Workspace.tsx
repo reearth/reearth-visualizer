@@ -47,7 +47,7 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
             {excessMembers > 0 && <Avatar innerText={excessMembers} />}
           </Flex>
           <StyledLink to={`/settings/workspaces/${team?.id}`}>
-            <Icon icon="settings" />
+            <StyledIcon icon="settings" />
           </StyledLink>
         </Flex>
       </Content>
@@ -75,17 +75,24 @@ const Content = styled(Flex)`
   }
 `;
 
-const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.main.text};
-  text-decoration: none;
+const StyledIcon = styled(Icon)`
+  border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
-  border-radius: ${metricsSizes.xs}px;
-  align-self: flex-end;
+  color: ${props => props.theme.main.text};
+
+  &:hover {
+    background: ${props => props.theme.main.bg};
+  }
+`;
+
+const StyledLink = styled(Link)`
+  color: ${props => props.theme.main.text};
+  text-decoration: none;
   display: flex;
+  align-items: center;
 
   &:hover {
     text-decoration: none;
-    background: ${({ theme }) => theme.main.bg};
   }
 `;
 

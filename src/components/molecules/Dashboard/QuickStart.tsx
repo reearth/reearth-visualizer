@@ -133,6 +133,7 @@ const BannerButtonStyles = css`
   margin: 0px;
   border-radius: ${metricsSizes["s"]}px;
   cursor: pointer;
+  transition: all 0.3s;
 `;
 
 const LongBannerButton = styled(Flex)`

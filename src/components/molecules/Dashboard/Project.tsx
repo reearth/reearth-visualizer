@@ -17,7 +17,7 @@ export interface Props {
 
 const Project: React.FC<Props> = ({ className, project }) => {
   const { name, description, image, status, id, sceneId } = project;
-  const [isHover, setHover] = useState(false);
+  const [isHovered, setHover] = useState(false);
 
   const onPreviewOpen = useCallback(() => {
     window.open(`${location.origin}/edit/${sceneId}/preview`);
@@ -33,30 +33,26 @@ const Project: React.FC<Props> = ({ className, project }) => {
         projectImage={image}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
-        <Content isHover={isHover}>
+        <Content isHovered={isHovered}>
           <Text size={isSmallWindow ? "m" : "l"} color={theme.dashboard.projectName}>
             {name}
           </Text>
-          {isHover && (
-            <Actions>
-              <ButtonWrapper>
-                <StyledLink to={`/edit/${sceneId}`}>
-                  <Button large buttonType="primary" icon="earthEditor" />
-                </StyledLink>
-
-                <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
-
-                <StyledLink to={`/settings/projects/${id}`}>
-                  <Button large buttonType="primary" icon="settings" />
-                </StyledLink>
-              </ButtonWrapper>
-              <DescriptionWrapper>
-                <Description size="s" isParagraph={true} color={theme.dashboard.projectDescription}>
-                  {description}
-                </Description>
-              </DescriptionWrapper>
-            </Actions>
-          )}
+          <Actions>
+            <ButtonWrapper>
+              <StyledLink to={`/edit/${sceneId}`}>
+                <Button large buttonType="primary" icon="earthEditor" />
+              </StyledLink>
+              <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
+              <StyledLink to={`/settings/projects/${id}`}>
+                <Button large buttonType="primary" icon="settings" />
+              </StyledLink>
+            </ButtonWrapper>
+            <DescriptionWrapper>
+              <Description size="s" isParagraph={true} color={theme.dashboard.projectDescription}>
+                {description}
+              </Description>
+            </DescriptionWrapper>
+          </Actions>
           <PublicationStatus status={status} color={theme.dashboard.publicationStatus} />
         </Content>
       </Block>
@@ -81,27 +77,29 @@ const Block = styled.div<{ projectImage?: string | null }>`
   height: 242px;
   border-radius: 12px;
   margin: 7px;
-  background-image: ${props =>
-    props.projectImage ? `url(${props.projectImage})` : `url(${defaultProjectImage})`};
+  background-image: ${({ projectImage }) =>
+    projectImage ? `url(${projectImage})` : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
-  ${props => !props.projectImage && "background-size: 560px 290px;"}
+  ${({ projectImage }) => !projectImage && "background-size: 560px 290px;"}
 
   @media only screen and (max-width: 1024px) {
     height: 200px;
   }
 `;
 
-const Content = styled.div<{ isHover?: boolean }>`
+const Content = styled.div<{ isHovered?: boolean }>`
   position: relative;
   height: 194px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: ${props => props.theme.main.text};
-  background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
+  color: ${({ theme }) => theme.main.text};
+  background-color: ${({ isHovered, theme }) => (isHovered ? theme.main.transparentBg : "")};
   border-radius: 12px;
+  opacity: ${({ isHovered }) => (isHovered ? 1 : 0)};
+  transition: all 0.4s;
 
   @media only screen and (max-width: 1024px) {
     height: 152px;
