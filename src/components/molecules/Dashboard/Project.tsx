@@ -37,7 +37,7 @@ const Project: React.FC<Props> = ({ className, project }) => {
           <Text size={isSmallWindow ? "m" : "l"} color={theme.dashboard.projectName}>
             {name}
           </Text>
-          <Actions>
+          <Actions isHovered={isHovered}>
             <ButtonWrapper>
               <StyledLink to={`/edit/${sceneId}`}>
                 <Button large buttonType="primary" icon="earthEditor" />
@@ -98,7 +98,6 @@ const Content = styled.div<{ isHovered?: boolean }>`
   color: ${({ theme }) => theme.main.text};
   background-color: ${({ isHovered, theme }) => (isHovered ? theme.main.transparentBg : "")};
   border-radius: 12px;
-  opacity: ${({ isHovered }) => (isHovered ? 1 : 0)};
   transition: all 0.4s;
 
   @media only screen and (max-width: 1024px) {
@@ -123,7 +122,7 @@ const ButtonWrapper = styled.div`
   margin-bottom: 5px;
 `;
 
-const Actions = styled.div`
+const Actions = styled.div<{ isHovered?: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -135,6 +134,8 @@ const Actions = styled.div`
   flex-direction: column;
   padding: 24px;
   box-sizing: border-box;
+  opacity: ${({ isHovered }) => (isHovered ? 1 : 0)};
+  transition: all 0.4s;
 `;
 
 const StyledLink = styled(Link)`
