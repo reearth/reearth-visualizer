@@ -149,7 +149,7 @@ const useTimelinePlayer = ({
     }
     setIsPlaying(p => !p);
     onPlay?.(!isPlaying);
-  }, [isPlayingReversed, isPlaying]);
+  }, [isPlayingReversed, isPlaying, onPlay, onPlayReversed]);
   const toggleIsPlayingReversed = useCallback(() => {
     if (isPlaying) {
       setIsPlaying(false);
@@ -157,7 +157,7 @@ const useTimelinePlayer = ({
     }
     setIsPlayingReversed(p => !p);
     onPlayReversed?.(!isPlayingReversed);
-  }, [isPlaying, isPlayingReversed]);
+  }, [isPlaying, isPlayingReversed, onPlay, onPlayReversed]);
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
     const lastIdx = textDate.lastIndexOf(" ");

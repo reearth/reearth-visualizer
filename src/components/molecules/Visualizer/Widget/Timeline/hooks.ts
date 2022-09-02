@@ -105,7 +105,7 @@ export const useTimeline = () => {
       }
       return prev;
     });
-    setSpeed(clockSpeed);
+    setSpeed(Math.abs(clockSpeed));
   }, [clockCurrentTime, clockStartTime, clockStopTime, clockSpeed]);
 
   return {
