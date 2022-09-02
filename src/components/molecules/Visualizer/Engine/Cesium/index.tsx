@@ -53,7 +53,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     terrainProperty,
     backgroundColor,
     cesium,
-    limiterDimensions,
+    cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
     handleMount,
@@ -145,10 +145,10 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           percentageChanged={0.2}
           onMoveEnd={handleCameraMoveEnd}
         />
-        {limiterDimensions && property?.cameraLimiter?.cameraLimitterShowHelper && (
+        {cameraViewBoundaries && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
             <PolylineGraphics
-              positions={limiterDimensions.cartesianArray}
+              positions={cameraViewBoundaries}
               width={1}
               material={Color.RED}
               arcType={ArcType.RHUMB}></PolylineGraphics>

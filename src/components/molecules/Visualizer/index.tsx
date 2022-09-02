@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
@@ -7,6 +8,7 @@ import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
 import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
+import Err from "./Error";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore, Layer } from "./Layers";
@@ -141,100 +143,102 @@ export default function Visualizer({
   });
 
   return (
-    <Provider {...providerProps}>
-      <Filled ref={wrapperRef}>
-        {isDroppable && <DropHolder />}
-        {ready && widgets?.alignSystem && (
-          <WidgetAlignSystem
-            alignSystem={widgets.alignSystem}
-            editing={widgetAlignEditorActivated}
-            onWidgetUpdate={onWidgetUpdate}
-            onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
-            sceneProperty={overriddenSceneProperty}
-            pluginProperty={pluginProperty}
-            isEditable={props.isEditable}
-            isBuilt={props.isBuilt}
-            pluginBaseUrl={pluginBaseUrl}
-            layoutConstraint={widgets.layoutConstraint}
-          />
-        )}
-        <Engine
-          ref={engineRef}
-          property={overriddenSceneProperty}
-          selectedLayerId={selectedLayer?.id}
-          layerSelectionReason={layerSelectionReason}
-          ready={ready}
-          camera={innerCamera}
-          clock={innerClock}
-          isLayerDragging={isLayerDragging}
-          isLayerDraggable={props.isEditable}
-          shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
-          onLayerSelect={selectLayer}
-          onCameraChange={updateCamera}
-          onTick={updateClock}
-          onLayerDrop={handleLayerDrop}
-          onLayerDrag={handleLayerDrag}
-          {...props}>
-          <Layers
-            isEditable={props.isEditable}
-            isBuilt={props.isBuilt}
-            pluginProperty={pluginProperty}
-            clusterProperty={clusterProperty}
-            sceneProperty={overriddenSceneProperty}
-            pluginBaseUrl={pluginBaseUrl}
-            selectedLayerId={selectedLayerId}
-            layers={layers}
-            isLayerHidden={isLayerHidden}
-            overriddenProperties={layerOverriddenProperties}
-            clusterComponent={engineRef.current?.clusterComponent}
-          />
-          {ready &&
-            widgets?.floatingWidgets?.map(widget => (
-              <W
-                key={widget.id}
-                widget={widget}
-                sceneProperty={overriddenSceneProperty}
-                pluginProperty={
-                  widget.pluginId && widget.extensionId
-                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                    : undefined
-                }
-                isEditable={props.isEditable}
-                isBuilt={props.isBuilt}
-                pluginBaseUrl={pluginBaseUrl}
-              />
-            ))}
-        </Engine>
-        {ready && (
-          <Infobox
-            title={infobox?.title}
-            infoboxKey={infobox?.infoboxKey}
-            visible={!!infobox?.visible}
-            sceneProperty={overriddenSceneProperty}
-            blocks={infobox?.blocks}
-            layer={infobox?.layer}
-            selectedBlockId={selectedBlockId}
-            pluginProperty={pluginProperty}
-            isBuilt={props.isBuilt}
-            isEditable={props.isEditable && !!infobox?.isEditable}
-            onBlockChange={changeBlock}
-            onBlockDelete={onBlockDelete}
-            onBlockMove={onBlockMove}
-            onBlockInsert={onBlockInsert}
-            onBlockSelect={selectBlock}
-            renderInsertionPopUp={renderInfoboxInsertionPopUp}
-            pluginBaseUrl={pluginBaseUrl}
-            onMaskClick={handleInfoboxMaskClick}
-          />
-        )}
-        {children}
-        {!ready && (
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
-        )}
-      </Filled>
-    </Provider>
+    <ErrorBoundary FallbackComponent={Err}>
+      <Provider {...providerProps}>
+        <Filled ref={wrapperRef}>
+          {isDroppable && <DropHolder />}
+          {ready && widgets?.alignSystem && (
+            <WidgetAlignSystem
+              alignSystem={widgets.alignSystem}
+              editing={widgetAlignEditorActivated}
+              onWidgetUpdate={onWidgetUpdate}
+              onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
+              sceneProperty={overriddenSceneProperty}
+              pluginProperty={pluginProperty}
+              isEditable={props.isEditable}
+              isBuilt={props.isBuilt}
+              pluginBaseUrl={pluginBaseUrl}
+              layoutConstraint={widgets.layoutConstraint}
+            />
+          )}
+          <Engine
+            ref={engineRef}
+            property={overriddenSceneProperty}
+            selectedLayerId={selectedLayer?.id}
+            layerSelectionReason={layerSelectionReason}
+            ready={ready}
+            camera={innerCamera}
+            clock={innerClock}
+            isLayerDragging={isLayerDragging}
+            isLayerDraggable={props.isEditable}
+            shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
+            onLayerSelect={selectLayer}
+            onCameraChange={updateCamera}
+            onTick={updateClock}
+            onLayerDrop={handleLayerDrop}
+            onLayerDrag={handleLayerDrag}
+            {...props}>
+            <Layers
+              isEditable={props.isEditable}
+              isBuilt={props.isBuilt}
+              pluginProperty={pluginProperty}
+              clusterProperty={clusterProperty}
+              sceneProperty={overriddenSceneProperty}
+              pluginBaseUrl={pluginBaseUrl}
+              selectedLayerId={selectedLayerId}
+              layers={layers}
+              isLayerHidden={isLayerHidden}
+              overriddenProperties={layerOverriddenProperties}
+              clusterComponent={engineRef.current?.clusterComponent}
+            />
+            {ready &&
+              widgets?.floatingWidgets?.map(widget => (
+                <W
+                  key={widget.id}
+                  widget={widget}
+                  sceneProperty={overriddenSceneProperty}
+                  pluginProperty={
+                    widget.pluginId && widget.extensionId
+                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                      : undefined
+                  }
+                  isEditable={props.isEditable}
+                  isBuilt={props.isBuilt}
+                  pluginBaseUrl={pluginBaseUrl}
+                />
+              ))}
+          </Engine>
+          {ready && (
+            <Infobox
+              title={infobox?.title}
+              infoboxKey={infobox?.infoboxKey}
+              visible={!!infobox?.visible}
+              sceneProperty={overriddenSceneProperty}
+              blocks={infobox?.blocks}
+              layer={infobox?.layer}
+              selectedBlockId={selectedBlockId}
+              pluginProperty={pluginProperty}
+              isBuilt={props.isBuilt}
+              isEditable={props.isEditable && !!infobox?.isEditable}
+              onBlockChange={changeBlock}
+              onBlockDelete={onBlockDelete}
+              onBlockMove={onBlockMove}
+              onBlockInsert={onBlockInsert}
+              onBlockSelect={selectBlock}
+              renderInsertionPopUp={renderInfoboxInsertionPopUp}
+              pluginBaseUrl={pluginBaseUrl}
+              onMaskClick={handleInfoboxMaskClick}
+            />
+          )}
+          {children}
+          {!ready && (
+            <LoadingWrapper>
+              <Loading />
+            </LoadingWrapper>
+          )}
+        </Filled>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

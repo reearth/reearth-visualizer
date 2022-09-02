@@ -8,6 +8,10 @@ test("mergeProperty", () => {
   const b = { a: { b: { lat: 1 } }, c: [{ d: 3 }] };
   const e = { a: { b: { lat: 1 } }, c: [{ d: 3 }], d: 1 };
 
+  expect(mergeProperty(undefined, undefined)).toEqual({});
+  expect(mergeProperty(undefined, { a: { b: 1 } })).toEqual({ a: { b: 1 } });
+  expect(mergeProperty({ a: { b: 1 } }, undefined)).toEqual({ a: { b: 1 } });
+
   const result = mergeProperty(a, b);
   expect(result).toEqual(e);
   expect(result).not.toBe(a);

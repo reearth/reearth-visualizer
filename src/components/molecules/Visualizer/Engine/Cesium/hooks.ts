@@ -350,7 +350,7 @@ export default ({
       cesiumDnD.current?.disable();
     };
   }, [handleLayerDrag, handleLayerDrop, isLayerDraggable]);
-  const { limiterDimensions, cameraViewOuterBoundaries, cameraViewBoundariesMaterial } =
+  const { cameraViewBoundaries, cameraViewOuterBoundaries, cameraViewBoundariesMaterial } =
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
 
   return {
@@ -358,7 +358,7 @@ export default ({
     terrainProperty,
     backgroundColor,
     cesium,
-    limiterDimensions,
+    cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
     handleMount,

@@ -93,7 +93,7 @@ export const useTimeline = () => {
         clock.tick();
       });
     }
-  }, []);
+  }, [clock]);
 
   // Sync cesium clock.
   useEffect(() => {
@@ -106,7 +106,14 @@ export const useTimeline = () => {
       return prev;
     });
     setSpeed(Math.abs(clockSpeed));
-  }, [clockCurrentTime, clockStartTime, clockStopTime, clockSpeed]);
+  }, [
+    clockCurrentTime,
+    clockStartTime,
+    clockStopTime,
+    clockSpeed,
+    clock?.startTime,
+    clock?.stopTime,
+  ]);
 
   return {
     speed,

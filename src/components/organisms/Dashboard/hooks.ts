@@ -196,7 +196,7 @@ export default (teamId?: string) => {
         setModalShown(false);
       }
     },
-    [createNewProject, createScene, teamId, refetch, t, setNotification],
+    [createNewProject, createScene, teamId, t, setNotification],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);

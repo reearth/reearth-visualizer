@@ -66,8 +66,8 @@
         "cypress": "10.3.1",
         "del-cli": "4.0.1",
         "dotenv": "16.0.1",
-        "eslint": "8.16.0",
-        "eslint-config-reearth": "0.1.0",
+        "eslint": "8.23.0",
+        "eslint-config-reearth": "0.1.1",
         "eslint-plugin-cypress": "2.12.1",
         "eslint-plugin-graphql": "4.0.0",
         "husky": "8.0.1",
@@ -75,7 +75,7 @@
         "jsdom": "20.0.0",
         "lint-staged": "12.4.2",
         "npm-run-all": "4.1.5",
-        "prettier": "2.6.2",
+        "prettier": "2.7.1",
         "read-env": "2.0.0",
         "rollup-plugin-visualizer": "5.7.1",
         "ts-node": "10.8.1",
@@ -85,7 +85,7 @@
         "vite": "3.0.3",
         "vite-plugin-cesium": "1.2.22",
         "vitest": "0.19.0",
-        "web-streams-polyfill": "^3.2.1"
+        "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
         "@apollo/client": "3.6.6",
@@ -135,6 +135,7 @@
         "react-dnd-html5-backend": "16.0.1",
         "react-dom": "18.1.0",
         "react-dropzone": "14.2.1",
+        "react-error-boundary": "3.1.4",
         "react-ga": "3.3.0",
         "react-i18next": "11.17.1",
         "react-inlinesvg": "3.0.0",

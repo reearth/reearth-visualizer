@@ -15,6 +15,10 @@ rules:
         caseInsensitive: true
 overrides:
   - files:
+      - i18next-parser.config.js
+    extends:
+      - reearth/commonjs
+  - files:
       - src/gql/queries/*.ts
       - src/gql/fragments/*.ts
     plugins:

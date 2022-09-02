@@ -80,15 +80,24 @@ export default function useHook({
 
   const messageEvents = useMemo(() => new Set<(msg: any) => void>(), []);
   const messageOnceEvents = useMemo(() => new Set<(msg: any) => void>(), []);
-  const onMessage = useCallback((e: (msg: any) => void) => {
-    messageEvents.add(e);
-  }, []);
-  const offMessage = useCallback((e: (msg: any) => void) => {
-    messageEvents.delete(e);
-  }, []);
-  const onceMessage = useCallback((e: (msg: any) => void) => {
-    messageOnceEvents.add(e);
-  }, []);
+  const onMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageEvents.add(e);
+    },
+    [messageEvents],
+  );
+  const offMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageEvents.delete(e);
+    },
+    [messageEvents],
+  );
+  const onceMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageOnceEvents.add(e);
+    },
+    [messageOnceEvents],
+  );
   const handleMessage = useCallback(
     (msg: any) => {
       try {
@@ -100,7 +109,7 @@ export default function useHook({
       rawOnMessage?.(msg);
       messageOnceEvents.clear();
     },
-    [messageEvents],
+    [messageEvents, messageOnceEvents, onError, rawOnMessage],
   );
 
   const evalCode = useCallback(
@@ -178,11 +187,13 @@ export default function useHook({
       setLoaded(true);
     })();
 
+    const iframeRef = mainIFrameRef.current;
+
     return () => {
       onDispose?.();
       messageEvents.clear();
       messageOnceEvents.clear();
-      mainIFrameRef.current?.reset();
+      iframeRef?.reset();
       setLoaded(false);
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
@@ -198,7 +209,20 @@ export default function useHook({
         }
       }
     };
-  }, [code, evalCode, isMarshalable, onDispose, onPreInit, skip, exposed]);
+  }, [
+    code,
+    evalCode,
+    isMarshalable,
+    onDispose,
+    onPreInit,
+    skip,
+    exposed,
+    onMessage,
+    offMessage,
+    onceMessage,
+    messageEvents,
+    messageOnceEvents,
+  ]);
 
   useImperativeHandle(
     ref,

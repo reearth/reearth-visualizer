@@ -60,7 +60,7 @@ export default (projectId: string) => {
               };
             })
         : [],
-    [],
+    [rawSceneData, sceneId],
   );
 
   const personalPlugins = useMemo(() => {
@@ -78,24 +78,27 @@ export default (projectId: string) => {
       : [];
   }, [rawSceneData]);
 
-  const handleInstallByMarketplace = useCallback(async (pluginId: string) => {
-    if (!sceneId) return;
-    const results = await installPluginMutation({
-      variables: { sceneId, pluginId },
-    });
-    if (results.errors || !results.data?.installPlugin?.scenePlugin) {
-      setNotification({
-        type: "error",
-        text: t("Failed to install plugin."),
+  const handleInstallByMarketplace = useCallback(
+    async (pluginId: string) => {
+      if (!sceneId) return;
+      const results = await installPluginMutation({
+        variables: { sceneId, pluginId },
       });
-    } else {
-      setNotification({
-        type: "success",
-        text: t("Successfully installed plugin!"),
-      });
-      await client.resetStore();
-    }
-  }, []);
+      if (results.errors || !results.data?.installPlugin?.scenePlugin) {
+        setNotification({
+          type: "error",
+          text: t("Failed to install plugin."),
+        });
+      } else {
+        setNotification({
+          type: "success",
+          text: t("Successfully installed plugin!"),
+        });
+        await client.resetStore();
+      }
+    },
+    [client, installPluginMutation, sceneId, setNotification, t],
+  );
 
   const handleInstallByUploadingZipFile = useCallback(
     async (files: FileList) => {
@@ -121,7 +124,7 @@ export default (projectId: string) => {
         client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
+    [sceneId, uploadPluginMutation, client, setNotification, t],
   );
 
   const handleInstallFromPublicRepo = useCallback(
@@ -143,7 +146,7 @@ export default (projectId: string) => {
         await client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
+    [sceneId, uploadPluginMutation, setNotification, t, client],
   );
 
   const uninstallPlugin = useCallback(

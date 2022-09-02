@@ -72,9 +72,7 @@ export default ({
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
-    sceneProperty ?? {},
-  );
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(

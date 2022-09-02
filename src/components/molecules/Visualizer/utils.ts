@@ -11,12 +11,16 @@ export function mergeProperty(a: any, b: any) {
   );
 }
 
-export function useOverriddenProperty<T = any>(
-  property: T,
+export function useOverriddenProperty<T extends {}>(
+  property: T | undefined,
 ): [T, (pluginId: string, property: T) => void] {
-  const [{ "": overriddenPropertyCommon, ...overriddenProperty }, setOverrideProperty] = useState<{
+  const [overriddenProperties, setOverrideProperty] = useState<{
     [pluginId: string]: any;
   }>({});
+  const { overriddenPropertyCommon, overriddenProperty } = useMemo(() => {
+    const { "": overriddenPropertyCommon, ...overriddenProperty } = overriddenProperties;
+    return { overriddenPropertyCommon, overriddenProperty };
+  }, [overriddenProperties]);
 
   const overrideProperty = useCallback((pluginId: string, property: any) => {
     setOverrideProperty(p => (property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)));

@@ -50,6 +50,7 @@ const StyledResizable = styled.div<Pick<Props, "direction" | "size">>`
   flex-direction: ${({ direction }) => (direction === "vertical" ? "row" : "column")};
   width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
+  flex-shrink: 0;
 `;
 
 const Wrapper = styled.div`

@@ -139,9 +139,12 @@ const useTimelinePlayer = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
-  const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
-    onSpeedChange?.(parseInt(e.currentTarget.value, 10));
-  }, []);
+  const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    e => {
+      onSpeedChange?.(parseInt(e.currentTarget.value, 10));
+    },
+    [onSpeedChange],
+  );
   const toggleIsPlaying = useCallback(() => {
     if (isPlayingReversed) {
       setIsPlayingReversed(false);
@@ -149,7 +152,7 @@ const useTimelinePlayer = ({
     }
     setIsPlaying(p => !p);
     onPlay?.(!isPlaying);
-  }, [isPlayingReversed, isPlaying, onPlay, onPlayReversed]);
+  }, [isPlayingReversed, onPlay, isPlaying, onPlayReversed]);
   const toggleIsPlayingReversed = useCallback(() => {
     if (isPlaying) {
       setIsPlaying(false);

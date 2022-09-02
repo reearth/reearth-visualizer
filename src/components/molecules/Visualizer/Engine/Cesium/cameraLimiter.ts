@@ -26,19 +26,29 @@ export function useCameraLimiter(
   camera: Camera | undefined,
   property: SceneProperty["cameraLimiter"] | undefined,
 ) {
-  const geodesic = useMemo(():
-    | undefined
-    | { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } => {
+  const geodesic = useMemo(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed()) return undefined;
-    return property?.cameraLimitterTargetArea?.lng && property.cameraLimitterTargetArea.lat
-      ? getGeodesic(
-          viewer,
-          property.cameraLimitterTargetArea.lng,
-          property.cameraLimitterTargetArea.lat,
-        )
-      : undefined;
-  }, [cesium, property?.cameraLimitterTargetArea?.lng, property?.cameraLimitterTargetArea?.lat]);
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimitterEnabled ||
+      !property.cameraLimitterTargetArea?.lng ||
+      !property.cameraLimitterTargetArea.lat
+    ) {
+      return undefined;
+    }
+
+    return getGeodesic(
+      viewer,
+      property.cameraLimitterTargetArea.lng,
+      property.cameraLimitterTargetArea.lat,
+    );
+  }, [
+    cesium,
+    property?.cameraLimitterEnabled,
+    property?.cameraLimitterTargetArea?.lng,
+    property?.cameraLimitterTargetArea?.lat,
+  ]);
 
   // calculate inner limiter dimensions
   const limiterDimensions = useMemo((): InnerLimiterDimensions | undefined => {
@@ -132,7 +142,7 @@ export function useCameraLimiter(
   }, [camera, cesium, property, limiterDimensions]);
 
   return {
-    limiterDimensions,
+    cameraViewBoundaries: limiterDimensions?.cartesianArray,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
   };
@@ -156,7 +166,7 @@ export const getGeodesic = (
   viewer: CesiumViewer,
   lng: number,
   lat: number,
-): { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } | undefined => {
+): { vertical: EllipsoidGeodesic; horizontal: EllipsoidGeodesic } | undefined => {
   const ellipsoid = viewer.scene.globe.ellipsoid;
 
   const centerPoint = Cartesian3.fromDegrees(lng, lat, 0);
@@ -172,21 +182,21 @@ export const getGeodesic = (
     new Cartesian3(),
   );
 
-  const geodesicVertical = new EllipsoidGeodesic(
+  const vertical = new EllipsoidGeodesic(
     cartographicCenterPoint,
     Cartographic.fromCartesian(north),
     ellipsoid,
   );
-  const geodesicHorizontal = new EllipsoidGeodesic(
+  const horizontal = new EllipsoidGeodesic(
     cartographicCenterPoint,
     Cartographic.fromCartesian(east),
     ellipsoid,
   );
-  return { geodesicVertical, geodesicHorizontal };
+  return { vertical, horizontal };
 };
 
 export const calcBoundaryBox = (
-  geodesic: { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic },
+  geodesic: { vertical: EllipsoidGeodesic; horizontal: EllipsoidGeodesic },
   halfLength: number,
   halfWidth: number,
 ): {
@@ -198,10 +208,10 @@ export const calcBoundaryBox = (
   };
   cartesianArray: Cartesian3[];
 } => {
-  const topDimension = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(halfLength);
-  const bottomDimension = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(-halfLength);
-  const rightDimension = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(halfWidth);
-  const leftDimension = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(-halfWidth);
+  const topDimension = geodesic.vertical.interpolateUsingSurfaceDistance(halfLength);
+  const bottomDimension = geodesic.vertical.interpolateUsingSurfaceDistance(-halfLength);
+  const rightDimension = geodesic.horizontal.interpolateUsingSurfaceDistance(halfWidth);
+  const leftDimension = geodesic.horizontal.interpolateUsingSurfaceDistance(-halfWidth);
 
   const rightTop = new Cartographic(rightDimension.longitude, topDimension.latitude, 0);
   const leftTop = new Cartographic(leftDimension.longitude, topDimension.latitude, 0);

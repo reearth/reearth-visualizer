@@ -42,7 +42,7 @@ export default function useIFrame({
       },
       postMessage,
     }),
-    [],
+    [iframeCanBeVisible, onRender, postMessage],
   );
 
   useEffect(() => {
