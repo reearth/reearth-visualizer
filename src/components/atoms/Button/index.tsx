@@ -43,7 +43,7 @@ const Button: React.FC<Props> = ({
 
   const WrappedIcon = icon ? (
     <IconWrapper text={hasText} iconRight={iconRight} large={large}>
-      <Icon icon={icon} size={iSize} noTransition />
+      <Icon icon={icon} size={iSize} notransition />
     </IconWrapper>
   ) : null;
 
