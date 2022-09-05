@@ -57,7 +57,7 @@ const PluginSection: React.FC<Props> = ({
   const t = useT();
   const { search } = useLocation();
   const queriedPluginId = useMemo(
-    () => new URLSearchParams(search).get("pluginId") ?? undefined,
+    () => new URLSearchParams(search).get("selected") ?? undefined,
     [search],
   );
 
