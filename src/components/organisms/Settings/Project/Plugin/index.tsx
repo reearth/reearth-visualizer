@@ -18,9 +18,11 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
     currentProject,
+    currentTheme,
+    currentLang,
+    loading,
     marketplacePluginIds,
     personalPlugins,
-    loading,
     extensions,
     accessToken,
     handleInstallByMarketplace,
@@ -38,6 +40,8 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           marketplacePluginIds={marketplacePluginIds}
           personalPlugins={personalPlugins}
           extensions={extensions}
+          currentTheme={currentTheme}
+          currentLang={currentLang}
           accessToken={accessToken}
           onInstallByMarketplace={handleInstallByMarketplace}
           onInstallByUploadingZipFile={handleInstallByUploadingZipFile}

@@ -10,13 +10,13 @@ import {
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
 import { useLang, useT } from "@reearth/i18n";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import { useProject, useNotification, useCurrentTheme } from "@reearth/state";
 
 export default (projectId: string) => {
   const t = useT();
   const locale = useLang();
+  const [currentTheme] = useCurrentTheme();
   const client = useApolloClient();
-  const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
   const { getAccessToken } = useAuth();
@@ -175,8 +175,9 @@ export default (projectId: string) => {
 
   const loading = sceneLoading;
   return {
-    currentTeam,
     currentProject,
+    currentTheme,
+    currentLang: locale,
     loading,
     marketplacePluginIds,
     personalPlugins,

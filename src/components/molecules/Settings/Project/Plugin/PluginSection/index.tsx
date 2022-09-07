@@ -26,6 +26,8 @@ export type Props = {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
   };
+  currentTheme?: "light" | "dark";
+  currentLang?: string;
   accessToken?: string;
   onInstallByMarketplace: (pluginId: string) => void;
   onInstallFromPublicRepo: (repoUrl: string) => void;
@@ -48,6 +50,8 @@ const PluginSection: React.FC<Props> = ({
   marketplacePluginIds,
   personalPlugins,
   extensions,
+  currentTheme,
+  currentLang,
   accessToken,
   onInstallByMarketplace,
   onInstallByUploadingZipFile,
@@ -81,6 +85,8 @@ const PluginSection: React.FC<Props> = ({
                   <ext.component
                     key={ext.id}
                     selectedPluginId={queriedPluginId}
+                    theme={currentTheme}
+                    lang={currentLang}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
@@ -95,6 +101,8 @@ const PluginSection: React.FC<Props> = ({
                   <ext.component
                     key={ext.id}
                     installedPlugins={marketplacePluginIds}
+                    theme={currentTheme}
+                    lang={currentLang}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
