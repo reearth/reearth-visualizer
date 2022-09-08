@@ -173,7 +173,9 @@ func (i *Plugin) installScenePlugin(ctx context.Context, p *pluginpack.Package, 
 		}
 	}
 
-	s.Plugins().Add(scene.NewPlugin(p.Manifest.Plugin.ID(), ppid))
+	if !s.Plugins().Add(scene.NewPlugin(p.Manifest.Plugin.ID(), ppid)) {
+		return interfaces.ErrPluginAlreadyInstalled
+	}
 
 	if pp != nil {
 		if err := i.propertyRepo.Save(ctx, pp); err != nil {

@@ -317,30 +317,35 @@ func TestPlugins_Add(t *testing.T) {
 		Name         string
 		Input        *Plugin
 		PS, Expected *Plugins
+		Want         bool
 	}{
 		{
 			Name:     "add nil plugin",
 			Input:    nil,
 			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
 			Expected: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Want:     false,
 		},
 		{
 			Name:     "add existing plugin",
 			Input:    NewPlugin(pid, pr),
 			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
 			Expected: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Want:     false,
 		},
 		{
 			Name:     "add official plugin",
 			Input:    NewPlugin(OfficialPluginID, pr),
 			PS:       NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
 			Expected: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Want:     false,
 		},
 		{
 			Name:     "add new plugin",
 			Input:    NewPlugin(pid, pr),
 			PS:       NewPlugins([]*Plugin{}),
 			Expected: NewPlugins([]*Plugin{NewPlugin(pid, pr)}),
+			Want:     true,
 		},
 	}
 
@@ -348,7 +353,7 @@ func TestPlugins_Add(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			tc.PS.Add(tc.Input)
+			assert.Equal(t, tc.Want, tc.PS.Add(tc.Input))
 			assert.Equal(t, tc.Expected, tc.PS)
 		})
 	}

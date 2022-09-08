@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2/clientcredentials"
@@ -17,21 +16,13 @@ var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
 
 type Marketplace struct {
 	endpoint string
-	client   *http.Client
+	conf     *clientcredentials.Config
 }
 
 func New(endpoint string, conf *clientcredentials.Config) *Marketplace {
-	var client *http.Client
-	if conf != nil {
-		client = conf.Client(context.Background())
-	}
-	if client == nil {
-		client = http.DefaultClient
-	}
-
 	return &Marketplace{
 		endpoint: strings.TrimSuffix(endpoint, "/"),
-		client:   client,
+		conf:     conf,
 	}
 }
 
@@ -103,9 +94,15 @@ type plugin struct {
 */
 
 func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*pluginpack.Package, error) {
-	log.Infof("marketplace: download plugin from \"%s\"", url)
+	var client *http.Client
+	if m.conf != nil {
+		client = m.conf.Client(ctx)
+	}
+	if client == nil {
+		client = http.DefaultClient
+	}
 
-	res, err := m.client.Get(url)
+	res, err := client.Get(url)
 	if err != nil {
 		return nil, rerror.ErrInternalBy(err)
 	}

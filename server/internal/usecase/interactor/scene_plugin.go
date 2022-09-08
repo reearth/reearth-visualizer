@@ -60,7 +60,9 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		}
 	}
 
-	s.Plugins().Add(scene.NewPlugin(pid, p.IDRef()))
+	if !s.Plugins().Add(scene.NewPlugin(pid, p.IDRef())) {
+		return nil, nil, interfaces.ErrPluginAlreadyInstalled
+	}
 
 	if p != nil {
 		if err := i.propertyRepo.Save(ctx, p); err != nil {

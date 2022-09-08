@@ -67,11 +67,12 @@ func (p *Plugins) HasPluginByName(name string) bool {
 	return false
 }
 
-func (p *Plugins) Add(sp *Plugin) {
+func (p *Plugins) Add(sp *Plugin) bool {
 	if sp == nil || p.HasPluginByName(sp.plugin.Name()) || sp.plugin.Equal(OfficialPluginID) {
-		return
+		return false
 	}
 	p.plugins = append(p.plugins, sp)
+	return true
 }
 
 func (p *Plugins) Remove(pid PluginID) {
