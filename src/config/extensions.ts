@@ -84,21 +84,17 @@ export async function loadExtensions(urls?: string[]): Promise<Extensions | unde
   for (const url of urls) {
     try {
       const newExtensions: Extension[] = (await import(/* @vite-ignore */ url)).default;
-      newExtensions.forEach(ext =>
-        ext.type === "dataset-import"
-          ? datasetImport.push(ext as Extension<"dataset-import">)
-          : ext.type === "publication"
-          ? publication.push(ext as Extension<"publication">)
-          : ext.type === "plugin-library"
-          ? pluginLibrary.push(ext as Extension<"plugin-library">)
-          : ext.type === "plugin-installed"
-          ? pluginInstalled.push(ext as Extension<"plugin-installed">)
-          : ext.type === "global-modal"
-          ? globalModal.push(ext as Extension<"global-modal">)
-          : undefined,
-      );
+      newExtensions.forEach(ext => {
+        if (ext.type === "dataset-import") datasetImport.push(ext as Extension<"dataset-import">);
+        else if (ext.type === "publication") publication.push(ext as Extension<"publication">);
+        else if (ext.type === "plugin-library")
+          pluginLibrary.push(ext as Extension<"plugin-library">);
+        else if (ext.type === "plugin-installed")
+          pluginInstalled.push(ext as Extension<"plugin-installed">);
+        else if (ext.type === "global-modal") globalModal.push(ext as Extension<"global-modal">);
+      });
     } catch (e) {
-      // ignore
+      console.error("extension load failed", e);
     }
   }
 
