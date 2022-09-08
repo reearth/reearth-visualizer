@@ -135,3 +135,14 @@ func TestMarketplace_FetchPluginPackage_NoAuth(t *testing.T) {
 	// no need to test pluginpack in detail here
 	assert.Equal(t, id.MustPluginID("testplugin~1.0.1"), got.Manifest.Plugin.ID())
 }
+
+func TestMarketplace_GetPluginURL(t *testing.T) {
+	pid := id.MustPluginID("aaaabbbxxxbb~1.0.0")
+	u, err := (&Marketplace{
+		endpoint: "https://xxxxx",
+	}).getPluginURL(pid)
+	assert.NoError(t, err)
+	assert.Equal(t, "https://xxxxx/api/plugins/aaaabbbxxxbb/1.0.0.zip", u)
+	_, err = url.Parse(u)
+	assert.NoError(t, err)
+}

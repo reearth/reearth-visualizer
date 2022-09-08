@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2/clientcredentials"
@@ -35,14 +36,14 @@ func New(endpoint string, conf *clientcredentials.Config) *Marketplace {
 }
 
 func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (*pluginpack.Package, error) {
-	purl, err := m.getPluginURL(ctx, pid)
+	purl, err := m.getPluginURL(pid)
 	if err != nil {
 		return nil, err
 	}
 	return m.downloadPluginPackage(ctx, purl)
 }
 
-func (m *Marketplace) getPluginURL(_ context.Context, pid id.PluginID) (string, error) {
+func (m *Marketplace) getPluginURL(pid id.PluginID) (string, error) {
 	return fmt.Sprintf("%s/api/plugins/%s/%s.zip", m.endpoint, pid.Name(), pid.Version().String()), nil
 }
 
@@ -102,6 +103,8 @@ type plugin struct {
 */
 
 func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*pluginpack.Package, error) {
+	log.Infof("marketplace: download plugin from \"%s\"", url)
+
 	res, err := m.client.Get(url)
 	if err != nil {
 		return nil, rerror.ErrInternalBy(err)
@@ -113,7 +116,7 @@ func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*p
 		return nil, rerror.ErrNotFound
 	}
 	if res.StatusCode != http.StatusOK {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("status code is %s", res.Status))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
 	}
 	return pluginpack.PackageFromZip(res.Body, nil, pluginPackageSizeLimit)
 }
