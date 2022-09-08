@@ -84,7 +84,8 @@ const StyledSvg = styled(SVG)<{ color?: string; size?: string; notransition?: bo
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
-  ${({ notransition }) => !notransition && "transition: all 0.4s;"}
+  transition-property: color, background;
+  ${({ notransition }) => (!notransition ? "transition-duration: 0.4s;" : undefined)}
 `;
 
 export default memo(Icon);

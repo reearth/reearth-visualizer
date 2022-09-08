@@ -123,7 +123,8 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   display: flex;
   align-items: center;
-  transition: all 0.4s;
+  transition-property: color, background;
+  transition-duration: 0.4s;
 
   &:hover {
     background: ${({ buttonType, disabled, theme }) =>
