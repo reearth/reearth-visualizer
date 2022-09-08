@@ -29,10 +29,10 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	e.HTTPErrorHandler = errorHandler(e.DefaultHTTPErrorHandler)
 
 	// basic middleware
-	logger := GetEchoLogger()
+	logger := log.NewEcho()
 	e.Logger = logger
 	e.Use(
-		logger.Hook(),
+		logger.AccessLogger(),
 		middleware.Recover(),
 		otelecho.Middleware("reearth"),
 	)

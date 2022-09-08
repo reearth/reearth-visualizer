@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2/clientcredentials"
@@ -101,6 +102,8 @@ func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*p
 	if client == nil {
 		client = http.DefaultClient
 	}
+
+	log.Infof("marketplace: downloading plugin package from \"%s\"", url)
 
 	res, err := client.Get(url)
 	if err != nil {
