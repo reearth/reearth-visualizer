@@ -21,7 +21,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
     currentTheme,
     currentLang,
     loading,
-    marketplacePluginIds,
+    marketplacePlugins,
     personalPlugins,
     extensions,
     accessToken,
@@ -37,7 +37,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       {!currentProject?.isArchived ? (
         <PluginSection
           loading={loading}
-          marketplacePluginIds={marketplacePluginIds}
+          marketplacePlugins={marketplacePlugins}
           personalPlugins={personalPlugins}
           extensions={extensions}
           currentTheme={currentTheme}

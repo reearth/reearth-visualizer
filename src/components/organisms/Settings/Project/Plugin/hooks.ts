@@ -47,35 +47,33 @@ export default (projectId: string) => {
 
   const sceneId = useMemo(() => rawSceneData?.scene?.id, [rawSceneData]);
 
-  const marketplacePluginIds = useMemo(
+  const marketplacePlugins = useMemo(
     () =>
-      rawSceneData
-        ? rawSceneData?.scene?.plugins
-            .filter(p => p.plugin?.id !== "reearth" && !sceneId)
-            .map<{ id: string; version: string }>(p => {
-              const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
-              return {
-                id,
-                version,
-              };
-            })
-        : [],
-    [rawSceneData, sceneId],
+      rawSceneData?.scene?.plugins
+        .filter(p => p.plugin?.id !== "reearth")
+        .map<{ id: string; version: string }>(p => {
+          const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
+          return {
+            id,
+            version,
+          };
+        }) ?? [],
+    [rawSceneData],
   );
 
   const personalPlugins = useMemo(() => {
-    return rawSceneData
-      ? rawSceneData?.scene?.plugins
-          .filter(p => p.plugin?.id !== "reearth")
-          .map<PluginItem>(p => ({
-            title: p.plugin?.translatedName ?? "",
-            bodyMarkdown: p.plugin?.translatedDescription ?? "",
-            author: p.plugin?.author ?? "",
-            // thumbnailUrl: p.plugin?.thumbnailUrl,
-            isInstalled: true,
-            pluginId: p.plugin?.id ?? "",
-          }))
-      : [];
+    return (
+      rawSceneData?.scene?.plugins
+        .filter(p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~").length == 3)
+        .map<PluginItem>(p => ({
+          title: p.plugin?.translatedName ?? "",
+          bodyMarkdown: p.plugin?.translatedDescription ?? "",
+          author: p.plugin?.author ?? "",
+          // thumbnailUrl: p.plugin?.thumbnailUrl,
+          isInstalled: true,
+          pluginId: p.plugin?.id ?? "",
+        })) ?? []
+    );
   }, [rawSceneData]);
 
   const handleInstallByMarketplace = useCallback(
@@ -179,7 +177,7 @@ export default (projectId: string) => {
     currentTheme,
     currentLang: locale,
     loading,
-    marketplacePluginIds,
+    marketplacePlugins,
     personalPlugins,
     extensions,
     accessToken,

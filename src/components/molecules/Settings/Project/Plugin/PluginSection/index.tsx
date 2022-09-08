@@ -15,7 +15,7 @@ export type PluginItem = PluginItemType;
 export type Props = {
   title?: string;
   loading?: boolean;
-  marketplacePluginIds?:
+  marketplacePlugins?:
     | {
         id: string;
         version: string;
@@ -47,7 +47,7 @@ export type PluginTabs = "Marketplace" | "Public" | "Personal";
 
 const PluginSection: React.FC<Props> = ({
   loading,
-  marketplacePluginIds,
+  marketplacePlugins,
   personalPlugins,
   extensions,
   currentTheme,
@@ -100,7 +100,7 @@ const PluginSection: React.FC<Props> = ({
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    installedPlugins={marketplacePluginIds}
+                    installedPlugins={marketplacePlugins}
                     theme={currentTheme}
                     lang={currentLang}
                     accessToken={accessToken}
