@@ -21,7 +21,7 @@ type Marketplace struct {
 
 func New(endpoint string, conf *clientcredentials.Config) *Marketplace {
 	var client *http.Client
-	if conf == nil {
+	if conf != nil {
 		client = conf.Client(context.Background())
 	}
 	if client == nil {
