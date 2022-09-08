@@ -84,7 +84,8 @@ func TestMarketplace_FetchPluginPackage(t *testing.T) {
 	*/
 
 	httpmock.RegisterResponder(
-		"GET", "https://marketplace.example.com/api/plugins/testplugin/1.0.1.zip",
+		"GET",
+		"https://marketplace.example.com/api/plugins/testplugin/1.0.1.zip",
 		func(req *http.Request) (*http.Response, error) {
 			if req.Header.Get("Authorization") != "Bearer "+ac {
 				return httpmock.NewStringResponse(http.StatusUnauthorized, ""), nil
@@ -93,7 +94,7 @@ func TestMarketplace_FetchPluginPackage(t *testing.T) {
 		},
 	)
 
-	m := New("https://marketplace.example.com/", clientcredentials.Config{
+	m := New("https://marketplace.example.com/", &clientcredentials.Config{
 		ClientID:     "x",
 		ClientSecret: "y",
 		TokenURL:     "https://marketplace.example.com/oauth/token",
@@ -101,6 +102,34 @@ func TestMarketplace_FetchPluginPackage(t *testing.T) {
 			"audience": []string{"d"},
 		},
 	})
+	got, err := m.FetchPluginPackage(context.Background(), pid)
+	assert.NoError(t, err)
+	// no need to test pluginpack in detail here
+	assert.Equal(t, id.MustPluginID("testplugin~1.0.1"), got.Manifest.Plugin.ID())
+}
+
+func TestMarketplace_FetchPluginPackage_NoAuth(t *testing.T) {
+	pid := id.MustPluginID("testplugin~1.0.1")
+
+	f, err := os.Open("testdata/test.zip")
+	assert.NoError(t, err)
+	defer func() {
+		_ = f.Close()
+	}()
+	z, err := io.ReadAll(f)
+	assert.NoError(t, err)
+
+	httpmock.Activate()
+	defer httpmock.Deactivate()
+
+	httpmock.RegisterResponder(
+		"GET", "https://marketplace.example.com/api/plugins/testplugin/1.0.1.zip",
+		func(req *http.Request) (*http.Response, error) {
+			return httpmock.NewBytesResponse(http.StatusOK, z), nil
+		},
+	)
+
+	m := New("https://marketplace.example.com/", nil)
 	got, err := m.FetchPluginPackage(context.Background(), pid)
 	assert.NoError(t, err)
 	// no need to test pluginpack in detail here

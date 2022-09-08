@@ -19,10 +19,18 @@ type Marketplace struct {
 	client   *http.Client
 }
 
-func New(endpoint string, conf clientcredentials.Config) *Marketplace {
+func New(endpoint string, conf *clientcredentials.Config) *Marketplace {
+	var client *http.Client
+	if conf == nil {
+		client = conf.Client(context.Background())
+	}
+	if client == nil {
+		client = http.DefaultClient
+	}
+
 	return &Marketplace{
 		endpoint: strings.TrimSuffix(endpoint, "/"),
-		client:   conf.Client(context.Background()),
+		client:   client,
 	}
 }
 

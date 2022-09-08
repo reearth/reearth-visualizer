@@ -321,7 +321,7 @@ func addHTTPScheme(host string) string {
 
 type MarketplaceConfig struct {
 	Endpoint string
-	OAuth    OAuthClientCredentialsConfig
+	OAuth    *OAuthClientCredentialsConfig
 }
 
 type OAuthClientCredentialsConfig struct {
@@ -332,7 +332,11 @@ type OAuthClientCredentialsConfig struct {
 	Audience     []string
 }
 
-func (c OAuthClientCredentialsConfig) Config() clientcredentials.Config {
+func (c *OAuthClientCredentialsConfig) Config() *clientcredentials.Config {
+	if c == nil {
+		return nil
+	}
+
 	var params url.Values
 	if len(c.Audience) > 0 {
 		params = url.Values{
@@ -340,7 +344,7 @@ func (c OAuthClientCredentialsConfig) Config() clientcredentials.Config {
 		}
 	}
 
-	return clientcredentials.Config{
+	return &clientcredentials.Config{
 		ClientID:       c.ClientID,
 		ClientSecret:   c.ClientSecret,
 		TokenURL:       c.TokenURL,
