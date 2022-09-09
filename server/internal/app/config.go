@@ -333,7 +333,7 @@ type OAuthClientCredentialsConfig struct {
 }
 
 func (c *OAuthClientCredentialsConfig) Config() *clientcredentials.Config {
-	if c == nil {
+	if c == nil || c.ClientID == "" || c.ClientSecret == "" || c.TokenURL == "" {
 		return nil
 	}
 

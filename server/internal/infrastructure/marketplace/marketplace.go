@@ -36,7 +36,7 @@ func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (
 }
 
 func (m *Marketplace) getPluginURL(pid id.PluginID) (string, error) {
-	return fmt.Sprintf("%s/api/plugins/%s/%s.zip", m.endpoint, pid.Name(), pid.Version().String()), nil
+	return strings.TrimSpace(fmt.Sprintf("%s/api/plugins/%s/%s.zip", m.endpoint, pid.Name(), pid.Version().String())), nil
 }
 
 /*
@@ -96,7 +96,7 @@ type plugin struct {
 
 func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*pluginpack.Package, error) {
 	var client *http.Client
-	if m.conf != nil {
+	if m.conf != nil && m.conf.ClientID != "" && m.conf.ClientSecret != "" && m.conf.TokenURL != "" {
 		client = m.conf.Client(ctx)
 	}
 	if client == nil {
