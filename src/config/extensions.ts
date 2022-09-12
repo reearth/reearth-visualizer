@@ -29,7 +29,6 @@ export type ProjectPublicationExtensionProps = {
 } & SharedExtensionProps;
 
 export type PluginExtensionProps = {
-  selectedPluginId?: string;
   installedPlugins?: {
     id: string;
     version: string;
