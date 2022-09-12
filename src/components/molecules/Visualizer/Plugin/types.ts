@@ -82,6 +82,7 @@ export type Scene = {
   /** Current scene property */
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
+  readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
 };
 
 /** You can operate and get data about layers. */

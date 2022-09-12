@@ -60,6 +60,7 @@ export type Props = {
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
+  captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
 };
 
 export type Context = {
@@ -101,6 +102,7 @@ export function Provider({
   zoomIn,
   zoomOut,
   viewport,
+  captureScreen,
   onMouseEvent,
   children,
 }: Props): JSX.Element {
@@ -156,6 +158,7 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
+        captureScreen,
       }),
       overrideSceneProperty,
     }),
@@ -186,6 +189,7 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
+      captureScreen,
     ],
   );
 

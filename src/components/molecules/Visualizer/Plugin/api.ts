@@ -155,6 +155,7 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
+  captureScreen,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -179,6 +180,7 @@ export function commonReearth({
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -210,6 +212,7 @@ export function commonReearth({
         return sceneProperty();
       },
       overrideProperty: overrideSceneProperty,
+      captureScreen,
     },
     engineName,
     camera: {

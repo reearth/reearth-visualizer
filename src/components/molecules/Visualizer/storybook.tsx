@@ -92,6 +92,7 @@ export const context: ProviderProps = {
   layersInViewport: act("layersInViewport"),
   viewport: act("viewport"),
   onMouseEvent: act("onMouseEvent"),
+  captureScreen: act("captureScreen"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(
