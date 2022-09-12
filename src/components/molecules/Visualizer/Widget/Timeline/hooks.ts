@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
 
@@ -22,6 +22,7 @@ export const useTimeline = () => {
   );
   const [isOpened, setIsOpened] = useState(false);
   const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.currentTime).getTime());
+  const isClockInitialized = useRef(false);
   const clockCurrentTime = clock?.currentTime.getTime();
   const clockStartTime = clock?.startTime.getTime();
   const clockStopTime = clock?.stopTime.getTime();
@@ -75,19 +76,23 @@ export const useTimeline = () => {
     [clock, speed],
   );
 
-  const handleOnSpeedChange = useCallback((speed: number) => {
-    setSpeed(speed);
-    if (clock) {
-      const absSpeed = Math.abs(speed);
-      // Maybe we need to throttle changing speed.
-      clock.speed = clock.speed > 0 ? absSpeed : absSpeed * -1;
-      clock.tick();
-    }
-  }, []);
+  const handleOnSpeedChange = useCallback(
+    (speed: number) => {
+      setSpeed(speed);
+      if (clock) {
+        const absSpeed = Math.abs(speed);
+        // Maybe we need to throttle changing speed.
+        clock.speed = clock.speed > 0 ? absSpeed : absSpeed * -1;
+        clock.tick();
+      }
+    },
+    [clock],
+  );
 
   // Initialize clock value
   useEffect(() => {
-    if (clock) {
+    if (clock && !isClockInitialized.current) {
+      isClockInitialized.current = true;
       queueMicrotask(() => {
         clock.speed = 1;
         clock.tick();
