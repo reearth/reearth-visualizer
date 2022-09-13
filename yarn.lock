@@ -4294,6 +4294,11 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.2.tgz#423c77877d0569db20e1fc80885ac4118314010e"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
+"@tweenjs/tween.js@^18.6.4":
+  version "18.6.4"
+  resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-18.6.4.tgz#40a3d0a93647124872dec8e0fd1bd5926695b6ca"
+  integrity sha512-lB9lMjuqjtuJrx7/kOkqQBtllspPIN+96OvTCeJ2j5FEzinoAXTdAMFnDAQT1KVPRlnYfBrqxtqP66vDM40xxQ==
+
 "@types/apollo-upload-client@17.0.0":
   version "17.0.0"
   resolved "https://registry.yarnpkg.com/@types/apollo-upload-client/-/apollo-upload-client-17.0.0.tgz#e9ae78c3c3f1a70b5724616c83f5af2ad902f1d0"
@@ -5285,10 +5290,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zip.js/zip.js@^2.3.12":
-  version "2.6.18"
-  resolved "https://registry.yarnpkg.com/@zip.js/zip.js/-/zip.js-2.6.18.tgz#160521cbb1dde47c55789c4f9453bde3b5876853"
-  integrity sha512-KltaGn75SN6vRu+Us07kfwahd3fc110cwIf3Bd1FBDiwNmGmnGH52bwaMzZdBoPHtnKTziYOmcZ1N6JQKfUH6Q==
+"@zip.js/zip.js@2.4.x":
+  version "2.4.26"
+  resolved "https://registry.yarnpkg.com/@zip.js/zip.js/-/zip.js-2.4.26.tgz#b79bb2055dc6e185890ee01cdb710caba505d5b2"
+  integrity sha512-I9HBO3BHIxEMQmltmHM3iqUW6IHqi3gsL9wTSXvHTRpOrA6q2OxtR58EDSaOGjHhDVJ+wIOAxZyKq2x00AVmqw==
 
 abab@^2.0.6:
   version "2.0.6"
@@ -6936,12 +6941,13 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium@1.96.0:
-  version "1.96.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.96.0.tgz#72e38afa0289b532741a205bf8e0396eb3e7ef37"
-  integrity sha512-OTkkKpByP+8KQCd8i7EFHmnql8yW9gVS7bxE9DGWdEULinVp/hdt56bd6VtcElTakmWItqpSql1v6r2EoHU35g==
+cesium@1.97.0:
+  version "1.97.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.97.0.tgz#3b7c506f6499c77d232c4877fd0114abacdc1a16"
+  integrity sha512-owMehAM/32XplyyA8SiCdwr1q2fuhrKQMSVddOnpA3cdksWFIxg06KCnuO851lirQst10Gmdfi0JEEn43ub3rA==
   dependencies:
-    "@zip.js/zip.js" "^2.3.12"
+    "@tweenjs/tween.js" "^18.6.4"
+    "@zip.js/zip.js" "2.4.x"
     autolinker "^3.14.3"
     bitmap-sdf "^1.0.3"
     dompurify "^2.2.2"
@@ -6958,7 +6964,6 @@ cesium@1.96.0:
     protobufjs "7.0.0"
     rbush "^3.0.1"
     topojson-client "^3.1.0"
-    tween.js "^16.6.0"
     urijs "^1.19.7"
 
 chai@^4.3.6:
@@ -18555,11 +18560,6 @@ tunnel-agent@^0.6.0:
   integrity sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0=
   dependencies:
     safe-buffer "^5.0.1"
-
-tween.js@^16.6.0:
-  version "16.6.0"
-  resolved "https://registry.yarnpkg.com/tween.js/-/tween.js-16.6.0.tgz#739104c9336cc4f11ee53f9ce7cede51e6723624"
-  integrity sha512-IIhm0VsiBxNJO+WsXUvjcq+u3sKfOwSu67Yh9T5xSpXb2eHHi9+uZDDGBc7uMXjfud0bYiLkYCEb7JXIGXi5KA==
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
