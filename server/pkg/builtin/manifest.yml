@@ -1287,10 +1287,24 @@ extensions:
         - id: default
           title: Model
           fields:
+            - id: sourceType
+              type: string
+              title: Source type
+              description: choose the tiles source type between 3D tileset or OSM building.
+              defaultValue: url
+              choices:
+                - key: url
+                  label: URL
+                - key: OSM
+                  label: OSM Buildings
             - id: tileset
               type: url
               title: Tileset URL
               description: A path to tileset.json in 3D tiles
+              availableIf:
+                field: sourceType
+                type: string
+                value: url
             - id: styleUrl
               type: url
               title: Styling URL
@@ -1300,6 +1314,10 @@ extensions:
               title: Shadows
               description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
               defaultValue: disabled
+              availableIf:
+                field: sourceType
+                type: string
+                value: url
               choices:
                 - key: disabled
                   label: Disabled
