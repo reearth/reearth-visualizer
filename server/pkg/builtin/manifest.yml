@@ -1295,7 +1295,7 @@ extensions:
               choices:
                 - key: url
                   label: URL
-                - key: OSM
+                - key: osm
                   label: OSM Buildings
             - id: tileset
               type: url
