@@ -1314,10 +1314,6 @@ extensions:
               title: Shadows
               description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
               defaultValue: disabled
-              availableIf:
-                field: sourceType
-                type: string
-                value: url
               choices:
                 - key: disabled
                   label: Disabled

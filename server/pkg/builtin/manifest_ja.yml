@@ -570,14 +570,14 @@ extensions:
         title: 3Dタイル
         fields:
           sourceType:
-            title: Source type
-            description: choose the tiles source type between 3D tileset or OSM building.
+            title: 種類
+            description: 3Dタイルの種類を選択します。
             choices:
               url: URL
-              OSM: OSM Buildings
+              osm: OSM Buildings
           tileset:
-            title: Tileset URL
-            description: A path to tileset.json in 3D tiles
+            title: タイルセットURL
+            description: 3Dタイルデータ内の tileset.json のURL
           styleUrl:
             title: スタイルURL
             description: 3D Tiles styles が記述されたJSONのURL。スタイルを適用することができます。設定は任意です。
