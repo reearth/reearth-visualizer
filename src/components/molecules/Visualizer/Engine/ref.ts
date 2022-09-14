@@ -64,6 +64,17 @@ export type EngineRef = {
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  enableScreenSpaceCameraController: (enabled: boolean) => void;
+  lookHorizontal: (amount: number) => void;
+  lookVertical: (amount: number) => void;
+  moveForward: (amount: number) => void;
+  moveBackward: (amount: number) => void;
+  moveUp: (amount: number) => void;
+  moveDown: (amount: number) => void;
+  moveLeft: (amount: number) => void;
+  moveRight: (amount: number) => void;
+  moveOverTerrain: (offset?: number) => void;
+  flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

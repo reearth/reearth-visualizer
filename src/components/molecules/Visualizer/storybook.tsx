@@ -93,6 +93,17 @@ export const context: ProviderProps = {
   viewport: act("viewport"),
   onMouseEvent: act("onMouseEvent"),
   captureScreen: act("captureScreen"),
+  enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
+  lookHorizontal: act("lookHorizontal"),
+  lookVertical: act("lookVertical"),
+  moveForward: act("moveForward"),
+  moveBackward: act("moveBackward"),
+  moveUp: act("moveUp"),
+  moveDown: act("moveDown"),
+  moveLeft: act("moveLeft"),
+  moveRight: act("moveRight"),
+  moveOverTerrain: act("moveOverTerrain"),
+  flyToGround: act("flyToGround"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

@@ -156,6 +156,17 @@ export function commonReearth({
   zoomOut,
   viewport,
   captureScreen,
+  enableScreenSpaceCameraController,
+  lookHorizontal,
+  lookVertical,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveOverTerrain,
+  flyToGround,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -181,6 +192,17 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
+  enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
+  lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
+  lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
+  moveForward: GlobalThis["reearth"]["camera"]["moveForward"];
+  moveBackward: GlobalThis["reearth"]["camera"]["moveBackward"];
+  moveUp: GlobalThis["reearth"]["camera"]["moveUp"];
+  moveDown: GlobalThis["reearth"]["camera"]["moveDown"];
+  moveLeft: GlobalThis["reearth"]["camera"]["moveLeft"];
+  moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
+  moveOverTerrain: GlobalThis["reearth"]["camera"]["moveOverTerrain"];
+  flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -198,6 +220,17 @@ export function commonReearth({
         get viewport() {
           return viewport();
         },
+        enableScreenSpaceController: enableScreenSpaceCameraController,
+        lookHorizontal,
+        lookVertical,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
+        moveOverTerrain,
+        flyToGround,
       },
       get property() {
         return sceneProperty();
@@ -226,6 +259,17 @@ export function commonReearth({
       get viewport() {
         return viewport();
       },
+      enableScreenSpaceController: enableScreenSpaceCameraController,
+      lookHorizontal,
+      lookVertical,
+      moveForward,
+      moveBackward,
+      moveUp,
+      moveDown,
+      moveLeft,
+      moveRight,
+      moveOverTerrain,
+      flyToGround,
     },
     layers: {
       get layersInViewport() {

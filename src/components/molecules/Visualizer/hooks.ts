@@ -432,6 +432,17 @@ function useProviderProps(
     | "viewport"
     | "onMouseEvent"
     | "captureScreen"
+    | "enableScreenSpaceCameraController"
+    | "lookHorizontal"
+    | "lookVertical"
+    | "moveForward"
+    | "moveBackward"
+    | "moveUp"
+    | "moveDown"
+    | "moveLeft"
+    | "moveRight"
+    | "moveOverTerrain"
+    | "flyToGround"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -526,6 +537,81 @@ function useProviderProps(
     [engineRef],
   );
 
+  const enableScreenSpaceCameraController = useCallback(
+    (enabled: boolean) => engineRef?.current?.enableScreenSpaceCameraController(enabled),
+    [engineRef],
+  );
+
+  const lookHorizontal = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookHorizontal(amount);
+    },
+    [engineRef],
+  );
+
+  const lookVertical = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookVertical(amount);
+    },
+    [engineRef],
+  );
+
+  const moveForward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveForward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveBackward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveBackward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveUp = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveUp(amount);
+    },
+    [engineRef],
+  );
+
+  const moveDown = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveDown(amount);
+    },
+    [engineRef],
+  );
+
+  const moveLeft = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveLeft(amount);
+    },
+    [engineRef],
+  );
+
+  const moveRight = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveRight(amount);
+    },
+    [engineRef],
+  );
+
+  const moveOverTerrain = useCallback(
+    (offset?: number) => {
+      return engineRef.current?.moveOverTerrain(offset);
+    },
+    [engineRef],
+  );
+
+  const flyToGround = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions, offset?: number) => {
+      engineRef.current?.flyToGround(dest, options, offset);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -538,5 +624,16 @@ function useProviderProps(
     viewport,
     onMouseEvent,
     captureScreen,
+    enableScreenSpaceCameraController,
+    lookHorizontal,
+    lookVertical,
+    moveForward,
+    moveBackward,
+    moveUp,
+    moveDown,
+    moveLeft,
+    moveRight,
+    moveOverTerrain,
+    flyToGround,
   };
 }

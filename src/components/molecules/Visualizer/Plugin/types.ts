@@ -281,6 +281,21 @@ export type Camera = {
   readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  readonly enableScreenSpaceController: (enabled: boolean) => void;
+  readonly lookHorizontal: (amount: number) => void;
+  readonly lookVertical: (amount: number) => void;
+  readonly moveForward: (amount: number) => void;
+  readonly moveBackward: (amount: number) => void;
+  readonly moveUp: (amount: number) => void;
+  readonly moveDown: (amount: number) => void;
+  readonly moveLeft: (amount: number) => void;
+  readonly moveRight: (amount: number) => void;
+  readonly moveOverTerrain: (offset?: number) => void;
+  readonly flyToGround: (
+    destination: FlyToDestination,
+    options?: CameraOptions,
+    offset?: number,
+  ) => void;
 };
 
 /** Represents the camera position and state */
