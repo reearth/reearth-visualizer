@@ -569,6 +569,12 @@ extensions:
       default:
         title: 3Dタイル
         fields:
+          sourceType:
+            title: 種類
+            description: 3Dタイルの種類を選択します。
+            choices:
+              url: URL
+              osm: OSM Buildings
           tileset:
             title: タイルセットURL
             description: 3Dタイルデータ内の tileset.json のURL

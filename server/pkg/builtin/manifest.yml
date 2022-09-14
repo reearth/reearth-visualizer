@@ -1287,10 +1287,24 @@ extensions:
         - id: default
           title: Model
           fields:
+            - id: sourceType
+              type: string
+              title: Source type
+              description: Choose between an external 3D tileset or the OSM building 3d tileset.
+              defaultValue: url
+              choices:
+                - key: url
+                  label: URL
+                - key: osm
+                  label: OSM Buildings
             - id: tileset
               type: url
               title: Tileset URL
               description: A path to tileset.json in 3D tiles
+              availableIf:
+                field: sourceType
+                type: string
+                value: url
             - id: styleUrl
               type: url
               title: Styling URL
