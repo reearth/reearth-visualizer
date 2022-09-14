@@ -1290,7 +1290,7 @@ extensions:
             - id: sourceType
               type: string
               title: Source type
-              description: choose the tiles source type between 3D tileset or OSM building.
+              description: Choose between an external 3D tileset or the OSM building 3d tileset.
               defaultValue: url
               choices:
                 - key: url
