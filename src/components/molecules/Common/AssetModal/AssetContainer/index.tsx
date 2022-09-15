@@ -73,6 +73,7 @@ const AssetContainer: React.FC<Props> = ({
   onSelect,
   onSortChange,
   onSearch,
+  onURLShow,
 }) => {
   const t = useT();
   const {
@@ -105,6 +106,10 @@ const AssetContainer: React.FC<Props> = ({
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
   }, [hasMoreAssets, isLoading, onGetMore]);
+
+  useEffect(() => {
+    onURLShow?.(assets);
+  }, [onURLShow, assets]);
 
   return (
     <Wrapper>

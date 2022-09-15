@@ -1,4 +1,4 @@
-import React, { useCallback, useState, ComponentType } from "react";
+import React, { useCallback, useState, ComponentType, useEffect } from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
@@ -55,11 +55,13 @@ const AssetModal: React.FC<Props> = ({
 
   const handleShowURL = useCallback(
     (assets?: AssetType[]) => {
-      setShowURL(
-        videoOnly || !!(selectedAssetUrl && !assets?.some(e => e.url === selectedAssetUrl)),
-      );
+      if (!assets) return;
+      const show =
+        videoOnly || !!(selectedAssetUrl && !assets.some(e => e.url === selectedAssetUrl));
+      setShowURL(show);
+      setTextUrl(show && initialAssetUrl ? initialAssetUrl : undefined);
     },
-    [videoOnly, selectedAssetUrl],
+    [videoOnly, initialAssetUrl, selectedAssetUrl],
   );
 
   const handleTextUrlChange = useCallback((text?: string) => {
@@ -74,7 +76,7 @@ const AssetModal: React.FC<Props> = ({
 
   const resetValues = useCallback(() => {
     setTextUrl(showURL && initialAssetUrl ? initialAssetUrl : undefined);
-    selectTab("assets");
+    selectTab(showURL ? "url" : "assets");
     selectAssetUrl(initialAssetUrl ?? undefined);
   }, [showURL, initialAssetUrl]);
 
@@ -82,6 +84,10 @@ const AssetModal: React.FC<Props> = ({
     resetValues();
     toggleAssetModal?.(false);
   }, [toggleAssetModal, resetValues]);
+
+  useEffect(() => {
+    selectTab(showURL ? "url" : "assets");
+  }, [showURL]);
 
   return videoOnly ? (
     <Modal

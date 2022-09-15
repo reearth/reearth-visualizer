@@ -46,13 +46,12 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
 
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
-      ?
-        IonResource.fromAssetId(96188) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
-      : sourceType === "url" && isVisible && tileset
+      ? IonResource.fromAssetId(96188) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
+      : isVisible && tileset
       ? tileset
       : null;
   }, [isVisible, sourceType, tileset]);
-  
+
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset
       ref={ref}
