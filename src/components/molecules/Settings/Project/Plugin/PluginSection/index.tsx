@@ -73,7 +73,7 @@ const PluginSection: React.FC<Props> = ({
       <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
         {{
           Marketplace: (
-            <Box p="2xl">
+            <Box pv="2xl">
               {accessToken &&
                 extensions?.library?.map(ext => (
                   <ext.component
@@ -89,7 +89,7 @@ const PluginSection: React.FC<Props> = ({
             </Box>
           ),
           Public: (
-            <Box p="2xl">
+            <Box>
               {accessToken &&
                 extensions?.installed?.map(ext => (
                   <ext.component
