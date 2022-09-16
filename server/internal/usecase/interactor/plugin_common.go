@@ -56,6 +56,12 @@ func (i *pluginCommon) GetOrDownloadPlugin(ctx context.Context, pid id.PluginID)
 	if plugin, err := i.pluginRepo.FindByID(ctx, pid); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return nil, err
 	} else if plugin != nil {
+		if plugin.ID().Scene() == nil {
+			if err := i.pluginRegistry.NotifyDownload(ctx, plugin.ID()); err != nil {
+				return nil, err
+			}
+		}
+
 		return plugin, nil
 	}
 

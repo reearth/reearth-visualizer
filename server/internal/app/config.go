@@ -321,6 +321,7 @@ func addHTTPScheme(host string) string {
 
 type MarketplaceConfig struct {
 	Endpoint string
+	Secret   string
 	OAuth    *OAuthClientCredentialsConfig
 }
 

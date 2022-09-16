@@ -12,4 +12,5 @@ var ErrFailedToFetchDataFromPluginRegistry = errors.New("failed to fetch data fr
 
 type PluginRegistry interface {
 	FetchPluginPackage(context.Context, id.PluginID) (*pluginpack.Package, error)
+	NotifyDownload(context.Context, id.PluginID) error
 }
