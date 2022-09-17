@@ -103,7 +103,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
         <li>
           <InputRangeLabel>
-            <InputRangeLabelText size="xs">{speed}X</InputRangeLabelText>
+            <InputRangeLabelText size="xs">{speed}x</InputRangeLabelText>
             <InputRange
               publishedTheme={publishedTheme}
               type="range"

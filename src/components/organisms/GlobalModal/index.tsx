@@ -39,7 +39,6 @@ const GlobalModal: React.FC = () => {
           theme={currentTheme}
           accessToken={accessToken}
           onLogOut={logout}
-          show
           onNotificationChange={handleNotificationChange}
         />
       ))}

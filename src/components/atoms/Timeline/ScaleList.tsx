@@ -58,7 +58,8 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
 const ScaleContainer = styled.div`
   display: flex;
-  min-width: 100%;
+  width: 0;
+
   height: 30px;
   align-items: flex-end;
   will-change: auto;
