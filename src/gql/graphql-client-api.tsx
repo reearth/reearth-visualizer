@@ -2695,6 +2695,15 @@ export type UninstallPluginMutationVariables = Exact<{
 
 export type UninstallPluginMutation = { __typename?: 'Mutation', uninstallPlugin?: { __typename?: 'UninstallPluginPayload', pluginId: string } | null };
 
+export type UpgradePluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['ID'];
+  toPluginId: Scalars['ID'];
+}>;
+
+
+export type UpgradePluginMutation = { __typename?: 'Mutation', upgradePlugin?: { __typename?: 'UpgradePluginPayload', scenePlugin: { __typename?: 'ScenePlugin', pluginId: string, propertyId?: string | null } } | null };
+
 export type GetProjectQueryVariables = Exact<{
   projectId: Scalars['ID'];
 }>;
@@ -5555,6 +5564,46 @@ export function useUninstallPluginMutation(baseOptions?: Apollo.MutationHookOpti
 export type UninstallPluginMutationHookResult = ReturnType<typeof useUninstallPluginMutation>;
 export type UninstallPluginMutationResult = Apollo.MutationResult<UninstallPluginMutation>;
 export type UninstallPluginMutationOptions = Apollo.BaseMutationOptions<UninstallPluginMutation, UninstallPluginMutationVariables>;
+export const UpgradePluginDocument = gql`
+    mutation UpgradePlugin($sceneId: ID!, $pluginId: ID!, $toPluginId: ID!) {
+  upgradePlugin(
+    input: {sceneId: $sceneId, pluginId: $pluginId, toPluginId: $toPluginId}
+  ) {
+    scenePlugin {
+      pluginId
+      propertyId
+    }
+  }
+}
+    `;
+export type UpgradePluginMutationFn = Apollo.MutationFunction<UpgradePluginMutation, UpgradePluginMutationVariables>;
+
+/**
+ * __useUpgradePluginMutation__
+ *
+ * To run a mutation, you first call `useUpgradePluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpgradePluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upgradePluginMutation, { data, loading, error }] = useUpgradePluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      pluginId: // value for 'pluginId'
+ *      toPluginId: // value for 'toPluginId'
+ *   },
+ * });
+ */
+export function useUpgradePluginMutation(baseOptions?: Apollo.MutationHookOptions<UpgradePluginMutation, UpgradePluginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpgradePluginMutation, UpgradePluginMutationVariables>(UpgradePluginDocument, options);
+      }
+export type UpgradePluginMutationHookResult = ReturnType<typeof useUpgradePluginMutation>;
+export type UpgradePluginMutationResult = Apollo.MutationResult<UpgradePluginMutation>;
+export type UpgradePluginMutationOptions = Apollo.BaseMutationOptions<UpgradePluginMutation, UpgradePluginMutationVariables>;
 export const GetProjectDocument = gql`
     query GetProject($projectId: ID!) {
   node(id: $projectId, type: PROJECT) {

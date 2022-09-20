@@ -8,9 +8,7 @@ import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
-// Components
-
-type Props = {
+export type Props = {
   projectId: string;
 };
 

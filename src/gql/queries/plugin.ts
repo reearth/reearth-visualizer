@@ -71,3 +71,14 @@ export const UNINSTALL_PLUGIN = gql`
     }
   }
 `;
+
+export const UPGRADE_PLUGIN = gql`
+  mutation UpgradePlugin($sceneId: ID!, $pluginId: ID!, $toPluginId: ID!) {
+    upgradePlugin(input: { sceneId: $sceneId, pluginId: $pluginId, toPluginId: $toPluginId }) {
+      scenePlugin {
+        pluginId
+        propertyId
+      }
+    }
+  }
+`;

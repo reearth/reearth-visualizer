@@ -8,9 +8,18 @@ import {
   useInstallPluginMutation,
   useUninstallPluginMutation,
   useUploadPluginMutation,
+  useUpgradePluginMutation,
 } from "@reearth/gql/graphql-client-api";
 import { useLang, useT } from "@reearth/i18n";
 import { useProject, useNotification, useCurrentTheme } from "@reearth/state";
+
+export type Plugin = {
+  fullId: string;
+  id: string;
+  version: string;
+  title?: string;
+  author?: string;
+};
 
 export default (projectId: string) => {
   const t = useT();
@@ -31,6 +40,7 @@ export default (projectId: string) => {
   const [installPluginMutation] = useInstallPluginMutation();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
+  const [upgradePluginMutation] = useUpgradePluginMutation();
 
   const extensions = useMemo(
     () => ({
@@ -50,14 +60,20 @@ export default (projectId: string) => {
   const marketplacePlugins = useMemo(
     () =>
       rawSceneData?.scene?.plugins
-        .filter(p => p.plugin?.id !== "reearth")
-        .map<{ id: string; version: string }>(p => {
-          const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
+        .filter(p => p.plugin && p.plugin?.id !== "reearth")
+        .map((p): Plugin | undefined => {
+          if (!p.plugin) return;
+          const fullId = p.plugin.id;
+          const [id, version] = fullId.split("~", 2);
           return {
+            fullId,
             id,
             version,
+            title: p.plugin.name,
+            author: p.plugin.author,
           };
-        }) ?? [],
+        })
+        .filter((p): p is Plugin => !!p) ?? [],
     [rawSceneData],
   );
 
@@ -77,12 +93,22 @@ export default (projectId: string) => {
   }, [rawSceneData]);
 
   const handleInstallByMarketplace = useCallback(
-    async (pluginId: string) => {
-      if (!sceneId) return;
-      const results = await installPluginMutation({
-        variables: { sceneId, pluginId },
-      });
-      if (results.errors || !results.data?.installPlugin?.scenePlugin) {
+    async (pluginId: string | undefined, oldPluginId?: string) => {
+      if (!sceneId || !pluginId) return;
+
+      const results = await (oldPluginId
+        ? upgradePluginMutation({
+            variables: {
+              sceneId,
+              pluginId: oldPluginId,
+              toPluginId: pluginId,
+            },
+          })
+        : await installPluginMutation({
+            variables: { sceneId, pluginId },
+          }));
+
+      if (results.errors) {
         setNotification({
           type: "error",
           text: t("Failed to install plugin."),
@@ -95,7 +121,7 @@ export default (projectId: string) => {
         await client.resetStore();
       }
     },
-    [client, installPluginMutation, sceneId, setNotification, t],
+    [client, installPluginMutation, sceneId, setNotification, t, upgradePluginMutation],
   );
 
   const handleInstallByUploadingZipFile = useCallback(

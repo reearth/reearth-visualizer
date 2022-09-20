@@ -16,8 +16,11 @@ export type Props = {
   loading?: boolean;
   marketplacePlugins?:
     | {
+        fullId: string;
         id: string;
         version: string;
+        title?: string;
+        author?: string;
       }[]
     | undefined;
   personalPlugins?: PluginItem[];
