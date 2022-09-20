@@ -9,25 +9,24 @@ import (
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(ctx context.Context, mc *mongo.Client, databaseName string) (*repo.Container, error) {
-	if databaseName == "" {
-		databaseName = "reearth"
-	}
-
-	db := mc.Database(databaseName)
+func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
 	}
 
 	client := mongox.NewClientWithDatabase(db)
+
+	authRequest := authserver.NewMongo(client.WithCollection("authRequest"))
+
 	c := &repo.Container{
 		Asset:          NewAsset(client),
-		AuthRequest:    authserver.NewMongo(client.WithCollection("authRequest")),
+		AuthRequest:    authRequest,
 		Config:         NewConfig(db.Collection("config"), lock),
 		DatasetSchema:  NewDatasetSchema(client),
 		Dataset:        NewDataset(client),
@@ -44,6 +43,11 @@ func New(ctx context.Context, mc *mongo.Client, databaseName string) (*repo.Cont
 		Transaction:    mongox.NewTransaction(client),
 		Policy:         NewPolicy(client),
 		Lock:           lock,
+	}
+
+	// init
+	if err := util.Try(authRequest.Init); err != nil {
+		return nil, err
 	}
 
 	// migration

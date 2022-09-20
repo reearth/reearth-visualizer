@@ -33,9 +33,10 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 			SetMonitor(otelmongo.NewMonitor()),
 	)
 	if err != nil {
-		log.Fatalf("repo initialization error: %+v\n", err)
+		log.Fatalf("mongo error: %+v\n", err)
 	}
-	repos, err := mongorepo.New(ctx, client, "reearth")
+
+	repos, err := mongorepo.New(ctx, client.Database("reearth"))
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}
