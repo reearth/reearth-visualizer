@@ -64,13 +64,12 @@ export function exposed({
         }),
         layers: merge(commonReearth.layers, {
           get add() {
-            return (layer: Layer, parentId?: string) => {
+            return (layer: Layer, parentId?: string) =>
               commonReearth.layers.add(
                 layer,
                 parentId,
                 plugin ? `${plugin.id}/${plugin.extensionId}` : "",
               );
-            };
           },
         }),
         ui: {
