@@ -1,8 +1,6 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.11.0 - 2022-09-15
-
 ## 0.10.0 - 2022-08-10
 
 ### 🚀 Features
