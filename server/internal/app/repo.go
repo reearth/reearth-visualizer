@@ -72,7 +72,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
-		gateways.PluginRegistry = marketplace.New(conf.Marketplace.Endpoint, conf.Marketplace.OAuth.Config())
+		gateways.PluginRegistry = marketplace.New(conf.Marketplace.Endpoint, conf.Marketplace.Secret, conf.Marketplace.OAuth.Config())
 	}
 
 	// release lock of all scenes

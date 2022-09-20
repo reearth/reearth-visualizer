@@ -13,89 +13,97 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
+const (
+	secretHeader           string = "X-Reearth-Secret"
+	pluginPackageSizeLimit int64  = 10 * 1024 * 1024 // 10MB
+)
 
 type Marketplace struct {
 	endpoint string
+	secret   string
 	conf     *clientcredentials.Config
 }
 
-func New(endpoint string, conf *clientcredentials.Config) *Marketplace {
+func New(endpoint, secret string, conf *clientcredentials.Config) *Marketplace {
 	return &Marketplace{
 		endpoint: strings.TrimSuffix(endpoint, "/"),
+		secret:   secret,
 		conf:     conf,
 	}
 }
 
 func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (*pluginpack.Package, error) {
-	purl, err := m.getPluginURL(pid)
+	url, err := m.getPluginURL(pid)
 	if err != nil {
 		return nil, err
 	}
-	return m.downloadPluginPackage(ctx, purl)
-}
 
-func (m *Marketplace) getPluginURL(pid id.PluginID) (string, error) {
-	return strings.TrimSpace(fmt.Sprintf("%s/api/plugins/%s/%s.zip", m.endpoint, pid.Name(), pid.Version().String())), nil
-}
+	log.Infof("marketplace: downloading plugin package from \"%s\"", url)
 
-/*
-func (m *Marketplace) getPluginURL(ctx context.Context, pid id.PluginID) (string, error) {
-	body := strings.NewReader(fmt.Sprintf(
-		`{"query":"query { node(id:"%s" type:PLUGIN) { ...Plugin { url } } }"}`,
-		pid.Name(),
-	))
-	req, err := http.NewRequestWithContext(ctx, "POST", m.endpoint+"/graphql", body)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-
-	res, err := m.client.Do(req)
+	if m.secret != "" {
+		req.Header.Set(secretHeader, m.secret)
+	}
+	res, err := m.client(ctx).Do(req)
 	if err != nil {
-		return "", rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalBy(err)
 	}
-	if res.StatusCode != http.StatusOK {
-		return "", rerror.ErrNotFound
-	}
+
 	defer func() {
 		_ = res.Body.Close()
 	}()
-	var pluginRes response
-	if err := json.NewDecoder(res.Body).Decode(&pluginRes); err != nil {
-		return "", rerror.ErrInternalBy(err)
-	}
-	if pluginRes.Errors != nil {
-		return "", rerror.ErrInternalBy(fmt.Errorf("gql returns errors: %v", pluginRes.Errors))
+
+	if res.StatusCode == http.StatusNotFound {
+		return nil, rerror.ErrNotFound
 	}
 
-	purl := pluginRes.PluginURL()
-	if purl == "" {
-		return "", rerror.ErrNotFound
+	if res.StatusCode != http.StatusOK {
+		return nil, rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
 	}
-	return purl, nil
+
+	return pluginpack.PackageFromZip(res.Body, nil, pluginPackageSizeLimit)
 }
 
-type response struct {
-	Data   pluginNodeQueryData `json:"data"`
-	Errors any                 `json:"errors"`
+func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error {
+	url, err := m.getPluginURL(pid)
+	if err != nil {
+		return err
+	}
+	url = url + "/download"
+
+	log.Infof("marketplace: notify donwload to \"%s\"", url)
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+	if m.secret != "" {
+		req.Header.Set(secretHeader, m.secret)
+	}
+
+	res, err := m.client(ctx).Do(req)
+	if err != nil {
+		return rerror.ErrInternalBy(err)
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusNotFound {
+		return rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
+	}
+	return nil
 }
 
-func (r response) PluginURL() string {
-	return r.Data.Node.URL
+func (m *Marketplace) getPluginURL(pid id.PluginID) (string, error) {
+	return strings.TrimSpace(fmt.Sprintf("%s/api/plugins/%s/%s", m.endpoint, pid.Name(), pid.Version().String())), nil
 }
 
-type pluginNodeQueryData struct {
-	Node plugin
-}
-
-type plugin struct {
-	URL string `json:"url"`
-}
-*/
-
-func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*pluginpack.Package, error) {
-	var client *http.Client
+func (m *Marketplace) client(ctx context.Context) (client *http.Client) {
 	if m.conf != nil && m.conf.ClientID != "" && m.conf.ClientSecret != "" && m.conf.TokenURL != "" {
 		client = m.conf.Client(ctx)
 	}
@@ -103,20 +111,5 @@ func (m *Marketplace) downloadPluginPackage(ctx context.Context, url string) (*p
 		client = http.DefaultClient
 	}
 
-	log.Infof("marketplace: downloading plugin package from \"%s\"", url)
-
-	res, err := client.Get(url)
-	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
-	}
-	defer func() {
-		_ = res.Body.Close()
-	}()
-	if res.StatusCode == http.StatusNotFound {
-		return nil, rerror.ErrNotFound
-	}
-	if res.StatusCode != http.StatusOK {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
-	}
-	return pluginpack.PackageFromZip(res.Body, nil, pluginPackageSizeLimit)
+	return
 }
