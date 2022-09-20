@@ -90,17 +90,19 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	// apis
 	api := e.Group("/api")
-	api.GET("/ping", Ping())
-	api.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
+	api.GET("/ping", Ping(), private)
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData())
-	api.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
-	api.POST("/signup", Signup())
+
+	apiPrivate := api.Group("", private)
+	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
+	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
+	apiPrivate.POST("/signup", Signup())
 
 	if !cfg.Config.AuthSrv.Disabled {
-		api.POST("/signup/verify", StartSignupVerify())
-		api.POST("/signup/verify/:code", SignupVerify())
-		api.POST("/password-reset", PasswordReset())
+		apiPrivate.POST("/signup/verify", StartSignupVerify())
+		apiPrivate.POST("/signup/verify/:code", SignupVerify())
+		apiPrivate.POST("/password-reset", PasswordReset())
 	}
 
 	published := e.Group("/p", PublishedAuthMiddleware())
@@ -168,4 +170,11 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 	}
 
 	return code, msg
+}
+
+func private(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderCacheControl, "private, no-store, no-cache, must-revalidate")
+		return next(c)
+	}
 }
