@@ -10,7 +10,7 @@ import { useTeam, useNotification } from "@reearth/state";
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
   const { isAuthenticated, isLoading, error: authError, logout, login } = useAuth();
-  const error = useCleanUrl();
+  const [error] = useCleanUrl();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentTeam, setTeam] = useTeam();
