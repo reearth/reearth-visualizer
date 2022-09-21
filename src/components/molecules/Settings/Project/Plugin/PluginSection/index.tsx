@@ -31,10 +31,10 @@ export type Props = {
   currentTheme?: "light" | "dark";
   currentLang?: string;
   accessToken?: string;
-  onInstallByMarketplace: (pluginId: string) => void;
+  onInstallFromMarketplace: (pluginId: string | undefined, oldPluginId?: string) => void;
   onInstallFromPublicRepo: (repoUrl: string) => void;
-  onInstallByUploadingZipFile: (files: FileList) => void;
-  uninstallPlugin: (pluginId: string) => void;
+  onInstallFromFile: (files: FileList) => void;
+  onUninstall: (pluginId: string) => void;
 };
 
 export type PluginPageMode = "list" | "install-way" | PluginActions;
@@ -55,10 +55,10 @@ const PluginSection: React.FC<Props> = ({
   currentTheme,
   currentLang,
   accessToken,
-  onInstallByMarketplace,
-  onInstallByUploadingZipFile,
+  onInstallFromMarketplace,
+  onInstallFromFile,
   onInstallFromPublicRepo,
-  uninstallPlugin,
+  onUninstall,
 }) => {
   const t = useT();
 
@@ -85,8 +85,8 @@ const PluginSection: React.FC<Props> = ({
                     lang={currentLang}
                     installedPlugins={marketplacePlugins}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
@@ -101,8 +101,8 @@ const PluginSection: React.FC<Props> = ({
                     theme={currentTheme}
                     lang={currentLang}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
@@ -113,8 +113,8 @@ const PluginSection: React.FC<Props> = ({
             <PluginInstall
               installedPlugins={personalPlugins}
               installFromPublicRepo={onInstallFromPublicRepo}
-              installByUploadingZipFile={onInstallByUploadingZipFile}
-              uninstallPlugin={uninstallPlugin}
+              installByUploadingZipFile={onInstallFromFile}
+              uninstallPlugin={onUninstall}
             />
           ),
         }}

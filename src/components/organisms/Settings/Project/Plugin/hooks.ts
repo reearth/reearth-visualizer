@@ -60,7 +60,7 @@ export default (projectId: string) => {
   const marketplacePlugins = useMemo(
     () =>
       rawSceneData?.scene?.plugins
-        .filter(p => p.plugin && p.plugin?.id !== "reearth")
+        .filter(p => p.plugin && p.plugin?.id !== "reearth" && p.plugin.id.split("~", 3).length < 3)
         .map((p): Plugin | undefined => {
           if (!p.plugin) return;
           const fullId = p.plugin.id;
@@ -80,19 +80,18 @@ export default (projectId: string) => {
   const personalPlugins = useMemo(() => {
     return (
       rawSceneData?.scene?.plugins
-        .filter(p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~").length == 3)
+        .filter(p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~", 3).length == 3)
         .map<PluginItem>(p => ({
           title: p.plugin?.translatedName ?? "",
           bodyMarkdown: p.plugin?.translatedDescription ?? "",
           author: p.plugin?.author ?? "",
-          // thumbnailUrl: p.plugin?.thumbnailUrl,
           isInstalled: true,
           pluginId: p.plugin?.id ?? "",
         })) ?? []
     );
   }, [rawSceneData]);
 
-  const handleInstallByMarketplace = useCallback(
+  const handleInstallPluginByMarketplace = useCallback(
     async (pluginId: string | undefined, oldPluginId?: string) => {
       if (!sceneId || !pluginId) return;
 
@@ -104,7 +103,7 @@ export default (projectId: string) => {
               toPluginId: pluginId,
             },
           })
-        : await installPluginMutation({
+        : installPluginMutation({
             variables: { sceneId, pluginId },
           }));
 
@@ -124,7 +123,7 @@ export default (projectId: string) => {
     [client, installPluginMutation, sceneId, setNotification, t, upgradePluginMutation],
   );
 
-  const handleInstallByUploadingZipFile = useCallback(
+  const handleInstallPluginFromFile = useCallback(
     async (files: FileList) => {
       if (!sceneId) return;
       const results = await Promise.all(
@@ -151,7 +150,7 @@ export default (projectId: string) => {
     [sceneId, uploadPluginMutation, client, setNotification, t],
   );
 
-  const handleInstallFromPublicRepo = useCallback(
+  const handleInstallPluginFromPublicRepo = useCallback(
     async (repoUrl: string) => {
       if (!sceneId) return;
       const results = await uploadPluginMutation({
@@ -173,7 +172,7 @@ export default (projectId: string) => {
     [sceneId, uploadPluginMutation, setNotification, t, client],
   );
 
-  const uninstallPlugin = useCallback(
+  const handleUninstallPlugin = useCallback(
     async (pluginId: string) => {
       const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
@@ -191,7 +190,6 @@ export default (projectId: string) => {
           text: t("Successfully removed plugin."),
         });
         await client.resetStore();
-        // await refetchInstalledPlugins();
       }
     },
     [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, t, client],
@@ -207,9 +205,9 @@ export default (projectId: string) => {
     personalPlugins,
     extensions,
     accessToken,
-    handleInstallByMarketplace,
-    handleInstallByUploadingZipFile,
-    handleInstallFromPublicRepo,
-    uninstallPlugin,
+    handleInstallPluginByMarketplace,
+    handleInstallPluginFromFile,
+    handleInstallPluginFromPublicRepo,
+    handleUninstallPlugin,
   };
 };
