@@ -12,7 +12,7 @@ export type Mode = "layer" | "widget";
 export default () => {
   const t = useT();
   const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
-  const error = useCleanUrl();
+  const [error, isErrorChecked] = useCleanUrl();
   const navigate = useNavigate();
   const [currentTeam, setTeam] = useTeam();
   const [, setNotification] = useNotification();
@@ -25,6 +25,7 @@ export default () => {
       const res = await axios.post(
         (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token,
       );
+
       if (res.status === 200) {
         setNotification({
           type: "success",
@@ -43,6 +44,8 @@ export default () => {
   );
 
   useEffect(() => {
+    if (!isErrorChecked || error) return;
+
     if (window.location.search) {
       const searchParam = new URLSearchParams(window.location.search).toString().split("=");
       if (searchParam[0] === "user-verification-token") {
@@ -67,22 +70,27 @@ export default () => {
     setTeam,
     data,
     teamId,
+    isErrorChecked,
+    error,
   ]);
 
   useEffect(() => {
-    if (authError || (isAuthenticated && !loading && data?.me === null)) {
+    if (isErrorChecked && (authError || (isAuthenticated && !loading && data?.me === null))) {
       logout();
     }
-  }, [authError, data?.me, isAuthenticated, loading, logout]);
+  }, [authError, data?.me, isAuthenticated, isErrorChecked, loading, logout]);
 
-  if (error) {
-    setNotification({
-      type: "error",
-      text: error,
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      setNotification({
+        type: "error",
+        text: error,
+      });
+    }
+  }, [error, setNotification]);
 
   return {
+    error,
     isLoading,
     isAuthenticated,
   };

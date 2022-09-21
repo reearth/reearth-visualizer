@@ -5,12 +5,16 @@ import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled, useTheme } from "@reearth/theme";
 
-const RootPage: React.FC = () => {
+export type Props = {
+  loading?: boolean;
+};
+
+const RootPage: React.FC<Props> = ({ loading }) => {
   const theme = useTheme();
   return (
     <Wrapper justify="center" align="center" direction="column">
       <StyledIcon icon="logo" size={200} />
-      <RingLoader size={35} color={theme.main.strongText} />
+      {loading && <RingLoader size={35} color={theme.main.strongText} />}
     </Wrapper>
   );
 };

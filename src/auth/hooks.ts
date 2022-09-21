@@ -24,9 +24,10 @@ export default function useAuth() {
   };
 }
 
-export function useCleanUrl() {
-  const { isAuthenticated, isLoading } = useAuth0();
+export function useCleanUrl(): [string | undefined, boolean] {
+  const { isLoading } = useAuth0();
   const [error, setError] = useState<string>();
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (isLoading) return; // ensure that Auth0 can detect errors
@@ -46,9 +47,10 @@ export function useCleanUrl() {
     const url = `${window.location.pathname}${queries ? "?" : ""}${queries}`;
 
     history.replaceState(null, document.title, url);
-  }, [isAuthenticated, isLoading]);
+    setDone(true);
+  }, [isLoading]);
 
-  return error;
+  return [error, done];
 }
 
 export function useAuthenticationRequired(): [boolean, string | undefined] {
@@ -67,7 +69,7 @@ export function useAuthenticationRequired(): [boolean, string | undefined] {
     login();
   }, [authError, isAuthenticated, isLoading, login, logout]);
 
-  const error = useCleanUrl();
+  const [error] = useCleanUrl();
 
   return [isAuthenticated, error];
 }
