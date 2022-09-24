@@ -1,6 +1,11 @@
 Continue: 続ける
 Cancel: キャンセル
 Drop here: ここにドロップ
+aria-label-compass: コンパス
+aria-label-adjust-angle: 角度を調節する
+aria-label-zoom-out: ズームアウト
+aria-label-Go-to-the-home-position: 元の位置に戻る
+aria-label-zoom-in: ズームイン
 Notfound: ページが見つかりません
 Published: 一般公開
 Unpublished: 非公開
@@ -56,10 +61,10 @@ Save: 保存
 Select Asset: 選択
 Select: 選択
 Resource URL: リソースURL
-Account Settings: アカウント設定
-Log out: ログアウト
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
+Account Settings: アカウント設定
+Log out: ログアウト
 Create New Project: 新規プロジェクト作成
 Create: 作成
 Project Name: プロジェクト名
