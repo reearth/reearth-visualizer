@@ -1944,3 +1944,13 @@ extensions:
         zone: outer
         section: center
         area: bottom
+  - id: navigator
+    type: widget
+    name: Navigator
+    description: A navigator widget that allows for viewing the earth from various angle by operating menu.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: right
+        area: top
