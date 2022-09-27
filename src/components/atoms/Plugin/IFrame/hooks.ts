@@ -131,6 +131,8 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
+    linksToHead(doc, doc.body.querySelectorAll("link"));
+
     const onScriptsLoaded = () => {
       // post pending messages
       if (pendingMesages.current.length) {
@@ -227,4 +229,18 @@ function runScript(oldScript: HTMLScriptElement) {
       resolve();
     }
   });
+}
+
+function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
+  for (const link of links) {
+    const newLink = document.createElement("link");
+    for (const attr of link.attributes) {
+      newLink.setAttribute(attr.name, attr.value);
+    }
+    if (link.innerText) {
+      newLink.appendChild(document.createTextNode(link.innerText));
+    }
+    doc.head.appendChild(newLink);
+    doc.body.removeChild(link);
+  }
 }
