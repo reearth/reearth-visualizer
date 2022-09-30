@@ -41,7 +41,6 @@ export type PluginExtensionProps = {
 } & SharedExtensionProps;
 
 export type GlobalModalProps = {
-  show?: boolean;
   onLogOut?: () => void;
 } & SharedExtensionProps;
 
