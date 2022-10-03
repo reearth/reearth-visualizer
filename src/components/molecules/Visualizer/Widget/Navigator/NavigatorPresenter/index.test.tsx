@@ -1,6 +1,6 @@
 import { expect, test, vitest } from "vitest";
 
-import { fireEvent, render, screen, waitFor } from "@reearth/test/utils";
+import { fireEvent, render, screen } from "@reearth/test/utils";
 
 import Navigator from ".";
 
@@ -52,9 +52,19 @@ test("it should rotate compass by mouse operation", async () => {
 });
 
 test("it should orbit by mouse operation", async () => {
-  const onOrbitMock = vitest.fn();
+  const onMoveOrbitMock = vitest.fn();
+  const onStartOrbitMock = vitest.fn();
+  const onEndOrbitMock = vitest.fn();
   const onRotateMock = vitest.fn();
-  render(<Navigator degree={0} onRotate={onRotateMock} onOrbit={onOrbitMock} />);
+  render(
+    <Navigator
+      degree={0}
+      onRotate={onRotateMock}
+      onStartOrbit={onStartOrbitMock}
+      onEndOrbit={onEndOrbitMock}
+      onMoveOrbit={onMoveOrbitMock}
+    />,
+  );
 
   const angle = screen.getByLabelText("adjust angle");
   if (!angle.parentElement) {
@@ -70,29 +80,23 @@ test("it should orbit by mouse operation", async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(compassFocus).toHaveStyle({ transform: "rotate(90deg)" });
-  expect(onOrbitMock).toBeCalledWith({ x: 0, y: 0, degree: 90 });
+  expect(onStartOrbitMock).toBeCalled();
+  expect(onMoveOrbitMock).toBeCalledWith(90);
 
-  onOrbitMock.mockReset();
+  onMoveOrbitMock.mockReset();
 
   fireEvent.mouseMove(window);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(compassFocus).toHaveStyle({ transform: "rotate(90deg)" });
-  expect(onOrbitMock).toBeCalledWith({ x: 0, y: 0, degree: 90 });
-
-  // it should do auto rotate when compassFocus degree is `0 <= degree <= 180`
-  await waitFor(() => {
-    expect(onRotateMock).toBeCalledWith(5);
-  });
+  expect(onMoveOrbitMock).toBeCalledWith(90);
 
   fireEvent.mouseMove(window, { clientX: -10, clientY: -10 });
-  // it should do auto reverse rotation when compassFocus degree is other than `0 <= degree <= 180`
-  await waitFor(() => {
-    expect(onRotateMock).toBeCalledWith(0);
-  });
 
-  onOrbitMock.mockReset();
+  onMoveOrbitMock.mockReset();
 
   fireEvent.mouseUp(window);
+  expect(onEndOrbitMock).toBeCalled();
+
   fireEvent.mouseMove(window);
-  expect(onOrbitMock).not.toBeCalled();
+  expect(onMoveOrbitMock).not.toBeCalled();
 });

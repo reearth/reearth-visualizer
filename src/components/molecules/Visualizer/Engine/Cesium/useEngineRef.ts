@@ -24,6 +24,8 @@ import {
   moveRight,
   moveOverTerrain,
   flyToGround,
+  getCenterCamera,
+  zoom,
 } from "./common";
 
 export default function useEngineRef(
@@ -98,15 +100,65 @@ export default function useEngineRef(
             }
           : undefined;
       },
-      zoomIn: amount => {
+      zoomIn: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer.scene?.camera.zoomIn(amount);
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        zoom({ camera, scene, relativeAmount: 1 / amount }, options);
       },
-      zoomOut: amount => {
+      zoomOut: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.zoomOut(amount);
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        zoom({ camera, scene, relativeAmount: amount }, options);
+      },
+      orbit: radian => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+
+        const distance = 0.02;
+        const angle = radian + CesiumMath.PI_OVER_TWO;
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        const oldTransform = Cesium.Matrix4.clone(camera.transform);
+
+        const center = getCenterCamera({ camera, scene });
+        // Get fixed frame from center to globe ellipsoid.
+        const frame = Cesium.Transforms.eastNorthUpToFixedFrame(
+          center || camera.positionWC,
+          scene.globe.ellipsoid,
+        );
+
+        camera.lookAtTransform(frame);
+
+        if (center) {
+          camera.rotateLeft(x);
+          camera.rotateUp(y);
+        } else {
+          camera.look(Cesium.Cartesian3.UNIT_Z, x);
+          camera.look(camera.right, y);
+        }
+        camera.lookAtTransform(oldTransform);
+      },
+      rotateRight: radian => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        const oldTransform = Cesium.Matrix4.clone(camera.transform);
+        const frame = Cesium.Transforms.eastNorthUpToFixedFrame(
+          camera.positionWC,
+          scene.globe.ellipsoid,
+        );
+        camera.lookAtTransform(frame);
+        camera.rotateRight(radian - -camera.heading);
+        camera.lookAtTransform(oldTransform);
       },
       changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;

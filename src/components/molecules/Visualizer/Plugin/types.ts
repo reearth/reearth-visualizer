@@ -275,12 +275,16 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
-  readonly zoomIn: (amount: number) => void;
-  readonly zoomOut: (amount: number) => void;
+  readonly zoomIn: (amount: number, options?: CameraOptions) => void;
+  readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
   readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  /** Rotate the camera around the center of earth. */
+  readonly rotateRight: (radian: number) => void;
+  /** Move the angle of camera around the center of earth. */
+  readonly orbit: (radian: number) => void;
   readonly enableScreenSpaceController: (enabled: boolean) => void;
   readonly lookHorizontal: (amount: number) => void;
   readonly lookVertical: (amount: number) => void;

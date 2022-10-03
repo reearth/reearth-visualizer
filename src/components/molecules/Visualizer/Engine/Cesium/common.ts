@@ -26,6 +26,8 @@ import {
   Cartographic,
   EllipsoidTerrainProvider,
   sampleTerrainMostDetailed,
+  Ray,
+  IntersectionTests,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -33,7 +35,7 @@ import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
 
-import { Clock } from "../../Plugin/types";
+import { CameraOptions, Clock } from "../../Plugin/types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -305,6 +307,66 @@ export const animateFOV = ({
     );
   }
   return undefined;
+};
+
+/**
+ * Get the center of globe.
+ */
+export const getCenterCamera = ({
+  camera,
+  scene,
+}: {
+  camera: CesiumCamera;
+  scene: Scene;
+}): Cartesian3 | void => {
+  const result = new Cartesian3();
+  const ray = camera.getPickRay(camera.positionWC);
+  if (ray) {
+    ray.origin = camera.positionWC;
+    ray.direction = camera.directionWC;
+    return scene.globe.pick(ray, scene, result);
+  }
+};
+
+export const zoom = (
+  { camera, scene, relativeAmount }: { camera: CesiumCamera; scene: Scene; relativeAmount: number },
+  options?: CameraOptions,
+) => {
+  const center = getCenterCamera({ camera, scene });
+  const target =
+    center ||
+    IntersectionTests.grazingAltitudeLocation(
+      // Get the ray from cartographic to the camera direction
+      new Ray(
+        // Get the cartographic position of camera on 3D space.
+        scene.globe.ellipsoid.cartographicToCartesian(camera.positionCartographic),
+        // Get the camera direction.
+        camera.directionWC,
+      ),
+      scene.globe.ellipsoid,
+    );
+
+  if (!target) {
+    return;
+  }
+
+  const orientation = {
+    heading: camera.heading,
+    pitch: camera.pitch,
+    roll: camera.roll,
+  };
+
+  const cartesian3Scratch = new Cartesian3();
+  const direction = Cartesian3.subtract(camera.position, target, cartesian3Scratch);
+  const movementVector = Cartesian3.multiplyByScalar(direction, relativeAmount, direction);
+  const endPosition = Cartesian3.add(target, movementVector, target);
+
+  camera.flyTo({
+    destination: endPosition,
+    orientation: orientation,
+    duration: options?.duration || 0.5,
+    convert: false,
+  });
 };
 
 export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {

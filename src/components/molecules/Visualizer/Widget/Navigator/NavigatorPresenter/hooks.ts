@@ -1,6 +1,5 @@
 import { MouseEventHandler, useCallback, useEffect, useRef, useState } from "react";
 
-import { CompassAngle } from "./types";
 import { calculateDegreeOfCompass } from "./utils";
 
 const useReferredValue = <T = unknown>(val: T) => {
@@ -16,45 +15,50 @@ const useReferredValue = <T = unknown>(val: T) => {
 export const useNavigator = ({
   degree,
   onRotate,
-  onOrbit,
+  onMoveOrbit,
+  onStartOrbit,
+  onEndOrbit,
 }: {
   degree: number;
   onRotate?: (degree: number) => void;
-  onOrbit?: (angle: CompassAngle) => void;
+  onMoveOrbit?: (degree: number) => void;
+  onStartOrbit?: () => void;
+  onEndOrbit?: () => void;
 }) => {
   const [compassDegree, setCompassDegree] = useState(0);
-  const [compassFocusAngle, setCompassFocusAngle] = useState<CompassAngle>({
-    x: 0,
-    y: 0,
-    degree: 0,
-  });
+  const [compassFocusDegree, setCompassFocusDegree] = useState(0);
   const compassRef = useRef<HTMLDivElement | null>(null);
   const isRotatingRef = useRef(false);
   const shouldIncrementCompassDegreeOnMovingAngle = useRef(false);
   const [isMovingAngle, setIsMovingAngle] = useState(false);
   const isMovingAngleRef = useReferredValue(isMovingAngle);
   const onRotateRef = useReferredValue(onRotate);
-  const onOrbitRef = useReferredValue(onOrbit);
+  const onMoveOrbitRef = useReferredValue(onMoveOrbit);
+  const onStartOrbitRef = useReferredValue(onStartOrbit);
+  const onEndOrbitRef = useReferredValue(onEndOrbit);
 
-  const handleOnMouseDownCompass: MouseEventHandler<HTMLDivElement> = useCallback(e => {
-    const compass = compassRef.current;
-    if (!compass) {
-      return;
-    }
-    const rect = compass.getBoundingClientRect();
-    const degree = calculateDegreeOfCompass(
-      {
-        x: rect.x,
-        y: rect.y,
-        height: compass.clientHeight,
-        width: compass.clientWidth,
-      },
-      { x: e.clientX, y: e.clientY },
-    );
-    isRotatingRef.current = true;
-    setCompassDegree(degree);
-    onRotateRef.current?.(degree);
-  }, []);
+  const handleOnMouseDownCompass: MouseEventHandler<HTMLDivElement> = useCallback(
+    e => {
+      const compass = compassRef.current;
+      if (!compass) {
+        return;
+      }
+      const rect = compass.getBoundingClientRect();
+      const degree = calculateDegreeOfCompass(
+        {
+          x: rect.x,
+          y: rect.y,
+          height: compass.clientHeight,
+          width: compass.clientWidth,
+        },
+        { x: e.clientX, y: e.clientY },
+      );
+      isRotatingRef.current = true;
+      setCompassDegree(degree);
+      onRotateRef.current?.(degree);
+    },
+    [onRotateRef],
+  );
 
   const rotateCompassWhileMovingAngle = useCallback(() => {
     if (!isMovingAngleRef.current) {
@@ -64,11 +68,10 @@ export const useNavigator = ({
       const next = shouldIncrementCompassDegreeOnMovingAngle.current
         ? prevDegree + 1
         : prevDegree - 1;
-      onRotate?.(next);
       return next;
     });
     window.requestAnimationFrame(rotateCompassWhileMovingAngle);
-  }, []);
+  }, [isMovingAngleRef]);
 
   const handleOnMouseDownAngle: MouseEventHandler<HTMLDivElement> = useCallback(
     e => {
@@ -88,12 +91,13 @@ export const useNavigator = ({
       );
       setIsMovingAngle(true);
       isMovingAngleRef.current = true;
-      setCompassFocusAngle({ x: e.clientX, y: e.clientY, degree });
-      onOrbitRef.current?.({ x: e.clientX, y: e.clientY, degree });
+      setCompassFocusDegree(degree);
+      onStartOrbitRef.current?.();
+      onMoveOrbitRef.current?.(degree);
 
       rotateCompassWhileMovingAngle();
     },
-    [rotateCompassWhileMovingAngle],
+    [rotateCompassWhileMovingAngle, onMoveOrbitRef, isMovingAngleRef, onStartOrbitRef],
   );
 
   useEffect(() => {
@@ -131,13 +135,14 @@ export const useNavigator = ({
         },
         { x: e.clientX, y: e.clientY },
       );
-      setCompassFocusAngle({ x: e.clientX, y: e.clientY, degree });
-      onOrbitRef.current?.({ x: e.clientX, y: e.clientY, degree });
+      setCompassFocusDegree(degree);
+      onMoveOrbitRef.current?.(degree);
 
       shouldIncrementCompassDegreeOnMovingAngle.current = 0 <= degree && degree <= 180;
     };
     const handleOnMouseUp = () => {
       isRotatingRef.current = false;
+      onEndOrbitRef.current?.();
       setIsMovingAngle(false);
     };
     window.addEventListener("mousemove", handleOnMouseMoveCompass);
@@ -148,16 +153,25 @@ export const useNavigator = ({
       window.addEventListener("mousemove", handleOnMouseMoveAngle);
       window.addEventListener("mouseup", handleOnMouseUp);
     };
-  }, []);
+  }, [
+    isMovingAngleRef,
+    isRotatingRef,
+    onStartOrbitRef,
+    onEndOrbitRef,
+    onMoveOrbitRef,
+    onRotateRef,
+  ]);
 
   useEffect(() => {
-    setCompassDegree(degree);
-  }, [degree]);
+    if (!isRotatingRef.current && !isMovingAngleRef.current) {
+      setCompassDegree(degree);
+    }
+  }, [degree, isMovingAngleRef]);
 
   return {
     compassRef,
     compassDegree,
-    compassFocusAngle,
+    compassFocusDegree,
     isMovingAngle,
     handleOnMouseDownCompass,
     handleOnMouseDownAngle,

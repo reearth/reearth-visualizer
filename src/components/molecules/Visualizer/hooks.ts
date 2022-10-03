@@ -427,6 +427,8 @@ function useProviderProps(
     | "lookAt"
     | "zoomIn"
     | "zoomOut"
+    | "orbit"
+    | "rotateRight"
     | "layers"
     | "layersInViewport"
     | "viewport"
@@ -519,6 +521,20 @@ function useProviderProps(
   const zoomOut = useCallback(
     (amount: number) => {
       engineRef.current?.zoomOut(amount);
+    },
+    [engineRef],
+  );
+
+  const rotateRight = useCallback(
+    (radian: number) => {
+      engineRef.current?.rotateRight(radian);
+    },
+    [engineRef],
+  );
+
+  const orbit = useCallback(
+    (radian: number) => {
+      engineRef.current?.orbit(radian);
     },
     [engineRef],
   );
@@ -619,6 +635,8 @@ function useProviderProps(
     lookAt,
     zoomIn,
     zoomOut,
+    orbit,
+    rotateRight,
     layers,
     layersInViewport,
     viewport,

@@ -1,3 +1,6 @@
+export const degreeToRadian = (deg: number) => deg * (Math.PI / 180);
+export const radianToDegree = (rad: number) => rad * (180 / Math.PI);
+
 export const calculateDegreeOfCompass = (
   compass: {
     x: number;
@@ -20,5 +23,5 @@ export const calculateDegreeOfCompass = (
   // `Math.atan2` return radian but this is hard to handle it.
   // So we transform radian to degree the following mathematical formula.
   // `degree = radian * (180˚ / π)`
-  return Math.atan2(y, x) * (180 / Math.PI) + 90;
+  return radianToDegree(Math.atan2(y, x)) + 90;
 };

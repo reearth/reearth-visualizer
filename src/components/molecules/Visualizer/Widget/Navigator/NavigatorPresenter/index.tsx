@@ -1,12 +1,10 @@
 import { memo } from "react";
 
+import Icon from "@reearth/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
-import Icon from "../Icon";
-
 import { useNavigator } from "./hooks";
-import { CompassAngle } from "./types";
 
 export type Props = {
   degree: number;
@@ -21,7 +19,9 @@ export type Props = {
    * This event is invoked when inner mouse down on circle button and mouse move.
    * When mouse up, this event is stopped.
    */
-  onOrbit?: (angle: CompassAngle) => void;
+  onMoveOrbit?: (degree: number) => void;
+  onStartOrbit?: () => void;
+  onEndOrbit?: () => void;
   /**
    * This event is invoked when center of circle is clicked.
    */
@@ -34,10 +34,12 @@ export type Props = {
   onZoomOut?: () => void;
 };
 
-const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
+const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
   degree,
   onRotate,
-  onOrbit,
+  onStartOrbit,
+  onEndOrbit,
+  onMoveOrbit,
   onRestoreRotate,
   onClickHelp,
   onZoomIn,
@@ -46,11 +48,11 @@ const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
   const {
     compassRef,
     compassDegree,
-    compassFocusAngle,
+    compassFocusDegree,
     isMovingAngle,
     handleOnMouseDownAngle,
     handleOnMouseDownCompass,
-  } = useNavigator({ degree, onRotate, onOrbit });
+  } = useNavigator({ degree, onRotate, onStartOrbit, onEndOrbit, onMoveOrbit });
   const t = useT();
   return (
     <Container>
@@ -68,7 +70,7 @@ const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
           {isMovingAngle && (
             <CompassFocusIcon
               style={{
-                transform: `rotate(${compassFocusAngle.degree}deg)`,
+                transform: `rotate(${compassFocusDegree}deg)`,
               }}
               data-testId="compassFocus">
               <Icon icon="compassFocus" color="blue" alt="" size={30} />
@@ -81,14 +83,14 @@ const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
         <Help onClick={onClickHelp}>?</Help>
       </CompassContainer>
       <Tool>
-        <ToolIconButton onClick={onZoomOut}>
-          <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
-        </ToolIconButton>
-        <ToolIconButton onDoubleClick={onRestoreRotate}>
-          <Icon icon="house" aria-label={t("aria-label-Go-to-the-home-position")} size={16} />
-        </ToolIconButton>
         <ToolIconButton onClick={onZoomIn}>
           <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
+        </ToolIconButton>
+        <ToolIconButton onClick={onRestoreRotate}>
+          <Icon icon="house" aria-label={t("aria-label-Go-to-the-home-position")} size={16} />
+        </ToolIconButton>
+        <ToolIconButton onClick={onZoomOut}>
+          <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
         </ToolIconButton>
       </Tool>
     </Container>
@@ -116,6 +118,7 @@ const Help = styled.button`
   left: -28px;
   background: #4a4a4a;
   color: #fff;
+  user-select: none;
 `;
 
 const Compass = styled.div`
@@ -170,4 +173,4 @@ const ToolIconButton = styled.button`
   place-items: center;
 `;
 
-export default Navigator;
+export default NavigatorPresenter;
