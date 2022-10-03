@@ -13,3 +13,4 @@ prefixes:
   ci: false
   revert: false
 titleVersionPrefix: remove
+groupByScopes: false
