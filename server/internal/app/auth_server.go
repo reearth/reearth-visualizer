@@ -87,7 +87,7 @@ func (c *authServerConfig) Load(ctx context.Context) (*authserver.Config, error)
 	if err != nil {
 		return nil, err
 	}
-	if cfg.Auth == nil {
+	if cfg == nil || cfg.Auth == nil {
 		return nil, nil
 	}
 

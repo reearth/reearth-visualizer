@@ -2,7 +2,10 @@ lint:
 	golangci-lint run --fix
 
 test:
-	go test -race -v ./...
+	go test -race -short -v ./...
+
+e2e:
+	go test -v ./e2e/...
 
 build:
 	go build ./cmd/reearth
@@ -16,4 +19,4 @@ run-db:
 gql:
 	go generate ./internal/adapter/gql
 
-.PHONY: lint test build run-app run-db gql
+.PHONY: lint test e2e build run-app run-db gql
