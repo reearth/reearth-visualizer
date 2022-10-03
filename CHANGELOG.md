@@ -1,6 +1,61 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.11.0 - 2022-10-03
+
+### 🔧 Bug Fixes
+
+- Installed plugins are not displayed expectedly [`12d546`](https://github.com/reearth/reearth-web/commit/12d546)
+
+### 🚀 Features
+
+- Add 3D OSM building tiles ([#315](https://github.com/reearth/reearth-web/pull/315)) [`2eb89a`](https://github.com/reearth/reearth-web/commit/2eb89a)
+- Extend plugin API with camera control ([#311](https://github.com/reearth/reearth-web/pull/311)) [`c1190b`](https://github.com/reearth/reearth-web/commit/c1190b)
+- Extend plugin api with captureScreen ([#310](https://github.com/reearth/reearth-web/pull/310)) [`f03022`](https://github.com/reearth/reearth-web/commit/f03022)
+- Small update to dashboard UI&#x2F;UX and add marketplace button [`f580e6`](https://github.com/reearth/reearth-web/commit/f580e6)
+- Add global modal component and extension location ([#302](https://github.com/reearth/reearth-web/pull/302)) [`7362aa`](https://github.com/reearth/reearth-web/commit/7362aa)
+- Add overlay warning to earth editor if browser width is too narrow ([#304](https://github.com/reearth/reearth-web/pull/304)) [`7f5f91`](https://github.com/reearth/reearth-web/commit/7f5f91)
+- Add builtin timeline widget ([#285](https://github.com/reearth/reearth-web/pull/285)) [`f774ee`](https://github.com/reearth/reearth-web/commit/f774ee)
+- Add plugin settings extension support ([#293](https://github.com/reearth/reearth-web/pull/293)) [`abd1c2`](https://github.com/reearth/reearth-web/commit/abd1c2)
+
+### 🔧 Bug Fixes
+
+- Remove &#x60;show&#x60; props from modal extension ([#321](https://github.com/reearth/reearth-web/pull/321)) [`62eb73`](https://github.com/reearth/reearth-web/commit/62eb73)
+- Styles not working as expected in plugin ([#322](https://github.com/reearth/reearth-web/pull/322)) [`21329d`](https://github.com/reearth/reearth-web/commit/21329d)
+- Small type error [`21c8bc`](https://github.com/reearth/reearth-web/commit/21c8bc)
+- Stop redirect when an error occurs on top page [`236354`](https://github.com/reearth/reearth-web/commit/236354)
+- Installed plugins are not correctly listed [`ec305d`](https://github.com/reearth/reearth-web/commit/ec305d)
+- Exposed plugin api add layer does not return layer id ([#320](https://github.com/reearth/reearth-web/pull/320)) [`f504d2`](https://github.com/reearth/reearth-web/commit/f504d2)
+- Cannot to upgrade marketplace plugins ([#319](https://github.com/reearth/reearth-web/pull/319)) [`444fce`](https://github.com/reearth/reearth-web/commit/444fce)
+- Timeline width exceeding browser width ([#316](https://github.com/reearth/reearth-web/pull/316)) [`c6dbb3`](https://github.com/reearth/reearth-web/commit/c6dbb3)
+- 3d tile not updating until source type is selected ([#318](https://github.com/reearth/reearth-web/pull/318)) [`49a07b`](https://github.com/reearth/reearth-web/commit/49a07b)
+- Wrapper styles in plugin section for plugin extension ([#317](https://github.com/reearth/reearth-web/pull/317)) [`235440`](https://github.com/reearth/reearth-web/commit/235440)
+- Timeline speed bug ([#314](https://github.com/reearth/reearth-web/pull/314)) [`984be8`](https://github.com/reearth/reearth-web/commit/984be8)
+- Pass extensions to a plugin library extension [`744154`](https://github.com/reearth/reearth-web/commit/744154)
+- Print errors when failed to load extensions [`35a63f`](https://github.com/reearth/reearth-web/commit/35a63f)
+- Icon button transition happening when undesired ([#313](https://github.com/reearth/reearth-web/pull/313)) [`6a6d98`](https://github.com/reearth/reearth-web/commit/6a6d98)
+- Icon size being too small ([#309](https://github.com/reearth/reearth-web/pull/309)) [`3574f0`](https://github.com/reearth/reearth-web/commit/3574f0)
+- Change query param used by marketplace to be more concise [`9ba28c`](https://github.com/reearth/reearth-web/commit/9ba28c)
+- Dashboard project name not showing ([#307](https://github.com/reearth/reearth-web/pull/307)) [`6a30f5`](https://github.com/reearth/reearth-web/commit/6a30f5)
+- Plugin API update event gets called repeatedly, missing hook deps ([#306](https://github.com/reearth/reearth-web/pull/306)) [`47ec24`](https://github.com/reearth/reearth-web/commit/47ec24)
+- Update cesium to 1.97.0 [`4d993a`](https://github.com/reearth/reearth-web/commit/4d993a)
+- Play button does not work and some unexpected style on timeline widget ([#305](https://github.com/reearth/reearth-web/pull/305)) [`ce29a5`](https://github.com/reearth/reearth-web/commit/ce29a5)
+- Development error occurs when updating or DnD layers ([#299](https://github.com/reearth/reearth-web/pull/299)) [`efd079`](https://github.com/reearth/reearth-web/commit/efd079)
+- Project creation not creating a scene before earth editor becoming accessible [`a0a03e`](https://github.com/reearth/reearth-web/commit/a0a03e)
+- Device settings menu icon getting squished ([#298](https://github.com/reearth/reearth-web/pull/298)) [`91c312`](https://github.com/reearth/reearth-web/commit/91c312)
+- Remove unused GraphQL calls [`59f402`](https://github.com/reearth/reearth-web/commit/59f402)
+
+### 🎨 Styling
+
+- Update button and icon UX [`75e6f4`](https://github.com/reearth/reearth-web/commit/75e6f4)
+
+### Miscellaneous Tasks
+
+- Update dependency cesium to v1.97.0 ([#291](https://github.com/reearth/reearth-web/pull/291)) [`dcdf93`](https://github.com/reearth/reearth-web/commit/dcdf93)
+- Add remaining props to plugin settings extensions ([#312](https://github.com/reearth/reearth-web/pull/312)) [`893d32`](https://github.com/reearth/reearth-web/commit/893d32)
+- Plugin component supports modalContainer and popupContainer props ([#300](https://github.com/reearth/reearth-web/pull/300)) [`fc5f58`](https://github.com/reearth/reearth-web/commit/fc5f58)
+- Update cesium to v1.96 ([#303](https://github.com/reearth/reearth-web/pull/303)) [`4fc241`](https://github.com/reearth/reearth-web/commit/4fc241)
+
 ## 0.10.0 - 2022-08-10
 
 ### 🚀 Features
