@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"net"
+	"net/http"
 	"os"
 	"os/signal"
 
@@ -101,4 +103,16 @@ func (w *WebServer) Run() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+}
+
+func (w *WebServer) Serve(l net.Listener) error {
+	return w.appServer.Server.Serve(l)
+}
+
+func (w *WebServer) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
+	w.appServer.ServeHTTP(wr, r)
+}
+
+func (w *WebServer) Shutdown(ctx context.Context) error {
+	return w.appServer.Shutdown(ctx)
 }
