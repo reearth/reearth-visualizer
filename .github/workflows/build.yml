@@ -94,7 +94,7 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
-          commit: ${{ needs.info.outputs.sha_short }}
+          commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.name }}
           tag: ${{ needs.info.outputs.name }}
           body: ${{ needs.info.outputs.sha_short }}
@@ -110,7 +110,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: ${{ env.ARTIFACTS }},${{ env.ARTIFACTS_WEB }}
-          commit: ${{ needs.info.outputs.sha_short }}
+          commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.tag }}
           tag: ${{ needs.info.outputs.tag }}
           bodyFile: CHANGELOG_latest.md
