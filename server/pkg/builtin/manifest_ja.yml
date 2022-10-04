@@ -913,3 +913,6 @@ extensions:
   timeline:
     name: タイムライン
     description: 時系列データを表示するために、時刻を変更したり時間を再生したりすることができます。
+  navigator:
+    name: ナビゲーター
+    description: ナビゲータを操作することで地球を様々な角度から見ることができます。
