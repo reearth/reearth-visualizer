@@ -57,7 +57,7 @@ jobs:
     if: needs.info.outputs.name || needs.info.outputs.tag
     env:
       ARTIFACTS: server/dist/reearth_*.*
-      ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      ARTIFACTS_WEB: reearth-web_${{ needs.info.outputs.name || needs.info.outputs.tag }}.tar.gz
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -68,13 +68,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: "1.19"
-      - name: Fetch reearth-web release
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          repo: reearth/reearth-web
-          version: tags/${{ needs.info.outputs.name }}
-          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -83,6 +76,13 @@ jobs:
         env:
           SNAPSHOT: ${{ !needs.info.outputs.tag && '--snapshot' || '' }}
           GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.tag || '0.0.0' }}
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: reearth/reearth-web
+          version: tags/${{ needs.info.outputs.name || needs.info.outputs.tag }}
+          file: ${{ env.ARTIFACTS_WEB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Rename artifacts
         if: needs.info.outputs.name
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
@@ -97,7 +97,7 @@ jobs:
           commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.name }}
           tag: ${{ needs.info.outputs.name }}
-          body: ${{ github.sha }}
+          body: ${{ needs.info.outputs.sha_short }}
           prerelease: true
       - name: Download latest changelog
         if: needs.info.outputs.tag
@@ -167,8 +167,8 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth-web
-          version: tags/${{ needs.info.outputs.name }}
-          file: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+          version: tags/${{ needs.info.outputs.name || needs.info.outputs.tag }}
+          file: reearth-web_${{ needs.info.outputs.name || needs.info.outputs.tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth-web
