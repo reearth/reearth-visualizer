@@ -373,7 +373,7 @@ export default ({
 
 function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
   return t
-    .getPropertyNames()
+    .getPropertyIds()
     .reduce<{ key: string; value: any }[]>(
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
