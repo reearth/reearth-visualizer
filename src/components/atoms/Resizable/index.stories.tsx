@@ -8,7 +8,7 @@ const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
   style,
 }) => <div style={{ display: "flex", height: 400, ...style }}>{children}</div>;
 const Pane = <div style={{ flex: 1, background: "#ffffff" }} />;
-const Content = <div style={{ width: "100%", height: "100%", background: "#ffffff" }}></div>;
+const Content = <div style={{ width: "100%", height: "100%", background: "#ffffff" }} />;
 
 export default {
   title: "atoms/Resizable",

@@ -50,19 +50,17 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
       <SettingsHeader currentWorkspace={currentTeam} />
       <ProfileSection currentTeam={currentTeam} updateTeamName={updateName} owner={owner} />
       {!currentTeam?.personal && (
-        <>
-          <MembersSection
-            me={me}
-            owner={owner}
-            members={members}
-            searchedUser={searchedUser}
-            changeSearchedUser={changeSearchedUser}
-            searchUser={searchUser}
-            addMembersToTeam={addMembersToTeam}
-            updateMemberOfTeam={updateMemberOfTeam}
-            removeMemberFromTeam={removeMemberFromTeam}
-          />
-        </>
+        <MembersSection
+          me={me}
+          owner={owner}
+          members={members}
+          searchedUser={searchedUser}
+          changeSearchedUser={changeSearchedUser}
+          searchUser={searchUser}
+          addMembersToTeam={addMembersToTeam}
+          updateMemberOfTeam={updateMemberOfTeam}
+          removeMemberFromTeam={removeMemberFromTeam}
+        />
       )}
       {me.myTeam !== teamId && <DangerSection team={currentTeam} deleteTeam={deleteTeam} />}
     </SettingPage>

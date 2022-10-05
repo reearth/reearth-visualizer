@@ -32,19 +32,17 @@ const FontFormatField: React.FC<Props> = ({
   const inactive = !!linked || !!overridden || !!disabled;
 
   return (
-    <>
-      <CheckGroup<FontFormatKey>
-        className={className}
-        values={selectedValues}
-        inactive={inactive}
-        onChange={onChange}>
-        {formatItems.map(({ key, icon }) => (
-          <Check key={key} value={key} linked={linked} overridden={overridden}>
-            <Icon icon={icon} size={16} />
-          </Check>
-        ))}
-      </CheckGroup>
-    </>
+    <CheckGroup<FontFormatKey>
+      className={className}
+      values={selectedValues}
+      inactive={inactive}
+      onChange={onChange}>
+      {formatItems.map(({ key, icon }) => (
+        <Check key={key} value={key} linked={linked} overridden={overridden}>
+          <Icon icon={icon} size={16} />
+        </Check>
+      ))}
+    </CheckGroup>
   );
 };
 

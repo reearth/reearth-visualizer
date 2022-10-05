@@ -66,9 +66,7 @@ const RightMenu: React.FC = () => {
                   ) : selected === "widgets" ? (
                     <PropertyPane mode="widgets" />
                   ) : selected === "cluster" ? (
-                    <>
-                      <PropertyPane mode="cluster" />
-                    </>
+                    <PropertyPane mode="cluster" />
                   ) : (
                     <PropertyPane mode="scene" />
                   )}
@@ -83,11 +81,7 @@ const RightMenu: React.FC = () => {
           </>
         ),
         tag: (selected === "layer" || selected === "scene") && <TagPane mode={selected} />,
-        export: (selected === "layer" || selected === "scene") && (
-          <>
-            <ExportPane />
-          </>
-        ),
+        export: (selected === "layer" || selected === "scene") && <ExportPane />,
         dataset: selected === "dataset" && <DatasetInfoPane />,
       }}
     </TabArea>

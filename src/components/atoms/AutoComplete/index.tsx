@@ -88,7 +88,8 @@ function AutoComplete<Value extends string | number>({
             {i.label}
           </Option>
         );
-      })}></SelectCore>
+      })}
+    />
   );
 }
 

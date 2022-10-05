@@ -67,7 +67,7 @@
         "del-cli": "4.0.1",
         "dotenv": "16.0.1",
         "eslint": "8.23.0",
-        "eslint-config-reearth": "0.1.1",
+        "eslint-config-reearth": "0.2.1",
         "eslint-plugin-cypress": "2.12.1",
         "eslint-plugin-graphql": "4.0.0",
         "husky": "8.0.1",

@@ -63,7 +63,8 @@ const Select = <Value extends string | number>(
       value={selectedValue}
       options={children}
       fullWidth={fullWidth}
-      onChange={onChange}></SelectCore>
+      onChange={onChange}
+    />
   );
 };
 

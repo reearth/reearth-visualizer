@@ -72,54 +72,52 @@ const PluginSection: React.FC<Props> = ({
   );
 
   return (
-    <>
-      <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
-        {{
-          Marketplace: (
-            <Box pv="2xl">
-              {accessToken &&
-                extensions?.library?.map(ext => (
-                  <ext.component
-                    key={ext.id}
-                    theme={currentTheme}
-                    lang={currentLang}
-                    installedPlugins={marketplacePlugins}
-                    accessToken={accessToken}
-                    onInstall={onInstallFromMarketplace}
-                    onUninstall={onUninstall}
-                  />
-                ))}
-            </Box>
-          ),
-          Public: (
-            <Box>
-              {accessToken &&
-                extensions?.installed?.map(ext => (
-                  <ext.component
-                    key={ext.id}
-                    installedPlugins={marketplacePlugins}
-                    theme={currentTheme}
-                    lang={currentLang}
-                    accessToken={accessToken}
-                    onInstall={onInstallFromMarketplace}
-                    onUninstall={onUninstall}
-                  />
-                ))}
-            </Box>
-          ),
-          Personal: loading ? (
-            <Loading />
-          ) : (
-            <PluginInstall
-              installedPlugins={personalPlugins}
-              installFromPublicRepo={onInstallFromPublicRepo}
-              installByUploadingZipFile={onInstallFromFile}
-              uninstallPlugin={onUninstall}
-            />
-          ),
-        }}
-      </TabSection>
-    </>
+    <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
+      {{
+        Marketplace: (
+          <Box pv="2xl">
+            {accessToken &&
+              extensions?.library?.map(ext => (
+                <ext.component
+                  key={ext.id}
+                  theme={currentTheme}
+                  lang={currentLang}
+                  installedPlugins={marketplacePlugins}
+                  accessToken={accessToken}
+                  onInstall={onInstallFromMarketplace}
+                  onUninstall={onUninstall}
+                />
+              ))}
+          </Box>
+        ),
+        Public: (
+          <Box>
+            {accessToken &&
+              extensions?.installed?.map(ext => (
+                <ext.component
+                  key={ext.id}
+                  installedPlugins={marketplacePlugins}
+                  theme={currentTheme}
+                  lang={currentLang}
+                  accessToken={accessToken}
+                  onInstall={onInstallFromMarketplace}
+                  onUninstall={onUninstall}
+                />
+              ))}
+          </Box>
+        ),
+        Personal: loading ? (
+          <Loading />
+        ) : (
+          <PluginInstall
+            installedPlugins={personalPlugins}
+            installFromPublicRepo={onInstallFromPublicRepo}
+            installByUploadingZipFile={onInstallFromFile}
+            uninstallPlugin={onUninstall}
+          />
+        ),
+      }}
+    </TabSection>
   );
 };
 

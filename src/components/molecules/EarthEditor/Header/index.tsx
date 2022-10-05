@@ -60,7 +60,8 @@ const Header: React.FC<Props> = ({
         text={t("Preview")}
         buttonType="secondary"
         onClick={onPreviewOpen}
-        margin="0 12px 0 0"></PreviewButton>
+        margin="0 12px 0 0"
+      />
       <Dropdown
         ref={dropDownRef}
         openOnClick

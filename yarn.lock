@@ -9131,10 +9131,10 @@ eslint-config-prettier@8.5.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.5.0.tgz#5a81680ec934beca02c7b1a61cf8ca34b66feab1"
   integrity sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==
 
-eslint-config-reearth@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-reearth/-/eslint-config-reearth-0.1.1.tgz#433165e09537020ff30784e9e7e8ca0fda329ad5"
-  integrity sha512-tKAVDzyDtuCamVu2aQVYaJfDq8R9bRFvbx1mUOdxikdMIQhL7x//Ii5+5OJue7IXH2l8gfbuocSyVlBJd9Ep5A==
+eslint-config-reearth@0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-reearth/-/eslint-config-reearth-0.2.1.tgz#4e2e36843b12141f64cd02f6766365a867fc5ce5"
+  integrity sha512-HsIBrYc1CK5nsUOM2DK2sKdPsrCSunPeBcK2e6QOGRwt49GSIEAbFMGCaOFk8zu2Wqq6DtfD2wBM3nQQuLoV0Q==
   dependencies:
     "@typescript-eslint/eslint-plugin" "5.36.1"
     "@typescript-eslint/parser" "5.36.1"
