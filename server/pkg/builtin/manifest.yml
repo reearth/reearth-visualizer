@@ -18,6 +18,11 @@ extensions:
               type: camera
               title: Initial camera position
               description: The starting position of your project.
+            - id: allowEnterGround
+              type: bool
+              title: Enter the ground
+              defaultValue: false
+              description: Set to true to allow the camera to enter the surface of the earth.
             - id: terrain
               type: bool
               title: Terrain
