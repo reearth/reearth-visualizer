@@ -12,8 +12,8 @@ extensions:
             title: カメラ初期位置
             description: ページロード後最初に表示するカメラの位置を設定します。
           allowEnterGround:
-            title: ホゲホゲホゲ
-            description: ホゲホゲホゲホゲホゲホゲホゲホゲ。
+            title: 地下へ入る
+            description: Onにすることでカメラが地表面へ潜り込むようになります。
           terrain:
             title: 地形
             description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
