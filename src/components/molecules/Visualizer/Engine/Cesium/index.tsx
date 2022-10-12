@@ -137,6 +137,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
             ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
             : Number.POSITIVE_INFINITY
         }
+        enableCollisionDetection={!property?.default?.allowEnterGround}
       />
       <Camera
         onChange={handleCameraChange}

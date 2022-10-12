@@ -140,6 +140,7 @@ export type SceneProperty = {
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
+    allowEnterGround?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
