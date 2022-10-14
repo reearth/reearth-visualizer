@@ -157,13 +157,17 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     attachTag(ep.current?.cesiumElement, unselectableTag, true);
   }, [pos, isVisible, extrudePoints]);
 
+  const extrudePointsLineColor = useMemo(() => {
+    return Color.WHITE.withAlpha(0.4);
+  }, []);
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
         <Entity ref={ep}>
           <PolylineGraphics
             positions={extrudePoints}
-            material={Color.WHITE.withAlpha(0.4)}
+            material={extrudePointsLineColor}
             width={0.5}
           />
         </Entity>
