@@ -61,6 +61,7 @@ export type Props = {
   onAdd?: (id?: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
+  onZoomToLayer?: (selectedLayerId: string) => void;
 };
 
 const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
@@ -101,6 +102,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     onAdd,
     onGroupCreate,
     onImport,
+    onZoomToLayer,
   },
   ref,
 ) => {
@@ -245,6 +247,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                   onLayerImport={onImport}
                   onLayerRemove={onRemove}
                   onLayerGroupCreate={onGroupCreate}
+                  onZoomToLayer={onZoomToLayer}
                 />
               )}
             </LayerActionsWrapper>

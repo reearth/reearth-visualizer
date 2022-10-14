@@ -1,11 +1,6 @@
 Continue: 続ける
 Cancel: キャンセル
 Drop here: ここにドロップ
-aria-label-compass: コンパス
-aria-label-adjust-angle: 角度を調節する
-aria-label-zoom-out: ズームアウト
-aria-label-Go-to-the-home-position: 元の位置に戻る
-aria-label-zoom-in: ズームイン
 Notfound: ページが見つかりません
 Published: 一般公開
 Unpublished: 非公開
@@ -80,6 +75,7 @@ Manage Workspaces: ワークスペースを管理
 New Workspace: 新規ワークスペース
 Create New Workspace: 新規ワークスペース作成
 Workspace Name: ワークスペース名
+Plugin Marketplace: プラグインマーケットプレイス
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
 Quick Start: クイックスタート
 User guide: ユーザーガイド
@@ -119,9 +115,10 @@ Selectable Layers: 選択可能なレイヤー
 Add: 追加
 Remove: 削除
 Stories: ストーリー
-Delete selected layer.: 選択中のレイヤーを削除
-Create new folder.: 新規フォルダ作成
-Add Layer.: レイヤーを追加
+Delete Selected Layer: 選択中のレイヤーを削除
+Create New Folder: 新規フォルダ作成
+Add Layer: ''
+Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
 Scene: シーン
 Widgets: ウィジェット
@@ -243,7 +240,6 @@ You are uninstalling the selected plugin. The data used by this plugin may also 
 Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
 Installed: インストール済み
 Install: インストール
-Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
 Zip file from PC: PCからZipファイルをアップロード
@@ -285,6 +281,11 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: すべてのワークスペース
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
+aria-label-compass: コンパス
+aria-label-adjust-angle: 角度を調節する
+aria-label-zoom-in: ズームイン
+aria-label-Go-to-the-home-position: 元の位置に戻る
+aria-label-zoom-out: ズームアウト
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 Failed to add one or more assets.: アセットの作成に失敗しました。

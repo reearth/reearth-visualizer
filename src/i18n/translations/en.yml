@@ -1,11 +1,6 @@
 Continue: Continue
 Cancel: Cancel
 Drop here: Drop here
-aria-label-compass: compass
-aria-label-adjust-angle: adjust angle
-aria-label-zoom-out: zoom out
-aria-label-Go-to-the-home-position: Go to the home position
-aria-label-zoom-in: zoom in
 Notfound: Notfound
 Published: Published
 Unpublished: Unpublished
@@ -86,6 +81,7 @@ Manage Workspaces: Manage Workspaces
 New Workspace: New Workspace
 Create New Workspace: Create New Workspace
 Workspace Name: Workspace Name
+Plugin Marketplace: Plugin Marketplace
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
   You have no projects in your workspace. Click the button above in the Quick
   Start to create a project now!
@@ -129,9 +125,10 @@ Selectable Layers: Selectable Layers
 Add: Add
 Remove: Remove
 Stories: Stories
-Delete selected layer.: Delete selected layer.
-Create new folder.: Create new folder.
-Add Layer.: Add Layer.
+Delete Selected Layer: Delete Selected Layer
+Create New Folder: Create New Folder
+Add Layer: Add Layer
+Zoom To Layer: Zoom To Layer
 Delete the selected item.: Delete the selected item.
 Scene: Scene
 Widgets: Widgets
@@ -276,7 +273,6 @@ You are uninstalling the selected plugin. The data used by this plugin may also 
 Please be sure before uninstalling.: Please be sure before uninstalling.
 Installed: Installed
 Install: Install
-Plugin Marketplace: Plugin Marketplace
 Public Installed: Public Installed
 Personal Installed: Personal Installed
 Zip file from PC: Zip file from PC
@@ -324,6 +320,11 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: All workspaces
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
+aria-label-compass: compass
+aria-label-adjust-angle: adjust angle
+aria-label-zoom-in: zoom in
+aria-label-Go-to-the-home-position: Go to the home position
+aria-label-zoom-out: zoom out
 Your account has been successfully verified! Feel free to login now.: Your account has been successfully verified! Feel free to login now.
 Could not verify your signup. Please start the process over.: Could not verify your signup. Please start the process over.
 Failed to add one or more assets.: Failed to add one or more assets.

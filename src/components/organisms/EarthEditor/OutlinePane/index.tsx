@@ -39,6 +39,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     addCluster,
     renameCluster,
     removeCluster,
+    zoomToLayer,
   } = useHooks();
 
   return (
@@ -73,6 +74,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onClusterRemove={removeCluster}
       onWidgetActivation={activateWidget}
       onDrop={handleDrop}
+      onZoomToLayer={zoomToLayer}
     />
   );
 };

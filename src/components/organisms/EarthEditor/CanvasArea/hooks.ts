@@ -30,6 +30,7 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
+  useZoomedLayerId,
   useClock,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
@@ -52,6 +53,7 @@ export default (isBuilt?: boolean) => {
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
+  const [zoomedLayerId] = useZoomedLayerId();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -277,6 +279,7 @@ export default (isBuilt?: boolean) => {
     sceneId,
     rootLayerId,
     selectedLayerId,
+    zoomedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,

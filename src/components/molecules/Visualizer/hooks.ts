@@ -34,6 +34,7 @@ export default ({
   rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
+  zoomedLayerId,
   camera,
   clock,
   sceneProperty,
@@ -53,6 +54,7 @@ export default ({
   rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
+  zoomedLayerId?: string;
   camera?: Camera;
   clock?: Clock;
   sceneProperty?: SceneProperty;
@@ -219,6 +221,12 @@ export default ({
   const handleInfoboxMaskClick = useCallback(() => {
     selectLayer(undefined);
   }, [selectLayer]);
+
+  useEffect(() => {
+    if (zoomedLayerId) {
+      engineRef.current?.lookAtLayer(zoomedLayerId);
+    }
+  }, [zoomedLayerId]);
 
   return {
     engineRef,

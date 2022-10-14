@@ -89,6 +89,7 @@ export default ({
   onLayerGroupCreate,
   onLayerImport,
   handleShowWarning,
+  onZoomToLayer,
 }: {
   rootLayerId?: string;
   layers?: Layer[];
@@ -125,6 +126,7 @@ export default ({
   onDrop?: (layer: string, index: number, childrenCount: number) => any;
   onLayerGroupCreate?: () => void;
   handleShowWarning?: (show: boolean) => void;
+  onZoomToLayer?: (layerId: string) => void;
 }) => {
   const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
@@ -384,6 +386,7 @@ export default ({
     visibilityShown: true,
     selectedLayerId,
     rootLayerId,
+    onZoomToLayer,
   });
 
   const clusterTreeViewItemOnRename = useCallback(

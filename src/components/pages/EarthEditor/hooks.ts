@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useAuth } from "@reearth/auth";
 import { useGetSceneQuery } from "@reearth/gql";
-import { useSceneId, useRootLayerId } from "@reearth/state";
+import { useSceneId, useRootLayerId, useZoomedLayerId } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 
@@ -10,6 +10,7 @@ export default (sceneId?: string) => {
   const isAuthenticated = useAuth();
   const [, setRootLayerId] = useRootLayerId();
   const [, setSceneId] = useSceneId();
+  const [, zoomToLayer] = useZoomedLayerId();
 
   const { loading, data } = useGetSceneQuery({
     variables: { sceneId: sceneId || "" },
@@ -18,7 +19,8 @@ export default (sceneId?: string) => {
 
   useEffect(() => {
     setSceneId(sceneId);
-  }, [sceneId, setSceneId]);
+    zoomToLayer(undefined);
+  }, [sceneId, setSceneId, zoomToLayer]);
 
   useEffect(() => {
     setRootLayerId(

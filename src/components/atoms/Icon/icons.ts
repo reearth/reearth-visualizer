@@ -105,6 +105,7 @@ import Install from "./Icons/install.svg";
 import CopyCode from "./Icons/copyCode.svg";
 import FieldClear from "./Icons/fieldClear.svg";
 import FieldLinked from "./Icons/fieldLinked.svg";
+import ZoomToLayer from "./Icons/zoomToLayer.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
@@ -276,4 +277,5 @@ export default {
   compass: Compass,
   compassFocus: CompassFocus,
   house: House,
+  zoomToLayer: ZoomToLayer,
 };

@@ -21,6 +21,7 @@ export type Props<T = unknown> = ItemProps<Layer<T>> & {
   onAdd?: (id?: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
+  onZoomToLayer?: (layerId: string) => void;
 };
 
 function LayerTreeViewItem<T = unknown>(
@@ -49,6 +50,7 @@ function LayerTreeViewItem<T = unknown>(
     onRemove,
     onGroupCreate,
     onImport,
+    onZoomToLayer,
   }: Props<T>,
   ref: Ref<HTMLDivElement>,
 ) {
@@ -94,6 +96,7 @@ function LayerTreeViewItem<T = unknown>(
         onGroupCreate={onGroupCreate}
         onImport={onImport}
         childSelected={childSelected}
+        onZoomToLayer={onZoomToLayer}
       />
       {children && (
         <Children expanded={expanded} dropType={canDrop ? dropType : undefined}>
@@ -137,6 +140,7 @@ export function useLayerTreeViewItem<T>({
   onRemove,
   onGroupCreate,
   onImport,
+  onZoomToLayer,
 }: {
   rootLayerId?: string;
   selectedLayerId?: string;
@@ -150,6 +154,7 @@ export function useLayerTreeViewItem<T>({
   onRemove?: (selectedLayerId: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
+  onZoomToLayer?: (layerId: string) => void;
 } = {}) {
   return useMemo(() => {
     function InnerLayerTreeViewItem(props: Props<T>, ref: Ref<HTMLDivElement>) {
@@ -179,6 +184,7 @@ export function useLayerTreeViewItem<T>({
           onAdd,
           onGroupCreate,
           onImport,
+          onZoomToLayer,
           ...events,
         },
         ref,
@@ -195,6 +201,7 @@ export function useLayerTreeViewItem<T>({
     onAdd,
     onGroupCreate,
     onImport,
+    onZoomToLayer,
     onVisibilityChange,
     onActivationChange,
     onRename,

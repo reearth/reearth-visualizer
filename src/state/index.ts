@@ -26,6 +26,9 @@ export type Selected =
 const selected = atom<Selected | undefined>(undefined);
 export const useSelected = () => useAtom(selected);
 
+const zoomedLayerId = atom<string | undefined>(undefined);
+export const useZoomedLayerId = () => useAtom(zoomedLayerId);
+
 const selectedBlock = atom<string | undefined>(undefined);
 export const useSelectedBlock = () => useAtom(selectedBlock);
 

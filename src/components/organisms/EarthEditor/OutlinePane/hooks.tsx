@@ -34,6 +34,7 @@ import {
   useSelectedBlock,
   useRootLayerId,
   useWidgetAlignEditorActivated,
+  useZoomedLayerId,
 } from "@reearth/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
@@ -53,6 +54,7 @@ export default () => {
   const locale = useLang();
   const [sceneId] = useSceneId();
   const [selected, select] = useSelected();
+  const [, zoomToLayer] = useZoomedLayerId();
   const [, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
   const [, toggleWidgetAlignEditor] = useWidgetAlignEditorActivated();
@@ -455,6 +457,7 @@ export default () => {
     selectCluster,
     addCluster,
     removeCluster,
+    zoomToLayer,
   };
 };
 
