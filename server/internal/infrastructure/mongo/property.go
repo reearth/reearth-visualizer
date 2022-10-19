@@ -7,10 +7,24 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+var (
+	propertyIndexes = []string{
+		"scene",
+		"schema",
+		"schemaplugin",
+		"fields.links.schema",
+		"fields.links.dataset",
+		"items.groups.fields.links.schema",
+		"items.groups.fields.links.dataset",
+		"items.fields.links.schema",
+		"items.fields.links.dataset",
+	}
+	propertyUniqueIndexes = []string{"id"}
 )
 
 type Property struct {
@@ -19,16 +33,13 @@ type Property struct {
 }
 
 func NewProperty(client *mongox.Client) *Property {
-	r := &Property{client: client.WithCollection("property")}
-	r.init()
-	return r
+	return &Property{
+		client: client.WithCollection("property"),
+	}
 }
 
-func (r *Property) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "property", i)
-	}
+func (r *Property) Init() error {
+	return createIndexes(context.Background(), r.client, propertyIndexes, propertyUniqueIndexes)
 }
 
 func (r *Property) Filtered(f repo.SceneFilter) repo.Property {

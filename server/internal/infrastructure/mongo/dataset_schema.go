@@ -9,10 +9,14 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+)
+
+var (
+	datasetSchemaIndexes       = []string{"scene"}
+	datasetSchemaUniqueIndexes = []string{"id"}
 )
 
 type DatasetSchema struct {
@@ -21,16 +25,13 @@ type DatasetSchema struct {
 }
 
 func NewDatasetSchema(client *mongox.Client) *DatasetSchema {
-	r := &DatasetSchema{client: client.WithCollection("datasetSchema")}
-	r.init()
-	return r
+	return &DatasetSchema{
+		client: client.WithCollection("datasetSchema"),
+	}
 }
 
-func (r *DatasetSchema) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "datasetSchema", i)
-	}
+func (r *DatasetSchema) Init() error {
+	return createIndexes(context.Background(), r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
 }
 
 func (r *DatasetSchema) Filtered(f repo.SceneFilter) repo.DatasetSchema {

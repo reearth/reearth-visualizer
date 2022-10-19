@@ -9,12 +9,16 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+)
+
+var (
+	datasetIndexes       = []string{"scene", "schema"}
+	datasetUniqueIndexes = []string{"id"}
 )
 
 type Dataset struct {
@@ -23,9 +27,13 @@ type Dataset struct {
 }
 
 func NewDataset(client *mongox.Client) *Dataset {
-	r := &Dataset{client: client.WithCollection("dataset")}
-	r.init()
-	return r
+	return &Dataset{
+		client: client.WithCollection("dataset"),
+	}
+}
+
+func (r *Dataset) Init() error {
+	return createIndexes(context.Background(), r.client, datasetIndexes, datasetUniqueIndexes)
 }
 
 func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {
@@ -34,14 +42,6 @@ func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {
 		f:      r.f.Merge(f),
 	}
 }
-
-func (r *Dataset) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene", "schema"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "dataset", i)
-	}
-}
-
 func (r *Dataset) FindByID(ctx context.Context, id id.DatasetID) (*dataset.Dataset, error) {
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }

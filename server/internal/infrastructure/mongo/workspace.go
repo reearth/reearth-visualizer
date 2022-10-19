@@ -8,29 +8,30 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type workspaceRepo struct {
+var (
+	workspaceIndexes       = []string{}
+	workspaceUniqueIndexes = []string{"id"}
+)
+
+type Workspace struct {
 	client *mongox.ClientCollection
 }
 
 func NewWorkspace(client *mongox.Client) repo.Workspace {
-	r := &workspaceRepo{client: client.WithCollection("team")} // DON'T CHANGE NAME
-	r.init()
-	return r
-}
-
-func (r *workspaceRepo) init() {
-	i := r.client.CreateIndex(context.Background(), nil, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "workspace", i)
+	return &Workspace{
+		client: client.WithCollection("team"),
 	}
 }
 
-func (r *workspaceRepo) FindByUser(ctx context.Context, id id.UserID) (workspace.List, error) {
+func (r *Workspace) Init() error {
+	return createIndexes(context.Background(), r.client, workspaceIndexes, workspaceUniqueIndexes)
+}
+
+func (r *Workspace) FindByUser(ctx context.Context, id id.UserID) (workspace.List, error) {
 	return r.find(ctx, bson.M{
 		"members." + strings.Replace(id.String(), ".", "", -1): bson.M{
 			"$exists": true,
@@ -38,7 +39,7 @@ func (r *workspaceRepo) FindByUser(ctx context.Context, id id.UserID) (workspace
 	})
 }
 
-func (r *workspaceRepo) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (workspace.List, error) {
+func (r *Workspace) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (workspace.List, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -52,16 +53,16 @@ func (r *workspaceRepo) FindByIDs(ctx context.Context, ids id.WorkspaceIDList) (
 	return filterWorkspaces(ids, res), nil
 }
 
-func (r *workspaceRepo) FindByID(ctx context.Context, id id.WorkspaceID) (*workspace.Workspace, error) {
+func (r *Workspace) FindByID(ctx context.Context, id id.WorkspaceID) (*workspace.Workspace, error) {
 	return r.findOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *workspaceRepo) Save(ctx context.Context, ws *workspace.Workspace) error {
+func (r *Workspace) Save(ctx context.Context, ws *workspace.Workspace) error {
 	doc, id := mongodoc.NewWorkspace(ws)
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *workspaceRepo) SaveAll(ctx context.Context, workspaces []*workspace.Workspace) error {
+func (r *Workspace) SaveAll(ctx context.Context, workspaces []*workspace.Workspace) error {
 	if len(workspaces) == 0 {
 		return nil
 	}
@@ -73,11 +74,11 @@ func (r *workspaceRepo) SaveAll(ctx context.Context, workspaces []*workspace.Wor
 	return r.client.SaveAll(ctx, ids, docs2)
 }
 
-func (r *workspaceRepo) Remove(ctx context.Context, id id.WorkspaceID) error {
+func (r *Workspace) Remove(ctx context.Context, id id.WorkspaceID) error {
 	return r.client.RemoveOne(ctx, bson.M{"id": id.String()})
 }
 
-func (r *workspaceRepo) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) error {
+func (r *Workspace) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -86,7 +87,7 @@ func (r *workspaceRepo) RemoveAll(ctx context.Context, ids id.WorkspaceIDList) e
 	})
 }
 
-func (r *workspaceRepo) find(ctx context.Context, filter interface{}) (workspace.List, error) {
+func (r *Workspace) find(ctx context.Context, filter interface{}) (workspace.List, error) {
 	c := mongodoc.NewWorkspaceConsumer()
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
@@ -94,7 +95,7 @@ func (r *workspaceRepo) find(ctx context.Context, filter interface{}) (workspace
 	return c.Result, nil
 }
 
-func (r *workspaceRepo) findOne(ctx context.Context, filter interface{}) (*workspace.Workspace, error) {
+func (r *Workspace) findOne(ctx context.Context, filter interface{}) (*workspace.Workspace, error) {
 	c := mongodoc.NewWorkspaceConsumer()
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err

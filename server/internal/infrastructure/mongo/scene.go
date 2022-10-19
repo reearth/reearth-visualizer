@@ -8,10 +8,14 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+)
+
+var (
+	sceneIndexes       = []string{"project"}
+	sceneUniqueIndexes = []string{"id"}
 )
 
 type Scene struct {
@@ -20,16 +24,13 @@ type Scene struct {
 }
 
 func NewScene(client *mongox.Client) *Scene {
-	r := &Scene{client: client.WithCollection("scene")}
-	r.init()
-	return r
+	return &Scene{
+		client: client.WithCollection("scene"),
+	}
 }
 
-func (r *Scene) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"project"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "scene", i)
-	}
+func (r *Scene) Init() error {
+	return createIndexes(context.Background(), r.client, sceneIndexes, sceneUniqueIndexes)
 }
 
 func (r *Scene) Filtered(f repo.WorkspaceFilter) repo.Scene {
