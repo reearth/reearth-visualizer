@@ -15,14 +15,22 @@ import (
 var (
 	propertyIndexes = []string{
 		"scene",
+		"id,scene",
 		"schema",
 		"schemaplugin",
+		"scene,schemaplugin",
 		"fields.links.schema",
+		"fields.links.schema,scene",
 		"fields.links.dataset",
-		"items.groups.fields.links.schema",
-		"items.groups.fields.links.dataset",
+		"fields.links.dataset,scene",
 		"items.fields.links.schema",
+		"items.fields.links.schema,scene",
 		"items.fields.links.dataset",
+		"items.fields.links.dataset,scene",
+		"items.groups.fields.links.schema",
+		"items.groups.fields.links.schema,scene",
+		"items.groups.fields.links.dataset",
+		"items.groups.fields.links.dataset,scene",
 	}
 	propertyUniqueIndexes = []string{"id"}
 )
