@@ -37,10 +37,19 @@ extensions:
                   label: Cesium World Terrain
                 - key: arcgis
                   label: ArcGIS Terrain
+                - key: url
+                  label: URL
               availableIf:
                 field: terrain
                 type: bool
                 value: true
+            - id: terrainUrl
+              type: url
+              title: Terrain URL
+              availableIf:
+                field: terrainType
+                type: string
+                value: url
             - id: terrainExaggeration
               type: number
               title: Terrain exaggeration
