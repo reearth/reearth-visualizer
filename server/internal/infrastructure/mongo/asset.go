@@ -9,12 +9,16 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+var (
+	assetIndexes       = []string{"team"}
+	assetUniqueIndexes = []string{"id"}
 )
 
 type Asset struct {
@@ -23,9 +27,11 @@ type Asset struct {
 }
 
 func NewAsset(client *mongox.Client) *Asset {
-	r := &Asset{client: client.WithCollection("asset")}
-	r.init()
-	return r
+	return &Asset{client: client.WithCollection("asset")}
+}
+
+func (r *Asset) Init() error {
+	return createIndexes(context.Background(), r.client, assetIndexes, assetUniqueIndexes)
 }
 
 func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
@@ -111,13 +117,6 @@ func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{
 		"id": id.String(),
 	}))
-}
-
-func (r *Asset) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"team"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "asset", i)
-	}
 }
 
 func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, pagination *usecasex.Pagination) ([]*asset.Asset, *usecasex.PageInfo, error) {
