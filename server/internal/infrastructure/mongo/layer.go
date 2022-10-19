@@ -22,13 +22,20 @@ type Layer struct {
 var (
 	layerIndexes = []string{
 		"scene",
+		"id,scene",
 		"plugin",
 		"extension",
+		"property",
+		"property,scene",
 		"group.layers",
+		"group.layers,scene",
 		"tags.id",
 		"tags.tags.id",
+		"scene,infobox.fields",
 		"infobox.property",
+		"infobox.property,scene",
 		"infobox.fields.property",
+		"infobox.fields.property,scene",
 	}
 	layerUniqueIndexes = []string{"id"}
 )

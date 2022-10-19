@@ -17,7 +17,13 @@ import (
 )
 
 var (
-	datasetIndexes       = []string{"scene", "schema"}
+	datasetIndexes = []string{
+		"scene",
+		"id,scene",
+		"schema",
+		"scene,schema",
+		"schema,id,scene",
+	}
 	datasetUniqueIndexes = []string{"id"}
 )
 

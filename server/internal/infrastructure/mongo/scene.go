@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	sceneIndexes       = []string{"project"}
+	sceneIndexes       = []string{"project", "team"}
 	sceneUniqueIndexes = []string{"id"}
 )
 
