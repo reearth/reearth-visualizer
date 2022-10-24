@@ -47,6 +47,7 @@ export default ({
   onCameraChange,
   onTick,
   onLayerDrop,
+  onZoomToLayer,
 }: {
   engineType?: string;
   rootLayerId?: string;
@@ -74,6 +75,7 @@ export default ({
   onCameraChange?: (c: Camera) => void;
   onTick?: (c: Clock) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
@@ -227,8 +229,9 @@ export default ({
   useEffect(() => {
     if (zoomedLayerId) {
       engineRef.current?.lookAtLayer(zoomedLayerId);
+      onZoomToLayer?.(undefined);
     }
-  }, [zoomedLayerId]);
+  }, [zoomedLayerId, onZoomToLayer]);
 
   const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
   const pluginModalContainerRef = useRef<HTMLDivElement>();

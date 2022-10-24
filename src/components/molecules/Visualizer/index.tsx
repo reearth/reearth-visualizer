@@ -70,6 +70,7 @@ export type Props = {
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
   onLayerSelect?: (id?: string) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,
@@ -102,6 +103,7 @@ export default function Visualizer({
   onBlockInsert,
   onBlockSelect,
   onLayerDrop,
+  onZoomToLayer,
   ...props
 }: Props): JSX.Element {
   const {
@@ -155,6 +157,7 @@ export default function Visualizer({
     onCameraChange: props.onCameraChange,
     onTick: props.onTick,
     onLayerDrop,
+    onZoomToLayer,
   });
 
   return (
