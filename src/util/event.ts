@@ -1,3 +1,5 @@
+import EventTarget from "@ungap/event-target";
+
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<E extends { [P in string]: any[] } = { [P in string]: any[] }> = <
   T extends keyof E,

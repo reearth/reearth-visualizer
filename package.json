@@ -104,6 +104,7 @@
         "@types/gapi.client.sheets": "4.0.20201029",
         "@types/google.picker": "0.0.39",
         "@types/tinycolor2": "1.4.2",
+        "@ungap/event-target": "^0.2.3",
         "apollo-link-sentry": "3.1.2",
         "apollo-upload-client": "17.0.0",
         "array-move": "4.0.0",
