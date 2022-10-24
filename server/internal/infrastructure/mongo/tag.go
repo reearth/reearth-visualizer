@@ -7,11 +7,15 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/tag"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+var (
+	tagIndexes       = []string{"scene", "group.tags", "item.parent"}
+	tagUniqueIndexes = []string{"id"}
 )
 
 type Tag struct {
@@ -20,16 +24,13 @@ type Tag struct {
 }
 
 func NewTag(client *mongox.Client) *Tag {
-	r := &Tag{client: client.WithCollection("tag")}
-	r.init()
-	return r
+	return &Tag{
+		client: client.WithCollection("tag"),
+	}
 }
 
-func (r *Tag) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene", "group.tags", "item.parent"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "tag", i)
-	}
+func (r *Tag) Init() error {
+	return createIndexes(context.Background(), r.client, tagIndexes, tagUniqueIndexes)
 }
 
 func (r *Tag) Filtered(f repo.SceneFilter) repo.Tag {

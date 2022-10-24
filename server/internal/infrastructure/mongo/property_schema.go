@@ -9,9 +9,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+var (
+	propertySchemaIndexes       = []string{}
+	propertySchemaUniqueIndexes = []string{"id"}
 )
 
 type PropertySchema struct {
@@ -20,16 +24,13 @@ type PropertySchema struct {
 }
 
 func NewPropertySchema(client *mongox.Client) *PropertySchema {
-	r := &PropertySchema{client: client.WithCollection("propertySchema")}
-	r.init()
-	return r
+	return &PropertySchema{
+		client: client.WithCollection("propertySchema"),
+	}
 }
 
-func (r *PropertySchema) init() {
-	i := r.client.CreateIndex(context.Background(), nil, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "propertySchema", i)
-	}
+func (r *PropertySchema) Init() error {
+	return createIndexes(context.Background(), r.client, propertySchemaIndexes, propertySchemaUniqueIndexes)
 }
 
 func (r *PropertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
