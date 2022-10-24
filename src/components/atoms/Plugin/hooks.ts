@@ -1,5 +1,6 @@
 import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
+import type { RefObject } from "react";
 import {
   ForwardedRef,
   useCallback,
@@ -18,6 +19,7 @@ export type Options = {
   skip?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   ref?: ForwardedRef<Ref>;
+  mainIFrameRef?: RefObject<IFrameRef>;
   exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
   onError?: (err: any) => void;
   onPreInit?: () => void;
@@ -220,6 +222,7 @@ export default function useHook({
     onMessage,
     offMessage,
     onceMessage,
+    mainIFrameRef,
     messageEvents,
     messageOnceEvents,
   ]);

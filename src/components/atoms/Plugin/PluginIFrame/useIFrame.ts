@@ -7,7 +7,12 @@ import { usePostMessage } from "./usePostMessage";
 export type IFrameAPI = {
   render: (
     html: string,
-    options?: { visible?: boolean; width?: number | string; height?: number | string },
+    options?: {
+      visible?: boolean;
+      width?: number | string;
+      height?: number | string;
+      onAutoResized?: () => void;
+    },
   ) => void;
   resize: (width: string | number | undefined, height: string | number | undefined) => void;
   postMessage: (message: any) => void;
@@ -25,7 +30,18 @@ export default function useIFrame({
   const ref = useRef<IFrameRef>(null);
   const [iFrameLoaded, setIFrameLoaded] = useState(false);
   const [[html, options], setIFrameState] = useState<
-    [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
+    [
+      string,
+      (
+        | {
+            visible?: boolean;
+            width?: number | string;
+            height?: number | string;
+            onAutoResized?: () => void;
+          }
+        | undefined
+      ),
+    ]
   >(["", undefined]);
   const postMessage = usePostMessage(ref, !ready || !iFrameLoaded);
   const handleLoad = useCallback(() => setIFrameLoaded(true), []);

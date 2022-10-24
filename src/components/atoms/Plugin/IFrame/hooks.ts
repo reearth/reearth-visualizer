@@ -29,6 +29,7 @@ export default function useHook({
   onLoad,
   onMessage,
   onClick,
+  onAutoResized,
 }: {
   width?: number | string;
   height?: number | string;
@@ -41,6 +42,7 @@ export default function useHook({
   onLoad?: () => void;
   onMessage?: (message: any) => void;
   onClick?: () => void;
+  onAutoResized?: () => void;
 } = {}): {
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
@@ -77,6 +79,7 @@ export default function useHook({
         const { width, height } = ev.data[autoResizeMessageKey];
         if (typeof width !== "number" || typeof height !== "number") return;
         setIFrameSize([width + "px", height + "px"]);
+        onAutoResized?.();
       } else {
         onMessage?.(ev.data);
       }
@@ -85,7 +88,7 @@ export default function useHook({
     return () => {
       window.removeEventListener("message", cb);
     };
-  }, [autoResize, autoResizeMessageKey, onMessage]);
+  }, [autoResize, autoResizeMessageKey, onMessage, onAutoResized]);
 
   const onIframeLoad = useCallback(() => {
     const win = iFrameRef.current?.contentWindow;
@@ -109,15 +112,15 @@ export default function useHook({
             const width = ${
               width
                 ? typeof width === "number"
-                  ? width
-                  : width + "px"
+                  ? `"${width}px"`
+                  : `"${width}"`
                 : "html.offsetWidth + horizontalMargin"
             };
             const height = ${
               height
                 ? typeof height === "number"
-                  ? height + "px"
-                  : height
+                  ? `"${height}px"`
+                  : `"${height}"`
                 : "html.offsetHeight + verticalMargin"
             };
             parent.postMessage({

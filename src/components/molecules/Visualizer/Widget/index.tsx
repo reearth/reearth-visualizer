@@ -1,3 +1,4 @@
+import type * as CSS from "csstype";
 import { ComponentType, useCallback, useMemo } from "react";
 
 import Plugin, {
@@ -5,6 +6,7 @@ import Plugin, {
   WidgetLayout,
   WidgetLocation,
   Props as PluginProps,
+  CommonProps as PluginCommonProps,
 } from "../Plugin";
 
 import builtin, { isBuiltinWidget } from "./builtin";
@@ -20,11 +22,10 @@ export type Props<PP = any, SP = any> = {
   extended?: boolean;
   sceneProperty?: SP;
   pluginProperty?: PP;
-  pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-};
+} & PluginCommonProps;
 
 export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {
   widget: RawWidget;
@@ -36,6 +37,7 @@ export default function WidgetComponent<PP = any, SP = any>({
   widget,
   extended,
   pluginBaseUrl,
+  pluginProperty,
   layout,
   onExtend,
   editing,
@@ -71,6 +73,20 @@ export default function WidgetComponent<PP = any, SP = any>({
     [widget.id, onExtend],
   );
 
+  const iFrameProps = useMemo<{ style: CSS.Properties }>(
+    () => ({
+      style: { pointerEvents: editing ? "none" : "auto" },
+    }),
+    [editing],
+  );
+
+  const BuiltinStyle = useMemo<CSS.Properties>(
+    () => ({
+      pointerEvents: editing ? "none" : "auto",
+    }),
+    [editing],
+  );
+
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
@@ -83,7 +99,7 @@ export default function WidgetComponent<PP = any, SP = any>({
     : "both";
 
   return Builtin ? (
-    <div style={{ pointerEvents: editing ? "none" : "auto" }}>
+    <div style={BuiltinStyle}>
       <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
     </div>
   ) : (
@@ -95,11 +111,12 @@ export default function WidgetComponent<PP = any, SP = any>({
       extensionType="widget"
       visible
       pluginBaseUrl={pluginBaseUrl}
-      property={props.pluginProperty}
+      property={pluginProperty}
       widget={w}
-      iFrameProps={{ style: { pointerEvents: editing ? "none" : "auto" } }}
+      iFrameProps={iFrameProps}
       onRender={handleRender}
       onResize={handleResize}
+      {...props}
     />
   );
 }

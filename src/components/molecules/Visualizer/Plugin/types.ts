@@ -17,6 +17,8 @@ export type Reearth = {
   readonly camera: Camera;
   readonly clock?: Clock;
   readonly ui: UI;
+  readonly modal: Modal;
+  readonly popup: Popup;
   readonly plugin: Plugin;
   readonly layers: Layers;
   readonly layer?: Layer;
@@ -250,6 +252,66 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+};
+
+export type Modal = {
+  readonly show: (
+    html: string,
+    options?: {
+      width?: number | string;
+      height?: number | string;
+      background?: string;
+    },
+  ) => void;
+  readonly postMessage: (message: any) => void;
+  readonly update: (options: {
+    width?: number | string;
+    height?: number | string;
+    background?: string;
+  }) => void;
+  readonly close: () => void;
+};
+
+export type PopupPosition =
+  | "top"
+  | "top-start"
+  | "top-end"
+  | "right"
+  | "right-start"
+  | "right-end"
+  | "bottom"
+  | "bottom-start"
+  | "bottom-end"
+  | "left"
+  | "left-start"
+  | "left-end";
+
+export type PopupOffset =
+  | number
+  | {
+      mainAxis?: number;
+      crossAxis?: number;
+      alignmentAxis?: number | null;
+    };
+
+export type Popup = {
+  readonly show: (
+    html: string,
+    options?: {
+      width?: number | string;
+      height?: number | string;
+      position?: PopupPosition;
+      offset?: PopupOffset;
+    },
+  ) => void;
+  readonly postMessage: (message: any) => void;
+  readonly update: (options: {
+    width?: number | string;
+    height?: number | string;
+    position?: PopupPosition;
+    offset?: PopupOffset;
+  }) => void;
+  readonly close: () => void;
 };
 
 /** Deprecated. */

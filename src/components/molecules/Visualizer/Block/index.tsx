@@ -4,21 +4,19 @@ import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
 import Plugin from "../Plugin";
-import type { Block, Layer, InfoboxProperty } from "../Plugin";
+import type { Block, Layer, InfoboxProperty, CommonProps as PluginCommonProps } from "../Plugin";
 
 import builtin from "./builtin";
 
 export type { Block, Layer } from "../Plugin";
 
-export type Props<BP = any, PP = any> = {
+export type Props<BP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
   layer?: Layer;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
-  pluginProperty?: PP;
-  pluginBaseUrl?: string;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
@@ -26,14 +24,14 @@ export type Props<BP = any, PP = any> = {
     value: ValueTypes[T],
     type: T,
   ) => void;
-};
+} & PluginCommonProps;
 
-export type Component<BP = any, PP = any> = ComponentType<Props<BP, PP>>;
+export type Component<BP = any> = ComponentType<Props<BP>>;
 
-export default function BlockComponent<P = any, PP = any>({
+export default function BlockComponent<P = any>({
   pluginBaseUrl,
   ...props
-}: Props<P, PP>): JSX.Element | null {
+}: Props<P>): JSX.Element | null {
   const Builtin =
     props.block?.pluginId && props.block.extensionId
       ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
@@ -56,6 +54,12 @@ export default function BlockComponent<P = any, PP = any>({
         layer={props.layer}
         block={props.block}
         onClick={props.onClick}
+        pluginModalContainer={props.pluginModalContainer}
+        shownPluginModalInfo={props.shownPluginModalInfo}
+        onPluginModalShow={props.onPluginModalShow}
+        pluginPopupContainer={props.pluginPopupContainer}
+        shownPluginPopupInfo={props.shownPluginPopupInfo}
+        onPluginPopupShow={props.onPluginPopupShow}
       />
     </Wrapper>
   );

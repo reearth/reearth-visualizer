@@ -5,6 +5,8 @@ import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
+import type { CommonProps as PluginCommonProps } from "../Plugin";
+
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
@@ -16,9 +18,7 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
-};
+} & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
@@ -33,6 +33,7 @@ export default function MobileZone({
   isEditable,
   isBuilt,
   children,
+  ...props
 }: Props) {
   const filteredSections = useMemo(() => {
     return sections.filter(s => !!zone?.[s] || (s === "center" && children));
@@ -65,6 +66,7 @@ export default function MobileZone({
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
+                  {...props}
                 />
               ),
             )}

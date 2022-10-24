@@ -1,6 +1,8 @@
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
+import type { PluginModalInfo } from "./ModalContainer";
+import type { PluginPopupInfo } from "./PopupContainer";
 import type { Layer, Widget, Block } from "./types";
 
 export type {
@@ -15,6 +17,17 @@ export type {
 export { Provider, useContext } from "./context";
 export type { Props as ProviderProps, Context } from "./context";
 
+export type CommonProps = {
+  pluginProperty?: any;
+  pluginBaseUrl?: string;
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
+  onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
+};
+
 export type Props = {
   className?: string;
   sourceCode?: string;
@@ -24,8 +37,6 @@ export type Props = {
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   property?: any;
-  pluginProperty?: any;
-  pluginBaseUrl?: string;
   layer?: Layer;
   widget?: Widget;
   block?: Block;
@@ -45,7 +56,7 @@ export type Props = {
     height: string | number | undefined,
     extended: boolean | undefined,
   ) => void;
-};
+} & CommonProps;
 
 export default function Plugin({
   className,
@@ -55,17 +66,34 @@ export default function Plugin({
   extensionType,
   autoResize,
   visible,
+  pluginModalContainer,
+  shownPluginModalInfo,
+  pluginPopupContainer,
+  shownPluginPopupInfo,
   pluginBaseUrl = "/plugins",
   layer,
   widget,
   block,
   pluginProperty,
   iFrameProps,
+  onPluginModalShow,
+  onPluginPopupShow,
   onClick,
   onRender,
   onResize,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError } = useHooks({
+  const {
+    skip,
+    src,
+    isMarshalable,
+    modalVisible,
+    popupVisible,
+    externalRef,
+    onPreInit,
+    onDispose,
+    exposed,
+    onError,
+  } = useHooks({
     pluginId,
     extensionId,
     extensionType,
@@ -74,6 +102,10 @@ export default function Plugin({
     widget,
     block,
     pluginProperty,
+    shownPluginModalInfo,
+    shownPluginPopupInfo,
+    onPluginModalShow,
+    onPluginPopupShow,
     onRender,
     onResize,
   });
@@ -86,6 +118,11 @@ export default function Plugin({
       autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
+      modalVisible={modalVisible}
+      popupVisible={popupVisible}
+      modalContainer={pluginModalContainer}
+      popupContainer={pluginPopupContainer}
+      externalRef={externalRef}
       isMarshalable={isMarshalable}
       exposed={exposed}
       onError={onError}

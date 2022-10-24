@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
+import type { CommonProps as PluginCommonProps } from "../Plugin";
+
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
@@ -12,10 +14,8 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-};
+} & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
@@ -30,6 +30,7 @@ export default function Zone({
   isEditable,
   isBuilt,
   children,
+  ...props
 }: Props) {
   return (
     <>
@@ -54,6 +55,7 @@ export default function Zone({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
+                {...props}
               />
             ),
           )}

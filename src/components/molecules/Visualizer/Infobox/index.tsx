@@ -9,6 +9,7 @@ import { ValueTypes, ValueType } from "@reearth/util/value";
 
 import PluginBlock, { Layer, Block } from "../Block";
 import type { SceneProperty } from "../Engine";
+import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Field from "./Field";
 import Frame from "./Frame";
@@ -29,8 +30,6 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
-  pluginBaseUrl?: string;
-  pluginProperty?: { [key: string]: any };
   onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
@@ -44,7 +43,7 @@ export type Props = {
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderInsertionPopUp?: (onSelect: (bi: number) => void, onClose: () => void) => React.ReactNode;
-};
+} & PluginCommonProps;
 
 const Infobox: React.FC<Props> = ({
   className,
@@ -65,6 +64,7 @@ const Infobox: React.FC<Props> = ({
   onBlockMove,
   renderInsertionPopUp,
   onBlockInsert,
+  ...props
 }) => {
   const {
     insertionPopUpPosition,
@@ -136,6 +136,7 @@ const Infobox: React.FC<Props> = ({
             }}
             layer={layer}
             pluginBaseUrl={pluginBaseUrl}
+            {...props}
           />
         </Field>
       ))}

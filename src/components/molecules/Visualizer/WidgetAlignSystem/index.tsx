@@ -4,6 +4,8 @@ import { useMedia } from "react-use";
 
 import { styled } from "@reearth/theme";
 
+import type { CommonProps as PluginCommonProps } from "../Plugin";
+
 import useHooks from "./hooks";
 import type {
   WidgetAlignSystem as WidgetAlignSystemType,
@@ -33,8 +35,6 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
   onWidgetUpdate?: (
     id: string,
     update: {
@@ -45,7 +45,7 @@ export type Props = {
   ) => void;
   onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-};
+} & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
@@ -58,6 +58,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   layoutConstraint,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
+  ...props
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetUpdate,
@@ -81,7 +82,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}>
+            layoutConstraint={layoutConstraint}
+            {...props}>
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
@@ -92,6 +94,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 isEditable={isEditable}
                 isBuilt={isBuilt}
                 layoutConstraint={layoutConstraint}
+                {...props}
               />
             )}
           </MobileZone>
@@ -104,7 +107,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}>
+            layoutConstraint={layoutConstraint}
+            {...props}>
             <ZoneComponent
               zoneName="inner"
               zone={alignSystem?.inner}
@@ -114,6 +118,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
               isEditable={isEditable}
               isBuilt={isBuilt}
               layoutConstraint={layoutConstraint}
+              {...props}
             />
           </ZoneComponent>
         )}

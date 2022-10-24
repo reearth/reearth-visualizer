@@ -1,5 +1,6 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, MutableRefObject } from "react";
+import type { RefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
@@ -9,6 +10,8 @@ import { useGet } from "../utils";
 
 import { exposed } from "./api";
 import { useContext } from "./context";
+import type { PluginModalInfo } from "./ModalContainer";
+import type { PluginPopupInfo } from "./PopupContainer";
 import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
@@ -20,6 +23,10 @@ export default function ({
   layer,
   widget,
   pluginProperty,
+  shownPluginModalInfo,
+  onPluginModalShow,
+  shownPluginPopupInfo,
+  onPluginPopupShow,
   onRender,
   onResize,
 }: {
@@ -31,6 +38,10 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  shownPluginModalInfo?: PluginModalInfo;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  onPluginPopupShow?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
       | {
@@ -46,6 +57,18 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
+  const modalVisible = useRef<boolean>(false);
+  const popupVisible = useRef<boolean>(false);
+  const externalRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    modalVisible.current = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
+  }, [modalVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id, block?.id]);
+
+  useEffect(() => {
+    popupVisible.current = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
+  }, [popupVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id, block?.id]);
+
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
       extensionId,
@@ -55,6 +78,11 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      modalVisible,
+      popupVisible,
+      externalRef,
+      onPluginModalShow,
+      onPluginPopupShow,
       onRender,
       onResize,
     }) ?? [];
@@ -75,6 +103,9 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
+    modalVisible: modalVisible.current,
+    popupVisible: popupVisible.current,
+    externalRef,
     exposed: staticExposed,
     onError,
     onPreInit,
@@ -90,6 +121,11 @@ export function useAPI({
   layer,
   block,
   widget,
+  modalVisible,
+  popupVisible,
+  externalRef,
+  onPluginModalShow,
+  onPluginPopupShow,
   onRender,
   onResize,
 }: {
@@ -100,6 +136,11 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
+  modalVisible?: MutableRefObject<boolean>;
+  popupVisible?: MutableRefObject<boolean>;
+  externalRef: RefObject<HTMLIFrameElement> | undefined;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
+  onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
   onRender?: (
     options:
       | {
@@ -166,7 +207,13 @@ export function useAPI({
     event.current?.[1]("close");
     event.current?.[2]?.();
     event.current = undefined;
-  }, []);
+    if (modalVisible?.current) {
+      onPluginModalShow?.();
+    }
+    if (popupVisible?.current) {
+      onPluginPopupShow?.();
+    }
+  }, [modalVisible, onPluginModalShow, popupVisible, onPluginPopupShow]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
@@ -175,7 +222,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ main: { postMessage, render, resize }, messages }: IFrameAPI) => {
+    return ({ main, modal, popup, messages }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: {
@@ -210,15 +257,68 @@ export function useAPI({
         block: getBlock,
         layer: getLayer,
         widget: getWidget,
-        postMessage,
+        postMessage: main.postMessage,
         render: (html, { extended, ...options } = {}) => {
-          render(html, options);
+          main.render(html, options);
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
         },
+        renderModal: (html, { ...options } = {}) => {
+          modal.render(html, options);
+          onPluginModalShow?.({
+            id: widget?.id ?? block?.id,
+            background: options?.background,
+          });
+        },
+        closeModal: () => {
+          onPluginModalShow?.();
+        },
+        updateModal: options => {
+          modal.resize(options.width, options.height);
+          onPluginModalShow?.({
+            id: widget?.id ?? block?.id,
+            background: options.background,
+          });
+        },
+        postMessageModal: modal.postMessage,
+        renderPopup: (html, { ...options } = {}) => {
+          let rendered = false;
+          popup.render(html, {
+            ...options,
+            onAutoResized: () => {
+              if (!rendered) {
+                onPluginPopupShow?.({
+                  id: widget?.id ?? block?.id,
+                  ref: externalRef,
+                  ...options,
+                });
+                rendered = true;
+              }
+            },
+          });
+          onPluginPopupShow?.({
+            id: widget?.id ?? block?.id,
+            ref: externalRef,
+            ...options,
+          });
+        },
+        closePopup: () => {
+          onPluginPopupShow?.();
+        },
+        updatePopup: options => {
+          if (options.width !== undefined || options.height !== undefined) {
+            popup.resize(options.width, options.height);
+          }
+          onPluginPopupShow?.({
+            id: widget?.id ?? block?.id,
+            ...options,
+            ref: externalRef,
+          });
+        },
+        postMessagePopup: popup.postMessage,
         resize: (width, height, extended) => {
-          resize(width, height);
+          main.resize(width, height);
           onResize?.(width, height, extended);
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
@@ -231,9 +331,14 @@ export function useAPI({
     extensionType,
     pluginId,
     pluginProperty,
+    widget?.id,
+    block?.id,
+    externalRef,
     getBlock,
     getLayer,
     getWidget,
+    onPluginModalShow,
+    onPluginPopupShow,
     onRender,
     onResize,
   ]);
