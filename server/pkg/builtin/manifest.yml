@@ -149,7 +149,7 @@ extensions:
                 - key: stamen_toner
                   label: Stamen Toner
                 - key: open_street_map
-                  label: Open Street Map
+                  label: OpenStreetMap
                 - key: esri_world_topo
                   label: ESRI Topography
                 - key: black_marble
