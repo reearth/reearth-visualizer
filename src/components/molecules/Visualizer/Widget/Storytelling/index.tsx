@@ -208,6 +208,7 @@ const Title = styled(Text)<{ color: string }>`
 const StyledIcon = styled(Icon)<{ iconColor: string }>`
   color: ${({ color }) => color};
   margin-right: ${metricsSizes["l"]}px;
+  flex-shrink: 0;
 `;
 
 const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
