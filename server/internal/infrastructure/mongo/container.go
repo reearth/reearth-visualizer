@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,12 +22,9 @@ func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 	}
 
 	client := mongox.NewClientWithDatabase(db)
-
-	authRequest := authserver.NewMongo(client.WithCollection("authRequest"))
-
 	c := &repo.Container{
 		Asset:          NewAsset(client),
-		AuthRequest:    authRequest,
+		AuthRequest:    authserver.NewMongo(client.WithCollection("authRequest")),
 		Config:         NewConfig(db.Collection("config"), lock),
 		DatasetSchema:  NewDatasetSchema(client),
 		Dataset:        NewDataset(client),
@@ -46,7 +44,7 @@ func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 	}
 
 	// init
-	if err := util.Try(authRequest.Init); err != nil {
+	if err := Init(c); err != nil {
 		return nil, err
 	}
 
@@ -57,6 +55,29 @@ func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 	}
 
 	return c, nil
+}
+
+func Init(r *repo.Container) error {
+	if r == nil {
+		return nil
+	}
+
+	return util.Try(
+		r.Asset.(*Asset).Init,
+		r.AuthRequest.(*authserver.Mongo).Init,
+		r.Dataset.(*Dataset).Init,
+		r.DatasetSchema.(*DatasetSchema).Init,
+		r.Layer.(*Layer).Init,
+		r.Plugin.(*Plugin).Init,
+		r.Policy.(*Policy).Init,
+		r.Project.(*Project).Init,
+		r.Property.(*Property).Init,
+		r.PropertySchema.(*PropertySchema).Init,
+		r.Scene.(*Scene).Init,
+		r.Tag.(*Tag).Init,
+		r.User.(*User).Init,
+		r.Workspace.(*Workspace).Init,
+	)
 }
 
 func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
@@ -82,4 +103,12 @@ func applyOptionalSceneFilter(filter interface{}, ids scene.IDList) interface{} 
 		{"scene": nil},
 		{"scene": ""},
 	}})
+}
+
+func createIndexes(ctx context.Context, c *mongox.ClientCollection, keys, uniqueKeys []string) error {
+	created, deleted, err := c.Indexes(ctx, keys, uniqueKeys)
+	if len(created) > 0 || len(deleted) > 0 {
+		log.Infof("mongo: %s: index deleted: %v, created: %v\n", c.Client().Name(), deleted, created)
+	}
+	return err
 }

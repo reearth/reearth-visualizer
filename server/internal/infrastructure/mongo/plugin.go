@@ -11,9 +11,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
+)
+
+var (
+	pluginIndexes       = []string{"scene"}
+	pluginUniqueIndexes = []string{"id"}
 )
 
 type Plugin struct {
@@ -22,16 +26,13 @@ type Plugin struct {
 }
 
 func NewPlugin(client *mongox.Client) *Plugin {
-	r := &Plugin{client: client.WithCollection("plugin")}
-	r.init()
-	return r
+	return &Plugin{
+		client: client.WithCollection("plugin"),
+	}
 }
 
-func (r *Plugin) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"scene"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "plugin", i)
-	}
+func (r *Plugin) Init() error {
+	return createIndexes(context.Background(), r.client, pluginIndexes, pluginUniqueIndexes)
 }
 
 func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {

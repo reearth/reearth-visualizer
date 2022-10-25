@@ -5,27 +5,28 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+var (
+	policyIndexes       = []string{}
+	policyUniqueIndexes = []string{"id"}
+)
+
 type Policy struct {
-	c *mongox.ClientCollection
+	client *mongox.ClientCollection
 }
 
 func NewPolicy(c *mongox.Client) *Policy {
-	r := &Policy{c: c.WithCollection("policy")}
-	r.init()
-	return r
+	return &Policy{
+		client: c.WithCollection("policy"),
+	}
 }
 
-func (r *Policy) init() {
-	i := r.c.CreateIndex(context.Background(), nil, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "policy", i)
-	}
+func (r *Policy) Init() error {
+	return createIndexes(context.Background(), r.client, policyIndexes, policyUniqueIndexes)
 }
 
 func (r *Policy) FindByID(ctx context.Context, id workspace.PolicyID) (*workspace.Policy, error) {
@@ -44,7 +45,7 @@ func (r *Policy) FindByIDs(ctx context.Context, ids []workspace.PolicyID) ([]*wo
 
 func (r *Policy) findOne(ctx context.Context, filter interface{}) (*workspace.Policy, error) {
 	c := mongodoc.NewPolicyConsumer()
-	if err := r.c.FindOne(ctx, filter, c); err != nil {
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
@@ -52,7 +53,7 @@ func (r *Policy) findOne(ctx context.Context, filter interface{}) (*workspace.Po
 
 func (r *Policy) find(ctx context.Context, filter interface{}) ([]*workspace.Policy, error) {
 	c := mongodoc.NewPolicyConsumer()
-	if err := r.c.Find(ctx, filter, c); err != nil {
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil

@@ -8,8 +8,12 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
+)
+
+var (
+	userIndexes       = []string{"auth0sublist"}
+	userUniqueIndexes = []string{"id", "email", "name"}
 )
 
 type User struct {
@@ -17,16 +21,13 @@ type User struct {
 }
 
 func NewUser(client *mongox.Client) *User {
-	r := &User{client: client.WithCollection("user")}
-	r.init()
-	return r
+	return &User{
+		client: client.WithCollection("user"),
+	}
 }
 
-func (r *User) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"auth0sublist"}, []string{"id", "email", "name"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "user", i)
-	}
+func (r *User) Init() error {
+	return createIndexes(context.Background(), r.client, userIndexes, userUniqueIndexes)
 }
 
 func (r *User) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {

@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
@@ -20,17 +19,35 @@ type Layer struct {
 	f      repo.SceneFilter
 }
 
+var (
+	layerIndexes = []string{
+		"scene",
+		"id,scene",
+		"plugin",
+		"extension",
+		"property",
+		"property,scene",
+		"group.layers",
+		"group.layers,scene",
+		"tags.id",
+		"tags.tags.id",
+		"scene,infobox.fields",
+		"infobox.property",
+		"infobox.property,scene",
+		"infobox.fields.property",
+		"infobox.fields.property,scene",
+	}
+	layerUniqueIndexes = []string{"id"}
+)
+
 func NewLayer(client *mongox.Client) *Layer {
-	r := &Layer{client: client.WithCollection("layer")}
-	r.init()
-	return r
+	return &Layer{
+		client: client.WithCollection("layer"),
+	}
 }
 
-func (r *Layer) init() {
-	i := r.client.CreateIndex(context.Background(), []string{"plugin", "extension", "scene", "group.layers", "tags.id", "tags.tags.id"}, []string{"id"})
-	if len(i) > 0 {
-		log.Infof("mongo: %s: index created: %s", "layer", i)
-	}
+func (r *Layer) Init() error {
+	return createIndexes(context.Background(), r.client, layerIndexes, layerUniqueIndexes)
 }
 
 func (r *Layer) Filtered(f repo.SceneFilter) repo.Layer {
