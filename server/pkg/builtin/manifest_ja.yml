@@ -74,7 +74,7 @@ extensions:
               default_road: 道路地図
               stamen_watercolor: Stamen Watercolor
               stamen_toner: Stamen Toner
-              open_street_map: Open Street Map
+              open_street_map: OpenStreetMap
               esri_world_topo: ESRI Topography
               black_marble: Black Marble
               japan_gsi_standard: 地理院地図 標準地図
