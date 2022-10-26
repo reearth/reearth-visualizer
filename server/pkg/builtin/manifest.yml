@@ -18,6 +18,11 @@ extensions:
               type: camera
               title: Initial camera position
               description: The starting position of your project.
+            - id: allowEnterGround
+              type: bool
+              title: Enter the ground
+              defaultValue: false
+              description: Set to true to allow the camera to enter the surface of the earth.
             - id: terrain
               type: bool
               title: Terrain
@@ -144,7 +149,7 @@ extensions:
                 - key: stamen_toner
                   label: Stamen Toner
                 - key: open_street_map
-                  label: Open Street Map
+                  label: OpenStreetMap
                 - key: esri_world_topo
                   label: ESRI Topography
                 - key: black_marble
@@ -1944,3 +1949,13 @@ extensions:
         zone: outer
         section: center
         area: bottom
+  - id: navigator
+    type: widget
+    name: Navigator
+    description: A navigator widget that allows for viewing the earth from various angle by operating menu.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: right
+        area: top

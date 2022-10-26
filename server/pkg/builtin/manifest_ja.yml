@@ -11,6 +11,9 @@ extensions:
           camera:
             title: カメラ初期位置
             description: ページロード後最初に表示するカメラの位置を設定します。
+          allowEnterGround:
+            title: 地下へ入る
+            description: Onにすることでカメラが地表面へ潜り込むようになります。
           terrain:
             title: 地形
             description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
@@ -52,7 +55,7 @@ extensions:
             title: 基準位置
             description: 移動範囲の基準となる位置です。この位置が制限範囲を表すボックスの横方向と奥行き方向の中心点となり、かつ移動可能範囲における最大の高さとなります。ここで指定した高さ以上にカメラをズームアウトすることができなくなります。
           cameraLimitterTargetWidth:
-            title: 軽度の範囲
+            title: 経度の範囲
             description: 制限範囲を表すボックスの幅（経度の方向）を指定します。
           cameraLimitterTargetLength:
             title: 緯度の範囲
@@ -71,7 +74,7 @@ extensions:
               default_road: 道路地図
               stamen_watercolor: Stamen Watercolor
               stamen_toner: Stamen Toner
-              open_street_map: Open Street Map
+              open_street_map: OpenStreetMap
               esri_world_topo: ESRI Topography
               black_marble: Black Marble
               japan_gsi_standard: 地理院地図 標準地図
@@ -913,3 +916,6 @@ extensions:
   timeline:
     name: タイムライン
     description: 時系列データを表示するために、時刻を変更したり時間を再生したりすることができます。
+  navigator:
+    name: ナビゲーター
+    description: ナビゲータを操作することで地球を様々な角度から見ることができます。
