@@ -6,21 +6,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
-  e2e_pre:
-    runs-on: ubuntu-latest
-    outputs:
-      result: ${{ steps.e2e_pre.outputs.result }}
-    env:
-      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-    steps:
-      - name: Set vars
-        id: e2e_pre
-        run: echo "::set-output name=result::`test -n "$CYPRESS_PROJECT_ID" && echo 1`"
   e2e:
     name: E2E test
     runs-on: ubuntu-latest
-    needs: e2e_pre
-    if: needs.e2e_pre.outputs.result != null
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -36,34 +24,33 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: install
+        run: yarn install
+      - name: install playwright dependencies
+        run: yarn run playwright install
       - name: E2E test
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          record: true
+        run: yarn run e2e
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          CYPRESS_BASE_URL: https://test.reearth.dev
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_REEARTH_WEB_API: https://api.test.reearth.dev/api
-          CYPRESS_REEARTH_WEB_AUTH0_AUDIENCE: ${{ secrets.REEARTH_WEB_AUTH0_AUDIENCE }}
-          CYPRESS_REEARTH_WEB_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_WEB_AUTH0_CLIENT_ID }}
-          CYPRESS_REEARTH_WEB_AUTH0_DOMAIN: ${{ secrets.REEARTH_WEB_AUTH0_DOMAIN }}
-          CYPRESS_REEARTH_WEB_E2E_USER_ID: ${{ secrets.REEARTH_WEB_E2E_USER_ID }}
-          CYPRESS_REEARTH_WEB_E2E_TEAM_ID: ${{ secrets.REEARTH_WEB_E2E_TEAM_ID }}
-          CYPRESS_REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
-          CYPRESS_REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
-          CYPRESS_REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
-          CYPRESS_REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
+          REEARTH_WEB_API: https://api.test.reearth.dev/api
+          REEARTH_WEB_AUTH0_AUDIENCE: ${{ secrets.REEARTH_WEB_AUTH0_AUDIENCE }}
+          REEARTH_WEB_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_WEB_AUTH0_CLIENT_ID }}
+          REEARTH_WEB_AUTH0_DOMAIN: ${{ secrets.REEARTH_WEB_AUTH0_DOMAIN }}
+          REEARTH_WEB_E2E_BASEURL: https://test.reearth.dev
+          REEARTH_WEB_E2E_USER_ID: ${{ secrets.REEARTH_WEB_E2E_USER_ID }}
+          REEARTH_WEB_E2E_TEAM_ID: ${{ secrets.REEARTH_WEB_E2E_TEAM_ID }}
+          REEARTH_WEB_E2E_USERNAME: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
+          REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
+          REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
+          REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: e2etest-result
-          if-no-files-found: ignore
+          name: playwright
           path: |
-            cypress/screenshots
-            cypress/videos
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
   slack-notification:
     if: success() || failure()
     name: Slack Notification

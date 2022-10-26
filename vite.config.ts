@@ -9,6 +9,7 @@ import react from "@vitejs/plugin-react";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
+import { configDefaults } from "vitest/config";
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
@@ -36,6 +37,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["src/test/setup.ts"],
+    exclude: [...configDefaults.exclude, "e2e/*"],
     coverage: {
       all: true,
       include: ["src/**/*.ts", "src/**/*.tsx"],

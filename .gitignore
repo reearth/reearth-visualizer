@@ -7,8 +7,8 @@ node_modules
 /vendor
 /storybook-static
 __screenshots__
-/cypress/videos
-/cypress/screenshots
+/playwright-report
+/test-results
 /.env*
 /reearth-config.json
 .idea/*

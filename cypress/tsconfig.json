@@ -1,7 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "target": "ES2019", // https://github.com/cypress-io/cypress/issues/20753
-    "types": ["cypress", "node"]
-  },
-}

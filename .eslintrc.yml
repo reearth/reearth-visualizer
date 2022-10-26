@@ -54,7 +54,3 @@ overrides:
         - env: literal
           requiredFields:
             - id
-  - files:
-      - cypress/**/*
-    extends:
-      - plugin:cypress/recommended
