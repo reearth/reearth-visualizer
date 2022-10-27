@@ -443,8 +443,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/ravilushqa/otelgqlgen v0.8.0 h1:x48k+D1GMgm87xhMO2Lekrr9YGzFbpG3yijn9GpxuAY=
 github.com/ravilushqa/otelgqlgen v0.8.0/go.mod h1:6JO5YO2iY4POC7R6yB/L/RKXCcyISL8qQt5NnHOhh0o=
-github.com/reearth/reearthx v0.0.0-20220920100400-54da87c8211a h1:c1wckKanJD8e2Zi2FiKBheNHaT9ZJ5fqUjbTYlBlc9k=
-github.com/reearth/reearthx v0.0.0-20220920100400-54da87c8211a/go.mod h1:YZMXO1RhQ5fFL0GIOFvJq2GNskW7w+xoW4Zfu2QUXhw=
 github.com/reearth/reearthx v0.0.0-20221019044201-1e0270d3ad51 h1:mTT2F5btZdZRFohwFxFG9wU2ouDZ+tIzv2/S2AYhRI8=
 github.com/reearth/reearthx v0.0.0-20221019044201-1e0270d3ad51/go.mod h1:YZMXO1RhQ5fFL0GIOFvJq2GNskW7w+xoW4Zfu2QUXhw=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481/go.mod h1:C9WhFzY47SzYBIvzFqSvHIR6ROgDo4TtdTuRaOMjF/s=
