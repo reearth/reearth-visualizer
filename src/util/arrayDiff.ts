@@ -1,4 +1,4 @@
-import { differenceBy } from "lodash";
+import { differenceBy } from "lodash-es";
 
 export default function arrayDiff<T>(oldList: T[], newList: T[]): [T, number, number][] {
   const newIds = newList.map<[T, number]>((e, i) => [e, i]);

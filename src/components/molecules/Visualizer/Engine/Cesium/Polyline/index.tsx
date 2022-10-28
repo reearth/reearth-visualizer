@@ -1,5 +1,5 @@
 import { Cartesian3 } from "cesium";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 import React, { useMemo } from "react";
 import { PolylineGraphics, Entity } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";

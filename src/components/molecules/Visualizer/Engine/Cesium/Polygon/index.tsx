@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { PolygonHierarchy, Cartesian3 } from "cesium";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 import React, { useMemo } from "react";
 import { PolygonGraphics, Entity } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";

@@ -1,4 +1,4 @@
-import { cloneDeep, mergeWith, omit } from "lodash";
+import { cloneDeep, mergeWith, omit } from "lodash-es";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 export function mergeProperty(a: any, b: any) {

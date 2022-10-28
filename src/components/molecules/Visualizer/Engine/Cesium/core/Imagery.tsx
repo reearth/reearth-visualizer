@@ -1,5 +1,5 @@
 import { ImageryProvider } from "cesium";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { ImageryLayer } from "resium";
 

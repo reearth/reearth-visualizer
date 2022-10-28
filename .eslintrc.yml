@@ -2,6 +2,11 @@ extends:
   - reearth
 root: true
 rules:
+  no-restricted-imports:
+    - error
+    - paths:
+      - name: lodash
+        message: Use lodash-es instead.
   import/order:
     - warn
     - pathGroups:
