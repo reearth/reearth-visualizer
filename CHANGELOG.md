@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.12.0 - 2022-10-28
+
+### Web
+
+### Miscellaneous Tasks
+
+- Update eslint-config-reearth to 0.2.1 ([#326](https://github.com/reearth/reearth-web/pull/326)) [`25acdd`](https://github.com/reearth/reearth-web/commit/25acdd)
+
+### 🚀 Features
+
+- Add plugin api modal &amp; popup ([#328](https://github.com/reearth/reearth-web/pull/328)) [`27cd7a`](https://github.com/reearth/reearth-web/commit/27cd7a)
+- Zoom to layer ([#301](https://github.com/reearth/reearth-web/pull/301)) [`1f5296`](https://github.com/reearth/reearth-web/commit/1f5296)
+- Fix layer(marker) extrdue line disapear  ([#330](https://github.com/reearth/reearth-web/pull/330)) [`7c304f`](https://github.com/reearth/reearth-web/commit/7c304f)
+- Add option to allow camera to enter the earth&[#39](https://github.com/reearth/reearth-web/pull/39);s surface ([#329](https://github.com/reearth/reearth-web/pull/329)) [`6255ad`](https://github.com/reearth/reearth-web/commit/6255ad)
+- Add navigator as a built-in widget ([#323](https://github.com/reearth/reearth-web/pull/323)) [`3befd4`](https://github.com/reearth/reearth-web/commit/3befd4)
+
+### 🔧 Bug Fixes
+
+- Fix the story telling icon size when the layer name is too long  ([#334](https://github.com/reearth/reearth-web/pull/334)) [`c70121`](https://github.com/reearth/reearth-web/commit/c70121)
+- Polyfill event target for old Safari [`227d64`](https://github.com/reearth/reearth-web/commit/227d64)
+- Zoom to layer functionality ([#332](https://github.com/reearth/reearth-web/pull/332)) [`79b0dd`](https://github.com/reearth/reearth-web/commit/79b0dd)
+- Camera popup icon is too small and the icon on storytelling ([#324](https://github.com/reearth/reearth-web/pull/324)) [`e676c3`](https://github.com/reearth/reearth-web/commit/e676c3)
+
+### Miscellaneous Tasks
+
+- Update yarn.lock [`ae4660`](https://github.com/reearth/reearth-web/commit/ae4660)
+- Fix wdyr [`d4075a`](https://github.com/reearth/reearth-web/commit/d4075a)
+- Update dependency cesium to v1.98.1 ([#325](https://github.com/reearth/reearth-web/pull/325)) [`16e38c`](https://github.com/reearth/reearth-web/commit/16e38c)
+
+### Server
+
+#### 🚀 Features
+
+- Add field to manifest to allow for entering the ground ([#353](https://github.com/reearth/reearth/pull/353)) [`6a56ce`](https://github.com/reearth/reearth/commit/6a56ce)
+- Add builtint navigator widget manifest ([#342](https://github.com/reearth/reearth/pull/342)) [`f6834f`](https://github.com/reearth/reearth/commit/f6834f)
+
+#### 🔧 Bug Fixes
+
+- Tiles typo error ([#360](https://github.com/reearth/reearth/pull/360)) [`ddf7d5`](https://github.com/reearth/reearth/commit/ddf7d5)
+- Japanese typo error ([#351](https://github.com/reearth/reearth/pull/351)) [`d0292c`](https://github.com/reearth/reearth/commit/d0292c)
+- Mongo indexes deleted unexpectedly [`4a323b`](https://github.com/reearth/reearth/commit/4a323b)
+
+#### ⚡️ Performance
+
+- Add mongo indexes [`cee2b2`](https://github.com/reearth/reearth/commit/cee2b2)
+
+#### Miscellaneous Tasks
+
+- Fix make run-db [`944c0d`](https://github.com/reearth/reearth/commit/944c0d)
+
 ## 0.11.0 - 2022-10-04
 
 ### Web
