@@ -20,42 +20,13 @@ rules:
         caseInsensitive: true
 overrides:
   - files:
+      - e2e/**/*
+    extends:
+      - reearth/node
+      - plugin:playwright/playwright-test
+    env:
+      browser: false
+  - files:
       - i18next-parser.config.js
     extends:
       - reearth/commonjs
-  - files:
-      - src/gql/queries/*.ts
-      - src/gql/fragments/*.ts
-    plugins:
-      - graphql
-    rules:
-      graphql/capitalized-type-name:
-        - error
-        - env: apollo
-      graphql/no-deprecated-fields:
-        - error
-        - env: apollo
-      graphql/required-fields:
-        - error
-        - env: apollo
-          requiredFields:
-            - id
-  - files:
-      - src/**/*.graphql
-    plugins:
-      - graphql
-    rules:
-      graphql/template-strings:
-        - error
-        - env: literal
-      graphql/capitalized-type-name:
-        - error
-        - env: literal
-      graphql/no-deprecated-fields:
-        - error
-        - env: literal
-      graphql/required-fields:
-        - error
-        - env: literal
-          requiredFields:
-            - id
