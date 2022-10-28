@@ -14,4 +14,5 @@ var migrations = map[int64]MigrationFunc{
   210730175108: AddSceneAlignSystem,
   220214180713: SplitSchemaOfProperties,
   220309174648: AddSceneFieldToPropertySchema,
+  221028204300: MoveTerrainProperties,
 }
