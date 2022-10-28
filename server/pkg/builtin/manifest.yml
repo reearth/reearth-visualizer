@@ -23,52 +23,6 @@ extensions:
               title: Enter the ground
               defaultValue: false
               description: Set to true to allow the camera to enter the surface of the earth.
-            - id: terrain
-              type: bool
-              title: Terrain
-              description: Show elevation when close to the surface.
-            - id: terrainType
-              type: string
-              title: Terrain type
-              description: Specify terrain type.
-              defaultValue: cesium
-              choices:
-                - key: cesium
-                  label: Cesium World Terrain
-                - key: arcgis
-                  label: ArcGIS Terrain
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
-            - id: terrainExaggeration
-              type: number
-              title: Terrain exaggeration
-              description: A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.
-              defaultValue: 1
-              suffix: x
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
-            - id: terrainExaggerationRelativeHeight
-              type: number
-              title: Terrain exaggeration relative height
-              description: The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.
-              defaultValue: 0
-              suffix: m
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
-            - id: depthTestAgainstTerrain
-              type: bool
-              title: Hide objects under terrain
-              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
             - id: skybox
               type: bool
               title: Sky
@@ -95,38 +49,6 @@ extensions:
                   label: Scene 2D
                 - key: columbus
                   label: Columbus View
-        - id: cameraLimiter
-          title: Camera Limiter
-          description: Set the camera limiting box.
-          fields:
-            - id: cameraLimitterEnabled
-              type: bool
-              title: Enable
-              defaultValue: false
-              description: Enable camera limiter.
-            - id: cameraLimitterShowHelper
-              type: bool
-              title: Show helper
-              defaultValue: false
-              description: Display the limiter boundaries.
-            - id: cameraLimitterTargetArea
-              type: camera
-              title: Target max height
-              description: The base position of the camera movement range. This position is the center point of the limit box in the horizontal and depth directions, and is the maximum height of the movable range. The camera will not be able to zoom out beyond the height specified here.
-            - id: cameraLimitterTargetWidth
-              type: number
-              title: Target width
-              description: Specifies the width (longitude direction) of the box that represents the limiter boundaries.
-              min: 5
-              defaultValue: 1000000
-              suffix: m
-            - id: cameraLimitterTargetLength
-              type: number
-              title: Target length
-              description: Specifies the depth (latitude direction) of the box that represents the limiter boundaries.
-              min: 5
-              defaultValue: 1000000
-              suffix: m
         - id: tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
@@ -183,6 +105,67 @@ extensions:
               ui: slider
               min: 0
               max: 1
+        - id: terrain
+          title: Terrain
+          fields:
+            - id: terrain
+              type: bool
+              title: Terrain
+              description: Show elevation when close to the surface.
+            - id: terrainType
+              type: string
+              title: Terrain type
+              description: Specify terrain type.
+              defaultValue: cesium
+              choices:
+                - key: cesium
+                  label: Cesium World Terrain
+                - key: arcgis
+                  label: ArcGIS Terrain
+                - key: gsi
+                  label: Japan GSI elevation tiles
+                - key: cesiumion
+                  label: Cesium Ion
+            - id: terrainCesiumIonAsset
+              type: string
+              title: Terrain Cesium Ion asset ID
+              description: Specify the ID of a terrain asset registered on Cesium Ion.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainCesiumIonAccessToken
+              type: string
+              title: Terrain Cesium Ion access token
+              description: Specify a Cesium Ion access token if you want to override the access token in the scene-wide settings for this tile.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainCesiumIonUrl
+              type: string
+              title: Terrain URL
+              description: Specify the URL of Cesium's terrain server if it is delivered on-premises rather than Cesum Ion. This takes precedence over the asset ID setting.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainExaggeration
+              type: number
+              title: Terrain exaggeration
+              description: A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.
+              defaultValue: 1
+              suffix: x
+            - id: terrainExaggerationRelativeHeight
+              type: number
+              title: Terrain exaggeration relative height
+              description: The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.
+              defaultValue: 0
+              suffix: m
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Hide objects under terrain
+              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
         - id: indicator
           title: Indicator
           description: Set the style of indicator shown when selecting a layer on the map.
@@ -389,6 +372,38 @@ extensions:
                   label: Clamped
                 - key: bounced
                   label: Bounced
+        - id: cameraLimiter
+          title: Camera Limiter
+          description: Set the camera limiting box.
+          fields:
+            - id: cameraLimitterEnabled
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable camera limiter.
+            - id: cameraLimitterShowHelper
+              type: bool
+              title: Show helper
+              defaultValue: false
+              description: Display the limiter boundaries.
+            - id: cameraLimitterTargetArea
+              type: camera
+              title: Target max height
+              description: The base position of the camera movement range. This position is the center point of the limit box in the horizontal and depth directions, and is the maximum height of the movable range. The camera will not be able to zoom out beyond the height specified here.
+            - id: cameraLimitterTargetWidth
+              type: number
+              title: Target width
+              description: Specifies the width (longitude direction) of the box that represents the limiter boundaries.
+              min: 5
+              defaultValue: 1000000
+              suffix: m
+            - id: cameraLimitterTargetLength
+              type: number
+              title: Target length
+              description: Specifies the depth (latitude direction) of the box that represents the limiter boundaries.
+              min: 5
+              defaultValue: 1000000
+              suffix: m
         - id: googleAnalytics
           title: Google Analytics
           description: Set your Google Analytics tracking ID and analyze how your published project is being viewed.
@@ -1000,87 +1015,6 @@ extensions:
         latlng:
           schemaGroupId: default
           fieldId: location
-  # - id: rect
-  #   visualizer: cesium
-  #   type: primitive
-  #   name: Rectangle
-  #   description: A rectangle
-  #   schema:
-  #     groups:
-  #       - id: default
-  #         title: Rectangle
-  #         fields:
-  #           - id: rect
-  #             type: rect
-  #             title: Rectangle
-  #           - id: height
-  #             type: number
-  #             title: Height
-  #             defaultValue: 0
-  #             min: 0
-  #             suffix: m
-  #           - id: heightReference
-  #             type: string
-  #             title: Height standard
-  #             description: The position relative to the terrain. By default, it is the absolute altitude from the WGS84 ellipsoid.
-  #             defaultValue: none
-  #             choices:
-  #               - key: none
-  #                 label: Absolute
-  #               - key: clamp
-  #                 label: Clamp to ground
-  #               - key: relative
-  #                 label: Relative to ground
-  #           - id: extrudedHeight
-  #             type: bool
-  #             title: Extruded
-  #           - id: style
-  #             type: string
-  #             title: Style
-  #             defaultValue: color
-  #             choices:
-  #               - key: color
-  #                 label: Color
-  #               - key: image
-  #                 label: Image
-  #           - id: fillColor
-  #             type: string
-  #             title: Fill
-  #             ui: color
-  #             availableIf:
-  #               field: style
-  #               type: string
-  #               value: color
-  #           - id: image
-  #             type: url
-  #             title: Image
-  #             ui: image
-  #             availableIf:
-  #               field: style
-  #               type: string
-  #               value: image
-  #           - id: outlineColor
-  #             type: string
-  #             title: Fill
-  #             ui: color
-  #           - id: outlineWidth
-  #             type: number
-  #             title: Outline width
-  #             suffix: px
-  #           - id: shadows
-  #             type: string
-  #             title: Shadows
-  #             description: Enables shadows. Also shadows in the scene should be enabled. Rendering may become overloaded.
-  #             defaultValue: disabled
-  #             choices:
-  #               - key: disabled
-  #                 label: Disabled
-  #               - key: enabled
-  #                 label: Enabled
-  #               - key: cast_only
-  #                 label: Cast only
-  #               - key: receive_only
-  #                 label: Receive only
   - id: ellipsoid
     visualizer: cesium
     type: primitive
