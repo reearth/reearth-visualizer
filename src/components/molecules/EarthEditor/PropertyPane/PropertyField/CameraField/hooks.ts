@@ -106,7 +106,7 @@ export default ({
   );
 
   const updateAltitude = useCallback(
-    (fov: number) => updateCamera({ height: Math.max(500, Math.min(fov, 10 ** 10)) }),
+    (altitude: number) => updateCamera({ height: Math.min(altitude, 10 ** 10) }),
     [updateCamera],
   );
 

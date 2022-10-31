@@ -266,7 +266,7 @@ const Popup = styled.ul<{ open: boolean }>`
 
 const FormGroup = styled.div`
   display: flex;
-  align-item: center;
+  align-items: center;
 `;
 
 const FormIcon = styled.div`
