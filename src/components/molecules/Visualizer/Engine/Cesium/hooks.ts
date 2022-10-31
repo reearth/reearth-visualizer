@@ -213,7 +213,9 @@ export default ({
         const props: MouseEvent = {
           x: position?.x,
           y: position?.y,
-          ...(position ? getLocationFromScreenXY(viewer.scene, position.x, position.y) ?? {} : {}),
+          ...(position
+            ? getLocationFromScreenXY(viewer.scene, position.x, position.y, true) ?? {}
+            : {}),
         };
         const layerId = getLayerId(target);
         if (layerId) props.layerId = layerId;

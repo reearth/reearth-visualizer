@@ -151,11 +151,25 @@ export const vo = (
     [""]: undefined,
   }[o || ""]);
 
-export const getLocationFromScreenXY = (scene: Scene | undefined | null, x: number, y: number) => {
+export const getLocationFromScreenXY = (
+  scene: Scene | undefined | null,
+  x: number,
+  y: number,
+  withTerrain = false,
+) => {
   if (!scene) return undefined;
   const camera = scene.camera;
   const ellipsoid = scene.globe.ellipsoid;
-  const cartesian = camera?.pickEllipsoid(new Cartesian2(x, y), ellipsoid);
+  let cartesian;
+  if (withTerrain) {
+    const ray = camera.getPickRay(new Cartesian2(x, y));
+    if (ray) {
+      cartesian = scene.globe.pick(ray, scene);
+    }
+  }
+  if (!cartesian) {
+    cartesian = camera?.pickEllipsoid(new Cartesian2(x, y), ellipsoid);
+  }
   if (!cartesian) return undefined;
   const { latitude, longitude, height } = ellipsoid.cartesianToCartographic(cartesian);
   return {
