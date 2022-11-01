@@ -49,9 +49,17 @@ export default function Area({
       id={`${zone}/${section}/${area}`}
       vertical={area === "middle"}
       stretch={area === "middle"}
-      // reverse={area !== "middle" && section === "right"}
-      end={section === "right" || area === "bottom"}
-      align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
+      bottom={(section === "right" && area !== "top") || area === "bottom"}
+      realignable={(area === "middle" || section === "center") && !!widgets?.length}
+      align={
+        widgets?.length
+          ? area === "middle" || section === "center"
+            ? align
+            : section === "right"
+            ? "end"
+            : undefined
+          : undefined
+      }
       style={{ flexWrap: "wrap", pointerEvents: "none" }}
       editorStyle={{
         flexWrap: "wrap",
