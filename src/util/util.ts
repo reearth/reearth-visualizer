@@ -2,7 +2,7 @@ import { Args, Args3, Args2 } from "@reearth/types";
 
 export const isPresent = <V>(v: V | undefined): v is V => typeof v !== "undefined";
 
-export const partitionObject = <T, K extends keyof T>(
+export const partitionObject = <T extends {}, K extends keyof T>(
   obj: T,
   keys: K[],
 ): [Pick<T, K>, Omit<T, K>] => {

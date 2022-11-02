@@ -26,7 +26,7 @@ const NewPasswordForm: React.FC<Props> = ({
   const [newPassword, setNewPassword] = useState<string>("");
   const [email, setEmail] = useState<string>();
   const [disabled, setDisabled] = useState(true);
-  const [regexMessage, setRegexMessage] = useState("");
+  const [regexMessage, setRegexMessage] = useState<string | undefined | null>();
 
   const handleEmailInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

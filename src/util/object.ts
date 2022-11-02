@@ -1,4 +1,4 @@
-export function delayedObject<T>(obj: T, excludedKeys?: string[]): Readonly<T> {
+export function delayedObject<T extends {}>(obj: T, excludedKeys?: string[]): Readonly<T> {
   const res: any = {};
   const descs = Object.keys(obj).reduce<PropertyDescriptorMap>(
     (a, b) => ({

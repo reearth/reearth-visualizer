@@ -14,7 +14,7 @@ export default function ({
   passwordPolicy?: PasswordPolicyType;
 }) {
   const t = useT();
-  const [regexMessage, setRegexMessage] = useState("");
+  const [regexMessage, setRegexMessage] = useState<string | undefined | null>();
   const [username, setUsername] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();

@@ -47,7 +47,7 @@ const PasswordModal: React.FC<Props> = ({
   const theme = useTheme();
 
   const [password, setPassword] = useState("");
-  const [regexMessage, setRegexMessage] = useState("");
+  const [regexMessage, setRegexMessage] = useState<string | undefined | null>();
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>();
   const [disabled, setDisabled] = useState(true);
 
