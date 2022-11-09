@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Area from "./Area";
@@ -14,6 +15,7 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  viewport?: Viewport;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
 } & PluginCommonProps;
 

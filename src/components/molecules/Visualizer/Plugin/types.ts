@@ -25,6 +25,7 @@ export type Reearth = {
   readonly widget?: Widget;
   readonly block?: Block;
   readonly scene: Scene;
+  readonly viewport: Viewport;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -70,6 +71,7 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
+  resize: [props: Viewport];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -324,6 +326,12 @@ export type Visualizer = {
   readonly property?: any;
   /** use `reearth.scene.overrideProperty` instead. */
   readonly overrideProperty: (property: any) => void;
+};
+
+export type Viewport = {
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 };
 
 type Rect = {

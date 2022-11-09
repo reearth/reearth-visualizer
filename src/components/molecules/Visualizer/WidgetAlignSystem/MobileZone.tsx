@@ -5,6 +5,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Area from "./Area";
@@ -18,6 +19,7 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  viewport?: Viewport;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;

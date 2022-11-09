@@ -5,6 +5,7 @@ import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 import W, { WidgetLayout } from "../Widget";
 
@@ -19,6 +20,7 @@ type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  viewport?: Viewport;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;

@@ -3,6 +3,7 @@ import { ComponentType } from "react";
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
+import { Viewport } from "../hooks";
 import Plugin from "../Plugin";
 import type { Block, Layer, InfoboxProperty, CommonProps as PluginCommonProps } from "../Plugin";
 
@@ -17,6 +18,7 @@ export type Props<BP = any> = {
   layer?: Layer;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
+  viewport?: Viewport;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
@@ -37,32 +39,34 @@ export default function BlockComponent<P = any>({
       ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
       : undefined;
 
-  return Builtin ? (
-    <Builtin {...props} />
-  ) : (
-    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
-      <Plugin
-        autoResize="height-only"
-        pluginId={props.block?.pluginId}
-        extensionId={props.block?.extensionId}
-        sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
-        extensionType="block"
-        pluginBaseUrl={pluginBaseUrl}
-        visible
-        property={props.pluginProperty}
-        pluginProperty={props.pluginProperty}
-        layer={props.layer}
-        block={props.block}
-        onClick={props.onClick}
-        pluginModalContainer={props.pluginModalContainer}
-        shownPluginModalInfo={props.shownPluginModalInfo}
-        onPluginModalShow={props.onPluginModalShow}
-        pluginPopupContainer={props.pluginPopupContainer}
-        shownPluginPopupInfo={props.shownPluginPopupInfo}
-        onPluginPopupShow={props.onPluginPopupShow}
-      />
-    </Wrapper>
-  );
+  return props.viewport ? (
+    Builtin ? (
+      <Builtin {...props} />
+    ) : (
+      <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+        <Plugin
+          autoResize="height-only"
+          pluginId={props.block?.pluginId}
+          extensionId={props.block?.extensionId}
+          sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
+          extensionType="block"
+          pluginBaseUrl={pluginBaseUrl}
+          visible
+          property={props.pluginProperty}
+          pluginProperty={props.pluginProperty}
+          layer={props.layer}
+          block={props.block}
+          onClick={props.onClick}
+          pluginModalContainer={props.pluginModalContainer}
+          shownPluginModalInfo={props.shownPluginModalInfo}
+          onPluginModalShow={props.onPluginModalShow}
+          pluginPopupContainer={props.pluginPopupContainer}
+          shownPluginPopupInfo={props.shownPluginPopupInfo}
+          onPluginPopupShow={props.onPluginPopupShow}
+        />
+      </Wrapper>
+    )
+  ) : null;
 }
 
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`

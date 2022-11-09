@@ -1,6 +1,7 @@
 import type * as CSS from "csstype";
 import { ComponentType, useCallback, useMemo } from "react";
 
+import { Viewport } from "../hooks";
 import Plugin, {
   Widget as RawWidget,
   WidgetLayout,
@@ -24,10 +25,11 @@ export type Props<PP = any, SP = any> = {
   pluginProperty?: PP;
   layout?: WidgetLayout;
   editing?: boolean;
+  viewport?: Viewport;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 } & PluginCommonProps;
 
-export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {
+export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget" | "viewport"> & {
   widget: RawWidget;
 };
 
@@ -41,6 +43,7 @@ export default function WidgetComponent<PP = any, SP = any>({
   layout,
   onExtend,
   editing,
+  viewport,
   ...props
 }: Props<PP, SP>) {
   const { align, location } = layout ?? {};
@@ -98,27 +101,29 @@ export default function WidgetComponent<PP = any, SP = any>({
     ? "height-only"
     : "both";
 
-  return Builtin ? (
-    <div style={BuiltinStyle}>
-      <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
-    </div>
-  ) : (
-    <Plugin
-      autoResize={autoResize}
-      pluginId={w?.pluginId}
-      extensionId={w?.extensionId}
-      sourceCode={(w as any)?.__REEARTH_SOURCECODE} // for debugging
-      extensionType="widget"
-      visible
-      pluginBaseUrl={pluginBaseUrl}
-      property={pluginProperty}
-      widget={w}
-      iFrameProps={iFrameProps}
-      onRender={handleRender}
-      onResize={handleResize}
-      {...props}
-    />
-  );
+  return viewport ? (
+    Builtin ? (
+      <div style={BuiltinStyle}>
+        <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
+      </div>
+    ) : (
+      <Plugin
+        autoResize={autoResize}
+        pluginId={w?.pluginId}
+        extensionId={w?.extensionId}
+        sourceCode={(w as any)?.__REEARTH_SOURCECODE} // for debugging
+        extensionType="widget"
+        visible
+        pluginBaseUrl={pluginBaseUrl}
+        property={pluginProperty}
+        widget={w}
+        iFrameProps={iFrameProps}
+        onRender={handleRender}
+        onResize={handleResize}
+        {...props}
+      />
+    )
+  ) : null;
 }
 
 function isHorizontal(l: WidgetLocation): boolean {

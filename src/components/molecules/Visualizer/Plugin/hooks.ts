@@ -197,6 +197,7 @@ export function useAPI({
         "mouseleave",
         "wheel",
         "tick",
+        "resize",
       ]);
     }
 
