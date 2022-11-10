@@ -9,7 +9,7 @@ import type { MouseEvents, MouseEvent } from "../ref";
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
 import {
-  getLocationFromScreenXY,
+  getLocationFromScreen,
   flyTo,
   lookAt,
   getCamera,
@@ -62,10 +62,10 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getCamera(viewer);
       },
-      getLocationFromScreenXY: (x, y) => {
+      getLocationFromScreen: (x, y, withTerrain) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return getLocationFromScreenXY(viewer.scene, x, y);
+        return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
       flyTo: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

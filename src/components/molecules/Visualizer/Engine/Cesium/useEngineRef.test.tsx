@@ -510,3 +510,42 @@ test("look", () => {
   expect(mockLook).toHaveBeenCalledTimes(2);
   expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 90);
 });
+
+test("get location from screen xy", () => {
+  const mockGetPickRay = vi.fn(() => true);
+  const mockPickEllipsoid = vi.fn(() =>
+    Cartesian3.fromDegrees(137, 40, 0, new Globe(Ellipsoid.WGS84).ellipsoid),
+  );
+  const mockPick = vi.fn(() =>
+    Cartesian3.fromDegrees(110, 20, 10000, new Globe(Ellipsoid.WGS84).ellipsoid),
+  );
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          camera: {
+            getPickRay: mockGetPickRay,
+            pickEllipsoid: mockPickEllipsoid,
+          },
+          globe: {
+            ellipsoid: new Globe(Ellipsoid.WGS84).ellipsoid,
+            pick: mockPick,
+          },
+        },
+      } as any,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  const location = result.current.current?.getLocationFromScreen(0, 0);
+  expect(location?.lng).toBeCloseTo(137, 0);
+  expect(location?.lat).toBeCloseTo(40, 0);
+  expect(location?.height).toBeCloseTo(0, 0);
+  const location2 = result.current.current?.getLocationFromScreen(0, 0, true);
+  expect(location2?.lng).toBeCloseTo(110, 0);
+  expect(location2?.lat).toBeCloseTo(20, 0);
+  expect(location2?.height).toBeCloseTo(10000, 0);
+});

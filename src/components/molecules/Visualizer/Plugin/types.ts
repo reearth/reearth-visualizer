@@ -82,11 +82,22 @@ export type Plugin = {
   readonly property?: any;
 };
 
+export type LatLngHeight = {
+  lat: number;
+  lng: number;
+  height: number;
+};
+
 export type Scene = {
   /** Current scene property */
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly getLocationFromScreen: (
+    x: number,
+    y: number,
+    withTerrain?: boolean,
+  ) => LatLngHeight | undefined;
 };
 
 /** You can operate and get data about layers. */

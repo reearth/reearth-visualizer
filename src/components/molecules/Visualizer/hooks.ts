@@ -96,7 +96,7 @@ export default ({
         drop(_item, context) {
           if (!rootLayerId || !isEditable) return;
           const loc = context.position
-            ? engineRef.current?.getLocationFromScreenXY(context.position.x, context.position.y)
+            ? engineRef.current?.getLocationFromScreen(context.position.x, context.position.y)
             : undefined;
           return {
             type: "earth",
@@ -512,6 +512,7 @@ function useProviderProps(
     | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
+    | "getLocationFromScreen"
     | "enableScreenSpaceCameraController"
     | "lookHorizontal"
     | "lookVertical"
@@ -631,6 +632,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const getLocationFromScreen = useCallback(
+    (x: number, y: number, withTerrain?: boolean) => {
+      return engineRef.current?.getLocationFromScreen(x, y, withTerrain);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.current?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -720,6 +728,7 @@ function useProviderProps(
     cameraViewport,
     onMouseEvent,
     captureScreen,
+    getLocationFromScreen,
     enableScreenSpaceCameraController,
     lookHorizontal,
     lookVertical,

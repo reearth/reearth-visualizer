@@ -19,7 +19,7 @@ import {
   isDraggable,
   isSelectable,
   layerIdField,
-  getLocationFromScreenXY,
+  getLocationFromScreen,
   getClock,
 } from "./common";
 import terrain from "./terrain";
@@ -214,7 +214,7 @@ export default ({
           x: position?.x,
           y: position?.y,
           ...(position
-            ? getLocationFromScreenXY(viewer.scene, position.x, position.y, true) ?? {}
+            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
             : {}),
         };
         const layerId = getLayerId(target);
