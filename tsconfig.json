@@ -21,6 +21,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
+      "@reearth/e2e/*": [
+        "e2e/*"
+      ],
       "@reearth/*": [
         "src/*"
       ],
@@ -33,6 +36,7 @@
   },
   "include": [
     "src",
+    "e2e",
   ],
   "ts-node": {
     "compilerOptions": {

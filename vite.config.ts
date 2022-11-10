@@ -9,11 +9,12 @@ import react from "@vitejs/plugin-react";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
+import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
-  plugins: [react(), yaml(), cesium(), serverHeaders(), config()],
+  plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
   },
@@ -31,7 +32,6 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
-      { find: "@reearth", replacement: resolve(__dirname, "src") },
     ],
   },
   test: {

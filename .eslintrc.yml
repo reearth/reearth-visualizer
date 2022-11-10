@@ -26,6 +26,12 @@ overrides:
       - plugin:playwright/playwright-test
     env:
       browser: false
+    rules:
+      no-restricted-imports:
+        - error
+        - paths:
+          - name: '@playwright/test'
+            message: Use @reearth/e2e/utils instead.
   - files:
       - i18next-parser.config.js
     extends:

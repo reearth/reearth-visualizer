@@ -1,4 +1,4 @@
-import { expect, test } from "./utils";
+import { expect, test } from "@reearth/e2e/utils";
 
 test("dasboard can be logged in", async ({ page, reearth }) => {
   await reearth.initUser();
