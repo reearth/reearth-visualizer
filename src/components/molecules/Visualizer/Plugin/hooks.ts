@@ -61,15 +61,7 @@ export default function ({
   const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    modalVisible.current = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
-  }, [modalVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id, block?.id]);
-
-  useEffect(() => {
-    popupVisible.current = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
-  }, [popupVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id, block?.id]);
-
-  const { staticExposed, isMarshalable, onPreInit, onDispose } =
+  const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
       extensionId,
       extensionType,
@@ -86,6 +78,42 @@ export default function ({
       onRender,
       onResize,
     }) ?? [];
+
+  useEffect(() => {
+    const visible = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
+    if (modalVisible.current !== visible) {
+      modalVisible.current = visible;
+      if (!modalVisible.current) {
+        onModalClose();
+      }
+    }
+  }, [
+    modalVisible,
+    shownPluginModalInfo,
+    pluginId,
+    extensionId,
+    widget?.id,
+    block?.id,
+    onModalClose,
+  ]);
+
+  useEffect(() => {
+    const visible = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
+    if (popupVisible.current !== visible) {
+      popupVisible.current = visible;
+      if (!popupVisible.current) {
+        onPopupClose();
+      }
+    }
+  }, [
+    popupVisible,
+    shownPluginPopupInfo,
+    pluginId,
+    extensionId,
+    widget?.id,
+    block?.id,
+    onPopupClose,
+  ]);
 
   const onError = useCallback(
     (err: any) => {
@@ -160,6 +188,8 @@ export function useAPI({
   isMarshalable: Options["isMarshalable"] | undefined;
   onPreInit: () => void;
   onDispose: () => void;
+  onModalClose: () => void;
+  onPopupClose: () => void;
 } {
   const ctx = useContext();
   const getLayer = useGet(layer);
@@ -348,10 +378,20 @@ export function useAPI({
     event.current?.[1]("update");
   }, [block, layer, widget, ctx?.reearth.scene.property]);
 
+  const onModalClose = useCallback(() => {
+    event.current?.[1]("modalclose");
+  }, []);
+
+  const onPopupClose = useCallback(() => {
+    event.current?.[1]("popupclose");
+  }, []);
+
   return {
     staticExposed,
     isMarshalable,
     onPreInit,
     onDispose,
+    onModalClose,
+    onPopupClose,
   };
 }

@@ -72,6 +72,8 @@ export type ReearthEventType = {
   wheel: [props: MouseEvent];
   tick: [props: Date];
   resize: [props: Viewport];
+  modalclose: [];
+  popupclose: [];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
