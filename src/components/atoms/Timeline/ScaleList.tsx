@@ -1,24 +1,26 @@
 import { memo } from "react";
 
 import Text from "@reearth/components/atoms/Text";
-import { styled } from "@reearth/theme";
+import { PublishTheme, styled } from "@reearth/theme";
 
 import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
 import { formatDateForTimeline } from "./utils";
 
 type Props = {
+  publishedTheme?: PublishTheme;
   gapHorizontal: number;
 } & ScaleListInnerProps;
 
-const ScaleList: React.FC<Props> = ({ gapHorizontal, ...props }) => {
+const ScaleList: React.FC<Props> = ({ publishedTheme, gapHorizontal, ...props }) => {
   return (
     <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
-      <ScaleListInner {...props} />
+      <ScaleListInner publishedTheme={publishedTheme} {...props} />
     </ScaleContainer>
   );
 };
 
 type ScaleListInnerProps = {
+  publishedTheme?: PublishTheme;
   start: Date;
   scaleCount: number;
   hoursCount: number;
@@ -27,6 +29,7 @@ type ScaleListInnerProps = {
 };
 
 const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPresenter({
+  publishedTheme,
   start,
   scaleCount,
   hoursCount,
@@ -45,7 +48,9 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
           return (
             <LabeledScale key={idx}>
-              <ScaleLabel size="xs">{label}</ScaleLabel>
+              <ScaleLabel size="2xs" customColor publishedTheme={publishedTheme}>
+                {label}
+              </ScaleLabel>
               <Scale isHour={isHour} isStrongScale={isStrongScale} />
             </LabeledScale>
           );
@@ -55,6 +60,10 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
     </>
   );
 });
+
+export type StyledColorProps = {
+  publishedTheme: PublishTheme | undefined;
+};
 
 const ScaleContainer = styled.div`
   display: flex;
@@ -67,7 +76,7 @@ const ScaleContainer = styled.div`
   ::after {
     content: "";
     display: block;
-    padding-right: ${PADDING_HORIZONTAL}px;
+    padding-right: 1px;
     height: 1px;
   }
 `;
@@ -79,11 +88,11 @@ const LabeledScale = styled.div`
   height: 100%;
 `;
 
-const ScaleLabel = styled(Text)`
+const ScaleLabel = styled(Text)<StyledColorProps>`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme }) => theme.colors.publish.dark.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   white-space: nowrap;
 `;
 

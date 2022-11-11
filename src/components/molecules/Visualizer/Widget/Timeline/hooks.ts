@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
+import { Widget } from "@reearth/components/molecules/Visualizer/Plugin";
 
 import { useContext } from "../../Plugin";
 
@@ -14,13 +15,19 @@ const makeRange = (startTime?: number, stopTime?: number) => {
 
 const DEFAULT_SPEED = 1;
 
-export const useTimeline = () => {
+export const useTimeline = ({
+  widget,
+  onExtend,
+}: {
+  widget: Widget;
+  onExtend?: (id: string, extended: boolean | undefined) => void;
+}) => {
   const ctx = useContext();
   const clock = ctx?.reearth.clock;
   const [range, setRange] = useState(() =>
     makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime()),
   );
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.currentTime).getTime());
   const isClockInitialized = useRef(false);
   const clockCurrentTime = clock?.currentTime.getTime();
@@ -31,11 +38,14 @@ export const useTimeline = () => {
   const [speed, setSpeed] = useState(clockSpeed);
 
   const handleOnOpen = useCallback(() => {
+    onExtend?.(widget.id, true);
     setIsOpened(true);
-  }, []);
+  }, [widget.id, onExtend]);
+
   const handleOnClose = useCallback(() => {
+    onExtend?.(widget.id, false);
     setIsOpened(false);
-  }, []);
+  }, [widget.id, onExtend]);
 
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {

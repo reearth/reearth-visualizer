@@ -5,11 +5,11 @@ import Text from "@reearth/components/atoms/Text";
 // eslint-disable-next-line no-restricted-imports
 import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
 import { useT } from "@reearth/i18n";
-import { PublishTheme, styled, usePublishTheme } from "@reearth/theme";
+import { styled, usePublishTheme } from "@reearth/theme";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";
-import ScaleList from "./ScaleList";
+import ScaleList, { StyledColorProps } from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
 
 export type Props = {
@@ -24,6 +24,8 @@ export type Props = {
    */
   range?: { [K in keyof Range]?: Range[K] };
   speed?: number;
+  isOpened?: boolean;
+  sceneProperty?: SceneProperty;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
   onPlay?: (isPlaying: boolean) => void;
@@ -31,23 +33,21 @@ export type Props = {
   onOpen?: () => void;
   onClose?: () => void;
   onSpeedChange?: (speed: number) => void;
-  isOpened?: boolean;
-  sceneProperty?: SceneProperty;
 };
 
 const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   currentTime,
   range,
   speed,
+  isOpened,
+  sceneProperty,
   onClick,
   onDrag,
   onPlay,
   onPlayReversed,
-  isOpened,
   onOpen,
   onClose,
   onSpeedChange: onSpeedChangeProps,
-  sceneProperty,
 }) {
   const {
     startDate,
@@ -79,10 +79,12 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   const t = useT();
 
   return isOpened ? (
-    <Container>
-      <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
-        <Icon alt={t("Close timeline")} icon="cancel" size={16} />
-      </CloseButton>
+    <Container publishedTheme={publishedTheme}>
+      <div style={{ width: "32px" }}>
+        <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
+          <Icon alt={t("Close timeline")} icon="cancel" size={16} />
+        </CloseButton>
+      </div>
       <ToolBox>
         <li>
           <PlayButton
@@ -103,7 +105,9 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
         <li>
           <InputRangeLabel>
-            <InputRangeLabelText size="xs">{speed}x</InputRangeLabelText>
+            <InputRangeLabelText size="xs" customColor publishedTheme={publishedTheme}>
+              {speed}X
+            </InputRangeLabelText>
             <InputRange
               publishedTheme={publishedTheme}
               type="range"
@@ -115,9 +119,14 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           </InputRangeLabel>
         </li>
       </ToolBox>
-      <CurrentTime size="xs" weight="bold">
-        {formattedCurrentTime}
-      </CurrentTime>
+      <CurrentTimeWrapper>
+        <CurrentTime size="xs" customColor publishedTheme={publishedTheme}>
+          {formattedCurrentTime.date}
+        </CurrentTime>
+        <CurrentTime size="xs" customColor publishedTheme={publishedTheme}>
+          {formattedCurrentTime.time}
+        </CurrentTime>
+      </CurrentTimeWrapper>
       {/**
        * TODO: Support keyboard operation for accessibility
        * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
@@ -130,6 +139,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           gapHorizontal={gapHorizontal}
           scaleInterval={scaleInterval}
           strongScaleHours={strongScaleHours}
+          publishedTheme={publishedTheme}
         />
         <IconWrapper
           data-testid="knob-icon"
@@ -142,19 +152,16 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
       </ScaleBox>
     </Container>
   ) : (
-    <OpenButton onClick={onOpen}>
+    <OpenButton publishedTheme={publishedTheme} onClick={onOpen}>
       <Icon alt={t("Open timeline")} icon="timeline" size={24} />
     </OpenButton>
   );
 });
 
-type StyledColorProps = {
-  publishedTheme: PublishTheme | undefined;
-};
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.main.deepBg};
+const Container = styled.div<StyledColorProps>`
+  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
   width: 100%;
+  height: 40px;
   display: flex;
   box-sizing: border-box;
   -webkit-user-select: none;
@@ -163,16 +170,15 @@ const Container = styled.div`
   user-select: none;
 `;
 
-const OpenButton = styled.button`
-  background: ${({ theme }) => theme.main.deepBg};
-  color: ${({ theme }) => theme.main.text};
+const OpenButton = styled.button<StyledColorProps>`
+  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   padding: 8px 12px;
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
   background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
-  padding: 4px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,10 +197,13 @@ const ToolBox = styled.ul`
 
 const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & StyledColorProps>`
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  border: ${({ theme }) => `1px solid ${theme.main.weak}`};
-  color: ${({ theme }) => theme.main.text};
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${({ theme, isPlaying, publishedTheme }) =>
+    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.main.text};
+  width: 22px;
+  height: 22px;
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,11 +216,11 @@ const InputRangeLabel = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: ${({ theme }) => `0 ${theme.metrics.s}px 0 ${theme.metrics.m}px`};
+  margin: ${({ theme }) => `0 ${theme.metrics["2xs"]}px 0 ${theme.metrics["2xs"]}px`};
 `;
 
-const InputRangeLabelText = styled(Text)`
-  color: ${({ theme }) => theme.main.text};
+const InputRangeLabelText = styled(Text)<StyledColorProps>`
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
@@ -233,40 +242,47 @@ const InputRange = styled.input<StyledColorProps>`
   }
 `;
 
-const CurrentTime = styled(Text)`
+const CurrentTimeWrapper = styled.div`
   border: ${({ theme }) => `1px solid ${theme.main.weak}`};
-  border-radius: 5px;
-  color: ${({ theme }) => theme.main.text};
+  border-radius: 4px;
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
-  margin: ${({ theme }) => `${theme.metrics.s}px 0`};
+  margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
   flex-shrink: 0;
+`;
+
+const CurrentTime = styled(Text)<StyledColorProps>`
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  line-height: 16px;
   white-space: pre-line;
 `;
 
 const ScaleBox = styled.div`
-  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.colors.publish.dark.icon.weak}`};
+  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  overflow-x: auto;
+  overflow-x: overlay;
   overflow-y: hidden;
   width: 100%;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  ::-webkit-scrollbar {
-    height: 5px;
+  transition: -webkit-scrollbar 1s;
+  :hover::-webkit-scrollbar {
+    height: 2px;
   }
   ::-webkit-scrollbar-track {
     background-color: transparent;
+    background-color: red;
+    display: none;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
   }
   margin: ${({ theme }) =>
-    `${theme.metrics.s}px ${theme.metrics.m}px ${theme.metrics.s}px ${theme.metrics.xs}px`};
+    `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
 `;
 
 const IconWrapper = styled.div<StyledColorProps>`

@@ -6,11 +6,11 @@ import { useTimeline } from "./hooks";
 
 export type Props = WidgetProps;
 
-const Timeline = ({ widget, sceneProperty }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events } = useTimeline();
+const Timeline = ({ widget, sceneProperty, onExtend }: Props): JSX.Element | null => {
+  const { isOpened, currentTime, range, speed, events } = useTimeline({ widget, onExtend });
 
   return (
-    <Widget extended={!!widget?.extended?.horizontally}>
+    <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
       <TimelineUI
         isOpened={isOpened}
         currentTime={currentTime}
@@ -25,12 +25,13 @@ const Timeline = ({ widget, sceneProperty }: Props): JSX.Element | null => {
 
 const Widget = styled.div<{
   extended?: boolean;
+  opened?: boolean;
 }>`
   max-width: 100vw;
-  width: ${({ extended }) => (extended ? "100%" : "720px")};
+  width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "720px" : "auto")};
 
   @media (max-width: 560px) {
-    width: ${({ extended }) => (extended ? "100%" : "90vw")};
+    width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "90vw" : "auto")};
   }
 `;
 

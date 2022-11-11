@@ -166,7 +166,10 @@ const useTimelinePlayer = ({
     const lastIdx = textDate.lastIndexOf(" ");
     const date = textDate.slice(0, lastIdx);
     const time = textDate.slice(lastIdx);
-    return `${date}\n${time}`;
+    return {
+      date,
+      time,
+    };
   }, [currentTime]);
 
   useEffect(() => {
