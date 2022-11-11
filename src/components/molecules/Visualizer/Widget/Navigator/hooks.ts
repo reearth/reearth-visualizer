@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import { SceneProperty } from "../../Engine";
 import { useContext } from "../../Plugin";
@@ -9,12 +9,17 @@ export default function ({ sceneProperty }: { sceneProperty: SceneProperty }) {
   const ctx = useContext();
   const camera = ctx?.reearth.camera;
   const [degree, setDegree] = useState(0);
-  const [isHelpOpened, setIsHelpOpened] = useState(false);
+  // const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
   const cameraRotateRight = camera?.rotateRight;
   const cameraOrbit = camera?.orbit;
   const cameraOrbitRef = useRef<typeof cameraOrbit>();
+
+  const sceneMode = useMemo(
+    () => sceneProperty.default?.sceneMode,
+    [sceneProperty.default?.sceneMode],
+  );
 
   const handleOnRotate = useCallback(
     (deg: number) => {
@@ -37,9 +42,9 @@ export default function ({ sceneProperty }: { sceneProperty: SceneProperty }) {
       camera?.flyTo(sceneProperty.default.camera, { duration: 1 });
     }
   }, [camera, sceneProperty]);
-  const handleOnClickHelp = useCallback(() => {
-    setIsHelpOpened(prev => !prev);
-  }, []);
+  // const handleOnClickHelp = useCallback(() => {
+  //   setIsHelpOpened(prev => !prev);
+  // }, []);
 
   const handleOnZoomIn = useCallback(() => {
     camera?.zoomIn(2);
@@ -75,15 +80,16 @@ export default function ({ sceneProperty }: { sceneProperty: SceneProperty }) {
   }, [ctx?.reearth]);
 
   return {
+    sceneMode,
     degree,
-    isHelpOpened, // TODO: This will be used to display help modal.
+    // isHelpOpened, // TODO: This will be used to display help modal.
     events: {
       onRotate: handleOnRotate,
       onStartOrbit: handleOnStartOrbit,
       onEndOrbit: handleOnEndOrbit,
       onMoveOrbit: handleOnMoveOrbit,
       onRestoreRotate: handleOnRestoreRotate,
-      onClickHelp: handleOnClickHelp,
+      // onClickHelp: handleOnClickHelp, // Uncomment-out when isHelpOpened/help modal is made
       onZoomIn: handleOnZoomIn,
       onZoomOut: handleOnZoomOut,
     },

@@ -1,1 +1,11 @@
-<svg fill="none" height="64" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m32 64c17.6731 0 32-14.3269 32-32s-14.3269-32-32-32-32 14.3269-32 32 14.3269 32 32 32zm0-12c11.0457 0 20-8.9543 20-20s-8.9543-20-20-20-20 8.9543-20 20 8.9543 20 20 20z" fill="#fff" fill-rule="evenodd"/><path d="m34.81 9h-1.31l-3.61-5.77h-.04c.0067.13333.0133.27667.02.43.0133.15333.0233.31667.03.49.0067.16667.0133.34.02.52.0067.17333.01.35.01.53v3.8h-.98v-7.14h1.3l3.6 5.74h.03c-.0067-.1-.0133-.22333-.02-.37-.0067-.15333-.0133-.31667-.02-.49 0-.17333-.0033-.35-.01-.53s-.0133-.35-.02-.51v-3.84h1z" fill="currentColor"/><path d="m1 32.5h6" stroke="currentColor"/><path d="m57 32.5h6" stroke="currentColor"/><path d="m32.5 57v6" stroke="currentColor"/><g fill="currentColor"><circle cx="10" cy="16" r="1"/><circle cx="10" cy="51" r="1"/><circle cx="52" cy="16" r="1"/><circle cx="52" cy="51" r="1"/></g></svg>
+<svg width="64" height="65" viewBox="0 0 64 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="32" cy="32.5" r="26" stroke="currentColor" stroke-width="12" />
+<path d="M34.81 8.99999H33.5L29.89 3.22999H29.85C29.8567 3.36332 29.8633 3.50665 29.87 3.65999C29.8833 3.81332 29.8933 3.97665 29.9 4.14999C29.9067 4.31665 29.9133 4.48999 29.92 4.66999C29.9267 4.84332 29.93 5.01999 29.93 5.19999V8.99999H28.95V1.85999H30.25L33.85 7.59999H33.88C33.8733 7.49999 33.8667 7.37665 33.86 7.22999C33.8533 7.07665 33.8467 6.91332 33.84 6.73999C33.84 6.56665 33.8367 6.38999 33.83 6.20999C33.8233 6.02999 33.8167 5.85999 33.81 5.69999V1.85999H34.81V8.99999Z" fill="currentColor"/>
+<path d="M 7 32 H 0 V 33 H 7 Z" fill="currentColor"/>
+<path d="M 64 32 H 57 V 33 H 64 Z" fill="currentColor"/>
+<path d="M 32 57 H 33 V 64.5 H 32 Z" fill="currentColor"/>
+<rect x="9" y="15" width="2" height="2" ry="50" fill="currentColor" />
+<rect x="9" y="50" width="2" height="2" ry="50" fill="currentColor" />
+<rect x="51" y="15" width="2" height="2" ry="50" fill="currentColor" />
+<rect x="51" y="50" width="2" height="2" ry="50" fill="currentColor" />
+</svg>

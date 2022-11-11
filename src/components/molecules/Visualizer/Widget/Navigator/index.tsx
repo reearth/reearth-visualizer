@@ -1,4 +1,5 @@
 import { ComponentProps as WidgetProps } from "@reearth/components/molecules/Visualizer/Widget";
+import { usePublishTheme } from "@reearth/theme";
 
 import { SceneProperty } from "../../Engine";
 
@@ -8,9 +9,17 @@ import NavigatorPresenter from "./NavigatorPresenter";
 export type Props = WidgetProps<SceneProperty>;
 
 const Navigator = ({ sceneProperty }: Props): JSX.Element | null => {
-  const { degree, events } = useHooks({ sceneProperty });
+  const { sceneMode, degree, events } = useHooks({ sceneProperty });
+  const publishedTheme = usePublishTheme(sceneProperty?.theme);
 
-  return <NavigatorPresenter degree={degree} {...events} />;
+  return (
+    <NavigatorPresenter
+      sceneMode={sceneMode}
+      publishedTheme={publishedTheme}
+      degree={degree}
+      {...events}
+    />
+  );
 };
 
 export default Navigator;
