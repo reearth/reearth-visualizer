@@ -26,6 +26,7 @@ import {
   flyToGround,
   getCenterCamera,
   zoom,
+  lookAtWithoutAnimation,
 } from "./common";
 
 export default function useEngineRef(
@@ -80,6 +81,9 @@ export default function useEngineRef(
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
+        if (options?.animation) {
+          return lookAtWithoutAnimation(viewer.scene, { ...getCamera(viewer), ...camera });
+        }
         cancelCameraFlight.current?.();
         cancelCameraFlight.current = lookAt(
           viewer.scene?.camera,

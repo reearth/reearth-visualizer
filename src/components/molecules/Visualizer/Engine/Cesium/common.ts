@@ -28,6 +28,7 @@ import {
   sampleTerrainMostDetailed,
   Ray,
   IntersectionTests,
+  Matrix4,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -290,6 +291,41 @@ export const lookAt = (
     cancelFov?.();
     cesiumCamera?.cancelFlight();
   };
+};
+
+export const lookAtWithoutAnimation = (
+  scene: Scene,
+  camera?: {
+    /** degrees */
+    lat?: number;
+    /** degrees */
+    lng?: number;
+    /** meters */
+    height?: number;
+    /** radians */
+    heading?: number;
+    /** radians */
+    pitch?: number;
+    /** radians */
+    range?: number;
+    /** Field of view expressed in radians */
+    fov?: number;
+  },
+) => {
+  if (!camera) {
+    return;
+  }
+
+  const position =
+    typeof camera.lat === "number" &&
+    typeof camera.lng === "number" &&
+    typeof camera.height === "number"
+      ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
+      : undefined;
+
+  if (position) {
+    scene.camera.lookAtTransform(Matrix4.fromTranslation(position));
+  }
 };
 
 export const animateFOV = ({

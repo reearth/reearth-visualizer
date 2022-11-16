@@ -459,6 +459,7 @@ export type CameraOptions = {
   duration?: number;
   /** Easing function. */
   easing?: (time: number) => number;
+  animation?: boolean;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

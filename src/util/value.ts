@@ -46,6 +46,44 @@ export type Rect = {
   north: number;
 };
 
+// Ideal for plugin developers, but it's hard to implement it with Cesium
+export type Plane = {
+  location: LatLngHeight;
+  width: number;
+  height: number;
+  length: number;
+  heading: number;
+  pitch: number;
+};
+
+// Familiar with Cesium
+export type EXPERIMENTAL_clipping = {
+  planes?: {
+    normal: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    distance: number;
+  }[];
+  location: LatLngHeight;
+  /**
+   * x-axis
+   */
+  width?: number;
+  /**
+   * y-axis
+   */
+  length?: number;
+  /**
+   * z-axis
+   */
+  height?: number;
+  heading?: number;
+  pitch?: number;
+  roll?: number;
+};
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;

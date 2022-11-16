@@ -1,5 +1,6 @@
 import type { Component } from "../../Primitive";
 
+import Box from "./Box";
 import Ellipsoid from "./Ellipsoid";
 import Marker from "./Marker";
 import Model from "./Model";
@@ -16,6 +17,7 @@ const builtin: Record<string, Component> = {
   "reearth/polygon": Polygon,
   "reearth/rect": Rect,
   "reearth/ellipsoid": Ellipsoid,
+  "reearth/box": Box,
   "reearth/photooverlay": PhotoOverlay,
   "reearth/resource": Resource,
   "reearth/model": Model,
