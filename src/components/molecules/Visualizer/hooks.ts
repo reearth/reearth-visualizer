@@ -41,6 +41,7 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
+  inEditor,
   rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
@@ -62,6 +63,7 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
+  inEditor?: boolean;
   rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
@@ -251,6 +253,7 @@ export default ({
     {
       engineName: engineType || "",
       sceneProperty: overriddenSceneProperty,
+      inEditor: !!inEditor,
       tags,
       camera: innerCamera,
       clock: innerClock,
