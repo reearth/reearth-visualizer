@@ -11,7 +11,7 @@ export type { API, IFrameType, Ref } from "./hooks";
 
 export type Props = {
   className?: string;
-  canBeVisible?: boolean;
+  uiVisible?: boolean;
   skip?: boolean;
   src?: string;
   sourceCode?: string;
@@ -36,7 +36,7 @@ export type Props = {
 const Plugin: ForwardRefRenderFunction<Ref, Props> = (
   {
     className,
-    canBeVisible,
+    uiVisible,
     modalVisible,
     popupVisible,
     skip,
@@ -78,7 +78,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         type="main"
         ref={mainIFrameRef}
         ready={loaded}
-        visible={canBeVisible}
+        visible={uiVisible}
         enabled
         className={className}
         iFrameProps={iFrameProps}

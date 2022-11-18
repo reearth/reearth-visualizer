@@ -16,7 +16,7 @@ let cb: (message: any) => void | undefined;
 
 Default.args = {
   src: `/plugins/plugin.js`,
-  canBeVisible: true,
+  uiVisible: true,
   iFrameProps: {
     style: {
       width: "300px",
@@ -50,7 +50,7 @@ export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
 
 HiddenIFrame.args = {
   src: `/plugins/hidden.js`,
-  canBeVisible: true,
+  uiVisible: true,
   iFrameProps: {
     style: {
       width: "300px",
@@ -132,6 +132,6 @@ AutoResize.args = {
     onmessage = msg => { resize(msg.width, msg.height); };
   `,
   autoResize: "both",
-  canBeVisible: true,
+  uiVisible: true,
   exposed: ({ main: { render, resize } }) => ({ render, resize }),
 };

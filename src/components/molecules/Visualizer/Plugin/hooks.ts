@@ -1,5 +1,5 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo, useRef, MutableRefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, MutableRefObject, useState } from "react";
 import type { RefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
@@ -19,6 +19,7 @@ export default function ({
   extensionId,
   pluginBaseUrl,
   extensionType,
+  visible,
   block,
   layer,
   widget,
@@ -34,6 +35,7 @@ export default function ({
   extensionId?: string;
   pluginBaseUrl?: string;
   extensionType?: string;
+  visible?: boolean;
   layer?: Layer;
   widget?: Widget;
   block?: Block;
@@ -61,6 +63,8 @@ export default function ({
   const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
 
+  const [uiVisible, setUIVisibility] = useState<boolean>(!!visible);
+
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
       extensionId,
@@ -75,6 +79,7 @@ export default function ({
       externalRef,
       onPluginModalShow,
       onPluginPopupShow,
+      setUIVisibility,
       onRender,
       onResize,
     }) ?? [];
@@ -131,6 +136,7 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
+    uiVisible,
     modalVisible: modalVisible.current,
     popupVisible: popupVisible.current,
     externalRef,
@@ -154,6 +160,7 @@ export function useAPI({
   externalRef,
   onPluginModalShow,
   onPluginPopupShow,
+  setUIVisibility,
   onRender,
   onResize,
 }: {
@@ -169,6 +176,7 @@ export function useAPI({
   externalRef: RefObject<HTMLIFrameElement> | undefined;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
+  setUIVisibility: (visible: boolean) => void;
   onRender?: (
     options:
       | {
@@ -294,6 +302,10 @@ export function useAPI({
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
+          setUIVisibility(true);
+        },
+        closeUI: () => {
+          setUIVisibility(false);
         },
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
@@ -370,6 +382,7 @@ export function useAPI({
     getWidget,
     onPluginModalShow,
     onPluginPopupShow,
+    setUIVisibility,
     onRender,
     onResize,
   ]);

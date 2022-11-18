@@ -268,6 +268,7 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+  readonly close: () => void;
 };
 
 export type Modal = {

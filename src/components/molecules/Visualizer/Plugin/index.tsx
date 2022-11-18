@@ -86,6 +86,7 @@ export default function Plugin({
     skip,
     src,
     isMarshalable,
+    uiVisible,
     modalVisible,
     popupVisible,
     externalRef,
@@ -98,6 +99,7 @@ export default function Plugin({
     extensionId,
     extensionType,
     pluginBaseUrl,
+    visible,
     layer,
     widget,
     block,
@@ -117,7 +119,7 @@ export default function Plugin({
       sourceCode={sourceCode}
       autoResize={autoResize}
       iFrameProps={iFrameProps}
-      canBeVisible={visible}
+      uiVisible={uiVisible}
       modalVisible={modalVisible}
       popupVisible={popupVisible}
       modalContainer={pluginModalContainer}
