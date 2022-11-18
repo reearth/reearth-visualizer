@@ -48,7 +48,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     html,
     options,
     handleLoad,
-  } = useHooks({ ready, ref, visible, type, onRender });
+  } = useHooks({ ready, ref, visible, type, enabled, onRender });
 
   const children = (
     <>

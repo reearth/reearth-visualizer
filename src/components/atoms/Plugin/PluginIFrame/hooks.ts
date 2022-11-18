@@ -14,12 +14,14 @@ export default function useHooks({
   ready,
   visible,
   type,
+  enabled,
   onRender,
 }: {
   ref?: ForwardedRef<Ref>;
   ready?: boolean;
   visible?: boolean;
   type?: string;
+  enabled?: boolean;
   onRender?: (type: string) => void;
 }) {
   const handleRender = useCallback(() => type && onRender?.(type), [type, onRender]);
@@ -33,6 +35,7 @@ export default function useHooks({
     reset,
   } = useIFrame({
     ready,
+    enabled,
     visible,
     onRender: handleRender,
   });
