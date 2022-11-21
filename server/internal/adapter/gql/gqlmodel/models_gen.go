@@ -720,11 +720,15 @@ type PluginExtension struct {
 }
 
 type Policy struct {
+	ID                    ID     `json:"id"`
+	Name                  string `json:"name"`
 	ProjectCount          *int   `json:"projectCount"`
 	MemberCount           *int   `json:"memberCount"`
 	PublishedProjectCount *int   `json:"publishedProjectCount"`
 	LayerCount            *int   `json:"layerCount"`
 	AssetStorageSize      *int64 `json:"assetStorageSize"`
+	DatasetSchemaCount    *int   `json:"datasetSchemaCount"`
+	DatasetCount          *int   `json:"datasetCount"`
 }
 
 type Project struct {

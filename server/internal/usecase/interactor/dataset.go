@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/layer/layerops"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -29,11 +30,14 @@ var extensionForLinkedLayers = id.PluginExtensionID("marker")
 type Dataset struct {
 	common
 	commonSceneLock
+	sceneRepo         repo.Scene
+	workspaceRepo     repo.Workspace
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
 	pluginRepo        repo.Plugin
+	policyRepo        repo.Policy
 	datasource        gateway.DataSource
 	file              gateway.File
 	google            gateway.Google
@@ -43,6 +47,8 @@ type Dataset struct {
 func NewDataset(r *repo.Container, gr *gateway.Container) interfaces.Dataset {
 	return &Dataset{
 		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
+		sceneRepo:         r.Scene,
+		workspaceRepo:     r.Workspace,
 		datasetRepo:       r.Dataset,
 		datasetSchemaRepo: r.DatasetSchema,
 		propertyRepo:      r.Property,
@@ -92,86 +98,11 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 }
 
 func (i *Dataset) AddDynamicDatasetSchema(ctx context.Context, inp interfaces.AddDynamicDatasetSchemaParam) (_ *dataset.Schema, err error) {
-	// Begin Db transaction
-	tx, err := i.transaction.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	schemaBuilder := dataset.NewSchema().
-		NewID().
-		Scene(inp.SceneId).
-		Dynamic(true)
-	fields := i.DynamicSchemaFields()
-	schemaBuilder = schemaBuilder.Fields(fields)
-	ds, err := schemaBuilder.Build()
-	if err != nil {
-		return nil, err
-	}
-	err = i.datasetSchemaRepo.Save(ctx, ds)
-	if err != nil {
-		return nil, err
-	}
-
-	// Commit db transaction
-	tx.Commit()
-	return ds, nil
+	return nil, errors.New("not supported")
 }
 
 func (i *Dataset) AddDynamicDataset(ctx context.Context, inp interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
-	// Begin Db transaction
-	tx, err := i.transaction.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	fields := []*dataset.Field{}
-	dss, err := i.datasetSchemaRepo.FindDynamicByID(ctx, inp.SchemaId)
-	if err != nil {
-		return nil, nil, err
-	}
-	for _, f := range dss.Fields() {
-		if f.Name() == "author" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Author), ""))
-		}
-		if f.Name() == "content" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Content), ""))
-		}
-		if inp.Target != nil && len(*inp.Target) > 0 && f.Name() == "target" {
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeString.ValueFrom(inp.Target), ""))
-		}
-		if inp.Lat != nil && inp.Lng != nil && f.Name() == "location" {
-			latlng := dataset.LatLng{Lat: *inp.Lat, Lng: *inp.Lng}
-			fields = append(fields, dataset.NewField(f.ID(), dataset.ValueTypeLatLng.ValueFrom(latlng), ""))
-		}
-	}
-	ds, err := dataset.
-		New().
-		NewID().
-		Fields(fields).
-		Schema(inp.SchemaId).
-		Build()
-	if err != nil {
-		return nil, nil, err
-	}
-	err = i.datasetRepo.Save(ctx, ds)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Commit db transaction
-	tx.Commit()
-	return dss, ds, nil
+	return nil, nil, errors.New("not supported")
 }
 
 func (i *Dataset) ImportDataset(ctx context.Context, inp interfaces.ImportDatasetParam, operator *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -187,7 +118,7 @@ func (i *Dataset) ImportDataset(ctx context.Context, inp interfaces.ImportDatase
 		separator = '\t'
 	}
 
-	return i.importDataset(ctx, inp.File.Content, inp.File.Path, separator, inp.SceneId, inp.SchemaId)
+	return i.importDataset(ctx, inp.File.Content, inp.File.Path, separator, inp.SceneId, inp.SchemaId, operator)
 }
 
 func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfaces.ImportDatasetFromGoogleSheetParam, operator *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -206,10 +137,10 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 		}
 	}()
 
-	return i.importDataset(ctx, *csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId)
+	return i.importDataset(ctx, *csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
 }
 
-func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID) (_ *dataset.Schema, err error) {
+func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID, o *usecase.Operator) (_ *dataset.Schema, err error) {
 	tx, err := i.transaction.Begin()
 	if err != nil {
 		return
@@ -219,6 +150,33 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 			err = err2
 		}
 	}()
+
+	s, err := i.sceneRepo.FindByID(ctx, sceneId)
+	if err != nil {
+		return nil, err
+	}
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, err
+	}
+	dsc, err := i.datasetSchemaRepo.CountByScene(ctx, sceneId)
+	if err != nil {
+		return nil, err
+	}
+
+	var policy *workspace.Policy
+	if policyID := o.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		policy = p
+	}
+
+	// enforce policy
+	if err := policy.EnforceDatasetSchemaCount(dsc + 1); err != nil {
+		return nil, err
+	}
 
 	csv := dataset.NewCSVParser(content, name, separator)
 	err = csv.Init()
@@ -253,6 +211,11 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 
 	schema, datasets, err := csv.ReadAll()
 	if err != nil {
+		return nil, err
+	}
+
+	// enforce policy
+	if err := policy.EnforceDatasetCount(len(datasets)); err != nil {
 		return nil, err
 	}
 

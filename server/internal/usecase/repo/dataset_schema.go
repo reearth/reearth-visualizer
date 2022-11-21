@@ -17,6 +17,7 @@ type DatasetSchema interface {
 	FindBySceneAndSource(context.Context, id.SceneID, string) (dataset.SchemaList, error)
 	FindDynamicByID(context.Context, id.DatasetSchemaID) (*dataset.Schema, error)
 	FindAllDynamicByScene(context.Context, id.SceneID) (dataset.SchemaList, error)
+	CountByScene(context.Context, id.SceneID) (int, error)
 	Save(context.Context, *dataset.Schema) error
 	SaveAll(context.Context, dataset.SchemaList) error
 	Remove(context.Context, id.DatasetSchemaID) error

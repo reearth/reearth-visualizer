@@ -146,7 +146,7 @@ func testPolicy[T any](t *testing.T, tests []policyTest[T], f func(d T) PolicyOp
 
 				got := tf(p, tt.arg)
 				if tt.fail {
-					assert.Same(t, ErrOperationDenied, got)
+					assert.Same(t, ErrPolicyViolation, got)
 				} else {
 					assert.NoError(t, got)
 				}

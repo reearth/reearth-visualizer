@@ -24,18 +24,25 @@ func TestFromRole(t *testing.T) {
 
 func TestToPolicy(t *testing.T) {
 	assert.Equal(t, &Policy{
+		ID:                    ID("x"),
+		Name:                  "aaa",
 		ProjectCount:          lo.ToPtr(1),
 		MemberCount:           lo.ToPtr(2),
 		PublishedProjectCount: lo.ToPtr(3),
 		LayerCount:            lo.ToPtr(4),
 		AssetStorageSize:      lo.ToPtr(int64(5)),
+		DatasetCount:          lo.ToPtr(6),
+		DatasetSchemaCount:    lo.ToPtr(7),
 	}, ToPolicy(workspace.NewPolicy(workspace.PolicyOption{
 		ID:                    workspace.PolicyID("x"),
+		Name:                  "aaa",
 		ProjectCount:          lo.ToPtr(1),
 		MemberCount:           lo.ToPtr(2),
 		PublishedProjectCount: lo.ToPtr(3),
 		LayerCount:            lo.ToPtr(4),
 		AssetStorageSize:      lo.ToPtr(int64(5)),
+		DatasetCount:          lo.ToPtr(6),
+		DatasetSchemaCount:    lo.ToPtr(7),
 	})))
 	assert.Nil(t, ToPolicy(nil))
 }

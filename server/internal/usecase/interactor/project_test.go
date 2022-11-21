@@ -91,6 +91,6 @@ func TestProject_Create(t *testing.T) {
 	}, &usecase.Operator{
 		WritableWorkspaces: workspace.IDList{ws.ID()},
 	})
-	assert.Same(t, workspace.ErrOperationDenied, err)
+	assert.Same(t, workspace.ErrPolicyViolation, err)
 	assert.Nil(t, got)
 }
