@@ -55,6 +55,7 @@ func NewDataset(r *repo.Container, gr *gateway.Container) interfaces.Dataset {
 		layerRepo:         r.Layer,
 		pluginRepo:        r.Plugin,
 		transaction:       r.Transaction,
+		policyRepo:        r.Policy,
 		datasource:        gr.DataSource,
 		file:              gr.File,
 		google:            gr.Google,
@@ -219,12 +220,11 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		return nil, err
 	}
 
-	err = i.datasetSchemaRepo.Save(ctx, schema)
-	if err != nil {
+	if err := i.datasetSchemaRepo.Save(ctx, schema); err != nil {
 		return nil, err
 	}
-	err = i.datasetRepo.SaveAll(ctx, datasets)
-	if err != nil {
+
+	if err := i.datasetRepo.SaveAll(ctx, datasets); err != nil {
 		return nil, err
 	}
 

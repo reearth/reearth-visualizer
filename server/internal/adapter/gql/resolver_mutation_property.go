@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -74,14 +75,45 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 		return nil, err
 	}
 
-	p, pgl, pg, pf, err := usecases(ctx).Property.UploadFile(ctx, interfaces.UploadFileParam{
+	uc := usecases(ctx)
+	pr, err := uc.Property.Fetch(ctx, []id.PropertyID{pid}, getOperator(ctx))
+	if err != nil || len(pr) == 0 {
+		if err == nil {
+			err = rerror.ErrNotFound
+		}
+		return nil, err
+	}
+	ws, err := uc.Scene.Fetch(ctx, []id.SceneID{pr[0].Scene()}, getOperator(ctx))
+	if err != nil || len(ws) == 0 {
+		if err == nil {
+			err = rerror.ErrNotFound
+		}
+		return nil, err
+	}
+	prj, err := uc.Project.Fetch(ctx, []id.ProjectID{ws[0].Project()}, getOperator(ctx))
+	if err != nil || len(prj) == 0 {
+		if err == nil {
+			err = rerror.ErrNotFound
+		}
+		return nil, err
+	}
+
+	a, err := uc.Asset.Create(ctx, interfaces.CreateAssetParam{
+		WorkspaceID: prj[0].Workspace(),
+		File:        gqlmodel.FromFile(&input.File),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	p, pgl, pg, pf, err := uc.Property.UpdateValue(ctx, interfaces.UpdatePropertyValueParam{
 		PropertyID: pid,
 		Pointer: gqlmodel.FromPointer(
 			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
 			input.ItemID,
 			gqlmodel.ToStringIDRef[id.PropertyField](&input.FieldID),
 		),
-		File: gqlmodel.FromFile(&input.File),
+		Value: property.ValueTypeURL.ValueFrom(a.URL()),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

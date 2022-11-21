@@ -63,29 +63,30 @@ func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, e
 	return f.read(ctx, path.Join(gcsAssetBasePath, sn))
 }
 
-func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, error) {
+func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
 	if file == nil {
-		return nil, gateway.ErrInvalidFile
+		return nil, 0, gateway.ErrInvalidFile
 	}
 	if file.Size >= fileSizeLimit {
-		return nil, gateway.ErrFileTooLarge
+		return nil, 0, gateway.ErrFileTooLarge
 	}
 
 	sn := sanitize.Path(newAssetID() + path.Ext(file.Path))
 	if sn == "" {
-		return nil, gateway.ErrInvalidFile
+		return nil, 0, gateway.ErrInvalidFile
 	}
 
 	filename := path.Join(gcsAssetBasePath, sn)
 	u := getGCSObjectURL(f.base, filename)
 	if u == nil {
-		return nil, gateway.ErrInvalidFile
+		return nil, 0, gateway.ErrInvalidFile
 	}
 
-	if err := f.upload(ctx, filename, file.Content); err != nil {
-		return nil, err
+	s, err := f.upload(ctx, filename, file.Content)
+	if err != nil {
+		return nil, 0, err
 	}
-	return u, nil
+	return u, s, nil
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
@@ -111,7 +112,8 @@ func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
-	return f.upload(ctx, path.Join(gcsPluginBasePath, pid.String(), sanitize.Path(file.Path)), file.Content)
+	_, err := f.upload(ctx, path.Join(gcsPluginBasePath, pid.String(), sanitize.Path(file.Path)), file.Content)
+	return err
 }
 
 func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
@@ -132,7 +134,8 @@ func (f *fileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
-	return f.upload(ctx, path.Join(gcsMapBasePath, sn), content)
+	_, err := f.upload(ctx, path.Join(gcsMapBasePath, sn), content)
+	return err
 }
 
 func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
@@ -186,37 +189,38 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	return reader, nil
 }
 
-func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) error {
+func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
-		return gateway.ErrInvalidFile
+		return 0, gateway.ErrInvalidFile
 	}
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
 		log.Errorf("gcs: upload bucket err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalBy(err)
 	}
 
 	object := bucket.Object(filename)
 	if err := object.Delete(ctx); err != nil && !errors.Is(err, storage.ErrObjectNotExist) {
 		log.Errorf("gcs: upload delete err: %+v\n", err)
-		return gateway.ErrFailedToUploadFile
+		return 0, gateway.ErrFailedToUploadFile
 	}
 
 	writer := object.NewWriter(ctx)
 	writer.ObjectAttrs.CacheControl = f.cacheControl
 
-	if _, err := io.Copy(writer, content); err != nil {
+	size, err := io.Copy(writer, content)
+	if err != nil {
 		log.Errorf("gcs: upload err: %+v\n", err)
-		return gateway.ErrFailedToUploadFile
+		return 0, gateway.ErrFailedToUploadFile
 	}
 
 	if err := writer.Close(); err != nil {
 		log.Errorf("gcs: upload close err: %+v\n", err)
-		return gateway.ErrFailedToUploadFile
+		return 0, gateway.ErrFailedToUploadFile
 	}
 
-	return nil
+	return size, nil
 }
 
 func (f *fileRepo) move(ctx context.Context, from, dest string) error {
