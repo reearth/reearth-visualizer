@@ -15,7 +15,7 @@ type WorkspaceDocument struct {
 	Name     string
 	Members  map[string]WorkspaceMemberDocument
 	Personal bool
-	Policy   *workspace.PolicyID
+	Policy   *workspace.PolicyID `bson:"policy,omitempty"`
 }
 
 type WorkspaceConsumer = mongox.SliceFuncConsumer[*WorkspaceDocument, *workspace.Workspace]
