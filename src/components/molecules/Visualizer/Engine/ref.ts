@@ -126,7 +126,7 @@ export type CameraOptions = {
   /** Seconds */
   duration?: number;
   easing?: (time: number) => number;
-  animation?: boolean;
+  withoutAnimation?: boolean;
 };
 
 export type ClusterProps = {

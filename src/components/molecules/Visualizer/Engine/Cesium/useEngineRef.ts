@@ -81,7 +81,7 @@ export default function useEngineRef(
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        if (options?.animation) {
+        if (options?.withoutAnimation) {
           return lookAtWithoutAnimation(viewer.scene, { ...getCamera(viewer), ...camera });
         }
         cancelCameraFlight.current?.();
