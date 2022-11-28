@@ -25,7 +25,9 @@ import type {
   LookAtDestination,
   Tag,
 } from "./Plugin/types";
+import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import { useOverriddenProperty } from "./utils";
+import type { WidgetAlignSystem } from "./WidgetAlignSystem";
 
 export type Viewport = {
   width: number;
@@ -50,6 +52,7 @@ export default ({
   clock,
   sceneProperty,
   tags,
+  alignSystem,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
@@ -72,6 +75,7 @@ export default ({
   clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
+  alignSystem?: WidgetAlignSystem;
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends keyof ValueTypes>(
@@ -249,6 +253,10 @@ export default ({
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
+  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
+    alignSystem,
+  });
+
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
@@ -268,6 +276,7 @@ export default ({
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
+      moveWidget,
     },
     engineRef,
     layers,
@@ -315,6 +324,7 @@ export default ({
     pluginPopupContainerRef,
     shownPluginPopupInfo,
     viewport,
+    overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

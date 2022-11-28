@@ -366,11 +366,13 @@ export function useAPI({
           onResize?.(width, height, extended);
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
+        moveWidget: ctx.moveWidget,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.overrideSceneProperty,
+    ctx?.moveWidget,
     extensionId,
     extensionType,
     pluginId,

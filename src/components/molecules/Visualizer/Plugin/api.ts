@@ -14,6 +14,7 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
+  WidgetLocationOptions,
 } from "./types";
 
 export type CommonReearth = Omit<
@@ -41,6 +42,7 @@ export function exposed({
   block,
   widget,
   overrideSceneProperty,
+  moveWidget,
 }: {
   render: (
     html: string,
@@ -76,6 +78,7 @@ export function exposed({
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
+  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -184,7 +187,14 @@ export function exposed({
       plugin?.extensionType === "widget"
         ? {
             get widget() {
-              return widget?.();
+              return {
+                ...widget?.(),
+                moveTo: (options: WidgetLocationOptions) => {
+                  const widgetId = widget?.()?.id;
+                  if (!widgetId) return;
+                  moveWidget?.(widgetId, options);
+                },
+              };
             },
           }
         : {},

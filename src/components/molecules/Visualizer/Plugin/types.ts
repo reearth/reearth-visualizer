@@ -208,6 +208,7 @@ export type Widget<P = any> = {
     vertically: boolean;
   };
   layout?: WidgetLayout;
+  moveTo?: (options: WidgetLocationOptions) => void;
 };
 
 export type WidgetLayout = {
@@ -222,6 +223,10 @@ export type WidgetLocation = {
 };
 
 export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetLocationOptions = WidgetLocation & {
+  method?: "insert" | "append";
+};
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
 export type UI = {
