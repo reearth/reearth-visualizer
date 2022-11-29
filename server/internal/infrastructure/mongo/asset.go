@@ -94,7 +94,11 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (i
 	defer func() {
 		_ = c.Close(ctx)
 	}()
-	_ = c.Next(ctx)
+
+	if !c.Next(ctx) {
+		return 0, nil
+	}
+
 	type resp struct {
 		Size int64
 	}

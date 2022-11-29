@@ -95,7 +95,7 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 			return nil, err
 		}
 
-		if err := p.EnforceProjectCount(projectCount); err != nil {
+		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
 			return nil, err
 		}
 	}
@@ -274,7 +274,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			if err != nil {
 				return nil, err
 			}
-			if err := p.EnforcePublishedProjectCount(s); err != nil {
+			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
 				return nil, err
 			}
 		}

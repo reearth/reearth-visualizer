@@ -157,7 +157,7 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 		if err != nil {
 			return nil, err
 		}
-		if err := p.EnforceMemberCount(ws.Members().Count()); err != nil {
+		if err := p.EnforceMemberCount(ws.Members().Count() + 1); err != nil {
 			return nil, err
 		}
 	}
