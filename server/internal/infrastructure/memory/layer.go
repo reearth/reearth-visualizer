@@ -293,7 +293,9 @@ func (r *Layer) CountByScene(_ context.Context, sid id.SceneID) (n int, _ error)
 
 	for _, d := range r.data {
 		if d.Scene() == sid {
-			n++
+			if lg := layer.ToLayerGroup(d); lg == nil && !lg.IsRoot() {
+				n++
+			}
 		}
 	}
 	return

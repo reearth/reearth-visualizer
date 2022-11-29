@@ -41,31 +41,31 @@ func (p *Policy) Option() PolicyOption {
 }
 
 func (p *Policy) EnforceProjectCount(count int) error {
-	return p.error(p == nil || p.opts.ProjectCount == nil || *p.opts.ProjectCount > count)
+	return p.error(p == nil || p.opts.ProjectCount == nil || *p.opts.ProjectCount >= count)
 }
 
 func (p *Policy) EnforceMemberCount(count int) error {
-	return p.error(p == nil || p.opts.MemberCount == nil || *p.opts.MemberCount > count)
+	return p.error(p == nil || p.opts.MemberCount == nil || *p.opts.MemberCount >= count)
 }
 
 func (p *Policy) EnforcePublishedProjectCount(count int) error {
-	return p.error(p == nil || p.opts.PublishedProjectCount == nil || *p.opts.PublishedProjectCount > count)
+	return p.error(p == nil || p.opts.PublishedProjectCount == nil || *p.opts.PublishedProjectCount >= count)
 }
 
 func (p *Policy) EnforceLayerCount(count int) error {
-	return p.error(p == nil || p.opts.LayerCount == nil || *p.opts.LayerCount > count)
+	return p.error(p == nil || p.opts.LayerCount == nil || *p.opts.LayerCount >= count)
 }
 
 func (p *Policy) EnforceAssetStorageSize(size int64) error {
-	return p.error(p == nil || p.opts.AssetStorageSize == nil || *p.opts.AssetStorageSize > size)
+	return p.error(p == nil || p.opts.AssetStorageSize == nil || *p.opts.AssetStorageSize >= size)
 }
 
 func (p *Policy) EnforceDatasetSchemaCount(count int) error {
-	return p.error(p == nil || p.opts.DatasetSchemaCount == nil || *p.opts.DatasetSchemaCount > count)
+	return p.error(p == nil || p.opts.DatasetSchemaCount == nil || *p.opts.DatasetSchemaCount >= count)
 }
 
 func (p *Policy) EnforceDatasetCount(count int) error {
-	return p.error(p == nil || p.opts.DatasetCount == nil || *p.opts.DatasetCount > count)
+	return p.error(p == nil || p.opts.DatasetCount == nil || *p.opts.DatasetCount >= count)
 }
 
 func (*Policy) error(ok bool) error {

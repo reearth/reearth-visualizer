@@ -168,6 +168,11 @@ func (i *User) StartPasswordReset(ctx context.Context, email string) error {
 		return err
 	}
 
+	a := u.Auths().GetByProvider(user.ProviderReearth)
+	if a == nil || a.Sub == "" {
+		return interfaces.ErrUserInvalidPasswordReset
+	}
+
 	pr := user.NewPasswordReset()
 	u.SetPasswordReset(pr)
 
@@ -219,16 +224,20 @@ func (i *User) PasswordReset(ctx context.Context, password, token string) error 
 
 	passwordReset := u.PasswordReset()
 	ok := passwordReset.Validate(token)
-
 	if !ok {
 		return interfaces.ErrUserInvalidPasswordReset
 	}
 
-	u.SetPasswordReset(nil)
+	a := u.Auths().GetByProvider(user.ProviderReearth)
+	if a == nil || a.Sub == "" {
+		return interfaces.ErrUserInvalidPasswordReset
+	}
 
 	if err := u.SetPassword(password); err != nil {
 		return err
 	}
+
+	u.SetPasswordReset(nil)
 
 	if err := i.userRepo.Save(ctx, u); err != nil {
 		return err
