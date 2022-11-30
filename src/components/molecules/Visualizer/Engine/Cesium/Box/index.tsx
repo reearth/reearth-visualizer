@@ -1,10 +1,14 @@
-import { Cartesian3, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
-import React, { useMemo, useEffect, memo, useState } from "react";
+import React, { memo } from "react";
 
-import { LatLngHeight, toColor } from "@reearth/util/value";
+import { LatLngHeight } from "@reearth/util/value";
 
+import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 
+import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./constants";
+import { Edge } from "./Edge";
+import { useHooks } from "./hooks/box";
+import { ScalePoints } from "./ScalePoints";
 import { Side } from "./Side";
 
 export type Props = PrimitiveProps<Property>;
@@ -20,63 +24,57 @@ export type Property = {
     roll?: number;
     fillColor?: string;
     outlineColor?: string;
+    activeOutlineColor?: string;
     outlineWidth?: number;
-    fill?: boolean;
-    outline?: boolean;
+    draggableOutlineColor?: string;
+    activeDraggableOutlineColor?: string;
+    draggableOutlineWidth?: number;
+    scalePoint?: boolean;
+    axisLine?: boolean;
+    pointFillColor?: string;
+    pointOutlineColor?: string;
+    activePointOutlineColor?: string;
+    pointOutlineWidth?: number;
+    axisLineColor?: string;
+    axisLineWidth?: number;
+    allowEnterGround?: boolean;
+    cursor?: string;
+    activeBox?: boolean;
+    activeScalePointIndex?: number; // 0 ~ 11
+    activeEdgeIndex?: number; // 0 ~ 11
   };
 };
 
-// The 6 box sides defined as planes in local coordinate space.
-// ref: https://github.com/TerriaJS/terriajs/blob/cad62a45cbee98c7561625458bec3a48510f6cbc/lib/Models/BoxDrawing.ts#L161-L169
-const SIDE_PLANES: readonly CesiumPlane[] = [
-  new CesiumPlane(new Cartesian3(0, 0, 1), 0.5),
-  new CesiumPlane(new Cartesian3(0, 0, -1), 0.5),
-  new CesiumPlane(new Cartesian3(0, 1, 0), 0.5),
-  new CesiumPlane(new Cartesian3(0, -1, 0), 0.5),
-  new CesiumPlane(new Cartesian3(1, 0, 0), 0.5),
-  new CesiumPlane(new Cartesian3(-1, 0, 0), 0.5),
-];
-
-// This is used for plane ID.
-// We can use this name, for example you want to move the box when front plane is dragged.
-const SIDE_PLANE_NAMES = ["bottom", "top", "front", "back", "left", "right"];
-
-const updateTrs = (trs: TranslationRotationScale, property: Property | undefined) => {
-  const { location, height, width, length } = property?.default ?? {};
-
-  const translation = location
-    ? Cartesian3.fromDegrees(location.lng, location.lat, location.height ?? 0)
-    : undefined;
-  if (translation) {
-    Cartesian3.clone(translation, trs.translation);
-  }
-
-  // Quaternion.clone(trs.rotation, this.trs.rotation);
-
-  Cartesian3.clone(new Cartesian3(width || 100, length || 100, height || 100), trs.scale);
-
-  return trs;
-};
-
-const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ layer }) {
+const Box: React.FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function BoxPresenter({
+  layer,
+  sceneProperty,
+}) {
   const { id, isVisible, property } = layer ?? {};
-  const { fillColor, outlineColor, outlineWidth, fill, outline } = property?.default ?? {};
+  const {
+    height = 100,
+    width = 100,
+    length = 100,
+    pointOutlineWidth,
+    axisLineWidth,
+    scalePoint = true,
+    axisLine = true,
+    activeBox,
+    activeEdgeIndex,
+    activeScalePointIndex,
+  } = property?.default ?? {};
+  const {
+    style,
+    trs,
+    scalePointStyle,
+    handlePointMouseDown,
+    handlePointMouseMove,
+    handlePointMouseUp,
+    handleEdgeMouseDown,
+    handleEdgeMouseMove,
+    handleEdgeMouseUp,
+  } = useHooks({ layer, sceneProperty });
 
-  const [trs] = useState(() => updateTrs(new TranslationRotationScale(), property));
-  useEffect(() => {
-    updateTrs(trs, property);
-  }, [property, trs]);
-
-  const style = useMemo(
-    () => ({
-      fillColor: toColor(fillColor),
-      outlineColor: toColor(outlineColor),
-      outlineWidth,
-      fill,
-      outline,
-    }),
-    [fillColor, outlineColor, outlineWidth, fill, outline],
-  );
+  const scalePointDimension = ((width + height + length) / 3) * 0.05;
 
   return !isVisible ? null : (
     <>
@@ -85,10 +83,61 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
           key={`${id}-plane-${SIDE_PLANE_NAMES[i]}`}
           id={`${id}-plane-${SIDE_PLANE_NAMES[i]}`}
           planeLocal={plane}
-          style={style}
+          fill={style.fill}
+          fillColor={style.fillColor}
+          outlineColor={style.outlineColor}
+          isActive={!!activeBox}
+          activeOutlineColor={style.activeOutlineColor}
           trs={trs}
         />
       ))}
+      {BOX_EDGES.map((edge, i) => {
+        return (
+          <Edge
+            key={`${id}-edge-${i}`}
+            id={`${id}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
+            index={i}
+            edge={edge}
+            isHovered={activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)}
+            width={edge.isDraggable ? style.draggableOutlineWidth : style.outlineWidth}
+            fillColor={edge.isDraggable ? style.draggableOutlineColor : style.outlineColor}
+            hoverColor={
+              edge.isDraggable ? style.activeDraggableOutlineColor : style.activeOutlineColor
+            }
+            trs={trs}
+            onMouseDown={edge.isDraggable ? handleEdgeMouseDown : undefined}
+            onMouseMove={edge.isDraggable ? handleEdgeMouseMove : undefined}
+            onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
+          />
+        );
+      })}
+      {scalePoint &&
+        SCALE_POINTS.map((vector, i) => (
+          <ScalePoints
+            key={`${id}-scale-point-${i}`}
+            id={`${id}-scale-point`}
+            index={i}
+            scalePoint={vector}
+            trs={trs}
+            isHovered={activeScalePointIndex === i}
+            pointFillColor={scalePointStyle.pointFillColor}
+            pointOutlineColor={scalePointStyle.pointOutlineColor}
+            hoverPointOutlineColor={scalePointStyle.activePointOutlineColor}
+            pointOutlineWidth={pointOutlineWidth}
+            axisLineColor={scalePointStyle.axisLineColor}
+            axisLineWidth={axisLineWidth}
+            dimensions={{
+              width: scalePointDimension,
+              height: scalePointDimension,
+              length: scalePointDimension,
+            }}
+            visiblePoint={scalePoint}
+            visibleAxisLine={axisLine && activeScalePointIndex === i}
+            onPointMouseDown={handlePointMouseDown}
+            onPointMouseMove={handlePointMouseMove}
+            onPointMouseUp={handlePointMouseUp}
+          />
+        ))}
     </>
   );
 });

@@ -8,6 +8,7 @@ import {
   Matrix3,
   Matrix4,
   Transforms,
+  TranslationRotationScale,
 } from "cesium";
 import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -15,8 +16,10 @@ import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
+import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { shadowMode, layerIdField } from "../common";
+import { shadowMode, layerIdField, sampleTerrainHeightFromCartesian } from "../common";
+import { translationWithClamping } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -32,7 +35,10 @@ export type Property = {
   };
 };
 
-const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ layer }) {
+const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function TilesetPresenter({
+  layer,
+  sceneProperty,
+}) {
   const { viewer } = useCesium();
   const { isVisible, property } = layer ?? {};
   const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, experimental_clipping } =
@@ -47,6 +53,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     pitch,
     planes: _planes,
   } = experimental_clipping || {};
+  const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -91,6 +98,25 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     [layer?.id],
   );
 
+  const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
+  const inProgressSamplingTerrainHeight = useRef(false);
+  const updateTerrainHeight = useCallback(
+    (translation: Cartesian3) => {
+      if (inProgressSamplingTerrainHeight.current) {
+        return;
+      }
+
+      if (!allowEnterGround) {
+        inProgressSamplingTerrainHeight.current = true;
+        sampleTerrainHeightFromCartesian(viewer.scene, translation).then(v => {
+          setTerrainHeightEstimate(v ?? 0);
+          inProgressSamplingTerrainHeight.current = false;
+        });
+      }
+    },
+    [allowEnterGround, viewer],
+  );
+
   useEffect(() => {
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
@@ -111,8 +137,15 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         location?.height,
       );
 
-      const hpr =
-        heading && pitch && roll ? HeadingPitchRoll.fromDegrees(heading, pitch, roll) : undefined;
+      if (!allowEnterGround) {
+        translationWithClamping(
+          new TranslationRotationScale(position, undefined, dimensions),
+          !!allowEnterGround,
+          terrainHeightEstimate,
+        );
+      }
+
+      const hpr = heading && pitch && roll ? new HeadingPitchRoll(heading, pitch, roll) : undefined;
       const boxTransform = Matrix4.multiply(
         hpr
           ? Matrix4.fromRotationTranslation(Matrix3.fromHeadingPitchRoll(hpr), position)
@@ -126,8 +159,25 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
+    if (!allowEnterGround) {
+      updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
+    }
     prepareClippingPlanes();
-  }, [width, length, height, location?.lng, location?.lat, location?.height, heading, pitch, roll, clippingPlanes.modelMatrix]);
+  }, [
+    width,
+    length,
+    height,
+    location?.lng,
+    location?.lat,
+    location?.height,
+    heading,
+    pitch,
+    roll,
+    clippingPlanes.modelMatrix,
+    updateTerrainHeight,
+    allowEnterGround,
+    terrainHeightEstimate,
+  ]);
 
   useEffect(() => {
     if (!styleUrl) {
@@ -161,6 +211,6 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
   );
 });
 
-const _debugFlight = true;
+const _debugFlight = false;
 
 export default Tileset;

@@ -50,10 +50,17 @@ export type MouseEvent = {
   delta?: number;
 };
 
+export type LayerEditEvent = {
+  layerId: string | undefined;
+  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  rotate?: { heading: number; pitch: number; roll: number };
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: CameraPosition];
+  layeredit: [e: LayerEditEvent];
   select: [layerId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];

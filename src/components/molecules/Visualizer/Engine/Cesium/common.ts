@@ -681,7 +681,7 @@ function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotat
   return rotatedVector;
 }
 
-async function sampleTerrainHeight(
+export async function sampleTerrainHeight(
   scene: Scene,
   lng: number,
   lat: number,
@@ -693,4 +693,16 @@ async function sampleTerrainHeight(
     Cartographic.fromDegrees(lng, lat),
   ]);
   return sample.height;
+}
+
+export async function sampleTerrainHeightFromCartesian(scene: Scene, translation: Cartesian3) {
+  const cart = Cartographic.fromCartesian(translation);
+  const [lng, lat] = [
+    CesiumMath.toDegrees(cart?.longitude || 0),
+    CesiumMath.toDegrees(cart?.latitude || 0),
+  ];
+  if (!lng || !lat) {
+    return;
+  }
+  return await sampleTerrainHeight(scene, lng, lat);
 }
