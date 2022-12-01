@@ -312,7 +312,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 			}
 		}
 
-		if err := p.EnforceLayerCount(s + dsc); err != nil {
+		if err := p.EnforceLayerCount(s + dsc + 1); err != nil {
 			return nil, nil, err
 		}
 	}
