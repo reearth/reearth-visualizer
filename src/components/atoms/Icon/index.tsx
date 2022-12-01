@@ -78,7 +78,7 @@ const Icon: React.FC<Props> = ({
 const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
-  ${({ notransition }) => !notransition && "transition: all 0.4s;"}
+  ${({ notransition }) => !notransition && "transition: all 0.3s;"}
 `;
 
 const StyledSvg = styled(SVG)<{
@@ -94,7 +94,7 @@ const StyledSvg = styled(SVG)<{
   color: ${({ color }) => color};
   ${({ stroke }) => `stroke: ${stroke};`}
   transition-property: color, background;
-  ${({ notransition }) => (!notransition ? "transition-duration: 0.4s;" : undefined)}
+  ${({ notransition }) => (!notransition ? "transition-duration: 0.3s;" : undefined)}
 `;
 
 export default memo(Icon);

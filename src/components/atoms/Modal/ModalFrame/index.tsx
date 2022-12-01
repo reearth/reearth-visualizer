@@ -6,13 +6,14 @@ import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 export type Props = {
+  className?: string;
   children?: ReactNode;
   size?: "sm" | "md" | "lg";
   isVisible?: boolean;
   onClose?: () => void;
 };
 
-const Modal: React.FC<Props> = ({ size, isVisible, onClose, children }) => {
+const Modal: React.FC<Props> = ({ className, size, isVisible, onClose, children }) => {
   const ref = useRef<HTMLDivElement>(null);
   useClickAway(ref, () => onClose?.());
 
@@ -29,7 +30,7 @@ const Modal: React.FC<Props> = ({ size, isVisible, onClose, children }) => {
 
   return state === "unmounted" ? null : (
     <Bg state={state}>
-      <Wrapper ref={ref} size={size}>
+      <Wrapper className={className} ref={ref} size={size}>
         {onClose && (
           <CloseButton onClick={handleClose}>
             <Icon icon="cancel" />

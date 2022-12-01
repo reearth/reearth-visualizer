@@ -11,10 +11,10 @@ import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import useHooks from "./hooks";
 
 export type Props = {
-  teamId?: string;
+  workspaceId?: string;
 };
 
-const Dashboard: React.FC<Props> = ({ teamId }) => {
+const Dashboard: React.FC<Props> = ({ workspaceId }) => {
   const { logout } = useAuth();
 
   const {
@@ -22,54 +22,56 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     projects,
     projectLoading,
     hasMoreProjects,
-    createProject,
-    teams = [],
-    currentTeam,
-    createTeam,
-    changeTeam,
+    workspaces,
+    currentWorkspace,
+    isPersonal,
     modalShown,
-    openModal,
-    handleModalClose,
     selectedAsset,
     assetModalOpened,
-    toggleAssetModal,
-    onAssetSelect,
+    handleProjectCreate,
+    handleWorkspaceCreate,
+    handleWorkspaceChange,
+    handleModalOpen,
+    handleModalClose,
+    handleAssetModalToggle,
+    handleAssetSelect,
     handleGetMoreProjects,
-  } = useHooks(teamId);
+  } = useHooks(workspaceId);
 
   return (
     <MoleculeDashboard
       header={
         <MoleculeHeader
           user={user}
-          teams={teams}
-          currentTeam={currentTeam}
-          onSignOut={logout}
-          onCreateTeam={createTeam}
-          onChangeTeam={changeTeam}
+          workspaces={workspaces}
+          currentWorkspace={currentWorkspace}
+          personalWorkspace={isPersonal}
           modalShown={modalShown}
-          openModal={openModal}
+          onSignOut={logout}
+          onWorkspaceCreate={handleWorkspaceCreate}
+          onWorkspaceChange={handleWorkspaceChange}
+          openModal={handleModalOpen}
           onModalClose={handleModalClose}
           dashboard
         />
       }
-      onGetMoreProjects={handleGetMoreProjects}
       isLoading={projectLoading}
-      hasMoreProjects={hasMoreProjects}>
-      <Workspace team={currentTeam} />
+      hasMoreProjects={hasMoreProjects}
+      onGetMoreProjects={handleGetMoreProjects}>
+      <Workspace workspace={currentWorkspace} isPersonal={isPersonal} />
       <QuickStart
-        onCreateTeam={createTeam}
-        onCreateProject={createProject}
         selectedAsset={selectedAsset}
-        onAssetSelect={onAssetSelect}
-        toggleAssetModal={toggleAssetModal}
+        onWorkspaceCreate={handleWorkspaceCreate}
+        onProjectCreate={handleProjectCreate}
+        onAssetSelect={handleAssetSelect}
+        toggleAssetModal={handleAssetModalToggle}
         assetModal={
           <AssetModal
-            teamId={teamId}
+            teamId={workspaceId}
             initialAssetUrl={selectedAsset}
             isOpen={assetModalOpened}
-            onSelect={onAssetSelect}
-            toggleAssetModal={toggleAssetModal}
+            onSelect={handleAssetSelect}
+            toggleAssetModal={handleAssetModalToggle}
           />
         }
       />

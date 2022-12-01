@@ -60,6 +60,8 @@ Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 Account Settings: アカウント設定
 Log out: ログアウト
+OK: 確認
+Click here for more details.: 詳細はこちら
 Create New Project: 新規プロジェクト作成
 Create: 作成
 Project Name: プロジェクト名
@@ -70,12 +72,13 @@ Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
+Create New Workspace: 新規ワークスペース作成
+Workspace Name: ワークスペース名
 Workspaces: ワークスペース
 Manage Workspaces: ワークスペースを管理
 New Workspace: 新規ワークスペース
-Create New Workspace: 新規ワークスペース作成
-Workspace Name: ワークスペース名
 Plugin Marketplace: プラグインマーケットプレイス
+timeSince: '{{timeSince}}に変更'
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
 Quick Start: クイックスタート
 User guide: ユーザーガイド
@@ -86,7 +89,6 @@ Layer style: レイヤータイプ
 import: インポート
 Data: データ
 Import to scene: シーンへ追加
-OK: 確認
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: データセットを削除します。このデータセットとリンクされているレイヤーはエラーが発生する可能性があります。
 Please make sure your project doesn't rely on this dataset before proceeding.: プロジェクトがデータセットに依存していないことを確認してください。
 Connect with Google Drive: グーグルドライブと連携
@@ -316,6 +318,7 @@ Same label tag already exist. Please type different label.: 同じラベルの�
 Tag group has tags, you need to remove all tags under the tag group: タググループ内のタグをすべて削除してからタググループを削除してください。
 Error: エラー
 Warning: 注意
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のプランの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
 Failed to update account name.: アカウント名の変更に失敗しました。
 Failed to update password.: パスワードの更新に失敗しました。

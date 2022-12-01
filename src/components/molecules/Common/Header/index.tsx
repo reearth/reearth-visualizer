@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -6,72 +5,69 @@ import WorkspaceCreationModal from "@reearth/components/molecules/Common/Workspa
 import { styled, metrics, css } from "@reearth/theme";
 
 import Profile from "./profile";
-import type { User, Team, Project } from "./types";
+import type { User, Workspace, Project } from "./types";
 
-export type { User, Team, Project } from "./types";
+export type { User, Workspace, Project } from "./types";
 
 export interface Props {
   className?: string;
-  children?: ReactNode;
   user?: User;
-  currentTeam?: Team;
   currentProject?: Project;
-  sceneId?: string;
-  teams: Team[];
+  currentWorkspace?: Workspace;
+  personalWorkspace?: boolean;
+  workspaces?: Workspace[];
   icon?: React.ReactNode;
   center?: React.ReactNode;
   right?: React.ReactNode;
-  onBack?: () => void;
-  onForward?: () => void;
-  onSignOut?: () => void;
-  onCreateTeam?: (data: { name: string }) => Promise<void>;
-  onChangeTeam?: (teamId: string) => void;
   modalShown?: boolean;
+  dashboard?: boolean;
+  onSignOut?: () => void;
+  onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
+  onWorkspaceChange?: (workspaceId: string) => void;
   openModal?: () => void;
   onModalClose?: (r?: boolean) => void;
-  dashboard?: boolean;
 }
 
 const Header: React.FC<Props> = ({
   className,
-  onSignOut,
   user,
-  currentTeam,
-  currentProject,
-  teams,
+  currentWorkspace,
+  personalWorkspace,
+  workspaces,
   center,
   icon,
   right,
-  onCreateTeam,
-  onChangeTeam,
   modalShown,
+  dashboard,
+  onSignOut,
+  onWorkspaceCreate,
+  onWorkspaceChange,
   openModal,
   onModalClose,
-  dashboard,
 }) => {
   return (
     <Wrapper className={className}>
       <Content>
         <LeftArea>
-          <StyledLink to={`/dashboard/${currentTeam?.id}`}>
+          <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
             {!dashboard && <StyledIcon icon="dashboard" size={24} />}
           </StyledLink>
           {icon}
-          {onSignOut && onChangeTeam && (
+          {onSignOut && onWorkspaceChange && (
             <>
               <Profile
                 user={user}
-                currentTeam={currentTeam}
-                currentProject={currentProject}
-                teams={teams}
+                currentWorkspace={currentWorkspace}
+                personalWorkspace={personalWorkspace}
+                workspaces={workspaces}
                 onSignOut={onSignOut}
-                onChangeTeam={onChangeTeam}
+                onWorkspaceChange={onWorkspaceChange}
                 openModal={openModal}
               />
               <WorkspaceCreationModal
                 open={modalShown}
                 onClose={onModalClose}
-                onSubmit={onCreateTeam}
+                onSubmit={onWorkspaceCreate}
               />
             </>
           )}

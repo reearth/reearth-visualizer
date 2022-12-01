@@ -4,7 +4,8 @@ import Wrapper from "@reearth/components/atoms/Modal/ModalFrame";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 
-interface Props {
+type Props = {
+  className?: string;
   title?: string;
   size?: "sm" | "md" | "lg";
   button1?: ReactNode;
@@ -12,9 +13,10 @@ interface Props {
   children?: ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
-}
+};
 
 const Modal: React.FC<Props> = ({
+  className,
   title,
   size,
   button1,
@@ -25,7 +27,7 @@ const Modal: React.FC<Props> = ({
 }) => {
   const theme = useTheme();
   return (
-    <Wrapper size={size} isVisible={isVisible} onClose={onClose}>
+    <Wrapper className={className} size={size} isVisible={isVisible} onClose={onClose}>
       <Title size="l" weight="bold" color={theme.main.strongText}>
         {title}
       </Title>

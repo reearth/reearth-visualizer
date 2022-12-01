@@ -15,5 +15,6 @@ export const projectFragment = gql`
     publicImage
     alias
     publishmentStatus
+    updatedAt
   }
 `;

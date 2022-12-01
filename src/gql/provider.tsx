@@ -72,7 +72,16 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (!networkError && !graphQLErrors) return;
-    const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
+    let error: { type?: string; message?: string } | undefined;
+
+    if (networkError?.message) {
+      error = { message: networkError?.message };
+    } else {
+      error = {
+        type: graphQLErrors?.[0].path?.[0].toString(),
+        message: graphQLErrors?.[0].message,
+      };
+    }
     if (error) {
       setError(error);
       reportError(error);

@@ -16,32 +16,32 @@ const Header: React.FC<Props> = ({ className }) => {
   const {
     teams = [],
     teamId,
-    changeTeam,
     publicationModalVisible,
-    onSearchIndexChange,
     searchIndex,
     publishing,
-    openPublicationModal,
-    closePublicationModal,
     workspaceModalVisible,
-    openWorkspaceModal,
-    closeWorkspaceModal,
     projectId,
     projectAlias,
     projectStatus,
-    publishProject,
     publicationModalLoading,
     user,
     currentTeam,
     currentProject,
-    logout,
-    handleCopyToClipBoard,
     validAlias,
-    checkProjectAlias,
     validatingAlias,
-    createTeam,
     url,
-    openPreview,
+    handlePublicationModalOpen,
+    handlePublicationModalClose,
+    handleWorkspaceModalOpen,
+    handleWorkspaceModalClose,
+    handleSearchIndexChange,
+    handleTeamChange,
+    handleTeamCreate,
+    handleProjectPublish,
+    handleProjectAliasCheck,
+    handleCopyToClipBoard,
+    handlePreviewOpen,
+    handleLogout,
   } = useHooks();
 
   return (
@@ -51,35 +51,35 @@ const Header: React.FC<Props> = ({ className }) => {
         currentProjectStatus={projectStatus}
         currentProject={currentProject}
         user={user}
-        teams={teams}
+        workspaces={teams}
         teamId={teamId}
-        currentTeam={currentTeam}
-        onPublishmentStatusClick={openPublicationModal}
-        onSignOut={logout}
-        onCreateTeam={createTeam}
-        onChangeTeam={changeTeam}
-        onPreviewOpen={openPreview}
+        currentWorkspace={currentTeam}
         modalShown={workspaceModalVisible}
-        openModal={openWorkspaceModal}
-        onModalClose={closeWorkspaceModal}
+        onPublishmentStatusClick={handlePublicationModalOpen}
+        onSignOut={handleLogout}
+        onWorkspaceCreate={handleTeamCreate}
+        onWorkspaceChange={handleTeamChange}
+        onPreviewOpen={handlePreviewOpen}
+        openModal={handleWorkspaceModalOpen}
+        onModalClose={handleWorkspaceModalClose}
       />
       <PublicationModal
         className={className}
         loading={publicationModalLoading}
         isVisible={!!publicationModalVisible}
-        onClose={closePublicationModal}
-        onSearchIndexChange={onSearchIndexChange}
         searchIndex={searchIndex}
         publishing={publishing}
-        onPublish={publishProject}
         projectId={projectId}
         projectAlias={projectAlias}
         publicationStatus={projectStatus}
-        onCopyToClipBoard={handleCopyToClipBoard}
         validAlias={validAlias}
-        onAliasValidate={checkProjectAlias}
         validatingAlias={validatingAlias}
         url={url}
+        onClose={handlePublicationModalClose}
+        onSearchIndexChange={handleSearchIndexChange}
+        onPublish={handleProjectPublish}
+        onCopyToClipBoard={handleCopyToClipBoard}
+        onAliasValidate={handleProjectAliasCheck}
       />
     </>
   );

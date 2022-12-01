@@ -14,6 +14,7 @@ export type Props = {
   description?: string;
   balloonDirection?: Placement;
   gap?: number;
+  mouseEnterDelay?: number;
   img?: {
     imagePath: string;
     alt?: string;
@@ -27,6 +28,7 @@ const HelpButton: React.FC<Props> = ({
   description,
   balloonDirection,
   gap,
+  mouseEnterDelay = 500,
   img,
   children,
 }) => {
@@ -53,19 +55,18 @@ const HelpButton: React.FC<Props> = ({
   });
   const [visible, setVisible] = useState(false);
   const [isMouseEnter, setIsMouseEnter] = useState(false);
-  const mouseEnterSec = 500;
 
   useEffect(() => {
     if (isMouseEnter) {
       const timer = setTimeout(() => {
         setVisible(true);
-      }, mouseEnterSec);
+      }, mouseEnterDelay);
       return () => clearTimeout(timer);
     } else {
       setVisible(false);
       return;
     }
-  }, [isMouseEnter]);
+  }, [isMouseEnter, mouseEnterDelay]);
 
   return (
     <div ref={wrapperRef} className={className}>

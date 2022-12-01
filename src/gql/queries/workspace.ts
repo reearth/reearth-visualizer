@@ -14,6 +14,18 @@ export const GET_TEAMS = gql`
       role
     }
     personal
+    policyId
+    policy {
+      id
+      name
+      projectCount
+      memberCount
+      publishedProjectCount
+      layerCount
+      assetStorageSize
+      datasetSchemaCount
+      datasetCount
+    }
   }
 
   query GetTeams {
@@ -48,6 +60,18 @@ export const CREATE_TEAM = gql`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
     }
   }
@@ -77,6 +101,18 @@ export const UPDATE_TEAM = gql`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
     }
   }
@@ -98,6 +134,18 @@ export const ADD_MEMBER_TO_TEAM = gql`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
     }
   }
@@ -119,6 +167,18 @@ export const REMOVE_MEMBER_FROM_TEAM = gql`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
     }
   }
@@ -140,6 +200,18 @@ export const UPDATE_MEMBER_OF_TEAM = gql`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
     }
   }

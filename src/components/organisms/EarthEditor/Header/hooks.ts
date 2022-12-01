@@ -18,7 +18,7 @@ import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
-  const { logout } = useAuth();
+  const { logout: handleLogout } = useAuth();
   const t = useT();
 
   const [, setNotification] = useNotification();
@@ -34,8 +34,8 @@ export default () => {
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
-  const openWorkspaceModal = useCallback(() => setWorkspaceModalVisible(true), []);
-  const closeWorkspaceModal = useCallback(() => setWorkspaceModalVisible(false), []);
+  const handleWorkspaceModalOpen = useCallback(() => setWorkspaceModalVisible(true), []);
+  const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
 
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
 
@@ -63,7 +63,7 @@ export default () => {
   const [checkProjectAliasQuery, { loading: validatingAlias, data: checkProjectAliasData }] =
     useCheckProjectAliasLazyQuery();
 
-  const checkProjectAlias = useCallback(
+  const handleProjectAliasCheck = useCallback(
     (alias: string) => {
       if (project?.alias === alias) {
         setValidAlias(true);
@@ -111,23 +111,23 @@ export default () => {
     setSearchIndex(!!(project?.publishmentStatus === "PUBLIC"));
   }, [project]);
 
-  const onSearchIndexChange = useCallback(() => {
+  const handleSearchIndexChange = useCallback(() => {
     setSearchIndex(!searchIndex);
   }, [searchIndex]);
 
   const [publishProjectMutation, { loading: publicationModalLoading }] =
     usePublishProjectMutation();
 
-  const openPublicationModal = useCallback((p: publishingType) => {
+  const handlePublicationModalOpen = useCallback((p: publishingType) => {
     setPublishing(p);
     setPublicationModalVisible(true);
   }, []);
-  const closePublicationModal = useCallback(() => {
+  const handlePublicationModalClose = useCallback(() => {
     setSearchIndex(!!(project?.publishmentStatus === "PUBLIC"));
     setPublicationModalVisible(false);
   }, [project?.publishmentStatus]);
 
-  const publishProject = useCallback(
+  const handleProjectPublish = useCallback(
     async (alias: string | undefined, s: Status) => {
       if (!project) return;
       const gqlStatus =
@@ -160,7 +160,7 @@ export default () => {
     [project, publishProjectMutation, t, setNotification],
   );
 
-  const changeTeam = useCallback(
+  const handleTeamChange = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
       if (team && teamId !== currentTeam?.id) {
@@ -172,7 +172,7 @@ export default () => {
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
-  const createTeam = useCallback(
+  const handleTeamCreate = useCallback(
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
@@ -191,7 +191,7 @@ export default () => {
     setProjectAlias(project?.alias);
   }, [project]);
 
-  const openPreview = useCallback(() => {
+  const handlePreviewOpen = useCallback(() => {
     window.open(location.pathname + "/preview", "_blank");
   }, []);
 
@@ -207,7 +207,6 @@ export default () => {
     teamId,
     publicationModalVisible,
     searchIndex,
-    onSearchIndexChange,
     publishing,
     workspaceModalVisible,
     projectId: project?.id,
@@ -220,17 +219,18 @@ export default () => {
     validAlias,
     validatingAlias,
     url,
-    changeTeam,
-    openPublicationModal,
-    closePublicationModal,
-    openWorkspaceModal,
-    closeWorkspaceModal,
+    handlePublicationModalOpen,
+    handlePublicationModalClose,
+    handleWorkspaceModalOpen,
+    handleWorkspaceModalClose,
+    handleSearchIndexChange,
+    handleTeamChange,
+    handleTeamCreate,
+    handleProjectPublish,
+    handleProjectAliasCheck,
     handleCopyToClipBoard,
-    publishProject,
-    logout,
-    checkProjectAlias,
-    createTeam,
-    openPreview,
+    handlePreviewOpen,
+    handleLogout,
   };
 };
 

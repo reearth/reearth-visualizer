@@ -8,25 +8,26 @@ import {
   MenuListItem,
   MenuListItemLabel,
 } from "@reearth/components/molecules/Common/MenuList";
-import TeamMenu from "@reearth/components/molecules/Common/TeamMenu";
+import WorkspaceMenu from "@reearth/components/molecules/Common/WorkspaceMenu";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
-import { User, Team, Project } from "./types";
+import { User, Workspace } from "./types";
 
-export interface LoginProps {
+export type LoginProps = {
   user: User;
-  currentTeam: Team;
-  currentProject: Project;
-}
-export interface Props {
-  teams: Team[];
+  currentWorkspace: Workspace;
+  personalWorkspace?: boolean;
+};
+export type Props = {
+  workspaces?: Workspace[];
+  personalWorkspace?: boolean;
   onSignOut: () => void;
-  onChangeTeam?: (teamId: string) => void;
+  onWorkspaceChange?: (workspaceId: string) => void;
   openModal?: () => void;
-}
+};
 
-const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, currentTeam }) => {
+const Label: React.FC<LoginProps> = ({ user, personalWorkspace, currentWorkspace }) => {
   const theme = useTheme();
   return (
     <LabelWrapper>
@@ -37,9 +38,11 @@ const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, curre
         <LabelUserName size="m" weight="bold" color={theme.main.strongText}>
           {user.name}
         </LabelUserName>
-        <LabelTeamName size="xs" color={theme.main.strongText}>
-          {currentTeam.name}
-        </LabelTeamName>
+        {!personalWorkspace && (
+          <LabelWorkspaceName size="xs" color={theme.main.strongText}>
+            {currentWorkspace.name}
+          </LabelWorkspaceName>
+        )}
       </LabelRight>
     </LabelWrapper>
   );
@@ -47,10 +50,11 @@ const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, curre
 
 const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
   user = { name: "" },
-  currentTeam = { id: undefined, name: "" },
-  teams = [],
+  currentWorkspace = { id: undefined, name: "" },
+  personalWorkspace,
+  workspaces = [],
   onSignOut,
-  onChangeTeam,
+  onWorkspaceChange,
   openModal,
 }) => {
   const t = useT();
@@ -65,17 +69,23 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
         noHoverStyle
         direction="down"
         hasIcon
-        label={<Label user={user} currentTeam={currentTeam} />}>
+        label={
+          <Label
+            user={user}
+            personalWorkspace={personalWorkspace}
+            currentWorkspace={currentWorkspace}
+          />
+        }>
         <ChildrenWrapper>
           <MenuList>
             <MenuListItem>
               <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
             </MenuListItem>
             <MenuListItem noHover>
-              <TeamMenu
-                currentTeam={currentTeam}
-                teams={teams}
-                onChangeTeam={onChangeTeam}
+              <WorkspaceMenu
+                currentWorkspace={currentWorkspace}
+                workspaces={workspaces}
+                onWorkspaceChange={onWorkspaceChange}
                 openModal={openModal}
               />
             </MenuListItem>
@@ -123,7 +133,7 @@ const LabelLeft = styled.div`
   margin-right: 16px;
 `;
 
-const LabelTeamName = styled(Text)`
+const LabelWorkspaceName = styled(Text)`
   margin-top: 2px;
 `;
 

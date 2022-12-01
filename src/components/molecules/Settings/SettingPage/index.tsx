@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -12,12 +12,14 @@ import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 export type SettingPageProps = {
   loading?: boolean;
   hasMoreItems?: boolean;
+  sceneId?: string;
+  children?: ReactNode;
   onScroll?: () => void;
 } & Props;
 
 const SettingPage: React.FC<SettingPageProps> = ({
   children,
-  currentTeam,
+  currentWorkspace,
   currentProject,
   sceneId,
   loading,
@@ -40,7 +42,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
     <Wrapper>
       <StyledHeader
         {...props}
-        currentTeam={currentTeam}
+        currentWorkspace={currentWorkspace}
         icon={
           currentProject && (
             <StyledLink to={`/edit/${sceneId}`}>
@@ -49,7 +51,9 @@ const SettingPage: React.FC<SettingPageProps> = ({
           )
         }
         center={
-          currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
+          currentProject && (
+            <ProjectMenu currentProject={currentProject} teamId={currentWorkspace?.id} />
+          )
         }
       />
       <BodyWrapper
@@ -58,7 +62,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
           !loading && hasMoreItems && onScrollToBottom(e, onScroll);
         }}>
         <LeftWrapper>
-          <Navigation team={currentTeam} project={currentProject} />
+          <Navigation team={currentWorkspace} project={currentProject} />
         </LeftWrapper>
         <RightWrapper>
           <ContentWrapper>
@@ -70,7 +74,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
               />
               {isOpen && (
                 <Menu>
-                  <Navigation team={currentTeam} project={currentProject} />
+                  <Navigation team={currentWorkspace} project={currentProject} />
                 </Menu>
               )}
             </DeviceMenu>

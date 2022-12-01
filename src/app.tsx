@@ -35,7 +35,7 @@ function AppRoutes() {
     { path: "/login", element: <LoginPage /> },
     { path: "/signup", element: <SignupPage /> },
     { path: "/password-reset", element: <PasswordResetPage /> },
-    { path: "/dashboard/:teamId", element: <Dashboard /> },
+    { path: "/dashboard/:workspaceId", element: <Dashboard /> },
     { path: "/edit/:sceneId", element: <EarthEditor /> },
     { path: "/edit/:sceneId/preview", element: <Preview /> },
     { path: "/settings", element: <Navigate to="/settings/account" /> },

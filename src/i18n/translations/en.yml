@@ -66,6 +66,8 @@ Re:Earth needs at least 900px width to be used effectively. Please resize your b
   browser window.
 Account Settings: Account Settings
 Log out: Log out
+OK: OK
+Click here for more details.: ''
 Create New Project: Create New Project
 Create: Create
 Project Name: Project Name
@@ -76,12 +78,13 @@ Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
+Create New Workspace: Create New Workspace
+Workspace Name: Workspace Name
 Workspaces: Workspaces
 Manage Workspaces: Manage Workspaces
 New Workspace: New Workspace
-Create New Workspace: Create New Workspace
-Workspace Name: Workspace Name
 Plugin Marketplace: Plugin Marketplace
+timeSince: Edited {{timeSince}}
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
   You have no projects in your workspace. Click the button above in the Quick
   Start to create a project now!
@@ -94,7 +97,6 @@ Layer style: Layer style
 import: import
 Data: Data
 Import to scene: Import to scene
-OK: OK
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
   You are deleting a dataset. Layers that are linked to this dataset might show
   errors.
@@ -355,6 +357,7 @@ Same label tag already exist. Please type different label.: Same label tag alrea
 Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
 Error: Error
 Warning: Warning
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Failed to update account name.: Failed to update account name.
 Failed to update password.: Failed to update password.

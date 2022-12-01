@@ -1249,8 +1249,12 @@ export enum PluginExtensionType {
 export type Policy = {
   __typename?: 'Policy';
   assetStorageSize?: Maybe<Scalars['FileSize']>;
+  datasetCount?: Maybe<Scalars['Int']>;
+  datasetSchemaCount?: Maybe<Scalars['Int']>;
+  id: Scalars['ID'];
   layerCount?: Maybe<Scalars['Int']>;
   memberCount?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
   projectCount?: Maybe<Scalars['Int']>;
   publishedProjectCount?: Maybe<Scalars['Int']>;
 };
@@ -2337,7 +2341,7 @@ export type Layer5FragmentFragment = Layer5Fragment_LayerGroup_Fragment | Layer5
 
 export type PluginFragmentFragment = { __typename?: 'Plugin', id: string, name: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, name: string, description: string, icon: string, translatedName: string }> };
 
-export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus };
+export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date };
 
 export type PropertySchemaGroupFragmentFragment = { __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> };
 
@@ -2709,14 +2713,14 @@ export type GetProjectQueryVariables = Exact<{
 }>;
 
 
-export type GetProjectQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+export type GetProjectQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type GetProjectWithSceneIdQueryVariables = Exact<{
   projectId: Scalars['ID'];
 }>;
 
 
-export type GetProjectWithSceneIdQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+export type GetProjectWithSceneIdQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type GetProjectBySceneQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -2744,7 +2748,7 @@ export type GetProjectsQueryVariables = Exact<{
 }>;
 
 
-export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', totalCount: number, edges: Array<{ __typename?: 'ProjectEdge', node?: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null }>, nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
+export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', totalCount: number, edges: Array<{ __typename?: 'ProjectEdge', node?: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, scene?: { __typename?: 'Scene', id: string } | null } | null }>, nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, scene?: { __typename?: 'Scene', id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type CheckProjectAliasQueryVariables = Exact<{
   alias: Scalars['String'];
@@ -2784,7 +2788,7 @@ export type UpdateProjectMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
+export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date } } | null };
 
 export type UpdateProjectBasicAuthMutationVariables = Exact<{
   projectId: Scalars['ID'];
@@ -3051,7 +3055,7 @@ export type GetUserBySearchQuery = { __typename?: 'Query', searchUser?: { __type
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }, teams: Array<{ __typename?: 'Team', id: string, name: string, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }> } | null };
+export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, policyId?: string | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> }, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }> } | null };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3142,19 +3146,19 @@ export type UpdateWidgetAlignSystemMutationVariables = Exact<{
 
 export type UpdateWidgetAlignSystemMutation = { __typename?: 'Mutation', updateWidgetAlignSystem?: { __typename?: 'UpdateWidgetAlignSystemPayload', scene: { __typename?: 'Scene', id: string, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, pluginId: string, extensionId: string, propertyId: string }>, widgetAlignSystem?: { __typename?: 'WidgetAlignSystem', outer?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null, inner?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null } | null } } | null };
 
-export type TeamFragment = { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> };
+export type TeamFragment = { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null };
 
 export type GetTeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTeamsQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, myTeam: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }> } | null };
+export type GetTeamsQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, myTeam: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
 
 export type CreateTeamMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreateTeamMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
+export type CreateTeamMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export type DeleteTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3169,7 +3173,7 @@ export type UpdateTeamMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTeamMutation = { __typename?: 'Mutation', updateTeam?: { __typename?: 'UpdateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
+export type UpdateTeamMutation = { __typename?: 'Mutation', updateTeam?: { __typename?: 'UpdateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export type AddMemberToTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3178,7 +3182,7 @@ export type AddMemberToTeamMutationVariables = Exact<{
 }>;
 
 
-export type AddMemberToTeamMutation = { __typename?: 'Mutation', addMemberToTeam?: { __typename?: 'AddMemberToTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
+export type AddMemberToTeamMutation = { __typename?: 'Mutation', addMemberToTeam?: { __typename?: 'AddMemberToTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export type RemoveMemberFromTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3186,7 +3190,7 @@ export type RemoveMemberFromTeamMutationVariables = Exact<{
 }>;
 
 
-export type RemoveMemberFromTeamMutation = { __typename?: 'Mutation', removeMemberFromTeam?: { __typename?: 'RemoveMemberFromTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
+export type RemoveMemberFromTeamMutation = { __typename?: 'Mutation', removeMemberFromTeam?: { __typename?: 'RemoveMemberFromTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export type UpdateMemberOfTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3195,7 +3199,7 @@ export type UpdateMemberOfTeamMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMemberOfTeamMutation = { __typename?: 'Mutation', updateMemberOfTeam?: { __typename?: 'UpdateMemberOfTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
+export type UpdateMemberOfTeamMutation = { __typename?: 'Mutation', updateMemberOfTeam?: { __typename?: 'UpdateMemberOfTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export const WidgetAreaFragmentFragmentDoc = gql`
     fragment WidgetAreaFragment on WidgetArea {
@@ -3895,6 +3899,7 @@ export const ProjectFragmentFragmentDoc = gql`
   publicImage
   alias
   publishmentStatus
+  updatedAt
 }
     `;
 export const TeamFragmentDoc = gql`
@@ -3911,6 +3916,18 @@ export const TeamFragmentDoc = gql`
     role
   }
   personal
+  policyId
+  policy {
+    id
+    name
+    projectCount
+    memberCount
+    publishedProjectCount
+    layerCount
+    assetStorageSize
+    datasetSchemaCount
+    datasetCount
+  }
 }
     `;
 export const GetAssetsDocument = gql`
@@ -7332,6 +7349,18 @@ export const GetMeDocument = gql`
           }
         }
       }
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
     teams {
       id
@@ -7344,6 +7373,18 @@ export const GetMeDocument = gql`
         }
         userId
         role
+      }
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
       }
       projects(first: 100) {
         nodes {
@@ -8026,6 +8067,18 @@ export const CreateTeamDocument = gql`
         role
       }
       personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
   }
 }
@@ -8105,6 +8158,18 @@ export const UpdateTeamDocument = gql`
         role
       }
       personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
   }
 }
@@ -8152,6 +8217,18 @@ export const AddMemberToTeamDocument = gql`
         role
       }
       personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
   }
 }
@@ -8200,6 +8277,18 @@ export const RemoveMemberFromTeamDocument = gql`
         role
       }
       personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
   }
 }
@@ -8247,6 +8336,18 @@ export const UpdateMemberOfTeamDocument = gql`
         role
       }
       personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
     }
   }
 }

@@ -110,16 +110,16 @@ export default (
   }, [alias, onPublish, publishing, searchIndex, setStatusChange, generateAlias, handleClose]);
 
   return {
-    handlePublish,
-    handleClose,
     statusChanged,
-    setStatusChange,
     alias,
     validation,
-    generateAlias,
     copiedKey,
-    handleCopyToClipBoard,
     showOptions,
+    handlePublish,
+    handleClose,
+    setStatusChange,
+    generateAlias,
+    handleCopyToClipBoard,
     setOptions,
   };
 };

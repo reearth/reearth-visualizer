@@ -14,15 +14,15 @@ export type Notification = {
 
 export type Props = {
   visible?: boolean;
-  setModal?: (show: boolean) => void;
   notification?: Notification;
+  setModal?: (show: boolean) => void;
   resetNotification?: () => void;
 };
 
 const NotificationBanner: React.FC<Props> = ({
   visible,
-  setModal,
   notification,
+  setModal,
   resetNotification,
 }) => {
   const theme = useTheme();

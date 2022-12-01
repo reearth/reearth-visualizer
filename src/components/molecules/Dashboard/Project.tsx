@@ -1,31 +1,39 @@
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
 import Button from "@reearth/components/atoms/Button";
+import Flex from "@reearth/components/atoms/Flex";
 import PublicationStatus from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import { Project as ProjectType } from "@reearth/components/molecules/Dashboard/types";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 import defaultProjectImage from "./defaultProjectImage.jpg";
 
-export interface Props {
+export type Props = {
   className?: string;
   project: ProjectType;
-}
+};
 
 const Project: React.FC<Props> = ({ className, project }) => {
-  const { name, description, image, status, id, sceneId } = project;
+  const t = useT();
+  const theme = useTheme();
+  dayjs.extend(relativeTime);
+
+  const isSmallWindow = useMedia("(max-width: 1024px)");
   const [isHovered, setHover] = useState(false);
+  const { name, description, image, status, id, sceneId } = project;
+
+  // const timeSinceLastEdit = useMemo(() => dayjs(updatedAt).fromNow(), [updatedAt]);
+  const timeSinceLastEdit = undefined; // Once backend is implemented, remove this line and uncomment above timeSinceLastEdit
 
   const onPreviewOpen = useCallback(() => {
     window.open(`${location.origin}/edit/${sceneId}/preview`);
   }, [sceneId]);
-
-  const theme = useTheme();
-
-  const isSmallWindow = useMedia("(max-width: 1024px)");
 
   return (
     <StyledWrapper className={className}>
@@ -53,7 +61,12 @@ const Project: React.FC<Props> = ({ className, project }) => {
               </Description>
             </DescriptionWrapper>
           </Actions>
-          <PublicationStatus status={status} color={theme.dashboard.publicationStatus} />
+          <Flex gap={36}>
+            <PublicationStatus status={status} color={theme.dashboard.publicationStatus} />
+            {timeSinceLastEdit && (
+              <Text size="xs">{t("timeSince", { timeSince: timeSinceLastEdit })}</Text>
+            )}
+          </Flex>
         </Content>
       </Block>
     </StyledWrapper>
@@ -74,7 +87,8 @@ const StyledWrapper = styled.div`
 `;
 
 const Block = styled.div<{ projectImage?: string | null }>`
-  height: 242px;
+  display: flex;
+  height: 238px;
   border-radius: 12px;
   margin: 7px;
   background-image: ${({ projectImage }) =>
@@ -90,8 +104,8 @@ const Block = styled.div<{ projectImage?: string | null }>`
 
 const Content = styled.div<{ isHovered?: boolean }>`
   position: relative;
-  height: 194px;
-  padding: 24px;
+  flex: 1;
+  padding: 16px 21px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -99,10 +113,6 @@ const Content = styled.div<{ isHovered?: boolean }>`
   background-color: ${({ isHovered, theme }) => (isHovered ? theme.main.transparentBg : "")};
   border-radius: 12px;
   transition: all 0.4s;
-
-  @media only screen and (max-width: 1024px) {
-    height: 152px;
-  }
 `;
 
 const DescriptionWrapper = styled.div`
@@ -132,7 +142,7 @@ const Actions = styled.div<{ isHovered?: boolean }>`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 24px;
+  padding: 16px 21px;
   box-sizing: border-box;
   opacity: ${({ isHovered }) => (isHovered ? 1 : 0)};
   transition: all 0.4s;

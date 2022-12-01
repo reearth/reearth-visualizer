@@ -23,44 +23,44 @@ interface Props {
   projectId?: string;
   projectAlias?: string;
   validAlias?: boolean;
-  onClose?: () => void;
-  onSearchIndexChange?: () => void;
   searchIndex?: boolean;
   publishing?: publishingType;
+  validatingAlias?: boolean;
+  url?: string[];
+  onClose?: () => void;
+  onSearchIndexChange?: () => void;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
-  validatingAlias?: boolean;
-  url?: string[];
 }
 
 const PublicationModal: React.FC<Props> = ({
   isVisible,
   loading,
-  onClose,
-  onSearchIndexChange,
   searchIndex,
   publishing,
   publicationStatus,
-  onPublish,
   projectAlias,
-  onCopyToClipBoard,
   validAlias,
-  onAliasValidate,
   validatingAlias,
   url,
+  onClose,
+  onSearchIndexChange,
+  onPublish,
+  onCopyToClipBoard,
+  onAliasValidate,
 }) => {
   const t = useT();
   const theme = useTheme();
   const {
-    handlePublish,
-    handleClose,
     statusChanged,
     alias,
     validation,
     copiedKey,
-    handleCopyToClipBoard,
     showOptions,
+    handlePublish,
+    handleClose,
+    handleCopyToClipBoard,
     setOptions,
   } = useHooks(
     publishing,

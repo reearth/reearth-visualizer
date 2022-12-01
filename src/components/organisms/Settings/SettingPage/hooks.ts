@@ -80,7 +80,7 @@ export default (params: Params) => {
     );
   }, [project, setProject]);
 
-  const changeTeam = useCallback(
+  const handleWorkspaceChange = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
 
@@ -96,7 +96,7 @@ export default (params: Params) => {
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
-  const createTeam = useCallback(
+  const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
@@ -110,19 +110,16 @@ export default (params: Params) => {
     [createTeamMutation, setTeam],
   );
 
-  const back = useCallback(() => navigate(-1), [navigate]);
-
   return {
     user,
     teams,
     currentTeam,
     currentProject,
     sceneId,
-    createTeam,
-    changeTeam,
     modalShown,
+    handleWorkspaceCreate,
+    handleWorkspaceChange,
     openModal,
     handleModalClose,
-    back,
   };
 };

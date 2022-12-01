@@ -33,6 +33,18 @@ export const GET_ME = gql`
             }
           }
         }
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
+        }
       }
       teams {
         id
@@ -45,6 +57,18 @@ export const GET_ME = gql`
           }
           userId
           role
+        }
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+          datasetSchemaCount
+          datasetCount
         }
         projects(first: 100) {
           nodes {

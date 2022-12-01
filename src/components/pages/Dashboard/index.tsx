@@ -9,10 +9,10 @@ export type Props = {
 };
 
 const DashboardPage: React.FC<Props> = () => {
-  const { teamId } = useParams();
+  const { workspaceId } = useParams();
   return (
     <AuthenticationRequiredPage>
-      <Dashboard teamId={teamId} />
+      <Dashboard workspaceId={workspaceId} />
     </AuthenticationRequiredPage>
   );
 };

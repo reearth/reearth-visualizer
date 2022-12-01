@@ -7,11 +7,11 @@ const defaultProps: Props = {
   user: {
     name: "Shinnosuke Komiya",
   },
-  currentTeam: {
+  currentWorkspace: {
     id: "1",
     name: "Darwin Education",
   },
-  teams: [
+  workspaces: [
     {
       id: "A",
       name: "Team A",
@@ -21,8 +21,6 @@ const defaultProps: Props = {
       name: "Team B",
     },
   ],
-  onBack: () => action("onBack"),
-  onForward: () => action("onForward"),
   onSignOut: () => action("signOut"),
 };
 
