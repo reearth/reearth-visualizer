@@ -13335,10 +13335,10 @@ react-accessible-accordion@5.0.0:
   resolved "https://registry.yarnpkg.com/react-accessible-accordion/-/react-accessible-accordion-5.0.0.tgz#5b61d06aec38906a99f977c10324d9bddec0f64c"
   integrity sha512-MT2obYpTgLIIfPr9d7hEyvPB5rg8uJcHpgA83JSRlEUHvzH48+8HJPvzSs+nM+XprTugDgLfhozO5qyJpBvYRQ==
 
-react-align@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.2.0.tgz#b6b9c8dfe7c63b870d6467c1d7a3e0bfca10872a"
-  integrity sha512-7I5+w+YN3yfirAYaa4vOKHmheU5FWJ2eEvCM4ciea5jKpi305SDSb8DUwdeP8Yh4EJzNX4ImsZOM/myaVRz3mQ==
+react-align@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.2.2.tgz#d245c0bde883da805f76c19c13ac1c67941a2b97"
+  integrity sha512-cESpOZ/j7SmGvL94SLpX5d3a4Sdewxoh1IgjbTLe7kiwiPr/gGeK17coc6Mnl32rGk+oQaqUdNk5YSZbo1R8kQ==
 
 react-beautiful-dnd@13.1.1:
   version "13.1.1"
