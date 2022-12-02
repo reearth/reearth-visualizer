@@ -65,7 +65,6 @@ extensions:
             choices:
               cesium: Cesium World Terrain
               arcgis: ArcGIS Terrain
-              gsi: 国土地理院 標高タイル
               cesiumion: Cesium Ion
           terrainCesiumIonAsset:
             title: Cesium Ion アセットID

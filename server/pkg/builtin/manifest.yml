@@ -122,8 +122,6 @@ extensions:
                   label: Cesium World Terrain
                 - key: arcgis
                   label: ArcGIS Terrain
-                - key: gsi
-                  label: Japan GSI elevation tiles
                 - key: cesiumion
                   label: Cesium Ion
             - id: terrainCesiumIonAsset
