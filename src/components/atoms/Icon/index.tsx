@@ -19,6 +19,7 @@ export type Props = {
   style?: CSSProperties;
   role?: AriaRole;
   notransition?: boolean;
+  transitionDuration?: string;
   onClick?: () => void;
 } & AriaAttributes;
 
@@ -32,6 +33,7 @@ const Icon: React.FC<Props> = ({
   size,
   role,
   notransition,
+  transitionDuration,
   onClick,
   ...props
 }) => {
@@ -63,13 +65,19 @@ const Icon: React.FC<Props> = ({
     <StyledSvg
       className={className}
       src={src}
-      style={style}
       role={role}
       color={color}
       stroke={stroke}
       size={sizeStr}
-      notransition={notransition}
       onClick={onClick}
+      style={{
+        ...style,
+        // To prevent annoying errors from being output to the console, specify transitions without Emotion.
+        transitionDuration:
+          !notransition && !style?.transitionDuration
+            ? transitionDuration || "0.3s"
+            : style?.transitionDuration,
+      }}
       {...aria}
     />
   );
@@ -85,7 +93,6 @@ const StyledSvg = styled(SVG)<{
   color?: string;
   stroke?: string;
   size?: string;
-  notransition?: boolean;
 }>`
   font-size: 0;
   display: inline-block;
@@ -94,7 +101,6 @@ const StyledSvg = styled(SVG)<{
   color: ${({ color }) => color};
   ${({ stroke }) => `stroke: ${stroke};`}
   transition-property: color, background;
-  ${({ notransition }) => (!notransition ? "transition-duration: 0.3s;" : undefined)}
 `;
 
 export default memo(Icon);
