@@ -1,5 +1,14 @@
 import { Args, Args3, Args2 } from "@reearth/types";
 
+/**
+ * Often we want to make an array of keys of an object type,
+ * but if we just specify the key names directly, we may forget to change the array if the object type is changed.
+ * With this function, the compiler checks the object keys for completeness, so the array of keys is always up to date.
+ */
+export const objKeys = <T>(obj: { [k in keyof T]: 0 }): (keyof T)[] => {
+  return Object.keys(obj) as (keyof T)[];
+};
+
 export const isPresent = <V>(v: V | undefined): v is V => typeof v !== "undefined";
 
 export const partitionObject = <T extends {}, K extends keyof T>(

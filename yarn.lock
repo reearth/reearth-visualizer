@@ -2262,9 +2262,9 @@
     "@types/gapi.client.discovery" "*"
 
 "@maxim_mazurok/gapi.client.sheets-v4@latest":
-  version "0.0.20221031"
-  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.sheets-v4/-/gapi.client.sheets-v4-0.0.20221031.tgz#f586b972a7897afadf6f8b49c0336f0c944a6a1f"
-  integrity sha512-BxEMZ7l0C7csdKLmSSRwk9SyM8PaSQirrgEYTya34pWRKAfYgdrUpA2NnN4iSXbdWluohuBcBcZj920FSqy0WQ==
+  version "0.0.20221115"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.sheets-v4/-/gapi.client.sheets-v4-0.0.20221115.tgz#5bd60c2dfb780167dbe5d0ee690f7139e1854aa9"
+  integrity sha512-xMLfeiYJx3HWBybGDSlU/RHShY/0oXaoI5qLmchOJBRslEYbLFF2o7TJgR5JWTuG7mj3n+QtjZhV7FGoyU5/og==
   dependencies:
     "@types/gapi.client" "*"
     "@types/gapi.client.discovery" "*"

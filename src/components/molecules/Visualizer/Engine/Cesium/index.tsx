@@ -2,7 +2,6 @@ import { ArcType, Color, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
-  Globe,
   Fog,
   Sun,
   SkyAtmosphere,
@@ -19,6 +18,7 @@ import {
 import type { EngineProps, Ref as EngineRef } from "..";
 
 import Clock from "./core/Clock";
+import Globe from "./core/Globe";
 import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
 import Event from "./Event";
@@ -50,8 +50,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   ref,
 ) => {
   const {
-    terrainProvider,
-    terrainProperty,
     backgroundColor,
     cesium,
     cameraViewBoundaries,
@@ -175,17 +173,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       />
       <Sun show={property?.atmosphere?.enable_sun ?? true} />
       <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
-      <Globe
-        enableLighting={!!property?.atmosphere?.enable_lighting}
-        showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
-        atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
-        atmosphereHueShift={property?.atmosphere?.hue_shift}
-        atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
-        terrainProvider={terrainProvider}
-        depthTestAgainstTerrain={!!terrainProperty.depthTestAgainstTerrain}
-        terrainExaggerationRelativeHeight={terrainProperty.terrainExaggerationRelativeHeight}
-        terrainExaggeration={terrainProperty.terrainExaggeration}
-      />
+      <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
       {ready ? children : null}
     </Viewer>
   );
