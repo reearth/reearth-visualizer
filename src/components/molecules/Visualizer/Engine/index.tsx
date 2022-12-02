@@ -31,14 +31,15 @@ export type EngineProps = {
   ready?: boolean;
   selectedLayerId?: string;
   layerSelectionReason?: string;
+  isLayerDraggable?: boolean;
+  isLayerDragging?: boolean;
+  shouldRender?: boolean;
+  meta?: Record<string, unknown>;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Clock) => void;
-  isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-  isLayerDragging?: boolean;
-  shouldRender?: boolean;
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;

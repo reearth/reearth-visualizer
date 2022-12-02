@@ -3,15 +3,14 @@ import {
   EllipsoidTerrainProvider,
   IonResource,
   CesiumTerrainProvider,
-  Ion,
 } from "cesium";
 
 export default {
   default: new EllipsoidTerrainProvider(),
-  cesium: () =>
+  cesium: ({ cesiumIonAccessToken }: { cesiumIonAccessToken?: string }) =>
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
     new CesiumTerrainProvider({
-      url: IonResource.fromAssetId(1, { accessToken: Ion.defaultAccessToken }),
+      url: IonResource.fromAssetId(1, { accessToken: cesiumIonAccessToken }),
       requestVertexNormals: false,
       requestWaterMask: false,
     }),

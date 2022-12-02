@@ -80,7 +80,7 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
                 style={{
                   transform: `rotate(${compassFocusDegree}deg)`,
                 }}
-                data-testId="compassFocus">
+                data-testid="compassFocus">
                 <Icon icon="compassFocus" color={publishedTheme?.select} alt="" size={30} />
               </CompassFocusIcon>
             )}

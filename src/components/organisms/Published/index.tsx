@@ -1,5 +1,6 @@
 import Error from "@reearth/components/molecules/Published/Error";
 import Visualizer from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 import useHooks from "./hooks";
 
@@ -9,8 +10,17 @@ export type Props = {
 };
 
 export default function Published({ className, alias }: Props) {
-  const { sceneProperty, pluginProperty, rootLayer, widgets, tags, ready, error, clusterProperty } =
-    useHooks(alias);
+  const {
+    sceneProperty,
+    pluginProperty,
+    rootLayer,
+    widgets,
+    tags,
+    ready,
+    error,
+    clusterProperty,
+    engineMeta,
+  } = useHooks(alias);
 
   return error ? (
     <Error />
@@ -27,7 +37,8 @@ export default function Published({ className, alias }: Props) {
       ready={ready}
       isBuilt
       isPublished
-      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
+      pluginBaseUrl={config()?.plugins}
+      engineMeta={engineMeta}
     />
   );
 }

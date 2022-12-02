@@ -3,6 +3,7 @@ import React, { useCallback } from "react";
 import ContentPicker from "@reearth/components/atoms/ContentPicker";
 import FovSlider from "@reearth/components/molecules/EarthEditor/FovSlider";
 import Visualizer, { Props as VisualizerProps } from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 import useHooks from "./hooks";
 
@@ -11,8 +12,6 @@ export type Props = {
   isBuilt?: boolean;
   inEditor?: boolean;
 };
-
-// TODO: ErrorBoudaryでエラーハンドリング
 
 const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
   const {
@@ -32,6 +31,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
     camera,
     clock,
     widgetAlignEditorActivated,
+    engineMeta,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -76,8 +76,10 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       camera={camera}
       clock={clock}
       ready={isBuilt || (!!rootLayer && !!widgets)}
-      onLayerSelect={selectLayer}
+      pluginBaseUrl={config()?.plugins}
       widgetAlignEditorActivated={widgetAlignEditorActivated}
+      engineMeta={engineMeta}
+      onLayerSelect={selectLayer}
       onCameraChange={onCameraChange}
       onTick={onTick}
       onWidgetUpdate={onWidgetUpdate}
@@ -87,10 +89,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       onBlockMove={onBlockMove}
       onBlockDelete={onBlockRemove}
       onBlockInsert={onBlockInsert}
-      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onLayerDrop={handleDropLayer}
-      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
-      onZoomToLayer={zoomToLayer}>
+      onZoomToLayer={zoomToLayer}
+      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}>
       <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}

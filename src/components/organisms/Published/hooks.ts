@@ -9,6 +9,7 @@ import type {
   Alignment,
   ClusterProperty,
 } from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 import { PublishedData, WidgetZone, WidgetSection, WidgetArea, Layer as RawLayer } from "./types";
 
@@ -166,6 +167,13 @@ export default (alias?: string) => {
     })();
   }, [actualAlias]);
 
+  const engineMeta = useMemo(
+    () => ({
+      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+    }),
+    [],
+  );
+
   return {
     alias: actualAlias,
     sceneProperty,
@@ -176,6 +184,7 @@ export default (alias?: string) => {
     widgets,
     ready,
     error,
+    engineMeta,
   };
 };
 

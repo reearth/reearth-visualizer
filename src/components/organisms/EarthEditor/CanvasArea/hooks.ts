@@ -5,6 +5,7 @@ import {
   Location,
   Alignment,
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import { config } from "@reearth/config";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -275,6 +276,13 @@ export default (isBuilt?: boolean) => {
     [sceneId, updateWidgetAlignSystemMutation],
   );
 
+  const engineMeta = useMemo(
+    () => ({
+      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+    }),
+    [],
+  );
+
   return {
     sceneId,
     rootLayerId,
@@ -293,6 +301,7 @@ export default (isBuilt?: boolean) => {
     camera,
     clock,
     widgetAlignEditorActivated,
+    engineMeta,
     selectLayer,
     selectBlock,
     onBlockChange,

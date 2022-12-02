@@ -4,8 +4,8 @@ import { expect, test, vi } from "vitest";
 import { type Tile, useImageryProviders } from "./Imagery";
 
 test("useImageryProviders", () => {
-  const provider = vi.fn((url?: string): any => ({ hoge: url }));
-  const provider2 = vi.fn((url?: string): any => ({ hoge2: url }));
+  const provider = vi.fn(({ url }: { url?: string } = {}): any => ({ hoge: url }));
+  const provider2 = vi.fn(({ url }: { url?: string } = {}): any => ({ hoge2: url }));
   const presets = { default: provider, foobar: provider2 };
   const { result, rerender } = renderHook(
     ({ tiles, cesiumIonAccessToken }: { tiles: Tile[]; cesiumIonAccessToken?: string }) =>
@@ -37,7 +37,7 @@ test("useImageryProviders", () => {
   expect(result.current.providers["1"][2]).not.toBe(prevImageryProvider);
   expect(result.current.updated).toBe(true);
   expect(provider).toBeCalledTimes(2);
-  expect(provider).toBeCalledWith("a");
+  expect(provider).toBeCalledWith({ url: "a" });
   const prevImageryProvider2 = result.current.providers["1"][2];
 
   // add a tile with URL

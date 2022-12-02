@@ -66,6 +66,7 @@ export type Props = {
   isPublished?: boolean;
   inEditor?: boolean;
   widgetAlignEditorActivated?: boolean;
+  engineMeta?: Record<string, unknown>;
   onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
   onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
@@ -95,6 +96,7 @@ export default function Visualizer({
   selectedBlockId: outerSelectedBlockId,
   zoomedLayerId,
   widgetAlignEditorActivated,
+  engineMeta,
   onLayerSelect,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
@@ -206,6 +208,7 @@ export default function Visualizer({
               !!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID] ||
               !!widgets?.ownBuiltinWidgets?.[NAVIGATOR_BUILTIN_WIDGET_ID]
             }
+            meta={engineMeta}
             onLayerSelect={selectLayer}
             onCameraChange={updateCamera}
             onTick={updateClock}

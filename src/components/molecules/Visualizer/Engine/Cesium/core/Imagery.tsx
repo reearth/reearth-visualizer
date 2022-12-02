@@ -70,24 +70,26 @@ export function useImageryProviders({
   tiles?: Tile[];
   cesiumIonAccessToken?: string;
   presets: {
-    [key: string]: (url?: string) => ImageryProvider | null;
+    [key: string]: (opts?: {
+      url?: string;
+      cesiumIonAccessToken?: string;
+    }) => ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
-    (t: Tile) =>
-      t.tile_url && t.tile_type
-        ? presets[t.tile_type](t.tile_url)
-        : presets[t.tile_type || "default"](),
+    (t: Tile, ciat?: string) =>
+      presets[t.tile_type || "default"]({ url: t.tile_url, cesiumIonAccessToken: ciat }),
     [presets],
   );
 
   const prevCesiumIonAccessToken = useRef(cesiumIonAccessToken);
-  const tileKeys = tiles.map(t => t.id);
+  const tileKeys = tiles.map(t => t.id).join(",");
   const prevTileKeys = useRef(tileKeys);
   const prevProviders = useRef<Providers>({});
 
+  // Manage TileProviders so that TileProvider does not need to be recreated each time tiles are updated.
   const { providers, updated } = useMemo(() => {
-    const updatedCesiumAccessToken = prevCesiumIonAccessToken.current !== cesiumIonAccessToken;
+    const isCesiumAccessTokenUpdated = prevCesiumIonAccessToken.current !== cesiumIonAccessToken;
     const prevProvidersKeys = Object.keys(prevProviders.current);
     const added = tiles.map(t => t.id).filter(t => t && !prevProvidersKeys.includes(t));
 
@@ -123,8 +125,8 @@ export function useImageryProviders({
                   added ||
                   prevType !== tile.tile_type ||
                   prevUrl !== tile.tile_url ||
-                  (updatedCesiumAccessToken && (!tile.tile_type || tile.tile_type === "default"))
-                    ? [tile.tile_type, tile.tile_url, newTile(tile)]
+                  (isCesiumAccessTokenUpdated && (!tile.tile_type || tile.tile_type === "default"))
+                    ? [tile.tile_type, tile.tile_url, newTile(tile, cesiumIonAccessToken)]
                     : [prevType, prevUrl, prevProvider],
                 ],
         )
@@ -136,13 +138,14 @@ export function useImageryProviders({
 
     const updated =
       !!added.length ||
-      !!updatedCesiumAccessToken ||
+      !!isCesiumAccessTokenUpdated ||
       !isEqual(prevTileKeys.current, tileKeys) ||
       rawProviders.some(
         p => p.tile && (p.prevType !== p.tile.tile_type || p.prevUrl !== p.tile.tile_url),
       );
 
     prevTileKeys.current = tileKeys;
+    prevCesiumIonAccessToken.current = cesiumIonAccessToken;
 
     return { providers, updated };
   }, [cesiumIonAccessToken, tiles, tileKeys, newTile]);

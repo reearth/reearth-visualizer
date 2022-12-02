@@ -40,6 +40,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     isLayerDraggable,
     isLayerDragging,
     shouldRender,
+    meta,
     onLayerSelect,
     onCameraChange,
     onTick,
@@ -56,25 +57,27 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    mouseEventHandles,
+    cesiumIonAccessToken,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
     handleTick,
-    mouseEventHandles,
   } = useHooks({
     ref,
     property,
     camera,
     clock,
     selectedLayerId,
+    isLayerDraggable,
+    meta,
     onLayerSelect,
     onCameraChange,
     onTick,
     onLayerDrag,
     onLayerDrop,
-    isLayerDraggable,
   });
 
   return (
@@ -121,7 +124,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
       <Clock property={property} onTick={handleTick} />
-      <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={property?.default?.ion} />
+      <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
       <Entity>
         <Indicator property={property} />
       </Entity>

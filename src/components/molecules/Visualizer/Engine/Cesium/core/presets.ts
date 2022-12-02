@@ -5,24 +5,23 @@ import {
   OpenStreetMapImageryProvider,
   IonWorldImageryStyle,
   UrlTemplateImageryProvider,
-  Ion,
 } from "cesium";
 
 export const tiles = {
-  default: () =>
+  default: ({ cesiumIonAccessToken } = {}) =>
     new IonImageryProvider({
       assetId: IonWorldImageryStyle.AERIAL,
-      accessToken: Ion.defaultAccessToken,
+      accessToken: cesiumIonAccessToken,
     }),
-  default_label: () =>
+  default_label: ({ cesiumIonAccessToken } = {}) =>
     new IonImageryProvider({
       assetId: IonWorldImageryStyle.AERIAL_WITH_LABELS,
-      accessToken: Ion.defaultAccessToken,
+      accessToken: cesiumIonAccessToken,
     }),
-  default_road: () =>
+  default_road: ({ cesiumIonAccessToken } = {}) =>
     new IonImageryProvider({
       assetId: IonWorldImageryStyle.ROAD,
-      accessToken: Ion.defaultAccessToken,
+      accessToken: cesiumIonAccessToken,
     }),
   stamen_watercolor: () =>
     new OpenStreetMapImageryProvider({
@@ -47,11 +46,13 @@ export const tiles = {
         "Copyright: Tiles © Esri — Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Communit",
       enablePickFeatures: false,
     }),
-  black_marble: () =>
-    new IonImageryProvider({ assetId: 3812, accessToken: Ion.defaultAccessToken }),
+  black_marble: ({ cesiumIonAccessToken } = {}) =>
+    new IonImageryProvider({ assetId: 3812, accessToken: cesiumIonAccessToken }),
   japan_gsi_standard: () =>
     new OpenStreetMapImageryProvider({
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
     }),
-  url: url => (url ? new UrlTemplateImageryProvider({ url }) : null),
-} as { [key: string]: (url?: string) => ImageryProvider | null };
+  url: ({ url } = {}) => (url ? new UrlTemplateImageryProvider({ url }) : null),
+} as {
+  [key: string]: (opts?: { url?: string; cesiumIonAccessToken?: string }) => ImageryProvider | null;
+};

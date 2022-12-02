@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock } from "cesium";
+import { Color, Entity, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock, Ion } from "cesium";
 import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -26,18 +26,17 @@ import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
-const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
-
 export default ({
   ref,
   property,
   camera,
   clock,
   selectedLayerId,
+  isLayerDraggable,
+  meta,
   onLayerSelect,
   onCameraChange,
   onTick,
-  isLayerDraggable,
   onLayerDrag,
   onLayerDrop,
 }: {
@@ -46,17 +45,20 @@ export default ({
   camera?: Camera;
   clock?: Clock;
   selectedLayerId?: string;
+  isLayerDraggable?: boolean;
+  meta?: Record<string, unknown>;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Clock) => void;
-  isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
-  const cesiumIonAccessToken = property?.default?.ion;
-  // Ensure to set Cesium Ion access token before the first rendering
-  Ion.defaultAccessToken = cesiumIonAccessToken || cesiumIonDefaultAccessToken;
+  const cesiumIonDefaultAccessToken =
+    typeof meta?.cesiumIonAccessToken === "string"
+      ? meta.cesiumIonAccessToken
+      : Ion.defaultAccessToken;
+  const cesiumIonAccessToken = property?.default?.ion || cesiumIonDefaultAccessToken;
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
@@ -94,7 +96,7 @@ export default ({
         ? terrain[terrainProperty.terrainType] || terrain.default
         : terrain.cesium
       : terrain.default;
-    return typeof provider === "function" ? provider() : provider;
+    return typeof provider === "function" ? provider({ cesiumIonAccessToken }) : provider;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cesiumIonAccessToken, terrainProperty.terrain, terrainProperty.terrainType]);
 
@@ -363,13 +365,14 @@ export default ({
     cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    cesiumIonAccessToken,
+    mouseEventHandles,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraChange,
     handleTick,
     handleCameraMoveEnd,
-    mouseEventHandles,
   };
 };
 
