@@ -107,6 +107,12 @@ func (r *DatasetSchema) FindBySceneAndSource(_ context.Context, s id.SceneID, sr
 	}), nil
 }
 
+func (r *DatasetSchema) CountByScene(_ context.Context, sid id.SceneID) (int, error) {
+	return r.data.CountAll(func(k id.DatasetSchemaID, v *dataset.Schema) bool {
+		return v.Scene() == sid && r.f.CanRead(v.Scene())
+	}), nil
+}
+
 func (r *DatasetSchema) Save(_ context.Context, d *dataset.Schema) error {
 	if !r.f.CanWrite(d.Scene()) {
 		return repo.ErrOperationDenied

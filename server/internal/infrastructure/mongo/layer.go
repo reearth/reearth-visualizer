@@ -200,7 +200,8 @@ func (r *Layer) CountByScene(ctx context.Context, sid id.SceneID) (int, error) {
 	}
 
 	c, err := r.client.Count(ctx, bson.M{
-		"scene": sid.String(),
+		"scene":      sid.String(),
+		"group.root": bson.M{"$ne": true},
 	})
 	return int(c), err
 }

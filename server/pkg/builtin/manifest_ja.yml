@@ -11,24 +11,12 @@ extensions:
           camera:
             title: カメラ初期位置
             description: ページロード後最初に表示するカメラの位置を設定します。
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           allowEnterGround:
             title: 地下へ入る
             description: Onにすることでカメラが地表面へ潜り込むようになります。
-          terrain:
-            title: 地形
-            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
-          terrainType:
-            title: 地形の種類
-            description: 地形の種類を指定します。
-          terrainExaggeration:
-            title: 地形の強調
-            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
-          terrainExaggerationRelativeHeight:
-            title: 地形の強調の基準
-            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
-          depthTestAgainstTerrain:
-            title: 地形の下を非表示
-            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。
@@ -36,30 +24,8 @@ extensions:
             title: 背景色
             description: 宇宙空間が非表示の場合の、背景色を設定します。
           ion:
-            title: Cesium Icon APIアクセストークン
-            description: 自身のCesium IonアカウントからAPIキーを発行し、ここに設定します。Cesium Ionのアセット（タイルデータ、3Dデータなど）の使用が可能になるため、設定を推奨します。
-          sceneMode:
-            title: シーンモード
-            description: 地球儀の表示を2D、2.5D、3Dから選択します。
-      cameraLimiter:
-        title: カメラ範囲制限
-        description: カメラの移動できる範囲を制限することができます。
-        fields:
-          cameraLimitterEnabled:
-            title: 有効
-            description: カメラの範囲制限を有効にします。
-          cameraLimitterShowHelper:
-            title: 範囲を表示
-            description: カメラの移動範囲を表すボックスを表示します。
-          cameraLimitterTargetArea:
-            title: 基準位置
-            description: 移動範囲の基準となる位置です。この位置が制限範囲を表すボックスの横方向と奥行き方向の中心点となり、かつ移動可能範囲における最大の高さとなります。ここで指定した高さ以上にカメラをズームアウトすることができなくなります。
-          cameraLimitterTargetWidth:
-            title: 経度の範囲
-            description: 制限範囲を表すボックスの幅（経度の方向）を指定します。
-          cameraLimitterTargetLength:
-            title: 緯度の範囲
-            description: 制限範囲を表すボックスの奥行き（緯度の方向）を指定します。
+            title: Cesium Ion アクセストークン
+            description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
       tiles:
         title: タイル
         description: 手持ちのタイルデータを使用し、地球上に表示することができます。
@@ -87,7 +53,37 @@ extensions:
             title: 最大レベル
           tile_opacity:
             title: 不透明性
-            description: NEEDS DESCRIPTION
+      terrain:
+        title: 地形
+        fields:
+          terrain:
+            title: 地形
+            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          terrainType:
+            title: 種類
+            description: 地形の種類を指定します。
+            choices:
+              cesium: Cesium World Terrain
+              arcgis: ArcGIS Terrain
+              cesiumion: Cesium Ion
+          terrainCesiumIonAsset:
+            title: Cesium Ion アセットID
+            description: Cesium Ion に登録されたテラインのアセットのIDを指定します。
+          terrainCesiumIonAccessToken:
+            title: Cesium Ion アクセストークン
+            description: シーン全体設定の Cesium Ion のアクセストークンをこのタイルのために上書きしたい場合は指定します。
+          terrainCesiumIonUrl:
+            title: Cesium Ion テラインURL
+            description: Cesium のテラインデータを Cesium Ion ではなくオンプレミスのサーバーで配信している場合はそのURLを指定します。アセットIDの指定よりも優先されます。
+          terrainExaggeration:
+            title: 地形の強調
+            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
+          terrainExaggerationRelativeHeight:
+            title: 地形の強調の基準
+            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
+          depthTestAgainstTerrain:
+            title: 地形の下を非表示
+            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
       indicator:
         title: インディケーター
         description: レイヤー選択時に表示されるインディケーターのスタイルを設定します
@@ -171,6 +167,25 @@ extensions:
               unbounded: 再生を続ける
               clamped: 停止する
               bounced: バウンス
+      cameraLimiter:
+        title: カメラ範囲制限
+        description: カメラの移動できる範囲を制限することができます。
+        fields:
+          cameraLimitterEnabled:
+            title: 有効
+            description: カメラの範囲制限を有効にします。
+          cameraLimitterShowHelper:
+            title: 範囲を表示
+            description: カメラの移動範囲を表すボックスを表示します。
+          cameraLimitterTargetArea:
+            title: 基準位置
+            description: 移動範囲の基準となる位置です。この位置が制限範囲を表すボックスの横方向と奥行き方向の中心点となり、かつ移動可能範囲における最大の高さとなります。ここで指定した高さ以上にカメラをズームアウトすることができなくなります。
+          cameraLimitterTargetWidth:
+            title: 経度の範囲
+            description: 制限範囲を表すボックスの幅（経度の方向）を指定します。
+          cameraLimitterTargetLength:
+            title: 緯度の範囲
+            description: 制限範囲を表すボックスの奥行き（緯度の方向）を指定します。
       googleAnalytics:
         title: Google Analytics
         description: Google Analyticsを有効にすることで、公開ページがどのように閲覧されているかを分析することが可能です。

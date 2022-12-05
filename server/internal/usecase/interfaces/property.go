@@ -86,7 +86,6 @@ type Property interface {
 	FetchMerged(context.Context, *id.PropertyID, *id.PropertyID, *id.DatasetID, *usecase.Operator) (*property.Merged, error)
 	UpdateValue(context.Context, UpdatePropertyValueParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)
 	RemoveField(context.Context, RemovePropertyFieldParam, *usecase.Operator) (*property.Property, error)
-	UploadFile(context.Context, UploadFileParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)
 	LinkValue(context.Context, LinkPropertyValueParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)
 	UnlinkValue(context.Context, UnlinkPropertyValueParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)
 	AddItem(context.Context, AddPropertyItemParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, error)

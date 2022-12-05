@@ -154,6 +154,6 @@ func TestWorkspace_AddMember(t *testing.T) {
 			DefaultPolicy:    workspace.PolicyID("a").Ref(),
 		},
 	)
-	assert.Same(t, workspace.ErrOperationDenied, err)
+	assert.Same(t, workspace.ErrPolicyViolation, err)
 	assert.Nil(t, got)
 }

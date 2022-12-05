@@ -47,11 +47,12 @@ func TestFile_UploadAsset(t *testing.T) {
 	fs := mockFs()
 	f, _ := NewFile(fs, "https://example.com/assets")
 
-	u, err := f.UploadAsset(context.Background(), &file.File{
+	u, s, err := f.UploadAsset(context.Background(), &file.File{
 		Path:    "aaa.txt",
 		Content: io.NopCloser(strings.NewReader("aaa")),
 	})
 	assert.NoError(t, err)
+	assert.Equal(t, int64(3), s)
 	assert.Equal(t, "https", u.Scheme)
 	assert.Equal(t, "example.com", u.Host)
 	assert.True(t, strings.HasPrefix(u.Path, "/assets/"))

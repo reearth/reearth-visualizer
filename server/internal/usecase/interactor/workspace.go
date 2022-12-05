@@ -79,6 +79,8 @@ func (i *Workspace) Create(ctx context.Context, name string, firstUser workspace
 	}
 
 	operator.AddNewWorkspace(ws.ID())
+	i.applyDefaultPolicy(ws, operator)
+
 	tx.Commit()
 	return ws, nil
 }
@@ -111,10 +113,11 @@ func (i *Workspace) Update(ctx context.Context, id workspace.ID, name string, op
 
 	ws.Rename(name)
 
-	err = i.workspaceRepo.Save(ctx, ws)
-	if err != nil {
+	if err := i.workspaceRepo.Save(ctx, ws); err != nil {
 		return nil, err
 	}
+
+	i.applyDefaultPolicy(ws, operator)
 
 	tx.Commit()
 	return ws, nil
@@ -154,7 +157,7 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 		if err != nil {
 			return nil, err
 		}
-		if err := p.EnforceMemberCount(ws.Members().Count()); err != nil {
+		if err := p.EnforceMemberCount(ws.Members().Count() + 1); err != nil {
 			return nil, err
 		}
 	}
@@ -166,6 +169,8 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 	if err := i.workspaceRepo.Save(ctx, ws); err != nil {
 		return nil, err
 	}
+
+	i.applyDefaultPolicy(ws, operator)
 
 	tx.Commit()
 	return ws, nil
@@ -211,6 +216,8 @@ func (i *Workspace) RemoveMember(ctx context.Context, id workspace.ID, u workspa
 		return nil, err
 	}
 
+	i.applyDefaultPolicy(ws, operator)
+
 	tx.Commit()
 	return ws, nil
 }
@@ -254,6 +261,8 @@ func (i *Workspace) UpdateMember(ctx context.Context, id workspace.ID, u workspa
 	if err != nil {
 		return nil, err
 	}
+
+	i.applyDefaultPolicy(ws, operator)
 
 	tx.Commit()
 	return ws, nil
@@ -309,10 +318,17 @@ func (i *Workspace) filterWorkspaces(workspaces []*workspace.Workspace, operator
 	if operator == nil {
 		return make([]*workspace.Workspace, len(workspaces)), nil
 	}
-	for i, t := range workspaces {
+	for j, t := range workspaces {
 		if t == nil || !operator.IsReadableWorkspace(t.ID()) {
-			workspaces[i] = nil
+			workspaces[j] = nil
 		}
+		i.applyDefaultPolicy(workspaces[j], operator)
 	}
 	return workspaces, nil
+}
+
+func (i *Workspace) applyDefaultPolicy(ws *workspace.Workspace, o *usecase.Operator) {
+	if ws.Policy() == nil && o.DefaultPolicy != nil {
+		ws.SetPolicy(o.DefaultPolicy)
+	}
 }

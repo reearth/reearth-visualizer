@@ -95,7 +95,7 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 			return nil, err
 		}
 
-		if err := p.EnforceProjectCount(projectCount); err != nil {
+		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
 			return nil, err
 		}
 	}
@@ -263,18 +263,20 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
-	// enforce policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforcePublishedProjectCount(s); err != nil {
-			return nil, err
+	if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
+		// enforce policy
+		if policyID := operator.Policy(ws.Policy()); policyID != nil {
+			p, err := i.policyRepo.FindByID(ctx, *policyID)
+			if err != nil {
+				return nil, err
+			}
+			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+			if err != nil {
+				return nil, err
+			}
+			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+				return nil, err
+			}
 		}
 	}
 

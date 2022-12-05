@@ -1,6 +1,8 @@
 package gqlmodel
 
-import "github.com/reearth/reearth/server/pkg/workspace"
+import (
+	"github.com/reearth/reearth/server/pkg/workspace"
+)
 
 func ToWorkspace(t *workspace.Workspace) *Team {
 	if t == nil {
@@ -53,12 +55,17 @@ func ToPolicy(p *workspace.Policy) *Policy {
 	if p == nil {
 		return nil
 	}
+
 	o := p.Option()
 	return &Policy{
+		ID:                    ID(o.ID),
+		Name:                  o.Name,
 		ProjectCount:          o.ProjectCount,
 		MemberCount:           o.MemberCount,
 		PublishedProjectCount: o.PublishedProjectCount,
 		LayerCount:            o.LayerCount,
 		AssetStorageSize:      o.AssetStorageSize,
+		DatasetSchemaCount:    o.DatasetSchemaCount,
+		DatasetCount:          o.DatasetCount,
 	}
 }

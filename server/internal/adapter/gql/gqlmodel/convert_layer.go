@@ -44,7 +44,7 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 		LinkedDatasetSchemaID: IDFromRef(l.LinkedDatasetSchema()),
 		LayerIds:              util.Map(l.Layers().Layers(), IDFrom[id.Layer]),
 		Root:                  l.IsRoot(),
-		ParentID:              IDFromRef[id.Layer](parent),
+		ParentID:              IDFromRef(parent),
 		Tags:                  ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
@@ -80,7 +80,7 @@ func ToInfoboxField(ibf *layer.InfoboxField, parentSceneID id.SceneID, parentDat
 		PluginID:        IDFromPluginID(ibf.Plugin()),
 		ExtensionID:     ID(ibf.Extension()),
 		PropertyID:      IDFrom(ibf.Property()),
-		LinkedDatasetID: IDFromRef[id.Dataset](parentDatasetID),
+		LinkedDatasetID: IDFromRef(parentDatasetID),
 	}
 }
 
@@ -99,7 +99,7 @@ func ToInfobox(ib *layer.Infobox, parent id.LayerID, parentSceneID id.SceneID, p
 		PropertyID:      IDFrom(ib.Property()),
 		Fields:          fields,
 		LayerID:         IDFrom(parent),
-		LinkedDatasetID: IDFromRef[id.Dataset](parentDatasetID),
+		LinkedDatasetID: IDFromRef(parentDatasetID),
 	}
 }
 

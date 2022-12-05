@@ -109,6 +109,16 @@ func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, sceneID id.Sce
 	})
 }
 
+func (r *DatasetSchema) CountByScene(ctx context.Context, id id.SceneID) (int, error) {
+	res, err := r.client.Count(ctx, r.readFilter(bson.M{
+		"scene": id.String(),
+	}))
+	if err != nil {
+		return 0, err
+	}
+	return int(res), nil
+}
+
 func (r *DatasetSchema) Save(ctx context.Context, datasetSchema *dataset.Schema) error {
 	if !r.f.CanWrite(datasetSchema.Scene()) {
 		return repo.ErrOperationDenied

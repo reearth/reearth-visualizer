@@ -59,6 +59,11 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 				return nil, err
 			}
 
+			url, size, err := i.gateways.File.UploadAsset(ctx, inp.File)
+			if err != nil {
+				return nil, err
+			}
+
 			// enforce policy
 			if policyID := operator.Policy(ws.Policy()); policyID != nil {
 				p, err := i.repos.Policy.FindByID(ctx, *policyID)
@@ -69,21 +74,17 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 				if err != nil {
 					return nil, err
 				}
-				if err := p.EnforceAssetStorageSize(s + inp.File.Size); err != nil {
+				if err := p.EnforceAssetStorageSize(s + size); err != nil {
+					_ = i.gateways.File.RemoveAsset(ctx, url)
 					return nil, err
 				}
-			}
-
-			url, err := i.gateways.File.UploadAsset(ctx, inp.File)
-			if err != nil {
-				return nil, err
 			}
 
 			a, err := asset.New().
 				NewID().
 				Workspace(inp.WorkspaceID).
 				Name(path.Base(inp.File.Path)).
-				Size(inp.File.Size).
+				Size(size).
 				URL(url.String()).
 				Build()
 			if err != nil {

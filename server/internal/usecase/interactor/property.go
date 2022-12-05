@@ -3,13 +3,11 @@ package interactor
 import (
 	"context"
 	"errors"
-	"path"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/usecasex"
@@ -153,85 +151,6 @@ func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropert
 
 	tx.Commit()
 	return p, nil
-}
-
-func (i *Property) UploadFile(ctx context.Context, inp interfaces.UploadFileParam, operator *usecase.Operator) (p *property.Property, pgl *property.GroupList, pg *property.Group, field *property.Field, err error) {
-	tx, err := i.transaction.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	if inp.File == nil {
-		return nil, nil, nil, nil, interfaces.ErrInvalidFile
-	}
-
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	if err := i.CheckSceneLock(ctx, p.Scene()); err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	propertyScene, err := i.sceneRepo.FindByID(ctx, p.Scene())
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	ps, err := i.propertySchemaRepo.FindByID(ctx, p.Schema())
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	field, pgl, pg, _ = p.GetOrCreateField(ps, inp.Pointer)
-
-	if field.Type() != property.ValueTypeURL {
-		return nil, nil, nil, nil, interfaces.ErrPropertyInvalidType
-	}
-
-	url, err := i.file.UploadAsset(ctx, inp.File)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	asset, err := asset.New().
-		NewID().
-		Workspace(propertyScene.Workspace()).
-		Name(path.Base(inp.File.Path)).
-		Size(inp.File.Size).
-		URL(url.String()).
-		Build()
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	err = i.assetRepo.Save(ctx, asset)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	v := property.ValueTypeURL.ValueFrom(url)
-	if v == nil {
-		return nil, nil, nil, nil, interfaces.ErrInvalidPropertyValue
-	}
-	if err = field.Update(v, ps.Groups().Field(field.Field())); err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	if err = i.propertyRepo.Save(ctx, p); err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	tx.Commit()
-	return p, pgl, pg, field, nil
 }
 
 func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyValueParam, operator *usecase.Operator) (p *property.Property, pgl *property.GroupList, pg *property.Group, field *property.Field, err error) {

@@ -19,7 +19,7 @@ var (
 
 type File interface {
 	ReadAsset(context.Context, string) (io.ReadCloser, error)
-	UploadAsset(context.Context, *file.File) (*url.URL, error)
+	UploadAsset(context.Context, *file.File) (*url.URL, int64, error)
 	RemoveAsset(context.Context, *url.URL) error
 	ReadPluginFile(context.Context, id.PluginID, string) (io.ReadCloser, error)
 	UploadPluginFile(context.Context, id.PluginID, *file.File) error

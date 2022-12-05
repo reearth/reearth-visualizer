@@ -33,12 +33,10 @@ type policyTest[T any] struct {
 
 func TestPolicy_EnforceMemberCount(t *testing.T) {
 	tests := []policyTest[int]{
-		{limit: 0, arg: 0, fail: true},
+		{limit: 0, arg: 0, fail: false},
 		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
+		{limit: 1, arg: 1, fail: false},
 		{limit: 1, arg: 2, fail: true},
-		{limit: 2, arg: 1, fail: false},
-		{limit: 2, arg: 2, fail: true},
 		{limitNil: true, arg: 100, fail: false},
 		{policyNil: true, arg: 100, fail: false},
 	}
@@ -52,12 +50,10 @@ func TestPolicy_EnforceMemberCount(t *testing.T) {
 
 func TestPolicy_EnforceProjectCount(t *testing.T) {
 	tests := []policyTest[int]{
-		{limit: 0, arg: 0, fail: true},
+		{limit: 0, arg: 0, fail: false},
 		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
+		{limit: 1, arg: 1, fail: false},
 		{limit: 1, arg: 2, fail: true},
-		{limit: 2, arg: 1, fail: false},
-		{limit: 2, arg: 2, fail: true},
 		{limitNil: true, arg: 100, fail: false},
 		{policyNil: true, arg: 100, fail: false},
 	}
@@ -71,12 +67,10 @@ func TestPolicy_EnforceProjectCount(t *testing.T) {
 
 func TestPolicy_EnforcePublishedProjectCount(t *testing.T) {
 	tests := []policyTest[int]{
-		{limit: 0, arg: 0, fail: true},
+		{limit: 0, arg: 0, fail: false},
 		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
+		{limit: 1, arg: 1, fail: false},
 		{limit: 1, arg: 2, fail: true},
-		{limit: 2, arg: 1, fail: false},
-		{limit: 2, arg: 2, fail: true},
 		{limitNil: true, arg: 100, fail: false},
 		{policyNil: true, arg: 100, fail: false},
 	}
@@ -90,12 +84,10 @@ func TestPolicy_EnforcePublishedProjectCount(t *testing.T) {
 
 func TestPolicy_EnforceLayerCount(t *testing.T) {
 	tests := []policyTest[int]{
-		{limit: 0, arg: 0, fail: true},
+		{limit: 0, arg: 0, fail: false},
 		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
+		{limit: 1, arg: 1, fail: false},
 		{limit: 1, arg: 2, fail: true},
-		{limit: 2, arg: 1, fail: false},
-		{limit: 2, arg: 2, fail: true},
 		{limitNil: true, arg: 100, fail: false},
 		{policyNil: true, arg: 100, fail: false},
 	}
@@ -109,12 +101,10 @@ func TestPolicy_EnforceLayerCount(t *testing.T) {
 
 func TestPolicy_EnforceAssetStorageSize(t *testing.T) {
 	tests := []policyTest[int64]{
-		{limit: 0, arg: 0, fail: true},
-		{limit: 1, arg: 0, fail: false},
-		{limit: 1, arg: 1, fail: true},
-		{limit: 1, arg: 2, fail: true},
+		{limit: 0, arg: 0, fail: false},
 		{limit: 20000, arg: 19999, fail: false},
-		{limit: 20000, arg: 20000, fail: true},
+		{limit: 20000, arg: 20000, fail: false},
+		{limit: 20000, arg: 20001, fail: true},
 		{limitNil: true, arg: 100, fail: false},
 		{policyNil: true, arg: 100, fail: false},
 	}
@@ -123,6 +113,40 @@ func TestPolicy_EnforceAssetStorageSize(t *testing.T) {
 		return PolicyOption{AssetStorageSize: lo.ToPtr(d)}
 	}, func(p *Policy, a int64) error {
 		return p.EnforceAssetStorageSize(a)
+	})
+}
+
+func TestPolicy_EnforceDatasetSchemaCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: false},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: false},
+		{limit: 1, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) PolicyOption {
+		return PolicyOption{DatasetSchemaCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforceDatasetSchemaCount(a)
+	})
+}
+
+func TestPolicy_EnforceDatasetCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: false},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: false},
+		{limit: 1, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) PolicyOption {
+		return PolicyOption{DatasetCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforceDatasetCount(a)
 	})
 }
 
@@ -146,7 +170,7 @@ func testPolicy[T any](t *testing.T, tests []policyTest[T], f func(d T) PolicyOp
 
 				got := tf(p, tt.arg)
 				if tt.fail {
-					assert.Same(t, ErrOperationDenied, got)
+					assert.Same(t, ErrPolicyViolation, got)
 				} else {
 					assert.NoError(t, got)
 				}
@@ -160,11 +184,14 @@ func TestPolicy_Clone(t *testing.T) {
 	p := &Policy{
 		opts: PolicyOption{
 			ID:                    PolicyID("x"),
+			Name:                  "a",
 			ProjectCount:          lo.ToPtr(1),
 			MemberCount:           lo.ToPtr(1),
 			PublishedProjectCount: lo.ToPtr(1),
 			LayerCount:            lo.ToPtr(1),
 			AssetStorageSize:      lo.ToPtr(int64(1)),
+			DatasetSchemaCount:    lo.ToPtr(1),
+			DatasetCount:          lo.ToPtr(2),
 		},
 	}
 	got := p.Clone()

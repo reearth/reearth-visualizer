@@ -39,22 +39,9 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 - 📢 Easily make a project public
 - ✨ Freely style the map
 
-## Repositories
+## Built with
 
-| Name | Status | Coverage | Contributors |
-| --------- | --------- | --------- | --------- |
-| [reearth-web](https://github.com/reearth/reearth-web) | [![main](https://github.com/reearth/reearth-web/actions/workflows/ci.yml/badge.svg)](https://github.com/reearth/reearth-web/actions/workflows/ci.yml) | [![codecov](https://codecov.io/gh/reearth/reearth-web/branch/main/graph/badge.svg?token=ZFLXJY1WLW)](https://codecov.io/gh/reearth/reearth-web) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth-web)](https://GitHub.com/reearth/reearth-web/graphs/contributors/) |
-| [reearth-backend](https://github.com/reearth/reearth/tree/main/server) | [![main](https://github.com/reearth/reearth/actions/workflows/ci.yml/badge.svg)](https://github.com/reearth/reearth/actions/workflows/ci.yml) | [![codecov](https://codecov.io/gh/reearth/reearth/branch/main/graph/badge.svg)](https://codecov.io/gh/reearth/reearth) | [![contributors](https://img.shields.io/github/contributors/reearth/reearth)](https://GitHub.com/reearth/reearth/graphs/contributors/) |
-
-## Built With
-
-* [React](https://github.com/facebook/react)
-* [TypeScript](https://github.com/microsoft/TypeScript)
-* [Go](https://github.com/golang/go)
-* [GraphQL](https://github.com/graphql)
-* [MongoDB](https://www.mongodb.com/)
-* [WebAssembly](https://webassembly.org/) (Plug-in execution)
-* [OpenID Connect](https://openid.net/connect/)
+[React](https://github.com/facebook/react), [TypeScript](https://github.com/microsoft/TypeScript), [Go](https://github.com/golang/go), [GraphQL](https://github.com/graphql), [MongoDB](https://www.mongodb.com/), [WebAssembly](https://webassembly.org/) (plugin execution), [OpenID Connect](https://openid.net/connect/)
 
 ## Getting Started
 
@@ -68,7 +55,7 @@ docker compose up -d
 
 For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/set-up-reearth-in-your-environment).
 
-## Cloud Service
+## Cloud Service (SaaS)
 
 We also maintain a cloud service [here](https://reearth.io/), which can help you start your Re:Earth journey quicker.
 
@@ -76,7 +63,7 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 
 ### OS
 
-| Windows10 | Apple macOS 10.12(macOS Sierra)+ | ChromeOS | iOS 11+ | Android 10+ | Linux(which installed browsers blow) |
+| Windows 10+ | Apple macOS 10.12 (macOS Sierra)+ | ChromeOS | iOS 11+ | Android 10+ | Linux (with the desktop) |
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
@@ -84,7 +71,7 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 
 | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
 | --------- | --------- | --------- | --------- | --------- | --------- |
-| 91+ | 57+| 58+| 11+ | last 2 versions | last 2 versions
+| 91+ | 57+ | 58+ | 11+ | last 2 versions | last 2 versions
 
 ## Roadmap
 
@@ -98,58 +85,18 @@ If your have any requests for features, they are more than welcome! Just create 
 
 ## Contributing
 
-### Contribution Guide
+See [the contributing guide](contributing.md).
 
-Read our [contributing guide](https://docs.reearth.io/developer-guide/contribution) to learn about our development process, how to propose bugfixes and improvements, release policies, and how to build and test your changes to Re:Earth.
+## Contributers
 
-### Code of Conduct
+[![Contributers](https://contrib.rocks/image?repo=reearth/reearth)](https://github.com/reearth/reearth/graphs/contributors)
 
-Re:Earth has adopted a Code of Conduct that we expect project participants to follow to. Please read [the full](./CODE_OF_CONDUCT.md) text so that you can understand what actions will and will not be tolerated.
+Made with [contrib.rocks](https://contrib.rocks).
 
-### Good for First Issues
+## Contact
 
-To help you get your feet wet and get you familiar with our contribution process, we have [a list of good](https://github.com/reearth/reearth/projects/1#column-14917909) first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
-
-### Bonus for Contributors
-
-Good news for Re:Earth contributors! If you commit to the Re:Earth source code and your PR is merged, we will issue you a free Re:Earth cloud account, valid for one year from that date. Your contribution will be made available as a service.
-
-To get your account issued, please contact us after your PR is merged, via the email address in your GitHub account to community@reearth.io.
+Re:Earth core comitters: [community@reearth.io](mailto:community@reearth.io)
 
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
-
-## Core Comitters
-
-<table><tbody><tr>
-<td><a href="https://github.com/rot1024">
-<img src="https://github.com/rot1024.png" width="75" height="75"><br />rot1024
-</a></td>
-<td><a href="https://github.com/HideBa">
-<img src="https://github.com/HideBa.png" width="75" height="75"><br />HideBa
-</a></td>
-<td><a href="https://github.com/KaWaite">
-<img src="https://github.com/KaWaite.png" width="75" height="75"><br />KaWaite
-</a></td>
-<td><a href="https://github.com/lavalse">
-<img src="https://github.com/lavalse.png" width="75" height="75"><br />lavalse
-</a></td>
-<td><a href="https://github.com/issmail-basel">
-<img src="https://github.com/issmail-basel.png" width="75" height="75"><br />issmail-basel
-</a></td>
-<td><a href="https://github.com/mimoham24">
-<img src="https://github.com/mimoham24.png" width="75" height="75"><br />mimoham24
-</a></td>
-<td><a href="https://github.com/yk-eukarya">
-<img src="https://github.com/yk-eukarya.png" width="75" height="75"><br />yk-eukarya
-</a></td>
-<td><a href="https://github.com/kurohune538">
-<img src="https://github.com/kurohune538.png" width="75" height="75"><br />kurohune538
-</a></td>
-</tr></tbody></table>
-
-## Contact
-
-- Re:Earth core comitters: [community@reearth.io](mailto:community@reearth.io)
-- Project link: [https://github.com/reearth/reearth](https://github.com/reearth/reearth)
