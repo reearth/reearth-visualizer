@@ -3,9 +3,22 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useT, useLang } from "@reearth/i18n";
 import { useError, useNotification, Notification } from "@reearth/state";
 
-export type PolicyItems = "layer" | "asset" | "dataset" | "project" | "published" | "member";
+export type PolicyItems =
+  | "layer"
+  | "asset"
+  | "dataset"
+  | "createProject"
+  | "publishProject"
+  | "member";
 
-const policyItems: PolicyItems[] = ["layer", "asset", "dataset", "project", "published", "member"];
+const policyItems: PolicyItems[] = [
+  "layer",
+  "asset",
+  "dataset",
+  "createProject",
+  "publishProject",
+  "member",
+];
 
 export default () => {
   const t = useT();
@@ -39,7 +52,7 @@ export default () => {
   useEffect(() => {
     if (!error) return;
     if (error.message?.includes("policy violation") && error.message) {
-      const limitedItem = policyItems.find(i => error.message?.toLowerCase().includes(i));
+      const limitedItem = policyItems.find(i => error.message?.includes(i));
       const policyItem =
         limitedItem && policyLimitNotifications ? policyLimitNotifications[limitedItem] : undefined;
       const message = policyItem
