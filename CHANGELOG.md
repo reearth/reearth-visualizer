@@ -1,6 +1,56 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.13.0 - 2022-12-06
+
+### 🚀 Features
+
+- Support Cesium Ion terrain ([#331](https://github.com/reearth/reearth-web/pull/331)) [`e0b99a`](https://github.com/reearth/reearth-web/commit/e0b99a)
+- Set Cesium Ion default access token via config ([#365](https://github.com/reearth/reearth-web/pull/365)) [`a257b1`](https://github.com/reearth/reearth-web/commit/a257b1)
+- Display policy name on workspace title ([#362](https://github.com/reearth/reearth-web/pull/362)) [`c1c632`](https://github.com/reearth/reearth-web/commit/c1c632)
+- Editable box ([#357](https://github.com/reearth/reearth-web/pull/357)) [`92a159`](https://github.com/reearth/reearth-web/commit/92a159)
+- Extend plugin API supports move widget ([#346](https://github.com/reearth/reearth-web/pull/346)) [`c82825`](https://github.com/reearth/reearth-web/commit/c82825)
+- Extend plugin API supports close widget ([#355](https://github.com/reearth/reearth-web/pull/355)) [`d02578`](https://github.com/reearth/reearth-web/commit/d02578)
+- Extend plugin API supports get scene inEditor ([#351](https://github.com/reearth/reearth-web/pull/351)) [`ec0b81`](https://github.com/reearth/reearth-web/commit/ec0b81)
+- Add clipping box ([#338](https://github.com/reearth/reearth-web/pull/338)) [`af55f1`](https://github.com/reearth/reearth-web/commit/af55f1)
+- Extend plugin API event with modalclose popupclose ([#354](https://github.com/reearth/reearth-web/pull/354)) [`9be75a`](https://github.com/reearth/reearth-web/commit/9be75a)
+- Extend plugin API supports get location from screen position ([#350](https://github.com/reearth/reearth-web/pull/350)) [`9a826f`](https://github.com/reearth/reearth-web/commit/9a826f)
+- Extend plugin API supports get viewport&[#39](https://github.com/reearth/reearth-web/pull/39);s size ([#342](https://github.com/reearth/reearth-web/pull/342)) [`7b268b`](https://github.com/reearth/reearth-web/commit/7b268b)
+- Add Re:Earth favicon ([#349](https://github.com/reearth/reearth-web/pull/349)) [`0395d2`](https://github.com/reearth/reearth-web/commit/0395d2)
+- Support acquiring locations with terrain ([#343](https://github.com/reearth/reearth-web/pull/343)) [`596543`](https://github.com/reearth/reearth-web/commit/596543)
+
+### 🔧 Bug Fixes
+
+- Policy messages not aligning with policy ([#368](https://github.com/reearth/reearth-web/pull/368)) [`2871ed`](https://github.com/reearth/reearth-web/commit/2871ed)
+- Widget align system alignment issue with installed widgets [`e302cc`](https://github.com/reearth/reearth-web/commit/e302cc)
+- Rename animation option to withoutAnimation in lookAt ([#361](https://github.com/reearth/reearth-web/pull/361)) [`846a6e`](https://github.com/reearth/reearth-web/commit/846a6e)
+- Post message queue doesn&[#39](https://github.com/reearth/reearth-web/pull/39);t work for modal&#x2F;popup ([#359](https://github.com/reearth/reearth-web/pull/359)) [`abb4ed`](https://github.com/reearth/reearth-web/commit/abb4ed)
+- Correct flyToGround destination camera ([#356](https://github.com/reearth/reearth-web/pull/356)) [`225758`](https://github.com/reearth/reearth-web/commit/225758)
+- Navigator styles ([#353](https://github.com/reearth/reearth-web/pull/353)) [`971323`](https://github.com/reearth/reearth-web/commit/971323)
+- Timeline styles ([#352](https://github.com/reearth/reearth-web/pull/352)) [`c76d36`](https://github.com/reearth/reearth-web/commit/c76d36)
+- Alignment issues in Widget Align System ([#344](https://github.com/reearth/reearth-web/pull/344)) [`0e12ea`](https://github.com/reearth/reearth-web/commit/0e12ea)
+- Cannot input camera altitude less than 500 with camera pane ([#339](https://github.com/reearth/reearth-web/pull/339)) [`76a169`](https://github.com/reearth/reearth-web/commit/76a169)
+- Type error from apollo-client [`7dd2b3`](https://github.com/reearth/reearth-web/commit/7dd2b3)
+- Fix the camera offset when keep press on zoom to layer ([#335](https://github.com/reearth/reearth-web/pull/335)) [`ccec33`](https://github.com/reearth/reearth-web/commit/ccec33)
+
+### ⚡️ Performance
+
+- Use lodash-es rather than lodash [`731e54`](https://github.com/reearth/reearth-web/commit/731e54)
+
+### 🧪 Testing
+
+- Gql func to e2e reearth page [`593780`](https://github.com/reearth/reearth-web/commit/593780)
+- Introduce playwright to run e2e tests ([#336](https://github.com/reearth/reearth-web/pull/336)) [`3af520`](https://github.com/reearth/reearth-web/commit/3af520)
+
+### Miscellaneous Tasks
+
+- Suppress errors output to the console by Icon [`bd9dc5`](https://github.com/reearth/reearth-web/commit/bd9dc5)
+- Upgrade cesium to v1.100.0 [`ec05a0`](https://github.com/reearth/reearth-web/commit/ec05a0)
+- Upgrade cesium to v1.99 [`be5b22`](https://github.com/reearth/reearth-web/commit/be5b22)
+- Upgrade dependencies ([#345](https://github.com/reearth/reearth-web/pull/345)) [`1efe8c`](https://github.com/reearth/reearth-web/commit/1efe8c)
+- Remove eslint-plugin-graphql, add eslint-plugin-playwright, refresh yarn.lock [`28c846`](https://github.com/reearth/reearth-web/commit/28c846)
+- Use node 16 to avoid storybook build error with node 18 [`64819e`](https://github.com/reearth/reearth-web/commit/64819e)
+
 ## 0.12.0 - 2022-10-26
 
 ### Miscellaneous Tasks
