@@ -29,6 +29,7 @@ import {
   Ray,
   IntersectionTests,
   Matrix4,
+  SceneMode,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -380,9 +381,16 @@ export const getCenterCamera = ({
 };
 
 export const zoom = (
-  { camera, scene, relativeAmount }: { camera: CesiumCamera; scene: Scene; relativeAmount: number },
+  { viewer, relativeAmount }: { viewer: Viewer; relativeAmount: number },
   options?: CameraOptions,
 ) => {
+  const { camera, scene } = viewer;
+  if (scene.mode !== SceneMode.SCENE3D) {
+    const pos = getCamera(viewer);
+    flyTo(camera, { ...pos, height: (pos?.height || 1) * relativeAmount }, { duration: 0.5 });
+    return;
+  }
+
   const center = getCenterCamera({ camera, scene });
   const target =
     center ||

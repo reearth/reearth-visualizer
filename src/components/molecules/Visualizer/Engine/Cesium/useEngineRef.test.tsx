@@ -7,6 +7,7 @@ import {
   Globe,
   Ellipsoid,
   Matrix4,
+  SceneMode,
 } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
@@ -172,16 +173,17 @@ test("requestRender", () => {
 });
 
 test("zoom", async () => {
+  const viewer = {
+    scene: {
+      camera: {},
+    },
+    isDestroyed: () => {
+      return false;
+    },
+  } as any;
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
-      cesiumElement: {
-        scene: {
-          camera: {},
-        },
-        isDestroyed: () => {
-          return false;
-        },
-      } as any,
+      cesiumElement: viewer,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -194,8 +196,7 @@ test("zoom", async () => {
   expect(commons.zoom).toHaveBeenCalledTimes(1);
   expect(commons.zoom).toHaveBeenCalledWith(
     {
-      camera: {},
-      scene: { camera: {} },
+      viewer,
       relativeAmount: 0.1,
     },
     undefined,
@@ -205,8 +206,7 @@ test("zoom", async () => {
   expect(commons.zoom).toHaveBeenCalledTimes(2);
   expect(commons.zoom).toHaveBeenCalledWith(
     {
-      camera: {},
-      scene: { camera: {} },
+      viewer,
       relativeAmount: 20,
     },
     undefined,
@@ -217,10 +217,22 @@ test("call orbit when camera focuses on center", async () => {
   const { result } = renderHook(() => {
     const cesiumElement = {
       scene: {
-        camera: { lookAtTransform: vi.fn(), rotateLeft: vi.fn(), rotateUp: vi.fn(), look: vi.fn() },
+        camera: {
+          lookAtTransform: vi.fn(),
+          rotateLeft: vi.fn(),
+          rotateUp: vi.fn(),
+          look: vi.fn(),
+          move: vi.fn(),
+          positionCartographic: new Cartesian3(),
+        },
+        mode: SceneMode.SCENE3D,
         globe: {
           ellipsoid: new Ellipsoid(),
           pick: () => new Cartesian3(),
+        },
+        canvas: {
+          clientWidth: 100,
+          clientHeight: 100,
         },
       },
       transform: new Matrix4(),
@@ -257,11 +269,18 @@ test("call orbit when camera does not focus on center", async () => {
           rotateLeft: vi.fn(),
           rotateUp: vi.fn(),
           look: vi.fn(),
+          move: vi.fn(),
           positionWC: new Cartesian3(),
+          positionCartographic: new Cartesian3(),
         },
+        mode: SceneMode.SCENE3D,
         globe: {
           ellipsoid: new Ellipsoid(),
           pick: () => undefined,
+        },
+        canvas: {
+          clientWidth: 100,
+          clientHeight: 100,
         },
       },
       transform: new Matrix4(),
@@ -287,6 +306,48 @@ test("call orbit when camera does not focus on center", async () => {
   expect(cesium.current.cesiumElement?.scene.camera.lookAtTransform).toHaveBeenCalledTimes(2);
 });
 
+test("orbit on 2D mode", async () => {
+  const { result } = renderHook(() => {
+    const cesiumElement = {
+      scene: {
+        camera: {
+          lookAtTransform: vi.fn(),
+          rotateLeft: vi.fn(),
+          rotateUp: vi.fn(),
+          look: vi.fn(),
+          move: vi.fn(),
+          positionWC: new Cartesian3(),
+          positionCartographic: new Cartesian3(),
+        },
+        mode: SceneMode.SCENE2D,
+        globe: {
+          ellipsoid: new Ellipsoid(),
+          pick: () => undefined,
+        },
+        canvas: {
+          clientWidth: 100,
+          clientHeight: 100,
+        },
+      },
+      transform: new Matrix4(),
+      isDestroyed: () => {
+        return false;
+      },
+    } as any;
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return [engineRef, cesium] as const;
+  });
+
+  const [engineRef, cesium] = result.current;
+
+  engineRef.current?.orbit(90);
+  expect(cesium.current.cesiumElement?.scene.camera.move).toHaveBeenCalledTimes(1);
+});
+
 test("rotateRight", async () => {
   const { result } = renderHook(() => {
     const cesiumElement = {
@@ -295,7 +356,10 @@ test("rotateRight", async () => {
           lookAtTransform: vi.fn(),
           rotateRight: vi.fn(),
           positionWC: new Cartesian3(),
+          twistRight: vi.fn(),
+          twistLeft: vi.fn(),
         },
+        mode: SceneMode.SCENE3D,
         globe: {
           ellipsoid: new Ellipsoid(),
         },
@@ -318,6 +382,42 @@ test("rotateRight", async () => {
   engineRef.current?.rotateRight(90);
   expect(cesium.current.cesiumElement?.scene.camera.rotateRight).toHaveBeenCalled();
   expect(cesium.current.cesiumElement?.scene.camera.lookAtTransform).toHaveBeenCalledTimes(2);
+});
+
+test("rotateRight on 2D mode", async () => {
+  const { result } = renderHook(() => {
+    const cesiumElement = {
+      scene: {
+        camera: {
+          lookAtTransform: vi.fn(),
+          rotateRight: vi.fn(),
+          positionWC: new Cartesian3(),
+          twistRight: vi.fn(),
+          twistLeft: vi.fn(),
+        },
+        mode: SceneMode.SCENE2D,
+        globe: {
+          ellipsoid: new Ellipsoid(),
+        },
+      },
+      transform: new Matrix4(),
+      isDestroyed: () => {
+        return false;
+      },
+    } as any;
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return [engineRef, cesium] as const;
+  });
+
+  const [engineRef, cesium] = result.current;
+
+  engineRef.current?.rotateRight(90);
+  expect(cesium.current.cesiumElement?.scene.camera.twistLeft).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.twistRight).toHaveBeenCalled();
 });
 
 test("getClock", () => {

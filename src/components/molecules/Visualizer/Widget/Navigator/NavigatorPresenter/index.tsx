@@ -39,7 +39,6 @@ export type Props = {
 };
 
 const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
-  sceneMode,
   publishedTheme,
   degree,
   onRotate,
@@ -64,33 +63,31 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
 
   return (
     <Container>
-      {sceneMode !== "2d" && (
-        <CompassContainer>
-          <Compass ref={compassRef}>
-            <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={publishedTheme}>
-              <Icon
-                icon="compass"
-                aria-label={t("aria-label-compass")}
-                size={64}
-                style={{ transform: `rotate(${compassDegree}deg)` }}
-              />
-            </CompassIcon>
-            {isMovingAngle && (
-              <CompassFocusIcon
-                style={{
-                  transform: `rotate(${compassFocusDegree}deg)`,
-                }}
-                data-testid="compassFocus">
-                <Icon icon="compassFocus" color={publishedTheme?.select} alt="" size={30} />
-              </CompassFocusIcon>
-            )}
-            <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={publishedTheme}>
-              <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
-            </AngleIcon>
-          </Compass>
-          {onClickHelp && <Help onClick={onClickHelp}>?</Help>}
-        </CompassContainer>
-      )}
+      <CompassContainer>
+        <Compass ref={compassRef}>
+          <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={publishedTheme}>
+            <Icon
+              icon="compass"
+              aria-label={t("aria-label-compass")}
+              size={64}
+              style={{ transform: `rotate(${compassDegree}deg)` }}
+            />
+          </CompassIcon>
+          {isMovingAngle && (
+            <CompassFocusIcon
+              style={{
+                transform: `rotate(${compassFocusDegree}deg)`,
+              }}
+              data-testId="compassFocus">
+              <Icon icon="compassFocus" color={publishedTheme?.select} alt="" size={30} />
+            </CompassFocusIcon>
+          )}
+          <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={publishedTheme}>
+            <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
+          </AngleIcon>
+        </Compass>
+        {onClickHelp && <Help onClick={onClickHelp}>?</Help>}
+      </CompassContainer>
       <Tool publishedTheme={publishedTheme}>
         <ToolIconButton onClick={onZoomIn} publishedTheme={publishedTheme}>
           <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
