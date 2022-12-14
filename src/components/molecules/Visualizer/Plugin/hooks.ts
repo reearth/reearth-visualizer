@@ -207,6 +207,10 @@ export function useAPI({
   const event =
     useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
 
+  const pluginMessageSender = useCallback((msg: any) => {
+    event.current?.[1]("pluginmessage", msg);
+  }, []);
+
   const onPreInit = useCallback(() => {
     const e = events<ReearthEventType>();
     let cancel: (() => void) | undefined;
@@ -241,7 +245,20 @@ export function useAPI({
     }
 
     event.current = [e[0], e[1], cancel];
-  }, [ctx?.reearth.on, ctx?.reearth.off, ctx?.reearth.once]);
+
+    const instanceId = widget?.id ?? block?.id;
+    if (instanceId) {
+      ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+    }
+  }, [
+    ctx?.reearth.on,
+    ctx?.reearth.off,
+    ctx?.reearth.once,
+    ctx?.pluginInstances,
+    widget?.id,
+    block?.id,
+    pluginMessageSender,
+  ]);
 
   const onDispose = useCallback(() => {
     event.current?.[1]("close");
@@ -252,6 +269,10 @@ export function useAPI({
     }
     if (popupVisible) {
       onPluginPopupShow?.();
+    }
+    const instanceId = widget?.id ?? block?.id;
+    if (instanceId) {
+      ctx?.pluginInstances.removePluginMessageSender(instanceId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPluginModalShow, onPluginPopupShow]);
@@ -368,12 +389,14 @@ export function useAPI({
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
         moveWidget: ctx.moveWidget,
+        pluginPostMessage: ctx.pluginInstances.postMessage,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.overrideSceneProperty,
     ctx?.moveWidget,
+    ctx?.pluginInstances,
     extensionId,
     extensionType,
     pluginId,

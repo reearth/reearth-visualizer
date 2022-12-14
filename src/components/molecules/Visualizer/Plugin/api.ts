@@ -3,6 +3,7 @@ import { merge } from "@reearth/util/object";
 
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
+import type { PluginInstances } from "../usePluginInstances";
 
 import type {
   GlobalThis,
@@ -43,6 +44,7 @@ export function exposed({
   widget,
   overrideSceneProperty,
   moveWidget,
+  pluginPostMessage,
 }: {
   render: (
     html: string,
@@ -79,6 +81,7 @@ export function exposed({
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
+  pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -172,6 +175,20 @@ export function exposed({
             return plugin?.property;
           },
         },
+        plugins: {
+          get postMessage() {
+            const sender =
+              (plugin?.extensionType === "widget"
+                ? widget?.()?.id
+                : plugin?.extensionType === "block"
+                ? block?.()?.id
+                : "") ?? "";
+            return (id: string, msg: any) => pluginPostMessage(id, msg, sender);
+          },
+          get instances() {
+            return commonReearth.plugins.instances;
+          },
+        },
         ...events,
       },
       plugin?.extensionType === "block"
@@ -212,6 +229,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  pluginInstances,
   viewport,
   selectedLayer,
   layerSelectionReason,
@@ -252,6 +270,7 @@ export function commonReearth({
   viewport: () => VisualizerViewport;
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -423,6 +442,11 @@ export function commonReearth({
       },
       get add() {
         return addLayer;
+      },
+    },
+    plugins: {
+      get instances() {
+        return pluginInstances().meta.current;
       },
     },
     ...events,

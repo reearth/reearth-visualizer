@@ -159,6 +159,7 @@ export default function Visualizer({
     sceneProperty,
     tags,
     alignSystem: widgets?.alignSystem,
+    floatingWidgets: widgets?.floatingWidgets,
     onLayerSelect,
     onBlockSelect,
     onBlockChange,
