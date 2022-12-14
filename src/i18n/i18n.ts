@@ -24,6 +24,7 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
   nsSeparator: false,
   keySeparator: false,
   returnEmptyString: false,
+  returnNull: false,
 });
 
 export default i18n;

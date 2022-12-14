@@ -2,6 +2,7 @@ import {
   Cartesian3,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
+  ClippingPlane,
   ClippingPlaneCollection as CesiumClippingPlaneCollection,
   HeadingPitchRoll,
   IonResource,
@@ -10,7 +11,6 @@ import {
   Transforms,
   TranslationRotationScale,
 } from "cesium";
-import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
