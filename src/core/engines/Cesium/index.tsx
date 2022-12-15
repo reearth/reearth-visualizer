@@ -59,6 +59,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cesiumIonAccessToken,
     handleMount,
     handleUnmount,
+    handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
@@ -82,6 +83,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     <featureContext.Provider value={context}>
       <Viewer
         ref={cesium}
+        onUpdate={handleUpdate}
         className={className}
         animation
         timeline

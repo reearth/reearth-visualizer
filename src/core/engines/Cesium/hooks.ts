@@ -272,6 +272,12 @@ export default ({
     viewer.scene.requestRender();
   });
 
+  const handleUpdate = useCallback(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.requestRender();
+  }, []);
+
   // enable Drag and Drop Layers
   const handleLayerDrag = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
@@ -337,6 +343,7 @@ export default ({
     mouseEventHandles,
     handleMount,
     handleUnmount,
+    handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,

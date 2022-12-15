@@ -16265,10 +16265,10 @@ requires-port@^1.0.0:
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==
 
-resium@1.15.1:
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/resium/-/resium-1.15.1.tgz#a2eee681f815e5978eb77b78122a853cbac69165"
-  integrity sha512-FDRl6WUyYin+yhs6uAFKqCvI75rawMBfld/yF0V5A+YeCyKP1mt6Bx5v+lCCJaZl4RUOvQ3i3wJJUhuGsxpvYA==
+resium@1.16.0:
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/resium/-/resium-1.16.0.tgz#9a9561c1736456211a91f6f06c191623f164b994"
+  integrity sha512-cEiIuXzfTS4TRerD4ucaYQAb1exX3YUw4xrONpzSb1pAkmku//xsfCCsD7xR2hG39Zk1WJTEO74Mu6homvTR6Q==
 
 resize-observer-polyfill@^1.5.1:
   version "1.5.1"
