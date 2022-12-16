@@ -87,6 +87,7 @@ export const context: ProviderProps = {
     width: 1280,
     height: 720,
     isMobile: false,
+    query: {},
   },
   layers: new LayerStore({ id: "", children: layers }),
   pluginInstances: {

@@ -31,6 +31,7 @@ import type {
   MouseEvent,
   Clock,
   Viewport,
+  ViewportSize,
   LatLngHeight,
   WidgetLocationOptions,
 } from "./types";
@@ -55,7 +56,7 @@ export type Props = {
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
-  viewport?: VisualizerViewport;
+  viewport: VisualizerViewport;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -299,9 +300,15 @@ export function Provider({
       tick: useMemo<[date: Date] | undefined>(() => {
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
-      resize: useMemo<[viewport: Viewport] | undefined>(
-        () => (viewport ? [viewport] : undefined),
-        [viewport],
+      resize: useMemo<[viewport: ViewportSize] | undefined>(
+        () => [
+          {
+            width: viewport.width,
+            height: viewport.height,
+            isMobile: viewport.isMobile,
+          } as ViewportSize,
+        ],
+        [viewport.width, viewport.height, viewport.isMobile],
       ),
     },
     emit,

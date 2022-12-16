@@ -1,7 +1,6 @@
 import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
-import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { PluginInstances } from "../usePluginInstances";
 
@@ -267,7 +266,7 @@ export function commonReearth({
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
-  viewport: () => VisualizerViewport;
+  viewport: () => GlobalThis["reearth"]["viewport"];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
   pluginInstances: () => PluginInstances;

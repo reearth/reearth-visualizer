@@ -26,17 +26,12 @@ import type {
   Tag,
 } from "./Plugin/types";
 import usePluginInstances from "./usePluginInstances";
+import useViewport from "./useViewport";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import { useOverriddenProperty } from "./utils";
 import type { WidgetAlignSystem, Widget } from "./WidgetAlignSystem";
 
-export type Viewport = {
-  width: number;
-  height: number;
-  isMobile: boolean;
-};
-
-const viewportMobileMaxWidth = 768;
+export type { Viewport } from "./useViewport";
 
 export default ({
   engineType,
@@ -120,48 +115,9 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const [viewport, setViewport] = useState<Viewport>();
-
-  useEffect(() => {
-    const viewportResizeObserver = new ResizeObserver(entries => {
-      const [entry] = entries;
-      let width: number | undefined;
-      let height: number | undefined;
-
-      if (entry.contentBoxSize) {
-        // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
-        const contentBoxSize = Array.isArray(entry.contentBoxSize)
-          ? entry.contentBoxSize[0]
-          : entry.contentBoxSize;
-        width = contentBoxSize.inlineSize;
-        height = contentBoxSize.blockSize;
-      } else if (entry.contentRect) {
-        width = entry.contentRect.width;
-        height = entry.contentRect.height;
-      } else {
-        width = wrapperRef.current?.clientWidth;
-        height = wrapperRef.current?.clientHeight;
-      }
-
-      setViewport(
-        width && height
-          ? {
-              width,
-              height,
-              isMobile: width <= viewportMobileMaxWidth,
-            }
-          : undefined,
-      );
-    });
-
-    if (wrapperRef.current) {
-      viewportResizeObserver.observe(wrapperRef.current);
-    }
-
-    return () => {
-      viewportResizeObserver.disconnect();
-    };
-  }, []);
+  const viewport = useViewport({
+    wrapperRef,
+  });
 
   const {
     selectedLayer,
