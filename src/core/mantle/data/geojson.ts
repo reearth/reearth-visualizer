@@ -16,6 +16,40 @@ export function processGeoJSON(geojson: GeoJSON, range?: DataRange): Feature[] {
 
   if (geojson.type === "Feature") {
     const geo = geojson.geometry;
+    if (geo.type === "MultiPoint") {
+      return geo.coordinates.flatMap(coord => {
+        return processGeoJSON({
+          ...geojson,
+          geometry: {
+            type: "Point",
+            coordinates: coord,
+          },
+        });
+      });
+    }
+    if (geo.type === "MultiLineString") {
+      return geo.coordinates.flatMap(coord => {
+        return processGeoJSON({
+          ...geojson,
+          geometry: {
+            type: "LineString",
+            coordinates: coord,
+          },
+        });
+      });
+    }
+    if (geo.type === "MultiPolygon") {
+      return geo.coordinates.flatMap(coord => {
+        return processGeoJSON({
+          ...geojson,
+          geometry: {
+            type: "Polygon",
+            coordinates: coord,
+          },
+        });
+      });
+    }
+
     return [
       {
         id: (geojson.id && String(geojson.id)) || generateRandomString(12),
