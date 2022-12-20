@@ -7,6 +7,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
+import { LayerEditEvent } from "@reearth/core/Map";
 
 import type {
   Camera,
@@ -43,6 +44,7 @@ export default ({
   onCameraChange,
   onLayerDrag,
   onLayerDrop,
+  onLayerEdit,
   onTick,
 }: {
   ref: React.ForwardedRef<EngineRef>;
@@ -56,6 +58,7 @@ export default ({
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerEdit?: (e: LayerEditEvent) => void;
   onTick?: (time: Date) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -329,8 +332,9 @@ export default ({
       selectionReason,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
+      onLayerEdit,
     }),
-    [selectionReason, engineAPI],
+    [selectionReason, engineAPI, onLayerEdit],
   );
 
   return {

@@ -27,6 +27,7 @@ export type {
   Rect,
   LatLngHeight,
 } from "../../mantle";
+export * from "./event";
 
 export type EngineRef = {
   [index in keyof MouseEventHandles]: MouseEventHandles[index];
@@ -82,6 +83,13 @@ export type EngineProps = {
   onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerEdit?: (e: LayerEditEvent) => void;
+};
+
+export type LayerEditEvent = {
+  layerId: string | undefined;
+  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  rotate?: { heading: number; pitch: number; roll: number };
 };
 
 export type SelectLayerOptions = {

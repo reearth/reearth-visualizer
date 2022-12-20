@@ -1,58 +1,46 @@
-import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle, IonResource } from "cesium";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Cesium3DTileset, CesiumComponentRef } from "resium";
+import { memo } from "react";
+import { Cesium3DTileset } from "resium";
 
 import type { Cesium3DTilesAppearance } from "../../..";
 import { shadowMode } from "../../common";
-import { attachTag, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import { type FeatureComponentConfig, type FeatureProps } from "../utils";
+
+import { useHooks } from "./hooks";
 
 export type Props = FeatureProps<Property>;
 
 export type Property = Cesium3DTilesAppearance;
 
-export default function Tileset({
+function Tileset({
   id,
   isVisible,
   property,
   layer,
   feature,
+  sceneProperty,
 }: Props): JSX.Element | null {
-  const { sourceType, tileset, styleUrl, shadows } = property ?? {};
-  const [style, setStyle] = useState<Cesium3DTileStyle>();
-
-  const ref = useCallback(
-    (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
-      if (tileset?.cesiumElement) {
-        attachTag(tileset.cesiumElement, { layerId: layer?.id || id, featureId: feature?.id });
-      }
-    },
-    [feature?.id, id, layer?.id],
-  );
-
-  useEffect(() => {
-    if (!styleUrl) {
-      setStyle(undefined);
-      return;
-    }
-    (async () => {
-      const res = await fetch(styleUrl);
-      if (!res.ok) return;
-      setStyle(new Cesium3DTileStyle(await res.json()));
-    })();
-  }, [styleUrl]);
-
-  const tilesetUrl = useMemo(() => {
-    return sourceType === "osm" && isVisible
-      ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
-      : isVisible
-      ? tileset
-      : null;
-  }, [isVisible, sourceType, tileset]);
+  const { sourceType, tileset, shadows } = property ?? {};
+  const { tilesetUrl, ref, style, clippingPlanes } = useHooks({
+    id,
+    isVisible,
+    layer,
+    feature,
+    property,
+    sceneProperty,
+  });
 
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
-    <Cesium3DTileset ref={ref} url={tilesetUrl} style={style} shadows={shadowMode(shadows)} />
+    <Cesium3DTileset
+      ref={ref}
+      url={tilesetUrl}
+      style={style}
+      shadows={shadowMode(shadows)}
+      clippingPlanes={clippingPlanes}
+    />
   );
 }
+
+export default memo(Tileset);
 
 export const config: FeatureComponentConfig = {
   noFeature: true,
