@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.14.0 - 2022-12-20
+
+### 🚀 Features
+
+- Port the Box layer into the reearth&#x2F;core ([#377](https://github.com/reearth/reearth-web/pull/377)) [`f235f1`](https://github.com/reearth/reearth-web/commit/f235f1)
+- Support multi feature for geojson ([#380](https://github.com/reearth/reearth-web/pull/380)) [`d1ee59`](https://github.com/reearth/reearth-web/commit/d1ee59)
+- Extend plugin API supports get query ([#374](https://github.com/reearth/reearth-web/pull/374)) [`ccae02`](https://github.com/reearth/reearth-web/commit/ccae02)
+- Extend plugin API supports communication ([#364](https://github.com/reearth/reearth-web/pull/364)) [`61e67e`](https://github.com/reearth/reearth-web/commit/61e67e)
+- Support 2d mode in navigator ([#360](https://github.com/reearth/reearth-web/pull/360)) [`595dd5`](https://github.com/reearth/reearth-web/commit/595dd5)
+- Main logic of the new layer system ([#370](https://github.com/reearth/reearth-web/pull/370)) [`0dd63e`](https://github.com/reearth/reearth-web/commit/0dd63e)
+
+### 🔧 Bug Fixes
+
+- Cache logic for feature ([#379](https://github.com/reearth/reearth-web/pull/379)) [`67bc52`](https://github.com/reearth/reearth-web/commit/67bc52)
+- Rendering bug in new layer system ([#375](https://github.com/reearth/reearth-web/pull/375)) [`172988`](https://github.com/reearth/reearth-web/commit/172988)
+
+### ⚡️ Performance
+
+- Improve unnecessary loading the globe image ([#378](https://github.com/reearth/reearth-web/pull/378)) [`4abbba`](https://github.com/reearth/reearth-web/commit/4abbba)
+
+### ✨ Refactor
+
+- Move feature context ([#381](https://github.com/reearth/reearth-web/pull/381)) [`7e18b8`](https://github.com/reearth/reearth-web/commit/7e18b8)
+
+### Miscellaneous Tasks
+
+- Upgrade dependencies ([#373](https://github.com/reearth/reearth-web/pull/373)) [`1fcc75`](https://github.com/reearth/reearth-web/commit/1fcc75)
+
 ## 0.13.0 - 2022-12-06
 
 ### 🚀 Features
