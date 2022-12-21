@@ -2,9 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.14.1 - 2022-12-21
+
 ## 0.14.0 - 2022-12-20
 
 ## 0.13.0 - 2022-12-06
+
+### Web
+
+### 🔧 Bug Fixes
+
+- Plugin API viewport.query destroys published pages ([#385](https://github.com/reearth/reearth-web/pull/385)) [`de8c01`](https://github.com/reearth/reearth-web/commit/de8c01)
 
 ### Web
 
