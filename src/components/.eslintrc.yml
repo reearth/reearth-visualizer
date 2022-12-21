@@ -50,3 +50,10 @@ overrides:
         - error
         - paths:
             - '@reearth/theme'
+  - files: molecules/Visualizer/**/*
+    rules:
+      'no-restricted-imports':
+        - error
+        - paths:
+            - name: react-router-dom
+              message: Cannot use react-router-dom in published pages. Don't use it.

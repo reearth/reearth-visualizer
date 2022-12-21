@@ -1,5 +1,4 @@
-import { useState, useEffect, RefObject } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useEffect, RefObject, useMemo } from "react";
 
 const viewportMobileMaxWidth = 768;
 
@@ -15,11 +14,12 @@ type Props = {
 };
 
 export default ({ wrapperRef }: Props) => {
+  const query = useMemo(() => paramsToObject(new URLSearchParams(window.location.search)), []);
   const [viewport, setViewport] = useState<Viewport>({
     width: undefined,
     height: undefined,
     isMobile: undefined,
-    query: {},
+    query,
   });
 
   useEffect(() => {
@@ -62,22 +62,10 @@ export default ({ wrapperRef }: Props) => {
     };
   }, [wrapperRef]);
 
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    setViewport(viewport => {
-      const query = paramsToObject(searchParams.entries());
-      return {
-        ...viewport,
-        query,
-      };
-    });
-  }, [searchParams]);
-
   return viewport;
 };
 
-function paramsToObject(entries: IterableIterator<[string, string]>) {
+function paramsToObject(entries: URLSearchParams) {
   const result: Record<string, string> = {};
   for (const [key, value] of entries) {
     result[key] = value;
