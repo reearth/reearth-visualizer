@@ -27,6 +27,7 @@ export type Reearth = {
   readonly block?: Block;
   readonly scene: Scene;
   readonly viewport: Viewport;
+  readonly clientStorage: ClientStorage;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -514,4 +515,11 @@ export type Clock = {
   readonly tick: () => Date;
   readonly play: () => void;
   readonly pause: () => void;
+};
+
+export type ClientStorage = {
+  readonly getAsync: (key: string) => Promise<any>;
+  readonly setAsync: (key: string, value: any) => Promise<void>;
+  readonly deleteAsync: (key: string) => Promise<void>;
+  readonly keysAsync: () => Promise<string[]>;
 };

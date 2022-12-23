@@ -2,6 +2,7 @@ import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
 import type { LayerStore } from "../Layers";
+import type { ClientStorage } from "../useClientStorage";
 import type { PluginInstances } from "../usePluginInstances";
 
 import type {
@@ -19,7 +20,7 @@ import type {
 
 export type CommonReearth = Omit<
   Reearth,
-  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget" | "clientStorage"
 >;
 
 export function exposed({
@@ -41,9 +42,11 @@ export function exposed({
   layer,
   block,
   widget,
+  startEventLoop,
   overrideSceneProperty,
   moveWidget,
   pluginPostMessage,
+  clientStorage,
 }: {
   render: (
     html: string,
@@ -78,9 +81,11 @@ export function exposed({
   layer?: () => Layer | undefined;
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
+  startEventLoop?: () => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
+  clientStorage: ClientStorage;
 }): GlobalThis {
   return merge({
     console: {
@@ -186,6 +191,74 @@ export function exposed({
           },
           get instances() {
             return commonReearth.plugins.instances;
+          },
+        },
+        clientStorage: {
+          get getAsync() {
+            return (key: string) => {
+              const promise = clientStorage.getAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+              );
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
+            };
+          },
+          get setAsync() {
+            return (key: string, value: any) => {
+              const localValue =
+                typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
+              const promise = clientStorage.setAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+                localValue,
+              );
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
+            };
+          },
+          get deleteAsync() {
+            return (key: string) => {
+              const promise = clientStorage.deleteAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+              );
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
+            };
+          },
+          get keysAsync() {
+            return () => {
+              const promise = clientStorage.keysAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+              );
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
+            };
           },
         },
         ...events,

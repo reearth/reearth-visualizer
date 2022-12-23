@@ -284,7 +284,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ main, modal, popup, messages }: IFrameAPI) => {
+    return ({ main, modal, popup, messages, startEventLoop }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: {
@@ -387,9 +387,11 @@ export function useAPI({
           main.resize(width, height);
           onResize?.(width, height, extended);
         },
+        startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
         moveWidget: ctx.moveWidget,
         pluginPostMessage: ctx.pluginInstances.postMessage,
+        clientStorage: ctx.clientStorage,
       });
     };
   }, [
@@ -397,6 +399,7 @@ export function useAPI({
     ctx?.overrideSceneProperty,
     ctx?.moveWidget,
     ctx?.pluginInstances,
+    ctx?.clientStorage,
     extensionId,
     extensionType,
     pluginId,

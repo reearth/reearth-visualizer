@@ -25,6 +25,7 @@ import type {
   LookAtDestination,
   Tag,
 } from "./Plugin/types";
+import useClientStorage from "./useClientStorage";
 import usePluginInstances from "./usePluginInstances";
 import useViewport from "./useViewport";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
@@ -222,6 +223,8 @@ export default ({
     blocks: selectedLayer?.infobox?.blocks,
   });
 
+  const clientStorage = useClientStorage();
+
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
@@ -236,6 +239,7 @@ export default ({
       layerOverridenInfobox,
       layerOverriddenProperties,
       viewport,
+      clientStorage,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,

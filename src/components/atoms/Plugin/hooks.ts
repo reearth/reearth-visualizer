@@ -38,6 +38,7 @@ export type API = {
     off: (e: (msg: any) => void) => void;
     once: (e: (msg: any) => void) => void;
   };
+  startEventLoop: () => void;
 };
 
 export type Ref = {
@@ -51,7 +52,8 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     Array.isArray(obj) ||
     Object.getPrototypeOf(obj) === Function.prototype ||
     Object.getPrototypeOf(obj) === Object.prototype ||
-    obj instanceof Date
+    obj instanceof Date ||
+    obj instanceof Promise
   );
 };
 
@@ -114,6 +116,22 @@ export default function useHook({
     [messageEvents, messageOnceEvents, onError, rawOnMessage],
   );
 
+  const eventLoopCb = useCallback(() => {
+    if (!arena.current) return;
+    try {
+      arena.current.executePendingJobs();
+      if (arena.current.context.runtime.hasPendingJob()) {
+        eventLoop.current = window.setTimeout(eventLoopCb, 0);
+      }
+    } catch (err) {
+      onError(err);
+    }
+  }, [onError]);
+
+  const startEventLoop = useCallback(() => {
+    eventLoop.current = window.setTimeout(eventLoopCb, 0);
+  }, [eventLoopCb]);
+
   const evalCode = useCallback(
     (code: string): any => {
       if (!arena.current) return;
@@ -125,22 +143,11 @@ export default function useHook({
         onError(err);
       }
 
-      const eventLoopCb = () => {
-        if (!arena.current) return;
-        try {
-          arena.current.executePendingJobs();
-          if (arena.current.context.runtime.hasPendingJob()) {
-            eventLoop.current = window.setTimeout(eventLoopCb, 0);
-          }
-        } catch (err) {
-          onError(err);
-        }
-      };
-      eventLoop.current = window.setTimeout(eventLoopCb, 0);
+      startEventLoop();
 
       return result;
     },
-    [onError],
+    [onError, startEventLoop],
   );
 
   useEffect(() => {
@@ -179,6 +186,7 @@ export default function useHook({
                 off: offMessage,
                 once: onceMessage,
               },
+              startEventLoop,
             })
           : exposed;
       if (e) {
@@ -225,6 +233,7 @@ export default function useHook({
     mainIFrameRef,
     messageEvents,
     messageOnceEvents,
+    startEventLoop,
   ]);
 
   useImperativeHandle(
