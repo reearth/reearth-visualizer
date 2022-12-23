@@ -36,6 +36,7 @@ const config: StorybookViteConfig = {
         alias: [
           { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
           { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
+          { find: "csv-parse", replacement: "csv-parse/browser/esm" },
         ],
       },
     });

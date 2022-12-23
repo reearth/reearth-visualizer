@@ -32,6 +32,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
+      { find: "csv-parse", replacement: "csv-parse/browser/esm" },
     ],
   },
   test: {
@@ -50,6 +51,7 @@ export default defineConfig({
       ],
       reporter: ["text", "json", "lcov"],
     },
+    alias: [{ find: "csv-parse", replacement: "csv-parse" }],
   },
 });
 
