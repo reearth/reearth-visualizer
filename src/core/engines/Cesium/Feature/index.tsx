@@ -24,7 +24,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   "3dtiles": [Tileset, tilesetConfig],
   box: [Box, boxConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
-  legacy_resource: [Resource, resourceConfig],
+  resource: [Resource, resourceConfig],
 };
 
 export default function Feature({
@@ -37,13 +37,7 @@ export default function Feature({
       {[undefined, ...layer.features].flatMap(f =>
         (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => {
           const [C, config] = components[k] ?? [];
-          if (
-            !C ||
-            (f && !f[k]) ||
-            !layer[k] ||
-            (config.noLayer && !f) ||
-            (config.noFeature && f)
-          ) {
+          if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
             return null;
           }
 

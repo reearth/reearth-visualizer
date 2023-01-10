@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
-import type { LegacyResourceAppearance } from "../../..";
-import { type FeatureComponentConfig, type FeatureProps } from "../utils";
+import type { ResourceAppearance } from "../../..";
+import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
-export type Property = LegacyResourceAppearance;
+export type Property = ResourceAppearance;
 const types: Record<string, "geojson" | "kml" | "czml"> = {
   kml: "kml",
   geojson: "geojson",
@@ -18,8 +18,15 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-export default function Resource({ isVisible, property }: Props) {
-  const { url, type, clampToGround } = property ?? {};
+export default function Resource({ isVisible, property, layer }: Props) {
+  const { clampToGround } = property ?? {};
+  const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
+    const data = extractSimpleLayerData(layer);
+    const type = property?.type;
+    const url = property?.url;
+    return [type ?? (data?.type as ResourceAppearance["type"]), url ?? data?.url];
+  }, [property, layer]);
+
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],
@@ -29,7 +36,9 @@ export default function Resource({ isVisible, property }: Props) {
 
   if (!isVisible || !Component || !url) return null;
 
-  return <Component data={url} clampToGround={clampToGround} />;
+  return <Component data={url} show={true} clampToGround={clampToGround} />;
 }
 
-export const config: FeatureComponentConfig = {};
+export const config: FeatureComponentConfig = {
+  noFeature: true,
+};

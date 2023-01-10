@@ -193,7 +193,7 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     }
   } else if (l.extensionId === "resource") {
-    appearance = "legacy_resource";
+    appearance = "resource";
   }
 
   const property = appearance

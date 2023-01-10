@@ -168,11 +168,11 @@ export function getCompat(l: Layer | undefined): LayerCompat | undefined {
           : {}),
       },
     };
-  } else if ("legacy_resource" in l) {
+  } else if ("resource" in l) {
     extensionId = "resource";
     property = {
       default: {
-        ...(l as any).legacy_resource,
+        ...(l as any).resource,
       },
     };
   }

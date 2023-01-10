@@ -29,5 +29,5 @@ export type {
   MarkerAppearance,
   ModelAppearance,
   LegacyPhotooverlayAppearance,
-  LegacyResourceAppearance,
+  ResourceAppearance,
 } from "../mantle";

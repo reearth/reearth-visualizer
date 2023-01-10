@@ -28,6 +28,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
 
   const {
     model,
+    url,
     heightReference: hr,
     heading,
     pitch,
@@ -69,7 +70,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
 
-  return !isVisible || !model || !position ? null : (
+  return !isVisible || (!model && !url) || !position ? null : (
     <EntityExt
       id={id}
       position={position}
@@ -78,7 +79,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       featureId={feature?.id}
       draggable>
       <ModelGraphics
-        uri={model}
+        uri={model || url}
         scale={scale}
         shadows={shadowMode(shadows)}
         colorBlendMode={colorBlendMode(colorBlend)}
@@ -97,5 +98,5 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
 }
 
 export const config: FeatureComponentConfig = {
-  noFeature: true,
+  noLayer: true,
 };

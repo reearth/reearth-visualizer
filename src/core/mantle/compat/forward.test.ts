@@ -472,7 +472,7 @@ test("resource", () => {
     id: "x",
     type: "simple",
     visible: true,
-    legacy_resource: {
+    resource: {
       url: "xxx",
       hoge: "red",
     },

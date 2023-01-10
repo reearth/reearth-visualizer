@@ -340,12 +340,12 @@ test("3dtiles", () => {
   });
 });
 
-test("legacy_resource", () => {
+test("resource", () => {
   expect(
     getCompat({
       id: "xxx",
       type: "simple",
-      legacy_resource: {
+      resource: {
         url: "xxx",
         aaaa: 1,
       },

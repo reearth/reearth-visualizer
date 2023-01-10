@@ -10,6 +10,8 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
+import { Data } from "@reearth/core/mantle";
+
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
 export type FeatureProps<P = any> = {
@@ -110,3 +112,10 @@ const tagObj: { [k in keyof Tag]: 1 } = {
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
 
 const tagKey = "__reearth_tag";
+
+export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+  if (layer?.layer.type !== "simple") {
+    return;
+  }
+  return layer.layer.data;
+};
