@@ -23,7 +23,7 @@ const horizontalAlignItems = [
   { key: "justify", label: "justify", icon: "alignJustify" } as const,
 ];
 
-type HorizontalAlignKey = typeof horizontalAlignItems[number]["label"];
+type HorizontalAlignKey = (typeof horizontalAlignItems)[number]["label"];
 
 // const verticalAlignItems = [
 //   { key: "top", label: "top", icon: "verticalAlignTop" },

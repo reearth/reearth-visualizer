@@ -8,7 +8,7 @@ export default {
 } as Meta;
 
 const headers = ["title", "lat", "lng", "size", "color", "text"];
-type Rows = typeof headers[number];
+type Rows = (typeof headers)[number];
 type Item = { [k in Rows]: string | number };
 const data: Item[] = [
   {

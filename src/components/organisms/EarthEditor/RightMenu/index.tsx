@@ -13,9 +13,9 @@ import useHooks, { Tab } from "./hooks";
 const layerMode = ["property", "infobox", "tag", "export"];
 const widgetMode = ["property"];
 const sceneMode = ["property", "tag"];
-export type LayerMode = typeof layerMode[number];
-export type WidgetMode = typeof widgetMode[number];
-export type SceneMode = typeof sceneMode[number];
+export type LayerMode = (typeof layerMode)[number];
+export type WidgetMode = (typeof widgetMode)[number];
+export type SceneMode = (typeof sceneMode)[number];
 export type Mode = LayerMode | WidgetMode | SceneMode;
 
 // TODO: ErrorBoudaryでエラーハンドリング

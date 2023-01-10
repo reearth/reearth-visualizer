@@ -51,7 +51,10 @@ export default defineConfig({
       ],
       reporter: ["text", "json", "lcov"],
     },
-    alias: [{ find: "csv-parse", replacement: "csv-parse" }],
+    alias: [
+      { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
+      { find: "csv-parse", replacement: "csv-parse" },
+    ],
   },
 });
 

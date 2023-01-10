@@ -73,7 +73,7 @@ const SUPPORTED_COORDINATES = {
 const setCoordinatesToPointGeometry = (
   geometry: Point | null,
   value: any,
-  coordIdx: typeof SUPPORTED_COORDINATES[keyof typeof SUPPORTED_COORDINATES],
+  coordIdx: (typeof SUPPORTED_COORDINATES)[keyof typeof SUPPORTED_COORDINATES],
   optional?: boolean,
 ): Point | null => {
   if (geometry === null) {

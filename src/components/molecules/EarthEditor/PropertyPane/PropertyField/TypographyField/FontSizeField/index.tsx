@@ -9,7 +9,7 @@ import { styled } from "@reearth/theme";
 
 const sizes = [6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 21, 24, 36, 48, 60, 72] as const;
 
-export type FontSize = typeof sizes[number];
+export type FontSize = (typeof sizes)[number];
 
 const sizeItems = sizes.map(size => ({ key: size, label: size }));
 
