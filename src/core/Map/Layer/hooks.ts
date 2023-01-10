@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 
-import { computeAtom, DataType, type Atom } from "../../mantle";
+import { computeAtom, DataType, type Atom, evalFeature } from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
 
 export type { Atom as Atoms } from "../../mantle";
@@ -54,5 +54,6 @@ export default function useHooks(
     handleFeatureRequest: requestFetch,
     handleFeatureFetch: writeFeatures,
     handleFeatureDelete: deleteFeatures,
+    evalFeature,
   };
 }

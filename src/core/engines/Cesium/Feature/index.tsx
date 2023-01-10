@@ -1,3 +1,5 @@
+import { DataType } from "@reearth/core/mantle";
+
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
 import Box, { config as boxConfig } from "./Box";
@@ -29,6 +31,15 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   raster: [Raster, rasterConfig],
 };
 
+const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
+  geojson: "auto",
+  czml: "auto",
+  csv: "auto",
+  wms: ["raster"],
+  mvt: ["raster"],
+  ["3dtiles"]: ["model"],
+};
+
 const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
 const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
   if (!PICKABLE_APPEARANCE.includes(k)) {
@@ -51,6 +62,18 @@ export default function Feature({
         (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => {
           const [C, config] = components[k] ?? [];
           if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
+            return null;
+          }
+
+          const displayType =
+            layer.layer.type === "simple" &&
+            layer.layer.data?.type &&
+            displayConfig[layer.layer.data.type];
+
+          if (
+            (Array.isArray(displayType) && !displayType.includes(k)) ||
+            (!Array.isArray(displayType) && displayType !== "auto")
+          ) {
             return null;
           }
 

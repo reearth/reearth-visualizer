@@ -29,6 +29,7 @@ test("simple", () => {
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
     onFeatureRequest: expect.any(Function),
+    evalFeature: expect.any(Function),
   });
   expect(Feature.mock.calls[1][0]).toEqual({
     isHidden: false,
@@ -43,6 +44,7 @@ test("simple", () => {
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
     onFeatureRequest: expect.any(Function),
+    evalFeature: expect.any(Function),
   });
 
   Feature.mockClear();

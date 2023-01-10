@@ -68,7 +68,7 @@ test("computeAtom", async () => {
   expect(result.current.result).toEqual({
     id: "xxx",
     layer,
-    status: "ready",
+    status: "fetching",
     features: [],
     originalFeatures: [],
   }),

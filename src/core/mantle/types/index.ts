@@ -75,7 +75,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms";
+export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt";
 
 // Feature
 

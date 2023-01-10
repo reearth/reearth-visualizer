@@ -76,6 +76,7 @@ export type PolygonAppearance = {
   strokeWidth?: number;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  lineJoin?: CanvasLineJoin;
 };
 
 export type EllipsoidAppearance = {

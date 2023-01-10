@@ -192,5 +192,5 @@ export const engine: Engine = {
   component: Component,
   featureComponent: Feature,
   clusterComponent: Cluster,
-  delegatedDataTypes: ["czml", "wms"],
+  delegatedDataTypes: ["czml", "wms", "mvt"],
 };

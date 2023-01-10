@@ -4,6 +4,7 @@ import type { EvalContext, EvalResult } from "..";
 import {
   appearanceKeys,
   AppearanceTypes,
+  ComputedFeature,
   Expression,
   Feature,
   LayerAppearanceTypes,
@@ -21,6 +22,11 @@ export async function evalSimpleLayer(
     features: features?.map(f => ({ ...f, ...evalLayerAppearances(appearances, layer, f) })),
   };
 }
+
+export const evalSimpleFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
+  const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
+  return { ...feature, ...evalLayerAppearances(appearances, layer, feature) };
+};
 
 export function evalLayerAppearances(
   appearance: Partial<LayerAppearanceTypes>,
