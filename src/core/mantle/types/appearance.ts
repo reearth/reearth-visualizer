@@ -24,6 +24,7 @@ export type AppearanceTypes = {
   box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
+  raster: RasterAppearance;
 };
 
 export type MarkerAppearance = {
@@ -85,8 +86,7 @@ export type EllipsoidAppearance = {
 };
 
 export type ModelAppearance = {
-  // For compat
-  model?: string;
+  model?: string; // For compat
   url?: string;
   heightReference?: "none" | "clamp" | "relative";
   heading?: number;
@@ -141,6 +141,12 @@ export type ResourceAppearance = {
   clampToGround?: boolean;
 };
 
+export type RasterAppearance = {
+  minimumLevel?: number;
+  maximumLevel?: number;
+  credit?: string;
+};
+
 export type BoxAppearance = {
   height?: number;
   width?: number;
@@ -180,6 +186,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   box: 1,
   photooverlay: 1,
   resource: 1,
+  raster: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);

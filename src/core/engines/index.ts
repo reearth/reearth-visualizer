@@ -30,4 +30,5 @@ export type {
   ModelAppearance,
   LegacyPhotooverlayAppearance,
   ResourceAppearance,
+  RasterAppearance,
 } from "../mantle";

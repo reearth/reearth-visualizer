@@ -1,4 +1,4 @@
-import type { AppearanceTypes, FeatureComponentProps } from "../..";
+import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
 import Box, { config as boxConfig } from "./Box";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
@@ -7,6 +7,7 @@ import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
 import Polygon, { config as polygonConfig } from "./Polygon";
 import Polyline, { config as polylineConfig } from "./Polyline";
+import Raster, { config as rasterConfig } from "./Raster";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
 import type { FeatureComponent, FeatureComponentConfig } from "./utils";
@@ -25,6 +26,18 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   box: [Box, boxConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   resource: [Resource, resourceConfig],
+  raster: [Raster, rasterConfig],
+};
+
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
+const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
+  if (!PICKABLE_APPEARANCE.includes(k)) {
+    return;
+  }
+  if (layer.layer.type !== "simple") {
+    return;
+  }
+  return layer.layer[k];
 };
 
 export default function Feature({
@@ -46,7 +59,7 @@ export default function Feature({
               {...props}
               key={`${f?.id || ""}_${k}`}
               id={f ? f.id : layer.id}
-              property={f ? f[k] : layer[k]}
+              property={f ? f[k] : layer[k] || pickProperty(k, layer)}
               geometry={f?.geometry}
               feature={f}
               layer={layer}
