@@ -7,7 +7,7 @@ import type {
 } from "react";
 
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
-import type { FeatureComponentType, ClusterComponentType } from "../Layers";
+import type { FeatureComponentType, ClusterComponentType, LayerSelectionReason } from "../Layers";
 
 export type {
   FeatureComponentProps,
@@ -15,8 +15,11 @@ export type {
   ClusterComponentType,
   ClusterComponentProps,
   ClusterProperty,
+  Ref as LayersRef,
+  LayerSelectionReason,
 } from "../Layers";
 export type {
+  Layer,
   ComputedFeature,
   ComputedLayer,
   Geometry,
@@ -26,6 +29,8 @@ export type {
   LatLng,
   Rect,
   LatLngHeight,
+  ValueTypes,
+  ValueType,
 } from "../../mantle";
 export * from "./event";
 
@@ -42,8 +47,8 @@ export type EngineRef = {
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
   zoomOut: (amount: number, options?: CameraOptions) => void;
-  orbit: (radian: number) => void;
-  rotateRight: (radian: number) => void;
+  orbit: (radians: number) => void;
+  rotateRight: (radians: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
@@ -59,6 +64,13 @@ export type EngineRef = {
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
   mouseEventCallbacks: MouseEvents;
+  pause: () => void;
+  play: () => void;
+  changeSpeed: (speed: number) => void;
+  changeStart: (start: Date) => void;
+  changeStop: (stop: Date) => void;
+  changeTime: (time: Date) => void;
+  tick: () => void;
 };
 
 export type EngineProps = {
@@ -68,19 +80,19 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
   selectedLayerId?: string;
-  selectionReason?: string;
-  layerSelectionReason?: string;
+  layerSelectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
+  onLayerSelect?: (id: string | undefined, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
+  onTick?: (clock: Clock) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
@@ -90,16 +102,6 @@ export type LayerEditEvent = {
   layerId: string | undefined;
   scale?: { width: number; length: number; height: number; location: LatLngHeight };
   rotate?: { heading: number; pitch: number; roll: number };
-};
-
-export type SelectLayerOptions = {
-  reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
-};
-
-export type OverriddenInfobox = {
-  title?: string;
-  content: { key: string; value: string }[];
 };
 
 export type Clock = {

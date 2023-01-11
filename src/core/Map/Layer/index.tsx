@@ -1,16 +1,10 @@
 import { ComponentType } from "react";
 
-import type {
-  DataRange,
-  Feature,
-  ComputedLayer,
-  Layer,
-  DataType,
-  LayerSimple,
-  ComputedFeature,
-} from "../../mantle";
+import type { DataRange, Feature, ComputedLayer, Layer, DataType } from "../../mantle";
 
-import useHooks, { type Atoms } from "./hooks";
+import useHooks, { type Atoms, type EvalFeature } from "./hooks";
+
+export type { EvalFeature } from "./hooks";
 
 export type { Layer, LayerSimple } from "../../mantle";
 
@@ -29,7 +23,7 @@ export type FeatureComponentProps = {
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
-  evalFeature?: (layer: LayerSimple, feature: Feature) => ComputedFeature | undefined;
+  evalFeature: EvalFeature;
 } & CommonProps;
 
 export type Props = {

@@ -593,3 +593,66 @@ test("compat", () => {
     },
   });
 });
+
+test("select", () => {
+  const handleLayerSelect = vi.fn();
+  const initialLayers: Layer[] = [
+    {
+      id: "x",
+      type: "simple",
+    },
+  ];
+  const { result, rerender } = renderHook(
+    ({ layers }: { layers?: Layer[] } = {}) => {
+      const ref = useRef<Ref>(null);
+      useHooks({ ref, layers, onLayerSelect: handleLayerSelect });
+      return { ref };
+    },
+    {
+      initialProps: {
+        layers: initialLayers,
+      },
+    },
+  );
+
+  // select
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select("x", { reason: "reason" });
+  rerender({ layers: initialLayers });
+  expect(result.current.ref.current?.selectedLayer()).toEqual({
+    id: "x",
+  });
+  expect(handleLayerSelect).toBeCalledWith("x", { id: "x", type: "simple" }, { reason: "reason" });
+  expect(handleLayerSelect).toBeCalledTimes(1);
+
+  // remove reason
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select("x");
+  rerender({ layers: initialLayers });
+  expect(result.current.ref.current?.selectedLayer()).toEqual({
+    id: "x",
+  });
+  expect(handleLayerSelect).toBeCalledWith("x", { id: "x", type: "simple" }, undefined);
+  expect(handleLayerSelect).toBeCalledTimes(1);
+
+  // delete layers
+  handleLayerSelect.mockClear();
+  rerender({ layers: [] });
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).toBeCalledWith(undefined, undefined, undefined);
+  expect(handleLayerSelect).toBeCalledTimes(1);
+
+  // select a layer that does not exist
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select("y");
+  rerender();
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).not.toBeCalled();
+
+  // unselect
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select(undefined);
+  rerender();
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).not.toBeCalled();
+});

@@ -4,8 +4,7 @@ import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
-import { ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
-
+import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
 import { extractSimpleLayerData } from "../utils";
 
 import { Props } from "./types";

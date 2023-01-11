@@ -4,12 +4,10 @@ export type {
   EngineComponent,
   EngineRef,
   EngineProps,
-  SelectLayerOptions,
+  LayerSelectionReason,
   SceneProperty,
   MouseEvent,
   MouseEvents,
-  ComputedFeature,
-  ComputedLayer,
   Geometry,
   AppearanceTypes,
   Camera,
@@ -20,6 +18,8 @@ export type {
   Clock,
   FlyToDestination,
   TerrainProperty,
+  LayerEditEvent,
+  EvalFeature,
 } from "../Map";
 export type {
   Cesium3DTilesAppearance,
@@ -31,4 +31,7 @@ export type {
   LegacyPhotooverlayAppearance,
   ResourceAppearance,
   RasterAppearance,
+  ComputedFeature,
+  ComputedLayer,
+  Feature,
 } from "../mantle";

@@ -1,6 +1,14 @@
-import { AppearanceTypes, ComputedFeature, Data, DataRange, Feature, LayerSimple } from "../types";
+import {
+  AppearanceTypes,
+  ComputedFeature,
+  Data,
+  DataRange,
+  Feature,
+  Layer,
+  LayerSimple,
+} from "../types";
 
-import { evalSimpleFeature, evalSimpleLayer } from "./simple";
+import { evalSimpleLayerFeature, evalSimpleLayer } from "./simple";
 
 export type EvalContext = {
   getFeatures: (d: Data, r?: DataRange) => Promise<Feature[] | undefined>;
@@ -22,9 +30,9 @@ export async function evalLayer(
   return;
 }
 
-export function evalFeature(layer: LayerSimple, feature: Feature): ComputedFeature | undefined {
+export function evalFeature(layer: Layer, feature: Feature): ComputedFeature | undefined {
   if (layer.type === "simple") {
-    return evalSimpleFeature(layer, feature);
+    return evalSimpleLayerFeature(layer, feature);
   }
   return;
 }

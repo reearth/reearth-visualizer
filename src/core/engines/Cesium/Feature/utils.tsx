@@ -1,5 +1,5 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { Cesium3DTileset, Entity as CesiumEntity, PropertyBag } from "cesium";
+import { Cesium3DTileset, Color, Entity as CesiumEntity, PropertyBag } from "cesium";
 import {
   ComponentProps,
   ComponentType,
@@ -118,4 +118,15 @@ export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data |
     return;
   }
   return layer.layer.data;
+};
+
+export const toColor = (c?: string) => {
+  if (!c || typeof c !== "string") return undefined;
+
+  // support alpha
+  const m = c.match(/^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/);
+  if (!m) return Color.fromCssColorString(c);
+
+  const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
+  return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
 };

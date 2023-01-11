@@ -42,12 +42,3 @@ export const Movable: Story<Props> = () => {
     />
   );
 };
-
-export const ThemeColor: Story<Props> = () => (
-  <Timeline
-    // Forward a hour
-    currentTime={Date.now() + 3600000}
-    isOpened={true}
-    sceneProperty={{ theme: { themeType: "forest" } }}
-  />
-);

@@ -5,7 +5,6 @@ import Component, { Props } from "../../Map";
 import { engine } from ".";
 
 export default {
-  title: "core/engines/Cesium",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

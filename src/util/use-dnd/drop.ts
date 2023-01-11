@@ -3,12 +3,14 @@ import { useDrop as useDndDrop, DropTargetHookSpec, DropTargetMonitor } from "re
 
 import { Item, ItemType, Dropper } from "./types";
 
-export interface Context {
+export { DndProvider as Provider } from "react-dnd";
+
+export type Context = {
   position?: { x: number; y: number; w: number; h: number };
   canDrop: boolean;
-}
+};
 
-export interface DropOptions<T extends ItemType = ItemType, E extends HTMLElement = HTMLElement> {
+export type DropOptions<T extends ItemType = ItemType, E extends HTMLElement = HTMLElement> = {
   accept: T | T[];
   canDrop?: (item: Item<T>) => boolean;
   hover?: (item: Item<T>, context: Context) => void;
@@ -16,7 +18,7 @@ export interface DropOptions<T extends ItemType = ItemType, E extends HTMLElemen
   shallow?: boolean;
   disabled?: boolean;
   wrapperRef?: React.RefObject<E>;
-}
+};
 
 export const useDrop = <T extends ItemType = ItemType, E extends HTMLElement = HTMLElement>({
   accept,

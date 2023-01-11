@@ -1,12 +1,14 @@
 import { useAtom } from "jotai";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 
-import { computeAtom, DataType, type Atom, evalFeature } from "../../mantle";
+import { computeAtom, DataType, type Atom, evalFeature, ComputedFeature } from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
 
 export type { Atom as Atoms } from "../../mantle";
 
 export const createAtom = computeAtom;
+
+export type EvalFeature = (layer: Layer, feature: Feature) => ComputedFeature | undefined;
 
 export default function useHooks(
   layer: Layer | undefined,

@@ -32,14 +32,15 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     style,
     property,
     camera,
+    clock,
     small,
     ready,
     children,
     selectedLayerId,
-    selectionReason,
     isLayerDraggable,
     isLayerDragging,
     shouldRender,
+    layerSelectionReason,
     meta,
     onLayerSelect,
     onCameraChange,
@@ -58,19 +59,21 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cameraViewBoundariesMaterial,
     mouseEventHandles,
     cesiumIonAccessToken,
+    context,
     handleMount,
     handleUnmount,
     handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    context,
+    handleTick,
   } = useHooks({
     ref,
     property,
     camera,
+    clock,
     selectedLayerId,
-    selectionReason,
+    selectionReason: layerSelectionReason,
     isLayerDraggable,
     meta,
     onLayerSelect,
@@ -124,11 +127,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseLeave={mouseEventHandles.mouseleave}
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
-      <Clock property={property} onTick={onTick} />
+      <Clock property={property} onTick={handleTick} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
-      <Entity>
-        <Indicator property={property} />
-      </Entity>
+      <Indicator property={property} />
       <ScreenSpaceEventHandler useDefault>
         {/* remove default click event */}
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />

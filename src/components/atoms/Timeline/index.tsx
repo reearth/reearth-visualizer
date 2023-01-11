@@ -2,15 +2,15 @@ import { memo } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-// eslint-disable-next-line no-restricted-imports
-import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
 import { useT } from "@reearth/i18n";
-import { styled, usePublishTheme } from "@reearth/theme";
+import { styled, PublishTheme } from "@reearth/theme";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";
 import ScaleList, { StyledColorProps } from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
+
+export type { Range, TimeEventHandler } from "./types";
 
 export type Props = {
   /**
@@ -25,7 +25,7 @@ export type Props = {
   range?: { [K in keyof Range]?: Range[K] };
   speed?: number;
   isOpened?: boolean;
-  sceneProperty?: SceneProperty;
+  theme?: PublishTheme;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
   onPlay?: (isPlaying: boolean) => void;
@@ -40,7 +40,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   range,
   speed,
   isOpened,
-  sceneProperty,
+  theme,
   onClick,
   onDrag,
   onPlay,
@@ -75,20 +75,19 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     onPlayReversed,
     onSpeedChange: onSpeedChangeProps,
   });
-  const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const t = useT();
 
   return isOpened ? (
-    <Container publishedTheme={publishedTheme}>
+    <Container publishedTheme={theme}>
       <div style={{ width: "32px" }}>
-        <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
+        <CloseButton publishedTheme={theme} onClick={onClose}>
           <Icon alt={t("Close timeline")} icon="cancel" size={16} />
         </CloseButton>
       </div>
       <ToolBox>
         <li>
           <PlayButton
-            publishedTheme={publishedTheme}
+            publishedTheme={theme}
             isPlaying={isPlayingReversed}
             onClick={toggleIsPlayingReversed}>
             <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
@@ -97,7 +96,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         <li>
           <PlayButton
             isRight
-            publishedTheme={publishedTheme}
+            publishedTheme={theme}
             isPlaying={isPlaying}
             onClick={toggleIsPlaying}>
             <Icon alt={t("Play timeline")} icon="playRight" size={16} />
@@ -105,11 +104,11 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
         <li>
           <InputRangeLabel>
-            <InputRangeLabelText size="xs" customColor publishedTheme={publishedTheme}>
+            <InputRangeLabelText size="xs" customColor publishedTheme={theme}>
               {speed}X
             </InputRangeLabelText>
             <InputRange
-              publishedTheme={publishedTheme}
+              publishedTheme={theme}
               type="range"
               max={10000}
               min={1}
@@ -120,10 +119,10 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
       </ToolBox>
       <CurrentTimeWrapper>
-        <CurrentTime size="xs" customColor publishedTheme={publishedTheme}>
+        <CurrentTime size="xs" customColor publishedTheme={theme}>
           {formattedCurrentTime.date}
         </CurrentTime>
-        <CurrentTime size="xs" customColor publishedTheme={publishedTheme}>
+        <CurrentTime size="xs" customColor publishedTheme={theme}>
           {formattedCurrentTime.time}
         </CurrentTime>
       </CurrentTimeWrapper>
@@ -139,11 +138,11 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           gapHorizontal={gapHorizontal}
           scaleInterval={scaleInterval}
           strongScaleHours={strongScaleHours}
-          publishedTheme={publishedTheme}
+          publishedTheme={theme}
         />
         <IconWrapper
           data-testid="knob-icon"
-          publishedTheme={publishedTheme}
+          publishedTheme={theme}
           style={{
             left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
           }}>
@@ -152,7 +151,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
       </ScaleBox>
     </Container>
   ) : (
-    <OpenButton publishedTheme={publishedTheme} onClick={onOpen}>
+    <OpenButton publishedTheme={theme} onClick={onOpen}>
       <Icon alt={t("Open timeline")} icon="timeline" size={24} />
     </OpenButton>
   );

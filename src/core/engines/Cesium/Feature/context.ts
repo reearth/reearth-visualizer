@@ -2,10 +2,10 @@ import { createContext, useContext as useReactContext } from "react";
 
 import { LayerEditEvent } from "@reearth/core/Map";
 
-import type { Camera, FlyToDestination, CameraOptions } from "../..";
+import type { Camera, FlyToDestination, CameraOptions, LayerSelectionReason } from "../..";
 
 export type Context = {
-  selectionReason?: string;
+  selectionReason?: LayerSelectionReason;
   getCamera?: () => Camera | undefined;
   flyTo?: (camera: FlyToDestination, options?: CameraOptions) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;

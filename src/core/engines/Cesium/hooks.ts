@@ -7,16 +7,17 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
-import { LayerEditEvent } from "@reearth/core/Map";
 
 import type {
   Camera,
   LatLng,
-  SelectLayerOptions,
+  LayerSelectionReason,
   EngineRef,
   SceneProperty,
   MouseEvent,
   MouseEvents,
+  Clock,
+  LayerEditEvent,
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
@@ -36,6 +37,7 @@ export default ({
   ref,
   property,
   camera,
+  clock,
   selectedLayerId,
   selectionReason,
   isLayerDraggable,
@@ -50,16 +52,17 @@ export default ({
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   selectedLayerId?: string;
-  selectionReason?: string;
+  selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
+  onLayerSelect?: (id?: string, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
-  onTick?: (time: Date) => void;
+  onTick?: (clock: Clock) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -102,7 +105,7 @@ export default ({
       }
       const clock = getClock(cesium?.current?.cesiumElement?.clock);
       if (clock) {
-        onTick?.(clock.current);
+        onTick?.(clock);
       }
     },
     [
@@ -155,6 +158,27 @@ export default ({
       emittedCamera.current = [];
     }
   }, [camera, engineAPI]);
+
+  useEffect(() => {
+    if (!clock) return;
+    if (clock.current) {
+      engineAPI.changeTime(clock.current);
+    }
+    if (clock.playing === true) {
+      engineAPI.play();
+    } else if (clock.playing === false) {
+      engineAPI.pause();
+    }
+    if (clock.speed) {
+      engineAPI.changeSpeed(clock.speed);
+    }
+    if (clock.start) {
+      engineAPI.changeStart(clock.start);
+    }
+    if (clock.stop) {
+      engineAPI.changeStop(clock.stop);
+    }
+  }, [clock, engineAPI]);
 
   // manage layer selection
   useEffect(() => {
@@ -337,6 +361,13 @@ export default ({
     [selectionReason, engineAPI, onLayerEdit],
   );
 
+  const handleTick = useCallback(() => {
+    const clock = getClock(cesium?.current?.cesiumElement?.clock);
+    if (clock) {
+      onTick?.(clock);
+    }
+  }, [onTick]);
+
   return {
     backgroundColor,
     cesium,
@@ -345,13 +376,14 @@ export default ({
     cameraViewBoundariesMaterial,
     cesiumIonAccessToken,
     mouseEventHandles,
+    context,
     handleMount,
     handleUnmount,
     handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    context,
+    handleTick,
   };
 };
 

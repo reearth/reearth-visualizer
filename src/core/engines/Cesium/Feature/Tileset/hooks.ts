@@ -18,18 +18,10 @@ import {
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
-import {
-  ComputedFeature,
-  ComputedLayer,
-  Feature,
-  toColor,
-  evalFeature,
-} from "@reearth/core/mantle";
-import { SceneProperty } from "@reearth/core/Map";
-
+import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { translationWithClamping } from "../../utils";
-import { attachTag, extractSimpleLayerData } from "../utils";
+import { attachTag, extractSimpleLayerData, toColor } from "../utils";
 
 import { Property } from ".";
 
@@ -76,27 +68,32 @@ type CachedFeature = {
 const useFeature = ({
   tileset,
   layer,
+  evalFeature,
 }: {
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
+  evalFeature: EvalFeature;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
 
-  const attachComputedFeature = (feature?: CachedFeature) => {
-    const layer = cachedCalculatedLayerRef?.current?.layer;
-    if (layer?.type === "simple" && feature?.feature) {
-      const computedFeature = evalFeature(layer, feature?.feature);
-      const show = computedFeature?.["3dtiles"]?.show;
-      if (show !== undefined) {
-        feature.raw.show = show;
+  const attachComputedFeature = useCallback(
+    (feature?: CachedFeature) => {
+      const layer = cachedCalculatedLayerRef?.current?.layer;
+      if (layer?.type === "simple" && feature?.feature) {
+        const computedFeature = evalFeature(layer, feature?.feature);
+        const show = computedFeature?.["3dtiles"]?.show;
+        if (show !== undefined) {
+          feature.raw.show = show;
+        }
+        const color = toColor(computedFeature?.["3dtiles"]?.color);
+        if (color !== undefined) {
+          feature.raw.color = color;
+        }
       }
-      const color = toColor(computedFeature?.["3dtiles"]?.color);
-      if (color !== undefined) {
-        feature.raw.color = color;
-      }
-    }
-  };
+    },
+    [evalFeature],
+  );
 
   useEffect(() => {
     function lookupFeatures(
@@ -147,7 +144,7 @@ const useFeature = ({
     tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) => {
       currentTiles.delete(t);
     });
-  }, [tileset, cachedFeaturesRef]);
+  }, [tileset, cachedFeaturesRef, attachComputedFeature]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -165,7 +162,7 @@ const useFeature = ({
         attachComputedFeature(f);
       }
     });
-  }, [tileAppearanceShow, tileAppearanceColor]);
+  }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
 };
 
 export const useHooks = ({
@@ -175,6 +172,7 @@ export const useHooks = ({
   sceneProperty,
   layer,
   feature,
+  evalFeature,
 }: {
   id: string;
   isVisible?: boolean;
@@ -182,6 +180,7 @@ export const useHooks = ({
   sceneProperty?: SceneProperty;
   layer?: ComputedLayer;
   feature?: ComputedFeature;
+  evalFeature: EvalFeature;
 }) => {
   const { viewer } = useCesium();
   const { sourceType, tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } =
@@ -247,7 +246,7 @@ export const useHooks = ({
     [id, layer?.id, feature?.id],
   );
 
-  useFeature({ tileset: tilesetRef, layer });
+  useFeature({ tileset: tilesetRef, layer, evalFeature });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
   const inProgressSamplingTerrainHeight = useRef(false);

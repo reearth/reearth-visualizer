@@ -1,8 +1,9 @@
 import { atom, useAtomValue } from "jotai";
-import { merge, omit } from "lodash-es";
+import { merge, omit, isEqual } from "lodash-es";
 import {
   ForwardedRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
@@ -58,16 +59,38 @@ export type Ref = {
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
   hide: (...layers: string[]) => void;
   show: (...layers: string[]) => void;
+  select: (id: string | undefined, reason?: LayerSelectionReason) => void;
+  selectedLayer: () => LazyLayer | undefined;
+};
+
+export type OverriddenInfobox = {
+  title?: string;
+  content: { key: string; value: string }[];
+};
+
+export type LayerSelectionReason = {
+  reason?: string;
+  overriddenInfobox?: OverriddenInfobox;
 };
 
 export default function useHooks({
   layers,
   ref,
   hiddenLayers,
+  selectedLayerId,
+  selectionReason,
+  onLayerSelect,
 }: {
   layers?: Layer[];
   ref?: ForwardedRef<Ref>;
   hiddenLayers?: string[];
+  selectedLayerId?: string;
+  selectionReason?: LayerSelectionReason;
+  onLayerSelect?: (
+    id: string | undefined,
+    layer: Layer | undefined,
+    reason: LayerSelectionReason | undefined,
+  ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
@@ -398,6 +421,14 @@ export default function useHooks({
     [showLayer],
   );
 
+  const { select, selectedLayer } = useSelection({
+    flattenedLayers,
+    selectedLayerId,
+    selectedReason: selectionReason,
+    getLazyLayer: findById,
+    onLayerSelect,
+  });
+
   useImperativeHandle(
     ref,
     () => ({
@@ -417,6 +448,8 @@ export default function useHooks({
       findByTagLabels,
       hide: hideLayers,
       show: showLayers,
+      select,
+      selectedLayer,
     }),
     [
       findById,
@@ -435,6 +468,8 @@ export default function useHooks({
       findByTagLabels,
       hideLayers,
       showLayers,
+      select,
+      selectedLayer,
     ],
   );
 
@@ -531,4 +566,76 @@ function compat(layer: unknown): Layer | undefined {
   return "extensionId" in layer || "property" in layer
     ? convertLegacyLayer(layer as any)
     : (layer as Layer);
+}
+
+function useSelection({
+  flattenedLayers,
+  selectedLayerId: initialSelectedLayerId,
+  selectedReason: initialSelectedReason,
+  getLazyLayer,
+  onLayerSelect,
+}: {
+  flattenedLayers?: Layer[];
+  selectedLayerId?: string;
+  selectedReason?: LayerSelectionReason;
+  getLazyLayer: (id: string) => LazyLayer | undefined;
+  onLayerSelect?: (
+    id: string | undefined,
+    layer: Layer | undefined,
+    reason: LayerSelectionReason | undefined,
+  ) => void;
+}) {
+  const [[selectedLayerId, selectedReason], setSelectedLayer] = useState<
+    [string | undefined, LayerSelectionReason | undefined]
+  >([initialSelectedLayerId, initialSelectedReason]);
+
+  useEffect(() => {
+    setSelectedLayer(s => {
+      return initialSelectedLayerId
+        ? s[0] !== initialSelectedLayerId || !isEqual(s[1], initialSelectedReason)
+          ? [initialSelectedLayerId, initialSelectedReason]
+          : s
+        : !s[0] && !s[1]
+        ? s
+        : [undefined, undefined];
+    });
+  }, [initialSelectedLayerId, initialSelectedReason]);
+
+  const actualSelectedLayer = useMemo(
+    () => (selectedLayerId ? flattenedLayers?.find(l => l.id === selectedLayerId) : undefined),
+    [flattenedLayers, selectedLayerId],
+  );
+
+  useEffect(() => {
+    if (actualSelectedLayer) {
+      onLayerSelect?.(actualSelectedLayer.id, actualSelectedLayer, selectedReason);
+    } else {
+      onLayerSelect?.(undefined, undefined, undefined);
+    }
+  }, [onLayerSelect, actualSelectedLayer, selectedReason]);
+
+  useEffect(() => {
+    setSelectedLayer(s =>
+      s[0] && flattenedLayers?.find(l => l.id === s[0])
+        ? s
+        : !s[0] && !s[1]
+        ? s
+        : [undefined, undefined],
+    );
+  }, [flattenedLayers]);
+
+  const select = useCallback((id: unknown, options?: LayerSelectionReason) => {
+    if (typeof id === "string") setSelectedLayer([id || undefined, options]);
+    else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
+  }, []);
+
+  const selectedLayerForRef = useCallback(
+    () => (selectedLayerId ? getLazyLayer(selectedLayerId) : undefined),
+    [getLazyLayer, selectedLayerId],
+  );
+
+  return {
+    selectedLayer: selectedLayerForRef,
+    select,
+  };
 }

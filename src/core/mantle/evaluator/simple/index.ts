@@ -27,7 +27,7 @@ export async function evalSimpleLayer(
   };
 }
 
-export const evalSimpleFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
+export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return { ...feature, ...evalLayerAppearances(appearances, layer, feature) };
 };
