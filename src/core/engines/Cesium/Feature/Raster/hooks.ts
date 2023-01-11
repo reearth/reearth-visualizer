@@ -1,7 +1,7 @@
 import { VectorTileFeature } from "@mapbox/vector-tile";
 import { ImageryLayerCollection, ImageryProvider, WebMapServiceImageryProvider } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
 import { ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
@@ -94,10 +94,14 @@ export const useMVT = ({
   const { minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
-  const [cachedFeatureIds] = useState(() => new Set<Feature["id"]>());
-  const cachedFeaturesRef = useRef<Feature[]>([]);
+  const cachedFeaturesRef = useRef<Map<Feature["id"], Feature>>(new Map());
   const cachedComputedFeaturesRef = useRef<Map<Feature["id"], ComputedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
+
+  const polygonAppearanceFillStyle = layer?.polygon?.fillColor;
+  const polygonAppearanceStrokeStyle = layer?.polygon?.strokeColor;
+  const polygonAppearanceLineWidth = layer?.polygon?.strokeWidth;
+  const polygonAppearanceLineJoin = layer?.polygon?.lineJoin;
 
   const imageryProvider = useMemo(() => {
     if (!isVisible || !url || !layers || type !== "mvt") return;
@@ -110,25 +114,34 @@ export const useMVT = ({
       style: (mvtFeature, tile) => {
         const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
         const feature = ((): ComputedFeature | void => {
-          if (!cachedFeatureIds.has(id)) {
-            const layer = cachedCalculatedLayerRef.current?.layer;
-            if (
-              layer?.type === "simple" &&
-              VectorTileFeature.types[mvtFeature.type] === "Polygon"
-            ) {
+          const layer = cachedCalculatedLayerRef.current?.layer;
+          if (layer?.type === "simple" && VectorTileFeature.types[mvtFeature.type] === "Polygon") {
+            if (!cachedFeaturesRef.current.has(id)) {
               const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
-              cachedFeatureIds.add(id);
-              cachedFeaturesRef.current.push(feature);
+              cachedFeaturesRef.current.set(id, feature);
               const computedFeature = evalFeature?.(layer, feature);
               if (computedFeature) {
                 cachedComputedFeaturesRef.current.set(id, computedFeature);
               }
               return computedFeature;
+            } else {
+              const feature = cachedFeaturesRef.current.get(id);
+              if (
+                feature &&
+                (polygonAppearanceFillStyle !== feature?.properties.fillColor ||
+                  polygonAppearanceStrokeStyle !== feature?.properties.strokeStyle ||
+                  polygonAppearanceLineWidth !== feature?.properties.lineWidth ||
+                  polygonAppearanceLineJoin !== feature?.properties.lineJoin)
+              ) {
+                const computedFeature = evalFeature?.(layer, feature);
+                if (computedFeature) {
+                  cachedComputedFeaturesRef.current.set(id, computedFeature);
+                }
+              }
+              return cachedComputedFeaturesRef.current.get(
+                mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
+              );
             }
-          } else {
-            return cachedComputedFeaturesRef.current.get(
-              mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
-            );
           }
         })();
         return {
@@ -147,8 +160,11 @@ export const useMVT = ({
     maximumLevel,
     credit,
     layers,
-    cachedFeatureIds,
     evalFeature,
+    polygonAppearanceFillStyle,
+    polygonAppearanceStrokeStyle,
+    polygonAppearanceLineWidth,
+    polygonAppearanceLineJoin,
   ]);
 
   useEffect(() => {

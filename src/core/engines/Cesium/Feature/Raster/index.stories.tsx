@@ -55,7 +55,7 @@ MVT.args = {
       type: "simple",
       data: {
         type: "mvt",
-        url: "https://d2jfi34fqvxlsc.cloudfront.net/main/data/mvt/tran/13100_tokyo/{z}/{x}/{y}.mvt",
+        url: "https://example.com/exmaple.mvt", // You need to set MVT URL.
         layers: "road",
       },
       polygon: {
