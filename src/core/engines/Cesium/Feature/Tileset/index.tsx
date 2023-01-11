@@ -19,7 +19,7 @@ function Tileset({
   feature,
   sceneProperty,
 }: Props): JSX.Element | null {
-  const { sourceType, tileset, shadows } = property ?? {};
+  const { shadows } = property ?? {};
   const { tilesetUrl, ref, style, clippingPlanes } = useHooks({
     id,
     isVisible,
@@ -29,7 +29,7 @@ function Tileset({
     sceneProperty,
   });
 
-  return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
+  return !isVisible || !tilesetUrl ? null : (
     <Cesium3DTileset
       ref={ref}
       url={tilesetUrl}

@@ -110,6 +110,8 @@ export type ModelAppearance = {
 export type Cesium3DTilesAppearance = {
   sourceType?: "url" | "osm";
   tileset?: string;
+  show?: boolean;
+  color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   edgeWidth?: number;

@@ -37,7 +37,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   csv: "auto",
   wms: ["raster"],
   mvt: ["raster"],
-  ["3dtiles"]: ["model"],
+  ["3dtiles"]: ["3dtiles"],
 };
 
 const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
