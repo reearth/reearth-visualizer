@@ -13,6 +13,7 @@ import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
 
 export * from "./appearance";
 export * from "./value";
+export * from "./expression";
 
 // Layer
 
@@ -22,6 +23,7 @@ export type LayerSimple = {
   type: "simple";
   data?: Data;
   properties?: any;
+  defines?: Record<string, string>;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -78,7 +80,6 @@ export type DataRange = {
 export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt";
 
 // Feature
-
 export type Feature = {
   id: string;
   geometry?: Geometry;
