@@ -122,16 +122,12 @@ export default function useEngineRef(
       zoomIn: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        zoom({ camera, scene, relativeAmount: 1 / amount }, options);
+        zoom({ viewer, relativeAmount: 1 / amount }, options);
       },
       zoomOut: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        zoom({ camera, scene, relativeAmount: amount }, options);
+        zoom({ viewer, relativeAmount: amount }, options);
       },
       orbit: radian => {
         const viewer = cesium.current?.cesiumElement;
@@ -156,7 +152,14 @@ export default function useEngineRef(
 
         camera.lookAtTransform(frame);
 
-        if (center) {
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
+          camera.move(
+            new Cesium.Cartesian3(x, y, 0),
+            (Math.max(scene.canvas.clientWidth, scene.canvas.clientHeight) / 100) *
+              camera.positionCartographic.height *
+              distance,
+          );
+        } else if (center) {
           camera.rotateLeft(x);
           camera.rotateUp(y);
         } else {
@@ -175,9 +178,14 @@ export default function useEngineRef(
           camera.positionWC,
           scene.globe.ellipsoid,
         );
-        camera.lookAtTransform(frame);
-        camera.rotateRight(radian - -camera.heading);
-        camera.lookAtTransform(oldTransform);
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
+          camera.twistRight(radian - -camera.heading);
+          camera.twistLeft(radian - -camera.heading);
+        } else {
+          camera.lookAtTransform(frame);
+          camera.rotateRight(radian - -camera.heading);
+          camera.lookAtTransform(oldTransform);
+        }
       },
       changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;
