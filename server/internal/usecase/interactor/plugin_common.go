@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -21,17 +22,29 @@ type pluginCommon struct {
 }
 
 func (i *pluginCommon) SavePluginPack(ctx context.Context, p *pluginpack.Package) error {
+	read := false
+	id := p.Manifest.Plugin.ID()
+
 	for {
 		f, err := p.Files.Next()
 		if err != nil {
+			log.Errorf("failed to read a plugin file (%s): %s", id, err)
 			return interfaces.ErrInvalidPluginPackage
 		}
+
 		if f == nil {
 			break
 		}
+
+		read = true
 		if err := i.file.UploadPluginFile(ctx, p.Manifest.Plugin.ID(), f); err != nil {
 			return rerror.ErrInternalBy(err)
 		}
+	}
+
+	if !read {
+		log.Errorf("no plugin files (%s)", id)
+		return interfaces.ErrInvalidPluginPackage
 	}
 
 	// save plugin and property schemas
