@@ -89,7 +89,7 @@ export default function WidgetComponent({
       style={{
         pointerEvents: editing ? "none" : "auto",
       }}>
-      <Builtin {...props} widget={w} />
+      <Builtin {...props} editing={editing} widget={w} />
     </div>
   ) : (
     <>{renderWidget?.(w)}</>

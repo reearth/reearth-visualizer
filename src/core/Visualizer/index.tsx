@@ -143,33 +143,6 @@ export default function Visualizer({
 
   return (
     <>
-      <Map
-        ref={mapRef}
-        isBuilt={isBuilt}
-        isEditable={isEditable}
-        sceneProperty={sceneProperty}
-        engine={engine}
-        layers={layers}
-        engines={engines}
-        camera={camera}
-        clock={clock}
-        clusters={clusters}
-        hiddenLayers={hiddenLayers}
-        isLayerDraggable={isLayerDraggable}
-        isLayerDragging={isLayerDragging}
-        meta={meta}
-        style={style}
-        // overrides={overrides} // not used for now
-        property={sceneProperty}
-        selectedLayerId={selectedLayerId}
-        small={small}
-        ready={ready}
-        onCameraChange={handleCameraChange}
-        onLayerDrag={onLayerDrag}
-        onLayerDrop={onLayerDrop}
-        onLayerSelect={handleLayerSelect}
-        onTick={handleTick}
-      />
       <Crust
         isBuilt={isBuilt}
         isEditable={isEditable}
@@ -196,6 +169,33 @@ export default function Visualizer({
         onBlockDelete={onBlockDelete}
         onBlockInsert={onBlockInsert}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+      />
+      <Map
+        ref={mapRef}
+        isBuilt={isBuilt}
+        isEditable={isEditable}
+        sceneProperty={sceneProperty}
+        engine={engine}
+        layers={layers}
+        engines={engines}
+        camera={camera}
+        clock={clock}
+        clusters={clusters}
+        hiddenLayers={hiddenLayers}
+        isLayerDraggable={isLayerDraggable}
+        isLayerDragging={isLayerDragging}
+        meta={meta}
+        style={style}
+        // overrides={overrides} // not used for now
+        property={sceneProperty}
+        selectedLayerId={selectedLayerId}
+        small={small}
+        ready={ready}
+        onCameraChange={handleCameraChange}
+        onLayerDrag={onLayerDrag}
+        onLayerDrop={onLayerDrop}
+        onLayerSelect={handleLayerSelect}
+        onTick={handleTick}
       />
     </>
   );
