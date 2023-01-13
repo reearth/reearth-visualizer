@@ -90,6 +90,8 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
+	log.Infof("gcs: asset deleted: %s", u)
+
 	sn := getGCSObjectNameFromURL(f.base, u)
 	if sn == "" {
 		return gateway.ErrInvalidFile
@@ -117,6 +119,8 @@ func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *
 }
 
 func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
+	log.Infof("gcs: plugin deleted: %s", pid)
+
 	return f.deleteAll(ctx, path.Join(gcsPluginBasePath, pid.String()))
 }
 
@@ -148,6 +152,8 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 }
 
 func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
+	log.Infof("gcs: built scene deleted: %s", name)
+
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
 		return gateway.ErrInvalidFile

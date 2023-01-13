@@ -95,6 +95,12 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 	var oldPManifest *manifest.Manifest
 	newpid := p.Manifest.Plugin.ID()
 	oldpid := s.Plugins().PluginByName(newpid.Name()).PluginRef()
+
+	// if the old plugin is public, it should not be deleted
+	if oldpid != nil && oldpid.Scene() == nil {
+		return nil, nil, interfaces.ErrPluginAlreadyInstalled
+	}
+
 	if oldpid != nil {
 		oldPlugin, err := i.pluginRepo.FindByID(ctx, *oldpid)
 		if err != nil {
