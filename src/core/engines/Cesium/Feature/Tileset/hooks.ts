@@ -45,6 +45,9 @@ const makeFeatureFrom3DTile = (
   feature: Cesium3DTileFeature,
   coordinates: number[],
 ): Feature => {
+  const properties = Object.fromEntries(
+    feature.getPropertyIds().map(id => [id, feature.getProperty(id)]),
+  );
   return {
     type: "feature",
     id,
@@ -52,7 +55,7 @@ const makeFeatureFrom3DTile = (
       type: "Point",
       coordinates,
     },
-    properties: feature.tileset.properties,
+    properties,
     range: {
       x: coordinates[0],
       y: coordinates[1],
@@ -67,12 +70,14 @@ type CachedFeature = {
 };
 
 const useFeature = ({
+  id,
   tileset,
   layer,
   evalFeature,
   onComputedFeatureFetch,
   onFeatureDelete,
 }: {
+  id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
@@ -81,6 +86,7 @@ const useFeature = ({
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
+  const layerId = layer?.id || id;
 
   const attachComputedFeature = useCallback(
     (feature?: CachedFeature) => {
@@ -153,6 +159,8 @@ const useFeature = ({
           return feature;
         })();
 
+        attachTag(tileFeature, { layerId, featureId: id });
+
         const computedFeature = attachComputedFeature(feature);
         if (computedFeature) {
           tempFeatures.push(feature.feature);
@@ -173,7 +181,14 @@ const useFeature = ({
       });
       onFeatureDelete?.(featureIds);
     });
-  }, [tileset, cachedFeaturesRef, attachComputedFeature, onComputedFeatureFetch, onFeatureDelete]);
+  }, [
+    tileset,
+    cachedFeaturesRef,
+    attachComputedFeature,
+    onComputedFeatureFetch,
+    onFeatureDelete,
+    layerId,
+  ]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -279,7 +294,14 @@ export const useHooks = ({
     [id, layer?.id, feature?.id],
   );
 
-  useFeature({ tileset: tilesetRef, layer, evalFeature, onComputedFeatureFetch, onFeatureDelete });
+  useFeature({
+    id,
+    tileset: tilesetRef,
+    layer,
+    evalFeature,
+    onComputedFeatureFetch,
+    onFeatureDelete,
+  });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
   const inProgressSamplingTerrainHeight = useRef(false);

@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
 import { type MapRef, mapRef } from "./ref";
-import type { EngineRef, LayersRef, Layer, LayerSelectionReason } from "./types";
+import type { EngineRef, LayersRef, LayerSelectionReason, ComputedLayer } from "./types";
 
 export type { MapRef } from "./ref";
 
@@ -10,10 +10,14 @@ export default function ({
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     options?: LayerSelectionReason,
   ) => void;
 }) {
@@ -39,26 +43,39 @@ export default function ({
   // 6. selectedLayerId prop on Engine component, onLayerSelect event on Layer component
   // 7. onLayerSelect event on Map component
 
-  const [selectedLayer, selectLayer] = useState<
-    [string | undefined, Layer | undefined, LayerSelectionReason | undefined]
-  >([undefined, undefined, undefined]);
+  const [selectedLayer, selectLayer] = useState<{
+    layerId?: string;
+    featureId?: string;
+    layer?: ComputedLayer;
+    reason?: LayerSelectionReason;
+  }>({});
 
   const handleLayerSelect = useCallback(
-    (id: string | undefined, layer: Layer | undefined, reason?: LayerSelectionReason) => {
-      selectLayer([id, layer, reason]);
+    async (
+      layerId: string | undefined,
+      featureId: string | undefined,
+      layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+      reason?: LayerSelectionReason,
+    ) => {
+      selectLayer({ layerId, featureId, layer: await layer?.(), reason });
     },
     [],
   );
 
   const handleEngineLayerSelect = useCallback(
-    (id: string | undefined, reason?: LayerSelectionReason) => {
-      layersRef.current?.select(id, reason);
+    (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => {
+      layersRef.current?.select(layerId, featureId, reason);
     },
     [],
   );
 
   useEffect(() => {
-    onLayerSelect?.(selectedLayer[0], selectedLayer[1], selectedLayer[2]);
+    onLayerSelect?.(
+      selectedLayer.layerId,
+      selectedLayer.featureId,
+      async () => selectedLayer.layer,
+      selectedLayer.reason,
+    );
   }, [onLayerSelect, selectedLayer]);
 
   return {

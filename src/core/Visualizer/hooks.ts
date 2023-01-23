@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
-import type { Layer, Ref as MapRef, LayerSelectionReason, Camera, Clock } from "../Map";
+import { ComputedFeature, Feature } from "../mantle";
+import type { Ref as MapRef, LayerSelectionReason, Camera, Clock, ComputedLayer } from "../Map";
 
 const viewportMobileMaxWidth = 768;
 
@@ -18,8 +19,9 @@ export default function useHooks({
   camera?: Camera;
   clock?: Date;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onBlockSelect?: (blockId?: string) => void;
@@ -29,19 +31,31 @@ export default function useHooks({
   const mapRef = useRef<MapRef>(null);
 
   // layer
-  const [selectedLayer, selectLayer] = useState<
-    [string | undefined, Layer | undefined, LayerSelectionReason | undefined]
-  >([undefined, undefined, undefined]);
+  const [selectedLayer, selectLayer] = useState<{
+    layerId?: string;
+    featureId?: string;
+    layer?: ComputedLayer;
+    reason?: LayerSelectionReason;
+  }>({});
+  const [selectedFeature, selectFeature] = useState<Feature>();
+  const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
   useEffect(() => {
-    onLayerSelect?.(...selectedLayer);
+    const { layerId, featureId, layer, reason } = selectedLayer;
+    onLayerSelect?.(layerId, featureId, async () => layer, reason);
   }, [onLayerSelect, selectedLayer]);
   const handleLayerSelect = useCallback(
-    (
-      id: string | undefined,
-      layer: Layer | undefined,
+    async (
+      layerId: string | undefined,
+      featureId: string | undefined,
+      layer: (() => Promise<ComputedLayer | undefined>) | undefined,
       reason: LayerSelectionReason | undefined,
     ) => {
-      selectLayer([id, layer, reason]);
+      const computedLayer = await layer?.();
+
+      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
+      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId));
+
+      selectLayer({ layerId, featureId, layer: computedLayer, reason });
     },
     [],
   );
@@ -66,7 +80,9 @@ export default function useHooks({
 
   return {
     mapRef,
-    selectedLayer: selectedLayer[1],
+    selectedLayer: selectedLayer,
+    selectedFeature,
+    selectedComputedFeature,
     selectedBlock,
     camera,
     clock: mapClock,

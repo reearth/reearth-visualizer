@@ -32,7 +32,10 @@ export function widgetContextFromMapRef({
   mapRef?: RefObject<MapRef>;
   clock?: Clock;
   camera?: Camera;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   sceneProperty?: SceneProperty;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;

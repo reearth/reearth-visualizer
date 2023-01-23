@@ -59,8 +59,8 @@ function Map(
       isBuilt={isBuilt}
       isEditable={isEditable}
       property={sceneProperty}
-      selectedLayerId={selectedLayer[0]}
-      layerSelectionReason={selectedLayer[2]}
+      selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+      layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
       {...props}>
       <Layers

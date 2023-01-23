@@ -40,10 +40,17 @@ export default function ({
   range?: number;
   autoStart?: boolean;
   stories?: Story[];
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
-  onLayerSelect?: (id: string | undefined, options?: { reason?: string }) => void;
+  onLayerSelect?: (
+    layerId: string | undefined,
+    featureId: string | undefined,
+    options?: { reason?: string },
+  ) => void;
   findPhotooverlayLayer?: (
     id: string,
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
@@ -61,7 +68,7 @@ export default function ({
   }>();
 
   const selectedLayer = useMemo(
-    () => (selectedLayerId ? findPhotooverlayLayer?.(selectedLayerId) : undefined),
+    () => (selectedLayerId?.layerId ? findPhotooverlayLayer?.(selectedLayerId.layerId) : undefined),
     [findPhotooverlayLayer, selectedLayerId],
   );
 
@@ -98,7 +105,7 @@ export default function ({
         camera,
         range,
       });
-      selectLayer?.(id, { reason: "storytelling" });
+      selectLayer?.(id, undefined, { reason: "storytelling" });
     },
     [camera, duration, range, selectLayer, stories],
   );

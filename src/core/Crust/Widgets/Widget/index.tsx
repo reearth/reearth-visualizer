@@ -31,11 +31,18 @@ export type Props = {
 export type Context = {
   clock?: Clock;
   camera?: Camera;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   is2d?: boolean;
   onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
-  onLayerSelect?: (id: string | undefined, options?: { reason?: string }) => void;
+  onLayerSelect?: (
+    layerId: string | undefined,
+    featureId: string | undefined,
+    options?: { reason?: string },
+  ) => void;
   onPlay?: () => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;

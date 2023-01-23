@@ -15,6 +15,7 @@ import Map, {
   type Camera,
   type LatLng,
   type Cluster,
+  ComputedLayer,
 } from "../Map";
 
 import { engines, type EngineType } from "./engines";
@@ -49,15 +50,19 @@ export type Props = {
   small?: boolean;
   ready?: boolean;
   selectedBlockId?: string;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   hiddenLayers?: string[];
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onWidgetLayoutUpdate?: (
@@ -124,6 +129,8 @@ export default function Visualizer({
     mapRef,
     selectedLayer,
     selectedBlock,
+    selectedFeature,
+    selectedComputedFeature,
     camera,
     clock,
     isMobile,
@@ -147,15 +154,19 @@ export default function Visualizer({
         isBuilt={isBuilt}
         isEditable={isEditable}
         sceneProperty={sceneProperty}
-        blocks={selectedLayer?.infobox?.blocks}
+        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
         camera={camera}
         clock={clock}
         isMobile={isMobile}
-        infoboxProperty={selectedLayer?.infobox?.property?.default}
-        infoboxTitle={selectedLayer?.title}
-        infoboxVisible={!!selectedLayer?.infobox}
+        selectedComputedLayer={selectedLayer?.layer}
+        selectedFeature={selectedFeature}
+        selectedComputedFeature={selectedComputedFeature}
+        selectedReason={selectedLayer.reason}
+        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
+        infoboxTitle={selectedLayer?.layer?.layer.title}
+        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
         selectedBlockId={selectedBlock}
-        selectedLayerId={selectedLayer?.id}
+        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}

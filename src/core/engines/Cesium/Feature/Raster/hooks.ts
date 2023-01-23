@@ -1,5 +1,10 @@
 import { VectorTileFeature } from "@mapbox/vector-tile";
-import { ImageryLayerCollection, ImageryProvider, WebMapServiceImageryProvider } from "cesium";
+import {
+  ImageryLayerCollection,
+  ImageryLayerFeatureInfo,
+  ImageryProvider,
+  WebMapServiceImageryProvider,
+} from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
@@ -191,6 +196,16 @@ export const useMVT = ({
           lineWidth: computedFeature?.polygon?.strokeWidth,
           lineJoin: computedFeature?.polygon?.lineJoin,
         };
+      },
+      onSelectFeature: (mvtFeature, tile) => {
+        const featureId = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const layerId = cachedCalculatedLayerRef.current?.layer.id;
+        const l = new ImageryLayerFeatureInfo();
+        l.data = {
+          featureId,
+          layerId,
+        };
+        return l;
       },
     });
   }, [

@@ -1,5 +1,11 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { Cesium3DTileset, Color, Entity as CesiumEntity, PropertyBag } from "cesium";
+import {
+  Cesium3DTileFeature,
+  Cesium3DTileset,
+  Color,
+  Entity as CesiumEntity,
+  PropertyBag,
+} from "cesium";
 import {
   ComponentProps,
   ComponentType,
@@ -66,10 +72,18 @@ function EntityExtComponent(
   return <Entity ref={composeRefs(ref, r)} {...props} />;
 }
 
-export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefined, tag: Tag) {
+export function attachTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  tag: Tag,
+) {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    (entity as any)[tagKey] = tag;
+    return;
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     (entity as any)[tagKey] = tag;
     return;
   }
@@ -83,10 +97,16 @@ export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefi
   }
 }
 
-export function getTag(entity: CesiumEntity | Cesium3DTileset | null | undefined): Tag | undefined {
+export function getTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+): Tag | undefined {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    return (entity as any)[tagKey];
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     return (entity as any)[tagKey];
   }
 

@@ -1,8 +1,9 @@
 import { forwardRef, type ForwardRefRenderFunction } from "react";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
+import type { ComputedLayer } from "../types";
 
-import useHooks, { LayerSelectionReason, type Layer, type Ref } from "./hooks";
+import useHooks, { LayerSelectionReason, type Ref } from "./hooks";
 
 export type {
   CommonProps,
@@ -22,11 +23,15 @@ export type {
 
 export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   hiddenLayers?: string[];
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   selectionReason?: LayerSelectionReason;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
 };

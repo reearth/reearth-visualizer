@@ -112,13 +112,13 @@ export class Node {
   _evaluateLiteralString() {
     return this._value;
   }
-  _evaluateVariableString(feature: Feature) {
+  _evaluateVariableString(feature?: Feature) {
     let result = this._value;
     let match = variableRegex.exec(result);
     while (match !== null) {
       const placeholder = match[0];
       const variableName = match[1];
-      let property = feature.properties[variableName];
+      let property = feature?.properties[variableName];
       if (!defined(property)) {
         property = "";
       }
@@ -127,21 +127,21 @@ export class Node {
     }
     return result;
   }
-  _evaluateVariable(feature: Feature) {
+  _evaluateVariable(feature?: Feature) {
     let property;
-    if (String(this._value) in feature.properties) {
+    if (feature && String(this._value) in feature.properties) {
       property = feature.properties[String(this._value)];
     } else if (String(this._value) === "id") {
-      property = feature.id;
+      property = feature?.id;
     }
     if (!defined(property)) {
       property = "";
     }
     return property;
   }
-  _evaluateMemberDot(feature: Feature) {
+  _evaluateMemberDot(feature?: Feature) {
     if (checkFeature(this._left)) {
-      return feature.properties[this._right.evaluate(feature)];
+      return feature?.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
     if (!defined(property)) {
@@ -152,9 +152,9 @@ export class Node {
     return property[member];
   }
 
-  _evaluateMemberBrackets(feature: Feature) {
+  _evaluateMemberBrackets(feature?: Feature) {
     if (checkFeature(this._left)) {
-      return feature.properties[this._right.evaluate(feature)];
+      return feature?.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
     if (!defined(property)) {
@@ -164,7 +164,7 @@ export class Node {
     const member = this._right.evaluate(feature);
     return property[member];
   }
-  _evaluateArray(feature: Feature) {
+  _evaluateArray(feature?: Feature) {
     const array = [];
     for (let i = 0; i < this._value.length; i++) {
       array[i] = this._value[i].evaluate(feature);
@@ -172,14 +172,14 @@ export class Node {
     return array;
   }
 
-  _evaluateNot(feature: Feature) {
+  _evaluateNot(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left !== "boolean") {
       throw new Error(`Operator "!" requires a boolean argument. Argument is ${left}.`);
     }
     return !left;
   }
-  _evaluateNegative(feature: Feature) {
+  _evaluateNegative(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left === "number") {
       return -left;
@@ -187,7 +187,7 @@ export class Node {
 
     throw new Error(`Operator "-" requires a vector or number argument. Argument is ${left}.`);
   }
-  _evaluatePositive(feature: Feature) {
+  _evaluatePositive(feature?: Feature) {
     const left = this._left.evaluate(feature);
 
     if (!(typeof left === "number")) {
@@ -196,7 +196,7 @@ export class Node {
 
     return left;
   }
-  _evaluateLessThan(feature: Feature) {
+  _evaluateLessThan(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
@@ -208,7 +208,7 @@ export class Node {
 
     return left < right;
   }
-  _evaluateLessThanOrEquals(feature: Feature) {
+  _evaluateLessThanOrEquals(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
@@ -220,7 +220,7 @@ export class Node {
 
     return left <= right;
   }
-  _evaluateGreaterThan(feature: Feature) {
+  _evaluateGreaterThan(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
@@ -232,7 +232,7 @@ export class Node {
 
     return left > right;
   }
-  _evaluateGreaterThanOrEquals(feature: Feature) {
+  _evaluateGreaterThanOrEquals(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
@@ -244,7 +244,7 @@ export class Node {
 
     return left >= right;
   }
-  _evaluateOr(feature: Feature) {
+  _evaluateOr(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left !== "boolean") {
       throw new Error(`Operator "||" requires boolean arguments. First argument is ${left}.`);
@@ -262,7 +262,7 @@ export class Node {
 
     return left || right;
   }
-  _evaluateAnd(feature: Feature) {
+  _evaluateAnd(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left !== "boolean") {
       throw new Error(`Operator "&&" requires boolean arguments. First argument is ${left}.`);
@@ -280,7 +280,7 @@ export class Node {
 
     return left && right;
   }
-  _evaluatePlus(feature: Feature) {
+  _evaluatePlus(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
     if (typeof left === "number" && typeof right === "number") {
@@ -291,7 +291,7 @@ export class Node {
       `Operator "+" requires vector or number arguments of matching types, or at least one string argument. Arguments are ${left} and ${right}.`,
     );
   }
-  _evaluateMinus(feature: Feature) {
+  _evaluateMinus(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
     if (typeof left === "number" && typeof right === "number") {
@@ -302,7 +302,7 @@ export class Node {
       `Operator "-" requires vector or number arguments of matching types. Arguments are ${left} and ${right}.`,
     );
   }
-  _evaluateTimes(feature: Feature) {
+  _evaluateTimes(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
     if (typeof left === "number" && typeof right === "number") {
@@ -313,7 +313,7 @@ export class Node {
       `Operator "*" requires vector or number arguments. If both arguments are vectors they must be matching types. Arguments are ${left} and ${right}.`,
     );
   }
-  _evaluateDivide(feature: Feature) {
+  _evaluateDivide(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
     if (typeof left === "number" && typeof right === "number") {
@@ -324,7 +324,7 @@ export class Node {
       `Operator "/" requires vector or number arguments of matching types, or a number as the second argument. Arguments are ${left} and ${right}.`,
     );
   }
-  _evaluateMod(feature: Feature) {
+  _evaluateMod(feature?: Feature) {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
     if (typeof left === "number" && typeof right === "number") {
@@ -335,19 +335,19 @@ export class Node {
       `Operator "%" requires vector or number arguments of matching types. Arguments are ${left} and ${right}.`,
     );
   }
-  _evaluateEqualsStrict(feature: Feature): boolean {
+  _evaluateEqualsStrict(feature?: Feature): boolean {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
     return left === right;
   }
-  _evaluateNotEqualsStrict(feature: Feature): boolean {
+  _evaluateNotEqualsStrict(feature?: Feature): boolean {
     const left = this._left.evaluate(feature);
     const right = this._right.evaluate(feature);
 
     return left !== right;
   }
-  _evaluateConditional(feature: Feature) {
+  _evaluateConditional(feature?: Feature) {
     const test = this._test.evaluate(feature);
 
     if (typeof test !== "boolean") {
@@ -361,23 +361,23 @@ export class Node {
     }
     return this._right.evaluate(feature);
   }
-  _evaluateNaN(feature: Feature): boolean {
+  _evaluateNaN(feature?: Feature): boolean {
     return isNaN(this._left.evaluate(feature));
   }
-  _evaluateIsFinite(feature: Feature): boolean {
+  _evaluateIsFinite(feature?: Feature): boolean {
     return isFinite(this._left.evaluate(feature));
   }
 
-  _evaluateBooleanConversion(feature: Feature): boolean {
+  _evaluateBooleanConversion(feature?: Feature): boolean {
     return Boolean(this._left.evaluate(feature));
   }
-  _evaluateNumberConversion(feature: Feature): number {
+  _evaluateNumberConversion(feature?: Feature): number {
     return Number(this._left.evaluate(feature));
   }
-  _evaluateStringConversion(feature: Feature): string {
+  _evaluateStringConversion(feature?: Feature): string {
     return String(this._left.evaluate(feature));
   }
-  _evaluateToString(feature: Feature): string | Error {
+  _evaluateToString(feature?: Feature): string | Error {
     const left = this._left.evaluate(feature);
     if (left instanceof RegExp) {
       return String(left);
@@ -385,7 +385,7 @@ export class Node {
     throw new Error(`Unexpected function call "${this._value}".`);
   }
 
-  _evaluateLiteralColor(feature: any) {
+  _evaluateLiteralColor(feature?: Feature) {
     const args = this._left;
     let color = new Color();
     if (this._value === "color") {

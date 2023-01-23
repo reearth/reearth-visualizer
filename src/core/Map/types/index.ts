@@ -84,13 +84,20 @@ export type EngineProps = {
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   layerSelectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id: string | undefined, options?: LayerSelectionReason) => void;
+  onLayerSelect?: (
+    layerId: string | undefined,
+    featureId?: string,
+    options?: LayerSelectionReason,
+  ) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Clock) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
