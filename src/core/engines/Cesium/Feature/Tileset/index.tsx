@@ -19,6 +19,8 @@ function Tileset({
   feature,
   sceneProperty,
   evalFeature,
+  onComputedFeatureFetch,
+  onFeatureDelete,
 }: Props): JSX.Element | null {
   const { shadows } = property ?? {};
   const { tilesetUrl, ref, style, clippingPlanes } = useHooks({
@@ -29,6 +31,8 @@ function Tileset({
     property,
     sceneProperty,
     evalFeature,
+    onComputedFeatureFetch,
+    onFeatureDelete,
   });
 
   return !isVisible || !tilesetUrl ? null : (

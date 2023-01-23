@@ -21,6 +21,11 @@ export default function useHooks(
     (features: Feature[]) => set({ type: "writeFeatures", features }),
     [set],
   );
+  const writeComputedFeatures = useCallback(
+    (feature: Feature[], computed: ComputedFeature[]) =>
+      set({ type: "writeComputedFeatures", value: { feature, computed } }),
+    [set],
+  );
   const requestFetch = useCallback(
     (range: DataRange) => set({ type: "requestFetch", range }),
     [set],
@@ -55,6 +60,7 @@ export default function useHooks(
     computedLayer,
     handleFeatureRequest: requestFetch,
     handleFeatureFetch: writeFeatures,
+    handleComputedFeatureFetch: writeComputedFeatures,
     handleFeatureDelete: deleteFeatures,
     evalFeature,
   };

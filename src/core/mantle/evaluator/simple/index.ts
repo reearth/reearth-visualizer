@@ -23,13 +23,21 @@ export async function evalSimpleLayer(
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return {
     layer: evalLayerAppearances(appearances, layer),
-    features: features?.map(f => ({ ...f, ...evalLayerAppearances(appearances, layer, f) })),
+    features: features?.map(f => ({
+      ...f,
+      ...evalLayerAppearances(appearances, layer, f),
+      type: "computedFeature",
+    })),
   };
 }
 
 export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
-  return { ...feature, ...evalLayerAppearances(appearances, layer, feature) };
+  return {
+    ...feature,
+    ...evalLayerAppearances(appearances, layer, feature),
+    type: "computedFeature",
+  };
 };
 
 export function evalLayerAppearances(

@@ -149,6 +149,7 @@ const makeFeature = (value: CSVGeoJSONFeature, range: DataRange | undefined): Fe
 
   const geo = value.geometry;
   return {
+    type: "feature",
     id: (value.id && String(value.id)) || generateRandomString(12),
     geometry: geo ?? undefined,
     properties: value.properties,

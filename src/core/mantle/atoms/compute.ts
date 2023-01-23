@@ -22,6 +22,7 @@ export type Command =
   | { type: "setLayer"; layer?: Layer }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
+  | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
   | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] };
@@ -76,25 +77,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
     const layerId = currentLayer.id;
 
-    // With delegated data, we can skip fetching process.
+    // To write feature with delegated data, you should use `writeComputedFeature` atom.
     if (get(delegatedDataTypes).includes(currentLayer.data.type)) {
-      set(layerStatus, "fetching");
-
-      const getAllFeatures = async (data: Data) => {
-        const getterAll = get(dataAtoms.getAll);
-        const allFeatures = getterAll(layerId, data);
-        return allFeatures?.flat();
-      };
-
-      const getFeatures = async (data: Data, range?: DataRange) => {
-        const getter = get(dataAtoms.get);
-        const c = getter(layerId, data, range);
-        return c;
-      };
-
-      const result = await evalLayer(currentLayer, { getFeatures, getAllFeatures });
       set(layerStatus, "ready");
-      set(computedResult, result);
       return;
     }
 
@@ -157,6 +142,48 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
+  const writeComputedFeatures = atom(
+    null,
+    async (get, set, value: { feature: Feature[]; computed: ComputedFeature[] }) => {
+      const currentLayer = get(layer);
+      if (currentLayer?.type !== "simple" || !currentLayer.data) return;
+
+      if (import.meta.env.DEV) {
+        if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
+          throw new Error("writeComputedFeature can be called with delegated data");
+        }
+      }
+
+      set(layerStatus, "fetching");
+
+      set(dataAtoms.set, {
+        data: currentLayer.data,
+        features: value.feature,
+        layerId: currentLayer.id,
+      });
+
+      const computedLayer = await evalLayer(currentLayer, {
+        getAllFeatures: async () => undefined,
+        getFeatures: async () => undefined,
+      });
+
+      if (!computedLayer) {
+        return;
+      }
+
+      set(layerStatus, "ready");
+
+      const prevResult = get(computedResult);
+
+      const result = {
+        layer: computedLayer.layer,
+        features: [...(prevResult?.features || []), ...value.computed],
+      };
+
+      set(computedResult, result);
+    },
+  );
+
   const deleteFeatures = atom(null, async (get, set, value: string[]) => {
     const currentLayer = get(layer);
     if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
@@ -181,6 +208,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "writeFeatures":
           await s(writeFeatures, value.features);
+          break;
+        case "writeComputedFeatures":
+          await s(writeComputedFeatures, value.value);
           break;
         case "deleteFeatures":
           await s(deleteFeatures, value.features);
