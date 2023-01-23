@@ -5,6 +5,7 @@ import Layers, { type Props as LayersProps } from "./Layers";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
+export { useGet, type WrappedRef, type Undefinable, useOverriddenProperty } from "./utils";
 
 export type {
   NaiveLayer,
@@ -16,6 +17,8 @@ export type {
   LayerSelectionReason,
   Cluster,
   EvalFeature,
+  OverriddenInfobox,
+  OverriddenLayer,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";

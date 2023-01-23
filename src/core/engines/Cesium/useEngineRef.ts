@@ -342,7 +342,7 @@ export default function useEngineRef(
       tick: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer.clock.tick();
+        return JulianDate.toDate(viewer.clock.tick());
       },
       changeStart: (start: Date) => {
         const viewer = cesium.current?.cesiumElement;
@@ -353,6 +353,24 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         viewer.clock.stopTime = JulianDate.fromDate(stop);
+      },
+      inViewport: location => {
+        const rect = e.getViewport();
+        return !!(
+          rect &&
+          location &&
+          typeof location.lng === "number" &&
+          typeof location.lat === "number" &&
+          Cesium.Rectangle.contains(
+            new Cesium.Rectangle(
+              CesiumMath.toRadians(rect.west),
+              CesiumMath.toRadians(rect.south),
+              CesiumMath.toRadians(rect.east),
+              CesiumMath.toRadians(rect.north),
+            ),
+            Cesium.Cartographic.fromDegrees(location.lng, location.lat),
+          )
+        );
       },
     };
   }, [cesium]);

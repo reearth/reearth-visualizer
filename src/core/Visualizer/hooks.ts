@@ -1,8 +1,28 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useWindowSize } from "react-use";
 
-import { ComputedFeature, Feature } from "../mantle";
-import type { Ref as MapRef, LayerSelectionReason, Camera, Clock, ComputedLayer } from "../Map";
+import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
+
+import type { ComputedFeature, Feature } from "../mantle";
+import type {
+  Ref as MapRef,
+  LayerSelectionReason,
+  Camera,
+  Clock,
+  ComputedLayer,
+  SceneProperty,
+} from "../Map";
+import { useOverriddenProperty } from "../Map";
+
+import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
 
@@ -10,6 +30,9 @@ export default function useHooks({
   selectedBlockId: initialSelectedBlockId,
   camera: initialCamera,
   clock: initialClock,
+  sceneProperty,
+  isEditable,
+  rootLayerId,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
@@ -18,6 +41,9 @@ export default function useHooks({
   selectedBlockId?: string;
   camera?: Camera;
   clock?: Date;
+  isEditable?: boolean;
+  rootLayerId?: string;
+  sceneProperty?: SceneProperty;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -29,6 +55,34 @@ export default function useHooks({
   onTick?: (clock: Date) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const { ref: dropRef, isDroppable } = useDrop(
+    useMemo(
+      (): DropOptions => ({
+        accept: ["primitive"],
+        drop(_item, context) {
+          if (!rootLayerId || !isEditable) return;
+          const loc = context.position
+            ? mapRef.current?.engine.getLocationFromScreen(context.position.x, context.position.y)
+            : undefined;
+          return {
+            type: "earth",
+            layerId: rootLayerId,
+            position: loc ? { lat: loc.lat, lng: loc.lng, height: loc.height } : undefined,
+          };
+        },
+        wrapperRef,
+      }),
+      [rootLayerId, isEditable],
+    ),
+  );
+  dropRef(wrapperRef);
+
+  const viewport = useViewport({
+    wrapperRef,
+  });
 
   // layer
   const [selectedLayer, selectLayer] = useState<{
@@ -60,6 +114,9 @@ export default function useHooks({
     [],
   );
 
+  // scene
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
 
@@ -80,17 +137,22 @@ export default function useHooks({
 
   return {
     mapRef,
+    wrapperRef,
     selectedLayer: selectedLayer,
     selectedFeature,
     selectedComputedFeature,
     selectedBlock,
+    viewport,
     camera,
     clock: mapClock,
     isMobile,
+    overriddenSceneProperty,
+    isDroppable,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
     handleTick: handleTick2,
+    overrideSceneProperty,
   };
 }
 

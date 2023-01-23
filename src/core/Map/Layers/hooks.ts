@@ -61,12 +61,15 @@ export type Ref = {
   show: (...layers: string[]) => void;
   select: (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => void;
   selectedLayer: () => LazyLayer | undefined;
+  overriddenLayers: () => OverriddenLayer[];
 };
 
 export type OverriddenInfobox = {
   title?: string;
   content: { key: string; value: string }[];
 };
+
+export type OverriddenLayer = Omit<Layer, "type" | "children">;
 
 export type LayerSelectionReason = {
   reason?: string;
@@ -102,7 +105,7 @@ export default function useHooks({
   ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
-  const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
+  const [overriddenLayers, setOverridenLayers] = useState<OverriddenLayer[]>([]);
   const atomMap = useMemo(() => new Map<string, Atom>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
@@ -430,6 +433,8 @@ export default function useHooks({
     [showLayer],
   );
 
+  const overriddenLayersRef = useCallback(() => overriddenLayers, [overriddenLayers]);
+
   const { select, selectedLayer } = useSelection({
     flattenedLayers,
     selectedLayerId,
@@ -459,6 +464,7 @@ export default function useHooks({
       show: showLayers,
       select,
       selectedLayer,
+      overriddenLayers: overriddenLayersRef,
     }),
     [
       findById,
@@ -479,6 +485,7 @@ export default function useHooks({
       showLayers,
       select,
       selectedLayer,
+      overriddenLayersRef,
     ],
   );
 

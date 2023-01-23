@@ -3,6 +3,7 @@ import React, { type ReactNode } from "react";
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import type { Layer } from "@reearth/core/mantle";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
@@ -10,9 +11,9 @@ import BlockComponent from "./Block";
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
-import { ValueTypes, ValueType, Block, InfoboxProperty, Theme } from "./types";
+import type { ValueTypes, ValueType, Block, InfoboxProperty, Theme, BlockProps } from "./types";
 
-export type { InfoboxProperty, Block, LatLng } from "./types";
+export type { InfoboxProperty, Block, LatLng, BlockProps } from "./types";
 
 export type Props = {
   className?: string;
@@ -25,6 +26,7 @@ export type Props = {
   selectedBlockId?: string;
   visible?: boolean;
   theme?: Theme;
+  layer?: Layer;
   onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
@@ -37,7 +39,7 @@ export type Props = {
   onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
-  renderBlock?: (block: Block) => ReactNode;
+  renderBlock?: (block: BlockProps) => ReactNode;
   renderInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 };
 

@@ -1,3 +1,5 @@
+import type { Layer } from "@reearth/core/mantle";
+
 import type { Typography } from "../types";
 
 export type { LatLng, Typography, ValueTypes, ValueType, Theme } from "../types";
@@ -26,4 +28,10 @@ export type Block<P = any> = {
   extensionId?: string;
   property?: P;
   propertyId?: string;
+};
+
+export type BlockProps<P = any> = {
+  block?: Block<P>;
+  layer?: Layer;
+  onClick?: () => void;
 };

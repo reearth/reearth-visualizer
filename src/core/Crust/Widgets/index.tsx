@@ -1,6 +1,7 @@
 import { ReactNode, useCallback } from "react";
 
-import type { Theme, Widget, WidgetLayout } from "./types";
+import type { Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types";
+import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
 import WidgetAlignSystem, {
   type Alignment,
@@ -15,11 +16,14 @@ export type {
   Location,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
+  WidgetArea,
+  WidgetZone,
+  WidgetSection,
 } from "./WidgetAlignSystem";
 
 export type { Context } from "./Widget";
 
-export type { Widget, InternalWidget } from "./types";
+export type { Widget, InternalWidget, WidgetLocationOptions } from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
@@ -48,6 +52,7 @@ export type WidgetProps = {
   extended: boolean;
   layout: WidgetLayout;
   onExtend: (id: string, extended: boolean | undefined) => void;
+  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
 
 export default function Widgets({
@@ -63,6 +68,10 @@ export default function Widgets({
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
 }: Props): JSX.Element | null {
+  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
+    alignSystem,
+  });
+
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
       <WidgetComponent
@@ -75,17 +84,24 @@ export default function Widgets({
         isBuilt={isBuilt}
         context={context}
         renderWidget={widget2 =>
-          renderWidget?.({ widget: widget2, editing, extended, layout, onExtend })
+          renderWidget?.({
+            widget: widget2,
+            editing,
+            extended,
+            layout,
+            onExtend,
+            moveWidget,
+          })
         }
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, renderWidget, theme],
+    [context, isBuilt, isEditable, renderWidget, theme, moveWidget],
   );
 
   return (
     <WidgetAlignSystem
-      alignSystem={alignSystem}
+      alignSystem={overriddenAlignSystem}
       editing={editing}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}

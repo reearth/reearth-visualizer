@@ -55,6 +55,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   zoomOut: 1,
   changeStart: 1,
   changeStop: 1,
+  inViewport: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -76,6 +77,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   selectedLayer: 1,
   show: 1,
   walk: 1,
+  overriddenLayers: 1,
 };
 
 export function mapRef({

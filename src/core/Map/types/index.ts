@@ -70,7 +70,8 @@ export type EngineRef = {
   changeStart: (start: Date) => void;
   changeStop: (stop: Date) => void;
   changeTime: (time: Date) => void;
-  tick: () => void;
+  tick: () => Date | void;
+  inViewport: (location?: LatLng) => boolean;
 };
 
 export type EngineProps = {

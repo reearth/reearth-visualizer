@@ -1,11 +1,18 @@
 import { CSSProperties, type ReactNode } from "react";
 
+// TODO(@keiya01): Change directory structure
+import DropHolder from "@reearth/components/atoms/DropHolder";
+import Filled from "@reearth/components/atoms/Filled";
+
 import Crust, {
   type Alignment,
   type Location,
   type WidgetAlignSystem,
   type WidgetLayoutConstraint,
+  type ExternalPluginProps,
+  type InternalWidget,
 } from "../Crust";
+import { Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -30,14 +37,18 @@ export type {
   WidgetLayoutConstraint,
 } from "../Crust";
 export type { EngineType } from "./engines";
+export { Viewport } from "./useViewport";
 
 export type Props = {
   engine?: EngineType;
   isBuilt?: boolean;
   isEditable?: boolean;
+  inEditor?: boolean;
+  rootLayerId?: string;
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   widgetAlignSystemEditing?: boolean;
+  floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[];
@@ -49,6 +60,7 @@ export type Props = {
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
+  tags?: Tag[];
   selectedBlockId?: string;
   selectedLayerId?: {
     layerId?: string;
@@ -87,20 +99,24 @@ export type Props = {
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
-};
+} & ExternalPluginProps;
 
 export default function Visualizer({
   engine,
   isBuilt,
+  rootLayerId,
   isEditable,
+  inEditor,
   sceneProperty,
   layers,
   clusters,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
+  floatingWidgets,
   small,
   ready,
+  tags,
   selectedBlockId,
   selectedLayerId,
   hiddenLayers,
@@ -110,6 +126,8 @@ export default function Visualizer({
   clock: initialClock,
   meta,
   style,
+  pluginBaseUrl,
+  pluginProperty,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
@@ -127,21 +145,29 @@ export default function Visualizer({
 }: Props): JSX.Element | null {
   const {
     mapRef,
+    wrapperRef,
     selectedLayer,
     selectedBlock,
     selectedFeature,
     selectedComputedFeature,
+    viewport,
     camera,
     clock,
     isMobile,
+    overriddenSceneProperty,
+    isDroppable,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
     handleTick,
+    overrideSceneProperty,
   } = useHooks({
+    rootLayerId,
+    isEditable,
     camera: initialCamera,
     clock: initialClock,
     selectedBlockId,
+    sceneProperty,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
@@ -149,43 +175,13 @@ export default function Visualizer({
   });
 
   return (
-    <>
-      <Crust
-        isBuilt={isBuilt}
-        isEditable={isEditable}
-        sceneProperty={sceneProperty}
-        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
-        camera={camera}
-        clock={clock}
-        isMobile={isMobile}
-        selectedComputedLayer={selectedLayer?.layer}
-        selectedFeature={selectedFeature}
-        selectedComputedFeature={selectedComputedFeature}
-        selectedReason={selectedLayer.reason}
-        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
-        infoboxTitle={selectedLayer?.layer?.layer.title}
-        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
-        selectedBlockId={selectedBlock}
-        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
-        widgetAlignSystem={widgetAlignSystem}
-        widgetAlignSystemEditing={widgetAlignSystemEditing}
-        widgetLayoutConstraint={widgetLayoutConstraint}
-        mapRef={mapRef}
-        onWidgetLayoutUpdate={onWidgetLayoutUpdate}
-        onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
-        onInfoboxMaskClick={onInfoboxMaskClick}
-        onBlockSelect={handleBlockSelect}
-        onBlockChange={onBlockChange}
-        onBlockMove={onBlockMove}
-        onBlockDelete={onBlockDelete}
-        onBlockInsert={onBlockInsert}
-        renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
-      />
+    <Filled ref={wrapperRef}>
+      {isDroppable && <DropHolder />}
       <Map
         ref={mapRef}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={sceneProperty}
+        sceneProperty={overriddenSceneProperty}
         engine={engine}
         layers={layers}
         engines={engines}
@@ -208,6 +204,44 @@ export default function Visualizer({
         onLayerSelect={handleLayerSelect}
         onTick={handleTick}
       />
-    </>
+      <Crust
+        engineName={engine}
+        tags={tags}
+        viewport={viewport}
+        isBuilt={isBuilt}
+        isEditable={isEditable}
+        inEditor={inEditor}
+        sceneProperty={overriddenSceneProperty}
+        overrideSceneProperty={overrideSceneProperty}
+        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
+        camera={camera}
+        clock={clock}
+        isMobile={isMobile}
+        selectedComputedLayer={selectedLayer?.layer}
+        selectedFeature={selectedFeature}
+        selectedComputedFeature={selectedComputedFeature}
+        selectedReason={selectedLayer.reason}
+        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
+        infoboxTitle={selectedLayer?.layer?.layer.title}
+        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
+        selectedBlockId={selectedBlock}
+        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+        widgetAlignSystem={widgetAlignSystem}
+        widgetAlignSystemEditing={widgetAlignSystemEditing}
+        widgetLayoutConstraint={widgetLayoutConstraint}
+        floatingWidgets={floatingWidgets}
+        mapRef={mapRef}
+        externalPlugin={{ pluginBaseUrl, pluginProperty }}
+        onWidgetLayoutUpdate={onWidgetLayoutUpdate}
+        onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
+        onInfoboxMaskClick={onInfoboxMaskClick}
+        onBlockSelect={handleBlockSelect}
+        onBlockChange={onBlockChange}
+        onBlockMove={onBlockMove}
+        onBlockDelete={onBlockDelete}
+        onBlockInsert={onBlockInsert}
+        renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+      />
+    </Filled>
   );
 }

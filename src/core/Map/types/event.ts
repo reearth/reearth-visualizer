@@ -14,7 +14,7 @@ export type Events<E extends { [P in string]: any[] } = { [P in string]: any[] }
   readonly once: <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => void;
 };
 
-export default function events<E extends { [P in string]: any[] } = { [P in string]: any[] }>(): [
+export function events<E extends { [P in string]: any[] } = { [P in string]: any[] }>(): [
   Events<E>,
   EventEmitter<E>,
 ] {

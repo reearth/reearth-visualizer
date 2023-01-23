@@ -108,12 +108,6 @@ export type Context = {
 export const context = createContext<Context | undefined>(undefined);
 export const useContext = (): Context | undefined => useReactContext(context);
 
-declare global {
-  interface Window {
-    reearth?: CommonReearth;
-  }
-}
-
 export function Provider({
   engine: { api, builtinPrimitives },
   engineName,
@@ -348,7 +342,7 @@ export function Provider({
 
   // expose plugin API for developers
   useEffect(() => {
-    window.reearth = value.reearth;
+    (window as any).reearth = value.reearth;
     return () => {
       delete window.reearth;
     };

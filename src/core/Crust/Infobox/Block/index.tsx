@@ -1,16 +1,18 @@
-import { ComponentType, ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
+import type { Layer } from "@reearth/core/mantle";
 import { styled } from "@reearth/theme";
-import { ValueType, ValueTypes } from "@reearth/util/value";
+import type { ValueType, ValueTypes } from "@reearth/util/value";
 
-import { Block, InfoboxProperty } from "../types";
+import type { Block, BlockProps, InfoboxProperty } from "../types";
 
 import builtin from "./builtin";
 
 export type { InfoboxProperty, Typography, LatLng } from "../types";
 
 export type Props<BP = any> = {
-  renderBlock?: (block: Block) => ReactNode;
+  renderBlock?: (block: BlockProps) => ReactNode;
+  layer?: Layer;
 } & CommonProps<BP>;
 
 export type CommonProps<BP = any> = {
@@ -43,7 +45,7 @@ export default function BlockComponent<P = any>({
     <Builtin {...props} />
   ) : props.block ? (
     <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
-      {renderBlock?.(props.block)}
+      {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
     </Wrapper>
   ) : null;
 }

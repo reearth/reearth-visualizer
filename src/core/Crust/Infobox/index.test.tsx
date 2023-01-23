@@ -8,7 +8,7 @@ import Infobox from ".";
 test("infobox should render blocks by renderBlock prop", async () => {
   render(
     <Provider>
-      <Infobox visible blocks={[{ id: "BLOCK ID" }]} renderBlock={b => <p>{b.id}</p>} />
+      <Infobox visible blocks={[{ id: "BLOCK ID" }]} renderBlock={b => <p>{b.block?.id}</p>} />
     </Provider>,
   );
 
