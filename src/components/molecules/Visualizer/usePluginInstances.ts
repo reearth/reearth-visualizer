@@ -30,9 +30,9 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
   const runTimesCache = useMemo<Map<string, number>>(() => new Map(), []);
   const runTimesCacheHandler = useMemo(
     () => ({
-      get: (id: string) => runTimesCache.get(id),
-      increment: (id: string) => runTimesCache.set(id, (runTimesCache.get(id) || 0) + 1),
-      decrement: (id: string) => runTimesCache.set(id, (runTimesCache.get(id) || 0) - 1),
+      get: (id: string) => runTimesCache.get(id) || 0,
+      increment: (id: string) => runTimesCache.set(id, runTimesCacheHandler.get(id) + 1),
+      decrement: (id: string) => runTimesCache.set(id, runTimesCacheHandler.get(id) - 1),
       clear: (id: string) => runTimesCache.set(id, 0),
       clearAll: () => runTimesCache.clear(),
     }),
@@ -60,7 +60,7 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
                       extensionId: widget.extensionId ?? "",
                       extensionType: "widget",
                       get runTimes() {
-                        return runTimesCache.get(widget.id);
+                        return runTimesCacheHandler.get(widget.id);
                       },
                     });
                   });
@@ -81,7 +81,7 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
           extensionId: widget.extensionId ?? "",
           extensionType: "widget",
           get runTimes() {
-            return runTimesCache.get(widget.id);
+            return runTimesCacheHandler.get(widget.id);
           },
         });
       });
@@ -96,14 +96,14 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
           extensionId: block.extensionId ?? "",
           extensionType: "block",
           get runTimes() {
-            return runTimesCache.get(block.id);
+            return runTimesCacheHandler.get(block.id);
           },
         });
       });
     }
 
     pluginInstancesMeta.current = instances;
-  }, [alignSystem, floatingWidgets, blocks, runTimesCache]);
+  }, [alignSystem, floatingWidgets, blocks, runTimesCacheHandler]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 
