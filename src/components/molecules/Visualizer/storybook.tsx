@@ -97,6 +97,13 @@ export const context: ProviderProps = {
     postMessage: () => {},
     addPluginMessageSender: () => {},
     removePluginMessageSender: () => {},
+    runTimesCache: {
+      get: () => 1,
+      increment: () => {},
+      decrement: () => {},
+      clear: () => {},
+      clearAll: () => {},
+    },
   },
   clientStorage: {
     getAsync: act("clientStorage.getAsync"),

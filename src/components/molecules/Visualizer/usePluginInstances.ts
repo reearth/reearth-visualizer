@@ -15,10 +15,29 @@ export type PluginInstances = {
   postMessage: (id: string, msg: any, sender: string) => void;
   addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => void;
   removePluginMessageSender: (id: string) => void;
+  runTimesCache: {
+    get: (id: string) => number | undefined;
+    increment: (id: string) => void;
+    decrement: (id: string) => void;
+    clear: (id: string) => void;
+    clearAll: () => void;
+  };
 };
 
 export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
   const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
+
+  const runTimesCache = useMemo<Map<string, number>>(() => new Map(), []);
+  const runTimesCacheHandler = useMemo(
+    () => ({
+      get: (id: string) => runTimesCache.get(id),
+      increment: (id: string) => runTimesCache.set(id, (runTimesCache.get(id) || 0) + 1),
+      decrement: (id: string) => runTimesCache.set(id, (runTimesCache.get(id) || 0) - 1),
+      clear: (id: string) => runTimesCache.set(id, 0),
+      clearAll: () => runTimesCache.clear(),
+    }),
+    [runTimesCache],
+  );
 
   useEffect(() => {
     const instances: PluginExtensionInstance[] = [];
@@ -40,6 +59,9 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
                       name: getExtensionInstanceName(widget.pluginId ?? ""),
                       extensionId: widget.extensionId ?? "",
                       extensionType: "widget",
+                      get runTimes() {
+                        return runTimesCache.get(widget.id);
+                      },
                     });
                   });
                 }
@@ -58,6 +80,9 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
           name: getExtensionInstanceName(widget.pluginId ?? ""),
           extensionId: widget.extensionId ?? "",
           extensionType: "widget",
+          get runTimes() {
+            return runTimesCache.get(widget.id);
+          },
         });
       });
     }
@@ -70,12 +95,15 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
           name: getExtensionInstanceName(block.pluginId ?? ""),
           extensionId: block.extensionId ?? "",
           extensionType: "block",
+          get runTimes() {
+            return runTimesCache.get(block.id);
+          },
         });
       });
     }
 
     pluginInstancesMeta.current = instances;
-  }, [alignSystem, floatingWidgets, blocks]);
+  }, [alignSystem, floatingWidgets, blocks, runTimesCache]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 
@@ -102,8 +130,9 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
       removePluginMessageSender: (id: string) => {
         pluginMessageSenders.current?.delete(id);
       },
+      runTimesCache: runTimesCacheHandler,
     };
-  }, [pluginInstancesMeta]);
+  }, [pluginInstancesMeta, runTimesCacheHandler]);
 
   return pluginInstances;
 };

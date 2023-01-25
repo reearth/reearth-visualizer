@@ -105,6 +105,7 @@ export type PluginExtensionInstance = {
   readonly name: string;
   readonly extensionId: string;
   readonly extensionType: "widget" | "block";
+  readonly runTimes: number | undefined; // Count number of plugin is run
 };
 
 export type Plugins = {
