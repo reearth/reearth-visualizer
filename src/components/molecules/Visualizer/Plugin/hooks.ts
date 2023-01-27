@@ -12,14 +12,7 @@ import { exposed } from "./api";
 import { useContext } from "./context";
 import type { PluginModalInfo } from "./ModalContainer";
 import type { PluginPopupInfo } from "./PopupContainer";
-import type {
-  Layer,
-  Widget,
-  Block,
-  GlobalThis,
-  ReearthEventType,
-  WidgetLocationOptions,
-} from "./types";
+import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
   pluginId,
@@ -256,6 +249,7 @@ export function useAPI({
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+      ctx?.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
     ctx?.reearth.on,
@@ -396,10 +390,7 @@ export function useAPI({
         },
         startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
-        moveWidget: (widgetId: string, options: WidgetLocationOptions) => {
-          ctx.moveWidget?.(widgetId, options);
-          ctx.pluginInstances.runTimesCache.increment(widgetId);
-        },
+        moveWidget: ctx.moveWidget,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
       });
