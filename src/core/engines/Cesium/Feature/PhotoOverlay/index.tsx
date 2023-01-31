@@ -79,7 +79,7 @@ export default function PhotoOverlay({
     isSelected: isSelected && !!photoOverlayImage,
   });
 
-  return !isVisible ? null : (
+  return !isVisible || !pos ? null : (
     <>
       <EntityExt id={id} position={pos} layerId={layer?.id} featureId={feature?.id} draggable>
         <BillboardGraphics

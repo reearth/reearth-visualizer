@@ -10,10 +10,19 @@ export type Property = {};
 const Navigator = ({
   theme,
   editing,
-  context: { camera, onCameraOrbit, onCameraRotateRight, onFlyTo, onZoomIn, onZoomOut } = {},
+  context: {
+    camera,
+    initialCamera,
+    onCameraOrbit,
+    onCameraRotateRight,
+    onFlyTo,
+    onZoomIn,
+    onZoomOut,
+  } = {},
 }: Props): JSX.Element | null => {
   const { degree, events } = useHooks({
     camera,
+    initialCamera,
     onCameraOrbit,
     onCameraRotateRight,
     onFlyTo,

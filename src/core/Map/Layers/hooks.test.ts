@@ -460,6 +460,77 @@ test("override", () => {
   expect(l3.tags).toBeUndefined();
 });
 
+test("overrideProperties", () => {
+  const dataValue = {
+    type: "Feature",
+    id: "y",
+    geometry: { type: "Point", coordinates: [1, 2] },
+  };
+  const layers: Layer[] = [
+    { id: "x", type: "simple", title: "X" },
+    {
+      id: "z",
+      type: "group",
+      children: [
+        {
+          id: "y",
+          type: "simple",
+          title: "Y",
+          data: { type: "geojson", value: dataValue },
+          marker: { pointSize: 10, pointColor: "red" },
+          compat: {
+            extensionId: "marker",
+          },
+        },
+      ],
+    },
+  ];
+
+  const { result, rerender } = renderHook(() => {
+    const ref = useRef<Ref>(null);
+    const { flattenedLayers } = useHooks({ layers, ref });
+    return { ref, flattenedLayers };
+  });
+
+  result.current.ref.current?.overrideProperties("y", {
+    default: {
+      pointSize: 100,
+      location: {
+        lat: 1,
+        lng: 2,
+      },
+    },
+  });
+  rerender();
+  const l = result.current.flattenedLayers[1];
+  if (l.type !== "simple") throw new Error("invalid layer type");
+  expect(l.title).toBe("Y");
+  expect(l.data?.value).toEqual({
+    ...dataValue,
+    geometry: { ...dataValue.geometry, coordinates: [2, 1] },
+  });
+  expect(l.marker).toEqual({ pointSize: 100, pointColor: "red" });
+  expect(l.tags).toBeUndefined();
+
+  result.current.ref.current?.overrideProperties("y", {
+    pointSize: 200,
+  });
+  rerender();
+  const l2 = result.current.flattenedLayers[1];
+  if (l2.type !== "simple") throw new Error("invalid layer type");
+  expect(l2.data?.value).toBe(dataValue);
+  expect(l2.marker).toEqual({ pointSize: 10, pointColor: "red" });
+
+  result.current.ref.current?.override("y");
+  rerender();
+  const l3 = result.current.flattenedLayers[1];
+  if (l3.type !== "simple") throw new Error("invalid layer type");
+  expect(l3.title).toBe("Y");
+  expect(l3.data?.value).toBe(dataValue);
+  expect(l3.marker).toEqual({ pointSize: 10, pointColor: "red" });
+  expect(l3.tags).toBeUndefined();
+});
+
 test("hide and show", () => {
   const layers: Layer[] = [
     { id: "x", type: "simple", title: "X" },

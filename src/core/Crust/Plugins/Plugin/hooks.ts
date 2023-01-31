@@ -36,6 +36,7 @@ export default function ({
   widget,
   pluginProperty,
   shownPluginModalInfo,
+  onVisibilityChange,
   onPluginModalShow,
   shownPluginPopupInfo,
   onPluginPopupShow,
@@ -54,6 +55,7 @@ export default function ({
   block?: Block;
   pluginProperty?: any;
   shownPluginModalInfo?: PluginModalInfo;
+  onVisibilityChange?: (widgetId: string, v: boolean) => void;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   shownPluginPopupInfo?: PluginPopupInfo;
   onPluginPopupShow?: (modalInfo?: PluginModalInfo) => void;
@@ -78,6 +80,17 @@ export default function ({
   const [modalVisible, setModalVisibility] = useState<boolean>(false);
   const [popupVisible, setPopupVisibility] = useState<boolean>(false);
 
+  const handleSetVisibility = useCallback(
+    (v: boolean) => {
+      setUIVisibility(v);
+      const instanceId = widget?.id ?? block?.id;
+      if (instanceId) {
+        onVisibilityChange?.(instanceId, v);
+      }
+    },
+    [onVisibilityChange, widget?.id, block?.id],
+  );
+
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
       extensionId,
@@ -92,7 +105,7 @@ export default function ({
       externalRef,
       onPluginModalShow,
       onPluginPopupShow,
-      setUIVisibility,
+      setUIVisibility: handleSetVisibility,
       onRender,
       onResize,
       mapRef,
@@ -268,6 +281,7 @@ export function useAPI({
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+      ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
     ctx?.reearth.on,

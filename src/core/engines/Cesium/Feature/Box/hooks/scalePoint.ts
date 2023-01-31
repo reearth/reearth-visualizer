@@ -16,6 +16,7 @@ import { useCesium } from "resium";
 
 import type { EventCallback } from "@reearth/core/Map";
 
+import { getTag } from "../../utils";
 import type { PointEventCallback, ScalePointProperties } from "../ScalePoints";
 
 export const useHooks = ({
@@ -105,7 +106,7 @@ export const useHooks = ({
   const isOppositePointClicked = useRef(false);
   const handlePointMouseDown: EventCallback = useCallback(
     e => {
-      const currentLayerId = viewer.scene.pick(e.position)?.id?.id;
+      const currentLayerId = getTag(viewer.scene.pick(e.position)?.id)?.layerId;
       isOppositePointClicked.current = currentLayerId === oppositeLayerId;
       if (currentLayerId === layerId || currentLayerId === oppositeLayerId) {
         onPointMouseDown?.(e, {

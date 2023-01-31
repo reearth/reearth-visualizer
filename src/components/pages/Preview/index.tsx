@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
+import CoreCanvasArea from "@reearth/components/organisms/EarthEditor/core/CanvasArea";
 import { useSceneId } from "@reearth/state";
+import { useCore } from "@reearth/util/use-core";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
 import { PublishedAppProvider as ThemeProvider } from "../../../theme";
@@ -15,6 +17,7 @@ export type Props = {
 const PreviewPage: React.FC<Props> = () => {
   const { sceneId } = useParams();
   const [sceneId2, setSceneId] = useSceneId();
+  const core = useCore();
 
   useEffect(() => {
     setSceneId(sceneId);
@@ -24,7 +27,7 @@ const PreviewPage: React.FC<Props> = () => {
     <ThemeProvider>
       <DndProvider>
         <AuthenticationRequiredPage>
-          <CanvasArea isBuilt />
+          {core ? <CoreCanvasArea isBuilt /> : <CanvasArea isBuilt />}
         </AuthenticationRequiredPage>
       </DndProvider>
     </ThemeProvider>

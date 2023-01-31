@@ -1,11 +1,14 @@
 import { Color, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
 import { FC, memo } from "react";
-import { Entity, PlaneGraphics } from "resium";
+import { PlaneGraphics } from "resium";
+
+import { EntityExt } from "../utils";
 
 import { useHooks } from "./hooks/side";
 
 export const Side: FC<{
-  id: string;
+  layerId: string;
+  featureId?: string;
   planeLocal: CesiumPlane;
   isActive: boolean;
   trs: TranslationRotationScale;
@@ -14,7 +17,8 @@ export const Side: FC<{
   activeOutlineColor?: Color;
   fill?: boolean;
 }> = memo(function SidePresenter({
-  id,
+  layerId,
+  featureId,
   planeLocal,
   isActive,
   fill,
@@ -32,7 +36,7 @@ export const Side: FC<{
   });
 
   return (
-    <Entity id={id} position={cbRef} orientation={orientation}>
+    <EntityExt layerId={layerId} featureId={featureId} position={cbRef} orientation={orientation}>
       <PlaneGraphics
         plane={plane}
         dimensions={dimension}
@@ -42,6 +46,6 @@ export const Side: FC<{
         outlineColor={outlineColorCb}
         outline
       />
-    </Entity>
+    </EntityExt>
   );
 });

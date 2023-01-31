@@ -14,6 +14,22 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
     alignSystem,
   );
 
+  // NOTE: This is invisible list of widget.
+  //       The reason why we use invisible list is prevent initializing cost.
+  const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
+
+  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
+    setInvisibleWidgetIDs(a => {
+      if (!a.includes(widgetId) && !v) {
+        return [...a, widgetId];
+      }
+      if (a.includes(widgetId) && v) {
+        return a.filter(i => i !== widgetId);
+      }
+      return a;
+    });
+  }, []);
+
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
       !["outer", "inner"].includes(options.zone) ||
@@ -27,18 +43,35 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
     setOverrideAlignSystem(alignSystem => {
       if (!alignSystem) return alignSystem;
-      Object.keys(alignSystem).forEach(zoneName => {
-        const zone = alignSystem[zoneName as keyof WidgetAlignSystem];
+      let next = { ...alignSystem };
+      Object.keys(next).forEach(zoneName_ => {
+        const zoneName = zoneName_ as keyof WidgetAlignSystem;
+        const zone = alignSystem[zoneName];
         if (zone) {
-          Object.keys(zone).forEach(sectionName => {
-            const section = zone[sectionName as keyof WidgetZone];
+          Object.keys(zone).forEach(sectionName_ => {
+            const sectionName = sectionName_ as keyof WidgetZone;
+            const section = zone[sectionName];
             if (section) {
-              Object.keys(section).forEach(areaName => {
-                const area = section[areaName as keyof WidgetSection];
+              Object.keys(section).forEach(areaName_ => {
+                const areaName = areaName_ as keyof WidgetSection;
+                const area = section[areaName];
                 if (!widget && area?.widgets) {
                   const sourceIndex = area.widgets.findIndex(w => w.id === widgetId);
                   if (sourceIndex !== -1) {
                     [widget] = area.widgets.splice(sourceIndex, 1);
+                    next = {
+                      ...next,
+                      [zoneName]: {
+                        ...next[zoneName],
+                        [sectionName]: {
+                          ...(next[zoneName]?.[sectionName] || {}),
+                          [areaName]: {
+                            ...(next[zoneName]?.[sectionName]?.[areaName] || {}),
+                            ...area,
+                          },
+                        },
+                      },
+                    };
                   }
                 }
               });
@@ -46,7 +79,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
           });
         }
       });
-      return { ...alignSystem };
+      return { ...next };
     });
 
     setTimeout(() => {
@@ -97,5 +130,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
   return {
     overriddenAlignSystem,
     moveWidget,
+    invisibleWidgetIDs,
+    onVisibilityChange,
   };
 };

@@ -16,12 +16,11 @@ import type {
   SceneProperty,
   MouseEvent,
   MouseEvents,
-  Clock,
   LayerEditEvent,
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import { getCamera, isDraggable, isSelectable, getLocationFromScreen, getClock } from "./common";
+import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
@@ -30,7 +29,6 @@ export default ({
   ref,
   property,
   camera,
-  clock,
   selectedLayerId,
   selectionReason,
   isLayerDraggable,
@@ -40,12 +38,10 @@ export default ({
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
-  onTick,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
-  clock?: Clock;
   selectedLayerId?: {
     layerId?: string;
     featureId?: string;
@@ -58,7 +54,6 @@ export default ({
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
-  onTick?: (clock: Clock) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -99,24 +94,18 @@ export default ({
       if (camera) {
         onCameraChange?.(camera);
       }
-      const clock = getClock(cesium?.current?.cesiumElement?.clock);
-      if (clock) {
-        onTick?.(clock);
-      }
     },
     [
       engineAPI,
       onCameraChange,
-      onTick,
       property?.default?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
-      prevDeps[2] === nextDeps[2] &&
-      isEqual(prevDeps[3], nextDeps[3]) &&
-      prevDeps[4] === nextDeps[4],
+      isEqual(prevDeps[2], nextDeps[2]) &&
+      prevDeps[3] === nextDeps[3],
   );
 
   const handleUnmount = useCallback(() => {
@@ -154,27 +143,6 @@ export default ({
       emittedCamera.current = [];
     }
   }, [camera, engineAPI]);
-
-  useEffect(() => {
-    if (!clock) return;
-    if (clock.current) {
-      engineAPI.changeTime(clock.current);
-    }
-    if (clock.playing === true) {
-      engineAPI.play();
-    } else if (clock.playing === false) {
-      engineAPI.pause();
-    }
-    if (clock.speed) {
-      engineAPI.changeSpeed(clock.speed);
-    }
-    if (clock.start) {
-      engineAPI.changeStart(clock.start);
-    }
-    if (clock.stop) {
-      engineAPI.changeStop(clock.stop);
-    }
-  }, [clock, engineAPI]);
 
   // manage layer selection
   useEffect(() => {
@@ -371,12 +339,12 @@ export default ({
     [selectionReason, engineAPI, onLayerEdit],
   );
 
-  const handleTick = useCallback(() => {
-    const clock = getClock(cesium?.current?.cesiumElement?.clock);
-    if (clock) {
-      onTick?.(clock);
-    }
-  }, [onTick]);
+  const handleTick = useCallback(
+    (d: Date) => {
+      engineAPI.tickEventCallback?.current?.forEach(e => e(d));
+    },
+    [engineAPI],
+  );
 
   return {
     backgroundColor,

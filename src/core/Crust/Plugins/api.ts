@@ -117,11 +117,11 @@ export function exposed({
         modal: {
           show: (
             html: string,
-            options?:
-              | {
-                  background?: string;
-                }
-              | undefined,
+            options?: {
+              width?: number | string;
+              height?: number | string;
+              background?: string;
+            },
           ) => {
             renderModal(html, options);
           },
@@ -132,12 +132,12 @@ export function exposed({
         popup: {
           show: (
             html: string,
-            options:
-              | {
-                  position?: PopupPosition;
-                  offset?: number;
-                }
-              | undefined,
+            options?: {
+              width?: number | string;
+              height?: number | string;
+              position?: PopupPosition;
+              offset?: number;
+            },
           ) => {
             renderPopup(html, options);
           },

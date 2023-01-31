@@ -22,7 +22,7 @@ import Map, {
   type Camera,
   type LatLng,
   type Cluster,
-  ComputedLayer,
+  type ComputedLayer,
 } from "../Map";
 
 import { engines, type EngineType } from "./engines";
@@ -37,7 +37,7 @@ export type {
   WidgetLayoutConstraint,
 } from "../Crust";
 export type { EngineType } from "./engines";
-export { Viewport } from "./useViewport";
+export type { Viewport } from "./useViewport";
 
 export type Props = {
   engine?: EngineType;
@@ -55,7 +55,6 @@ export type Props = {
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   camera?: Camera;
-  clock?: Date;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
@@ -67,8 +66,8 @@ export type Props = {
     featureId?: string;
   };
   hiddenLayers?: string[];
+  zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
@@ -98,6 +97,7 @@ export type Props = {
   onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
@@ -123,11 +123,11 @@ export default function Visualizer({
   isLayerDraggable,
   isLayerDragging,
   camera: initialCamera,
-  clock: initialClock,
   meta,
   style,
   pluginBaseUrl,
   pluginProperty,
+  zoomedLayerId,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
@@ -135,12 +135,12 @@ export default function Visualizer({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onInfoboxMaskClick,
-  onTick,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
   onBlockDelete,
   onBlockInsert,
+  onZoomToLayer,
   renderInfoboxInsertionPopup,
 }: Props): JSX.Element | null {
   const {
@@ -152,58 +152,31 @@ export default function Visualizer({
     selectedComputedFeature,
     viewport,
     camera,
-    clock,
     isMobile,
     overriddenSceneProperty,
     isDroppable,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
-    handleTick,
     overrideSceneProperty,
+    handleLayerEdit,
+    onLayerEdit,
   } = useHooks({
     rootLayerId,
     isEditable,
     camera: initialCamera,
-    clock: initialClock,
     selectedBlockId,
     sceneProperty,
+    zoomedLayerId,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
-    onTick,
+    onZoomToLayer,
   });
 
   return (
     <Filled ref={wrapperRef}>
       {isDroppable && <DropHolder />}
-      <Map
-        ref={mapRef}
-        isBuilt={isBuilt}
-        isEditable={isEditable}
-        sceneProperty={overriddenSceneProperty}
-        engine={engine}
-        layers={layers}
-        engines={engines}
-        camera={camera}
-        clock={clock}
-        clusters={clusters}
-        hiddenLayers={hiddenLayers}
-        isLayerDraggable={isLayerDraggable}
-        isLayerDragging={isLayerDragging}
-        meta={meta}
-        style={style}
-        // overrides={overrides} // not used for now
-        property={sceneProperty}
-        selectedLayerId={selectedLayerId}
-        small={small}
-        ready={ready}
-        onCameraChange={handleCameraChange}
-        onLayerDrag={onLayerDrag}
-        onLayerDrop={onLayerDrop}
-        onLayerSelect={handleLayerSelect}
-        onTick={handleTick}
-      />
       <Crust
         engineName={engine}
         tags={tags}
@@ -215,7 +188,6 @@ export default function Visualizer({
         overrideSceneProperty={overrideSceneProperty}
         blocks={selectedLayer?.layer?.layer.infobox?.blocks}
         camera={camera}
-        clock={clock}
         isMobile={isMobile}
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
@@ -241,6 +213,32 @@ export default function Visualizer({
         onBlockDelete={onBlockDelete}
         onBlockInsert={onBlockInsert}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+        onLayerEdit={onLayerEdit}
+      />
+      <Map
+        ref={mapRef}
+        isBuilt={isBuilt}
+        isEditable={isEditable}
+        engine={engine}
+        layers={layers}
+        engines={engines}
+        camera={camera}
+        clusters={clusters}
+        hiddenLayers={hiddenLayers}
+        isLayerDraggable={isLayerDraggable}
+        isLayerDragging={isLayerDragging}
+        meta={meta}
+        style={style}
+        // overrides={overrides} // not used for now
+        property={overriddenSceneProperty}
+        selectedLayerId={selectedLayerId}
+        small={small}
+        ready={ready}
+        onCameraChange={handleCameraChange}
+        onLayerDrag={onLayerDrag}
+        onLayerDrop={onLayerDrop}
+        onLayerSelect={handleLayerSelect}
+        onLayerEdit={handleLayerEdit}
       />
     </Filled>
   );

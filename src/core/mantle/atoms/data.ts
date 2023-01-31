@@ -89,8 +89,10 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
   };
 }
 
+export const DATA_CACHE_KEYS: (keyof Pick<Data, "type" | "url">)[] = ["type", "url"];
+
 function dataKey(layerId: string, data: Data): string {
-  return !data.value && data.url ? `${data.type}:${data.url}` : `layer:${layerId}`;
+  return !data.value && data.url ? DATA_CACHE_KEYS.map(k => data[k]).join(":") : `layer:${layerId}`;
 }
 
 function rangeKey(range?: DataRange): string {

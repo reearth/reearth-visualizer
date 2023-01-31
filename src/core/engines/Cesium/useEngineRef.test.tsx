@@ -597,3 +597,23 @@ test("get location from screen xy", () => {
   expect(location2?.lat).toBeCloseTo(20, 0);
   expect(location2?.height).toBeCloseTo(10000, 0);
 });
+
+test("onTick", () => {
+  const d = new Date();
+  const mockTickEventHandler = vi.fn(e => e);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.onTick(mockTickEventHandler);
+  expect(result.current.current?.tickEventCallback?.current).toEqual([mockTickEventHandler]);
+
+  result.current.current?.tickEventCallback?.current?.[0]?.(d);
+  expect(mockTickEventHandler).toHaveBeenCalledTimes(1);
+
+  result.current.current?.removeTickEventListener(mockTickEventHandler);
+  expect(result.current.current?.tickEventCallback?.current).toHaveLength(0);
+});

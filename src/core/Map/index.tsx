@@ -35,7 +35,6 @@ function Map(
     engine,
     isBuilt,
     isEditable,
-    sceneProperty,
     clusters,
     hiddenLayers,
     layers,
@@ -61,7 +60,6 @@ function Map(
       ref={engineRef}
       isBuilt={isBuilt}
       isEditable={isEditable}
-      property={sceneProperty}
       selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
@@ -74,7 +72,6 @@ function Map(
         isEditable={isEditable}
         layers={layers}
         overrides={overrides}
-        sceneProperty={sceneProperty}
         selectedLayerId={selectedLayerId}
         selectionReason={layerSelectionReason}
         Feature={currentEngine?.featureComponent}

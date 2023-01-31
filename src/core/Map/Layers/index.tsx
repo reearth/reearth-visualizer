@@ -35,6 +35,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
     featureId?: string;
   };
   selectionReason?: LayerSelectionReason;
+  sceneProperty?: any;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,

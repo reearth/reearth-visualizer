@@ -56,6 +56,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   changeStart: 1,
   changeStop: 1,
   inViewport: 1,
+  onTick: 1,
+  removeTickEventListener: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -72,6 +74,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   isLayer: 1,
   layers: 1,
   override: 1,
+  overrideProperties: 1,
   replace: 1,
   select: 1,
   selectedLayer: 1,

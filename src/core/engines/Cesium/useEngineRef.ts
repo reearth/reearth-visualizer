@@ -3,6 +3,8 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
+import { TickEventCallback } from "@reearth/core/Map";
+
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 
 import {
@@ -47,6 +49,7 @@ export default function useEngineRef(
     mouseleave: undefined,
     wheel: undefined,
   });
+  const tickEventCallback = useRef<TickEventCallback[]>([]);
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -372,6 +375,13 @@ export default function useEngineRef(
           )
         );
       },
+      onTick: cb => {
+        tickEventCallback.current.push(cb);
+      },
+      removeTickEventListener: cb => {
+        tickEventCallback.current = tickEventCallback.current.filter(c => c !== cb) || [];
+      },
+      tickEventCallback,
     };
   }, [cesium]);
 

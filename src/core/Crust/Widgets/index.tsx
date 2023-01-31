@@ -21,9 +21,10 @@ export type {
   WidgetSection,
 } from "./WidgetAlignSystem";
 
-export type { Context } from "./Widget";
+export type { Context, BuiltinWidgets } from "./Widget";
+export { isBuiltinWidget } from "./Widget";
 
-export type { Widget, InternalWidget, WidgetLocationOptions } from "./types";
+export type { Widget, InternalWidget, WidgetLocationOptions, WidgetAlignment } from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
@@ -53,6 +54,7 @@ export type WidgetProps = {
   layout: WidgetLayout;
   onExtend: (id: string, extended: boolean | undefined) => void;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
+  onVisibilityChange: (widgetId: string, v: boolean) => void;
 };
 
 export default function Widgets({
@@ -68,9 +70,10 @@ export default function Widgets({
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
-    alignSystem,
-  });
+  const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
+    useWidgetAlignSystem({
+      alignSystem,
+    });
 
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
@@ -91,17 +94,19 @@ export default function Widgets({
             layout,
             onExtend,
             moveWidget,
+            onVisibilityChange,
           })
         }
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, renderWidget, theme, moveWidget],
+    [context, isBuilt, isEditable, renderWidget, theme, moveWidget, onVisibilityChange],
   );
 
   return (
     <WidgetAlignSystem
       alignSystem={overriddenAlignSystem}
+      invisibleWidgetIDs={invisibleWidgetIDs}
       editing={editing}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}

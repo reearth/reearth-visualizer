@@ -14,7 +14,7 @@ import type {
 } from "../types";
 import { appearanceKeys } from "../types";
 
-import { dataAtom, globalDataFeaturesCache } from "./data";
+import { dataAtom, DATA_CACHE_KEYS, globalDataFeaturesCache } from "./data";
 
 export type Atom = ReturnType<typeof computeAtom>;
 
@@ -93,7 +93,13 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const allFeatures = getterAll(layerId, data);
 
       // Ignore cache if data is embedded
-      if (allFeatures) return allFeatures.flat();
+      if (
+        allFeatures &&
+        // Check if data has cache key
+        DATA_CACHE_KEYS.every(k => !!data[k])
+      ) {
+        return allFeatures.flat();
+      }
 
       await set(dataAtoms.fetch, { data, layerId });
       return getterAll(layerId, data)?.flat() ?? [];

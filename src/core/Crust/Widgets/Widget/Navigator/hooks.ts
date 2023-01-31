@@ -6,6 +6,7 @@ import { degreeToRadian, radianToDegree } from "./NavigatorPresenter";
 
 export default function ({
   camera,
+  initialCamera,
   onZoomIn,
   onZoomOut,
   onCameraOrbit,
@@ -13,6 +14,7 @@ export default function ({
   onFlyTo,
 }: {
   camera?: Camera;
+  initialCamera?: Camera;
   onZoomIn?: (amount: number) => void;
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (orbit: number) => void;
@@ -41,10 +43,10 @@ export default function ({
     orbitRadianRef.current = degreeToRadian(deg);
   }, []);
   const handleOnRestoreRotate = useCallback(() => {
-    if (camera) {
-      onFlyTo?.(camera, { duration: 1 });
+    if (initialCamera) {
+      onFlyTo?.(initialCamera, { duration: 1 });
     }
-  }, [camera, onFlyTo]);
+  }, [initialCamera, onFlyTo]);
   const handleOnClickHelp = useCallback(() => {
     setIsHelpOpened(prev => !prev);
   }, []);

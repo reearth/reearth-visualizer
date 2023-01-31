@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 import type { TimeEventHandler } from "@reearth/components/atoms/Timeline";
+import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 
 import type { Clock } from "../types";
 
@@ -22,6 +23,7 @@ export const useTimeline = ({
   onTimeChange,
   onSpeedChange,
   onTick,
+  removeTickEventListener,
   onExtend,
 }: {
   widgetId: string;
@@ -30,7 +32,8 @@ export const useTimeline = ({
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
   onTimeChange?: (time: Date) => void;
-  onTick?: () => void;
+  onTick?: TickEvent;
+  removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 }) => {
   const [range, setRange] = useState(() =>
@@ -39,7 +42,6 @@ export const useTimeline = ({
   const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.current).getTime());
   const isClockInitialized = useRef(false);
-  const clockCurrentTime = clock?.current.getTime();
   const clockStartTime = clock?.start?.getTime();
   const clockStopTime = clock?.stop?.getTime();
   const clockSpeed = clock?.speed || DEFAULT_SPEED;
@@ -64,7 +66,6 @@ export const useTimeline = ({
       const t = new Date(currentTime);
       onTimeChange?.(t);
       setCurrentTime(currentTime);
-      // setCurrentTime(getOrNewDate(clock.tick()).getTime());
     },
     [clock, onTimeChange],
   );
@@ -82,9 +83,8 @@ export const useTimeline = ({
         onPause?.();
       }
       onSpeedChange?.(Math.abs(speed));
-      onTick?.();
     },
-    [clock, onPause, onPlay, onSpeedChange, onTick, speed],
+    [clock, onPause, onPlay, onSpeedChange, speed],
   );
 
   const handleOnPlayReversed = useCallback(
@@ -100,9 +100,8 @@ export const useTimeline = ({
         onPause?.();
       }
       onSpeedChange?.(Math.abs(speed) * -1);
-      onTick?.();
     },
-    [clock, onPause, onPlay, onSpeedChange, onTick, speed],
+    [clock, onPause, onPlay, onSpeedChange, speed],
   );
 
   const handleOnSpeedChange = useCallback(
@@ -112,10 +111,9 @@ export const useTimeline = ({
         const absSpeed = Math.abs(speed);
         // Maybe we need to throttle changing speed.
         onSpeedChange?.((clock.speed ?? 1) > 0 ? absSpeed : absSpeed * -1);
-        onTick?.();
       }
     },
-    [clock, onSpeedChange, onTick],
+    [clock, onSpeedChange],
   );
 
   // Initialize clock value
@@ -124,14 +122,12 @@ export const useTimeline = ({
       isClockInitialized.current = true;
       queueMicrotask(() => {
         onSpeedChange?.(1);
-        onTick?.();
       });
     }
   }, [clock, onSpeedChange, onTick]);
 
   // Sync cesium clock.
   useEffect(() => {
-    setCurrentTime(clockCurrentTime || Date.now());
     setRange(prev => {
       const next = makeRange(clock?.start?.getTime(), clock?.stop?.getTime());
       if (prev.start !== next.start || prev.end !== next.end) {
@@ -140,7 +136,18 @@ export const useTimeline = ({
       return prev;
     });
     setSpeed(Math.abs(clockSpeed));
-  }, [clockCurrentTime, clockStartTime, clockStopTime, clockSpeed, clock?.start, clock?.stop]);
+  }, [clockStartTime, clockStopTime, clockSpeed, clock?.start, clock?.stop]);
+
+  useEffect(() => {
+    const h: TickEventCallback = d => {
+      if (!clock?.playing) return;
+      setCurrentTime(d.getTime() || Date.now());
+    };
+    onTick?.(h);
+    return () => {
+      removeTickEventListener?.(h);
+    };
+  }, [onTick, clock?.playing, removeTickEventListener]);
 
   return {
     speed,

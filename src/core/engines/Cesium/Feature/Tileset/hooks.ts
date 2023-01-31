@@ -322,31 +322,18 @@ export const useHooks = ({
     [allowEnterGround, viewer],
   );
 
-  // Keep to have array references as much as possible for prevent unnecessary re-render.
-  const coordinatesRef = useRef<number[]>();
-  useEffect(() => {
-    const next = coordinates
-      ? coordinates
-      : location
-      ? [location.lng, location.lat, location.height ?? 0]
-      : undefined;
-
-    if (!next) {
-      return;
-    }
-
-    if (!coordinatesRef.current || !next.every((v, i) => coordinatesRef.current?.[i] === v)) {
-      coordinatesRef.current = next;
-    }
-  }, [coordinates, location]);
-
   useEffect(() => {
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
         return;
       }
 
-      await tilesetRef.current?.readyPromise;
+      try {
+        await tilesetRef.current?.readyPromise;
+      } catch (e) {
+        console.error("Could not load 3D tiles: ", e);
+        return;
+      }
 
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),
@@ -354,12 +341,12 @@ export const useHooks = ({
 
       const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
-      const coordinates = coordinatesRef.current;
-      const position = Cartesian3.fromDegrees(
-        coordinates?.[0] || 0,
-        coordinates?.[1] || 0,
-        coordinates?.[2] || 0,
-      );
+      const coords = coordinates
+        ? coordinates
+        : location
+        ? [location.lng, location.lat, location.height ?? 0]
+        : undefined;
+      const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
 
       if (!allowEnterGround) {
         translationWithClamping(
@@ -394,6 +381,8 @@ export const useHooks = ({
     heading,
     pitch,
     roll,
+    location,
+    coordinates,
     clippingPlanes.modelMatrix,
     updateTerrainHeight,
     allowEnterGround,

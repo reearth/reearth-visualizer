@@ -1,8 +1,10 @@
 import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
 import { FC, memo } from "react";
-import { Entity, PolylineGraphics } from "resium";
+import { PolylineGraphics } from "resium";
 
 import type { EventCallback } from "@reearth/core/Map";
+
+import { EntityExt } from "../utils";
 
 import { useHooks } from "./hooks/edge";
 
@@ -19,7 +21,8 @@ export type EdgeEventCallback = EventCallback<
 export type EdgeProperties = { start: Cartesian3; end: Cartesian3; isDraggable?: boolean };
 
 type Props = {
-  id: string;
+  layerId: string;
+  featureId?: string;
   index: number;
   edge: EdgeProperties;
   trs: TranslationRotationScale;
@@ -35,7 +38,8 @@ type Props = {
 };
 
 export const Edge: FC<Props> = memo(function EdgePresenter({
-  id,
+  layerId,
+  featureId,
   index,
   edge,
   isHovered,
@@ -48,7 +52,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   onMouseUp,
 }) {
   const { cbp, outlineColor } = useHooks({
-    id,
+    id: layerId,
     index,
     edge,
     isHovered,
@@ -61,13 +65,13 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   });
 
   return (
-    <Entity id={id}>
+    <EntityExt layerId={layerId} featureId={featureId}>
       <PolylineGraphics
         positions={cbp}
         width={width}
         material={outlineColor}
         arcType={ArcType.NONE}
       />
-    </Entity>
+    </EntityExt>
   );
 });

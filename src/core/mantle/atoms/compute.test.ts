@@ -338,7 +338,7 @@ test("computeAtom with cache", async () => {
 
   expect(fetchDataMock).toBeCalledTimes(1);
 
-  const sharedData = {
+  const geometryOnlyData = {
     test_id: "a",
     type: "geojson",
     value: { type: "feature", geometry: internalFeatures[0].geometry },
@@ -353,7 +353,7 @@ test("computeAtom with cache", async () => {
         layer: {
           id: "xxx",
           type: "simple",
-          data: sharedData,
+          data: geometryOnlyData,
           marker: {
             imageColor: "black",
           },
@@ -367,7 +367,7 @@ test("computeAtom with cache", async () => {
     layer: {
       id: "xxx",
       type: "simple",
-      data: sharedData,
+      data: geometryOnlyData,
       marker: {
         imageColor: "black",
       },
@@ -388,7 +388,7 @@ test("computeAtom with cache", async () => {
         layer: {
           id: "xxx",
           type: "simple",
-          data: sharedData,
+          data: geometryOnlyData,
           marker: {
             imageColor: "white",
           },
@@ -402,7 +402,7 @@ test("computeAtom with cache", async () => {
     layer: {
       id: "xxx",
       type: "simple",
-      data: sharedData,
+      data: geometryOnlyData,
       marker: {
         imageColor: "white",
       },
@@ -412,8 +412,8 @@ test("computeAtom with cache", async () => {
     originalFeatures: [...internalFeatures],
   });
 
-  // It should not be invoked when the data is same.
-  expect(fetchDataMock).toBeCalledTimes(2);
+  // It should be invoked even if the data is same when data doesn't have cache key.
+  expect(fetchDataMock).toBeCalledTimes(3);
 
   // Set `data.url`.
   // It should replace existing cache with new data.
@@ -454,7 +454,7 @@ test("computeAtom with cache", async () => {
     ],
   });
 
-  expect(fetchDataMock).toBeCalledTimes(3);
+  expect(fetchDataMock).toBeCalledTimes(4);
 });
 
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({

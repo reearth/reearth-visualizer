@@ -6,7 +6,7 @@ import type { SceneProperty } from "../..";
 
 export type Props = {
   property?: SceneProperty;
-  onTick?: (clock: Date) => void;
+  onTick?: (d: Date) => void;
 };
 
 export default function ReearthClock({ property, onTick }: Props): JSX.Element | null {
@@ -24,7 +24,7 @@ export default function ReearthClock({ property, onTick }: Props): JSX.Element |
 
   const handleTick = useCallback(
     (clock: CesiumClock) => {
-      if (!clock.shouldAnimate) return;
+      // NOTE: Must not update state. This event will be called every frame.
       onTick?.(JulianDate.toDate(clock.currentTime));
     },
     [onTick],

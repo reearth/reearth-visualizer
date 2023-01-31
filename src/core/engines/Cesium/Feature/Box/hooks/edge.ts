@@ -13,6 +13,7 @@ import { useCesium } from "resium";
 
 import type { EventCallback } from "@reearth/core/Map";
 
+import { getTag } from "../../utils";
 import type { EdgeEventCallback, EdgeProperties } from "../Edge";
 
 export const useHooks = ({
@@ -70,7 +71,7 @@ export const useHooks = ({
 
   const handleMouseDown: EventCallback = useCallback(
     e => {
-      const currentLayerId = viewer.scene.pick(e.position)?.id?.id;
+      const currentLayerId = getTag(viewer.scene.pick(e.position)?.id)?.layerId;
       if (currentLayerId !== id) {
         return;
       }

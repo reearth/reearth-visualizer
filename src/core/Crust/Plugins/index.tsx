@@ -6,6 +6,8 @@ export {
   default as Plugin,
   ModalContainer,
   PopupContainer,
+  type Props as PluginProps,
+  type CommonProps as CommonPluginProps,
   type PluginModalInfo,
   type PluginPopupInfo,
   type ExternalPluginProps,

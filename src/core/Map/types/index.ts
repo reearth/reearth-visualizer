@@ -4,6 +4,7 @@ import type {
   RefAttributes,
   ReactNode,
   CSSProperties,
+  RefObject,
 } from "react";
 
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
@@ -72,6 +73,9 @@ export type EngineRef = {
   changeTime: (time: Date) => void;
   tick: () => Date | void;
   inViewport: (location?: LatLng) => boolean;
+  onTick: TickEvent;
+  tickEventCallback?: RefObject<TickEventCallback[]>;
+  removeTickEventListener: TickEvent;
 };
 
 export type EngineProps = {
@@ -81,7 +85,6 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
-  clock?: Clock;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
@@ -100,7 +103,6 @@ export type EngineProps = {
     options?: LayerSelectionReason,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Clock) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
@@ -146,6 +148,9 @@ export type MouseEvents = {
   mouseleave: ((props: MouseEvent) => void) | undefined;
   wheel: ((props: MouseEvent) => void) | undefined;
 };
+
+export type TickEvent = (cb: TickEventCallback) => void;
+export type TickEventCallback = (clock: Date) => void;
 
 export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;

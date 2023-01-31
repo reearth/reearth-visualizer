@@ -1,8 +1,10 @@
 import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
 import { FC, memo } from "react";
-import { BoxGraphics, Entity, PolylineGraphics } from "resium";
+import { BoxGraphics, PolylineGraphics } from "resium";
 
 import type { EventCallback } from "@reearth/core/Map";
+
+import { EntityExt } from "../utils";
 
 import { useHooks } from "./hooks/scalePoint";
 
@@ -26,7 +28,8 @@ export type PointEventCallback = EventCallback<
 >;
 
 type Props = {
-  id: string;
+  layerId: string;
+  featureId?: string;
   index: number;
   scalePoint: ScalePointProperties;
   trs: TranslationRotationScale;
@@ -46,7 +49,8 @@ type Props = {
 };
 
 export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
-  id,
+  layerId,
+  featureId,
   index,
   scalePoint,
   isHovered,
@@ -71,7 +75,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
     orientation,
     axisColorProperty,
   } = useHooks({
-    id,
+    id: layerId,
     index,
     scalePoint,
     isHovered,
@@ -87,7 +91,11 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
 
   return (
     <>
-      <Entity id={`${id}-${index}`} position={entitiesPosition.point} orientation={orientation}>
+      <EntityExt
+        layerId={`${layerId}-${index}`}
+        featureId={`${featureId}-${index}`}
+        position={entitiesPosition.point}
+        orientation={orientation}>
         <BoxGraphics
           show={visiblePoint}
           dimensions={cesiumDimensionsCallbackProperty}
@@ -97,9 +105,10 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           outlineColor={pointOutlineColorCb}
           outlineWidth={pointOutlineWidth}
         />
-      </Entity>
-      <Entity
-        id={`${id}-opposite-${index}`}
+      </EntityExt>
+      <EntityExt
+        layerId={`${layerId}-opposite-${index}`}
+        featureId={`${featureId}-opposite-${index}`}
         position={entitiesPosition.oppositePoint}
         orientation={orientation}>
         <BoxGraphics
@@ -111,8 +120,10 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           outlineColor={pointOutlineColorCb}
           outlineWidth={pointOutlineWidth}
         />
-      </Entity>
-      <Entity id={`${id}-axis-line-${index}`}>
+      </EntityExt>
+      <EntityExt
+        layerId={`${layerId}-axis-line-${index}`}
+        featureId={`${featureId}-axis-line-${index}`}>
         <PolylineGraphics
           positions={entitiesPosition.axisLine}
           show={visibleAxisLine}
@@ -120,7 +131,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           width={axisLineWidth}
           arcType={ArcType.NONE}
         />
-      </Entity>
+      </EntityExt>
     </>
   );
 });

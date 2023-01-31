@@ -8,6 +8,7 @@ export type Props = {
   children?: ReactNode;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
+  invisibleWidgetIDs?: string[];
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   renderWidget?: (props: WidgetProps) => ReactNode;
 };

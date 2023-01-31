@@ -17,11 +17,12 @@ export type Property = BoxAppearance & {
 };
 
 const Box: React.FC<Props> = memo(function BoxPresenter({
-  id,
   property,
   geometry,
   isVisible,
   sceneProperty,
+  layer,
+  feature,
 }) {
   const {
     height = 100,
@@ -49,12 +50,15 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
 
+  const [layerId, featureId] = [layer?.id, feature?.id];
+
   return !isVisible ? null : (
     <>
       {SIDE_PLANES.map((plane, i) => (
         <Side
-          key={`${id}-plane-${SIDE_PLANE_NAMES[i]}`}
-          id={`${id}-plane-${SIDE_PLANE_NAMES[i]}`}
+          key={`${layerId}-plane-${SIDE_PLANE_NAMES[i]}`}
+          layerId={`${layerId}-plane-${SIDE_PLANE_NAMES[i]}`}
+          featureId={`${featureId}-plane-${SIDE_PLANE_NAMES[i]}`}
           planeLocal={plane}
           fill={style.fill}
           fillColor={style.fillColor}
@@ -67,8 +71,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
       {BOX_EDGES.map((edge, i) => {
         return (
           <Edge
-            key={`${id}-edge-${i}`}
-            id={`${id}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
+            key={`${layerId}-edge-${i}`}
+            featureId={`${featureId}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
+            layerId={`${layerId}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
             index={i}
             edge={edge}
             isHovered={activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)}
@@ -87,8 +92,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
       {scalePoint &&
         SCALE_POINTS.map((vector, i) => (
           <ScalePoints
-            key={`${id}-scale-point-${i}`}
-            id={`${id}-scale-point`}
+            key={`${layerId}-scale-point-${i}`}
+            layerId={`${layerId}-scale-point`}
+            featureId={`${featureId}-scale-point`}
             index={i}
             scalePoint={vector}
             trs={trs}

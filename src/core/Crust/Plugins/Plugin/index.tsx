@@ -42,6 +42,7 @@ export type Props = {
   widget?: Widget;
   block?: Block;
   iFrameProps?: PluginProps["iFrameProps"];
+  onVisibilityChange?: (widgetId: string, v: boolean) => void;
   onClick?: () => void;
   onRender?: (
     options:
@@ -79,6 +80,7 @@ export default function Plugin({
   block,
   pluginProperty,
   iFrameProps,
+  onVisibilityChange,
   onPluginModalShow,
   onPluginPopupShow,
   onClick,
@@ -111,6 +113,7 @@ export default function Plugin({
     pluginProperty,
     shownPluginModalInfo,
     shownPluginPopupInfo,
+    onVisibilityChange,
     onPluginModalShow,
     onPluginPopupShow,
     onRender,

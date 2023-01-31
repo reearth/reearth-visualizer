@@ -165,6 +165,13 @@ export const context: Context = {
     postMessage: () => {},
     addPluginMessageSender: () => {},
     removePluginMessageSender: () => {},
+    runTimesCache: {
+      get: () => 1,
+      increment: () => {},
+      decrement: () => {},
+      clear: () => {},
+      clearAll: () => {},
+    },
   },
   clientStorage: {
     getAsync: act("clientStorage.getAsync"),

@@ -22,11 +22,11 @@ export type CommonProps = {
   isEditable?: boolean;
   isHidden?: boolean;
   isSelected?: boolean;
-  sceneProperty?: any;
 };
 
 export type FeatureComponentProps = {
   layer: ComputedLayer;
+  sceneProperty?: any;
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
@@ -39,6 +39,7 @@ export type Props = {
   atom?: Atoms;
   overrides?: Record<string, any>;
   delegatedDataTypes?: DataType[];
+  sceneProperty?: any;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;

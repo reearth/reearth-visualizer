@@ -487,4 +487,129 @@ test("resource", () => {
       },
     },
   });
+
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "resource",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    resource: {
+      url: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    data: {
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    compat: {
+      extensionId: "resource",
+      propertyId: "p",
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    },
+  });
+});
+
+test("box", () => {
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "box",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    box: {
+      color: "red",
+    },
+    data: {
+      type: "geojson",
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [1, 2, 3],
+        },
+      },
+    },
+    compat: {
+      extensionId: "box",
+      propertyId: "p",
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    },
+  });
 });

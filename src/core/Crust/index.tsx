@@ -3,7 +3,7 @@ import type { ReactNode, RefObject } from "react";
 import type { Tag } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { LayerSelectionReason } from "../Map";
+import type { LayerEditEvent, LayerSelectionReason } from "../Map";
 import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
@@ -11,7 +11,7 @@ import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera, Clock } from "./types";
+import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera } from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -33,7 +33,13 @@ export type {
   Alignment,
   Location,
   InternalWidget,
+  WidgetZone,
+  WidgetSection,
+  BuiltinWidgets,
+  WidgetArea,
+  WidgetAlignment,
 } from "./Widgets";
+export { isBuiltinWidget } from "./Widgets";
 
 export type Props = {
   // common
@@ -46,7 +52,6 @@ export type Props = {
   sceneProperty?: SceneProperty;
   viewport?: Viewport;
   camera?: Camera;
-  clock?: Clock;
   selectedComputedLayer?: ComputedLayer;
   selectedComputedFeature?: ComputedFeature;
   selectedFeature?: Feature;
@@ -95,6 +100,7 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
+  onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 };
 
 export default function Crust({
@@ -107,7 +113,6 @@ export default function Crust({
   sceneProperty,
   viewport,
   camera,
-  clock,
   tags,
   selectedLayerId,
   selectedReason,
@@ -132,6 +137,7 @@ export default function Crust({
   onBlockInsert,
   renderInfoboxInsertionPopup,
   overrideSceneProperty,
+  onLayerEdit,
 }: Props): JSX.Element | null {
   const {
     renderBlock,
@@ -143,7 +149,7 @@ export default function Crust({
     pluginPopupContainerRef,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
-  const widgetContext = useWidgetContext({ mapRef, camera, clock, sceneProperty, selectedLayerId });
+  const widgetContext = useWidgetContext({ mapRef, camera, sceneProperty, selectedLayerId });
 
   return (
     <Plugins
@@ -157,7 +163,9 @@ export default function Crust({
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
-      overrideSceneProperty={overrideSceneProperty}>
+      camera={camera}
+      overrideSceneProperty={overrideSceneProperty}
+      onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}
