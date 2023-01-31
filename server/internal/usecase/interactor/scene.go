@@ -348,6 +348,9 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	if param.Align != nil {
 		area.SetAlignment(*param.Align)
 	}
+	if param.Properties != nil {
+		area.SetProperties(param.Properties)
+	}
 
 	if err = i.sceneRepo.Save(ctx, scene); err != nil {
 		return nil, err

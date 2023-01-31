@@ -73,6 +73,23 @@ func FromSceneWidgetLocation(l *WidgetLocationInput) *scene.WidgetLocation {
 	}
 }
 
+func FromSceneWidgetAreaProperties(l *WidgetAreaPropertiesInput) *scene.WidgetAreaProperties {
+	if l == nil {
+		return nil
+	}
+
+	return scene.NewWidgetAreaProperties(scene.NewWidgetAreaPadding(
+		*l.PaddingLeft,
+		*l.PaddingRight,
+		*l.PaddingTop,
+		*l.PaddingBottom,
+	),
+		*l.Gap,
+		*l.Centered,
+		*l.Background,
+	)
+}
+
 func FromSceneWidgetZoneType(t WidgetZoneType) scene.WidgetZoneType {
 	switch t {
 	case WidgetZoneTypeInner:

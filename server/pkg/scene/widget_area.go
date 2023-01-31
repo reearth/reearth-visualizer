@@ -1,13 +1,12 @@
 package scene
 
-import (
-	"github.com/samber/lo"
-)
+import "github.com/samber/lo"
 
 // WidgetArea has the widgets and alignment information found in each part area of a section.
 type WidgetArea struct {
-	widgetIds WidgetIDList
-	align     WidgetAlignType
+	widgetIds  WidgetIDList
+	align      WidgetAlignType
+	properties *WidgetAreaProperties
 }
 
 type WidgetAlignType string
@@ -18,10 +17,11 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType) *WidgetArea {
+func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, properties *WidgetAreaProperties) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
+	wa.SetProperties(properties)
 	return wa
 }
 
@@ -41,6 +41,14 @@ func (a *WidgetArea) Alignment() WidgetAlignType {
 	}
 
 	return a.align
+}
+
+func (a *WidgetArea) Properties() *WidgetAreaProperties {
+	if a == nil {
+		return nil
+	}
+
+	return a.properties
 }
 
 func (a *WidgetArea) Find(wid WidgetID) int {
@@ -82,6 +90,14 @@ func (a *WidgetArea) SetAlignment(at WidgetAlignType) {
 	} else {
 		a.align = WidgetAlignStart
 	}
+}
+
+func (a *WidgetArea) SetProperties(ap *WidgetAreaProperties) {
+	if a == nil {
+		return
+	}
+
+	a.properties = ap.Clone()
 }
 
 func (a *WidgetArea) Remove(wid WidgetID) {

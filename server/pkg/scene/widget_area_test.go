@@ -14,6 +14,7 @@ func TestWidgetArea(t *testing.T) {
 		Name     string
 		Input1   WidgetIDList
 		Input2   WidgetAlignType
+		Input3   *WidgetAreaProperties
 		Expected *WidgetArea
 	}{
 		{
@@ -29,6 +30,33 @@ func TestWidgetArea(t *testing.T) {
 			Expected: &WidgetArea{widgetIds: WidgetIDList{wid1}, align: WidgetAlignEnd},
 		},
 		{
+			Name:   "New widget area with properties",
+			Input1: WidgetIDList{wid1},
+			Input2: WidgetAlignEnd,
+			Input3: &WidgetAreaProperties{
+				padding: WidgetAreaPadding{
+					top:    10,
+					bottom: 15,
+					left:   5,
+					right:  5,
+				},
+				gap:        40,
+				centered:   true,
+				background: "#ffffff",
+			},
+			Expected: &WidgetArea{widgetIds: WidgetIDList{wid1}, align: WidgetAlignEnd, properties: &WidgetAreaProperties{
+				padding: WidgetAreaPadding{
+					top:    10,
+					bottom: 15,
+					left:   5,
+					right:  5,
+				},
+				gap:        40,
+				centered:   true,
+				background: "#ffffff",
+			}},
+		},
+		{
 			Name:     "New widget area with wrong widget align type",
 			Input1:   WidgetIDList{wid1, wid2},
 			Input2:   "wrong",
@@ -40,7 +68,7 @@ func TestWidgetArea(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			wa := NewWidgetArea(tc.Input1, tc.Input2)
+			wa := NewWidgetArea(tc.Input1, tc.Input2, tc.Input3)
 			assert.Equal(t, tc.Expected, wa)
 		})
 	}
@@ -48,13 +76,13 @@ func TestWidgetArea(t *testing.T) {
 
 func TestWidgetArea_WidgetIDs(t *testing.T) {
 	wid := NewWidgetID()
-	wa := NewWidgetArea(WidgetIDList{wid}, WidgetAlignStart)
+	wa := NewWidgetArea(WidgetIDList{wid}, WidgetAlignStart, nil)
 	assert.Equal(t, wa.widgetIds, wa.WidgetIDs())
 	assert.Nil(t, (*WidgetArea)(nil).WidgetIDs())
 }
 
 func TestWidgetArea_Alignment(t *testing.T) {
-	wa := NewWidgetArea(nil, WidgetAlignEnd)
+	wa := NewWidgetArea(nil, WidgetAlignEnd, nil)
 	assert.Equal(t, WidgetAlignEnd, wa.Alignment())
 	assert.Equal(t, WidgetAlignType(""), (*WidgetArea)(nil).Alignment())
 }
@@ -93,7 +121,7 @@ func TestWidgetArea_Find(t *testing.T) {
 
 			var wa *WidgetArea
 			if !tc.Nil {
-				wa = NewWidgetArea(WidgetIDList{wid}, WidgetAlignStart)
+				wa = NewWidgetArea(WidgetIDList{wid}, WidgetAlignStart, nil)
 			}
 			assert.Equal(t, tc.Expected, wa.Find(tc.Input))
 		})
@@ -146,7 +174,7 @@ func TestWidgetArea_Add(t *testing.T) {
 				return
 			}
 
-			wa := NewWidgetArea(WidgetIDList{wid1, wid2}, WidgetAlignStart)
+			wa := NewWidgetArea(WidgetIDList{wid1, wid2}, WidgetAlignStart, nil)
 			wa.Add(tc.Input, tc.Input2)
 			assert.Equal(t, tc.Expected, wa.WidgetIDs())
 		})
@@ -189,7 +217,7 @@ func TestWidgetArea_AddAll(t *testing.T) {
 				return
 			}
 
-			wa := NewWidgetArea(nil, WidgetAlignStart)
+			wa := NewWidgetArea(nil, WidgetAlignStart, nil)
 			wa.AddAll(tc.Input)
 			assert.Equal(t, tc.Expected, wa.WidgetIDs())
 		})
@@ -227,7 +255,7 @@ func TestWidgetArea_SetAlignment(t *testing.T) {
 
 			var wa *WidgetArea
 			if !tc.Nil {
-				wa = NewWidgetArea(nil, WidgetAlignStart)
+				wa = NewWidgetArea(nil, WidgetAlignStart, nil)
 			}
 			wa.SetAlignment(tc.Input)
 			if !tc.Nil {
@@ -270,7 +298,7 @@ func TestWidgetArea_Remove(t *testing.T) {
 
 			var wa *WidgetArea
 			if !tc.Nil {
-				wa = NewWidgetArea(WidgetIDList{wid}, "")
+				wa = NewWidgetArea(WidgetIDList{wid}, "", nil)
 			}
 			wa.Remove(tc.Input)
 			if !tc.Nil {
@@ -316,7 +344,7 @@ func TestWidgetArea_Move(t *testing.T) {
 
 			var wa *WidgetArea
 			if !tc.Nil {
-				wa = NewWidgetArea(WidgetIDList{wid, wid2, wid3}, "")
+				wa = NewWidgetArea(WidgetIDList{wid, wid2, wid3}, "", nil)
 			}
 			wa.Move(tc.Input1, tc.Input2)
 			if !tc.Nil {
