@@ -23,19 +23,16 @@ export async function evalSimpleLayer(
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return {
     layer: evalLayerAppearances(appearances, layer),
-    features: features?.map(f => ({
-      ...f,
-      ...evalLayerAppearances(appearances, layer, f),
-      type: "computedFeature",
-    })),
+    features: features?.map(f => evalSimpleLayerFeature(layer, f)),
   };
 }
 
 export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
+  const nextFeature = evalJsonProperties(layer, feature);
   return {
-    ...feature,
-    ...evalLayerAppearances(appearances, layer, feature),
+    ...nextFeature,
+    ...evalLayerAppearances(appearances, layer, nextFeature),
     type: "computedFeature",
   };
 };
@@ -76,4 +73,28 @@ function evalExpression(expressionContainer: any, layer: LayerSimple, feature?: 
     return styleExpression;
   }
   return expressionContainer;
+}
+
+function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
+  const keys = layer.data?.jsonProperties;
+  if (!feature.properties || !keys || !keys.length) {
+    return feature;
+  }
+
+  const next = {
+    ...feature,
+    ...(feature?.properties ? { properties: { ...feature.properties } } : {}),
+  };
+  keys.forEach(k => {
+    next.properties[k] = (() => {
+      const p = next.properties[k];
+      try {
+        return JSON.parse(p);
+      } catch {
+        return p;
+      }
+    })();
+  });
+
+  return next;
 }

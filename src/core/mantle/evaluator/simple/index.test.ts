@@ -41,6 +41,54 @@ test("evalSimpleLayer", async () => {
   });
 });
 
+test("evaluate json properties", async () => {
+  expect(
+    await evalSimpleLayer(
+      {
+        id: "x",
+        type: "simple",
+        data: {
+          type: "geojson",
+          jsonProperties: ["key1", "key2"],
+        },
+      },
+      {
+        getAllFeatures: async () => [
+          {
+            type: "feature",
+            id: "a",
+          },
+          {
+            type: "feature",
+            id: "b",
+            properties: {
+              key1: `["hoge", "fuga"]`,
+              key2: "abc",
+            },
+          },
+        ],
+        getFeatures: async () => undefined,
+      },
+    ),
+  ).toEqual({
+    layer: {},
+    features: [
+      {
+        type: "computedFeature",
+        id: "a",
+      },
+      {
+        type: "computedFeature",
+        id: "b",
+        properties: {
+          key1: ["hoge", "fuga"],
+          key2: "abc",
+        },
+      },
+    ],
+  });
+});
+
 describe("Conditional styling", () => {
   test("conditions with variables from properties, members and Strictly Equals", () => {
     expect(

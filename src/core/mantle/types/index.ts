@@ -62,6 +62,7 @@ export type Data = {
   url?: string;
   value?: any;
   layers?: string | string[];
+  jsonProperties?: string[];
   csv?: {
     idColumn?: string | number;
     latColumn?: string | number;
