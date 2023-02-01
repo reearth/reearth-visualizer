@@ -4,14 +4,17 @@ type WidgetAreaProperties struct {
 	padding    WidgetAreaPadding
 	gap        int
 	centered   bool
-	background string
+	background *string
 }
 
 type WidgetAreaPadding struct {
 	top, bottom, left, right int
 }
 
-func NewWidgetAreaProperties(padding WidgetAreaPadding, gap int, centered bool, bg string) *WidgetAreaProperties {
+func NewWidgetAreaProperties() *WidgetAreaProperties {
+	return &WidgetAreaProperties{}
+}
+func NewWidgetAreaPropertiesWith(padding WidgetAreaPadding, gap int, centered bool, bg *string) *WidgetAreaProperties {
 	return &WidgetAreaProperties{
 		padding:    padding,
 		gap:        gap,
@@ -53,11 +56,11 @@ func (ap *WidgetAreaProperties) SetCentered(c bool) {
 	ap.centered = c
 }
 
-func (ap *WidgetAreaProperties) Background() string {
+func (ap *WidgetAreaProperties) Background() *string {
 	return ap.background
 }
 
-func (ap *WidgetAreaProperties) SetBackground(bg string) {
+func (ap *WidgetAreaProperties) SetBackground(bg *string) {
 	if ap == nil {
 		return
 	}

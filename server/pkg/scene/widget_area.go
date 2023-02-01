@@ -93,7 +93,7 @@ func (a *WidgetArea) SetAlignment(at WidgetAlignType) {
 }
 
 func (a *WidgetArea) SetProperties(ap *WidgetAreaProperties) {
-	if a == nil {
+	if a == nil || ap == nil {
 		return
 	}
 

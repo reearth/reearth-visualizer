@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +43,7 @@ func TestWidgetArea(t *testing.T) {
 				},
 				gap:        40,
 				centered:   true,
-				background: "#ffffff",
+				background: lo.ToPtr("#ffffff"),
 			},
 			Expected: &WidgetArea{widgetIds: WidgetIDList{wid1}, align: WidgetAlignEnd, properties: &WidgetAreaProperties{
 				padding: WidgetAreaPadding{
@@ -53,7 +54,7 @@ func TestWidgetArea(t *testing.T) {
 				},
 				gap:        40,
 				centered:   true,
-				background: "#ffffff",
+				background: lo.ToPtr("#ffffff"),
 			}},
 		},
 		{

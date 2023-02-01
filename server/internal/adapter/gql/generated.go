@@ -1036,7 +1036,10 @@ type ComplexityRoot struct {
 
 	WidgetArea struct {
 		Align      func(childComplexity int) int
-		Properties func(childComplexity int) int
+		Background func(childComplexity int) int
+		Centered   func(childComplexity int) int
+		Gap        func(childComplexity int) int
+		Padding    func(childComplexity int) int
 		WidgetIds  func(childComplexity int) int
 	}
 
@@ -1045,13 +1048,6 @@ type ComplexityRoot struct {
 		Left   func(childComplexity int) int
 		Right  func(childComplexity int) int
 		Top    func(childComplexity int) int
-	}
-
-	WidgetAreaProperties struct {
-		Background func(childComplexity int) int
-		Centered   func(childComplexity int) int
-		Gap        func(childComplexity int) int
-		Padding    func(childComplexity int) int
 	}
 
 	WidgetExtendable struct {
@@ -6124,12 +6120,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WidgetArea.Align(childComplexity), true
 
-	case "WidgetArea.properties":
-		if e.complexity.WidgetArea.Properties == nil {
+	case "WidgetArea.background":
+		if e.complexity.WidgetArea.Background == nil {
 			break
 		}
 
-		return e.complexity.WidgetArea.Properties(childComplexity), true
+		return e.complexity.WidgetArea.Background(childComplexity), true
+
+	case "WidgetArea.centered":
+		if e.complexity.WidgetArea.Centered == nil {
+			break
+		}
+
+		return e.complexity.WidgetArea.Centered(childComplexity), true
+
+	case "WidgetArea.gap":
+		if e.complexity.WidgetArea.Gap == nil {
+			break
+		}
+
+		return e.complexity.WidgetArea.Gap(childComplexity), true
+
+	case "WidgetArea.padding":
+		if e.complexity.WidgetArea.Padding == nil {
+			break
+		}
+
+		return e.complexity.WidgetArea.Padding(childComplexity), true
 
 	case "WidgetArea.widgetIds":
 		if e.complexity.WidgetArea.WidgetIds == nil {
@@ -6165,34 +6182,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WidgetAreaPadding.Top(childComplexity), true
-
-	case "WidgetAreaProperties.background":
-		if e.complexity.WidgetAreaProperties.Background == nil {
-			break
-		}
-
-		return e.complexity.WidgetAreaProperties.Background(childComplexity), true
-
-	case "WidgetAreaProperties.centered":
-		if e.complexity.WidgetAreaProperties.Centered == nil {
-			break
-		}
-
-		return e.complexity.WidgetAreaProperties.Centered(childComplexity), true
-
-	case "WidgetAreaProperties.gap":
-		if e.complexity.WidgetAreaProperties.Gap == nil {
-			break
-		}
-
-		return e.complexity.WidgetAreaProperties.Gap(childComplexity), true
-
-	case "WidgetAreaProperties.padding":
-		if e.complexity.WidgetAreaProperties.Padding == nil {
-			break
-		}
-
-		return e.complexity.WidgetAreaProperties.Padding(childComplexity), true
 
 	case "WidgetExtendable.horizontally":
 		if e.complexity.WidgetExtendable.Horizontally == nil {
@@ -6373,7 +6362,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpgradePluginInput,
 		ec.unmarshalInputUploadFileToPropertyInput,
 		ec.unmarshalInputUploadPluginInput,
-		ec.unmarshalInputWidgetAreaPropertiesInput,
+		ec.unmarshalInputWidgetAreaPaddingInput,
 		ec.unmarshalInputWidgetLocationInput,
 	)
 	first := true
@@ -6856,7 +6845,10 @@ type WidgetSection {
 type WidgetArea {
   widgetIds: [ID!]!
   align: WidgetAreaAlign!
-  properties: WidgetAreaProperties!
+  padding: WidgetAreaPadding!
+  gap: Int!
+  centered: Boolean!
+  background: String
 }
 
 type WidgetAreaPadding {
@@ -6864,13 +6856,6 @@ type WidgetAreaPadding {
   bottom: Int!
   left: Int!
   right: Int!
-}
-
-type WidgetAreaProperties {
-  padding: WidgetAreaPadding!
-  gap: Int!
-  centered: Boolean!
-  background: String!
 }
 
 # Property
@@ -7414,16 +7399,6 @@ input WidgetLocationInput {
   area: WidgetAreaType!
 }
 
-input WidgetAreaPropertiesInput {
-  paddingTop: Int
-  paddingBottom: Int
-  paddingLeft: Int
-  paddingRight: Int
-  gap: Int
-  centered: Boolean
-  background: String
-}
-
 input AddWidgetInput {
   sceneId: ID!
   pluginId: ID!
@@ -7443,8 +7418,19 @@ input UpdateWidgetAlignSystemInput {
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
-  properties: WidgetAreaPropertiesInput
+  padding: WidgetAreaPaddingInput
+  gap: Int
+  centered: Boolean
+  background: String
 }
+
+input WidgetAreaPaddingInput {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
 
 input RemoveWidgetInput {
   sceneId: ID!
@@ -42378,8 +42364,8 @@ func (ec *executionContext) fieldContext_WidgetArea_align(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _WidgetArea_properties(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetArea_properties(ctx, field)
+func (ec *executionContext) _WidgetArea_padding(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetArea_padding(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -42392,7 +42378,7 @@ func (ec *executionContext) _WidgetArea_properties(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Properties, nil
+		return obj.Padding, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42404,12 +42390,12 @@ func (ec *executionContext) _WidgetArea_properties(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.WidgetAreaProperties)
+	res := resTmp.(*gqlmodel.WidgetAreaPadding)
 	fc.Result = res
-	return ec.marshalNWidgetAreaProperties2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaProperties(ctx, field.Selections, res)
+	return ec.marshalNWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_WidgetArea_properties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_WidgetArea_padding(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "WidgetArea",
 		Field:      field,
@@ -42417,16 +42403,145 @@ func (ec *executionContext) fieldContext_WidgetArea_properties(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "padding":
-				return ec.fieldContext_WidgetAreaProperties_padding(ctx, field)
-			case "gap":
-				return ec.fieldContext_WidgetAreaProperties_gap(ctx, field)
-			case "centered":
-				return ec.fieldContext_WidgetAreaProperties_centered(ctx, field)
-			case "background":
-				return ec.fieldContext_WidgetAreaProperties_background(ctx, field)
+			case "top":
+				return ec.fieldContext_WidgetAreaPadding_top(ctx, field)
+			case "bottom":
+				return ec.fieldContext_WidgetAreaPadding_bottom(ctx, field)
+			case "left":
+				return ec.fieldContext_WidgetAreaPadding_left(ctx, field)
+			case "right":
+				return ec.fieldContext_WidgetAreaPadding_right(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAreaProperties", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type WidgetAreaPadding", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetArea_gap(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetArea_gap(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Gap, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetArea_gap(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetArea",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetArea_centered(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetArea_centered(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Centered, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetArea_centered(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetArea",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetArea_background(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetArea_background(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Background, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetArea_background(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetArea",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -42603,192 +42718,6 @@ func (ec *executionContext) fieldContext_WidgetAreaPadding_right(ctx context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WidgetAreaProperties_padding(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAreaProperties) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAreaProperties_padding(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Padding, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.WidgetAreaPadding)
-	fc.Result = res
-	return ec.marshalNWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAreaProperties_padding(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAreaProperties",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "top":
-				return ec.fieldContext_WidgetAreaPadding_top(ctx, field)
-			case "bottom":
-				return ec.fieldContext_WidgetAreaPadding_bottom(ctx, field)
-			case "left":
-				return ec.fieldContext_WidgetAreaPadding_left(ctx, field)
-			case "right":
-				return ec.fieldContext_WidgetAreaPadding_right(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAreaPadding", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WidgetAreaProperties_gap(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAreaProperties) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAreaProperties_gap(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Gap, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAreaProperties_gap(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAreaProperties",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WidgetAreaProperties_centered(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAreaProperties) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAreaProperties_centered(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Centered, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAreaProperties_centered(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAreaProperties",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WidgetAreaProperties_background(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAreaProperties) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAreaProperties_background(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Background, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAreaProperties_background(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAreaProperties",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -43241,8 +43170,14 @@ func (ec *executionContext) fieldContext_WidgetSection_top(ctx context.Context, 
 				return ec.fieldContext_WidgetArea_widgetIds(ctx, field)
 			case "align":
 				return ec.fieldContext_WidgetArea_align(ctx, field)
-			case "properties":
-				return ec.fieldContext_WidgetArea_properties(ctx, field)
+			case "padding":
+				return ec.fieldContext_WidgetArea_padding(ctx, field)
+			case "gap":
+				return ec.fieldContext_WidgetArea_gap(ctx, field)
+			case "centered":
+				return ec.fieldContext_WidgetArea_centered(ctx, field)
+			case "background":
+				return ec.fieldContext_WidgetArea_background(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetArea", field.Name)
 		},
@@ -43290,8 +43225,14 @@ func (ec *executionContext) fieldContext_WidgetSection_middle(ctx context.Contex
 				return ec.fieldContext_WidgetArea_widgetIds(ctx, field)
 			case "align":
 				return ec.fieldContext_WidgetArea_align(ctx, field)
-			case "properties":
-				return ec.fieldContext_WidgetArea_properties(ctx, field)
+			case "padding":
+				return ec.fieldContext_WidgetArea_padding(ctx, field)
+			case "gap":
+				return ec.fieldContext_WidgetArea_gap(ctx, field)
+			case "centered":
+				return ec.fieldContext_WidgetArea_centered(ctx, field)
+			case "background":
+				return ec.fieldContext_WidgetArea_background(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetArea", field.Name)
 		},
@@ -43339,8 +43280,14 @@ func (ec *executionContext) fieldContext_WidgetSection_bottom(ctx context.Contex
 				return ec.fieldContext_WidgetArea_widgetIds(ctx, field)
 			case "align":
 				return ec.fieldContext_WidgetArea_align(ctx, field)
-			case "properties":
-				return ec.fieldContext_WidgetArea_properties(ctx, field)
+			case "padding":
+				return ec.fieldContext_WidgetArea_padding(ctx, field)
+			case "gap":
+				return ec.fieldContext_WidgetArea_gap(ctx, field)
+			case "centered":
+				return ec.fieldContext_WidgetArea_centered(ctx, field)
+			case "background":
+				return ec.fieldContext_WidgetArea_background(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetArea", field.Name)
 		},
@@ -48071,7 +48018,7 @@ func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "location", "align", "properties"}
+	fieldsInOrder := [...]string{"sceneId", "location", "align", "padding", "gap", "centered", "background"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48102,11 +48049,35 @@ func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx conte
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "padding":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
-			it.Properties, err = ec.unmarshalOWidgetAreaPropertiesInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPropertiesInput(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("padding"))
+			it.Padding, err = ec.unmarshalOWidgetAreaPaddingInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPaddingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "gap":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gap"))
+			it.Gap, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "centered":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("centered"))
+			it.Centered, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "background":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background"))
+			it.Background, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48332,73 +48303,49 @@ func (ec *executionContext) unmarshalInputUploadPluginInput(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputWidgetAreaPropertiesInput(ctx context.Context, obj interface{}) (gqlmodel.WidgetAreaPropertiesInput, error) {
-	var it gqlmodel.WidgetAreaPropertiesInput
+func (ec *executionContext) unmarshalInputWidgetAreaPaddingInput(ctx context.Context, obj interface{}) (gqlmodel.WidgetAreaPaddingInput, error) {
+	var it gqlmodel.WidgetAreaPaddingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"paddingTop", "paddingBottom", "paddingLeft", "paddingRight", "gap", "centered", "background"}
+	fieldsInOrder := [...]string{"top", "bottom", "left", "right"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "paddingTop":
+		case "top":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paddingTop"))
-			it.PaddingTop, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("top"))
+			it.Top, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "paddingBottom":
+		case "bottom":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paddingBottom"))
-			it.PaddingBottom, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bottom"))
+			it.Bottom, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "paddingLeft":
+		case "left":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paddingLeft"))
-			it.PaddingLeft, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("left"))
+			it.Left, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "paddingRight":
+		case "right":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paddingRight"))
-			it.PaddingRight, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "gap":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gap"))
-			it.Gap, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "centered":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("centered"))
-			it.Centered, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "background":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background"))
-			it.Background, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("right"))
+			it.Right, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -56484,13 +56431,31 @@ func (ec *executionContext) _WidgetArea(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "properties":
+		case "padding":
 
-			out.Values[i] = ec._WidgetArea_properties(ctx, field, obj)
+			out.Values[i] = ec._WidgetArea_padding(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "gap":
+
+			out.Values[i] = ec._WidgetArea_gap(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "centered":
+
+			out.Values[i] = ec._WidgetArea_centered(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "background":
+
+			out.Values[i] = ec._WidgetArea_background(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -56536,55 +56501,6 @@ func (ec *executionContext) _WidgetAreaPadding(ctx context.Context, sel ast.Sele
 		case "right":
 
 			out.Values[i] = ec._WidgetAreaPadding_right(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var widgetAreaPropertiesImplementors = []string{"WidgetAreaProperties"}
-
-func (ec *executionContext) _WidgetAreaProperties(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WidgetAreaProperties) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, widgetAreaPropertiesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("WidgetAreaProperties")
-		case "padding":
-
-			out.Values[i] = ec._WidgetAreaProperties_padding(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "gap":
-
-			out.Values[i] = ec._WidgetAreaProperties_gap(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "centered":
-
-			out.Values[i] = ec._WidgetAreaProperties_centered(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "background":
-
-			out.Values[i] = ec._WidgetAreaProperties_background(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -59840,16 +59756,6 @@ func (ec *executionContext) marshalNWidgetAreaPadding2ᚖgithubᚗcomᚋreearth�
 	return ec._WidgetAreaPadding(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNWidgetAreaProperties2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaProperties(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAreaProperties) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._WidgetAreaProperties(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNWidgetAreaType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaType(ctx context.Context, v interface{}) (gqlmodel.WidgetAreaType, error) {
 	var res gqlmodel.WidgetAreaType
 	err := res.UnmarshalGQL(v)
@@ -61280,11 +61186,11 @@ func (ec *executionContext) marshalOWidgetAreaAlign2ᚖgithubᚗcomᚋreearthᚋ
 	return v
 }
 
-func (ec *executionContext) unmarshalOWidgetAreaPropertiesInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPropertiesInput(ctx context.Context, v interface{}) (*gqlmodel.WidgetAreaPropertiesInput, error) {
+func (ec *executionContext) unmarshalOWidgetAreaPaddingInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPaddingInput(ctx context.Context, v interface{}) (*gqlmodel.WidgetAreaPaddingInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputWidgetAreaPropertiesInput(ctx, v)
+	res, err := ec.unmarshalInputWidgetAreaPaddingInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

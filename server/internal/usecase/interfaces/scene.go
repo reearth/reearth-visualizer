@@ -45,7 +45,10 @@ type UpdateWidgetAlignSystemParam struct {
 	SceneID    id.SceneID
 	Location   scene.WidgetLocation
 	Align      *scene.WidgetAlignType
-	Properties *scene.WidgetAreaProperties
+	Padding    *scene.WidgetAreaPadding
+	Gap        *int
+	Centered   *bool
+	Background *string
 }
 
 type UpdateClusterParam struct {

@@ -33,7 +33,7 @@ type WidgetAreaPropertiesDoc struct {
 	}
 	Gap        int
 	Centered   bool
-	Background string
+	Background *string
 }
 
 func NewWidgetAlignSystem(was *scene.WidgetAlignSystem) *WidgetAlignSystemDocument {
@@ -150,7 +150,7 @@ func (a *WidgetAreaDocument) Model() *scene.WidgetArea {
 		return nil
 	}
 
-	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align), scene.NewWidgetAreaProperties(
+	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align), scene.NewWidgetAreaPropertiesWith(
 		scene.NewWidgetAreaPadding(
 			a.Properties.Padding.Left,
 			a.Properties.Padding.Right,

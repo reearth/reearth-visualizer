@@ -419,7 +419,10 @@ type WidgetSection {
 type WidgetArea {
   widgetIds: [ID!]!
   align: WidgetAreaAlign!
-  properties: WidgetAreaProperties!
+  padding: WidgetAreaPadding!
+  gap: Int!
+  centered: Boolean!
+  background: String
 }
 
 type WidgetAreaPadding {
@@ -427,13 +430,6 @@ type WidgetAreaPadding {
   bottom: Int!
   left: Int!
   right: Int!
-}
-
-type WidgetAreaProperties {
-  padding: WidgetAreaPadding!
-  gap: Int!
-  centered: Boolean!
-  background: String!
 }
 
 # Property
@@ -977,16 +973,6 @@ input WidgetLocationInput {
   area: WidgetAreaType!
 }
 
-input WidgetAreaPropertiesInput {
-  paddingTop: Int
-  paddingBottom: Int
-  paddingLeft: Int
-  paddingRight: Int
-  gap: Int
-  centered: Boolean
-  background: String
-}
-
 input AddWidgetInput {
   sceneId: ID!
   pluginId: ID!
@@ -1006,8 +992,19 @@ input UpdateWidgetAlignSystemInput {
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
-  properties: WidgetAreaPropertiesInput
+  padding: WidgetAreaPaddingInput
+  gap: Int
+  centered: Boolean
+  background: String
 }
+
+input WidgetAreaPaddingInput {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
 
 input RemoveWidgetInput {
   sceneId: ID!

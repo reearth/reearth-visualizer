@@ -331,15 +331,15 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		}
 	}()
 
-	scene, err2 := i.sceneRepo.FindByID(ctx, param.SceneID)
+	s, err2 := i.sceneRepo.FindByID(ctx, param.SceneID)
 	if err2 != nil {
 		return nil, err2
 	}
-	if err := i.CanWriteWorkspace(scene.Workspace(), operator); err != nil {
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
 		return nil, err
 	}
 
-	area := scene.Widgets().Alignment().Area(param.Location)
+	area := s.Widgets().Alignment().Area(param.Location)
 
 	if area == nil {
 		return nil, errors.New("invalid location")
@@ -348,16 +348,32 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	if param.Align != nil {
 		area.SetAlignment(*param.Align)
 	}
-	if param.Properties != nil {
-		area.SetProperties(param.Properties)
+
+	var ap *scene.WidgetAreaProperties
+	if area.Properties() != nil {
+		ap = area.Properties()
+	} else {
+		ap = scene.NewWidgetAreaProperties()
 	}
 
-	if err = i.sceneRepo.Save(ctx, scene); err != nil {
+	if param.Padding != nil {
+		ap.SetPadding(*param.Padding)
+	}
+	if param.Gap != nil {
+		ap.SetGap(*param.Gap)
+	}
+	if param.Centered != nil {
+		ap.SetCentered(*param.Centered)
+	}
+	ap.SetBackground(param.Background)
+	area.SetProperties(ap)
+
+	if err = i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, err
 	}
 
 	tx.Commit()
-	return scene, nil
+	return s, nil
 }
 
 func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {

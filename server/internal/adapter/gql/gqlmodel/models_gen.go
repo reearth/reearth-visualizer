@@ -1278,10 +1278,13 @@ type UpdateTeamPayload struct {
 }
 
 type UpdateWidgetAlignSystemInput struct {
-	SceneID    ID                         `json:"sceneId"`
-	Location   *WidgetLocationInput       `json:"location"`
-	Align      *WidgetAreaAlign           `json:"align"`
-	Properties *WidgetAreaPropertiesInput `json:"properties"`
+	SceneID    ID                      `json:"sceneId"`
+	Location   *WidgetLocationInput    `json:"location"`
+	Align      *WidgetAreaAlign        `json:"align"`
+	Padding    *WidgetAreaPaddingInput `json:"padding"`
+	Gap        *int                    `json:"gap"`
+	Centered   *bool                   `json:"centered"`
+	Background *string                 `json:"background"`
 }
 
 type UpdateWidgetAlignSystemPayload struct {
@@ -1347,9 +1350,12 @@ type WidgetAlignSystem struct {
 }
 
 type WidgetArea struct {
-	WidgetIds  []ID                  `json:"widgetIds"`
-	Align      WidgetAreaAlign       `json:"align"`
-	Properties *WidgetAreaProperties `json:"properties"`
+	WidgetIds  []ID               `json:"widgetIds"`
+	Align      WidgetAreaAlign    `json:"align"`
+	Padding    *WidgetAreaPadding `json:"padding"`
+	Gap        int                `json:"gap"`
+	Centered   bool               `json:"centered"`
+	Background *string            `json:"background"`
 }
 
 type WidgetAreaPadding struct {
@@ -1359,21 +1365,11 @@ type WidgetAreaPadding struct {
 	Right  int `json:"right"`
 }
 
-type WidgetAreaProperties struct {
-	Padding    *WidgetAreaPadding `json:"padding"`
-	Gap        int                `json:"gap"`
-	Centered   bool               `json:"centered"`
-	Background string             `json:"background"`
-}
-
-type WidgetAreaPropertiesInput struct {
-	PaddingTop    *int    `json:"paddingTop"`
-	PaddingBottom *int    `json:"paddingBottom"`
-	PaddingLeft   *int    `json:"paddingLeft"`
-	PaddingRight  *int    `json:"paddingRight"`
-	Gap           *int    `json:"gap"`
-	Centered      *bool   `json:"centered"`
-	Background    *string `json:"background"`
+type WidgetAreaPaddingInput struct {
+	Top    int `json:"top"`
+	Bottom int `json:"bottom"`
+	Left   int `json:"left"`
+	Right  int `json:"right"`
 }
 
 type WidgetExtendable struct {
