@@ -85,26 +85,18 @@ export default (alias?: string) => {
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
-      const left = widgetSection(zone?.left);
-      const center = widgetSection(zone?.center);
-      const right = widgetSection(zone?.right);
-      if (!left && !center && !right) return;
       return {
-        left,
-        center,
-        right,
+        left: widgetSection(zone?.left),
+        center: widgetSection(zone?.center),
+        right: widgetSection(zone?.right),
       };
     };
 
     const widgetSection = (section?: WidgetSection | null) => {
-      const top = widgetArea(section?.top);
-      const middle = widgetArea(section?.middle);
-      const bottom = widgetArea(section?.bottom);
-      if (!top && !middle && !bottom) return;
       return {
-        top,
-        middle,
-        bottom,
+        top: widgetArea(section?.top),
+        middle: widgetArea(section?.middle),
+        bottom: widgetArea(section?.bottom),
       };
     };
 
@@ -113,10 +105,9 @@ export default (alias?: string) => {
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
         .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
-      if (!areaWidgets || areaWidgets.length < 1) return;
       return {
         align: align ?? "start",
-        widgets: areaWidgets,
+        widgets: areaWidgets || [],
       };
     };
 
