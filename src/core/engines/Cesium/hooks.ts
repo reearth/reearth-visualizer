@@ -149,7 +149,7 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId?.layerId);
+    const entity = findEntity(viewer, selectedLayerId?.featureId ?? selectedLayerId?.layerId);
     if (viewer.selectedEntity === entity) return;
 
     const tag = getTag(entity);
@@ -224,7 +224,7 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
-        onLayerSelect?.(tag?.layerId);
+        onLayerSelect?.(tag?.layerId, tag?.featureId);
         return;
       }
 
