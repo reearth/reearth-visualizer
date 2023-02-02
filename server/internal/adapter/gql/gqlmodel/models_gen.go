@@ -1278,9 +1278,13 @@ type UpdateTeamPayload struct {
 }
 
 type UpdateWidgetAlignSystemInput struct {
-	SceneID  ID                   `json:"sceneId"`
-	Location *WidgetLocationInput `json:"location"`
-	Align    *WidgetAreaAlign     `json:"align"`
+	SceneID    ID                      `json:"sceneId"`
+	Location   *WidgetLocationInput    `json:"location"`
+	Align      *WidgetAreaAlign        `json:"align"`
+	Padding    *WidgetAreaPaddingInput `json:"padding"`
+	Gap        *int                    `json:"gap"`
+	Centered   *bool                   `json:"centered"`
+	Background *string                 `json:"background"`
 }
 
 type UpdateWidgetAlignSystemPayload struct {
@@ -1346,8 +1350,26 @@ type WidgetAlignSystem struct {
 }
 
 type WidgetArea struct {
-	WidgetIds []ID            `json:"widgetIds"`
-	Align     WidgetAreaAlign `json:"align"`
+	WidgetIds  []ID               `json:"widgetIds"`
+	Align      WidgetAreaAlign    `json:"align"`
+	Padding    *WidgetAreaPadding `json:"padding"`
+	Gap        int                `json:"gap"`
+	Centered   bool               `json:"centered"`
+	Background *string            `json:"background"`
+}
+
+type WidgetAreaPadding struct {
+	Top    int `json:"top"`
+	Bottom int `json:"bottom"`
+	Left   int `json:"left"`
+	Right  int `json:"right"`
+}
+
+type WidgetAreaPaddingInput struct {
+	Top    int `json:"top"`
+	Bottom int `json:"bottom"`
+	Left   int `json:"left"`
+	Right  int `json:"right"`
 }
 
 type WidgetExtendable struct {

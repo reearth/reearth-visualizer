@@ -24,6 +24,12 @@ type WidgetSectionDocument struct {
 type WidgetAreaDocument struct {
 	WidgetIDs []string
 	Align     string
+	Padding   struct {
+		Top, Bottom, Left, Right int
+	}
+	Gap        int
+	Centered   bool
+	Background *string
 }
 
 func NewWidgetAlignSystem(was *scene.WidgetAlignSystem) *WidgetAlignSystemDocument {
@@ -84,6 +90,17 @@ func NewWidgetArea(a *scene.WidgetArea) *WidgetAreaDocument {
 	return &WidgetAreaDocument{
 		WidgetIDs: a.WidgetIDs().Strings(),
 		Align:     string(a.Alignment()),
+		Padding: struct {
+			Top, Bottom, Left, Right int
+		}{
+			Top:    a.Padding().Top(),
+			Bottom: a.Padding().Bottom(),
+			Left:   a.Padding().Left(),
+			Right:  a.Padding().Right(),
+		},
+		Gap:        a.Gap(),
+		Centered:   a.Centered(),
+		Background: a.Background(),
 	}
 }
 
@@ -127,7 +144,17 @@ func (a *WidgetAreaDocument) Model() *scene.WidgetArea {
 		return nil
 	}
 
-	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align))
+	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align),
+		scene.NewWidgetAreaPadding(
+			a.Padding.Left,
+			a.Padding.Right,
+			a.Padding.Top,
+			a.Padding.Bottom,
+		),
+		a.Gap,
+		a.Centered,
+		a.Background,
+	)
 }
 
 func stringsToWidgetIDs(wids []string) []id.WidgetID {
