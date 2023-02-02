@@ -27,17 +27,17 @@ func (s *WidgetSection) Area(t WidgetAreaType) *WidgetArea {
 	switch t {
 	case WidgetAreaTop:
 		if s.top == nil {
-			s.top = NewWidgetArea(nil, WidgetAlignStart, nil)
+			s.top = NewWidgetArea(nil, WidgetAlignStart, nil, 0, false, nil)
 		}
 		return s.top
 	case WidgetAreaMiddle:
 		if s.middle == nil {
-			s.middle = NewWidgetArea(nil, WidgetAlignStart, nil)
+			s.middle = NewWidgetArea(nil, WidgetAlignStart, nil, 0, false, nil)
 		}
 		return s.middle
 	case WidgetAreaBottom:
 		if s.bottom == nil {
-			s.bottom = NewWidgetArea(nil, WidgetAlignStart, nil)
+			s.bottom = NewWidgetArea(nil, WidgetAlignStart, nil, 0, false, nil)
 		}
 		return s.bottom
 	}

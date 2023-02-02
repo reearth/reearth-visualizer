@@ -22,13 +22,9 @@ type WidgetSectionDocument struct {
 }
 
 type WidgetAreaDocument struct {
-	WidgetIDs  []string
-	Align      string
-	Properties WidgetAreaPropertiesDoc
-}
-
-type WidgetAreaPropertiesDoc struct {
-	Padding struct {
+	WidgetIDs []string
+	Align     string
+	Padding   struct {
 		Top, Bottom, Left, Right int
 	}
 	Gap        int
@@ -94,19 +90,17 @@ func NewWidgetArea(a *scene.WidgetArea) *WidgetAreaDocument {
 	return &WidgetAreaDocument{
 		WidgetIDs: a.WidgetIDs().Strings(),
 		Align:     string(a.Alignment()),
-		Properties: WidgetAreaPropertiesDoc{
-			Padding: struct {
-				Top, Bottom, Left, Right int
-			}{
-				Top:    a.Properties().Padding().Top(),
-				Bottom: a.Properties().Padding().Bottom(),
-				Left:   a.Properties().Padding().Left(),
-				Right:  a.Properties().Padding().Right(),
-			},
-			Gap:        a.Properties().Gap(),
-			Centered:   a.Properties().Centered(),
-			Background: a.Properties().Background(),
+		Padding: struct {
+			Top, Bottom, Left, Right int
+		}{
+			Top:    a.Padding().Top(),
+			Bottom: a.Padding().Bottom(),
+			Left:   a.Padding().Left(),
+			Right:  a.Padding().Right(),
 		},
+		Gap:        a.Gap(),
+		Centered:   a.Centered(),
+		Background: a.Background(),
 	}
 }
 
@@ -150,17 +144,17 @@ func (a *WidgetAreaDocument) Model() *scene.WidgetArea {
 		return nil
 	}
 
-	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align), scene.NewWidgetAreaPropertiesWith(
+	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align),
 		scene.NewWidgetAreaPadding(
-			a.Properties.Padding.Left,
-			a.Properties.Padding.Right,
-			a.Properties.Padding.Top,
-			a.Properties.Padding.Bottom,
+			a.Padding.Left,
+			a.Padding.Right,
+			a.Padding.Top,
+			a.Padding.Bottom,
 		),
-		a.Properties.Gap,
-		a.Properties.Centered,
-		a.Properties.Background,
-	))
+		a.Gap,
+		a.Centered,
+		a.Background,
+	)
 }
 
 func stringsToWidgetIDs(wids []string) []id.WidgetID {

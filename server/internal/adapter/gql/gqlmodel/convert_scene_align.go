@@ -83,7 +83,7 @@ func FromSceneWidgetAreaPadding(p *WidgetAreaPaddingInput) *scene.WidgetAreaPadd
 		p.Top,
 		p.Bottom,
 	)
-	return &pp
+	return pp
 }
 
 func FromSceneWidgetZoneType(t WidgetZoneType) scene.WidgetZoneType {

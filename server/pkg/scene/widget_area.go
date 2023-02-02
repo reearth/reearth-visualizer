@@ -6,7 +6,10 @@ import "github.com/samber/lo"
 type WidgetArea struct {
 	widgetIds  WidgetIDList
 	align      WidgetAlignType
-	properties *WidgetAreaProperties
+	padding    *WidgetAreaPadding
+	gap        int
+	centered   bool
+	background *string
 }
 
 type WidgetAlignType string
@@ -17,11 +20,15 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, properties *WidgetAreaProperties) *WidgetArea {
+func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap int, centered bool, background *string) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
-	wa.SetProperties(properties)
+	wa.SetPadding(padding)
+	wa.SetGap(gap)
+	wa.SetCentered(centered)
+	wa.SetBackground(background)
+
 	return wa
 }
 
@@ -43,12 +50,36 @@ func (a *WidgetArea) Alignment() WidgetAlignType {
 	return a.align
 }
 
-func (a *WidgetArea) Properties() *WidgetAreaProperties {
+func (a *WidgetArea) Padding() *WidgetAreaPadding {
 	if a == nil {
 		return nil
 	}
 
-	return a.properties
+	return a.padding
+}
+
+func (a *WidgetArea) Gap() int {
+	if a == nil {
+		return 0
+	}
+
+	return a.gap
+}
+
+func (a *WidgetArea) Centered() bool {
+	if a == nil {
+		return false
+	}
+
+	return a.centered
+}
+
+func (a *WidgetArea) Background() *string {
+	if a == nil {
+		return nil
+	}
+
+	return a.background
 }
 
 func (a *WidgetArea) Find(wid WidgetID) int {
@@ -92,12 +123,24 @@ func (a *WidgetArea) SetAlignment(at WidgetAlignType) {
 	}
 }
 
-func (a *WidgetArea) SetProperties(ap *WidgetAreaProperties) {
+func (a *WidgetArea) SetPadding(ap *WidgetAreaPadding) {
 	if a == nil || ap == nil {
 		return
 	}
 
-	a.properties = ap.Clone()
+	a.padding = ap
+}
+
+func (a *WidgetArea) SetGap(g int) {
+	a.gap = g
+}
+
+func (a *WidgetArea) SetCentered(c bool) {
+	a.centered = c
+}
+
+func (a *WidgetArea) SetBackground(bg *string) {
+	a.background = bg
 }
 
 func (a *WidgetArea) Remove(wid WidgetID) {
@@ -120,4 +163,30 @@ func (a *WidgetArea) Move(from, to int) {
 
 	wid := a.widgetIds[from]
 	a.widgetIds = a.widgetIds.DeleteAt(from).Insert(to, wid)
+}
+
+type WidgetAreaPadding struct {
+	top, bottom, left, right int
+}
+
+func NewWidgetAreaPadding(l, r, t, b int) *WidgetAreaPadding {
+	return &WidgetAreaPadding{
+		top:    t,
+		bottom: b,
+		left:   l,
+		right:  r,
+	}
+}
+
+func (p WidgetAreaPadding) Top() int {
+	return p.top
+}
+func (p WidgetAreaPadding) Bottom() int {
+	return p.bottom
+}
+func (p WidgetAreaPadding) Left() int {
+	return p.left
+}
+func (p WidgetAreaPadding) Right() int {
+	return p.right
 }

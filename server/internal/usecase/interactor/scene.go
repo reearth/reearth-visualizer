@@ -349,24 +349,16 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		area.SetAlignment(*param.Align)
 	}
 
-	var ap *scene.WidgetAreaProperties
-	if area.Properties() != nil {
-		ap = area.Properties()
-	} else {
-		ap = scene.NewWidgetAreaProperties()
-	}
-
 	if param.Padding != nil {
-		ap.SetPadding(*param.Padding)
+		area.SetPadding(param.Padding)
 	}
 	if param.Gap != nil {
-		ap.SetGap(*param.Gap)
+		area.SetGap(*param.Gap)
 	}
 	if param.Centered != nil {
-		ap.SetCentered(*param.Centered)
+		area.SetCentered(*param.Centered)
 	}
-	ap.SetBackground(param.Background)
-	area.SetProperties(ap)
+	area.SetBackground(param.Background)
 
 	if err = i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, err
