@@ -67,6 +67,35 @@ test("with header", async () => {
   ]);
 });
 
+test("specify csv directly", async () => {
+  const features = await fetchCSV({
+    type: "csv",
+    value: `id,lat,lng,height,country\n1,0,0,0,Japan`,
+    csv: {
+      idColumn: "id",
+      latColumn: "lat",
+      lngColumn: "lng",
+      heightColumn: "height",
+      noHeader: false,
+    },
+  });
+
+  expect(features).toEqual([
+    {
+      type: "feature",
+      id: "1",
+      geometry: {
+        type: "Point",
+        coordinates: [0, 0, 0],
+      },
+      properties: {
+        country: "Japan",
+      },
+      range: undefined,
+    },
+  ]);
+});
+
 test("has header but set index", async () => {
   const fetchDataMock = vi.spyOn(Utils, "f");
   fetchDataMock.mockImplementation(async () => {

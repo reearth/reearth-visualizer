@@ -7,8 +7,11 @@ import { f, generateRandomString } from "./utils";
 export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[] | void> {
   if (!data.url) {
     const value = data.value;
-    const feature = makeFeature(value, range);
-    return feature ? [feature] : undefined;
+    if (typeof value !== "string") {
+      const feature = makeFeature(value, range);
+      return feature ? [feature] : undefined;
+    }
+    return await parseCSV(value, data.csv, range);
   }
   const csvText = await (await f(data.url)).text();
   return await parseCSV(csvText, data.csv, range);
