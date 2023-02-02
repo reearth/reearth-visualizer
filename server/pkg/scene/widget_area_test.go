@@ -368,20 +368,27 @@ func TestWidgetArea_Move(t *testing.T) {
 	}
 }
 
-func TestWidgetArea_SetBackground(t *testing.T) {
-	wa := &WidgetArea{}
+func TestWidgetArea_Background(t *testing.T) {
+	var wa *WidgetArea
+	var want *string
+	assert.Equal(t, want, wa.Background())
+	wa = &WidgetArea{}
 	wa.SetBackground(lo.ToPtr("xxx"))
 	assert.Equal(t, lo.ToPtr("xxx"), wa.Background())
 }
 
-func TestWidgetArea_SetGap(t *testing.T) {
-	wa := &WidgetArea{}
+func TestWidgetArea_Gap(t *testing.T) {
+	var wa *WidgetArea
+	assert.Equal(t, 0, wa.Gap())
+	wa = &WidgetArea{}
 	wa.SetGap(39)
 	assert.Equal(t, 39, wa.Gap())
 }
 
-func TestWidgetArea_SetCentered(t *testing.T) {
-	wa := &WidgetArea{}
+func TestWidgetArea_Centered(t *testing.T) {
+	var wa *WidgetArea
+	assert.Equal(t, false, wa.Centered())
+	wa = &WidgetArea{}
 	wa.SetCentered(true)
 	assert.Equal(t, true, wa.Centered())
 }
@@ -396,5 +403,8 @@ func TestWidgetArea_Padding(t *testing.T) {
 		right:  1,
 	}, p)
 	wa.SetPadding(p)
-	assert.Equal(t, p, wa.Padding())
+	assert.Equal(t, p.Right(), wa.Padding().Right())
+	assert.Equal(t, p.Left(), wa.Padding().Left())
+	assert.Equal(t, p.Top(), wa.Padding().Top())
+	assert.Equal(t, p.Bottom(), wa.Padding().Bottom())
 }
