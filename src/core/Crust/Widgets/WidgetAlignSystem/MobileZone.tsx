@@ -7,6 +7,7 @@ import { styled } from "@reearth/theme";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
+import { filterSections } from "./utils";
 
 export type Props = {
   children?: ReactNode;
@@ -18,7 +19,6 @@ export type Props = {
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
-const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
@@ -31,12 +31,7 @@ export default function MobileZone({
   renderWidget,
 }: Props) {
   const filteredSections = useMemo(() => {
-    return sections.filter(
-      s =>
-        areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgetIDs?.includes(w.id)))
-          .length ||
-        (s === "center" && children),
-    );
+    return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
   }, [zone, children, invisibleWidgetIDs]);
 
   const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);

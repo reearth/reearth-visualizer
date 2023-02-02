@@ -43,8 +43,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
     setOverrideAlignSystem(alignSystem => {
       if (!alignSystem) return alignSystem;
-      let next = { ...alignSystem };
-      Object.keys(next).forEach(zoneName_ => {
+      Object.keys(alignSystem).forEach(zoneName_ => {
         const zoneName = zoneName_ as keyof WidgetAlignSystem;
         const zone = alignSystem[zoneName];
         if (zone) {
@@ -59,19 +58,6 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
                   const sourceIndex = area.widgets.findIndex(w => w.id === widgetId);
                   if (sourceIndex !== -1) {
                     [widget] = area.widgets.splice(sourceIndex, 1);
-                    next = {
-                      ...next,
-                      [zoneName]: {
-                        ...next[zoneName],
-                        [sectionName]: {
-                          ...(next[zoneName]?.[sectionName] || {}),
-                          [areaName]: {
-                            ...(next[zoneName]?.[sectionName]?.[areaName] || {}),
-                            ...area,
-                          },
-                        },
-                      },
-                    };
                   }
                 }
               });
@@ -79,7 +65,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
           });
         }
       });
-      return { ...next };
+      return { ...alignSystem };
     });
 
     setTimeout(() => {
@@ -118,7 +104,24 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
           targetArea.widgets.push(widget);
         }
 
-        return { ...alignSystem };
+        if (targetArea.widgets.length) {
+          const next = {
+            ...alignSystem,
+            [options.zone]: {
+              ...alignSystem[options.zone],
+              [options.section]: {
+                ...(alignSystem[options.zone]?.[options.section] || {}),
+                [options.area]: {
+                  ...(alignSystem[options.zone]?.[options.section]?.[options.area] || {}),
+                  widgets: [...targetArea.widgets],
+                },
+              },
+            },
+          };
+          return { ...next };
+        }
+
+        return alignSystem;
       });
     }, 0);
   }, []);
