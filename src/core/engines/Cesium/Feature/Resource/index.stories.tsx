@@ -27,6 +27,13 @@ Default.args = {
         url: "/testdata/sample.czml",
       },
       resource: {},
+      marker: {
+        pointColor: {
+          expression: {
+            conditions: [["${id} === '1'", "color('red')"]],
+          },
+        },
+      },
     },
   ],
   property: {

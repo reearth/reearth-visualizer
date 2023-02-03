@@ -43,6 +43,7 @@ export type Tag = {
   draggable?: boolean;
   unselectable?: boolean;
   legacyLocationPropertyKey?: string;
+  originalProperties?: any;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -93,7 +94,8 @@ export function attachTag(
     entity.properties = new PropertyBag();
   }
   for (const k of tagKeys) {
-    if (!(k in tag)) entity.properties.removeProperty(`reearth_${k}`);
+    if (!(k in tag) && entity.properties.hasProperty(`reearth_${k}`))
+      entity.properties.removeProperty(`reearth_${k}`);
     else entity.properties[`reearth_${k}`] = tag[k];
   }
 }
@@ -128,6 +130,7 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   featureId: 1,
   layerId: 1,
   unselectable: 1,
+  originalProperties: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
