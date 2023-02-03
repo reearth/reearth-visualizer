@@ -22,14 +22,16 @@ type WidgetSectionDocument struct {
 }
 
 type WidgetAreaDocument struct {
-	WidgetIDs []string
-	Align     string
-	Padding   struct {
-		Top, Bottom, Left, Right int
-	}
+	WidgetIDs  []string
+	Align      string
+	Padding    *WidgetAreaPaddingDocument
 	Gap        int
 	Centered   bool
 	Background *string
+}
+
+type WidgetAreaPaddingDocument struct {
+	Top, Bottom, Left, Right int
 }
 
 func NewWidgetAlignSystem(was *scene.WidgetAlignSystem) *WidgetAlignSystemDocument {
@@ -88,19 +90,25 @@ func NewWidgetArea(a *scene.WidgetArea) *WidgetAreaDocument {
 	}
 
 	return &WidgetAreaDocument{
-		WidgetIDs: a.WidgetIDs().Strings(),
-		Align:     string(a.Alignment()),
-		Padding: struct {
-			Top, Bottom, Left, Right int
-		}{
-			Top:    a.Padding().Top(),
-			Bottom: a.Padding().Bottom(),
-			Left:   a.Padding().Left(),
-			Right:  a.Padding().Right(),
-		},
+		WidgetIDs:  a.WidgetIDs().Strings(),
+		Align:      string(a.Alignment()),
+		Padding:    NewWidgetAreaPadding(a.Padding()),
 		Gap:        a.Gap(),
 		Centered:   a.Centered(),
 		Background: a.Background(),
+	}
+}
+
+func NewWidgetAreaPadding(p *scene.WidgetAreaPadding) *WidgetAreaPaddingDocument {
+	if p == nil {
+		return nil
+	}
+
+	return &WidgetAreaPaddingDocument{
+		Top:    p.Top(),
+		Bottom: p.Bottom(),
+		Left:   p.Left(),
+		Right:  p.Right(),
 	}
 }
 
@@ -144,17 +152,22 @@ func (a *WidgetAreaDocument) Model() *scene.WidgetArea {
 		return nil
 	}
 
-	return scene.NewWidgetArea(stringsToWidgetIDs(a.WidgetIDs), scene.WidgetAlignType(a.Align),
-		scene.NewWidgetAreaPadding(
-			a.Padding.Left,
-			a.Padding.Right,
-			a.Padding.Top,
-			a.Padding.Bottom,
-		),
+	return scene.NewWidgetArea(
+		stringsToWidgetIDs(a.WidgetIDs),
+		scene.WidgetAlignType(a.Align),
+		a.Padding.Model(),
 		a.Gap,
 		a.Centered,
 		a.Background,
 	)
+}
+
+func (a *WidgetAreaPaddingDocument) Model() *scene.WidgetAreaPadding {
+	if a == nil {
+		return nil
+	}
+
+	return scene.NewWidgetAreaPadding(a.Left, a.Right, a.Top, a.Bottom)
 }
 
 func stringsToWidgetIDs(wids []string) []id.WidgetID {

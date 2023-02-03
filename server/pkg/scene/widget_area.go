@@ -1,6 +1,9 @@
 package scene
 
-import "github.com/samber/lo"
+import (
+	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
+)
 
 // WidgetArea has the widgets and alignment information found in each part area of a section.
 type WidgetArea struct {
@@ -79,7 +82,7 @@ func (a *WidgetArea) Background() *string {
 		return nil
 	}
 
-	return a.background
+	return util.CloneRef(a.background)
 }
 
 func (a *WidgetArea) Find(wid WidgetID) int {
@@ -140,7 +143,7 @@ func (a *WidgetArea) SetCentered(c bool) {
 }
 
 func (a *WidgetArea) SetBackground(bg *string) {
-	a.background = bg
+	a.background = util.CloneRef(bg)
 }
 
 func (a *WidgetArea) Remove(wid WidgetID) {
@@ -181,12 +184,15 @@ func NewWidgetAreaPadding(l, r, t, b int) *WidgetAreaPadding {
 func (p WidgetAreaPadding) Top() int {
 	return p.top
 }
+
 func (p WidgetAreaPadding) Bottom() int {
 	return p.bottom
 }
+
 func (p WidgetAreaPadding) Left() int {
 	return p.left
 }
+
 func (p WidgetAreaPadding) Right() int {
 	return p.right
 }
