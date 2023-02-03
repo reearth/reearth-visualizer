@@ -34,8 +34,9 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
 // This indicates what component should render for file extension.
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   geojson: "auto",
-  czml: "auto",
   csv: "auto",
+  czml: ["resource"],
+  kml: ["resource"],
   wms: ["raster"],
   mvt: ["raster"],
   ["3dtiles"]: ["3dtiles"],
