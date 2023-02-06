@@ -61,7 +61,7 @@ func (r *DatasetSchema) FindByScene(_ context.Context, s id.SceneID, p *usecasex
 	}
 
 	return result, usecasex.NewPageInfo(
-		len(result),
+		int64(len(result)),
 		startCursor,
 		endCursor,
 		true,

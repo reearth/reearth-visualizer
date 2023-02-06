@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 func RefToIndex(i *int) int {
@@ -90,10 +91,17 @@ func ToPagination(pagination *Pagination) *usecasex.Pagination {
 	if pagination == nil {
 		return nil
 	}
-	return &usecasex.Pagination{
+	return usecasex.CursorPagination{
 		Before: pagination.Before,
 		After:  pagination.After,
-		First:  pagination.First,
-		Last:   pagination.Last,
+		First:  intToInt64(pagination.First),
+		Last:   intToInt64(pagination.Last),
+	}.Wrap()
+}
+
+func intToInt64(i *int) *int64 {
+	if i == nil {
+		return nil
 	}
+	return lo.ToPtr(int64(*i))
 }

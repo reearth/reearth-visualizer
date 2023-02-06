@@ -101,7 +101,12 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, fi
 		return nil, err
 	}
 
-	res, pi, err := c.usecase.FindSchemaByScene(ctx, sid, usecasex.NewPagination(first, last, before, after), getOperator(ctx))
+	res, pi, err := c.usecase.FindSchemaByScene(ctx, sid, usecasex.CursorPagination{
+		First:  intToInt64(first),
+		Last:   intToInt64(last),
+		Before: before,
+		After:  after,
+	}.Wrap(), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +126,7 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, fi
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount,
+		TotalCount: int(pi.TotalCount),
 	}, nil
 }
 
@@ -150,7 +155,12 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, firs
 		return nil, err
 	}
 
-	p := usecasex.NewPagination(first, last, before, after)
+	p := usecasex.CursorPagination{
+		First:  intToInt64(first),
+		Last:   intToInt64(last),
+		Before: before,
+		After:  after,
+	}.Wrap()
 	res, pi, err2 := c.usecase.FindBySchema(ctx, schemaid, p, getOperator(ctx))
 	if err2 != nil {
 		return nil, err2
@@ -171,7 +181,7 @@ func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, firs
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount,
+		TotalCount: int(pi.TotalCount),
 	}
 
 	return conn, nil
