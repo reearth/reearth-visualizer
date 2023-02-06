@@ -135,5 +135,5 @@ const Description = styled(Text)`
 `;
 
 export const config: FeatureComponentConfig = {
-  noFeature: true,
+  noLayer: true,
 };

@@ -463,6 +463,7 @@ test("resource", () => {
       isVisible: true,
       property: {
         default: {
+          type: "abc",
           url: "xxx",
           hoge: "red",
         },
@@ -472,7 +473,12 @@ test("resource", () => {
     id: "x",
     type: "simple",
     visible: true,
+    data: {
+      type: "abc",
+      url: "xxx",
+    },
     resource: {
+      type: "abc",
       url: "xxx",
       hoge: "red",
     },
@@ -481,6 +487,7 @@ test("resource", () => {
       propertyId: "p",
       property: {
         default: {
+          type: "abc",
           url: "xxx",
           hoge: "red",
         },

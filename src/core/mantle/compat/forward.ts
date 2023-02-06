@@ -201,6 +201,11 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
         type: l.property.default.type,
         value: obj,
       };
+    } else {
+      data = {
+        type: l.property.default.type,
+        url: l.property.default.url,
+      };
     }
   } else if (l.extensionId === "box") {
     appearance = "box";
