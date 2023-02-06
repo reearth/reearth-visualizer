@@ -457,6 +457,159 @@ test("computeAtom with cache", async () => {
   expect(fetchDataMock).toBeCalledTimes(4);
 });
 
+test("computeAtom only value", async () => {
+  const data: TestData = {
+    test_id: "xxx",
+    type: "geojson",
+    value: {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [1, 1],
+      },
+    },
+  };
+  const features: Feature[] = [
+    { type: "feature", id: "xxx", geometry: { type: "Point", coordinates: [1, 1] } },
+  ];
+  const features2: Feature[] = [
+    { type: "feature", id: "zzz", geometry: { type: "Point", coordinates: [100, 100] } },
+  ];
+  const fetchDataMock = vi.spyOn(DataCache, "fetchData");
+  fetchDataMock.mockImplementation(async data => {
+    return [
+      {
+        type: "feature",
+        id: (data as any).test_id || "",
+        geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
+        properties: undefined,
+        range: undefined,
+      },
+    ];
+  });
+  const internalFeatures: Feature[] = [
+    { type: "feature", id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
+  ];
+  const internalFeatures2: Feature[] = [
+    { type: "feature", id: features2[0].id, geometry: { type: "Point", coordinates: [100, 100] } },
+  ];
+  const { result } = renderHook(() => {
+    const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
+    const [result, set] = useAtom(atoms);
+    return { result, set };
+  });
+
+  expect(result.current.result).toBeUndefined();
+
+  // Set data.value
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data,
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data,
+    },
+    status: "ready",
+    features: toComputedFeature(features),
+    originalFeatures: [...features],
+  });
+
+  expect(fetchDataMock).toBeCalledTimes(1);
+
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data,
+          marker: {
+            imageColor: "black",
+          },
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data,
+      marker: {
+        imageColor: "black",
+      },
+    },
+    status: "ready",
+    features: toComputedFeature(internalFeatures),
+    originalFeatures: [...internalFeatures],
+  });
+
+  // Should not fetch if value is not changed
+  expect(fetchDataMock).toBeCalledTimes(1);
+
+  const changedData = {
+    ...data,
+    test_id: "zzz",
+    value: {
+      ...data.value,
+      geometry: {
+        type: "Point",
+        coordinates: [100, 100],
+      },
+    },
+  };
+
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data: changedData,
+          marker: {
+            imageColor: "black",
+          },
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data: changedData,
+      marker: {
+        imageColor: "black",
+      },
+    },
+    status: "ready",
+    features: toComputedFeature(internalFeatures2),
+    originalFeatures: [...internalFeatures2],
+  });
+
+  // Should fetch if value is changed
+  expect(fetchDataMock).toBeCalledTimes(2);
+});
+
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
   evalLayer: async (layer: LayerSimple, ctx: EvalContext) => {
     if (!layer.data) return { layer: {}, features: undefined };

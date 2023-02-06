@@ -1,6 +1,7 @@
 import { atom } from "jotai";
-import { merge, pick } from "lodash-es";
+import { merge, pick, isEqual } from "lodash-es";
 
+import { processGeoJSON } from "../data/geojson";
 import { evalLayer, EvalResult } from "../evaluator";
 import type {
   ComputedFeature,
@@ -85,6 +86,32 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
     set(layerStatus, "fetching");
 
+    const shouldFetch = (prevFeatures: Feature[] | undefined) => {
+      if (currentLayer.type !== "simple") {
+        return false;
+      }
+
+      // `data.url` should be cached on dataAtoms, so we can return true in this line.
+      if (currentLayer.data?.url || !currentLayer.data?.value) {
+        return true;
+      }
+
+      // Only support geojson for specifying direct feature.
+      if (currentLayer.data?.type !== "geojson") {
+        return false;
+      }
+
+      const curFeatures = processGeoJSON(currentLayer.data.value);
+      if (curFeatures.length === prevFeatures?.length) {
+        return !curFeatures.every((cur, i) => {
+          const prev = prevFeatures[i];
+          return isEqual({ ...cur, id: "" }, { ...prev, id: "" });
+        });
+      }
+
+      return true;
+    };
+
     // Used for a simple layer.
     // It retrieves all features for the layer stored in the cache,
     // but attempts to retrieve data from the network if the main feature is not yet in the cache.
@@ -92,13 +119,19 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const getterAll = get(dataAtoms.getAll);
       const allFeatures = getterAll(layerId, data);
 
+      const flattenAllFeatures = allFeatures?.flat();
+
       // Ignore cache if data is embedded
       if (
         allFeatures &&
         // Check if data has cache key
         DATA_CACHE_KEYS.every(k => !!data[k])
       ) {
-        return allFeatures.flat();
+        return flattenAllFeatures;
+      }
+
+      if (!shouldFetch(flattenAllFeatures)) {
+        return flattenAllFeatures;
       }
 
       await set(dataAtoms.fetch, { data, layerId });
@@ -114,6 +147,10 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
       // Ignore cache if data is embedded
       if (c) return c;
+
+      if (!shouldFetch(c)) {
+        return c;
+      }
 
       await set(dataAtoms.fetch, { data, range, layerId });
       return getter(layerId, data, range);
