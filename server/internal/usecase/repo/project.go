@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 type Project interface {
@@ -20,8 +21,13 @@ type Project interface {
 	Remove(context.Context, id.ProjectID) error
 }
 
-func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.WorkspaceID, batch int, callback func([]*project.Project) error) error {
-	pagination := usecasex.NewPagination(&batch, nil, nil, nil)
+func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.WorkspaceID, batch int64, callback func([]*project.Project) error) error {
+	pagination := usecasex.CursorPagination{
+		Before: nil,
+		After:  nil,
+		First:  lo.ToPtr(batch),
+		Last:   nil,
+	}.Wrap()
 
 	for {
 		projects, info, err := repo.FindByWorkspace(ctx, tid, pagination)
@@ -41,7 +47,7 @@ func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.Worksp
 		}
 
 		c := usecasex.Cursor(projects[len(projects)-1].ID().String())
-		pagination.After = &c
+		pagination.Cursor.After = &c
 	}
 
 	return nil

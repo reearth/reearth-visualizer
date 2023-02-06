@@ -124,17 +124,19 @@ func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
 }
 
 func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, pagination *usecasex.Pagination) ([]*asset.Asset, *usecasex.PageInfo, error) {
-	var sortstr *string
+	var usort *usecasex.Sort
 	if sort != nil {
-		sortstr2 := string(*sort)
-		sortstr = &sortstr2
+		usort = &usecasex.Sort{
+			Key: string(*sort),
+		}
 	}
 
 	c := mongodoc.NewAssetConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), sortstr, pagination, c)
+	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalBy(err)
 	}
+
 	return c.Result, pageInfo, nil
 }
 
