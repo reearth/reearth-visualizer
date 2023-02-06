@@ -12,7 +12,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       clientId={clientId}
       audience={audience}
       useRefreshTokens
-      scope="openid profile email"
+      scope="openid profile email offline_access"
       cacheLocation="localstorage"
       redirectUri={window.location.origin}>
       {children}
