@@ -60,7 +60,7 @@ func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, key
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: pi.TotalCount,
+		TotalCount: int(pi.TotalCount),
 	}, nil
 }
 

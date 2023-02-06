@@ -765,7 +765,27 @@ extensions:
               title: Label background color
               ui: color
               availableIf:
-                field: labelBackground
+                field: label
+                type: bool
+                value: true
+            - id: labelBackgroundPaddingHorizontal
+              type: number
+              title: Label padding X
+              suffix: px
+              defaultValue: 7
+              min: 0
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelBackgroundPaddingVertical
+              type: number
+              title: Label padding Y
+              suffix: px
+              defaultValue: 5
+              min: 0
+              availableIf:
+                field: label
                 type: bool
                 value: true
             - id: extrude

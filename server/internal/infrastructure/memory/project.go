@@ -56,7 +56,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *use
 	}
 
 	return result, usecasex.NewPageInfo(
-		len(r.data),
+		int64(len(r.data)),
 		startCursor,
 		endCursor,
 		true,

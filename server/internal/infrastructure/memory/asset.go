@@ -79,7 +79,7 @@ func (r *Asset) FindByWorkspace(_ context.Context, wid id.WorkspaceID, filter re
 	}
 
 	return result, usecasex.NewPageInfo(
-		len(result),
+		int64(len(result)),
 		startCursor,
 		endCursor,
 		true,

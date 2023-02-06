@@ -22,7 +22,6 @@ import (
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
-	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
@@ -116,7 +115,7 @@ func TestEndpoint(t *testing.T) {
 		"code_verifier": verifier,
 	}, nil)
 	var r map[string]any
-	util.Must(json.Unmarshal(lo.Must(io.ReadAll(res2.Body)), &r))
+	lo.Must0(json.Unmarshal(lo.Must(io.ReadAll(res2.Body)), &r))
 	assert.Equal(t, map[string]any{
 		"id_token":     r["id_token"],
 		"access_token": r["access_token"],
@@ -132,7 +131,7 @@ func TestEndpoint(t *testing.T) {
 		"Authorization": "Bearer " + accessToken,
 	})
 	var r2 map[string]any
-	util.Must(json.Unmarshal(lo.Must(io.ReadAll(res3.Body)), &r2))
+	lo.Must0(json.Unmarshal(lo.Must(io.ReadAll(res3.Body)), &r2))
 	assert.Equal(t, map[string]any{
 		"sub":            "reearth|subsub",
 		"email":          "aaa@example.com",
@@ -143,13 +142,13 @@ func TestEndpoint(t *testing.T) {
 	// openid-configuration
 	res4 := send(http.MethodGet, ts.URL+"/.well-known/openid-configuration", false, nil, nil)
 	var r3 map[string]any
-	util.Must(json.Unmarshal(lo.Must(io.ReadAll(res4.Body)), &r3))
+	lo.Must0(json.Unmarshal(lo.Must(io.ReadAll(res4.Body)), &r3))
 	assert.Equal(t, "https://example.com/jwks.json", r3["jwks_uri"])
 
 	// jwks
 	res5 := send(http.MethodGet, ts.URL+"/jwks.json", false, nil, nil)
 	var jwks jose.JSONWebKeySet
-	util.Must(json.Unmarshal(lo.Must(io.ReadAll(res5.Body)), &jwks))
+	lo.Must0(json.Unmarshal(lo.Must(io.ReadAll(res5.Body)), &jwks))
 
 	// validate access_token
 	token := lo.Must(jwt.ParseSigned(accessToken))
@@ -158,7 +157,7 @@ func TestEndpoint(t *testing.T) {
 	})
 	key := jwks.Key(header.KeyID)[0]
 	claims := map[string]any{}
-	util.Must(token.Claims(key.Key, &claims))
+	lo.Must0(token.Claims(key.Key, &claims))
 	assert.Equal(t, map[string]any{
 		"iss": "https://example.com/",
 		"sub": "reearth|subsub",
@@ -176,7 +175,7 @@ func TestEndpoint(t *testing.T) {
 	})
 	key2 := jwks.Key(header2.KeyID)[0]
 	claims2 := map[string]any{}
-	util.Must(token.Claims(key2.Key, &claims2))
+	lo.Must0(token.Claims(key2.Key, &claims2))
 	assert.Equal(t, map[string]any{
 		"iss": "https://example.com/",
 		"sub": "reearth|subsub",
