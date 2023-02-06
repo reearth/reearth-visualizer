@@ -353,9 +353,13 @@ extensions:
           labelTypography:
             title: ラベルフォント
           labelBackground:
-            title: ラベルの背景
+            title: ラベル背景
           labelBackgroundColor:
-            title: ラベルの背景色
+            title: ラベル背景色
+          labelBackgroundPaddingHorizontal:
+            title: ラベル背景余白左右
+          labelBackgroundPaddingVertical:
+            title: ラベル背景余白上下
           extrude:
             title: 地面から線を伸ばす
   polyline:
