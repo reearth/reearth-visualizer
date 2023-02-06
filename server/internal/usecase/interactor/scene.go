@@ -358,7 +358,9 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	if param.Centered != nil {
 		area.SetCentered(*param.Centered)
 	}
-	area.SetBackground(param.Background)
+	if param.Background != nil {
+		area.SetBackground(param.Background)
+	}
 
 	if err = i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, err
