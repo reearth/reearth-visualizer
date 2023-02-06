@@ -760,6 +760,14 @@ extensions:
                 field: label
                 type: bool
                 value: true
+            - id: labelBackgroundColor
+              type: string
+              title: Label background color
+              ui: color
+              availableIf:
+                field: labelBackground
+                type: bool
+                value: true
             - id: extrude
               type: bool
               title: Extruded

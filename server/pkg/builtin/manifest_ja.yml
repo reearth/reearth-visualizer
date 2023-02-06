@@ -354,6 +354,8 @@ extensions:
             title: ラベルフォント
           labelBackground:
             title: ラベルの背景
+          labelBackgroundColor:
+            title: ラベルの背景色
           extrude:
             title: 地面から線を伸ばす
   polyline:
