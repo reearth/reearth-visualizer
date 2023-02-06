@@ -37,18 +37,17 @@ func ToWidgetSection(s *scene.WidgetSection) *WidgetSection {
 		Bottom: ToWidgetArea(s.Area(scene.WidgetAreaBottom)),
 	}
 }
-func ToWidgetAreaPadding(p *scene.WidgetAreaPadding) (res *WidgetAreaPadding) {
+func ToWidgetAreaPadding(p *scene.WidgetAreaPadding) *WidgetAreaPadding {
 	if p == nil {
-		return
+		return &WidgetAreaPadding{}
 	}
 
-	res = &WidgetAreaPadding{
+	return &WidgetAreaPadding{
 		Top:    p.Top(),
 		Bottom: p.Bottom(),
 		Left:   p.Left(),
 		Right:  p.Right(),
 	}
-	return
 }
 
 func ToWidgetArea(a *scene.WidgetArea) *WidgetArea {
