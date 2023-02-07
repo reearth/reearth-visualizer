@@ -10,3 +10,15 @@ export const parseHost = (source: DataSource): string | undefined => {
 
   return parsed[2];
 };
+
+export const getExtname = (url: string | undefined): string | undefined => {
+  if (!url) {
+    return undefined;
+  }
+
+  try {
+    return new URL(url).pathname.split(".")[1];
+  } catch {
+    return undefined;
+  }
+};

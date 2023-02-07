@@ -1,4 +1,5 @@
 import { DataType } from "@reearth/core/mantle";
+import { getExtname } from "@reearth/util/path";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
@@ -62,8 +63,12 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
-  const displayType =
-    layer.layer.type === "simple" && layer.layer.data?.type && displayConfig[layer.layer.data.type];
+  const data = layer.layer.type === "simple" ? layer.layer.data : undefined;
+  const ext =
+    !data?.type || (data.type as string) === "auto"
+      ? (getExtname(data?.url) as DataType)
+      : undefined;
+  const displayType = data?.type && displayConfig[ext ?? data.type];
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);

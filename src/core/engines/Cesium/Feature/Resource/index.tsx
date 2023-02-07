@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
 import { DataType, evalFeature } from "@reearth/core/mantle";
+import { getExtname } from "@reearth/util/path";
 
 import type { ResourceAppearance, AppearanceTypes } from "../../..";
 import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps } from "../utils";
@@ -48,11 +49,8 @@ export default function Resource({ isVisible, property, layer }: Props) {
   }, [property, layer]);
   const { viewer } = useCesium();
 
-  const ext = useMemo(
-    () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
-    [type, url],
-  );
-  const actualType = ext ? types[ext[1]] : type !== "auto" ? type : undefined;
+  const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
+  const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
   const appearances = actualType ? delegatingAppearance[actualType] : undefined;
 

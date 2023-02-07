@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { parseHost, DataSource } from "./path";
+import { parseHost, DataSource, getExtname } from "./path";
 
 test("parse host", () => {
   const cases = [
@@ -17,4 +17,8 @@ test("parse host", () => {
   cases.forEach(c => {
     expect(parseHost(c.source as DataSource)).toBe(c.expected);
   });
+});
+
+test("getExtname", () => {
+  expect(getExtname("https://example.com/test.czml")).toBe("czml");
 });
