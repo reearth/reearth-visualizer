@@ -118,7 +118,12 @@ export default function useHooks({
             isEditable: !overriddenInfobox && !!selectedLayer.layer?.layer?.infobox,
             visible: !!selectedLayer.layer?.layer?.infobox,
             property: selectedLayer.layer?.layer.infobox?.property?.default,
-            blocks: overridenInfoboxBlocks(overriddenInfobox),
+            blocks:
+              overridenInfoboxBlocks(overriddenInfobox) ||
+              selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
+                ...b,
+                property: b.property.default ?? b.property,
+              })),
           }
         : undefined,
     [selectedLayer, overriddenInfobox],

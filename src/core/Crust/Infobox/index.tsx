@@ -35,6 +35,7 @@ export type Props = {
     fieldId: string,
     value: ValueTypes[T],
     type: T,
+    layer?: Layer,
   ) => void;
   onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
   onBlockDelete?: (id: string) => void;
@@ -124,7 +125,7 @@ const Infobox: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             infoboxProperty={property}
-            onChange={(...args) => onBlockChange?.(b.id, ...args)}
+            onChange={(...args) => onBlockChange?.(b.id, ...args, props.layer)}
             onClick={() => {
               if (b.id && selectedBlockId !== b.id) {
                 onBlockSelect?.(b.id);
