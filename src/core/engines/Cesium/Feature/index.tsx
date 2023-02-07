@@ -44,6 +44,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   "osm-buildings": ["3dtiles"],
   gpx: "auto",
   shapefile: "auto",
+  gtfs: "auto",
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
