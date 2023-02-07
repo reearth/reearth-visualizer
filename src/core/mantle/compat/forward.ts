@@ -185,8 +185,12 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "tileset") {
     appearance = "3dtiles";
-    legacyPropertyKeys = ["tileset"];
-    if (l.property?.default?.tileset) {
+    legacyPropertyKeys = ["tileset", "sourceType"];
+    if (l.property?.default?.sourceType === "osm") {
+      data = {
+        type: "osm-buildings",
+      };
+    } else if (l.property?.default?.tileset) {
       data = {
         type: "3dtiles",
         url: l.property.default.tileset,

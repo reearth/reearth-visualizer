@@ -417,6 +417,43 @@ test("model", () => {
 });
 
 test("3dtiles", () => {
+  // osm
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "tileset",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          sourceType: "osm",
+          hoge: "red",
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    data: {
+      type: "osm-buildings",
+    },
+    "3dtiles": {
+      hoge: "red",
+    },
+    compat: {
+      extensionId: "tileset",
+      propertyId: "p",
+      property: {
+        default: {
+          sourceType: "osm",
+          hoge: "red",
+        },
+      },
+    },
+  });
+
+  // tileset
   expect(
     convertLegacyLayer({
       id: "x",

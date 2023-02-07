@@ -39,7 +39,8 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   kml: ["resource"],
   wms: ["raster"],
   mvt: ["raster"],
-  ["3dtiles"]: ["3dtiles"],
+  "3dtiles": ["3dtiles"],
+  "osm-buildings": ["3dtiles"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.

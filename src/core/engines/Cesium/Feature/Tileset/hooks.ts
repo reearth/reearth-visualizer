@@ -231,8 +231,7 @@ export const useHooks = ({
   onFeatureDelete?: (feature: string[]) => void;
 }) => {
   const { viewer } = useCesium();
-  const { sourceType, tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } =
-    property ?? {};
+  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } = property ?? {};
   const {
     width,
     height,
@@ -246,7 +245,7 @@ export const useHooks = ({
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
-  const { url } = useData(layer);
+  const { url, type } = useData(layer);
 
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -402,12 +401,12 @@ export const useHooks = ({
   }, [styleUrl]);
 
   const tilesetUrl = useMemo(() => {
-    return sourceType === "osm" && isVisible
+    return type === "osm-buildings" && isVisible
       ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
-      : isVisible
+      : type === "3dtiles" && isVisible
       ? url ?? tileset
       : null;
-  }, [isVisible, sourceType, tileset, url]);
+  }, [isVisible, tileset, url, type]);
 
   return {
     tilesetUrl,
