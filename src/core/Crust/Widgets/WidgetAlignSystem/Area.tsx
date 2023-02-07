@@ -7,6 +7,7 @@ import { useTheme } from "@reearth/theme";
 
 import type {
   Alignment,
+  WidgetAreaPadding,
   WidgetLayoutConstraint,
   Location,
   WidgetLayout,
@@ -14,25 +15,49 @@ import type {
   InternalWidget,
 } from "./types";
 
-type Props = {
+export type WidgetAreaType = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
+  padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
+  gap?: number;
+  centered?: boolean;
+  background?: string;
+};
+
+type Props = {
+  selectedWidgetArea?: WidgetAreaType;
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align: Alignment;
+  padding: WidgetAreaPadding;
+  backgroundColor: string;
+  gap: number;
+  centered: boolean;
+  widgets?: InternalWidget[];
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
 export default function Area({
+  selectedWidgetArea,
   zone,
   section,
   area,
   align,
+  padding,
+  backgroundColor,
+  gap,
+  centered,
   widgets,
   layoutConstraint,
   renderWidget,
+  onWidgetAreaSelect,
 }: Props) {
   const theme = useTheme();
   const layout = useMemo<WidgetLayout>(
@@ -47,6 +72,18 @@ export default function Area({
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea
       key={area}
+      onClick={() =>
+        onWidgetAreaSelect?.({
+          area,
+          section,
+          zone,
+          align,
+          background: backgroundColor,
+          centered,
+          gap,
+          padding,
+        })
+      }
       id={`${zone}/${section}/${area}`}
       vertical={area === "middle"}
       stretch={area === "middle"}
@@ -61,14 +98,31 @@ export default function Area({
             : undefined
           : undefined
       }
-      style={{ flexWrap: "wrap", pointerEvents: "none" }}
+      style={{
+        flexWrap: "wrap",
+        pointerEvents: "none",
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        backgroundColor: backgroundColor,
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
+      }}
       editorStyle={{
         flexWrap: "wrap",
-        background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        background: backgroundColor
+          ? backgroundColor
+          : area === "middle"
+          ? theme.alignSystem.blueBg
+          : theme.alignSystem.orangeBg,
         border:
-          area === "middle"
+          `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
+          `${zone}/${section}/${area}`
+            ? `1.2px dashed #00FFFF`
+            : area === "middle"
             ? `1px solid ${theme.alignSystem.blueHighlight}`
             : `1px solid ${theme.alignSystem.orangeHighlight}`,
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets?.map((widget, i) => {

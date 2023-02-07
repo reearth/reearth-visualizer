@@ -25,7 +25,7 @@ const WidgetAlignSystemToggle: React.FC<Props> = ({ checked, onChange }) => {
 const ToggleWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 16px 16px 0 16px;
+  padding: 16px;
   justify-content: space-between;
 `;
 

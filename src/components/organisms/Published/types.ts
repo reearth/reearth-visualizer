@@ -83,6 +83,10 @@ export type WidgetSection = {
 export type WidgetArea = {
   widgetIds: string[];
   align: WidgetAlignment;
+  padding?: WidgetAreaPadding;
+  gap?: number;
+  centered?: boolean;
+  background?: string;
 };
 
 export type Cluster = {
@@ -92,3 +96,5 @@ export type Cluster = {
 };
 
 export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };

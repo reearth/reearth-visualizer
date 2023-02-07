@@ -18,6 +18,7 @@ import Widgets, {
   type Location,
   type WidgetLayoutConstraint,
   type InternalWidget,
+  type WidgetAreaType,
 } from "./Widgets";
 
 export type { ValueTypes, ValueType } from "./types";
@@ -38,6 +39,7 @@ export type {
   BuiltinWidgets,
   WidgetArea,
   WidgetAlignment,
+  WidgetAreaType,
 } from "./Widgets";
 export { isBuiltinWidget } from "./Widgets";
 
@@ -72,6 +74,7 @@ export type Props = {
   infoboxTitle?: string;
   selectedBlockId?: string;
   showInfoboxTitle?: boolean;
+  selectedWidgetArea?: WidgetAreaType;
   infoboxVisible?: boolean;
   // plugin
   externalPlugin: ExternalPluginProps;
@@ -85,6 +88,7 @@ export type Props = {
     },
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
   onInfoboxMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
@@ -126,9 +130,11 @@ export default function Crust({
   infoboxTitle,
   infoboxVisible,
   selectedBlockId,
+  selectedWidgetArea,
   externalPlugin,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
+  onWidgetAreaSelect,
   onInfoboxMaskClick,
   onBlockSelect,
   onBlockChange,
@@ -177,12 +183,14 @@ export default function Crust({
         isBuilt={isBuilt}
         isEditable={isEditable}
         alignSystem={widgetAlignSystem}
+        selectedWidgetArea={selectedWidgetArea}
         editing={widgetAlignSystemEditing}
         layoutConstraint={widgetLayoutConstraint}
         theme={theme}
         context={widgetContext}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onAlignmentUpdate={onWidgetAlignmentUpdate}
+        onWidgetAreaSelect={onWidgetAreaSelect}
         renderWidget={renderWidget}
       />
       <Infobox

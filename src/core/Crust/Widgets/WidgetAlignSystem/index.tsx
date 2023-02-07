@@ -14,7 +14,9 @@ import type {
   WidgetProps,
 } from "./types";
 import { filterSections } from "./utils";
-import ZoneComponent from "./Zone";
+import ZoneComponent, { WidgetAreaType } from "./Zone";
+
+export type { WidgetAreaType };
 
 export type {
   WidgetAlignSystem,
@@ -32,6 +34,7 @@ export type {
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
+  selectedWidgetArea?: WidgetAreaType;
   invisibleWidgetIDs?: string[];
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -46,17 +49,20 @@ export type Props = {
       index?: number;
     },
   ) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 };
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
+  selectedWidgetArea,
   invisibleWidgetIDs,
   editing,
   isMobile,
   layoutConstraint,
   theme,
   renderWidget,
+  onWidgetAreaSelect,
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
   onAlignmentUpdate: onAlignmentUpdate,
 }) => {
@@ -82,18 +88,22 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onExtend={handleExtend}>
         <Zone
           zoneName="outer"
+          selectedWidgetArea={selectedWidgetArea}
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
           invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
-          renderWidget={renderWidget}>
+          renderWidget={renderWidget}
+          onWidgetAreaSelect={onWidgetAreaSelect}>
           {(!isMobile || hasInner) && (
             <ZoneComponent
               zoneName="inner"
+              selectedWidgetArea={selectedWidgetArea}
               invisibleWidgetIDs={invisibleWidgetIDs}
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
               renderWidget={renderWidget}
+              onWidgetAreaSelect={onWidgetAreaSelect}
             />
           )}
         </Zone>

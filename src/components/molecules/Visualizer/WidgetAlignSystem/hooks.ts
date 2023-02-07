@@ -15,9 +15,15 @@ export type Location = {
   area: "top" | "middle" | "bottom";
 };
 
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
 export type WidgetArea = {
   align: Alignment;
+  padding?: WidgetAreaPadding;
   widgets?: Widget[];
+  gap?: number;
+  centered?: boolean;
+  background?: string;
 };
 
 export type WidgetSection = {

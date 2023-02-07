@@ -37,6 +37,15 @@ const widgetAlignSysFragment = gql`
   fragment WidgetAreaFragment on WidgetArea {
     widgetIds
     align
+    padding {
+      top
+      bottom
+      left
+      right
+    }
+    gap
+    centered
+    background
   }
 `;
 

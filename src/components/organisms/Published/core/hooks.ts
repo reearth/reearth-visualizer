@@ -13,6 +13,7 @@ import type {
   WidgetSection,
   WidgetArea,
   Layer as RawLayer,
+  WidgetAreaPadding,
 } from "./types";
 import { useGA } from "./useGA";
 
@@ -102,12 +103,17 @@ export default (alias?: string) => {
 
     const widgetArea = (area?: WidgetArea | null) => {
       const align = area?.align.toLowerCase() as WidgetAlignment | undefined;
+      const padding = area?.padding as WidgetAreaPadding | undefined;
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
         .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
       return {
         align: align ?? "start",
+        padding: padding ?? { top: 0, bottom: 0, left: 0, right: 0 },
         widgets: areaWidgets || [],
+        background: area?.background as string | undefined,
+        centered: area?.centered,
+        gap: area?.gap,
       };
     };
 

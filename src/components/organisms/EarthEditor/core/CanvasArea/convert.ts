@@ -29,6 +29,8 @@ import type {
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
+import { WidgetAreaPadding } from "../../PropertyPane/hooks";
+
 type BlockType = Item & {
   pluginId: string;
   extensionId: string;
@@ -237,11 +239,21 @@ export const convertWidgets = (
 
   const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea => {
     const align = area?.align.toLowerCase() as Alignment | undefined;
+    const padding = area?.padding as WidgetAreaPadding | undefined;
     const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
       .map<InternalWidget | undefined>(w => widgets.find(w2 => w === w2.id))
       .filter((w): w is InternalWidget => !!w);
+    if (!areaWidgets || (areaWidgets && areaWidgets.length < 1))
+      return {
+        align: align ?? "start",
+        widgets: areaWidgets,
+      };
     return {
       align: align ?? "start",
+      padding: padding ?? { top: 0, bottom: 0, left: 0, right: 0 },
+      background: area?.background as string | undefined,
+      centered: area?.centered,
+      gap: area?.gap,
       widgets: areaWidgets || [],
     };
   };

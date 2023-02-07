@@ -141,6 +141,7 @@ You are about to delete the selected widget. You will lose all data tied to this
   You are about to delete the selected widget. You will lose all data tied to
   this widget.
 Are you sure you would like to delete this widget?: Are you sure you would like to delete this widget?
+Container: ''
 Create Infobox: Create Infobox
 Dataset: Dataset
 Pose Set: Pose Set
@@ -185,6 +186,10 @@ You are deleting the infobox and all its contents. Are you sure you want to do t
   You are deleting the infobox and all its contents. Are you sure you want to do
   that?
 List: List
+Padding: ''
+Gap Spacing: ''
+Align Center: ''
+Background Color: ''
 Enable Editor Mode: Enable Editor Mode
 Congratulations!: Congratulations!
 Publish your project: Publish your project

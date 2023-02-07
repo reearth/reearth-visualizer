@@ -3,36 +3,55 @@ import { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { useTheme } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 import W, { WidgetLayout } from "../Widget";
 
-import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
+import type {
+  Widget,
+  Alignment,
+  WidgetAreaPadding,
+  WidgetLayoutConstraint,
+  Location,
+} from "./hooks";
 
 type Props = {
+  selectedWidgetArea?: WidgetAreaState;
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
+  padding: WidgetAreaPadding;
+  backgroundColor: string;
+  gap: number;
+  centered: boolean;
   widgets?: Widget[];
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;
 
 export default function Area({
+  selectedWidgetArea,
   zone,
   section,
   area,
   align,
+  padding,
+  backgroundColor,
+  gap,
+  centered,
   widgets,
   pluginProperty,
   layoutConstraint,
+  onWidgetAlignAreaSelect,
   ...props
 }: Props) {
   const theme = useTheme();
@@ -49,6 +68,18 @@ export default function Area({
     <GridArea
       key={area}
       id={`${zone}/${section}/${area}`}
+      onClick={() =>
+        onWidgetAlignAreaSelect?.({
+          area,
+          section,
+          zone,
+          align,
+          background: backgroundColor,
+          centered,
+          gap,
+          padding,
+        })
+      }
       vertical={area === "middle"}
       stretch={area === "middle"}
       bottom={(section === "right" && area !== "top") || area === "bottom"}
@@ -62,14 +93,32 @@ export default function Area({
             : undefined
           : undefined
       }
-      style={{ flexWrap: "wrap", pointerEvents: "none" }}
+      style={{
+        flexWrap: "wrap",
+        pointerEvents: "none",
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        backgroundColor: backgroundColor,
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
+      }}
       editorStyle={{
         flexWrap: "wrap",
-        background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        background: backgroundColor
+          ? backgroundColor
+          : area === "middle"
+          ? theme.alignSystem.blueBg
+          : theme.alignSystem.orangeBg,
         border:
-          area === "middle"
+          `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
+          `${zone}/${section}/${area}`
+            ? `1.2px dashed #00FFFF`
+            : area === "middle"
             ? `1px solid ${theme.alignSystem.blueHighlight}`
             : `1px solid ${theme.alignSystem.orangeHighlight}`,
+        cursor: "pointer",
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets?.map((widget, i) => {

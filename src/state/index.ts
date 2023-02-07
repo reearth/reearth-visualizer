@@ -16,6 +16,24 @@ export const useRootLayerId = () => useAtom(rootLayerId);
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
 export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
 
+export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type WidgetAreaState = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align: WidgetAlignment;
+  padding?: WidgetAreaPadding;
+  gap?: number;
+  centered?: boolean;
+  background?: string;
+};
+
+const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
+export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
+
 export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }

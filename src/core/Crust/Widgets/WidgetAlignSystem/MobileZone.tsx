@@ -5,23 +5,26 @@ import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
 import { styled } from "@reearth/theme";
 
-import Area from "./Area";
+import Area, { WidgetAreaType } from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
 import { filterSections } from "./utils";
 
 export type Props = {
   children?: ReactNode;
+  selectedWidgetArea?: WidgetAreaType;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   theme?: Theme;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   invisibleWidgetIDs?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
 };
 
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
+  selectedWidgetArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -29,6 +32,7 @@ export default function MobileZone({
   children,
   invisibleWidgetIDs,
   renderWidget,
+  onWidgetAreaSelect,
 }: Props) {
   const filteredSections = useMemo(() => {
     return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
@@ -55,13 +59,19 @@ export default function MobileZone({
               ) : (
                 <Area
                   key={a}
+                  selectedWidgetArea={selectedWidgetArea}
                   zone={zoneName}
                   section={s}
                   area={a}
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
+                  padding={zone?.[s]?.[a]?.padding ?? { top: 0, bottom: 0, left: 0, right: 0 }}
+                  gap={zone?.[s]?.[a]?.gap ?? 0}
+                  centered={zone?.[s]?.[a]?.centered ?? false}
+                  backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
                   layoutConstraint={layoutConstraint}
                   renderWidget={renderWidget}
+                  onWidgetAreaSelect={onWidgetAreaSelect}
                 />
               ),
             )}

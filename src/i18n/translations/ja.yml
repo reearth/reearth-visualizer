@@ -129,6 +129,7 @@ Clusters: クラスター
 Delete widget: ウィジェットを削除
 You are about to delete the selected widget. You will lose all data tied to this widget.: ウィジェットを削除しようとしています。ウィジェットに関連するデータも削除されます。
 Are you sure you would like to delete this widget?: 本当にウィジェットを削除しますか？
+Container: ''
 Create Infobox: インフォボックス作成
 Dataset: データセット
 Pose Set: 設定済み
@@ -171,6 +172,10 @@ Template: テンプレート
 template: テンプレート
 You are deleting the infobox and all its contents. Are you sure you want to do that?: インフォボックスとその内容を削除します。本当によろしいですか？
 List: リスト
+Padding: 余白
+Gap Spacing: 間隔
+Align Center: 中央に配置
+Background Color: 背景色
 Enable Editor Mode: ウィジェットの配置を編集
 Congratulations!: おめでとうございます！
 Publish your project: プロジェクトを公開する

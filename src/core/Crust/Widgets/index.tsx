@@ -4,6 +4,7 @@ import type { Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
 import WidgetAlignSystem, {
+  WidgetAreaType,
   type Alignment,
   type Location,
   type WidgetAlignSystem as WidgetAlignSystemType,
@@ -19,6 +20,7 @@ export type {
   WidgetArea,
   WidgetZone,
   WidgetSection,
+  WidgetAreaType,
 } from "./WidgetAlignSystem";
 
 export type { Context, BuiltinWidgets } from "./Widget";
@@ -28,6 +30,7 @@ export type { Widget, InternalWidget, WidgetLocationOptions, WidgetAlignment } f
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
+  selectedWidgetArea?: WidgetAreaType;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   editing?: boolean;
   isMobile?: boolean;
@@ -45,6 +48,7 @@ export type Props = {
     },
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
 };
 
 export type WidgetProps = {
@@ -59,6 +63,7 @@ export type WidgetProps = {
 
 export default function Widgets({
   alignSystem,
+  selectedWidgetArea,
   editing,
   isMobile,
   layoutConstraint,
@@ -69,6 +74,7 @@ export default function Widgets({
   renderWidget,
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
+  onWidgetAreaSelect,
 }: Props): JSX.Element | null {
   const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
     useWidgetAlignSystem({
@@ -106,6 +112,7 @@ export default function Widgets({
   return (
     <WidgetAlignSystem
       alignSystem={overriddenAlignSystem}
+      selectedWidgetArea={selectedWidgetArea}
       invisibleWidgetIDs={invisibleWidgetIDs}
       editing={editing}
       isMobile={isMobile}
@@ -114,6 +121,7 @@ export default function Widgets({
       renderWidget={renderWidgetInternal}
       onAlignmentUpdate={onAlignmentUpdate}
       onWidgetLayoutUpdate={onWidgetLayoutUpdate}
+      onWidgetAreaSelect={onWidgetAreaSelect}
     />
   );
 }

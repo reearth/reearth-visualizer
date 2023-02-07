@@ -4,6 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
 import Loading from "@reearth/components/atoms/Loading";
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
@@ -62,6 +63,7 @@ export type Props = {
   selectedLayerId?: string;
   zoomedLayerId?: string;
   selectedBlockId?: string;
+  selectedWidgetArea?: WidgetAreaState;
   pluginBaseUrl?: string;
   isPublished?: boolean;
   inEditor?: boolean;
@@ -73,6 +75,7 @@ export type Props = {
   onLayerSelect?: (id?: string) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
+  onWidgetAlignAreaSelect?: (widgetAreaState?: WidgetAreaState) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,
@@ -94,6 +97,7 @@ export default function Visualizer({
   inEditor,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
+  selectedWidgetArea,
   zoomedLayerId,
   widgetAlignEditorActivated,
   engineMeta,
@@ -108,6 +112,7 @@ export default function Visualizer({
   onBlockSelect,
   onLayerDrop,
   onZoomToLayer,
+  onWidgetAlignAreaSelect,
   ...props
 }: Props): JSX.Element {
   const {
@@ -176,6 +181,7 @@ export default function Visualizer({
           {isDroppable && <DropHolder />}
           {ready && widgets?.alignSystem && (
             <WidgetAlignSystem
+              selectedWidgetArea={selectedWidgetArea}
               alignSystem={overriddenAlignSystem}
               editing={widgetAlignEditorActivated}
               onWidgetUpdate={onWidgetUpdate}
@@ -193,6 +199,7 @@ export default function Visualizer({
               viewport={viewport}
               pluginBaseUrl={pluginBaseUrl}
               layoutConstraint={widgets.layoutConstraint}
+              onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
             />
           )}
           <Engine

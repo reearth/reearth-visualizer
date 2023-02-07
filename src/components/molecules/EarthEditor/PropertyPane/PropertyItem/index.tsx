@@ -83,6 +83,21 @@ export type Group = {
 
 export type Item = Group | GroupList;
 
+export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type WidgetAreaState = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align: WidgetAlignment;
+  padding?: WidgetAreaPadding;
+  gap?: number;
+  centered?: boolean;
+  background?: string;
+};
+
 export type Props = {
   className?: string;
   item?: Item;

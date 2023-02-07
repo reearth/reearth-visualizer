@@ -35,6 +35,7 @@ import {
   useRootLayerId,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
+  useSelectedWidgetArea,
 } from "@reearth/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
@@ -58,6 +59,7 @@ export default () => {
   const [, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
   const [, toggleWidgetAlignEditor] = useWidgetAlignEditorActivated();
+  const [, selectWidgetArea] = useSelectedWidgetArea();
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },
@@ -193,8 +195,9 @@ export default () => {
   useEffect(() => {
     if (selected?.type !== "widgets") {
       toggleWidgetAlignEditor(false);
+      selectWidgetArea();
     }
-  }, [selected?.type, toggleWidgetAlignEditor]);
+  }, [selected?.type, toggleWidgetAlignEditor, selectWidgetArea]);
 
   const moveLayer = useCallback(
     async (

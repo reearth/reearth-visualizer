@@ -3,6 +3,7 @@ import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
@@ -13,6 +14,7 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
+  selectedWidgetArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -20,12 +22,14 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
+  selectedWidgetArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -34,6 +38,7 @@ export default function MobileZone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  onWidgetAlignAreaSelect,
   children,
   ...props
 }: Props) {
@@ -66,17 +71,23 @@ export default function MobileZone({
               ) : (
                 <Area
                   key={a}
+                  selectedWidgetArea={selectedWidgetArea}
                   zone={zoneName}
                   section={s}
                   area={a}
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
+                  padding={zone?.[s]?.[a]?.padding ?? { top: 0, bottom: 0, left: 0, right: 0 }}
+                  backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
+                  gap={zone?.[s]?.[a]?.gap ?? 0}
+                  centered={zone?.[s]?.[a]?.centered ?? false}
                   layoutConstraint={layoutConstraint}
                   sceneProperty={sceneProperty}
                   pluginProperty={pluginProperty}
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
+                  onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
                   {...props}
                 />
               ),
