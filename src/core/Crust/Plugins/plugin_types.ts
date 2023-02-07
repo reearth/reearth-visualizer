@@ -121,7 +121,7 @@ export type Camera = {
   readonly zoomIn: (amount: number, options?: CameraOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
-  readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
+  readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

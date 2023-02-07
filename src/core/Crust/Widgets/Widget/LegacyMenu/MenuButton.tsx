@@ -40,7 +40,7 @@ export type Props = {
   menuItems?: MenuItem[];
   pos: Position;
   theme?: Theme;
-  onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
 };
 
 export default function MenuButton({

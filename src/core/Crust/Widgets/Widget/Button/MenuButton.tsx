@@ -38,7 +38,7 @@ export type Props = {
   };
   align?: "end" | "start" | "centered";
   theme?: Theme;
-  onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
 };
 
 export default function MenuButton({

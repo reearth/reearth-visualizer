@@ -23,7 +23,7 @@ import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
-import { convertCartesian3ToPosition } from "./utils";
+import { convertCartesian3ToPosition, findEntity } from "./utils";
 
 export default ({
   ref,
@@ -149,7 +149,7 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId?.featureId ?? selectedLayerId?.layerId);
+    const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
     if (viewer.selectedEntity === entity) return;
 
     const tag = getTag(entity);
@@ -372,28 +372,6 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
     );
-}
-
-function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity | undefined {
-  if (!layerId) return;
-
-  let entity = viewer.entities.getById(layerId);
-  if (entity) return entity;
-
-  entity = viewer.entities.values.find(e => getTag(e)?.layerId === layerId);
-  if (entity) return entity;
-
-  for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
-    for (let i = 0; i < ds.length; i++) {
-      const entities = ds.get(i).entities.values;
-      const e = entities.find(e => getTag(e)?.layerId === layerId);
-      if (e) {
-        return e;
-      }
-    }
-  }
-
-  return;
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {

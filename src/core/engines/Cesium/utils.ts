@@ -4,7 +4,10 @@ import {
   Math as CesiumMath,
   TranslationRotationScale,
   Cartographic,
+  Entity,
 } from "cesium";
+
+import { getTag } from "./Feature";
 
 export const convertCartesian3ToPosition = (
   cesium?: CesiumViewer,
@@ -35,3 +38,31 @@ export const translationWithClamping = (
     }
   }
 };
+
+export function findEntity(
+  viewer: CesiumViewer,
+  layerId?: string,
+  featureId?: string,
+): Entity | undefined {
+  const id = featureId ?? layerId;
+  const keyName = featureId ? "featureId" : "layerId";
+  if (!id) return;
+
+  let entity = viewer.entities.getById(id);
+  if (entity) return entity;
+
+  entity = viewer.entities.values.find(e => getTag(e)?.[keyName] === id);
+  if (entity) return entity;
+
+  for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
+    for (let i = 0; i < ds.length; i++) {
+      const entities = ds.get(i).entities.values;
+      const e = entities.find(e => getTag(e)?.[keyName] === id);
+      if (e) {
+        return e;
+      }
+    }
+  }
+
+  return;
+}

@@ -44,7 +44,7 @@ export default function ({
     layerId?: string;
     featureId?: string;
   };
-  onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
   onLayerSelect?: (
     layerId: string | undefined,
@@ -123,7 +123,7 @@ export default function ({
   }, [selectedLayer]);
 
   useEffect(() => {
-    const id = selectedLayerId;
+    const id = selectedLayerId?.layerId;
     const index = id ? stories?.findIndex(l => l.layer === id) : undefined;
     select(
       typeof index === "number" && index >= 0

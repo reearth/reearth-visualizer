@@ -27,6 +27,7 @@ import {
   zoom,
   lookAtWithoutAnimation,
 } from "./common";
+import { findEntity } from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -68,15 +69,33 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      flyTo: (camera, options) => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        cancelCameraFlight.current?.();
-        cancelCameraFlight.current = flyTo(
-          viewer.scene?.camera,
-          { ...getCamera(viewer), ...camera },
-          options,
-        );
+      flyTo: (target, options) => {
+        if (target && typeof target === "object") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          cancelCameraFlight.current?.();
+          cancelCameraFlight.current = flyTo(
+            viewer.scene?.camera,
+            { ...getCamera(viewer), ...target },
+            options,
+          );
+        }
+        if (target && typeof target === "string") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          const layerOrFeatureId = target;
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          if (entityFromFeatureId) {
+            viewer.flyTo(entityFromFeatureId, options);
+          } else {
+            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+            if (entityFromLayerId) {
+              viewer.flyTo(entityFromLayerId, options);
+            }
+          }
+        }
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

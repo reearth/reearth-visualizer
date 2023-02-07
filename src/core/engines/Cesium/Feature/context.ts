@@ -7,7 +7,7 @@ import type { Camera, FlyToDestination, CameraOptions, LayerSelectionReason } fr
 export type Context = {
   selectionReason?: LayerSelectionReason;
   getCamera?: () => Camera | undefined;
-  flyTo?: (camera: FlyToDestination, options?: CameraOptions) => void;
+  flyTo?: (target: string | FlyToDestination, options?: CameraOptions) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
 };
 

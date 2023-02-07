@@ -47,19 +47,16 @@ export function widgetContextFromMapRef({
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);
-      if (
-        !l ||
-        l.type !== "simple" ||
-        !l.photooverlay?.location ||
-        !("lat" in l.photooverlay.location)
-      ) {
+      if (!l || l.type !== "simple") {
         return undefined;
       }
+      // For compat
+      const location = l.property?.default?.location ?? l.property?.default?.position;
       return {
         title: l.title,
-        lat: l.photooverlay.location.lat,
-        lng: l.photooverlay.location.lng,
-        height: typeof l.photooverlay?.height === "number" ? l.photooverlay.height : 0,
+        lat: location?.lat,
+        lng: location?.lng,
+        height: location?.height ?? 0,
       };
     },
     onCameraOrbit: (...args) => engine()?.orbit(...args),
