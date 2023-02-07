@@ -39,7 +39,7 @@ func ToWidgetSection(s *scene.WidgetSection) *WidgetSection {
 }
 func ToWidgetAreaPadding(p *scene.WidgetAreaPadding) *WidgetAreaPadding {
 	if p == nil {
-		return &WidgetAreaPadding{}
+		return nil
 	}
 
 	return &WidgetAreaPadding{

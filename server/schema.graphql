@@ -419,8 +419,8 @@ type WidgetSection {
 type WidgetArea {
   widgetIds: [ID!]!
   align: WidgetAreaAlign!
-  padding: WidgetAreaPadding!
-  gap: Int!
+  padding: WidgetAreaPadding
+  gap: Int
   centered: Boolean!
   background: String
 }

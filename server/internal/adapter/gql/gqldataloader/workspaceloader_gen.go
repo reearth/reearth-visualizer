@@ -48,13 +48,13 @@ type WorkspaceLoader struct {
 
 	// the current batch. keys will continue to be collected until timeout is hit,
 	// then everything will be sent to the fetch method and out to the listeners
-	batch *teamLoaderBatch
+	batch *workspaceLoaderBatch
 
 	// mutex to prevent races
 	mu sync.Mutex
 }
 
-type teamLoaderBatch struct {
+type workspaceLoaderBatch struct {
 	keys    []gqlmodel.ID
 	data    []*gqlmodel.Team
 	error   []error
@@ -62,12 +62,12 @@ type teamLoaderBatch struct {
 	done    chan struct{}
 }
 
-// Load a Workspace by key, batching and caching will be applied automatically
+// Load a Team by key, batching and caching will be applied automatically
 func (l *WorkspaceLoader) Load(key gqlmodel.ID) (*gqlmodel.Team, error) {
 	return l.LoadThunk(key)()
 }
 
-// LoadThunk returns a function that when called will block waiting for a Workspace.
+// LoadThunk returns a function that when called will block waiting for a Team.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
 func (l *WorkspaceLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Team, error) {
@@ -79,7 +79,7 @@ func (l *WorkspaceLoader) LoadThunk(key gqlmodel.ID) func() (*gqlmodel.Team, err
 		}
 	}
 	if l.batch == nil {
-		l.batch = &teamLoaderBatch{done: make(chan struct{})}
+		l.batch = &workspaceLoaderBatch{done: make(chan struct{})}
 	}
 	batch := l.batch
 	pos := batch.keyIndex(l, key)
@@ -128,7 +128,7 @@ func (l *WorkspaceLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.Team, []error
 	return teams, errors
 }
 
-// LoadAllThunk returns a function that when called will block waiting for a Workspaces.
+// LoadAllThunk returns a function that when called will block waiting for a Teams.
 // This method should be used if you want one goroutine to make requests to many
 // different data loaders without blocking until the thunk is called.
 func (l *WorkspaceLoader) LoadAllThunk(keys []gqlmodel.ID) func() ([]*gqlmodel.Team, []error) {
@@ -178,7 +178,7 @@ func (l *WorkspaceLoader) unsafeSet(key gqlmodel.ID, value *gqlmodel.Team) {
 
 // keyIndex will return the location of the key in the batch, if its not found
 // it will add the key to the batch
-func (b *teamLoaderBatch) keyIndex(l *WorkspaceLoader, key gqlmodel.ID) int {
+func (b *workspaceLoaderBatch) keyIndex(l *WorkspaceLoader, key gqlmodel.ID) int {
 	for i, existingKey := range b.keys {
 		if key == existingKey {
 			return i
@@ -202,7 +202,7 @@ func (b *teamLoaderBatch) keyIndex(l *WorkspaceLoader, key gqlmodel.ID) int {
 	return pos
 }
 
-func (b *teamLoaderBatch) startTimer(l *WorkspaceLoader) {
+func (b *workspaceLoaderBatch) startTimer(l *WorkspaceLoader) {
 	time.Sleep(l.wait)
 	l.mu.Lock()
 
@@ -218,7 +218,7 @@ func (b *teamLoaderBatch) startTimer(l *WorkspaceLoader) {
 	b.end(l)
 }
 
-func (b *teamLoaderBatch) end(l *WorkspaceLoader) {
+func (b *workspaceLoaderBatch) end(l *WorkspaceLoader) {
 	b.data, b.error = l.fetch(b.keys)
 	close(b.done)
 }

@@ -6845,8 +6845,8 @@ type WidgetSection {
 type WidgetArea {
   widgetIds: [ID!]!
   align: WidgetAreaAlign!
-  padding: WidgetAreaPadding!
-  gap: Int!
+  padding: WidgetAreaPadding
+  gap: Int
   centered: Boolean!
   background: String
 }
@@ -42385,14 +42385,11 @@ func (ec *executionContext) _WidgetArea_padding(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.WidgetAreaPadding)
 	fc.Result = res
-	return ec.marshalNWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx, field.Selections, res)
+	return ec.marshalOWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_WidgetArea_padding(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -42439,14 +42436,11 @@ func (ec *executionContext) _WidgetArea_gap(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_WidgetArea_gap(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -56435,16 +56429,10 @@ func (ec *executionContext) _WidgetArea(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = ec._WidgetArea_padding(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "gap":
 
 			out.Values[i] = ec._WidgetArea_gap(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "centered":
 
 			out.Values[i] = ec._WidgetArea_centered(ctx, field, obj)
@@ -59746,16 +59734,6 @@ func (ec *executionContext) marshalNWidgetAreaAlign2githubᚗcomᚋreearthᚋree
 	return v
 }
 
-func (ec *executionContext) marshalNWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAreaPadding) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._WidgetAreaPadding(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNWidgetAreaType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaType(ctx context.Context, v interface{}) (gqlmodel.WidgetAreaType, error) {
 	var res gqlmodel.WidgetAreaType
 	err := res.UnmarshalGQL(v)
@@ -61184,6 +61162,13 @@ func (ec *executionContext) marshalOWidgetAreaAlign2ᚖgithubᚗcomᚋreearthᚋ
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOWidgetAreaPadding2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPadding(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAreaPadding) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WidgetAreaPadding(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOWidgetAreaPaddingInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaPaddingInput(ctx context.Context, v interface{}) (*gqlmodel.WidgetAreaPaddingInput, error) {

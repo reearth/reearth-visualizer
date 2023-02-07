@@ -10,7 +10,7 @@ type WidgetArea struct {
 	widgetIds  WidgetIDList
 	align      WidgetAlignType
 	padding    *WidgetAreaPadding
-	gap        int
+	gap        *int
 	centered   bool
 	background *string
 }
@@ -23,7 +23,7 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap int, centered bool, background *string) *WidgetArea {
+func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap *int, centered bool, background *string) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
@@ -61,9 +61,9 @@ func (a *WidgetArea) Padding() *WidgetAreaPadding {
 	return a.padding
 }
 
-func (a *WidgetArea) Gap() int {
+func (a *WidgetArea) Gap() *int {
 	if a == nil {
-		return 0
+		return nil
 	}
 
 	return a.gap
@@ -134,7 +134,7 @@ func (a *WidgetArea) SetPadding(ap *WidgetAreaPadding) {
 	a.padding = ap
 }
 
-func (a *WidgetArea) SetGap(g int) {
+func (a *WidgetArea) SetGap(g *int) {
 	a.gap = g
 }
 
