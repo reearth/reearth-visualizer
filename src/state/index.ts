@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
 
 import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
+import { LayerSelectionReason } from "@reearth/core/Map";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
@@ -36,7 +37,12 @@ export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
 
 export type Selected =
   | { type: "scene" }
-  | { type: "layer"; layerId: string }
+  | {
+      type: "layer";
+      layerId: string;
+      featureId?: string;
+      layerSelectionReason?: LayerSelectionReason;
+    }
   | { type: "widgets" }
   | { type: "cluster"; clusterId: string }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }

@@ -3,6 +3,7 @@ import { useWindowSize } from "react-use";
 
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
+import type { Block } from "../Crust";
 import type { ComputedFeature, Feature } from "../mantle";
 import type {
   Ref as MapRef,
@@ -11,6 +12,7 @@ import type {
   ComputedLayer,
   SceneProperty,
   LayerEditEvent,
+  OverriddenInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 
@@ -106,6 +108,22 @@ export default function useHooks({
     [],
   );
 
+  // Infobox
+  const overriddenInfobox = selectedLayer.reason?.overriddenInfobox;
+  const infobox = useMemo(
+    () =>
+      selectedLayer
+        ? {
+            title: overriddenInfobox?.title || selectedLayer.layer?.layer?.title,
+            isEditable: !overriddenInfobox && !!selectedLayer.layer?.layer?.infobox,
+            visible: !!selectedLayer.layer?.layer?.infobox,
+            property: selectedLayer.layer?.layer.infobox?.property?.default,
+            blocks: overridenInfoboxBlocks(overriddenInfobox),
+          }
+        : undefined,
+    [selectedLayer, overriddenInfobox],
+  );
+
   // scene
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
 
@@ -148,6 +166,7 @@ export default function useHooks({
     isMobile,
     overriddenSceneProperty,
     isDroppable,
+    infobox,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
@@ -178,4 +197,26 @@ function useValue<T>(
   }, [initial]);
 
   return [state, handleOnChange];
+}
+
+function overridenInfoboxBlocks(
+  overriddenInfobox: OverriddenInfobox | undefined,
+): Block[] | undefined {
+  return overriddenInfobox && Array.isArray(overriddenInfobox?.content)
+    ? [
+        {
+          id: "content",
+          pluginId: "reearth",
+          extensionId: "dlblock",
+          property: {
+            items: overriddenInfobox.content.map((c, i) => ({
+              id: i,
+              item_title: c.key,
+              item_datastr: String(c.value),
+              item_datatype: "string",
+            })),
+          },
+        },
+      ]
+    : undefined;
 }
