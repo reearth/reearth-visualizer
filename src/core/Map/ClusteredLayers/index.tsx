@@ -87,7 +87,7 @@ export default function ClusteredLayers({
         clusters
           ?.filter(cluster => !!cluster.id)
           .map(cluster => (
-            <Cluster key={cluster.id} cluster={cluster}>
+            <Cluster key={cluster.id} cluster={cluster} property={cluster.property}>
               {layers?.filter(layer => cluster?.layers?.some(l => l === layer.id)).map(renderLayer)}
             </Cluster>
           ))}

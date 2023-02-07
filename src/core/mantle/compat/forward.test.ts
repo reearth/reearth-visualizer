@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
-import { convertLegacyLayer } from "./forward";
-import type { Infobox, Tag } from "./types";
+import { convertLegacyCluster, convertLegacyLayer } from "./forward";
+import type { Infobox, LegacyCluster, Tag } from "./types";
 
 const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
@@ -656,4 +656,31 @@ test("box", () => {
       },
     },
   });
+});
+
+test("convertLegacyCluster", () => {
+  const legacy: LegacyCluster[] = [
+    {
+      id: "test",
+      default: {
+        clusterPixelRange: 100,
+        clusterMinSize: 1,
+      },
+      layers: [{ layer: "1" }, {}],
+    },
+  ];
+
+  expect(convertLegacyCluster(legacy)).toEqual([
+    {
+      id: "test",
+      property: {
+        default: {
+          clusterPixelRange: 100,
+          clusterMinSize: 1,
+        },
+        layers: [{ layer: "1" }, {}],
+      },
+      layers: ["1"],
+    },
+  ]);
 });

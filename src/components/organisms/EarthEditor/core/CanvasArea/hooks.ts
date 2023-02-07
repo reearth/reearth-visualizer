@@ -2,8 +2,13 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
-import { type ComputedLayer, convertLegacyLayer } from "@reearth/core/mantle";
-import type { Cluster, Layer, LayerSelectionReason } from "@reearth/core/Map";
+import {
+  convertLegacyLayer,
+  convertLegacyCluster,
+  type ComputedLayer,
+  type LegacyCluster,
+} from "@reearth/core/mantle";
+import type { Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -125,13 +130,14 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
-  const clusters = useMemo<Cluster[]>(
+  const legacyClusters = useMemo<LegacyCluster[]>(
     () =>
       scene?.clusters
         .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
-        .filter((c): c is Cluster => !!c) ?? [],
+        .filter((c): c is LegacyCluster => !!c) ?? [],
     [scene?.clusters],
   );
+  const clusters = convertLegacyCluster(legacyClusters);
 
   const pluginProperty = useMemo(
     () =>

@@ -1,7 +1,11 @@
 import { Feature, LineString, Point, Polygon } from "geojson";
 import { omitBy } from "lodash-es";
 
+import { Cluster } from "@reearth/core/Map";
+
 import type { Data, Layer, LayerGroup, LayerSimple } from "../types";
+
+import { LegacyCluster } from "./types";
 
 import type { LegacyLayer } from ".";
 
@@ -254,4 +258,15 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     },
     v => typeof v === "undefined" || v === null,
   ) as any;
+}
+
+export function convertLegacyCluster(clusters: LegacyCluster[]): Cluster[] {
+  return clusters.map(c => ({
+    id: c.id,
+    property: {
+      default: c.default,
+      layers: c.layers,
+    },
+    layers: c.layers?.map(l => l.layer).filter((l): l is string => !!l),
+  }));
 }

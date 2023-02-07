@@ -87,3 +87,16 @@ export type Typography = {
   italic?: boolean;
   underline?: boolean;
 };
+
+export type LegacyCluster = {
+  id: string;
+  default?: {
+    clusterPixelRange: number;
+    clusterMinSize: number;
+    clusterLabelTypography?: Typography;
+    clusterImage?: string;
+    clusterImageHeight?: number;
+    clusterImageWidth?: number;
+  };
+  layers?: { layer?: string }[];
+};
