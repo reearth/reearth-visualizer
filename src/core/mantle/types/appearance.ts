@@ -55,6 +55,9 @@ export type MarkerAppearance = {
     | "rightbottom";
   labelTypography?: Typography;
   labelBackground?: boolean;
+  labelBackgroundColor?: string;
+  labelBackgroundPaddingHorizontal?: number;
+  labelBackgroundPaddingVertical?: number;
   extrude?: boolean;
 };
 

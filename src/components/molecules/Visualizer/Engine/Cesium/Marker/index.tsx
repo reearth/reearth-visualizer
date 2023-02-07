@@ -67,6 +67,9 @@ type Property = {
       | "rightbottom";
     labelTypography?: Typography;
     labelBackground?: boolean;
+    labelBackgroundColor?: string;
+    labelBackgroundPaddingHorizontal?: number;
+    labelBackgroundPaddingVertical?: number;
     extrude?: boolean;
   };
 };
@@ -87,6 +90,9 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     labelText,
     labelPosition: labelPos = "right",
     labelBackground,
+    labelBackgroundColor,
+    labelBackgroundPaddingHorizontal,
+    labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
@@ -126,11 +132,6 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     shadowOffsetY,
   });
 
-  const cesiumImageColor = useMemo(
-    () => (imageColor ? Color.fromCssColorString(imageColor) : undefined),
-    [imageColor],
-  );
-
   const pixelOffset = useMemo(() => {
     const padding = 15;
     const x = (isStyleImage ? imgw : pointSize) / 2 + padding;
@@ -161,6 +162,21 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     return Color.WHITE.withAlpha(0.4);
   }, []);
 
+  const imageColorCesium = useMemo(() => toColor(imageColor), [imageColor]);
+  const pointColorCesium = useMemo(() => toColor(pointColor), [pointColor]);
+  const pointOutlineColorCesium = useMemo(() => toColor(pointOutlineColor), [pointOutlineColor]);
+  const labelColorCesium = useMemo(() => toColor(labelTypography?.color), [labelTypography?.color]);
+  const labelBackgroundColorCesium = useMemo(
+    () => toColor(labelBackgroundColor),
+    [labelBackgroundColor],
+  );
+  const labelBackgroundPadding = useMemo(
+    // https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html?classFilter=labelgra#backgroundPadding
+    () =>
+      new Cartesian2(labelBackgroundPaddingHorizontal || 7, labelBackgroundPaddingVertical || 5),
+    [labelBackgroundPaddingHorizontal, labelBackgroundPaddingVertical],
+  );
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
@@ -176,15 +192,15 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}
-            color={toColor(pointColor)}
-            outlineColor={toColor(pointOutlineColor)}
+            color={pointColorCesium}
+            outlineColor={pointOutlineColorCesium}
             outlineWidth={pointOutlineWidth}
             heightReference={heightReference(hr)}
           />
         ) : (
           <BillboardGraphics
             image={icon}
-            color={cesiumImageColor}
+            color={imageColorCesium}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
@@ -207,10 +223,12 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
                 : VerticalOrigin.CENTER
             }
             pixelOffset={pixelOffset}
-            fillColor={toColor(labelTypography?.color)}
+            fillColor={labelColorCesium}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
             text={labelText}
             showBackground={labelBackground}
+            backgroundColor={labelBackgroundColorCesium}
+            backgroundPadding={labelBackgroundPadding}
             heightReference={heightReference(hr)}
           />
         )}
