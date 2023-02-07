@@ -42,6 +42,16 @@ export function evalLayerAppearances(
   layer: LayerSimple,
   feature?: Feature,
 ): Partial<AppearanceTypes> {
+  if (!feature) {
+    if (!layer.id) {
+      throw new Error("layer id is required");
+    }
+    feature = {
+      type: "feature",
+      id: layer.id,
+      properties: layer.properties || {},
+    };
+  }
   return Object.fromEntries(
     Object.entries(appearance).map(([k, v]) => [
       k,

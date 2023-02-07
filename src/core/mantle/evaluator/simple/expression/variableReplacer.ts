@@ -1,10 +1,10 @@
 import { JSONPath } from "jsonpath-plus";
-import * as randomWords from "random-words";
 
 import { Feature } from "../../../types";
 import { defined } from "../../../utils";
 
 import { JPLiteral } from "./expression";
+import { generateRandomString } from "./utils";
 
 export function replaceVariables(expression: string, feature?: any): [string, JPLiteral[]] {
   let exp = expression;
@@ -28,7 +28,7 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
         if (containsValidJSONPath(varExp, feature)) {
           const res = JSONPath({ json: feature, path: varExp });
           if (res.length == 1) {
-            const placeholderLiteral = generateRandomLiteralWords();
+            const placeholderLiteral = generateRandomString(10);
             literalJP.push({
               literalName: placeholderLiteral,
               literalValue: res[0],
@@ -94,8 +94,4 @@ function containsValidJSONPath(expression: string, feature: Feature): boolean {
   } catch (error) {
     return false;
   }
-}
-
-function generateRandomLiteralWords() {
-  return randomWords.default({ exactly: 5, join: "" });
 }

@@ -2,90 +2,94 @@ import { expect, test, describe } from "vitest";
 
 import { evalLayerAppearances, evalSimpleLayer } from ".";
 
-test("evalSimpleLayer", async () => {
-  expect(
-    await evalSimpleLayer(
-      {
-        id: "x",
-        type: "simple",
-        data: {
-          type: "geojson",
+describe("evalSimpleLayer", () => {
+  test("functionality test", async () => {
+    expect(
+      await evalSimpleLayer(
+        {
+          id: "x",
+          type: "simple",
+          data: {
+            type: "geojson",
+          },
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: { expression: { conditions: [["true", "1"]] } },
+          },
+          properties: {},
         },
-        marker: {
-          pointColor: "#FF0000",
-          pointSize: { expression: { conditions: [["true", "1"]] } },
+        {
+          getAllFeatures: async () => [{ type: "feature", id: "a" }],
+          getFeatures: async () => undefined,
         },
-      },
-      {
-        getAllFeatures: async () => [{ type: "feature", id: "a" }],
-        getFeatures: async () => undefined,
-      },
-    ),
-  ).toEqual({
-    layer: {
-      marker: {
-        pointColor: "#FF0000",
-        pointSize: 1,
-      },
-    },
-    features: [
-      {
-        type: "computedFeature",
-        id: "a",
+      ),
+    ).toEqual({
+      layer: {
         marker: {
           pointColor: "#FF0000",
           pointSize: 1,
         },
       },
-    ],
+      features: [
+        {
+          type: "computedFeature",
+          id: "a",
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: 1,
+          },
+        },
+      ],
+    });
   });
-});
 
-test("evaluate json properties", async () => {
-  expect(
-    await evalSimpleLayer(
-      {
-        id: "x",
-        type: "simple",
-        data: {
-          type: "geojson",
-          jsonProperties: ["key1", "key2"],
-        },
-      },
-      {
-        getAllFeatures: async () => [
-          {
-            type: "feature",
-            id: "a",
+  test("evaluate json properties", async () => {
+    expect(
+      await evalSimpleLayer(
+        {
+          id: "x",
+          type: "simple",
+          data: {
+            type: "geojson",
+            jsonProperties: ["key1", "key2"],
           },
-          {
-            type: "feature",
-            id: "b",
-            properties: {
-              key1: `["hoge", "fuga"]`,
-              key2: "abc",
+          properties: {},
+        },
+        {
+          getAllFeatures: async () => [
+            {
+              type: "feature",
+              id: "a",
             },
-          },
-        ],
-        getFeatures: async () => undefined,
-      },
-    ),
-  ).toEqual({
-    layer: {},
-    features: [
-      {
-        type: "computedFeature",
-        id: "a",
-      },
-      {
-        type: "computedFeature",
-        id: "b",
-        properties: {
-          key1: ["hoge", "fuga"],
-          key2: "abc",
+            {
+              type: "feature",
+              id: "b",
+              properties: {
+                key1: `["hoge", "fuga"]`,
+                key2: "abc",
+              },
+            },
+          ],
+          getFeatures: async () => undefined,
         },
-      },
-    ],
+      ),
+    ).toEqual({
+      layer: {},
+      features: [
+        {
+          type: "computedFeature",
+          id: "a",
+        },
+        {
+          type: "computedFeature",
+          id: "b",
+          properties: {
+            key1: ["hoge", "fuga"],
+            key2: "abc",
+          },
+        },
+      ],
+    });
   });
 });
 
@@ -328,6 +332,55 @@ describe("Conditional styling", () => {
     ).toEqual({
       marker: {
         pointColor: "#FF2000", // blue
+        pointSize: 26,
+      },
+    });
+  });
+
+  test("Layers with undefined feature", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["${$.phoneNumbers[:1].type} === 'iPhone'", "${$.age}"],
+                  ["true", "1"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            firstName: "John",
+            lastName: "doe",
+            age: 26,
+            address: {
+              streetAddress: "naist street",
+              city: "Nara",
+              postalCode: "630-0192",
+            },
+            phoneNumbers: [
+              {
+                type: "iPhone",
+                number: "0123-4567-8888",
+              },
+              {
+                type: "home",
+                number: "0123-4567-8910",
+              },
+            ],
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
         pointSize: 26,
       },
     });

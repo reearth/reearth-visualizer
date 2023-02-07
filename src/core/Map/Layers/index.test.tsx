@@ -157,6 +157,7 @@ test("computed", async () => {
           },
         },
       },
+      properties: {},
       marker: {
         pointColor: "red",
       },
