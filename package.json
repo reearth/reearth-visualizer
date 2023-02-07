@@ -119,6 +119,7 @@
         "date-fns": "2.29.3",
         "dayjs": "1.11.7",
         "detect-browser": "5.3.0",
+        "fast-xml-parser": "4.1.1",
         "formik": "2.2.9",
         "github-markdown-css": "5.1.0",
         "graphiql": "2.2.0",
