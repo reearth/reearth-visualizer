@@ -113,7 +113,7 @@ func TestBuildWidgetAlignSystem(t *testing.T) {
 								Left:   0,
 								Right:  0,
 							},
-							Gap:        0,
+							Gap:        nil,
 							Centered:   false,
 							Background: nil,
 						},

@@ -25,7 +25,7 @@ type WidgetAreaDocument struct {
 	WidgetIDs  []string
 	Align      string
 	Padding    *WidgetAreaPaddingDocument
-	Gap        int
+	Gap        *int
 	Centered   bool
 	Background *string
 }

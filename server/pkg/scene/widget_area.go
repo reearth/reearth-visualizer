@@ -10,7 +10,7 @@ type WidgetArea struct {
 	widgetIds  WidgetIDList
 	align      WidgetAlignType
 	padding    *WidgetAreaPadding
-	gap        int
+	gap        *int
 	centered   bool
 	background *string
 }
@@ -23,7 +23,7 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap int, centered bool, background *string) *WidgetArea {
+func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap *int, centered bool, background *string) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
@@ -58,15 +58,15 @@ func (a *WidgetArea) Padding() *WidgetAreaPadding {
 		return nil
 	}
 
-	return a.padding
+	return util.CloneRef(a.padding)
 }
 
-func (a *WidgetArea) Gap() int {
+func (a *WidgetArea) Gap() *int {
 	if a == nil {
-		return 0
+		return nil
 	}
 
-	return a.gap
+	return util.CloneRef(a.gap)
 }
 
 func (a *WidgetArea) Centered() bool {
@@ -131,11 +131,11 @@ func (a *WidgetArea) SetPadding(ap *WidgetAreaPadding) {
 		return
 	}
 
-	a.padding = ap
+	a.padding = util.CloneRef(ap)
 }
 
-func (a *WidgetArea) SetGap(g int) {
-	a.gap = g
+func (a *WidgetArea) SetGap(g *int) {
+	a.gap = util.CloneRef(g)
 }
 
 func (a *WidgetArea) SetCentered(c bool) {

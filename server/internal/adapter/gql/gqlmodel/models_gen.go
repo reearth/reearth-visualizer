@@ -1353,7 +1353,7 @@ type WidgetArea struct {
 	WidgetIds  []ID               `json:"widgetIds"`
 	Align      WidgetAreaAlign    `json:"align"`
 	Padding    *WidgetAreaPadding `json:"padding"`
-	Gap        int                `json:"gap"`
+	Gap        *int               `json:"gap"`
 	Centered   bool               `json:"centered"`
 	Background *string            `json:"background"`
 }

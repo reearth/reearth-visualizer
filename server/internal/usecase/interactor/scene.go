@@ -353,7 +353,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		area.SetPadding(param.Padding)
 	}
 	if param.Gap != nil {
-		area.SetGap(*param.Gap)
+		area.SetGap(param.Gap)
 	}
 	if param.Centered != nil {
 		area.SetCentered(*param.Centered)
