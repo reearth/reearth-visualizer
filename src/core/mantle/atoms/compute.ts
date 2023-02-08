@@ -98,7 +98,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
       // Only support geojson for specifying direct feature.
       if (currentLayer.data?.type !== "geojson") {
-        return false;
+        return true;
       }
 
       const curFeatures = processGeoJSON(currentLayer.data.value);

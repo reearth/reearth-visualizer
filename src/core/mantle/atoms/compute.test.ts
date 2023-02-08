@@ -475,6 +475,9 @@ test("computeAtom only value", async () => {
   const features2: Feature[] = [
     { type: "feature", id: "zzz", geometry: { type: "Point", coordinates: [100, 100] } },
   ];
+  const features3: Feature[] = [
+    { type: "feature", id: "zzz", geometry: { type: "Point", coordinates: [1000, 1000] } },
+  ];
   const fetchDataMock = vi.spyOn(DataCache, "fetchData");
   fetchDataMock.mockImplementation(async data => {
     return [
@@ -492,6 +495,13 @@ test("computeAtom only value", async () => {
   ];
   const internalFeatures2: Feature[] = [
     { type: "feature", id: features2[0].id, geometry: { type: "Point", coordinates: [100, 100] } },
+  ];
+  const internalFeatures3: Feature[] = [
+    {
+      type: "feature",
+      id: features3[0].id,
+      geometry: { type: "Point", coordinates: [1000, 1000] },
+    },
   ];
   const { result } = renderHook(() => {
     const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
@@ -608,6 +618,53 @@ test("computeAtom only value", async () => {
 
   // Should fetch if value is changed
   expect(fetchDataMock).toBeCalledTimes(2);
+
+  const otherData: TestData = {
+    ...data,
+    type: "csv",
+    test_id: "zzz",
+    value: {
+      ...data.value,
+      geometry: {
+        type: "Point",
+        coordinates: [1000, 1000],
+      },
+    },
+  };
+
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data: otherData,
+          marker: {
+            imageColor: "black",
+          },
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data: otherData,
+      marker: {
+        imageColor: "black",
+      },
+    },
+    status: "ready",
+    features: toComputedFeature(internalFeatures3),
+    originalFeatures: [...internalFeatures3],
+  });
+
+  // Should fetch if value is changed
+  expect(fetchDataMock).toBeCalledTimes(3);
 });
 
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
