@@ -110,7 +110,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/", PublishedIndex())
 
 	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.Auths())
+	web(e, cfg.Config.Web, cfg.Config.AuthForWeb())
 
 	return e
 }

@@ -62,6 +62,48 @@ type Auth0Config struct {
 	WebClientID  string
 }
 
+func (c Auth0Config) AuthConfigForWeb() *AuthConfig {
+	if c.Domain == "" || c.WebClientID == "" {
+		return nil
+	}
+	domain := prepareUrl(c.Domain)
+	var aud []string
+	if len(c.Audience) > 0 {
+		aud = []string{c.Audience}
+	}
+	return &AuthConfig{
+		ISS:      domain,
+		AUD:      aud,
+		ClientID: &c.WebClientID,
+	}
+}
+
+func (c Auth0Config) AuthConfigForM2M() *AuthConfig {
+	if c.Domain == "" || c.ClientID == "" {
+		return nil
+	}
+	domain := prepareUrl(c.Domain)
+	var aud []string
+	if len(c.Audience) > 0 {
+		aud = []string{c.Audience}
+	}
+	return &AuthConfig{
+		ISS:      domain,
+		AUD:      aud,
+		ClientID: &c.ClientID,
+	}
+}
+
+func (c Auth0Config) AuthConfigs() (res []AuthConfig) {
+	if c := c.AuthConfigForWeb(); c != nil {
+		res = append(res, *c)
+	}
+	if c := c.AuthConfigForM2M(); c != nil {
+		res = append(res, *c)
+	}
+	return
+}
+
 type AuthSrvConfig struct {
 	Dev      bool
 	Disabled bool
@@ -204,8 +246,8 @@ func (c Config) Print() string {
 }
 
 func (c Config) Auths() (res []AuthConfig) {
-	if ac := c.Auth0.AuthConfig(); ac != nil {
-		res = append(res, *ac)
+	if ac := c.Auth0.AuthConfigs(); len(ac) > 0 {
+		res = append(res, ac...)
 	}
 	if c.Auth_ISS != "" {
 		var aud []string
@@ -226,28 +268,35 @@ func (c Config) Auths() (res []AuthConfig) {
 	return append(res, c.Auth...)
 }
 
+func (c Config) AuthForWeb() *AuthConfig {
+	if ac := c.Auth0.AuthConfigForWeb(); ac != nil {
+		return ac
+	}
+	if c.Auth_ISS != "" {
+		var aud []string
+		if len(c.Auth_AUD) > 0 {
+			aud = append(aud, c.Auth_AUD)
+		}
+		return &AuthConfig{
+			ISS:      c.Auth_ISS,
+			AUD:      aud,
+			ALG:      c.Auth_ALG,
+			TTL:      c.Auth_TTL,
+			ClientID: c.Auth_ClientID,
+		}
+	}
+	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
+		return ac
+	}
+	return nil
+}
+
 func prepareUrl(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "https://" + url
 	}
 	url = strings.TrimSuffix(url, "/")
 	return url
-}
-
-func (c Auth0Config) AuthConfig() *AuthConfig {
-	if c.Domain == "" {
-		return nil
-	}
-	domain := prepareUrl(c.Domain)
-	var aud []string
-	if len(c.Audience) > 0 {
-		aud = []string{c.Audience}
-	}
-	return &AuthConfig{
-		ISS:      domain,
-		AUD:      aud,
-		ClientID: &c.ClientID,
-	}
 }
 
 type AuthConfig struct {
