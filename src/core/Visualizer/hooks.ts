@@ -3,7 +3,8 @@ import { useWindowSize } from "react-use";
 
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
-import type { Block } from "../Crust";
+import type { Block, BuiltinWidgets } from "../Crust";
+import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
 import type { ComputedFeature, Feature } from "../mantle";
 import type {
   Ref as MapRef,
@@ -27,6 +28,7 @@ export default function useHooks({
   isEditable,
   rootLayerId,
   zoomedLayerId,
+  ownBuiltinWidgets,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
@@ -38,6 +40,7 @@ export default function useHooks({
   rootLayerId?: string;
   sceneProperty?: SceneProperty;
   zoomedLayerId?: string;
+  ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -159,6 +162,14 @@ export default function useHooks({
     }
   }, [zoomedLayerId, onZoomToLayer]);
 
+  // shouldRender
+  const shouldRender = useMemo(() => {
+    const shouldWidgetAnimate = ownBuiltinWidgets?.some(
+      id => !!getBuiltinWidgetOptions(id).animation,
+    );
+    return shouldWidgetAnimate;
+  }, [ownBuiltinWidgets]);
+
   return {
     mapRef,
     wrapperRef,
@@ -172,6 +183,7 @@ export default function useHooks({
     overriddenSceneProperty,
     isDroppable,
     infobox,
+    shouldRender,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

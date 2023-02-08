@@ -24,17 +24,24 @@ export type BuiltinWidgets<T = unknown> = Record<
   T
 >;
 
-const BUILTIN_WIDGET_ID_LIST: BuiltinWidgets<boolean> = {
-  [MENU_BUILTIN_WIDGET_ID]: true,
-  [BUTTON_BUILTIN_WIDGET_ID]: true,
-  [SPLASHSCREEN_BUILTIN_WIDGET_ID]: true,
-  [STORYTELLING_BUILTIN_WIDGET_ID]: true,
-  [TIMELINE_BUILTIN_WIDGET_ID]: true,
-  [NAVIGATOR_BUILTIN_WIDGET_ID]: true,
+const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
+  [MENU_BUILTIN_WIDGET_ID]: {},
+  [BUTTON_BUILTIN_WIDGET_ID]: {},
+  [SPLASHSCREEN_BUILTIN_WIDGET_ID]: {},
+  [STORYTELLING_BUILTIN_WIDGET_ID]: {},
+  [TIMELINE_BUILTIN_WIDGET_ID]: {
+    animation: true,
+  },
+  [NAVIGATOR_BUILTIN_WIDGET_ID]: {
+    animation: true,
+  },
 };
 
+export const getBuiltinWidgetOptions = (id: string) =>
+  BUILTIN_WIDGET_OPTIONS[id as keyof BuiltinWidgets];
+
 export const isBuiltinWidget = (id: string): id is keyof BuiltinWidgets =>
-  !!BUILTIN_WIDGET_ID_LIST[id as keyof BuiltinWidgets];
+  !!builtin[id as keyof BuiltinWidgets];
 
 const builtin: BuiltinWidgets<Component> = {
   [MENU_BUILTIN_WIDGET_ID]: Menu,

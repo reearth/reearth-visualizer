@@ -167,7 +167,7 @@ export const convertWidgets = (
       floatingWidgets: InternalWidget[];
       alignSystem: WidgetAlignSystem;
       layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
-      ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
+      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
     }
   | undefined => {
   if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
@@ -258,17 +258,10 @@ export const convertWidgets = (
     };
   };
 
-  const ownBuiltinWidgets = data.node.widgets.reduce<{
-    [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K];
-  }>((res, next) => {
+  const ownBuiltinWidgets = data.node.widgets.reduce<(keyof BuiltinWidgets)[]>((res, next) => {
     const id = `${next.pluginId}/${next.extensionId}`;
-    return isBuiltinWidget(id)
-      ? {
-          ...res,
-          [id]: true,
-        }
-      : res;
-  }, {});
+    return isBuiltinWidget(id) && next.enabled ? [...res, id] : res;
+  }, []);
 
   return {
     floatingWidgets,

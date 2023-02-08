@@ -16,7 +16,7 @@ import type {
 } from "./types";
 
 export type { WidgetLayout } from "../types";
-export { isBuiltinWidget, type BuiltinWidgets } from "./builtin";
+export { isBuiltinWidget, type BuiltinWidgets, getBuiltinWidgetOptions } from "./builtin";
 
 export type Props = {
   widget: InternalWidget;

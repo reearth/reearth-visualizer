@@ -67,6 +67,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         widgetAlignSystem={widgets?.alignSystem}
         floatingWidgets={widgets?.floatingWidgets}
         widgetLayoutConstraint={widgets?.layoutConstraint}
+        ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
         selectedLayerId={selectedLayerId}
         selectedBlockId={selectedBlockId}
         selectedWidgetArea={selectedWidgetArea}
