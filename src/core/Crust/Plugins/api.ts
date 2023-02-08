@@ -1,5 +1,5 @@
 import type { Tag } from "@reearth/core/mantle/compat";
-import type { Events, Layer, NaiveLayer } from "@reearth/core/Map";
+import type { Events, Layer, LayerSelectionReason, LayersRef, NaiveLayer } from "@reearth/core/Map";
 import { merge } from "@reearth/util/object";
 
 import type { Block } from "../Infobox";
@@ -332,7 +332,7 @@ export function commonReearth({
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenProperties?: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
-  selectLayer: GlobalThis["reearth"]["layers"]["select"];
+  selectLayer: LayersRef["select"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -444,7 +444,9 @@ export function commonReearth({
         return layersInViewport;
       },
       get select() {
-        return selectLayer;
+        // For compat
+        return (layerId: string | undefined, reason?: LayerSelectionReason | undefined) =>
+          selectLayer?.(layerId, undefined, reason);
       },
       get show() {
         return showLayer;

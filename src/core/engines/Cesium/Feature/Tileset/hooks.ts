@@ -127,23 +127,19 @@ const useFeature = ({
       return;
     }
 
-    const currentTiles: Map<Cesium3DTile, number> = new Map();
+    const currentTiles: Map<Cesium3DTile, string> = new Map();
 
     tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {
       if (currentTiles.has(t)) {
         return;
       }
 
-      const tiles = Array.from(currentTiles.values());
-      const prevFeatureId = tiles[tiles.length - 1] || 0;
-      const nextFeatureId = t.content.featuresLength + prevFeatureId;
-
-      currentTiles.set(t, nextFeatureId);
-
       const tempFeatures: Feature[] = [];
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
+        const nextFeatureId = String(tileFeature.featureId);
+        currentTiles.set(t, nextFeatureId);
         const id = String(nextFeatureId + tileFeature.featureId);
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
@@ -172,11 +168,12 @@ const useFeature = ({
     });
 
     tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) => {
-      const nextFeatureId = currentTiles.get(t) || 0;
       currentTiles.delete(t);
       const featureIds: string[] = [];
-      lookupFeatures(t.content, tileFeature => {
-        const id = String(nextFeatureId + tileFeature.featureId);
+      lookupFeatures(t.content, (tileFeature, content) => {
+        const coordinates = content.tile.boundingSphere.center;
+        const id =
+          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);

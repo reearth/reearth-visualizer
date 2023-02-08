@@ -63,6 +63,7 @@ export type Reearth = {
       | "overrideProperties"
       | "override"
       | "add"
+      | "select"
       | "addAll"
       | "replace"
       | "deleteLayer"
@@ -73,6 +74,10 @@ export type Reearth = {
       readonly overriddenProperties?: OverriddenLayer[];
       readonly overrideProperty?: WrappedRef<LayersRef>["overrideProperties"];
       readonly add?: (layer: NaiveLayer) => string | undefined;
+      readonly select?: (
+        layerId: string | undefined,
+        reason?: LayerSelectionReason | undefined,
+      ) => void;
       selectionReason?: LayerSelectionReason;
       overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
       tags?: Tag[];
