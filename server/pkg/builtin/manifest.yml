@@ -415,6 +415,14 @@ extensions:
               type: string
               title: Tracking ID
               description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
+        - id: experimental
+          title: Advanced
+          fields:
+            - id: experimental_core
+              type: bool
+              title: Enable advanced features
+              defaultValue: false
+              description: Enable advanced features for this scene. Page reload is required to apply this setting.
       linkable:
         url:
           schemaGroupId: indicator
