@@ -58,7 +58,13 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
   });
 
   return (
-    <ClusteredLayers {...props} layers={flattenedLayers} atomMap={atomMap} isHidden={isHidden} />
+    <ClusteredLayers
+      {...props}
+      selectedLayerId={selectedLayerId}
+      layers={flattenedLayers}
+      atomMap={atomMap}
+      isHidden={isHidden}
+    />
   );
 };
 
