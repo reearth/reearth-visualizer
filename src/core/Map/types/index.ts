@@ -103,8 +103,12 @@ export type EngineProps = {
     options?: LayerSelectionReason,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
-  onLayerDrag?: (layerId: string, position: LatLng) => void;
-  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
+  onLayerDrop?: (
+    layerId: string,
+    featureId: string | undefined,
+    position: LatLng | undefined,
+  ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
 };
 

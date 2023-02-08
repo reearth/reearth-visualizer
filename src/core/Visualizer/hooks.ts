@@ -5,7 +5,7 @@ import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
-import type { ComputedFeature, Feature } from "../mantle";
+import type { ComputedFeature, Feature, LatLng } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
@@ -33,6 +33,7 @@ export default function useHooks({
   onBlockSelect,
   onCameraChange,
   onZoomToLayer,
+  onLayerDrop,
 }: {
   selectedBlockId?: string;
   camera?: Camera;
@@ -50,6 +51,7 @@ export default function useHooks({
   onBlockSelect?: (blockId?: string) => void;
   onCameraChange?: (camera: Camera) => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
+  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
 
@@ -162,6 +164,27 @@ export default function useHooks({
     }
   }, [zoomedLayerId, onZoomToLayer]);
 
+  // dnd
+  const [isLayerDragging, setIsLayerDragging] = useState(false);
+  const handleLayerDrag = useCallback(() => {
+    setIsLayerDragging(true);
+  }, []);
+  const handleLayerDrop = useCallback(
+    (layerId: string, _featureId: string | undefined, latlng: LatLng | undefined) => {
+      setIsLayerDragging(false);
+      const layer = mapRef.current?.layers.findById(layerId);
+      const propertyKey = layer?.property.default.location
+        ? "default.location"
+        : layer?.property.default.position
+        ? "default.position"
+        : undefined;
+      if (latlng && layer && layer.propertyId && propertyKey) {
+        onLayerDrop?.(layer.propertyId, propertyKey, latlng);
+      }
+    },
+    [onLayerDrop, mapRef],
+  );
+
   // shouldRender
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
@@ -183,10 +206,13 @@ export default function useHooks({
     overriddenSceneProperty,
     isDroppable,
     infobox,
+    isLayerDragging,
     shouldRender,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
+    handleLayerDrag,
+    handleLayerDrop,
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,

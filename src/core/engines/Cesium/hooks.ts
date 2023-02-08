@@ -51,8 +51,12 @@ export default ({
   meta?: Record<string, unknown>;
   onLayerSelect?: (layerId?: string, featureId?: string, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
-  onLayerDrag?: (layerId: string, position: LatLng) => void;
-  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
+  onLayerDrop?: (
+    layerId: string,
+    featureId: string | undefined,
+    position: LatLng | undefined,
+  ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -292,7 +296,10 @@ export default ({
       const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
       if (!pos) return false;
 
-      onLayerDrag?.(e.id, pos);
+      const tag = getTag(e);
+      if (!tag) return false;
+
+      onLayerDrag?.(tag.layerId || "", tag.featureId, pos);
     },
     [onLayerDrag],
   );
@@ -302,9 +309,9 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return false;
 
-      const key = isDraggable(e);
+      const tag = getTag(e);
       const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
-      onLayerDrop?.(e.id, key || "", pos);
+      onLayerDrop?.(tag?.layerId || "", tag?.featureId || "", pos);
 
       return false; // let apollo-client handle optimistic updates
     },

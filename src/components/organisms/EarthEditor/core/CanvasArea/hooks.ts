@@ -226,13 +226,13 @@ export default (isBuilt?: boolean) => {
   }, [isBuilt, title]);
 
   const handleDropLayer = useCallback(
-    async (layerId: string, propertyKey: string, position?: LatLng) => {
+    async (propertyId: string, propertyKey: string, position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [schemaGroupId, fieldId] = propertyKey.split(".", 2);
 
       await updatePropertyValue({
         variables: {
-          propertyId: layerId,
+          propertyId,
           schemaGroupId,
           fieldId,
           type: ValueType.Latlng,

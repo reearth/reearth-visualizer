@@ -504,7 +504,7 @@ export function isSelectable(e: Entity | undefined): boolean {
 }
 
 export function isDraggable(e: Entity): string | undefined {
-  return e.properties?.getValue(new JulianDate())?.[draggableTag];
+  return e.properties?.[draggableTag];
 }
 
 export function attachTag(entity: Entity | undefined, tag: string, value: any) {
