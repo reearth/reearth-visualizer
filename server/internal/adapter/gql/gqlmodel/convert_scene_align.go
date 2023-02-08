@@ -37,6 +37,18 @@ func ToWidgetSection(s *scene.WidgetSection) *WidgetSection {
 		Bottom: ToWidgetArea(s.Area(scene.WidgetAreaBottom)),
 	}
 }
+func ToWidgetAreaPadding(p *scene.WidgetAreaPadding) *WidgetAreaPadding {
+	if p == nil {
+		return nil
+	}
+
+	return &WidgetAreaPadding{
+		Top:    p.Top(),
+		Bottom: p.Bottom(),
+		Left:   p.Left(),
+		Right:  p.Right(),
+	}
+}
 
 func ToWidgetArea(a *scene.WidgetArea) *WidgetArea {
 	if a == nil {
@@ -44,8 +56,12 @@ func ToWidgetArea(a *scene.WidgetArea) *WidgetArea {
 	}
 
 	return &WidgetArea{
-		WidgetIds: util.Map(a.WidgetIDs(), IDFrom[id.Widget]),
-		Align:     ToWidgetAlignType(a.Alignment()),
+		WidgetIds:  util.Map(a.WidgetIDs(), IDFrom[id.Widget]),
+		Align:      ToWidgetAlignType(a.Alignment()),
+		Padding:    ToWidgetAreaPadding(a.Padding()),
+		Gap:        a.Gap(),
+		Centered:   a.Centered(),
+		Background: a.Background(),
 	}
 }
 
@@ -71,6 +87,19 @@ func FromSceneWidgetLocation(l *WidgetLocationInput) *scene.WidgetLocation {
 		Section: FromSceneWidgetSectionType(l.Section),
 		Area:    FromSceneWidgetAreaType(l.Area),
 	}
+}
+
+func FromSceneWidgetAreaPadding(p *WidgetAreaPaddingInput) *scene.WidgetAreaPadding {
+	if p == nil {
+		return nil
+	}
+	pp := scene.NewWidgetAreaPadding(
+		p.Left,
+		p.Right,
+		p.Top,
+		p.Bottom,
+	)
+	return pp
 }
 
 func FromSceneWidgetZoneType(t WidgetZoneType) scene.WidgetZoneType {

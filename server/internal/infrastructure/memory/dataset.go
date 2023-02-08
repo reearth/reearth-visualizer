@@ -57,7 +57,7 @@ func (r *Dataset) FindBySchema(_ context.Context, s id.DatasetSchemaID, p *useca
 	}
 
 	return result, usecasex.NewPageInfo(
-		len(result),
+		int64(len(result)),
 		startCursor,
 		endCursor,
 		true,

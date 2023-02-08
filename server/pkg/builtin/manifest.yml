@@ -760,6 +760,34 @@ extensions:
                 field: label
                 type: bool
                 value: true
+            - id: labelBackgroundColor
+              type: string
+              title: Label background color
+              ui: color
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelBackgroundPaddingHorizontal
+              type: number
+              title: Label padding X
+              suffix: px
+              defaultValue: 7
+              min: 0
+              availableIf:
+                field: label
+                type: bool
+                value: true
+            - id: labelBackgroundPaddingVertical
+              type: number
+              title: Label padding Y
+              suffix: px
+              defaultValue: 5
+              min: 0
+              availableIf:
+                field: label
+                type: bool
+                value: true
             - id: extrude
               type: bool
               title: Extruded
@@ -1478,10 +1506,6 @@ extensions:
                 field: item_datatype
                 type: string
                 value: number
-  # - id: navigator
-  #   type: widget
-  #   title: Navigator
-  #   description: Navigator widget
   - id: menu
     type: widget
     name: Menu (legacy)
@@ -1662,6 +1686,17 @@ extensions:
                 field: buttonType
                 type: string
                 value: camera
+            - id: visible
+              title: Visible
+              type: string
+              defaultValue: always
+              choices:
+                - key: always
+                  label: Always
+                - key: desktop
+                  label: Desktop only
+                - key: mobile
+                  label: Mobile only
         - id: menu
           title: Menu
           list: true
@@ -1747,6 +1782,17 @@ extensions:
               type: string
               title: Background color
               ui: color
+            - id: visible
+              title: Visible
+              type: string
+              defaultValue: always
+              choices:
+                - key: always
+                  label: Always
+                - key: desktop
+                  label: Desktop only
+                - key: mobile
+                  label: Mobile only
         - id: camera
           title: Camera flight sequence
           list: true
@@ -1798,6 +1844,17 @@ extensions:
             - id: autoStart
               title: Auto start
               type: bool
+            - id: visible
+              title: Visible
+              type: string
+              defaultValue: always
+              choices:
+                - key: always
+                  label: Always
+                - key: desktop
+                  label: Desktop only
+                - key: mobile
+                  label: Mobile only
         - id: stories
           title: Stories
           representativeField: layer
@@ -1881,6 +1938,22 @@ extensions:
         zone: outer
         section: center
         area: bottom
+    schema:
+      groups:
+        - id: default
+          title: Timeline
+          fields:
+            - id: visible
+              title: Visible
+              type: string
+              defaultValue: always
+              choices:
+                - key: always
+                  label: Always
+                - key: desktop
+                  label: Desktop only
+                - key: mobile
+                  label: Mobile only
   - id: navigator
     type: widget
     name: Navigator
@@ -1891,3 +1964,19 @@ extensions:
         zone: outer
         section: right
         area: top
+    schema:
+      groups:
+        - id: default
+          title: Navigator
+          fields:
+            - id: visible
+              title: Visible
+              type: string
+              defaultValue: always
+              choices:
+                - key: always
+                  label: Always
+                - key: desktop
+                  label: Desktop only
+                - key: mobile
+                  label: Mobile only

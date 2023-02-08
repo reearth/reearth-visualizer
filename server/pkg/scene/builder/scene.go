@@ -200,7 +200,22 @@ func buildWidgetArea(a *scene.WidgetArea) *widgetAreaJSON {
 		return nil
 	}
 	return &widgetAreaJSON{
-		WidgetIDs: toString(a.WidgetIDs()),
-		Align:     string(a.Alignment()),
+		WidgetIDs:  toString(a.WidgetIDs()),
+		Align:      string(a.Alignment()),
+		Padding:    buildWidgetAreaPadding(a.Padding()),
+		Gap:        a.Gap(),
+		Centered:   a.Centered(),
+		Background: a.Background(),
+	}
+}
+func buildWidgetAreaPadding(p *scene.WidgetAreaPadding) *widgetAreaPaddingJSON {
+	if p == nil {
+		return &widgetAreaPaddingJSON{}
+	}
+	return &widgetAreaPaddingJSON{
+		Top:    p.Top(),
+		Bottom: p.Bottom(),
+		Left:   p.Left(),
+		Right:  p.Right(),
 	}
 }

@@ -163,8 +163,19 @@ type widgetSectionJSON struct {
 }
 
 type widgetAreaJSON struct {
-	WidgetIDs []string `json:"widgetIds"`
-	Align     string   `json:"align"`
+	WidgetIDs  []string               `json:"widgetIds"`
+	Align      string                 `json:"align"`
+	Padding    *widgetAreaPaddingJSON `json:"padding"`
+	Gap        *int                   `json:"gap"`
+	Centered   bool                   `json:"centered"`
+	Background *string                `json:"background"`
+}
+
+type widgetAreaPaddingJSON struct {
+	Top    int `json:"top"`
+	Bottom int `json:"bottom"`
+	Left   int `json:"left"`
+	Right  int `json:"right"`
 }
 
 type widgetJSON struct {
