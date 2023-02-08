@@ -16,7 +16,6 @@ import {
   useUpdatePropertyItemsMutation,
   ListOperation,
   useUpdateWidgetAlignSystemMutation,
-  WidgetAreaAlign,
   WidgetAreaType,
   WidgetSectionType,
   WidgetZoneType,
@@ -53,7 +52,7 @@ export type WidgetAreaState = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
-  align: WidgetAlignment;
+  align?: WidgetAlignment;
   padding?: WidgetAreaPadding;
   gap?: number;
   centered?: boolean;
@@ -109,7 +108,6 @@ export default (mode: Mode) => {
             section: widgetAreaState.section.toUpperCase() as WidgetSectionType,
             zone: widgetAreaState.zone.toUpperCase() as WidgetZoneType,
           },
-          align: widgetAreaState.align.toUpperCase() as WidgetAreaAlign,
           background: widgetAreaState.background,
           padding: widgetAreaState.padding,
           centered: widgetAreaState.centered,

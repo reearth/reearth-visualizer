@@ -15,7 +15,7 @@ export type Location = {
 export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
 
 export type WidgetArea = {
-  align: Alignment;
+  align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
   gap?: number;

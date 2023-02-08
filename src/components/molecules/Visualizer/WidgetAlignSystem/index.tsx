@@ -81,6 +81,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         {props.viewport?.isMobile ? (
           <MobileZone
             zoneName="outer"
+            isMobileZone={props.viewport.isMobile}
             selectedWidgetArea={selectedWidgetArea}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
@@ -94,6 +95,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
+                isMobileZone={props.viewport.isMobile}
                 selectedWidgetArea={selectedWidgetArea}
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}

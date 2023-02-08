@@ -91,7 +91,7 @@ export type WidgetAreaState = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
-  align: WidgetAlignment;
+  align?: WidgetAlignment;
   padding?: WidgetAreaPadding;
   gap?: number;
   centered?: boolean;

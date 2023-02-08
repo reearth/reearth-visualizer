@@ -19,7 +19,7 @@ export type WidgetAreaType = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
-  align: Alignment;
+  align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
   gap?: number;
@@ -33,7 +33,7 @@ type Props = {
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
-  padding: WidgetAreaPadding;
+  padding?: WidgetAreaPadding;
   backgroundColor: string;
   gap: number;
   centered: boolean;
@@ -73,15 +73,20 @@ export default function Area({
     <GridArea
       key={area}
       onClick={() =>
+        widgets?.length &&
         onWidgetAreaSelect?.({
           area,
           section,
           zone,
-          align,
           background: backgroundColor,
           centered,
           gap,
-          padding,
+          padding: {
+            top: padding?.top ?? 6,
+            bottom: padding?.bottom ?? 6,
+            left: padding?.left ?? 6,
+            right: padding?.right ?? 6,
+          },
         })
       }
       id={`${zone}/${section}/${area}`}
@@ -101,14 +106,15 @@ export default function Area({
       style={{
         flexWrap: "wrap",
         pointerEvents: "none",
-        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
         backgroundColor: backgroundColor,
         gap: gap,
         alignItems: centered ? "center" : "unset",
+        borderRadius: 0,
       }}
       editorStyle={{
         flexWrap: "wrap",
-        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
         background: backgroundColor
           ? backgroundColor
           : area === "middle"
@@ -141,7 +147,8 @@ export default function Area({
             index={i}
             extended={extended ?? widget.extended}
             extendable={extendable2}
-            style={{ pointerEvents: "none" }}>
+            style={{ pointerEvents: "none", margin: 0 }}
+            editorStyle={{ margin: 0 }}>
             {({ editing }) =>
               renderWidget?.({
                 widget,

@@ -23,6 +23,7 @@ type Props = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
+  isMobileZone?: boolean;
   align: Alignment;
   padding: WidgetAreaPadding;
   backgroundColor: string;
@@ -39,6 +40,7 @@ type Props = {
 } & PluginCommonProps;
 
 export default function Area({
+  isMobileZone,
   selectedWidgetArea,
   zone,
   section,
@@ -73,7 +75,6 @@ export default function Area({
           area,
           section,
           zone,
-          align,
           background: backgroundColor,
           centered,
           gap,
@@ -96,19 +97,25 @@ export default function Area({
       style={{
         flexWrap: "wrap",
         pointerEvents: "none",
-        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
-        backgroundColor: backgroundColor,
-        gap: gap,
-        alignItems: centered ? "center" : "unset",
+        padding: isMobileZone
+          ? "inherit"
+          : `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        backgroundColor: isMobileZone ? "inherit" : backgroundColor,
+        gap: isMobileZone ? "inherit" : gap,
+        alignItems: centered && !isMobileZone ? "center" : "inherit",
+        borderRadius: 0,
       }}
       editorStyle={{
         flexWrap: "wrap",
-        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
-        background: backgroundColor
-          ? backgroundColor
-          : area === "middle"
-          ? theme.alignSystem.blueBg
-          : theme.alignSystem.orangeBg,
+        padding: isMobileZone
+          ? "inherit"
+          : `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        background:
+          backgroundColor && !isMobileZone
+            ? backgroundColor
+            : area === "middle"
+            ? theme.alignSystem.blueBg
+            : theme.alignSystem.orangeBg,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
@@ -117,8 +124,8 @@ export default function Area({
             ? `1px solid ${theme.alignSystem.blueHighlight}`
             : `1px solid ${theme.alignSystem.orangeHighlight}`,
         cursor: "pointer",
-        gap: gap,
-        alignItems: centered ? "center" : "unset",
+        gap: isMobileZone ? "inherit" : gap,
+        alignItems: centered && !isMobileZone ? "center" : "inherit",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets?.map((widget, i) => {
@@ -137,7 +144,8 @@ export default function Area({
             index={i}
             extended={extended ?? widget.extended}
             extendable={extendable2}
-            style={{ pointerEvents: "none" }}>
+            style={{ pointerEvents: "none", margin: isMobileZone ? 6 : 0 }}
+            editorStyle={{ margin: isMobileZone ? 6 : 0 }}>
             {({ editing }) => (
               <W
                 widget={widget}

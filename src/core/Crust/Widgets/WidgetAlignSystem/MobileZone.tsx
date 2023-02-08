@@ -65,8 +65,8 @@ export default function MobileZone({
                   area={a}
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
-                  padding={zone?.[s]?.[a]?.padding ?? { top: 0, bottom: 0, left: 0, right: 0 }}
-                  gap={zone?.[s]?.[a]?.gap ?? 0}
+                  padding={zone?.[s]?.[a]?.padding ?? { top: 6, bottom: 6, left: 6, right: 6 }}
+                  gap={zone?.[s]?.[a]?.gap ?? 6}
                   centered={zone?.[s]?.[a]?.centered ?? false}
                   backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
                   layoutConstraint={layoutConstraint}
