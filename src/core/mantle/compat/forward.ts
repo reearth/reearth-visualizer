@@ -211,7 +211,7 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     } else {
       data = {
-        type: l.property.default?.type,
+        type: l.property.default?.type || "auto", // auto is allowed only in internal
         url: l.property.default?.url,
       };
     }
