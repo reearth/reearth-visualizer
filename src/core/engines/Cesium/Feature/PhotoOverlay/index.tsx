@@ -9,7 +9,12 @@ import { styled, useTheme } from "@reearth/theme";
 
 import type { LegacyPhotooverlayAppearance } from "../../..";
 import { heightReference, ho, useIcon, vo } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 import useHooks, { photoDuration, photoExitDuration, TransitionStatus } from "./hooks";
 
@@ -79,9 +84,17 @@ export default function PhotoOverlay({
     isSelected: isSelected && !!photoOverlayImage,
   });
 
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+
   return !isVisible || !pos ? null : (
     <>
-      <EntityExt id={id} position={pos} layerId={layer?.id} featureId={feature?.id} draggable>
+      <EntityExt
+        id={id}
+        position={pos}
+        layerId={layer?.id}
+        featureId={feature?.id}
+        draggable
+        availability={availability}>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}

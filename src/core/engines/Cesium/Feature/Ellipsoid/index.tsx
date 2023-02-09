@@ -7,7 +7,12 @@ import { LatLng, toColor } from "@reearth/util/value";
 
 import type { EllipsoidAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 export type Props = FeatureProps<Property>;
 
@@ -46,6 +51,7 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
   }, [radius]);
 
   const material = useMemo(() => toColor(fillColor), [fillColor]);
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
   return !isVisible || !pos ? null : (
     <EntityExt
@@ -54,7 +60,8 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
       layerId={layer?.id}
       featureId={feature?.id}
       draggable
-      legacyLocationPropertyKey="default.position">
+      legacyLocationPropertyKey="default.position"
+      availability={availability}>
       <EllipsoidGraphics
         radii={raddi}
         material={material}

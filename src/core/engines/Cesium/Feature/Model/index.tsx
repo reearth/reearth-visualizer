@@ -6,7 +6,12 @@ import { toColor } from "@reearth/util/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 export type Props = FeatureProps<Property>;
 
@@ -75,6 +80,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const modelColor = useMemo(() => (colorBlend ? toColor(color) : undefined), [colorBlend, color]);
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
   return !isVisible || (!model && !url) || !position ? null : (
     <EntityExt
@@ -83,7 +89,8 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       orientation={orientation as any}
       layerId={layer?.id}
       featureId={feature?.id}
-      draggable>
+      draggable
+      availability={availability}>
       <ModelGraphics
         uri={model || url}
         scale={scale}

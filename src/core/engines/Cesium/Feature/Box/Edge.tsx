@@ -1,4 +1,10 @@
-import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
+import {
+  ArcType,
+  Cartesian3,
+  Color,
+  TimeIntervalCollection,
+  TranslationRotationScale,
+} from "cesium";
 import { FC, memo } from "react";
 import { PolylineGraphics } from "resium";
 
@@ -30,6 +36,7 @@ type Props = {
   fillColor?: Color;
   hoverColor?: Color;
   width?: number;
+  availability?: TimeIntervalCollection;
   onMouseDown?: EdgeEventCallback;
   onMouseMove?: EdgeEventCallback;
   onMouseUp?: EdgeEventCallback;
@@ -47,6 +54,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   trs,
   width,
   hoverColor,
+  availability,
   onMouseDown,
   onMouseMove,
   onMouseUp,
@@ -65,7 +73,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   });
 
   return (
-    <EntityExt layerId={layerId} featureId={featureId}>
+    <EntityExt layerId={layerId} featureId={featureId} availability={availability}>
       <PolylineGraphics
         positions={cbp}
         width={width}

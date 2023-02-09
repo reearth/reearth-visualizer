@@ -9,11 +9,13 @@ import {
   LayerAppearanceTypes,
   LayerSimple,
   ExpressionContainer,
+  TimeInterval,
 } from "../../types";
 import { defined } from "../../utils";
 
 import { ConditionalExpression } from "./conditionalExpression";
 import { Expression } from "./expression";
+import { evalTimeInterval } from "./interval";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -21,19 +23,25 @@ export async function evalSimpleLayer(
 ): Promise<EvalResult | undefined> {
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
+  const timeIntervals = evalTimeInterval(features, layer.data?.time);
   return {
     layer: evalLayerAppearances(appearances, layer),
-    features: features?.map(f => evalSimpleLayerFeature(layer, f)),
+    features: features?.map((f, i) => evalSimpleLayerFeature(layer, f, timeIntervals?.[i])),
   };
 }
 
-export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
+export const evalSimpleLayerFeature = (
+  layer: LayerSimple,
+  feature: Feature,
+  interval?: TimeInterval,
+): ComputedFeature => {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   const nextFeature = evalJsonProperties(layer, feature);
   return {
     ...nextFeature,
     ...evalLayerAppearances(appearances, layer, nextFeature),
     type: "computedFeature",
+    interval,
   };
 };
 

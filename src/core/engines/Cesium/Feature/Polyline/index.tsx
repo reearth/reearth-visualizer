@@ -8,7 +8,12 @@ import { Coordinates, toColor } from "@reearth/util/value";
 
 import type { PolylineAppearance } from "../../..";
 import { shadowMode } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 export type Props = FeatureProps<Property>;
 
@@ -35,9 +40,10 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     isEqual,
   );
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
   return !isVisible ? null : (
-    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id}>
+    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolylineGraphics
         positions={positions}
         width={strokeWidth}

@@ -6,7 +6,12 @@ import { toCSSFont } from "@reearth/util/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 import marker from "./marker.svg";
 
@@ -118,10 +123,16 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     [labelBackgroundPaddingHorizontal, labelBackgroundPaddingVertical],
   );
 
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
-        <EntityExt layerId={layer?.id} featureId={feature?.id} unselectable>
+        <EntityExt
+          layerId={layer?.id}
+          featureId={feature?.id}
+          unselectable
+          availability={availability}>
           <PolylineGraphics
             positions={extrudePoints}
             material={extrudePointsLineColor}
@@ -129,7 +140,13 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
           />
         </EntityExt>
       )}
-      <EntityExt id={id} position={pos} layerId={layer?.id} featureId={feature?.id} draggable>
+      <EntityExt
+        id={id}
+        position={pos}
+        layerId={layer?.id}
+        featureId={feature?.id}
+        draggable
+        availability={availability}>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}

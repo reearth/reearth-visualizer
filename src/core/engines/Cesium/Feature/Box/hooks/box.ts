@@ -13,7 +13,7 @@ import { useCesium } from "resium";
 import type { Property } from "..";
 import { sampleTerrainHeightFromCartesian } from "../../../common";
 import { useContext } from "../../context";
-import { type FeatureProps, toColor } from "../../utils";
+import { type FeatureProps, toColor, toTimeInterval } from "../../utils";
 import type { EdgeEventCallback } from "../Edge";
 import type { PointEventCallback } from "../ScalePoints";
 import { computeMouseMoveAmount, updateTrs } from "../utils";
@@ -22,7 +22,8 @@ export const useHooks = ({
   property,
   geometry,
   sceneProperty,
-}: Pick<FeatureProps<Property>, "property" | "sceneProperty" | "geometry">) => {
+  feature,
+}: Pick<FeatureProps<Property>, "property" | "sceneProperty" | "geometry" | "feature">) => {
   const { viewer } = useCesium();
   const ctx = useContext();
   const {
@@ -291,10 +292,13 @@ export const useHooks = ({
     document.body.style.cursor = cursor || "default";
   }, [cursor]);
 
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+
   return {
     style,
     trs,
     scalePointStyle,
+    availability,
     handlePointMouseDown,
     handlePointMouseMove,
     handlePointMouseUp,

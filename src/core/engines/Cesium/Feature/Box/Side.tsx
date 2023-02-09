@@ -1,4 +1,9 @@
-import { Color, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
+import {
+  Color,
+  Plane as CesiumPlane,
+  TimeIntervalCollection,
+  TranslationRotationScale,
+} from "cesium";
 import { FC, memo } from "react";
 import { PlaneGraphics } from "resium";
 
@@ -16,6 +21,7 @@ export const Side: FC<{
   outlineColor?: Color;
   activeOutlineColor?: Color;
   fill?: boolean;
+  availability?: TimeIntervalCollection;
 }> = memo(function SidePresenter({
   layerId,
   featureId,
@@ -26,6 +32,7 @@ export const Side: FC<{
   outlineColor,
   activeOutlineColor,
   trs,
+  availability,
 }) {
   const { cbRef, plane, dimension, orientation, outlineColorCb } = useHooks({
     planeLocal,
@@ -36,7 +43,12 @@ export const Side: FC<{
   });
 
   return (
-    <EntityExt layerId={layerId} featureId={featureId} position={cbRef} orientation={orientation}>
+    <EntityExt
+      layerId={layerId}
+      featureId={featureId}
+      position={cbRef}
+      orientation={orientation}
+      availability={availability}>
       <PlaneGraphics
         plane={plane}
         dimensions={dimension}

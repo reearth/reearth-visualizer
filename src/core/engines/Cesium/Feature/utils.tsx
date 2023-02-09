@@ -4,7 +4,11 @@ import {
   Cesium3DTileset,
   Color,
   Entity as CesiumEntity,
+  Iso8601,
+  JulianDate,
   PropertyBag,
+  TimeInterval as CesiumTimeInterval,
+  TimeIntervalCollection as CesiumTimeIntervalCollection,
 } from "cesium";
 import {
   ComponentProps,
@@ -16,7 +20,7 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import { Data } from "@reearth/core/mantle";
+import { Data, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
@@ -153,4 +157,18 @@ export const toColor = (c?: string) => {
 
   const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
   return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
+};
+
+export const toTimeInterval = (
+  interval: TimeInterval | undefined,
+): CesiumTimeIntervalCollection | undefined => {
+  if (!interval) {
+    return;
+  }
+  return new CesiumTimeIntervalCollection([
+    new CesiumTimeInterval({
+      start: JulianDate.fromDate(interval[0]),
+      stop: interval[1] ? JulianDate.fromDate(interval[1]) : Iso8601.MAXIMUM_VALUE,
+    }),
+  ]);
 };

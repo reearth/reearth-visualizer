@@ -40,13 +40,14 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     style,
     trs,
     scalePointStyle,
+    availability,
     handlePointMouseDown,
     handlePointMouseMove,
     handlePointMouseUp,
     handleEdgeMouseDown,
     handleEdgeMouseMove,
     handleEdgeMouseUp,
-  } = useHooks({ property, geometry, sceneProperty });
+  } = useHooks({ property, geometry, sceneProperty, feature });
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
 
@@ -66,6 +67,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           isActive={!!activeBox}
           activeOutlineColor={style.activeOutlineColor}
           trs={trs}
+          availability={availability}
         />
       ))}
       {BOX_EDGES.map((edge, i) => {
@@ -86,6 +88,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onMouseDown={edge.isDraggable ? handleEdgeMouseDown : undefined}
             onMouseMove={edge.isDraggable ? handleEdgeMouseMove : undefined}
             onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
+            availability={availability}
           />
         );
       })}
@@ -115,6 +118,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onPointMouseDown={handlePointMouseDown}
             onPointMouseMove={handlePointMouseMove}
             onPointMouseUp={handlePointMouseUp}
+            availability={availability}
           />
         ))}
     </>

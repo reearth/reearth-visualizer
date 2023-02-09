@@ -1,4 +1,10 @@
-import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
+import {
+  ArcType,
+  Cartesian3,
+  Color,
+  TimeIntervalCollection,
+  TranslationRotationScale,
+} from "cesium";
 import { FC, memo } from "react";
 import { BoxGraphics, PolylineGraphics } from "resium";
 
@@ -43,6 +49,7 @@ type Props = {
   dimensions?: { width: number; height: number; length: number };
   visiblePoint?: boolean;
   visibleAxisLine?: boolean;
+  availability?: TimeIntervalCollection;
   onPointMouseDown?: PointEventCallback;
   onPointMouseMove?: PointEventCallback;
   onPointMouseUp?: PointEventCallback;
@@ -64,6 +71,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
   dimensions,
   visiblePoint,
   visibleAxisLine,
+  availability,
   onPointMouseDown,
   onPointMouseMove,
   onPointMouseUp,
@@ -95,7 +103,8 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
         layerId={`${layerId}-${index}`}
         featureId={`${featureId}-${index}`}
         position={entitiesPosition.point}
-        orientation={orientation}>
+        orientation={orientation}
+        availability={availability}>
         <BoxGraphics
           show={visiblePoint}
           dimensions={cesiumDimensionsCallbackProperty}
@@ -110,7 +119,8 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
         layerId={`${layerId}-opposite-${index}`}
         featureId={`${featureId}-opposite-${index}`}
         position={entitiesPosition.oppositePoint}
-        orientation={orientation}>
+        orientation={orientation}
+        availability={availability}>
         <BoxGraphics
           show={visiblePoint}
           dimensions={cesiumDimensionsCallbackProperty}
@@ -123,7 +133,8 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
       </EntityExt>
       <EntityExt
         layerId={`${layerId}-axis-line-${index}`}
-        featureId={`${featureId}-axis-line-${index}`}>
+        featureId={`${featureId}-axis-line-${index}`}
+        availability={availability}>
         <PolylineGraphics
           positions={entitiesPosition.axisLine}
           show={visibleAxisLine}

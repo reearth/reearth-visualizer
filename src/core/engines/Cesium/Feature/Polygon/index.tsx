@@ -9,7 +9,12 @@ import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
 import type { PolygonAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";
-import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  EntityExt,
+  toTimeInterval,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 export type Props = FeatureProps<Property>;
 
@@ -57,9 +62,10 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     [stroke, strokeColor],
   );
   const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
+  const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
   return !isVisible ? null : (
-    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id}>
+    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}
         fill={fill}
