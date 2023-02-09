@@ -10,6 +10,7 @@ export type { Layer } from "../Primitive";
 export type Props = {
   pluginProperty?: { [key: string]: any };
   clusterProperty?: ClusterProperty[];
+  meta?: Record<string, unknown>;
   sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -33,6 +34,7 @@ export default function Layers({
   layers,
   selectedLayerId,
   overriddenProperties,
+  meta,
   isLayerHidden,
   clusterComponent,
 }: Props): JSX.Element | null {
@@ -59,6 +61,7 @@ export default function Layers({
               ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
               : undefined
           }
+          meta={meta}
           isHidden={isLayerHidden?.(layer.id)}
           isEditable={isEditable}
           isBuilt={isBuilt}
@@ -77,6 +80,7 @@ export default function Layers({
       pluginProperty,
       sceneProperty,
       selectedLayerId,
+      meta,
     ],
   );
 

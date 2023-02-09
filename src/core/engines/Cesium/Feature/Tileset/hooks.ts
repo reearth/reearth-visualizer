@@ -213,6 +213,7 @@ export const useHooks = ({
   sceneProperty,
   layer,
   feature,
+  meta,
   evalFeature,
   onComputedFeatureFetch,
   onFeatureDelete,
@@ -223,6 +224,7 @@ export const useHooks = ({
   sceneProperty?: SceneProperty;
   layer?: ComputedLayer;
   feature?: ComputedFeature;
+  meta?: Record<string, unknown>;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (feature: string[]) => void;
@@ -399,11 +401,13 @@ export const useHooks = ({
 
   const tilesetUrl = useMemo(() => {
     return type === "osm-buildings" && isVisible
-      ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
+      ? IonResource.fromAssetId(96188, {
+          accessToken: meta?.cesiumIonAccessToken as string | undefined,
+        }) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
       : type === "3dtiles" && isVisible
       ? url ?? tileset
       : null;
-  }, [isVisible, tileset, url, type]);
+  }, [isVisible, tileset, url, type, meta]);
 
   return {
     tilesetUrl,

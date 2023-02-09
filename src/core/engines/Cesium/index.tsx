@@ -87,6 +87,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       className={className}
       animation
       timeline
+      // NOTE: We need to update cesium ion token dynamically.
+      // To replace old imagery provider, we need to remove old imagery provider.
+      imageryProvider={false}
       fullscreenButton={false}
       homeButton={false}
       geocoder={false}

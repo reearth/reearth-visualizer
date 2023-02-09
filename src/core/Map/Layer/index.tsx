@@ -22,6 +22,7 @@ export type CommonProps = {
   isEditable?: boolean;
   isHidden?: boolean;
   isSelected?: boolean;
+  meta?: Record<string, unknown>;
 };
 
 export type FeatureComponentProps = {

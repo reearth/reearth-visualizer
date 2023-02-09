@@ -10,6 +10,7 @@ export type Props<P = any, PP = any, SP = any> = {
   layer?: Layer<P>;
   isEditable?: boolean;
   isBuilt?: boolean;
+  meta?: Record<string, unknown>;
   isSelected?: boolean;
   isHidden?: boolean;
   pluginProperty?: PP;

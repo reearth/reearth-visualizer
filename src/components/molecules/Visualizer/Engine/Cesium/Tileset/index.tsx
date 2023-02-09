@@ -38,6 +38,7 @@ export type Property = {
 const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function TilesetPresenter({
   layer,
   sceneProperty,
+  meta,
 }) {
   const { viewer } = useCesium();
   const { isVisible, property } = layer ?? {};
@@ -193,11 +194,13 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
 
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
-      ? IonResource.fromAssetId(96188) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
+      ? IonResource.fromAssetId(96188, {
+          accessToken: meta?.cesiumIonAccessToken as string | undefined,
+        }) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
       : isVisible && tileset
       ? tileset
       : null;
-  }, [isVisible, sourceType, tileset]);
+  }, [isVisible, sourceType, tileset, meta]);
 
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset
