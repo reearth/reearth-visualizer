@@ -237,7 +237,8 @@ export type SceneProperty = {
     bgcolor?: string;
     ion?: string;
     sceneMode?: SceneMode; // default: scene3d
-  } & TerrainProperty;
+    vr?: boolean;
+  } & TerrainProperty; // compat
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;
     cameraLimitterShowHelper?: boolean;

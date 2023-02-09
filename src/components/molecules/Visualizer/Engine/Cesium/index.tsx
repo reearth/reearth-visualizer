@@ -167,7 +167,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           />
         </Entity>
       )}
-      <Scene backgroundColor={backgroundColor} />
+      <Scene backgroundColor={backgroundColor} useWebVR={property?.default?.vr} />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}
