@@ -31,8 +31,8 @@ const Timeline = ({
     onSpeedChange,
     onTimeChange,
     onTick,
-    onExtend,
     removeTickEventListener,
+    onExtend,
   });
 
   return (

@@ -153,7 +153,7 @@ export default function Area({
               renderWidget?.({
                 widget,
                 layout,
-                extended: !!extended,
+                extended,
                 editing,
                 onExtend: handleExtend,
               })

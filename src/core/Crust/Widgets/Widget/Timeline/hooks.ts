@@ -49,7 +49,7 @@ export const useTimeline = ({
   const [speed, setSpeed] = useState(clockSpeed);
 
   const handleOnOpen = useCallback(() => {
-    onExtend?.(widgetId, true);
+    onExtend?.(widgetId, undefined);
     setIsOpened(true);
   }, [widgetId, onExtend]);
 

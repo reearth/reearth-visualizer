@@ -54,7 +54,7 @@ export type Props = {
 export type WidgetProps = {
   widget: Widget;
   editing: boolean;
-  extended: boolean;
+  extended?: boolean;
   layout: WidgetLayout;
   onExtend: (id: string, extended: boolean | undefined) => void;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
