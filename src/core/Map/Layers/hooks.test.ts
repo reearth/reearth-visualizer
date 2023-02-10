@@ -460,7 +460,7 @@ test("override", () => {
   expect(l3.tags).toBeUndefined();
 });
 
-test("overrideProperties", () => {
+test("override property for compat", () => {
   const dataValue = {
     type: "Feature",
     id: "y",
@@ -492,12 +492,14 @@ test("overrideProperties", () => {
     return { ref, flattenedLayers };
   });
 
-  result.current.ref.current?.overrideProperties("y", {
-    default: {
-      pointSize: 100,
-      location: {
-        lat: 1,
-        lng: 2,
+  result.current.ref.current?.override("y", {
+    property: {
+      default: {
+        pointSize: 100,
+        location: {
+          lat: 1,
+          lng: 2,
+        },
       },
     },
   });
@@ -512,8 +514,10 @@ test("overrideProperties", () => {
   expect(l.marker).toEqual({ pointSize: 100, pointColor: "red" });
   expect(l.tags).toBeUndefined();
 
-  result.current.ref.current?.overrideProperties("y", {
-    pointSize: 200,
+  result.current.ref.current?.override("y", {
+    property: {
+      pointSize: 200,
+    },
   });
   rerender();
   const l2 = result.current.flattenedLayers[1];

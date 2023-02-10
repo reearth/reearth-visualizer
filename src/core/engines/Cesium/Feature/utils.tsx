@@ -20,7 +20,7 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import { Data, TimeInterval } from "@reearth/core/mantle";
+import { Data, LayerSimple, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
@@ -141,11 +141,15 @@ const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
 
 const tagKey = "__reearth_tag";
 
-export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+export const extractSimpleLayer = (layer: ComputedLayer | undefined): LayerSimple | void => {
   if (layer?.layer.type !== "simple") {
     return;
   }
-  return layer.layer.data;
+  return layer.layer;
+};
+
+export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+  return extractSimpleLayer(layer)?.data;
 };
 
 export const toColor = (c?: string) => {

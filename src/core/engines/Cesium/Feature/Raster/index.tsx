@@ -1,7 +1,7 @@
 import { isEqual } from "lodash-es";
 import { memo } from "react";
 
-import { type FeatureComponentConfig } from "../utils";
+import { extractSimpleLayer, extractSimpleLayerData, type FeatureComponentConfig } from "../utils";
 
 import { useMVT, useWMS } from "./hooks";
 import type { Props } from "./types";
@@ -24,7 +24,8 @@ export default memo(
   Raster,
   (prev, next) =>
     // In Raster component, we only use polygon, so we only check polygon in layer props.
-    isEqual(prev.layer?.polygon, next.layer?.polygon) &&
+    isEqual(extractSimpleLayer(prev.layer)?.polygon, extractSimpleLayer(next.layer)?.polygon) &&
+    isEqual(extractSimpleLayerData(prev.layer), extractSimpleLayerData(next.layer)) &&
     isEqual(prev.property, next.property) &&
     prev.isVisible === next.isVisible &&
     prev.evalFeature === next.evalFeature &&

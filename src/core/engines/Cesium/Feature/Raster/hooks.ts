@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
-import { extractSimpleLayerData } from "../utils";
+import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
 
 import { Props } from "./types";
 
@@ -111,10 +111,11 @@ export const useMVT = ({
   const cachedFeatureIdsRef = useRef(new Set<Feature["id"]>());
   const shouldSyncFeatureRef = useRef(false);
 
-  const polygonAppearanceFillStyle = layer?.polygon?.fillColor;
-  const polygonAppearanceStrokeStyle = layer?.polygon?.strokeColor;
-  const polygonAppearanceLineWidth = layer?.polygon?.strokeWidth;
-  const polygonAppearanceLineJoin = layer?.polygon?.lineJoin;
+  const layerSimple = extractSimpleLayer(layer);
+  const polygonAppearanceFillStyle = layerSimple?.polygon?.fillColor;
+  const polygonAppearanceStrokeStyle = layerSimple?.polygon?.strokeColor;
+  const polygonAppearanceLineWidth = layerSimple?.polygon?.strokeWidth;
+  const polygonAppearanceLineJoin = layerSimple?.polygon?.lineJoin;
 
   const tempFeaturesRef = useRef<Feature[]>([]);
   const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);

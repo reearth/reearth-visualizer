@@ -6,6 +6,7 @@ import type {
   CameraPosition,
   Tag,
   NaiveLayer,
+  LayerSimple,
 } from "@reearth/core/mantle";
 import type {
   CameraOptions,
@@ -61,12 +62,9 @@ export type Reearth = {
       WrappedRef<LayersRef>,
       | "layers"
       | "isLayer"
-      | "overrideProperties"
-      | "override"
       | "add"
       | "select"
       | "addAll"
-      | "replace"
       | "deleteLayer"
       | "selectedLayer"
       | "selectedFeature"
@@ -74,8 +72,9 @@ export type Reearth = {
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
       readonly overriddenProperties?: OverriddenLayer[];
-      readonly overrideProperty?: WrappedRef<LayersRef>["overrideProperties"];
+      readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
       readonly add?: (layer: NaiveLayer) => string | undefined;
+      readonly delete?: WrappedRef<LayersRef>["deleteLayer"];
       readonly select?: (
         layerId: string | undefined,
         reason?: LayerSelectionReason | undefined,
