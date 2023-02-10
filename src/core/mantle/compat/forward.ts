@@ -211,8 +211,8 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     } else {
       data = {
-        type: l.property.default?.type || "auto", // auto is allowed only in internal
-        url: l.property.default?.url,
+        type: l.property?.default?.type || "auto", // auto is allowed only in internal
+        url: l.property?.default?.url,
       };
     }
   } else if (l.extensionId === "box") {
@@ -238,16 +238,17 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   }
 
-  const property = appearance
-    ? Object.fromEntries(
-        Object.entries(l.property)
-          .flatMap(([k, v]): (readonly [PropertyKey, any])[] | undefined => {
-            if (Array.isArray(v) || k === "id" || !v || typeof v !== "object") return undefined;
-            return Object.entries(v).filter(([k]) => !legacyPropertyKeys?.includes(k));
-          })
-          .filter((p): p is readonly [PropertyKey, any] => !!p),
-      )
-    : undefined;
+  const property =
+    appearance && l.property
+      ? Object.fromEntries(
+          Object.entries(l.property)
+            .flatMap(([k, v]): (readonly [PropertyKey, any])[] | undefined => {
+              if (Array.isArray(v) || k === "id" || !v || typeof v !== "object") return undefined;
+              return Object.entries(v).filter(([k]) => !legacyPropertyKeys?.includes(k));
+            })
+            .filter((p): p is readonly [PropertyKey, any] => !!p),
+        )
+      : undefined;
 
   return omitBy(
     {
