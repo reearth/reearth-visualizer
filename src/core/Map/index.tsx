@@ -63,6 +63,7 @@ function Map(
       selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
+      layersRef={layersRef}
       {...props}>
       <Layers
         ref={layersRef}

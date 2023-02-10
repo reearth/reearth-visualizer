@@ -2,11 +2,13 @@ import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion, Cesium3DTileset } 
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
+import { ComputedFeature, DataType } from "@reearth/core/mantle";
+import { LayersRef } from "@reearth/core/Map";
 
 import type {
   Camera,
@@ -33,6 +35,7 @@ export default ({
   selectionReason,
   isLayerDraggable,
   meta,
+  layersRef,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -46,6 +49,7 @@ export default ({
     layerId?: string;
     featureId?: string;
   };
+  layersRef?: RefObject<LayersRef>;
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
@@ -155,6 +159,33 @@ export default ({
     if (!viewer || viewer.isDestroyed()) return;
 
     const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
+    if (!entity) {
+      // Find ImageryLayerFeature
+      const ImageryLayerDataTypes: DataType[] = ["mvt"];
+      const layers = layersRef?.current?.findAll(
+        layer =>
+          layer.type === "simple" &&
+          !!layer.data?.type &&
+          ImageryLayerDataTypes.includes(layer.data?.type),
+      );
+
+      if (layers?.length) {
+        // TODO: Get ImageryLayerFeature from `viewer.imageryLayers`.(But currently didn't find the way)
+        const [feature, layerId] =
+          ((): [ComputedFeature, string] | void => {
+            for (const layer of layers) {
+              const f = layer.computed?.features.find(
+                feature => feature.id !== selectedLayerId?.featureId,
+              );
+              if (f) {
+                return [f, layer.id];
+              }
+            }
+          })() || [];
+        onLayerSelect?.(layerId, feature?.id);
+      }
+    }
+
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
@@ -182,7 +213,7 @@ export default ({
     if (!entity || entity instanceof Entity) {
       viewer.selectedEntity = entity;
     }
-  }, [cesium, selectedLayerId, onLayerSelect]);
+  }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
 
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {

@@ -8,7 +8,12 @@ import type {
 } from "react";
 
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
-import type { FeatureComponentType, ClusterComponentType, LayerSelectionReason } from "../Layers";
+import type {
+  FeatureComponentType,
+  ClusterComponentType,
+  LayerSelectionReason,
+  Ref as LayersRef,
+} from "../Layers";
 
 export type {
   FeatureComponentProps,
@@ -97,6 +102,7 @@ export type EngineProps = {
   isLayerDragging?: boolean;
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
+  layersRef?: RefObject<LayersRef>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
