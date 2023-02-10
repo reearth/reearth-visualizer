@@ -17,7 +17,7 @@ export type Props = {
 const PreviewPage: React.FC<Props> = () => {
   const { sceneId } = useParams();
   const [sceneId2, setSceneId] = useSceneId();
-  const core = useCore();
+  const core = useCore("earth_editor");
 
   useEffect(() => {
     setSceneId(sceneId);

@@ -10,7 +10,7 @@ const PublishedPage: React.FC<{
   default?: boolean;
   alias?: string;
 }> = ({ alias }) => {
-  const core = useCore();
+  const core = useCore("published", alias);
   return (
     <DndProvider>
       {core ? <CorePublished alias={alias} /> : <Published alias={alias} />}

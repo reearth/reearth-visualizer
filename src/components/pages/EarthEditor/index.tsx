@@ -22,7 +22,7 @@ export type Props = {
 const EarthEditor: React.FC<Props> = () => {
   const { sceneId } = useParams();
   const { loading, loaded } = useHooks(sceneId);
-  const core = useCore();
+  const core = useCore("earth_editor");
 
   return (
     <AuthenticationRequiredPage>
