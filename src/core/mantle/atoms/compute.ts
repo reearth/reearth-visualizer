@@ -26,7 +26,8 @@ export type Command =
   | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
-  | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] };
+  | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] }
+  | { type: "forceUpdateFeatures" };
 
 export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   const delegatedDataTypes = atom<DataType[]>([]);
@@ -67,7 +68,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     };
   });
 
-  const compute = atom(null, async (get, set, _: any) => {
+  const compute = atom(null, async (get, set, value: { forceUpdateData: boolean } | undefined) => {
     const currentLayer = get(layer);
     if (!currentLayer) return;
 
@@ -123,6 +124,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
       // Ignore cache if data is embedded
       if (
+        !value?.forceUpdateData &&
         allFeatures &&
         // Check if data has cache key
         DATA_CACHE_KEYS.every(k => !!data[k])
@@ -130,11 +132,11 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
         return flattenAllFeatures;
       }
 
-      if (!shouldFetch(flattenAllFeatures)) {
+      if (!value?.forceUpdateData && !shouldFetch(flattenAllFeatures)) {
         return flattenAllFeatures;
       }
 
-      await set(dataAtoms.fetch, { data, layerId });
+      await set(dataAtoms.fetch, { data, layerId, forceUpdateData: value?.forceUpdateData });
       return getterAll(layerId, data)?.flat() ?? [];
     };
 
@@ -239,6 +241,12 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
+  const forceUpdateFeatures = atom(null, async (get, set, _: any) => {
+    const currentLayer = get(layer);
+    if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
+    await set(compute, { forceUpdateData: true });
+  });
+
   return atom<ComputedLayer | undefined, Command>(
     g => g(get),
     async (_, s, value) => {
@@ -263,6 +271,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "updateDelegatedDataTypes":
           await s(updateDelegatedDataTypes, value.delegatedDataTypes);
+          break;
+        case "forceUpdateFeatures":
+          await s(forceUpdateFeatures, undefined);
           break;
       }
     },

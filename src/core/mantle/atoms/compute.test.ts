@@ -667,6 +667,107 @@ test("computeAtom only value", async () => {
   expect(fetchDataMock).toBeCalledTimes(3);
 });
 
+test("forceUpdateFeatures", async () => {
+  const fetchDataMock = vi.spyOn(DataCache, "fetchData");
+  fetchDataMock.mockImplementation(async data => {
+    return [
+      {
+        type: "feature",
+        id: (data as any).test_id || "",
+        geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
+      },
+    ];
+  });
+  const { result } = renderHook(() => {
+    const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
+    const [result, set] = useAtom(atoms);
+    return { result, set };
+  });
+
+  expect(result.current.result).toBeUndefined();
+
+  // Set data.url
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data,
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data,
+    },
+    status: "ready",
+    features: toComputedFeature(features),
+    originalFeatures: [...features],
+  });
+
+  expect(fetchDataMock).toBeCalledTimes(1);
+
+  // Set same data
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "setLayer",
+        layer: {
+          id: "xxx",
+          type: "simple",
+          data,
+        },
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data,
+    },
+    status: "ready",
+    features: toComputedFeature(features),
+    originalFeatures: [...features],
+  });
+
+  // Should cache is used
+  expect(fetchDataMock).toBeCalledTimes(1);
+
+  // Force update
+  await act(async () => {
+    await waitFor(() =>
+      result.current.set({
+        type: "forceUpdateFeatures",
+      }),
+    );
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: {
+      id: "xxx",
+      type: "simple",
+      data,
+    },
+    status: "ready",
+    features: toComputedFeature(features),
+    originalFeatures: [...features],
+  });
+
+  // Should fetch is invoked
+  expect(fetchDataMock).toBeCalledTimes(2);
+});
+
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
   evalLayer: async (layer: LayerSimple, ctx: EvalContext) => {
     if (!layer.data) return { layer: {}, features: undefined };

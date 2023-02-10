@@ -60,12 +60,19 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
 
   const fetch = atom(
     null,
-    async (get, set, value: { data: Data; range?: DataRange; layerId: string }) => {
+    async (
+      get,
+      set,
+      value: { data: Data; range?: DataRange; layerId: string; forceUpdateData?: boolean },
+    ) => {
       const k = dataKey(value.layerId, value.data);
       if (!k) return;
 
       const rk = rangeKey(value.range);
-      const cached = !value.data.value && value.data.url ? get(cacheAtoms.get)(k, rk) : undefined;
+      const cached =
+        !value.forceUpdateData && !value.data.value && value.data.url
+          ? get(cacheAtoms.get)(k, rk)
+          : undefined;
       if (cached || get(fetching).findIndex(e => e[0] === k && e[1] === rk) >= 0) return;
 
       try {

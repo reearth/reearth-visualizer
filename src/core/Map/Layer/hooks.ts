@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { useCallback, useLayoutEffect, useMemo } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
 import { computeAtom, DataType, type Atom, evalFeature, ComputedFeature } from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
@@ -34,6 +34,7 @@ export default function useHooks(
     (features: string[]) => set({ type: "deleteFeatures", features }),
     [set],
   );
+  const forceUpdateFeatures = useCallback(() => set({ type: "forceUpdateFeatures" }), [set]);
 
   useLayoutEffect(() => {
     set({ type: "updateDelegatedDataTypes", delegatedDataTypes: delegatedDataTypes ?? [] });
@@ -55,6 +56,23 @@ export default function useHooks(
           : undefined,
     });
   }, [layer, set]);
+
+  const intervalId = useRef<number>();
+  useLayoutEffect(() => {
+    const data = layer?.type === "simple" ? layer.data : undefined;
+
+    if (!data?.updateInterval || !data?.url) {
+      return;
+    }
+
+    intervalId.current = window.setInterval(forceUpdateFeatures, data.updateInterval);
+
+    return () => {
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+      }
+    };
+  }, [layer, forceUpdateFeatures]);
 
   return {
     computedLayer,
