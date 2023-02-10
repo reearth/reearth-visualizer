@@ -676,22 +676,20 @@ function useSelection({
 
   useEffect(() => {
     const actualSelectedLayer = selectedLayerForRef();
-    if (actualSelectedLayer) {
-      onLayerSelect?.(
-        actualSelectedLayer.id,
-        selectedLayerId?.featureId,
-        () =>
-          new Promise(resolve => {
-            // Wait until computed feature is ready
-            queueMicrotask(() => {
-              resolve(actualSelectedLayer.computed);
-            });
-          }),
-        selectedReason,
-      );
-    } else {
-      onLayerSelect?.(undefined, undefined, undefined, undefined);
-    }
+    onLayerSelect?.(
+      actualSelectedLayer?.id,
+      selectedLayerId?.featureId,
+      actualSelectedLayer
+        ? () =>
+            new Promise(resolve => {
+              // Wait until computed feature is ready
+              queueMicrotask(() => {
+                resolve(actualSelectedLayer?.computed);
+              });
+            })
+        : undefined,
+      selectedReason,
+    );
   }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef]);
 
   useEffect(() => {

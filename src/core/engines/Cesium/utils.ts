@@ -5,6 +5,10 @@ import {
   TranslationRotationScale,
   Cartographic,
   Entity,
+  Cesium3DTile,
+  Cesium3DTileset,
+  Cesium3DTileContent,
+  Cesium3DTileFeature,
 } from "cesium";
 
 import { getTag } from "./Feature";
@@ -39,11 +43,52 @@ export const translationWithClamping = (
   }
 };
 
+export function lookupFeatures(
+  c: Cesium3DTileContent,
+  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
+) {
+  if (!c) return;
+  const length = c.featuresLength;
+  for (let i = 0; i < length; i++) {
+    const f = c.getFeature(i);
+    if (!f) {
+      continue;
+    }
+    cb(f, c);
+  }
+  c.innerContents?.forEach(c => lookupFeatures(c, cb));
+  return;
+}
+
+const findFeatureFrom3DTile = (
+  tile: Cesium3DTile,
+  featureId?: string,
+): Cesium3DTileFeature | void => {
+  let target: Cesium3DTileFeature | undefined = undefined;
+  lookupFeatures(tile.content, f => {
+    const tag = getTag(f);
+    if (tag?.featureId === featureId) {
+      target = f;
+    }
+  });
+
+  if (target) {
+    return target;
+  }
+
+  for (const child of tile.children) {
+    const t = findFeatureFrom3DTile(child, featureId);
+    if (t) {
+      return t;
+    }
+  }
+};
+
 export function findEntity(
   viewer: CesiumViewer,
   layerId?: string,
   featureId?: string,
-): Entity | undefined {
+): Entity | Cesium3DTileset | Cesium3DTileFeature | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
   if (!id) return;
@@ -61,6 +106,32 @@ export function findEntity(
       if (e) {
         return e;
       }
+    }
+  }
+
+  // Find Cesium3DTileFeature
+  for (let i = 0; i < viewer.scene.primitives.length; i++) {
+    const prim = viewer.scene.primitives.get(i);
+    if (!(prim instanceof Cesium3DTileset)) {
+      continue;
+    }
+
+    const target = findFeatureFrom3DTile(prim.root, featureId);
+    if (target) {
+      return target;
+    }
+  }
+
+  // Find Cesium3DTileset
+  for (let i = 0; i < viewer.scene.primitives.length; i++) {
+    const prim = viewer.scene.primitives.get(i);
+    if (!(prim instanceof Cesium3DTileset)) {
+      continue;
+    }
+
+    const tag = getTag(prim);
+    if (tag?.layerId === layerId) {
+      return prim;
     }
   }
 

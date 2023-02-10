@@ -291,6 +291,7 @@ export function commonReearth({
   pluginInstances,
   viewport,
   selectedLayer,
+  selectedFeature,
   layerSelectionReason,
   layerOverriddenProperties,
   selectLayer,
@@ -330,6 +331,7 @@ export function commonReearth({
   clock: () => GlobalThis["reearth"]["clock"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
+  selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenProperties?: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: LayersRef["select"];
@@ -445,8 +447,8 @@ export function commonReearth({
       },
       get select() {
         // For compat
-        return (layerId: string | undefined, reason?: LayerSelectionReason | undefined) =>
-          selectLayer?.(layerId, undefined, reason);
+        return (id: string | undefined, reason?: LayerSelectionReason | undefined) =>
+          selectLayer?.(id, id, reason);
       },
       get show() {
         return showLayer;
@@ -477,6 +479,9 @@ export function commonReearth({
       },
       get selected() {
         return selectedLayer();
+      },
+      get selectedFeature() {
+        return selectedFeature();
       },
       get findById() {
         return layers()?.findById;

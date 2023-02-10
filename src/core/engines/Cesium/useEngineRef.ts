@@ -87,11 +87,11 @@ export default function useEngineRef(
 
           const layerOrFeatureId = target;
           const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
-          if (entityFromFeatureId) {
+          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
             viewer.flyTo(entityFromFeatureId, options);
           } else {
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
-            if (entityFromLayerId) {
+            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
               viewer.flyTo(entityFromLayerId, options);
             }
           }

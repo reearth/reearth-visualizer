@@ -12,7 +12,6 @@ import {
   Matrix3,
   Cesium3DTileset,
   Cesium3DTile,
-  Cesium3DTileContent,
   Cesium3DTileFeature,
 } from "cesium";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,7 +19,7 @@ import { CesiumComponentRef, useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
-import { translationWithClamping } from "../../utils";
+import { lookupFeatures, translationWithClamping } from "../../utils";
 import { attachTag, extractSimpleLayerData, toColor } from "../utils";
 
 import { Property } from ".";
@@ -110,23 +109,6 @@ const useFeature = ({
   );
 
   useEffect(() => {
-    function lookupFeatures(
-      c: Cesium3DTileContent,
-      cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
-    ) {
-      if (!c) return [];
-      const length = c.featuresLength;
-      for (let i = 0; i < length; i++) {
-        const f = c.getFeature(i);
-        if (!f) {
-          continue;
-        }
-        cb(f, c);
-      }
-      c.innerContents?.flatMap(c => lookupFeatures(c, cb));
-      return;
-    }
-
     const currentTiles: Map<Cesium3DTile, string> = new Map();
 
     tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {

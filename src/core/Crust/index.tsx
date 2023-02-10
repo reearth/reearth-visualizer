@@ -121,6 +121,7 @@ export default function Crust({
   selectedLayerId,
   selectedReason,
   selectedComputedLayer,
+  selectedComputedFeature,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
@@ -165,6 +166,7 @@ export default function Crust({
       inEditor={inEditor}
       tags={tags}
       selectedLayer={selectedComputedLayer}
+      selectedFeature={selectedComputedFeature}
       layerSelectionReason={selectedReason}
       viewport={viewport}
       alignSystem={widgetAlignSystem}

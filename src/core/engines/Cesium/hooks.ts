@@ -1,4 +1,4 @@
-import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion } from "cesium";
+import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion, Cesium3DTileset } from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -148,19 +148,41 @@ export default ({
     }
   }, [camera, engineAPI]);
 
+  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | Cesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
     const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
-    if (viewer.selectedEntity === entity) return;
+    if (prevSelectedEntity.current === entity) return;
+    prevSelectedEntity.current = entity;
 
     const tag = getTag(entity);
     if (tag?.unselectable) return;
 
-    viewer.selectedEntity = entity;
-  }, [cesium, selectedLayerId]);
+    if (entity && entity instanceof Cesium3DTileFeature) {
+      const tag = getTag(entity);
+      if (tag) {
+        onLayerSelect?.(tag.layerId, String(tag.featureId), {
+          overriddenInfobox: {
+            title: entity.getProperty("name"),
+            content: tileProperties(entity),
+          },
+        });
+      }
+      return;
+    }
+
+    if (entity) {
+      // Sometimes only featureId is specified, so we need to sync entity tag.
+      onLayerSelect?.(tag?.layerId, tag?.featureId);
+    }
+
+    if (!entity || entity instanceof Entity) {
+      viewer.selectedEntity = entity;
+    }
+  }, [cesium, selectedLayerId, onLayerSelect]);
 
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {

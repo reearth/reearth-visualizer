@@ -32,6 +32,7 @@ export default function ({
   tags,
   viewport,
   selectedLayer,
+  selectedFeature,
   layerSelectionReason,
   alignSystem,
   floatingWidgets,
@@ -73,6 +74,7 @@ export default function ({
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
+  const getSelectedFeature = useGet(selectedFeature);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const overrideScenePropertyCommon = useCallback(
     (property: any) => {
@@ -277,6 +279,7 @@ export default function ({
         pluginInstances: getPluginInstances,
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
+        selectedFeature: getSelectedFeature,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenProperties,
         showLayer,
@@ -323,6 +326,7 @@ export default function ({
       getPluginInstances,
       getViewport,
       getSelectedLayer,
+      getSelectedFeature,
       getLayerSelectionReason,
       overrideScenePropertyCommon,
       lookAt,
