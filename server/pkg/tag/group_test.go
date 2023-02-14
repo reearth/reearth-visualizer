@@ -126,11 +126,12 @@ func TestGroup_AddTag(t *testing.T) {
 			expected: IDList{tid},
 		},
 	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.tag.AddTag(tc.input...)
-			assert.Equal(tt, tc.tag.tags, tc.expected)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.tag.AddTag(tt.input...)
+			assert.Equal(t, tt.tag.tags, tt.expected)
 		})
 	}
 }
@@ -152,11 +153,12 @@ func TestGroup_RemoveTag(t *testing.T) {
 			expected: IDList{tid},
 		},
 	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(tt *testing.T) {
-			tt.Parallel()
-			tc.tag.RemoveTag(tc.input...)
-			assert.Equal(tt, tc.tag.tags, tc.expected)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.tag.RemoveTag(tt.input...)
+			assert.Equal(t, tt.tag.tags, tt.expected)
 		})
 	}
 }

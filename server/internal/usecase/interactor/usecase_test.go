@@ -14,7 +14,7 @@ import (
 )
 
 func TestUc_checkPermission(t *testing.T) {
-	tid := id.NewWorkspaceID()
+	wid := id.NewWorkspaceID()
 	sid := id.NewSceneID()
 
 	tests := []struct {
@@ -37,11 +37,11 @@ func TestUc_checkPermission(t *testing.T) {
 		},
 		{
 			name:               "can read a workspace",
-			readableWorkspaces: id.WorkspaceIDList{tid},
+			readableWorkspaces: id.WorkspaceIDList{wid},
 			op: &usecase.Operator{
-				ReadableWorkspaces: id.WorkspaceIDList{tid},
+				ReadableWorkspaces: id.WorkspaceIDList{wid},
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:               "cannot read a workspace",
@@ -53,15 +53,15 @@ func TestUc_checkPermission(t *testing.T) {
 		},
 		{
 			name:               "can write a workspace",
-			writableWorkspaces: id.WorkspaceIDList{tid},
+			writableWorkspaces: id.WorkspaceIDList{wid},
 			op: &usecase.Operator{
-				WritableWorkspaces: id.WorkspaceIDList{tid},
+				WritableWorkspaces: id.WorkspaceIDList{wid},
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:               "cannot write a workspace",
-			writableWorkspaces: id.WorkspaceIDList{tid},
+			writableWorkspaces: id.WorkspaceIDList{wid},
 			op: &usecase.Operator{
 				WritableWorkspaces: id.WorkspaceIDList{},
 			},
@@ -73,7 +73,7 @@ func TestUc_checkPermission(t *testing.T) {
 			op: &usecase.Operator{
 				ReadableScenes: id.SceneIDList{sid},
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:           "cannot read a scene",
@@ -89,7 +89,7 @@ func TestUc_checkPermission(t *testing.T) {
 			op: &usecase.Operator{
 				WritableScenes: id.SceneIDList{sid},
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:           "cannot write a scene",
@@ -102,6 +102,7 @@ func TestUc_checkPermission(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
