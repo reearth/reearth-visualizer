@@ -13,7 +13,7 @@ import type {
   ComputedLayer,
   SceneProperty,
   LayerEditEvent,
-  OverriddenInfobox,
+  DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 
@@ -113,25 +113,30 @@ export default function useHooks({
     [],
   );
 
+  // blocks
+  const blocks = useMemo(
+    () =>
+      selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
+        ...b,
+        property: b.property.default ?? b.property,
+      })),
+    [selectedLayer.layer?.layer.infobox?.blocks],
+  );
+
   // Infobox
-  const overriddenInfobox = selectedLayer.reason?.overriddenInfobox;
+  const defaultInfobox = selectedLayer.reason?.defaultInfobox;
   const infobox = useMemo(
     () =>
       selectedLayer
         ? {
-            title: overriddenInfobox?.title || selectedLayer.layer?.layer?.title,
-            isEditable: !overriddenInfobox && !!selectedLayer.layer?.layer?.infobox,
+            title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
+            isEditable: !!selectedLayer.layer?.layer?.infobox,
             visible: !!selectedLayer.layer?.layer?.infobox,
             property: selectedLayer.layer?.layer.infobox?.property?.default,
-            blocks:
-              overridenInfoboxBlocks(overriddenInfobox) ||
-              selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
-                ...b,
-                property: b.property.default ?? b.property,
-              })),
+            blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
         : undefined,
-    [selectedLayer, overriddenInfobox],
+    [selectedLayer, defaultInfobox, blocks],
   );
 
   // scene
@@ -242,17 +247,15 @@ function useValue<T>(
   return [state, handleOnChange];
 }
 
-function overridenInfoboxBlocks(
-  overriddenInfobox: OverriddenInfobox | undefined,
-): Block[] | undefined {
-  return overriddenInfobox && Array.isArray(overriddenInfobox?.content)
+function defaultInfoboxBlocks(defaultInfobox: DefaultInfobox | undefined): Block[] | undefined {
+  return defaultInfobox && Array.isArray(defaultInfobox?.content)
     ? [
         {
           id: "content",
           pluginId: "reearth",
           extensionId: "dlblock",
           property: {
-            items: overriddenInfobox.content.map((c, i) => ({
+            items: defaultInfobox.content.map((c, i) => ({
               id: i,
               item_title: c.key,
               item_datastr: String(c.value),

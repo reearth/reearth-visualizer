@@ -201,7 +201,7 @@ export default ({
       const tag = getTag(entity);
       if (tag) {
         onLayerSelect?.(tag.layerId, String(tag.featureId), {
-          overriddenInfobox: {
+          defaultInfobox: {
             title: entity.getProperty("name"),
             content: tileProperties(entity),
           },
@@ -295,7 +295,7 @@ export default ({
         const tag = getTag(target);
         if (tag) {
           onLayerSelect?.(tag.layerId, String(tag.featureId), {
-            overriddenInfobox: {
+            defaultInfobox: {
               title: target.getProperty("name"),
               content: tileProperties(target),
             },

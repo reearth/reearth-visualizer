@@ -18,7 +18,7 @@ export type {
   Ref,
   NaiveLayer,
   LayerSelectionReason,
-  OverriddenInfobox,
+  DefaultInfobox,
   OverriddenLayer,
 } from "./hooks";
 export type {

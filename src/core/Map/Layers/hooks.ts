@@ -65,7 +65,7 @@ export type Ref = {
   overriddenLayers: () => OverriddenLayer[];
 };
 
-export type OverriddenInfobox = {
+export type DefaultInfobox = {
   title?: string;
   content: { key: string; value: string }[];
 };
@@ -74,12 +74,12 @@ export type OverriddenLayer = Omit<Layer, "type" | "children">;
 
 export type LayerSelectionReason = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 export type FeatureSelectionReason = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 export default function useHooks({

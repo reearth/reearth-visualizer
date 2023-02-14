@@ -475,7 +475,10 @@ export function commonReearth({
         return layerSelectionReason();
       },
       get overriddenInfobox() {
-        return layerSelectionReason()?.overriddenInfobox;
+        return layerSelectionReason()?.defaultInfobox;
+      },
+      get defaultInfobox() {
+        return layerSelectionReason()?.defaultInfobox;
       },
       get selected() {
         return selectedLayer();

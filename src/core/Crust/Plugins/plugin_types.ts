@@ -16,7 +16,7 @@ import type {
   LookAtDestination,
   LayerSelectionReason,
   LazyLayer,
-  OverriddenInfobox,
+  DefaultInfobox,
   OverriddenLayer,
   Undefinable,
   WrappedRef,
@@ -80,7 +80,9 @@ export type Reearth = {
         reason?: LayerSelectionReason | undefined,
       ) => void;
       selectionReason?: LayerSelectionReason;
-      overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
+      // For compat
+      overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
+      defaultInfobox?: LayerSelectionReason["defaultInfobox"];
       tags?: Tag[];
       layers?: LazyLayer[];
       isLayer?: boolean;
@@ -222,7 +224,7 @@ export type Plugins = {
 
 export type SelectLayerOptions = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
