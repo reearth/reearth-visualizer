@@ -364,9 +364,9 @@ export default function ({
 
   useEmit<SelectedReearthEventType>(
     {
-      select: useMemo<[layerId: string | undefined]>(
-        () => (selectedLayer ? [selectedLayer.id] : [undefined]),
-        [selectedLayer],
+      select: useMemo<[layerId: string | undefined, featureId: string | undefined]>(
+        () => (selectedLayer ? [selectedLayer.id, selectedFeature?.id] : [undefined, undefined]),
+        [selectedLayer, selectedFeature],
       ),
       cameramove: useMemo<[camera: CameraPosition] | undefined>(
         () => (camera ? [camera] : undefined),

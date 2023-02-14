@@ -159,7 +159,7 @@ export default ({
     if (!viewer || viewer.isDestroyed()) return;
 
     const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
-    if (!entity) {
+    if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
       const ImageryLayerDataTypes: DataType[] = ["mvt"];
       const layers = layersRef?.current?.findAll(
@@ -186,7 +186,12 @@ export default ({
       }
     }
 
-    if (prevSelectedEntity.current === entity) return;
+    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
+    if (
+      prevSelectedEntity.current === entity ||
+      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
+    )
+      return;
     prevSelectedEntity.current = entity;
 
     const tag = getTag(entity);
@@ -282,6 +287,7 @@ export default ({
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
         onLayerSelect?.(tag?.layerId, tag?.featureId);
+        prevSelectedEntity.current = target.id;
         return;
       }
 
@@ -294,6 +300,7 @@ export default ({
               content: tileProperties(target),
             },
           });
+          prevSelectedEntity.current = target;
         }
         return;
       }

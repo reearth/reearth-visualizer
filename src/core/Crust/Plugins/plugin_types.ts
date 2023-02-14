@@ -175,7 +175,7 @@ export type ReearthEventType = {
   close: [];
   cameramove: [camera: CameraPosition];
   layeredit: [e: LayerEditEvent];
-  select: [layerId: string | undefined];
+  select: [layerId: string | undefined, featureId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
   doubleclick: [props: MouseEvent];
