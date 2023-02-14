@@ -90,11 +90,13 @@ func TestWeb(t *testing.T) {
 			contentType: "text/html; charset=utf-8",
 		},
 		{
-			name:        "static file",
-			path:        "/test.js",
-			statusCode:  http.StatusOK,
-			body:        testJS,
-			contentType: "application/javascript",
+			name:       "static file",
+			path:       "/test.js",
+			statusCode: http.StatusOK,
+			body:       testJS,
+			// content type is not static
+			// contentType: "application/javascript",
+			// contentType: "text/javascript; charset=utf-8",
 		},
 		{
 			name:        "data file without host",
