@@ -1378,22 +1378,6 @@ extensions:
             - id: typography
               type: typography
               title: Font
-  - id: htmlblock
-    type: block
-    name: HTML
-    description: HTML block
-    schema:
-      groups:
-        - id: default
-          title: HTML block
-          fields:
-            - id: title
-              type: string
-              title: Title
-            - id: html
-              type: string
-              title: HTML
-              ui: multiline
   - id: imageblock
     type: block
     name: Image
@@ -1530,6 +1514,22 @@ extensions:
                 field: item_datatype
                 type: string
                 value: number
+  - id: htmlblock
+    type: block
+    name: HTML
+    description: HTML block
+    schema:
+      groups:
+        - id: default
+          title: HTML block
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: html
+              type: string
+              title: HTML
+              ui: multiline
   - id: menu
     type: widget
     name: Menu (legacy)
