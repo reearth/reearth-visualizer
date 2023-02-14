@@ -638,7 +638,7 @@ extensions:
             description: 地表の凹凸に沿うようにポリゴンなどのデータを表示します。
   textblock:
     name: テキスト
-    description: Text block
+    description: Textブロック
     propertySchema:
       default:
         title: テキストブロック
@@ -663,6 +663,17 @@ extensions:
             description: "右端の余白を設定します。最小0px・最大40ox"
           typography:
             title: フォント
+  htmlblock:
+    name: HTML
+    description: HTMLブロック
+    propertySchema:
+      default:
+        title: HTMLブロック
+        fields:
+          title:
+            title: タイトル
+          html:
+            title: HTML
   imageblock:
     name: 画像
     description: 画像ブロック
