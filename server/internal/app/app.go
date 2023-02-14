@@ -92,7 +92,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), private)
 	api.GET("/published/:name", PublishedMetadata())
-	api.GET("/published_data/:name", PublishedData())
+	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", private)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
@@ -106,11 +106,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	published := e.Group("/p", PublishedAuthMiddleware())
-	published.GET("/:name/data.json", PublishedData())
-	published.GET("/:name/", PublishedIndex())
+	published.GET("/:name/data.json", PublishedData("", true))
+	published.GET("/:name/", PublishedIndex("", true))
 
 	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.AuthForWeb())
+	web(e, cfg.Config.Web, cfg.Config.AuthForWeb(), cfg.Config.Published.Host, nil)
 
 	return e
 }

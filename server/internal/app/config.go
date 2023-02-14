@@ -171,6 +171,7 @@ type GraphQLConfig struct {
 
 type PublishedConfig struct {
 	IndexURL *url.URL
+	Host     string
 }
 
 type GCSConfig struct {
