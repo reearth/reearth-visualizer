@@ -20,29 +20,31 @@ import (
 const configPrefix = "reearth"
 
 type Config struct {
-	Port           string `default:"8080" envconfig:"PORT"`
-	ServerHost     string
-	Host           string `default:"http://localhost:8080"`
-	Host_Web       string
-	Dev            bool
-	DB             string `default:"mongodb://localhost"`
-	Mailer         string
-	SMTP           SMTPConfig
-	SendGrid       SendGridConfig
-	GraphQL        GraphQLConfig
-	Published      PublishedConfig
-	GCPProject     string `envconfig:"GOOGLE_CLOUD_PROJECT"`
-	Profiler       string
-	Tracer         string
-	TracerSample   float64
-	GCS            GCSConfig
-	Marketplace    MarketplaceConfig
-	AssetBaseURL   string `default:"http://localhost:8080/assets"`
-	Origins        []string
-	Policy         PolicyConfig
-	Web            WebConfig
-	SignupSecret   string
-	SignupDisabled bool
+	Port             string `default:"8080" envconfig:"PORT"`
+	ServerHost       string
+	Host             string `default:"http://localhost:8080"`
+	Host_Web         string
+	Dev              bool
+	DB               string `default:"mongodb://localhost"`
+	Mailer           string
+	SMTP             SMTPConfig
+	SendGrid         SendGridConfig
+	GraphQL          GraphQLConfig
+	Published        PublishedConfig
+	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`
+	Profiler         string
+	Tracer           string
+	TracerSample     float64
+	GCS              GCSConfig
+	Marketplace      MarketplaceConfig
+	AssetBaseURL     string `default:"http://localhost:8080/assets"`
+	Origins          []string
+	Policy           PolicyConfig
+	Web_Disabled     bool
+	Web_App_Disabled bool
+	Web              WebConfig
+	SignupSecret     string
+	SignupDisabled   bool
 	// auth
 	Auth          AuthConfigs
 	Auth0         Auth0Config

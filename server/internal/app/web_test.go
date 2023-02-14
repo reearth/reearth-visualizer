@@ -43,38 +43,25 @@ func TestWeb(t *testing.T) {
 	lo.Must0(prjr.Save(ctx, prj))
 	fileg := lo.Must(fs.NewFile(mfs, ""))
 	lo.Must0(fileg.UploadBuiltScene(ctx, strings.NewReader(dataJSON), prj.Alias()))
-	e := echo.New()
-	e.HTTPErrorHandler = func(err error, c echo.Context) {
-		if errors.Is(err, rerror.ErrNotFound) {
-			_ = c.JSON(http.StatusNotFound, map[string]any{"error": "not found"})
-			return
-		}
-		_ = c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
-		return adapter.AttachUsecases(ctx, &interfaces.Container{
-			Published: interactor.NewPublished(prjr, fileg, publishedHTML),
-		})
-	}))
-
-	web(e, WebConfig{
-		"a": "b",
-	}, &AuthConfig{
-		ISS:      "https://iss.example.com",
-		AUD:      []string{"https://aud.example.com"},
-		ClientID: lo.ToPtr("clientID"),
-	}, `{}.example.com`, mfs)
 
 	tests := []struct {
 		name        string
 		path        string
 		host        string
+		disabled    bool
+		appDisabled bool
 		statusCode  int
 		body        string
 		contentType string
 		assertBody  func(t *testing.T, body string)
 	}{
+		{
+			name:       "disabled",
+			disabled:   true,
+			path:       "/reearth_config.json",
+			statusCode: http.StatusNotFound,
+			body:       `{"error":"not found"}`,
+		},
 		{
 			name:        "reearth_config.json",
 			path:        "/reearth_config.json",
@@ -126,6 +113,12 @@ func TestWeb(t *testing.T) {
 			contentType: "text/html; charset=utf-8",
 		},
 		{
+			name:        "index file with app disabled",
+			appDisabled: true,
+			path:        "/",
+			statusCode:  http.StatusNotFound,
+		},
+		{
 			name:        "index file with app host",
 			path:        "/",
 			host:        "aaa.example2.com",
@@ -158,6 +151,37 @@ func TestWeb(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
+			e := echo.New()
+			e.HTTPErrorHandler = func(err error, c echo.Context) {
+				if errors.Is(err, rerror.ErrNotFound) || errors.Is(err, echo.ErrNotFound) {
+					_ = c.JSON(http.StatusNotFound, map[string]any{"error": "not found"})
+					return
+				}
+				_ = c.JSON(http.StatusInternalServerError, err.Error())
+			}
+
+			e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
+				return adapter.AttachUsecases(ctx, &interfaces.Container{
+					Published: interactor.NewPublished(prjr, fileg, publishedHTML),
+				})
+			}))
+
+			(&WebHandler{
+				Disabled:    tt.disabled,
+				AppDisabled: tt.appDisabled,
+				WebConfig: WebConfig{
+					"a": "b",
+				},
+				AuthConfig: &AuthConfig{
+					ISS:      "https://iss.example.com",
+					AUD:      []string{"https://aud.example.com"},
+					ClientID: lo.ToPtr("clientID"),
+				},
+				HostPattern: `{}.example.com`,
+				FS:          mfs,
+			}).Handler(e)
+
 			r := httptest.NewRequest("GET", tt.path, nil)
 			if tt.host != "" {
 				r.Host = tt.host

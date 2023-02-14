@@ -11,30 +11,43 @@ import (
 
 type WebConfig map[string]string
 
-func web(e *echo.Echo, wc WebConfig, ac *AuthConfig, pattern string, fs afero.Fs) {
-	if fs == nil {
-		fs = afero.NewOsFs()
+type WebHandler struct {
+	Disabled    bool
+	AppDisabled bool
+	WebConfig   WebConfig
+	AuthConfig  *AuthConfig
+	HostPattern string
+	FS          afero.Fs
+}
+
+func (w *WebHandler) Handler(e *echo.Echo) {
+	if w.Disabled {
+		return
 	}
-	if _, err := fs.Stat("web"); err != nil {
+
+	if w.FS == nil {
+		w.FS = afero.NewOsFs()
+	}
+	if _, err := w.FS.Stat("web"); err != nil {
 		return // web won't be delivered
 	}
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
 	config := map[string]string{}
-	if ac != nil {
-		if ac.ISS != "" {
-			config["auth0Domain"] = strings.TrimSuffix(ac.ISS, "/")
+	if w.AuthConfig != nil {
+		if w.AuthConfig.ISS != "" {
+			config["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
 		}
-		if ac.ClientID != nil {
-			config["auth0ClientId"] = *ac.ClientID
+		if w.AuthConfig.ClientID != nil {
+			config["auth0ClientId"] = *w.AuthConfig.ClientID
 		}
-		if len(ac.AUD) > 0 {
-			config["auth0Audience"] = ac.AUD[0]
+		if len(w.AuthConfig.AUD) > 0 {
+			config["auth0Audience"] = w.AuthConfig.AUD[0]
 		}
 	}
 
-	for k, v := range wc {
+	for k, v := range w.WebConfig {
 		config[k] = v
 	}
 
@@ -43,17 +56,17 @@ func web(e *echo.Echo, wc WebConfig, ac *AuthConfig, pattern string, fs afero.Fs
 		Index:      "index.html",
 		Browse:     false,
 		HTML5:      true,
-		Filesystem: afero.NewHttpFs(fs),
+		Filesystem: afero.NewHttpFs(w.FS),
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
 	e.GET("/reearth_config.json", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, config)
 	})
-	e.GET("/data.json", PublishedData(pattern, false))
+	e.GET("/data.json", PublishedData(w.HostPattern, false))
 	e.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
-	e.GET("/", notFound, PublishedIndexMiddleware(pattern, false), m)
+	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), m)
 	e.GET("*", notFound, m)
 }

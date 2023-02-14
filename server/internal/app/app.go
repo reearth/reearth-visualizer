@@ -110,7 +110,14 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/", PublishedIndex("", true))
 
 	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.AuthForWeb(), cfg.Config.Published.Host, nil)
+	(&WebHandler{
+		Disabled:    cfg.Config.Web_Disabled,
+		AppDisabled: cfg.Config.Web_App_Disabled,
+		WebConfig:   cfg.Config.Web,
+		AuthConfig:  cfg.Config.AuthForWeb(),
+		HostPattern: cfg.Config.Published.Host,
+		FS:          nil,
+	}).Handler(e)
 
 	return e
 }
@@ -119,6 +126,10 @@ func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 	return func(err error, c echo.Context) {
 		if c.Response().Committed {
 			return
+		}
+
+		if errors.Is(err, echo.ErrNotFound) {
+			err = rerror.ErrNotFound
 		}
 
 		code, msg := errorMessage(err, func(f string, args ...interface{}) {

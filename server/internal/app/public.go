@@ -154,10 +154,10 @@ func PublishedData(pattern string, useParam bool) echo.HandlerFunc {
 }
 
 func PublishedIndex(pattern string, useParam bool) echo.HandlerFunc {
-	return PublishedIndexMiddleware(pattern, useParam)(nil)
+	return PublishedIndexMiddleware(pattern, useParam, true)(nil)
 }
 
-func PublishedIndexMiddleware(pattern string, useParam bool) echo.MiddlewareFunc {
+func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			contr, err := publishedController(c)
@@ -166,8 +166,13 @@ func PublishedIndexMiddleware(pattern string, useParam bool) echo.MiddlewareFunc
 			}
 
 			alias := resolveAlias(c, pattern, useParam)
-			if alias == "" && next != nil {
-				return next(c)
+			if alias == "" && (next != nil || errorIfNotFound) {
+				if errorIfNotFound {
+					return rerror.ErrNotFound
+				}
+				if next != nil {
+					return next(c)
+				}
 			}
 
 			index, err := contr.Index(c.Request().Context(), alias, &url.URL{
