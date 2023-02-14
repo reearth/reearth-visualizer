@@ -663,17 +663,6 @@ extensions:
             description: "右端の余白を設定します。最小0px・最大40ox"
           typography:
             title: フォント
-  htmlblock:
-    name: HTML
-    description: HTMLブロック
-    propertySchema:
-      default:
-        title: HTMLブロック
-        fields:
-          title:
-            title: タイトル
-          html:
-            title: HTML
   imageblock:
     name: 画像
     description: 画像ブロック
@@ -755,6 +744,17 @@ extensions:
             title: データ(文字)
           item_datanum:
             title: データ(数字)
+  htmlblock:
+    name: HTML
+    description: HTMLブロック
+    propertySchema:
+      default:
+        title: HTMLブロック
+        fields:
+          title:
+            title: タイトル
+          html:
+            title: HTML
   menu:
     name: メニュー (廃止予定)
     description: |
