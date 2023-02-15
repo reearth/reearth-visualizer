@@ -43,7 +43,7 @@ export const useTimeline = ({
 }) => {
   const visible = useVisible({
     widgetId: widget.id,
-    visible: widget.property.default.visible,
+    visible: widget.property?.default?.visible,
     isMobile,
     onVisibilityChange,
   });
