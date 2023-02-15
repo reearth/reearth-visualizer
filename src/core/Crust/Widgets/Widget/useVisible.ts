@@ -15,6 +15,7 @@ export const useVisible = ({
 }) => {
   const visible = useMemo(
     () =>
+      !defaultVisible ||
       defaultVisible === "always" ||
       (defaultVisible === "desktop" && !isMobile) ||
       (defaultVisible === "mobile" && !!isMobile),
