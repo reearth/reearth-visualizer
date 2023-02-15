@@ -6,6 +6,7 @@ import { styled } from "@reearth/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import type { Camera } from "../types";
+import { useVisible, Visible } from "../useVisible";
 
 export type Props = WidgetProps<Property>;
 
@@ -20,6 +21,7 @@ export type Property = {
     overlayImageW?: number;
     overlayImageH?: number;
     overlayTitle?: string;
+    visible?: Visible;
   };
   camera?: {
     cameraPosition?: Camera;
@@ -31,6 +33,8 @@ export type Property = {
 const SplashScreen = ({
   widget,
   isBuilt,
+  isMobile,
+  onVisibilityChange,
   context: { onFlyTo } = {},
 }: Props): JSX.Element | null => {
   const { property } = widget ?? {};
@@ -46,6 +50,12 @@ const SplashScreen = ({
     overlayTitle: title,
   } = property?.overlay ?? {};
   const camera = property?.camera?.filter(c => !!c.cameraPosition);
+  const visible = useVisible({
+    widgetId: widget.id,
+    visible: widget.property?.overlay.visible,
+    isMobile,
+    onVisibilityChange,
+  });
 
   const [cameraSequence, setCameraSequence] = useState(0);
   const [delayedCameraSequence, setDelayedCameraSequence] = useState(-1);
@@ -96,7 +106,7 @@ const SplashScreen = ({
     return () => clearTimeout(t);
   }, [delayedCurrentCamera, isBuilt]);
 
-  return state === "unmounted" ? null : (
+  return !visible || state === "unmounted" ? null : (
     <Wrapper state={state} bgcolor={bgcolor} duration={transitionDuration}>
       <Image src={image} alt={title} width={imageW} height={imageH} />
     </Wrapper>

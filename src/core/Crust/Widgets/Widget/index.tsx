@@ -26,8 +26,10 @@ export type Props = {
   theme?: Theme;
   isEditable?: boolean;
   isBuilt?: boolean;
+  isMobile?: boolean;
   context?: Context;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
   renderWidget?: (w: Widget) => ReactNode;
 };
 

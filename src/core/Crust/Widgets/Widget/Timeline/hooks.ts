@@ -3,7 +3,8 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { TimeEventHandler } from "@reearth/components/atoms/Timeline";
 import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 
-import type { Clock } from "../types";
+import type { Clock, Widget } from "../types";
+import { useVisible } from "../useVisible";
 
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
@@ -16,8 +17,9 @@ const makeRange = (startTime?: number, stopTime?: number) => {
 const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
-  widgetId,
+  widget,
   clock,
+  isMobile,
   onPlay,
   onPause,
   onTimeChange,
@@ -25,9 +27,11 @@ export const useTimeline = ({
   onTick,
   removeTickEventListener,
   onExtend,
+  onVisibilityChange,
 }: {
-  widgetId: string;
+  widget: Widget;
   clock?: Clock;
+  isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
@@ -35,7 +39,15 @@ export const useTimeline = ({
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (id: string, v: boolean) => void;
 }) => {
+  const visible = useVisible({
+    widgetId: widget.id,
+    visible: widget.property.default.visible,
+    isMobile,
+    onVisibilityChange,
+  });
+  const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(clock?.start?.getTime(), clock?.stop?.getTime()),
   );
@@ -154,6 +166,7 @@ export const useTimeline = ({
     range,
     isOpened,
     currentTime,
+    visible,
     events: {
       onOpen: handleOnOpen,
       onClose: handleOnClose,

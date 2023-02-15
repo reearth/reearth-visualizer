@@ -1,30 +1,43 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-import type { Camera, FlyToDestination } from "../types";
+import type { Camera, FlyToDestination, Widget } from "../types";
+import { useVisible } from "../useVisible";
 
 import { degreeToRadian, radianToDegree } from "./NavigatorPresenter";
 
 export default function ({
   camera,
   initialCamera,
+  widget,
+  isMobile,
   onZoomIn,
   onZoomOut,
   onCameraOrbit,
   onCameraRotateRight,
   onFlyTo,
+  onVisibilityChange,
 }: {
   camera?: Camera;
   initialCamera?: Camera;
+  widget: Widget;
+  isMobile?: boolean;
   onZoomIn?: (amount: number) => void;
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (orbit: number) => void;
   onCameraRotateRight?: (radian: number) => void;
   onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
 }) {
   const [degree, setDegree] = useState(0);
   const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
+  const visible = useVisible({
+    widgetId: widget.id,
+    visible: widget.property.default.visible,
+    isMobile,
+    onVisibilityChange,
+  });
 
   const handleOnRotate = useCallback(
     (deg: number) => {
@@ -88,6 +101,7 @@ export default function ({
   return {
     degree,
     isHelpOpened,
+    visible,
     events: {
       onRotate: handleOnRotate,
       onStartOrbit: handleOnStartOrbit,
