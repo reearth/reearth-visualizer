@@ -45,6 +45,8 @@ export type Ref = {
   arena: () => Arena | undefined;
 };
 
+const AsyncFunction = (async () => {}).constructor;
+
 // restrict any classes
 export const defaultIsMarshalable = (obj: any): boolean => {
   return (
@@ -53,7 +55,8 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     Object.getPrototypeOf(obj) === Function.prototype ||
     Object.getPrototypeOf(obj) === Object.prototype ||
     obj instanceof Date ||
-    obj instanceof Promise
+    obj instanceof Promise ||
+    obj instanceof AsyncFunction
   );
 };
 

@@ -26,6 +26,7 @@ import {
   getCenterCamera,
   zoom,
   lookAtWithoutAnimation,
+  sampleTerrainHeight,
 } from "./common";
 import { findEntity } from "./utils";
 
@@ -68,6 +69,11 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
+      },
+      sampleTerrainHeight: async (lng, lat) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return await sampleTerrainHeight(viewer.scene, lng, lat);
       },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {

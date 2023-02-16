@@ -121,6 +121,7 @@ export type Scene = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
 };
 
 export type Camera = {

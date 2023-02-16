@@ -19,6 +19,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getCamera: 1,
   getClock: 1,
   getLocationFromScreen: 1,
+  sampleTerrainHeight: 1,
   getViewport: 1,
   lookAt: 1,
   lookAtLayer: 1,

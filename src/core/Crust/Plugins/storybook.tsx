@@ -92,6 +92,7 @@ export const context: Context = {
       overrideProperty: act("overrideSceneProperty"),
       captureScreen: act("captureScreen"),
       getLocationFromScreen: act("getLocationFromScreen"),
+      sampleTerrainHeight: act("sampleTerrainHeight"),
     },
     layers: {
       hide: act("layers.hide"),

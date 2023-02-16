@@ -48,6 +48,7 @@ export type EngineRef = {
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
+  sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;

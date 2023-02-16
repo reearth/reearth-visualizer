@@ -309,6 +309,7 @@ export function commonReearth({
   rotateRight,
   captureScreen,
   getLocationFromScreen,
+  sampleTerrainHeight,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -350,6 +351,7 @@ export function commonReearth({
   cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -411,6 +413,7 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
+      sampleTerrainHeight,
     },
     get viewport() {
       return viewport?.();
