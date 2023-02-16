@@ -105,7 +105,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         <li>
           <InputRangeLabel>
             <InputRangeLabelText size="xs" customColor publishedTheme={theme}>
-              {speed}X
+              X{speed}
             </InputRangeLabelText>
             <InputRange
               publishedTheme={theme}
@@ -192,6 +192,10 @@ const ToolBox = styled.ul`
     `${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.l}px`};
   list-style: none;
   padding: 0;
+
+  @media (max-width: 768px) {
+    margin-left: ${({ theme }) => `${theme.metrics.s}px`};
+  }
 `;
 
 const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & StyledColorProps>`
@@ -209,13 +213,17 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
   background: ${({ isPlaying, publishedTheme, theme }) =>
     isPlaying ? publishedTheme?.select || theme.main.select : "transparent"};
+
+  @media (max-width: 768px) {
+    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.xs}px` : 0)};
+  }
 `;
 
 const InputRangeLabel = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: ${({ theme }) => `0 ${theme.metrics["2xs"]}px 0 ${theme.metrics["2xs"]}px`};
+  margin-left: ${({ theme }) => theme.metrics["2xs"]}px;
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
@@ -239,6 +247,10 @@ const InputRange = styled.input<StyledColorProps>`
     width: 10px;
     border-radius: 50%;
   }
+
+  @media (max-width: 768px) {
+    width: 74px;
+  }
 `;
 
 const CurrentTimeWrapper = styled.div`
@@ -247,6 +259,10 @@ const CurrentTimeWrapper = styled.div`
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
   margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const CurrentTime = styled(Text)<StyledColorProps>`
@@ -282,6 +298,10 @@ const ScaleBox = styled.div`
   }
   margin: ${({ theme }) =>
     `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 const IconWrapper = styled.div<StyledColorProps>`

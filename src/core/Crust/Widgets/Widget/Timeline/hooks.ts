@@ -161,6 +161,14 @@ export const useTimeline = ({
     };
   }, [onTick, clock?.playing, removeTickEventListener]);
 
+  useEffect(() => {
+    if (isMobile) {
+      onExtend?.(widgetId, true);
+    } else {
+      onExtend?.(widgetId, undefined);
+    }
+  }, [widgetId, onExtend, isMobile]);
+
   return {
     speed,
     range,
