@@ -6,6 +6,7 @@ import {
   WebMapServiceImageryProvider,
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
+import md5 from "js-md5";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
@@ -65,7 +66,19 @@ export const useWMS = ({
 
 type TileCoords = { x: number; y: number; level: number };
 
-const idFromGeometry = (tile: TileCoords) => [tile.x, tile.y, tile.level].join(":");
+const idFromGeometry = (
+  geometry: ReturnType<VectorTileFeature["loadGeometry"]>,
+  tile: TileCoords,
+) => {
+  const id = [tile.x, tile.y, tile.level, ...geometry.flatMap(i => i.map(j => [j.x, j.y]))].join(
+    ":",
+  );
+
+  const hash = md5.create();
+  hash.update(id);
+
+  return hash.hex();
+};
 
 const makeFeatureFromPolygon = (
   id: string,
@@ -128,7 +141,7 @@ export const useMVT = ({
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
       onRenderFeature: (mvtFeature, tile) => {
-        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
         if (!cachedFeatureIdsRef.current.has(id)) {
           shouldSyncFeatureRef.current = true;
         }
@@ -143,7 +156,7 @@ export const useMVT = ({
         }
       },
       style: (mvtFeature, tile) => {
-        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
         const [feature, computedFeature] =
           ((): [Feature | undefined, ComputedFeature | undefined] | void => {
             const layer = cachedCalculatedLayerRef.current?.layer;
@@ -179,7 +192,7 @@ export const useMVT = ({
                 return [
                   feature,
                   cachedComputedFeaturesRef.current.get(
-                    mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
+                    idFromGeometry(mvtFeature.loadGeometry(), tile),
                   ),
                 ];
               }
@@ -199,7 +212,7 @@ export const useMVT = ({
         };
       },
       onSelectFeature: (mvtFeature, tile) => {
-        const featureId = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const featureId = idFromGeometry(mvtFeature.loadGeometry(), tile);
         const layerId = cachedCalculatedLayerRef.current?.layer.id;
         const l = new ImageryLayerFeatureInfo();
         l.data = {

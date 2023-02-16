@@ -112,7 +112,7 @@ export function findEntity(
   // Find Cesium3DTileFeature
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset)) {
+    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
       continue;
     }
 

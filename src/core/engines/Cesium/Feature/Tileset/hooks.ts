@@ -120,9 +120,7 @@ const useFeature = ({
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const nextFeatureId = String(tileFeature.featureId);
-        currentTiles.set(t, nextFeatureId);
-        const id = String(nextFeatureId + tileFeature.featureId);
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
             coordinates.x,
@@ -154,8 +152,7 @@ const useFeature = ({
       const featureIds: string[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id =
-          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);
