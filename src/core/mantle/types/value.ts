@@ -61,6 +61,7 @@ export type EXPERIMENTAL_clipping = {
     };
     distance: number;
   }[];
+  visible?: boolean;
   // for compat
   location?: LatLngHeight;
   coordinates?: number[];
