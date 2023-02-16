@@ -31,7 +31,11 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
   return (
     <Wrapper>
       <LogoWrapper>
-        <Icon icon="logoColorful" size={110} />
+        {window.REEARTH_CONFIG?.logoUrl ? (
+          <img src={window.REEARTH_CONFIG.logoUrl} style={{ maxWidth: "100%" }} />
+        ) : (
+          <Icon icon="logoColorful" size={110} />
+        )}
       </LogoWrapper>
       <NavigationList>
         <NavigationItem to="/settings/account" name={t("Account")} />

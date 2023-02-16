@@ -70,6 +70,7 @@ const QuickStart: React.FC<Props> = ({
             direction="column"
             align="center"
             justify="center"
+            linearGradient={window.REEARTH_CONFIG?.linearGradient}
             onClick={() => setProjCreateOpen(true)}>
             <StyledIcon icon="newProject" size={70} />
             <Text size="m" weight="bold" customColor>
@@ -170,7 +171,7 @@ const BannerButton = styled(Flex)`
   }
 `;
 
-const HeroBannerButton = styled(Flex)`
+const HeroBannerButton = styled(Flex)<{ linearGradient?: string }>`
   ${BannerButtonStyles};
   position: relative;
   z-index: ${({ theme }) => theme.zIndexes.base};
@@ -187,8 +188,10 @@ const HeroBannerButton = styled(Flex)`
     left: 0;
     width: 100%;
     height: 200%;
-    background: ${({ theme }) =>
-      `linear-gradient(140deg, ${theme.main.brandRed} 20%, ${theme.main.brandBlue} 60%)`};
+    background: ${({ linearGradient, theme }) =>
+      linearGradient
+        ? linearGradient
+        : `linear-gradient(140deg, ${theme.main.brandRed} 20%, ${theme.main.brandBlue} 60%)`};
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;

@@ -11,12 +11,17 @@ export interface Props {
 const Logo: React.FC<Props> = ({ className }) => {
   return (
     <Wrapper align="center" justify="center" className={className}>
-      <Icon icon="logoColorful" size={122} />
+      {window.REEARTH_CONFIG?.logoUrl ? (
+        <img src={window.REEARTH_CONFIG.logoUrl} style={{ maxWidth: "100%" }} />
+      ) : (
+        <Icon icon="logoColorful" size={122} />
+      )}
     </Wrapper>
   );
 };
 
 const Wrapper = styled(Flex)`
+  flex: 1;
   min-width: 155px;
   flex-grow: 3;
   margin: 14px;
