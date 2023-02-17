@@ -19,7 +19,7 @@ export type Widget<P = any> = {
 
 export type WidgetLayout = {
   location: WidgetLocation;
-  align: WidgetAlignment;
+  align?: WidgetAlignment;
 };
 
 export type WidgetLocation = {

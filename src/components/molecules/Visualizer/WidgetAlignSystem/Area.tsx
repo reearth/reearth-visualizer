@@ -97,9 +97,11 @@ export default function Area({
       style={{
         flexWrap: "wrap",
         pointerEvents: "none",
-        padding: isMobileZone
-          ? "inherit"
-          : `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        padding: widgets?.length
+          ? isMobileZone
+            ? "inherit"
+            : `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
+          : "0",
         backgroundColor: isMobileZone ? "inherit" : backgroundColor,
         gap: isMobileZone ? "inherit" : gap,
         alignItems: centered && !isMobileZone ? "center" : "inherit",
