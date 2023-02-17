@@ -204,7 +204,7 @@ extensions:
         fields:
           experimental_core:
             title: 先進的機能を使用
-            description: このシーンに対して先進的機能を有効にします。この設定を適用するにはページのリロードが必要です。
+            description: このシーンに対して先進的機能を有効にします。（ベータ）
       theme:
         title: 公開用テーマ
         description: 公開用のテーマを設定することができます。

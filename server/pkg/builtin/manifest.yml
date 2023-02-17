@@ -426,7 +426,7 @@ extensions:
               type: bool
               title: Enable advanced features
               defaultValue: false
-              description: Enable advanced features for this scene.
+              description: Enable advanced features for this scene. (beta)
       linkable:
         url:
           schemaGroupId: indicator
