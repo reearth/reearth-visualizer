@@ -34,7 +34,10 @@ const EarthEditor: React.FC<Props> = () => {
           header={<Header />}
           left={<LeftMenu />}
           centerTop={<PrimitiveHeader />}
-          center={core ? <CoreCanvasArea inEditor /> : <CanvasArea inEditor />}
+          center={
+            typeof core == "boolean" &&
+            (core ? <CoreCanvasArea inEditor /> : <CanvasArea inEditor />)
+          }
           right={<RightMenu />}
         />
       </DndProvider>

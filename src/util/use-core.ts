@@ -5,7 +5,10 @@ import { PublishedData } from "@reearth/components/organisms/Published/core/type
 import { useGetScenePropertyQuery } from "@reearth/gql";
 
 // TODO: Remove this hook when we use reearth/core completely.
-export const useCore = (type?: "published" | "earth_editor", alias?: string): boolean => {
+export const useCore = (
+  type?: "published" | "earth_editor",
+  alias?: string,
+): boolean | undefined => {
   const query = useMemo(() => new URLSearchParams(window.location.search), []);
   if (query.has("useCore") || type === undefined) {
     return query.has("useCore");
@@ -33,7 +36,7 @@ export const useCore = (type?: "published" | "earth_editor", alias?: string): bo
 
   if (type === "published") {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [isCore, setIsCore] = useState(false);
+    const [isCore, setIsCore] = useState<boolean | undefined>(undefined);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const actualAlias = useMemo(
       () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
