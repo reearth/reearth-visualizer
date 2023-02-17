@@ -67,7 +67,12 @@ export type Ref = {
 
 export type DefaultInfobox = {
   title?: string;
-  content: { key: string; value: string }[];
+  content:
+    | {
+        type: "table";
+        value: { key: string; value: string }[];
+      }
+    | { type: "html"; value: string };
 };
 
 export type OverriddenLayer = Omit<Layer, "type" | "children">;
@@ -680,6 +685,7 @@ function useSelection({
           },
           options,
         ]);
+      else if (options) setSelectedLayer(s => [s[0], options]);
       else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
     },
     [],

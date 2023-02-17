@@ -365,12 +365,12 @@ function useLayers({
     | undefined
   >(
     () =>
-      selectedLayer
+      selectedLayer || layerOverridenInfobox
         ? {
-            infoboxKey: selectedLayer.id,
-            title: layerOverridenInfobox?.title || selectedLayer.title,
-            isEditable: !layerOverridenInfobox && !!selectedLayer.infobox,
-            visible: !!selectedLayer?.infobox,
+            infoboxKey: selectedLayer?.id,
+            title: layerOverridenInfobox?.title || selectedLayer?.title,
+            isEditable: !layerOverridenInfobox && !!selectedLayer?.infobox,
+            visible: !!selectedLayer?.infobox || !!layerOverridenInfobox,
             layer: selectedLayer,
             blocks,
           }
@@ -461,23 +461,44 @@ function useInnerState<T>(
 function overridenInfoboxBlocks(
   overriddenInfobox: OverriddenInfobox | undefined,
 ): Block[] | undefined {
-  return overriddenInfobox && Array.isArray(overriddenInfobox?.content)
-    ? [
-        {
-          id: "content",
-          pluginId: "reearth",
-          extensionId: "dlblock",
-          property: {
-            items: overriddenInfobox.content.map((c, i) => ({
-              id: i,
-              item_title: c.key,
-              item_datastr: String(c.value),
-              item_datatype: "string",
-            })),
+  if (overriddenInfobox?.content.type === "table") {
+    return Array.isArray(overriddenInfobox?.content)
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "dlblock",
+            property: {
+              items: overriddenInfobox.content.map((c, i) => ({
+                id: i,
+                item_title: c.key,
+                item_datastr: String(c.value),
+                item_datatype: "string",
+              })),
+            },
           },
-        },
-      ]
-    : undefined;
+        ]
+      : undefined;
+  }
+
+  if (overriddenInfobox?.content.type === "html") {
+    return overriddenInfobox.content.value
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "htmlblock",
+            property: {
+              default: {
+                html: overriddenInfobox.content.value,
+              },
+            },
+          },
+        ]
+      : undefined;
+  }
+
+  return undefined;
 }
 
 function useProviderProps(

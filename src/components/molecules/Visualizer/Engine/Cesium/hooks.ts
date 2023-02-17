@@ -1,4 +1,12 @@
-import { Color, Entity, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock, Ion } from "cesium";
+import {
+  Color,
+  Entity,
+  Cesium3DTileFeature,
+  Cartesian3,
+  Clock as CesiumClock,
+  Ion,
+  JulianDate,
+} from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -233,7 +241,15 @@ export default ({
       if (!viewer || viewer.isDestroyed()) return;
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
-        onLayerSelect?.(target.id.id);
+        onLayerSelect?.(target.id.id, {
+          overriddenInfobox: {
+            title: target.id.name,
+            content: {
+              type: "html",
+              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
+            },
+          },
+        });
         return;
       }
 
@@ -243,7 +259,10 @@ export default ({
           onLayerSelect?.(layerId, {
             overriddenInfobox: {
               title: target.getProperty("name"),
-              content: tileProperties(target),
+              content: {
+                type: "table",
+                value: tileProperties(target),
+              },
             },
           });
         }

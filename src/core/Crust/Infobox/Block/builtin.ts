@@ -1,4 +1,5 @@
 import DataList from "./DataList";
+import HTML from "./HTML";
 import Image from "./Image";
 import Location from "./Location";
 import Text from "./Text";
@@ -12,6 +13,7 @@ const builtin: Record<string, Component> = {
   "reearth/locationblock": Location,
   "reearth/textblock": Text,
   "reearth/videoblock": Video,
+  "reearth/htmlblock": HTML,
 };
 
 export default builtin;

@@ -1,4 +1,12 @@
-import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion, Cesium3DTileset } from "cesium";
+import {
+  Color,
+  Entity,
+  Cesium3DTileFeature,
+  Cartesian3,
+  Ion,
+  Cesium3DTileset,
+  JulianDate,
+} from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -208,7 +216,10 @@ export default ({
         onLayerSelect?.(tag.layerId, String(tag.featureId), {
           defaultInfobox: {
             title: entity.getProperty("name"),
-            content: tileProperties(entity),
+            content: {
+              type: "table",
+              value: tileProperties(entity),
+            },
           },
         });
       }
@@ -217,7 +228,23 @@ export default ({
 
     if (entity) {
       // Sometimes only featureId is specified, so we need to sync entity tag.
-      onLayerSelect?.(tag?.layerId, tag?.featureId);
+      onLayerSelect?.(
+        tag?.layerId,
+        tag?.featureId,
+        entity instanceof Entity
+          ? {
+              defaultInfobox: {
+                title: entity.name,
+                content: {
+                  type: "html",
+                  value: entity.description?.getValue(
+                    cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
+                  ),
+                },
+              },
+            }
+          : undefined,
+      );
     }
   }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
 
@@ -287,7 +314,15 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
-        onLayerSelect?.(tag?.layerId, tag?.featureId);
+        onLayerSelect?.(tag?.layerId, tag?.featureId, {
+          defaultInfobox: {
+            title: target.id.name,
+            content: {
+              type: "html",
+              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
+            },
+          },
+        });
         prevSelectedEntity.current = target.id;
         viewer.selectedEntity = target.id;
         return;
@@ -299,7 +334,10 @@ export default ({
           onLayerSelect?.(tag.layerId, String(tag.featureId), {
             defaultInfobox: {
               title: target.getProperty("name"),
-              content: tileProperties(target),
+              content: {
+                type: "table",
+                value: tileProperties(target),
+              },
             },
           });
           prevSelectedEntity.current = target;

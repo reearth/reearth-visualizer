@@ -168,7 +168,12 @@ export type SelectLayerOptions = {
 
 export type OverriddenInfobox = {
   title?: string;
-  content: { key: string; value: string }[];
+  content:
+    | {
+        type: "table";
+        value: { key: string; value: string }[];
+      }
+    | { type: "html"; value: string };
 };
 
 /** Layer is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */

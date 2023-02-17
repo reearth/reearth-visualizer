@@ -131,7 +131,7 @@ export default function useHooks({
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
-            visible: !!selectedLayer.layer?.layer?.infobox,
+            visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
             property: selectedLayer.layer?.layer.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
@@ -248,21 +248,40 @@ function useValue<T>(
 }
 
 function defaultInfoboxBlocks(defaultInfobox: DefaultInfobox | undefined): Block[] | undefined {
-  return defaultInfobox && Array.isArray(defaultInfobox?.content)
-    ? [
-        {
-          id: "content",
-          pluginId: "reearth",
-          extensionId: "dlblock",
-          property: {
-            items: defaultInfobox.content.map((c, i) => ({
-              id: i,
-              item_title: c.key,
-              item_datastr: String(c.value),
-              item_datatype: "string",
-            })),
+  if (defaultInfobox?.content.type === "table") {
+    return Array.isArray(defaultInfobox?.content.value)
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "dlblock",
+            property: {
+              items: defaultInfobox.content.value.map((c, i) => ({
+                id: i,
+                item_title: c.key,
+                item_datastr: String(c.value),
+                item_datatype: "string",
+              })),
+            },
           },
-        },
-      ]
-    : undefined;
+        ]
+      : undefined;
+  }
+
+  if (defaultInfobox?.content.type === "html") {
+    return defaultInfobox.content.value
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "htmlblock",
+            property: {
+              html: defaultInfobox.content.value,
+            },
+          },
+        ]
+      : undefined;
+  }
+
+  return undefined;
 }
