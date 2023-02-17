@@ -117,6 +117,7 @@ export default function Widgets({
       selectedWidgetArea={selectedWidgetArea}
       invisibleWidgetIDs={invisibleWidgetIDs}
       editing={editing}
+      built={isBuilt}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}
       theme={theme}

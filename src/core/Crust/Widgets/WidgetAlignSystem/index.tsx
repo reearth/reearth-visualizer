@@ -37,6 +37,7 @@ export type Props = {
   selectedWidgetArea?: WidgetAreaType;
   invisibleWidgetIDs?: string[];
   editing?: boolean;
+  built?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isMobile?: boolean;
   theme?: Theme;
@@ -58,6 +59,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   selectedWidgetArea,
   invisibleWidgetIDs,
   editing,
+  built,
   isMobile,
   layoutConstraint,
   theme,
@@ -93,6 +95,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
           layoutConstraint={layoutConstraint}
           invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
+          built={built}
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}>
           {(!isMobile || hasInner) && (
@@ -102,6 +105,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
               invisibleWidgetIDs={invisibleWidgetIDs}
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
+              built={built}
               renderWidget={renderWidget}
               onWidgetAreaSelect={onWidgetAreaSelect}
             />

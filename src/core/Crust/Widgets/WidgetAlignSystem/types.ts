@@ -42,7 +42,7 @@ export type WidgetAlignSystem = {
 
 export type WidgetLayout = {
   location: WidgetLocation;
-  align: WidgetAlignment;
+  align?: WidgetAlignment;
 };
 
 export type WidgetLayoutConstraint = {

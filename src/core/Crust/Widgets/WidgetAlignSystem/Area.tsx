@@ -32,11 +32,12 @@ type Props = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
-  align: Alignment;
+  align?: Alignment;
   padding?: WidgetAreaPadding;
-  backgroundColor: string;
-  gap: number;
-  centered: boolean;
+  backgroundColor?: string;
+  gap?: number;
+  centered?: boolean;
+  built?: boolean;
   widgets?: InternalWidget[];
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // note that layoutConstraint will be always undefined in published pages
@@ -54,6 +55,7 @@ export default function Area({
   backgroundColor,
   gap,
   centered,
+  built,
   widgets,
   layoutConstraint,
   renderWidget,
@@ -106,11 +108,14 @@ export default function Area({
       style={{
         flexWrap: "wrap",
         pointerEvents: "none",
-        padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
+        padding: widgets?.length
+          ? `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`
+          : "0",
         backgroundColor: backgroundColor,
         gap: gap,
         alignItems: centered ? "center" : "unset",
         borderRadius: 0,
+        transition: built ? "none" : undefined,
       }}
       editorStyle={{
         flexWrap: "wrap",

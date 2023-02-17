@@ -15,6 +15,7 @@ export type Props = {
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   theme?: Theme;
+  built?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   invisibleWidgetIDs?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -29,6 +30,7 @@ export default function MobileZone({
   zoneName,
   layoutConstraint,
   theme,
+  built,
   children,
   invisibleWidgetIDs,
   renderWidget,
@@ -70,6 +72,7 @@ export default function MobileZone({
                   centered={zone?.[s]?.[a]?.centered ?? false}
                   backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
                   layoutConstraint={layoutConstraint}
+                  built={built}
                   renderWidget={renderWidget}
                   onWidgetAreaSelect={onWidgetAreaSelect}
                 />

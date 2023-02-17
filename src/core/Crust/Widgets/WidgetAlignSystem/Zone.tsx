@@ -13,6 +13,7 @@ export type Props = {
   zoneName: "inner" | "outer";
   invisibleWidgetIDs?: string[];
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  built?: boolean;
   renderWidget?: (props: WidgetProps) => ReactNode;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
 };
@@ -25,6 +26,7 @@ export default function Zone({
   zone,
   zoneName,
   layoutConstraint,
+  built,
   children,
   renderWidget,
   onWidgetAreaSelect,
@@ -46,12 +48,13 @@ export default function Zone({
                 section={s}
                 area={a}
                 widgets={zone?.[s]?.[a]?.widgets}
-                align={zone?.[s]?.[a]?.align ?? "start"}
+                align={zone?.[s]?.[a]?.align}
                 padding={zone?.[s]?.[a]?.padding}
-                backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
-                gap={zone?.[s]?.[a]?.gap ?? 6}
-                centered={zone?.[s]?.[a]?.centered ?? false}
+                backgroundColor={zone?.[s]?.[a]?.background}
+                gap={zone?.[s]?.[a]?.gap}
+                centered={zone?.[s]?.[a]?.centered}
                 layoutConstraint={layoutConstraint}
+                built={built}
                 renderWidget={renderWidget}
                 onWidgetAreaSelect={onWidgetAreaSelect}
               />
