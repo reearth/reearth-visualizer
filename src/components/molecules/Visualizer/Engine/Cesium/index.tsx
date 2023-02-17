@@ -167,7 +167,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           />
         </Entity>
       )}
-      <Scene backgroundColor={backgroundColor} useWebVR={property?.default?.vr} />
+      {/* NOTE: useWebVR={false} will crash Cesium */}
+      <Scene backgroundColor={backgroundColor} useWebVR={!!property?.default?.vr || undefined} />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}
