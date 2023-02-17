@@ -26,6 +26,9 @@ extensions:
           ion:
             title: Cesium Ion アクセストークン
             description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
+          vr:
+            title: VR
+            description: 画面を左右に分割するVRモードを有効にします。
       tiles:
         title: タイル
         description: 手持ちのタイルデータを使用し、地球上に表示することができます。

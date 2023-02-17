@@ -23,6 +23,18 @@ extensions:
               title: Enter the ground
               defaultValue: false
               description: Set to true to allow the camera to enter the surface of the earth.
+            - id: sceneMode
+              type: string
+              title: Scene mode
+              description: Specify scene mode.
+              defaultValue: 3d
+              choices:
+                - key: 3d
+                  label: Scene 3D
+                - key: 2d
+                  label: Scene 2D
+                - key: columbus
+                  label: Columbus View
             - id: skybox
               type: bool
               title: Sky
@@ -37,18 +49,10 @@ extensions:
               type: string
               title: Cesium Ion API access token
               description: Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.
-            - id: sceneMode
-              type: string
-              title: Scene mode
-              description: Specify scene mode.
-              defaultValue: 3d
-              choices:
-                - key: 3d
-                  label: Scene 3D
-                - key: 2d
-                  label: Scene 2D
-                - key: columbus
-                  label: Columbus View
+            - id: vr
+              type: bool
+              title: VR
+              description: Enable VR mode to split the screen into left and right.
         - id: tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
@@ -422,7 +426,7 @@ extensions:
               type: bool
               title: Enable advanced features
               defaultValue: false
-              description: Enable advanced features for this scene. Page reload is required to apply this setting.
+              description: Enable advanced features for this scene.
       linkable:
         url:
           schemaGroupId: indicator
