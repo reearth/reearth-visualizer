@@ -20,7 +20,7 @@ import { CesiumComponentRef, useCesium } from "resium";
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { lookupFeatures, translationWithClamping } from "../../utils";
-import { attachTag, extractSimpleLayerData, toColor } from "../utils";
+import { attachTag, extractSimpleLayer, extractSimpleLayerData, toColor } from "../utils";
 
 import { Property } from ".";
 
@@ -171,8 +171,9 @@ const useFeature = ({
   }, [layer]);
 
   // Update 3dtiles styles
-  const tileAppearanceShow = layer?.["3dtiles"]?.show;
-  const tileAppearanceColor = layer?.["3dtiles"]?.color;
+  const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
+  const tileAppearanceShow = tileAppearance?.show;
+  const tileAppearanceColor = tileAppearance?.color;
   useEffect(() => {
     cachedFeaturesRef.current.map(f => {
       const properties = f.feature.properties;
