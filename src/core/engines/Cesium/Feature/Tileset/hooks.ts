@@ -221,6 +221,7 @@ export const useHooks = ({
     pitch,
     planes: _planes,
     visible: clippingVisible = true,
+    direction = "inside",
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
@@ -242,6 +243,7 @@ export const useHooks = ({
     }
     return prevPlanes.current;
   }, [_planes]);
+  const clipDirection = direction === "inside" ? -1 : 1;
   // Create immutable object
   const [clippingPlanes] = useState(
     () =>
@@ -250,9 +252,10 @@ export const useHooks = ({
           plane =>
             new ClippingPlane(
               new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
-              (plane.distance || 0) * -1,
+              (plane.distance || 0) * clipDirection,
             ),
         ),
+        unionClippingRegions: direction === "outside",
         edgeWidth: edgeWidth,
         edgeColor: toColor(edgeColor),
       }),
@@ -348,10 +351,10 @@ export const useHooks = ({
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
+    prepareClippingPlanes();
     if (!allowEnterGround) {
       updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
     }
-    prepareClippingPlanes();
   }, [
     width,
     length,
@@ -372,16 +375,20 @@ export const useHooks = ({
   }, [clippingPlanes, clippingVisible]);
 
   useEffect(() => {
+    clippingPlanes.unionClippingRegions = direction === "outside";
+  }, [clippingPlanes, direction]);
+
+  useEffect(() => {
     clippingPlanes.removeAll();
     planes?.forEach(plane =>
       clippingPlanes.add(
         new ClippingPlane(
           new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
-          (plane.distance || 0) * -1,
+          (plane.distance || 0) * clipDirection,
         ),
       ),
     );
-  }, [planes, clippingPlanes]);
+  }, [planes, clippingPlanes, clipDirection]);
 
   useEffect(() => {
     if (!styleUrl) {

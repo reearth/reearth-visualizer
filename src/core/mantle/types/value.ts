@@ -80,6 +80,7 @@ export type EXPERIMENTAL_clipping = {
   heading?: number;
   pitch?: number;
   roll?: number;
+  direction?: "inside" | "outside";
 };
 
 // Don't forget adding a new field to valueTypeMapper also!
