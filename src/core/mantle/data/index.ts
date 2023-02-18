@@ -4,6 +4,8 @@ import type { Data, DataRange, Feature } from "../types";
 
 import { fetchCSV } from "./csv";
 import { fetchGeoJSON } from "./geojson";
+import { fetchGeoRSS } from "./georss";
+import { fetchGMLData } from "./gml";
 import { fetchGPXfile } from "./gpx";
 import { fetchGTFS } from "./gtfs";
 import { fetchShapefile } from "./shapefile";
@@ -16,6 +18,8 @@ const registry: Record<string, DataFetcher> = {
   shapefile: fetchShapefile,
   gpx: fetchGPXfile,
   gtfs: fetchGTFS,
+  georss: fetchGeoRSS,
+  gml: fetchGMLData,
 };
 
 export async function fetchData(data: Data, range?: DataRange): Promise<Feature[] | void> {

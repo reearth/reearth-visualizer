@@ -45,6 +45,8 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gpx: "auto",
   shapefile: "auto",
   gtfs: "auto",
+  georss: [],
+  gml: [],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.

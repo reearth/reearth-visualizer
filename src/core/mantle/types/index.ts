@@ -94,7 +94,9 @@ export type DataType =
   | "kml"
   | "gpx"
   | "shapefile"
-  | "gtfs";
+  | "gtfs"
+  | "gml"
+  | "georss";
 
 export type TimeInterval = [start: Date, end?: Date];
 

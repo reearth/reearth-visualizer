@@ -7,3 +7,11 @@ export async function f(url: string): Promise<Response> {
   }
   return res;
 }
+
+export function isDefined<T>(value: T | undefined | null): value is T {
+  return value !== undefined && value !== null;
+}
+
+export function convertToCoordinates(coordinates: string) {
+  return coordinates.split(" ").map(coord => parseFloat(coord));
+}
