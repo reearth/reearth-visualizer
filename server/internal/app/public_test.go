@@ -121,8 +121,7 @@ func TestPublishedData(t *testing.T) {
 			c.SetParamNames("name")
 			c.SetParamValues(tc.PublishedName)
 			m := mockPublishedUsecaseMiddleware(false)
-
-			err := m(PublishedData())(c)
+			err := m(PublishedData("", true))(c)
 
 			if tc.Error == nil {
 				assert.NoError(err)
@@ -177,7 +176,7 @@ func TestPublishedIndex(t *testing.T) {
 			c.SetParamValues(tc.PublishedName)
 			m := mockPublishedUsecaseMiddleware(tc.EmptyIndex)
 
-			err := m(PublishedIndex())(c)
+			err := m(PublishedIndex("", true))(c)
 
 			if tc.Error == nil {
 				assert.NoError(err)
@@ -236,4 +235,11 @@ func (p *mockPublished) Index(ctx context.Context, name string, url *url.URL) (s
 		return "index", nil
 	}
 	return "", rerror.ErrNotFound
+}
+
+func TestGetAliasFromHost(t *testing.T) {
+	assert.Equal(t, "", getAliasFromHost("", ".example.com")) // invalid regexp
+	assert.Equal(t, "", getAliasFromHost("", "{}.example.com"))
+	assert.Equal(t, "aaa", getAliasFromHost("aaa.example.com", "{}.example.com"))
+	assert.Equal(t, "bbb.aaa", getAliasFromHost("bbb.aaa.example.com", "{}.example.com"))
 }

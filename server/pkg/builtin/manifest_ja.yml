@@ -26,6 +26,9 @@ extensions:
           ion:
             title: Cesium Ion アクセストークン
             description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
+          vr:
+            title: VR
+            description: 画面を左右に分割するVRモードを有効にします。
       tiles:
         title: タイル
         description: 手持ちのタイルデータを使用し、地球上に表示することができます。
@@ -195,7 +198,13 @@ extensions:
             description: Google Analyticsを有効にします。
           trackingCode:
             title: トラッキングID
-            description: ここにグーグルアナリティクスのトラッキングIDを貼り付けることで、公開プロジェクトにこのコードが埋め込まれます。
+            description: ここにGoogle AnalyticsのトラッキングIDを貼り付けることで、公開プロジェクトにこのコードが埋め込まれます。
+      experimental:
+        title: 高度な設定
+        fields:
+          experimental_core:
+            title: 先進的機能を使用
+            description: このシーンに対して先進的機能を有効にします。（ベータ）
       theme:
         title: 公開用テーマ
         description: 公開用のテーマを設定することができます。
@@ -632,7 +641,7 @@ extensions:
             description: 地表の凹凸に沿うようにポリゴンなどのデータを表示します。
   textblock:
     name: テキスト
-    description: Text block
+    description: Textブロック
     propertySchema:
       default:
         title: テキストブロック
@@ -738,6 +747,17 @@ extensions:
             title: データ(文字)
           item_datanum:
             title: データ(数字)
+  htmlblock:
+    name: HTML
+    description: HTMLブロック
+    propertySchema:
+      default:
+        title: HTMLブロック
+        fields:
+          title:
+            title: タイトル
+          html:
+            title: HTML
   menu:
     name: メニュー (廃止予定)
     description: |

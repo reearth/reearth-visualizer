@@ -44,6 +44,7 @@ func TestGetPropertySchemaByVisualizer(t *testing.T) {
 func TestPlugin(t *testing.T) {
 	assert.NotNil(t, Plugin())
 }
+
 func TestGetPlugin(t *testing.T) {
 	tests := []struct {
 		name        string

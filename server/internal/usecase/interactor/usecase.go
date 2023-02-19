@@ -101,6 +101,10 @@ func Run3[A, B, C any](ctx context.Context, op *usecase.Operator, r *repo.Contai
 }
 
 func (u *uc) checkPermission(op *usecase.Operator) error {
+	if op == nil {
+		return nil
+	}
+
 	ok := true
 	if u.readableWorkspaces != nil {
 		ok = op.IsReadableWorkspace(u.readableWorkspaces...)

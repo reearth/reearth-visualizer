@@ -2,47 +2,71 @@ package app
 
 import (
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/spf13/afero"
 )
 
 type WebConfig map[string]string
 
-func web(e *echo.Echo, wc WebConfig, a []AuthConfig) {
-	if _, err := os.Stat("web"); err != nil {
+type WebHandler struct {
+	Disabled    bool
+	AppDisabled bool
+	WebConfig   WebConfig
+	AuthConfig  *AuthConfig
+	HostPattern string
+	FS          afero.Fs
+}
+
+func (w *WebHandler) Handler(e *echo.Echo) {
+	if w.Disabled {
+		return
+	}
+
+	if w.FS == nil {
+		w.FS = afero.NewOsFs()
+	}
+	if _, err := w.FS.Stat("web"); err != nil {
 		return // web won't be delivered
 	}
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
 	config := map[string]string{}
-	if len(a) > 0 {
-		ac := a[0]
-		if ac.ISS != "" {
-			config["auth0Domain"] = strings.TrimSuffix(ac.ISS, "/")
+	if w.AuthConfig != nil {
+		if w.AuthConfig.ISS != "" {
+			config["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
 		}
-		if ac.ClientID != nil {
-			config["auth0ClientId"] = *ac.ClientID
+		if w.AuthConfig.ClientID != nil {
+			config["auth0ClientId"] = *w.AuthConfig.ClientID
 		}
-		if len(ac.AUD) > 0 {
-			config["auth0Audience"] = ac.AUD[0]
+		if len(w.AuthConfig.AUD) > 0 {
+			config["auth0Audience"] = w.AuthConfig.AUD[0]
 		}
 	}
-	for k, v := range wc {
+
+	for k, v := range w.WebConfig {
 		config[k] = v
 	}
+
+	m := middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:       "web",
+		Index:      "index.html",
+		Browse:     false,
+		HTML5:      true,
+		Filesystem: afero.NewHttpFs(w.FS),
+	})
+	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
 	e.GET("/reearth_config.json", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, config)
 	})
-
-	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   "web",
-		Index:  "index.html",
-		Browse: false,
-		HTML5:  true,
-	}))
+	e.GET("/data.json", PublishedData(w.HostPattern, false))
+	e.GET("/index.html", func(c echo.Context) error {
+		return c.Redirect(http.StatusPermanentRedirect, "/")
+	})
+	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), m)
+	e.GET("*", notFound, m)
 }

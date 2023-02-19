@@ -86,13 +86,6 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
-	prj, err := i.project.FindByPublicName(ctx, name)
-	if err != nil || prj == nil {
-		return "", err
-	}
-
-	md := interfaces.ProjectPublishedMetadataFrom(prj)
-
 	html := i.indexHTMLStr
 	if i.indexHTML != nil {
 		htmli, err := i.indexHTML.Get(ctx)
@@ -101,6 +94,20 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 		}
 		html = htmli
 	}
+
+	if name == "" {
+		return html, nil
+	}
+
+	prj, err := i.project.FindByPublicName(ctx, name)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", err
+	}
+	if prj == nil {
+		return html, nil
+	}
+
+	md := interfaces.ProjectPublishedMetadataFrom(prj)
 	return renderIndex(html, u.String(), md), nil
 }
 

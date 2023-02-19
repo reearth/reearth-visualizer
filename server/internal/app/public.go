@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -130,10 +132,10 @@ func PublishedMetadata() echo.HandlerFunc {
 	}
 }
 
-func PublishedData() echo.HandlerFunc {
+func PublishedData(pattern string, useParam bool) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		name := c.Param("name")
-		if name == "" {
+		alias := resolveAlias(c, pattern, useParam)
+		if alias == "" {
 			return rerror.ErrNotFound
 		}
 
@@ -142,7 +144,7 @@ func PublishedData() echo.HandlerFunc {
 			return err
 		}
 
-		r, err := contr.Data(c.Request().Context(), name)
+		r, err := contr.Data(c.Request().Context(), alias)
 		if err != nil {
 			return err
 		}
@@ -151,25 +153,42 @@ func PublishedData() echo.HandlerFunc {
 	}
 }
 
-func PublishedIndex() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		contr, err := publishedController(c)
-		if err != nil {
-			return err
-		}
+func PublishedIndex(pattern string, useParam bool) echo.HandlerFunc {
+	return PublishedIndexMiddleware(pattern, useParam, true)(nil)
+}
 
-		index, err := contr.Index(c.Request().Context(), c.Param("name"), &url.URL{
-			Scheme: "http",
-			Host:   c.Request().Host,
-			Path:   c.Request().URL.Path,
-		})
-		if err != nil {
-			return err
+func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			contr, err := publishedController(c)
+			if err != nil {
+				return err
+			}
+
+			alias := resolveAlias(c, pattern, useParam)
+			if alias == "" && (next != nil || errorIfNotFound) {
+				if errorIfNotFound {
+					return rerror.ErrNotFound
+				}
+				if next != nil {
+					return next(c)
+				}
+			}
+
+			index, err := contr.Index(c.Request().Context(), alias, &url.URL{
+				Scheme: "http",
+				Host:   c.Request().Host,
+				Path:   c.Request().URL.Path,
+			})
+			if err != nil {
+				return err
+			}
+			if index == "" {
+				return rerror.ErrNotFound
+			}
+
+			return c.HTML(http.StatusOK, index)
 		}
-		if index == "" {
-			return rerror.ErrNotFound
-		}
-		return c.HTML(http.StatusOK, index)
 	}
 }
 
@@ -211,4 +230,34 @@ func publishedController(c echo.Context) (*http1.PublishedController, error) {
 		return nil, rerror.ErrNotFound
 	}
 	return http1.NewPublishedController(uc.Published), nil
+}
+
+func resolveAlias(c echo.Context, pattern string, useParam bool) (a string) {
+	if useParam {
+		a = c.Param("name")
+	}
+	if a == "" {
+		a = getAliasFromHost(c.Request().Host, pattern)
+	}
+	return
+}
+
+func getAliasFromHost(host, pattern string) string {
+	if host == "" || pattern == "" || !strings.Contains(pattern, "{}") {
+		return ""
+	}
+
+	const placeholder = "<>"
+	pattern = strings.ReplaceAll(pattern, "{}", placeholder)
+	re, err := regexp.Compile(strings.ReplaceAll(regexp.QuoteMeta(pattern), placeholder, "(.+?)"))
+	if err != nil {
+		return ""
+	}
+
+	m := re.FindStringSubmatch(host)
+	if len(m) <= 1 {
+		return ""
+	}
+
+	return m[1]
 }

@@ -92,7 +92,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), private)
 	api.GET("/published/:name", PublishedMetadata())
-	api.GET("/published_data/:name", PublishedData())
+	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", private)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
@@ -106,11 +106,18 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	published := e.Group("/p", PublishedAuthMiddleware())
-	published.GET("/:name/data.json", PublishedData())
-	published.GET("/:name/", PublishedIndex())
+	published.GET("/:name/data.json", PublishedData("", true))
+	published.GET("/:name/", PublishedIndex("", true))
 
 	serveFiles(e, cfg.Gateways.File)
-	web(e, cfg.Config.Web, cfg.Config.Auths())
+	(&WebHandler{
+		Disabled:    cfg.Config.Web_Disabled,
+		AppDisabled: cfg.Config.Web_App_Disabled,
+		WebConfig:   cfg.Config.Web,
+		AuthConfig:  cfg.Config.AuthForWeb(),
+		HostPattern: cfg.Config.Published.Host,
+		FS:          nil,
+	}).Handler(e)
 
 	return e
 }
@@ -119,6 +126,10 @@ func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 	return func(err error, c echo.Context) {
 		if c.Response().Committed {
 			return
+		}
+
+		if errors.Is(err, echo.ErrNotFound) {
+			err = rerror.ErrNotFound
 		}
 
 		code, msg := errorMessage(err, func(f string, args ...interface{}) {

@@ -7,10 +7,12 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/rerror"
@@ -85,8 +87,9 @@ func TestScene_InstallPlugin(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+			// t.Parallel() // avoid data race
 			assert := assert.New(t)
 			ctx := context.Background()
 
@@ -96,7 +99,6 @@ func TestScene_InstallPlugin(t *testing.T) {
 				sc.Plugins().Add(p)
 			}
 			sr := memory.NewSceneWith(sc)
-
 			pl := plugin.New().ID(pid).MustBuild()
 			pl2 := plugin.New().ID(pid3).Schema(id.NewPropertySchemaID(pid3, "@").Ref()).MustBuild()
 			pl3 := plugin.New().ID(pid4).MustBuild()
@@ -105,10 +107,11 @@ func TestScene_InstallPlugin(t *testing.T) {
 			prr := memory.NewProperty()
 
 			uc := &Scene{
-				sceneRepo:    sr,
-				pluginRepo:   pr,
-				propertyRepo: prr,
-				transaction:  &usecasex.NopTransaction{},
+				sceneRepo:      sr,
+				pluginRepo:     pr,
+				pluginRegistry: &mockPluginRegistry{},
+				propertyRepo:   prr,
+				transaction:    &usecasex.NopTransaction{},
 			}
 
 			o := tt.args.operator
@@ -194,6 +197,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert := assert.New(t)
@@ -332,6 +336,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert := assert.New(t)
@@ -364,6 +369,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 				propertySchemaRepo: psr,
 				layerRepo:          lr,
 				datasetRepo:        dsr,
+				pluginRegistry:     &mockPluginRegistry{},
 				transaction:        &usecasex.NopTransaction{},
 			}
 
@@ -388,4 +394,16 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			}
 		})
 	}
+}
+
+type mockPluginRegistry struct {
+	gateway.PluginRegistry
+}
+
+func (g *mockPluginRegistry) FetchPluginPackage(context.Context, id.PluginID) (*pluginpack.Package, error) {
+	return nil, rerror.ErrNotFound
+}
+
+func (g *mockPluginRegistry) NotifyDownload(context.Context, id.PluginID) error {
+	return nil
 }
