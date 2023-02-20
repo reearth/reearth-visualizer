@@ -9,6 +9,7 @@ import {
   PropertyBag,
   TimeInterval as CesiumTimeInterval,
   TimeIntervalCollection as CesiumTimeIntervalCollection,
+  DistanceDisplayCondition as CesiumDistanceDisplayCondition,
 } from "cesium";
 import {
   ComponentProps,
@@ -178,4 +179,13 @@ export const toTimeInterval = (
       stop: interval[1] ? JulianDate.fromDate(interval[1]) : Iso8601.MAXIMUM_VALUE,
     }),
   ]);
+};
+
+export const toDistanceDisplayCondition = (
+  near: number | undefined,
+  far: number | undefined,
+): CesiumDistanceDisplayCondition | undefined => {
+  return typeof near === "number" || typeof far === "number"
+    ? new CesiumDistanceDisplayCondition(near ?? 0.0, far ?? Number.MAX_VALUE)
+    : undefined;
 };

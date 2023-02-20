@@ -1,5 +1,6 @@
 import {
   Color,
+  DistanceDisplayCondition,
   Plane as CesiumPlane,
   TimeIntervalCollection,
   TranslationRotationScale,
@@ -22,6 +23,7 @@ export const Side: FC<{
   activeOutlineColor?: Color;
   fill?: boolean;
   availability?: TimeIntervalCollection;
+  distanceDisplayCondition?: DistanceDisplayCondition;
 }> = memo(function SidePresenter({
   layerId,
   featureId,
@@ -33,6 +35,7 @@ export const Side: FC<{
   activeOutlineColor,
   trs,
   availability,
+  distanceDisplayCondition,
 }) {
   const { cbRef, plane, dimension, orientation, outlineColorCb } = useHooks({
     planeLocal,
@@ -56,6 +59,7 @@ export const Side: FC<{
         material={fillColor}
         outlineWidth={1}
         outlineColor={outlineColorCb}
+        distanceDisplayCondition={distanceDisplayCondition}
         outline
       />
     </EntityExt>

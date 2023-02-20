@@ -4,6 +4,7 @@ import {
   Color,
   TimeIntervalCollection,
   TranslationRotationScale,
+  DistanceDisplayCondition,
 } from "cesium";
 import { FC, memo } from "react";
 import { PolylineGraphics } from "resium";
@@ -37,6 +38,7 @@ type Props = {
   hoverColor?: Color;
   width?: number;
   availability?: TimeIntervalCollection;
+  distanceDisplayCondition?: DistanceDisplayCondition;
   onMouseDown?: EdgeEventCallback;
   onMouseMove?: EdgeEventCallback;
   onMouseUp?: EdgeEventCallback;
@@ -55,6 +57,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   width,
   hoverColor,
   availability,
+  distanceDisplayCondition,
   onMouseDown,
   onMouseMove,
   onMouseUp,
@@ -79,6 +82,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
         width={width}
         material={outlineColor}
         arcType={ArcType.NONE}
+        distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>
   );

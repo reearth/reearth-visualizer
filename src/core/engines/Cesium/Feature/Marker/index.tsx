@@ -8,6 +8,7 @@ import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -124,6 +125,10 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   );
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
   return !pos || !isVisible ? null : (
     <>
@@ -137,6 +142,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             positions={extrudePoints}
             material={extrudePointsLineColor}
             width={0.5}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         </EntityExt>
       )}
@@ -154,6 +160,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             outlineColor={pointOutlineColorCesium}
             outlineWidth={pointOutlineWidth}
             heightReference={heightReference(hr)}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         ) : (
           <BillboardGraphics
@@ -162,6 +169,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         )}
         {label && (
@@ -188,6 +196,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             backgroundColor={labelBackgroundColorCesium}
             backgroundPadding={labelBackgroundPadding}
             heightReference={heightReference(hr)}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         )}
       </EntityExt>

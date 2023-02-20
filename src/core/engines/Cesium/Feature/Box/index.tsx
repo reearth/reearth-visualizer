@@ -41,6 +41,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     trs,
     scalePointStyle,
     availability,
+    distanceDisplayCondition,
     handlePointMouseDown,
     handlePointMouseMove,
     handlePointMouseUp,
@@ -68,6 +69,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           activeOutlineColor={style.activeOutlineColor}
           trs={trs}
           availability={availability}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       ))}
       {BOX_EDGES.map((edge, i) => {
@@ -89,6 +91,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onMouseMove={edge.isDraggable ? handleEdgeMouseMove : undefined}
             onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
             availability={availability}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         );
       })}
@@ -119,6 +122,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onPointMouseMove={handlePointMouseMove}
             onPointMouseUp={handlePointMouseUp}
             availability={availability}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         ))}
     </>

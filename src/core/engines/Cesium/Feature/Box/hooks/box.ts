@@ -13,7 +13,12 @@ import { useCesium } from "resium";
 import type { Property } from "..";
 import { sampleTerrainHeightFromCartesian } from "../../../common";
 import { useContext } from "../../context";
-import { type FeatureProps, toColor, toTimeInterval } from "../../utils";
+import {
+  type FeatureProps,
+  toColor,
+  toTimeInterval,
+  toDistanceDisplayCondition,
+} from "../../utils";
 import type { EdgeEventCallback } from "../Edge";
 import type { PointEventCallback } from "../ScalePoints";
 import { computeMouseMoveAmount, updateTrs } from "../utils";
@@ -293,12 +298,17 @@ export const useHooks = ({
   }, [cursor]);
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
   return {
     style,
     trs,
     scalePointStyle,
     availability,
+    distanceDisplayCondition,
     handlePointMouseDown,
     handlePointMouseMove,
     handlePointMouseUp,

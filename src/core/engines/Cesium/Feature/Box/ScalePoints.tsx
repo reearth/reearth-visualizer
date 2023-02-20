@@ -4,6 +4,7 @@ import {
   Color,
   TimeIntervalCollection,
   TranslationRotationScale,
+  DistanceDisplayCondition,
 } from "cesium";
 import { FC, memo } from "react";
 import { BoxGraphics, PolylineGraphics } from "resium";
@@ -50,6 +51,7 @@ type Props = {
   visiblePoint?: boolean;
   visibleAxisLine?: boolean;
   availability?: TimeIntervalCollection;
+  distanceDisplayCondition?: DistanceDisplayCondition;
   onPointMouseDown?: PointEventCallback;
   onPointMouseMove?: PointEventCallback;
   onPointMouseUp?: PointEventCallback;
@@ -72,6 +74,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
   visiblePoint,
   visibleAxisLine,
   availability,
+  distanceDisplayCondition,
   onPointMouseDown,
   onPointMouseMove,
   onPointMouseUp,
@@ -113,6 +116,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           outline={!!pointOutlineColor}
           outlineColor={pointOutlineColorCb}
           outlineWidth={pointOutlineWidth}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       </EntityExt>
       <EntityExt
@@ -129,6 +133,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           outline={!!pointOutlineColor}
           outlineColor={pointOutlineColorCb}
           outlineWidth={pointOutlineWidth}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       </EntityExt>
       <EntityExt
@@ -141,6 +146,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
           material={axisColorProperty}
           width={axisLineWidth}
           arcType={ArcType.NONE}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       </EntityExt>
     </>
