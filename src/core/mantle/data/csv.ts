@@ -68,8 +68,8 @@ const parseCSV = async (
 };
 
 const SUPPORTED_COORDINATES = {
-  lat: 0,
-  lng: 1,
+  lng: 0,
+  lat: 1,
   height: 2,
 } as const;
 
@@ -106,11 +106,25 @@ const makeGeoJSONFromArray = (
         };
       }
 
-      if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
-        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 0) };
-      }
       if (options?.lngColumn !== undefined && [headers[idx], idx].includes(options.lngColumn)) {
-        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 1) };
+        return {
+          ...result,
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.lng,
+          ),
+        };
+      }
+      if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
+        return {
+          ...result,
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.lat,
+          ),
+        };
       }
       if (
         options?.heightColumn !== undefined &&
@@ -118,7 +132,12 @@ const makeGeoJSONFromArray = (
       ) {
         return {
           ...result,
-          geometry: setCoordinatesToPointGeometry(result.geometry, value, 2, true),
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.height,
+            true,
+          ),
         };
       }
 

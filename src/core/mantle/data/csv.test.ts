@@ -7,7 +7,7 @@ test("with header", async () => {
   const fetchDataMock = vi.spyOn(Utils, "f");
   fetchDataMock.mockImplementation(async () => {
     return {
-      text: async () => `id,country,lat,,lng,height
+      text: async () => `id,country,lng,,lat,height
 1,Japan,0,,1,10
 2,US,2,,3,
 3,UK,4,,5,30
@@ -70,7 +70,7 @@ test("with header", async () => {
 test("specify csv directly", async () => {
   const features = await fetchCSV({
     type: "csv",
-    value: `id,lat,lng,height,country\n1,0,0,0,Japan`,
+    value: `id,lng,lat,height,country\n1,0,0,0,Japan`,
     csv: {
       idColumn: "id",
       latColumn: "lat",
@@ -101,7 +101,7 @@ test("has header but set index", async () => {
   fetchDataMock.mockImplementation(async () => {
     return {
       // lat has no header name
-      text: async () => `id,country,,,lng
+      text: async () => `id,country,,,lat
 1,Japan,0,,1
 2,US,2,,3
 3,UK,4,,5
@@ -114,8 +114,8 @@ test("has header but set index", async () => {
     url: "http://example.com",
     csv: {
       idColumn: 0,
-      latColumn: 2,
-      lngColumn: 100, // This should not found
+      lngColumn: 2,
+      latColumn: 100, // This should not found
       noHeader: false,
     },
   });
@@ -127,7 +127,7 @@ test("has header but set index", async () => {
       geometry: undefined,
       properties: {
         country: "Japan",
-        lng: "1",
+        lat: "1",
       },
       range: undefined,
     },
@@ -137,7 +137,7 @@ test("has header but set index", async () => {
       geometry: undefined,
       properties: {
         country: "US",
-        lng: "3",
+        lat: "3",
       },
       range: undefined,
     },
@@ -147,7 +147,7 @@ test("has header but set index", async () => {
       geometry: undefined,
       properties: {
         country: "UK",
-        lng: "5",
+        lat: "5",
       },
       range: undefined,
     },
@@ -159,7 +159,7 @@ test("has multiline field", async () => {
   fetchDataMock.mockImplementation(async () => {
     return {
       // lat has no header name
-      text: async () => `id,country,lat,text,lng
+      text: async () => `id,country,lng,text,lat
 1,Japan,0,"Hello
 World",1
 2,US,2,"This is list
@@ -178,8 +178,8 @@ I'm CSV",5
     url: "http://example.com",
     csv: {
       idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4, // This should not fount.
+      lngColumn: 2,
+      latColumn: 4, // This should not fount.
       noHeader: false,
     },
   });
@@ -249,8 +249,8 @@ test("without header", async () => {
     url: "http://example.com",
     csv: {
       idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4,
+      lngColumn: 2,
+      latColumn: 4,
       noHeader: true,
     },
   });
@@ -305,8 +305,8 @@ test("some delimiter", async () => {
     url: "http://example.com",
     csv: {
       idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4,
+      lngColumn: 2,
+      latColumn: 4,
       noHeader: true,
     },
   });
@@ -350,7 +350,7 @@ test("invalid parameters", async () => {
   const generateRandomStringMock = vi.spyOn(Utils, "generateRandomString");
   fetchDataMock.mockImplementation(async () => {
     return {
-      text: async () => `id,lat,lng,height
+      text: async () => `id,lng,lat,height
 1,abc,1,10
 ,2,,20
 3,,,30
