@@ -54,7 +54,7 @@ export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] | void {
             f.properties.position?.latitude || 0,
           ],
         },
-        properties: {},
+        properties: f.properties,
       };
     });
 }
