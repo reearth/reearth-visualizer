@@ -408,7 +408,7 @@ export class Node {
         }
       }
     } else if (this._value === "rgb") {
-      Color.fromBytes(
+      color = Color.fromBytes(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
         args[2].evaluate(feature),
@@ -417,26 +417,28 @@ export class Node {
     } else if (this._value === "rgba") {
       // convert between css alpha (0 to 1) and cesium alpha (0 to 255)
       const a = args[3].evaluate(feature) * 255;
-      Color.fromBytes(
+      color = Color.fromBytes(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
         args[2].evaluate(feature),
         a,
       );
     } else if (this._value === "hsl") {
-      Color.fromHsl(
+      const hsl = Color.fromHsl(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
         args[2].evaluate(feature),
         1.0,
       );
+      if (hsl) color = hsl;
     } else if (this._value === "hsla") {
-      Color.fromHsl(
+      const hsl = Color.fromHsl(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
         args[2].evaluate(feature),
         args[3].evaluate(feature),
       );
+      if (hsl) color = hsl;
     }
     return color.toCssHexString();
   }
