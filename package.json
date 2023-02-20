@@ -139,7 +139,7 @@
         "mini-svg-data-uri": "1.4.4",
         "parse-domain": "7.0.1",
         "quickjs-emscripten": "0.21.1",
-        "quickjs-emscripten-sync": "1.5.1",
+        "quickjs-emscripten-sync": "1.5.2",
         "rc-slider": "9.7.5",
         "react": "18.2.0",
         "react-accessible-accordion": "5.0.0",

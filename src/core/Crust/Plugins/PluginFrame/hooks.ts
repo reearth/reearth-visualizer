@@ -176,6 +176,7 @@ export default function useHook({
         isMarshalable: target =>
           defaultIsMarshalable(target) ||
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
+        experimentalContextEx: true,
       });
 
       const e =
