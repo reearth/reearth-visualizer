@@ -33,4 +33,9 @@ Object.defineProperty(window, "matchMedia", {
   })),
 });
 
+Object.defineProperty(window, "requestIdleCallback", {
+  writable: true,
+  value: vi.fn(),
+});
+
 afterEach(cleanup);

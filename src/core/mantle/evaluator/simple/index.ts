@@ -14,7 +14,7 @@ import {
 import { defined } from "../../utils";
 
 import { ConditionalExpression } from "./conditionalExpression";
-import { Expression } from "./expression";
+import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
 
 export async function evalSimpleLayer(
@@ -70,6 +70,31 @@ export function evalLayerAppearances(
       ),
     ]),
   );
+}
+
+export function clearAllExpressionCaches(
+  layer: LayerSimple | undefined,
+  feature: Feature | undefined,
+) {
+  const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
+
+  Object.entries(appearances).forEach(([, v]) => {
+    Object.entries(v).forEach(([, expressionContainer]) => {
+      if (hasExpression(expressionContainer)) {
+        const styleExpression = expressionContainer.expression;
+        if (typeof styleExpression === "object" && styleExpression.conditions) {
+          styleExpression.conditions.forEach(([expression1, expression2]) => {
+            clearExpressionCaches(expression1, feature, layer?.defines);
+            clearExpressionCaches(expression2, feature, layer?.defines);
+          });
+        } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+          clearExpressionCaches(String(styleExpression), feature, layer?.defines);
+        } else if (typeof styleExpression === "string") {
+          clearExpressionCaches(styleExpression, feature, layer?.defines);
+        }
+      }
+    });
+  });
 }
 
 function hasExpression(e: any): e is ExpressionContainer {

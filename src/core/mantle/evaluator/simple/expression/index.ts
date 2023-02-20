@@ -1,1 +1,1 @@
-export { Expression } from "./expression";
+export { Expression, clearExpressionCaches } from "./expression";

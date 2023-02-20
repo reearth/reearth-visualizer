@@ -1,7 +1,14 @@
 import { useAtom } from "jotai";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
-import { computeAtom, DataType, type Atom, evalFeature, ComputedFeature } from "../../mantle";
+import {
+  clearAllExpressionCaches,
+  computeAtom,
+  DataType,
+  type Atom,
+  evalFeature,
+  ComputedFeature,
+} from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
 
 export type { Atom as Atoms } from "../../mantle";
@@ -73,6 +80,22 @@ export default function useHooks(
       }
     };
   }, [layer, forceUpdateFeatures]);
+
+  // Clear expression cache if layer is unmounted
+  useEffect(
+    () => () => {
+      window.requestIdleCallback(() => {
+        // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
+        computedLayer?.originalFeatures.forEach(f => {
+          clearAllExpressionCaches(
+            computedLayer.layer.type === "simple" ? computedLayer.layer : undefined,
+            f,
+          );
+        });
+      });
+    },
+    [computedLayer],
+  );
 
   return {
     computedLayer,
