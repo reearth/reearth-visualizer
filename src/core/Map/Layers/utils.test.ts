@@ -12,11 +12,9 @@ test("deepAssign", () => {
 
   expect(
     deepAssign({ marker: { color: "red", size: 100 } }, { marker: { color: undefined } }),
-  ).toEqual({ marker: { color: "red", size: 100 } });
+  ).toEqual({ marker: { size: 100 } });
 
-  expect(deepAssign({ marker: { color: "red", size: 100 } }, { marker: undefined })).toEqual({
-    marker: { color: "red", size: 100 },
-  });
+  expect(deepAssign({ marker: { color: "red", size: 100 } }, { marker: undefined })).toEqual({});
 
   expect(
     deepAssign(
@@ -24,7 +22,6 @@ test("deepAssign", () => {
       { marker: undefined },
     ),
   ).toEqual({
-    marker: { color: "red", size: 100 },
     test: { value: ["abc"] },
   });
 

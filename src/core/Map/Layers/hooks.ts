@@ -1,5 +1,5 @@
 import { atom, useAtomValue } from "jotai";
-import { merge, omit, isEqual } from "lodash-es";
+import { omit, isEqual } from "lodash-es";
 import {
   ForwardedRef,
   useCallback,
@@ -134,8 +134,7 @@ export default function useHooks({
 
       // prevents unnecessary copying of data value
       const dataValue = ol.data?.value ?? (l.type === "simple" ? l.data?.value : undefined);
-      const res = merge(
-        {},
+      const res = deepAssign(
         {
           ...l,
           ...(l.type === "simple" && l.data ? { data: omit(l.data, "value") } : {}),

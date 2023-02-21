@@ -465,7 +465,7 @@ test("override", () => {
   if (l4.type !== "simple") throw new Error("invalid layer type");
   expect(l4.title).toBe("Y!!");
   expect(l4.data?.value).toBe(dataValue2);
-  expect(l4.marker).toEqual({ pointSize: 10, pointColor: "red" });
+  expect(l4.marker).toEqual({});
   expect(l2.tags).toEqual([{ id: "t2", label: "t2" }]);
 
   result.current.ref.current?.override("y", { marker: undefined });
@@ -541,7 +541,7 @@ test("override property for compat", () => {
   const l2 = result.current.flattenedLayers[1];
   if (l2.type !== "simple") throw new Error("invalid layer type");
   expect(l2.data?.value).toBe(dataValue);
-  expect(l2.marker).toEqual({ pointSize: 10, pointColor: "red" });
+  expect(l2.marker).toEqual({});
 
   result.current.ref.current?.override("y");
   rerender();
@@ -549,7 +549,7 @@ test("override property for compat", () => {
   if (l3.type !== "simple") throw new Error("invalid layer type");
   expect(l3.title).toBe("Y");
   expect(l3.data?.value).toBe(dataValue);
-  expect(l3.marker).toEqual({ pointSize: 10, pointColor: "red" });
+  expect(l3.marker).toEqual({});
   expect(l3.tags).toBeUndefined();
 });
 

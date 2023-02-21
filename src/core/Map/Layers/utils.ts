@@ -5,6 +5,10 @@ export const deepAssign = <O extends Record<string, any>>(obj: O, src: O) => {
     Object.entries({ ...src, ...obj })
       .map(([k, v]): [string, any] | undefined => {
         const srcV: unknown = src[k];
+        if (Object.hasOwn(src, k) && (srcV === undefined || srcV === null)) {
+          return undefined;
+        }
+
         if (srcV === undefined) {
           return [k, v];
         }
