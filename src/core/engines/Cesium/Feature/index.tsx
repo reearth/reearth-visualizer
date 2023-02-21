@@ -87,7 +87,7 @@ export default function Feature({
             <C
               {...props}
               key={`${layer?.id || ""}_${k}`}
-              id={layer.id}
+              id={`${layer.id}_${k}`}
               property={pickProperty(k, layer) || layer[k]}
               layer={layer}
               isVisible={layer.layer.visible !== false && !isHidden}
@@ -118,7 +118,7 @@ export default function Feature({
             <C
               {...props}
               key={`${f?.id || ""}_${k}`}
-              id={f ? f.id : layer.id}
+              id={`${f ? f.id : layer.id}_${k}`}
               property={f ? f[k] : layer[k] || pickProperty(k, layer)}
               geometry={f?.geometry}
               feature={f}
