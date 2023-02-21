@@ -327,7 +327,7 @@ export default function useHooks({
         rawLayer.data.value.id = id;
       }
 
-      const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
+      const layer2 = { id, ...omit(rawLayer, "id", "type", "children") };
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];

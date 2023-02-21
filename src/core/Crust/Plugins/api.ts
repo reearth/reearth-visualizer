@@ -293,7 +293,6 @@ export function commonReearth({
   selectedLayer,
   selectedFeature,
   layerSelectionReason,
-  layerOverriddenProperties,
   selectLayer,
   showLayer,
   hideLayer,
@@ -334,7 +333,6 @@ export function commonReearth({
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
-  layerOverriddenProperties?: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: LayersRef["select"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
@@ -459,8 +457,16 @@ export function commonReearth({
       get hide() {
         return hideLayer;
       },
+      // For compat
       get overriddenProperties() {
-        return layerOverriddenProperties?.();
+        return layers()
+          ?.overriddenLayers?.()
+          ?.reduce((res, v) => {
+            return {
+              ...res,
+              [v.id]: v.compat?.property,
+            };
+          }, {} as { [id: string]: any });
       },
       get overrideProperty() {
         return overrideLayerProperty;
@@ -509,6 +515,9 @@ export function commonReearth({
       },
       get override() {
         return layers()?.override;
+      },
+      get overridden() {
+        return layers()?.overriddenLayers?.();
       },
       get replace() {
         return layers()?.replace;

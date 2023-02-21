@@ -654,6 +654,7 @@ test("compat", () => {
     default: {
       location: { lat: 1, lng: 2 },
       pointSize: 10,
+      pointColor: "yellow",
     },
   });
 

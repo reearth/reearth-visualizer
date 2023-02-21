@@ -268,10 +268,6 @@ export default function ({
     [layersRef],
   );
 
-  const layerOverriddenProperties = useCallback(() => {
-    return layersRef?.overriddenLayers();
-  }, [layersRef]);
-
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -288,7 +284,6 @@ export default function ({
         selectedLayer: getSelectedLayer,
         selectedFeature: getSelectedFeature,
         layerSelectionReason: getLayerSelectionReason,
-        layerOverriddenProperties,
         showLayer,
         hideLayer,
         addLayer,
@@ -367,7 +362,6 @@ export default function ({
       showLayer,
       zoomIn,
       zoomOut,
-      layerOverriddenProperties,
     ],
   );
 
