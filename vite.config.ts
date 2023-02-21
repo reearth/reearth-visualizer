@@ -22,6 +22,7 @@ export default defineConfig({
     port: 3000,
   },
   build: {
+    assetsDir: "static", // avoid conflicts with backend asset endpoints
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
