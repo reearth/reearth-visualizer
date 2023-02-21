@@ -13,7 +13,11 @@ export function evalTimeInterval(
     if (!property) {
       continue;
     }
-    startTimes.push(new Date(property));
+    try {
+      startTimes.push(new Date(property));
+    } catch {
+      // do nothing
+    }
   }
   startTimes.sort((a, b) => a.getTime() - b.getTime());
   return startTimes.map((start, i) => [
