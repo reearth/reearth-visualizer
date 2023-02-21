@@ -118,7 +118,7 @@ export default function useHooks({
     () =>
       selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
         ...b,
-        property: b.property.default ?? b.property,
+        property: b.property?.default ?? b.property,
       })),
     [selectedLayer.layer?.layer.infobox?.blocks],
   );
