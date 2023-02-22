@@ -385,6 +385,34 @@ test("add, replace, delete", () => {
   ]);
 });
 
+test("delete", () => {
+  const layers: Layer[] = [{ id: "x", type: "simple", title: "X" }];
+
+  const { result, rerender } = renderHook(() => {
+    const ref = useRef<Ref>(null);
+    const { flattenedLayers } = useHooks({ layers, ref });
+    return { ref, flattenedLayers };
+  });
+
+  result.current.ref.current?.add({
+    type: "simple",
+    title: "a",
+  });
+  const lb = result.current.ref.current?.add({
+    type: "simple",
+    title: "b",
+  });
+
+  result.current.ref.current?.deleteLayer(lb?.id || "");
+
+  rerender();
+
+  expect(result.current.flattenedLayers).toEqual([
+    { type: "simple", id: "x", title: "X" },
+    { type: "simple", id: expect.any(String), title: "a" },
+  ]);
+});
+
 test("override", () => {
   const dataValue = {
     type: "Feature",

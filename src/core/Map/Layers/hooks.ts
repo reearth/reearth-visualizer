@@ -374,8 +374,8 @@ export default function useHooks({
             lazyLayerMap.delete(id);
             showLayer(id);
           });
-        tempLayersRef.current = tempLayersRef.current.filter(l =>
-          deleted.find(ll => ll.id === l.id),
+        tempLayersRef.current = tempLayersRef.current.filter(
+          l => !deleted.find(ll => ll.id === l.id),
         );
         return newLayers;
       });
