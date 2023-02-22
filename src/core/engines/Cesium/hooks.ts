@@ -166,18 +166,25 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
+    const prevTag = getTag(prevSelectedEntity.current);
+    if (
+      (!prevTag?.featureId &&
+        prevTag?.layerId &&
+        selectedLayerId?.layerId &&
+        prevTag?.layerId === selectedLayerId.layerId) ||
+      (prevTag?.featureId &&
+        selectedLayerId?.featureId &&
+        prevTag?.featureId === selectedLayerId.featureId)
+    )
+      return;
+
     const entity =
       findEntity(viewer, undefined, selectedLayerId?.featureId) ||
       findEntity(viewer, selectedLayerId?.layerId);
     if (!entity || entity instanceof Entity) {
       viewer.selectedEntity = entity;
     }
-    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
-    if (
-      prevSelectedEntity.current === entity ||
-      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
-    )
-      return;
+    if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
     if (!entity && selectedLayerId?.featureId) {

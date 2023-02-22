@@ -130,7 +130,7 @@ export function findEntity(
     }
 
     const tag = getTag(prim);
-    if (tag?.layerId === layerId) {
+    if (tag?.layerId && layerId && tag?.layerId === layerId) {
       return prim;
     }
   }

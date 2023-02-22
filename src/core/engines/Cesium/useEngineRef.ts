@@ -28,6 +28,7 @@ import {
   lookAtWithoutAnimation,
   sampleTerrainHeight,
 } from "./common";
+import { getTag } from "./Feature";
 import { findEntity } from "./utils";
 
 export default function useEngineRef(
@@ -96,6 +97,18 @@ export default function useEngineRef(
           if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
             viewer.flyTo(entityFromFeatureId, options);
           } else {
+            for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
+              for (let i = 0; i < ds.length; i++) {
+                const d = ds.get(i);
+                const entities = d.entities.values;
+                const e = entities.find(e => getTag(e)?.layerId === layerOrFeatureId);
+                if (e) {
+                  viewer.flyTo(d);
+                  return;
+                }
+              }
+            }
+
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
             if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
               viewer.flyTo(entityFromLayerId, options);

@@ -10,7 +10,12 @@ import { DataType, evalFeature } from "@reearth/core/mantle";
 import { getExtname } from "@reearth/util/path";
 
 import type { ResourceAppearance, AppearanceTypes } from "../../..";
-import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps } from "../utils";
+import {
+  attachTag,
+  extractSimpleLayerData,
+  type FeatureComponentConfig,
+  type FeatureProps,
+} from "../utils";
 
 import { attachStyle } from "./utils";
 
@@ -57,6 +62,9 @@ export default function Resource({ isVisible, property, layer }: Props) {
   const handleOnChange = useCallback(
     (e: CesiumCzmlDataSource | CesiumKmlDataSource | CesiumGeoJsonDataSource) => {
       attachStyle(e, appearances, layer, evalFeature, viewer.clock.currentTime);
+      e.entities.values.forEach(e => {
+        attachTag(e, { layerId: layer?.id });
+      });
     },
     [appearances, layer, viewer],
   );
