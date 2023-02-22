@@ -83,6 +83,7 @@ export type PolygonAppearance = {
   lineJoin?: CanvasLineJoin;
   near?: number;
   far?: number;
+  extrudedHeight?: number;
 };
 
 export type EllipsoidAppearance = {

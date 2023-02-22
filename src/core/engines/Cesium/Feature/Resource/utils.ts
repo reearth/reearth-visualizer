@@ -239,6 +239,9 @@ export const attachStyle = (
             name: "heightReference",
             type: "heightReference",
           },
+          extrudedHeight: {
+            name: "extrudedHeight",
+          },
         });
       }
     });
