@@ -176,16 +176,38 @@ const useFeature = ({
   const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
   const tileAppearanceShow = tileAppearance?.show;
   const tileAppearanceColor = tileAppearance?.color;
+
+  // If styles are updated while features are calculating,
+  // we stop calculating features, and reassign styles.
+  const shouldSkipComputing = useRef(false);
   useEffect(() => {
-    cachedFeaturesRef.current.map(f => {
+    shouldSkipComputing.current = true;
+  }, [tileAppearanceShow, tileAppearanceColor]);
+
+  const computeFeatures = useCallback(() => {
+    for (const f of cachedFeaturesRef.current) {
+      if (shouldSkipComputing.current) {
+        break;
+      }
+
       const properties = f.feature.properties;
       if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
         f.feature.properties.color = tileAppearanceColor;
         f.feature.properties.show = tileAppearanceShow;
         attachComputedFeature(f);
       }
-    });
+    }
   }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
+
+  useEffect(() => {
+    computeFeatures();
+
+    // Computation is stopped, start re-calculating.
+    if (shouldSkipComputing.current) {
+      shouldSkipComputing.current = false;
+      computeFeatures();
+    }
+  }, [computeFeatures]);
 };
 
 export const useHooks = ({
