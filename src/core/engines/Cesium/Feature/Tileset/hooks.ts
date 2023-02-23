@@ -179,9 +179,11 @@ const useFeature = ({
 
   // If styles are updated while features are calculating,
   // we stop calculating features, and reassign styles.
+  const skippedComputingAt = useRef<number | null>();
   const shouldSkipComputing = useRef(false);
   useEffect(() => {
     shouldSkipComputing.current = true;
+    skippedComputingAt.current = Date.now();
   }, [tileAppearanceShow, tileAppearanceColor]);
 
   const computeFeatures = useCallback(() => {
@@ -200,10 +202,15 @@ const useFeature = ({
   }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
 
   useEffect(() => {
+    const startedComputingAt = Date.now();
     computeFeatures();
 
     // Computation is stopped, start re-calculating.
-    if (shouldSkipComputing.current) {
+    if (
+      shouldSkipComputing.current &&
+      skippedComputingAt.current &&
+      skippedComputingAt.current <= startedComputingAt
+    ) {
       shouldSkipComputing.current = false;
       computeFeatures();
     }
