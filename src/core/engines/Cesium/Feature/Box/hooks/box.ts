@@ -10,8 +10,10 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
+import { LayerEditEvent } from "@reearth/core/Map";
+
 import type { Property } from "..";
-import { sampleTerrainHeightFromCartesian } from "../../../common";
+import { sampleTerrainHeightFromCartesian, updateMapController } from "../../../common";
 import { useContext } from "../../context";
 import {
   type FeatureProps,
@@ -28,7 +30,10 @@ export const useHooks = ({
   geometry,
   sceneProperty,
   feature,
-}: Pick<FeatureProps<Property>, "property" | "sceneProperty" | "geometry" | "feature">) => {
+  onLayerEdit,
+}: Pick<FeatureProps<Property>, "property" | "sceneProperty" | "geometry" | "feature"> & {
+  onLayerEdit?: (e: LayerEditEvent) => void;
+}) => {
   const { viewer } = useCesium();
   const ctx = useContext();
   const {
@@ -121,9 +126,13 @@ export const useHooks = ({
 
   // ScalePoint event handlers
   const currentPointIndex = useRef<number>();
-  const handlePointMouseDown: PointEventCallback = useCallback((_, { index }) => {
-    currentPointIndex.current = index;
-  }, []);
+  const handlePointMouseDown: PointEventCallback = useCallback(
+    (_, { index }) => {
+      updateMapController(viewer, false);
+      currentPointIndex.current = index;
+    },
+    [viewer],
+  );
   const prevMousePosition2dForPoint = useRef<Cartesian2>();
   const handlePointMouseMove: PointEventCallback = useCallback(
     (e, { position, oppositePosition, pointLocal, index, layerId }) => {
@@ -223,6 +232,19 @@ export const useHooks = ({
         nextTranslation,
       ) as Cartographic;
 
+      onLayerEdit?.({
+        layerId,
+        scale: {
+          width: nextScale.x,
+          length: nextScale.y,
+          height: nextScale.z,
+          location: {
+            lat: CesiumMath.toDegrees(cartographic?.latitude),
+            lng: CesiumMath.toDegrees(cartographic?.longitude),
+            height: cartographic?.height,
+          },
+        },
+      });
       ctx?.onLayerEdit?.({
         layerId,
         scale: {
@@ -237,18 +259,23 @@ export const useHooks = ({
         },
       });
     },
-    [trs, viewer, allowEnterGround, ctx],
+    [trs, viewer, allowEnterGround, ctx, onLayerEdit],
   );
   const handlePointMouseUp: PointEventCallback = useCallback(() => {
     currentPointIndex.current = undefined;
     prevMousePosition2dForPoint.current = undefined;
-  }, []);
+    updateMapController(viewer, true);
+  }, [viewer]);
 
   // Edge event handlers
   const currentEdgeIndex = useRef<number>();
-  const handleEdgeMouseDown: EdgeEventCallback = useCallback((_, { index }) => {
-    currentEdgeIndex.current = index;
-  }, []);
+  const handleEdgeMouseDown: EdgeEventCallback = useCallback(
+    (_, { index }) => {
+      currentEdgeIndex.current = index;
+      updateMapController(viewer, false);
+    },
+    [viewer],
+  );
   const prevMouseXAxisForEdge = useRef<number>();
   const handleEdgeMouseMove: EdgeEventCallback = useCallback(
     (e, { index, layerId }) => {
@@ -277,6 +304,14 @@ export const useHooks = ({
 
       const { heading, pitch, roll } = HeadingPitchRoll.fromQuaternion(nextRotation);
 
+      onLayerEdit?.({
+        layerId,
+        rotate: {
+          heading,
+          pitch,
+          roll,
+        },
+      });
       ctx?.onLayerEdit?.({
         layerId,
         rotate: {
@@ -286,12 +321,13 @@ export const useHooks = ({
         },
       });
     },
-    [trs, ctx],
+    [trs, ctx, onLayerEdit],
   );
   const handleEdgeMouseUp: EdgeEventCallback = useCallback(() => {
     currentEdgeIndex.current = undefined;
     prevMouseXAxisForEdge.current = undefined;
-  }, []);
+    updateMapController(viewer, true);
+  }, [viewer]);
 
   useEffect(() => {
     document.body.style.cursor = cursor || "default";

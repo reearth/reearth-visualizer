@@ -22,6 +22,8 @@ import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { lookupFeatures, translationWithClamping } from "../../utils";
 import { attachTag, extractSimpleLayer, extractSimpleLayerData, toColor } from "../utils";
 
+import { useClippingBox } from "./useClippingBox";
+
 import { Property } from ".";
 
 const useData = (layer: ComputedLayer | undefined) => {
@@ -188,6 +190,7 @@ const useFeature = ({
 
 export const useHooks = ({
   id,
+  boxId,
   isVisible,
   property,
   sceneProperty,
@@ -199,6 +202,7 @@ export const useHooks = ({
   onFeatureDelete,
 }: {
   id: string;
+  boxId: string;
   isVisible?: boolean;
   property?: Property;
   sceneProperty?: SceneProperty;
@@ -223,7 +227,8 @@ export const useHooks = ({
     planes: _planes,
     visible: clippingVisible = true,
     direction = "inside",
-  } = experimental_clipping || {};
+    builtinBoxProps,
+  } = useClippingBox({ clipping: experimental_clipping, sceneProperty, boxId });
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type } = useData(layer);
@@ -418,5 +423,6 @@ export const useHooks = ({
     ref,
     style,
     clippingPlanes,
+    builtinBoxProps,
   };
 };

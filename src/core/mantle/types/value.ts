@@ -53,6 +53,8 @@ export type Plane = {
 
 // Familiar with Cesium
 export type EXPERIMENTAL_clipping = {
+  useBuiltinBox?: boolean;
+  keepAboveGround?: boolean;
   planes?: {
     normal: {
       x: number;

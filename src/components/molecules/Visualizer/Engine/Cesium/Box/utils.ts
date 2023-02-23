@@ -68,7 +68,7 @@ function screenProjectVector(
   return screenVector2d;
 }
 
-const dotMousePosition = (
+export const computeMoveAmount = (
   scene: Scene,
   mouseMove: {
     startPosition: Cartesian2;
@@ -106,7 +106,7 @@ export const computeMouseMoveAmount = (
   direction: Cartesian3,
   length: number,
 ) => {
-  const { moveAmount, pixelsPerStep } = dotMousePosition(scene, mouseMove, position, direction);
+  const { moveAmount, pixelsPerStep } = computeMoveAmount(scene, mouseMove, position, direction);
   const scaleAmount = moveAmount / length;
   const pixelLengthAfterScaling = pixelsPerStep * length + pixelsPerStep * length * scaleAmount;
   return { pixelLengthAfterScaling, scaleAmount };
