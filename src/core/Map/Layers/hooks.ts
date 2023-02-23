@@ -228,6 +228,14 @@ export default function useHooks({
     [findById],
   );
 
+  const { select, selectedLayer } = useSelection({
+    flattenedLayers,
+    selectedLayerId,
+    selectedReason: selectionReason,
+    getLazyLayer: findById,
+    onLayerSelect,
+  });
+
   const add = useCallback(
     (layer: NaiveLayer): LazyLayer | undefined => {
       if (!isValidLayer(layer)) return;
@@ -357,6 +365,11 @@ export default function useHooks({
 
   const deleteLayer = useCallback(
     (...ids: string[]) => {
+      const selectedId = ids.find(id => id === selectedLayerId?.layerId);
+      if (selectedId) {
+        // Reset selected layer
+        select();
+      }
       setTempLayers(layers => {
         const deleted: Layer[] = [];
         const newLayers = filterLayers(layers, l => {
@@ -380,7 +393,7 @@ export default function useHooks({
         return newLayers;
       });
     },
-    [layerMap, atomMap, lazyLayerMap, showLayer],
+    [layerMap, atomMap, lazyLayerMap, showLayer, select, selectedLayerId],
   );
 
   const isLayer = useCallback(
@@ -474,14 +487,6 @@ export default function useHooks({
   );
 
   const overriddenLayersRef = useCallback(() => overriddenLayers, [overriddenLayers]);
-
-  const { select, selectedLayer } = useSelection({
-    flattenedLayers,
-    selectedLayerId,
-    selectedReason: selectionReason,
-    getLazyLayer: findById,
-    onLayerSelect,
-  });
 
   useImperativeHandle(
     ref,

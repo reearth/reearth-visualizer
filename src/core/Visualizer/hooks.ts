@@ -116,11 +116,11 @@ export default function useHooks({
   // blocks
   const blocks = useMemo(
     () =>
-      selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
+      selectedLayer.layer?.layer?.infobox?.blocks?.map(b => ({
         ...b,
         property: b.property?.default ?? b.property,
       })),
-    [selectedLayer.layer?.layer.infobox?.blocks],
+    [selectedLayer.layer?.layer?.infobox?.blocks],
   );
 
   // Infobox
@@ -132,7 +132,7 @@ export default function useHooks({
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
             visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
-            property: selectedLayer.layer?.layer.infobox?.property?.default,
+            property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
         : undefined,
