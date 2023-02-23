@@ -110,7 +110,7 @@ export default function useHooks(
         });
       });
     },
-    [computedLayer],
+    [], // eslint-disable-line react-hooks/exhaustive-deps -- clear cache only when layer is unmounted
   );
 
   return {
