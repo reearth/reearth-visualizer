@@ -241,5 +241,7 @@ func TestGetAliasFromHost(t *testing.T) {
 	assert.Equal(t, "", getAliasFromHost("", ".example.com")) // invalid regexp
 	assert.Equal(t, "", getAliasFromHost("", "{}.example.com"))
 	assert.Equal(t, "aaa", getAliasFromHost("aaa.example.com", "{}.example.com"))
+	assert.Equal(t, "aaa", getAliasFromHost("aaa.example.com", "https://{}.example.com"))
+	assert.Equal(t, "aaa", getAliasFromHost("aaa.example.com", "http://{}.example.com"))
 	assert.Equal(t, "bbb.aaa", getAliasFromHost("bbb.aaa.example.com", "{}.example.com"))
 }

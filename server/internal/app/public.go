@@ -248,6 +248,7 @@ func getAliasFromHost(host, pattern string) string {
 	}
 
 	const placeholder = "<>"
+	pattern = strings.TrimPrefix(strings.TrimPrefix(pattern, "https://"), "http://")
 	pattern = strings.ReplaceAll(pattern, "{}", placeholder)
 	re, err := regexp.Compile(strings.ReplaceAll(regexp.QuoteMeta(pattern), placeholder, "(.+?)"))
 	if err != nil {
