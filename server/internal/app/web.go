@@ -46,6 +46,9 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 			config["auth0Audience"] = w.AuthConfig.AUD[0]
 		}
 	}
+	if w.HostPattern != "" {
+		config["published"] = w.HostPattern
+	}
 
 	for k, v := range w.WebConfig {
 		config[k] = v
