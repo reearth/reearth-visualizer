@@ -47,7 +47,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		}
 	}
 	if w.HostPattern != "" {
-		config["published"] = w.HostPattern
+		config["published"] = w.hostWithSchema()
 	}
 
 	for k, v := range w.WebConfig {
@@ -72,4 +72,11 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	})
 	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), m)
 	e.GET("*", notFound, m)
+}
+
+func (w *WebHandler) hostWithSchema() string {
+	if strings.HasPrefix(w.HostPattern, "http://") || strings.HasPrefix(w.HostPattern, "https://") {
+		return w.HostPattern
+	}
+	return "https://" + w.HostPattern
 }

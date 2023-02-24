@@ -66,7 +66,7 @@ func TestWeb(t *testing.T) {
 			name:        "reearth_config.json",
 			path:        "/reearth_config.json",
 			statusCode:  http.StatusOK,
-			body:        `{"a":"b","auth0Audience":"https://aud.example.com","auth0ClientId":"clientID","auth0Domain":"https://iss.example.com"}`,
+			body:        `{"a":"b","auth0Audience":"https://aud.example.com","auth0ClientId":"clientID","auth0Domain":"https://iss.example.com","published":"https://{}.example.com"}`,
 			contentType: "application/json; charset=UTF-8",
 		},
 		{
