@@ -73,7 +73,7 @@ export default ({
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
-    typeof meta?.cesiumIonAccessToken === "string"
+    typeof meta?.cesiumIonAccessToken === "string" && meta.cesiumIonAccessToken
       ? meta.cesiumIonAccessToken
       : Ion.defaultAccessToken;
   const cesiumIonAccessToken = property?.default?.ion || cesiumIonDefaultAccessToken;
