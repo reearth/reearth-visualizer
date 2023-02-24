@@ -3,7 +3,7 @@ import type { LineString, Position, GeoJsonProperties } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { f } from "./utils";
+import { f, generateRandomString } from "./utils";
 
 export async function fetchGPXfile(data: Data, _range?: DataRange): Promise<Feature[] | void> {
   const xmlDataStr = data.url ? await (await f(data.url)).text() : data.value;
@@ -66,8 +66,8 @@ function makeTrackPoints(trk: GPX["gpx"]["trk"]) {
   }, [] as TrackPoint[]);
 }
 
-function feature(geom: LineString | null, properties?: GeoJsonProperties): Feature {
-  const feat: any = { type: "Feature" };
+function feature(geom: LineString, properties?: GeoJsonProperties): Feature {
+  const feat: Feature = { type: "feature", id: generateRandomString(12) };
   feat.properties = properties || {};
   feat.geometry = geom;
   return feat;
