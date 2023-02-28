@@ -640,6 +640,7 @@ type ComplexityRoot struct {
 		IsBasicAuthActive func(childComplexity int) int
 		Name              func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
+		PublicIcon        func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
 		PublicNoIndex     func(childComplexity int) int
 		PublicTitle       func(childComplexity int) int
@@ -4351,6 +4352,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.PublicDescription(childComplexity), true
 
+	case "Project.publicIcon":
+		if e.complexity.Project.PublicIcon == nil {
+			break
+		}
+
+		return e.complexity.Project.PublicIcon(childComplexity), true
+
 	case "Project.publicImage":
 		if e.complexity.Project.PublicImage == nil {
 			break
@@ -6668,6 +6676,7 @@ type Project implements Node {
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
+  publicIcon: String!
   publicNoIndex: Boolean!
   imageUrl: URL
   teamId: ID!
@@ -7368,9 +7377,11 @@ input UpdateProjectInput {
   publicTitle: String
   publicDescription: String
   publicImage: String
+  publicIcon: String
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean
+  deletePublicIcon: Boolean
 }
 
 input UploadPluginInput {
@@ -29797,6 +29808,50 @@ func (ec *executionContext) fieldContext_Project_publicImage(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_publicIcon(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_publicIcon(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicIcon, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_publicIcon(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_publicNoIndex(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_publicNoIndex(ctx, field)
 	if err != nil {
@@ -30359,6 +30414,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIcon":
+				return ec.fieldContext_Project_publicIcon(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "imageUrl":
@@ -30586,6 +30643,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIcon":
+				return ec.fieldContext_Project_publicIcon(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "imageUrl":
@@ -30674,6 +30733,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIcon":
+				return ec.fieldContext_Project_publicIcon(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "imageUrl":
@@ -37587,6 +37648,8 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIcon":
+				return ec.fieldContext_Project_publicIcon(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "imageUrl":
@@ -47620,7 +47683,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicIcon", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "deletePublicIcon"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47723,6 +47786,14 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "publicIcon":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicIcon"))
+			it.PublicIcon, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "publicNoIndex":
 			var err error
 
@@ -47744,6 +47815,14 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletePublicImage"))
 			it.DeletePublicImage, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "deletePublicIcon":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletePublicIcon"))
+			it.DeletePublicIcon, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53032,6 +53111,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 		case "publicImage":
 
 			out.Values[i] = ec._Project_publicImage(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "publicIcon":
+
+			out.Values[i] = ec._Project_publicIcon(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"crypto/subtle"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -157,6 +158,37 @@ func PublishedIndex(pattern string, useParam bool) echo.HandlerFunc {
 	return PublishedIndexMiddleware(pattern, useParam, true)(nil)
 }
 
+func PublishedIconMiddleware(pattern string, useParam bool) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if c.Path() != "/favicon.ico" {
+				return next(c)
+			}
+
+			alias := resolveAlias(c, pattern, useParam)
+			if alias == "" {
+				return rerror.ErrNotFound
+			}
+
+			contr, err := publishedController(c)
+			if err != nil {
+				return err
+			}
+
+			r, err := contr.Icon(c.Request().Context(), alias)
+			if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+				return err
+			}
+
+			if len(r) == 0 {
+				return next(c)
+			}
+
+			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", r)
+		}
+	}
+}
+
 func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -180,11 +212,11 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 				Host:   c.Request().Host,
 				Path:   c.Request().URL.Path,
 			})
+			if err == nil && index == "" {
+				err = rerror.ErrNotFound
+			}
 			if err != nil {
 				return err
-			}
-			if index == "" {
-				return rerror.ErrNotFound
 			}
 
 			return c.HTML(http.StatusOK, index)
@@ -238,6 +270,9 @@ func resolveAlias(c echo.Context, pattern string, useParam bool) (a string) {
 	}
 	if a == "" {
 		a = getAliasFromHost(c.Request().Host, pattern)
+	}
+	if a == "" {
+		a = c.Request().Host
 	}
 	return
 }

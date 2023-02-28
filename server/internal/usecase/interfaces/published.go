@@ -16,6 +16,7 @@ type ProjectPublishedMetadata struct {
 	IsBasicAuthActive bool   `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername string `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
+	Favicon           bool   `json:"favicon,omitempty"`
 }
 
 func ProjectPublishedMetadataFrom(prj *project.Project) ProjectPublishedMetadata {
@@ -27,6 +28,7 @@ func ProjectPublishedMetadataFrom(prj *project.Project) ProjectPublishedMetadata
 		IsBasicAuthActive: prj.IsBasicAuthActive(),
 		BasicAuthUsername: prj.BasicAuthUsername(),
 		BasicAuthPassword: prj.BasicAuthPassword(),
+		Favicon:           prj.IsPublicIconDataPresent(),
 	}
 }
 
@@ -34,4 +36,5 @@ type Published interface {
 	Metadata(context.Context, string) (ProjectPublishedMetadata, error)
 	Data(context.Context, string) (io.Reader, error)
 	Index(context.Context, string, *url.URL) (string, error)
+	Icon(context.Context, string) ([]byte, error)
 }

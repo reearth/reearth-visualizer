@@ -12,23 +12,26 @@ import (
 
 type ProjectDocument struct {
 	ID                string
-	Archived          bool
-	IsBasicAuthActive bool
-	BasicAuthUsername string
-	BasicAuthPassword string
-	UpdatedAt         time.Time
-	PublishedAt       time.Time
+	Archived          bool   `bson:",omitempty"`
+	IsBasicAuthActive bool   `bson:",omitempty"`
+	BasicAuthUsername string `bson:",omitempty"`
+	BasicAuthPassword string `bson:",omitempty"`
 	Name              string
 	Description       string
-	Alias             string
-	ImageURL          string
-	PublicTitle       string
-	PublicDescription string
-	PublicImage       string
-	PublicNoIndex     bool
-	Team              string // DON'T CHANGE NAME'
-	Visualizer        string
-	PublishmentStatus string
+	Alias             string `bson:",omitempty"`
+	ImageURL          string `bson:",omitempty"`
+	PublicTitle       string `bson:",omitempty"`
+	PublicDescription string `bson:",omitempty"`
+	PublicImage       string `bson:",omitempty"`
+	PublicIocn        string `bson:",omitempty"`
+	PublicIcon        string `bson:",omitempty"`
+	PublicIconData    []byte `bson:",omitempty"`
+	PublicNoIndex     bool   `bson:",omitempty"`
+	Workspace         string `bson:"team,omitempty"` // DON'T CHANGE NAME'
+	Visualizer        string `bson:",omitempty"`
+	PublishmentStatus string `bson:",omitempty"`
+	UpdatedAt         time.Time
+	PublishedAt       time.Time
 }
 
 type ProjectConsumer = mongox.SliceFuncConsumer[*ProjectDocument, *project.Project]
@@ -60,8 +63,10 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		PublicTitle:       project.PublicTitle(),
 		PublicDescription: project.PublicDescription(),
 		PublicImage:       project.PublicImage(),
+		PublicIcon:        project.PublicIcon(),
+		PublicIconData:    project.PublicIconData(),
 		PublicNoIndex:     project.PublicNoIndex(),
-		Team:              project.Workspace().String(),
+		Workspace:         project.Workspace().String(),
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 	}, pid
@@ -72,7 +77,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.WorkspaceIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -99,6 +104,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
+		PublicIcon(d.PublicIcon).
+		PublicIconData(d.PublicIconData).
 		PublicNoIndex(d.PublicNoIndex).
 		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).

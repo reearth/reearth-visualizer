@@ -35,8 +35,10 @@ type UpdateProjectParam struct {
 	PublicTitle       *string
 	PublicDescription *string
 	PublicImage       *string
+	PublicIcon        *string
 	PublicNoIndex     *bool
 	DeletePublicImage bool
+	DeletePublicIcon  bool
 	DeleteImageURL    bool
 }
 

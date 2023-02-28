@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/samber/lo"
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
@@ -32,16 +33,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 }
 
 func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.UpdateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	deletePublicImage := false
-	if input.DeletePublicImage != nil {
-		deletePublicImage = *input.DeletePublicImage
-	}
-
-	deleteImageURL := false
-	if input.DeleteImageURL != nil {
-		deleteImageURL = *input.DeleteImageURL
-	}
-
 	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {
 		return nil, err
@@ -60,9 +51,11 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,
+		PublicIcon:        input.PublicIcon,
 		PublicNoIndex:     input.PublicNoIndex,
-		DeletePublicImage: deletePublicImage,
-		DeleteImageURL:    deleteImageURL,
+		DeletePublicImage: lo.FromPtr(input.DeletePublicImage),
+		DeletePublicIcon:  lo.FromPtr(input.DeletePublicIcon),
+		DeleteImageURL:    lo.FromPtr(input.DeleteImageURL),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

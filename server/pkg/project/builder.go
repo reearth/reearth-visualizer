@@ -8,7 +8,8 @@ import (
 )
 
 type Builder struct {
-	p *Project
+	p              *Project
+	publicIconData []byte
 }
 
 func New() *Builder {
@@ -21,6 +22,11 @@ func (b *Builder) Build() (*Project, error) {
 	}
 	if b.p.alias != "" && !CheckAliasPattern(b.p.alias) {
 		return nil, ErrInvalidAlias
+	}
+	if len(b.publicIconData) > 0 {
+		if err := b.p.UpdatePublicIconData(b.publicIconData); err != nil {
+			return nil, err
+		}
 	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()
@@ -114,6 +120,16 @@ func (b *Builder) PublicDescription(publicDescription string) *Builder {
 
 func (b *Builder) PublicImage(publicImage string) *Builder {
 	b.p.publicImage = publicImage
+	return b
+}
+
+func (b *Builder) PublicIcon(publicIcon string) *Builder {
+	b.p.publicIcon = publicIcon
+	return b
+}
+
+func (b *Builder) PublicIconData(data []byte) *Builder {
+	b.publicIconData = data
 	return b
 }
 

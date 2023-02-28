@@ -113,6 +113,12 @@ func TestBuilder_PublicImage(t *testing.T) {
 	assert.Equal(t, "xxxxx", res.PublicImage())
 }
 
+func TestBuilder_PublicIcon(t *testing.T) {
+	var tb = New().NewID()
+	res := tb.PublicIcon("xxxxx").MustBuild()
+	assert.Equal(t, "xxxxx", res.PublicIcon())
+}
+
 func TestBuilder_PublishedAt(t *testing.T) {
 	var tb = New().NewID()
 	d := time.Date(1986, 12, 11, 19, 30, 0, 0, time.UTC)

@@ -111,6 +111,22 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 	return renderIndex(html, u.String(), md), nil
 }
 
+func (i *Published) Icon(ctx context.Context, name string) ([]byte, error) {
+	if name == "" {
+		return nil, rerror.ErrNotFound
+	}
+
+	prj, err := i.project.FindByPublicName(ctx, name)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return nil, err
+	}
+	if prj == nil {
+		return nil, rerror.ErrNotFound
+	}
+
+	return prj.PublicIconData(), nil
+}
+
 const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" />
   <meta property="og:title" content="{{.title}}" />{{end}}{{if .description}}
   <meta name="twitter:description" content="{{.description}}" />
@@ -120,7 +136,8 @@ const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" 
   <meta property="og:image" content="{{.image}}" />{{end}}
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{.url}}" />{{if .noindex}}
-  <meta name="robots" content="noindex,nofollow" />{{end}}
+  <meta name="robots" content="noindex,nofollow" />{{end}}{{if .favicon}}
+  <link rel="icon" href="/favicon.ico" sizes="any" />{{end}}
 `
 
 var (
@@ -141,6 +158,7 @@ func renderIndex(index, url string, d interfaces.ProjectPublishedMetadata) strin
 			"image":       d.Image,
 			"noindex":     d.Noindex,
 			"url":         url,
+			"favicon":     d.Favicon,
 		})
 	return strings.Replace(index, "</head>", b.String()+"</head>", -1)
 }

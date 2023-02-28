@@ -27,3 +27,7 @@ func (c *PublishedController) Data(ctx context.Context, name string) (io.Reader,
 func (c *PublishedController) Index(ctx context.Context, name string, url *url.URL) (string, error) {
 	return c.usecase.Index(ctx, name, url)
 }
+
+func (c *PublishedController) Icon(ctx context.Context, name string) ([]byte, error) {
+	return c.usecase.Icon(ctx, name)
+}

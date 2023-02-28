@@ -3,7 +3,9 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -203,6 +205,20 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicImage("")
 	} else if p.PublicImage != nil {
 		prj.UpdatePublicImage(*p.PublicImage)
+	}
+
+	if p.DeletePublicIcon {
+		prj.UpdatePublicIcon("")
+		_ = prj.UpdatePublicIconData(nil)
+	} else if p.PublicIcon != nil {
+		prj.UpdatePublicImage(*p.PublicIcon)
+		ico, err := generateIcon(ctx, *p.PublicIcon)
+		if err != nil {
+			return nil, err
+		}
+		if err := prj.UpdatePublicIconData(ico); err != nil {
+			return nil, err
+		}
 	}
 
 	if p.PublicNoIndex != nil {
@@ -413,4 +429,26 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	tx.Commit()
 	return nil
+}
+
+func generateIcon(ctx context.Context, url string) ([]byte, error) {
+	if url == "" {
+		return nil, nil
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, errors.New("failed to get image")
+	}
+
+	defer func() { _ = res.Body.Close() }()
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get image: status code is %d", res.StatusCode)
+	}
+
+	return project.GenerateIcon(res.Body)
 }

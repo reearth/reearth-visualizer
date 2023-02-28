@@ -746,6 +746,7 @@ type Project struct {
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
+	PublicIcon        string            `json:"publicIcon"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
 	ImageURL          *url.URL          `json:"imageUrl"`
 	TeamID            ID                `json:"teamId"`
@@ -1230,9 +1231,11 @@ type UpdateProjectInput struct {
 	PublicTitle       *string  `json:"publicTitle"`
 	PublicDescription *string  `json:"publicDescription"`
 	PublicImage       *string  `json:"publicImage"`
+	PublicIcon        *string  `json:"publicIcon"`
 	PublicNoIndex     *bool    `json:"publicNoIndex"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl"`
 	DeletePublicImage *bool    `json:"deletePublicImage"`
+	DeletePublicIcon  *bool    `json:"deletePublicIcon"`
 }
 
 type UpdatePropertyItemInput struct {

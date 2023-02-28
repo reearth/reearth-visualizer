@@ -20,6 +20,7 @@ func TestRenderIndex(t *testing.T) {
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://xxss.com" />
   <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
 </head></html>`, renderIndex(
 		`<html><head>
   <title>Foobar</title>
@@ -30,6 +31,7 @@ func TestRenderIndex(t *testing.T) {
 			Description: "desc",
 			Image:       "hogehoge",
 			Noindex:     true,
+			Favicon:     true,
 		},
 	))
 }

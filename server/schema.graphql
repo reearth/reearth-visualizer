@@ -242,6 +242,7 @@ type Project implements Node {
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
+  publicIcon: String!
   publicNoIndex: Boolean!
   imageUrl: URL
   teamId: ID!
@@ -942,9 +943,11 @@ input UpdateProjectInput {
   publicTitle: String
   publicDescription: String
   publicImage: String
+  publicIcon: String
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean
+  deletePublicIcon: Boolean
 }
 
 input UploadPluginInput {

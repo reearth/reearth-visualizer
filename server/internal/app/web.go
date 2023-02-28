@@ -63,6 +63,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
+	e.Use(PublishedIconMiddleware(w.HostPattern, false))
 	e.GET("/reearth_config.json", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, config)
 	})

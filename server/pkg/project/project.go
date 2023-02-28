@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	ErrInvalidAlias error = errors.New("invalid alias")
-	aliasRegexp           = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
+	ErrInvalidAlias = errors.New("invalid alias")
+	ErrInvalidIcon  = errors.New("tool large icon")
+	aliasRegexp     = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Project struct {
@@ -29,6 +30,8 @@ type Project struct {
 	publicTitle       string
 	publicDescription string
 	publicImage       string
+	publicIcon        string
+	publicIconData    []byte
 	publicNoIndex     bool
 	workspace         WorkspaceID
 	visualizer        visualizer.Visualizer
@@ -94,6 +97,20 @@ func (p *Project) PublicDescription() string {
 
 func (p *Project) PublicImage() string {
 	return p.publicImage
+}
+
+func (p *Project) PublicIcon() string {
+	return p.publicIcon
+}
+
+func (p *Project) PublicIconData() []byte {
+	b := make([]byte, 0, len(p.publicIconData))
+	copy(b, p.publicIconData)
+	return b
+}
+
+func (p *Project) IsPublicIconDataPresent() bool {
+	return len(p.publicIconData) > 0
 }
 
 func (p *Project) PublicNoIndex() bool {
@@ -177,6 +194,18 @@ func (p *Project) UpdatePublicDescription(publicDescription string) {
 
 func (p *Project) UpdatePublicImage(publicImage string) {
 	p.publicImage = publicImage
+}
+
+func (p *Project) UpdatePublicIcon(publicIcon string) {
+	p.publicIcon = publicIcon
+}
+
+func (p *Project) UpdatePublicIconData(data []byte) error {
+	if len(data) > iconDataMaxSize {
+		return ErrInvalidIcon
+	}
+	p.publicIconData = data
+	return nil
 }
 
 func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {
