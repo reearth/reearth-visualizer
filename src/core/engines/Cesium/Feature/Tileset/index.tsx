@@ -63,6 +63,7 @@ function Tileset({
         <Box
           {...props}
           id={boxId}
+          sceneProperty={sceneProperty}
           property={boxProperty as any}
           geometry={builtinBoxProps.geometry}
           feature={feature}

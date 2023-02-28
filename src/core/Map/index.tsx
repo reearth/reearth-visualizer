@@ -79,6 +79,7 @@ function Map(
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}
         meta={props.meta}
+        sceneProperty={props.property}
         onLayerSelect={handleLayerSelect}
       />
     </Engine>

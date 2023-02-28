@@ -263,21 +263,16 @@ export const useClippingBox = ({
           direction,
         );
         const moveVector = Cartesian3.multiplyByScalar(direction, moveAmount, new Cartesian3());
-        console.log(
-          "Height: ",
-          moveAmount,
-          terrainHeight,
-          coords?.[2],
-          direction,
-          vector,
-          moveVector,
-        );
         setCoords(v => [v?.[0] || 0, v?.[1] || 0, (v?.[2] || 0) + moveVector.z + terrainHeight]);
       } else {
         const position = e.endPosition
           ? getLocationFromScreen(viewer.scene, e.endPosition.x, e.endPosition.y, true)
           : undefined;
-        setCoords(v => [position?.lng || 0, position?.lat || 0, position?.height || v?.[2] || 0]);
+        setCoords(v => [
+          position?.lng || 0,
+          position?.lat || 0,
+          (!allowEnterGround() ? position?.height : undefined) || v?.[2] || 0,
+        ]);
       }
     },
     [allowEnterGround, coords, dimensions?.height, viewer.scene],

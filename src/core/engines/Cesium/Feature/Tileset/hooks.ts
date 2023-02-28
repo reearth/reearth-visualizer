@@ -339,6 +339,13 @@ export const useHooks = ({
   );
 
   useEffect(() => {
+    const coords = coordinates
+      ? coordinates
+      : location
+      ? [location.lng, location.lat, location.height ?? 0]
+      : undefined;
+    const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
+
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
         return;
@@ -357,19 +364,12 @@ export const useHooks = ({
 
       const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
-      const coords = coordinates
-        ? coordinates
-        : location
-        ? [location.lng, location.lat, location.height ?? 0]
-        : undefined;
-      const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
-
       if (!allowEnterGround) {
-        translationWithClamping(
-          new TranslationRotationScale(position, undefined, dimensions),
-          !!allowEnterGround,
-          terrainHeightEstimate,
-        );
+        const trs = new TranslationRotationScale(position, undefined, dimensions);
+        translationWithClamping(trs, !!allowEnterGround, terrainHeightEstimate);
+        position.x = trs.translation.x;
+        position.y = trs.translation.y;
+        position.z = trs.translation.z;
       }
 
       const hpr = heading && pitch && roll ? new HeadingPitchRoll(heading, pitch, roll) : undefined;
@@ -388,7 +388,7 @@ export const useHooks = ({
 
     prepareClippingPlanes();
     if (!allowEnterGround) {
-      updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
+      updateTerrainHeight(position);
     }
   }, [
     width,
