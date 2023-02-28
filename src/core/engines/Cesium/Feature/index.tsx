@@ -86,7 +86,7 @@ export default function Feature({
           return (
             <C
               {...props}
-              key={`${layer?.id || ""}_${k}`}
+              key={`${layer?.id || ""}_${k}_${data?.url}`}
               id={`${layer.id}_${k}`}
               property={pickProperty(k, layer) || layer[k]}
               layer={layer}
