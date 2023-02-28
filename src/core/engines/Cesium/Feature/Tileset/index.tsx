@@ -2,7 +2,7 @@ import { memo, useMemo } from "react";
 import { Cesium3DTileset } from "resium";
 
 import type { Cesium3DTilesAppearance, ComputedLayer } from "../../..";
-import { shadowMode } from "../../common";
+import { colorBlendModeFor3DTile, shadowMode } from "../../common";
 import Box from "../Box";
 import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
@@ -25,7 +25,7 @@ function Tileset({
   onFeatureDelete,
   ...props
 }: Props): JSX.Element | null {
-  const { shadows } = property ?? {};
+  const { shadows, colorBlendMode } = property ?? {};
   const boxId = `${layer?.id}_box`;
   const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps } = useHooks({
     id,
@@ -57,6 +57,7 @@ function Tileset({
         style={style}
         shadows={shadowMode(shadows)}
         clippingPlanes={clippingPlanes}
+        colorBlendMode={colorBlendModeFor3DTile(colorBlendMode)}
       />
       {builtinBoxProps && (
         <Box

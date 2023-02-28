@@ -30,6 +30,7 @@ import {
   Matrix4,
   Color,
   SceneMode,
+  Cesium3DTileColorBlendMode,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -470,6 +471,17 @@ export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" 
       replace: ColorBlendMode.REPLACE,
       mix: ColorBlendMode.MIX,
     } as { [key in string]?: ColorBlendMode }
+  )[colorBlendMode || ""]);
+
+export const colorBlendModeFor3DTile = (
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default",
+) =>
+  ((
+    {
+      highlight: Cesium3DTileColorBlendMode.HIGHLIGHT,
+      replace: Cesium3DTileColorBlendMode.REPLACE,
+      mix: Cesium3DTileColorBlendMode.MIX,
+    } as { [key in string]?: Cesium3DTileColorBlendMode }
   )[colorBlendMode || ""]);
 
 export const heightReference = (

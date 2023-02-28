@@ -125,6 +125,7 @@ export type Cesium3DTilesAppearance = {
   color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
