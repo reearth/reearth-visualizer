@@ -70,6 +70,8 @@ type CachedFeature = {
   raw: Cesium3DTileFeature;
 };
 
+const MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES = 5000;
+
 const useFeature = ({
   id,
   tileset,
@@ -90,7 +92,7 @@ const useFeature = ({
   const layerId = layer?.id || id;
 
   const attachComputedFeature = useCallback(
-    (feature?: CachedFeature) => {
+    async (feature?: CachedFeature) => {
       const layer = cachedCalculatedLayerRef?.current?.layer;
       if (layer?.type === "simple" && feature?.feature) {
         const computedFeature = evalFeature(layer, feature?.feature);
@@ -120,7 +122,7 @@ const useFeature = ({
 
       const tempFeatures: Feature[] = [];
       const tempComputedFeatures: ComputedFeature[] = [];
-      lookupFeatures(t.content, (tileFeature, content) => {
+      lookupFeatures(t.content, async (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
         const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         const feature = (() => {
@@ -139,7 +141,7 @@ const useFeature = ({
 
         attachTag(tileFeature, { layerId, featureId: id });
 
-        const computedFeature = attachComputedFeature(feature);
+        const computedFeature = await attachComputedFeature(feature);
         if (computedFeature) {
           tempFeatures.push(feature.feature);
           tempComputedFeatures.push(computedFeature);
@@ -180,40 +182,58 @@ const useFeature = ({
   // If styles are updated while features are calculating,
   // we stop calculating features, and reassign styles.
   const skippedComputingAt = useRef<number | null>();
-  const shouldSkipComputing = useRef(false);
   useEffect(() => {
-    shouldSkipComputing.current = true;
     skippedComputingAt.current = Date.now();
   }, [tileAppearanceShow, tileAppearanceColor]);
 
-  const computeFeatures = useCallback(() => {
-    for (const f of cachedFeaturesRef.current) {
-      if (shouldSkipComputing.current) {
-        break;
-      }
+  const computeFeatureAsync = useCallback(
+    async (f: CachedFeature, startedComputingAt: number) =>
+      new Promise(resolve =>
+        requestAnimationFrame(() => {
+          if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
+            resolve(undefined);
+            return;
+          }
 
-      const properties = f.feature.properties;
-      if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
-        f.feature.properties.color = tileAppearanceColor;
-        f.feature.properties.show = tileAppearanceShow;
-        attachComputedFeature(f);
+          const properties = f.feature.properties;
+          if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
+            f.feature.properties.color = tileAppearanceColor;
+            f.feature.properties.show = tileAppearanceShow;
+            attachComputedFeature(f);
+          }
+          resolve(undefined);
+        }),
+      ),
+    [tileAppearanceShow, tileAppearanceColor, attachComputedFeature],
+  );
+
+  const computeFeatures = useCallback(
+    async (startedComputingAt: number) => {
+      const tempAsyncProcesses: Promise<unknown>[] = [];
+      for (const f of cachedFeaturesRef.current) {
+        if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
+          break;
+        }
+        tempAsyncProcesses.push(computeFeatureAsync(f, startedComputingAt));
+
+        if (tempAsyncProcesses.length > MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES) {
+          await Promise.all(tempAsyncProcesses);
+          tempAsyncProcesses.length = 0;
+        }
       }
-    }
-  }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
+      if (!(skippedComputingAt.current && skippedComputingAt.current > startedComputingAt)) {
+        await Promise.all(tempAsyncProcesses);
+      }
+    },
+    [computeFeatureAsync],
+  );
 
   useEffect(() => {
-    const startedComputingAt = Date.now();
-    computeFeatures();
-
-    // Computation is stopped, start re-calculating.
-    if (
-      shouldSkipComputing.current &&
-      skippedComputingAt.current &&
-      skippedComputingAt.current <= startedComputingAt
-    ) {
-      shouldSkipComputing.current = false;
-      computeFeatures();
-    }
+    const compute = async () => {
+      const startedComputingAt = Date.now();
+      await computeFeatures(startedComputingAt);
+    };
+    compute();
   }, [computeFeatures]);
 };
 

@@ -45,7 +45,7 @@ export const translationWithClamping = (
 
 export function lookupFeatures(
   c: Cesium3DTileContent,
-  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
+  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void | Promise<void>,
 ) {
   if (!c) return;
   const length = c.featuresLength;
