@@ -12,21 +12,27 @@ export type Props = {
 const RootPage: React.FC<Props> = ({ loading }) => {
   const theme = useTheme();
   return (
-    <Wrapper justify="center" align="center" direction="column">
-      <StyledIcon icon="logo" size={200} />
+    <Wrapper
+      justify="center"
+      align="center"
+      direction="column"
+      gap={100}
+      bg={window.REEARTH_CONFIG?.brand?.background}>
+      {window.REEARTH_CONFIG?.brand?.logoUrl ? (
+        <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
+      ) : (
+        <Icon icon="logo" size={200} />
+      )}
       {loading && <RingLoader size={35} color={theme.main.strongText} />}
     </Wrapper>
   );
 };
 
-const Wrapper = styled(Flex)`
+const Wrapper = styled(Flex)<{ bg?: string }>`
   height: 100%;
-  background: ${({ theme }) =>
+  background: ${({ theme, bg }) =>
+    bg ||
     `linear-gradient(70deg, ${theme.main.brandBlue} 10%, ${theme.main.brandRed} 60%, ${theme.main.brandBlue} 90%)`};
-`;
-
-const StyledIcon = styled(Icon)`
-  margin-bottom: 100px;
 `;
 
 export default RootPage;

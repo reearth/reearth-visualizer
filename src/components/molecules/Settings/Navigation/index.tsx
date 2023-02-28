@@ -31,8 +31,8 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
   return (
     <Wrapper>
       <LogoWrapper>
-        {window.REEARTH_CONFIG?.logoUrl ? (
-          <img src={window.REEARTH_CONFIG.logoUrl} style={{ maxWidth: "100%" }} />
+        {window.REEARTH_CONFIG?.brand?.logoUrl ? (
+          <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ maxWidth: "100%" }} />
         ) : (
           <Icon icon="logoColorful" size={110} />
         )}

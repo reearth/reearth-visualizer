@@ -70,7 +70,7 @@ const QuickStart: React.FC<Props> = ({
             direction="column"
             align="center"
             justify="center"
-            linearGradient={window.REEARTH_CONFIG?.linearGradient}
+            linearGradient={window.REEARTH_CONFIG?.brand?.background}
             onClick={() => setProjCreateOpen(true)}>
             <StyledIcon icon="newProject" size={70} />
             <Text size="m" weight="bold" customColor>
