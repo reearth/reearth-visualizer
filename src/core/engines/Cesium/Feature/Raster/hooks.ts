@@ -184,6 +184,11 @@ export const useMVT = ({
                   polygonAppearanceLineWidth !== feature?.properties.lineWidth ||
                   polygonAppearanceLineJoin !== feature?.properties.lineJoin
                 ) {
+                  feature.properties.fillColor = polygonAppearanceFillStyle;
+                  feature.properties.strokeStyle = polygonAppearanceStrokeStyle;
+                  feature.properties.lineWidth = polygonAppearanceLineWidth;
+                  feature.properties.lineJoin = polygonAppearanceLineJoin;
+
                   const computedFeature = evalFeature?.(layer, feature);
                   if (computedFeature) {
                     cachedComputedFeaturesRef.current.set(id, computedFeature);
