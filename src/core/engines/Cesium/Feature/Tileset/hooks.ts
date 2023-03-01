@@ -242,7 +242,6 @@ export const useHooks = ({
   boxId,
   isVisible,
   property,
-  sceneProperty,
   layer,
   feature,
   meta,
@@ -277,8 +276,8 @@ export const useHooks = ({
     visible: clippingVisible = true,
     direction = "inside",
     builtinBoxProps,
-  } = useClippingBox({ clipping: experimental_clipping, sceneProperty, boxId });
-  const { allowEnterGround } = sceneProperty?.default || {};
+    allowEnterGround,
+  } = useClippingBox({ clipping: experimental_clipping, boxId });
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type } = useData(layer);
 

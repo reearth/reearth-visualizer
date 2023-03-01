@@ -21,7 +21,6 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   property,
   geometry,
   isVisible,
-  sceneProperty,
   layer,
   feature,
   onLayerEdit,
@@ -50,7 +49,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     handleEdgeMouseDown,
     handleEdgeMouseMove,
     handleEdgeMouseUp,
-  } = useHooks({ property, geometry, sceneProperty, feature, onLayerEdit });
+  } = useHooks({ property, geometry, feature, onLayerEdit });
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
 

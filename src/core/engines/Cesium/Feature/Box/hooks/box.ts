@@ -28,10 +28,9 @@ import { computeMouseMoveAmount, updateTrs } from "../utils";
 export const useHooks = ({
   property,
   geometry,
-  sceneProperty,
   feature,
   onLayerEdit,
-}: Pick<FeatureProps<Property>, "property" | "sceneProperty" | "geometry" | "feature"> & {
+}: Pick<FeatureProps<Property>, "property" | "geometry" | "feature"> & {
   onLayerEdit?: (e: LayerEditEvent) => void;
 }) => {
   const { viewer } = useCesium();
@@ -49,8 +48,8 @@ export const useHooks = ({
     activePointOutlineColor,
     axisLineColor,
     cursor,
+    allowEnterGround,
   } = property ?? {};
-  const { allowEnterGround } = sceneProperty?.default || {};
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
   const [trs] = useState(() =>

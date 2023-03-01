@@ -12,7 +12,7 @@ import { RootEventTarget, useCesium } from "resium";
 
 import { computeMoveAmount } from "@reearth/components/molecules/Visualizer/Engine/Cesium/Box/utils";
 import { Camera, EXPERIMENTAL_clipping } from "@reearth/core/mantle";
-import { LayerEditEvent, SceneProperty } from "@reearth/core/Map";
+import { LayerEditEvent } from "@reearth/core/Map";
 
 import {
   getCamera,
@@ -84,17 +84,15 @@ export const BUILTIN_BOX_SIDE_PLANES = [
 
 export const useClippingBox = ({
   clipping,
-  sceneProperty,
   boxId,
 }: {
   clipping?: EXPERIMENTAL_clipping;
-  sceneProperty?: SceneProperty;
   boxId: string;
 }) => {
   const {
     useBuiltinBox,
     visible,
-    keepAboveGround,
+    allowEnterGround,
     coordinates,
     width,
     height,
@@ -105,11 +103,6 @@ export const useClippingBox = ({
   } = clipping || {};
 
   const { viewer }: { viewer: Viewer } = useCesium();
-
-  const allowEnterGround = useCallback(
-    () => !!sceneProperty?.default?.allowEnterGround || !keepAboveGround,
-    [sceneProperty?.default?.allowEnterGround, keepAboveGround],
-  );
 
   const isBoxClicked = useRef(false);
   const isTopBottomSidePlaneClicked = useRef(false);
@@ -229,7 +222,7 @@ export const useClippingBox = ({
       if (isTopBottomSidePlaneClicked.current) {
         const locationHeight = coords?.[2] || 0;
         const terrainHeight = await (async () => {
-          if (!allowEnterGround()) {
+          if (!allowEnterGround) {
             const boxBottomHeight = locationHeight - (dimensions?.height || 0) / 2;
             const floorHeight =
               (await sampleTerrainHeight(viewer.scene, coords?.[0] || 0, coords?.[1] || 0)) || 0;
@@ -250,9 +243,6 @@ export const useClippingBox = ({
         );
         const direction = new Cartesian3(0, 0, vector.y < 0 ? -1 : 1);
 
-        // FIXME()
-        // const scale =
-        //   Math.floor(locationHeight) > 5 ? getCamera().height / locationHeight : 1;
         const { moveAmount } = computeMoveAmount(
           viewer.scene,
           {
@@ -263,7 +253,11 @@ export const useClippingBox = ({
           direction,
         );
         const moveVector = Cartesian3.multiplyByScalar(direction, moveAmount, new Cartesian3());
-        setCoords(v => [v?.[0] || 0, v?.[1] || 0, (v?.[2] || 0) + moveVector.z + terrainHeight]);
+        setCoords(v => [
+          v?.[0] || 0,
+          v?.[1] || 0,
+          (terrainHeight ? terrainHeight : v?.[2] || 0) + moveVector.z,
+        ]);
       } else {
         const position = e.endPosition
           ? getLocationFromScreen(viewer.scene, e.endPosition.x, e.endPosition.y, true)
@@ -271,7 +265,7 @@ export const useClippingBox = ({
         setCoords(v => [
           position?.lng || 0,
           position?.lat || 0,
-          (!allowEnterGround() ? position?.height : undefined) || v?.[2] || 0,
+          (!allowEnterGround ? position?.height : undefined) || v?.[2] || 0,
         ]);
       }
     },
