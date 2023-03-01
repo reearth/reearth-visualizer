@@ -140,16 +140,16 @@ export const useMVT = ({
       credit,
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
-      onRenderFeature: (mvtFeature, tile) => {
-        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
-        if (!cachedFeatureIdsRef.current.has(id)) {
-          shouldSyncFeatureRef.current = true;
-        }
+      onRenderFeature: () => {
         return true;
       },
       onFeaturesRendered: () => {
         if (shouldSyncFeatureRef.current) {
-          onComputedFeatureFetch?.(tempFeaturesRef.current, tempComputedFeaturesRef.current);
+          const features = tempFeaturesRef.current;
+          const computedFeatures = tempComputedFeaturesRef.current;
+          requestAnimationFrame(() => {
+            onComputedFeatureFetch?.(features, computedFeatures);
+          });
           tempFeaturesRef.current = [];
           tempComputedFeaturesRef.current = [];
           shouldSyncFeatureRef.current = false;
@@ -157,6 +157,11 @@ export const useMVT = ({
       },
       style: (mvtFeature, tile) => {
         const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
+        if (!cachedFeatureIdsRef.current.has(id)) {
+          shouldSyncFeatureRef.current = true;
+          cachedFeatureIdsRef.current.add(id);
+        }
+
         const [feature, computedFeature] =
           ((): [Feature | undefined, ComputedFeature | undefined] | void => {
             const layer = cachedCalculatedLayerRef.current?.layer;
