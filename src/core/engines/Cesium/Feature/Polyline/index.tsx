@@ -47,7 +47,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [property?.near, property?.far],
   );
 
-  return !isVisible ? null : (
+  return !isVisible || !coordinates ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolylineGraphics
         positions={positions}

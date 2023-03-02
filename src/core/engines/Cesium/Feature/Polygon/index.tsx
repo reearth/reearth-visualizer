@@ -70,7 +70,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     [property?.near, property?.far],
   );
 
-  return !isVisible ? null : (
+  return !isVisible || !coordiantes ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}
