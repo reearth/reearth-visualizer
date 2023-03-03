@@ -22,6 +22,7 @@ const Timeline = ({
   onVisibilityChange,
   context: {
     clock,
+    overriddenClock,
     onPlay,
     onPause,
     onSpeedChange,
@@ -33,6 +34,7 @@ const Timeline = ({
   const { isOpened, currentTime, range, speed, events, visible } = useTimeline({
     widget,
     clock,
+    overriddenClock,
     isMobile,
     onPlay,
     onPause,

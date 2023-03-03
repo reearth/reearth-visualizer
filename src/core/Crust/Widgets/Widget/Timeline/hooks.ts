@@ -6,11 +6,17 @@ import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 import type { Clock, Widget } from "../types";
 import { useVisible } from "../useVisible";
 
+const MAX_RANGE = 7776000000; // 3 months
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
   return {
     start: startTime,
-    end: (startTime || 0) < (stopTime || 0) ? stopTime : undefined,
+    end:
+      startTime && stopTime && startTime < stopTime
+        ? Math.min(stopTime, startTime + MAX_RANGE)
+        : startTime
+        ? startTime + MAX_RANGE
+        : undefined,
   };
 };
 
@@ -19,6 +25,7 @@ const DEFAULT_SPEED = 1;
 export const useTimeline = ({
   widget,
   clock,
+  overriddenClock,
   isMobile,
   onPlay,
   onPause,
@@ -31,6 +38,7 @@ export const useTimeline = ({
 }: {
   widget: Widget;
   clock?: Clock;
+  overriddenClock?: Partial<Clock>;
   isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
@@ -141,14 +149,24 @@ export const useTimeline = ({
   // Sync cesium clock.
   useEffect(() => {
     setRange(prev => {
-      const next = makeRange(clock?.start?.getTime(), clock?.stop?.getTime());
+      const start = overriddenClock?.start?.getTime() ?? clock?.start?.getTime();
+      const stop = overriddenClock?.stop?.getTime() ?? clock?.stop?.getTime();
+      const next = makeRange(start, stop);
       if (prev.start !== next.start || prev.end !== next.end) {
         return next;
       }
       return prev;
     });
     setSpeed(Math.abs(clockSpeed));
-  }, [clockStartTime, clockStopTime, clockSpeed, clock?.start, clock?.stop]);
+  }, [
+    clockStartTime,
+    clockStopTime,
+    clockSpeed,
+    clock?.start,
+    clock?.stop,
+    overriddenClock?.start,
+    overriddenClock?.stop,
+  ]);
 
   useEffect(() => {
     const h: TickEventCallback = d => {
@@ -160,6 +178,13 @@ export const useTimeline = ({
       removeTickEventListener?.(h);
     };
   }, [onTick, clock?.playing, removeTickEventListener]);
+
+  useEffect(() => {
+    const current = overriddenClock?.current;
+    if (current) {
+      setCurrentTime(current.getTime());
+    }
+  }, [overriddenClock]);
 
   useEffect(() => {
     if (isMobile) {
