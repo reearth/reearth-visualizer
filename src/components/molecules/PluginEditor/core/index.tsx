@@ -18,6 +18,7 @@ const PluginEditor: React.FC = () => {
     showAlignSystem,
     showInfobox,
     layers,
+    engineMeta,
     setSourceCode,
     setMode,
     setInfoboxSize,
@@ -46,6 +47,7 @@ const PluginEditor: React.FC = () => {
           style={{ width: "100%" }}
           widgetAlignSystem={widgets.alignSystem}
           layers={layers}
+          meta={engineMeta}
         />
         <div
           style={{

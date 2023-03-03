@@ -3,6 +3,7 @@ import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
 import type { WidgetZone, WidgetSection, Layer } from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 export type Position = { section: string; area: string };
 
@@ -177,6 +178,13 @@ export default () => {
     }
   }, []);
 
+  const engineMeta = useMemo(
+    () => ({
+      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+    }),
+    [],
+  );
+
   return {
     sourceCode,
     rootLayer,
@@ -186,6 +194,7 @@ export default () => {
     infoboxSize,
     showAlignSystem,
     showInfobox,
+    engineMeta,
     setSourceCode,
     setMode,
     setInfoboxSize,

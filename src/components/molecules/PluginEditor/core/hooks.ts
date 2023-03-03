@@ -2,6 +2,7 @@ import fileDownload from "js-file-download";
 import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
+import { config } from "@reearth/config";
 import type { WidgetSection, WidgetZone } from "@reearth/core/Crust";
 import type { Layer } from "@reearth/core/mantle";
 
@@ -179,6 +180,13 @@ export default () => {
     }
   }, []);
 
+  const engineMeta = useMemo(
+    () => ({
+      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+    }),
+    [],
+  );
+
   return {
     sourceCode,
     layers,
@@ -188,6 +196,7 @@ export default () => {
     infoboxSize,
     showAlignSystem,
     showInfobox,
+    engineMeta,
     setSourceCode,
     setMode,
     setInfoboxSize,
