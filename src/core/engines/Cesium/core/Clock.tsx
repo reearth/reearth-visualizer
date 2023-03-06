@@ -14,9 +14,9 @@ export type Props = {
 export default function ReearthClock({ property, onTick }: Props): JSX.Element | null {
   const { animation, visible, start, stop, current, stepType, rangeType, multiplier, step } =
     property?.timeline ?? {};
-  const dateStart = convertTime(start);
-  const dateStop = convertTime(stop);
-  const dateCurrent = convertTime(current);
+  const dateStart = useMemo(() => convertTime(start), [start]);
+  const dateStop = useMemo(() => convertTime(stop), [stop]);
+  const dateCurrent = useMemo(() => convertTime(current), [current]);
   const startTime = useMemo(
     () => (dateStart ? JulianDate.fromDate(dateStart) : undefined),
     [dateStart],

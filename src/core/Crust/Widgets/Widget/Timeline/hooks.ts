@@ -146,11 +146,13 @@ export const useTimeline = ({
     }
   }, [clock, onSpeedChange, onTick]);
 
+  const overriddenStart = overriddenClock?.start?.getTime();
+  const overriddenStop = overriddenClock?.start?.getTime();
   // Sync cesium clock.
   useEffect(() => {
     setRange(prev => {
-      const start = overriddenClock?.start?.getTime() ?? clock?.start?.getTime();
-      const stop = overriddenClock?.stop?.getTime() ?? clock?.stop?.getTime();
+      const start = overriddenStart ?? clockStartTime;
+      const stop = overriddenStop ?? clockStopTime;
       const next = makeRange(start, stop);
       if (prev.start !== next.start || prev.end !== next.end) {
         return next;
@@ -158,15 +160,7 @@ export const useTimeline = ({
       return prev;
     });
     setSpeed(Math.abs(clockSpeed));
-  }, [
-    clockStartTime,
-    clockStopTime,
-    clockSpeed,
-    clock?.start,
-    clock?.stop,
-    overriddenClock?.start,
-    overriddenClock?.stop,
-  ]);
+  }, [clockStartTime, clockStopTime, clockSpeed, overriddenStart, overriddenStop]);
 
   useEffect(() => {
     const h: TickEventCallback = d => {
@@ -179,12 +173,12 @@ export const useTimeline = ({
     };
   }, [onTick, clock?.playing, removeTickEventListener]);
 
+  const overriddenCurrentTime = overriddenClock?.current?.getTime();
   useEffect(() => {
-    const current = overriddenClock?.current;
-    if (current) {
-      setCurrentTime(current.getTime());
+    if (overriddenCurrentTime) {
+      setCurrentTime(overriddenCurrentTime);
     }
-  }, [overriddenClock]);
+  }, [overriddenCurrentTime]);
 
   useEffect(() => {
     if (isMobile) {

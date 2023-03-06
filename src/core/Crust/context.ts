@@ -45,15 +45,9 @@ export function widgetContextFromMapRef({
       return engine()?.getClock();
     },
     overriddenClock: {
-      get current() {
-        return convertTime(sceneProperty?.timeline?.current);
-      },
-      get start() {
-        return convertTime(sceneProperty?.timeline?.start);
-      },
-      get stop() {
-        return convertTime(sceneProperty?.timeline?.stop);
-      },
+      current: convertTime(sceneProperty?.timeline?.current),
+      start: convertTime(sceneProperty?.timeline?.start),
+      stop: convertTime(sceneProperty?.timeline?.stop),
     },
     initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
