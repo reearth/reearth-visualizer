@@ -49,7 +49,7 @@ export const copyLazyLayer = (l: LazyLayer | undefined) => {
   return layerKeys.reduce((res, key) => {
     if (key === "computed") {
       res[key] = computedLayerKeys.reduce((computedRes, computedKey) => {
-        computedRes[computedKey] = l?.[key as keyof LazyLayer][computedKey];
+        computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
         return computedRes;
       }, {} as Record<string, any>);
       return res;
