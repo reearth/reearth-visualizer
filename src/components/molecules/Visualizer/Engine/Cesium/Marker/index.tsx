@@ -45,6 +45,7 @@ type Property = {
     pointOutlineWidth?: number;
     image?: string;
     imageSize?: number;
+    imageSizeInMeters?: boolean;
     imageHorizontalOrigin?: "left" | "center" | "right";
     imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
     imageColor?: string;
@@ -95,6 +96,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
+    imageSizeInMeters,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
     imageColor,
@@ -204,6 +206,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
+            sizeInMeters={imageSizeInMeters}
           />
         )}
         {label && (

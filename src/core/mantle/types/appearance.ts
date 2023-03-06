@@ -33,6 +33,7 @@ export type MarkerAppearance = {
   pointOutlineWidth?: number;
   image?: string;
   imageSize?: number;
+  imageSizeInMeters?: boolean;
   imageHorizontalOrigin?: "left" | "center" | "right";
   imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
   imageColor?: string;
