@@ -27,6 +27,7 @@ export type {
   ClusterProperty,
   Cluster,
 } from "../ClusteredLayers";
+export { copyLazyLayers, copyLazyLayer } from "./utils";
 
 export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   hiddenLayers?: string[];

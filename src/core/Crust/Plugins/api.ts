@@ -1,5 +1,14 @@
 import type { Tag } from "@reearth/core/mantle/compat";
-import type { Events, Layer, LayerSelectionReason, LayersRef, NaiveLayer } from "@reearth/core/Map";
+import {
+  copyLazyLayer,
+  Events,
+  Layer,
+  LayerSelectionReason,
+  LayersRef,
+  NaiveLayer,
+  LazyLayer,
+  copyLazyLayers,
+} from "@reearth/core/Map";
 import { merge } from "@reearth/util/object";
 
 import type { Block } from "../Infobox";
@@ -475,7 +484,7 @@ export function commonReearth({
         return !!layers()?.isLayer;
       },
       get layers() {
-        return layers()?.layers() ?? [];
+        return copyLazyLayers(layers()?.layers()) ?? [];
       },
       get tags() {
         return tags();
@@ -496,22 +505,29 @@ export function commonReearth({
         return selectedFeature();
       },
       get findById() {
-        return layers()?.findById;
+        return (id: string) => copyLazyLayer(layers()?.findById(id));
       },
       get findByIds() {
-        return layers()?.findByIds;
+        return (...args: string[]) =>
+          copyLazyLayers(
+            layers()
+              ?.findByIds(...args)
+              ?.filter((l): l is LazyLayer => !!l),
+          );
       },
       get findByTags() {
-        return layers()?.findByTags;
+        return (...args: string[]) => copyLazyLayers(layers()?.findByTags(...args));
       },
       get findByTagLabels() {
-        return layers()?.findByTagLabels;
+        return (...args: string[]) => copyLazyLayers(layers()?.findByTagLabels(...args));
       },
       get find() {
-        return layers()?.find;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          copyLazyLayer(layers()?.find(cb));
       },
       get findAll() {
-        return layers()?.findAll;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          copyLazyLayers(layers()?.findAll(cb));
       },
       get override() {
         return layers()?.override;
