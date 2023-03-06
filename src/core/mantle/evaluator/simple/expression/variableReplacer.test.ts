@@ -37,4 +37,13 @@ describe("replaceVariables", () => {
     });
     expect(res[0].literalValue).toBe("iPhone");
   });
+
+  test("should replace reserved word", () => {
+    const [result, _] = replaceVariables(
+      "${va[ria]ble} + ${variable[0]} + ${variable['key']} + ${variable[\"key\"]} + ${variable[variable]} + ${variable[variable].nested} + ${variable[variable]['nested']}",
+    );
+    expect(result).toBe(
+      `czm_va$reearth_opened_square_bracket_$ria$reearth_closed_square_bracket_$ble + czm_variable[0] + czm_variable['key'] + czm_variable["key"] + czm_variable[variable] + czm_variable[variable].nested + czm_variable[variable]['nested']`,
+    );
+  });
 });

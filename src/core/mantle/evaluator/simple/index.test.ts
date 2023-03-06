@@ -421,4 +421,36 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Property has reserved word", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["${he[llo]world} === 'value'", "100"],
+                  ["true", "1"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            "he[llo]world": "value",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
+        pointSize: 100,
+      },
+    });
+  });
 });

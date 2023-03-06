@@ -4,6 +4,7 @@ import { ExpressionNodeType, unaryOperators, binaryOperators, replacementRegex }
 import { Expression } from "./expression";
 import { unaryFunctions, binaryFunctions } from "./functions";
 import { Node } from "./node";
+import { restoreReservedWord } from "./variableReplacer";
 
 export function createRuntimeAst(expression: Expression, ast: any): Node | Error {
   let node: Node | Error = new Error("failed to parse");
@@ -260,5 +261,5 @@ function isVariable(name: string): boolean {
 }
 
 function getPropertyName(variable: string): string {
-  return variable.substring(4);
+  return restoreReservedWord(variable).substring(4);
 }

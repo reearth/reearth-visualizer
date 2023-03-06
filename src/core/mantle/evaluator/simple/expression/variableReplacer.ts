@@ -43,7 +43,8 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
           throw new Error(`replaceVariable: ${varExp} is not a valid JSONPath`);
         }
       } else {
-        result += `czm_${varExp}`;
+        const replacedVarExp = replaceReservedWord(varExp);
+        result += `czm_${replacedVarExp}`;
       }
       exp = exp.substring(j + 1);
       i = exp.indexOf("${");
@@ -95,3 +96,25 @@ function containsValidJSONPath(expression: string, feature: Feature): boolean {
     return false;
   }
 }
+
+const makeReservedWord = (str: string) => `$reearth_${str}_$`;
+const RESERVED_WORDS: Record<string, string> = {
+  "[": makeReservedWord("opened_square_bracket"),
+  "]": makeReservedWord("closed_square_bracket"),
+  "{": makeReservedWord("opened_curly_bracket"),
+  "}": makeReservedWord("closed_curly_bracket"),
+  "(": makeReservedWord("opened_parentheses"),
+  ")": makeReservedWord("closed_parentheses"),
+};
+
+const replaceReservedWord = (word: string) => {
+  return word.replaceAll(
+    /(.*)(\[|\{|\()(.*)(\]|\}|\))(?!\.|\[)(.+)/g,
+    (_match, prefix, openedBracket, inner, closedBracket, suffix) => {
+      return `${prefix}${RESERVED_WORDS[openedBracket]}${inner}${RESERVED_WORDS[closedBracket]}${suffix}`;
+    },
+  );
+};
+
+export const restoreReservedWord = (text: string) =>
+  Object.entries(RESERVED_WORDS).reduce((res, [key, val]) => res.replace(val, key), text);
