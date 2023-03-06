@@ -58,14 +58,16 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
       const computedFeatures: ComputedFeature[] = [];
       e.entities.values.forEach(e => {
         const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
-        if (!res) {
-          return;
-        }
-        const [feature, computedFeature] = res;
-        attachTag(e, { layerId: layer?.id, featureId: feature.id });
+        const [feature, computedFeature] = res || [];
 
-        features.push(feature);
-        computedFeatures.push(computedFeature);
+        attachTag(e, { layerId: layer?.id, featureId: feature?.id });
+
+        if (feature) {
+          features.push(feature);
+        }
+        if (computedFeature) {
+          computedFeatures.push(computedFeature);
+        }
       });
 
       // GeoJSON is not delegated data, so we need to skip.
