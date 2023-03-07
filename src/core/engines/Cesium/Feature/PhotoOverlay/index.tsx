@@ -43,6 +43,7 @@ export default function PhotoOverlay({
   );
 
   const {
+    show = true,
     image,
     imageSize,
     imageHorizontalOrigin,
@@ -91,7 +92,7 @@ export default function PhotoOverlay({
     [property?.near, property?.far],
   );
 
-  return !isVisible || !pos ? null : (
+  return !isVisible || !show || !pos ? null : (
     <>
       <EntityExt
         id={id}

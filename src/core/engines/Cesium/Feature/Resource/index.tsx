@@ -42,7 +42,7 @@ type CachedFeature = {
 };
 
 export default function Resource({ isVisible, property, layer, onComputedFeatureFetch }: Props) {
-  const { clampToGround } = property ?? {};
+  const { show = true, clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
@@ -92,7 +92,7 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     });
   }, [layer, viewer]);
 
-  if (!isVisible || !Component || !url) return null;
+  if (!isVisible || !show || !Component || !url) return null;
 
   return (
     <Component data={url} show={true} clampToGround={clampToGround} onChange={handleOnChange} />

@@ -7,10 +7,11 @@ import {
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import md5 from "js-md5";
+import { isEqual, pick } from "lodash-es";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
-import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
+import type { ComputedFeature, ComputedLayer, Feature, PolygonAppearance } from "../../..";
 import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
 
 import { Props } from "./types";
@@ -47,11 +48,11 @@ export const useWMS = ({
   property,
   layer,
 }: Pick<Props, "isVisible" | "property" | "layer">) => {
-  const { minimumLevel, maximumLevel, credit } = property ?? {};
+  const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
   const imageryProvider = useMemo(() => {
-    if (!isVisible || !url || !layers || type !== "wms") return;
+    if (!isVisible || !show || !url || !layers || type !== "wms") return;
     return new WebMapServiceImageryProvider({
       url,
       layers,
@@ -59,7 +60,7 @@ export const useWMS = ({
       maximumLevel,
       credit,
     });
-  }, [isVisible, type, url, minimumLevel, maximumLevel, credit, layers]);
+  }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit]);
 
   useImageryProvider(imageryProvider);
 };
@@ -114,7 +115,7 @@ export const useMVT = ({
   Props,
   "isVisible" | "property" | "layer" | "onComputedFeatureFetch" | "evalFeature" | "onFeatureDelete"
 >) => {
-  const { minimumLevel, maximumLevel, credit } = property ?? {};
+  const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
   const cachedFeaturesRef = useRef<Map<Feature["id"], Feature>>(new Map());
@@ -125,15 +126,12 @@ export const useMVT = ({
   const shouldSyncFeatureRef = useRef(false);
 
   const layerSimple = extractSimpleLayer(layer);
-  const polygonAppearanceFillStyle = layerSimple?.polygon?.fillColor;
-  const polygonAppearanceStrokeStyle = layerSimple?.polygon?.strokeColor;
-  const polygonAppearanceLineWidth = layerSimple?.polygon?.strokeWidth;
-  const polygonAppearanceLineJoin = layerSimple?.polygon?.lineJoin;
+  const layerPolygonAppearance = usePick(layerSimple?.polygon, polygonAppearanceFields);
 
   const tempFeaturesRef = useRef<Feature[]>([]);
   const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);
   const imageryProvider = useMemo(() => {
-    if (!isVisible || !url || !layers || type !== "mvt") return;
+    if (!isVisible || !show || !url || !layers || type !== "mvt") return;
     return new MVTImageryProvider({
       minimumLevel,
       maximumLevel,
@@ -183,16 +181,11 @@ export const useMVT = ({
                   return;
                 }
 
-                if (
-                  polygonAppearanceFillStyle !== feature?.properties.fillColor ||
-                  polygonAppearanceStrokeStyle !== feature?.properties.strokeStyle ||
-                  polygonAppearanceLineWidth !== feature?.properties.lineWidth ||
-                  polygonAppearanceLineJoin !== feature?.properties.lineJoin
-                ) {
-                  feature.properties.fillColor = polygonAppearanceFillStyle;
-                  feature.properties.strokeStyle = polygonAppearanceStrokeStyle;
-                  feature.properties.lineWidth = polygonAppearanceLineWidth;
-                  feature.properties.lineJoin = polygonAppearanceLineJoin;
+                const featurePolygonAppearance = pick(feature?.properties, polygonAppearanceFields);
+                if (!isEqual(layerPolygonAppearance, featurePolygonAppearance)) {
+                  Object.entries(layerPolygonAppearance ?? {}).forEach(([k, v]) => {
+                    feature.properties[k] = v;
+                  });
 
                   const computedFeature = evalFeature?.(layer, feature);
                   if (computedFeature) {
@@ -214,11 +207,16 @@ export const useMVT = ({
           tempComputedFeaturesRef.current.push(computedFeature);
         }
 
+        const polygon = computedFeature?.polygon;
         return {
-          fillStyle: computedFeature?.polygon?.fillColor,
-          strokeStyle: computedFeature?.polygon?.strokeColor,
-          lineWidth: computedFeature?.polygon?.strokeWidth,
-          lineJoin: computedFeature?.polygon?.lineJoin,
+          fillStyle:
+            (polygon?.fill ?? true) && (polygon?.show ?? true)
+              ? polygon?.fillColor
+              : "rgba(0,0,0,0)", // hide the feature
+          strokeStyle:
+            polygon?.stroke && (polygon?.show ?? true) ? polygon?.strokeColor : "rgba(0,0,0,0)", // hide the feature
+          lineWidth: polygon?.strokeWidth,
+          lineJoin: polygon?.lineJoin,
         };
       },
       onSelectFeature: (mvtFeature, tile) => {
@@ -234,18 +232,16 @@ export const useMVT = ({
     });
   }, [
     isVisible,
-    type,
+    show,
     url,
+    layers,
+    type,
     minimumLevel,
     maximumLevel,
     credit,
-    layers,
-    evalFeature,
     onComputedFeatureFetch,
-    polygonAppearanceFillStyle,
-    polygonAppearanceStrokeStyle,
-    polygonAppearanceLineWidth,
-    polygonAppearanceLineJoin,
+    evalFeature,
+    layerPolygonAppearance,
   ]);
 
   useEffect(() => {
@@ -261,3 +257,22 @@ export const useMVT = ({
 
   useImageryProvider(imageryProvider);
 };
+
+export const usePick = <T extends object, U extends keyof T>(
+  o: T | undefined | null,
+  fields: readonly U[],
+): Pick<T, U> | undefined => {
+  const p = useMemo(() => (o ? pick(o, fields) : undefined), [o, fields]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => p, [JSON.stringify(p)]);
+};
+
+const polygonAppearanceFields: (keyof PolygonAppearance)[] = [
+  "show",
+  "fill",
+  "fillColor",
+  "stroke",
+  "strokeColor",
+  "strokeWidth",
+  "lineJoin",
+];

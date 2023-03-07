@@ -35,6 +35,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   );
 
   const {
+    show = true,
     fill = true,
     stroke,
     fillColor,
@@ -70,7 +71,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     [property?.near, property?.far],
   );
 
-  return !isVisible || !coordiantes ? null : (
+  return !isVisible || !coordiantes || !show ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}

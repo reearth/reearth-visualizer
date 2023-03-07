@@ -29,7 +29,7 @@ type CesiumEntityAppearanceKey = "polygon" | "polyline";
 type SupportedAppearanceKey = "marker" | keyof Pick<Entity, CesiumEntityAppearanceKey>;
 
 type EntityAppearanceKey<AName extends SupportedAppearanceKey> = AName extends "marker"
-  ? keyof Pick<Entity, "point">
+  ? keyof Pick<Entity, "point" | "billboard" | "label">
   : keyof Pick<Entity, CesiumEntityAppearanceKey>;
 
 type AppearancePropertyKeyType = "color" | "heightReference" | "shadows";
@@ -107,7 +107,12 @@ export const attachStyle = (
   if (!layer) {
     return;
   }
-  if (hasAppearance(layer, entity, ["marker", "point"])) {
+
+  // TODO: make it DRY
+  const point = hasAppearance(layer, entity, ["marker", "point"]);
+  const billboard = hasAppearance(layer, entity, ["marker", "billboard"]);
+  const label = hasAppearance(layer, entity, ["marker", "label"]);
+  if (point || billboard || label) {
     const position = entity.position?.getValue(currentTime);
     const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
     const feature: Feature = {
@@ -128,26 +133,81 @@ export const attachStyle = (
     if (!computedFeature) {
       return;
     }
-    attachProperties(entity, computedFeature, ["marker", "point"], {
-      pixelSize: {
-        name: "pointSize",
-      },
-      color: {
-        name: "pointColor",
-        type: "color",
-      },
-      outlineColor: {
-        name: "pointOutlineColor",
-        type: "color",
-      },
-      outlineWidth: {
-        name: "pointOutlineWidth",
-      },
-      heightReference: {
-        name: "heightReference",
-        type: "heightReference",
-      },
-    });
+    if (point) {
+      attachProperties(entity, computedFeature, ["marker", "point"], {
+        show: {
+          name: "show",
+        },
+        pixelSize: {
+          name: "pointSize",
+        },
+        color: {
+          name: "pointColor",
+          type: "color",
+        },
+        outlineColor: {
+          name: "pointOutlineColor",
+          type: "color",
+        },
+        outlineWidth: {
+          name: "pointOutlineWidth",
+        },
+        heightReference: {
+          name: "heightReference",
+          type: "heightReference",
+        },
+      });
+    }
+
+    if (billboard) {
+      attachProperties(entity, computedFeature, ["marker", "billboard"], {
+        show: {
+          name: "show",
+        },
+        image: {
+          name: "image",
+        },
+        color: {
+          name: "imageColor",
+          type: "color",
+        },
+        scale: {
+          name: "imageSize",
+        },
+        sizeInMeters: {
+          name: "imageSizeInMeters",
+        },
+        heightReference: {
+          name: "heightReference",
+          type: "heightReference",
+        },
+        horizontalOrigin: {
+          name: "imageHorizontalOrigin",
+        },
+        verticalOrigin: {
+          name: "imageVerticalOrigin",
+        },
+      });
+
+      if (label) {
+        attachProperties(entity, computedFeature, ["marker", "label"], {
+          show: {
+            name: "show",
+          },
+          text: {
+            name: "labelText",
+          },
+          backgroundColor: {
+            name: "labelBackground",
+            type: "color",
+          },
+          heightReference: {
+            name: "heightReference",
+            type: "heightReference",
+          },
+        });
+      }
+    }
     return [feature, computedFeature];
   }
 
@@ -178,6 +238,9 @@ export const attachStyle = (
       return;
     }
     attachProperties(entity, computedFeature, ["polyline", "polyline"], {
+      show: {
+        name: "show",
+      },
       width: {
         name: "strokeWidth",
       },
@@ -221,6 +284,9 @@ export const attachStyle = (
       return;
     }
     attachProperties(entity, computedFeature, ["polygon", "polygon"], {
+      show: {
+        name: "show",
+      },
       fill: {
         name: "fill",
       },

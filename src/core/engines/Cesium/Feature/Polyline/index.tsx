@@ -23,6 +23,7 @@ export type Property = PolylineAppearance & {
 };
 
 export default function Polyline({ id, isVisible, property, geometry, layer, feature }: Props) {
+  const { show = true } = property || {};
   const coordinates = useMemo(
     () =>
       geometry?.type === "LineString"
@@ -47,7 +48,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [property?.near, property?.far],
   );
 
-  return !isVisible || !coordinates ? null : (
+  return !isVisible || !coordinates || !show ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolylineGraphics
         positions={positions}

@@ -96,11 +96,14 @@ const useFeature = ({
       const layer = cachedCalculatedLayerRef?.current?.layer;
       if (layer?.type === "simple" && feature?.feature) {
         const computedFeature = evalFeature(layer, feature?.feature);
-        const show = computedFeature?.["3dtiles"]?.show;
+        const style = computedFeature?.["3dtiles"];
+
+        const show = style?.show;
         if (show !== undefined) {
           feature.raw.show = show;
         }
-        const color = toColor(computedFeature?.["3dtiles"]?.color);
+
+        const color = toColor(style?.color);
         if (color !== undefined) {
           feature.raw.color = color;
         }
