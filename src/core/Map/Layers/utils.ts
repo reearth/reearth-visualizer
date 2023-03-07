@@ -1,8 +1,5 @@
 import { isArray, isObject } from "lodash-es";
 
-import { LazyLayer } from "./hooks";
-import { layerKeys, computedLayerKeys } from "./keys";
-
 export const deepAssign = <O extends Record<string, any>>(obj: O, src: O) => {
   return Object.fromEntries(
     Object.entries({ ...src, ...obj })
@@ -37,34 +34,4 @@ export const deepAssign = <O extends Record<string, any>>(obj: O, src: O) => {
       })
       .filter((v): v is [string, any] => !!v),
   ) as O;
-};
-
-export const copyLazyLayers = (layers: LazyLayer[] | undefined) => {
-  return layers?.map(l => {
-    return copyLazyLayer(l);
-  });
-};
-
-export const copyLazyLayer = (l: LazyLayer | undefined) => {
-  return layerKeys.reduce((res, key) => {
-    if (key === "computed") {
-      res = {
-        ...res,
-        get [key]() {
-          return computedLayerKeys.reduce((computedRes, computedKey) => {
-            computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
-            return computedRes;
-          }, {} as Record<string, any>);
-        },
-      };
-      return res;
-    }
-    res[key] = {
-      ...res,
-      get [key]() {
-        return l?.[key as keyof LazyLayer];
-      },
-    };
-    return res;
-  }, {} as Record<string, any>) as LazyLayer;
 };

@@ -6,7 +6,6 @@ import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
 export { useGet, type WrappedRef, type Undefinable, useOverriddenProperty } from "./utils";
-export { copyLazyLayers, copyLazyLayer } from "./Layers";
 
 export type {
   NaiveLayer,
