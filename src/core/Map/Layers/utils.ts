@@ -48,13 +48,23 @@ export const copyLazyLayers = (layers: LazyLayer[] | undefined) => {
 export const copyLazyLayer = (l: LazyLayer | undefined) => {
   return layerKeys.reduce((res, key) => {
     if (key === "computed") {
-      res[key] = computedLayerKeys.reduce((computedRes, computedKey) => {
-        computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
-        return computedRes;
-      }, {} as Record<string, any>);
+      res = {
+        ...res,
+        get [key]() {
+          return computedLayerKeys.reduce((computedRes, computedKey) => {
+            computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
+            return computedRes;
+          }, {} as Record<string, any>);
+        },
+      };
       return res;
     }
-    res[key] = l?.[key as keyof LazyLayer];
+    res[key] = {
+      ...res,
+      get [key]() {
+        return l?.[key as keyof LazyLayer];
+      },
+    };
     return res;
   }, {} as Record<string, any>) as LazyLayer;
 };
