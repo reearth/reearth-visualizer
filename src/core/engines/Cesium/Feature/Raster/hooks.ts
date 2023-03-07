@@ -39,6 +39,7 @@ const useData = (layer: ComputedLayer | undefined) => {
           ? data.layers.join(",")
           : data?.layers
         : undefined,
+      parameters: data?.parameters,
     };
   }, [layer]);
 };
@@ -49,7 +50,7 @@ export const useWMS = ({
   layer,
 }: Pick<Props, "isVisible" | "property" | "layer">) => {
   const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
-  const { type, url, layers } = useData(layer);
+  const { type, url, layers, parameters } = useData(layer);
 
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || !layers || type !== "wms") return;
@@ -59,8 +60,9 @@ export const useWMS = ({
       minimumLevel,
       maximumLevel,
       credit,
+      parameters,
     });
-  }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit]);
+  }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit, parameters]);
 
   useImageryProvider(imageryProvider);
 };

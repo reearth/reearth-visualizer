@@ -66,6 +66,7 @@ export type Data = {
   layers?: string | string[];
   jsonProperties?: string[];
   updateInterval?: number; // milliseconds
+  parameters?: Record<string, any>;
   time?: {
     property?: string;
     interval?: number; // milliseconds
