@@ -1,4 +1,4 @@
-import { CSSProperties, type ReactNode } from "react";
+import { CSSProperties, useMemo, type ReactNode } from "react";
 
 // TODO(@keiya01): Change directory structure
 import DropHolder from "@reearth/components/atoms/DropHolder";
@@ -185,6 +185,11 @@ export default function Visualizer({
     onLayerDrop,
   });
 
+  const selectedLayerIdForCrust = useMemo(
+    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
+    [selectedLayer.featureId, selectedLayer.layerId],
+  );
+
   return (
     <Filled ref={wrapperRef}>
       {isDroppable && <DropHolder />}
@@ -209,7 +214,7 @@ export default function Visualizer({
         infoboxTitle={infobox?.title}
         infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
-        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+        selectedLayerId={selectedLayerIdForCrust}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}

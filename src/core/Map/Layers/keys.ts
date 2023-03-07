@@ -26,6 +26,7 @@ export const layerKeys = objKeys<
   extensionId: 1,
   isVisible: 1,
   visible: 1,
+  events: 1,
 });
 
 export const computedLayerKeys = objKeys<Exclude<KeysOfUnion<ComputedLayer>, "id">>({

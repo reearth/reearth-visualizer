@@ -6,25 +6,32 @@ import {
   clearAllExpressionCaches,
   computeAtom,
   DataType,
-  type Atom,
   evalFeature,
-  ComputedFeature,
   type Data,
 } from "../../mantle";
-import type { DataRange, Feature, Layer } from "../../mantle";
+import type { Atom, DataRange, Layer, ComputedLayer, ComputedFeature, Feature } from "../types";
 
-export type { Atom as Atoms } from "../../mantle";
+export type { Atom as Atom } from "../types";
 
 export const createAtom = computeAtom;
 
 export type EvalFeature = (layer: Layer, feature: Feature) => ComputedFeature | undefined;
 
-export default function useHooks(
-  layer: Layer | undefined,
-  atom: Atom | undefined,
-  overrides?: Record<string, any>,
-  delegatedDataTypes?: DataType[],
-) {
+export default function useHooks({
+  layer,
+  atom,
+  overrides,
+  delegatedDataTypes,
+  selected,
+  selectedFeatureId,
+}: {
+  layer: Layer | undefined;
+  atom: Atom | undefined;
+  overrides?: Record<string, any>;
+  delegatedDataTypes?: DataType[];
+  selected?: boolean;
+  selectedFeatureId?: string;
+}) {
   const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
   const writeFeatures = useCallback(
     (features: Feature[]) => set({ type: "writeFeatures", features }),
@@ -113,6 +120,8 @@ export default function useHooks(
     [], // eslint-disable-line react-hooks/exhaustive-deps -- clear cache only when layer is unmounted
   );
 
+  useSelectEvent({ layer, selected, computedLayer, selectedFeatureId });
+
   return {
     computedLayer,
     handleFeatureRequest: requestFetch,
@@ -121,4 +130,32 @@ export default function useHooks(
     handleFeatureDelete: deleteFeatures,
     evalFeature,
   };
+}
+
+function useSelectEvent({
+  layer,
+  selected,
+  computedLayer,
+  selectedFeatureId,
+}: {
+  layer: Layer | undefined;
+  selected: boolean | undefined;
+  computedLayer?: ComputedLayer;
+  selectedFeatureId?: string;
+}) {
+  const selectEvent = layer?.type === "simple" ? layer.events?.select : undefined;
+  useEffect(() => {
+    if (!selected || !selectEvent) return;
+    if (selectEvent.openUrl) {
+      const url = selectEvent.openUrl.urlKey
+        ? (selectedFeatureId
+            ? computedLayer?.features.find(f => f.id === selectedFeatureId)?.properties
+            : computedLayer?.properties)?.[selectEvent.openUrl.urlKey]
+        : selectEvent.openUrl.url;
+      if (typeof url === "string" && url) {
+        window.open(url, "_blank", "noreferrer");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]); // only selected
 }

@@ -1,4 +1,4 @@
-import { forwardRef, type Ref } from "react";
+import { forwardRef, useMemo, type Ref } from "react";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
@@ -55,12 +55,17 @@ function Map(
       onLayerSelect,
     });
 
+  const selectedLayerIdForEngine = useMemo(
+    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
+    [selectedLayer.featureId, selectedLayer.layerId],
+  );
+
   return Engine ? (
     <Engine
       ref={engineRef}
       isBuilt={isBuilt}
       isEditable={isEditable}
-      selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+      selectedLayerId={selectedLayerIdForEngine}
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}

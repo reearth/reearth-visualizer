@@ -25,7 +25,12 @@ export type {
   LayerSelectionReason,
 } from "../Layers";
 export type {
+  Atom,
+  DataType,
+  DataRange,
+  Feature,
   Layer,
+  LayerSimple,
   ComputedFeature,
   ComputedLayer,
   Geometry,
