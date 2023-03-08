@@ -100,6 +100,7 @@ export default function PhotoOverlay({
         layerId={layer?.id}
         featureId={feature?.id}
         draggable
+        properties={feature?.properties}
         availability={availability}>
         <BillboardGraphics
           image={canvas}

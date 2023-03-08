@@ -72,7 +72,12 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   );
 
   return !isVisible || !coordiantes || !show ? null : (
-    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
+    <EntityExt
+      id={id}
+      layerId={layer?.id}
+      featureId={feature?.id}
+      availability={availability}
+      properties={feature?.properties}>
       <PolygonGraphics
         hierarchy={hierarchy}
         fill={fill}

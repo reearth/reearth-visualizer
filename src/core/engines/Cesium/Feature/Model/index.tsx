@@ -96,6 +96,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       layerId={layer?.id}
       featureId={feature?.id}
       draggable
+      properties={feature?.properties}
       availability={availability}>
       <ModelGraphics
         uri={model || url}

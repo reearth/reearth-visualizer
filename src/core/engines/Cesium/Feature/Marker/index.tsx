@@ -139,6 +139,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
           layerId={layer?.id}
           featureId={feature?.id}
           unselectable
+          properties={feature?.properties}
           availability={availability}>
           <PolylineGraphics
             positions={extrudePoints}
@@ -154,6 +155,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         layerId={layer?.id}
         featureId={feature?.id}
         draggable
+        properties={feature?.properties}
         availability={availability}>
         {style === "point" ? (
           <PointGraphics
