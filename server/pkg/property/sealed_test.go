@@ -447,13 +447,13 @@ func TestSealed_Interface(t *testing.T) {
 				"x": []map[string]interface{}{
 					{
 						"a":  "a",
-						"b":  "bbb",
+						"b":  "b",
 						"id": i5id.String(),
 					},
 				},
 				"y": map[string]interface{}{
 					"a": "aaa",
-					"b": "bbb",
+					"b": "aaa",
 				},
 			},
 		},

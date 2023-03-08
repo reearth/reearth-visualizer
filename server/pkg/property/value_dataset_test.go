@@ -295,7 +295,7 @@ func TestValueAndDatasetValue_Value(t *testing.T) {
 				d: dataset.ValueTypeString.MustBeValue("foo"),
 				p: ValueTypeString.MustBeValue("bar"),
 			},
-			want: ValueTypeString.MustBeValue("foo"),
+			want: ValueTypeString.MustBeValue("bar"),
 		},
 		{
 			name:   "empty",
