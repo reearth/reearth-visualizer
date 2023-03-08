@@ -1,10 +1,5 @@
 import { VectorTileFeature } from "@mapbox/vector-tile";
-import {
-  ImageryLayerCollection,
-  ImageryLayerFeatureInfo,
-  ImageryProvider,
-  WebMapServiceImageryProvider,
-} from "cesium";
+import { ImageryLayerCollection, ImageryProvider, WebMapServiceImageryProvider } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import md5 from "js-md5";
 import { isEqual, pick } from "lodash-es";
@@ -110,9 +105,7 @@ export const useMVT = ({
   isVisible,
   property,
   layer,
-  onComputedFeatureFetch,
   evalFeature,
-  onFeatureDelete,
 }: Pick<
   Props,
   "isVisible" | "property" | "layer" | "onComputedFeatureFetch" | "evalFeature" | "onFeatureDelete"
@@ -120,20 +113,16 @@ export const useMVT = ({
   const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
-  const cachedFeaturesRef = useRef<Map<Feature["id"], Feature>>(new Map());
-  const cachedComputedFeaturesRef = useRef<Map<Feature["id"], ComputedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
-
-  const cachedFeatureIdsRef = useRef(new Set<Feature["id"]>());
-  const shouldSyncFeatureRef = useRef(false);
 
   const layerSimple = extractSimpleLayer(layer);
   const layerPolygonAppearance = usePick(layerSimple?.polygon, polygonAppearanceFields);
 
-  const tempFeaturesRef = useRef<Feature[]>([]);
-  const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);
+  const updatedAt = useRef<number>();
+
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || !layers || type !== "mvt") return;
+    let currentTime: number | undefined;
     return new MVTImageryProvider({
       minimumLevel,
       maximumLevel,
@@ -141,73 +130,27 @@ export const useMVT = ({
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
       onRenderFeature: () => {
-        return true;
-      },
-      onFeaturesRendered: () => {
-        if (shouldSyncFeatureRef.current) {
-          const features = tempFeaturesRef.current;
-          const computedFeatures = tempComputedFeaturesRef.current;
-          requestAnimationFrame(() => {
-            onComputedFeatureFetch?.(features, computedFeatures);
-          });
-          tempFeaturesRef.current = [];
-          tempComputedFeaturesRef.current = [];
-          shouldSyncFeatureRef.current = false;
+        if (!currentTime) {
+          currentTime = updatedAt.current;
         }
+        return currentTime === updatedAt.current;
       },
       style: (mvtFeature, tile) => {
-        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
-        if (!cachedFeatureIdsRef.current.has(id)) {
-          shouldSyncFeatureRef.current = true;
-          cachedFeatureIdsRef.current.add(id);
-        }
+        const computedFeature = ((): ComputedFeature | void => {
+          const layer = cachedCalculatedLayerRef.current?.layer;
+          if (layer?.type === "simple" && VectorTileFeature.types[mvtFeature.type] === "Polygon") {
+            const feature = makeFeatureFromPolygon("", mvtFeature, tile);
 
-        const [feature, computedFeature] =
-          ((): [Feature | undefined, ComputedFeature | undefined] | void => {
-            const layer = cachedCalculatedLayerRef.current?.layer;
-            if (
-              layer?.type === "simple" &&
-              VectorTileFeature.types[mvtFeature.type] === "Polygon"
-            ) {
-              if (!cachedFeaturesRef.current.has(id)) {
-                const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
-                cachedFeaturesRef.current.set(id, feature);
-                const computedFeature = evalFeature?.(layer, feature);
-                if (computedFeature) {
-                  cachedComputedFeaturesRef.current.set(id, computedFeature);
-                }
-                return [feature, computedFeature];
-              } else {
-                const feature = cachedFeaturesRef.current.get(id);
-                if (!feature) {
-                  return;
-                }
+            const featurePolygonAppearance = pick(feature?.properties, polygonAppearanceFields);
+            if (!isEqual(layerPolygonAppearance, featurePolygonAppearance)) {
+              Object.entries(layerPolygonAppearance ?? {}).forEach(([k, v]) => {
+                feature.properties[k] = v;
+              });
 
-                const featurePolygonAppearance = pick(feature?.properties, polygonAppearanceFields);
-                if (!isEqual(layerPolygonAppearance, featurePolygonAppearance)) {
-                  Object.entries(layerPolygonAppearance ?? {}).forEach(([k, v]) => {
-                    feature.properties[k] = v;
-                  });
-
-                  const computedFeature = evalFeature?.(layer, feature);
-                  if (computedFeature) {
-                    cachedComputedFeaturesRef.current.set(id, computedFeature);
-                  }
-                }
-                return [
-                  feature,
-                  cachedComputedFeaturesRef.current.get(
-                    idFromGeometry(mvtFeature.loadGeometry(), tile),
-                  ),
-                ];
-              }
+              return evalFeature?.(layer, feature);
             }
-          })() || [];
-
-        if (feature && computedFeature) {
-          tempFeaturesRef.current.push(feature);
-          tempComputedFeaturesRef.current.push(computedFeature);
-        }
+          }
+        })();
 
         const polygon = computedFeature?.polygon;
         return {
@@ -222,14 +165,10 @@ export const useMVT = ({
         };
       },
       onSelectFeature: (mvtFeature, tile) => {
-        const featureId = idFromGeometry(mvtFeature.loadGeometry(), tile);
-        const layerId = cachedCalculatedLayerRef.current?.layer.id;
-        const l = new ImageryLayerFeatureInfo();
-        l.data = {
-          featureId,
-          layerId,
-        };
-        return l;
+        // TODO: Implement select feature
+        const _id = mvtFeature.id
+          ? String(mvtFeature.id)
+          : idFromGeometry(mvtFeature.loadGeometry(), tile);
       },
     });
   }, [
@@ -241,21 +180,17 @@ export const useMVT = ({
     minimumLevel,
     maximumLevel,
     credit,
-    onComputedFeatureFetch,
     evalFeature,
     layerPolygonAppearance,
   ]);
 
   useEffect(() => {
-    cachedCalculatedLayerRef.current = layer;
-  }, [layer]);
+    updatedAt.current = Date.now();
+  }, [JSON.stringify(layerPolygonAppearance)]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const ids = cachedFeatureIdsRef.current;
-    return () => {
-      onFeatureDelete?.(Array.from(ids.values()));
-    };
-  }, [onFeatureDelete]);
+    cachedCalculatedLayerRef.current = layer;
+  }, [layer]);
 
   useImageryProvider(imageryProvider);
 };
