@@ -45,13 +45,15 @@ export function attachProperties<
     [K in keyof Exclude<Entity[PName], undefined>]?: {
       name: keyof AppearanceTypes[AName];
       type?: AppearancePropertyKeyType;
+      override?: any;
+      default?: any;
     };
   },
 ) {
   const [appearanceName, propertyName] = namePair;
-  const property = entity[propertyName];
-  if (!property) {
-    return;
+  const property = entity[propertyName] ?? {};
+  if (!entity[propertyName]) {
+    entity[propertyName] = {} as any;
   }
 
   const tag = getTag(entity);
@@ -83,7 +85,11 @@ export function attachProperties<
         value = heightReference(value);
     }
 
-    (property as any)[entityPropertyKey] = value ?? (property as any)[entityPropertyKey];
+    (entity[propertyName] as any)[entityPropertyKey] =
+      appearancePropertyKey.override ??
+      value ??
+      appearancePropertyKey.default ??
+      (property as any)[entityPropertyKey];
   });
 }
 
@@ -133,10 +139,17 @@ export const attachStyle = (
     if (!computedFeature) {
       return;
     }
+    const simpleLayer = extractSimpleLayer(layer);
     if (point) {
       attachProperties(entity, computedFeature, ["marker", "point"], {
         show: {
           name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         pixelSize: {
           name: "pointSize",
@@ -163,6 +176,12 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "billboard"], {
         show: {
           name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         image: {
           name: "image",
@@ -193,6 +212,7 @@ export const attachStyle = (
         attachProperties(entity, computedFeature, ["marker", "label"], {
           show: {
             name: "show",
+            default: true,
           },
           text: {
             name: "labelText",
@@ -240,6 +260,7 @@ export const attachStyle = (
     attachProperties(entity, computedFeature, ["polyline", "polyline"], {
       show: {
         name: "show",
+        default: true,
       },
       width: {
         name: "strokeWidth",
@@ -286,6 +307,7 @@ export const attachStyle = (
     attachProperties(entity, computedFeature, ["polygon", "polygon"], {
       show: {
         name: "show",
+        default: true,
       },
       fill: {
         name: "fill",

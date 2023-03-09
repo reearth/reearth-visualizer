@@ -17,6 +17,7 @@ test("attachProperties()", () => {
       fillColor: "red",
       shadows: "enabled",
       heightReference: "clamp",
+      outlineColor: "red",
     },
   };
 
@@ -36,6 +37,10 @@ test("attachProperties()", () => {
       name: "heightReference",
       type: "heightReference",
     },
+    outlineColor: {
+      name: "strokeColor",
+      override: "blue",
+    },
   });
 
   expect(mockEntity.polygon).toEqual({
@@ -43,6 +48,7 @@ test("attachProperties()", () => {
     shadows: shadowMode("enabled"),
     heightReference: heightReference("clamp"),
     outlineWidth: 100,
+    outlineColor: "blue",
   });
   expect(mockEntity.properties.reearth_originalProperties).toEqual({
     polygon: {
@@ -57,6 +63,7 @@ test("attachProperties()", () => {
       fillColor: "red",
       shadows: "enabled",
       heightReference: "clamp",
+      outlineColor: "red",
     },
   });
 });
