@@ -73,7 +73,10 @@ export function attachProperties<
     const appearanceKeyName = appearancePropertyKey.name;
     const appearanceKeyType = appearancePropertyKey.type as AppearancePropertyKeyType;
 
-    let value = (computedFeature?.[appearanceName] as any)?.[appearanceKeyName];
+    let value =
+      appearancePropertyKey.override ??
+      (computedFeature?.[appearanceName] as any)?.[appearanceKeyName] ??
+      appearancePropertyKey.default;
     switch (appearanceKeyType) {
       case "color":
         value = toColor(value);
@@ -86,10 +89,7 @@ export function attachProperties<
     }
 
     (entity[propertyName] as any)[entityPropertyKey] =
-      appearancePropertyKey.override ??
-      value ??
-      appearancePropertyKey.default ??
-      (property as any)[entityPropertyKey];
+      value ?? (property as any)[entityPropertyKey];
   });
 }
 
