@@ -45,6 +45,15 @@ func (p *Schema) LinkableFields() LinkableFields {
 	return p.linkable.Clone()
 }
 
+func (p *Schema) PrivateFields() (res []FieldID) {
+	for _, gf := range p.groups.GroupAndFields() {
+		if gf.Field.Private() {
+			res = append(res, gf.Field.ID())
+		}
+	}
+	return
+}
+
 func (p LinkableFields) Clone() LinkableFields {
 	return LinkableFields{
 		LatLng: p.LatLng.Clone(),
