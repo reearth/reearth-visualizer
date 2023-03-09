@@ -348,6 +348,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
+				true,
 			).BuildScene(ctx, w, s, time.Now())
 		}()
 

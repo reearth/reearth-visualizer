@@ -39,7 +39,7 @@ type MergedInfoboxField struct {
 }
 
 // Merge merges two layers
-func Merge(o Layer, p *Group) *Merged {
+func Merge(o Layer, p *Group, ps *property.Schema) *Merged {
 	if o == nil || p != nil && o.Scene() != p.Scene() {
 		return nil
 	}
@@ -55,6 +55,7 @@ func Merge(o Layer, p *Group) *Merged {
 			Original:      o.Property(),
 			Parent:        p.Property(),
 			LinkedDataset: ToLayerItem(o).LinkedDataset(),
+			PrivateFields: ps.PrivateFields(),
 		},
 		IsVisible: o.IsVisible(),
 		Tags:      MergeTags(o.Tags(), p.Tags()),

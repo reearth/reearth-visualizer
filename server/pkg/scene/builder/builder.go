@@ -21,13 +21,14 @@ const (
 )
 
 type Builder struct {
-	ploader  property.Loader
-	tloader  tag.SceneLoader
-	exporter *encoding.Exporter
-	encoder  *encoder
+	ploader           property.Loader
+	tloader           tag.SceneLoader
+	exporter          *encoding.Exporter
+	encoder           *encoder
+	dropPrivateFields bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, dropPrivateFields bool) *Builder {
 	e := &encoder{}
 	return &Builder{
 		ploader: pl,
@@ -44,6 +45,7 @@ func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loa
 			},
 			Encoder: e,
 		},
+		dropPrivateFields: dropPrivateFields,
 	}
 }
 

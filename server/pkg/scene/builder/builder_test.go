@@ -765,7 +765,7 @@ func TestSceneBuilder(t *testing.T) {
 	}
 
 	// exec
-	sb := New(lloader, ploader, dloader, tloader, tsloader)
+	sb := New(lloader, ploader, dloader, tloader, tsloader, false)
 	result, err := sb.buildScene(context.Background(), scene, publishedAt)
 
 	assert.NoError(t, err)

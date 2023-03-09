@@ -12,6 +12,7 @@ import (
 type Sealer struct {
 	DatasetGraphLoader dataset.GraphLoader
 	TagLoader          tag.Loader
+	DropPrivateFields  bool
 }
 
 func (s *Sealer) Seal(ctx context.Context, m MergedLayer) (SealedLayer, error) {
@@ -150,7 +151,7 @@ func (s *Sealer) sealProperty(ctx context.Context, m *property.Merged) (*propert
 	if s == nil {
 		return nil, nil
 	}
-	return property.Seal(ctx, m, s.DatasetGraphLoader)
+	return property.Seal(ctx, m, s.DatasetGraphLoader, s.DropPrivateFields)
 }
 
 func (s *Sealer) sealTags(m []layer.MergedTag, tagMap tag.Map) []SealedTag {

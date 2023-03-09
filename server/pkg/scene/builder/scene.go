@@ -128,7 +128,7 @@ func toTag(t tag.Tag, m tag.Map) tagJSON {
 }
 
 func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {
-	return property.SealProperty(ctx, p).Interface()
+	return property.SealProperty(ctx, p, b.dropPrivateFields).Interface()
 }
 
 func findProperty(pp []*property.Property, i property.ID) *property.Property {
