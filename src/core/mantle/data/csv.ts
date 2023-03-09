@@ -98,7 +98,9 @@ const makeGeoJSONFromArray = (
   options: Data["csv"],
 ): CSVGeoJSONFeature => {
   const result = values.reduce(
-    (result: CSVGeoJSONFeature, value, idx) => {
+    (result: CSVGeoJSONFeature, element, idx) => {
+      let value: string | number = element;
+      if (!options?.disableTypeConversion) value = filterNumericString(element);
       if (options?.idColumn !== undefined && [headers[idx], idx].includes(options.idColumn)) {
         return {
           ...result,
@@ -177,4 +179,12 @@ const makeFeature = (value: CSVGeoJSONFeature, range: DataRange | undefined): Fe
     properties: value.properties,
     range,
   };
+};
+
+const filterNumericString = (input: string): number | string => {
+  const parsed = Number(input);
+  if (isNaN(parsed) || input === "") {
+    return input;
+  }
+  return parsed;
 };

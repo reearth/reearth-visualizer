@@ -77,6 +77,7 @@ export type Data = {
     lngColumn?: string | number;
     heightColumn?: string | number;
     noHeader?: boolean;
+    disableTypeConversion?: boolean;
   };
 };
 
