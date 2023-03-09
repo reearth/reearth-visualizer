@@ -56,7 +56,7 @@ func (v *ValueAndDatasetValue) Value() *Value {
 	if v == nil || v.t == ValueTypeUnknown {
 		return nil
 	}
-	if v.d != nil {
+	if v.d != nil && v.p == nil {
 		return valueFromDataset(v.d)
 	}
 	return v.p
