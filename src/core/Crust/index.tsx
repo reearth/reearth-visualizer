@@ -1,6 +1,6 @@
 import type { ReactNode, RefObject } from "react";
 
-import type { Tag } from "@reearth/core/mantle";
+import type { SelectedFeatureInfo, Tag } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerEditEvent, LayerSelectionReason } from "../Map";
@@ -62,6 +62,7 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  selectedFeatureInfo?: SelectedFeatureInfo;
   tags?: Tag[];
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
@@ -122,6 +123,7 @@ export default function Crust({
   selectedReason,
   selectedComputedLayer,
   selectedComputedFeature,
+  selectedFeatureInfo,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
@@ -167,6 +169,7 @@ export default function Crust({
       tags={tags}
       selectedLayer={selectedComputedLayer}
       selectedFeature={selectedComputedFeature}
+      selectedFeatureInfo={selectedFeatureInfo}
       layerSelectionReason={selectedReason}
       viewport={viewport}
       alignSystem={widgetAlignSystem}

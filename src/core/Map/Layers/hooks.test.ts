@@ -2,6 +2,8 @@ import { renderHook } from "@testing-library/react";
 import { useRef } from "react";
 import { expect, test, vi } from "vitest";
 
+import { ComputedFeature } from "../types";
+
 import useHooks, { type Layer, type Ref } from "./hooks";
 
 test("hooks", () => {
@@ -739,12 +741,23 @@ test("select", () => {
 
   // select
   handleLayerSelect.mockClear();
-  result.current.ref.current?.select("x", "y", { reason: "reason" });
+  result.current.ref.current?.select(
+    "x",
+    "y",
+    { reason: "reason" },
+    { feature: { id: "abc" } as ComputedFeature },
+  );
   rerender({ layers: initialLayers });
   expect(result.current.ref.current?.selectedLayer()).toEqual({
     id: "x",
   });
-  expect(handleLayerSelect).toBeCalledWith("x", "y", expect.any(Function), { reason: "reason" });
+  expect(handleLayerSelect).toBeCalledWith(
+    "x",
+    "y",
+    expect.any(Function),
+    { reason: "reason" },
+    { feature: { id: "abc" } },
+  );
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // remove reason
@@ -754,14 +767,20 @@ test("select", () => {
   expect(result.current.ref.current?.selectedLayer()).toEqual({
     id: "x",
   });
-  expect(handleLayerSelect).toBeCalledWith("x", undefined, expect.any(Function), undefined);
+  expect(handleLayerSelect).toBeCalledWith(
+    "x",
+    undefined,
+    expect.any(Function),
+    undefined,
+    undefined,
+  );
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // delete layers
   handleLayerSelect.mockClear();
   rerender({ layers: [] });
   expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
-  expect(handleLayerSelect).toBeCalledWith(undefined, undefined, undefined, undefined);
+  expect(handleLayerSelect).toBeCalledWith(undefined, undefined, undefined, undefined, undefined);
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // select a layer that does not exist

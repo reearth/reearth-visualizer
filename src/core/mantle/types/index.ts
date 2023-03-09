@@ -57,6 +57,10 @@ export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children" | "infobox"> & 
 export type NaiveInfobox = Omit<Infobox, "id" | "blocks"> & { blocks?: NaiveBlock[] };
 export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
 
+export type SelectedFeatureInfo = {
+  feature?: ComputedFeature;
+};
+
 // Data
 
 export type Data = {

@@ -1,5 +1,7 @@
 import { forwardRef, type ForwardRefRenderFunction } from "react";
 
+import { SelectedFeatureInfo } from "@reearth/core/mantle";
+
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
 import type { ComputedLayer } from "../types";
 
@@ -41,6 +43,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
+    info: SelectedFeatureInfo | undefined,
   ) => void;
 };
 

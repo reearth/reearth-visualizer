@@ -1,6 +1,6 @@
 import type { PropsWithChildren, RefObject } from "react";
 
-import type { Camera, ComputedFeature, Tag } from "@reearth/core/mantle";
+import type { Camera, ComputedFeature, SelectedFeatureInfo, Tag } from "@reearth/core/mantle";
 import type { ComputedLayer, LayerEditEvent, LayerSelectionReason } from "@reearth/core/Map";
 import type { Viewport } from "@reearth/core/Visualizer";
 
@@ -19,6 +19,7 @@ export type Props = PropsWithChildren<{
   tags?: Tag[];
   selectedLayer?: ComputedLayer;
   selectedFeature?: ComputedFeature;
+  selectedFeatureInfo?: SelectedFeatureInfo;
   layerSelectionReason?: LayerSelectionReason;
   viewport?: Viewport;
   alignSystem?: WidgetAlignSystem;

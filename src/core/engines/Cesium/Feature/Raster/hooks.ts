@@ -1,5 +1,10 @@
 import { VectorTileFeature } from "@mapbox/vector-tile";
-import { ImageryLayerCollection, ImageryProvider, WebMapServiceImageryProvider } from "cesium";
+import {
+  ImageryLayerCollection,
+  ImageryLayerFeatureInfo,
+  ImageryProvider,
+  WebMapServiceImageryProvider,
+} from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import md5 from "js-md5";
 import { isEqual, pick } from "lodash-es";
@@ -165,10 +170,17 @@ export const useMVT = ({
         };
       },
       onSelectFeature: (mvtFeature, tile) => {
-        // TODO: Implement select feature
-        const _id = mvtFeature.id
+        const layer = extractSimpleLayer(cachedCalculatedLayerRef.current?.layer);
+        if (!layer) {
+          return;
+        }
+        const id = mvtFeature.id
           ? String(mvtFeature.id)
           : idFromGeometry(mvtFeature.loadGeometry(), tile);
+        const feature = evalFeature(layer, makeFeatureFromPolygon(id, mvtFeature, tile));
+        const info = new ImageryLayerFeatureInfo();
+        info.data = { layerId: layer?.id, featureId: id, feature };
+        return info;
       },
     });
   }, [

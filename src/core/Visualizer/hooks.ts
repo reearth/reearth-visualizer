@@ -5,7 +5,7 @@ import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
-import type { ComputedFeature, Feature, LatLng } from "../mantle";
+import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
@@ -102,11 +102,12 @@ export default function useHooks({
       featureId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
       reason: LayerSelectionReason | undefined,
+      info: SelectedFeatureInfo | undefined,
     ) => {
       const computedLayer = await layer?.();
 
       selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
-      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId));
+      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId) ?? info?.feature);
 
       selectLayer({ layerId, featureId, layer: computedLayer, reason });
     },

@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DATA_CACHE_KEYS } from "@reearth/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, convertLegacyLayer } from "../../mantle";
+import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 
@@ -61,7 +61,12 @@ export type Ref = {
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
   hide: (...layers: string[]) => void;
   show: (...layers: string[]) => void;
-  select: (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => void;
+  select: (
+    layerId: string | undefined,
+    featureId?: string,
+    reason?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
+  ) => void;
   selectedLayer: () => LazyLayer | undefined;
   overriddenLayers: () => OverriddenLayer[];
 };
@@ -109,6 +114,7 @@ export default function useHooks({
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
+    info: SelectedFeatureInfo | undefined,
   ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
@@ -648,17 +654,22 @@ function useSelection({
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
+    info: SelectedFeatureInfo | undefined,
   ) => void;
 }) {
-  const [[selectedLayerId, selectedReason], setSelectedLayer] = useState<
-    [{ layerId?: string; featureId?: string } | undefined, LayerSelectionReason | undefined]
-  >([initialSelectedLayerId, initialSelectedReason]);
+  const [[selectedLayerId, selectedReason, selectedFeatureInfo], setSelectedLayer] = useState<
+    [
+      { layerId?: string; featureId?: string } | undefined,
+      LayerSelectionReason | undefined,
+      SelectedFeatureInfo | undefined,
+    ]
+  >([initialSelectedLayerId, initialSelectedReason, undefined]);
 
   useEffect(() => {
     setSelectedLayer(s => {
       return initialSelectedLayerId
         ? s[0]?.layerId !== initialSelectedLayerId.layerId || !isEqual(s[1], initialSelectedReason)
-          ? [initialSelectedLayerId, initialSelectedReason]
+          ? [initialSelectedLayerId, initialSelectedReason, undefined]
           : s
         : !s[0]?.layerId && !s[1]
         ? s
@@ -685,21 +696,27 @@ function useSelection({
             })
         : undefined,
       selectedReason,
+      selectedFeatureInfo,
     );
-  }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef]);
+  }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef, selectedFeatureInfo]);
 
   useEffect(() => {
     setSelectedLayer(s =>
       s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
-        ? [{ ...s[0] }, s[1]] // Force update when flattenedLayers are updated
+        ? [{ ...s[0] }, s[1], undefined] // Force update when flattenedLayers are updated
         : !s[0]?.layerId && !s[1]
         ? s
-        : [undefined, undefined],
+        : [undefined, undefined, undefined],
     );
   }, [flattenedLayers]);
 
   const select = useCallback(
-    (layerId?: unknown, featureId?: unknown, options?: LayerSelectionReason) => {
+    (
+      layerId?: unknown,
+      featureId?: unknown,
+      options?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
+    ) => {
       if (typeof layerId === "string")
         setSelectedLayer([
           {
@@ -707,9 +724,10 @@ function useSelection({
             featureId: typeof featureId === "string" ? featureId || undefined : undefined,
           },
           options,
+          info,
         ]);
-      else if (options) setSelectedLayer(s => [s[0], options]);
-      else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
+      else if (options) setSelectedLayer(s => [s[0], options, info]);
+      else setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
     },
     [],
   );

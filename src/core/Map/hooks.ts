@@ -1,5 +1,7 @@
 import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
+import { SelectedFeatureInfo } from "../mantle";
+
 import { type MapRef, mapRef } from "./ref";
 import type { EngineRef, LayersRef, LayerSelectionReason, ComputedLayer } from "./types";
 
@@ -19,6 +21,7 @@ export default function ({
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
   ) => void;
 }) {
   const engineRef = useRef<EngineRef>(null);
@@ -48,6 +51,7 @@ export default function ({
     featureId?: string;
     layer?: ComputedLayer;
     reason?: LayerSelectionReason;
+    info?: SelectedFeatureInfo;
   }>({});
 
   const handleLayerSelect = useCallback(
@@ -56,15 +60,21 @@ export default function ({
       featureId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
       reason?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
     ) => {
-      selectLayer({ layerId, featureId, layer: await layer?.(), reason });
+      selectLayer({ layerId, featureId, layer: await layer?.(), reason, info });
     },
     [],
   );
 
   const handleEngineLayerSelect = useCallback(
-    (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => {
-      layersRef.current?.select(layerId, featureId, reason);
+    (
+      layerId: string | undefined,
+      featureId?: string,
+      reason?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
+    ) => {
+      layersRef.current?.select(layerId, featureId, reason, info);
     },
     [],
   );
@@ -75,6 +85,7 @@ export default function ({
       selectedLayer.featureId,
       async () => selectedLayer.layer,
       selectedLayer.reason,
+      selectedLayer.info,
     );
   }, [onLayerSelect, selectedLayer]);
 
