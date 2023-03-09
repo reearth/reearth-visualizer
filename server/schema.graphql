@@ -339,6 +339,7 @@ type PluginExtension {
   description: String!
   icon: String!
   singleOnly: Boolean
+  deprecated: Boolean!
   widgetLayout: WidgetLayout
   visualizer: Visualizer
   propertySchemaId: ID!
@@ -475,6 +476,7 @@ type PropertySchemaField {
   min: Float
   max: Float
   choices: [PropertySchemaFieldChoice!]
+  private: Boolean!
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
   allTranslatedDescription: TranslatedString

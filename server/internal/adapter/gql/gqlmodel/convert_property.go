@@ -247,6 +247,7 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 		UI:           ToPropertySchemaFieldUI(f.UI()),
 		Min:          f.Min(),
 		Max:          f.Max(),
+		Private:      f.Private(),
 		Choices: util.Map(f.Choices(), func(c property.SchemaFieldChoice) *PropertySchemaFieldChoice {
 			return &PropertySchemaFieldChoice{
 				Key:                c.Key,
