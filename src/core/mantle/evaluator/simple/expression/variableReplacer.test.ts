@@ -46,4 +46,9 @@ describe("replaceVariables", () => {
       `czm_va$reearth_opened_square_bracket_$ria$reearth_closed_square_bracket_$ble + czm_variable[0] + czm_variable['key'] + czm_variable["key"] + czm_variable[variable] + czm_variable[variable].nested + czm_variable[variable]['nested']`,
     );
   });
+
+  test("should replace reserved hyphen", () => {
+    const [result, _] = replaceVariables("${vari-able}");
+    expect(result).toBe(`czm_vari$reearth_hyphen_$able`);
+  });
 });
