@@ -17,6 +17,7 @@ type SchemaField struct {
 	max          *float64
 	choices      []SchemaFieldChoice
 	cond         *Condition
+	private      bool
 }
 
 type SchemaFieldChoice struct {
@@ -134,6 +135,13 @@ func (p *SchemaField) IsAvailableIf() *Condition {
 	return p.cond.Clone()
 }
 
+func (p *SchemaField) Private() bool {
+	if p == nil {
+		return false
+	}
+	return p.private
+}
+
 func (p *SchemaField) Validate(value *OptionalValue) bool {
 	if p == nil || value == nil || p.propertyType != value.Type() {
 		return false
@@ -179,6 +187,13 @@ func (p *SchemaField) SetDescription(des i18n.String) {
 		return
 	}
 	p.description = des.Clone()
+}
+
+func (p *SchemaField) SetPrivate(private bool) {
+	if p == nil {
+		return
+	}
+	p.private = private
 }
 
 func (c *SchemaFieldChoice) SetTitle(l i18n.String) {

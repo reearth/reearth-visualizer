@@ -85,3 +85,8 @@ func (b *ExtensionBuilder) System(s bool) *ExtensionBuilder {
 	b.s = s
 	return b
 }
+
+func (b *ExtensionBuilder) Deprecated(deprecated bool) *ExtensionBuilder {
+	b.p.deprecated = deprecated
+	return b
+}

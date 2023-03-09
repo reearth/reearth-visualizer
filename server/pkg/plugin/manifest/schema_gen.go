@@ -23,6 +23,7 @@ type Extension struct {
 	Type         string          `json:"type"`
 	Visualizer   *string         `json:"visualizer,omitempty"`
 	WidgetLayout *WidgetLayout   `json:"widgetLayout,omitempty"`
+	Deprecated   *bool           `json:"deprecated,omitempty"`
 }
 
 type ID string
@@ -70,6 +71,7 @@ type PropertySchemaField struct {
 	Title        *string            `json:"title"`
 	Type         Valuetype          `json:"type"`
 	UI           *string            `json:"ui,omitempty"`
+	Private      *bool              `json:"private,omitempty"`
 }
 
 type PropertySchemaGroup struct {

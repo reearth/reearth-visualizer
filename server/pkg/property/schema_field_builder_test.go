@@ -73,6 +73,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				Max(tt.Max).
 				UI(tt.Ui).
 				UIRef(&tt.Ui).
+				Private(true).
 				Build()
 
 			if tt.Err == nil {
@@ -88,6 +89,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				assert.Equal(t, tt.Expected.Cond, res.IsAvailableIf())
 				assert.Equal(t, tt.Expected.Fname, res.Title())
 				assert.Equal(t, tt.Expected.PropertyType, res.Type())
+				assert.True(t, res.Private())
 			} else {
 				assert.Equal(t, tt.Err, err)
 			}

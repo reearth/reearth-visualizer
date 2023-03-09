@@ -65,6 +65,12 @@ func TestExtensionBuilder_WidgetLayout(t *testing.T) {
 	assert.Same(t, &wl, res.WidgetLayout())
 }
 
+func TestExtensionBuilder_Deprecated(t *testing.T) {
+	var b = NewExtension()
+	res := b.ID("xxx").Deprecated(true).MustBuild()
+	assert.True(t, res.Deprecated())
+}
+
 func TestExtensionBuilder_Build(t *testing.T) {
 	type args struct {
 		icon          string

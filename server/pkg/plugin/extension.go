@@ -29,6 +29,7 @@ type Extension struct {
 	visualizer    visualizer.Visualizer
 	singleOnly    bool
 	widgetLayout  *WidgetLayout
+	deprecated    bool
 }
 
 func (w *Extension) ID() ExtensionID {
@@ -70,6 +71,10 @@ func (w *Extension) WidgetLayout() *WidgetLayout {
 	return w.widgetLayout
 }
 
+func (w *Extension) Deprecated() bool {
+	return w.deprecated
+}
+
 func (w *Extension) Rename(name i18n.String) {
 	w.name = name.Clone()
 
@@ -77,6 +82,10 @@ func (w *Extension) Rename(name i18n.String) {
 
 func (w *Extension) SetDescription(des i18n.String) {
 	w.description = des.Clone()
+}
+
+func (w *Extension) SetDeprecated(deprecated bool) {
+	w.deprecated = deprecated
 }
 
 func (w *Extension) Clone() *Extension {
