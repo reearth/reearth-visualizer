@@ -19,7 +19,7 @@ const makeRange = (startTime?: number, stopTime?: number) => {
       : now,
     end:
       startTime && stopTime && startTime < stopTime
-        ? Math.min(now, stopTime)
+        ? stopTime
         : startTime
         ? Math.min(now, startTime + MAX_RANGE)
         : now,
