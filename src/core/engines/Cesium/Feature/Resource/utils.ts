@@ -232,8 +232,8 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polyline", "polyline"])) {
-    const entityPosition = entity.position?.getValue(JulianDate.now());
-    const positions = entity.polyline?.positions?.getValue(JulianDate.now()) as Cartesian3[];
+    const entityPosition = entity.position?.getValue(currentTime);
+    const positions = entity.polyline?.positions?.getValue(currentTime) as Cartesian3[];
     const coordinates = positions?.map(position => [
       position?.x ?? 0,
       position?.y ?? 0,
@@ -281,9 +281,9 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polygon", "polygon"])) {
-    const entityPosition = entity.position?.getValue(JulianDate.now());
-    const hierarchy = entity.polygon?.hierarchy?.getValue(JulianDate.now()) as PolygonHierarchy;
-    const coordinates = hierarchy.holes?.map(hole =>
+    const entityPosition = entity.position?.getValue(currentTime);
+    const hierarchy = entity.polygon?.hierarchy?.getValue(currentTime) as PolygonHierarchy;
+    const coordinates = hierarchy?.holes?.map(hole =>
       hole.positions.map(position => [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]),
     );
     const feature: Feature = {

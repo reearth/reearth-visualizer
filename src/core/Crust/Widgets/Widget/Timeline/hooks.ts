@@ -9,7 +9,8 @@ import { useVisible } from "../useVisible";
 const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
-  const now = Date.now();
+  // To avoid out of range error in Cesium, we need to turn back a hour.
+  const now = Date.now() - 3600000;
   return {
     start: startTime
       ? Math.min(now, startTime)
@@ -187,14 +188,20 @@ export const useTimeline = ({
     };
   }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart]);
 
+  const onTimeChangeRef = useRef<typeof onTimeChange>();
+
+  useEffect(() => {
+    onTimeChangeRef.current = onTimeChange;
+  }, [onTimeChange]);
+
   const overriddenCurrentTime = overriddenClock?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
       const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
       setCurrentTime(t);
-      onTimeChange?.(new Date(t));
+      onTimeChangeRef.current?.(new Date(t));
     }
-  }, [overriddenCurrentTime, range, onTimeChange]);
+  }, [overriddenCurrentTime, range]);
 
   useEffect(() => {
     if (isMobile) {
