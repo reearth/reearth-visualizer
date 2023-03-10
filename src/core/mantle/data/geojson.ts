@@ -2,10 +2,14 @@ import type { GeoJSON } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { f, generateRandomString } from "./utils";
+import { f, FetchOptions, generateRandomString } from "./utils";
 
-export async function fetchGeoJSON(data: Data, range?: DataRange): Promise<Feature[] | void> {
-  const d = data.url ? await (await f(data.url)).json() : data.value;
+export async function fetchGeoJSON(
+  data: Data,
+  range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
+  const d = data.url ? await (await f(data.url, options)).json() : data.value;
   return processGeoJSON(d, range);
 }
 

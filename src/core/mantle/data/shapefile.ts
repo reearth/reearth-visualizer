@@ -4,10 +4,14 @@ import JSZip from "jszip";
 import type { Data, DataRange, Feature } from "../types";
 
 import { processGeoJSON } from "./geojson";
-import { f } from "./utils";
+import { f, FetchOptions } from "./utils";
 
-export async function fetchShapefile(data: Data, range?: DataRange): Promise<Feature[] | void> {
-  const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
+export async function fetchShapefile(
+  data: Data,
+  range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
+  const arrayBuffer = data.url ? await (await f(data.url, options)).arrayBuffer() : data.value;
   const zip = await JSZip.loadAsync(new Uint8Array(arrayBuffer));
 
   let shpFileArrayBuffer: ArrayBuffer | undefined;

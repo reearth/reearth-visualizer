@@ -190,9 +190,11 @@ export const useTimeline = ({
   const overriddenCurrentTime = overriddenClock?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
-      setCurrentTime(Math.max(Math.min(range.end, overriddenCurrentTime), range.start));
+      const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
+      setCurrentTime(t);
+      onTimeChange?.(new Date(t));
     }
-  }, [overriddenCurrentTime, range]);
+  }, [overriddenCurrentTime, range, onTimeChange]);
 
   useEffect(() => {
     if (isMobile) {

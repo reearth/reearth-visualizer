@@ -3,10 +3,14 @@ import type { LineString, Position, GeoJsonProperties } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { f, generateRandomString } from "./utils";
+import { f, FetchOptions, generateRandomString } from "./utils";
 
-export async function fetchGPXfile(data: Data, _range?: DataRange): Promise<Feature[] | void> {
-  const xmlDataStr = data.url ? await (await f(data.url)).text() : data.value;
+export async function fetchGPXfile(
+  data: Data,
+  _range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
+  const xmlDataStr = data.url ? await (await f(data.url, options)).text() : data.value;
   return handler(xmlDataStr);
 }
 

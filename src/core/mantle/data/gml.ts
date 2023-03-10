@@ -2,10 +2,14 @@ import { XMLParser, X2jOptionsOptional } from "fast-xml-parser";
 
 import type { Data, DataRange, Feature, Geometry } from "../types";
 
-import { f, convertToCoordinates } from "./utils";
+import { f, convertToCoordinates, FetchOptions } from "./utils";
 
-export async function fetchGMLData(data: Data, _range?: DataRange): Promise<Feature[] | void> {
-  const xmlDataStr = data.url ? await (await f(data.url)).text() : data.value;
+export async function fetchGMLData(
+  data: Data,
+  _range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
+  const xmlDataStr = data.url ? await (await f(data.url, options)).text() : data.value;
   return handler(xmlDataStr);
 }
 

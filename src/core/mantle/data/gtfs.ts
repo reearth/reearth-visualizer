@@ -3,17 +3,21 @@ import Pbf from "pbf";
 import type { Data, DataRange, Feature } from "../types";
 
 import { Trips, Trip, GTFS, GTFSReader } from "./gtfsReader";
-import { f } from "./utils";
+import { f, FetchOptions } from "./utils";
 
 let gtfs: GTFS = {};
 let current: Trips = {};
 let previous: Trips = {};
 let tripsData: Trips = {};
 
-export async function fetchGTFS(data: Data, range?: DataRange): Promise<Feature[] | void> {
+export async function fetchGTFS(
+  data: Data,
+  range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
   const fetchData = async () => {
     try {
-      const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
+      const arrayBuffer = data.url ? await (await f(data.url, options)).arrayBuffer() : data.value;
       const pbfBuffer = new Pbf(new Uint8Array(arrayBuffer));
       gtfs = new GTFSReader().read(pbfBuffer);
     } catch (err) {

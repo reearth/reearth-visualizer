@@ -9,7 +9,7 @@ import { doubleKeyCacheAtom } from "./cache";
 export const globalDataFeaturesCache = doubleKeyCacheAtom<string, string, Feature[]>();
 
 export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
-  const fetching = atom<[string, string][]>([]);
+  const fetching = atom<[string, string, AbortController][]>([]);
 
   const get = atom(
     get => (layerId: string, data: Data, range?: DataRange) =>
@@ -73,14 +73,21 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
         !value.forceUpdateData && !value.data.value && value.data.url
           ? get(cacheAtoms.get)(k, rk)
           : undefined;
-      if (cached || get(fetching).findIndex(e => e[0] === k && e[1] === rk) >= 0) return;
+      if (cached) return;
+      const status = get(fetching).find(e => e[0] === k && e[1] === rk);
+      if (status) {
+        status[2].abort();
+      }
 
       try {
-        set(fetching, f => [...f, [k, rk]]);
-        const features = await fetchData(value.data, value.range);
+        const abort = new AbortController();
+        set(fetching, f => [...f, [k, rk, abort]]);
+        const features = await fetchData(value.data, value.range, { signal: abort.signal });
         if (features) {
           set(cacheAtoms.set, { key: k, key2: rk, value: features });
         }
+      } catch (e) {
+        // Do nothing
       } finally {
         set(fetching, f => f.filter(e => e[0] !== k || e[1] !== rk));
       }

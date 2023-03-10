@@ -2,9 +2,13 @@ import type { Feature as GeoJSONFeature, Point } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { f, generateRandomString } from "./utils";
+import { f, FetchOptions, generateRandomString } from "./utils";
 
-export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[] | void> {
+export async function fetchCSV(
+  data: Data,
+  range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
   if (!data.url) {
     const value = data.value;
     if (typeof value !== "string") {
@@ -13,7 +17,7 @@ export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[]
     }
     return await parseCSV(value, data.csv, range);
   }
-  const csvText = await (await f(data.url)).text();
+  const csvText = await (await f(data.url, options)).text();
   return await parseCSV(csvText, data.csv, range);
 }
 
