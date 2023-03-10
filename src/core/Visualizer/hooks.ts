@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
+import { convertTime } from "@reearth/util/time";
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
@@ -143,6 +144,43 @@ export default function useHooks({
   // scene
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
 
+  // clock
+  const overriddenClock = useMemo(() => {
+    const { start, stop, current } = overriddenSceneProperty.timeline || {};
+    const startTime = convertTime(start)?.getTime();
+    const stopTime = convertTime(stop)?.getTime();
+    const currentTime = convertTime(current)?.getTime();
+
+    const DEFAULT_NEXT_RANGE = 86400000; // a day
+    const MAX_RANGE_DIFFERENCE = 2592000000; // 30 days
+
+    // To avoid out of range error in Cesium, we need to turn back a hour.
+    const now = Date.now() - 3600000;
+
+    const convertedStartTime = startTime
+      ? Math.min(now, startTime)
+      : stopTime
+      ? Math.min(now, stopTime - DEFAULT_NEXT_RANGE)
+      : now - DEFAULT_NEXT_RANGE;
+
+    const convertedStopTime = stopTime
+      ? Math.min(stopTime, convertedStartTime + MAX_RANGE_DIFFERENCE)
+      : startTime
+      ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
+      : now;
+
+    return {
+      start: new Date(convertedStartTime),
+      stop: new Date(convertedStopTime),
+      current: new Date(
+        Math.max(
+          Math.min(convertedStopTime, currentTime || convertedStartTime),
+          convertedStartTime,
+        ),
+      ),
+    };
+  }, [overriddenSceneProperty]);
+
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
 
@@ -210,6 +248,7 @@ export default function useHooks({
     camera,
     isMobile,
     overriddenSceneProperty,
+    overriddenClock,
     isDroppable,
     infobox,
     isLayerDragging,

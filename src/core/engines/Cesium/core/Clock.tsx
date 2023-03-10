@@ -2,32 +2,27 @@ import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium"
 import { useCallback, useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
-import { convertTime } from "@reearth/util/time";
-
-import type { SceneProperty } from "../..";
+import type { Clock as ClockType, SceneProperty } from "../..";
 
 export type Props = {
   property?: SceneProperty;
+  clock?: ClockType;
   onTick?: (d: Date) => void;
 };
 
-export default function ReearthClock({ property, onTick }: Props): JSX.Element | null {
-  const { animation, visible, start, stop, current, stepType, rangeType, multiplier, step } =
-    property?.timeline ?? {};
-  const dateStart = useMemo(() => convertTime(start), [start]);
-  const dateStop = useMemo(() => convertTime(stop), [stop]);
-  const dateCurrent = useMemo(() => convertTime(current), [current]);
+export default function ReearthClock({ property, clock, onTick }: Props): JSX.Element | null {
+  const { animation, visible, stepType, rangeType, multiplier, step } = property?.timeline ?? {};
   const startTime = useMemo(
-    () => (dateStart ? JulianDate.fromDate(dateStart) : undefined),
-    [dateStart],
+    () => (clock?.start ? JulianDate.fromDate(clock.start) : undefined),
+    [clock?.start],
   );
   const stopTime = useMemo(
-    () => (dateStop ? JulianDate.fromDate(dateStop) : undefined),
-    [dateStop],
+    () => (clock?.stop ? JulianDate.fromDate(clock?.stop) : undefined),
+    [clock?.stop],
   );
   const currentTime = useMemo(
-    () => (dateCurrent ? JulianDate.fromDate(dateCurrent) : undefined),
-    [dateCurrent],
+    () => (clock?.current ? JulianDate.fromDate(clock?.current) : undefined),
+    [clock],
   );
   const clockStep =
     stepType === "fixed" ? ClockStep.TICK_DEPENDENT : ClockStep.SYSTEM_CLOCK_MULTIPLIER;

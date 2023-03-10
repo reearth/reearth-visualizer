@@ -102,6 +102,7 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
+  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;

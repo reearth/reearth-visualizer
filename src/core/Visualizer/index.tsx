@@ -158,6 +158,7 @@ export default function Visualizer({
     camera,
     isMobile,
     overriddenSceneProperty,
+    overriddenClock,
     isDroppable,
     isLayerDragging,
     infobox,
@@ -202,6 +203,7 @@ export default function Visualizer({
         inEditor={inEditor}
         sceneProperty={overriddenSceneProperty}
         overrideSceneProperty={overrideSceneProperty}
+        overriddenClock={overriddenClock}
         blocks={infobox?.blocks}
         camera={camera}
         isMobile={isMobile}

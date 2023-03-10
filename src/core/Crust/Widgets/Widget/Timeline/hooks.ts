@@ -162,7 +162,7 @@ export const useTimeline = ({
   }, [clock, onSpeedChange, onTick]);
 
   const overriddenStart = overriddenClock?.start?.getTime();
-  const overriddenStop = overriddenClock?.start?.getTime();
+  const overriddenStop = overriddenClock?.stop?.getTime();
   // Sync cesium clock.
   useEffect(() => {
     setRange(prev => {
