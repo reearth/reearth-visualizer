@@ -152,6 +152,7 @@
         "react-dropzone": "14.2.3",
         "react-error-boundary": "3.1.4",
         "react-ga": "3.3.1",
+        "react-ga4": "2.0.0",
         "react-i18next": "12.1.4",
         "react-inlinesvg": "3.0.1",
         "react-leaflet": "4.2.0",
