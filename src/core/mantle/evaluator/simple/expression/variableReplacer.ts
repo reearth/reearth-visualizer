@@ -110,13 +110,13 @@ const RESERVED_WORDS: Record<string, string> = {
 
 const replaceReservedWord = (word: string) => {
   const wordFiltered = word.replace(/-/g, RESERVED_WORDS["-"]);
-  return wordFiltered.replaceAll(
-    /(.*)(\[|\{|\()(.*)(\]|\}|\))(?!\.|\[)(.+)/g,
-    (_match, prefix, openedBracket, inner, closedBracket, suffix) => {
-      return `${prefix}${RESERVED_WORDS[openedBracket]}${inner}${RESERVED_WORDS[closedBracket]}${suffix}`;
-    },
-  );
+  if (!/(\]|\)|\})[^[.]+$/.test(wordFiltered)) {
+    return wordFiltered;
+  }
+  return Object.entries(RESERVED_WORDS).reduce((res, [key, val]) => {
+    return res.replaceAll(key, val);
+  }, wordFiltered);
 };
 
 export const restoreReservedWord = (text: string) =>
-  Object.entries(RESERVED_WORDS).reduce((res, [key, val]) => res.replace(val, key), text);
+  Object.entries(RESERVED_WORDS).reduce((res, [key, val]) => res.replaceAll(val, key), text);
