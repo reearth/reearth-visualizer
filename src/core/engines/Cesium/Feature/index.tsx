@@ -13,7 +13,7 @@ import Polyline, { config as polylineConfig } from "./Polyline";
 import Raster, { config as rasterConfig } from "./Raster";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
-import type { FeatureComponent, FeatureComponentConfig } from "./utils";
+import { extractSimpleLayerData, FeatureComponent, FeatureComponentConfig } from "./utils";
 
 export * from "./utils";
 export { context, type Context } from "./context";
@@ -47,6 +47,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gtfs: "auto",
   georss: [],
   gml: [],
+  gltf: ["model"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
@@ -68,7 +69,7 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
-  const data = layer.layer.type === "simple" ? layer.layer.data : undefined;
+  const data = extractSimpleLayerData(layer);
   const ext =
     !data?.type || (data.type as string) === "auto"
       ? (getExtname(data?.url) as DataType)

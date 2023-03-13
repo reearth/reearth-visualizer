@@ -8,6 +8,7 @@ import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import {
   EntityExt,
+  extractSimpleLayerData,
   toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
@@ -22,6 +23,9 @@ export type Property = ModelAppearance & {
 };
 
 export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {
+  const data = extractSimpleLayerData(layer);
+  const isGltfData = data?.type === "gltf";
+
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -31,6 +35,11 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
         : undefined,
     [geometry?.coordinates, geometry?.type, property?.height, property?.location],
   );
+  const position = useMemo(() => {
+    return coordinates
+      ? Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2])
+      : Cartesian3.ZERO;
+  }, [coordinates]);
 
   const {
     show = true,
@@ -55,30 +64,25 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     silhouetteSize = 1,
   } = property ?? {};
 
-  const position = useMemo(() => {
-    return coordinates
-      ? Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2])
-      : undefined;
-  }, [coordinates]);
+  const actualUrl = useMemo(() => model || url || data?.url, [layer, model, url]);
   const orientation = useMemo(
     () =>
-      position
-        ? bearing
-          ? Transforms.headingPitchRollQuaternion(
-              position,
-              HeadingPitchRoll.fromDegrees(bearing - 90.0, 0.0, 0.0),
-            )
-          : Transforms.headingPitchRollQuaternion(
-              position,
-              new HeadingPitchRoll(
-                CesiumMath.toRadians(heading ?? 0),
-                CesiumMath.toRadians(pitch ?? 0),
-                CesiumMath.toRadians(roll ?? 0),
-              ),
-            )
-        : undefined,
+      bearing
+        ? Transforms.headingPitchRollQuaternion(
+            position,
+            HeadingPitchRoll.fromDegrees(bearing - 90.0, 0.0, 0.0),
+          )
+        : Transforms.headingPitchRollQuaternion(
+            position,
+            new HeadingPitchRoll(
+              CesiumMath.toRadians(heading ?? 0),
+              CesiumMath.toRadians(pitch ?? 0),
+              CesiumMath.toRadians(roll ?? 0),
+            ),
+          ),
     [bearing, heading, pitch, position, roll],
   );
+
   const modelColor = useMemo(() => (colorBlend ? toColor(color) : undefined), [colorBlend, color]);
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
@@ -88,7 +92,8 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     [property?.near, property?.far],
   );
 
-  return !isVisible || !show || (!model && !url) || !position ? null : (
+  // if data type is gltf, layer should be rendered. Otherwise only features should be rendererd.
+  return (isGltfData ? feature : !feature) || !isVisible || !show || !actualUrl ? null : (
     <EntityExt
       id={id}
       position={position}
@@ -99,7 +104,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       properties={feature?.properties}
       availability={availability}>
       <ModelGraphics
-        uri={model || url}
+        uri={actualUrl}
         scale={scale}
         shadows={shadowMode(shadows)}
         colorBlendMode={colorBlendMode(colorBlend)}
@@ -118,6 +123,4 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   );
 }
 
-export const config: FeatureComponentConfig = {
-  noLayer: true,
-};
+export const config: FeatureComponentConfig = {};

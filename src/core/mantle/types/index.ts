@@ -104,7 +104,8 @@ export type DataType =
   | "shapefile"
   | "gtfs"
   | "gml"
-  | "georss";
+  | "georss"
+  | "gltf";
 
 export type TimeInterval = [start: Date, end?: Date];
 
