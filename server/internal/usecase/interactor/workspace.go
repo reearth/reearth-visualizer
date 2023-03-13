@@ -52,10 +52,12 @@ func (i *Workspace) FindByUser(ctx context.Context, id workspace.UserID, operato
 }
 
 func (i *Workspace) Create(ctx context.Context, name string, firstUser workspace.UserID, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -86,10 +88,12 @@ func (i *Workspace) Create(ctx context.Context, name string, firstUser workspace
 }
 
 func (i *Workspace) Update(ctx context.Context, id workspace.ID, name string, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -124,10 +128,12 @@ func (i *Workspace) Update(ctx context.Context, id workspace.ID, name string, op
 }
 
 func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.UserID, role workspace.Role, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -177,10 +183,12 @@ func (i *Workspace) AddMember(ctx context.Context, id workspace.ID, u workspace.
 }
 
 func (i *Workspace) RemoveMember(ctx context.Context, id workspace.ID, u workspace.UserID, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -223,10 +231,12 @@ func (i *Workspace) RemoveMember(ctx context.Context, id workspace.ID, u workspa
 }
 
 func (i *Workspace) UpdateMember(ctx context.Context, id workspace.ID, u workspace.UserID, role workspace.Role, operator *usecase.Operator) (_ *workspace.Workspace, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -269,10 +279,12 @@ func (i *Workspace) UpdateMember(ctx context.Context, id workspace.ID, u workspa
 }
 
 func (i *Workspace) Remove(ctx context.Context, id workspace.ID, operator *usecase.Operator) (err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

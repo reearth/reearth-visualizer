@@ -76,11 +76,12 @@ func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, 
 }
 
 func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, _ *property.Field, err error) {
-
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -119,10 +120,12 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 }
 
 func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropertyFieldParam, operator *usecase.Operator) (p *property.Property, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -154,10 +157,12 @@ func (i *Property) RemoveField(ctx context.Context, inp interfaces.RemovePropert
 }
 
 func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyValueParam, operator *usecase.Operator) (p *property.Property, pgl *property.GroupList, pg *property.Group, field *property.Field, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -211,11 +216,12 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 }
 
 func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropertyValueParam, operator *usecase.Operator) (p *property.Property, pgl *property.GroupList, pg *property.Group, field *property.Field, err error) {
-
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -258,10 +264,12 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 }
 
 func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, pg *property.Group, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -305,10 +313,12 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 }
 
 func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItemParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -342,10 +352,12 @@ func (i *Property) MoveItem(ctx context.Context, inp interfaces.MovePropertyItem
 }
 
 func (i *Property) RemoveItem(ctx context.Context, inp interfaces.RemovePropertyItemParam, operator *usecase.Operator) (p *property.Property, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

@@ -16,10 +16,12 @@ import (
 )
 
 func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.PluginID, operator *usecase.Operator) (_ *scene.Scene, _ *id.PropertyID, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -83,10 +85,12 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 		return nil, rerror.ErrNotFound
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -173,10 +177,12 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 }
 
 func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, newPluginID id.PluginID, operator *usecase.Operator) (_ *scene.Scene, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

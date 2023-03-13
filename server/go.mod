@@ -24,9 +24,9 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.8.0
-	github.com/reearth/reearthx v0.0.0-20230206061553-f29144aee73b
+	github.com/reearth/reearthx v0.0.0-20230313110808-d00b7183549c
 	github.com/samber/lo v1.27.0
-	github.com/sendgrid/sendgrid-go v3.11.1+incompatible
+	github.com/sendgrid/sendgrid-go v3.12.0+incompatible
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.9.3
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
@@ -94,16 +94,17 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/imkira/go-interpol v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/maruel/panicparse/v2 v2.3.1 // indirect
 	github.com/matryer/moq v0.2.7 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.2.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/sendgrid/rest v2.6.6+incompatible // indirect
+	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/smartystreets/assertions v1.1.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
@@ -132,7 +133,7 @@ require (
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 	google.golang.org/appengine v1.6.7 // indirect

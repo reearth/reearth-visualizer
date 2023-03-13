@@ -2,80 +2,71 @@ package migration
 
 import (
 	"context"
-	"fmt"
+	"errors"
+	"sync"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearth/server/pkg/config"
 	"github.com/reearth/reearthx/mongox"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/reearth/reearthx/usecasex"
+	"github.com/reearth/reearthx/usecasex/migration"
 )
+
+// To add a new migration, do the following command:
+// go run github.com/reearth/reearthx/tools migrategen -d internal/infrastructure/mongo/migration -t DBClient -n "foobar"
 
 type DBClient = *mongox.Client
 
-type MigrationFunc = func(context.Context, DBClient) error
-
-type Client struct {
-	Client *mongox.Client
-	Config repo.Config
+func Do(ctx context.Context, db *mongox.Client, config repo.Config) error {
+	return migration.NewClient(db, NewConfig(config), migrations, 0).Migrate(ctx)
 }
 
-func (c Client) Migrate(ctx context.Context) (err error) {
-	config, err := c.Config.LockAndLoad(ctx)
-	if err != nil {
-		return fmt.Errorf("Failed to load config: %w", rerror.UnwrapErrInternal(err))
+type Config struct {
+	c       repo.Config
+	locked  bool
+	current config.Config
+	m       sync.Mutex
+}
+
+func NewConfig(c repo.Config) *Config {
+	return &Config{c: c}
+}
+
+func (c *Config) Begin(ctx context.Context) error {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	conf, err := c.c.LockAndLoad(ctx)
+	if conf != nil {
+		c.current = *conf
 	}
-	defer func() {
-		if err2 := c.Config.Unlock(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	nextMigrations := config.NextMigrations(migrationKeys())
-	if len(nextMigrations) == 0 {
-		return nil
+	if err == nil {
+		c.locked = true
 	}
+	return err
+}
 
-	var tx usecasex.Tx
-	defer func() {
-		if tx != nil {
-			if err2 := tx.End(ctx); err == nil && err2 != nil {
-				err = err2
-			}
-		}
-	}()
+func (c *Config) End(ctx context.Context) error {
+	c.m.Lock()
+	defer c.m.Unlock()
 
-	for _, m := range nextMigrations {
-		tx, err = c.Client.BeginTransaction()
-		if err != nil {
-			return err
-		}
-
-		log.Infof("DB migration: %d\n", m)
-		if err := migrations[m](ctx, c.Client); err != nil {
-			return fmt.Errorf("Failed to exec migration %d: %w", m, rerror.UnwrapErrInternal(err))
-		}
-
-		config.Migration = m
-		if err := c.Config.Save(ctx, config); err != nil {
-			return err
-		}
-
-		tx.Commit()
-		if err := tx.End(ctx); err != nil {
-			tx = nil
-			return err
-		}
-		tx = nil
+	if err := c.c.Unlock(ctx); err != nil {
+		return err
 	}
-
+	c.locked = false
 	return nil
 }
 
-func migrationKeys() []int64 {
-	keys := make([]int64, 0, len(migrations))
-	for k := range migrations {
-		keys = append(keys, k)
+func (c *Config) Current(ctx context.Context) (migration.Key, error) {
+	if !c.locked {
+		return 0, errors.New("config is not locked")
 	}
-	return keys
+	return c.current.Migration, nil
+}
+
+func (c *Config) Save(ctx context.Context, key migration.Key) error {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	c.current.Migration = key
+	return c.c.Save(ctx, &c.current)
 }

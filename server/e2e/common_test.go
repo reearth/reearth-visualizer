@@ -37,7 +37,7 @@ func StartServer(t *testing.T, cfg *app.Config, useMongo bool) *httpexpect.Expec
 	var repos *repo.Container
 	if useMongo {
 		db := mongotest.Connect(t)(t)
-		repos = lo.Must(mongo.New(ctx, db))
+		repos = lo.Must(mongo.New(ctx, db, false))
 	} else {
 		repos = memory.New()
 	}

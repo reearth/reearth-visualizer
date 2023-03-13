@@ -82,10 +82,12 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 		return nil, nil, err
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

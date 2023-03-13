@@ -66,10 +66,12 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 }
 
 func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -143,10 +145,12 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 }
 
 func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -239,10 +243,12 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 }
 
 func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetParam, operator *usecase.Operator) (_ *scene.Scene, _ *scene.Widget, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -321,10 +327,12 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 }
 
 func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.UpdateWidgetAlignSystemParam, operator *usecase.Operator) (_ *scene.Scene, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -371,10 +379,12 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 }
 
 func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -414,10 +424,12 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 }
 
 func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -458,10 +470,12 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 }
 
 func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateClusterParam, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -496,10 +510,12 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 }
 
 func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID id.ClusterID, operator *usecase.Operator) (*scene.Scene, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

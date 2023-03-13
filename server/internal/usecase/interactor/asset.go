@@ -34,7 +34,7 @@ func (i *Asset) FindByWorkspace(ctx context.Context, tid id.WorkspaceID, keyword
 	return Run2(
 		ctx, operator, i.repos,
 		Usecase().WithReadableWorkspaces(tid),
-		func() ([]*asset.Asset, *usecasex.PageInfo, error) {
+		func(ctx context.Context) ([]*asset.Asset, *usecasex.PageInfo, error) {
 			return i.repos.Asset.FindByWorkspace(ctx, tid, repo.AssetFilter{
 				Sort:       sort,
 				Keyword:    keyword,
@@ -53,7 +53,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		Usecase().
 			WithWritableWorkspaces(inp.WorkspaceID).
 			Transaction(),
-		func() (*asset.Asset, error) {
+		func(ctx context.Context) (*asset.Asset, error) {
 			ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
 			if err != nil {
 				return nil, err
@@ -103,7 +103,7 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	return Run1(
 		ctx, operator, i.repos,
 		Usecase().Transaction(),
-		func() (id.AssetID, error) {
+		func(ctx context.Context) (id.AssetID, error) {
 			asset, err := i.repos.Asset.FindByID(ctx, aid)
 			if err != nil {
 				return aid, err
