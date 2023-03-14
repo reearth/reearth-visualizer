@@ -611,7 +611,10 @@ test("onTick", () => {
   result.current.current?.onTick(mockTickEventHandler);
   expect(result.current.current?.tickEventCallback?.current).toEqual([mockTickEventHandler]);
 
-  result.current.current?.tickEventCallback?.current?.[0]?.(d);
+  result.current.current?.tickEventCallback?.current?.[0]?.(d, {
+    start: new Date(),
+    stop: new Date(),
+  });
   expect(mockTickEventHandler).toHaveBeenCalledTimes(1);
 
   result.current.current?.removeTickEventListener(mockTickEventHandler);

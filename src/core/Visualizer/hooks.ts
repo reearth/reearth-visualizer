@@ -170,14 +170,17 @@ export default function useHooks({
       : now;
 
     return {
-      start: new Date(convertedStartTime),
-      stop: new Date(convertedStopTime),
-      current: new Date(
-        Math.max(
-          Math.min(convertedStopTime, currentTime || convertedStartTime),
-          convertedStartTime,
-        ),
-      ),
+      start: start || stop ? new Date(convertedStartTime) : undefined,
+      stop: start || stop ? new Date(convertedStopTime) : undefined,
+      current:
+        start || stop || current
+          ? new Date(
+              Math.max(
+                Math.min(convertedStopTime, currentTime || convertedStartTime),
+                convertedStartTime,
+              ),
+            )
+          : undefined,
     };
   }, [overriddenSceneProperty]);
 

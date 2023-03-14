@@ -7,7 +7,7 @@ import type { Clock as ClockType, SceneProperty } from "../..";
 export type Props = {
   property?: SceneProperty;
   clock?: ClockType;
-  onTick?: (d: Date) => void;
+  onTick?: (d: Date, clock: { start: Date; stop: Date }) => void;
 };
 
 export default function ReearthClock({ property, clock, onTick }: Props): JSX.Element | null {
@@ -31,7 +31,10 @@ export default function ReearthClock({ property, clock, onTick }: Props): JSX.El
   const handleTick = useCallback(
     (clock: CesiumClock) => {
       // NOTE: Must not update state. This event will be called every frame.
-      onTick?.(JulianDate.toDate(clock.currentTime));
+      onTick?.(JulianDate.toDate(clock.currentTime), {
+        start: JulianDate.toDate(clock.startTime),
+        stop: JulianDate.toDate(clock.stopTime),
+      });
     },
     [onTick],
   );

@@ -1,9 +1,4 @@
-import {
-  KmlDataSource as CesiumKmlDataSource,
-  CzmlDataSource as CesiumCzmlDataSource,
-  GeoJsonDataSource as CesiumGeoJsonDataSource,
-  Entity,
-} from "cesium";
+import { Entity, type DataSource, type Viewer } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
@@ -43,24 +38,30 @@ type CachedFeature = {
 
 export default function Resource({ isVisible, property, layer, onComputedFeatureFetch }: Props) {
   const { show = true, clampToGround } = property ?? {};
-  const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
+  const [type, url, updateClock] = useMemo((): [
+    ResourceAppearance["type"],
+    string | undefined,
+    boolean,
+  ] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
     const url = property?.url;
     return [
       type ?? (data?.type as ResourceAppearance["type"]),
       url ?? (data && !DataTypeListAllowsOnlyProperty.includes(data.type) ? data?.url : undefined),
+      !data?.time?.updateClockOnLoad,
     ];
   }, [property, layer]);
-  const { viewer } = useCesium();
+  const { viewer } = useCesium() as { viewer?: Viewer };
   const cachedFeatures = useRef<CachedFeature[]>([]);
 
   const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
 
-  const handleOnChange = useCallback(
-    (e: CesiumCzmlDataSource | CesiumKmlDataSource | CesiumGeoJsonDataSource) => {
+  const handleChange = useCallback(
+    (e: DataSource) => {
+      if (!viewer) return;
       const features: Feature[] = [];
       const computedFeatures: ComputedFeature[] = [];
       e.entities.values.forEach(e => {
@@ -86,7 +87,35 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     [layer, viewer, onComputedFeatureFetch, type],
   );
 
+  const initialClock = useRef({
+    start: viewer?.clock.startTime,
+    stop: viewer?.clock.stopTime,
+    current: viewer?.clock.currentTime,
+  });
+  const handleLoad = useCallback(
+    (ds: DataSource) => {
+      if (!viewer?.clock) return;
+      if (!updateClock) {
+        if (
+          initialClock.current.current &&
+          initialClock.current.start &&
+          initialClock.current.stop
+        ) {
+          viewer.clock.currentTime = initialClock.current.current;
+          viewer.clock.startTime = initialClock.current.start;
+          viewer.clock.stopTime = initialClock.current.stop;
+        }
+        return;
+      }
+      viewer.clock.currentTime = ds.clock.currentTime;
+      viewer.clock.startTime = ds.clock.startTime;
+      viewer.clock.stopTime = ds.clock.stopTime;
+    },
+    [updateClock, viewer?.clock],
+  );
+
   useEffect(() => {
+    if (!viewer) return;
     cachedFeatures.current.forEach(f => {
       attachStyle(f.raw, layer, evalFeature, viewer.clock.currentTime);
     });
@@ -95,7 +124,13 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
   if (!isVisible || !show || !Component || !url) return null;
 
   return (
-    <Component data={url} show={true} clampToGround={clampToGround} onChange={handleOnChange} />
+    <Component
+      data={url}
+      show={true}
+      clampToGround={clampToGround}
+      onChange={handleChange}
+      onLoad={handleLoad}
+    />
   );
 }
 

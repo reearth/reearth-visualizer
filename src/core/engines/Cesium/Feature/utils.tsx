@@ -152,7 +152,7 @@ export const extractSimpleLayer = (
   return l;
 };
 
-export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | undefined => {
   return extractSimpleLayer(layer)?.data;
 };
 

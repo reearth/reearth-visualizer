@@ -140,7 +140,7 @@ export type LayerEditEvent = {
 };
 
 export type Clock = {
-  current: Date;
+  current?: Date;
   start?: Date;
   stop?: Date;
   speed?: number;
@@ -175,7 +175,7 @@ export type MouseEvents = {
 };
 
 export type TickEvent = (cb: TickEventCallback) => void;
-export type TickEventCallback = (clock: Date) => void;
+export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
 
 export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;

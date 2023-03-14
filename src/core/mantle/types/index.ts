@@ -74,6 +74,7 @@ export type Data = {
   time?: {
     property?: string;
     interval?: number; // milliseconds
+    updateClockOnLoad?: boolean;
   };
   csv?: {
     idColumn?: string | number;

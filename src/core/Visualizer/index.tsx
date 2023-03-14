@@ -243,6 +243,7 @@ export default function Visualizer({
         layers={layers}
         engines={engines}
         camera={camera}
+        overriddenClock={overriddenClock}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isLayerDragging={isLayerDragging}

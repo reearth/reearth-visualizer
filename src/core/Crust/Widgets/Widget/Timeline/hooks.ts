@@ -12,17 +12,8 @@ const makeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
   const now = Date.now() - 3600000;
   return {
-    start: startTime
-      ? Math.min(now, startTime)
-      : stopTime
-      ? Math.min(now, stopTime - MAX_RANGE)
-      : now,
-    end:
-      startTime && stopTime && startTime < stopTime
-        ? stopTime
-        : startTime
-        ? Math.min(now, startTime + MAX_RANGE)
-        : now,
+    start: startTime || now - MAX_RANGE,
+    end: stopTime || now,
   };
 };
 
@@ -161,32 +152,35 @@ export const useTimeline = ({
     }
   }, [clock, onSpeedChange, onTick]);
 
-  const overriddenStart = overriddenClock?.start?.getTime();
-  const overriddenStop = overriddenClock?.stop?.getTime();
-  // Sync cesium clock.
-  useEffect(() => {
+  const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
     setRange(prev => {
-      const start = overriddenStart ?? clockStartTime;
-      const stop = overriddenStop ?? clockStopTime;
       const next = makeRange(start, stop);
       if (prev.start !== next.start || prev.end !== next.end) {
         return next;
       }
       return prev;
     });
+  }, []);
+
+  const overriddenStart = overriddenClock?.start?.getTime();
+  const overriddenStop = overriddenClock?.stop?.getTime();
+
+  // Sync cesium clock.
+  useEffect(() => {
+    handleRange(overriddenStart ?? clockStartTime, overriddenStop ?? clockStopTime);
     setSpeed(Math.abs(clockSpeed));
-  }, [clockStartTime, clockStopTime, clockSpeed, overriddenStart, overriddenStop]);
+  }, [clockStartTime, clockStopTime, clockSpeed, overriddenStart, overriddenStop, handleRange]);
 
   useEffect(() => {
-    const h: TickEventCallback = d => {
-      if (!clock?.playing) return;
+    const h: TickEventCallback = (d, c) => {
+      handleRange(c.start.getTime(), c.stop.getTime());
       setCurrentTime(switchCurrentTimeToStart(d.getTime()));
     };
     onTick?.(h);
     return () => {
       removeTickEventListener?.(h);
     };
-  }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart]);
+  }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart, handleRange]);
 
   const onTimeChangeRef = useRef<typeof onTimeChange>();
 

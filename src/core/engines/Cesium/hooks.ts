@@ -480,8 +480,8 @@ export default ({
   );
 
   const handleTick = useCallback(
-    (d: Date) => {
-      engineAPI.tickEventCallback?.current?.forEach(e => e(d));
+    (d: Date, clock: { start: Date; stop: Date }) => {
+      engineAPI.tickEventCallback?.current?.forEach(e => e(d, clock));
     },
     [engineAPI],
   );
