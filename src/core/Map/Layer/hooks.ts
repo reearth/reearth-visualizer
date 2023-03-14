@@ -104,10 +104,26 @@ export default function useHooks({
     prevForceUpdatableData.current = forceUpdatableData;
   }, [layer, forceUpdateFeatures]);
 
+  // idleCallback is still experimental in ios
+  const ctx = typeof window !== "undefined" ? window : global;
+  const requestIdleCallbackShim = (
+    callback: (arg0: { didTimeout: boolean; timeRemaining: () => number }) => void,
+  ) => {
+    const start = Date.now();
+    return ctx.setTimeout(function () {
+      callback({
+        didTimeout: false,
+        timeRemaining: function () {
+          return Math.max(0, 12 - (Date.now() - start));
+        },
+      });
+    });
+  };
+  const requestIdleCallback = ctx.requestIdleCallback || requestIdleCallbackShim;
   // Clear expression cache if layer is unmounted
   useEffect(
     () => () => {
-      window.requestIdleCallback(() => {
+      requestIdleCallback(() => {
         // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
         computedLayer?.originalFeatures.forEach(f => {
           clearAllExpressionCaches(
