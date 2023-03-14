@@ -48,55 +48,53 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	if inp.File == nil {
 		return nil, interfaces.ErrFileNotIncluded
 	}
-	return Run1(
-		ctx, operator, i.repos,
-		Usecase().
-			WithWritableWorkspaces(inp.WorkspaceID).
-			Transaction(),
-		func(ctx context.Context) (*asset.Asset, error) {
-			ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
-			if err != nil {
-				return nil, err
-			}
 
-			url, size, err := i.gateways.File.UploadAsset(ctx, inp.File)
-			if err != nil {
-				return nil, err
-			}
+	ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
 
-			// enforce policy
-			if policyID := operator.Policy(ws.Policy()); policyID != nil {
-				p, err := i.repos.Policy.FindByID(ctx, *policyID)
-				if err != nil {
-					return nil, err
-				}
-				s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-				if err != nil {
-					return nil, err
-				}
-				if err := p.EnforceAssetStorageSize(s + size); err != nil {
-					_ = i.gateways.File.RemoveAsset(ctx, url)
-					return nil, err
-				}
-			}
+	if !operator.IsWritableWorkspace(ws.ID()) {
+		return nil, interfaces.ErrOperationDenied
+	}
 
-			a, err := asset.New().
-				NewID().
-				Workspace(inp.WorkspaceID).
-				Name(path.Base(inp.File.Path)).
-				Size(size).
-				URL(url.String()).
-				Build()
-			if err != nil {
-				return nil, err
-			}
+	url, size, err := i.gateways.File.UploadAsset(ctx, inp.File)
+	if err != nil {
+		return nil, err
+	}
 
-			if err := i.repos.Asset.Save(ctx, a); err != nil {
-				return nil, err
-			}
+	// enforce policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.repos.Policy.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+		if err := p.EnforceAssetStorageSize(s + size); err != nil {
+			_ = i.gateways.File.RemoveAsset(ctx, url)
+			return nil, err
+		}
+	}
 
-			return a, nil
-		})
+	a, err := asset.New().
+		NewID().
+		Workspace(inp.WorkspaceID).
+		Name(path.Base(inp.File.Path)).
+		Size(size).
+		URL(url.String()).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.repos.Asset.Save(ctx, a); err != nil {
+		return nil, err
+	}
+
+	return a, nil
 }
 
 func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Operator) (result id.AssetID, err error) {
