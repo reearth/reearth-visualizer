@@ -107,9 +107,11 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
         }
         return;
       }
-      viewer.clock.currentTime = ds.clock.currentTime;
-      viewer.clock.startTime = ds.clock.startTime;
-      viewer.clock.stopTime = ds.clock.stopTime;
+      if (ds.clock) {
+        viewer.clock.currentTime = ds.clock.currentTime;
+        viewer.clock.startTime = ds.clock.startTime;
+        viewer.clock.stopTime = ds.clock.stopTime;
+      }
     },
     [updateClock, viewer?.clock],
   );

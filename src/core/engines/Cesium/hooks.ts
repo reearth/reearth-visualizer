@@ -239,6 +239,10 @@ export default ({
     }
 
     if (entity) {
+      const layer = tag?.layerId
+        ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
+          layersRef?.current?.findById(tag.layerId)
+        : undefined;
       // Sometimes only featureId is specified, so we need to sync entity tag.
       onLayerSelect?.(
         tag?.layerId,
@@ -250,10 +254,7 @@ export default ({
                 content: getEntityContent(
                   entity,
                   cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
-                  tag?.layerId
-                    ? layersRef?.current?.findById(tag.layerId)?.infobox?.property?.default
-                        ?.defaultContent
-                    : undefined,
+                  tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
                 ),
               },
             }
@@ -328,6 +329,10 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
+        const layer = tag?.layerId
+          ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
+            layersRef?.current?.findById(tag.layerId)
+          : undefined;
         onLayerSelect?.(
           tag?.layerId,
           tag?.featureId,
@@ -338,10 +343,7 @@ export default ({
                   content: getEntityContent(
                     target.id,
                     viewer.clock.currentTime ?? new JulianDate(),
-                    tag?.layerId
-                      ? layersRef?.current?.findById(tag.layerId)?.infobox?.property?.default
-                          ?.defaultContent
-                      : undefined,
+                    tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
                   ),
                 },
               }
@@ -386,7 +388,7 @@ export default ({
 
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles, layersRef, selectedLayerId?.layerId],
+    [onLayerSelect, mouseEventHandles, layersRef],
   );
 
   // E2E test
