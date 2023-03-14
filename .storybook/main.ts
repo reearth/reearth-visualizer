@@ -38,6 +38,8 @@ const config: StorybookViteConfig = {
           { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
           { find: "csv-parse", replacement: "csv-parse/browser/esm" },
         ],
+        // WORKAROUND: https://github.com/storybookjs/builder-vite/issues/255
+        dedupe: ["@storybook/client-api"],
       },
     });
   },
