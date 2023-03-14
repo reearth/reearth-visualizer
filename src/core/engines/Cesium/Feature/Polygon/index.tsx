@@ -2,7 +2,7 @@
 import { Cartesian3, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash-es";
 import { useMemo } from "react";
-import { PolygonGraphics } from "resium";
+import { Entity, PolygonGraphics, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
@@ -17,13 +17,21 @@ import {
   type FeatureProps,
 } from "../utils";
 
-export type Props = FeatureProps<Property>;
+export type Props = FeatureProps<Property> & { disableWorkaround?: boolean };
 
 export type Property = PolygonAppearance & {
   polygon?: PolygonValue;
 };
 
-export default function Polygon({ id, isVisible, property, geometry, layer, feature }: Props) {
+export default function Polygon({
+  id,
+  isVisible,
+  property,
+  geometry,
+  layer,
+  feature,
+  disableWorkaround,
+}: Props) {
   const coordiantes = useMemo(
     () =>
       geometry?.type === "Polygon"
@@ -50,14 +58,41 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     () =>
       coordiantes?.[0]
         ? new PolygonHierarchy(
-            coordiantes[0].map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])),
+            coordiantes[0].map(c => Cartesian3.fromDegrees(c[0], c[1], c[2] ?? 0)),
             coordiantes
               .slice(1)
-              .map(p => new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])))),
+              .map(
+                p =>
+                  new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2] ?? 0))),
+              ),
           )
         : undefined,
     [coordiantes ?? []],
     isEqual,
+  );
+
+  const strokes = useMemo(
+    () =>
+      coordiantes && stroke && !disableWorkaround
+        ? coordiantes.flatMap(hole => [
+            // bottom
+            hole.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2] ?? 0)),
+            ...(extrudedHeight
+              ? [
+                  // top
+                  hole.map(c => Cartesian3.fromDegrees(c[0], c[1], extrudedHeight)),
+                  // vertical
+                  ...hole
+                    .slice(0, -1)
+                    .map(c => [
+                      Cartesian3.fromDegrees(c[0], c[1], 0),
+                      Cartesian3.fromDegrees(c[0], c[1], extrudedHeight),
+                    ]),
+                ]
+              : []),
+          ])
+        : [],
+    [coordiantes, stroke, disableWorkaround],
   );
 
   const memoStrokeColor = useMemo(
@@ -72,25 +107,40 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   );
 
   return !isVisible || !coordiantes || !show ? null : (
-    <EntityExt
-      id={id}
-      layerId={layer?.id}
-      featureId={feature?.id}
-      availability={availability}
-      properties={feature?.properties}>
-      <PolygonGraphics
-        hierarchy={hierarchy}
-        fill={fill}
-        material={memoFillColor}
-        outline={!!memoStrokeColor}
-        outlineColor={memoStrokeColor}
-        outlineWidth={strokeWidth}
-        heightReference={heightReference(hr)}
-        shadows={shadowMode(shadows)}
-        extrudedHeight={extrudedHeight}
-        distanceDisplayCondition={distanceDisplayCondition}
-      />
-    </EntityExt>
+    <>
+      <EntityExt
+        id={id}
+        layerId={layer?.id}
+        featureId={feature?.id}
+        availability={availability}
+        properties={feature?.properties}>
+        <PolygonGraphics
+          hierarchy={hierarchy}
+          fill={fill}
+          material={memoFillColor}
+          outline={!!memoStrokeColor}
+          outlineColor={memoStrokeColor}
+          outlineWidth={strokeWidth}
+          heightReference={heightReference(hr)}
+          shadows={shadowMode(shadows)}
+          extrudedHeight={extrudedHeight}
+          distanceDisplayCondition={distanceDisplayCondition}
+        />
+      </EntityExt>
+      {/* workaround */}
+      {strokes?.map((p, i) => (
+        <Entity key={i} id={`${id}-stroke${i}`}>
+          <PolylineGraphics
+            positions={p}
+            clampToGround={hr == "clamp" || hr == "relative"}
+            width={strokeWidth}
+            material={memoStrokeColor}
+            shadows={shadowMode(shadows)}
+            distanceDisplayCondition={distanceDisplayCondition}
+          />
+        </Entity>
+      ))}
+    </>
   );
 }
 
