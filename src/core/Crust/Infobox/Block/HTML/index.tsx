@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 
 import Icon from "@reearth/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
 import { CommonProps as BlockProps } from "..";
@@ -17,7 +17,6 @@ export type Property = {
 
 const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, onClick }) => {
   const t = useT();
-  const theme = useTheme();
   const { html, title } = block?.property ?? {};
 
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -88,7 +87,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
 
     frameWindow.addEventListener("load", () => {
       // Initialize styles
-      frameWindow.document.body.style.color = theme.main.text;
+      frameWindow.document.body.style.color = getComputedStyle(frameRef).color;
       frameWindow.document.body.style.margin = "0";
 
       if (isEditable) {
@@ -108,7 +107,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
       });
       resizeObserver.observe(frameWindow.document.body);
     });
-  }, [frameRef, theme.main.text, startEditing, isEditable, handleClick]);
+  }, [frameRef, startEditing, isEditable, handleClick]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
