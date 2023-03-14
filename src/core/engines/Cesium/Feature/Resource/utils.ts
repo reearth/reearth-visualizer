@@ -1,4 +1,11 @@
-import { JulianDate, Entity, Cartesian3, PolygonHierarchy } from "cesium";
+import {
+  JulianDate,
+  Entity,
+  Cartesian3,
+  PolygonHierarchy,
+  PointGraphics,
+  BillboardGraphics,
+} from "cesium";
 
 import { AppearanceTypes, ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
 import { EvalFeature } from "@reearth/core/Map";
@@ -53,7 +60,7 @@ export function attachProperties<
   const [appearanceName, propertyName] = namePair;
   const property = entity[propertyName] ?? {};
   if (!entity[propertyName]) {
-    entity[propertyName] = {} as any;
+    return;
   }
 
   const tag = getTag(entity);
@@ -141,6 +148,12 @@ export const attachStyle = (
     }
     const simpleLayer = extractSimpleLayer(layer);
     if (point) {
+      const isPointStyle = simpleLayer?.marker?.style === "point";
+      if (isPointStyle && !entity.point) {
+        entity.point = new PointGraphics();
+        entity.billboard = undefined;
+      }
+
       attachProperties(entity, computedFeature, ["marker", "point"], {
         show: {
           name: "show",
@@ -173,6 +186,12 @@ export const attachStyle = (
     }
 
     if (billboard) {
+      const isImageStyle = simpleLayer?.marker?.style === "image";
+      if (isImageStyle && !entity.billboard) {
+        entity.billboard = new BillboardGraphics();
+        entity.point = undefined;
+      }
+
       attachProperties(entity, computedFeature, ["marker", "billboard"], {
         show: {
           name: "show",

@@ -9,7 +9,11 @@ import {
   Cesium3DTileset,
   Cesium3DTileContent,
   Cesium3DTileFeature,
+  JulianDate,
 } from "cesium";
+
+import { InfoboxProperty } from "@reearth/core/Crust/Infobox";
+import { DefaultInfobox } from "@reearth/core/Map";
 
 import { getTag } from "./Feature";
 
@@ -136,4 +140,33 @@ export function findEntity(
   }
 
   return;
+}
+
+export const getEntityContent = (
+  entity: Entity,
+  time: JulianDate,
+  defaultContent: InfoboxProperty["defaultContent"],
+): DefaultInfobox["content"] => {
+  const content: Record<
+    Exclude<InfoboxProperty["defaultContent"], undefined>,
+    DefaultInfobox["content"]
+  > = {
+    description: {
+      type: "html",
+      value: entity.description?.getValue(time),
+    },
+    attributes: {
+      type: "table",
+      value: entity.properties ? entityProperties(entity.properties.getValue(time)) : [],
+    },
+  };
+
+  return defaultContent ? content[defaultContent] : content.description ?? content.attributes;
+};
+
+function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
+  return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
+    (a, [key, value]) => [...a, { key, value }],
+    [],
+  );
 }

@@ -20,6 +20,7 @@ export type InfoboxProperty = {
   outlineColor?: string;
   outlineWidth?: number;
   useMask?: boolean;
+  defaultContent?: "description" | "attributes";
 };
 
 export type Block<P = any> = {
