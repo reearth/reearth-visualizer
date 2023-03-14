@@ -77,10 +77,12 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 	}
 
 	// Begin Db transaction
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -131,6 +133,7 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 	if err != nil {
 		return nil, err
 	}
+
 	defer func() {
 		err = (*csvFile).Close()
 		if err != nil {
@@ -142,10 +145,12 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 }
 
 func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID, o *usecase.Operator) (_ *dataset.Schema, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -400,10 +405,12 @@ func (i *Dataset) Sync(ctx context.Context, sceneID id.SceneID, url string, oper
 	}
 
 	// Begin Db transaction
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -468,10 +475,12 @@ func (i *Dataset) AddDatasetSchema(ctx context.Context, inp interfaces.AddDatase
 	}
 
 	// Begin Db transaction
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -518,10 +527,12 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 	}
 
 	// Begin Db transaction
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2

@@ -153,10 +153,12 @@ func (i *User) GetUserBySubject(ctx context.Context, sub string) (u *user.User, 
 }
 
 func (i *User) StartPasswordReset(ctx context.Context, email string) error {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -207,10 +209,12 @@ func (i *User) StartPasswordReset(ctx context.Context, email string) error {
 }
 
 func (i *User) PasswordReset(ctx context.Context, password, token string) error {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -258,10 +262,12 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 		}
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -355,10 +361,12 @@ func (i *User) RemoveMyAuth(ctx context.Context, authProvider string, operator *
 		return nil, err
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -397,10 +405,12 @@ func (i *User) DeleteMe(ctx context.Context, userID id.UserID, operator *usecase
 		return errors.New("invalid user id")
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -489,10 +499,12 @@ func (i *User) CreateVerification(ctx context.Context, email string) error {
 }
 
 func (i *User) VerifyUser(ctx context.Context, code string) (*user.User, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx = tx.Context()
 	u, err := i.userRepo.FindByVerification(ctx, code)
 	if err != nil {
 		return nil, err

@@ -15,13 +15,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
 	}
 
 	client := mongox.NewClientWithDatabase(db)
+	if useTransaction {
+		client = client.WithTransaction()
+	}
+
 	c := &repo.Container{
 		Asset:          NewAsset(client),
 		AuthRequest:    authserver.NewMongo(client.WithCollection("authRequest")),
@@ -38,9 +42,9 @@ func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 		Workspace:      NewWorkspace(client),
 		User:           NewUser(client),
 		SceneLock:      NewSceneLock(client),
-		Transaction:    mongox.NewTransaction(client),
 		Policy:         NewPolicy(client),
 		Lock:           lock,
+		Transaction:    client.Transaction(),
 	}
 
 	// init
@@ -49,8 +53,7 @@ func New(ctx context.Context, db *mongo.Database) (*repo.Container, error) {
 	}
 
 	// migration
-	m := migration.Client{Client: client, Config: c.Config}
-	if err := m.Migrate(ctx); err != nil {
+	if err := migration.Do(ctx, client, c.Config); err != nil {
 		return nil, err
 	}
 
