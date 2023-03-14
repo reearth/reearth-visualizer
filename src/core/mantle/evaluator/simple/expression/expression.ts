@@ -16,23 +16,23 @@ export type JPLiteral = {
 export const EXPRESSION_CACHES = new Map<string, Node | Error>();
 
 export class Expression {
-  #expression: string;
-  #runtimeAst: Node | Error;
-  #feature?: Feature;
+  private _expression: string;
+  private _runtimeAst: Node | Error;
+  private _feature?: Feature;
 
   constructor(expression: string, feature?: Feature, defines?: any) {
-    this.#expression = expression;
-    this.#feature = feature;
+    this._expression = expression;
+    this._feature = feature;
     let literalJP: JPLiteral[] = [];
     expression = replaceDefines(expression, defines);
     [expression, literalJP] = replaceVariables(
       removeBackslashes(expression),
-      this.#feature?.properties,
+      this._feature?.properties,
     );
 
     const cachedAST = EXPRESSION_CACHES.get(expression);
     if (cachedAST) {
-      this.#runtimeAst = cachedAST;
+      this._runtimeAst = cachedAST;
     } else {
       if (literalJP.length !== 0) {
         for (const elem of literalJP) {
@@ -51,13 +51,13 @@ export class Expression {
         throw new Error(`failed to generate ast: ${e}`);
       }
 
-      this.#runtimeAst = createRuntimeAst(this, ast);
-      EXPRESSION_CACHES.set(expression, this.#runtimeAst);
+      this._runtimeAst = createRuntimeAst(this, ast);
+      EXPRESSION_CACHES.set(expression, this._runtimeAst);
     }
   }
 
   evaluate() {
-    const value = (this.#runtimeAst as Node).evaluate(this.#feature);
+    const value = (this._runtimeAst as Node).evaluate(this._feature);
     return value;
   }
 }
