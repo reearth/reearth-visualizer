@@ -109,6 +109,17 @@ export default function useEngineRef(
               }
             }
 
+            const targets: Cesium.Entity[] = [];
+            for (const entity of viewer.entities.values) {
+              if (getTag(entity)?.layerId === layerOrFeatureId) {
+                targets.push(entity);
+              }
+            }
+            if (targets.length) {
+              viewer.flyTo(targets, options);
+              return;
+            }
+
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
             if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
               viewer.flyTo(entityFromLayerId, options);
