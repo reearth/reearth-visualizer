@@ -113,7 +113,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,
 		AppDisabled: cfg.Config.Web_App_Disabled,
-		WebConfig:   cfg.Config.Web,
+		WebConfig:   cfg.Config.WebConfig(),
 		AuthConfig:  cfg.Config.AuthForWeb(),
 		HostPattern: cfg.Config.Published.Host,
 		FS:          nil,

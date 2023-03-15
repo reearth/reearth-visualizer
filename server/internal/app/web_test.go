@@ -170,7 +170,7 @@ func TestWeb(t *testing.T) {
 			(&WebHandler{
 				Disabled:    tt.disabled,
 				AppDisabled: tt.appDisabled,
-				WebConfig: WebConfig{
+				WebConfig: map[string]any{
 					"a": "b",
 				},
 				AuthConfig: &AuthConfig{
