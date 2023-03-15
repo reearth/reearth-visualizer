@@ -6,16 +6,9 @@ import { extractSimpleLayer, extractSimpleLayerData, type FeatureComponentConfig
 import { useMVT, useWMS } from "./hooks";
 import type { Props } from "./types";
 
-function Raster({
-  isVisible,
-  layer,
-  property,
-  onComputedFeatureFetch,
-  evalFeature,
-  onFeatureDelete,
-}: Props) {
+function Raster({ isVisible, layer, property, evalFeature }: Props) {
   useWMS({ isVisible, layer, property });
-  useMVT({ isVisible, layer, property, evalFeature, onComputedFeatureFetch, onFeatureDelete });
+  useMVT({ isVisible, layer, property, evalFeature });
 
   return null;
 }

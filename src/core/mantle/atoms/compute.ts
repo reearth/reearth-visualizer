@@ -25,6 +25,7 @@ export type Command =
   | { type: "writeFeatures"; features: Feature[] }
   | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
   | { type: "deleteFeatures"; features: string[] }
+  | { type: "deleteComputedFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
   | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] }
   | { type: "forceUpdateFeatures" };
@@ -241,6 +242,36 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
+  const deleteComputedFeatures = atom(null, async (get, set, value: string[]) => {
+    const currentLayer = get(layer);
+    if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
+
+    if (import.meta.env.DEV) {
+      if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
+        throw new Error("deleteComputedFeatures can be called with delegated data");
+      }
+    }
+
+    set(dataAtoms.deleteAll, {
+      data: currentLayer.data,
+      features: value,
+      layerId: currentLayer.id,
+    });
+
+    const prevResult = get(computedResult);
+
+    if (!prevResult?.layer) {
+      return;
+    }
+
+    const result = {
+      layer: prevResult?.layer,
+      features: prevResult?.features?.filter(f => !value.includes(f.id)) || [],
+    };
+
+    set(computedResult, result);
+  });
+
   const forceUpdateFeatures = atom(null, async (get, set, _: any) => {
     const currentLayer = get(layer);
     if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
@@ -265,6 +296,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "deleteFeatures":
           await s(deleteFeatures, value.features);
+          break;
+        case "deleteComputedFeatures":
+          await s(deleteComputedFeatures, value.features);
           break;
         case "override":
           await s(overrides, value.overrides);

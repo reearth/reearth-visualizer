@@ -32,6 +32,7 @@ export type FeatureComponentProps = {
   onFeatureFetch?: (features: Feature[]) => void;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
+  onComputedFeatureDelete?: (features: string[]) => void;
   evalFeature: EvalFeature;
 } & CommonProps;
 
@@ -57,6 +58,7 @@ export default function LayerComponent({
   const {
     computedLayer,
     handleFeatureDelete,
+    handleComputedFeatureDelete,
     handleFeatureFetch,
     handleComputedFeatureFetch,
     handleFeatureRequest,
@@ -74,6 +76,7 @@ export default function LayerComponent({
     <Feature
       layer={computedLayer}
       onFeatureDelete={handleFeatureDelete}
+      onComputedFeatureDelete={handleComputedFeatureDelete}
       onFeatureFetch={handleFeatureFetch}
       onComputedFeatureFetch={handleComputedFeatureFetch}
       onFeatureRequest={handleFeatureRequest}

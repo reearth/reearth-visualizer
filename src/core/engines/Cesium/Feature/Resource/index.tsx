@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
 import { ComputedFeature, DataType, evalFeature, Feature } from "@reearth/core/mantle";
+import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
 import { getExtname } from "@reearth/util/path";
 
 import type { ResourceAppearance } from "../../..";
@@ -36,7 +37,13 @@ type CachedFeature = {
   raw: Entity;
 };
 
-export default function Resource({ isVisible, property, layer, onComputedFeatureFetch }: Props) {
+export default function Resource({
+  isVisible,
+  property,
+  layer,
+  onComputedFeatureFetch,
+  onComputedFeatureDelete,
+}: Props) {
   const { show = true, clampToGround } = property ?? {};
   const [type, url, updateClock] = useMemo((): [
     ResourceAppearance["type"],
@@ -54,6 +61,7 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
   }, [property, layer]);
   const { viewer } = useCesium() as { viewer?: Viewer };
   const cachedFeatures = useRef<CachedFeature[]>([]);
+  const cachedFeatureIds = useRef(new Set<string>());
 
   const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
@@ -70,9 +78,10 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
 
         attachTag(e, { layerId: layer?.id, featureId: feature?.id });
 
-        if (feature) {
+        if (feature && !cachedFeatureIds.current.has(feature.id)) {
           features.push(feature);
           cachedFeatures.current.push({ feature, raw: e });
+          cachedFeatureIds.current.add(feature.id);
         }
         if (computedFeature) {
           computedFeatures.push(computedFeature);
@@ -122,6 +131,15 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
       attachStyle(f.raw, layer, evalFeature, viewer.clock.currentTime);
     });
   }, [layer, viewer]);
+
+  useEffect(
+    () => () => {
+      requestIdleCallbackWithRequiredWork(() => {
+        onComputedFeatureDelete?.(Array.from(cachedFeatureIds.current.values()));
+      });
+    },
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   if (!isVisible || !show || !Component || !url) return null;
 

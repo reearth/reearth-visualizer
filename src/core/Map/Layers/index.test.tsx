@@ -29,6 +29,7 @@ test("simple", () => {
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
     onComputedFeatureFetch: expect.any(Function),
+    onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
   });
@@ -45,6 +46,7 @@ test("simple", () => {
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
     onComputedFeatureFetch: expect.any(Function),
+    onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
   });

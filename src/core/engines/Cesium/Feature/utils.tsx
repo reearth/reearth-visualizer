@@ -11,6 +11,7 @@ import {
   TimeIntervalCollection as CesiumTimeIntervalCollection,
   DistanceDisplayCondition as CesiumDistanceDisplayCondition,
 } from "cesium";
+import md5 from "js-md5";
 import {
   ComponentProps,
   ComponentType,
@@ -188,4 +189,11 @@ export const toDistanceDisplayCondition = (
   return typeof near === "number" || typeof far === "number"
     ? new CesiumDistanceDisplayCondition(near ?? 0.0, far ?? Number.MAX_VALUE)
     : undefined;
+};
+
+export const generateIDWithMD5 = (id: string) => {
+  const hash = md5.create();
+  hash.update(id);
+
+  return hash.hex();
 };

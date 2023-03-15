@@ -17,6 +17,8 @@ import {
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
+import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
+
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { lookupFeatures, translationWithClamping } from "../../utils";
@@ -78,17 +80,18 @@ const useFeature = ({
   layer,
   evalFeature,
   onComputedFeatureFetch,
-  onFeatureDelete,
+  onComputedFeatureDelete,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
-  onFeatureDelete?: (feature: string[]) => void;
+  onComputedFeatureDelete?: (feature: string[]) => void;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
+  const cachedFeatureIds = useRef(new Set<string>());
   const layerId = layer?.id || id;
 
   const attachComputedFeature = useCallback(
@@ -139,6 +142,7 @@ const useFeature = ({
             raw: tileFeature,
           };
           cachedFeaturesRef.current.push(feature);
+          cachedFeatureIds.current.add(id);
           return feature;
         })();
 
@@ -161,15 +165,28 @@ const useFeature = ({
         const coordinates = content.tile.boundingSphere.center;
         const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         featureIds.push(id);
+
+        // Only delete cached id in here, removing cached feature lazily.
+        cachedFeatureIds.current.delete(id);
       });
-      onFeatureDelete?.(featureIds);
+      onComputedFeatureDelete?.(featureIds);
+
+      if (
+        cachedFeaturesRef.current.length !== Array.from(cachedFeatureIds.current.values()).length
+      ) {
+        queueMicrotask(() => {
+          cachedFeaturesRef.current = cachedFeaturesRef.current.filter(f =>
+            cachedFeatureIds.current.has(f.feature.id),
+          );
+        });
+      }
     });
   }, [
     tileset,
     cachedFeaturesRef,
     attachComputedFeature,
     onComputedFeatureFetch,
-    onFeatureDelete,
+    onComputedFeatureDelete,
     layerId,
   ]);
 
@@ -238,6 +255,16 @@ const useFeature = ({
     };
     compute();
   }, [computeFeatures]);
+
+  // Cleanup features
+  useEffect(
+    () => () => {
+      requestIdleCallbackWithRequiredWork(() => {
+        onComputedFeatureDelete?.(Array.from(cachedFeatureIds.current.values()));
+      });
+    },
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 };
 
 export const useHooks = ({
@@ -250,7 +277,7 @@ export const useHooks = ({
   meta,
   evalFeature,
   onComputedFeatureFetch,
-  onFeatureDelete,
+  onComputedFeatureDelete,
 }: {
   id: string;
   boxId: string;
@@ -262,7 +289,7 @@ export const useHooks = ({
   meta?: Record<string, unknown>;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
-  onFeatureDelete?: (feature: string[]) => void;
+  onComputedFeatureDelete?: (feature: string[]) => void;
 }) => {
   const { viewer } = useCesium();
   const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } = property ?? {};
@@ -338,7 +365,7 @@ export const useHooks = ({
     layer,
     evalFeature,
     onComputedFeatureFetch,
-    onFeatureDelete,
+    onComputedFeatureDelete,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);

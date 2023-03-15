@@ -200,6 +200,24 @@ test("computeAtom", async () => {
     }),
   );
 
+  // delete computed features
+  act(() => {
+    result.current.set({
+      type: "deleteComputedFeatures",
+      features: ["c"],
+    });
+  });
+
+  await waitFor(() =>
+    expect(result.current.result).toEqual({
+      id: "xxx",
+      layer,
+      status: "ready",
+      features: [...toComputedFeature(features), ...toComputedFeature(features2)],
+      originalFeatures: [...features],
+    }),
+  );
+
   // delete delegatedDataTypes
   act(() => {
     result.current.set({ type: "updateDelegatedDataTypes", delegatedDataTypes: [] });
@@ -220,12 +238,12 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [...features, ...features2, ...features3].map(f => ({
+    features: [...features, ...features2].map(f => ({
       ...f,
       type: "computedFeature",
       marker: { pointColor: "red" },
     })),
-    originalFeatures: [...features, ...features3],
+    originalFeatures: [...features],
   });
 
   // delete a feature b
@@ -238,35 +256,7 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [
-      ...toComputedFeature(features),
-      ...toComputedFeature(features2),
-      ...toComputedFeature(features3),
-    ],
-    originalFeatures: [...features, ...features3],
-  });
-
-  await waitFor(() =>
-    expect(result.current.result).toEqual({
-      id: "xxx",
-      layer,
-      status: "ready",
-      features: [...toComputedFeature(features), ...toComputedFeature(features3)],
-      originalFeatures: [...features, ...features3],
-    }),
-  );
-
-  // delete a feature c
-  act(() => {
-    result.current.set({ type: "override" });
-    result.current.set({ type: "deleteFeatures", features: ["c"] });
-  });
-
-  expect(result.current.result).toEqual({
-    id: "xxx",
-    layer,
-    status: "fetching",
-    features: [...toComputedFeature(features), ...toComputedFeature(features3)],
+    features: [...toComputedFeature(features), ...toComputedFeature(features2)],
     originalFeatures: [...features],
   });
 
@@ -275,8 +265,32 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features: toComputedFeature(features),
-      originalFeatures: features,
+      features: [...toComputedFeature(features)],
+      originalFeatures: [...features],
+    }),
+  );
+
+  // delete a feature "a"
+  act(() => {
+    result.current.set({ type: "override" });
+    result.current.set({ type: "deleteFeatures", features: ["a"] });
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer,
+    status: "fetching",
+    features: [...toComputedFeature(features)],
+    originalFeatures: [],
+  });
+
+  await waitFor(() =>
+    expect(result.current.result).toEqual({
+      id: "xxx",
+      layer,
+      status: "ready",
+      features: [],
+      originalFeatures: [],
     }),
   );
 

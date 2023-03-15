@@ -13,7 +13,12 @@ import Polyline, { config as polylineConfig } from "./Polyline";
 import Raster, { config as rasterConfig } from "./Raster";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
-import { extractSimpleLayerData, FeatureComponent, FeatureComponentConfig } from "./utils";
+import {
+  extractSimpleLayerData,
+  FeatureComponent,
+  FeatureComponentConfig,
+  generateIDWithMD5,
+} from "./utils";
 
 export * from "./utils";
 export { context, type Context } from "./context";
@@ -84,14 +89,20 @@ export default function Feature({
       <>
         {displayType.map(k => {
           const [C] = components[k] ?? [];
+          const isVisible = layer.layer.visible !== false && !isHidden;
+
+          // "noFeature" component should be recreated when the following value is changed.
+          // data.url, isVisible
+          const key = generateIDWithMD5(`${layer?.id || ""}_${k}_${data?.url}_${isVisible}`);
+
           return (
             <C
               {...props}
-              key={`${layer?.id || ""}_${k}_${data?.url}`}
+              key={key}
               id={`${layer.id}_${k}`}
               property={pickProperty(k, layer) || layer[k]}
               layer={layer}
-              isVisible={layer.layer.visible !== false && !isHidden}
+              isVisible={isVisible}
             />
           );
         })}

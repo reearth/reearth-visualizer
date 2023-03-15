@@ -22,7 +22,7 @@ function Tileset({
   meta,
   evalFeature,
   onComputedFeatureFetch,
-  onFeatureDelete,
+  onComputedFeatureDelete,
   ...props
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode } = property ?? {};
@@ -37,7 +37,7 @@ function Tileset({
     meta,
     evalFeature,
     onComputedFeatureFetch,
-    onFeatureDelete,
+    onComputedFeatureDelete,
   });
   const boxProperty = useMemo(
     () => ({
@@ -70,7 +70,7 @@ function Tileset({
           isVisible={builtinBoxProps.visible}
           evalFeature={evalFeature}
           onComputedFeatureFetch={onComputedFeatureFetch}
-          onFeatureDelete={onFeatureDelete}
+          onComputedFeatureDelete={onComputedFeatureDelete}
           onLayerEdit={builtinBoxProps.handleLayerEdit}
         />
       )}

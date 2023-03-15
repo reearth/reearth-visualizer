@@ -6,13 +6,12 @@ import {
   WebMapServiceImageryProvider,
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
-import md5 from "js-md5";
 import { isEqual, pick } from "lodash-es";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature, PolygonAppearance } from "../../..";
-import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
+import { extractSimpleLayer, extractSimpleLayerData, generateIDWithMD5 } from "../utils";
 
 import { Props } from "./types";
 
@@ -77,10 +76,7 @@ const idFromGeometry = (
     ":",
   );
 
-  const hash = md5.create();
-  hash.update(id);
-
-  return hash.hex();
+  return generateIDWithMD5(id);
 };
 
 const makeFeatureFromPolygon = (
@@ -111,10 +107,7 @@ export const useMVT = ({
   property,
   layer,
   evalFeature,
-}: Pick<
-  Props,
-  "isVisible" | "property" | "layer" | "onComputedFeatureFetch" | "evalFeature" | "onFeatureDelete"
->) => {
+}: Pick<Props, "isVisible" | "property" | "layer" | "evalFeature">) => {
   const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 

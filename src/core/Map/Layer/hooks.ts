@@ -2,6 +2,8 @@ import { useAtom } from "jotai";
 import { isEqual, pick } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
+import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
+
 import {
   clearAllExpressionCaches,
   computeAtom,
@@ -48,6 +50,10 @@ export default function useHooks({
   );
   const deleteFeatures = useCallback(
     (features: string[]) => set({ type: "deleteFeatures", features }),
+    [set],
+  );
+  const deleteComputedFeatures = useCallback(
+    (features: string[]) => set({ type: "deleteComputedFeatures", features }),
     [set],
   );
   const forceUpdateFeatures = useCallback(() => set({ type: "forceUpdateFeatures" }), [set]);
@@ -104,26 +110,10 @@ export default function useHooks({
     prevForceUpdatableData.current = forceUpdatableData;
   }, [layer, forceUpdateFeatures]);
 
-  // idleCallback is still experimental in ios
-  const ctx = typeof window !== "undefined" ? window : global;
-  const requestIdleCallbackShim = (
-    callback: (arg0: { didTimeout: boolean; timeRemaining: () => number }) => void,
-  ) => {
-    const start = Date.now();
-    return ctx.setTimeout(function () {
-      callback({
-        didTimeout: false,
-        timeRemaining: function () {
-          return Math.max(0, 12 - (Date.now() - start));
-        },
-      });
-    });
-  };
-  const requestIdleCallback = ctx.requestIdleCallback || requestIdleCallbackShim;
   // Clear expression cache if layer is unmounted
   useEffect(
     () => () => {
-      requestIdleCallback(() => {
+      requestIdleCallbackWithRequiredWork(() => {
         // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
         computedLayer?.originalFeatures.forEach(f => {
           clearAllExpressionCaches(
@@ -144,6 +134,7 @@ export default function useHooks({
     handleFeatureFetch: writeFeatures,
     handleComputedFeatureFetch: writeComputedFeatures,
     handleFeatureDelete: deleteFeatures,
+    handleComputedFeatureDelete: deleteComputedFeatures,
     evalFeature,
   };
 }
