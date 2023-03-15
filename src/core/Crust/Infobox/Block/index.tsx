@@ -4,6 +4,7 @@ import type { Layer } from "@reearth/core/mantle";
 import { styled } from "@reearth/theme";
 import type { ValueType, ValueTypes } from "@reearth/util/value";
 
+import { Theme } from "../../types";
 import type { Block, BlockProps, InfoboxProperty } from "../types";
 
 import builtin from "./builtin";
@@ -21,6 +22,7 @@ export type CommonProps<BP = any> = {
   isSelected?: boolean;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
+  theme?: Theme;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,

@@ -125,6 +125,7 @@ const Infobox: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             infoboxProperty={property}
+            theme={sceneProperty?.theme}
             pluginProperty={
               b.pluginId && b.extensionId
                 ? pluginProperty?.[`${b.pluginId}/${b.extensionId}`]

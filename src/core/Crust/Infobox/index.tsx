@@ -125,6 +125,7 @@ const Infobox: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             infoboxProperty={property}
+            theme={infoboxTheme}
             onChange={(...args) => onBlockChange?.(b.id, ...args, props.layer)}
             onClick={() => {
               if (b.id && selectedBlockId !== b.id) {

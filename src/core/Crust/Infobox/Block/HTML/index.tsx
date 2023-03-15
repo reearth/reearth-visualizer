@@ -15,7 +15,15 @@ export type Property = {
   title?: string;
 };
 
-const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, onClick }) => {
+const HTMLBlock: React.FC<Props> = ({
+  block,
+  isSelected,
+  isEditable,
+  infoboxProperty,
+  theme,
+  onChange,
+  onClick,
+}) => {
   const t = useT();
   const { html, title } = block?.property ?? {};
 
@@ -76,6 +84,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
   );
 
   // iframe
+  const themeColor = infoboxProperty?.typography?.color ?? theme?.mainText;
   const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
   const [height, setHeight] = useState(15);
   const initializeIframe = useCallback(() => {
@@ -85,29 +94,42 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
       return;
     }
 
-    frameWindow.addEventListener("load", () => {
-      // Initialize styles
-      frameWindow.document.body.style.color = getComputedStyle(frameRef).color;
-      frameWindow.document.body.style.margin = "0";
+    if (!frameDocument.body.innerHTML.length) {
+      // `document.write()` is not recommended API by HTML spec,
+      // but we need to use this API to make it work correctly on Safari.
+      // If Safari supports `onLoad` event with `srcDoc`, we can remove this line.
+      frameDocument.write(html || "");
+    }
 
-      if (isEditable) {
-        frameWindow.document.body.style.cursor = "pointer";
-        frameWindow.document.addEventListener("dblclick", startEditing);
-        frameWindow.document.addEventListener("click", () => handleClick());
-      }
+    // Initialize styles
+    frameWindow.document.body.style.color = themeColor ?? getComputedStyle(frameRef).color;
+    frameWindow.document.body.style.margin = "0";
 
-      const resize = () => {
-        const rect = frameWindow.document.body.getBoundingClientRect();
-        setHeight(rect.top + rect.bottom);
-      };
+    const handleFrameClick = () => handleClick();
 
-      // Resize
-      const resizeObserver = new ResizeObserver(() => {
-        resize();
-      });
-      resizeObserver.observe(frameWindow.document.body);
+    if (isEditable) {
+      frameWindow.document.body.style.cursor = "pointer";
+      frameWindow.document.addEventListener("dblclick", startEditing);
+      frameWindow.document.addEventListener("click", handleFrameClick);
+    }
+
+    const resize = () => {
+      const rect = frameWindow.document.body.getBoundingClientRect();
+      setHeight(rect.top + rect.bottom);
+    };
+
+    // Resize
+    const resizeObserver = new ResizeObserver(() => {
+      resize();
     });
-  }, [frameRef, startEditing, isEditable, handleClick]);
+    resizeObserver.observe(frameWindow.document.body);
+
+    return () => {
+      frameWindow.document.removeEventListener("dblclick", startEditing);
+      frameWindow.document.removeEventListener("click", handleFrameClick);
+      resizeObserver.disconnect();
+    };
+  }, [frameRef, startEditing, isEditable, handleClick, html, themeColor]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
@@ -145,7 +167,6 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
               ref={setFrameRef}
               frameBorder="0"
               scrolling="no"
-              srcDoc={html}
               $height={height}
               allowFullScreen
               sandbox="allow-same-origin allow-popups allow-forms"
@@ -178,10 +199,12 @@ const Title = styled.div`
 `;
 
 const IFrame = styled.iframe<{ $height: number }>`
+  display: block;
   border: none;
   padding: 5px;
   height: ${({ $height }) => $height}px;
   width: 100%;
+  min-width: 100%;
 `;
 
 const InputField = styled.textarea<{ minHeight: number }>`
