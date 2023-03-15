@@ -27,6 +27,7 @@ type Project struct {
 	workspaceRepo     repo.Workspace
 	sceneRepo         repo.Scene
 	propertyRepo      repo.Property
+	schemaRepo        repo.PropertySchema
 	layerRepo         repo.Layer
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
@@ -345,6 +346,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			err = builder.New(
 				repo.LayerLoaderFrom(i.layerRepo),
 				repo.PropertyLoaderFrom(i.propertyRepo),
+				repo.PropertySchemaLoaderFrom(i.schemaRepo),
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),

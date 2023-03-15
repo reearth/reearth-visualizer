@@ -21,6 +21,18 @@ func (p *SchemaGroupList) Len() int {
 	return len(p.groups)
 }
 
+func (p *SchemaGroupList) PrivateFields() []*SchemaField {
+	if p == nil {
+		return nil
+	}
+
+	fields := []*SchemaField{}
+	for _, g := range p.groups {
+		fields = append(fields, g.PrivateFields()...)
+	}
+	return fields
+}
+
 func (p *SchemaGroupList) Groups() []*SchemaGroup {
 	if p == nil {
 		return nil

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
@@ -22,7 +23,7 @@ type sceneJSON struct {
 	Clusters          []*clusterJSON          `json:"clusters"`
 }
 
-func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property) (*sceneJSON, error) {
+func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property, ps property.SchemaList) (*sceneJSON, error) {
 	tags, err := b.tags(ctx, s)
 	if err != nil {
 		return nil, err
@@ -32,7 +33,7 @@ func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Ti
 		SchemaVersion:     version,
 		ID:                s.ID().String(),
 		PublishedAt:       publishedAt,
-		Property:          b.property(ctx, findProperty(p, s.Property())),
+		Property:          b.property(ctx, findProperty(p, s.Property()), ps.PrivateFieldsIDs()),
 		Plugins:           b.plugins(ctx, s, p),
 		Widgets:           b.widgets(ctx, s, p),
 		Clusters:          b.clusters(ctx, s, p),
@@ -50,7 +51,7 @@ func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Pro
 			continue
 		}
 		if pp := sp.Property(); pp != nil {
-			res[sp.Plugin().String()] = b.property(ctx, findProperty(p, *pp))
+			res[sp.Plugin().String()] = b.property(ctx, findProperty(p, *pp), nil)
 		}
 	}
 	return res
@@ -68,7 +69,7 @@ func (b *Builder) widgets(ctx context.Context, s *scene.Scene, p []*property.Pro
 			ID:          w.ID().String(),
 			PluginID:    w.Plugin().String(),
 			ExtensionID: string(w.Extension()),
-			Property:    b.property(ctx, findProperty(p, w.Property())),
+			Property:    b.property(ctx, findProperty(p, w.Property()), nil),
 			Extended:    w.Extended(),
 		})
 	}
@@ -82,7 +83,7 @@ func (b *Builder) clusters(ctx context.Context, s *scene.Scene, p []*property.Pr
 		res = append(res, &clusterJSON{
 			ID:       c.ID().String(),
 			Name:     c.Name(),
-			Property: b.property(ctx, findProperty(p, c.Property())),
+			Property: b.property(ctx, findProperty(p, c.Property()), nil),
 		})
 	}
 	return res
@@ -127,8 +128,12 @@ func toTag(t tag.Tag, m tag.Map) tagJSON {
 	}
 }
 
-func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {
-	return property.SealProperty(ctx, p, b.dropPrivateFields).Interface()
+func (b *Builder) property(ctx context.Context, p *property.Property, pf []id.PropertyFieldID) propertyJSON {
+	if b.dropPrivateFields {
+		return property.SealProperty(ctx, p, nil).Interface()
+
+	}
+	return property.SealProperty(ctx, p, pf).Interface()
 }
 
 func findProperty(pp []*property.Property, i property.ID) *property.Property {

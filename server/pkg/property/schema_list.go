@@ -1,5 +1,9 @@
 package property
 
+import (
+	"github.com/samber/lo"
+)
+
 type SchemaList []*Schema
 
 func (l SchemaList) Find(psid SchemaID) *Schema {
@@ -9,6 +13,28 @@ func (l SchemaList) Find(psid SchemaID) *Schema {
 		}
 	}
 	return nil
+}
+
+func (l SchemaList) PrivateFields() []*SchemaField {
+	if l == nil {
+		return nil
+	}
+
+	var fields []*SchemaField
+	for _, g := range l {
+		fields = append(fields, g.Groups().PrivateFields()...)
+	}
+	return fields
+}
+
+func (l SchemaList) PrivateFieldsIDs() []FieldID {
+	if l == nil {
+		return nil
+	}
+
+	return lo.Map(l.PrivateFields(), func(t *SchemaField, _ int) FieldID {
+		return t.ID()
+	})
 }
 
 func (l SchemaList) Map() SchemaMap {
