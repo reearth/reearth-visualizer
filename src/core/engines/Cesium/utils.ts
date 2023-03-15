@@ -161,7 +161,7 @@ export const getEntityContent = (
     },
   };
 
-  return defaultContent ? content[defaultContent] : content.description ?? content.attributes;
+  return defaultContent ? content[defaultContent] : content.attributes ?? content.description;
 };
 
 function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
