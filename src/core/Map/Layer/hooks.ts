@@ -173,5 +173,5 @@ function useSelectEvent({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]); // only selected
+  }, [selected, selectedFeatureId]); // only selected
 }
