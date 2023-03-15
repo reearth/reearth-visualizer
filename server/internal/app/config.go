@@ -42,7 +42,8 @@ type Config struct {
 	Policy           PolicyConfig
 	Web_Disabled     bool
 	Web_App_Disabled bool
-	Web              WebConfig
+	Web              map[string]string
+	Web_Config       JSON
 	SignupSecret     string
 	SignupDisabled   bool
 	// auth
@@ -409,4 +410,28 @@ func (c *OAuthClientCredentialsConfig) Config() *clientcredentials.Config {
 
 type PolicyConfig struct {
 	Default *workspace.PolicyID
+}
+
+type JSON struct {
+	Data any
+}
+
+func (j *JSON) Decode(value string) error {
+	if value == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(value), &j.Data)
+}
+
+func (c *Config) WebConfig() map[string]any {
+	w := make(map[string]any)
+	for k, v := range c.Web {
+		w[k] = v
+	}
+	if m, ok := c.Web_Config.Data.(map[string]any); ok {
+		for k, v := range m {
+			w[k] = v
+		}
+	}
+	return w
 }

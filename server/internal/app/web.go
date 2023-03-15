@@ -9,12 +9,10 @@ import (
 	"github.com/spf13/afero"
 )
 
-type WebConfig map[string]string
-
 type WebHandler struct {
 	Disabled    bool
 	AppDisabled bool
-	WebConfig   WebConfig
+	WebConfig   map[string]any
 	AuthConfig  *AuthConfig
 	HostPattern string
 	FS          afero.Fs
@@ -34,7 +32,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
-	config := map[string]string{}
+	config := map[string]any{}
 	if w.AuthConfig != nil {
 		if w.AuthConfig.ISS != "" {
 			config["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
