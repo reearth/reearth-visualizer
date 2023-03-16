@@ -284,7 +284,11 @@ const ScaleBox = styled.div`
   -ms-user-select: none;
   user-select: none;
   transition: -webkit-scrollbar 1s;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   :hover::-webkit-scrollbar {
+    display: block;
     height: 2px;
   }
   ::-webkit-scrollbar-track {
