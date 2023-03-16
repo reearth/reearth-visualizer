@@ -6,6 +6,8 @@ import {
   Ion,
   Cesium3DTileset,
   JulianDate,
+  Cesium3DTilePointFeature,
+  Model,
 } from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -32,6 +34,7 @@ import type {
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
@@ -165,7 +168,7 @@ export default ({
     }
   }, [camera, engineAPI]);
 
-  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | Cesium3DTileFeature>();
+  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -354,7 +357,10 @@ export default ({
         return;
       }
 
-      if (target && target instanceof Cesium3DTileFeature) {
+      if (
+        target &&
+        (target instanceof Cesium3DTileFeature || target instanceof Cesium3DTilePointFeature)
+      ) {
         const tag = getTag(target);
         if (tag) {
           onLayerSelect?.(tag.layerId, String(tag.featureId), {
@@ -367,6 +373,23 @@ export default ({
             },
           });
           prevSelectedEntity.current = target;
+        }
+        return;
+      }
+
+      if (
+        target &&
+        "content" in target &&
+        target.content &&
+        typeof target.content === "object" &&
+        "_model" in target.content &&
+        target.content._model instanceof Model
+      ) {
+        const model = target.content._model;
+        const tag = getTag(model);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId));
+          prevSelectedEntity.current = model;
         }
         return;
       }
@@ -500,7 +523,9 @@ export default ({
   };
 };
 
-function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
+function tileProperties(
+  t: Cesium3DTileFeature | Cesium3DTilePointFeature,
+): { key: string; value: any }[] {
   return t
     .getPropertyIds()
     .reduce<{ key: string; value: any }[]>(

@@ -94,7 +94,14 @@ export default function useEngineRef(
 
           const layerOrFeatureId = target;
           const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
-          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
+          if (
+            entityFromFeatureId &&
+            !(
+              entityFromFeatureId instanceof Cesium.Cesium3DTileFeature ||
+              entityFromFeatureId instanceof Cesium.Cesium3DTilePointFeature ||
+              entityFromFeatureId instanceof Cesium.Model
+            )
+          ) {
             viewer.flyTo(entityFromFeatureId, options);
           } else {
             for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
@@ -121,7 +128,14 @@ export default function useEngineRef(
             }
 
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
-            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
+            if (
+              entityFromLayerId &&
+              !(
+                entityFromLayerId instanceof Cesium.Cesium3DTileFeature ||
+                entityFromLayerId instanceof Cesium.Cesium3DTilePointFeature ||
+                entityFromLayerId instanceof Cesium.Model
+              )
+            ) {
               viewer.flyTo(entityFromLayerId, options);
             }
           }

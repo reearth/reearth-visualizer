@@ -135,6 +135,8 @@ export type Cesium3DTilesAppearance = {
   edgeColor?: string;
   tileset?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
+  pointSize?: number;
+  meta?: unknown;
 };
 
 export type LegacyPhotooverlayAppearance = {

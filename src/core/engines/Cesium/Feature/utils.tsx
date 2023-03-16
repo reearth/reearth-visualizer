@@ -10,6 +10,8 @@ import {
   TimeInterval as CesiumTimeInterval,
   TimeIntervalCollection as CesiumTimeIntervalCollection,
   DistanceDisplayCondition as CesiumDistanceDisplayCondition,
+  Model,
+  Cesium3DTilePointFeature,
 } from "cesium";
 import md5 from "js-md5";
 import {
@@ -25,6 +27,7 @@ import { type CesiumComponentRef, Entity } from "resium";
 import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
+import type { InternalCesium3DTileFeature } from "../types";
 
 export type FeatureProps<P = any> = {
   id: string;
@@ -81,7 +84,7 @@ function EntityExtComponent(
 }
 
 export function attachTag(
-  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  entity: CesiumEntity | Cesium3DTileset | InternalCesium3DTileFeature | null | undefined,
   tag: Tag,
 ) {
   if (!entity) return;
@@ -91,7 +94,11 @@ export function attachTag(
     return;
   }
 
-  if (entity instanceof Cesium3DTileFeature) {
+  if (
+    entity instanceof Cesium3DTileFeature ||
+    entity instanceof Cesium3DTilePointFeature ||
+    entity instanceof Model
+  ) {
     (entity as any)[tagKey] = tag;
     return;
   }
@@ -107,7 +114,14 @@ export function attachTag(
 }
 
 export function getTag(
-  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  entity:
+    | CesiumEntity
+    | Cesium3DTileset
+    | Cesium3DTileFeature
+    | Cesium3DTilePointFeature
+    | Model
+    | null
+    | undefined,
 ): Tag | undefined {
   if (!entity) return;
 
@@ -115,7 +129,11 @@ export function getTag(
     return (entity as any)[tagKey];
   }
 
-  if (entity instanceof Cesium3DTileFeature) {
+  if (
+    entity instanceof Cesium3DTileFeature ||
+    entity instanceof Cesium3DTilePointFeature ||
+    entity instanceof Model
+  ) {
     return (entity as any)[tagKey];
   }
 

@@ -13,6 +13,8 @@ import {
   Cesium3DTileset,
   Cesium3DTile,
   Cesium3DTileFeature,
+  Model,
+  Cesium3DTilePointFeature,
 } from "cesium";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
@@ -21,8 +23,15 @@ import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
 
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
+import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
-import { attachTag, extractSimpleLayer, extractSimpleLayerData, toColor } from "../utils";
+import {
+  attachTag,
+  extractSimpleLayer,
+  extractSimpleLayerData,
+  generateIDWithMD5,
+  toColor,
+} from "../utils";
 
 import { useClippingBox } from "./useClippingBox";
 
@@ -45,12 +54,13 @@ const useData = (layer: ComputedLayer | undefined) => {
 
 const makeFeatureFrom3DTile = (
   id: string,
-  feature: Cesium3DTileFeature,
+  feature: InternalCesium3DTileFeature,
   coordinates: number[],
 ): Feature => {
-  const properties = Object.fromEntries(
-    feature.getPropertyIds().map(id => [id, feature.getProperty(id)]),
-  );
+  const properties =
+    feature instanceof Model
+      ? {}
+      : Object.fromEntries(feature.getPropertyIds().map(id => [id, feature.getProperty(id)]));
   return {
     type: "feature",
     id,
@@ -67,12 +77,38 @@ const makeFeatureFrom3DTile = (
   };
 };
 
+const getBuiltinFeatureId = (f: InternalCesium3DTileFeature) => {
+  return (f instanceof Model ? f.id : f instanceof Cesium3DTileFeature ? f.featureId : "") ?? "";
+};
+
 type CachedFeature = {
   feature: Feature;
-  raw: Cesium3DTileFeature;
+  raw: InternalCesium3DTileFeature;
 };
 
 const MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES = 5000;
+
+type StyleProperty<N = string> = { name: N; convert?: "color" | "vec2" | "vec4" };
+
+const COMMON_STYLE_PROPERTIES: StyleProperty<"color" | "show">[] = [
+  { name: "color", convert: "color" },
+  { name: "show" },
+];
+const MODEL_STYLE_PROPERTIES: StyleProperty<"pointSize" | "meta">[] = [
+  { name: "pointSize" },
+  { name: "meta" },
+];
+// TODO: Add more styles. And it has not been tested yet.
+const POINT_STYLE_PROPERTIES: StyleProperty<"pointSize">[] = [{ name: "pointSize" }];
+
+// TODO: Implement other convert type
+const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
+  if (convert === "color") {
+    return toColor(val);
+  }
+
+  return val;
+};
 
 const useFeature = ({
   id,
@@ -101,14 +137,33 @@ const useFeature = ({
         const computedFeature = evalFeature(layer, feature?.feature);
         const style = computedFeature?.["3dtiles"];
 
-        const show = style?.show;
-        if (show !== undefined) {
-          feature.raw.show = show;
+        const raw = feature.raw;
+
+        COMMON_STYLE_PROPERTIES.forEach(({ name, convert }) => {
+          const val = convertStyle(style?.[name], convert);
+          if (val !== undefined) {
+            raw[name] = val;
+          }
+        });
+
+        if (raw instanceof Cesium3DTilePointFeature) {
+          POINT_STYLE_PROPERTIES.forEach(({ name, convert }) => {
+            const val = convertStyle(style?.[name], convert);
+            if (val !== undefined) {
+              raw[name] = val;
+            }
+          });
         }
 
-        const color = toColor(style?.color);
-        if (color !== undefined) {
-          feature.raw.color = color;
+        if ("style" in raw) {
+          raw.style = new Cesium3DTileStyle(
+            // TODO: Convert value if it's necessary
+            MODEL_STYLE_PROPERTIES.reduce((res, { name, convert }) => {
+              const val = convertStyle(style?.[name as keyof typeof style], convert);
+              if (!val) return res;
+              return { ...res, [name]: val };
+            }, {}),
+          );
         }
 
         return computedFeature;
@@ -130,7 +185,10 @@ const useFeature = ({
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, async (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
+        const featureId = getBuiltinFeatureId(tileFeature);
+        const id = generateIDWithMD5(
+          `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}`,
+        );
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
             coordinates.x,
@@ -163,7 +221,10 @@ const useFeature = ({
       const featureIds: string[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
+        const featureId = getBuiltinFeatureId(tileFeature);
+        const id = generateIDWithMD5(
+          `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}`,
+        );
         featureIds.push(id);
 
         // Only delete cached id in here, removing cached feature lazily.
