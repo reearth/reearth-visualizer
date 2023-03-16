@@ -155,10 +155,7 @@ export const useClippingBox = ({
       }
       // Handle edge
       if (layerId?.startsWith(`${boxId}-edge-draggable`)) {
-        boxState.cursor = "grabbing";
         const index = Number(layerId.split("-").slice(-1)[0]);
-        boxState.activeEdgeIndex = index;
-        boxState.isEdgeClicked = true;
         handleUpdateBoxState({
           cursor: "grabbing",
           activeEdgeIndex: index,
@@ -377,7 +374,7 @@ export const useClippingBox = ({
         setDimensions(v => ({
           ...v,
           width: scale.width,
-          height: scale.length,
+          height: scale.height,
           length: scale.length,
         }));
 

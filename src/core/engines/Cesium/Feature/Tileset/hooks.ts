@@ -468,9 +468,10 @@ export const useHooks = ({
         return;
       }
 
-      const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
-        tilesetRef.current.boundingSphere.center.clone(),
-      );
+      // Use internal original matrix for clipping planes.
+      const clippingPlanesOriginMatrix = (
+        tilesetRef.current as any
+      ).clippingPlanesOriginMatrix.clone();
 
       const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
