@@ -11,20 +11,24 @@ import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature, PolygonAppearance } from "../../..";
-import { extractSimpleLayer, extractSimpleLayerData, generateIDWithMD5 } from "../utils";
+import { attachTag, extractSimpleLayer, extractSimpleLayerData, generateIDWithMD5 } from "../utils";
 
 import { Props } from "./types";
 
-const useImageryProvider = (imageryProvider: ImageryProvider | undefined) => {
+const useImageryProvider = (
+  imageryProvider: ImageryProvider | undefined,
+  layerId: string | undefined,
+) => {
   const { viewer } = useCesium();
   useEffect(() => {
     if (!imageryProvider) return;
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
     const layer = imageryLayers.addImageryProvider(imageryProvider);
+    attachTag(layer, { layerId });
     return () => {
       imageryLayers.remove(layer);
     };
-  }, [imageryProvider, viewer]);
+  }, [imageryProvider, viewer, layerId]);
 };
 
 const useData = (layer: ComputedLayer | undefined) => {
@@ -63,7 +67,7 @@ export const useWMS = ({
     });
   }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit, parameters]);
 
-  useImageryProvider(imageryProvider);
+  useImageryProvider(imageryProvider, layer?.id);
 };
 
 type TileCoords = { x: number; y: number; level: number };
@@ -197,7 +201,7 @@ export const useMVT = ({
     cachedCalculatedLayerRef.current = layer;
   }, [layer]);
 
-  useImageryProvider(imageryProvider);
+  useImageryProvider(imageryProvider, layer?.id);
 };
 
 export const usePick = <T extends object, U extends keyof T>(

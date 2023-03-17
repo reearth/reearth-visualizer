@@ -12,6 +12,7 @@ import {
   DistanceDisplayCondition as CesiumDistanceDisplayCondition,
   Model,
   Cesium3DTilePointFeature,
+  ImageryLayer,
 } from "cesium";
 import md5 from "js-md5";
 import {
@@ -84,7 +85,13 @@ function EntityExtComponent(
 }
 
 export function attachTag(
-  entity: CesiumEntity | Cesium3DTileset | InternalCesium3DTileFeature | null | undefined,
+  entity:
+    | CesiumEntity
+    | Cesium3DTileset
+    | InternalCesium3DTileFeature
+    | ImageryLayer
+    | null
+    | undefined,
   tag: Tag,
 ) {
   if (!entity) return;
@@ -97,7 +104,8 @@ export function attachTag(
   if (
     entity instanceof Cesium3DTileFeature ||
     entity instanceof Cesium3DTilePointFeature ||
-    entity instanceof Model
+    entity instanceof Model ||
+    entity instanceof ImageryLayer
   ) {
     (entity as any)[tagKey] = tag;
     return;
@@ -120,6 +128,7 @@ export function getTag(
     | Cesium3DTileFeature
     | Cesium3DTilePointFeature
     | Model
+    | ImageryLayer
     | null
     | undefined,
 ): Tag | undefined {
@@ -132,7 +141,8 @@ export function getTag(
   if (
     entity instanceof Cesium3DTileFeature ||
     entity instanceof Cesium3DTilePointFeature ||
-    entity instanceof Model
+    entity instanceof Model ||
+    entity instanceof ImageryLayer
   ) {
     return (entity as any)[tagKey];
   }
