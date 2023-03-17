@@ -146,9 +146,8 @@ export const attachStyle = (
     if (!computedFeature) {
       return;
     }
-    const simpleLayer = extractSimpleLayer(layer);
     if (point) {
-      const isPointStyle = simpleLayer?.marker?.style === "point";
+      const isPointStyle = computedFeature?.marker?.style === "point";
       if (isPointStyle && !entity.point) {
         entity.point = new PointGraphics();
         entity.billboard = undefined;
@@ -157,10 +156,11 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "point"], {
         show: {
           name: "show",
-          ...(simpleLayer?.marker?.style
+          ...(computedFeature?.marker?.style
             ? {
                 override:
-                  simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+                  computedFeature?.marker?.style === "point" &&
+                  (computedFeature?.marker.show ?? true),
               }
             : {}),
         },
@@ -186,7 +186,7 @@ export const attachStyle = (
     }
 
     if (billboard) {
-      const isImageStyle = simpleLayer?.marker?.style === "image";
+      const isImageStyle = computedFeature?.marker?.style === "image";
       if (isImageStyle && !entity.billboard) {
         entity.billboard = new BillboardGraphics();
         entity.point = undefined;
@@ -195,10 +195,11 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "billboard"], {
         show: {
           name: "show",
-          ...(simpleLayer?.marker?.style
+          ...(computedFeature?.marker?.style
             ? {
                 override:
-                  simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+                  computedFeature?.marker?.style === "image" &&
+                  (computedFeature?.marker.show ?? true),
               }
             : {}),
         },
