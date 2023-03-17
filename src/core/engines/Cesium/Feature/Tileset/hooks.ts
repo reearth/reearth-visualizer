@@ -16,15 +16,24 @@ import {
   Model,
   Cesium3DTilePointFeature,
 } from "cesium";
+import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
 import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
 
-import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  Feature,
+  EvalFeature,
+  SceneProperty,
+  Cesium3DTilesAppearance,
+} from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
+import { usePick } from "../hooks";
 import {
   attachTag,
   extractSimpleLayer,
@@ -100,6 +109,13 @@ const MODEL_STYLE_PROPERTIES: StyleProperty<"pointSize" | "meta">[] = [
 ];
 // TODO: Add more styles. And it has not been tested yet.
 const POINT_STYLE_PROPERTIES: StyleProperty<"pointSize">[] = [{ name: "pointSize" }];
+
+const TILESET_APPEARANCE_FIELDS: (keyof Cesium3DTilesAppearance)[] = [
+  "show",
+  "color",
+  "pointSize",
+  "meta",
+];
 
 // TODO: Implement other convert type
 const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
@@ -257,15 +273,14 @@ const useFeature = ({
 
   // Update 3dtiles styles
   const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
-  const tileAppearanceShow = tileAppearance?.show;
-  const tileAppearanceColor = tileAppearance?.color;
+  const pickedAppearance = usePick(tileAppearance, TILESET_APPEARANCE_FIELDS);
 
   // If styles are updated while features are calculating,
   // we stop calculating features, and reassign styles.
   const skippedComputingAt = useRef<number | null>();
   useEffect(() => {
     skippedComputingAt.current = Date.now();
-  }, [tileAppearanceShow, tileAppearanceColor]);
+  }, [pickedAppearance]);
 
   const computeFeatureAsync = useCallback(
     async (f: CachedFeature, startedComputingAt: number) =>
@@ -276,16 +291,17 @@ const useFeature = ({
             return;
           }
 
-          const properties = f.feature.properties;
-          if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
-            f.feature.properties.color = tileAppearanceColor;
-            f.feature.properties.show = tileAppearanceShow;
+          const pickedProperties = pick(f.feature.properties, TILESET_APPEARANCE_FIELDS);
+          if (pickedAppearance && !isEqual(pickedProperties, pickedAppearance)) {
+            Object.entries(pickedAppearance).forEach(([k, v]) => {
+              f.feature.properties[k] = v;
+            });
             attachComputedFeature(f);
           }
           resolve(undefined);
         }),
       ),
-    [tileAppearanceShow, tileAppearanceColor, attachComputedFeature],
+    [pickedAppearance, attachComputedFeature],
   );
 
   const computeFeatures = useCallback(
