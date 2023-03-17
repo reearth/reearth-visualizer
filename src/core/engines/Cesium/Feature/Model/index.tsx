@@ -64,7 +64,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     silhouetteSize = 1,
   } = property ?? {};
 
-  const actualUrl = useMemo(() => model || url || data?.url, [layer, model, url]);
+  const actualUrl = useMemo(() => model || url || data?.url, [model, url, data?.url]);
   const orientation = useMemo(
     () =>
       bearing

@@ -173,6 +173,7 @@ export type RasterAppearance = {
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
+  alpha?: number;
 };
 
 export type BoxAppearance = {
