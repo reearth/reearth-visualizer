@@ -102,6 +102,7 @@ const HTMLBlock: React.FC<Props> = ({
     }
 
     // Initialize styles
+    frameWindow.document.documentElement.style.margin = "0";
     frameWindow.document.body.style.color = themeColor ?? getComputedStyle(frameRef).color;
     frameWindow.document.body.style.margin = "0";
 
@@ -114,8 +115,7 @@ const HTMLBlock: React.FC<Props> = ({
     }
 
     const resize = () => {
-      const rect = frameWindow.document.body.getBoundingClientRect();
-      setHeight(rect.top + rect.bottom);
+      setHeight(frameWindow.document.documentElement.scrollHeight);
     };
 
     // Resize
@@ -205,6 +205,7 @@ const IFrame = styled.iframe<{ $height: number }>`
   height: ${({ $height }) => $height}px;
   width: 100%;
   min-width: 100%;
+  box-sizing: border-box;
 `;
 
 const InputField = styled.textarea<{ minHeight: number }>`
