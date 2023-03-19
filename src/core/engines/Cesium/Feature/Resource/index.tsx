@@ -56,7 +56,7 @@ export default function Resource({
     return [
       type ?? (data?.type as ResourceAppearance["type"]),
       url ?? (data && !DataTypeListAllowsOnlyProperty.includes(data.type) ? data?.url : undefined),
-      !data?.time?.updateClockOnLoad,
+      !!data?.time?.updateClockOnLoad,
     ];
   }, [property, layer]);
   const { viewer } = useCesium() as { viewer?: Viewer };
