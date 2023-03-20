@@ -2718,7 +2718,7 @@
   resolved "https://registry.yarnpkg.com/@mapbox/point-geometry/-/point-geometry-0.1.0.tgz#8a83f9335c7860effa2eeeca254332aa0aeed8f2"
   integrity sha512-6j56HdLTwWGO0fJPlrZtdU/B13q8Uwmo18Ck2GnGgN9PCFyKTZ3UbXeEdRFh18i9XQ92eH2VdtpJHpBD3aripQ==
 
-"@mapbox/vector-tile@1.3.1", "@mapbox/vector-tile@^1.3.1":
+"@mapbox/vector-tile@1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@mapbox/vector-tile/-/vector-tile-1.3.1.tgz#d3a74c90402d06e89ec66de49ec817ff53409666"
   integrity sha512-MCEddb8u44/xfQ3oD+Srl/tNcQoqTw3goGk2oLsrFxOTc3dUp+kAnby3PvAeeBYSMSjSPD1nd1AJA6W49WnoUw==
@@ -7733,13 +7733,13 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium-mvt-imagery-provider@1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.1.5.tgz#dbea3914a1be96127a7d8c7ab79f449cb1d2fbb2"
-  integrity sha512-o7aJSbBFoyAyjzTMQjWvar7yMo3GgUhDKf23DbqpSaDJx2kr+LFWj7XcL89hpqZgzz+mE4JZQ5jcrjUIZhFSGg==
+cesium-mvt-imagery-provider@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.2.0.tgz#0cfeb0143e21496e4aef8b602977ce3dfea8569b"
+  integrity sha512-GNcbZLRm5EvAzC6bVfztmiq9YGY1+FsL5fOCfscB0wS6hDKHaxINFjgkYx2h86/mRmFmXLeA39GMDXWS3v+ZZg==
   dependencies:
-    "@mapbox/vector-tile" "^1.3.1"
-    pbf "^3.2.1"
+    "@mapbox/vector-tile" "1.3.1"
+    pbf "3.2.1"
 
 cesium@1.103.0:
   version "1.103.0"
@@ -14742,7 +14742,7 @@ pathval@^1.1.1:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
   integrity sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==
 
-pbf@^3.2.1:
+pbf@3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/pbf/-/pbf-3.2.1.tgz#b4c1b9e72af966cd82c6531691115cc0409ffe2a"
   integrity sha512-ClrV7pNOn7rtmoQVF4TS1vyU0WhYRnP92fzbfF75jAIwpnzdJXf8iTd4CMEqO4yUenH6NDqLiwjqlh6QgZzgLQ==

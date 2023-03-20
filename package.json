@@ -112,7 +112,7 @@
         "axios": "1.2.2",
         "cesium": "1.103.0",
         "cesium-dnd": "1.1.0",
-        "cesium-mvt-imagery-provider": "1.1.5",
+        "cesium-mvt-imagery-provider": "1.2.0",
         "core-js": "3.27.1",
         "crypto-js": "4.1.1",
         "csv-parse": "5.3.3",
