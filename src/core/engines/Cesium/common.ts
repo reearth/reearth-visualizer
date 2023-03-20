@@ -501,6 +501,7 @@ export const shadowMode = (
       enabled: ShadowMode.ENABLED,
       cast_only: ShadowMode.CAST_ONLY,
       receive_only: ShadowMode.RECEIVE_ONLY,
+      disabled: ShadowMode.DISABLED,
     } as {
       [key in string]?: ShadowMode;
     }
