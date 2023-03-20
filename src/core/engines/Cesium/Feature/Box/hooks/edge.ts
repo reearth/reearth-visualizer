@@ -71,6 +71,9 @@ export const useHooks = ({
 
   const handleMouseDown: EventCallback = useCallback(
     e => {
+      if (!viewer) {
+        return;
+      }
       const currentLayerId = getTag(viewer.scene.pick(e.position)?.id)?.layerId;
       if (currentLayerId !== id) {
         return;
@@ -94,7 +97,7 @@ export const useHooks = ({
     [onMouseUp, index, id],
   );
 
-  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer.scene.canvas), [viewer]);
+  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer?.scene.canvas), [viewer]);
   useEffect(() => {
     eventHandler.setInputAction(handleMouseDown, ScreenSpaceEventType.LEFT_DOWN);
     eventHandler.setInputAction(handleMouseMove, ScreenSpaceEventType.MOUSE_MOVE);

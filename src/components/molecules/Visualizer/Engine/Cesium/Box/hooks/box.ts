@@ -55,7 +55,7 @@ export const useHooks = ({
       return;
     }
 
-    if (!allowEnterGround) {
+    if (!allowEnterGround && viewer) {
       inProgressSamplingTerrainHeight.current = true;
       sampleTerrainHeightFromCartesian(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
@@ -110,7 +110,13 @@ export const useHooks = ({
   const prevMousePosition2dForPoint = useRef<Cartesian2>();
   const handlePointMouseMove: PointEventCallback = useCallback(
     (e, { position, oppositePosition, pointLocal, index, layerId }) => {
-      if (currentPointIndex.current !== index || !position || !oppositePosition || !pointLocal) {
+      if (
+        currentPointIndex.current !== index ||
+        !position ||
+        !oppositePosition ||
+        !pointLocal ||
+        !viewer
+      ) {
         return;
       }
       if (prevMousePosition2dForPoint.current === undefined) {

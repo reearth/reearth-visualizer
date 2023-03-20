@@ -68,7 +68,7 @@ export const useHooks = ({
       return;
     }
 
-    if (!allowEnterGround) {
+    if (!allowEnterGround && viewer) {
       inProgressSamplingTerrainHeight.current = true;
       sampleTerrainHeightFromCartesian(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
@@ -127,6 +127,9 @@ export const useHooks = ({
   const currentPointIndex = useRef<number>();
   const handlePointMouseDown: PointEventCallback = useCallback(
     (_, { index }) => {
+      if (!viewer) {
+        return;
+      }
       updateMapController(viewer, false);
       currentPointIndex.current = index;
     },
@@ -135,7 +138,13 @@ export const useHooks = ({
   const prevMousePosition2dForPoint = useRef<Cartesian2>();
   const handlePointMouseMove: PointEventCallback = useCallback(
     (e, { position, oppositePosition, pointLocal, index, layerId }) => {
-      if (currentPointIndex.current !== index || !position || !oppositePosition || !pointLocal) {
+      if (
+        currentPointIndex.current !== index ||
+        !position ||
+        !oppositePosition ||
+        !pointLocal ||
+        !viewer
+      ) {
         return;
       }
 
@@ -261,6 +270,9 @@ export const useHooks = ({
     [trs, viewer, allowEnterGround, ctx, onLayerEdit],
   );
   const handlePointMouseUp: PointEventCallback = useCallback(() => {
+    if (!viewer) {
+      return;
+    }
     currentPointIndex.current = undefined;
     prevMousePosition2dForPoint.current = undefined;
     updateMapController(viewer, true);
@@ -270,6 +282,9 @@ export const useHooks = ({
   const currentEdgeIndex = useRef<number>();
   const handleEdgeMouseDown: EdgeEventCallback = useCallback(
     (_, { index }) => {
+      if (!viewer) {
+        return;
+      }
       currentEdgeIndex.current = index;
       updateMapController(viewer, false);
     },
@@ -323,6 +338,9 @@ export const useHooks = ({
     [trs, ctx, onLayerEdit],
   );
   const handleEdgeMouseUp: EdgeEventCallback = useCallback(() => {
+    if (!viewer) {
+      return;
+    }
     currentEdgeIndex.current = undefined;
     prevMouseXAxisForEdge.current = undefined;
     updateMapController(viewer, true);

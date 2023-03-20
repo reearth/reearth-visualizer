@@ -1,4 +1,4 @@
-import { Entity, type DataSource, type Viewer } from "cesium";
+import { Entity, type DataSource } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
@@ -59,7 +59,7 @@ export default function Resource({
       !!data?.time?.updateClockOnLoad,
     ];
   }, [property, layer]);
-  const { viewer } = useCesium() as { viewer?: Viewer };
+  const { viewer } = useCesium();
   const cachedFeatures = useRef<CachedFeature[]>([]);
   const cachedFeatureIds = useRef(new Set<string>());
 

@@ -30,7 +30,7 @@ const useImageryProvider = (
   const { viewer } = useCesium();
   const alpha = property?.alpha;
   useEffect(() => {
-    if (!imageryProvider) return;
+    if (!imageryProvider || !viewer) return;
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
     const imageryLayer = imageryLayers.addImageryProvider(imageryProvider);
     if (alpha !== undefined && typeof alpha === "number") {

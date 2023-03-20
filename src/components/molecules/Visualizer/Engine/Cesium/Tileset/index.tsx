@@ -107,7 +107,7 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
         return;
       }
 
-      if (!allowEnterGround) {
+      if (!allowEnterGround && viewer) {
         inProgressSamplingTerrainHeight.current = true;
         sampleTerrainHeightFromCartesian(viewer.scene, translation).then(v => {
           setTerrainHeightEstimate(v ?? 0);

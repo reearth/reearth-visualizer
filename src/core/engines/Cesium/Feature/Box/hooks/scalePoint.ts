@@ -106,6 +106,9 @@ export const useHooks = ({
   const isOppositePointClicked = useRef(false);
   const handlePointMouseDown: EventCallback = useCallback(
     e => {
+      if (!viewer) {
+        return;
+      }
       const currentLayerId = getTag(viewer.scene.pick(e.position)?.id)?.layerId;
       isOppositePointClicked.current = currentLayerId === oppositeLayerId;
       if (currentLayerId === layerId || currentLayerId === oppositeLayerId) {
@@ -153,7 +156,7 @@ export const useHooks = ({
     );
   }, [dimensions, cesiumDimensions]);
 
-  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer.scene.canvas), [viewer]);
+  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer?.scene.canvas), [viewer]);
   useEffect(() => {
     eventHandler.setInputAction(handlePointMouseDown, ScreenSpaceEventType.LEFT_DOWN);
     eventHandler.setInputAction(handlePointMouseMove, ScreenSpaceEventType.MOUSE_MOVE);

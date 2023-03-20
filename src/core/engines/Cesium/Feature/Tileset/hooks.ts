@@ -449,7 +449,7 @@ export const useHooks = ({
   const inProgressSamplingTerrainHeight = useRef(false);
   const updateTerrainHeight = useCallback(
     (translation: Cartesian3) => {
-      if (inProgressSamplingTerrainHeight.current) {
+      if (inProgressSamplingTerrainHeight.current || !viewer) {
         return;
       }
 

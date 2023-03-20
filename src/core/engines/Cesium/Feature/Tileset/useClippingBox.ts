@@ -1,6 +1,5 @@
 import {
   ScreenSpaceEventType,
-  Viewer,
   ScreenSpaceEventHandler,
   Cartesian2,
   Cartesian3,
@@ -102,7 +101,7 @@ export const useClippingBox = ({
     roll,
   } = clipping || {};
 
-  const { viewer }: { viewer: Viewer } = useCesium();
+  const { viewer } = useCesium();
 
   const isBoxClicked = useRef(false);
   const isTopBottomSidePlaneClicked = useRef(false);
@@ -141,6 +140,9 @@ export const useClippingBox = ({
 
   const handleMouseDown = useCallback(
     (e: any) => {
+      if (!viewer) {
+        return;
+      }
       const picked = viewer.scene.pick(e.position);
       const layerId = getLayerId(picked);
 
@@ -184,6 +186,9 @@ export const useClippingBox = ({
     [boxId, boxState, handleUpdateBoxState, viewer],
   );
   const handleMouseUp = useCallback(() => {
+    if (!viewer) {
+      return;
+    }
     if (boxState.activeScalePointIndex || boxState.activeEdgeIndex) {
       handleUpdateBoxState({
         cursor: "default",
@@ -212,7 +217,7 @@ export const useClippingBox = ({
   }, [boxState, handleUpdateBoxState, viewer]);
   const handleMouseMove = useCallback(
     async (e: any) => {
-      if (!isBoxClicked.current) return;
+      if (!isBoxClicked.current || !viewer) return;
 
       const cart = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2]);
 
@@ -266,7 +271,7 @@ export const useClippingBox = ({
         ]);
       }
     },
-    [allowEnterGround, coords, dimensions?.height, viewer.scene],
+    [allowEnterGround, coords, dimensions?.height, viewer],
   );
   const handleMouseEnter = useCallback(
     ({ layerId }: { layerId?: string } | undefined = {}) => {
@@ -343,7 +348,7 @@ export const useClippingBox = ({
   const hovered = useRef<any>();
   const handleRawMouseMove = useCallback(
     (e: any) => {
-      const picked = viewer.scene.pick(e.endPosition);
+      const picked = viewer?.scene.pick(e.endPosition);
 
       if (hovered.current !== picked) {
         if (hovered.current) {
@@ -363,7 +368,7 @@ export const useClippingBox = ({
 
       hovered.current = picked;
     },
-    [handleMouseEnter, handleMouseLeave, handleMouseMove, viewer.scene],
+    [handleMouseEnter, handleMouseLeave, handleMouseMove, viewer?.scene],
   );
 
   const handleLayerEdit = useCallback(
@@ -395,7 +400,7 @@ export const useClippingBox = ({
     [boxId],
   );
 
-  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer.scene.canvas), [viewer]);
+  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer?.scene.canvas), [viewer]);
   useEffect(() => {
     eventHandler.setInputAction(handleMouseDown, ScreenSpaceEventType.LEFT_DOWN);
     eventHandler.setInputAction(handleRawMouseMove, ScreenSpaceEventType.MOUSE_MOVE);
