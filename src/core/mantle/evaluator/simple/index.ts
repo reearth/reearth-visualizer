@@ -11,7 +11,6 @@ import {
   ExpressionContainer,
   TimeInterval,
 } from "../../types";
-import { defined } from "../../utils";
 
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
@@ -109,7 +108,7 @@ function evalExpression(
   try {
     if (hasExpression(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
-      if (!defined(styleExpression)) {
+      if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
         return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();

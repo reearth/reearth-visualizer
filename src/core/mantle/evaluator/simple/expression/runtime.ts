@@ -1,61 +1,61 @@
-import { defined } from "../../../utils";
-
 import { ExpressionNodeType, unaryOperators, binaryOperators, replacementRegex } from "./constants";
 import { Expression } from "./expression";
 import { unaryFunctions, binaryFunctions } from "./functions";
 import { Node } from "./node";
 import { restoreReservedWord } from "./variableReplacer";
 
+const UNARY_OPERATORS_SET = new Set(unaryOperators);
+const BINARY_OPERATORS_SET = new Set(binaryOperators);
+
 export function createRuntimeAst(expression: Expression, ast: any): Node | Error {
   let node: Node | Error = new Error("failed to parse");
-  let op;
-  let left;
-  let right;
 
-  if (ast.type === "Literal") {
+  const type = ast.type;
+
+  if (type === "Literal") {
     node = parseLiteral(ast);
-  } else if (ast.type === "CallExpression") {
+  } else if (type === "CallExpression") {
     node = parseCall(expression, ast);
-  } else if (ast.type === "Identifier") {
+  } else if (type === "Identifier") {
     node = parseKeywordsAndVariables(ast);
-  } else if (ast.type === "UnaryExpression") {
-    op = ast.operator;
+  } else if (type === "UnaryExpression") {
+    const op = ast.operator;
     const child = createRuntimeAst(expression, ast.argument);
-    if (unaryOperators.indexOf(op) > -1) {
+    if (UNARY_OPERATORS_SET.has(op)) {
       node = new Node(ExpressionNodeType.UNARY, op, child);
     } else {
       throw new Error(`Unexpected operator "${op}".`);
     }
-  } else if (ast.type === "BinaryExpression") {
-    op = ast.operator;
-    left = createRuntimeAst(expression, ast.left);
-    right = createRuntimeAst(expression, ast.right);
-    if (binaryOperators.indexOf(op) > -1) {
+  } else if (type === "BinaryExpression") {
+    const op = ast.operator;
+    const left = createRuntimeAst(expression, ast.left);
+    const right = createRuntimeAst(expression, ast.right);
+    if (BINARY_OPERATORS_SET.has(op)) {
       node = new Node(ExpressionNodeType.BINARY, op, left, right);
     } else {
       throw new Error(`Unexpected operator "${op}".`);
     }
-  } else if (ast.type === "LogicalExpression") {
-    op = ast.operator;
-    left = createRuntimeAst(expression, ast.left);
-    right = createRuntimeAst(expression, ast.right);
-    if (binaryOperators.indexOf(op) > -1) {
+  } else if (type === "LogicalExpression") {
+    const op = ast.operator;
+    const left = createRuntimeAst(expression, ast.left);
+    const right = createRuntimeAst(expression, ast.right);
+    if (BINARY_OPERATORS_SET.has(op)) {
       node = new Node(ExpressionNodeType.BINARY, op, left, right);
     }
-  } else if (ast.type === "ConditionalExpression") {
+  } else if (type === "ConditionalExpression") {
     const test = createRuntimeAst(expression, ast.test);
-    left = createRuntimeAst(expression, ast.consequent);
-    right = createRuntimeAst(expression, ast.alternate);
+    const left = createRuntimeAst(expression, ast.consequent);
+    const right = createRuntimeAst(expression, ast.alternate);
     node = new Node(ExpressionNodeType.CONDITIONAL, "?", left, right, test);
-  } else if (ast.type === "MemberExpression") {
+  } else if (type === "MemberExpression") {
     node = parseMemberExpression(expression, ast);
-  } else if (ast.type === "ArrayExpression") {
+  } else if (type === "ArrayExpression") {
     const val = [];
     for (let i = 0; i < ast.elements.length; i++) {
       val[i] = createRuntimeAst(expression, ast.elements[i]);
     }
     node = new Node(ExpressionNodeType.ARRAY, val);
-  } else if (ast.type === "Compound") {
+  } else if (type === "Compound") {
     // empty expression or multiple expressions
     throw new Error("Provide exactly one expression.");
   } else {
@@ -94,12 +94,10 @@ export function replaceBackslashes(expression: string): string {
 function parseCall(expression: Expression, ast: any): Node | Error {
   const args = ast.arguments;
   const argsLength = args.length;
-  let call;
-  let val, left, right;
 
   // Member function calls
   if (ast.callee.type === "MemberExpression") {
-    call = ast.callee.property.name;
+    const call = ast.callee.property.name;
     const object = ast.callee.object;
     if (call === "test" || call === "exec") {
       // Make sure this is called on a valid type
@@ -112,11 +110,11 @@ function parseCall(expression: Expression, ast: any): Node | Error {
         }
         return new Node(ExpressionNodeType.LITERAL_NULL, null);
       }
-      left = createRuntimeAst(expression, object);
-      right = createRuntimeAst(expression, args[0]);
+      const left = createRuntimeAst(expression, object);
+      const right = createRuntimeAst(expression, args[0]);
       return new Node(ExpressionNodeType.FUNCTION_CALL, call, left, right);
     } else if (call === "toString") {
-      val = createRuntimeAst(expression, object);
+      const val = createRuntimeAst(expression, object);
       return new Node(ExpressionNodeType.FUNCTION_CALL, call, val);
     }
 
@@ -124,13 +122,13 @@ function parseCall(expression: Expression, ast: any): Node | Error {
   }
 
   // Non-member function calls
-  call = ast.callee.name;
+  const call = ast.callee.name;
   if (call === "color") {
     if (argsLength === 0) {
       return new Node(ExpressionNodeType.LITERAL_COLOR, call);
     }
-    val = createRuntimeAst(expression, args[0]);
-    if (defined(args[1])) {
+    const val = createRuntimeAst(expression, args[0]);
+    if (typeof args[1] !== "undefined") {
       const alpha = createRuntimeAst(expression, args[1]);
       return new Node(ExpressionNodeType.LITERAL_COLOR, call, [val, alpha]);
     }
@@ -139,7 +137,7 @@ function parseCall(expression: Expression, ast: any): Node | Error {
     if (argsLength < 3) {
       throw new Error(`${call} requires three arguments.`);
     }
-    val = [
+    const val = [
       createRuntimeAst(expression, args[0]),
       createRuntimeAst(expression, args[1]),
       createRuntimeAst(expression, args[2]),
@@ -149,7 +147,7 @@ function parseCall(expression: Expression, ast: any): Node | Error {
     if (argsLength < 4) {
       throw new Error(`${call} requires four arguments.`);
     }
-    val = [
+    const val = [
       createRuntimeAst(expression, args[0]),
       createRuntimeAst(expression, args[1]),
       createRuntimeAst(expression, args[2]),
@@ -163,38 +161,38 @@ function parseCall(expression: Expression, ast: any): Node | Error {
       }
       return new Node(ExpressionNodeType.LITERAL_BOOLEAN, false);
     }
-    val = createRuntimeAst(expression, args[0]);
+    const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
-  } else if (defined(unaryFunctions[call])) {
+  } else if (typeof unaryFunctions[call] !== "undefined") {
     if (argsLength !== 1) {
       throw new Error(`${call} requires exactly one argument.`);
     }
-    val = createRuntimeAst(expression, args[0]);
+    const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
-  } else if (defined(binaryFunctions[call])) {
+  } else if (typeof binaryFunctions[call] !== "undefined") {
     if (argsLength !== 2) {
       throw new Error(`${call} requires exactly two arguments.`);
     }
-    left = createRuntimeAst(expression, args[0]);
-    right = createRuntimeAst(expression, args[1]);
+    const left = createRuntimeAst(expression, args[0]);
+    const right = createRuntimeAst(expression, args[1]);
     return new Node(ExpressionNodeType.BINARY, call, left, right);
   } else if (call === "Boolean") {
     if (argsLength === 0) {
       return new Node(ExpressionNodeType.LITERAL_BOOLEAN, false);
     }
-    val = createRuntimeAst(expression, args[0]);
+    const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
   } else if (call === "Number") {
     if (argsLength === 0) {
       return new Node(ExpressionNodeType.LITERAL_NUMBER, 0);
     }
-    val = createRuntimeAst(expression, args[0]);
+    const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
   } else if (call === "String") {
     if (argsLength === 0) {
       return new Node(ExpressionNodeType.LITERAL_STRING, "");
     }
-    val = createRuntimeAst(expression, args[0]);
+    const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
   }
 
@@ -202,21 +200,22 @@ function parseCall(expression: Expression, ast: any): Node | Error {
 }
 
 function parseKeywordsAndVariables(ast: any): Node | Error {
-  if (isVariable(ast.name)) {
-    const name = getPropertyName(ast.name);
-    if (name.substring(0, 8) === "tiles3d_") {
-      return new Node(ExpressionNodeType.BUILTIN_VARIABLE, name);
+  const name = ast.name;
+  if (isVariable(name)) {
+    const propName = getPropertyName(name);
+    if (propName.substring(0, 8) === "tiles3d_") {
+      return new Node(ExpressionNodeType.BUILTIN_VARIABLE, propName);
     }
-    return new Node(ExpressionNodeType.VARIABLE, name);
-  } else if (ast.name === "NaN") {
+    return new Node(ExpressionNodeType.VARIABLE, propName);
+  } else if (name === "NaN") {
     return new Node(ExpressionNodeType.LITERAL_NUMBER, NaN);
-  } else if (ast.name === "Infinity") {
+  } else if (name === "Infinity") {
     return new Node(ExpressionNodeType.LITERAL_NUMBER, Infinity);
-  } else if (ast.name === "undefined") {
+  } else if (name === "undefined") {
     return new Node(ExpressionNodeType.LITERAL_UNDEFINED, undefined);
   }
 
-  throw new Error(`${ast.name} is not defined.`);
+  throw new Error(`${name} is not defined.`);
 }
 
 function parseMathConstant(ast: any) {

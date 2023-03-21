@@ -1,7 +1,6 @@
 import jsep from "jsep";
 
 import { Feature } from "../../../types";
-import { defined } from "../../../utils";
 
 import { backslashRegex, backslashReplacement } from "./constants";
 import { Node } from "./node";
@@ -14,6 +13,7 @@ export type JPLiteral = {
 };
 
 export const EXPRESSION_CACHES = new Map<string, Node | Error>();
+const DEFINE_PLACEHOLDER_REGEX_CACHE = new Map<string, RegExp>();
 
 export class Expression {
   private _expression: string;
@@ -63,17 +63,17 @@ export class Expression {
 }
 
 export function replaceDefines(expression: string, defines: any): string {
-  if (!defined(defines)) {
+  if (typeof defines === "undefined") {
     return expression;
   }
-  for (const key in defines) {
-    const definePlaceholder = new RegExp(`\\$\\{${key}\\}`, "g");
-    const defineReplace = `(${defines[key]})`;
-    if (defined(defineReplace)) {
-      expression = expression.replace(definePlaceholder, defineReplace);
-    }
+  let definePlaceholderRegex = DEFINE_PLACEHOLDER_REGEX_CACHE.get(expression);
+  if (!definePlaceholderRegex) {
+    definePlaceholderRegex = new RegExp(`\\$\\{(${Object.keys(defines).join("|")})\\}`, "g");
+    DEFINE_PLACEHOLDER_REGEX_CACHE.set(expression, definePlaceholderRegex);
   }
-  return expression;
+  return expression.replace(definePlaceholderRegex, (_, key) =>
+    typeof defines[key] !== "undefined" ? `(${defines[key]})` : "",
+  );
 }
 
 export function removeBackslashes(expression: string): string {

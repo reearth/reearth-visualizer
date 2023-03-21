@@ -39,7 +39,6 @@ export const binaryOperators = [
   "=~",
 ];
 
-export const variableRegex = /\${(.*?)}/g; // Matches ${variable_name}
 export const backslashRegex = /\\/g;
 export const backslashReplacement = "@#%";
 export const replacementRegex = /@#%/g;

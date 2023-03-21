@@ -1,7 +1,6 @@
 import { Feature } from "../../../types";
-import { defined } from "../../../utils";
 
-import { ExpressionNodeType, variableRegex } from "./constants";
+import { ExpressionNodeType } from "./constants";
 import {
   getEvaluateUnaryFunction,
   unaryFunctions,
@@ -11,11 +10,11 @@ import {
 } from "./functions";
 
 export class Node {
-  _type;
-  _value;
-  _left;
-  _right;
-  _test;
+  private _type;
+  private _value;
+  private _left;
+  private _right;
+  private _test;
   evaluate: any;
 
   constructor(type: any, value: any, left?: any, right?: any, test?: any) {
@@ -29,80 +28,136 @@ export class Node {
   }
 
   setEvaluateFunction() {
-    if (this._type === ExpressionNodeType.CONDITIONAL) {
-      this.evaluate = this._evaluateConditional;
-    } else if (this._type === ExpressionNodeType.FUNCTION_CALL) {
-      if (this._value === "toString") {
-        this.evaluate = this._evaluateToString;
-      }
-    } else if (this._type === ExpressionNodeType.UNARY) {
-      if (this._value === "!") {
-        this.evaluate = this._evaluateNot;
-      } else if (this._value === "-") {
-        this.evaluate = this._evaluateNegative;
-      } else if (this._value === "+") {
-        this.evaluate = this._evaluatePositive;
-      } else if (this._value === "isNaN") {
-        this.evaluate = this._evaluateNaN;
-      } else if (this._value === "isFinite") {
-        this.evaluate = this._evaluateIsFinite;
-      } else if (this._value === "Boolean") {
-        this.evaluate = this._evaluateBooleanConversion;
-      } else if (this._value === "Number") {
-        this.evaluate = this._evaluateNumberConversion;
-      } else if (this._value === "String") {
-        this.evaluate = this._evaluateStringConversion;
-      } else if (defined(unaryFunctions[this._value as string])) {
-        this.evaluate = getEvaluateUnaryFunction(this._value);
-      }
-    } else if (this._type === ExpressionNodeType.BINARY) {
-      if (this._value === "+") {
-        this.evaluate = this._evaluatePlus;
-      } else if (this._value === "-") {
-        this.evaluate = this._evaluateMinus;
-      } else if (this._value === "*") {
-        this.evaluate = this._evaluateTimes;
-      } else if (this._value === "/") {
-        this.evaluate = this._evaluateDivide;
-      } else if (this._value === "%") {
-        this.evaluate = this._evaluateMod;
-      } else if (this._value === "===") {
-        this.evaluate = this._evaluateEqualsStrict;
-      } else if (this._value === "!==") {
-        this.evaluate = this._evaluateNotEqualsStrict;
-      } else if (this._value === "<") {
-        this.evaluate = this._evaluateLessThan;
-      } else if (this._value === "<=") {
-        this.evaluate = this._evaluateLessThanOrEquals;
-      } else if (this._value === ">") {
-        this.evaluate = this._evaluateGreaterThan;
-      } else if (this._value === ">=") {
-        this.evaluate = this._evaluateGreaterThanOrEquals;
-      } else if (this._value === "&&") {
-        this.evaluate = this._evaluateAnd;
-      } else if (this._value === "||") {
-        this.evaluate = this._evaluateOr;
-      } else if (defined(binaryFunctions[this._value])) {
-        this.evaluate = getEvaluateBinaryFunction(this._value);
-      }
-    } else if (this._type === ExpressionNodeType.MEMBER) {
-      if (this._value === "brackets") {
-        this.evaluate = this._evaluateMemberBrackets;
-      } else {
-        this.evaluate = this._evaluateMemberDot;
-      }
-    } else if (this._type === ExpressionNodeType.ARRAY) {
-      this.evaluate = this._evaluateArray;
-    } else if (this._type === ExpressionNodeType.VARIABLE) {
-      this.evaluate = this._evaluateVariable;
-    } else if (this._type === ExpressionNodeType.VARIABLE_IN_STRING) {
-      this.evaluate = this._evaluateVariableString;
-    } else if (this._type === ExpressionNodeType.LITERAL_COLOR) {
-      this.evaluate = this._evaluateLiteralColor;
-    } else if (this._type === ExpressionNodeType.LITERAL_STRING) {
-      this.evaluate = this._evaluateLiteralString;
-    } else {
-      this.evaluate = this._evaluateLiteral;
+    const type = this._type;
+    const value = this._value;
+
+    switch (type) {
+      case ExpressionNodeType.CONDITIONAL:
+        this.evaluate = this._evaluateConditional;
+        break;
+
+      case ExpressionNodeType.FUNCTION_CALL:
+        switch (value) {
+          case "toString":
+            this.evaluate = this._evaluateToString;
+            break;
+        }
+        break;
+
+      case ExpressionNodeType.UNARY:
+        switch (value) {
+          case "!":
+            this.evaluate = this._evaluateNot;
+            break;
+          case "-":
+            this.evaluate = this._evaluateNegative;
+            break;
+          case "+":
+            this.evaluate = this._evaluatePositive;
+            break;
+          case "isNaN":
+            this.evaluate = this._evaluateNaN;
+            break;
+          case "isFinite":
+            this.evaluate = this._evaluateIsFinite;
+            break;
+          case "Boolean":
+            this.evaluate = this._evaluateBooleanConversion;
+            break;
+          case "Number":
+            this.evaluate = this._evaluateNumberConversion;
+            break;
+          case "String":
+            this.evaluate = this._evaluateStringConversion;
+            break;
+          default:
+            if (typeof unaryFunctions[value as string] !== "undefined") {
+              this.evaluate = getEvaluateUnaryFunction(value);
+            }
+            break;
+        }
+        break;
+
+      case ExpressionNodeType.BINARY:
+        switch (value) {
+          case "+":
+            this.evaluate = this._evaluatePlus;
+            break;
+          case "-":
+            this.evaluate = this._evaluateMinus;
+            break;
+          case "*":
+            this.evaluate = this._evaluateTimes;
+            break;
+          case "/":
+            this.evaluate = this._evaluateDivide;
+            break;
+          case "%":
+            this.evaluate = this._evaluateMod;
+            break;
+          case "===":
+            this.evaluate = this._evaluateEqualsStrict;
+            break;
+          case "!==":
+            this.evaluate = this._evaluateNotEqualsStrict;
+            break;
+          case "<":
+            this.evaluate = this._evaluateLessThan;
+            break;
+          case "<=":
+            this.evaluate = this._evaluateLessThanOrEquals;
+            break;
+          case ">":
+            this.evaluate = this._evaluateGreaterThan;
+            break;
+          case ">=":
+            this.evaluate = this._evaluateGreaterThanOrEquals;
+            break;
+          case "&&":
+            this.evaluate = this._evaluateAnd;
+            break;
+          case "||":
+            this.evaluate = this._evaluateOr;
+            break;
+          default:
+            if (typeof binaryFunctions[value] !== "undefined") {
+              this.evaluate = getEvaluateBinaryFunction(value);
+            }
+            break;
+        }
+        break;
+
+      case ExpressionNodeType.MEMBER:
+        if (value === "brackets") {
+          this.evaluate = this._evaluateMemberBrackets;
+        } else {
+          this.evaluate = this._evaluateMemberDot;
+        }
+        break;
+
+      case ExpressionNodeType.ARRAY:
+        this.evaluate = this._evaluateArray;
+        break;
+
+      case ExpressionNodeType.VARIABLE:
+        this.evaluate = this._evaluateVariable;
+        break;
+
+      case ExpressionNodeType.VARIABLE_IN_STRING:
+        this.evaluate = this._evaluateVariableString;
+        break;
+
+      case ExpressionNodeType.LITERAL_COLOR:
+        this.evaluate = this._evaluateLiteralColor;
+        break;
+
+      case ExpressionNodeType.LITERAL_STRING:
+        this.evaluate = this._evaluateLiteralString;
+        break;
+
+      default:
+        this.evaluate = this._evaluateLiteral;
+        break;
     }
   }
 
@@ -113,13 +168,14 @@ export class Node {
     return this._value;
   }
   _evaluateVariableString(feature?: Feature) {
+    const variableRegex = /\${(.*?)}/g;
     let result = this._value;
     let match = variableRegex.exec(result);
     while (match !== null) {
       const placeholder = match[0];
       const variableName = match[1];
       let property = feature?.properties[variableName];
-      if (!defined(property)) {
+      if (typeof property === "undefined") {
         property = "";
       }
       result = result.replace(placeholder, property);
@@ -134,7 +190,7 @@ export class Node {
     } else if (String(this._value) === "id") {
       property = feature?.id;
     }
-    if (!defined(property)) {
+    if (typeof property === "undefined") {
       property = "";
     }
     return property;
@@ -144,7 +200,7 @@ export class Node {
       return feature?.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
-    if (!defined(property)) {
+    if (typeof property === "undefined") {
       return undefined;
     }
 
@@ -157,7 +213,7 @@ export class Node {
       return feature?.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
-    if (!defined(property)) {
+    if (typeof property === "undefined") {
       return undefined;
     }
 
@@ -389,7 +445,7 @@ export class Node {
     const args = this._left;
     let color = new Color();
     if (this._value === "color") {
-      if (!defined(args)) {
+      if (typeof args === "undefined") {
         color = Color.fromBytes(255, 255, 255, 255);
       } else if (args.length > 1) {
         const temp = Color.fromCssColorString(args[0].evaluate(feature));

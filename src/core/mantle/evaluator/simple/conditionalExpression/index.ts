@@ -1,53 +1,52 @@
 import { Feature, ConditionsExpression } from "../../../types";
-import { defined } from "../../../utils";
 import { Expression } from "../expression";
 
 export class ConditionalExpression {
-  #conditions: [string, string][];
-  #runtimeConditions: Statement[];
-  #feature?: Feature;
+  private _conditions: [string, string][];
+  private _runtimeConditions: Statement[];
+  private _feature?: Feature;
+  private _memoizedResult: any;
 
   constructor(conditionsExpression: ConditionsExpression, feature?: Feature, defines?: any) {
-    this.#conditions = conditionsExpression.conditions;
-    this.#runtimeConditions = [];
-    this.#feature = feature;
+    this._conditions = conditionsExpression.conditions;
+    this._runtimeConditions = [];
+    this._feature = feature;
+    this._memoizedResult = undefined;
 
     this.setRuntime(defines);
   }
 
   setRuntime(defines: any) {
-    const runtimeConditions = [];
-    const conditions = this.#conditions;
-    if (!defined(conditions)) {
-      return;
-    }
-    const length = conditions.length;
-    for (let i = 0; i < length; i++) {
-      const statement = conditions[i];
+    const runtimeConditions = this._conditions?.map(statement => {
       const cond = String(statement[0]);
       const condExpression = String(statement[1]);
-      runtimeConditions.push(
-        new Statement(
-          new Expression(cond, this.#feature, defines),
-          new Expression(condExpression, this.#feature, defines),
-        ),
+      return new Statement(
+        new Expression(cond, this._feature, defines),
+        new Expression(condExpression, this._feature, defines),
       );
-    }
-    this.#runtimeConditions = runtimeConditions;
+    });
+    this._runtimeConditions = runtimeConditions ?? [];
+    this._memoizedResult = undefined;
   }
 
   evaluate() {
-    const conditions = this.#runtimeConditions;
-    if (defined(conditions)) {
-      const length = conditions.length;
-      for (let i = 0; i < length; ++i) {
-        const statement = conditions[i];
-        if (statement.condition.evaluate()) {
-          return statement.expression.evaluate();
-        }
+    if (typeof this._memoizedResult !== "undefined") {
+      return this._memoizedResult;
+    }
+
+    const conditions = this._runtimeConditions;
+    const length = conditions.length;
+    for (let i = 0; i < length; i++) {
+      const statement = conditions[i];
+      if (statement.condition.evaluate()) {
+        const result = statement.expression.evaluate();
+        this._memoizedResult = result;
+        return result;
       }
     }
-    return undefined;
+    const undefinedResult = undefined;
+    this._memoizedResult = undefinedResult;
+    return undefinedResult;
   }
 }
 

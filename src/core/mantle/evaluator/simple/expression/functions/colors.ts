@@ -1,4 +1,4 @@
-import { defaultValue, defined } from "../../../../utils";
+import { defaultValue } from "../../../../utils";
 import { rgbaMatcher, rrggbbaaMatcher, builtInColor } from "../constants";
 
 //rgb(), rgba(), or rgb%()
@@ -32,7 +32,7 @@ export class Color {
     color = color.replace(/\s/g, "");
 
     const namedColor = getColor(color);
-    if (defined(namedColor)) {
+    if (typeof namedColor !== "undefined") {
       return namedColor;
     }
 
@@ -109,7 +109,7 @@ export class Color {
         blue = hue2rgb(m1, m2, hue - 1 / 3);
       }
 
-      if (!defined(result)) {
+      if (typeof result === "undefined") {
         return new Color(red, green, blue, alpha);
       }
 
