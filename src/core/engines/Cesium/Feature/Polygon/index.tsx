@@ -45,7 +45,6 @@ export default function Polygon({
   const {
     show = true,
     fill = true,
-    height = 0,
     stroke,
     fillColor,
     strokeColor,
@@ -118,7 +117,6 @@ export default function Polygon({
         <PolygonGraphics
           hierarchy={hierarchy}
           fill={fill}
-          height={height}
           material={memoFillColor}
           outline={!!memoStrokeColor}
           outlineColor={memoStrokeColor}
