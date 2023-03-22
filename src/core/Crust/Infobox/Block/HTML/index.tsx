@@ -103,8 +103,21 @@ const HTMLBlock: React.FC<Props> = ({
 
     // Initialize styles
     frameWindow.document.documentElement.style.margin = "0";
-    frameWindow.document.body.style.color = themeColor ?? getComputedStyle(frameRef).color;
-    frameWindow.document.body.style.margin = "0";
+
+    // Check if a style element has already been appended to the head
+    let style: HTMLElement | null = frameWindow.document.querySelector(
+      'style[data-id="reearth-iframe-style"]',
+    );
+    if (!style) {
+      // Create a new style element if it doesn't exist
+      style = frameWindow.document.createElement("style");
+      style.dataset.id = "reearth-iframe-style";
+      frameWindow.document.head.append(style);
+    }
+    // Update the content of the existing or new style element
+    style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
+    font-family:Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif; 
+    font-size: ${fonts.sizes.s}px; } a { color:${themeColor ?? getComputedStyle(frameRef).color};}`;
 
     const handleFrameClick = () => handleClick();
 
@@ -129,7 +142,7 @@ const HTMLBlock: React.FC<Props> = ({
       frameWindow.document.removeEventListener("click", handleFrameClick);
       resizeObserver.disconnect();
     };
-  }, [frameRef, startEditing, isEditable, handleClick, html, themeColor]);
+  }, [frameRef, themeColor, isEditable, html, handleClick, startEditing]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
