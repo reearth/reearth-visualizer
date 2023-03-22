@@ -45,7 +45,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     show = true,
     model,
     url,
-    heightReference: hr,
+    heightReference: hr = "clamp",
     heading,
     pitch,
     roll,
