@@ -140,6 +140,11 @@ export default function useHooks({
         : undefined,
     [selectedLayer, defaultInfobox, blocks],
   );
+  const handleInfoboxClose = useCallback(() => {
+    if (infobox?.property?.unselectOnClose) {
+      mapRef?.current?.layers.select(undefined);
+    }
+  }, [infobox]);
 
   // scene
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
@@ -264,6 +269,7 @@ export default function useHooks({
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
+    handleInfoboxClose,
   };
 }
 

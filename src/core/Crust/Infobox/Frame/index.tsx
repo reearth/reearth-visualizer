@@ -23,6 +23,7 @@ export type Props = {
   size?: "small" | "medium" | "large";
   position?: "right" | "middle" | "left";
   visible?: boolean;
+  unselectOnClose?: boolean;
   noContent?: boolean;
   useMask?: boolean;
   typography?: Typography;
@@ -39,6 +40,7 @@ export type Props = {
   onEntered?: () => void;
   onExit?: () => void;
   onExited?: () => void;
+  onClose?: () => void;
 };
 
 const Frame: React.FC<Props> = ({
@@ -53,6 +55,7 @@ const Frame: React.FC<Props> = ({
   outlineColor,
   outlineWidth,
   visible,
+  unselectOnClose,
   noContent,
   useMask,
   typography,
@@ -70,6 +73,7 @@ const Frame: React.FC<Props> = ({
   onEntered,
   onExit,
   onExited,
+  onClose,
 }) => {
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
@@ -84,8 +88,11 @@ const Frame: React.FC<Props> = ({
   }, [open, noContent, isSmallWindow]);
 
   const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
+    if (!unselectOnClose) {
+      setOpen(false);
+    }
+    onClose?.();
+  }, [onClose, unselectOnClose]);
 
   useEffect(() => {
     if (!ref2.current) return;

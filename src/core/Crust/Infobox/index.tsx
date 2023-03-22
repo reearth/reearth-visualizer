@@ -42,6 +42,7 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderBlock?: (block: BlockProps) => ReactNode;
   renderInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
+  onClose?: () => void;
 };
 
 const Infobox: React.FC<Props> = ({
@@ -61,6 +62,7 @@ const Infobox: React.FC<Props> = ({
   onBlockMove,
   onBlockInsert,
   renderInsertionPopup,
+  onClose,
   ...props
 }) => {
   const {
@@ -88,6 +90,7 @@ const Infobox: React.FC<Props> = ({
       useMask={!!property?.useMask}
       outlineWidth={property?.outlineWidth}
       visible={visible}
+      unselectOnClose={property?.unselectOnClose}
       noContent={!blocks?.length}
       theme={infoboxTheme}
       backgroundColor={property?.bgcolor}
@@ -101,7 +104,8 @@ const Infobox: React.FC<Props> = ({
       onClick={() => selectedBlockId && onBlockSelect?.(undefined)}
       onEnter={setNotReadyToRender}
       onEntered={setReadyToRender}
-      onExit={setNotReadyToRender}>
+      onExit={setNotReadyToRender}
+      onClose={onClose}>
       {blocks?.map((b, i) => (
         <Field
           key={b.id}

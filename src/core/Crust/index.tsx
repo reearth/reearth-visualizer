@@ -93,6 +93,7 @@ export type Props = {
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
   onInfoboxMaskClick?: () => void;
+  onInfoboxClose?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
     blockId: string,
@@ -141,6 +142,7 @@ export default function Crust({
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
   onInfoboxMaskClick,
+  onInfoboxClose,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
@@ -225,6 +227,7 @@ export default function Crust({
         onBlockInsert={onBlockInsert}
         renderBlock={renderBlock}
         renderInsertionPopup={renderInfoboxInsertionPopup}
+        onClose={onInfoboxClose}
       />
     </Plugins>
   );

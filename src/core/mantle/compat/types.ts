@@ -42,6 +42,7 @@ export type InfoboxProperty = {
     outlineWidth?: number;
     useMask?: boolean;
     defaultContent?: "description" | "attributes";
+    unselectOnClose?: boolean;
   };
 };
 

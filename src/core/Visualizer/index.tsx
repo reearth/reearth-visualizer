@@ -171,6 +171,7 @@ export default function Visualizer({
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
+    handleInfoboxClose,
   } = useHooks({
     rootLayerId,
     isEditable,
@@ -227,6 +228,7 @@ export default function Visualizer({
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
         onWidgetAreaSelect={onWidgetAreaSelect}
         onInfoboxMaskClick={onInfoboxMaskClick}
+        onInfoboxClose={handleInfoboxClose}
         onBlockSelect={handleBlockSelect}
         onBlockChange={onBlockChange}
         onBlockMove={onBlockMove}
