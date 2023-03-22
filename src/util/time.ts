@@ -7,3 +7,9 @@ export const convertTime = (time: string | undefined): Date | undefined => {
     return undefined;
   }
 };
+
+export const truncMinutes = (d: Date) => {
+  d.setMinutes(0);
+  d.setSeconds(0, 0);
+  return d;
+};

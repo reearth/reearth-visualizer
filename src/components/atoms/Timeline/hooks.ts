@@ -10,6 +10,8 @@ import React, {
   WheelEventHandler,
 } from "react";
 
+import { truncMinutes } from "@reearth/util/time";
+
 import {
   BORDER_WIDTH,
   DAY_SECS,
@@ -29,7 +31,7 @@ import { formatDateForTimeline } from "./utils";
 
 const convertPositionToTime = (e: MouseEvent, { start, end }: Range, gapHorizontal: number) => {
   const curTar = e.currentTarget;
-  const width = curTar.scrollWidth - (PADDING_HORIZONTAL + BORDER_WIDTH) * 2 - gapHorizontal;
+  const width = curTar.scrollWidth - (PADDING_HORIZONTAL + BORDER_WIDTH) * 2 + gapHorizontal / 2;
   const rect = curTar.getBoundingClientRect();
   const clientX = e.clientX - rect.x;
   const scrollX = curTar.scrollLeft;
@@ -44,6 +46,7 @@ type InteractionOption = {
   range: Range;
   gapHorizontal: number;
   zoom: number;
+  isRangeLessThanHalfHours: boolean;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
@@ -56,6 +59,7 @@ const useTimelineInteraction = ({
   setZoom,
   onClick,
   onDrag,
+  isRangeLessThanHalfHours,
 }: InteractionOption) => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const handleOnMouseDown = useCallback(() => {
@@ -106,13 +110,17 @@ const useTimelineInteraction = ({
 
   const handleOnWheel: WheelEventHandler = useCallback(
     e => {
+      if (isRangeLessThanHalfHours) {
+        return;
+      }
+
       const { deltaX, deltaY } = e;
       const isHorizontal = Math.abs(deltaX) > 0 || Math.abs(deltaX) < 0;
       if (isHorizontal) return;
 
       setZoom(() => Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO));
     },
-    [zoom, setZoom],
+    [zoom, setZoom, isRangeLessThanHalfHours],
   );
 
   return {
@@ -186,13 +194,6 @@ const useTimelinePlayer = ({
   };
 };
 
-const truncDate = (time: number) => {
-  const date = new Date(time);
-  date.setMinutes(0);
-  date.setSeconds(0, 0);
-  return date.getTime();
-};
-
 const getRange = (range?: { [K in keyof Range]?: Range[K] }): Range => {
   const { start, end } = range || {};
   if (start !== undefined && end !== undefined) {
@@ -248,7 +249,10 @@ export const useTimeline = ({
         throw new Error("Out of range error. `range.start` should be less than `range.end`");
       }
     }
-    return { start: truncDate(range.start), end: truncDate(range.end) };
+    return {
+      start: truncMinutes(new Date(range.start)).getTime(),
+      end: range.end,
+    };
   }, [_range]);
   const { start, end } = range;
   const startDate = useMemo(() => new Date(start), [start]);
@@ -257,29 +261,48 @@ export const useTimeline = ({
     SCALE_INTERVAL - Math.trunc(zoom - 1) * SCALE_ZOOM_INTERVAL * MINUTES_SEC,
     MINUTES_SEC,
   );
-  const strongScaleHours = Math.max(MAX_ZOOM_RATIO - Math.trunc(zoom) + 1, 1);
   const epochDiff = end - start;
 
   // convert epoch diff to minutes.
   const scaleCount = Math.trunc(epochDiff / EPOCH_SEC / scaleInterval);
 
-  // convert HOURS_SECS to minutes.
+  // Count hours scale
   const hoursCount = Math.trunc(HOURS_SECS / scaleInterval);
+
+  const strongScaleMinutes = Math.max(scaleInterval / MINUTES_SEC + Math.trunc(zoom) + 1, 10);
 
   // Convert scale count to pixel.
   const currentPosition = useMemo(() => {
     const diff = Math.min((currentTime - start) / EPOCH_SEC / scaleInterval, scaleCount);
-    const strongScaleCount = diff / (hoursCount * strongScaleHours);
+    const strongScaleCount = diff / strongScaleMinutes;
     return Math.max(
       diff * gapHorizontal +
         (diff - strongScaleCount) * NORMAL_SCALE_WIDTH +
-        strongScaleCount * STRONG_SCALE_WIDTH +
-        STRONG_SCALE_WIDTH / 2,
+        strongScaleCount * STRONG_SCALE_WIDTH,
       0,
     );
-  }, [currentTime, start, scaleCount, hoursCount, gapHorizontal, scaleInterval, strongScaleHours]);
+  }, [currentTime, start, scaleCount, gapHorizontal, scaleInterval, strongScaleMinutes]);
 
-  const events = useTimelineInteraction({ range, zoom, setZoom, gapHorizontal, onClick, onDrag });
+  const isRangeLessThanHalfHours = useMemo(
+    () => epochDiff < (DAY_SECS / 4) * EPOCH_SEC,
+    [epochDiff],
+  );
+
+  useEffect(() => {
+    if (isRangeLessThanHalfHours) {
+      setZoom(MAX_ZOOM_RATIO);
+    }
+  }, [isRangeLessThanHalfHours]);
+
+  const events = useTimelineInteraction({
+    range,
+    zoom,
+    setZoom,
+    gapHorizontal,
+    onClick,
+    onDrag,
+    isRangeLessThanHalfHours,
+  });
   const player = useTimelinePlayer({ currentTime, onPlay, onPlayReversed, onSpeedChange });
 
   return {
@@ -288,7 +311,7 @@ export const useTimeline = ({
     hoursCount,
     gapHorizontal,
     scaleInterval,
-    strongScaleHours,
+    strongScaleMinutes,
     currentPosition,
     events,
     player,

@@ -55,7 +55,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     hoursCount,
     gapHorizontal,
     scaleInterval,
-    strongScaleHours,
+    strongScaleMinutes,
     currentPosition,
     events,
     player: {
@@ -137,7 +137,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           hoursCount={hoursCount}
           gapHorizontal={gapHorizontal}
           scaleInterval={scaleInterval}
-          strongScaleHours={strongScaleHours}
+          strongScaleMinutes={strongScaleMinutes}
           publishedTheme={theme}
         />
         <IconWrapper
@@ -278,6 +278,7 @@ const ScaleBox = styled.div`
   position: relative;
   overflow-x: overlay;
   overflow-y: hidden;
+  contain: strict;
   width: 100%;
   -webkit-user-select: none;
   -moz-user-select: none;

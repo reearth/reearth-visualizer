@@ -25,7 +25,7 @@ type ScaleListInnerProps = {
   scaleCount: number;
   hoursCount: number;
   scaleInterval: number;
-  strongScaleHours: number;
+  strongScaleMinutes: number;
 };
 
 const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPresenter({
@@ -34,17 +34,18 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
   scaleCount,
   hoursCount,
   scaleInterval,
-  strongScaleHours,
+  strongScaleMinutes,
 }) {
-  const strongHours = hoursCount * strongScaleHours;
-  const lastStrongScaleIdx = strongHours * (scaleCount / strongHours);
+  const lastStrongScaleIdx = scaleCount - strongScaleMinutes;
   return (
     <>
       {[...Array(scaleCount + 1)].map((_, idx) => {
         const isHour = idx % hoursCount === 0;
-        const isStrongScale = idx % strongHours === 0;
-        if (isStrongScale && idx !== lastStrongScaleIdx) {
-          const label = formatDateForTimeline(start.getTime() + idx * EPOCH_SEC * scaleInterval);
+        const isStrongScale = idx % strongScaleMinutes === 0;
+        if (isStrongScale && idx < lastStrongScaleIdx) {
+          const label = formatDateForTimeline(start.getTime() + idx * EPOCH_SEC * scaleInterval, {
+            detail: true,
+          });
 
           return (
             <LabeledScale key={idx}>

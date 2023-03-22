@@ -3,13 +3,7 @@ import { expect, test, vi, vitest } from "vitest";
 
 import { render, screen, fireEvent } from "@reearth/test/utils";
 
-import {
-  PADDING_HORIZONTAL,
-  BORDER_WIDTH,
-  KNOB_SIZE,
-  NORMAL_SCALE_WIDTH,
-  GAP_HORIZONTAL,
-} from "./constants";
+import { PADDING_HORIZONTAL, BORDER_WIDTH, KNOB_SIZE, GAP_HORIZONTAL } from "./constants";
 
 import Timeline from ".";
 
@@ -60,9 +54,7 @@ test("it should get time from clicked position", () => {
 
   const iconWrapper = screen.getByTestId("knob-icon");
   const actualLeft = Math.trunc(parseInt(iconWrapper.style.left.split("px")[0]));
-  expect(actualLeft).toBe(
-    Math.trunc(currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2 + NORMAL_SCALE_WIDTH),
-  );
+  expect(actualLeft).toBe(Math.trunc(currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2));
 });
 
 test("it should get time from mouse moved position", () => {
@@ -70,9 +62,7 @@ test("it should get time from mouse moved position", () => {
   const slider = screen.getAllByRole("slider")[1];
   const currentPosition = 12;
   const clientX = PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition;
-  const expectedLeft = Math.trunc(
-    currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2 + NORMAL_SCALE_WIDTH,
-  );
+  const expectedLeft = Math.trunc(currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2);
 
   const scroll = vi.fn();
   window.HTMLElement.prototype.scroll = scroll;
@@ -80,17 +70,17 @@ test("it should get time from mouse moved position", () => {
   vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   // Check initial position
-  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
-    expectedLeft - currentPosition,
-  );
+  expect(
+    Math.abs(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))),
+  ).toBe(0);
 
   // It should not move
   fireEvent.mouseMove(slider, {
     clientX,
   });
-  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
-    expectedLeft - currentPosition,
-  );
+  expect(
+    Math.abs(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))),
+  ).toBe(0);
 
   // It should move
   fireEvent.mouseDown(slider);

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
-import { convertTime } from "@reearth/util/time";
+import { convertTime, truncMinutes } from "@reearth/util/time";
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
@@ -175,7 +175,7 @@ export default function useHooks({
       : now;
 
     return {
-      start: start || stop ? new Date(convertedStartTime) : undefined,
+      start: start || stop ? truncMinutes(new Date(convertedStartTime)) : undefined,
       stop: start || stop ? new Date(convertedStopTime) : undefined,
       current:
         start || stop || current
