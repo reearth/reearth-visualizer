@@ -53,7 +53,7 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
               minimumTerrainLevel={min}
               maximumTerrainLevel={max}
               alpha={opacity}
-              index={0}
+              index={i}
             />
           ) : null,
         )}
