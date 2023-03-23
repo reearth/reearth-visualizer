@@ -2,7 +2,9 @@ package app
 
 import (
 	"fmt"
+	"net/http"
 	"os"
+	"path"
 	"regexp"
 	"time"
 
@@ -94,4 +96,30 @@ func (fs *AdapterFS) Chown(name string, uid, gid int) error {
 
 func (fs *AdapterFS) Chtimes(name string, atime time.Time, mtime time.Time) error {
 	return fs.FS.Chtimes(name, atime, mtime)
+}
+
+func NewRewriteHTMLFS(f afero.Fs, base, title, favicon string) (http.FileSystem, error) {
+	index, err := afero.ReadFile(f, path.Join(base, "index.html"))
+	if err != nil {
+		return nil, err
+	}
+
+	indexs := rewriteHTML(string(index), title, favicon)
+	mfs := afero.NewMemMapFs()
+	if err := afero.WriteFile(mfs, path.Join(base, "index.html"), []byte(indexs), 0666); err != nil {
+		return nil, err
+	}
+
+	published, err := afero.ReadFile(f, path.Join(base, "published.html"))
+	if err != nil {
+		return nil, err
+	}
+
+	indexps := rewriteHTML(string(published), title, favicon)
+	if err := afero.WriteFile(mfs, path.Join(base, "published.html"), []byte(indexps), 0666); err != nil {
+		return nil, err
+	}
+
+	afs := &AdapterFS{FSU: mfs, FS: f}
+	return afero.NewHttpFs(afs), nil
 }

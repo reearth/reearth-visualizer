@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/samber/lo"
+	"github.com/reearth/reearthx/log"
 	"github.com/spf13/afero"
 )
 
@@ -29,17 +29,16 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	if w.FS == nil {
 		w.FS = afero.NewOsFs()
 	}
+
 	if _, err := w.FS.Stat("web"); err != nil {
 		return // web won't be delivered
 	}
-	index, err := afero.ReadFile(w.FS, "web/index.html")
+
+	hfs, err := NewRewriteHTMLFS(w.FS, "web", w.Title, w.Favicon)
 	if err != nil {
+		log.Errorf("web: failed to init fs: %v", err)
 		return
 	}
-	indexs := rewriteHTML(string(index), w.Title, w.Favicon)
-	mfs := afero.NewMemMapFs()
-	lo.Must0(afero.WriteFile(mfs, "web/index.html", []byte(indexs), 0666))
-	fs := &AdapterFS{FSU: mfs, FS: w.FS}
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
@@ -68,7 +67,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		Index:      "index.html",
 		Browse:     false,
 		HTML5:      true,
-		Filesystem: afero.NewHttpFs(fs),
+		Filesystem: hfs,
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
@@ -79,9 +78,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	e.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, indexs)
-	}, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled))
+	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), static)
 	e.GET("*", notFound, static)
 }
 

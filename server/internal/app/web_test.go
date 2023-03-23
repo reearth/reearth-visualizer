@@ -111,7 +111,7 @@ func TestWeb(t *testing.T) {
 			path:        "/",
 			statusCode:  http.StatusOK,
 			body:        indexHTML2,
-			contentType: "text/html; charset=UTF-8",
+			contentType: "text/html; charset=utf-8",
 		},
 		{
 			name:        "index file with app disabled",
@@ -125,7 +125,7 @@ func TestWeb(t *testing.T) {
 			host:        "aaa.example2.com",
 			statusCode:  http.StatusOK,
 			body:        indexHTML2,
-			contentType: "text/html; charset=UTF-8",
+			contentType: "text/html; charset=utf-8",
 		},
 		{
 			name:        "index file with invalid alias",
