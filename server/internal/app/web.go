@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/samber/lo"
 	"github.com/spf13/afero"
 )
 
@@ -15,6 +16,8 @@ type WebHandler struct {
 	WebConfig   map[string]any
 	AuthConfig  *AuthConfig
 	HostPattern string
+	Title       string
+	Favicon     string
 	FS          afero.Fs
 }
 
@@ -29,6 +32,14 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	if _, err := w.FS.Stat("web"); err != nil {
 		return // web won't be delivered
 	}
+	index, err := afero.ReadFile(w.FS, "web/index.html")
+	if err != nil {
+		return
+	}
+	indexs := rewriteHTML(string(index), w.Title, w.Favicon)
+	mfs := afero.NewMemMapFs()
+	lo.Must0(afero.WriteFile(mfs, "web/index.html", []byte(indexs), 0666))
+	fs := &AdapterFS{FSU: mfs, FS: w.FS}
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
@@ -52,12 +63,12 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		config[k] = v
 	}
 
-	m := middleware.StaticWithConfig(middleware.StaticConfig{
+	static := middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "web",
 		Index:      "index.html",
 		Browse:     false,
 		HTML5:      true,
-		Filesystem: afero.NewHttpFs(w.FS),
+		Filesystem: afero.NewHttpFs(fs),
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
@@ -68,8 +79,10 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	e.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
-	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), m)
-	e.GET("*", notFound, m)
+	e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, indexs)
+	}, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled))
+	e.GET("*", notFound, static)
 }
 
 func (w *WebHandler) hostWithSchema() string {

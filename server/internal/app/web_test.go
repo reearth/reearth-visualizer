@@ -22,7 +22,8 @@ import (
 )
 
 func TestWeb(t *testing.T) {
-	const indexHTML = `<html><head><meta charset="utf-8" /><title>Re:Earth</title></head></html>`
+	const indexHTML = `<html><head><meta charset="utf-8" /><title>Re:Earth</title><link rel="icon" href="favicon.ico" /></head></html>`
+	const indexHTML2 = `<html><head><meta charset="utf-8" /><title>title</title><link rel="icon" href="favicon" /></head></html>`
 	const publishedHTML = `<html><head><meta charset="utf-8" /><title>Re:Earth Published</title></head></html>`
 	const testJS = `console.log("hello, world");`
 	const dataJSON = `{"data":"data"}`
@@ -73,7 +74,7 @@ func TestWeb(t *testing.T) {
 			name:        "invalid path should serve index.html",
 			path:        "/not_found.js",
 			statusCode:  http.StatusOK,
-			body:        indexHTML,
+			body:        indexHTML2,
 			contentType: "text/html; charset=utf-8",
 		},
 		{
@@ -109,8 +110,8 @@ func TestWeb(t *testing.T) {
 			name:        "index file without host",
 			path:        "/",
 			statusCode:  http.StatusOK,
-			body:        indexHTML,
-			contentType: "text/html; charset=utf-8",
+			body:        indexHTML2,
+			contentType: "text/html; charset=UTF-8",
 		},
 		{
 			name:        "index file with app disabled",
@@ -123,8 +124,8 @@ func TestWeb(t *testing.T) {
 			path:        "/",
 			host:        "aaa.example2.com",
 			statusCode:  http.StatusOK,
-			body:        indexHTML,
-			contentType: "text/html; charset=utf-8",
+			body:        indexHTML2,
+			contentType: "text/html; charset=UTF-8",
 		},
 		{
 			name:        "index file with invalid alias",
@@ -180,6 +181,8 @@ func TestWeb(t *testing.T) {
 				},
 				HostPattern: `{}.example.com`,
 				FS:          mfs,
+				Title:       "title",
+				Favicon:     "favicon",
 			}).Handler(e)
 
 			r := httptest.NewRequest("GET", tt.path, nil)
