@@ -44,6 +44,8 @@ type Config struct {
 	Web_App_Disabled bool
 	Web              map[string]string
 	Web_Config       JSON
+	Web_Title        string
+	Web_FaviconURL   string
 	SignupSecret     string
 	SignupDisabled   bool
 	// auth
