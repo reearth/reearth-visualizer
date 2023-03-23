@@ -703,7 +703,7 @@ function useSelection({
   useEffect(() => {
     setSelectedLayer(s =>
       s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
-        ? [{ ...s[0] }, s[1], undefined] // Force update when flattenedLayers are updated
+        ? [{ ...s[0] }, s[1], s[2]] // Force update when flattenedLayers are updated
         : !s[0]?.layerId && !s[1]
         ? s
         : [undefined, undefined, undefined],
