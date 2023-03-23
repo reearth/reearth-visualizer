@@ -20,8 +20,6 @@ import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
-import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
-
 import type {
   ComputedFeature,
   ComputedLayer,
@@ -131,15 +129,11 @@ const useFeature = ({
   tileset,
   layer,
   evalFeature,
-  onComputedFeatureFetch,
-  onComputedFeatureDelete,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
-  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
-  onComputedFeatureDelete?: (feature: string[]) => void;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
@@ -151,6 +145,7 @@ const useFeature = ({
       const layer = cachedCalculatedLayerRef?.current?.layer;
       if (layer?.type === "simple" && feature?.feature) {
         const computedFeature = evalFeature(layer, feature?.feature);
+
         const style = computedFeature?.["3dtiles"];
 
         const raw = feature.raw;
@@ -182,23 +177,17 @@ const useFeature = ({
           );
         }
 
+        attachTag(feature.raw, { layerId, featureId: feature.feature.id, computedFeature });
+
         return computedFeature;
       }
       return;
     },
-    [evalFeature],
+    [evalFeature, layerId],
   );
 
   useEffect(() => {
-    const currentTiles: Map<Cesium3DTile, string> = new Map();
-
     tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {
-      if (currentTiles.has(t)) {
-        return;
-      }
-
-      const tempFeatures: Feature[] = [];
-      const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, async (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
         const featureId = getBuiltinFeatureId(tileFeature);
@@ -220,52 +209,10 @@ const useFeature = ({
           return feature;
         })();
 
-        attachTag(tileFeature, { layerId, featureId: id });
-
-        const computedFeature = await attachComputedFeature(feature);
-        if (computedFeature) {
-          tempFeatures.push(feature.feature);
-          tempComputedFeatures.push(computedFeature);
-        }
+        await attachComputedFeature(feature);
       });
-
-      onComputedFeatureFetch?.(tempFeatures, tempComputedFeatures);
     });
-
-    tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) => {
-      currentTiles.delete(t);
-      const featureIds: string[] = [];
-      lookupFeatures(t.content, (tileFeature, content) => {
-        const coordinates = content.tile.boundingSphere.center;
-        const featureId = getBuiltinFeatureId(tileFeature);
-        const id = generateIDWithMD5(
-          `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}`,
-        );
-        featureIds.push(id);
-
-        // Only delete cached id in here, removing cached feature lazily.
-        cachedFeatureIds.current.delete(id);
-      });
-      onComputedFeatureDelete?.(featureIds);
-
-      if (
-        cachedFeaturesRef.current.length !== Array.from(cachedFeatureIds.current.values()).length
-      ) {
-        queueMicrotask(() => {
-          cachedFeaturesRef.current = cachedFeaturesRef.current.filter(f =>
-            cachedFeatureIds.current.has(f.feature.id),
-          );
-        });
-      }
-    });
-  }, [
-    tileset,
-    cachedFeaturesRef,
-    attachComputedFeature,
-    onComputedFeatureFetch,
-    onComputedFeatureDelete,
-    layerId,
-  ]);
+  }, [tileset, cachedFeaturesRef, attachComputedFeature, layerId]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -307,10 +254,13 @@ const useFeature = ({
   const computeFeatures = useCallback(
     async (startedComputingAt: number) => {
       const tempAsyncProcesses: Promise<unknown>[] = [];
+      let skipped = false;
       for (const f of cachedFeaturesRef.current) {
         if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
+          skipped = true;
           break;
         }
+
         tempAsyncProcesses.push(computeFeatureAsync(f, startedComputingAt));
 
         if (tempAsyncProcesses.length > MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES) {
@@ -318,9 +268,10 @@ const useFeature = ({
           tempAsyncProcesses.length = 0;
         }
       }
-      if (!(skippedComputingAt.current && skippedComputingAt.current > startedComputingAt)) {
+      if (!skipped) {
         await Promise.all(tempAsyncProcesses);
       }
+      tempAsyncProcesses.length = 0;
     },
     [computeFeatureAsync],
   );
@@ -332,16 +283,6 @@ const useFeature = ({
     };
     compute();
   }, [computeFeatures]);
-
-  // Cleanup features
-  useEffect(
-    () => () => {
-      requestIdleCallbackWithRequiredWork(() => {
-        onComputedFeatureDelete?.(Array.from(cachedFeatureIds.current.values()));
-      });
-    },
-    [], // eslint-disable-line react-hooks/exhaustive-deps
-  );
 };
 
 export const useHooks = ({
@@ -353,8 +294,6 @@ export const useHooks = ({
   feature,
   meta,
   evalFeature,
-  onComputedFeatureFetch,
-  onComputedFeatureDelete,
 }: {
   id: string;
   boxId: string;
@@ -365,8 +304,6 @@ export const useHooks = ({
   feature?: ComputedFeature;
   meta?: Record<string, unknown>;
   evalFeature: EvalFeature;
-  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
-  onComputedFeatureDelete?: (feature: string[]) => void;
 }) => {
   const { viewer } = useCesium();
   const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } = property ?? {};
@@ -441,8 +378,6 @@ export const useHooks = ({
     tileset: tilesetRef,
     layer,
     evalFeature,
-    onComputedFeatureFetch,
-    onComputedFeatureDelete,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);

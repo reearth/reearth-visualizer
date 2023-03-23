@@ -29,6 +29,7 @@ export default function Published({ alias }: Props) {
       layers={layers}
       floatingWidgets={widgets?.floatingWidgets}
       widgetAlignSystem={widgets?.alignSystem}
+      ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
       tags={tags}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}

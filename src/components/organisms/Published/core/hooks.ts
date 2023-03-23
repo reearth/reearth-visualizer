@@ -3,7 +3,13 @@ import { useState, useMemo, useEffect } from "react";
 
 import type { Block, ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import { config } from "@reearth/config";
-import type { InternalWidget, WidgetAlignSystem, WidgetAlignment } from "@reearth/core/Crust";
+import {
+  InternalWidget,
+  WidgetAlignSystem,
+  WidgetAlignment,
+  BuiltinWidgets,
+  isBuiltinWidget,
+} from "@reearth/core/Crust";
 import {
   convertLegacyLayer,
   type Layer,
@@ -49,7 +55,12 @@ export default (alias?: string) => {
   const tags = data?.tags; // Currently no need to convert tags
 
   const widgets = useMemo<
-    { floatingWidgets: InternalWidget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
+    | {
+        floatingWidgets: InternalWidget[];
+        alignSystem: WidgetAlignSystem | undefined;
+        ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+      }
+    | undefined
   >(() => {
     if (!data || !data.widgets) return undefined;
 
@@ -127,6 +138,11 @@ export default (alias?: string) => {
       };
     };
 
+    const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>((res, next) => {
+      const id = `${next.pluginId}/${next.extensionId}`;
+      return isBuiltinWidget(id) && widgetsInWas.has(next.id) ? [...res, id] : res;
+    }, []);
+
     return {
       floatingWidgets,
       alignSystem: data.widgetAlignSystem
@@ -135,6 +151,7 @@ export default (alias?: string) => {
             inner: widgetZone(data.widgetAlignSystem.inner),
           }
         : undefined,
+      ownBuiltinWidgets,
     };
   }, [data]);
 

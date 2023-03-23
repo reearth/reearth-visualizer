@@ -244,6 +244,7 @@ export default ({
                 },
               }
             : undefined,
+          { feature: tag.computedFeature },
         );
       }
       return;
@@ -386,6 +387,7 @@ export default ({
                   },
                 }
               : undefined,
+            { feature: tag.computedFeature },
           );
           prevSelectedEntity.current = target;
         }
@@ -438,7 +440,7 @@ export default ({
                   layersRef?.current?.findById(tag.layerId)
                 : undefined;
               const content = getEntityContent(
-                f,
+                f.data.feature ?? f,
                 viewer.clock.currentTime ?? new JulianDate(),
                 tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
               );

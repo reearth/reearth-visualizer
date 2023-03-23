@@ -39,7 +39,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     isLayerDraggable,
     isLayerDragging,
-    shouldRender,
+    shouldRender: _shouldRender,
     layerSelectionReason,
     meta,
     layersRef,
@@ -109,10 +109,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         cursor: isLayerDragging ? "grab" : undefined,
         ...style,
       }}
-      requestRenderMode={!property?.timeline?.animation && !isLayerDraggable && !shouldRender}
-      maximumRenderTimeChange={
-        !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
-      }
+      // NOTE: Need to disable requestRenderMode on NLS, because we need to attach style dynamically.
+      //       If we want to use requestRenderMode, we need to add requestRenderMode option to sceneProperty.
+      // requestRenderMode={!property?.timeline?.animation && !isLayerDraggable && !shouldRender}
+      // maximumRenderTimeChange={
+      //   !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
+      // }
       shadows={!!property?.atmosphere?.shadows}
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}

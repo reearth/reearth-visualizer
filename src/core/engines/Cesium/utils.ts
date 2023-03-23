@@ -170,7 +170,7 @@ export const getEntityContent = (
     attributes: {
       type: "table",
       value:
-        entity instanceof ImageryLayerFeatureInfo &&
+        !(entity instanceof Entity) &&
         "properties" in entity &&
         entity.properties &&
         typeof entity.properties === "object"
