@@ -1,7 +1,10 @@
 package app
 
 import (
+	"bytes"
+	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -122,4 +125,26 @@ func NewRewriteHTMLFS(f afero.Fs, base, title, favicon string) (http.FileSystem,
 
 	afs := &AdapterFS{FSU: mfs, FS: f}
 	return afero.NewHttpFs(afs), nil
+}
+
+func fetchFavicon(url string) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code is %d", res.StatusCode)
+	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
+	b := &bytes.Buffer{}
+	_, _ = io.Copy(b, res.Body)
+	return b.Bytes(), nil
 }

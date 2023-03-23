@@ -17,7 +17,7 @@ type WebHandler struct {
 	AuthConfig  *AuthConfig
 	HostPattern string
 	Title       string
-	Favicon     string
+	FaviconURL  string
 	FS          afero.Fs
 }
 
@@ -34,7 +34,21 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		return // web won't be delivered
 	}
 
-	hfs, err := NewRewriteHTMLFS(w.FS, "web", w.Title, w.Favicon)
+	// favicon
+	var favicon []byte
+	var faviconPath string
+	var err error
+	if w.FaviconURL != "" {
+		favicon, err = fetchFavicon(w.FaviconURL)
+		if err != nil {
+			log.Errorf("web: failed to fetch favicon from %s", w.FaviconURL)
+			return
+		}
+		faviconPath = "/favicon.ico"
+	}
+
+	// fs
+	hfs, err := NewRewriteHTMLFS(w.FS, "web", w.Title, faviconPath)
 	if err != nil {
 		log.Errorf("web: failed to init fs: %v", err)
 		return
@@ -75,6 +89,11 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		return c.JSON(http.StatusOK, config)
 	})
 	e.GET("/data.json", PublishedData(w.HostPattern, false))
+	if favicon != nil && faviconPath != "" {
+		e.GET(faviconPath, func(c echo.Context) error {
+			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", favicon)
+		})
+	}
 	e.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
