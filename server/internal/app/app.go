@@ -116,6 +116,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		WebConfig:   cfg.Config.WebConfig(),
 		AuthConfig:  cfg.Config.AuthForWeb(),
 		HostPattern: cfg.Config.Published.Host,
+		Title:       cfg.Config.Web_Title,
+		FaviconURL:  cfg.Config.Web_FaviconURL,
 		FS:          nil,
 	}).Handler(e)
 

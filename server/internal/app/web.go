@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/reearth/reearthx/log"
 	"github.com/spf13/afero"
 )
 
@@ -15,6 +16,8 @@ type WebHandler struct {
 	WebConfig   map[string]any
 	AuthConfig  *AuthConfig
 	HostPattern string
+	Title       string
+	FaviconURL  string
 	FS          afero.Fs
 }
 
@@ -26,8 +29,29 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	if w.FS == nil {
 		w.FS = afero.NewOsFs()
 	}
+
 	if _, err := w.FS.Stat("web"); err != nil {
 		return // web won't be delivered
+	}
+
+	// favicon
+	var favicon []byte
+	var faviconPath string
+	var err error
+	if w.FaviconURL != "" {
+		favicon, err = fetchFavicon(w.FaviconURL)
+		if err != nil {
+			log.Errorf("web: failed to fetch favicon from %s", w.FaviconURL)
+			return
+		}
+		faviconPath = "/favicon.ico"
+	}
+
+	// fs
+	hfs, err := NewRewriteHTMLFS(w.FS, "web", w.Title, faviconPath)
+	if err != nil {
+		log.Errorf("web: failed to init fs: %v", err)
+		return
 	}
 
 	e.Logger.Info("web: web directory will be delivered\n")
@@ -52,12 +76,12 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		config[k] = v
 	}
 
-	m := middleware.StaticWithConfig(middleware.StaticConfig{
+	static := middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "web",
 		Index:      "index.html",
 		Browse:     false,
 		HTML5:      true,
-		Filesystem: afero.NewHttpFs(w.FS),
+		Filesystem: hfs,
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
@@ -65,11 +89,16 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		return c.JSON(http.StatusOK, config)
 	})
 	e.GET("/data.json", PublishedData(w.HostPattern, false))
+	if favicon != nil && faviconPath != "" {
+		e.GET(faviconPath, func(c echo.Context) error {
+			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", favicon)
+		})
+	}
 	e.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
-	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), m)
-	e.GET("*", notFound, m)
+	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), static)
+	e.GET("*", notFound, static)
 }
 
 func (w *WebHandler) hostWithSchema() string {
