@@ -34,7 +34,7 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
             return [result, []];
           }
         }
-        if (res.length == 1) {
+        if (res.length !== 0) {
           const placeholderLiteral = generateRandomString(10);
           literalJP.push({
             literalName: placeholderLiteral,
@@ -42,7 +42,7 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
           });
           result += placeholderLiteral;
         } else {
-          return [result, []];
+          return ["false", []];
         }
       } else {
         const replacedVarExp = replaceReservedWord(varExp);
