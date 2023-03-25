@@ -76,8 +76,14 @@ export const useTimeline = ({
   }, [widgetId, onExtend]);
 
   const switchCurrentTimeToStart = useCallback(
-    (t: number) => {
-      const cur = t > range.end ? range.start : t < range.start ? range.end : t;
+    (t: number, isRangeChanged: boolean) => {
+      const cur = isRangeChanged
+        ? t
+        : t > range.end
+        ? range.start
+        : t < range.start
+        ? range.end
+        : t;
       onTimeChange?.(new Date(cur));
       return cur;
     },
@@ -173,14 +179,25 @@ export const useTimeline = ({
 
   useEffect(() => {
     const h: TickEventCallback = (d, c) => {
-      handleRange(c.start.getTime(), c.stop.getTime());
-      setCurrentTime(switchCurrentTimeToStart(d.getTime()));
+      const isDifferentRange = range.start !== c.start.getTime() || range.end !== c.stop.getTime();
+      if (isDifferentRange) {
+        handleRange(c.start.getTime(), c.stop.getTime());
+      }
+      setCurrentTime(switchCurrentTimeToStart(d.getTime(), isDifferentRange));
     };
     onTick?.(h);
     return () => {
       removeTickEventListener?.(h);
     };
-  }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart, handleRange]);
+  }, [
+    onTick,
+    clock?.playing,
+    removeTickEventListener,
+    switchCurrentTimeToStart,
+    handleRange,
+    range.start,
+    range.end,
+  ]);
 
   const onTimeChangeRef = useRef<typeof onTimeChange>();
 
