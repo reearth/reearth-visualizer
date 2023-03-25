@@ -9,6 +9,8 @@ import {
   Cesium3DTilePointFeature,
   Model,
   Cartographic,
+  SunLight,
+  DirectionalLight,
 } from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -95,6 +97,34 @@ export default ({
       property?.default?.bgcolor ? Color.fromCssColorString(property.default.bgcolor) : undefined,
     [property?.default?.bgcolor],
   );
+
+  const light = useMemo(() => {
+    let light;
+    if (property?.light?.type === "sunLight") {
+      light = new SunLight({
+        color: property.light?.color ? Color.fromCssColorString(property.light.color) : undefined,
+        intensity: property.light?.intensity,
+      });
+    } else if (property?.light?.type === "directionalLight") {
+      light = new DirectionalLight({
+        direction: new Cartesian3(
+          property?.light?.direction_x ?? 1,
+          property?.light?.direction_y ?? 0,
+          property?.light?.direction_z ?? 0,
+        ),
+        color: property.light?.color ? Color.fromCssColorString(property.light.color) : undefined,
+        intensity: property.light?.intensity,
+      });
+    }
+    return light;
+  }, [
+    property?.light?.type,
+    property?.light?.color,
+    property?.light?.direction_x,
+    property?.light?.direction_y,
+    property?.light?.direction_z,
+    property?.light?.intensity,
+  ]);
 
   useEffect(() => {
     engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
@@ -570,6 +600,7 @@ export default ({
     cesiumIonAccessToken,
     mouseEventHandles,
     context,
+    light,
     handleMount,
     handleUnmount,
     handleUpdate,

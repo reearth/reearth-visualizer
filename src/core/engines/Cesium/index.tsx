@@ -60,6 +60,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     mouseEventHandles,
     cesiumIonAccessToken,
     context,
+    light,
     handleMount,
     handleUnmount,
     handleUpdate,
@@ -174,7 +175,11 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         </Entity>
       )}
       {/* NOTE: useWebVR={false} will crash Cesium */}
-      <Scene backgroundColor={backgroundColor} useWebVR={!!property?.default?.vr || undefined} />
+      <Scene
+        backgroundColor={backgroundColor}
+        useWebVR={!!property?.default?.vr || undefined}
+        light={light}
+      />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}

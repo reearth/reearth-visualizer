@@ -314,6 +314,14 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  light?: {
+    type?: "sunLight" | "directionalLight";
+    direction_x?: number;
+    direction_y?: number;
+    direction_z?: number;
+    color?: string;
+    intensity?: number;
+  };
 };
 
 export type EngineComponent = ForwardRefExoticComponent<
