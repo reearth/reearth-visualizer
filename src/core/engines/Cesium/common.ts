@@ -488,7 +488,11 @@ export const heightReference = (
   heightReference?: "none" | "clamp" | "relative",
 ): HeightReference | undefined =>
   ((
-    { clamp: HeightReference.CLAMP_TO_GROUND, relative: HeightReference.RELATIVE_TO_GROUND } as {
+    {
+      clamp: HeightReference.CLAMP_TO_GROUND,
+      relative: HeightReference.RELATIVE_TO_GROUND,
+      none: HeightReference.NONE,
+    } as {
       [key in string]?: HeightReference;
     }
   )[heightReference || ""]);
