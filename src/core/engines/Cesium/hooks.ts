@@ -100,30 +100,34 @@ export default ({
 
   const light = useMemo(() => {
     let light;
-    if (property?.light?.type === "sunLight") {
+    if (property?.light?.lightType === "sunLight") {
       light = new SunLight({
-        color: property.light?.color ? Color.fromCssColorString(property.light.color) : undefined,
-        intensity: property.light?.intensity,
+        color: property.light?.lightColor
+          ? Color.fromCssColorString(property.light.lightColor)
+          : undefined,
+        intensity: property.light?.lightIntensity,
       });
-    } else if (property?.light?.type === "directionalLight") {
+    } else if (property?.light?.lightType === "directionalLight") {
       light = new DirectionalLight({
         direction: new Cartesian3(
-          property?.light?.direction_x ?? 1,
-          property?.light?.direction_y ?? 0,
-          property?.light?.direction_z ?? 0,
+          property?.light?.lightDirectionX ?? 1,
+          property?.light?.lightDirectionY ?? 0,
+          property?.light?.lightDirectionZ ?? 0,
         ),
-        color: property.light?.color ? Color.fromCssColorString(property.light.color) : undefined,
-        intensity: property.light?.intensity,
+        color: property.light?.lightColor
+          ? Color.fromCssColorString(property.light.lightColor)
+          : undefined,
+        intensity: property.light?.lightIntensity,
       });
     }
     return light;
   }, [
-    property?.light?.type,
-    property?.light?.color,
-    property?.light?.direction_x,
-    property?.light?.direction_y,
-    property?.light?.direction_z,
-    property?.light?.intensity,
+    property?.light?.lightType,
+    property?.light?.lightColor,
+    property?.light?.lightDirectionX,
+    property?.light?.lightDirectionY,
+    property?.light?.lightDirectionZ,
+    property?.light?.lightIntensity,
   ]);
 
   useEffect(() => {

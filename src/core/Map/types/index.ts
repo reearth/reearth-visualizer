@@ -315,12 +315,12 @@ export type SceneProperty = {
     themeBackgroundColor?: string;
   };
   light?: {
-    type?: "sunLight" | "directionalLight";
-    direction_x?: number;
-    direction_y?: number;
-    direction_z?: number;
-    color?: string;
-    intensity?: number;
+    lightType?: "sunLight" | "directionalLight";
+    lightDirectionX?: number;
+    lightDirectionY?: number;
+    lightDirectionZ?: number;
+    lightColor?: string;
+    lightIntensity?: number;
   };
 };
 
