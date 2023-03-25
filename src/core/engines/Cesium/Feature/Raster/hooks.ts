@@ -137,6 +137,7 @@ export const useMVT = ({
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || !layers || type !== "mvt") return;
     let currentTime: number | undefined;
+    const cachedStyleMap = new Map();
     return new MVTImageryProvider({
       minimumLevel,
       maximumLevel,
@@ -150,6 +151,11 @@ export const useMVT = ({
         return currentTime === updatedAt.current;
       },
       style: (mvtFeature, tile) => {
+        const styleCacheKey = JSON.stringify(mvtFeature.properties);
+        const cachedStyle = cachedStyleMap.get(styleCacheKey);
+        if (cachedStyle) {
+          return cachedStyle;
+        }
         const computedFeature = ((): ComputedFeature | void => {
           const layer = cachedCalculatedLayerRef.current?.layer;
           if (layer?.type === "simple" && VectorTileFeature.types[mvtFeature.type] === "Polygon") {
@@ -167,7 +173,7 @@ export const useMVT = ({
         })();
 
         const polygon = computedFeature?.polygon;
-        return {
+        const style = {
           fillStyle:
             (polygon?.fill ?? true) && (polygon?.show ?? true)
               ? polygon?.fillColor
@@ -177,6 +183,8 @@ export const useMVT = ({
           lineWidth: polygon?.strokeWidth,
           lineJoin: polygon?.lineJoin,
         };
+        cachedStyleMap.set(styleCacheKey, style);
+        return style;
       },
       onSelectFeature: (mvtFeature, tile) => {
         const layer = extractSimpleLayer(cachedCalculatedLayerRef.current?.layer);

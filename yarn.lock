@@ -7733,10 +7733,10 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium-mvt-imagery-provider@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.2.0.tgz#0cfeb0143e21496e4aef8b602977ce3dfea8569b"
-  integrity sha512-GNcbZLRm5EvAzC6bVfztmiq9YGY1+FsL5fOCfscB0wS6hDKHaxINFjgkYx2h86/mRmFmXLeA39GMDXWS3v+ZZg==
+cesium-mvt-imagery-provider@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.2.1.tgz#1792cce5a6a5781f93479276f948db7a20cb1a1b"
+  integrity sha512-KSbtxCoHwZIDjZwEQIbGg1egHFpNST01DPG8BpbxDygzsPb5IBhOrU+pNn63Dkxp6x6cbzqjKon3z3VtF/ZvwQ==
   dependencies:
     "@mapbox/vector-tile" "1.3.1"
     pbf "3.2.1"

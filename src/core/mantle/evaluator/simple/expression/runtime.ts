@@ -2,7 +2,7 @@ import { ExpressionNodeType, unaryOperators, binaryOperators, replacementRegex }
 import { Expression } from "./expression";
 import { unaryFunctions, binaryFunctions } from "./functions";
 import { Node } from "./node";
-import { restoreReservedWord } from "./variableReplacer";
+import { restoreReservedWord, VARIABLE_PREFIX } from "./variableReplacer";
 
 const UNARY_OPERATORS_SET = new Set(unaryOperators);
 const BINARY_OPERATORS_SET = new Set(binaryOperators);
@@ -256,7 +256,7 @@ function parseMemberExpression(expression: Expression, ast: any) {
 }
 
 function isVariable(name: string): boolean {
-  return name.substring(0, 4) === "czm_";
+  return name.substring(0, 4) === VARIABLE_PREFIX;
 }
 
 function getPropertyName(variable: string): string {

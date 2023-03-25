@@ -3,6 +3,8 @@ import { JSONPath } from "jsonpath-plus";
 import { JPLiteral } from "./expression";
 import { generateRandomString } from "./utils";
 
+export const VARIABLE_PREFIX = "czm_";
+
 export function replaceVariables(expression: string, feature?: any): [string, JPLiteral[]] {
   let exp = expression;
   let result = "";
@@ -46,7 +48,7 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
         }
       } else {
         const replacedVarExp = replaceReservedWord(varExp);
-        result += `czm_${replacedVarExp}`;
+        result += `${VARIABLE_PREFIX}${replacedVarExp}`;
       }
       exp = exp.slice(j + 1);
       i = exp.indexOf("${");

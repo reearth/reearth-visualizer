@@ -5,7 +5,7 @@ import { Feature } from "../../../types";
 import { backslashRegex, backslashReplacement } from "./constants";
 import { Node } from "./node";
 import { createRuntimeAst } from "./runtime";
-import { replaceVariables } from "./variableReplacer";
+import { replaceVariables, VARIABLE_PREFIX } from "./variableReplacer";
 
 export type JPLiteral = {
   literalName: string;
@@ -13,6 +13,7 @@ export type JPLiteral = {
 };
 
 export const EXPRESSION_CACHES = new Map<string, Node | Error>();
+export const REPLACED_VARIABLES_CACHE = new Map<string, [string, JPLiteral[]]>();
 const DEFINE_PLACEHOLDER_REGEX_CACHE = new Map<string, RegExp>();
 
 export class Expression {
@@ -24,11 +25,22 @@ export class Expression {
     this._expression = expression;
     this._feature = feature;
     let literalJP: JPLiteral[] = [];
-    expression = replaceDefines(expression, defines);
-    [expression, literalJP] = replaceVariables(
-      removeBackslashes(expression),
-      this._feature?.properties,
-    );
+
+    const cachedReplacedVariables = REPLACED_VARIABLES_CACHE.get(expression);
+    // JSONPath returns simple literal so we can not cache in here
+    if (cachedReplacedVariables) {
+      [expression, literalJP] = cachedReplacedVariables;
+    } else {
+      const originalExpression = expression;
+      expression = replaceDefines(expression, defines);
+      [expression, literalJP] = replaceVariables(
+        removeBackslashes(expression),
+        this._feature?.properties,
+      );
+      if (expression.includes(VARIABLE_PREFIX)) {
+        REPLACED_VARIABLES_CACHE.set(originalExpression, [expression, literalJP]);
+      }
+    }
 
     const cachedAST = EXPRESSION_CACHES.get(expression);
     if (cachedAST) {
@@ -85,6 +97,8 @@ export function clearExpressionCaches(
   feature: Feature | undefined,
   defines: any | undefined,
 ) {
+  REPLACED_VARIABLES_CACHE.delete(expression);
+
   expression = replaceDefines(expression, defines);
   [expression] = replaceVariables(removeBackslashes(expression), feature?.properties);
   EXPRESSION_CACHES.delete(expression);

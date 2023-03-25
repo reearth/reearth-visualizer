@@ -9,6 +9,7 @@ import {
   Expression,
   EXPRESSION_CACHES,
   clearExpressionCaches,
+  REPLACED_VARIABLES_CACHE,
 } from "./expression";
 import { createRuntimeAst } from "./runtime";
 
@@ -45,13 +46,18 @@ describe("expression caches", () => {
   });
 
   test("should remove caches", () => {
-    const key = "czm_HEIGHT > 2 ? color('red') : color('blue')";
+    const originalExpression = "${HEIGHT} > 2 ? color('red') : color('blue')";
+    const replacedExpression = "czm_HEIGHT > 2 ? color('red') : color('blue')";
     const feature = { properties: { HEIGHT: 1 } } as Feature;
-    const expression = new Expression("${HEIGHT} > 2 ? color('red') : color('blue')", feature);
-    expect(EXPRESSION_CACHES.get(key)).toEqual(createRuntimeAst(expression, jsep(key)));
+    const expression = new Expression(originalExpression, feature);
+    expect(REPLACED_VARIABLES_CACHE.get(originalExpression)).toEqual([replacedExpression, []]);
+    expect(EXPRESSION_CACHES.get(replacedExpression)).toEqual(
+      createRuntimeAst(expression, jsep(replacedExpression)),
+    );
 
-    clearExpressionCaches(key, feature, undefined);
+    clearExpressionCaches(originalExpression, feature, undefined);
 
-    expect(EXPRESSION_CACHES.get(key)).toBeUndefined();
+    expect(REPLACED_VARIABLES_CACHE.get(originalExpression)).toBeUndefined();
+    expect(EXPRESSION_CACHES.get(replacedExpression)).toBeUndefined();
   });
 });
