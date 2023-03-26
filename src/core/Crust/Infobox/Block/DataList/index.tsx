@@ -89,6 +89,7 @@ const Dt = styled.dt`
   padding-left: 0;
   box-sizing: border-box;
   font-weight: bold;
+  word-break: break-all;
 `;
 
 const Dd = styled.dd`
