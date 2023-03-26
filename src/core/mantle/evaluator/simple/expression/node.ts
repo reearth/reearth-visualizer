@@ -257,9 +257,8 @@ export class Node {
     const right = this._right.evaluate(feature);
 
     if (typeof left !== "number" || typeof right !== "number") {
-      throw new Error(
-        `Operator "<" requires number arguments. Arguments are ${left} and ${right}.`,
-      );
+      console.warn(`Operator "<" requires number arguments. Arguments are ${left} and ${right}.`);
+      return false;
     }
 
     return left < right;
@@ -269,9 +268,8 @@ export class Node {
     const right = this._right.evaluate(feature);
 
     if (typeof left !== "number" || typeof right !== "number") {
-      throw new Error(
-        `Operator "<=" requires number arguments. Arguments are ${left} and ${right}.`,
-      );
+      console.warn(`Operator "<=" requires number arguments. Arguments are ${left} and ${right}.`);
+      return false;
     }
 
     return left <= right;
@@ -281,9 +279,8 @@ export class Node {
     const right = this._right.evaluate(feature);
 
     if (typeof left !== "number" || typeof right !== "number") {
-      throw new Error(
-        `Operator ">" requires number arguments. Arguments are ${left} and ${right}.`,
-      );
+      console.warn(`Operator ">" requires number arguments. Arguments are ${left} and ${right}.`);
+      return false;
     }
 
     return left > right;
@@ -293,9 +290,8 @@ export class Node {
     const right = this._right.evaluate(feature);
 
     if (typeof left !== "number" || typeof right !== "number") {
-      throw new Error(
-        `Operator ">=" requires number arguments. Arguments are ${left} and ${right}.`,
-      );
+      console.warn(`Operator ">=" requires number arguments. Arguments are ${left} and ${right}.`);
+      return false;
     }
 
     return left >= right;
@@ -303,7 +299,8 @@ export class Node {
   _evaluateOr(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left !== "boolean") {
-      throw new Error(`Operator "||" requires boolean arguments. First argument is ${left}.`);
+      console.warn(`Operator "||" requires boolean arguments. First argument is ${left}.`);
+      return false;
     }
 
     // short circuit the expression
@@ -313,7 +310,8 @@ export class Node {
 
     const right = this._right.evaluate(feature);
     if (typeof right !== "boolean") {
-      throw new Error(`Operator "||" requires boolean arguments. Second argument is ${right}.`);
+      console.warn(`Operator "||" requires boolean arguments. Second argument is ${right}.`);
+      return false;
     }
 
     return left || right;
@@ -321,7 +319,8 @@ export class Node {
   _evaluateAnd(feature?: Feature) {
     const left = this._left.evaluate(feature);
     if (typeof left !== "boolean") {
-      throw new Error(`Operator "&&" requires boolean arguments. First argument is ${left}.`);
+      console.warn(`Operator "&&" requires boolean arguments. First argument is ${left}.`);
+      return false;
     }
 
     // short circuit the expression
@@ -331,7 +330,8 @@ export class Node {
 
     const right = this._right.evaluate(feature);
     if (typeof right !== "boolean") {
-      throw new Error(`Operator "&&" requires boolean arguments. Second argument is ${right}.`);
+      console.warn(`Operator "&&" requires boolean arguments. Second argument is ${right}.`);
+      return false;
     }
 
     return left && right;
