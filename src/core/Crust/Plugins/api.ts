@@ -158,6 +158,13 @@ export function exposed({
               overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
             };
           },
+          get sampleTerrainHeight() {
+            return async (lng: number, lat: number) => {
+              const result = await commonReearth?.scene?.sampleTerrainHeight?.(lng, lat);
+              startEventLoop?.();
+              return result;
+            };
+          },
         }),
         plugin: {
           get id() {
