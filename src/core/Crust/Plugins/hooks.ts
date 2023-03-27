@@ -29,6 +29,7 @@ export default function ({
   mapRef,
   sceneProperty,
   inEditor,
+  built,
   tags,
   viewport,
   selectedLayer,
@@ -55,6 +56,7 @@ export default function ({
   const getLayers = useGet(layersRef);
   const getSceneProperty = useGet(sceneProperty);
   const getInEditor = useGet(!!inEditor);
+  const getBuilt = useGet(!!built);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useCallback(() => {
@@ -276,6 +278,7 @@ export default function ({
         layers: getLayers,
         sceneProperty: getSceneProperty,
         inEditor: getInEditor,
+        built: getBuilt,
         tags: getTags,
         camera: getCamera,
         clock: getClock,

@@ -59,6 +59,7 @@ export const context: ProviderProps = {
   engineName: "cesium",
   engine: {},
   inEditor: false,
+  built: false,
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),

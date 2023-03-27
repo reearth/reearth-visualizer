@@ -230,6 +230,7 @@ export default ({
       engineName: engineType || "",
       sceneProperty: overriddenSceneProperty,
       inEditor: !!inEditor,
+      built: !!isBuilt,
       tags,
       camera: innerCamera,
       clock: innerClock,

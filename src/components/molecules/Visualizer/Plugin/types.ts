@@ -120,8 +120,8 @@ export type LatLngHeight = {
 };
 
 export type Scene = {
-  /** Current scene property */
   readonly inEditor: boolean;
+  readonly built: boolean;
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;

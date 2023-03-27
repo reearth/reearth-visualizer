@@ -16,6 +16,7 @@ export type Props = PropsWithChildren<{
   mapRef?: RefObject<MapRef>;
   sceneProperty?: any;
   inEditor?: boolean;
+  built?: boolean;
   tags?: Tag[];
   selectedLayer?: ComputedLayer;
   selectedFeature?: ComputedFeature;

@@ -27,8 +27,7 @@ const PreviewPage: React.FC<Props> = () => {
     <ThemeProvider>
       <DndProvider>
         <AuthenticationRequiredPage>
-          {typeof core === "boolean" &&
-            (core ? <CoreCanvasArea isBuilt /> : <CanvasArea isBuilt />)}
+          {typeof core === "boolean" && (core ? <CoreCanvasArea /> : <CanvasArea />)}
         </AuthenticationRequiredPage>
       </DndProvider>
     </ThemeProvider>

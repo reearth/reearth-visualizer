@@ -89,6 +89,7 @@ export const context: Context = {
     },
     scene: {
       inEditor: false,
+      built: false,
       overrideProperty: act("overrideSceneProperty"),
       captureScreen: act("captureScreen"),
       getLocationFromScreen: act("getLocationFromScreen"),

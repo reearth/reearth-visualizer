@@ -175,6 +175,7 @@ export default function Crust({
       engineName={engineName}
       mapRef={mapRef}
       sceneProperty={sceneProperty}
+      built={isBuilt}
       inEditor={inEditor}
       tags={tags}
       selectedLayer={selectedComputedLayer}
