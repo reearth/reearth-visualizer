@@ -195,7 +195,7 @@ export default function useHook({
   useEffect(() => {
     const w = typeof width === "number" ? width + "px" : width;
     const h = typeof height === "number" ? height + "px" : height;
-    setIFrameSize(w && h ? [w, h] : undefined);
+    setIFrameSize(w || h ? [w, h] : undefined);
   }, [width, height]);
 
   return {
