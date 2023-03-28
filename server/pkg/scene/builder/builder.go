@@ -81,11 +81,13 @@ func (b *Builder) buildScene(ctx context.Context, s *scene.Scene, publishedAt ti
 		return nil, err
 	}
 
+	pf := property.FieldIDMapFrom(ps.Map(), p)
+
 	// layers
 	if err := b.exporter.ExportLayerByID(ctx, s.RootLayer()); err != nil {
 		return nil, err
 	}
 	layers := b.encoder.Result()
 
-	return b.scene(ctx, s, publishedAt, layers, p, ps)
+	return b.scene(ctx, s, publishedAt, layers, p, ps, pf)
 }
