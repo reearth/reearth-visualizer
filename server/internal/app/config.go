@@ -48,6 +48,7 @@ type Config struct {
 	Web_FaviconURL   string
 	SignupSecret     string
 	SignupDisabled   bool
+	HTTPSREDIRECT    bool
 	// auth
 	Auth          AuthConfigs
 	Auth0         Auth0Config
