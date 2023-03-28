@@ -131,11 +131,7 @@ func (b *Builder) property(ctx context.Context, p *property.Property, pf propert
 	if b.dropPrivateFields {
 		return property.SealProperty(ctx, p, nil).Interface()
 	}
-	var privateFields []property.FieldID
-	if pf != nil {
-		privateFields = pf[p.ID()]
-	}
-	return property.SealProperty(ctx, p, privateFields).Interface()
+	return property.SealProperty(ctx, p, pf.Get(p.ID())).Interface()
 }
 
 func toString(wids []scene.WidgetID) []string {

@@ -69,7 +69,7 @@ func (m *Merger) MergeLayerFromID(ctx context.Context, i layer.ID, parent *layer
 }
 
 func (m *Merger) mergeCommon(ctx context.Context, original layer.Layer, parent *layer.Group) (p *MergedLayerCommon, e error) {
-	ml := layer.Merge(original, parent)
+	ml := layer.Merge(original, parent, nil) // TODO: handle private fields
 	if ml == nil {
 		return
 	}

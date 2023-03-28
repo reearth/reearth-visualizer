@@ -368,7 +368,7 @@ func TestMerge(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			// t.Parallel() // avoid data race
-			actual := Merge(tt.o, tt.p)
+			actual := Merge(tt.o, tt.p, nil)
 			assert.Equal(t, tt.want, actual)
 		})
 	}

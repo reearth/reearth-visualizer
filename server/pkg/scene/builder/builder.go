@@ -45,6 +45,7 @@ func New(ll layer.Loader, pl property.Loader, sl property.SchemaLoader, dl datas
 			Sealer: &merging.Sealer{
 				DatasetGraphLoader: dl,
 				TagLoader:          tl,
+				DropPrivateFields:  true,
 			},
 			Encoder: e,
 		},
