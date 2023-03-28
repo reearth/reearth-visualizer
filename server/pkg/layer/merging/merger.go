@@ -69,22 +69,11 @@ func (m *Merger) MergeLayerFromID(ctx context.Context, i layer.ID, parent *layer
 }
 
 func (m *Merger) mergeCommon(ctx context.Context, original layer.Layer, parent *layer.Group) (p *MergedLayerCommon, e error) {
-	op, err := m.PropertyLoader(ctx, original.Properties()...)
-	if err != nil {
-		e = err
-		return
-	}
-
-	schemas, err := m.SchemaLoader(ctx, op.Schemas()...)
-	if err != nil {
-		e = err
-		return
-	}
-
-	ml := layer.Merge(original, parent, schemas.PrivateFieldsIDs())
+	ml := layer.Merge(original, parent)
 	if ml == nil {
 		return
 	}
+
 	properties, err := m.PropertyLoader(ctx, ml.Properties()...)
 	if err != nil {
 		e = err

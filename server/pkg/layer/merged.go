@@ -1,7 +1,6 @@
 package layer
 
 import (
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -40,7 +39,7 @@ type MergedInfoboxField struct {
 }
 
 // Merge merges two layers
-func Merge(o Layer, p *Group, pf []id.PropertyFieldID) *Merged {
+func Merge(o Layer, p *Group) *Merged {
 	if o == nil || p != nil && o.Scene() != p.Scene() {
 		return nil
 	}
@@ -56,7 +55,6 @@ func Merge(o Layer, p *Group, pf []id.PropertyFieldID) *Merged {
 			Original:      o.Property(),
 			Parent:        p.Property(),
 			LinkedDataset: ToLayerItem(o).LinkedDataset(),
-			PrivateFields: pf,
 		},
 		IsVisible: o.IsVisible(),
 		Tags:      MergeTags(o.Tags(), p.Tags()),
