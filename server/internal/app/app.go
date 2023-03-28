@@ -79,7 +79,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	var publishedIndexHTML string
 	if cfg.Config.Published.IndexURL == nil || cfg.Config.Published.IndexURL.String() == "" {
 		if html, err := fs.ReadFile(os.DirFS("."), "web/published.html"); err == nil {
-			publishedIndexHTML = rewriteHTML(string(html), cfg.Config.Web_Title, cfg.Config.Web_FaviconURL)
+			favicon := ""
+			if cfg.Config.Web_FaviconURL != "" && !cfg.Config.Web_Disabled {
+				favicon = "/favicon.ico"
+			}
+			publishedIndexHTML = rewriteHTML(string(html), cfg.Config.Web_Title, favicon)
 		}
 	}
 
