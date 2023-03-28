@@ -36,6 +36,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		middleware.Recover(),
 		otelecho.Middleware("reearth"),
 	)
+	if cfg.Config.HTTPSREDIRECT {
+		e.Use(middleware.HTTPSRedirectWithConfig(middleware.RedirectConfig{
+			Code: http.StatusTemporaryRedirect,
+		}))
+	}
 	origins := allowedOrigins(cfg)
 	if len(origins) > 0 {
 		e.Use(
@@ -74,7 +79,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	var publishedIndexHTML string
 	if cfg.Config.Published.IndexURL == nil || cfg.Config.Published.IndexURL.String() == "" {
 		if html, err := fs.ReadFile(os.DirFS("."), "web/published.html"); err == nil {
-			publishedIndexHTML = string(html)
+			publishedIndexHTML = rewriteHTML(string(html), cfg.Config.Web_Title, cfg.Config.Web_FaviconURL)
 		}
 	}
 
