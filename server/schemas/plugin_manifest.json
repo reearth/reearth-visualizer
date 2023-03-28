@@ -182,6 +182,12 @@
         },
         "availableIf": {
           "$ref": "#/definitions/propertyCondition"
+        },
+        "private": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [
@@ -373,6 +379,12 @@
         },
         "schema": {
           "$ref": "#/definitions/propertySchema"
+        },
+        "deprecated": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [

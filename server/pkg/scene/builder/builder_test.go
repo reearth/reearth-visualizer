@@ -435,6 +435,7 @@ func TestSceneBuilder(t *testing.T) {
 		layer51,
 		layer6,
 	})
+	psloader := property.SchemaLoaderFromMap(nil)
 	ploader := property.LoaderFrom([]*property.Property{
 		scenep,
 		layer1p,
@@ -765,7 +766,7 @@ func TestSceneBuilder(t *testing.T) {
 	}
 
 	// exec
-	sb := New(lloader, ploader, dloader, tloader, tsloader)
+	sb := New(lloader, ploader, psloader, dloader, tloader, tsloader, false)
 	result, err := sb.buildScene(context.Background(), scene, publishedAt)
 
 	assert.NoError(t, err)

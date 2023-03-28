@@ -139,3 +139,8 @@ func (b *SchemaFieldBuilder) IsAvailableIf(cond *Condition) *SchemaFieldBuilder 
 	b.p.cond = cond.Clone()
 	return b
 }
+
+func (b *SchemaFieldBuilder) Private(private bool) *SchemaFieldBuilder {
+	b.p.private = private
+	return b
+}

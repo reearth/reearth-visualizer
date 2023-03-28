@@ -599,6 +599,7 @@ type ComplexityRoot struct {
 	PluginExtension struct {
 		AllTranslatedDescription func(childComplexity int) int
 		AllTranslatedName        func(childComplexity int) int
+		Deprecated               func(childComplexity int) int
 		Description              func(childComplexity int) int
 		ExtensionID              func(childComplexity int) int
 		Icon                     func(childComplexity int) int
@@ -766,6 +767,7 @@ type ComplexityRoot struct {
 		Max                      func(childComplexity int) int
 		Min                      func(childComplexity int) int
 		Prefix                   func(childComplexity int) int
+		Private                  func(childComplexity int) int
 		Suffix                   func(childComplexity int) int
 		Title                    func(childComplexity int) int
 		TranslatedDescription    func(childComplexity int, lang *language.Tag) int
@@ -4091,6 +4093,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.AllTranslatedName(childComplexity), true
 
+	case "PluginExtension.deprecated":
+		if e.complexity.PluginExtension.Deprecated == nil {
+			break
+		}
+
+		return e.complexity.PluginExtension.Deprecated(childComplexity), true
+
 	case "PluginExtension.description":
 		if e.complexity.PluginExtension.Description == nil {
 			break
@@ -4917,6 +4926,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertySchemaField.Prefix(childComplexity), true
+
+	case "PropertySchemaField.private":
+		if e.complexity.PropertySchemaField.Private == nil {
+			break
+		}
+
+		return e.complexity.PropertySchemaField.Private(childComplexity), true
 
 	case "PropertySchemaField.suffix":
 		if e.complexity.PropertySchemaField.Suffix == nil {
@@ -6765,6 +6781,7 @@ type PluginExtension {
   description: String!
   icon: String!
   singleOnly: Boolean
+  deprecated: Boolean!
   widgetLayout: WidgetLayout
   visualizer: Visualizer
   propertySchemaId: ID!
@@ -6901,6 +6918,7 @@ type PropertySchemaField {
   min: Float
   max: Float
   choices: [PropertySchemaFieldChoice!]
+  private: Boolean!
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
   allTranslatedDescription: TranslatedString
@@ -16614,6 +16632,8 @@ func (ec *executionContext) fieldContext_InfoboxField_extension(ctx context.Cont
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -18088,6 +18108,8 @@ func (ec *executionContext) fieldContext_LayerGroup_extension(ctx context.Contex
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -19109,6 +19131,8 @@ func (ec *executionContext) fieldContext_LayerItem_extension(ctx context.Context
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -20646,6 +20670,8 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_extension(ctx contex
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -22128,6 +22154,8 @@ func (ec *executionContext) fieldContext_MergedPropertyField_field(ctx context.C
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -27569,6 +27597,8 @@ func (ec *executionContext) fieldContext_Plugin_extensions(ctx context.Context, 
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -28273,6 +28303,50 @@ func (ec *executionContext) _PluginExtension_singleOnly(ctx context.Context, fie
 }
 
 func (ec *executionContext) fieldContext_PluginExtension_singleOnly(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PluginExtension",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PluginExtension_deprecated(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PluginExtension) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PluginExtension_deprecated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Deprecated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PluginExtension_deprecated(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PluginExtension",
 		Field:      field,
@@ -31587,6 +31661,8 @@ func (ec *executionContext) fieldContext_PropertyField_field(ctx context.Context
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -33036,6 +33112,8 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_latlngField(ctx 
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -33111,6 +33189,8 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_urlField(ctx con
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -33822,6 +33902,50 @@ func (ec *executionContext) fieldContext_PropertySchemaField_choices(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _PropertySchemaField_private(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PropertySchemaField_private(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Private, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PropertySchemaField_private(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PropertySchemaField",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PropertySchemaField_isAvailableIf(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 	if err != nil {
@@ -34437,6 +34561,8 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_fields(ctx context.
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -34728,6 +34854,8 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_representativeField
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
+			case "private":
+				return ec.fieldContext_PropertySchemaField_private(ctx, field)
 			case "isAvailableIf":
 				return ec.fieldContext_PropertySchemaField_isAvailableIf(ctx, field)
 			case "allTranslatedTitle":
@@ -38618,6 +38746,8 @@ func (ec *executionContext) fieldContext_SceneWidget_extension(ctx context.Conte
 				return ec.fieldContext_PluginExtension_icon(ctx, field)
 			case "singleOnly":
 				return ec.fieldContext_PluginExtension_singleOnly(ctx, field)
+			case "deprecated":
+				return ec.fieldContext_PluginExtension_deprecated(ctx, field)
 			case "widgetLayout":
 				return ec.fieldContext_PluginExtension_widgetLayout(ctx, field)
 			case "visualizer":
@@ -52743,6 +52873,13 @@ func (ec *executionContext) _PluginExtension(ctx context.Context, sel ast.Select
 
 			out.Values[i] = ec._PluginExtension_singleOnly(ctx, field, obj)
 
+		case "deprecated":
+
+			out.Values[i] = ec._PluginExtension_deprecated(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "widgetLayout":
 
 			out.Values[i] = ec._PluginExtension_widgetLayout(ctx, field, obj)
@@ -54053,6 +54190,13 @@ func (ec *executionContext) _PropertySchemaField(ctx context.Context, sel ast.Se
 
 			out.Values[i] = ec._PropertySchemaField_choices(ctx, field, obj)
 
+		case "private":
+
+			out.Values[i] = ec._PropertySchemaField_private(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "isAvailableIf":
 
 			out.Values[i] = ec._PropertySchemaField_isAvailableIf(ctx, field, obj)

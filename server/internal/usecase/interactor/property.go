@@ -71,7 +71,7 @@ func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, 
 		parentp = props[0]
 	}
 
-	res := property.Merge(orgp, parentp, linked)
+	res := property.Merge(orgp, parentp, linked, nil)
 	return res, nil
 }
 

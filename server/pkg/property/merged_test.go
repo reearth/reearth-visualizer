@@ -352,8 +352,9 @@ func TestMerge(t *testing.T) {
 								Type:  ValueTypeString,
 							},
 							{
-								ID:   FieldID("f"),
-								Type: ValueTypeString,
+								ID:      FieldID("f"),
+								Type:    ValueTypeString,
+								Private: true,
 							},
 						},
 					},
@@ -381,8 +382,9 @@ func TestMerge(t *testing.T) {
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   FieldID("f"),
-						Type: ValueTypeString,
+						ID:      FieldID("f"),
+						Type:    ValueTypeString,
+						Private: true,
 					},
 				},
 			},
@@ -408,22 +410,23 @@ func TestMerge(t *testing.T) {
 						Type:  ValueTypeString,
 					},
 					{
-						ID:   FieldID("f"),
-						Type: ValueTypeString,
+						ID:      FieldID("f"),
+						Type:    ValueTypeString,
+						Private: true,
 					},
 				},
 			},
 		},
 	}
 
-	merged0 := Merge(nil, nil, nil)
+	merged0 := Merge(nil, nil, nil, nil)
 	assert.Nil(t, merged0)
-	merged1 := Merge(op, pp, nil)
+	merged1 := Merge(op, pp, nil, nil)
 	assert.Nil(t, merged1)
-	merged2 := Merge(op, pp2, &d)
+	merged2 := Merge(op, pp2, &d, nil)
 	assert.Equal(t, expected1, merged2)
-	merged3 := Merge(op, nil, &d)
+	merged3 := Merge(op, nil, &d, nil)
 	assert.Equal(t, expected2, merged3)
-	merged4 := Merge(nil, pp2, &d)
+	merged4 := Merge(nil, pp2, &d, []FieldID{"f"})
 	assert.Equal(t, expected3, merged4)
 }

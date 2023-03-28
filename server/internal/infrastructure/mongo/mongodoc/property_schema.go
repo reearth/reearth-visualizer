@@ -35,6 +35,7 @@ type PropertySchemaFieldDocument struct {
 	Min          *float64
 	Max          *float64
 	Choices      []PropertySchemaFieldChoiceDocument
+	Private      bool `bson:",omitempty"`
 }
 
 type PropertySchemaFieldChoiceDocument struct {
@@ -80,6 +81,7 @@ func NewPropertySchemaField(f *property.SchemaField) *PropertySchemaFieldDocumen
 		UI:           f.UI().StringRef(),
 		Min:          f.Min(),
 		Max:          f.Max(),
+		Private:      f.Private(),
 	}
 	if choices := f.Choices(); choices != nil {
 		field.Choices = make([]PropertySchemaFieldChoiceDocument, 0, len(choices))
@@ -164,6 +166,7 @@ func ToModelPropertySchemaField(f *PropertySchemaFieldDocument) (*property.Schem
 		MinRef(f.Min).
 		MaxRef(f.Max).
 		Choices(choices).
+		Private(f.Private).
 		Build()
 }
 

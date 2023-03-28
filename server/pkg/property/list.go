@@ -52,6 +52,11 @@ func (l List) Map() Map {
 	return m.Add(l...)
 }
 
+func (l List) Find(id ID) *Property {
+	pp, _ := lo.Find(l, func(p *Property) bool { return p.ID() == id })
+	return pp
+}
+
 type Map map[ID]*Property
 
 func MapFrom(properties ...*Property) Map {

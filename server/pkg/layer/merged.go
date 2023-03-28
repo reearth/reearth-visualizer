@@ -39,7 +39,7 @@ type MergedInfoboxField struct {
 }
 
 // Merge merges two layers
-func Merge(o Layer, p *Group) *Merged {
+func Merge(o Layer, p *Group, pf property.FieldIDMap) *Merged {
 	if o == nil || p != nil && o.Scene() != p.Scene() {
 		return nil
 	}
@@ -55,10 +55,11 @@ func Merge(o Layer, p *Group) *Merged {
 			Original:      o.Property(),
 			Parent:        p.Property(),
 			LinkedDataset: ToLayerItem(o).LinkedDataset(),
+			PrivateFields: pf.GetRef(o.Property(), p.Property()),
 		},
 		IsVisible: o.IsVisible(),
 		Tags:      MergeTags(o.Tags(), p.Tags()),
-		Infobox:   MergeInfobox(o.Infobox(), p.Infobox(), ToLayerItem(o).LinkedDataset()),
+		Infobox:   MergeInfobox(o.Infobox(), p.Infobox(), ToLayerItem(o).LinkedDataset(), pf),
 	}
 }
 
@@ -90,7 +91,7 @@ func MergeTags(o, _p *TagList) []MergedTag {
 }
 
 // MergeInfobox merges two infoboxes
-func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
+func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID, pf property.FieldIDMap) *MergedInfobox {
 	if o == nil && p == nil {
 		return nil
 	}
@@ -113,6 +114,7 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 				Original:      &p,
 				Parent:        nil,
 				LinkedDataset: linked,
+				PrivateFields: pf.Get(p),
 			},
 		})
 	}
@@ -123,6 +125,7 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 			Original:      o.PropertyRef(),
 			Parent:        p.PropertyRef(),
 			LinkedDataset: linked,
+			PrivateFields: pf.GetRef(o.PropertyRef(), p.PropertyRef()),
 		},
 	}
 }

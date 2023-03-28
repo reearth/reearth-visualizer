@@ -27,11 +27,12 @@ var (
 
 func TestSeal(t *testing.T) {
 	tests := []struct {
-		Name     string
-		MD       *Merged
-		DSGL     dataset.GraphLoader
-		Expected *Sealed
-		Err      error
+		Name              string
+		MD                *Merged
+		DSGL              dataset.GraphLoader
+		DropPrivateFields bool
+		Expected          *Sealed
+		Err               error
 	}{
 		{
 			Name: "nil group",
@@ -87,6 +88,12 @@ func TestSeal(t *testing.T) {
 								Links: NewLinks([]*Link{NewLink(d, ds, df)}),
 								Type:  ValueTypeString,
 							},
+							{
+								ID:      FieldID("c"),
+								Value:   ValueTypeString.ValueFrom("ccc"),
+								Type:    ValueTypeString,
+								Private: true,
+							},
 						},
 					},
 				},
@@ -96,6 +103,7 @@ func TestSeal(t *testing.T) {
 					dataset.NewField(df, dataset.ValueTypeString.ValueFrom("bbb"), ""),
 				}).MustBuild(),
 			}),
+			DropPrivateFields: true,
 			Expected: &Sealed{
 				Original:      opid.Ref(),
 				Parent:        ppid.Ref(),
@@ -167,7 +175,7 @@ func TestSeal(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res, err := Seal(context.Background(), tc.MD, tc.DSGL)
+			res, err := Seal(context.Background(), tc.MD, tc.DSGL, tc.DropPrivateFields)
 			assert.Equal(t, tc.Expected, res)
 			assert.Nil(t, err)
 		})
@@ -179,9 +187,10 @@ func TestSealProperty(t *testing.T) {
 	ps := MustSchemaID("xxx~1.1.1/aa")
 
 	tests := []struct {
-		Name     string
-		Input    *Property
-		Expected *Sealed
+		Name          string
+		Input         *Property
+		PrivateFields []FieldID
+		Expected      *Sealed
 	}{
 		{
 			Name: "nil property",
@@ -203,7 +212,7 @@ func TestSealProperty(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := SealProperty(context.Background(), tc.Input)
+			res := SealProperty(context.Background(), tc.Input, tc.PrivateFields)
 			assert.Equal(t, tc.Expected, res)
 		})
 	}
@@ -212,11 +221,12 @@ func TestSealProperty(t *testing.T) {
 func TestSealedItemFrom(t *testing.T) {
 
 	tests := []struct {
-		Name     string
-		MG       *MergedGroup
-		DSGL     dataset.GraphLoader
-		Expected *SealedItem
-		Err      error
+		Name              string
+		MG                *MergedGroup
+		DSGL              dataset.GraphLoader
+		DropPrivateFields bool
+		Expected          *SealedItem
+		Err               error
 	}{
 		{
 			Name: "nil group",
@@ -355,13 +365,69 @@ func TestSealedItemFrom(t *testing.T) {
 			},
 			Err: nil,
 		},
+		{
+			Name: "drop private fields",
+			MG: &MergedGroup{
+				SchemaGroup:   psiid1,
+				Original:      &i1id,
+				Parent:        &i2id,
+				LinkedDataset: &d,
+				Groups: []*MergedGroup{
+					{
+						SchemaGroup:   psiid2,
+						Original:      &i3id,
+						Parent:        &i4id,
+						LinkedDataset: &d,
+						Fields: []*MergedField{
+							{
+								ID:    FieldID("a"),
+								Value: ValueTypeString.ValueFrom("aaa"),
+								Type:  ValueTypeString,
+							},
+							{
+								ID:      FieldID("b"),
+								Value:   ValueTypeString.ValueFrom("aaa"),
+								Type:    ValueTypeString,
+								Private: true,
+							},
+						},
+					},
+				},
+			},
+			DropPrivateFields: true,
+			Expected: &SealedItem{
+				SchemaGroup:   psiid1,
+				Original:      &i1id,
+				Parent:        &i2id,
+				LinkedDataset: &d,
+				Groups: []*SealedItem{
+					{
+						SchemaGroup:   psiid2,
+						Original:      &i3id,
+						Parent:        &i4id,
+						LinkedDataset: &d,
+						Fields: []*SealedField{
+							{
+								ID: "a",
+								Val: NewValueAndDatasetValue(
+									ValueTypeString,
+									nil,
+									ValueTypeString.ValueFrom("aaa"),
+								),
+							},
+						},
+					},
+				},
+			},
+			Err: nil,
+		},
 	}
 
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res, err := sealedItemFrom(context.Background(), tc.MG, tc.DSGL)
+			res, err := sealedItemFrom(context.Background(), tc.MG, tc.DSGL, tc.DropPrivateFields)
 			assert.Equal(t, tc.Expected, res)
 			assert.Nil(t, err)
 		})

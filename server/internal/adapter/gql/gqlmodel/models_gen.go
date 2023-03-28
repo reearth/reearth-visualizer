@@ -707,6 +707,7 @@ type PluginExtension struct {
 	Description              string              `json:"description"`
 	Icon                     string              `json:"icon"`
 	SingleOnly               *bool               `json:"singleOnly"`
+	Deprecated               bool                `json:"deprecated"`
 	WidgetLayout             *WidgetLayout       `json:"widgetLayout"`
 	Visualizer               *Visualizer         `json:"visualizer"`
 	PropertySchemaID         ID                  `json:"propertySchemaId"`
@@ -878,6 +879,7 @@ type PropertySchemaField struct {
 	Min                      *float64                     `json:"min"`
 	Max                      *float64                     `json:"max"`
 	Choices                  []*PropertySchemaFieldChoice `json:"choices"`
+	Private                  bool                         `json:"private"`
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle"`
 	AllTranslatedDescription map[string]string            `json:"allTranslatedDescription"`

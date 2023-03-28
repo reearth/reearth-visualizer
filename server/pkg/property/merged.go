@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"golang.org/x/exp/slices"
 )
 
 // Merged represents a merged property from two properties
@@ -31,6 +32,7 @@ type MergedField struct {
 	Type       ValueType
 	Value      *Value
 	Links      *Links
+	Private    bool
 	Overridden bool
 }
 
@@ -65,14 +67,7 @@ type MergedMetadata struct {
 	Original      *ID
 	Parent        *ID
 	LinkedDataset *DatasetID
-}
-
-// MergedMetadataFrom generates MergedMetadata from single property
-func MergedMetadataFrom(p ID) MergedMetadata {
-	p2 := p
-	return MergedMetadata{
-		Original: &p2,
-	}
+	PrivateFields []FieldID
 }
 
 // Properties returns associated property IDs
@@ -95,7 +90,7 @@ func (m MergedMetadata) Merge(o *Property, p *Property) *Merged {
 	if m.Parent != nil && (p == nil || *m.Parent != p.ID()) {
 		return nil
 	}
-	return Merge(o, p, m.LinkedDataset)
+	return Merge(o, p, m.LinkedDataset, m.PrivateFields)
 }
 
 func (f *MergedField) DatasetValue(ctx context.Context, d dataset.GraphLoader) (*dataset.Value, error) {
@@ -106,7 +101,7 @@ func (f *MergedField) DatasetValue(ctx context.Context, d dataset.GraphLoader) (
 }
 
 // Merge merges two properties
-func Merge(o *Property, p *Property, linked *DatasetID) *Merged {
+func Merge(o *Property, p *Property, linked *DatasetID, privateFields []FieldID) *Merged {
 	if o == nil && p == nil || o != nil && p != nil && !o.Schema().Equal(p.Schema()) {
 		return nil
 	}
@@ -122,12 +117,12 @@ func Merge(o *Property, p *Property, linked *DatasetID) *Merged {
 		Original:      o.IDRef(),
 		Parent:        p.IDRef(),
 		Schema:        schema,
-		Groups:        mergeItems(o.Items(), p.Items(), linked.CloneRef()),
+		Groups:        mergeItems(o.Items(), p.Items(), linked.CloneRef(), privateFields),
 		LinkedDataset: linked.CloneRef(),
 	}
 }
 
-func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
+func mergeItems(i1, i2 []Item, linked *DatasetID, privateFields []FieldID) []*MergedGroup {
 	if i1 == nil && i2 == nil || len(i1) == 0 && len(i2) == 0 {
 		return nil
 	}
@@ -146,7 +141,7 @@ func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
 			}
 		}
 
-		if mg := mergeItem(item, parentItem, linked); mg != nil {
+		if mg := mergeItem(item, parentItem, linked, privateFields); mg != nil {
 			groups = append(groups, mg)
 		}
 	}
@@ -156,7 +151,7 @@ func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
 			continue
 		}
 
-		if mg := mergeItem(nil, item, linked); mg != nil {
+		if mg := mergeItem(nil, item, linked, privateFields); mg != nil {
 			groups = append(groups, mg)
 		}
 	}
@@ -172,7 +167,7 @@ func group(o, p Item) (*Group, *Group) {
 	return ToGroup(o), ToGroup(p)
 }
 
-func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
+func mergeItem(o, p Item, linked *DatasetID, privateFields []FieldID) *MergedGroup {
 	if o == nil && p == nil || o != nil && p != nil && o.SchemaGroup() != p.SchemaGroup() {
 		return nil
 	}
@@ -193,9 +188,9 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 		for _, gg := range groups {
 			var mi *MergedGroup
 			if og != nil {
-				mi = mergeItem(gg, nil, linked)
+				mi = mergeItem(gg, nil, linked, privateFields)
 			} else {
-				mi = mergeItem(nil, gg, linked)
+				mi = mergeItem(nil, gg, linked, privateFields)
 			}
 			if mi != nil {
 				mgroups = append(mgroups, mi)
@@ -206,7 +201,7 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 		fieldKeys := allFields(og.FieldIDs(), pg.FieldIDs())
 		mfields = make([]*MergedField, 0, len(fieldKeys))
 		for _, k := range fieldKeys {
-			mf := mergeField(og.Field(k), pg.Field(k), linked)
+			mf := mergeField(og.Field(k), pg.Field(k), linked, privateFields)
 			if mf != nil {
 				mfields = append(mfields, mf)
 			}
@@ -234,7 +229,7 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 	}
 }
 
-func mergeField(original, parent *Field, linked *DatasetID) *MergedField {
+func mergeField(original, parent *Field, linked *DatasetID, privateFields []FieldID) *MergedField {
 	if original == nil && parent == nil || original != nil && parent != nil && (original.Field() != parent.Field() || original.Type() != parent.Type()) {
 		return nil
 	}
@@ -275,12 +270,20 @@ func mergeField(original, parent *Field, linked *DatasetID) *MergedField {
 		links = l.ApplyDataset(linked)
 	}
 
+	private := false
+	if original != nil {
+		private = slices.Contains(privateFields, original.field)
+	} else if parent != nil {
+		private = slices.Contains(privateFields, parent.field)
+	}
+
 	return &MergedField{
 		ID:         fid,
 		Value:      v,
 		Type:       t,
 		Links:      links,
 		Overridden: overridden,
+		Private:    private,
 	}
 }
 

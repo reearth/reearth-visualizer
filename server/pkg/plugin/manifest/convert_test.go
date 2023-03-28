@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -370,6 +371,7 @@ func TestExtension(t *testing.T) {
 				Schema:      nil,
 				Type:        "cluster",
 				Visualizer:  &cesium,
+				Deprecated:  lo.ToPtr(true),
 			},
 			sys: true,
 			pid: plugin.OfficialPluginID,
@@ -381,6 +383,7 @@ func TestExtension(t *testing.T) {
 				System(true).
 				Description(i18n.StringFrom("ddd")).
 				Schema(property.MustSchemaID("reearth/cesium")).
+				Deprecated(true).
 				MustBuild(),
 			expectedPS: property.NewSchema().
 				ID(property.MustSchemaID("reearth/cesium")).
@@ -795,6 +798,7 @@ func TestSchemaField(t *testing.T) {
 				Suffix:       nil,
 				Type:         "string",
 				UI:           nil,
+				Private:      lo.ToPtr(true),
 			},
 			tl: &TranslatedPropertySchemaField{
 				Title:       i18n.String{"en": "TITLE", "ja": "タイトル"},
@@ -806,6 +810,7 @@ func TestSchemaField(t *testing.T) {
 				Name(i18n.String{"en": str, "ja": "タイトル"}).
 				Description(i18n.String{"ja": "説明"}).
 				Type(property.ValueTypeString).
+				Private(true).
 				MustBuild(),
 			err: nil,
 		},

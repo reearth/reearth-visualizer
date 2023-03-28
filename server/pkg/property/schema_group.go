@@ -2,6 +2,7 @@ package property
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearthx/util"
 )
 
 // SchemaGroup represents a group of property that has some fields
@@ -48,6 +49,15 @@ func (s *SchemaGroup) Field(fid FieldID) *SchemaField {
 		}
 	}
 	return nil
+}
+
+func (s *SchemaGroup) PrivateFields() []*SchemaField {
+	if s == nil {
+		return nil
+	}
+	return util.Filter(s.fields, func(field *SchemaField) bool {
+		return field.Private()
+	})
 }
 
 // FieldByPointer returns a field whose id is specified

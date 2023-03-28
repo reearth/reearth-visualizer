@@ -21,29 +21,35 @@ const (
 )
 
 type Builder struct {
-	ploader  property.Loader
-	tloader  tag.SceneLoader
-	exporter *encoding.Exporter
-	encoder  *encoder
+	ploader           property.Loader
+	sloader           property.SchemaLoader
+	tloader           tag.SceneLoader
+	exporter          *encoding.Exporter
+	encoder           *encoder
+	dropPrivateFields bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader) *Builder {
+func New(ll layer.Loader, pl property.Loader, sl property.SchemaLoader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, dropPrivateFields bool) *Builder {
 	e := &encoder{}
 	return &Builder{
 		ploader: pl,
+		sloader: sl,
 		tloader: tsl,
 		encoder: e,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,
 				PropertyLoader: pl,
+				SchemaLoader:   sl,
 			},
 			Sealer: &merging.Sealer{
 				DatasetGraphLoader: dl,
 				TagLoader:          tl,
+				DropPrivateFields:  true,
 			},
 			Encoder: e,
 		},
+		dropPrivateFields: dropPrivateFields,
 	}
 }
 
@@ -71,11 +77,18 @@ func (b *Builder) buildScene(ctx context.Context, s *scene.Scene, publishedAt ti
 		return nil, err
 	}
 
+	ps, err := b.sloader(ctx, p.Schemas()...)
+	if err != nil {
+		return nil, err
+	}
+
+	pf := property.FieldIDMapFrom(ps.Map(), p)
+
 	// layers
 	if err := b.exporter.ExportLayerByID(ctx, s.RootLayer()); err != nil {
 		return nil, err
 	}
 	layers := b.encoder.Result()
 
-	return b.scene(ctx, s, publishedAt, layers, p)
+	return b.scene(ctx, s, publishedAt, layers, p, ps, pf)
 }

@@ -10,6 +10,7 @@ import (
 type Merger struct {
 	LayerLoader    layer.Loader
 	PropertyLoader property.Loader
+	SchemaLoader   property.SchemaLoader
 }
 
 func (m *Merger) MergeLayer(ctx context.Context, l layer.Layer, parent *layer.Group) (MergedLayer, error) {
@@ -68,10 +69,11 @@ func (m *Merger) MergeLayerFromID(ctx context.Context, i layer.ID, parent *layer
 }
 
 func (m *Merger) mergeCommon(ctx context.Context, original layer.Layer, parent *layer.Group) (p *MergedLayerCommon, e error) {
-	ml := layer.Merge(original, parent)
+	ml := layer.Merge(original, parent, nil) // TODO: handle private fields
 	if ml == nil {
 		return
 	}
+
 	properties, err := m.PropertyLoader(ctx, ml.Properties()...)
 	if err != nil {
 		e = err

@@ -3,6 +3,7 @@ package gqlmodel
 import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToPlugin(p *plugin.Plugin) *Plugin {
@@ -31,7 +32,8 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 				Name:                     pe.Name().String(),
 				Description:              pe.Description().String(),
 				Icon:                     pe.Icon(),
-				SingleOnly:               BoolToRef(pe.SingleOnly()),
+				SingleOnly:               lo.ToPtr(pe.SingleOnly()),
+				Deprecated:               pe.Deprecated(),
 				WidgetLayout:             ToPluginWidgetLayout(pe.WidgetLayout()),
 				PropertySchemaID:         IDFromPropertySchemaID(pe.Schema()),
 				AllTranslatedDescription: pe.Description(),

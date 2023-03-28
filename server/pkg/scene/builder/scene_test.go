@@ -19,7 +19,7 @@ func TestScene_FindProperty(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		PL       []*property.Property
+		PL       property.List
 		Input    property.ID
 		Expected *property.Property
 	}{
@@ -41,7 +41,7 @@ func TestScene_FindProperty(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := findProperty(tc.PL, tc.Input)
+			res := tc.PL.Find(tc.Input)
 			assert.Equal(t, tc.Expected, res)
 		})
 	}

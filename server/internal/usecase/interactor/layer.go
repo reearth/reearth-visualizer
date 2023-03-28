@@ -109,7 +109,7 @@ func (i *Layer) FetchMerged(ctx context.Context, org id.LayerID, parent *id.Laye
 		}
 	}
 
-	return layer.Merge(orgl, parentl), nil
+	return layer.Merge(orgl, parentl, nil), nil
 }
 
 func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operator *usecase.Operator) (*layer.Merged, error) {
@@ -122,7 +122,7 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 		return nil, err
 	}
 
-	return layer.Merge(orgl, parent), nil
+	return layer.Merge(orgl, parent, nil), nil
 }
 
 func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.List, error) {

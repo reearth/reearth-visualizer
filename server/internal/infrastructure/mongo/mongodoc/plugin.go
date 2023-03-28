@@ -27,6 +27,7 @@ type PluginExtensionDocument struct {
 	Visualizer   string `bson:",omitempty"`
 	SingleOnly   bool
 	WidgetLayout *WidgetLayoutDocument
+	Deprecated   bool `bson:",omitempty"`
 }
 
 type WidgetLayoutDocument struct {
@@ -71,6 +72,7 @@ func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {
 			Visualizer:   string(e.Visualizer()),
 			SingleOnly:   e.SingleOnly(),
 			WidgetLayout: NewWidgetLayout(e.WidgetLayout()),
+			Deprecated:   e.Deprecated(),
 		})
 	}
 
@@ -112,6 +114,7 @@ func (d *PluginDocument) Model() (*plugin.Plugin, error) {
 			SingleOnly(e.SingleOnly).
 			WidgetLayout(e.WidgetLayout.Model()).
 			Schema(psid).
+			Deprecated(e.Deprecated).
 			Build()
 		if err != nil {
 			return nil, err

@@ -8,7 +8,7 @@ type Loader func(context.Context, ...ID) (List, error)
 
 type SchemaLoader func(context.Context, ...SchemaID) (SchemaList, error)
 
-func LoaderFrom(data []*Property) Loader {
+func LoaderFrom(data List) Loader {
 	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make([]*Property, 0, len(ids))
 		for _, i := range ids {
@@ -28,7 +28,7 @@ func LoaderFrom(data []*Property) Loader {
 	}
 }
 
-func LoaderFromMap(data map[ID]*Property) Loader {
+func LoaderFromMap(data Map) Loader {
 	return func(ctx context.Context, ids ...ID) (List, error) {
 		res := make([]*Property, 0, len(ids))
 		for _, i := range ids {
@@ -42,7 +42,7 @@ func LoaderFromMap(data map[ID]*Property) Loader {
 	}
 }
 
-func SchemaLoaderFromMap(data map[SchemaID]*Schema) SchemaLoader {
+func SchemaLoaderFromMap(data SchemaMap) SchemaLoader {
 	return func(ctx context.Context, ids ...SchemaID) (SchemaList, error) {
 		res := make([]*Schema, 0, len(ids))
 		for _, i := range ids {

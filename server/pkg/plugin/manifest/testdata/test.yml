@@ -13,6 +13,7 @@ extensions:
             - id: a
               type: bool
               defaultValue: true
+              private: true
               availableIf:
                 field: b
                 type: number

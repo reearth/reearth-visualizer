@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/samber/lo"
 )
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
@@ -140,15 +141,6 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 		return nil, nil, fmt.Errorf("invalid type: %s", i.Type)
 	}
 
-	var icon string
-	var singleOnly bool
-	if i.Icon != nil {
-		icon = *i.Icon
-	}
-	if i.SingleOnly != nil {
-		singleOnly = *i.SingleOnly
-	}
-
 	var name, desc i18n.String
 	if te != nil {
 		name = te.Name
@@ -163,11 +155,12 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 		Description(desc).
 		Visualizer(viz).
 		Type(typ).
-		SingleOnly(singleOnly).
+		SingleOnly(lo.FromPtr(i.SingleOnly)).
 		WidgetLayout(i.WidgetLayout.layout()).
-		Icon(icon).
+		Icon(lo.FromPtr(i.Icon)).
 		Schema(schema.ID()).
 		System(sys).
+		Deprecated(lo.FromPtr(i.Deprecated)).
 		Build()
 
 	if err != nil {
@@ -335,14 +328,6 @@ func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*pr
 	title = title.WithDefaultRef(i.Title)
 	desc = desc.WithDefaultRef(i.Description)
 
-	var prefix, suffix string
-	if i.Prefix != nil {
-		prefix = *i.Prefix
-	}
-	if i.Suffix != nil {
-		suffix = *i.Suffix
-	}
-
 	var choices []property.SchemaFieldChoice
 	if len(i.Choices) > 0 {
 		choices = make([]property.SchemaFieldChoice, 0, len(i.Choices))
@@ -364,14 +349,15 @@ func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*pr
 		Name(title).
 		Description(desc).
 		Type(t).
-		Prefix(prefix).
-		Suffix(suffix).
+		Prefix(lo.FromPtr(i.Prefix)).
+		Suffix(lo.FromPtr(i.Suffix)).
 		DefaultValue(toValue(i.DefaultValue, i.Type)).
 		MinRef(i.Min).
 		MaxRef(i.Max).
 		Choices(choices).
 		UIRef(property.SchemaFieldUIFromRef(i.UI)).
 		IsAvailableIf(i.AvailableIf.condition()).
+		Private(lo.FromPtr(i.Private)).
 		Build()
 	if err != nil {
 		return nil, rerror.From("build", err)
