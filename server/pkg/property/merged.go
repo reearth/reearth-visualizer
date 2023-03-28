@@ -270,13 +270,20 @@ func mergeField(original, parent *Field, linked *DatasetID, privateFields []Fiel
 		links = l.ApplyDataset(linked)
 	}
 
+	private := false
+	if original != nil {
+		private = slices.Contains(privateFields, original.field)
+	} else if parent != nil {
+		private = slices.Contains(privateFields, parent.field)
+	}
+
 	return &MergedField{
 		ID:         fid,
 		Value:      v,
 		Type:       t,
 		Links:      links,
 		Overridden: overridden,
-		Private:    slices.Contains(privateFields, original.field),
+		Private:    private,
 	}
 }
 
