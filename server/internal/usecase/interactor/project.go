@@ -46,6 +46,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		workspaceRepo:     r.Workspace,
 		sceneRepo:         r.Scene,
 		propertyRepo:      r.Property,
+		schemaRepo:        r.PropertySchema,
 		layerRepo:         r.Layer,
 		datasetRepo:       r.Dataset,
 		datasetSchemaRepo: r.DatasetSchema,
