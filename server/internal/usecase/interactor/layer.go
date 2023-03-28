@@ -165,10 +165,12 @@ func (l *Layer) Export(ctx context.Context, lid id.LayerID, ext string) (io.Read
 }
 
 func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, operator *usecase.Operator) (_ *layer.Item, _ *layer.Group, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -270,10 +272,12 @@ func (i *Layer) AddItem(ctx context.Context, inp interfaces.AddLayerItemInput, o
 }
 
 func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput, operator *usecase.Operator) (_ *layer.Group, _ *layer.Group, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -514,10 +518,12 @@ func (i *Layer) fetchAllChildren(ctx context.Context, l layer.Layer) ([]id.Layer
 }
 
 func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Operator) (_ id.LayerID, _ *layer.Group, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -579,10 +585,12 @@ func (i *Layer) Remove(ctx context.Context, lid id.LayerID, operator *usecase.Op
 }
 
 func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, operator *usecase.Operator) (_ layer.Layer, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -620,10 +628,12 @@ func (i *Layer) Update(ctx context.Context, inp interfaces.UpdateLayerInput, ope
 }
 
 func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operator *usecase.Operator) (_ id.LayerID, _ *layer.Group, _ *layer.Group, _ int, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -681,10 +691,12 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 }
 
 func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *usecase.Operator) (_ layer.Layer, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -732,10 +744,12 @@ func (i *Layer) CreateInfobox(ctx context.Context, lid id.LayerID, operator *use
 
 func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator *usecase.Operator) (_ layer.Layer, err error) {
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -777,10 +791,12 @@ func (i *Layer) RemoveInfobox(ctx context.Context, layerID id.LayerID, operator 
 }
 
 func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFieldParam, operator *usecase.Operator) (_ *layer.InfoboxField, _ layer.Layer, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -849,10 +865,12 @@ func (i *Layer) AddInfoboxField(ctx context.Context, inp interfaces.AddInfoboxFi
 }
 
 func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfoboxFieldParam, operator *usecase.Operator) (_ id.InfoboxFieldID, _ layer.Layer, _ int, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -889,10 +907,12 @@ func (i *Layer) MoveInfoboxField(ctx context.Context, inp interfaces.MoveInfobox
 }
 
 func (i *Layer) RemoveInfoboxField(ctx context.Context, inp interfaces.RemoveInfoboxFieldParam, operator *usecase.Operator) (_ id.InfoboxFieldID, _ layer.Layer, err error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -958,10 +978,12 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 		return nil, nil, interfaces.ErrFileNotIncluded
 	}
 
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -1046,10 +1068,12 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 }
 
 func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagID, operator *usecase.Operator) (layer.Layer, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
@@ -1092,10 +1116,12 @@ func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagI
 }
 
 func (i *Layer) DetachTag(ctx context.Context, layerID id.LayerID, tagID id.TagID, operator *usecase.Operator) (layer.Layer, error) {
-	tx, err := i.transaction.Begin()
+	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
