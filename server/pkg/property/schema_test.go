@@ -67,3 +67,22 @@ func TestLinkableField_Validate(t *testing.T) {
 		})
 	}
 }
+
+func TestSchema_PrivateFields(t *testing.T) {
+	s := &Schema{
+		groups: &SchemaGroupList{
+			groups: []*SchemaGroup{
+				{fields: []*SchemaField{
+					{id: FieldID("a")},
+					{id: FieldID("b"), private: true},
+				}},
+				{fields: []*SchemaField{
+					{id: FieldID("c")},
+					{id: FieldID("d"), private: true},
+				}},
+			},
+		},
+	}
+	assert.Equal(t, []FieldID{"b", "d"}, s.PrivateFields())
+	assert.Nil(t, (*SchemaGroup)(nil).PrivateFields())
+}

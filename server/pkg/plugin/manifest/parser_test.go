@@ -41,6 +41,7 @@ var normalExpected = &Manifest{
 							Field: property.FieldID("b"),
 							Value: property.ValueTypeNumber.ValueFrom(1),
 						}).
+						Private(true).
 						MustBuild(),
 					property.NewSchemaField().ID(property.FieldID("b")).
 						Type(property.ValueTypeNumber).
