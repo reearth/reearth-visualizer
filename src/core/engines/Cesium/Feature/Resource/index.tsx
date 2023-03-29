@@ -1,4 +1,4 @@
-import { Entity, type DataSource } from "cesium";
+import { Entity, type DataSource, Color } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
@@ -44,7 +44,15 @@ export default function Resource({
   onComputedFeatureFetch,
   onComputedFeatureDelete,
 }: Props) {
-  const { show = true, clampToGround } = property ?? {};
+  const {
+    show = true,
+    clampToGround,
+    stroke,
+    strokeWidth,
+    markerColor,
+    markerSize,
+    fill,
+  } = property ?? {};
   const [type, url, updateClock] = useMemo((): [
     ResourceAppearance["type"],
     string | undefined,
@@ -150,6 +158,11 @@ export default function Resource({
       clampToGround={clampToGround}
       onChange={handleChange}
       onLoad={handleLoad}
+      stroke={Color.fromCssColorString(stroke ?? "white")}
+      fill={Color.fromCssColorString(fill ?? "transparent")}
+      strokeWidth={strokeWidth}
+      markerSize={markerSize}
+      markerColor={Color.fromCssColorString(markerColor ?? "white")}
     />
   );
 }

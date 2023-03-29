@@ -166,6 +166,11 @@ export type ResourceAppearance = {
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
+  markerSize?: number;
+  markerColor?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  fill?: string;
 };
 
 export type RasterAppearance = {
