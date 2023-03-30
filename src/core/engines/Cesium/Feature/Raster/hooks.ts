@@ -191,7 +191,12 @@ export const useMVT = ({
             : idFromGeometry(mvtFeature.loadGeometry(), tile);
           const feature = evalFeature(layer, makeFeatureFromPolygon(id, mvtFeature, tile));
           const info = new ImageryLayerFeatureInfo();
-          info.data = { layerId: layer?.id, featureId: id, feature };
+          info.data = {
+            layerId: layer?.id,
+            featureId: id,
+            feature,
+            appearanceType: VectorTileFeature.types[mvtFeature.type].toLowerCase(),
+          };
           return info;
         },
       });

@@ -455,6 +455,11 @@ export default ({
           const l = await scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene);
           if (l && !!l.length) {
             l.map(f => {
+              const appearanceType = f.data?.appearanceType;
+              if (appearanceType && f.data?.feature?.[appearanceType]?.show === false) {
+                return;
+              }
+
               const pos = f.position;
               if (pos) {
                 // NOTE: Instantiate temporal Cesium.Entity to display indicator.
