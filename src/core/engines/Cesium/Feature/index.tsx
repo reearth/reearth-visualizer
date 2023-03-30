@@ -1,4 +1,4 @@
-import { DataType } from "@reearth/core/mantle";
+import { ComputedFeature, DataType } from "@reearth/core/mantle";
 import { getExtname } from "@reearth/util/path";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
@@ -84,6 +84,43 @@ export default function Feature({
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
 
+  const renderedComponents = new Set<string>(); // Initialize a set to store rendered components
+
+  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature) => {
+    const [C, config] = components[k] ?? [];
+    if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
+      return null;
+    }
+
+    if (
+      (Array.isArray(displayType) && !displayType.includes(k)) ||
+      (!Array.isArray(displayType) && displayType !== "auto")
+    ) {
+      return null;
+    }
+
+    const componentId = `${layer.id}_${f?.id ?? ""}_${k}`;
+
+    if (renderedComponents.has(componentId)) {
+      return null; // Skip rendering if the component with the same id has already been rendered
+    }
+
+    renderedComponents.add(componentId); // Add the component id to the set of rendered components
+
+    return (
+      <C
+        {...props}
+        key={componentId}
+        id={componentId}
+        property={f ? f[k] : layer[k] || pickProperty(k, layer)}
+        geometry={f?.geometry}
+        feature={f}
+        layer={layer}
+        isVisible={layer.layer.visible !== false && !isHidden}
+      />
+    );
+  };
+
   if (areAllDisplayTypeNoFeature) {
     return (
       <>
@@ -113,32 +150,7 @@ export default function Feature({
   return (
     <>
       {[undefined, ...layer.features].flatMap(f =>
-        (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => {
-          const [C, config] = components[k] ?? [];
-          if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
-            return null;
-          }
-
-          if (
-            (Array.isArray(displayType) && !displayType.includes(k)) ||
-            (!Array.isArray(displayType) && displayType !== "auto")
-          ) {
-            return null;
-          }
-
-          return (
-            <C
-              {...props}
-              key={`${layer.id}_${f?.id ?? ""}_${k}`}
-              id={`${layer.id}_${f?.id ?? ""}_${k}`}
-              property={f ? f[k] : layer[k] || pickProperty(k, layer)}
-              geometry={f?.geometry}
-              feature={f}
-              layer={layer}
-              isVisible={layer.layer.visible !== false && !isHidden}
-            />
-          );
-        }),
+        (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => renderComponent(k, f)),
       )}
     </>
   );
