@@ -7,7 +7,7 @@ import { useCustomCompareMemo } from "use-custom-compare";
 import { Coordinates, toColor } from "@reearth/util/value";
 
 import type { PolylineAppearance } from "../../..";
-import { shadowMode } from "../../common";
+import { classificationType, shadowMode } from "../../common";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -34,7 +34,13 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [geometry?.coordinates, geometry?.type, property?.coordinates],
   );
 
-  const { clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};
+  const {
+    clampToGround,
+    strokeColor,
+    strokeWidth = 1,
+    shadows,
+    classificationType: ct,
+  } = property ?? {};
 
   const positions = useCustomCompareMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])),
@@ -62,6 +68,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
         clampToGround={clampToGround}
         shadows={shadowMode(shadows)}
         distanceDisplayCondition={distanceDisplayCondition}
+        classificationType={classificationType(ct)}
       />
     </EntityExt>
   );

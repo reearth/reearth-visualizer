@@ -103,3 +103,5 @@ export type ValueTypes = {
 };
 
 export type ValueType = keyof ValueTypes;
+
+export type ClassificationType = "both" | "terrain" | "3dtiles";

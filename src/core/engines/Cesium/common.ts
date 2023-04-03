@@ -14,6 +14,7 @@ import {
   OrthographicOffCenterFrustum,
   Viewer,
   HeightReference,
+  ClassificationType as CesiumClassificationType,
   ShadowMode,
   Entity,
   PropertyBag,
@@ -34,6 +35,7 @@ import {
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
+import { ClassificationType } from "@reearth/core/mantle";
 import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 
@@ -496,6 +498,19 @@ export const heightReference = (
       [key in string]?: HeightReference;
     }
   )[heightReference || ""]);
+
+export const classificationType = (
+  classificationType?: ClassificationType,
+): CesiumClassificationType | undefined =>
+  ((
+    {
+      both: CesiumClassificationType.BOTH,
+      "3dtiles": CesiumClassificationType.CESIUM_3D_TILE,
+      terrain: CesiumClassificationType.TERRAIN,
+    } as {
+      [key in ClassificationType | ""]?: CesiumClassificationType;
+    }
+  )[classificationType || ""]);
 
 export const shadowMode = (
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only",

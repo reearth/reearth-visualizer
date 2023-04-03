@@ -8,7 +8,7 @@ import { useCustomCompareMemo } from "use-custom-compare";
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
 import type { PolygonAppearance } from "../../..";
-import { heightReference, shadowMode } from "../../common";
+import { classificationType, heightReference, shadowMode } from "../../common";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -52,6 +52,7 @@ export default function Polygon({
     heightReference: hr,
     shadows,
     extrudedHeight,
+    classificationType: ct,
   } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
@@ -125,6 +126,7 @@ export default function Polygon({
           shadows={shadowMode(shadows)}
           extrudedHeight={extrudedHeight}
           distanceDisplayCondition={distanceDisplayCondition}
+          classificationType={classificationType(ct)}
         />
       </EntityExt>
       {/* workaround */}
@@ -137,6 +139,7 @@ export default function Polygon({
             material={memoStrokeColor}
             shadows={shadowMode(shadows)}
             distanceDisplayCondition={distanceDisplayCondition}
+            classificationType={classificationType(ct)}
           />
         </Entity>
       ))}

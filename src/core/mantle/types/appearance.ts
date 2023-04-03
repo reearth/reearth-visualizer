@@ -1,7 +1,13 @@
 import { objKeys } from "../utils";
 
 import type { ExpressionContainer } from "./expression";
-import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
+import type {
+  Camera,
+  ClassificationType,
+  EXPERIMENTAL_clipping,
+  LatLng,
+  Typography,
+} from "./value";
 
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | ExpressionContainer;
@@ -73,6 +79,7 @@ export type PolylineAppearance = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   near?: number;
   far?: number;
+  classificationType?: ClassificationType;
 };
 
 export type PolygonAppearance = {
@@ -88,6 +95,7 @@ export type PolygonAppearance = {
   near?: number;
   far?: number;
   extrudedHeight?: number;
+  classificationType?: ClassificationType;
 };
 
 export type EllipsoidAppearance = {
