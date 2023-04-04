@@ -57,7 +57,9 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     scaleInterval,
     strongScaleMinutes,
     currentPosition,
+    scaleElement,
     events,
+    shouldScroll,
     player: {
       formattedCurrentTime,
       isPlaying,
@@ -130,7 +132,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
        * TODO: Support keyboard operation for accessibility
        * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
        */}
-      <ScaleBox role="slider" {...events}>
+      <ScaleBox role="slider" {...events} ref={scaleElement} shouldScroll={shouldScroll}>
         <ScaleList
           start={startDate}
           scaleCount={scaleCount}
@@ -259,6 +261,7 @@ const CurrentTimeWrapper = styled.div`
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
   margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
   flex-shrink: 0;
+  width: 70px;
 
   @media (max-width: 768px) {
     display: none;
@@ -271,12 +274,12 @@ const CurrentTime = styled(Text)<StyledColorProps>`
   white-space: pre-line;
 `;
 
-const ScaleBox = styled.div`
+const ScaleBox = styled.div<{ shouldScroll: boolean }>`
   border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  overflow-x: overlay;
+  overflow-x: ${({ shouldScroll }) => (shouldScroll ? "overlay" : "hidden")};
   overflow-y: hidden;
   contain: strict;
   width: 100%;

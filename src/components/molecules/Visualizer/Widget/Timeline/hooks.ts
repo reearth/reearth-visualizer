@@ -47,6 +47,26 @@ export const useTimeline = ({
     setIsOpened(false);
   }, [widget.id, onExtend]);
 
+  const switchCurrentTimeToStart = useCallback(
+    (t: number, isRangeChanged: boolean) => {
+      if (!clock) {
+        return;
+      }
+      const cur = isRangeChanged
+        ? t
+        : range.end && t > range.end
+        ? range.start
+        : range.start && t < range.start
+        ? range.end
+        : t;
+      if (cur) {
+        clock.currentTime = new Date(cur);
+      }
+      return cur;
+    },
+    [range, clock],
+  );
+
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {
       if (!clock) {
@@ -99,6 +119,16 @@ export const useTimeline = ({
     [clock],
   );
 
+  const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
+    setRange(prev => {
+      const next = makeRange(start, stop);
+      if (prev.start !== next.start || prev.end !== next.end) {
+        return next;
+      }
+      return prev;
+    });
+  }, []);
+
   // Initialize clock value
   useEffect(() => {
     if (clock && !isClockInitialized.current) {
@@ -112,7 +142,13 @@ export const useTimeline = ({
 
   // Sync cesium clock.
   useEffect(() => {
-    setCurrentTime(clockCurrentTime || Date.now());
+    const isDifferentRange = range.start !== clockStartTime || range.end !== clockStopTime;
+    if (isDifferentRange) {
+      handleRange(clockStartTime, clockStopTime);
+    }
+    setCurrentTime(
+      switchCurrentTimeToStart(clockCurrentTime ?? Date.now(), isDifferentRange) ?? Date.now(),
+    );
     setRange(prev => {
       const next = makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime());
       if (prev.start !== next.start || prev.end !== next.end) {
@@ -122,12 +158,16 @@ export const useTimeline = ({
     });
     setSpeed(Math.abs(clockSpeed));
   }, [
+    range.start,
+    range.end,
     clockCurrentTime,
     clockStartTime,
     clockStopTime,
     clockSpeed,
     clock?.startTime,
     clock?.stopTime,
+    switchCurrentTimeToStart,
+    handleRange,
   ]);
 
   return {

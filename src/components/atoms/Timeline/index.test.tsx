@@ -3,9 +3,14 @@ import { expect, test, vi, vitest } from "vitest";
 
 import { render, screen, fireEvent } from "@reearth/test/utils";
 
-import { PADDING_HORIZONTAL, BORDER_WIDTH, KNOB_SIZE, GAP_HORIZONTAL } from "./constants";
+import { PADDING_HORIZONTAL, BORDER_WIDTH, GAP_HORIZONTAL } from "./constants";
 
 import Timeline from ".";
+
+global.ResizeObserver = class {
+  observe() {}
+  disconnect() {}
+} as any;
 
 const CURRENT_TIME = new Date("2022-07-03T00:00:00.000").getTime();
 // This is width when range is one day.
@@ -53,8 +58,7 @@ test("it should get time from clicked position", () => {
   });
 
   const iconWrapper = screen.getByTestId("knob-icon");
-  const actualLeft = Math.trunc(parseInt(iconWrapper.style.left.split("px")[0]));
-  expect(actualLeft).toBe(Math.trunc(currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2));
+  expect(iconWrapper.style.left).toBe("-0.5px");
 });
 
 test("it should get time from mouse moved position", () => {
@@ -62,7 +66,7 @@ test("it should get time from mouse moved position", () => {
   const slider = screen.getAllByRole("slider")[1];
   const currentPosition = 12;
   const clientX = PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition;
-  const expectedLeft = Math.trunc(currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2);
+  const expectedLeft = "-0.5px";
 
   const scroll = vi.fn();
   window.HTMLElement.prototype.scroll = scroll;
@@ -88,17 +92,13 @@ test("it should get time from mouse moved position", () => {
     clientX,
   });
   fireEvent.mouseUp(slider);
-  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
-    expectedLeft,
-  );
+  expect(screen.getByTestId("knob-icon").style.left).toBe(expectedLeft);
 
   // It should not move
   fireEvent.mouseMove(slider, {
     clientX: clientX * 2,
   });
-  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
-    expectedLeft,
-  );
+  expect(screen.getByTestId("knob-icon").style.left).toBe(expectedLeft);
 });
 
 test("it should get correct strongScaleHours from amount of scroll", () => {

@@ -157,7 +157,6 @@ export default function useHooks({
     const currentTime = convertTime(current)?.getTime();
 
     const DEFAULT_NEXT_RANGE = 86400000; // a day
-    const MAX_RANGE_DIFFERENCE = 2592000000; // 30 days
 
     // To avoid out of range error in Cesium, we need to turn back a hour.
     const now = Date.now() - 3600000;
@@ -169,7 +168,7 @@ export default function useHooks({
       : now - DEFAULT_NEXT_RANGE;
 
     const convertedStopTime = stopTime
-      ? Math.min(stopTime, convertedStartTime + MAX_RANGE_DIFFERENCE)
+      ? Math.min(stopTime, now)
       : startTime
       ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
       : now;

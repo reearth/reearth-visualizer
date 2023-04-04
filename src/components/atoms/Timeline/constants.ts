@@ -13,3 +13,5 @@ export const DAY_SECS = 86400;
 export const MINUTES_SEC = 60;
 export const SCALE_ZOOM_INTERVAL = 5;
 export const KNOB_SIZE = 25;
+
+export const SCALE_LABEL_WIDTH = 111;
