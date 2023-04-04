@@ -217,6 +217,7 @@ export default function Visualizer({
               !!widgets?.ownBuiltinWidgets?.[NAVIGATOR_BUILTIN_WIDGET_ID]
             }
             meta={engineMeta}
+            inEditor={inEditor}
             onLayerSelect={selectLayer}
             onCameraChange={updateCamera}
             onTick={updateClock}
@@ -255,6 +256,7 @@ export default function Visualizer({
                   onPluginPopupShow={onPluginPopupShow}
                   isEditable={props.isEditable}
                   isBuilt={props.isBuilt}
+                  inEditor={inEditor}
                   pluginBaseUrl={pluginBaseUrl}
                   viewport={viewport}
                 />

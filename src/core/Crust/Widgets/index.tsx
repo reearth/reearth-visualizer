@@ -1,6 +1,6 @@
-import { ReactNode, useCallback } from "react";
+import { Fragment, ReactNode, useCallback } from "react";
 
-import type { Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types";
+import type { InternalWidget, Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
 import WidgetAlignSystem, {
@@ -30,12 +30,14 @@ export type { Widget, InternalWidget, WidgetLocationOptions, WidgetAlignment } f
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
+  floatingWidgets?: InternalWidget[];
   selectedWidgetArea?: WidgetAreaType;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   editing?: boolean;
   isMobile?: boolean;
   theme?: Theme;
   isEditable?: boolean;
+  inEditor?: boolean;
   isBuilt?: boolean;
   context?: Context;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -55,20 +57,22 @@ export type WidgetProps = {
   widget: Widget;
   editing: boolean;
   extended?: boolean;
-  layout: WidgetLayout;
-  onExtend: (id: string, extended: boolean | undefined) => void;
-  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
+  layout?: WidgetLayout;
+  onExtend?: (id: string, extended: boolean | undefined) => void;
+  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
   onVisibilityChange: (widgetId: string, v: boolean) => void;
 };
 
 export default function Widgets({
   alignSystem,
+  floatingWidgets,
   selectedWidgetArea,
   editing,
   isMobile,
   layoutConstraint,
   theme,
   isEditable,
+  inEditor,
   isBuilt,
   context,
   renderWidget,
@@ -90,6 +94,7 @@ export default function Widgets({
         layout={layout}
         theme={theme}
         isEditable={isEditable}
+        inEditor={inEditor}
         isBuilt={isBuilt}
         isMobile={isMobile}
         context={context}
@@ -100,7 +105,7 @@ export default function Widgets({
             extended,
             layout,
             onExtend,
-            moveWidget,
+            onWidgetMove: moveWidget,
             onVisibilityChange,
           })
         }
@@ -108,23 +113,43 @@ export default function Widgets({
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, isMobile, renderWidget, theme, moveWidget, onVisibilityChange],
+    [
+      theme,
+      isEditable,
+      inEditor,
+      isBuilt,
+      isMobile,
+      context,
+      onVisibilityChange,
+      renderWidget,
+      moveWidget,
+    ],
   );
 
   return (
-    <WidgetAlignSystem
-      alignSystem={overriddenAlignSystem}
-      selectedWidgetArea={selectedWidgetArea}
-      invisibleWidgetIDs={invisibleWidgetIDs}
-      editing={editing}
-      built={isBuilt}
-      isMobile={isMobile}
-      layoutConstraint={layoutConstraint}
-      theme={theme}
-      renderWidget={renderWidgetInternal}
-      onAlignmentUpdate={onAlignmentUpdate}
-      onWidgetLayoutUpdate={onWidgetLayoutUpdate}
-      onWidgetAreaSelect={onWidgetAreaSelect}
-    />
+    <>
+      <WidgetAlignSystem
+        alignSystem={overriddenAlignSystem}
+        selectedWidgetArea={selectedWidgetArea}
+        invisibleWidgetIDs={invisibleWidgetIDs}
+        editing={editing}
+        built={isBuilt}
+        isMobile={isMobile}
+        layoutConstraint={layoutConstraint}
+        theme={theme}
+        renderWidget={renderWidgetInternal}
+        onAlignmentUpdate={onAlignmentUpdate}
+        onWidgetLayoutUpdate={onWidgetLayoutUpdate}
+        onWidgetAreaSelect={onWidgetAreaSelect}
+      />
+      {floatingWidgets?.map(w => (
+        <Fragment key={w.id}>
+          {renderWidgetInternal({
+            widget: w,
+            editing: false,
+          })}
+        </Fragment>
+      ))}
+    </>
   );
 }

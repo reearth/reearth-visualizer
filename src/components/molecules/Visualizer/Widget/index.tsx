@@ -19,6 +19,7 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boole
 export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
+  inEditor?: boolean;
   widget: Widget;
   extended?: boolean;
   sceneProperty?: SP;

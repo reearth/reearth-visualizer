@@ -54,8 +54,8 @@ export type WidgetLayoutConstraint = {
 
 export type WidgetProps = {
   widget: InternalWidget;
-  layout: WidgetLayout;
+  layout?: WidgetLayout;
   extended?: boolean;
   editing: boolean;
-  onExtend: (id: string, extended: boolean | undefined) => void;
+  onExtend?: (id: string, extended: boolean | undefined) => void;
 };
