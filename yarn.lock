@@ -1331,10 +1331,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cesium/engine@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.1.0.tgz#da6c0c0ba5fdb98de96eed6c4323cd304cdfe981"
-  integrity sha512-U80bWcu+SmJYH/5nzowHcJI093qTkOd8wYj54Hgj7PKk1QhFKfE+oLCb8F577wAvwptoEZ57CdR4KgJNLGO1SA==
+"@cesium/engine@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.2.0.tgz#8b5cc86f98485fc0537a6a28bfdcb8fd1c2389e4"
+  integrity sha512-4F/K06HURmtm7rSbFdqxMBLVTmkKbLi5WtoVqMHLl1ezA5Hed8j0niJaOh6WesK2kZgU9NWGTjvJ1PNPdYe2lQ==
   dependencies:
     "@tweenjs/tween.js" "^18.6.4"
     "@zip.js/zip.js" "2.4.x"
@@ -1355,12 +1355,12 @@
     topojson-client "^3.1.0"
     urijs "^1.19.7"
 
-"@cesium/widgets@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.1.0.tgz#a9371bc929d81d19e51cba7f6f32fd7d531f1847"
-  integrity sha512-/sdDNr8nJMALjzHBdeeFdIxakP/9DbTccDouQWjOvpOj2aVe5iFNQWkYULssV38ywp2JEqmhvF5+eHsT0PAjPA==
+"@cesium/widgets@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.1.1.tgz#581ae6d91d811f5d57796f91f35a8dd8c622f4f9"
+  integrity sha512-s+vgNVmJgi9efwB30o8ly94BMDZ9Mgt/rFCuj4mOinyqK+qVfWu1sekprrMCRTTir3r93ADXs3H/y8ObWFIjkQ==
   dependencies:
-    "@cesium/engine" "2.1.0"
+    "@cesium/engine" "2.2.0"
     nosleep.js "^0.12.0"
 
 "@changesets/apply-release-plan@^6.1.2":
@@ -7741,13 +7741,13 @@ cesium-mvt-imagery-provider@1.2.4:
     "@mapbox/vector-tile" "1.3.1"
     pbf "3.2.1"
 
-cesium@1.103.0:
-  version "1.103.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.103.0.tgz#46af9c7789bf38d583e12c70cfeb9f78281a3e72"
-  integrity sha512-BoZx7Op/BYd8p8rBDnuv/u7b/yg2WpK3WBfrAKceemU1pv2QlMrFNBxKnd3PWHSUgJZc/yHtP7YrX5pIn7JSgA==
+cesium@1.104.0:
+  version "1.104.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.104.0.tgz#1ddfbbd3e2b62114e75f7c11827f54b1452a832d"
+  integrity sha512-2E2bJiyPgcvakQFbkGUXpIlHkex2kTtbMcZ+POf0cJd6qMi2SfASuYtyjkejU8ZeaaaWnnRm2d156I2wEDdbJw==
   dependencies:
-    "@cesium/engine" "2.1.0"
-    "@cesium/widgets" "2.1.0"
+    "@cesium/engine" "2.2.0"
+    "@cesium/widgets" "2.1.1"
 
 chai@^4.3.7:
   version "4.3.7"
