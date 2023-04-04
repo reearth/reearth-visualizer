@@ -21,7 +21,7 @@ export const processDatasets = (
 const processDataset = (fields: DatasetFragmentFragment["fields"]): { [key: string]: string } => {
   const datasetFields = fields
     .map((f): [string, string] | undefined => {
-      if (!f || !f.field) return undefined;
+      if (!f?.field) return undefined;
       return [
         f.field.name,
         String(typeof f.value === "object" && "lat" in f.value ? Object.values(f.value) : f.value),

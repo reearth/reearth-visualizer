@@ -170,7 +170,7 @@ export const convertWidgets = (
       ownBuiltinWidgets: (keyof BuiltinWidgets)[];
     }
   | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
+  if (!data?.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
     return undefined;
   }
 

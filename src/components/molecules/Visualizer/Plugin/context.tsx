@@ -244,10 +244,10 @@ export function Provider({
       builtinPrimitives,
       engineName,
       ev,
-      clientStorage,
       getLayers,
       getSceneProperty,
       getInEditor,
+      getBuilt,
       getTags,
       getCamera,
       getClock,
@@ -288,6 +288,7 @@ export function Provider({
       emit,
       moveWidget,
       pluginInstances,
+      clientStorage,
     ],
   );
 

@@ -62,7 +62,7 @@ export default (alias?: string) => {
       }
     | undefined
   >(() => {
-    if (!data || !data.widgets) return undefined;
+    if (!data?.widgets) return undefined;
 
     const widgetsInWas = new Set<string>();
     if (data.widgetAlignSystem) {

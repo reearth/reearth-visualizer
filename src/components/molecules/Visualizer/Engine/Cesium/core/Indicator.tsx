@@ -41,8 +41,7 @@ export default function Indicator({ className, property }: Props): JSX.Element |
       if (viewer.isDestroyed()) return;
       const selected = viewer.selectedEntity;
       if (
-        !selected ||
-        !selected.isShowing ||
+        !selected?.isShowing ||
         !selected.isAvailable(viewer.clock.currentTime) ||
         !selected.position
       ) {

@@ -47,7 +47,7 @@ export default (alias?: string) => {
   const widgets = useMemo<
     { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
   >(() => {
-    if (!data || !data.widgets) return undefined;
+    if (!data?.widgets) return undefined;
 
     const widgetsInWas = new Set<string>();
     if (data.widgetAlignSystem) {
