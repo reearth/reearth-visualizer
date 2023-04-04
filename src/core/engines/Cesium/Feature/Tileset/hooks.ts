@@ -31,8 +31,8 @@ import type {
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
-import { usePick } from "../hooks";
 import {
+  usePick,
   attachTag,
   extractSimpleLayer,
   extractSimpleLayerData,

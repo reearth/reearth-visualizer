@@ -2,9 +2,8 @@ import { Entity, type DataSource, Color } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
-import { ComputedFeature, DataType, evalFeature, Feature } from "@reearth/core/mantle";
+import { ComputedFeature, DataType, evalFeature, Feature, guessType } from "@reearth/core/mantle";
 import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
-import { getExtname } from "@reearth/util/path";
 
 import type { ResourceAppearance } from "../../..";
 import {
@@ -71,7 +70,7 @@ export default function Resource({
   const cachedFeatures = useRef<CachedFeature[]>([]);
   const cachedFeatureIds = useRef(new Set<string>());
 
-  const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
+  const ext = useMemo(() => (!type || type === "auto" ? guessType(url) : undefined), [type, url]);
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
 

@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 
 import { renderHook } from "@reearth/test/utils";
 
-import { usePick } from "./hooks";
+import { usePick } from "./utils";
 
 test("usePick", () => {
   const f = ["a", "b"] as const;

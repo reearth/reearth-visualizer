@@ -1,5 +1,4 @@
-import { ComputedFeature, DataType } from "@reearth/core/mantle";
-import { getExtname } from "@reearth/util/path";
+import { ComputedFeature, DataType, guessType } from "@reearth/core/mantle";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
@@ -53,6 +52,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   georss: [],
   gml: [],
   gltf: ["model"],
+  tiles: ["raster"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
@@ -75,10 +75,7 @@ export default function Feature({
   ...props
 }: FeatureComponentProps): JSX.Element | null {
   const data = extractSimpleLayerData(layer);
-  const ext =
-    !data?.type || (data.type as string) === "auto"
-      ? (getExtname(data?.url) as DataType)
-      : undefined;
+  const ext = !data?.type || (data.type as string) === "auto" ? guessType(data?.url) : undefined;
   const displayType = data?.type && displayConfig[ext ?? data.type];
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&

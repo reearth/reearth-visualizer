@@ -3,11 +3,14 @@ import { memo } from "react";
 
 import { extractSimpleLayer, extractSimpleLayerData, type FeatureComponentConfig } from "../utils";
 
-import { useMVT, useWMS } from "./hooks";
+import { useMVT } from "./mvt";
+import { useTiles } from "./tiles";
 import type { Props } from "./types";
+import { useWMS } from "./wms";
 
 function Raster({ isVisible, layer, property, evalFeature }: Props) {
   useWMS({ isVisible, layer, property });
+  useTiles({ isVisible, layer, property });
   useMVT({ isVisible, layer, property, evalFeature });
 
   return null;

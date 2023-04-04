@@ -106,7 +106,8 @@ export type DataType =
   | "gtfs"
   | "gml"
   | "georss"
-  | "gltf";
+  | "gltf"
+  | "tiles";
 
 export type TimeInterval = [start: Date, end?: Date];
 
