@@ -453,4 +453,36 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Number() input numberString has % in it", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["Number('0.32423%') < 1", "200"],
+                  ["true", "1"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            "he[llo]world": "value",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
+        pointSize: 200,
+      },
+    });
+  });
 });
