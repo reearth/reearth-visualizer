@@ -95,13 +95,18 @@ type CachedFeature = {
 
 const MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES = 5000;
 
-type StyleProperty<N = string> = { name: N; convert?: "color" | "vec2" | "vec4" };
+type StyleProperty<N = string> = {
+  name: N;
+  convert?: "color" | "colorFunctionString" | "vec2" | "vec4";
+};
 
 const COMMON_STYLE_PROPERTIES: StyleProperty<"color" | "show">[] = [
   { name: "color", convert: "color" },
   { name: "show" },
 ];
-const MODEL_STYLE_PROPERTIES: StyleProperty<"pointSize" | "meta">[] = [
+const MODEL_STYLE_PROPERTIES: StyleProperty<"color" | "show" | "pointSize" | "meta">[] = [
+  { name: "color", convert: "colorFunctionString" },
+  { name: "show" },
   { name: "pointSize" },
   { name: "meta" },
 ];
@@ -119,6 +124,8 @@ const TILESET_APPEARANCE_FIELDS: (keyof Cesium3DTilesAppearance)[] = [
 const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
   if (convert === "color") {
     return toColor(val);
+  } else if (convert === "colorFunctionString") {
+    return `color("${val}")`;
   }
 
   return val;
@@ -171,7 +178,7 @@ const useFeature = ({
             // TODO: Convert value if it's necessary
             MODEL_STYLE_PROPERTIES.reduce((res, { name, convert }) => {
               const val = convertStyle(style?.[name as keyof typeof style], convert);
-              if (!val) return res;
+              if (val === undefined) return res;
               return { ...res, [name]: val };
             }, {}),
           );
