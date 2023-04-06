@@ -29,7 +29,6 @@ export type ExternalPluginProps = Pick<CommonProps, "pluginProperty" | "pluginBa
 
 export type Props = {
   mapRef?: RefObject<MapRef>;
-  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   className?: string;
   sourceCode?: string;
   pluginId?: string;
@@ -58,11 +57,12 @@ export type Props = {
     height: string | number | undefined,
     extended: boolean | undefined,
   ) => void;
+  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
 } & CommonProps;
 
 export default function Plugin({
   mapRef,
-  moveWidget,
+  onWidgetMove,
   className,
   sourceCode,
   pluginId,
@@ -101,7 +101,7 @@ export default function Plugin({
     onError,
   } = useHooks({
     mapRef,
-    moveWidget,
+    onWidgetMove,
     pluginId,
     extensionId,
     extensionType,

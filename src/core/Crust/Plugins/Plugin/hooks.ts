@@ -25,7 +25,7 @@ import type { PluginPopupInfo } from "./PopupContainer";
 
 export default function ({
   mapRef,
-  moveWidget,
+  onWidgetMove,
   pluginId,
   extensionId,
   pluginBaseUrl,
@@ -44,7 +44,7 @@ export default function ({
   onResize,
 }: {
   mapRef?: RefObject<MapRef>;
-  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
+  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginId?: string;
   extensionId?: string;
   pluginBaseUrl?: string;
@@ -109,7 +109,7 @@ export default function ({
       onRender,
       onResize,
       mapRef,
-      moveWidget,
+      onWidgetMove,
     }) ?? [];
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export function useAPI({
   modalVisible,
   popupVisible,
   externalRef,
-  moveWidget,
+  onWidgetMove,
   onPluginModalShow,
   onPluginPopupShow,
   setUIVisibility,
@@ -208,7 +208,7 @@ export function useAPI({
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
   setUIVisibility: (visible: boolean) => void;
-  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
+  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
   onRender?: (
     options:
       | {
@@ -421,7 +421,7 @@ export function useAPI({
         },
         startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
-        moveWidget,
+        moveWidget: onWidgetMove,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
       });
@@ -446,7 +446,7 @@ export function useAPI({
     setUIVisibility,
     onRender,
     onResize,
-    moveWidget,
+    onWidgetMove,
   ]);
 
   useEffect(() => {
