@@ -501,7 +501,9 @@ export class Node {
   }
 }
 
-function cleanseNumberStringInput(input: string): string {
+function cleanseNumberStringInput(input: any): any {
+  if (typeof input !== "string") return input;
+
   const reservedWords = ["%"]; // add more reserved words if needed
 
   for (const word of reservedWords) {
