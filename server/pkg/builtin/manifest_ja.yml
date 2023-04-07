@@ -204,7 +204,10 @@ extensions:
         fields:
           experimental_core:
             title: 先進的機能を使用
-            description: このシーンに対して先進的機能を有効にします。（ベータ）
+            description: このシーンに対して先進的機能を有効にします。（ベータ版）
+          experimental_sandbox:
+            title: サンドボックスを有効（アルファ版）
+            description: プラグインのiframeのサンドボックスを有効にします。（アルファ版）
       theme:
         title: 公開用テーマ
         description: 公開用のテーマを設定することができます。
