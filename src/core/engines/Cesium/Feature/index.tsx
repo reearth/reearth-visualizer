@@ -44,6 +44,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   kml: ["resource"],
   wms: ["raster"],
   mvt: ["raster"],
+  tms: ["raster"],
   "3dtiles": ["3dtiles"],
   "osm-buildings": ["3dtiles"],
   gpx: "auto",
