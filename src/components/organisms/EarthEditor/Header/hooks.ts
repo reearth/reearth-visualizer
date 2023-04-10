@@ -88,7 +88,6 @@ export default () => {
     if (currentTeam) return;
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
-
     setTeam(team);
   }, [teams, currentTeam, teamId, setTeam]);
 

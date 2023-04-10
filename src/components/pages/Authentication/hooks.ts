@@ -1,11 +1,11 @@
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification } from "@reearth/state";
+import { useTeam, useNotification, useUserId } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
@@ -13,24 +13,53 @@ export default () => {
   const [error] = useCleanUrl();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setCurrentWorkspace] = useTeam();
+  const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
   const t = useT();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
-  const teamId = currentTeam?.id || data?.me?.myTeam.id;
+
+  if (isAuthenticated && !currentUserId) {
+    setCurrentUserId(data?.me?.id);
+  }
+  const workspaceId = useMemo(() => {
+    return currentWorkspace?.id || data?.me?.myTeam.id;
+  }, [currentWorkspace?.id, data?.me?.myTeam.id]);
 
   useEffect(() => {
     if (location.pathname === "/login" && !new URLSearchParams(window.location.search).has("id"))
       login();
   }, [login, location.pathname]);
 
+  const handleRedirect = useCallback(() => {
+    if (currentUserId === data?.me?.id) {
+      setCurrentWorkspace(
+        workspaceId
+          ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
+          : undefined,
+      );
+      navigate(`/dashboard/${workspaceId}`);
+    } else {
+      setCurrentUserId(data?.me?.id);
+      setCurrentWorkspace(data?.me?.myTeam);
+      navigate(`/dashboard/${data?.me?.myTeam.id}`);
+    }
+  }, [
+    currentUserId,
+    data?.me?.id,
+    data?.me?.teams,
+    data?.me?.myTeam,
+    setCurrentWorkspace,
+    workspaceId,
+    navigate,
+    setCurrentUserId,
+  ]);
   useEffect(() => {
-    if (!isAuthenticated || currentTeam || !data || !teamId) return;
-    setTeam(data.me?.myTeam);
-    navigate(`/dashboard/${teamId}`);
-  }, [isAuthenticated, navigate, currentTeam, setTeam, data, teamId]);
+    if (!isAuthenticated || !data || !workspaceId) return;
+    handleRedirect();
+  }, [isAuthenticated, navigate, data, workspaceId, handleRedirect]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {

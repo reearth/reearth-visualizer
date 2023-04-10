@@ -22,7 +22,8 @@ export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][num
 const projectsPerPage = 9;
 
 export default (workspaceId?: string) => {
-  const [currentTeam, setCurrentTeam] = useTeam();
+  const [currentWorkspace, setCurrentWorkspace] = useTeam();
+
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
@@ -50,23 +51,23 @@ export default (workspaceId?: string) => {
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
-    if (workspace?.id && workspace.id !== currentTeam?.id) {
-      setCurrentTeam({
+    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
+      setCurrentWorkspace({
         personal,
         ...workspace,
       });
     }
-  }, [currentTeam, workspace, setCurrentTeam, personal]);
+  }, [currentWorkspace, workspace, setCurrentWorkspace, personal]);
 
   const handleWorkspaceChange = useCallback(
     (workspaceId: string) => {
       const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
       if (workspace) {
-        setCurrentTeam(workspace);
+        setCurrentWorkspace(workspace);
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspaces, setCurrentTeam, navigate],
+    [workspaces, setCurrentWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -81,12 +82,12 @@ export default (workspaceId?: string) => {
           type: "success",
           text: t("Successfully created workspace!"),
         });
-        setCurrentTeam(results.data.createTeam.team);
+        setCurrentWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate, t, setNotification],
+    [createTeamMutation, refetch, setNotification, t, setCurrentWorkspace, navigate],
   );
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default (workspaceId?: string) => {
     if (currentProject) {
       unselectProject();
     }
-  }, [currentProject, setCurrentTeam, unselectProject]);
+  }, [currentProject, setCurrentWorkspace, unselectProject]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {

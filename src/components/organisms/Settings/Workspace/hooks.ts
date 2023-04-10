@@ -24,6 +24,7 @@ type Params = {
 export default (params: Params) => {
   const t = useT();
   const [currentTeam, setTeam] = useTeam();
+
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -91,7 +92,7 @@ export default (params: Params) => {
       }
       setModalShown(false);
     },
-    [createTeamMutation, setTeam, t, setNotification],
+    [createTeamMutation, setNotification, t, setTeam],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -134,7 +135,7 @@ export default (params: Params) => {
       });
       setTeam(teams[0]);
     }
-  }, [teamId, setTeam, teams, deleteTeamMutation, t, setNotification]);
+  }, [teamId, deleteTeamMutation, setNotification, t, setTeam, teams]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 

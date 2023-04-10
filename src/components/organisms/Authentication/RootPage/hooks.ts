@@ -1,24 +1,56 @@
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification } from "@reearth/state";
+import { useTeam, useNotification, useUserId } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 
 export default () => {
   const t = useT();
+  const navigate = useNavigate();
   const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
   const [error, isErrorChecked] = useCleanUrl();
-  const navigate = useNavigate();
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setWorkspace] = useTeam();
+  const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
-  const teamId = currentTeam?.id || data?.me?.myTeam.id;
+
+  if (isAuthenticated && !currentUserId) {
+    setCurrentUserId(data?.me?.id);
+  }
+
+  const workspaceId = useMemo(() => {
+    return currentWorkspace?.id || data?.me?.myTeam.id;
+  }, [currentWorkspace?.id, data?.me?.myTeam.id]);
+
+  const handleRedirect = useCallback(() => {
+    if (currentUserId === data?.me?.id) {
+      setWorkspace(
+        workspaceId
+          ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
+          : undefined,
+      );
+      navigate(`/dashboard/${workspaceId}`);
+    } else {
+      setCurrentUserId(data?.me?.id);
+      setWorkspace(data?.me?.myTeam);
+      navigate(`/dashboard/${data?.me?.myTeam.id}`);
+    }
+  }, [
+    currentUserId,
+    data?.me?.id,
+    data?.me?.teams,
+    data?.me?.myTeam,
+    setWorkspace,
+    workspaceId,
+    navigate,
+    setCurrentUserId,
+  ]);
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -56,9 +88,8 @@ export default () => {
     } else if (!isAuthenticated && !isLoading) {
       login();
     } else {
-      if (currentTeam || !data || !teamId) return;
-      setTeam(data.me?.myTeam);
-      navigate(`/dashboard/${teamId}`);
+      if (!data || !workspaceId) return;
+      handleRedirect();
     }
   }, [
     isAuthenticated,
@@ -66,12 +97,12 @@ export default () => {
     isLoading,
     verifySignup,
     navigate,
-    currentTeam,
-    setTeam,
+    currentWorkspace,
+    handleRedirect,
     data,
-    teamId,
     isErrorChecked,
     error,
+    workspaceId,
   ]);
 
   useEffect(() => {

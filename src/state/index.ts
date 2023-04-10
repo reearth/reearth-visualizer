@@ -1,4 +1,5 @@
 import { atom, useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
 import { LayerSelectionReason } from "@reearth/core/Map";
@@ -93,8 +94,11 @@ export type Team = {
   policy?: Policy | null;
 };
 
-const team = atom<Team | undefined>(undefined);
+const team = atomWithStorage<Team | undefined>("workspace", undefined);
 export const useTeam = () => useAtom(team);
+
+const userId = atomWithStorage<string | undefined>("userId", undefined);
+export const useUserId = () => useAtom(userId);
 
 export type Project = {
   id: string;
