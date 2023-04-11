@@ -21,8 +21,10 @@ function Raster({ isVisible, layer, property, evalFeature }: Props) {
 export default memo(
   Raster,
   (prev, next) =>
-    // In Raster component, we only use polygon, so we only check polygon in layer props.
+    // In Raster component, we only use polygon, polyline and marker, so we only check polygon in layer props.
     isEqual(extractSimpleLayer(prev.layer)?.polygon, extractSimpleLayer(next.layer)?.polygon) &&
+    isEqual(extractSimpleLayer(prev.layer)?.polyline, extractSimpleLayer(next.layer)?.polyline) &&
+    isEqual(extractSimpleLayer(prev.layer)?.marker, extractSimpleLayer(next.layer)?.marker) &&
     isEqual(extractSimpleLayerData(prev.layer), extractSimpleLayerData(next.layer)) &&
     isEqual(prev.property, next.property) &&
     prev.isVisible === next.isVisible &&
