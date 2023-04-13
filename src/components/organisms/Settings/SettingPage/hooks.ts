@@ -9,7 +9,7 @@ import {
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useTeam, useProject } from "@reearth/state";
+import { useWorkspace, useProject } from "@reearth/state";
 
 type Params = {
   teamId?: string;
@@ -19,7 +19,7 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setWorkspace] = useWorkspace();
   const [currentProject, setProject] = useProject();
 
   const { refetch } = useGetMeQuery();
@@ -34,9 +34,9 @@ export default (params: Params) => {
       if (r) {
         refetch();
       }
-      navigate(`/settings/workspaces/${currentTeam?.id}`);
+      navigate(`/settings/workspaces/${currentWorkspace?.id}`);
     },
-    [navigate, refetch, currentTeam?.id],
+    [navigate, refetch, currentWorkspace?.id],
   );
 
   const { data: sceneData } = useGetProjectSceneQuery({
@@ -53,11 +53,11 @@ export default (params: Params) => {
   const teams = teamsData?.me?.teams;
 
   useEffect(() => {
-    if (!currentTeam) {
-      setTeam(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
+    if (!currentWorkspace) {
+      setWorkspace(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTeam, setTeam, teams, teamsData?.me]);
+  }, [currentWorkspace, setWorkspace, teams, teamsData?.me]);
 
   const { data } = useGetProjectWithSceneIdQuery({
     variables: { projectId: projectId ?? "" },
@@ -85,14 +85,14 @@ export default (params: Params) => {
       const team = teams?.find(team => team.id === teamId);
 
       if (team) {
-        setTeam(team);
+        setWorkspace(team);
 
         if (params.projectId) {
           navigate("/settings/account");
         }
       }
     },
-    [teams, setTeam, params.projectId, navigate],
+    [teams, setWorkspace, params.projectId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -104,16 +104,16 @@ export default (params: Params) => {
       });
       const team = results.data?.createTeam?.team;
       if (results) {
-        setTeam(team);
+        setWorkspace(team);
       }
     },
-    [createTeamMutation, setTeam],
+    [createTeamMutation, setWorkspace],
   );
 
   return {
     user,
     teams,
-    currentTeam,
+    currentWorkspace,
     currentProject,
     sceneId,
     modalShown,

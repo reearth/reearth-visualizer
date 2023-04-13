@@ -13,7 +13,7 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification } from "@reearth/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -28,7 +28,7 @@ const projectPerPage = 5;
 
 export default (teamId: string) => {
   const [, setNotification] = useNotification();
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setWorkspace] = useWorkspace();
   const [, setProject] = useProject();
   const navigate = useNavigate();
   const t = useT();
@@ -43,8 +43,8 @@ export default (teamId: string) => {
   });
   const [createScene] = useCreateSceneMutation();
 
-  if (currentTeam && currentTeam.id !== teamId) {
-    teamId = currentTeam?.id;
+  if (currentWorkspace && currentWorkspace.id !== teamId) {
+    teamId = currentWorkspace?.id;
   }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
@@ -60,10 +60,10 @@ export default (teamId: string) => {
   });
 
   useEffect(() => {
-    if (team?.id && !currentTeam?.id) {
-      setTeam(team);
+    if (team?.id && !currentWorkspace?.id) {
+      setWorkspace(team);
     }
-  }, [currentTeam, team, setTeam]);
+  }, [currentWorkspace, team, setWorkspace]);
 
   const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
 

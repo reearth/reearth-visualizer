@@ -15,14 +15,14 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectsPerPage = 9;
 
 export default (workspaceId?: string) => {
-  const [currentWorkspace, setCurrentWorkspace] = useTeam();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();

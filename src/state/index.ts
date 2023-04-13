@@ -83,7 +83,7 @@ export type Policy = {
   datasetCount?: number | null;
 };
 
-export type Team = {
+export type Workspace = {
   id: string;
   name: string;
   members?: Array<any>;
@@ -94,8 +94,8 @@ export type Team = {
   policy?: Policy | null;
 };
 
-const team = atomWithStorage<Team | undefined>("workspace", undefined);
-export const useTeam = () => useAtom(team);
+const workspace = atomWithStorage<Workspace | undefined>("workspace", undefined);
+export const useWorkspace = () => useAtom(workspace);
 
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
@@ -124,7 +124,7 @@ export const useNotification = () => useAtom(notification);
 
 const unselectProject = atom(null, (_get, set) => {
   set(project, undefined);
-  set(team, undefined);
+  set(workspace, undefined);
   set(sceneId, undefined);
   set(selected, undefined);
   set(selectedBlock, undefined);

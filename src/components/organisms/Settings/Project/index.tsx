@@ -16,7 +16,7 @@ type Props = {
 const Project: React.FC<Props> = ({ projectId }) => {
   const {
     project,
-    currentTeam,
+    currentWorkspace,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,
@@ -27,8 +27,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
   } = useHooks({ projectId });
 
   return (
-    <SettingPage teamId={currentTeam?.id} projectId={projectId}>
-      <SettingsHeader currentWorkspace={currentTeam} currentProject={project?.name} />
+    <SettingPage teamId={currentWorkspace?.id} projectId={projectId}>
+      <SettingsHeader currentWorkspace={currentWorkspace} currentProject={project?.name} />
       {!project?.isArchived ? (
         <ProfileSection
           currentProject={project}
@@ -38,7 +38,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
           toggleAssetModal={toggleAssetModal}
           assetModal={
             <AssetModal
-              teamId={currentTeam?.id}
+              teamId={currentWorkspace?.id}
               isOpen={assetModalOpened}
               initialAssetUrl={project?.imageUrl}
               onSelect={updateProjectImageUrl}
@@ -51,7 +51,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
       )}
       <DangerSection
         project={project}
-        teamId={currentTeam?.id}
+        teamId={currentWorkspace?.id}
         archiveProject={archiveProject}
         deleteProject={deleteProject}
       />

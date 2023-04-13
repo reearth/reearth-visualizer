@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification, useUserId } from "@reearth/state";
+import { useWorkspace, useNotification, useUserId } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
@@ -13,7 +13,7 @@ export default () => {
   const [error] = useCleanUrl();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentWorkspace, setCurrentWorkspace] = useTeam();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;

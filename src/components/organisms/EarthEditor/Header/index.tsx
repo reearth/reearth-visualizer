@@ -25,7 +25,7 @@ const Header: React.FC<Props> = ({ className }) => {
     projectStatus,
     publicationModalLoading,
     user,
-    currentTeam,
+    currentWorkspace,
     currentProject,
     validAlias,
     validatingAlias,
@@ -53,7 +53,7 @@ const Header: React.FC<Props> = ({ className }) => {
         user={user}
         workspaces={teams}
         teamId={teamId}
-        currentWorkspace={currentTeam}
+        currentWorkspace={currentWorkspace}
         modalShown={workspaceModalVisible}
         onPublishmentStatusClick={handlePublicationModalOpen}
         onSignOut={handleLogout}

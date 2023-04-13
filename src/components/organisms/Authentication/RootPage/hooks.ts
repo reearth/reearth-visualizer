@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification, useUserId } from "@reearth/state";
+import { useWorkspace, useNotification, useUserId } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 
@@ -14,7 +14,7 @@ export default () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
   const [error, isErrorChecked] = useCleanUrl();
-  const [currentWorkspace, setWorkspace] = useTeam();
+  const [currentWorkspace, setWorkspace] = useWorkspace();
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
 

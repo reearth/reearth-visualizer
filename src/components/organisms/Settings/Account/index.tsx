@@ -13,7 +13,7 @@ export type Props = {};
 const Account: React.FC<Props> = () => {
   const t = useT();
   const {
-    currentTeam,
+    currentWorkspace,
     currentProject,
     me,
     hasPassword,
@@ -25,7 +25,7 @@ const Account: React.FC<Props> = () => {
   } = useHooks();
 
   return (
-    <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
+    <SettingPage teamId={currentWorkspace?.id} projectId={currentProject?.id}>
       <SettingsHeader title={t("Account")} />
       <ProfileSection username={me?.name} updateName={updateName} />
       {me && (

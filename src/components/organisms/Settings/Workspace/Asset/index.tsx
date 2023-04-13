@@ -13,11 +13,11 @@ type Props = {
 
 const Asset: React.FC<Props> = ({ teamId }: Props) => {
   const t = useT();
-  const { currentProject, currentTeam } = useHooks({ teamId });
+  const { currentProject, currentWorkspace } = useHooks({ teamId });
 
   return (
     <SettingPage teamId={teamId} projectId={currentProject?.id}>
-      <SettingsHeader title={t("Assets")} currentWorkspace={currentTeam} />
+      <SettingsHeader title={t("Assets")} currentWorkspace={currentWorkspace} />
       <AssetContainer teamId={teamId} isMultipleSelectable height={700} allowDeletion />
     </SettingPage>
   );

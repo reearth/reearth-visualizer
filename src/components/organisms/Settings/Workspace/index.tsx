@@ -15,7 +15,7 @@ type Props = {
 const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
   const {
     me,
-    currentTeam,
+    currentWorkspace,
     currentProject,
     searchedUser,
     changeSearchedUser,
@@ -27,7 +27,7 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
     removeMemberFromTeam,
   } = useHooks({ teamId });
   const [owner, setOwner] = useState(false);
-  const members = currentTeam?.members;
+  const members = currentWorkspace?.members;
 
   const checkOwner = useCallback(() => {
     if (members) {
@@ -47,9 +47,9 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage teamId={teamId} projectId={currentProject?.id}>
-      <SettingsHeader currentWorkspace={currentTeam} />
-      <ProfileSection currentTeam={currentTeam} updateTeamName={updateName} owner={owner} />
-      {!currentTeam?.personal && (
+      <SettingsHeader currentWorkspace={currentWorkspace} />
+      <ProfileSection currentTeam={currentWorkspace} updateTeamName={updateName} owner={owner} />
+      {!currentWorkspace?.personal && (
         <MembersSection
           me={me}
           owner={owner}
@@ -62,7 +62,7 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
           removeMemberFromTeam={removeMemberFromTeam}
         />
       )}
-      {me.myTeam !== teamId && <DangerSection team={currentTeam} deleteTeam={deleteTeam} />}
+      {me.myTeam !== teamId && <DangerSection team={currentWorkspace} deleteTeam={deleteTeam} />}
     </SettingPage>
   );
 };

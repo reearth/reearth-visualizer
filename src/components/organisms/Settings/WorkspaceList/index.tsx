@@ -19,7 +19,7 @@ const WorkspaceList: React.FC<Props> = ({ teamId }) => {
   const t = useT();
   const {
     teams,
-    currentTeam,
+    currentWorkspace,
     createTeam,
     selectWorkspace,
     openModal,
@@ -32,7 +32,7 @@ const WorkspaceList: React.FC<Props> = ({ teamId }) => {
     <SettingPage teamId={teamId}>
       <SettingsHeader title={t("Workspace List")} />
       <MoleculeWorkspaceList
-        currentTeam={currentTeam}
+        currentTeam={currentWorkspace}
         teams={teams}
         onWorkspaceSelect={selectWorkspace}
         onCreationButtonClick={openModal}

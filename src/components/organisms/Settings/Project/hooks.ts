@@ -7,7 +7,7 @@ import {
   useDeleteProjectMutation,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification } from "@reearth/state";
+import { useWorkspace, useNotification } from "@reearth/state";
 
 type Params = {
   projectId: string;
@@ -16,7 +16,7 @@ type Params = {
 export default ({ projectId }: Params) => {
   const t = useT();
   const [, setNotification] = useNotification();
-  const [currentTeam] = useTeam();
+  const [currentWorkspace] = useWorkspace();
 
   const { data } = useGetProjectQuery({
     variables: { projectId: projectId ?? "" },
@@ -131,7 +131,7 @@ export default ({ projectId }: Params) => {
   return {
     project,
     projectId,
-    currentTeam,
+    currentWorkspace,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,

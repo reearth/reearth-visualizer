@@ -15,7 +15,7 @@ type Props = {
 const Dataset: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
-    currentTeam,
+    currentWorkspace,
     currentProject,
     datasetSchemas,
     datasetLoading,
@@ -27,7 +27,7 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
 
   return (
     <SettingPage
-      teamId={currentTeam?.id}
+      teamId={currentWorkspace?.id}
       projectId={projectId}
       loading={datasetLoading}
       hasMoreItems={hasMoreDataSets}

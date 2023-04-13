@@ -26,7 +26,7 @@ import {
   useRootLayerId,
   useIsCapturing,
   useCamera,
-  useTeam,
+  useWorkspace,
   useSceneId,
   useSceneMode,
   useSelectedBlock,
@@ -67,7 +67,7 @@ export default (mode: Mode) => {
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
   const [sceneMode] = useSceneMode();
-  const [team] = useTeam();
+  const [workspace] = useWorkspace();
   const [sceneId] = useSceneId();
   const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
     useWidgetAlignEditorActivated();
@@ -361,7 +361,7 @@ export default (mode: Mode) => {
 
   return {
     pane,
-    teamId: team?.id,
+    workspaceId: workspace?.id,
     error,
     loading,
     isLayerGroup,

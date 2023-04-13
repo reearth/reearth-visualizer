@@ -27,7 +27,7 @@ const SettingPage: React.FC<Props> = ({
   const {
     user,
     teams = [],
-    currentTeam,
+    currentWorkspace,
     currentProject,
     sceneId,
     modalShown,
@@ -44,7 +44,7 @@ const SettingPage: React.FC<Props> = ({
     <MoleculesSettingPage
       user={user}
       workspaces={teams}
-      currentWorkspace={currentTeam}
+      currentWorkspace={currentWorkspace}
       currentProject={currentProject}
       sceneId={sceneId}
       loading={loading}

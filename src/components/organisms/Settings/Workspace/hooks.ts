@@ -15,7 +15,7 @@ import {
 } from "@reearth/gql";
 import { Team } from "@reearth/gql/graphql-client-api";
 import { useT } from "@reearth/i18n";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification } from "@reearth/state";
 
 type Params = {
   teamId: string;
@@ -23,7 +23,7 @@ type Params = {
 
 export default (params: Params) => {
   const t = useT();
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
@@ -52,12 +52,12 @@ export default (params: Params) => {
   );
 
   useEffect(() => {
-    if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
-      navigate(`/settings/workspaces/${currentTeam?.id}`);
+    if (params.teamId && currentWorkspace?.id && params.teamId !== currentWorkspace.id) {
+      navigate(`/settings/workspaces/${currentWorkspace?.id}`);
     }
-  }, [params, currentTeam, navigate]);
+  }, [params, currentWorkspace, navigate]);
 
-  const teamId = currentTeam?.id;
+  const teamId = currentWorkspace?.id;
 
   const [useGetUserBySearchQuery, { data: searchUserData }] = useGetUserBySearchLazyQuery();
 
@@ -84,7 +84,7 @@ export default (params: Params) => {
           text: t("Failed to create workspace."),
         });
       } else {
-        setTeam(team);
+        setWorkspace(team);
         setNotification({
           type: "success",
           text: t("Sucessfully created a workspace!"),
@@ -92,7 +92,7 @@ export default (params: Params) => {
       }
       setModalShown(false);
     },
-    [createTeamMutation, setNotification, t, setTeam],
+    [createTeamMutation, setNotification, t, setWorkspace],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -107,14 +107,14 @@ export default (params: Params) => {
           text: t("Failed to update workspace name."),
         });
       } else {
-        setTeam(results.data?.updateTeam?.team);
+        setWorkspace(results.data?.updateTeam?.team);
         setNotification({
           type: "info",
           text: t("You have changed the workspace's name."),
         });
       }
     },
-    [teamId, updateTeamMutation, t, setNotification, setTeam],
+    [teamId, updateTeamMutation, t, setNotification, setWorkspace],
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
@@ -133,9 +133,9 @@ export default (params: Params) => {
         type: "info",
         text: t("Workspace was successfully deleted."),
       });
-      setTeam(teams[0]);
+      setWorkspace(teams[0]);
     }
-  }, [teamId, deleteTeamMutation, setNotification, t, setTeam, teams]);
+  }, [teamId, deleteTeamMutation, setNotification, t, setWorkspace, teams]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
@@ -156,7 +156,7 @@ export default (params: Params) => {
             });
             return;
           }
-          setTeam(team);
+          setWorkspace(team);
         }),
       );
       if (results) {
@@ -166,7 +166,7 @@ export default (params: Params) => {
         });
       }
     },
-    [teamId, addMemberToTeamMutation, setTeam, setNotification, t],
+    [teamId, addMemberToTeamMutation, setWorkspace, setNotification, t],
   );
 
   const [updateMemberOfTeamMutation] = useUpdateMemberOfTeamMutation();
@@ -187,11 +187,11 @@ export default (params: Params) => {
         });
         const team = results.data?.updateMemberOfTeam?.team;
         if (team) {
-          setTeam(team);
+          setWorkspace(team);
         }
       }
     },
-    [teamId, setTeam, updateMemberOfTeamMutation],
+    [teamId, setWorkspace, updateMemberOfTeamMutation],
   );
 
   const [removeMemberFromTeamMutation] = useRemoveMemberFromTeamMutation();
@@ -211,29 +211,29 @@ export default (params: Params) => {
         });
         return;
       }
-      setTeam(team);
+      setWorkspace(team);
       setNotification({
         type: "success",
         text: t("Successfully removed member from the workspace."),
       });
     },
-    [teamId, removeMemberFromTeamMutation, setTeam, t, setNotification],
+    [teamId, removeMemberFromTeamMutation, setWorkspace, t, setNotification],
   );
 
   const selectWorkspace = useCallback(
     (team: Team) => {
       if (team.id) {
-        setTeam(team);
+        setWorkspace(team);
         navigate(`/settings/workspaces/${team.id}`);
       }
     },
-    [navigate, setTeam],
+    [navigate, setWorkspace],
   );
 
   return {
     me,
     teams,
-    currentTeam,
+    currentWorkspace,
     currentProject,
     searchedUser,
     changeSearchedUser,

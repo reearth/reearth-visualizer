@@ -19,7 +19,7 @@ type Props = {
 const Public: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
-    currentTeam,
+    currentWorkspace,
     currentProject,
     projectAlias,
     projectStatus,
@@ -41,7 +41,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
   } = useHooks({ projectId });
 
   return (
-    <SettingPage teamId={currentTeam?.id} projectId={projectId}>
+    <SettingPage teamId={currentWorkspace?.id} projectId={projectId}>
       <SettingsHeader currentProject={currentProject?.name} title={t("Public")} />
       {!project?.isArchived ? (
         <>
@@ -60,7 +60,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
             toggleAssetModal={toggleAssetModal}
             assetModal={
               <AssetModal
-                teamId={currentTeam?.id}
+                teamId={currentWorkspace?.id}
                 isOpen={assetModalOpened}
                 onSelect={updatePublicImage}
                 toggleAssetModal={toggleAssetModal}

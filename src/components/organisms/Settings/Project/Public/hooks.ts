@@ -11,7 +11,7 @@ import {
 } from "@reearth/gql";
 import { useLang as useCurrentLang } from "@reearth/i18n";
 import {
-  useTeam,
+  useWorkspace,
   useProject,
   useNotification,
   NotificationType,
@@ -23,7 +23,7 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const [currentTeam] = useTeam();
+  const [currentWorkspace] = useWorkspace();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -169,7 +169,7 @@ export default ({ projectId }: Params) => {
   const [currentTheme] = useCurrentTheme();
 
   return {
-    currentTeam,
+    currentWorkspace,
     currentProject,
     projectAlias,
     projectStatus: convertStatus(project?.publishmentStatus),

@@ -16,7 +16,7 @@ export interface Props {
 const PropertyPane: React.FC<Props> = ({ mode }) => {
   const {
     pane,
-    teamId,
+    workspaceId,
     isLayerGroup,
     linkedDatasetSchemaId,
     linkedDatasetId,
@@ -49,8 +49,8 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
   } = useHooks(mode);
 
   const AssetModalComponent: ComponentType<AssetModalProps> = useCallback(
-    ({ ...props }) => <AssetModal teamId={teamId} {...props} />,
-    [teamId],
+    ({ ...props }) => <AssetModal teamId={workspaceId} {...props} />,
+    [workspaceId],
   );
 
   return (

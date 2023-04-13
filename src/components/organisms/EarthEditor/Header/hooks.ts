@@ -14,7 +14,7 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
+import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -23,7 +23,7 @@ export default () => {
 
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
-  const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspace, setWorkspace] = useWorkspace();
   const [currentProject, setProject] = useProject();
 
   const navigate = useNavigate();
@@ -85,11 +85,11 @@ export default () => {
   }, [validatingAlias, checkProjectAliasData, project]);
 
   useEffect(() => {
-    if (currentTeam) return;
+    if (currentWorkspace) return;
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
-    setTeam(team);
-  }, [teams, currentTeam, teamId, setTeam]);
+    setWorkspace(team);
+  }, [teams, currentWorkspace, teamId, setWorkspace]);
 
   useEffect(() => {
     setProject(p =>
@@ -162,12 +162,12 @@ export default () => {
   const handleTeamChange = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
-      if (team && teamId !== currentTeam?.id) {
-        setTeam(team);
+      if (team && teamId !== currentWorkspace?.id) {
+        setWorkspace(team);
         navigate(`/dashboard/${teamId}`);
       }
     },
-    [teams, currentTeam?.id, setTeam, navigate],
+    [teams, currentWorkspace?.id, setWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -178,11 +178,11 @@ export default () => {
         refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
-        setTeam(results.data.createTeam.team);
+        setWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setTeam, navigate],
+    [createTeamMutation, setWorkspace, navigate],
   );
 
   useEffect(() => {
@@ -213,7 +213,7 @@ export default () => {
     projectStatus: convertStatus(project?.publishmentStatus),
     publicationModalLoading,
     user,
-    currentTeam,
+    currentWorkspace,
     currentProject,
     validAlias,
     validatingAlias,
