@@ -1,3 +1,6 @@
+import LRUCache from "lru-cache";
+import { useMemo } from "react";
+
 import { ComputedFeature, DataType, guessType } from "@reearth/core/mantle";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
@@ -70,6 +73,9 @@ const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
   return layer.layer[k];
 };
 
+const CACHED_COMPONENTS = new LRUCache<string, JSX.Element>({ max: 10000 });
+const FEATURE_DELEGATE_THRESHOLD = 6000;
+
 export default function Feature({
   layer,
   isHidden,
@@ -77,49 +83,73 @@ export default function Feature({
 }: FeatureComponentProps): JSX.Element | null {
   const data = extractSimpleLayerData(layer);
   const ext = !data?.type || (data.type as string) === "auto" ? guessType(data?.url) : undefined;
-  const displayType = data?.type && displayConfig[ext ?? data.type];
+  let displayType = data?.type && displayConfig[ext ?? data.type];
+  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
+    displayType = ["resource"];
+  }
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
 
-  const renderedComponents = new Set<string>(); // Initialize a set to store rendered components
+  const cachedRenderComponent = (
+    k: keyof AppearanceTypes,
+    f?: ComputedFeature,
+  ): JSX.Element | null => {
+    const componentId = `${layer.id}_${f?.id ?? ""}_${k}_${JSON.stringify(f?.[k]) ?? ""}`;
 
-  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature) => {
-    const [C, config] = components[k] ?? [];
-    if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
+    // Check if the component output is already cached
+    const cachedComponent = CACHED_COMPONENTS.get(componentId);
+    if (cachedComponent) {
+      return cachedComponent;
+    }
+
+    try {
+      const [C, config] = components[k] ?? [];
+      if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
+        return null;
+      }
+
+      if (
+        (Array.isArray(displayType) && !displayType.includes(k)) ||
+        (!Array.isArray(displayType) && displayType !== "auto")
+      ) {
+        return null;
+      }
+
+      // Skip using the Resource component if the data layer type is geojson and it is considered as active
+      if (data?.type === "geojson" && displayType === "auto" && k === "resource") {
+        return null;
+      }
+
+      const component = (
+        <C
+          {...props}
+          key={componentId}
+          id={componentId}
+          property={f ? f[k] : layer[k] || pickProperty(k, layer)}
+          geometry={f?.geometry}
+          feature={f}
+          layer={layer}
+          isVisible={layer.layer.visible !== false && !isHidden}
+        />
+      );
+
+      // Cache the component output
+      CACHED_COMPONENTS.set(componentId, component);
+
+      return component;
+    } catch (e) {
+      // Log any errors that occur during rendering
+      console.error(`Error rendering component ${componentId}`, e);
       return null;
     }
-
-    if (
-      (Array.isArray(displayType) && !displayType.includes(k)) ||
-      (!Array.isArray(displayType) && displayType !== "auto")
-    ) {
-      return null;
-    }
-
-    const componentId = `${layer.id}_${f?.id ?? ""}_${k}`;
-
-    if (renderedComponents.has(componentId)) {
-      return null; // Skip rendering if the component with the same id has already been rendered
-    }
-
-    renderedComponents.add(componentId); // Add the component id to the set of rendered components
-
-    return (
-      <C
-        {...props}
-        key={componentId}
-        id={componentId}
-        property={f ? f[k] : layer[k] || pickProperty(k, layer)}
-        geometry={f?.geometry}
-        feature={f}
-        layer={layer}
-        isVisible={layer.layer.visible !== false && !isHidden}
-      />
-    );
   };
 
-  if (areAllDisplayTypeNoFeature) {
+  const cachedNoFeatureComponents = useMemo(() => {
+    if (!areAllDisplayTypeNoFeature || !displayType || !Array.isArray(displayType)) {
+      return null;
+    }
+
     return (
       <>
         {displayType.map(k => {
@@ -143,13 +173,16 @@ export default function Feature({
         })}
       </>
     );
-  }
+  }, [areAllDisplayTypeNoFeature, displayType, layer, isHidden, data, props]);
 
   return (
     <>
-      {[undefined, ...layer.features].flatMap(f =>
-        (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => renderComponent(k, f)),
-      )}
+      {cachedNoFeatureComponents ||
+        [undefined, ...layer.features].flatMap(f =>
+          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k =>
+            cachedRenderComponent(k, f),
+          ),
+        )}
     </>
   );
 }

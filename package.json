@@ -135,6 +135,7 @@
         "leaflet": "1.9.3",
         "localforage": "1.10.0",
         "lodash-es": "4.17.21",
+        "lru-cache": "8.0.4",
         "mini-svg-data-uri": "1.4.4",
         "parse-domain": "7.0.1",
         "quickjs-emscripten": "0.21.1",

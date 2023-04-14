@@ -2,7 +2,7 @@ import { Entity, type DataSource, Color } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
-import { ComputedFeature, DataType, evalFeature, Feature, guessType } from "@reearth/core/mantle";
+import { ComputedFeature, evalFeature, Feature, guessType } from "@reearth/core/mantle";
 import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
 
 import type { ResourceAppearance } from "../../..";
@@ -28,8 +28,6 @@ const comps = {
   czml: CzmlDataSource,
   geojson: GeoJsonDataSource,
 };
-
-const DataTypeListAllowsOnlyProperty: DataType[] = ["geojson"];
 
 type CachedFeature = {
   feature: Feature;
@@ -62,7 +60,7 @@ export default function Resource({
     const url = property?.url;
     return [
       type ?? (data?.type as ResourceAppearance["type"]),
-      url ?? (data && !DataTypeListAllowsOnlyProperty.includes(data.type) ? data?.url : undefined),
+      url ?? data?.url,
       !!data?.time?.updateClockOnLoad,
     ];
   }, [property, layer]);
@@ -132,6 +130,17 @@ export default function Resource({
     [updateClock, viewer?.clock],
   );
 
+  // convert hexCodeColorString to ColorValue?s
+  const strokeValue = useMemo(
+    () => (stroke ? Color.fromCssColorString(stroke) : undefined),
+    [stroke],
+  );
+  const fillValue = useMemo(() => (fill ? Color.fromCssColorString(fill) : undefined), [fill]);
+  const markerColorValue = useMemo(
+    () => (markerColor ? Color.fromCssColorString(markerColor) : undefined),
+    [markerColor],
+  );
+
   useEffect(() => {
     if (!viewer) return;
     cachedFeatures.current.forEach(f => {
@@ -157,11 +166,11 @@ export default function Resource({
       clampToGround={clampToGround}
       onChange={handleChange}
       onLoad={handleLoad}
-      stroke={Color.fromCssColorString(stroke ?? "white")}
-      fill={Color.fromCssColorString(fill ?? "transparent")}
+      stroke={strokeValue}
+      fill={fillValue}
       strokeWidth={strokeWidth}
       markerSize={markerSize}
-      markerColor={Color.fromCssColorString(markerColor ?? "white")}
+      markerColor={markerColorValue}
     />
   );
 }
