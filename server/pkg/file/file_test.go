@@ -3,6 +3,7 @@ package file
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/spf13/afero"
@@ -166,18 +167,18 @@ func TestFilteredIterator(t *testing.T) {
 
 func TestFsIterator(t *testing.T) {
 	fs := afero.NewMemMapFs()
-	_ = fs.MkdirAll("a/b", 0755)
+	_ = fs.MkdirAll(filepath.Join("a", "b"), 0755)
 	f, _ := fs.Create("b")
 	_, _ = f.WriteString("hello")
 	_ = f.Close()
-	_, _ = fs.Create("a/b/c")
+	_, _ = fs.Create(filepath.Join("a", "b", "c"))
 
 	a, err := NewFsIterator(fs)
 	assert.NoError(t, err)
 
 	n, err := a.Next()
 	assert.NoError(t, err)
-	assert.Equal(t, "a/b/c", n.Path)
+	assert.Equal(t, filepath.Join("a", "b", "c"), n.Path)
 	nd, err := io.ReadAll(n.Content)
 	assert.NoError(t, err)
 	assert.Equal(t, []byte{}, nd)

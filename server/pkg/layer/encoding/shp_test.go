@@ -21,6 +21,7 @@ func TestEncodeSHP(t *testing.T) {
 		want  shp.Shape
 	}{
 		{
+			name: "polygon",
 			layer: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
@@ -141,13 +142,14 @@ func TestEncodeSHP(t *testing.T) {
 			assert.NoError(t, err)
 			en := NewSHPEncoder(tmpFile)
 			assert.NoError(t, en.Encode(tt.layer))
+			assert.NoError(t, tmpFile.Close())
 
 			shape, err := shp.Open(tmpFile.Name())
+			assert.NoError(t, err)
 			assert.True(t, shape.Next())
 
-			assert.NoError(t, err)
-			assert.NoError(t, os.Remove(tmpFile.Name()))
 			assert.NoError(t, shape.Close())
+			assert.NoError(t, os.Remove(tmpFile.Name()))
 
 			_, p := shape.Shape()
 			assert.Equal(t, tt.want, p)
