@@ -38,19 +38,19 @@ func TestCache_Get(t *testing.T) {
 	assert.NoError(t, e)
 	assert.Same(t, data, res)
 	assert.Equal(t, 1, called)
-	time.Sleep(1)
+	time.Sleep(1 * time.Nanosecond)
 
 	res, e = cache.Get(ctx) // second
 	assert.NoError(t, e)
 	assert.Same(t, data, res)
 	assert.Equal(t, 2, called)
-	time.Sleep(1)
+	time.Sleep(1 * time.Nanosecond)
 
 	res, e = cache.Get(ctx) // third
 	assert.Same(t, err, e)
 	assert.Same(t, data, res)
 	assert.Equal(t, 3, called)
-	time.Sleep(1)
+	time.Sleep(1 * time.Nanosecond)
 
 	res, e = cache.Get(ctx) // forth
 	assert.NoError(t, e)
