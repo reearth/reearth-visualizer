@@ -13,10 +13,10 @@ import { useT } from "@reearth/i18n";
 import useHooks from "./hooks";
 
 type Props = {
-  teamId: string;
+  workspaceId: string;
 };
 
-const ProjectList: React.FC<Props> = ({ teamId }) => {
+const ProjectList: React.FC<Props> = ({ workspaceId }) => {
   const t = useT();
   const {
     loading,
@@ -34,7 +34,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
-  } = useHooks(teamId);
+  } = useHooks(workspaceId);
 
   type Tab = "Working";
   const headers = {
@@ -43,7 +43,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage
-      teamId={teamId}
+      workspaceId={workspaceId}
       loading={loadingProjects}
       hasMoreItems={hasMoreProjects}
       onScroll={handleGetMoreProjects}>
@@ -71,7 +71,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         selectedAsset={selectedAsset}
         assetModal={
           <AssetModal
-            teamId={teamId}
+            workspaceId={workspaceId}
             isOpen={assetModalOpened}
             onSelect={onAssetSelect}
             toggleAssetModal={toggleAssetModal}

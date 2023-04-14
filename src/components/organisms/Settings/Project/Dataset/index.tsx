@@ -27,7 +27,7 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
 
   return (
     <SettingPage
-      teamId={currentWorkspace?.id}
+      workspaceId={currentWorkspace?.id}
       projectId={projectId}
       loading={datasetLoading}
       hasMoreItems={hasMoreDataSets}

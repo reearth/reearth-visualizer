@@ -20,7 +20,7 @@ type Props = {
     name: string;
     isArchived: boolean;
   };
-  teamId?: string;
+  workspaceId?: string;
   isVisible: boolean;
   archiveProject?: (archived: boolean) => void;
   deleteProject?: () => void;
@@ -30,7 +30,7 @@ type Props = {
 const DangerModal: React.FC<Props> = ({
   actionType,
   project,
-  teamId,
+  workspaceId,
   isVisible,
   archiveProject,
   deleteProject,
@@ -46,8 +46,8 @@ const DangerModal: React.FC<Props> = ({
     if (actionType === "delete") deleteProject?.();
     if (actionType === "archive") archiveProject?.(true);
     if (actionType === "unarchive") archiveProject?.(false);
-    navigate(`/settings/workspaces/${teamId}/projects`);
-  }, [navigate, archiveProject, deleteProject, actionType, teamId, project, disabled]);
+    navigate(`/settings/workspaces/${workspaceId}/projects`);
+  }, [project, disabled, actionType, deleteProject, archiveProject, navigate, workspaceId]);
 
   useEffect(() => {
     if (text == project?.name) {

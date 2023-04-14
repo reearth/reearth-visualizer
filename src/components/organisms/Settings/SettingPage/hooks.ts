@@ -12,7 +12,7 @@ import {
 import { useWorkspace, useProject } from "@reearth/state";
 
 type Params = {
-  teamId?: string;
+  workspaceId?: string;
   projectId?: string;
 };
 
@@ -44,20 +44,24 @@ export default (params: Params) => {
     skip: !projectId,
   });
   const sceneId = sceneData?.scene?.id;
-  const teamId = params.teamId ?? sceneData?.scene?.teamId;
+  const workspaceId = params.workspaceId ?? sceneData?.scene?.teamId;
 
   const { data: teamsData } = useGetTeamsQuery();
   const user: User = {
     name: teamsData?.me?.name ?? "",
   };
-  const teams = teamsData?.me?.teams;
+  const workspaces = teamsData?.me?.teams;
 
   useEffect(() => {
     if (!currentWorkspace) {
-      setWorkspace(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
+      setWorkspace(
+        workspaceId
+          ? workspaces?.find(t => t.id === workspaceId)
+          : teamsData?.me?.myTeam ?? undefined,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWorkspace, setWorkspace, teams, teamsData?.me]);
+  }, [currentWorkspace, setWorkspace, workspaces, teamsData?.me]);
 
   const { data } = useGetProjectWithSceneIdQuery({
     variables: { projectId: projectId ?? "" },
@@ -81,18 +85,18 @@ export default (params: Params) => {
   }, [project, setProject]);
 
   const handleWorkspaceChange = useCallback(
-    (teamId: string) => {
-      const team = teams?.find(team => team.id === teamId);
+    (workspaceId: string) => {
+      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
 
-      if (team) {
-        setWorkspace(team);
+      if (workspace) {
+        setWorkspace(workspace);
 
         if (params.projectId) {
           navigate("/settings/account");
         }
       }
     },
-    [teams, setWorkspace, params.projectId, navigate],
+    [workspaces, setWorkspace, params.projectId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -102,9 +106,9 @@ export default (params: Params) => {
         variables: { name: data.name },
         refetchQueries: ["GetTeams"],
       });
-      const team = results.data?.createTeam?.team;
+      const workspace = results.data?.createTeam?.team;
       if (results) {
-        setWorkspace(team);
+        setWorkspace(workspace);
       }
     },
     [createTeamMutation, setWorkspace],
@@ -112,7 +116,7 @@ export default (params: Params) => {
 
   return {
     user,
-    teams,
+    workspaces,
     currentWorkspace,
     currentProject,
     sceneId,

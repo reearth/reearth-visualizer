@@ -20,7 +20,7 @@ export type Props = {
   searchedUser?: User;
   searchUser: (nameOrEmail: string) => void;
   changeSearchedUser: (user: User | undefined) => void;
-  addMembersToTeam?: (userIds: string[]) => Promise<void>;
+  addMembersToWorkspace?: (userIds: string[]) => Promise<void>;
 };
 
 const AddMemberModal: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const AddMemberModal: React.FC<Props> = ({
   searchedUser,
   searchUser,
   changeSearchedUser,
-  addMembersToTeam,
+  addMembersToWorkspace,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -69,12 +69,12 @@ const AddMemberModal: React.FC<Props> = ({
   }, [setUsers, setNameOrEmail, changeSearchedUser, close]);
 
   const add = useCallback(async () => {
-    await addMembersToTeam?.(users.map(({ id }) => id));
+    await addMembersToWorkspace?.(users.map(({ id }) => id));
     changeSearchedUser(undefined);
     setUsers([]);
     setNameOrEmail("");
     close();
-  }, [addMembersToTeam, users, setUsers, setNameOrEmail, changeSearchedUser, close]);
+  }, [addMembersToWorkspace, users, changeSearchedUser, close]);
 
   return (
     <Modal
