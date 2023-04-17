@@ -1,0 +1,7 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow": "/.github/workflows/**/*.yml"
+    },
+    "vitest.commandLine": "yarn run vitest watch"
+}

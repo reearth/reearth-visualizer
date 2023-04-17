@@ -1,0 +1,14 @@
+Thumbs.db
+.DS_Store
+node_modules
+*.log
+/coverage
+/dist
+/vendor
+/storybook-static
+__screenshots__
+/playwright-report
+/test-results
+/.env*
+/reearth-config.json
+.idea/*
