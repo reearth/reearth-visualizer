@@ -27,8 +27,7 @@ export const useCore = (
         ? !!data?.node?.property?.items.find(
             item =>
               item.__typename === "PropertyGroup" &&
-              item.fields[0].fieldId === "experimental_core" &&
-              item.fields[0].value,
+              item.fields.find(f => f.fieldId === "experimental_core" && f.value),
           )
         : false;
     return enable;
