@@ -29,11 +29,9 @@ jobs:
         working-directory: web
     steps:
       - uses: actions/checkout@v3
-        with:
-          node-version: lts/*
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -68,7 +66,7 @@ jobs:
           name: build
           path: web/reearth-web.tar.gz
           if-no-files-found: error
-      
+
   ci-server:
     needs: changed-files
     if: contains(needs.changed-files.outputs.files, 'server/')
@@ -128,7 +126,7 @@ jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
+    if: ${{ github.event_name == 'push' && github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       tag: ${{ steps.info.outputs.tag }}
@@ -171,7 +169,7 @@ jobs:
     name: Build and release server
     runs-on: ubuntu-latest
     needs: [ci-web, ci-server, info]
-    if: ${{ github.event_name == 'push' && needs.ci-server.status == 'success' && (needs.ci-web.status == 'success' || needs.ci-web.status == 'skipped') && (needs.info.outputs.name || needs.info.outputs.tag) }}
+    if: ${{ github.event_name == 'push' && always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && (needs.info.outputs.name || needs.info.outputs.tag) }}
     env:
       ARTIFACTS: server/dist/reearth_*.*
     steps:
@@ -213,7 +211,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     needs: [ci-web, ci-server, info]
-    if: ${{ github.event_name == 'push' && needs.ci-web.status == 'success' && (needs.ci-server.status == 'success' || needs.ci-server.status == 'skipped') && (needs.info.outputs.name || needs.info.outputs.tag) }} 
+    if: ${{ github.event_name == 'push' && always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && (needs.info.outputs.name || needs.info.outputs.tag) }}
     env:
       ARTIFACT: web/reearth-web_${{ needs.info.outputs.tag }}.tar.gz
     steps:
@@ -252,12 +250,12 @@ jobs:
           tag: rc-${{ needs.info.outputs.tag }}
           bodyFile: web/CHANGELOG_latest.md
           prerelease: false
-  
+
   docker:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    needs: [info, web-release, ci-web, server-build]
-    if: ${{ github.event_name == 'push' && needs.*.status != 'failure' && (needs.info.outputs.name || needs.info.outputs.tag) }} 
+    needs: [info, web-release, ci-web, build-server]
+    if: ${{ github.event_name == 'push' && !contains(needs.*.result, 'failure') && (needs.info.outputs.name || needs.info.outputs.tag) }}
     env:
       IMAGE_NAME: reearth/reearth
     steps:
@@ -306,7 +304,7 @@ jobs:
           file: web/reearth-web_${{ needs.info.outputs.name || needs.info.outputs.tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
-      - name: Extract reearth-web
+      - name: Extract reearth/web
         run: tar -xvf server/reearth-web.tar.gz; mv server/reearth-web server/web; ls server
       - name: Build and push docker image
         uses: docker/build-push-action@v3
@@ -318,11 +316,11 @@ jobs:
           tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  
-  deploy_web:
+
+  deploy-web:
     name: Deploy web to test env
     needs: [web-release]
-    if: ${{ github.event_name == 'push' && web-release && github.event.repository.full_name == 'reearth/reearth' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event_name == 'push' && contains(needs.web-release.result, 'success') && github.event.repository.full_name == 'reearth/reearth' && github.event.workflow_run.head_branch == 'main' }}
     runs-on: ubuntu-latest
     steps:
       - name: get latest web artifact
@@ -344,12 +342,12 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
       - name: Deploy
         run: gsutil -m -h "Cache-Control:no-store" rsync -x "^reearth_config\\.json$" -dr reearth-web/ $GCS_DEST
-  
-  deploy_server:
+
+  deploy-server:
     name: Deploy server to test env
     needs: [docker]
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && docker && github.event.repository.full_name == 'reearth/reearth' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event_name == 'push' && contains(needs.docker.result, 'success') && github.event.repository.full_name == 'reearth/reearth' && github.event.workflow_run.head_branch == 'main' }}
     steps:
       - uses: google-github-actions/auth@v0
         with:
