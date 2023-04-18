@@ -1,8 +1,6 @@
 * @rot1024
 
 /server/ @yk-eukarya
-/server/pkg/builtin/manifest.yml    @HideBa
-/server/pkg/builtin/manifest_ja.yml @HideBa
 /web/           @KaWaite
 /web/e2e/       @keiya01
 /web/src/core/  @keiya01
