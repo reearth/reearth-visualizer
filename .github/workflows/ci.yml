@@ -112,19 +112,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: server
 
-  slack-notification:
-    name: Slack Notification
-    needs: [ci-web, ci-server]
-    if: success() || failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-
   info:
     name: Collect information
     needs: [ci-web, ci-server]
