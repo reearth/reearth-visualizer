@@ -21,6 +21,7 @@ jobs:
           dir_names_max_depth: 1
 
   ci-web:
+    name: CI web
     needs: changed-files
     if: contains(needs.changed-files.outputs.files, 'web/')
     runs-on: ubuntu-latest
@@ -68,6 +69,7 @@ jobs:
           if-no-files-found: error
 
   ci-server:
+    name: CI Server
     needs: changed-files
     if: contains(needs.changed-files.outputs.files, 'server/')
     runs-on: ubuntu-latest
@@ -111,9 +113,9 @@ jobs:
           flags: server
 
   slack-notification:
-    if: success() || failure()
     name: Slack Notification
     needs: [ci-web, ci-server]
+    if: success() || failure()
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -125,8 +127,9 @@ jobs:
 
   info:
     name: Collect information
+    needs: [ci-web, ci-server]
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
+    if: ${{ github.event_name == 'push' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.repository.full_name == 'reearth/reearth' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       tag: ${{ steps.info.outputs.tag }}
