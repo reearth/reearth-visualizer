@@ -58,8 +58,6 @@ export default (workspaceId?: string, initialAssetUrl?: string | null, allowDele
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const gqlCache = useApolloClient().cache;
-  console.log("inside assets");
-  console.log(workspaceId, pagination(sort), toGQLEnum(sort?.type), searchTerm);
   const { data, refetch, loading, fetchMore, networkStatus } = useGetAssetsQuery({
     variables: {
       teamId: workspaceId ?? "",
@@ -70,7 +68,6 @@ export default (workspaceId?: string, initialAssetUrl?: string | null, allowDele
     notifyOnNetworkStatusChange: true,
     skip: !workspaceId,
   });
-  console.log("data", data);
   const hasMoreAssets =
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
 

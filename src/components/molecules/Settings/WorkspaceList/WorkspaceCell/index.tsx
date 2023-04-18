@@ -15,7 +15,7 @@ export type Props = {
   className?: string;
   workspace: Workspace;
   personal: boolean;
-  onSelect?: (t: Workspace) => void;
+  onSelect?: (workspace: Workspace) => void;
 };
 
 const WorkspaceCell: React.FC<Props> = ({ className, workspace, personal, onSelect }) => {
