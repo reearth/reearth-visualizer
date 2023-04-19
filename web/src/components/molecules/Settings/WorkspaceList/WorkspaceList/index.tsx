@@ -3,27 +3,27 @@ import React, { useMemo } from "react";
 import Button from "@reearth/components/atoms/Button";
 import Text from "@reearth/components/atoms/Text";
 import WorkspaceCell from "@reearth/components/molecules/Settings/WorkspaceList/WorkspaceCell";
-import { Team as TeamType } from "@reearth/gql/graphql-client-api";
+import { Team as WorkspaceType } from "@reearth/gql/graphql-client-api";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
-export type Team = TeamType;
+export type Workspace = WorkspaceType;
 
 export type Props = {
   title?: string;
-  teams?: Team[];
-  currentTeam?: {
+  workspaces?: Workspace[];
+  currentWorkspace?: {
     id: string;
     name: string;
   };
   filterQuery?: string;
-  onWorkspaceSelect?: (team: Team) => void;
+  onWorkspaceSelect?: (workspace: Workspace) => void;
   onCreationButtonClick?: () => void;
 };
 
 const WorkspaceList: React.FC<Props> = ({
-  teams,
-  currentTeam,
+  workspaces,
+  currentWorkspace,
   title,
   filterQuery,
   onWorkspaceSelect,
@@ -33,9 +33,9 @@ const WorkspaceList: React.FC<Props> = ({
   const filteredWorkspaces = useMemo(
     () =>
       filterQuery
-        ? teams?.filter(t => t.name.toLowerCase().indexOf(filterQuery.toLowerCase()) !== -1)
-        : teams,
-    [filterQuery, teams],
+        ? workspaces?.filter(t => t.name.toLowerCase().indexOf(filterQuery.toLowerCase()) !== -1)
+        : workspaces,
+    [filterQuery, workspaces],
   );
   const theme = useTheme();
 
@@ -53,20 +53,20 @@ const WorkspaceList: React.FC<Props> = ({
         />
       </SubHeader>
       <StyledListView>
-        {filteredWorkspaces?.map(team => {
-          return team.id === currentTeam?.id ? (
+        {filteredWorkspaces?.map(workspace => {
+          return workspace.id === currentWorkspace?.id ? (
             <StyledWorkspaceCell
-              team={team}
-              key={team.id}
+              workspace={workspace}
+              key={workspace.id}
               onSelect={onWorkspaceSelect}
-              personal={team.personal}
+              personal={workspace.personal}
             />
           ) : (
             <WorkspaceCell
-              team={team}
-              key={team.id}
+              workspace={workspace}
+              key={workspace.id}
               onSelect={onWorkspaceSelect}
-              personal={team.personal}
+              personal={workspace.personal}
             />
           );
         })}

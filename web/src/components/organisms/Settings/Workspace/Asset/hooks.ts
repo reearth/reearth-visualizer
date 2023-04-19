@@ -5,7 +5,7 @@ import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hook
 import { useWorkspace, useProject } from "@reearth/state";
 
 export type Params = {
-  teamId: string;
+  workspaceId: string;
 };
 
 export default (params: Params) => {
@@ -27,7 +27,7 @@ export default (params: Params) => {
   } = assetHooks(currentWorkspace?.id);
 
   useEffect(() => {
-    if (params.teamId && currentWorkspace?.id && params.teamId !== currentWorkspace.id) {
+    if (params.workspaceId && currentWorkspace?.id && params.workspaceId !== currentWorkspace.id) {
       navigate(`/settings/workspaces/${currentWorkspace?.id}/asset`);
     }
   }, [params, currentWorkspace, navigate]);

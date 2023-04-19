@@ -52,24 +52,22 @@ function pagination(
   };
 }
 
-export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?: boolean) => {
+export default (workspaceId?: string, initialAssetUrl?: string | null, allowDeletion?: boolean) => {
   const t = useT();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const gqlCache = useApolloClient().cache;
-
   const { data, refetch, loading, fetchMore, networkStatus } = useGetAssetsQuery({
     variables: {
-      teamId: teamId ?? "",
+      teamId: workspaceId ?? "",
       pagination: pagination(sort),
       sort: toGQLEnum(sort?.type),
       keyword: searchTerm,
     },
     notifyOnNetworkStatusChange: true,
-    skip: !teamId,
+    skip: !workspaceId,
   });
-
   const hasMoreAssets =
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
 
@@ -93,11 +91,11 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
   const createAssets = useCallback(
     (files: FileList) =>
       (async () => {
-        if (!teamId) return;
+        if (!workspaceId) return;
 
         const results = await Promise.all(
           Array.from(files).map(async file => {
-            const result = await createAssetMutation({ variables: { teamId, file } });
+            const result = await createAssetMutation({ variables: { teamId: workspaceId, file } });
             if (result.errors || !result.data?.createAsset) {
               setNotification({
                 type: "error",
@@ -114,14 +112,14 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
           await refetch();
         }
       })(),
-    [createAssetMutation, setNotification, refetch, teamId, t],
+    [createAssetMutation, setNotification, refetch, workspaceId, t],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
   const removeAssets = useCallback(
     (assetIds: string[]) =>
       (async () => {
-        if (!teamId) return;
+        if (!workspaceId) return;
         const results = await Promise.all(
           assetIds.map(async assetId => {
             const result = await removeAssetMutation({
@@ -144,7 +142,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
           selectAsset([]);
         }
       })(),
-    [removeAssetMutation, teamId, setNotification, t],
+    [removeAssetMutation, workspaceId, setNotification, t],
   );
 
   const handleSortChange = useCallback(

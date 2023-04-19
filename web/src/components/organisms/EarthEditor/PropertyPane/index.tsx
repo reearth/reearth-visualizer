@@ -49,7 +49,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
   } = useHooks(mode);
 
   const AssetModalComponent: ComponentType<AssetModalProps> = useCallback(
-    ({ ...props }) => <AssetModal teamId={workspaceId} {...props} />,
+    ({ ...props }) => <AssetModal workspaceId={workspaceId} {...props} />,
     [workspaceId],
   );
 

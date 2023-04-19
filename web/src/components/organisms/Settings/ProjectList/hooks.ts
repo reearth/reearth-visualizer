@@ -26,7 +26,7 @@ export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][num
 
 const projectPerPage = 5;
 
-export default (teamId: string) => {
+export default (workspaceId: string) => {
   const [, setNotification] = useNotification();
   const [currentWorkspace, setWorkspace] = useWorkspace();
   const [, setProject] = useProject();
@@ -43,10 +43,12 @@ export default (teamId: string) => {
   });
   const [createScene] = useCreateSceneMutation();
 
-  if (currentWorkspace && currentWorkspace.id !== teamId) {
-    teamId = currentWorkspace?.id;
+  if (currentWorkspace && currentWorkspace.id !== workspaceId) {
+    workspaceId = currentWorkspace?.id;
   }
-  const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
+  const workspace = workspaceId
+    ? data?.me?.teams.find(workspace => workspace.id === workspaceId)
+    : data?.me?.myTeam;
 
   const {
     data: projectData,
@@ -54,16 +56,16 @@ export default (teamId: string) => {
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", last: projectPerPage },
-    skip: !teamId,
+    variables: { teamId: workspaceId ?? "", last: projectPerPage },
+    skip: !workspaceId,
     notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
-    if (team?.id && !currentWorkspace?.id) {
-      setWorkspace(team);
+    if (workspace?.id && !currentWorkspace?.id) {
+      setWorkspace(workspace);
     }
-  }, [currentWorkspace, team, setWorkspace]);
+  }, [currentWorkspace, workspace, setWorkspace]);
 
   const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
 
@@ -115,10 +117,10 @@ export default (teamId: string) => {
   // Submit Form
   const createProject = useCallback(
     async (data: { name: string; description: string; imageUrl: string | null }) => {
-      if (!teamId) return;
+      if (!workspaceId) return;
       const project = await createNewProject({
         variables: {
-          teamId,
+          teamId: workspaceId,
           visualizer: Visualizer.Cesium,
           name: data.name,
           description: data.description,
@@ -151,7 +153,7 @@ export default (teamId: string) => {
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, t, refetch, setNotification, teamId],
+    [createNewProject, createScene, t, refetch, setNotification, workspaceId],
   );
 
   const selectProject = useCallback(
@@ -187,7 +189,7 @@ export default (teamId: string) => {
     totalProjects,
     loadingProjects: loadingProjects ?? isRefetchingProjects,
     hasMoreProjects,
-    teamId,
+    workspaceId,
     loading,
     modalShown,
     openModal,
