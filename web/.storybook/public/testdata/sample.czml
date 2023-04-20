@@ -1,0 +1,55 @@
+[
+  {
+    "id": "document",
+    "name": "Japan",
+    "version": "1.0"
+  },
+  {
+    "id": "1",
+    "name": "Sendai city",
+    "description": "This is Sendai city of Miyagi prefecture.",
+    "position": {
+        "cartographicDegrees": [
+          140.87636805791237,
+          38.26835288549171,
+          0
+        ]
+    },
+    "point": {
+      "color": { "rgba": [255, 0, 255, 255] },
+      "pixelSize": 100
+    }
+  },
+  {
+    "id": "2",
+    "name": "Fukushima city",
+    "description": "This is Fukushima city of Fukushima prefecture.",
+    "position": {
+        "cartographicDegrees": [
+          140.47334452422348,
+          37.76702444930477,
+          0
+        ]
+    },
+    "point": {
+      "color": { "rgba": [0, 255, 255, 255] },
+      "pixelSize": 100
+    }
+  },
+  {
+    "id": "3",
+    "name": "Tokyo",
+    "description": "This is Tokyo prefecture.",
+    "position": {
+        "cartographicDegrees": [
+          139.6904487961309,
+          35.685394553171434,
+          0
+        ]
+    },
+    "point": {
+      "color": { "rgba": [255, 255, 0, 255] },
+      "pixelSize": 100
+    }
+  }
+]

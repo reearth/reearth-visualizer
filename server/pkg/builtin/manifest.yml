@@ -427,6 +427,11 @@ extensions:
               title: Enable advanced features
               defaultValue: false
               description: Enable advanced features for this scene. (beta)
+            - id: experimental_sandbox
+              type: bool
+              title: Enable sandbox (alpha)
+              defaultValue: false
+              description: Enable sandbox for plugin iframes. (alpha)
       linkable:
         url:
           schemaGroupId: indicator

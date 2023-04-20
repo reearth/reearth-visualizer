@@ -1,0 +1,17 @@
+viz: Visualizer
+map: Map
+plugin: Plugins
+mantle: mantle
+engine: Engine
+crust: Crust
+infobox: Infobox
+was: Widgets
+
+viz -> crust: use
+crust -> plugin: use
+crust -> was: use
+crust -> infobox: use
+viz -> map: use
+engine -> map: inject
+engine -> mantle: use
+map -> mantle: use
