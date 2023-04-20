@@ -13,6 +13,7 @@ export type Props<T> = {
   layout?: "auto" | "fixed";
   textAlign?: "left" | "center" | "right";
   width?: string;
+  height?: number;
   columnWidth?: string;
   columnHeight?: string;
   scroll?: boolean;
@@ -22,6 +23,7 @@ export type Props<T> = {
 export default function Table<T>({
   className,
   width,
+  height,
   headers,
   items,
   bg,
@@ -46,6 +48,7 @@ export default function Table<T>({
       textAlign={textAlign}
       multiLine={multiLine}
       width={width}
+      height={height}
       columnWidth={columnWidth}
       columnHeight={columnHeight}
       scroll={scroll}>
@@ -89,6 +92,7 @@ const StyledTable = styled.table<{
   columnHeight?: string;
   scroll?: boolean;
   width?: string;
+  height?: number;
 }>`
   table-layout: ${({ layout }) => layout};
   text-align: ${({ textAlign }) => textAlign};

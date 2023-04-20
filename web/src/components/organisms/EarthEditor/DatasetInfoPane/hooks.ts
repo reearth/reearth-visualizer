@@ -21,7 +21,7 @@ export default () => {
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
-      first: 10,
+      first: 301,
     },
     skip: selected?.type !== "dataset",
   });

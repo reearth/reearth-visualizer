@@ -4,7 +4,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import TabCard from "@reearth/components/atoms/TabCard";
 import Table from "@reearth/components/atoms/Table";
 import { useT } from "@reearth/i18n";
-import { useTheme } from "@reearth/theme";
+import { useTheme, metrics } from "@reearth/theme";
 
 import DatasetPropertyItem, {
   PrimitiveItem as PrimitiveItemType,
@@ -39,6 +39,7 @@ const DatasetInfoPane: React.FC<Props> = ({
             headers={datasetHeaders}
             items={datasets}
             bg={theme.properties.bg}
+            height={metrics.datasetInfoRightPaneHeight}
             borderColor={theme.properties.border}
             textSize="xs"
           />

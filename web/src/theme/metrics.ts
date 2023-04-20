@@ -12,6 +12,7 @@ const metrics = {
   dashboardQuickMinWidth: 270,
   dashboardContentHeight: 250,
   dashboardContentSmallHeight: 156,
+  datasetInfoRightPaneHeight: 400,
   //   marginHorizontal: 10,
   //   marginVertical: 10,
   //   section: 25,
