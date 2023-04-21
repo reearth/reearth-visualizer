@@ -122,11 +122,10 @@ const TILESET_APPEARANCE_FIELDS: (keyof Cesium3DTilesAppearance)[] = [
 
 // TODO: Implement other convert type
 const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
-  if (val === undefined) return undefined;
   if (convert === "color") {
     return toColor(val);
   } else if (convert === "colorFunctionString") {
-    return `color("${val}")`;
+    return val === undefined ? val : `color("${val}")`;
   }
 
   return val;
