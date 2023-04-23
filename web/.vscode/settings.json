@@ -3,8 +3,5 @@
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow": "/.github/workflows/**/*.yml"
     },
-    "vitest.commandLine": "yarn run vitest watch",
-    "i18n-ally.localesPaths": [
-        "src/i18n"
-    ]
+    "vitest.commandLine": "yarn run vitest watch"
 }
