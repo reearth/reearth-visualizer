@@ -67,6 +67,7 @@ export type Props = {
     featureId?: string;
   };
   layerSelectionReason?: LayerSelectionReason;
+  useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
   zoomedLayerId?: string;

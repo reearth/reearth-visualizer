@@ -80,6 +80,7 @@ export type Props = {
   infoboxVisible?: boolean;
   // plugin
   externalPlugin: ExternalPluginProps;
+  useExperimentalSandbox?: boolean;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
