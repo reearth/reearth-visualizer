@@ -1,7 +1,7 @@
 name: Building Web
 on:
   workflow_run:
-    workflows: [ci-web, ci-server]
+    workflows: [ci-web]
     types: [completed]
     branches: [main, release/*]
 concurrency:

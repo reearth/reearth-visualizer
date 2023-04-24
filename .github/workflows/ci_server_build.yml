@@ -1,7 +1,7 @@
 name: Building Server
 on:
   workflow_run:
-    workflows: [ci-server, ci-web]
+    workflows: [ci-server]
     types: [completed]
     branches: [main, release/*]
 concurrency:
