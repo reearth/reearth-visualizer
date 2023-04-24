@@ -4,7 +4,7 @@ module.exports = async ({ github }) => {
   const newTag = removeVFromTag(process.env.TAG);
   const release = await github.rest.repos.getReleaseByTag({
     owner: "reearth",
-    repo: "reearth-web",
+    repo: "reearth",
     tag: `v${newTag}`,
   });
   const webChangelogLatest = "### Web\n\n" + release.data.body;
