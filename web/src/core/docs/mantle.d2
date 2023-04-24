@@ -1,0 +1,17 @@
+computeFlow: compute flow
+layer: Layer
+computedLayer: ComputedLayer
+computedFeature: ComputedFeature
+
+layer -> mantle: add
+mantle -> computeFlow: compute layer
+computeFlow: {
+  gisData: GIS data
+
+  compute <-> data: check cached data
+  compute <-> gisData: fetch data
+  compute <-> evaluator: evaluate fetched data
+  compute -> data: cache fetched data
+}
+computeFlow -> computedLayer: result
+computeFlow -> computedFeature: result
