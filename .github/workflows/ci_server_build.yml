@@ -1,0 +1,73 @@
+name: Building Server
+on:
+  workflow_run:
+    workflows: [ci-server, ci-web]
+    types: [completed]
+    branches: [main, release/*]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  info: 
+    uses: reearth/reearth/.github/workflows/ci_collect_info.yml@main
+
+  build-server:
+    name: Build and release server
+    runs-on: ubuntu-latest
+    needs: [info]
+    if: needs.info.outputs.name || needs.info.outputs.new_tag
+    env:
+      ARTIFACTS: server/dist/reearth_*.*
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.19"
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: release --rm-dist ${{ env.SNAPSHOT }}
+          workdir: server
+        env:
+          SNAPSHOT: ${{ !needs.info.outputs.new_tag && '--snapshot' || '' }}
+          GORELEASER_CURRENT_TAG: ${{ needs.info.outputs.new_tag || '0.0.0' }}
+      - name: Rename artifacts
+        if: needs.info.outputs.name
+        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+      - name: Release nightly/rc
+        if: needs.info.outputs.name
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: ${{ env.ARTIFACTS }}
+          commit: ${{ github.sha }}
+          name: ${{ needs.info.outputs.name }}
+          tag: ${{ needs.info.outputs.new_tag }}
+          body: ${{ needs.info.outputs.sha_short }}
+          prerelease: true
+      - name: Download latest changelog
+        if: needs.info.outputs.new_tag
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: release.yml
+          name: changelog-${{ needs.info.outputs.new_tag }}
+      - name: Create GitHub release
+        if: needs.info.outputs.new_tag
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.ARTIFACTS }}
+          commit: ${{ github.sha }}
+          name: ${{ needs.info.outputs.new_tag }}
+          tag: ${{ needs.info.outputs.new_tag}}
+          bodyFile: CHANGELOG_latest.md
+      - name: Invoke ci-docker-build workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: ci_docker_build
+            token: ${{ secrets.GPT }}
