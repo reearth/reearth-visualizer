@@ -15,6 +15,9 @@ jobs:
   build-web:
     name: Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     if: needs.info.outputs.name
     needs:
       - info
