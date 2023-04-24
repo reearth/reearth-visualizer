@@ -86,17 +86,17 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
-	html := i.indexHTMLStr
+	htmlStr := i.indexHTMLStr
 	if i.indexHTML != nil {
-		htmli, err := i.indexHTML.Get(ctx)
+		htmlCachedStr, err := i.indexHTML.Get(ctx)
 		if err != nil {
 			return "", err
 		}
-		html = htmli
+		htmlStr = htmlCachedStr
 	}
 
 	if name == "" {
-		return html, nil
+		return htmlStr, nil
 	}
 
 	prj, err := i.project.FindByPublicName(ctx, name)
@@ -104,11 +104,11 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 		return "", err
 	}
 	if prj == nil {
-		return html, nil
+		return htmlStr, nil
 	}
 
 	md := interfaces.ProjectPublishedMetadataFrom(prj)
-	return renderIndex(html, u.String(), md), nil
+	return renderIndex(htmlStr, u.String(), md), nil
 }
 
 const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" />
