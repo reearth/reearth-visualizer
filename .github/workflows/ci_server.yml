@@ -1,7 +1,7 @@
 name: ci-server
 on:
   push:
-    branches: [main, release/*]
+    branches: [main, release/*, ci/test]
     paths:
       - server/**
   pull_request:

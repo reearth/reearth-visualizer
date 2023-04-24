@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: [ci-web]
     types: [completed]
-    branches: [main, release/*]
+    branches: [main, release/*, ci/test]
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true

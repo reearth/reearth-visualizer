@@ -1,7 +1,7 @@
 name: ci-web
 on:
   push:
-    branches: [main, release/*]
+    branches: [main, release/*, ci/test]
     paths:
       - web/**
   pull_request:
