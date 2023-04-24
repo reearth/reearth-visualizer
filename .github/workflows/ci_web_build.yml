@@ -52,17 +52,19 @@ jobs:
   release_nightly:
     name: Release nightly/rc
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     needs: [info, build-web]
     if: needs.info.outputs.name
     env:
-      ARTIFACT_WEB: web/reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      ARTIFACT_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: build
-          path: web/reearth-web.tar.gz
       - name: Rename artifact
-        run: mv web/reearth-web.tar.gz $ARTIFACT
+        run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -89,6 +91,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     needs:
       - info
     if: needs.info.outputs.new_tag
