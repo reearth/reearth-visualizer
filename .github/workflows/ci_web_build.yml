@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   info: 
-    uses: reearth/reearth/.github/workflows/ci_collect_info.yml@main
+    uses: reearth/reearth/.github/workflows/ci_collect_info.yml@ci/test
 
   build-web:
     name: Build
