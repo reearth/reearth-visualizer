@@ -8,7 +8,7 @@
     "scripts": {
         "start": "yarn && vite",
         "test": "vitest",
-        "coverage": "vitest --coverage --watch false",
+        "coverage": "vitest --coverage",
         "e2e": "playwright test",
         "prepare": "cd .. && husky install web/.husky",
         "build": "vite build",
