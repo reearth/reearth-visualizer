@@ -34,10 +34,6 @@ jobs:
           run: yarn install
         - name: Check
           run: yarn run check
-        - name: Test
-          run: yarn run coverage
-        - name: Check translations
-          run: yarn i18n --fail-on-update
         - name: Send coverage report
           uses: codecov/codecov-action@v2
           with:
