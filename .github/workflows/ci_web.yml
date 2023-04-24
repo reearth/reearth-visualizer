@@ -35,8 +35,10 @@ jobs:
         - name: Check
           run: yarn run check
         - name: Send coverage report
-          uses: codecov/codecov-action@v2
+          uses: codecov/codecov-action@v3
           with:
             token: ${{ secrets.CODECOV_TOKEN }}
             file: ./coverage/lcov.info
             flags: web
+        - name: Check translations
+          run: yarn run i18n --fail-on-update
