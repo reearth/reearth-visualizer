@@ -60,6 +60,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build
+          path: web/dist/reearth-web.tar.gz
       - name: Rename artifact
         run: mv web/dist/reearth-web.tar.gz $ARTIFACT
       - name: Release
