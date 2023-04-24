@@ -125,7 +125,7 @@ const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
   if (convert === "color") {
     return toColor(val);
   } else if (convert === "colorFunctionString") {
-    return `color("${val}")`;
+    return val === undefined ? val : `color("${val}")`;
   }
 
   return val;

@@ -6,6 +6,8 @@ engine: Engine
 crust: Crust
 infobox: Infobox
 was: Widgets
+cesium: Cesium
+feature: Feature
 
 viz -> crust: use
 crust -> plugin: use
@@ -14,4 +16,6 @@ crust -> infobox: use
 viz -> map: use
 engine -> map: inject
 engine -> mantle: use
+engine -> cesium: use
+cesium -> feature: use
 map -> mantle: use
