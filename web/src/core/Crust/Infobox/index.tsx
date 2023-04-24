@@ -178,5 +178,3 @@ const InnerWrapper = styled(Text)`
 `;
 
 export default Infobox;
-
-// added comment for test purposes
