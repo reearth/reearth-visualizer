@@ -18,7 +18,7 @@ import { useT } from "@reearth/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/state";
 
 type Params = {
-  teamId: string;
+  workspaceId: string;
 };
 
 export default (params: Params) => {
@@ -39,7 +39,7 @@ export default (params: Params) => {
 
   const { data, loading, refetch } = useGetTeamsQuery();
   const me = { id: data?.me?.id, myTeam: data?.me?.myTeam.id };
-  const teams = data?.me?.teams as Team[];
+  const workspaces = data?.me?.teams as Team[];
 
   const handleModalClose = useCallback(
     (r?: boolean) => {
@@ -52,12 +52,12 @@ export default (params: Params) => {
   );
 
   useEffect(() => {
-    if (params.teamId && currentWorkspace?.id && params.teamId !== currentWorkspace.id) {
+    if (params.workspaceId && currentWorkspace?.id && params.workspaceId !== currentWorkspace.id) {
       navigate(`/settings/workspaces/${currentWorkspace?.id}`);
     }
   }, [params, currentWorkspace, navigate]);
 
-  const teamId = currentWorkspace?.id;
+  const workspaceId = currentWorkspace?.id;
 
   const [useGetUserBySearchQuery, { data: searchUserData }] = useGetUserBySearchLazyQuery();
 
@@ -71,20 +71,20 @@ export default (params: Params) => {
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
-  const createTeam = useCallback(
+  const createWorkspace = useCallback(
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
         refetchQueries: ["GetTeams"],
       });
-      const team = results.data?.createTeam?.team;
+      const workspace = results.data?.createTeam?.team;
       if (results.errors || !results.data?.createTeam) {
         setNotification({
           type: "error",
           text: t("Failed to create workspace."),
         });
       } else {
-        setWorkspace(team);
+        setWorkspace(workspace);
         setNotification({
           type: "success",
           text: t("Sucessfully created a workspace!"),
@@ -99,8 +99,8 @@ export default (params: Params) => {
 
   const updateName = useCallback(
     async (name?: string) => {
-      if (!teamId || !name) return;
-      const results = await updateTeamMutation({ variables: { teamId, name } });
+      if (!workspaceId || !name) return;
+      const results = await updateTeamMutation({ variables: { teamId: workspaceId, name } });
       if (results.errors) {
         setNotification({
           type: "error",
@@ -114,15 +114,15 @@ export default (params: Params) => {
         });
       }
     },
-    [teamId, updateTeamMutation, t, setNotification, setWorkspace],
+    [workspaceId, updateTeamMutation, t, setNotification, setWorkspace],
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
     refetchQueries: ["GetTeams"],
   });
-  const deleteTeam = useCallback(async () => {
-    if (!teamId) return;
-    const result = await deleteTeamMutation({ variables: { teamId } });
+  const deleteWorkspace = useCallback(async () => {
+    if (!workspaceId) return;
+    const result = await deleteTeamMutation({ variables: { teamId: workspaceId } });
     if (result.errors || !result.data?.deleteTeam) {
       setNotification({
         type: "error",
@@ -133,30 +133,30 @@ export default (params: Params) => {
         type: "info",
         text: t("Workspace was successfully deleted."),
       });
-      setWorkspace(teams[0]);
+      setWorkspace(workspaces[0]);
     }
-  }, [teamId, deleteTeamMutation, setNotification, t, setWorkspace, teams]);
+  }, [workspaceId, deleteTeamMutation, setNotification, t, setWorkspace, workspaces]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
-  const addMembersToTeam = useCallback(
+  const addMembersToWorkspace = useCallback(
     async (userIds: string[]) => {
       const results = await Promise.all(
         userIds.map(async userId => {
-          if (!teamId) return;
+          if (!workspaceId) return;
           const result = await addMemberToTeamMutation({
-            variables: { userId, teamId, role: Role.Reader },
+            variables: { userId, teamId: workspaceId, role: Role.Reader },
             refetchQueries: ["GetTeams"],
           });
-          const team = result.data?.addMemberToTeam?.team;
-          if (result.errors || !team) {
+          const workspace = result.data?.addMemberToTeam?.team;
+          if (result.errors || !workspace) {
             setNotification({
               type: "error",
               text: t("Failed to add one or more members."),
             });
             return;
           }
-          setWorkspace(team);
+          setWorkspace(workspace);
         }),
       );
       if (results) {
@@ -166,17 +166,17 @@ export default (params: Params) => {
         });
       }
     },
-    [teamId, addMemberToTeamMutation, setWorkspace, setNotification, t],
+    [workspaceId, addMemberToTeamMutation, setWorkspace, setNotification, t],
   );
 
   const [updateMemberOfTeamMutation] = useUpdateMemberOfTeamMutation();
 
-  const updateMemberOfTeam = useCallback(
+  const updateMemberOfWorkspace = useCallback(
     async (userId: string, role: RoleUnion) => {
-      if (teamId) {
+      if (workspaceId) {
         const results = await updateMemberOfTeamMutation({
           variables: {
-            teamId,
+            teamId: workspaceId,
             userId,
             role: {
               READER: Role.Reader,
@@ -185,46 +185,46 @@ export default (params: Params) => {
             }[role],
           },
         });
-        const team = results.data?.updateMemberOfTeam?.team;
-        if (team) {
-          setWorkspace(team);
+        const workspace = results.data?.updateMemberOfTeam?.team;
+        if (workspace) {
+          setWorkspace(workspace);
         }
       }
     },
-    [teamId, setWorkspace, updateMemberOfTeamMutation],
+    [workspaceId, setWorkspace, updateMemberOfTeamMutation],
   );
 
   const [removeMemberFromTeamMutation] = useRemoveMemberFromTeamMutation();
 
-  const removeMemberFromTeam = useCallback(
+  const removeMemberFromWorkspace = useCallback(
     async (userId: string) => {
-      if (!teamId) return;
+      if (!workspaceId) return;
       const result = await removeMemberFromTeamMutation({
-        variables: { teamId, userId },
+        variables: { teamId: workspaceId, userId },
         refetchQueries: ["GetTeams"],
       });
-      const team = result.data?.removeMemberFromTeam?.team;
-      if (result.errors || !team) {
+      const workspace = result.data?.removeMemberFromTeam?.team;
+      if (result.errors || !workspace) {
         setNotification({
           type: "error",
           text: t("Failed to delete member from the workspace."),
         });
         return;
       }
-      setWorkspace(team);
+      setWorkspace(workspace);
       setNotification({
         type: "success",
         text: t("Successfully removed member from the workspace."),
       });
     },
-    [teamId, removeMemberFromTeamMutation, setWorkspace, t, setNotification],
+    [workspaceId, removeMemberFromTeamMutation, setWorkspace, t, setNotification],
   );
 
   const selectWorkspace = useCallback(
-    (team: Team) => {
-      if (team.id) {
-        setWorkspace(team);
-        navigate(`/settings/workspaces/${team.id}`);
+    (workspace: Team) => {
+      if (workspace.id) {
+        setWorkspace(workspace);
+        navigate(`/settings/workspaces/${workspace.id}`);
       }
     },
     [navigate, setWorkspace],
@@ -232,18 +232,18 @@ export default (params: Params) => {
 
   return {
     me,
-    teams,
+    workspaces,
     currentWorkspace,
     currentProject,
     searchedUser,
     changeSearchedUser,
-    createTeam,
+    createWorkspace,
     updateName,
-    deleteTeam,
+    deleteWorkspace,
     searchUser,
-    addMembersToTeam,
-    updateMemberOfTeam,
-    removeMemberFromTeam,
+    addMembersToWorkspace,
+    updateMemberOfWorkspace,
+    removeMemberFromWorkspace,
     selectWorkspace,
     openModal,
     modalShown,
