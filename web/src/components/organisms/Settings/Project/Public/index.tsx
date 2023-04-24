@@ -41,7 +41,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
   } = useHooks({ projectId });
 
   return (
-    <SettingPage teamId={currentWorkspace?.id} projectId={projectId}>
+    <SettingPage workspaceId={currentWorkspace?.id} projectId={projectId}>
       <SettingsHeader currentProject={currentProject?.name} title={t("Public")} />
       {!project?.isArchived ? (
         <>
@@ -60,7 +60,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
             toggleAssetModal={toggleAssetModal}
             assetModal={
               <AssetModal
-                teamId={currentWorkspace?.id}
+                workspaceId={currentWorkspace?.id}
                 isOpen={assetModalOpened}
                 onSelect={updatePublicImage}
                 toggleAssetModal={toggleAssetModal}

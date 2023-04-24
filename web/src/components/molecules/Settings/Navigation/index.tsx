@@ -9,7 +9,7 @@ import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-type Team = {
+type Workspace = {
   id?: string;
   name?: string;
 };
@@ -21,11 +21,11 @@ type Project = {
 };
 
 type Props = {
-  team?: Team;
+  workspace?: Workspace;
   project?: Project;
 };
 
-const Navigation: React.FC<Props> = ({ team, project }) => {
+const Navigation: React.FC<Props> = ({ workspace, project }) => {
   const t = useT();
 
   return (
@@ -41,22 +41,24 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
         <NavigationItem to="/settings/account" name={t("Account")} />
         <Divider margin="0" />
         <NavigationItem to={`/settings/workspaces`} name={t("Workspace List")}>
-          {team && (
+          {workspace && (
             <NavigationItem
               level={2}
-              to={`/settings/workspaces/${team.id}`}
-              key={team.id}
-              name={team.name as string}>
+              to={`/settings/workspaces/${workspace.id}`}
+              key={workspace.id}
+              name={workspace.name as string}>
               <NavigationItem
                 level={3}
-                to={`/settings/workspaces/${team.id}/asset`}
+                to={`/settings/workspaces/${workspace.id}/asset`}
                 name={t("Assets")}
               />
             </NavigationItem>
           )}
         </NavigationItem>
         <Divider margin="0" />
-        <NavigationItem to={`/settings/workspaces/${team?.id}/projects`} name={t("Project List")}>
+        <NavigationItem
+          to={`/settings/workspaces/${workspace?.id}/projects`}
+          name={t("Project List")}>
           {project && !project.isArchived && (
             <NavigationItem
               level={2}

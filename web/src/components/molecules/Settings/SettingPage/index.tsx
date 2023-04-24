@@ -52,7 +52,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
         }
         center={
           currentProject && (
-            <ProjectMenu currentProject={currentProject} teamId={currentWorkspace?.id} />
+            <ProjectMenu currentProject={currentProject} workspaceId={currentWorkspace?.id} />
           )
         }
       />
@@ -62,7 +62,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
           !loading && hasMoreItems && onScrollToBottom(e, onScroll);
         }}>
         <LeftWrapper>
-          <Navigation team={currentWorkspace} project={currentProject} />
+          <Navigation workspace={currentWorkspace} project={currentProject} />
         </LeftWrapper>
         <RightWrapper>
           <ContentWrapper>
@@ -74,7 +74,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
               />
               {isOpen && (
                 <Menu>
-                  <Navigation team={currentWorkspace} project={currentProject} />
+                  <Navigation workspace={currentWorkspace} project={currentProject} />
                 </Menu>
               )}
             </DeviceMenu>

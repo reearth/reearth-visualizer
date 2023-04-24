@@ -67,7 +67,7 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
         toggleAssetModal={handleAssetModalToggle}
         assetModal={
           <AssetModal
-            teamId={workspaceId}
+            workspaceId={workspaceId}
             initialAssetUrl={selectedAsset}
             isOpen={assetModalOpened}
             onSelect={handleAssetSelect}

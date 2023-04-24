@@ -9,14 +9,14 @@ import { styled } from "@reearth/theme";
 import Modal from "./Modal";
 
 export type Props = {
-  team?: {
+  workspace?: {
     id: string;
     name: string;
   };
-  deleteTeam?: () => void;
+  deleteWorkspace?: () => void;
 };
 
-const DangerSection: React.FC<Props> = ({ team, deleteTeam }) => {
+const DangerSection: React.FC<Props> = ({ workspace, deleteWorkspace }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const t = useT();
@@ -37,9 +37,9 @@ const DangerSection: React.FC<Props> = ({ team, deleteTeam }) => {
         />
       </Section>
       <Modal
-        team={team}
+        workspace={workspace}
         isVisible={isOpen}
-        deleteTeam={deleteTeam}
+        deleteWorkspace={deleteWorkspace}
         onClose={() => setIsOpen(false)}
       />
     </Wrapper>
