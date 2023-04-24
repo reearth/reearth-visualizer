@@ -9,45 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  info:
-    name: Collect information(server build)
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (startsWith(github.event.workflow_run.head_branch, 'release/') || github.event.workflow_run.head_branch == 'main' || !startsWith(github.event.head_commit.message, 'v')) }}
-    outputs:
-      sha_short: ${{ steps.info.outputs.sha_short }}
-      new_tag: ${{ steps.info.outputs.new_tag }}
-      new_tag_short: ${{ steps.info.outputs.new_tag_short }}
-      name: ${{ steps.info.outputs.name }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags
-      - name: Get info
-        id: info
-        # The tag name should be retrieved lazily, as tagging may be delayed.
-        env:
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-        run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          if [[ "$BRANCH" = "release"* ]]; then
-            TAG=$(git tag --points-at HEAD)
-            if [[ ! -z "$TAG" ]]; then
-              echo "::set-output name=new_tag::$TAG"
-              echo "::set-output name=new_tag_short::${TAG#v}"
-            else
-              echo "::set-output name=name::rc"
-            fi
-          else
-            echo "::set-output name=name::nightly"
-          fi
-      - name: Show info
-        env:
-          SHA_SHORT: ${{ steps.info.outputs.sha_short }}
-          NEW_TAG: ${{ steps.info.outputs.new_tag }}
-          NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
-          NAME: ${{ steps.info.outputs.name }}
-        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, name=$NAME"
+  info: 
+    uses: reearth/reearth/.github/workflows/ci_collect_info.yml@main
 
   build-server:
     name: Build and release server
