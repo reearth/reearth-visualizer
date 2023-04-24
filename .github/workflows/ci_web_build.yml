@@ -1,4 +1,4 @@
-name: Building Web
+name: build-web
 on:
   workflow_run:
     workflows: [ci-web]

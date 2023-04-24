@@ -1,4 +1,4 @@
-name: Deploying Server Nightly
+name: deploy-server-nightly
 on:
   workflow_dispatch:
 concurrency:

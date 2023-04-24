@@ -1,4 +1,4 @@
-name: TestRun on Web
+name: ci-web
 on:
   push:
     branches: [main, release/*]

@@ -1,4 +1,4 @@
-name: Deploying Web Nightly
+name: deploy-web-nightly
 on:
   workflow_dispatch:
 env:
