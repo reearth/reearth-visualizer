@@ -47,7 +47,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: build
-          path: web/dist/reearth-web.tar.gz
+          path: reearth-web.tar.gz
 
   release_nightly:
     name: Release nightly/rc
@@ -55,14 +55,14 @@ jobs:
     needs: [info, build-web]
     if: needs.info.outputs.name
     env:
-      ARTIFACT_WEB: web/dist/reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      ARTIFACT_WEB: web/reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: build
-          path: web/dist/reearth-web.tar.gz
+          path: web/reearth-web.tar.gz
       - name: Rename artifact
-        run: mv web/dist/reearth-web.tar.gz $ARTIFACT
+        run: mv web/reearth-web.tar.gz $ARTIFACT
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -99,7 +99,7 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           version: tags/rc
-          file: web/dist/reearth-web_rc.tar.gz
+          file: reearth-web_rc.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Rename artifact
         run: mv reearth-web_rc.tar.gz $ARTIFACT
