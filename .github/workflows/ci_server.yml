@@ -1,4 +1,4 @@
-name: ci-server
+name: TestRun on Server
 on:
   push:
     branches: [main, release/*]

@@ -1,4 +1,4 @@
-name: ci-server-build
+name: Building Server
 on:
   workflow_run:
     workflows: [ci-server, ci-web]

@@ -1,4 +1,4 @@
-name: ci-docker-build
+name: Building Docker Image
 on:
     workflow_dispatch:
 jobs:

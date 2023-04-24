@@ -1,4 +1,4 @@
-name: ci-deploy-web-nightly
+name: Deploying Web Nightly
 on:
   workflow_dispatch:
 env:

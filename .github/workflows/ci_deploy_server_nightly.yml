@@ -1,4 +1,4 @@
-name: ci-deploy-server-nightly
+name: Deploying Server Nightly
 on:
   workflow_dispatch:
 concurrency:
