@@ -11,3 +11,10 @@ ignore:
   - server/main.go
   - server/tools
   - server/tools.go
+  - web/**/*.test.ts
+  - web/**/*.test.tsx
+  - web/**/*.stories.ts
+  - web/**/*.stories.tsx
+  - web/.storybook
+  - web/bin
+  - web/src/gql/graphql-client-api.tsx

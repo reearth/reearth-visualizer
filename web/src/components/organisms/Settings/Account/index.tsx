@@ -25,7 +25,7 @@ const Account: React.FC<Props> = () => {
   } = useHooks();
 
   return (
-    <SettingPage teamId={currentWorkspace?.id} projectId={currentProject?.id}>
+    <SettingPage workspaceId={currentWorkspace?.id} projectId={currentProject?.id}>
       <SettingsHeader title={t("Account")} />
       <ProfileSection username={me?.name} updateName={updateName} />
       {me && (

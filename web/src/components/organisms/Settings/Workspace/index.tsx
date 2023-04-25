@@ -9,23 +9,23 @@ import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 import useHooks from "./hooks";
 
 type Props = {
-  teamId: string;
+  workspaceId: string;
 };
 
-const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
+const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
   const {
     me,
     currentWorkspace,
     currentProject,
     searchedUser,
     changeSearchedUser,
-    deleteTeam,
+    deleteWorkspace,
     updateName,
     searchUser,
-    addMembersToTeam,
-    updateMemberOfTeam,
-    removeMemberFromTeam,
-  } = useHooks({ teamId });
+    addMembersToWorkspace,
+    updateMemberOfWorkspace,
+    removeMemberFromWorkspace,
+  } = useHooks({ workspaceId });
   const [owner, setOwner] = useState(false);
   const members = currentWorkspace?.members;
 
@@ -46,9 +46,13 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
   }, [checkOwner]);
 
   return (
-    <SettingPage teamId={teamId} projectId={currentProject?.id}>
+    <SettingPage workspaceId={workspaceId} projectId={currentProject?.id}>
       <SettingsHeader currentWorkspace={currentWorkspace} />
-      <ProfileSection currentTeam={currentWorkspace} updateTeamName={updateName} owner={owner} />
+      <ProfileSection
+        currentWorkspace={currentWorkspace}
+        updateWorkspaceName={updateName}
+        owner={owner}
+      />
       {!currentWorkspace?.personal && (
         <MembersSection
           me={me}
@@ -57,12 +61,14 @@ const WorkspaceSettings: React.FC<Props> = ({ teamId }) => {
           searchedUser={searchedUser}
           changeSearchedUser={changeSearchedUser}
           searchUser={searchUser}
-          addMembersToTeam={addMembersToTeam}
-          updateMemberOfTeam={updateMemberOfTeam}
-          removeMemberFromTeam={removeMemberFromTeam}
+          addMembersToWorkspace={addMembersToWorkspace}
+          updateMemberOfWorkspace={updateMemberOfWorkspace}
+          removeMemberFromWorkspace={removeMemberFromWorkspace}
         />
       )}
-      {me.myTeam !== teamId && <DangerSection team={currentWorkspace} deleteTeam={deleteTeam} />}
+      {me.myTeam !== workspaceId && (
+        <DangerSection workspace={currentWorkspace} deleteWorkspace={deleteWorkspace} />
+      )}
     </SettingPage>
   );
 };

@@ -27,7 +27,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
   } = useHooks({ projectId });
 
   return (
-    <SettingPage teamId={currentWorkspace?.id} projectId={projectId}>
+    <SettingPage workspaceId={currentWorkspace?.id} projectId={projectId}>
       <SettingsHeader currentWorkspace={currentWorkspace} currentProject={project?.name} />
       {!project?.isArchived ? (
         <ProfileSection
@@ -38,7 +38,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
           toggleAssetModal={toggleAssetModal}
           assetModal={
             <AssetModal
-              teamId={currentWorkspace?.id}
+              workspaceId={currentWorkspace?.id}
               isOpen={assetModalOpened}
               initialAssetUrl={project?.imageUrl}
               onSelect={updateProjectImageUrl}
@@ -51,7 +51,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
       )}
       <DangerSection
         project={project}
-        teamId={currentWorkspace?.id}
+        workspaceId={currentWorkspace?.id}
         archiveProject={archiveProject}
         deleteProject={deleteProject}
       />

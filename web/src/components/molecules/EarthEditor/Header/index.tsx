@@ -52,7 +52,9 @@ const Header: React.FC<Props> = ({
     return currentProjectStatus === "unpublished" ? true : false;
   }, [currentProjectStatus]);
 
-  const center = currentProject && <ProjectMenu currentProject={currentProject} teamId={teamId} />;
+  const center = currentProject && (
+    <ProjectMenu currentProject={currentProject} workspaceId={teamId} />
+  );
 
   const right = (
     <RightArea justify="flex-end" align="center">

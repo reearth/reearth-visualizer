@@ -13,10 +13,10 @@ import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   currentProject: Project;
-  teamId?: string;
+  workspaceId?: string;
 };
 
-const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
+const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const theme = useTheme();
@@ -56,7 +56,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/workspaces/${teamId}/projects`}
+                linkTo={`/settings/workspaces/${workspaceId}/projects`}
                 text={t("Manage projects")}
               />
             </MenuListItem>
