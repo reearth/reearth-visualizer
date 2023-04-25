@@ -12,6 +12,9 @@ jobs:
     if: needs.info.outputs.name || needs.info.outputs.new_tag
     env:
       IMAGE_NAME: reearth/reearth
+    defaults:
+      run:
+        working-directory: server
     steps:
       - name: Checkout
         uses: actions/checkout@v2
