@@ -13,37 +13,37 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 type Props = {
   className?: string;
-  team?: {
+  workspace?: {
     id: string;
     name: string;
   };
   isVisible: boolean;
-  deleteTeam?: () => void;
+  deleteWorkspace?: () => void;
   onClose?: () => void;
 };
 
-const DangerModal: React.FC<Props> = ({ team, isVisible, deleteTeam, onClose }) => {
+const DangerModal: React.FC<Props> = ({ workspace, isVisible, deleteWorkspace, onClose }) => {
   const [disabled, setDisabled] = useState(true);
   const [text, setText] = useState<string>();
   const navigate = useNavigate();
   const t = useT();
 
   const handleDeletion = useCallback(() => {
-    if (team && deleteTeam && !disabled) {
-      deleteTeam();
+    if (workspace && deleteWorkspace && !disabled) {
+      deleteWorkspace();
       navigate(`/settings/workspaces`);
     }
-  }, [navigate, team, deleteTeam, disabled]);
+  }, [navigate, workspace, deleteWorkspace, disabled]);
 
   useEffect(() => {
-    setDisabled(text !== team?.name);
-  }, [text, team]);
+    setDisabled(text !== workspace?.name);
+  }, [text, workspace]);
   const theme = useTheme();
 
   return (
     <Modal title={t("Delete workspace")} isVisible={isVisible} size="sm" onClose={onClose}>
       <Subtitle size="s" color={theme.main.text} weight="bold" center>
-        {team?.name}
+        {workspace?.name}
       </Subtitle>
       <Description size="s" color={theme.main.text}>
         {t(`This action cannot be undone.`)}

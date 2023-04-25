@@ -9,7 +9,7 @@ import AssetContainer from "../AssetContainer";
 export type Props = PropsType;
 
 const AssetModal: React.FC<Props> = ({
-  teamId,
+  workspaceId,
   initialAssetUrl,
   isOpen,
   videoOnly,
@@ -18,7 +18,7 @@ const AssetModal: React.FC<Props> = ({
 }) => {
   return (
     <MoleculeAssetModal
-      teamId={teamId}
+      workspaceId={workspaceId}
       initialAssetUrl={initialAssetUrl}
       isOpen={isOpen}
       videoOnly={videoOnly}

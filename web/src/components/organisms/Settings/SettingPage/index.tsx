@@ -6,7 +6,7 @@ import MoleculesSettingPage from "@reearth/components/molecules/Settings/Setting
 import useHooks from "./hooks";
 
 type Props = {
-  teamId?: string;
+  workspaceId?: string;
   projectId?: string;
   children?: ReactNode;
   loading?: boolean;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const SettingPage: React.FC<Props> = ({
-  teamId,
+  workspaceId,
   projectId,
   children,
   loading,
@@ -26,7 +26,7 @@ const SettingPage: React.FC<Props> = ({
 
   const {
     user,
-    teams = [],
+    workspaces = [],
     currentWorkspace,
     currentProject,
     sceneId,
@@ -36,14 +36,14 @@ const SettingPage: React.FC<Props> = ({
     openModal,
     handleModalClose,
   } = useHooks({
-    teamId,
+    workspaceId,
     projectId,
   });
 
   return (
     <MoleculesSettingPage
       user={user}
-      workspaces={teams}
+      workspaces={workspaces}
       currentWorkspace={currentWorkspace}
       currentProject={currentProject}
       sceneId={sceneId}

@@ -24,7 +24,7 @@ type Props = {
     name: string;
     isArchived: boolean;
   };
-  team?: {
+  workspace?: {
     id: string;
     name: string;
   };

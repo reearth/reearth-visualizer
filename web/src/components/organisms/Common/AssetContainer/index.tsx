@@ -12,7 +12,7 @@ export type Asset = AssetType;
 export type Props = AssetContainerProps;
 
 const AssetContainer: React.FC<Props> = ({
-  teamId,
+  workspaceId,
   initialAssetUrl,
   onAssetUrlSelect,
   videoOnly,
@@ -36,7 +36,7 @@ const AssetContainer: React.FC<Props> = ({
     handleSortChange,
     handleSearchTerm,
     removeAssets,
-  } = useHooks(teamId, initialAssetUrl, allowDeletion);
+  } = useHooks(workspaceId, initialAssetUrl, allowDeletion);
 
   useEffect(() => {
     onURLShow?.(assets);

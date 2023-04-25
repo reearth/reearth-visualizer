@@ -9,6 +9,9 @@ jobs:
   e2e:
     name: E2E test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     steps:
       - uses: actions/setup-node@v3
         with:
