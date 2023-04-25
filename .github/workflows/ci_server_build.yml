@@ -48,7 +48,7 @@ jobs:
           artifacts: ${{ env.ARTIFACTS }}
           commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.name }}
-          tag: ${{ needs.info.outputs.new_tag }}
+          tag: ${{ needs.info.outputs.name }}
           body: ${{ needs.info.outputs.sha_short }}
           prerelease: true
       - name: Download latest changelog
