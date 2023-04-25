@@ -453,8 +453,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/ravilushqa/otelgqlgen v0.8.0 h1:x48k+D1GMgm87xhMO2Lekrr9YGzFbpG3yijn9GpxuAY=
 github.com/ravilushqa/otelgqlgen v0.8.0/go.mod h1:6JO5YO2iY4POC7R6yB/L/RKXCcyISL8qQt5NnHOhh0o=
-github.com/reearth/reearthx v0.0.0-20230313110808-d00b7183549c h1:6jhvsbF6V/EtzW09Ch7UuXl627Ls8wdU9TSMD7HNPH4=
-github.com/reearth/reearthx v0.0.0-20230313110808-d00b7183549c/go.mod h1:AsJomXOp70gxN3lq8amcJ1Erd6gl7dwCj4P2K5ih4DM=
+github.com/reearth/reearthx v0.0.0-20230417135043-7b80b5104916 h1:L7aw1N3g8YNspo/9gcikpGePQlXL8C/6L+Dj+Fu3RBY=
+github.com/reearth/reearthx v0.0.0-20230417135043-7b80b5104916/go.mod h1:AsJomXOp70gxN3lq8amcJ1Erd6gl7dwCj4P2K5ih4DM=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481/go.mod h1:C9WhFzY47SzYBIvzFqSvHIR6ROgDo4TtdTuRaOMjF/s=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
