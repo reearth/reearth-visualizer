@@ -78,12 +78,12 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         if: needs.info.outputs.name == 'nightly'
         with:
-          workflow: ci_deploy_web_nightly
+          workflow: deploy-web-nightly
           token: ${{ secrets.GPT }}
       - name: Invoke ci-docker-build workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-            workflow: ci_docker_build
+            workflow: build-docker-image
             token: ${{ secrets.GPT }}
 
   release:

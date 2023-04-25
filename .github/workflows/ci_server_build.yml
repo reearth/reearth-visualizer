@@ -70,5 +70,5 @@ jobs:
       - name: Invoke ci-docker-build workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-            workflow: ci_docker_build
+            workflow: build-docker-image
             token: ${{ secrets.GPT }}

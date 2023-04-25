@@ -1,4 +1,4 @@
-name: Collect Info
+name: collect-info
 on:
   push:
     branches: [main, release/*]

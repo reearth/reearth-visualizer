@@ -73,5 +73,5 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         if: needs.info.outputs.name == 'nightly'
         with:
-          workflow: ci_deploy_server_nightly
+          workflow: deploy-server-nightly
           token: ${{ secrets.GPT }}
