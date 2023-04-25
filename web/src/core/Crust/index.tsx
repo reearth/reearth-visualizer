@@ -139,6 +139,7 @@ export default function Crust({
   selectedBlockId,
   selectedWidgetArea,
   externalPlugin,
+  useExperimentalSandbox,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
@@ -187,6 +188,7 @@ export default function Crust({
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
       camera={camera}
+      useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
