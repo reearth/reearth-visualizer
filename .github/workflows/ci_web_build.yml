@@ -53,9 +53,6 @@ jobs:
   release_nightly:
     name: Release nightly/rc
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
     needs: [info, build-web]
     if: needs.info.outputs.name
     env:
@@ -64,7 +61,6 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: reearth-web
-          path: web/
       - name: Rename artifact
         run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
@@ -93,9 +89,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
     needs:
       - info
     if: needs.info.outputs.new_tag
