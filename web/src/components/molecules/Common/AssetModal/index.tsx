@@ -22,7 +22,7 @@ export type AssetSortType = SortType;
 
 export type Props = {
   className?: string;
-  teamId?: string;
+  workspaceId?: string;
   initialAssetUrl?: string | null;
   videoOnly?: boolean;
   isOpen?: boolean;
@@ -34,7 +34,7 @@ export type Props = {
 type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
-  teamId,
+  workspaceId,
   initialAssetUrl,
   videoOnly,
   isOpen,
@@ -119,7 +119,7 @@ const AssetModal: React.FC<Props> = ({
       }>
       {selectedTab === "assets" && AssetContainer && (
         <AssetContainer
-          teamId={teamId}
+          workspaceId={workspaceId}
           initialAssetUrl={initialAssetUrl}
           onAssetUrlSelect={selectAssetUrl}
           smallCardOnly

@@ -7,20 +7,20 @@ import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import { Team as TeamType } from "../WorkspaceList";
+import { Workspace as WorkspaceType } from "../WorkspaceList";
 
-export type Team = TeamType;
+export type Workspace = WorkspaceType;
 
 export type Props = {
   className?: string;
-  team: Team;
+  workspace: Workspace;
   personal: boolean;
-  onSelect?: (t: Team) => void;
+  onSelect?: (workspace: Workspace) => void;
 };
 
-const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect }) => {
+const WorkspaceCell: React.FC<Props> = ({ className, workspace, personal, onSelect }) => {
   const t = useT();
-  const teamMembers = team.members;
+  const workspaceMembers = workspace.members;
   const theme = useTheme();
 
   return (
@@ -28,9 +28,9 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
       className={className}
       direction="column"
       justify="space-between"
-      onClick={() => onSelect?.(team)}>
+      onClick={() => onSelect?.(workspace)}>
       <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
-        {team.name ? team.name : t("No Title Workspace")}
+        {workspace.name ? workspace.name : t("No Title Workspace")}
       </Text>
       {personal ? (
         <Text size="m" color={theme.main.weak}>
@@ -41,7 +41,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
       ) : (
         <Flex align="center" justify="flex-start">
           <Flex wrap="wrap">
-            {teamMembers.map(member => (
+            {workspaceMembers.map(member => (
               <StyleAvatar key={member.userId} innerText={member.user?.name} />
             ))}
           </Flex>

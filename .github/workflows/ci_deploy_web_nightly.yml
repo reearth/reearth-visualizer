@@ -1,4 +1,4 @@
-name: deploy_test
+name: deploy-web-nightly
 on:
   workflow_dispatch:
 env:
@@ -11,7 +11,7 @@ jobs:
   deploy_test:
     name: Deploy test env
     runs-on: ubuntu-latest
-    if: github.event.repository.full_name == 'reearth/reearth-web'
+    if: github.event.repository.full_name == 'reearth/reearth'
     steps:
       - uses: google-github-actions/auth@v0
         with:
@@ -20,22 +20,10 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
       - uses: dsaltares/fetch-gh-release-asset@master
         with:
+          repo: reearth/reearth
           version: tags/nightly
           file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: tar -xvf reearth-web_nightly.tar.gz
       - name: rsync
         run: gsutil -m -h "Cache-Control:no-store" rsync -x "^reearth_config\\.json$" -dr reearth-web/ $GCS_DEST
-  slack-notification:
-    if: success() || failure()
-    name: Slack Notification
-    needs:
-      - deploy_test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

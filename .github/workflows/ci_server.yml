@@ -1,16 +1,20 @@
-name: CI
+name: ci-server
 on:
   push:
-    branches: [main, release]
+    branches: [main, release/*]
+    paths:
+      - server/**
   pull_request:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    paths:
+      - server/**
+
 jobs:
   ci:
-    name: CI
+    name: Check server change
     runs-on: ubuntu-latest
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
+    defaults:
+      run:
+        working-directory: server
     services:
       mongo:
         image: mongo:5-focal
@@ -45,4 +49,4 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.txt
+          flags: server

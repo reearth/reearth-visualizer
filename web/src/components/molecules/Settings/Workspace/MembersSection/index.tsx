@@ -18,7 +18,7 @@ export type Me = {
 
 export type User = UserType;
 
-type TeamMember = {
+type WorkspaceMember = {
   user?: User;
   userId: string;
   role: Role;
@@ -27,14 +27,14 @@ type TeamMember = {
 type Props = {
   me?: Me;
   owner?: boolean;
-  members?: TeamMember[];
+  members?: WorkspaceMember[];
   searchedUser?: User;
   personal?: boolean;
   searchUser: (nameOrEmail: string) => void;
   changeSearchedUser: (user: User | undefined) => void;
-  addMembersToTeam: (userIds: string[]) => Promise<void>;
-  updateMemberOfTeam: (userId: string, role: Role) => void;
-  removeMemberFromTeam: (userId: string) => void;
+  addMembersToWorkspace: (userIds: string[]) => Promise<void>;
+  updateMemberOfWorkspace: (userId: string, role: Role) => void;
+  removeMemberFromWorkspace: (userId: string) => void;
 };
 
 const MembersSection: React.FC<Props> = ({
@@ -45,9 +45,9 @@ const MembersSection: React.FC<Props> = ({
   personal,
   searchUser,
   changeSearchedUser,
-  addMembersToTeam,
-  updateMemberOfTeam,
-  removeMemberFromTeam,
+  addMembersToWorkspace,
+  updateMemberOfWorkspace,
+  removeMemberFromWorkspace,
 }) => {
   const t = useT();
 
@@ -81,8 +81,8 @@ const MembersSection: React.FC<Props> = ({
                 role={role}
                 owner={owner}
                 isMyself={me?.id === user.id}
-                onChangeRole={role => updateMemberOfTeam(user.id, role)}
-                onRemove={() => removeMemberFromTeam(user.id)}
+                onChangeRole={role => updateMemberOfWorkspace(user.id, role)}
+                onRemove={() => removeMemberFromWorkspace(user.id)}
               />
             ) : null,
           )}
@@ -94,7 +94,7 @@ const MembersSection: React.FC<Props> = ({
             searchedUser={searchedUser}
             searchUser={searchUser}
             changeSearchedUser={changeSearchedUser}
-            addMembersToTeam={addMembersToTeam}
+            addMembersToWorkspace={addMembersToWorkspace}
           />
         )}
       </Section>

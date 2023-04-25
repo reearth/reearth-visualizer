@@ -9,10 +9,10 @@ export type Props = {
 };
 
 const AssetPage: React.FC<Props> = () => {
-  const { teamId = "" } = useParams();
+  const { workspaceId = "" } = useParams();
   return (
     <AuthenticationRequiredPage>
-      <Asset teamId={teamId} />
+      <Asset workspaceId={workspaceId} />
     </AuthenticationRequiredPage>
   );
 };

@@ -30,7 +30,7 @@ export type Asset = AssetType;
 export type AssetSortType = SortType;
 
 export type Props = {
-  teamId?: string;
+  workspaceId?: string;
   initialAssetUrl?: string | null;
   allowDeletion?: boolean;
   className?: string;
