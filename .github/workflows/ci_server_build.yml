@@ -1,5 +1,6 @@
 name: build-server
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: [ci-server]
     types: [completed]
