@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth/web
-        run: tar -xvf server/reearth-web.tar.gz; mv server/reearth-web server/web; ls server
+        run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
         uses: docker/build-push-action@v2
         with:
@@ -68,7 +68,6 @@ jobs:
           tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
       - name: Invoke ci-deploy-server-nightly workflow
         uses: benc-uk/workflow-dispatch@v1
         if: needs.info.outputs.name == 'nightly'
