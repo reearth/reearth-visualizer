@@ -12,32 +12,36 @@ import useHooks from "../Workspace/hooks";
 // Components
 
 type Props = {
-  teamId: string;
+  workspaceId: string;
 };
 
-const WorkspaceList: React.FC<Props> = ({ teamId }) => {
+const WorkspaceList: React.FC<Props> = ({ workspaceId }) => {
   const t = useT();
   const {
-    teams,
+    workspaces,
     currentWorkspace,
-    createTeam,
+    createWorkspace,
     selectWorkspace,
     openModal,
     modalShown,
     handleModalClose,
     loading,
-  } = useHooks({ teamId });
+  } = useHooks({ workspaceId });
 
   return (
-    <SettingPage teamId={teamId}>
+    <SettingPage workspaceId={workspaceId}>
       <SettingsHeader title={t("Workspace List")} />
       <MoleculeWorkspaceList
-        currentTeam={currentWorkspace}
-        teams={teams}
+        currentWorkspace={currentWorkspace}
+        workspaces={workspaces}
         onWorkspaceSelect={selectWorkspace}
         onCreationButtonClick={openModal}
       />
-      <WorkspaceCreationModal open={modalShown} onClose={handleModalClose} onSubmit={createTeam} />
+      <WorkspaceCreationModal
+        open={modalShown}
+        onClose={handleModalClose}
+        onSubmit={createWorkspace}
+      />
       {loading && <Loading portal overlay />}
     </SettingPage>
   );

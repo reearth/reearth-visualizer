@@ -9,8 +9,8 @@ export interface Props {
 }
 
 const ProjectList: React.FC<Props> = () => {
-  const { teamId = "" } = useParams();
-  return <OrganismsProjectList teamId={teamId} />;
+  const { workspaceId = "" } = useParams();
+  return <OrganismsProjectList workspaceId={workspaceId} />;
 };
 
 export default withAuthenticationRequired(ProjectList);

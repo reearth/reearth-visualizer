@@ -16,15 +16,15 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/cache"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/util"
 )
 
 type Published struct {
 	project      repo.Project
 	file         gateway.File
-	indexHTML    *cache.Cache[string]
+	indexHTML    *util.Cache[string]
 	indexHTMLStr string
 }
 
@@ -40,7 +40,7 @@ func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *
 	return &Published{
 		project: project,
 		file:    file,
-		indexHTML: cache.New(func(c context.Context, i string) (string, error) {
+		indexHTML: util.NewCache(func(c context.Context, i string) (string, error) {
 			req, err := http.NewRequestWithContext(c, http.MethodGet, indexHTMLURL.String(), nil)
 			if err != nil {
 				return "", err
@@ -86,17 +86,17 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
-	html := i.indexHTMLStr
+	htmlStr := i.indexHTMLStr
 	if i.indexHTML != nil {
-		htmli, err := i.indexHTML.Get(ctx)
+		htmlCachedStr, err := i.indexHTML.Get(ctx)
 		if err != nil {
 			return "", err
 		}
-		html = htmli
+		htmlStr = htmlCachedStr
 	}
 
 	if name == "" {
-		return html, nil
+		return htmlStr, nil
 	}
 
 	prj, err := i.project.FindByPublicName(ctx, name)
@@ -104,11 +104,11 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 		return "", err
 	}
 	if prj == nil {
-		return html, nil
+		return htmlStr, nil
 	}
 
 	md := interfaces.ProjectPublishedMetadataFrom(prj)
-	return renderIndex(html, u.String(), md), nil
+	return renderIndex(htmlStr, u.String(), md), nil
 }
 
 const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" />

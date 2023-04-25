@@ -41,9 +41,9 @@ function AppRoutes() {
     { path: "/settings", element: <Navigate to="/settings/account" /> },
     { path: "/settings/account", element: <AccountSettings /> },
     { path: "/settings/workspaces", element: <WorkspaceList /> },
-    { path: "/settings/workspaces/:teamId", element: <WorkspaceSettings /> },
-    { path: "/settings/workspaces/:teamId/projects", element: <SettingsProjectList /> },
-    { path: "/settings/workspaces/:teamId/asset", element: <AssetSettings /> },
+    { path: "/settings/workspaces/:workspaceId", element: <WorkspaceSettings /> },
+    { path: "/settings/workspaces/:workspaceId/projects", element: <SettingsProjectList /> },
+    { path: "/settings/workspaces/:workspaceId/asset", element: <AssetSettings /> },
     { path: "/settings/projects/:projectId", element: <ProjectSettings /> },
     { path: "/settings/projects/:projectId/public", element: <PublicSettings /> },
     { path: "/settings/projects/:projectId/dataset", element: <DatasetSettings /> },
@@ -80,9 +80,9 @@ const StyledRouter = styled(Router)`
 
 // Redirections for breaking changes in URLs
 const redirects = [
-  ["/settings/workspace/:teamId", "/settings/workspaces/:teamId"],
-  ["/settings/workspace/:teamId/projects", "/settings/workspaces/:teamId/projects"],
-  ["/settings/workspace/:teamId/asset", "/settings/workspaces/:teamId/asset"],
+  ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
+  ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
+  ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
   ["/settings/project/:projectId", "/settings/projects/:projectId"],
   ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
   ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],

@@ -7,20 +7,20 @@ import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
-  currentTeam?: {
+  currentWorkspace?: {
     id: string;
     name: string;
     // description: string;
     personal?: boolean;
   };
-  updateTeamName?: (name?: string) => void;
+  updateWorkspaceName?: (name?: string) => void;
   updateProjectDescription?: (description: string) => void;
   owner?: boolean;
 };
 
 const ProfileSection: React.FC<Props> = ({
-  currentTeam,
-  updateTeamName,
+  currentWorkspace,
+  updateWorkspaceName,
   //   updateProjectDescription,
   owner,
 }) => {
@@ -29,13 +29,13 @@ const ProfileSection: React.FC<Props> = ({
   return (
     <Wrapper>
       <Section>
-        {currentTeam?.personal || owner === false ? (
-          <Field header={t("Workspace name")} body={currentTeam?.name} />
+        {currentWorkspace?.personal || owner === false ? (
+          <Field header={t("Workspace name")} body={currentWorkspace?.name} />
         ) : (
           <EditableItem
             title={t("Workspace name")}
-            body={currentTeam?.name}
-            onSubmit={updateTeamName}
+            body={currentWorkspace?.name}
+            onSubmit={updateWorkspaceName}
           />
           // {/* <EditableItem
           //   title={t("Description")}
