@@ -47,8 +47,8 @@ jobs:
         run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
       - uses: actions/upload-artifact@v2
         with:
-          name: build
-          path: reearth-web.tar.gz
+          name: reearth-web
+          path: web/reearth-web.tar.gz
 
   release_nightly:
     name: Release nightly/rc
@@ -63,7 +63,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: build
+          name: reearth-web
       - name: Rename artifact
         run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
