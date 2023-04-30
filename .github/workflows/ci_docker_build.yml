@@ -17,7 +17,7 @@ jobs:
         working-directory: server
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -62,7 +62,7 @@ jobs:
       - name: Extract reearth/web
         run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: server
           platforms: ${{ steps.options.outputs.platforms }}

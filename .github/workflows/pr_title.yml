@@ -11,10 +11,10 @@ jobs:
   pr_title:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v2
+      - uses: actions/labeler@v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: amannn/action-semantic-pull-request@v4
+      - uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ignoreLabels: meta
