@@ -1,5 +1,6 @@
 name: build-server
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: [ci-server]
     types: [completed]
@@ -48,7 +49,7 @@ jobs:
           artifacts: ${{ env.ARTIFACTS }}
           commit: ${{ github.sha }}
           name: ${{ needs.info.outputs.name }}
-          tag: ${{ needs.info.outputs.new_tag }}
+          tag: ${{ needs.info.outputs.name }}
           body: ${{ needs.info.outputs.sha_short }}
           prerelease: true
       - name: Download latest changelog
@@ -69,5 +70,5 @@ jobs:
       - name: Invoke ci-docker-build workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-            workflow: ci_docker_build
+            workflow: build-docker-image
             token: ${{ secrets.GPT }}
