@@ -12,6 +12,7 @@ jobs:
   ci:
     name: Check and build web change
     runs-on: ubuntu-latest
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     defaults:
       run:
         working-directory: web
