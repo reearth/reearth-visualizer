@@ -72,7 +72,7 @@ func (i *Dataset) DynamicSchemaFields() []*dataset.SchemaField {
 	return []*dataset.SchemaField{author, content, location, target}
 }
 
-func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, operator *usecase.Operator) (_ *dataset.Schema, err error) {
+func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
 	schema, err := i.datasetSchemaRepo.FindByID(ctx, inp.SchemaId)
 	if err != nil {
 		return nil, err
@@ -102,11 +102,11 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 	return schema, nil
 }
 
-func (i *Dataset) AddDynamicDatasetSchema(ctx context.Context, inp interfaces.AddDynamicDatasetSchemaParam) (_ *dataset.Schema, err error) {
+func (i *Dataset) AddDynamicDatasetSchema(_ context.Context, _ interfaces.AddDynamicDatasetSchemaParam) (_ *dataset.Schema, err error) {
 	return nil, errors.New("not supported")
 }
 
-func (i *Dataset) AddDynamicDataset(ctx context.Context, inp interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
+func (i *Dataset) AddDynamicDataset(_ context.Context, _ interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
 	return nil, nil, errors.New("not supported")
 }
 
@@ -312,7 +312,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 	return schema, nil
 }
 
-func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, operator *usecase.Operator) (dataset.List, error) {
+func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, _ *usecase.Operator) (dataset.List, error) {
 	return i.datasetRepo.FindByIDs(ctx, ids)
 }
 
@@ -363,7 +363,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 	return r, s.Name(), nil
 }
 
-func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, operator *usecase.Operator) (dataset.List, error) {
+func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ *usecase.Operator) (dataset.List, error) {
 	if depth < 0 || depth > 3 {
 		return nil, interfaces.ErrDatasetInvalidDepth
 	}
@@ -388,11 +388,11 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, op
 	return res, nil
 }
 
-func (i *Dataset) FetchSchema(ctx context.Context, ids []id.DatasetSchemaID, operator *usecase.Operator) (dataset.SchemaList, error) {
+func (i *Dataset) FetchSchema(ctx context.Context, ids []id.DatasetSchemaID, _ *usecase.Operator) (dataset.SchemaList, error) {
 	return i.datasetSchemaRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, depth int, operator *usecase.Operator) (dataset.SchemaList, error) {
+func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, depth int, _ *usecase.Operator) (dataset.SchemaList, error) {
 	if depth < 0 || depth > 3 {
 		return nil, interfaces.ErrDatasetInvalidDepth
 	}
@@ -419,7 +419,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 	return res, nil
 }
 
-func (i *Dataset) FindBySchema(ctx context.Context, ds id.DatasetSchemaID, p *usecasex.Pagination, operator *usecase.Operator) (dataset.List, *usecasex.PageInfo, error) {
+func (i *Dataset) FindBySchema(ctx context.Context, ds id.DatasetSchemaID, p *usecasex.Pagination, _ *usecase.Operator) (dataset.List, *usecasex.PageInfo, error) {
 	return i.datasetRepo.FindBySchema(ctx, ds, p)
 }
 
