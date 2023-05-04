@@ -106,6 +106,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	apiPrivate := api.Group("", private)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
+	apiPrivate.GET("/dataset/:datasetSchemaId", ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
 
 	if !cfg.Config.AuthSrv.Disabled {

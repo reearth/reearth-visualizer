@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"encoding/csv"
 	"errors"
 	"io"
 	"strings"
@@ -13,6 +14,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -312,6 +314,53 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 
 func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, operator *usecase.Operator) (dataset.List, error) {
 	return i.datasetRepo.FindByIDs(ctx, ids)
+}
+
+func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.Operator) (io.Reader, string, error) {
+
+	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, "", err
+	}
+
+	ds, err := i.datasetRepo.FindBySchemaAll(ctx, id)
+	if err != nil {
+		return nil, "", err
+	}
+
+	r, w := io.Pipe()
+	csvw := csv.NewWriter(w)
+
+	go func() {
+		var err error
+
+		defer func() {
+			_ = w.CloseWithError(err)
+		}()
+
+		err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
+			return f.Name()
+		}))
+		if err != nil {
+			return
+		}
+
+		for _, values := range ds {
+			err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
+				fv := values.Field(f.ID())
+				if fv == nil || fv.Value() == nil {
+					return ""
+				}
+				return lo.FromPtrOr(fv.Value().Cast(dataset.ValueTypeString).ValueString(), "")
+			}))
+			if err != nil {
+				return
+			}
+		}
+		csvw.Flush()
+	}()
+
+	return r, s.Name(), nil
 }
 
 func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, operator *usecase.Operator) (dataset.List, error) {

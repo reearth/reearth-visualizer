@@ -34,3 +34,25 @@ func ExportLayer() echo.HandlerFunc {
 		return c.Stream(http.StatusOK, mime, reader)
 	}
 }
+
+func ExportDataset() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+		u := adapter.Usecases(ctx)
+
+		param := c.Param("datasetSchemaId")
+
+		dssId, err := id.DatasetSchemaIDFrom(param)
+		if err != nil {
+			return rerror.ErrNotFound
+		}
+
+		r, name, err := u.Dataset.Export(ctx, dssId, nil)
+		if err != nil {
+			return err
+		}
+
+		c.Response().Header().Add("Content-Disposition", "attachment;filename="+name)
+		return c.Stream(http.StatusOK, "text/csv", r)
+	}
+}
