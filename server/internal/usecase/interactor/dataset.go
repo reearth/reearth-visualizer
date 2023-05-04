@@ -186,8 +186,8 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		return nil, err
 	}
 
-	csv := dataset.NewCSVParser(content, name, separator)
-	err = csv.Init()
+	csvParser := dataset.NewCSVParser(content, name, separator)
+	err = csvParser.Init()
 	if err != nil {
 		return nil, err
 	}
@@ -198,26 +198,26 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		if err != nil {
 			return nil, err
 		}
-		err = csv.CheckCompatible(dss)
+		err = csvParser.CheckCompatible(dss)
 		if err != nil {
 			return nil, err
 		}
-		toreplace, err := i.datasetRepo.FindBySchemaAll(ctx, *schemaId)
+		toReplace, err := i.datasetRepo.FindBySchemaAll(ctx, *schemaId)
 		if err != nil {
 			return nil, err
 		}
-		err = i.datasetRepo.RemoveAll(ctx, toreplace.ToDatasetIds())
+		err = i.datasetRepo.RemoveAll(ctx, toReplace.ToDatasetIds())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err = csv.GuessSchema(sceneId)
+		err = csvParser.GuessSchema(sceneId)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	schema, datasets, err := csv.ReadAll()
+	schema, datasets, err := csvParser.ReadAll()
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +236,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 	}
 
 	if schemaId != nil {
-		layergroups, err := i.layerRepo.FindGroupBySceneAndLinkedDatasetSchema(ctx, sceneId, *schemaId)
+		layerGroups, err := i.layerRepo.FindGroupBySceneAndLinkedDatasetSchema(ctx, sceneId, *schemaId)
 		if err != nil {
 			return nil, err
 		}
@@ -245,9 +245,9 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		representativeFieldID := schema.RepresentativeFieldID()
 		removedProperties := []id.PropertyID{}
 		removedLayers := []id.LayerID{}
-		updatedLayers := append(layer.List{}, layergroups.ToLayerList()...)
+		updatedLayers := append(layer.List{}, layerGroups.ToLayerList()...)
 
-		for _, lg := range layergroups {
+		for _, lg := range layerGroups {
 			if lg.Layers().LayerCount() > 0 {
 				children, err := i.layerRepo.FindByIDs(ctx, lg.Layers().Layers())
 				if err != nil {
@@ -263,7 +263,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 			}
 
 			for _, ds := range datasets {
-				dsid := ds.ID()
+				dsId := ds.ID()
 				name := ""
 				if rf := ds.FieldRef(representativeFieldID); rf != nil && rf.Type() == dataset.ValueTypeString {
 					name = rf.Value().Value().(string)
@@ -273,7 +273,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 					ParentLayerID:   lg.ID(),
 					Plugin:          builtin.Plugin(),
 					ExtensionID:     &extensionForLinkedLayers,
-					LinkedDatasetID: &dsid,
+					LinkedDatasetID: &dsId,
 					Name:            name,
 				}.Initialize()
 				if err != nil {
@@ -329,7 +329,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 	}
 
 	r, w := io.Pipe()
-	csvw := csv.NewWriter(w)
+	csvW := csv.NewWriter(w)
 
 	go func() {
 		var err error
@@ -338,7 +338,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 			_ = w.CloseWithError(err)
 		}()
 
-		err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
+		err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
 			return f.Name()
 		}))
 		if err != nil {
@@ -346,7 +346,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 		}
 
 		for _, values := range ds {
-			err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
+			err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
 				fv := values.Field(f.ID())
 				if fv == nil || fv.Value() == nil {
 					return ""
@@ -357,7 +357,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 				return
 			}
 		}
-		csvw.Flush()
+		csvW.Flush()
 	}()
 
 	return r, s.Name(), nil
@@ -589,7 +589,7 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 	}()
 
 	// list of datasets attached by the schema
-	dsids := []id.DatasetID{}
+	dsIds := []id.DatasetID{}
 	var properties []*property.Property
 	for _, d := range datasets {
 		properties, err = i.propertyRepo.FindByDataset(ctx, inp.SchemaID, d.ID())
@@ -602,7 +602,7 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 			p.UnlinkAllByDataset(inp.SchemaID, d.ID())
 		}
 
-		dsids = append(dsids, d.ID())
+		dsIds = append(dsIds, d.ID())
 	}
 
 	// unlink layers (items and groups) and save
@@ -642,7 +642,7 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 		return inp.SchemaID, err
 	}
 
-	err = i.datasetRepo.RemoveAll(ctx, dsids)
+	err = i.datasetRepo.RemoveAll(ctx, dsIds)
 	if err != nil {
 		return inp.SchemaID, err
 	}
