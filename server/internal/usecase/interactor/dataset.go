@@ -192,7 +192,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		return nil, err
 	}
 
-	// replacment mode
+	// replacement mode
 	if schemaId != nil {
 		dss, err := i.datasetSchemaRepo.FindByID(ctx, *schemaId)
 		if err != nil {
