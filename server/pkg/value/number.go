@@ -2,6 +2,7 @@ package value
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -126,6 +127,13 @@ func (*propertyNumber) V2I(v interface{}) (interface{}, bool) {
 func (*propertyNumber) Validate(i interface{}) bool {
 	_, ok := i.(float64)
 	return ok
+}
+
+func (p *propertyNumber) String(i interface{}) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return fmt.Sprintf("%g", i.(float64))
 }
 
 func (v *Value) ValueNumber() (vv float64, ok bool) {

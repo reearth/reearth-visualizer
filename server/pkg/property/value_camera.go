@@ -61,6 +61,14 @@ func (*typePropertyCamera) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *typePropertyCamera) String(i interface{}) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	panic("not implemented!")
+	// return i.(Camera).String()
+}
+
 func (v *Value) ValueCamera() (vv Camera, ok bool) {
 	if v == nil {
 		return

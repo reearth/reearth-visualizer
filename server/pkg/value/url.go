@@ -44,6 +44,13 @@ func (*propertyURL) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *propertyURL) String(i interface{}) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(*url.URL).String()
+}
+
 func (v *Value) ValueURL() (vv *url.URL, ok bool) {
 	if v == nil {
 		return

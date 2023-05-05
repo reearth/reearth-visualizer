@@ -338,6 +338,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 			_ = w.CloseWithError(err)
 		}()
 
+		// write csv headers
 		err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
 			return f.Name()
 		}))
@@ -345,13 +346,14 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 			return
 		}
 
+		// write values
 		for _, values := range ds {
 			err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
 				fv := values.Field(f.ID())
 				if fv == nil || fv.Value() == nil {
-					return ""
+					return "#ERROR#"
 				}
-				return lo.FromPtrOr(fv.Value().Cast(dataset.ValueTypeString).ValueString(), "")
+				return fv.Value().String()
 			}))
 			if err != nil {
 				return

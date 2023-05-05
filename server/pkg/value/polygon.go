@@ -6,6 +6,10 @@ var TypePolygon Type = "polygon"
 
 type Polygon []Coordinates
 
+func (p Polygon) String() string {
+	panic("not implemented!")
+}
+
 func PolygonFrom(rings [][]float64) Polygon {
 	p := make([]Coordinates, 0, len(rings))
 	for _, ring := range rings {
@@ -48,6 +52,13 @@ func (*propertyPolygon) V2I(v interface{}) (interface{}, bool) {
 func (*propertyPolygon) Validate(i interface{}) bool {
 	_, ok := i.(Polygon)
 	return ok
+}
+
+func (p *propertyPolygon) String(i interface{}) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(Polygon).String()
 }
 
 func (v *Value) ValuePolygon() (vv Polygon, ok bool) {
