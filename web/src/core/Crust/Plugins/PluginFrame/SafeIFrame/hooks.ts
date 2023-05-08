@@ -158,11 +158,8 @@ export default function useHook({
 
   const srcDoc = useMemo(() => {
     if (html === undefined) return "";
-    let htmlWithAutoResize = html?.replaceAll(/<\/body>/gi, `${autoResizeScript}</body>`);
-    if (htmlWithAutoResize === html) {
-      htmlWithAutoResize = `${html}${autoResizeScript}`;
-    }
-    return htmlWithAutoResize;
+    const htmlWithAutoResize = html?.replaceAll(/<\/body>/gi, `${autoResizeScript}</body>`);
+    return htmlWithAutoResize === html ? `${html}${autoResizeScript}` : htmlWithAutoResize;
   }, [html, autoResizeScript]);
 
   return {
