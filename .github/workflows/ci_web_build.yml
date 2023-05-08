@@ -45,7 +45,7 @@ jobs:
         run: yarn build
       - name: Pack
         run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: reearth-web
           path: web/reearth-web.tar.gz
@@ -58,7 +58,7 @@ jobs:
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: reearth-web
       - name: Rename artifact

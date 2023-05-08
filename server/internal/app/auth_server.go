@@ -10,7 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/zitadel/oidc/pkg/oidc"
+	"github.com/zitadel/oidc/v2/pkg/oidc"
 )
 
 const authServerDefaultClientID = "reearth-authsrv-client-default"
