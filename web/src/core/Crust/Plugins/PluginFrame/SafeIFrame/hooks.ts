@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 
+import { insertToBody } from "./utils";
+
 export type RefType = {
   postMessage: (message: any) => void;
   resize: (width: string | number | undefined, height: string | number | undefined) => void;
@@ -157,9 +159,7 @@ export default function useHook({
   }, [autoResizeMessageKey]);
 
   const srcDoc = useMemo(() => {
-    if (html === undefined) return "";
-    const htmlWithAutoResize = html?.replaceAll(/<\/body>/gi, `${autoResizeScript}</body>`);
-    return htmlWithAutoResize === html ? `${html}${autoResizeScript}` : htmlWithAutoResize;
+    return insertToBody(html, autoResizeScript);
   }, [html, autoResizeScript]);
 
   return {
