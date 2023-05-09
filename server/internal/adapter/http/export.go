@@ -1,8 +1,7 @@
-package app
+package http
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -10,27 +9,24 @@ import (
 	"github.com/reearth/reearthx/rerror"
 )
 
-func ExportLayer() echo.HandlerFunc {
+func ExportDataset() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 		u := adapter.Usecases(ctx)
 
-		param := c.Param("param")
-		params := strings.Split(param, ".")
-		if len(params) != 2 {
-			return rerror.ErrNotFound
-		}
+		param := c.Param("datasetSchemaId")
 
-		lid, err := id.LayerIDFrom(params[0])
+		dssId, err := id.DatasetSchemaIDFrom(param)
 		if err != nil {
 			return rerror.ErrNotFound
 		}
 
-		reader, mime, err := u.Layer.Export(ctx, lid, params[1])
+		r, name, err := u.Dataset.Export(ctx, dssId, "csv", nil)
 		if err != nil {
 			return err
 		}
 
-		return c.Stream(http.StatusOK, mime, reader)
+		c.Response().Header().Add("Content-Disposition", "attachment;filename="+name)
+		return c.Stream(http.StatusOK, "text/csv", r)
 	}
 }

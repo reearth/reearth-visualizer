@@ -221,6 +221,9 @@ func (v *Value) ValuePolygon() *Polygon {
 }
 
 func (v *Value) String() string {
+	if v == nil {
+		return ""
+	}
 	return v.v.String()
 }
 

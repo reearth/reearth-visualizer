@@ -316,7 +316,7 @@ func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, _ *usecase.Oper
 	return i.datasetRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.Operator) (io.Reader, string, error) {
+func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, _ *usecase.Operator) (io.Reader, string, error) {
 
 	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
 	if err != nil {
@@ -328,6 +328,18 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 		return nil, "", err
 	}
 
+	var r io.Reader
+	switch format {
+	case "csv":
+		r = i.csvExport(s, ds)
+	default:
+		r = i.csvExport(s, ds)
+	}
+
+	return r, s.Name(), nil
+}
+
+func (i *Dataset) csvExport(s *dataset.Schema, ds dataset.List) io.Reader {
 	r, w := io.Pipe()
 	csvW := csv.NewWriter(w)
 
@@ -361,8 +373,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, _ *usecase.
 		}
 		csvW.Flush()
 	}()
-
-	return r, s.Name(), nil
+	return r
 }
 
 func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ *usecase.Operator) (dataset.List, error) {

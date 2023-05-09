@@ -65,7 +65,8 @@ func (p *typePropertyCamera) String(i interface{}) string {
 	if !p.Validate(i) {
 		return ""
 	}
-	panic("not implemented!")
+	return ""
+	// Should be implemented if needed
 	// return i.(Camera).String()
 }
 
