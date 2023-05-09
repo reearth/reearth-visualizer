@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-import { useAuth } from "@reearth/auth";
+//import { useAuth } from "@reearth/auth";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
@@ -14,11 +14,18 @@ export type Props = {
   id: string;
   name: string;
   removeDatasetSchema?: (schemaId: string) => void;
+  onDownloadFile?: (id: string, name: string) => void;
 };
 
-const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema }) => {
+const DatasetItem: React.FC<Props> = ({
+  className,
+  id,
+  name,
+  removeDatasetSchema,
+  onDownloadFile,
+}) => {
   const t = useT();
-  const { getAccessToken } = useAuth();
+  // const { getAccessToken } = useAuth();
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isDownloading, setDownloading] = useState(false);
@@ -27,34 +34,11 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
     () => removeDatasetSchema?.(id),
     [id, removeDatasetSchema],
   );
-
-  const handleDownload = useCallback(async () => {
+  const handleDownloadFile = useCallback(() => {
     setDownloading(true);
-    if (!id || !window.REEARTH_CONFIG?.api) {
-      setDownloading(false);
-      return;
-    }
-    const accessToken = await getAccessToken();
-    if (!accessToken) {
-      setDownloading(false);
-      return;
-    }
-    const res = await fetch(`${window.REEARTH_CONFIG.api}/dataset/${id}`, {
-      headers: {
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      },
-    });
-    const download = document.createElement("a");
-    download.download = name;
-    download.href = URL.createObjectURL(await res.blob());
-    download.dataset.downloadurl = [
-      "data:text/csv;charset=utf-8,",
-      download.download,
-      download.href,
-    ].join(":");
-    download.click();
+    onDownloadFile?.(id, name);
     setDownloading(false);
-  }, [getAccessToken, id, name]);
+  }, [id, name, onDownloadFile]);
 
   const onClose = useCallback(() => {
     setIsVisible(false);
@@ -70,7 +54,9 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
         {isHover && (
           <Actions>
             <TrashIcon icon="bin" size={20} onClick={() => setIsVisible(true)} />
-            {!isDownloading && <DownloadIcon icon="download" size={20} onClick={handleDownload} />}
+            {!isDownloading && (
+              <DownloadIcon icon="download" size={20} onClick={handleDownloadFile} />
+            )}
 
             {isDownloading && <SpinIcon icon="spinner" size={20} />}
           </Actions>

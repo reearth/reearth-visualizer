@@ -13,12 +13,14 @@ type Props = {
   datasetSchemas: Item[];
   removeDatasetSchema: (schemaId: string) => void;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
+  onDownloadFile?: (id: string, name: string) => void;
 };
 
 const DatasetSection: React.FC<Props> = ({
   datasetSchemas,
   removeDatasetSchema,
   onDatasetImport,
+  onDownloadFile,
 }) => {
   const t = useT();
   const handleFileSelect = useFileInput(files => onDatasetImport?.(files[0], null), {
@@ -32,7 +34,11 @@ const DatasetSection: React.FC<Props> = ({
       actions={
         <Button large buttonType="secondary" text={t("Add Dataset")} onClick={handleFileSelect} />
       }>
-      <StyledDatasetList items={datasetSchemas} removeDatasetSchema={removeDatasetSchema} />
+      <StyledDatasetList
+        items={datasetSchemas}
+        removeDatasetSchema={removeDatasetSchema}
+        onDownloadFile={onDownloadFile}
+      />
     </Section>
   );
 };

@@ -14,13 +14,19 @@ export type Props = {
   hasMore?: boolean;
   removeDatasetSchema?: (schemaId: string) => void;
   onGetMoreDataSets?: () => void;
+  onDownloadFile?: (id: string, name: string) => void;
 };
 
-const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema }) => {
+const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema, onDownloadFile }) => {
   return (
     <Wrapper>
       {items.map(item => (
-        <DatasetItem key={item.id} {...item} removeDatasetSchema={removeDatasetSchema} />
+        <DatasetItem
+          key={item.id}
+          {...item}
+          removeDatasetSchema={removeDatasetSchema}
+          onDownloadFile={onDownloadFile}
+        />
       ))}
     </Wrapper>
   );

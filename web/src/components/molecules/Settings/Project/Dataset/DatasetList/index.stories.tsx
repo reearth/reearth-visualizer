@@ -14,4 +14,10 @@ export default {
   component: DatasetList,
 } as Meta;
 
-export const Default = () => <DatasetList items={items} />;
+export const Default = () => (
+  <DatasetList
+    items={items}
+    removeDatasetSchema={schemaId => console.log(`Removing dataset with ID ${schemaId}`)}
+    onDownloadFile={(id, name) => console.log(`Downloading file with ID ${id} and name ${name}`)}
+  />
+);
