@@ -95,7 +95,9 @@ export default function Feature({
     k: keyof AppearanceTypes,
     f?: ComputedFeature,
   ): JSX.Element | null => {
-    const componentId = `${layer.id}_${f?.id ?? ""}_${k}_${JSON.stringify(f?.[k]) ?? ""}`;
+    const componentId = `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${
+      JSON.stringify(f?.[k]) ?? ""
+    }`;
 
     // Check if the component output is already cached
     const cachedComponent = CACHED_COMPONENTS.get(componentId);
