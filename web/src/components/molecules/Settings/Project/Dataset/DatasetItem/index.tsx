@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 
-//import { useAuth } from "@reearth/auth";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Modal from "@reearth/components/atoms/Modal";
@@ -25,7 +24,6 @@ const DatasetItem: React.FC<Props> = ({
   onDownloadFile,
 }) => {
   const t = useT();
-  // const { getAccessToken } = useAuth();
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isDownloading, setDownloading] = useState(false);
