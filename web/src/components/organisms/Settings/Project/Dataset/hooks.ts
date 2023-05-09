@@ -118,7 +118,7 @@ export default (projectId: string) => {
       const accessToken = await getAccessToken();
       if (!accessToken) return;
 
-      const res = await fetch(`${window.REEARTH_CONFIG.api}/dataset/${id}`, {
+      const res = await fetch(`${window.REEARTH_CONFIG.api}/datasets/${id}`, {
         headers: {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
