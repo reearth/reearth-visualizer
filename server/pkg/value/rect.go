@@ -48,7 +48,7 @@ func (*propertyRect) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyRect) String(i interface{}) string {
+func (p *propertyRect) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

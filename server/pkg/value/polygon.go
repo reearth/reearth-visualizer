@@ -54,7 +54,7 @@ func (*propertyPolygon) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyPolygon) String(i interface{}) string {
+func (p *propertyPolygon) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

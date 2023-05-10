@@ -63,7 +63,7 @@ func (*propertyLatLngHeight) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyLatLngHeight) String(i interface{}) string {
+func (p *propertyLatLngHeight) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

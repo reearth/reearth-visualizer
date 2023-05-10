@@ -129,7 +129,7 @@ func (*propertyNumber) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyNumber) String(i interface{}) string {
+func (p *propertyNumber) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

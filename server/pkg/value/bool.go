@@ -35,7 +35,7 @@ func (*propertyBool) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyBool) String(i interface{}) string {
+func (p *propertyBool) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

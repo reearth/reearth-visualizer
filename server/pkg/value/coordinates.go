@@ -80,7 +80,7 @@ func (*propertyCoordinates) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyCoordinates) String(i interface{}) string {
+func (p *propertyCoordinates) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

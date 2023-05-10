@@ -44,7 +44,7 @@ func (*propertyURL) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyURL) String(i interface{}) string {
+func (p *propertyURL) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}

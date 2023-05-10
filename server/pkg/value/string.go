@@ -37,7 +37,7 @@ func (*propertyString) Validate(i interface{}) bool {
 	return ok
 }
 
-func (p *propertyString) String(i interface{}) string {
+func (p *propertyString) String(i any) string {
 	if !p.Validate(i) {
 		return ""
 	}
