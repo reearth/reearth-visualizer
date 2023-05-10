@@ -32,6 +32,8 @@ jobs:
               ref: ${{ github.event.workflow_run.head_sha }}
           - name: Fetch tags
             run: git fetch --prune --unshallow --tags
+          - name: Debug
+            run: echo "${{ toJson(github) }}"
           - name: Get info
             id: info
             # The tag name should be retrieved lazily, as tagging may be delayed.
