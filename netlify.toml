@@ -1,8 +1,9 @@
 [build]
-  publish = "dist"
+  base = "web/"
+  publish = "web/dist"
   command = "yarn build:preview && (cd dist && curl -O https://test.reearth.dev/reearth_config.json)"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/web/*"
+  to = "/web/index.html"
   status = 200
