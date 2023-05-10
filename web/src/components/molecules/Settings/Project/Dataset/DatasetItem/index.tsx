@@ -13,17 +13,31 @@ export type Props = {
   id: string;
   name: string;
   removeDatasetSchema?: (schemaId: string) => void;
+  onDownloadFile?: (id: string, name: string, onLoad: () => void) => void;
 };
 
-const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema }) => {
+const DatasetItem: React.FC<Props> = ({
+  className,
+  id,
+  name,
+  removeDatasetSchema,
+  onDownloadFile,
+}) => {
   const t = useT();
-
   const [isHover, setHover] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isDownloading, setDownloading] = useState(false);
+
   const handleRemoveDatasetSchema = useCallback(
     () => removeDatasetSchema?.(id),
     [id, removeDatasetSchema],
   );
+  const handleDownloadFile = useCallback(() => {
+    setDownloading(true);
+    onDownloadFile?.(id, name, () => {
+      setDownloading(false);
+    });
+  }, [id, name, onDownloadFile]);
 
   const onClose = useCallback(() => {
     setIsVisible(false);
@@ -39,6 +53,11 @@ const DatasetItem: React.FC<Props> = ({ className, id, name, removeDatasetSchema
         {isHover && (
           <Actions>
             <TrashIcon icon="bin" size={20} onClick={() => setIsVisible(true)} />
+            {!isDownloading && (
+              <DownloadIcon icon="download" size={20} onClick={handleDownloadFile} />
+            )}
+
+            {isDownloading && <SpinIcon icon="spinner" size={20} />}
           </Actions>
         )}
         <Preview>
@@ -91,13 +110,14 @@ const Preview = styled.div`
 const Actions = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   background: rgba(34, 34, 34, 0.9);
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  justify-content: flex-start;
   padding: 10px;
   box-sizing: border-box;
 `;
@@ -118,7 +138,35 @@ const Name = styled.div`
 const TrashIcon = styled(Icon)`
   color: #ff3c53;
   cursor: pointer;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const DownloadIcon = styled(Icon)`
+  cursor: pointer;
+  color: ${props => props.theme.main.text};
   padding: 10px;
+  bottom: 0;
+  right: 0;
+`;
+
+const SpinIcon = styled(Icon)`
+  display: inline-block;
+  padding: 10px;
+  color: ${props => props.theme.main.text};
+  bottom: 0;
+  right: 0;
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;
 
 export default DatasetItem;
