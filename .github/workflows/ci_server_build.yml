@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: [ci-server]
     types: [completed]
-    branches: [main, release/*]
+    branches: [main, release/*, release]
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
