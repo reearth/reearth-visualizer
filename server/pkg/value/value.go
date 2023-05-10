@@ -69,6 +69,18 @@ func (v *Value) Interface() interface{} {
 	return nil
 }
 
+func (v *Value) String() string {
+	if v == nil || v.t == TypeUnknown {
+		return ""
+	}
+
+	if tp := v.TypeProperty(); tp != nil {
+		return tp.String(v.v)
+	}
+
+	return ""
+}
+
 func (v *Value) Validate() bool {
 	if v == nil || v.t == TypeUnknown {
 		return false
