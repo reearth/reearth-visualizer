@@ -39,6 +39,7 @@ jobs:
               BRANCH: ${{ github.event.workflow_run.head_branch }}
             run: |
               echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+              echo "BRANCH=$BRANCH"
               if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* ]]; then
                 TAG=$(git tag --points-at HEAD)
                 if [[ ! -z "$TAG" ]]; then
