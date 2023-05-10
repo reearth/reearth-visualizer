@@ -127,11 +127,6 @@ export default (projectId: string) => {
       const download = document.createElement("a");
       download.download = name;
       download.href = URL.createObjectURL(blob);
-      download.dataset.downloadurl = [
-        "data:text/csv;charset=utf-8,",
-        download.download,
-        download.href,
-      ].join(":");
       download.click();
       if (onLoad) {
         onLoad();
