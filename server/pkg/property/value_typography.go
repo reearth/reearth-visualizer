@@ -124,6 +124,15 @@ func (*typePropertyTypography) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *typePropertyTypography) String(i interface{}) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return ""
+	// Should be implemented if needed
+	// return i.(Typography).String()
+}
+
 func (v *Value) ValueTypography() (vv Typography, ok bool) {
 	if v == nil {
 		return
