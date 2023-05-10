@@ -13,7 +13,7 @@ export type Props = {
   id: string;
   name: string;
   removeDatasetSchema?: (schemaId: string) => void;
-  onDownloadFile?: (id: string, name: string) => void;
+  onDownloadFile?: (id: string, name: string, onLoad: () => void) => void;
 };
 
 const DatasetItem: React.FC<Props> = ({
@@ -34,8 +34,9 @@ const DatasetItem: React.FC<Props> = ({
   );
   const handleDownloadFile = useCallback(() => {
     setDownloading(true);
-    onDownloadFile?.(id, name);
-    setDownloading(false);
+    onDownloadFile?.(id, name, () => {
+      setDownloading(false);
+    });
   }, [id, name, onDownloadFile]);
 
   const onClose = useCallback(() => {

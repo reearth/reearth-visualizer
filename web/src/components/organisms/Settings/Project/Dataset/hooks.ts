@@ -112,26 +112,30 @@ export default (projectId: string) => {
   //Download file
 
   const handleDownloadFile = useCallback(
-    async (id: string, name: string) => {
+    async (id: string, name: string, onLoad: () => void) => {
       if (!id || !window.REEARTH_CONFIG?.api) return;
 
       const accessToken = await getAccessToken();
       if (!accessToken) return;
 
-      const res = await fetch(`${window.REEARTH_CONFIG.api}/dataset/${id}`, {
+      const res = await fetch(`${window.REEARTH_CONFIG.api}/datasets/${id}`, {
         headers: {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
+      const blob = await res.blob();
       const download = document.createElement("a");
       download.download = name;
-      download.href = URL.createObjectURL(await res.blob());
+      download.href = URL.createObjectURL(blob);
       download.dataset.downloadurl = [
         "data:text/csv;charset=utf-8,",
         download.download,
         download.href,
       ].join(":");
       download.click();
+      if (onLoad) {
+        onLoad();
+      }
     },
     [getAccessToken],
   );

@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 
 import DatasetList from ".";
@@ -17,7 +18,7 @@ export default {
 export const Default = () => (
   <DatasetList
     items={items}
-    removeDatasetSchema={schemaId => console.log(`Removing dataset with ID ${schemaId}`)}
-    onDownloadFile={(id, name) => console.log(`Downloading file with ID ${id} and name ${name}`)}
+    removeDatasetSchema={action("removeDatasetSchema")}
+    onDownloadFile={action("onDownloadFile")}
   />
 );

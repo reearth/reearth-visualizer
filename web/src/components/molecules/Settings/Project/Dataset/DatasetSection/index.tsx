@@ -13,7 +13,7 @@ type Props = {
   datasetSchemas: Item[];
   removeDatasetSchema: (schemaId: string) => void;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
-  onDownloadFile?: (id: string, name: string) => void;
+  onDownloadFile?: (id: string, name: string, onLoad: () => void) => void;
 };
 
 const DatasetSection: React.FC<Props> = ({

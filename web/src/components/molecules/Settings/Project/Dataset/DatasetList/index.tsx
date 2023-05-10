@@ -14,7 +14,7 @@ export type Props = {
   hasMore?: boolean;
   removeDatasetSchema?: (schemaId: string) => void;
   onGetMoreDataSets?: () => void;
-  onDownloadFile?: (id: string, name: string) => void;
+  onDownloadFile?: (id: string, name: string, onLoad: () => void) => void;
 };
 
 const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema, onDownloadFile }) => {
