@@ -32,6 +32,8 @@ jobs:
               ref: ${{ github.event.workflow_run.head_sha }}
           - name: Fetch tags
             run: git fetch --prune --unshallow --tags
+          - name: Debug
+            run: echo "${{ toJson(github) }}"
           - name: Get info
             id: info
             # The tag name should be retrieved lazily, as tagging may be delayed.
@@ -39,6 +41,7 @@ jobs:
               BRANCH: ${{ github.event.workflow_run.head_branch }}
             run: |
               echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+              echo "BRANCH=$BRANCH"
               if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* ]]; then
                 TAG=$(git tag --points-at HEAD)
                 if [[ ! -z "$TAG" ]]; then
