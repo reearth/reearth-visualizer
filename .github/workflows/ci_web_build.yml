@@ -1,5 +1,6 @@
 name: build-web
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: [ci-web]
     types: [completed]
@@ -46,23 +47,20 @@ jobs:
         run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
       - uses: actions/upload-artifact@v2
         with:
-          name: build
-          path: reearth-web.tar.gz
+          name: reearth-web
+          path: web/reearth-web.tar.gz
 
   release_nightly:
     name: Release nightly/rc
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
     needs: [info, build-web]
     if: needs.info.outputs.name
     env:
-      ARTIFACT_WEB: reearth-web_${{ needs.info.outputs.name }}.tar.gz
+      ARTIFACT: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: build
+          name: reearth-web
       - name: Rename artifact
         run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
@@ -80,20 +78,17 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         if: needs.info.outputs.name == 'nightly'
         with:
-          workflow: ci_deploy_web_nightly
+          workflow: deploy-web-nightly
           token: ${{ secrets.GPT }}
       - name: Invoke ci-docker-build workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-            workflow: ci_docker_build
+            workflow: build-docker-image
             token: ${{ secrets.GPT }}
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
     needs:
       - info
     if: needs.info.outputs.new_tag

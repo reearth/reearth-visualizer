@@ -13,7 +13,7 @@ func TestPingAPI(t *testing.T) {
 		AuthSrv: app.AuthSrvConfig{
 			Disabled: true,
 		},
-	}, false)
+	}, false, nil)
 
 	e.OPTIONS("/api/ping").
 		WithHeader("Origin", "https://example.com").

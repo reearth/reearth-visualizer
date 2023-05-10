@@ -353,10 +353,10 @@ func TestValue_Cast(t *testing.T) {
 			want:   &Value{t: TypeNumber, v: 1.1},
 		},
 		{
-			name:   "failed to cast",
+			name:   "to string",
 			target: &Value{t: TypeLatLng, v: LatLng{Lat: 1, Lng: 2}},
 			args:   args{t: TypeString},
-			want:   nil,
+			want:   &Value{t: TypeString, v: "2.000000, 1.000000"},
 		},
 		{
 			name:   "invalid value",

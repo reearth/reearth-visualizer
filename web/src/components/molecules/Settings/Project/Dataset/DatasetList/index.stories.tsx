@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 
 import DatasetList from ".";
@@ -14,4 +15,10 @@ export default {
   component: DatasetList,
 } as Meta;
 
-export const Default = () => <DatasetList items={items} />;
+export const Default = () => (
+  <DatasetList
+    items={items}
+    removeDatasetSchema={action("removeDatasetSchema")}
+    onDownloadFile={action("onDownloadFile")}
+  />
+);

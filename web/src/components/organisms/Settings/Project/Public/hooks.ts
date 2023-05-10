@@ -16,6 +16,7 @@ import {
   useNotification,
   NotificationType,
   useCurrentTheme as useCurrentTheme,
+  useSessionWorkspace,
 } from "@reearth/state";
 
 type Params = {
@@ -23,7 +24,9 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const [currentWorkspace] = useWorkspace();
+  const [currentWorkspace] = useSessionWorkspace();
+  const [lastWorkspace] = useWorkspace();
+
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -169,7 +172,7 @@ export default ({ projectId }: Params) => {
   const [currentTheme] = useCurrentTheme();
 
   return {
-    currentWorkspace,
+    currentWorkspace: currentWorkspace ?? lastWorkspace,
     currentProject,
     projectAlias,
     projectStatus: convertStatus(project?.publishmentStatus),

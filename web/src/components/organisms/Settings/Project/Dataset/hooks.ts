@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
+import { useAuth } from "@reearth/auth";
 import {
   DatasetsListQuery,
   useGetProjectSceneQuery,
@@ -9,7 +10,7 @@ import {
   useDatasetsListQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification, useSessionWorkspace } from "@reearth/state";
 
 type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
@@ -19,7 +20,10 @@ const datasetPerPage = 20;
 
 export default (projectId: string) => {
   const t = useT();
-  const [currentWorkspace] = useWorkspace();
+  const { getAccessToken } = useAuth();
+  const [currentWorkspace] = useSessionWorkspace();
+  const [lastWorkspace] = useWorkspace();
+
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -106,8 +110,34 @@ export default (projectId: string) => {
     [client, importData, sceneId],
   );
 
+  //Download file
+
+  const handleDownloadFile = useCallback(
+    async (id: string, name: string, onLoad: () => void) => {
+      if (!id || !window.REEARTH_CONFIG?.api) return;
+
+      const accessToken = await getAccessToken();
+      if (!accessToken) return;
+
+      const res = await fetch(`${window.REEARTH_CONFIG.api}/datasets/${id}`, {
+        headers: {
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
+      const blob = await res.blob();
+      const download = document.createElement("a");
+      download.download = name;
+      download.href = URL.createObjectURL(blob);
+      download.click();
+      if (onLoad) {
+        onLoad();
+      }
+    },
+    [getAccessToken],
+  );
+
   return {
-    currentWorkspace,
+    currentWorkspace: currentWorkspace ?? lastWorkspace,
     currentProject,
     datasetSchemas,
     datasetLoading: loading ?? isRefetchingDataSets,
@@ -115,5 +145,6 @@ export default (projectId: string) => {
     handleDatasetImport,
     handleRemoveDataset,
     handleGetMoreDataSets,
+    handleDownloadFile,
   };
 };

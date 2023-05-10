@@ -8,31 +8,29 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
+	"github.com/spf13/afero"
 )
+
+type Seeder func(ctx context.Context, r *repo.Container) error
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func StartServer(t *testing.T, cfg *app.Config, useMongo bool) *httpexpect.Expect {
-	t.Helper()
+func StartServer(t *testing.T, cfg *app.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
+	e, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
+	return e
+}
 
-	if testing.Short() {
-		t.SkipNow()
-	}
-
+func StartServerAndRepos(t *testing.T, cfg *app.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
 	ctx := context.Background()
-
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
 
 	var repos *repo.Container
 	if useMongo {
@@ -42,10 +40,35 @@ func StartServer(t *testing.T, cfg *app.Config, useMongo bool) *httpexpect.Expec
 		repos = memory.New()
 	}
 
+	if seeder != nil {
+		if err := seeder(ctx, repos); err != nil {
+			t.Fatalf("failed to seed the db: %s", err)
+		}
+	}
+
+	return StartServerWithRepos(t, cfg, repos), repos
+}
+func StartServerWithRepos(t *testing.T, cfg *app.Config, repos *repo.Container) *httpexpect.Expect {
+	t.Helper()
+
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	ctx := context.Background()
+
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		t.Fatalf("server failed to listen: %v", err)
+	}
+
 	srv := app.NewServer(ctx, &app.ServerConfig{
-		Config:   cfg,
-		Repos:    repos,
-		Gateways: &gateway.Container{},
+		Config: cfg,
+		Repos:  repos,
+		Gateways: &gateway.Container{
+			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		},
+		Debug: true,
 	})
 
 	ch := make(chan error)

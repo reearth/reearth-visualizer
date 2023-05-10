@@ -3,6 +3,7 @@ package interfaces
 import (
 	"context"
 	"errors"
+	"io"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/dataset"
@@ -62,6 +63,7 @@ var (
 
 type Dataset interface {
 	Fetch(context.Context, []id.DatasetID, *usecase.Operator) (dataset.List, error)
+	Export(context.Context, id.DatasetSchemaID, string, *usecase.Operator) (io.Reader, string, error)
 	GraphFetch(context.Context, id.DatasetID, int, *usecase.Operator) (dataset.List, error)
 	FetchSchema(context.Context, []id.DatasetSchemaID, *usecase.Operator) (dataset.SchemaList, error)
 	ImportDataset(context.Context, ImportDatasetParam, *usecase.Operator) (*dataset.Schema, error)

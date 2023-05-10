@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useNotification, useUserId } from "@reearth/state";
+import { useWorkspace, useNotification, useUserId, useSessionWorkspace } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
@@ -13,7 +13,9 @@ export default () => {
   const [error] = useCleanUrl();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useSessionWorkspace();
+  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
@@ -24,6 +26,11 @@ export default () => {
   if (isAuthenticated && !currentUserId) {
     setCurrentUserId(data?.me?.id);
   }
+
+  useEffect(() => {
+    if (!currentWorkspace && lastWorkspace) setCurrentWorkspace(lastWorkspace);
+  }, [currentWorkspace, lastWorkspace, setCurrentWorkspace]);
+
   const workspaceId = useMemo(() => {
     return currentWorkspace?.id || data?.me?.myTeam.id;
   }, [currentWorkspace?.id, data?.me?.myTeam.id]);
@@ -40,10 +47,13 @@ export default () => {
           ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
           : undefined,
       );
+      setLastWorkspace(currentWorkspace);
       navigate(`/dashboard/${workspaceId}`);
     } else {
       setCurrentUserId(data?.me?.id);
       setCurrentWorkspace(data?.me?.myTeam);
+      setLastWorkspace(currentWorkspace);
+
       navigate(`/dashboard/${data?.me?.myTeam.id}`);
     }
   }, [
@@ -53,9 +63,12 @@ export default () => {
     data?.me?.myTeam,
     setCurrentWorkspace,
     workspaceId,
+    setLastWorkspace,
+    currentWorkspace,
     navigate,
     setCurrentUserId,
   ]);
+
   useEffect(() => {
     if (!isAuthenticated || !data || !workspaceId) return;
     handleRedirect();

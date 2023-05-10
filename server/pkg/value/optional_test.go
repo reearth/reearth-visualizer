@@ -365,10 +365,10 @@ func TestOptional_Cast(t *testing.T) {
 			want:   &Optional{t: TypeString},
 		},
 		{
-			name:   "failed to cast",
+			name:   "to string",
 			target: &Optional{t: TypeLatLng, v: TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, nil)},
 			args:   args{t: TypeString},
-			want:   &Optional{t: TypeString},
+			want:   &Optional{t: TypeString, v: TypeString.ValueFrom("2.000000, 1.000000", nil)},
 		},
 		{
 			name:   "empty",
