@@ -10,7 +10,7 @@ import {
   useDatasetsListQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification, useSessionWorkspace } from "@reearth/state";
 
 type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
@@ -21,8 +21,9 @@ const datasetPerPage = 20;
 export default (projectId: string) => {
   const t = useT();
   const { getAccessToken } = useAuth();
+  const [currentWorkspace] = useSessionWorkspace();
+  const [lastWorkspace] = useWorkspace();
 
-  const [currentWorkspace] = useWorkspace();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -136,7 +137,7 @@ export default (projectId: string) => {
   );
 
   return {
-    currentWorkspace,
+    currentWorkspace: currentWorkspace ?? lastWorkspace,
     currentProject,
     datasetSchemas,
     datasetLoading: loading ?? isRefetchingDataSets,

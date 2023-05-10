@@ -35,6 +35,13 @@ func (*propertyBool) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *propertyBool) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return strconv.FormatBool(i.(bool))
+}
+
 func (v *Value) ValueBool() (vv bool, ok bool) {
 	if v == nil {
 		return

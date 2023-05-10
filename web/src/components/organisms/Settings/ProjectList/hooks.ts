@@ -13,7 +13,7 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification, useSessionWorkspace } from "@reearth/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -28,7 +28,9 @@ const projectPerPage = 5;
 
 export default (workspaceId: string) => {
   const [, setNotification] = useNotification();
-  const [currentWorkspace, setWorkspace] = useWorkspace();
+  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
+  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+
   const [, setProject] = useProject();
   const navigate = useNavigate();
   const t = useT();
@@ -42,6 +44,10 @@ export default (workspaceId: string) => {
     refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
+
+  useEffect(() => {
+    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
+  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   if (currentWorkspace && currentWorkspace.id !== workspaceId) {
     workspaceId = currentWorkspace?.id;
@@ -64,8 +70,9 @@ export default (workspaceId: string) => {
   useEffect(() => {
     if (workspace?.id && !currentWorkspace?.id) {
       setWorkspace(workspace);
+      setLastWorkspace(currentWorkspace);
     }
-  }, [currentWorkspace, workspace, setWorkspace]);
+  }, [currentWorkspace, workspace, setWorkspace, setLastWorkspace]);
 
   const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
 

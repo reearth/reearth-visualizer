@@ -220,6 +220,13 @@ func (v *Value) ValuePolygon() *Polygon {
 	return nil
 }
 
+func (v *Value) String() string {
+	if v == nil {
+		return ""
+	}
+	return v.v.String()
+}
+
 func ValueFromStringOrNumber(s string) *Value {
 	if s == "true" || s == "false" || s == "TRUE" || s == "FALSE" || s == "True" || s == "False" {
 		return ValueTypeBool.ValueFrom(s)
