@@ -19,7 +19,7 @@ jobs:
     info:
         name: Collect information
         runs-on: ubuntu-latest
-        if: ${{ github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (startsWith(github.event.workflow_run.head_branch, 'release/') || github.event.workflow_run.head_branch == 'release' || github.event.workflow_run.head_branch == 'main' || !startsWith(github.event.head_commit.message, 'v')) }}
+        if: ${{ github.event.repository.full_name == 'reearth/reearth' && (startsWith(github.ref_name, 'release/') || github.ref_name == 'release' || github.ref_name == 'main' || !startsWith(github.event.head_commit.message, 'v')) }}
         outputs:
           sha_short: ${{ steps.info.outputs.sha_short }}
           new_tag: ${{ steps.info.outputs.new_tag }}
@@ -32,13 +32,11 @@ jobs:
               ref: ${{ github.event.workflow_run.head_sha }}
           - name: Fetch tags
             run: git fetch --prune --unshallow --tags
-          - name: Debug
-            run: echo "${{ toJson(github) }}"
           - name: Get info
             id: info
             # The tag name should be retrieved lazily, as tagging may be delayed.
             env:
-              BRANCH: ${{ github.event.workflow_run.head_branch }}
+              BRANCH: ${{ github.ref_name }}
             run: |
               echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
               echo "BRANCH=$BRANCH"
