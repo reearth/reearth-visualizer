@@ -28,6 +28,8 @@ jobs:
         steps:
           - name: checkout
             uses: actions/checkout@v3
+            with:
+              ref: ${{ github.event.workflow_run.head_sha }}
           - name: Fetch tags
             run: git fetch --prune --unshallow --tags
           - name: Get info
