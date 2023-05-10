@@ -35,6 +35,8 @@ import PcIcon from "./Icons/pcIcon.svg";
 import GoogleDriveIcon from "./Icons/googleDriveIcon.svg";
 import SheetFileIcon from "./Icons/sheet-file.svg";
 import Update from "./Icons/update.svg";
+import Download from "./Icons/download.svg";
+import Spinner from "./Icons/spinner.svg";
 
 // Asset
 import AssetGrid from "./Icons/assetGrid.svg";
@@ -179,6 +181,8 @@ export default {
   datasetAdd: DatasetAdd,
   file: File,
   update: Update,
+  download: Download,
+  spinner: Spinner,
   googleDrive: GoogleDriveIcon,
   sheetFile: SheetFileIcon,
   computer: PcIcon,

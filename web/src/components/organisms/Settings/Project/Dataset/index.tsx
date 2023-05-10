@@ -23,6 +23,7 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
     handleRemoveDataset,
     handleDatasetImport,
     handleGetMoreDataSets,
+    handleDownloadFile,
   } = useHooks(projectId);
 
   return (
@@ -38,6 +39,7 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
           datasetSchemas={datasetSchemas}
           removeDatasetSchema={handleRemoveDataset}
           onDatasetImport={handleDatasetImport}
+          onDownloadFile={handleDownloadFile}
         />
       ) : (
         <ArchivedMessage />
