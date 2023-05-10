@@ -15,7 +15,7 @@ import {
 } from "@reearth/gql";
 import { Team } from "@reearth/gql/graphql-client-api";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification, useSessionWorkspace } from "@reearth/state";
 
 type Params = {
   workspaceId: string;
@@ -23,7 +23,8 @@ type Params = {
 
 export default (params: Params) => {
   const t = useT();
-  const [currentWorkspace, setWorkspace] = useWorkspace();
+  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
+  const [lastWorkspace, setLastWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
@@ -50,6 +51,10 @@ export default (params: Params) => {
     },
     [refetch],
   );
+
+  useEffect(() => {
+    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
+  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   useEffect(() => {
     if (params.workspaceId && currentWorkspace?.id && params.workspaceId !== currentWorkspace.id) {
@@ -85,6 +90,8 @@ export default (params: Params) => {
         });
       } else {
         setWorkspace(workspace);
+        setLastWorkspace(currentWorkspace);
+
         setNotification({
           type: "success",
           text: t("Sucessfully created a workspace!"),
@@ -92,7 +99,7 @@ export default (params: Params) => {
       }
       setModalShown(false);
     },
-    [createTeamMutation, setNotification, t, setWorkspace],
+    [createTeamMutation, setNotification, t, setWorkspace, setLastWorkspace, currentWorkspace],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -108,13 +115,23 @@ export default (params: Params) => {
         });
       } else {
         setWorkspace(results.data?.updateTeam?.team);
+        setLastWorkspace(currentWorkspace);
+
         setNotification({
           type: "info",
           text: t("You have changed the workspace's name."),
         });
       }
     },
-    [workspaceId, updateTeamMutation, t, setNotification, setWorkspace],
+    [
+      workspaceId,
+      updateTeamMutation,
+      setNotification,
+      t,
+      setWorkspace,
+      setLastWorkspace,
+      currentWorkspace,
+    ],
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
@@ -134,8 +151,18 @@ export default (params: Params) => {
         text: t("Workspace was successfully deleted."),
       });
       setWorkspace(workspaces[0]);
+      setLastWorkspace(currentWorkspace);
     }
-  }, [workspaceId, deleteTeamMutation, setNotification, t, setWorkspace, workspaces]);
+  }, [
+    workspaceId,
+    deleteTeamMutation,
+    setNotification,
+    t,
+    setWorkspace,
+    workspaces,
+    setLastWorkspace,
+    currentWorkspace,
+  ]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
@@ -157,6 +184,7 @@ export default (params: Params) => {
             return;
           }
           setWorkspace(workspace);
+          setLastWorkspace(currentWorkspace);
         }),
       );
       if (results) {
@@ -166,7 +194,15 @@ export default (params: Params) => {
         });
       }
     },
-    [workspaceId, addMemberToTeamMutation, setWorkspace, setNotification, t],
+    [
+      workspaceId,
+      addMemberToTeamMutation,
+      setWorkspace,
+      setLastWorkspace,
+      currentWorkspace,
+      setNotification,
+      t,
+    ],
   );
 
   const [updateMemberOfTeamMutation] = useUpdateMemberOfTeamMutation();
@@ -188,10 +224,11 @@ export default (params: Params) => {
         const workspace = results.data?.updateMemberOfTeam?.team;
         if (workspace) {
           setWorkspace(workspace);
+          setLastWorkspace(currentWorkspace);
         }
       }
     },
-    [workspaceId, setWorkspace, updateMemberOfTeamMutation],
+    [workspaceId, updateMemberOfTeamMutation, setWorkspace, setLastWorkspace, currentWorkspace],
   );
 
   const [removeMemberFromTeamMutation] = useRemoveMemberFromTeamMutation();
@@ -212,22 +249,34 @@ export default (params: Params) => {
         return;
       }
       setWorkspace(workspace);
+      setLastWorkspace(currentWorkspace);
+
       setNotification({
         type: "success",
         text: t("Successfully removed member from the workspace."),
       });
     },
-    [workspaceId, removeMemberFromTeamMutation, setWorkspace, t, setNotification],
+    [
+      workspaceId,
+      removeMemberFromTeamMutation,
+      setWorkspace,
+      setLastWorkspace,
+      currentWorkspace,
+      setNotification,
+      t,
+    ],
   );
 
   const selectWorkspace = useCallback(
     (workspace: Team) => {
       if (workspace.id) {
         setWorkspace(workspace);
+        setLastWorkspace(currentWorkspace);
+
         navigate(`/settings/workspaces/${workspace.id}`);
       }
     },
-    [navigate, setWorkspace],
+    [currentWorkspace, navigate, setLastWorkspace, setWorkspace],
   );
 
   return {
