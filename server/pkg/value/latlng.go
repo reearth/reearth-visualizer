@@ -1,6 +1,10 @@
 package value
 
-import "github.com/mitchellh/mapstructure"
+import (
+	"fmt"
+
+	"github.com/mitchellh/mapstructure"
+)
 
 type LatLng struct {
 	Lat float64 `json:"lat" mapstructure:"lat"`
@@ -15,6 +19,10 @@ func (l *LatLng) Clone() *LatLng {
 		Lat: l.Lat,
 		Lng: l.Lng,
 	}
+}
+
+func (l LatLng) String() string {
+	return fmt.Sprintf("%f, %f", l.Lng, l.Lat)
 }
 
 var TypeLatLng Type = "latlng"
@@ -51,6 +59,13 @@ func (*propertyLatLng) V2I(v interface{}) (interface{}, bool) {
 func (*propertyLatLng) Validate(i interface{}) bool {
 	_, ok := i.(LatLng)
 	return ok
+}
+
+func (p *propertyLatLng) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(LatLng).String()
 }
 
 func (v *Value) ValueLatLng() (vv LatLng, ok bool) {

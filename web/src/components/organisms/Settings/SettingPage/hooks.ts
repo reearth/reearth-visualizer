@@ -9,7 +9,7 @@ import {
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useWorkspace, useProject } from "@reearth/state";
+import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/state";
 
 type Params = {
   workspaceId?: string;
@@ -19,14 +19,19 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [currentWorkspace, setWorkspace] = useWorkspace();
+  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [currentProject, setProject] = useProject();
+  const [lastWorkspace, setLastWorkspace] = useWorkspace();
 
   const { refetch } = useGetMeQuery();
 
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
+
+  useEffect(() => {
+    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
+  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {
@@ -60,6 +65,7 @@ export default (params: Params) => {
           : teamsData?.me?.myTeam ?? undefined,
       );
     }
+    setLastWorkspace(currentWorkspace);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentWorkspace, setWorkspace, workspaces, teamsData?.me]);
 
@@ -90,13 +96,13 @@ export default (params: Params) => {
 
       if (workspace) {
         setWorkspace(workspace);
-
+        setLastWorkspace(currentWorkspace);
         if (params.projectId) {
           navigate("/settings/account");
         }
       }
     },
-    [workspaces, setWorkspace, params.projectId, navigate],
+    [workspaces, setWorkspace, setLastWorkspace, currentWorkspace, params.projectId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -109,9 +115,10 @@ export default (params: Params) => {
       const workspace = results.data?.createTeam?.team;
       if (results) {
         setWorkspace(workspace);
+        setLastWorkspace(currentWorkspace);
       }
     },
-    [createTeamMutation, setWorkspace],
+    [createTeamMutation, currentWorkspace, setLastWorkspace, setWorkspace],
   );
 
   return {

@@ -6,6 +6,7 @@ type TypeProperty interface {
 	I2V(interface{}) (interface{}, bool)
 	V2I(interface{}) (interface{}, bool)
 	Validate(interface{}) bool
+	String(any) string
 }
 
 type TypePropertyMap = map[Type]TypeProperty

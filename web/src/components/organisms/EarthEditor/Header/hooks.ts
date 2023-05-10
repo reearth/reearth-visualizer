@@ -14,7 +14,13 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/state";
+import {
+  useSceneId,
+  useWorkspace,
+  useProject,
+  useNotification,
+  useSessionWorkspace,
+} from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -23,8 +29,9 @@ export default () => {
 
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
-  const [currentWorkspace, setWorkspace] = useWorkspace();
+  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [currentProject, setProject] = useProject();
+  const [lastWorkspace, setLastWorkspace] = useWorkspace();
 
   const navigate = useNavigate();
 
@@ -73,6 +80,9 @@ export default () => {
     },
     [checkProjectAliasQuery, project],
   );
+  useEffect(() => {
+    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
+  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   useEffect(() => {
     setValidAlias(
@@ -89,7 +99,8 @@ export default () => {
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
     setWorkspace(team);
-  }, [teams, currentWorkspace, teamId, setWorkspace]);
+    setLastWorkspace(currentWorkspace);
+  }, [teams, currentWorkspace, teamId, setWorkspace, setLastWorkspace]);
 
   useEffect(() => {
     setProject(p =>
@@ -164,10 +175,12 @@ export default () => {
       const team = teams?.find(team => team.id === teamId);
       if (team && teamId !== currentWorkspace?.id) {
         setWorkspace(team);
+        setLastWorkspace(currentWorkspace);
+
         navigate(`/dashboard/${teamId}`);
       }
     },
-    [teams, currentWorkspace?.id, setWorkspace, navigate],
+    [teams, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -179,10 +192,12 @@ export default () => {
       });
       if (results.data?.createTeam) {
         setWorkspace(results.data.createTeam.team);
+        setLastWorkspace(currentWorkspace);
+
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setWorkspace, navigate],
+    [createTeamMutation, setWorkspace, setLastWorkspace, currentWorkspace, navigate],
   );
 
   useEffect(() => {
