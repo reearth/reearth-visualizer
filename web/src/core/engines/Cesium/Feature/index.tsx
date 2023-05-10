@@ -99,7 +99,6 @@ export default function Feature({
       JSON.stringify(f?.[k]) ?? ""
     }`;
 
-    // Check if the component output is already cached
     const cachedComponent = CACHED_COMPONENTS.get(componentId);
     if (cachedComponent) {
       return cachedComponent;
