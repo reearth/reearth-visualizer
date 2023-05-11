@@ -37,6 +37,13 @@ func (*propertyString) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *propertyString) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(string)
+}
+
 func (v *Value) ValueString() (vv string, ok bool) {
 	if v == nil {
 		return

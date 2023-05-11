@@ -255,10 +255,10 @@ func TestValue_Cast(t *testing.T) {
 			want:   ValueTypeNumber.ValueFrom(1.1),
 		},
 		{
-			name:   "failed to cast",
+			name:   "to string",
 			target: ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}),
 			args:   args{t: ValueTypeString},
-			want:   nil,
+			want:   ValueTypeString.ValueFrom("2.000000, 1.000000"),
 		},
 		{
 			name:   "invalid type",

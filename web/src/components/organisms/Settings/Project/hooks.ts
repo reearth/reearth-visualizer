@@ -7,7 +7,7 @@ import {
   useDeleteProjectMutation,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useNotification } from "@reearth/state";
+import { useWorkspace, useNotification, useSessionWorkspace } from "@reearth/state";
 
 type Params = {
   projectId: string;
@@ -16,7 +16,8 @@ type Params = {
 export default ({ projectId }: Params) => {
   const t = useT();
   const [, setNotification] = useNotification();
-  const [currentWorkspace] = useWorkspace();
+  const [currentWorkspace] = useSessionWorkspace();
+  const [lastWorkspace] = useWorkspace();
 
   const { data } = useGetProjectQuery({
     variables: { projectId: projectId ?? "" },
@@ -131,7 +132,7 @@ export default ({ projectId }: Params) => {
   return {
     project,
     projectId,
-    currentWorkspace,
+    currentWorkspace: currentWorkspace ?? lastWorkspace,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,

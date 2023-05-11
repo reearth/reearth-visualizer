@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import { useUpdateMeMutation, useGetProfileQuery, Theme as GQLTheme } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/state";
+import { useWorkspace, useProject, useNotification, useSessionWorkspace } from "@reearth/state";
 
 const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
   [GQLTheme.Default]: "default",
@@ -22,8 +22,9 @@ export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
   const client = useApolloClient();
-  const [currentWorkspace] = useWorkspace();
+  const [currentWorkspace] = useSessionWorkspace();
   const [currentProject] = useProject();
+  const [lastWorkspace] = useWorkspace();
 
   const { data: profileData } = useGetProfileQuery();
   const me = profileData?.me;
@@ -95,7 +96,7 @@ export default () => {
   );
 
   return {
-    currentWorkspace,
+    currentWorkspace: currentWorkspace ?? lastWorkspace,
     currentProject,
     me,
     hasPassword,
