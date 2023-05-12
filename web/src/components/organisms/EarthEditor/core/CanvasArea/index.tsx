@@ -32,6 +32,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     widgetAlignEditorActivated,
     engineMeta,
     layerSelectionReason,
+    useExperimentalSandbox,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -83,6 +84,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         widgetAlignSystemEditing={widgetAlignEditorActivated}
         meta={engineMeta}
         layerSelectionReason={layerSelectionReason}
+        useExperimentalSandbox={useExperimentalSandbox}
         onLayerSelect={selectLayer}
         onCameraChange={onCameraChange}
         onWidgetLayoutUpdate={onWidgetUpdate}
