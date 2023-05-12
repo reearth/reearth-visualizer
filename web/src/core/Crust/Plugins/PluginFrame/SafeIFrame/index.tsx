@@ -70,7 +70,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
       className={className}
       onLoad={onIFrameLoad}
       sandbox="allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox"
-      allow="geolocation"
+      allow="geolocation; camera"
       {...props}
     />
   ) : null;
