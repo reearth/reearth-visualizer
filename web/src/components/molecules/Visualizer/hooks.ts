@@ -371,7 +371,7 @@ function useLayers({
             infoboxKey: selectedLayer?.id,
             title: layerOverridenInfobox?.title || selectedLayer?.title,
             isEditable: !layerOverridenInfobox && !!selectedLayer?.infobox,
-            visible: !!selectedLayer?.infobox || !!layerOverridenInfobox,
+            visible: !!selectedLayer?.infobox,
             layer: selectedLayer,
             blocks,
           }
