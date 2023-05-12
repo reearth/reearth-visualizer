@@ -32,6 +32,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useSelectedWidgetArea,
+  useSessionWorkspace,
 } from "@reearth/state";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 
@@ -67,7 +68,9 @@ export default (mode: Mode) => {
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
   const [sceneMode] = useSceneMode();
-  const [workspace] = useWorkspace();
+  const [workspace] = useSessionWorkspace();
+  const [lastWorkspace] = useWorkspace();
+
   const [sceneId] = useSceneId();
   const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
     useWidgetAlignEditorActivated();
@@ -361,7 +364,7 @@ export default (mode: Mode) => {
 
   return {
     pane,
-    workspaceId: workspace?.id,
+    workspaceId: workspace?.id ?? lastWorkspace?.id,
     error,
     loading,
     isLayerGroup,

@@ -1,8 +1,19 @@
 package value
 
-import "github.com/mitchellh/mapstructure"
+import (
+	"strings"
+
+	"github.com/mitchellh/mapstructure"
+	"github.com/samber/lo"
+)
 
 type Coordinates []LatLngHeight
+
+func (c Coordinates) String() string {
+	return strings.Join(lo.Map(c, func(c LatLngHeight, _ int) string {
+		return c.String()
+	}), ",")
+}
 
 // CoordinatesFrom generates a new Coordinates from slice such as [lon, lat, alt, lon, lat, alt, ...]
 func CoordinatesFrom(coords []float64) Coordinates {
@@ -65,8 +76,15 @@ func (*propertyCoordinates) V2I(v interface{}) (interface{}, bool) {
 }
 
 func (*propertyCoordinates) Validate(i interface{}) bool {
-	_, ok := i.(bool)
+	_, ok := i.(Coordinates)
 	return ok
+}
+
+func (p *propertyCoordinates) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(Coordinates).String()
 }
 
 func (v *Value) ValueCoordinates() (vv Coordinates, ok bool) {

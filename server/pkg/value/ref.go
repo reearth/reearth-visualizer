@@ -31,6 +31,13 @@ func (*propertyRef) Validate(i interface{}) bool {
 	return ok
 }
 
+func (p *propertyRef) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(string)
+}
+
 func (v *Value) ValueRef() (vv string, ok bool) {
 	if v == nil {
 		return

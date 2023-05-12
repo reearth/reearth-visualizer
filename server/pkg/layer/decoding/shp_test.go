@@ -64,7 +64,7 @@ func testPoint(t *testing.T, points [][]float64, shapes []shp.Shape) {
 	for n, s := range shapes {
 		p, ok := s.(*shp.Point)
 		if !ok {
-			t.Fatal("Failed to type assert.")
+			t.Fatal("failed to type assert.")
 		}
 		assert.Equal(t, []float64{p.X, p.Y}, points[n])
 	}
@@ -74,7 +74,7 @@ func testPolyLine(t *testing.T, points [][]float64, shapes []shp.Shape) {
 	for n, s := range shapes {
 		p, ok := s.(*shp.PolyLine)
 		if !ok {
-			t.Fatal("Failed to type assert.")
+			t.Fatal("failed to type assert.")
 		}
 		for k, point := range p.Points {
 			assert.Equal(t, points[n*3+k], []float64{point.X, point.Y})
@@ -86,7 +86,7 @@ func testPolygon(t *testing.T, points [][]float64, shapes []shp.Shape) {
 	for n, s := range shapes {
 		p, ok := s.(*shp.Polygon)
 		if !ok {
-			t.Fatal("Failed to type assert.")
+			t.Fatal("failed to type assert.")
 		}
 		for k, point := range p.Points {
 			assert.Equal(t, points[n*3+k], []float64{point.X, point.Y})
@@ -127,7 +127,7 @@ func getShapesFromFile(filename string, t *testing.T) (shapes []shp.Shape) {
 		reader, err = shp.ReadZipFrom(osr)
 	}
 	if err != nil {
-		t.Fatal("Failed to open shapefile: " + filename + " (" + err.Error() + ")")
+		t.Fatal("failed to open shapefile: " + filename + " (" + err.Error() + ")")
 	}
 
 	for reader.Next() {

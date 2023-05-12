@@ -1,6 +1,10 @@
 package value
 
-import "github.com/mitchellh/mapstructure"
+import (
+	"fmt"
+
+	"github.com/mitchellh/mapstructure"
+)
 
 var TypeRect Type = "rect"
 
@@ -9,6 +13,10 @@ type Rect struct {
 	South float64 `json:"south" mapstructure:"south"`
 	East  float64 `json:"east" mapstructure:"east"`
 	North float64 `json:"north" mapstructure:"north"`
+}
+
+func (r Rect) String() string {
+	return fmt.Sprintf("%f, %f, %f, %f", r.West, r.South, r.East, r.North)
 }
 
 type propertyRect struct{}
@@ -38,6 +46,13 @@ func (*propertyRect) V2I(v interface{}) (interface{}, bool) {
 func (*propertyRect) Validate(i interface{}) bool {
 	_, ok := i.(Rect)
 	return ok
+}
+
+func (p *propertyRect) String(i any) string {
+	if !p.Validate(i) {
+		return ""
+	}
+	return i.(Rect).String()
 }
 
 func (v *Value) ValueRect() (vv Rect, ok bool) {
