@@ -90,7 +90,7 @@ export default (params: Params) => {
         });
       } else {
         setWorkspace(workspace);
-        setLastWorkspace(currentWorkspace);
+        setLastWorkspace(workspace);
 
         setNotification({
           type: "success",
@@ -99,7 +99,7 @@ export default (params: Params) => {
       }
       setModalShown(false);
     },
-    [createTeamMutation, setNotification, t, setWorkspace, setLastWorkspace, currentWorkspace],
+    [createTeamMutation, setNotification, t, setWorkspace, setLastWorkspace],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
