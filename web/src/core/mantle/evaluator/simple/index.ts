@@ -59,15 +59,23 @@ export function evalLayerAppearances(
       properties: layer.properties || {},
     };
   }
+
   return Object.fromEntries(
-    Object.entries(appearance).map(([k, v]) => [
-      k,
-      Object.fromEntries(
-        Object.entries(v).map(([k, v]) => {
-          return [k, evalExpression(v, layer, feature)];
-        }),
-      ),
-    ]),
+    Object.entries(appearance).map(([k, v]) => [k, recursiveValEval(v, layer, feature)]),
+  );
+}
+
+function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => {
+      // if v is an object itself and not a null, recurse deeper
+      // console.log("K: ", k, "V: ", v);
+      if (hasNonExpressionObject(v)) {
+        return [k, recursiveValEval(v, layer, feature)];
+      }
+      // if v is not an object, apply the evalExpression function
+      return [k, evalExpression(v, layer, feature)];
+    }),
   );
 }
 
@@ -76,28 +84,39 @@ export function clearAllExpressionCaches(
   feature: Feature | undefined,
 ) {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
-
   Object.entries(appearances).forEach(([, v]) => {
-    Object.entries(v).forEach(([, expressionContainer]) => {
-      if (hasExpression(expressionContainer)) {
-        const styleExpression = expressionContainer.expression;
-        if (typeof styleExpression === "object" && styleExpression.conditions) {
-          styleExpression.conditions.forEach(([expression1, expression2]) => {
-            clearExpressionCaches(expression1, feature, layer?.defines);
-            clearExpressionCaches(expression2, feature, layer?.defines);
-          });
-        } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-          clearExpressionCaches(String(styleExpression), feature, layer?.defines);
-        } else if (typeof styleExpression === "string") {
-          clearExpressionCaches(styleExpression, feature, layer?.defines);
-        }
+    recursiveClear(v, layer, feature);
+  });
+}
+
+function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Feature | undefined) {
+  Object.entries(obj).forEach(([, v]) => {
+    // if v is an object itself and not a null, recurse deeper
+    if (hasNonExpressionObject(v)) {
+      recursiveClear(v, layer, feature);
+    } else if (hasExpression(v)) {
+      // if v is not an object, apply the clearExpressionCaches function
+      const styleExpression = v.expression;
+      if (typeof styleExpression === "object" && styleExpression.conditions) {
+        styleExpression.conditions.forEach(([expression1, expression2]) => {
+          clearExpressionCaches(expression1, feature, layer?.defines);
+          clearExpressionCaches(expression2, feature, layer?.defines);
+        });
+      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+        clearExpressionCaches(String(styleExpression), feature, layer?.defines);
+      } else if (typeof styleExpression === "string") {
+        clearExpressionCaches(styleExpression, feature, layer?.defines);
       }
-    });
+    }
   });
 }
 
 function hasExpression(e: any): e is ExpressionContainer {
   return typeof e === "object" && e && "expression" in e;
+}
+
+function hasNonExpressionObject(v: any): boolean {
+  return typeof v === "object" && v !== null && !("expression" in v);
 }
 
 function evalExpression(
