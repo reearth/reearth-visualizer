@@ -67,6 +67,7 @@ export type Props = {
     featureId?: string;
   };
   layerSelectionReason?: LayerSelectionReason;
+  useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
   zoomedLayerId?: string;
@@ -132,6 +133,7 @@ export default function Visualizer({
   pluginProperty,
   zoomedLayerId,
   layerSelectionReason,
+  useExperimentalSandbox,
   onLayerDrop,
   onLayerSelect,
   onCameraChange,
@@ -224,6 +226,7 @@ export default function Visualizer({
         floatingWidgets={floatingWidgets}
         mapRef={mapRef}
         externalPlugin={{ pluginBaseUrl, pluginProperty }}
+        useExperimentalSandbox={useExperimentalSandbox}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
         onWidgetAreaSelect={onWidgetAreaSelect}

@@ -38,6 +38,7 @@ export default function ({
   alignSystem,
   floatingWidgets,
   camera,
+  useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
 }: Props) {
@@ -319,6 +320,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      useExperimentalSandbox,
     }),
     [
       engineName,
@@ -366,6 +368,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      useExperimentalSandbox,
     ],
   );
 

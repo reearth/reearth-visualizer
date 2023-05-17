@@ -187,6 +187,11 @@ export default () => {
     [],
   );
 
+  const useExperimentalSandbox = useMemo(
+    () => new URLSearchParams(window.location.search).has("useSandbox"),
+    [],
+  );
+
   return {
     sourceCode,
     layers,
@@ -197,6 +202,7 @@ export default () => {
     showAlignSystem,
     showInfobox,
     engineMeta,
+    useExperimentalSandbox,
     setSourceCode,
     setMode,
     setInfoboxSize,
