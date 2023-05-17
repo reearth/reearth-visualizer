@@ -601,30 +601,6 @@
     topojson-client "^3.1.0"
     urijs "^1.19.7"
 
-"@cesium/engine@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.4.0.tgz#5716c992358330367046cb53810128a0a34984ba"
-  integrity sha512-U5/m0XSpoxr5uo7rf0+rBNw4AwTMdQRRB5FX5bcunfE6J2eyKWtMp0lRhcTKVDN0O7HZwJIIZt0rtiXt/aC0tQ==
-  dependencies:
-    "@tweenjs/tween.js" "^18.6.4"
-    "@zip.js/zip.js" "2.4.x"
-    autolinker "^4.0.0"
-    bitmap-sdf "^1.0.3"
-    dompurify "^3.0.2"
-    earcut "^2.2.4"
-    grapheme-splitter "^1.0.4"
-    jsep "^1.3.8"
-    kdbush "^4.0.1"
-    ktx-parse "^0.5.0"
-    lerc "^2.0.0"
-    mersenne-twister "^1.1.0"
-    meshoptimizer "^0.18.1"
-    pako "^2.0.4"
-    protobufjs "^7.1.0"
-    rbush "^3.0.1"
-    topojson-client "^3.1.0"
-    urijs "^1.19.7"
-
 "@cesium/widgets@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.2.0.tgz#1b7d3940b6de509ed86a3e51a5c1caf288dd9f79"
@@ -5619,12 +5595,12 @@ cesium-mvt-imagery-provider@1.3.0:
     "@mapbox/vector-tile" "1.3.1"
     pbf "3.2.1"
 
-cesium@1.105.1:
-  version "1.105.1"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.105.1.tgz#759481057b99acaa2976e83dca3d9fa99a431c1d"
-  integrity sha512-It3TV+9FX/BWHuRdelKr3aGQ3GFepG1DGtpveXrlNLnXNutlhmmTmKUBnawQQ6Xoj1PeTveWNK9u4gJ5EhRUeA==
+cesium@1.105.0:
+  version "1.105.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.105.0.tgz#f6d366a08eeb5267249d1b021996a31f13269358"
+  integrity sha512-gh7sv67GmVen7LbOcugtfmWPN6wYyWNd3fq69xA81hJq0vvXFk/Pxwg1ElLi33ZsVJFyy5Js/vFX6oJNKYSbbg==
   dependencies:
-    "@cesium/engine" "2.4.0"
+    "@cesium/engine" "2.3.0"
     "@cesium/widgets" "2.2.0"
 
 chai@^4.3.7:
