@@ -121,6 +121,9 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 	if p.Archived != nil {
 		pb = pb.IsArchived(*p.Archived)
 	}
+	if p.CoreSupport != nil {
+		pb = pb.CoreSupport(*p.CoreSupport)
+	}
 
 	project, err := pb.Build()
 	if err != nil {

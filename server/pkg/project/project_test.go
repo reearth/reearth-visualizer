@@ -305,6 +305,38 @@ func TestProject_IsBasicAuthActive(t *testing.T) {
 	}
 }
 
+func TestProject_Experimental(t *testing.T) {
+	tests := []struct {
+		name     string
+		p        *Project
+		expected bool
+	}{
+		{
+			name: "inactive",
+			p: &Project{
+				coreSupport: false,
+			},
+			expected: false,
+		},
+		{
+			name: "active",
+			p: &Project{
+				coreSupport: true,
+			},
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			res := tt.p.CoreSupport()
+			assert.Equal(t, tt.expected, res)
+		})
+	}
+}
+
 func TestProject_BasicAuthUsername(t *testing.T) {
 	t.Run("return basic auth username", func(t *testing.T) {
 		p := &Project{basicAuthUsername: "test1"}
