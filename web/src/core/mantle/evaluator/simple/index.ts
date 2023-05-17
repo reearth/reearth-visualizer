@@ -116,7 +116,7 @@ function hasExpression(e: any): e is ExpressionContainer {
 }
 
 function hasNonExpressionObject(v: any): boolean {
-  return typeof v === "object" && v !== null && !("expression" in v);
+  return typeof v === "object" && v && !("expression" in v);
 }
 
 function evalExpression(
