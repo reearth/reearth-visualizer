@@ -115,10 +115,10 @@ export default (params: Params) => {
       const workspace = results.data?.createTeam?.team;
       if (results) {
         setWorkspace(workspace);
-        setLastWorkspace(currentWorkspace);
+        setLastWorkspace(workspace);
       }
     },
-    [createTeamMutation, currentWorkspace, setLastWorkspace, setWorkspace],
+    [createTeamMutation, setLastWorkspace, setWorkspace],
   );
 
   return {

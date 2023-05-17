@@ -299,6 +299,10 @@ export default (isBuilt?: boolean) => {
     [],
   );
 
+  const useExperimentalSandbox = useMemo(() => {
+    return !!sceneProperty?.experimental?.experimental_sandbox;
+  }, [sceneProperty]);
+
   return {
     sceneId,
     rootLayerId,
@@ -319,6 +323,7 @@ export default (isBuilt?: boolean) => {
     widgetAlignEditorActivated,
     engineMeta,
     layerSelectionReason,
+    useExperimentalSandbox,
     selectLayer,
     selectBlock,
     onBlockChange,

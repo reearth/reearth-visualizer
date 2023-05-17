@@ -25,6 +25,7 @@ export type Props = PropsWithChildren<{
   viewport?: Viewport;
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
+  useExperimentalSandbox?: boolean;
   overrideSceneProperty: (id: string, property: any) => void;
   camera?: Camera;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
@@ -34,5 +35,6 @@ export type Context = {
   reearth: CommonReearth;
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
+  useExperimentalSandbox?: boolean;
   overrideSceneProperty: (id: string, property: any) => void;
 };
