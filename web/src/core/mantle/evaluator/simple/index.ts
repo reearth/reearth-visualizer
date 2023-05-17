@@ -69,7 +69,6 @@ function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any 
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
       // if v is an object itself and not a null, recurse deeper
-      // console.log("K: ", k, "V: ", v);
       if (hasNonExpressionObject(v)) {
         return [k, recursiveValEval(v, layer, feature)];
       }
