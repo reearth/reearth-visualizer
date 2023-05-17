@@ -37,6 +37,7 @@
   "include": [
     "src",
     "e2e",
+    "declarations.d.ts"
   ],
   "ts-node": {
     "compilerOptions": {
