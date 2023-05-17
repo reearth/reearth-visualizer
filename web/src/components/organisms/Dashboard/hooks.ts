@@ -97,7 +97,7 @@ export default (workspaceId?: string) => {
           text: t("Successfully created workspace!"),
         });
         setCurrentWorkspace(results.data.createTeam.team);
-        setLastWorkspace(currentWorkspace);
+        setLastWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
@@ -109,7 +109,6 @@ export default (workspaceId?: string) => {
       t,
       setCurrentWorkspace,
       setLastWorkspace,
-      currentWorkspace,
       navigate,
     ],
   );

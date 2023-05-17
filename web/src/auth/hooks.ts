@@ -17,9 +17,11 @@ export default function useAuth() {
     login: () => loginWithRedirect(),
     logout: () =>
       logout({
-        returnTo: error
-          ? `${window.location.origin}?${errorKey}=${encodeURIComponent(error?.message)}`
-          : window.location.origin,
+        logoutParams: {
+          returnTo: error
+            ? `${window.location.origin}?${errorKey}=${encodeURIComponent(error?.message)}`
+            : window.location.origin,
+        },
       }),
   };
 }

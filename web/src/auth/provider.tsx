@@ -10,11 +10,13 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      audience={audience}
+      authorizationParams={{
+        audience: audience,
+        scope: "openid profile email offline_access",
+        redirectUri: window.location.origin,
+      }}
       useRefreshTokens
-      scope="openid profile email offline_access"
-      cacheLocation="localstorage"
-      redirectUri={window.location.origin}>
+      cacheLocation="localstorage">
       {children}
     </Auth0Provider>
   ) : (
