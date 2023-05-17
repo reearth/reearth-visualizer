@@ -192,12 +192,12 @@ export default () => {
       });
       if (results.data?.createTeam) {
         setWorkspace(results.data.createTeam.team);
-        setLastWorkspace(currentWorkspace);
+        setLastWorkspace(results.data.createTeam.team);
 
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setWorkspace, setLastWorkspace, currentWorkspace, navigate],
+    [createTeamMutation, setWorkspace, setLastWorkspace, navigate],
   );
 
   useEffect(() => {

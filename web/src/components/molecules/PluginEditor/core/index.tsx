@@ -19,6 +19,7 @@ const PluginEditor: React.FC = () => {
     showInfobox,
     layers,
     engineMeta,
+    useExperimentalSandbox,
     setSourceCode,
     setMode,
     setInfoboxSize,
@@ -48,6 +49,7 @@ const PluginEditor: React.FC = () => {
           widgetAlignSystem={widgets.alignSystem}
           layers={layers}
           meta={engineMeta}
+          useExperimentalSandbox={useExperimentalSandbox}
         />
         <div
           style={{
