@@ -187,12 +187,6 @@ jobs:
           tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Invoke ci-deploy-server-nightly workflow
-        uses: benc-uk/workflow-dispatch@v1
-        if: needs.info.outputs.name == 'nightly'
-        with:
-          workflow: deploy-server-nightly
-          token: ${{ secrets.GPT }}
 
   release:
     name: Release
