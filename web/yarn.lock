@@ -64,25 +64,17 @@
   dependencies:
     node-fetch "^2.6.1"
 
-"@auth0/auth0-react@1.12.1":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@auth0/auth0-react/-/auth0-react-1.12.1.tgz#3a469518828137339c635434ab953e206e798fe8"
-  integrity sha512-8+ecK/4rE0AGsxLW2IDcr1oPbT55tuE6cQEzEIOkQjB6QGQxxWMzQy0D4nMKw3JUAc7nYcFVOABNFNbc471n9Q==
+"@auth0/auth0-react@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-react/-/auth0-react-2.1.0.tgz#cadb561fb3994fd3e63040da1bfc714947ac07ea"
+  integrity sha512-+86qLx97BcSwL/ZwIzGq9jFa5SaV5z7goLU5gi+4R9KhzDg9vhmmZ+iQWW0GMiuwjJ8vcfX4hRTD6iF0DbGZWw==
   dependencies:
-    "@auth0/auth0-spa-js" "^1.22.6"
+    "@auth0/auth0-spa-js" "^2.0.4"
 
-"@auth0/auth0-spa-js@^1.22.6":
-  version "1.22.6"
-  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-1.22.6.tgz#482c7cf546649e856020d20843cd496258bd9fa0"
-  integrity sha512-iL3O0vWanfKFVgy1J2ZHDPlAUK6EVHWEHWS6mUXwHEuPiK39tjlQtyUKQIJI1F5YsZB75ijGgRWMTawSDXlwCA==
-  dependencies:
-    abortcontroller-polyfill "^1.7.3"
-    browser-tabs-lock "^1.2.15"
-    core-js "^3.25.4"
-    es-cookie "~1.3.2"
-    fast-text-encoding "^1.0.6"
-    promise-polyfill "^8.2.3"
-    unfetch "^4.2.0"
+"@auth0/auth0-spa-js@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-2.0.4.tgz#81f6b5d9f72617ed30ee53cdf27dcd7a216bf2da"
+  integrity sha512-NgD6Fkm5Xnbned1VjhEW8irm1/Y8AWtdSLexgLXNwwBVgfnYicCVBu8w75m2t+4QljXkTcI7IXVEFhVmxMuxaA==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.21.4":
   version "7.21.4"
@@ -585,30 +577,6 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cesium/engine@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.3.0.tgz#4e230d4846db73840e52199b46fb3a65e4eb1598"
-  integrity sha512-2NoBmDvNkvC+m/uKZNaPoMQZEyuqGGBo/I91rHx5i7UEJwAF/zfUTZ1k2Dx8otu6bDHT/azNo5LWocqP4hpwcw==
-  dependencies:
-    "@tweenjs/tween.js" "^18.6.4"
-    "@zip.js/zip.js" "2.4.x"
-    autolinker "^4.0.0"
-    bitmap-sdf "^1.0.3"
-    dompurify "^3.0.2"
-    earcut "^2.2.4"
-    grapheme-splitter "^1.0.4"
-    jsep "^1.3.8"
-    kdbush "^4.0.1"
-    ktx-parse "^0.5.0"
-    lerc "^2.0.0"
-    mersenne-twister "^1.1.0"
-    meshoptimizer "^0.18.1"
-    pako "^2.0.4"
-    protobufjs "^7.1.0"
-    rbush "^3.0.1"
-    topojson-client "^3.1.0"
-    urijs "^1.19.7"
-
 "@cesium/engine@2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.4.0.tgz#5716c992358330367046cb53810128a0a34984ba"
@@ -633,12 +601,12 @@
     topojson-client "^3.1.0"
     urijs "^1.19.7"
 
-"@cesium/widgets@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.2.0.tgz#1b7d3940b6de509ed86a3e51a5c1caf288dd9f79"
-  integrity sha512-t15V02J5cJcq2GxJlWy6a5zT1P+kw7cGDOAKbWb/CMNXxc/bxl2FeOoX6PMT+FuPNxREkR+xMxtXig44hvbRJQ==
+"@cesium/widgets@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.3.0.tgz#eb82d8e43424c1faa62cf001afbf42e0b0926143"
+  integrity sha512-U+lHh1LoDezuKN/f4Hu5WROh87S5YECsO8Vb0gcXoEEG6hHyHz2zOO8GXmDWtKPSTjq88gxAp4APGKztvn7pxQ==
   dependencies:
-    "@cesium/engine" "2.3.0"
+    "@cesium/engine" "2.4.0"
     nosleep.js "^0.12.0"
 
 "@changesets/apply-release-plan@^6.1.2":
@@ -4934,11 +4902,6 @@ abort-controller@^3.0.0:
   dependencies:
     event-target-shim "^5.0.0"
 
-abortcontroller-polyfill@^1.7.3:
-  version "1.7.5"
-  resolved "https://registry.npmjs.org/abortcontroller-polyfill/-/abortcontroller-polyfill-1.7.5.tgz"
-  integrity sha512-JMJ5soJWP18htbbxJjG7bG6yuI6pRhgJ0scHHTfkUjf6wjP912xZWvM+A4sJK3gqd9E8fcPbDnOefbA9Th/FIQ==
-
 accepts@~1.3.8:
   version "1.3.8"
   resolved "https://registry.npmjs.org/accepts/-/accepts-1.3.8.tgz"
@@ -5470,13 +5433,6 @@ browser-assert@^1.2.1:
   resolved "https://registry.npmjs.org/browser-assert/-/browser-assert-1.2.1.tgz"
   integrity sha512-nfulgvOR6S4gt9UKCeGJOuSGBPGiFT6oQ/2UBnvTY/5aQ1PnksW72fhZkM30DzoRRv2WpwZf1vHHEr3mtuXIWQ==
 
-browser-tabs-lock@^1.2.15:
-  version "1.3.0"
-  resolved "https://registry.npmjs.org/browser-tabs-lock/-/browser-tabs-lock-1.3.0.tgz"
-  integrity sha512-g6nHaobTiT0eMZ7jh16YpD2kcjAp+PInbiVq3M1x6KKaEIVhT4v9oURNIpZLOZ3LQbQ3XYfNhMAb/9hzNLIWrw==
-  dependencies:
-    lodash ">=4.17.21"
-
 browserslist@^4.21.3:
   version "4.21.4"
   resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.21.4.tgz"
@@ -5639,13 +5595,13 @@ cesium-mvt-imagery-provider@1.3.0:
     "@mapbox/vector-tile" "1.3.1"
     pbf "3.2.1"
 
-cesium@1.105.1:
-  version "1.105.1"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.105.1.tgz#759481057b99acaa2976e83dca3d9fa99a431c1d"
-  integrity sha512-It3TV+9FX/BWHuRdelKr3aGQ3GFepG1DGtpveXrlNLnXNutlhmmTmKUBnawQQ6Xoj1PeTveWNK9u4gJ5EhRUeA==
+cesium@1.105.2:
+  version "1.105.2"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.105.2.tgz#af488a05d646dcb5ce13cd8ffd51750465bfc70a"
+  integrity sha512-iX4YpOuF4qgce2iHrimMs3Yi0TY+qWiIWoeM7GZyy8fo0zubzqPd/sadr37bEtKhzOFn+JaP5nodxNUJ5exRWQ==
   dependencies:
     "@cesium/engine" "2.4.0"
-    "@cesium/widgets" "2.2.0"
+    "@cesium/widgets" "2.3.0"
 
 chai@^4.3.7:
   version "4.3.7"
@@ -6081,7 +6037,7 @@ copy-to-clipboard@^3.2.0, copy-to-clipboard@^3.3.1:
   dependencies:
     toggle-selection "^1.0.6"
 
-core-js@3.30.2, core-js@^3.25.4:
+core-js@3.30.2:
   version "3.30.2"
   resolved "https://registry.npmjs.org/core-js/-/core-js-3.30.2.tgz"
   integrity sha512-uBJiDmwqsbJCWHAwjrx3cvjbMXP7xD72Dmsn5LOJpiRmE3WbBbN5rCqQ2Qh6Ek6/eOrjlWngEynBWo4VxerQhg==
@@ -6782,11 +6738,6 @@ es-abstract@^1.19.0, es-abstract@^1.19.1, es-abstract@^1.20.0, es-abstract@^1.20
     unbox-primitive "^1.0.2"
     which-typed-array "^1.1.9"
 
-es-cookie@~1.3.2:
-  version "1.3.2"
-  resolved "https://registry.npmjs.org/es-cookie/-/es-cookie-1.3.2.tgz"
-  integrity sha512-UTlYYhXGLOy05P/vKVT2Ui7WtC7NiRzGtJyAKKn32g5Gvcjn7KAClLPWlipCtxIus934dFg9o9jXiBL0nP+t9Q==
-
 es-get-iterator@^1.1.1:
   version "1.1.2"
   resolved "https://registry.npmjs.org/es-get-iterator/-/es-get-iterator-1.1.2.tgz"
@@ -7326,11 +7277,6 @@ fast-shallow-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fast-shallow-equal/-/fast-shallow-equal-1.0.0.tgz"
   integrity sha512-HPtaa38cPgWvaCFmRNhlc6NG7pv6NUHqjPgVAkWGoB9mQMwYB27/K0CvOM5Czy+qpT3e8XJ6Q4aPAnzpNpzNaw==
-
-fast-text-encoding@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npmjs.org/fast-text-encoding/-/fast-text-encoding-1.0.6.tgz"
-  integrity sha512-VhXlQgj9ioXCqGstD37E/HBeqEGV/qOD/kmbVG8h5xKBYvM1L3lR1Zn4555cQ8GkYbJa8aJSipLPndE1k6zK2w==
 
 fast-url-parser@^1.1.3:
   version "1.1.3"
@@ -9329,7 +9275,7 @@ lodash.startcase@^4.4.0:
   resolved "https://registry.npmjs.org/lodash.startcase/-/lodash.startcase-4.4.0.tgz"
   integrity sha512-+WKqsK294HMSc2jEbNgpHpd0JfIBhp7rEV4aqXWqFr6AlXov+SlcgB1Fv01y2kGe3Gc8nMW7VA0SrGuSkRfIEg==
 
-lodash@>=4.17.21, lodash@^4, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21, lodash@~4.17.0:
+lodash@^4, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21, lodash@~4.17.0:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -10937,11 +10883,6 @@ promise-map-series@^0.3.0:
   version "0.3.0"
   resolved "https://registry.npmjs.org/promise-map-series/-/promise-map-series-0.3.0.tgz"
   integrity sha512-3npG2NGhTc8BWBolLLf8l/92OxMGaRLbqvIh9wjCHhDXNvk4zsxaTaCpiCunW09qWPrN2zeNSNwRLVBrQQtutA==
-
-promise-polyfill@^8.2.3:
-  version "8.3.0"
-  resolved "https://registry.npmjs.org/promise-polyfill/-/promise-polyfill-8.3.0.tgz"
-  integrity sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==
 
 promise@^7.1.1:
   version "7.3.1"
@@ -13107,11 +13048,6 @@ undici@^5.12.0:
   integrity sha512-zMLamCG62PGjd9HHMpo05bSLvvwWOZgGeiWlN/vlqu3+lRo3elxktVGEyLMX+IO7c2eflLjcW74AlkhEZm15mg==
   dependencies:
     busboy "^1.6.0"
-
-unfetch@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.npmjs.org/unfetch/-/unfetch-4.2.0.tgz"
-  integrity sha512-F9p7yYCn6cIW9El1zi0HI6vqpeIvBsr3dSuRO6Xuppb1u5rXpCPmMvLSyECLhybr9isec8Ohl0hPekMVrEinDA==
 
 unified@^10.0.0:
   version "10.1.2"

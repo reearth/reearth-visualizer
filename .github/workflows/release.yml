@@ -34,12 +34,6 @@ jobs:
           version: ${{ github.event.inputs.version }}
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
-      - name: Insert reearth-web changelog
-        uses: actions/github-script@v6
-        with:
-          script: 'require("./.github/workflows/release")({ github, context })'
-        env:
-          TAG: ${{ steps.changelog.outputs.version }}
       - name: Upload latest CHANGELOG
         uses: actions/upload-artifact@v3
         with:
