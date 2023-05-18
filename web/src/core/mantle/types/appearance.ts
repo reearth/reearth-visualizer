@@ -10,7 +10,7 @@ import type {
 } from "./value";
 
 export type LayerAppearance<T> = {
-  [K in keyof T]?: T[K] | ExpressionContainer;
+  [K in keyof T]?: T[K] | LayerAppearance<T[K]> | ExpressionContainer;
 };
 
 export type LayerAppearanceTypes = {

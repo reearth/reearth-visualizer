@@ -48,6 +48,7 @@ export type Config = {
 };
 
 declare global {
+  let __APP_VERSION__: string;
   interface Window {
     REEARTH_CONFIG?: Config;
     REEARTH_E2E_ACCESS_TOKEN?: string;
