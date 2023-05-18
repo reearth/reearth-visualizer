@@ -95,9 +95,11 @@ export default function Feature({
     k: keyof AppearanceTypes,
     f?: ComputedFeature,
   ): JSX.Element | null => {
-    const componentId = `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${
-      JSON.stringify(f?.[k]) ?? ""
-    }`;
+    const componentId = generateIDWithMD5(
+      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${data?.url ?? ""}_${
+        JSON.stringify(f?.[k]) ?? ""
+      }`,
+    );
 
     const cachedComponent = CACHED_COMPONENTS.get(componentId);
     if (cachedComponent) {

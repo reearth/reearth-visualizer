@@ -90,7 +90,7 @@ jobs:
           name: reearth-web
           path: web/reearth-web.tar.gz
 
-  release_nightly:
+  release-nightly:
     name: Release nightly/rc
     runs-on: ubuntu-latest
     needs: [info, build-web]
@@ -124,7 +124,7 @@ jobs:
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    needs: [info]
+    needs: [info, release-nightly]
     if: needs.info.outputs.name || needs.info.outputs.new_tag
     env:
       IMAGE_NAME: reearth/reearth
