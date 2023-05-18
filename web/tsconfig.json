@@ -16,6 +16,7 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
+    "strictNullChecks": true,
     "target": "ESNext",
     "baseUrl": ".",
     "resolveJsonModule": true,

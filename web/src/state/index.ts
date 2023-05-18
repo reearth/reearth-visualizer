@@ -1,6 +1,6 @@
-import { atom, useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import { SyncStorage } from "jotai/utils/atomWithStorage";
+import { atom } from "jotai";
+import { useAtom } from "jotai/react";
+import { atomWithStorage, SyncStorage } from "jotai/utils/atomWithStorage";
 
 import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
 import { LayerSelectionReason } from "@reearth/core/Map";

@@ -38,12 +38,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   });
 
   const layer = atom<Layer | undefined>(undefined);
-  const overrides = atom<Record<string, any> | undefined, Record<string, any> | undefined>(
-    undefined,
-    (_, set, value) => {
-      set(overrides, pick(value, appearanceKeys));
-    },
-  );
+  const overrides = atom(undefined, (_, set, value) => {
+    set(overrides, pick(value, appearanceKeys));
+  });
 
   const computedResult = atom<EvalResult | undefined>(undefined);
   const finalFeatures = atom(get =>
@@ -278,9 +275,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, { forceUpdateData: true });
   });
 
-  return atom<ComputedLayer | undefined, Command>(
+  return atom(
     g => g(get),
-    async (_, s, value) => {
+    async (_, s, value: any) => {
       switch (value.type) {
         case "setLayer":
           await s(set, value.layer);

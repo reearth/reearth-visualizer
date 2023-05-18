@@ -8845,10 +8845,10 @@ jiti@^1.17.1:
   resolved "https://registry.npmjs.org/jiti/-/jiti-1.18.2.tgz"
   integrity sha512-QAdOptna2NYiSSpv0O/BwoHBSmz4YhpzJHyi+fnMRTXFjp7B8i/YG5Z8IfusxB1ufjcD2Sre1F3R+nX3fvy7gg==
 
-jotai@1.13.1:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.13.1.tgz#20cc46454cbb39096b12fddfa635b873b3668236"
-  integrity sha512-RUmH1S4vLsG3V6fbGlKzGJnLrDcC/HNb5gH2AeA9DzuJknoVxSGvvg8OBB7lke+gDc4oXmdVsaKn/xDUhWZ0vw==
+jotai@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-2.1.0.tgz#b1a9525345518453802e4a64d99e2800598bab76"
+  integrity sha512-fR82PtHAmEQrc/daMEYGc4EteW96/b6wodtDSCzLvoJA/6y4YG70er4hh2f8CYwYjqwQ0eZUModGfG4DmwkTyQ==
 
 js-cookie@^2.2.1:
   version "2.2.1"

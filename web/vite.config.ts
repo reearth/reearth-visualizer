@@ -6,6 +6,8 @@ import { resolve } from "path";
 
 import yaml from "@rollup/plugin-yaml";
 import react from "@vitejs/plugin-react";
+import jotaiDebugLabel from "jotai/babel/plugin-debug-label";
+import jotaiReactRefresh from "jotai/babel/plugin-react-refresh";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
@@ -16,7 +18,14 @@ import pkg from "./package.json";
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
-  plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
+  plugins: [
+    react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } }),
+    yaml(),
+    cesium(),
+    serverHeaders(),
+    config(),
+    tsconfigPaths(),
+  ],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
