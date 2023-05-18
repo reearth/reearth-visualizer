@@ -485,4 +485,51 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Nested styling at 2nd degree", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["Number('0.32423%') < 1", "200"],
+                  ["true", "1"],
+                ],
+              },
+            },
+            labelTypography: {
+              fontSize: 20,
+              color: {
+                expression: {
+                  conditions: [
+                    ["${blah}==='value'", "color('#ff0000')"],
+                    ["true", "color('#ffffff')"],
+                  ],
+                },
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            blah: "value",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
+        pointSize: 200,
+        labelTypography: {
+          fontSize: 20,
+          color: "#FF0000",
+        },
+      },
+    });
+  });
 });
