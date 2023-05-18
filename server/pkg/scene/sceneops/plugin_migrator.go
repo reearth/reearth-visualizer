@@ -166,7 +166,6 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 			}
 		}
 
-		ll.SetPlugin(&newPluginID)
 		modifiedLayers = append(modifiedLayers, l)
 	}
 

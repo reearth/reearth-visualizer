@@ -353,7 +353,11 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			pl1p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 			prr := memory.NewPropertyWith(pl1p)
 
-			lr := memory.NewLayerWith()
+			ibf := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(id.NewPropertyID()).MustBuild()
+			ib := layer.NewInfobox([]*layer.InfoboxField{ibf}, id.NewPropertyID())
+			l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
+			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+			lr := memory.NewLayerWith(l1, l2)
 
 			dsr := memory.NewDataset()
 
@@ -384,14 +388,23 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			if tt.wantErr != nil {
 				assert.Equal(tt.wantErr, err)
 				assert.Nil(gotSc)
-			} else {
-				assert.NoError(err)
-				assert.Same(sc, gotSc)
-				assert.False(gotSc.Plugins().Has(tt.args.old))
-				assert.True(gotSc.Plugins().Has(tt.args.new))
-				p, _ := prr.FindByID(ctx, *gotSc.Plugins().Plugin(tt.args.new).Property())
-				assert.Equal(*pl2.Schema(), p.Schema())
+				return
 			}
+
+			assert.NoError(err)
+			assert.Same(sc, gotSc)
+			assert.False(gotSc.Plugins().Has(tt.args.old))
+			assert.True(gotSc.Plugins().Has(tt.args.new))
+			p, _ := prr.FindByID(ctx, *gotSc.Plugins().Plugin(tt.args.new).Property())
+			assert.Equal(*pl2.Schema(), p.Schema())
+
+			// layers plugin id should not be changed
+			ls, err := lr.FindByScene(ctx, sid)
+			assert.NoError(err)
+			for _, l := range ls {
+				assert.Equal(plugin.OfficialPluginID.Ref(), (*l).Plugin())
+			}
+
 		})
 	}
 }
