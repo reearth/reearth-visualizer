@@ -92,6 +92,9 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
             <MenuListItem>
               <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
             </MenuListItem>
+            <MenuListItem>
+              <MenuListItemLabel text={`v${__APP_VERSION__}`} />
+            </MenuListItem>
           </MenuList>
         </ChildrenWrapper>
       </StyledDropdown>
