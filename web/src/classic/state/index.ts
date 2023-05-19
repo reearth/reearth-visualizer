@@ -3,7 +3,7 @@ import { atomWithStorage } from "jotai/utils";
 import { SyncStorage } from "jotai/utils/atomWithStorage";
 
 import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
-import { LayerSelectionReason } from "@reearth/core/Map";
+import { LayerSelectionReason } from "@reearth/classic/core/Map";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.

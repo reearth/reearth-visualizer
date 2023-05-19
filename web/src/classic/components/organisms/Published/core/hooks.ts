@@ -9,13 +9,13 @@ import {
   WidgetAlignment,
   BuiltinWidgets,
   isBuiltinWidget,
-} from "@reearth/core/Crust";
+} from "@reearth/classic/core/Crust";
 import {
   convertLegacyLayer,
   type Layer,
   type LegacyLayer,
   convertLegacyCluster,
-} from "@reearth/core/mantle";
+} from "@reearth/classic/core/mantle";
 
 import type {
   PublishedData,

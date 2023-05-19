@@ -1,6 +1,6 @@
 import { config } from "@reearth/beta/services/config";
 import Error from "@reearth/classic/components/molecules/Published/Error";
-import Visualizer from "@reearth/core/Visualizer";
+import Visualizer from "@reearth/classic/core/Visualizer";
 
 import useHooks from "./hooks";
 

@@ -3,7 +3,7 @@ import React from "react";
 
 import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import Visualizer from "@reearth/core/Visualizer";
+import Visualizer from "@reearth/classic/core/Visualizer";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
 import useHooks, { positions } from "./hooks";

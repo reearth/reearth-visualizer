@@ -2,6 +2,14 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/beta/services/config";
 import { useLang } from "@reearth/beta/services/i18n";
+import type { Alignment, Location } from "@reearth/classic/core/Crust";
+import {
+  convertLegacyLayer,
+  convertLegacyCluster,
+  type ComputedLayer,
+  type LegacyCluster,
+} from "@reearth/classic/core/mantle";
+import type { Layer, LayerSelectionReason } from "@reearth/classic/core/Map";
 import {
   useSceneId,
   useSceneMode,
@@ -13,14 +21,6 @@ import {
   useZoomedLayerId,
   useSelectedWidgetArea,
 } from "@reearth/classic/state";
-import type { Alignment, Location } from "@reearth/core/Crust";
-import {
-  convertLegacyLayer,
-  convertLegacyCluster,
-  type ComputedLayer,
-  type LegacyCluster,
-} from "@reearth/core/mantle";
-import type { Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,

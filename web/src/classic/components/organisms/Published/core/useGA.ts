@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import type { SceneProperty } from "@reearth/core/Map";
+import type { SceneProperty } from "@reearth/classic/core/Map";
 
 const isGa4TrackingId = (trackingId: string) => trackingId.startsWith("G-");
 export const useGA = (sceneProperty: SceneProperty) => {

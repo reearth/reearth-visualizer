@@ -9,9 +9,9 @@ import type {
   WidgetArea,
   WidgetSection,
   WidgetZone,
-} from "@reearth/core/Crust";
-import { isBuiltinWidget } from "@reearth/core/Crust";
-import type { LegacyLayer, Tag } from "@reearth/core/mantle";
+} from "@reearth/classic/core/Crust";
+import { isBuiltinWidget } from "@reearth/classic/core/Crust";
+import type { LegacyLayer, Tag } from "@reearth/classic/core/mantle";
 import type {
   GetBlocksQuery,
   Maybe,
