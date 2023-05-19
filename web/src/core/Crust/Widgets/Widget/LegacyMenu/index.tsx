@@ -1,7 +1,7 @@
 import { groupBy } from "lodash-es";
 import { useMemo } from "react";
 
-import Flex from "@reearth/components/atoms/Flex";
+import Flex from "@reearth/classic/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
 import type { ComponentProps as WidgetProps } from "..";

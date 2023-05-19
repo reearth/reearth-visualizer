@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from "react";
 
-import Icon from "@reearth/components/atoms/Icon";
+import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 import { Typography, typographyStyles } from "@reearth/util/value";
 

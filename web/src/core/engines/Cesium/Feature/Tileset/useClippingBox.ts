@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RootEventTarget, useCesium } from "resium";
 
-import { computeMoveAmount } from "@reearth/components/molecules/Visualizer/Engine/Cesium/Box/utils";
+import { computeMoveAmount } from "@reearth/classic/components/molecules/Visualizer/Engine/Cesium/Box/utils";
 import { Camera, EXPERIMENTAL_clipping } from "@reearth/core/mantle";
 import { LayerEditEvent } from "@reearth/core/Map";
 

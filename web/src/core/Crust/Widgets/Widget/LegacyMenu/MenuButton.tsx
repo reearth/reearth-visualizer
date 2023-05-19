@@ -4,7 +4,7 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
 
-import Icon from "@reearth/components/atoms/Icon";
+import Icon from "@reearth/classic/components/atoms/Icon";
 import { fonts, styled } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 

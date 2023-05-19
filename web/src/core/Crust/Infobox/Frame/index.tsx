@@ -1,10 +1,10 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import Flex from "@reearth/components/atoms/Flex";
-import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
-import Icon from "@reearth/components/atoms/Icon";
-import Text from "@reearth/components/atoms/Text";
+import Flex from "@reearth/classic/components/atoms/Flex";
+import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
+import Icon from "@reearth/classic/components/atoms/Icon";
+import Text from "@reearth/classic/components/atoms/Text";
 import { styled, css, fonts, metricsSizes } from "@reearth/theme";
 
 import type { Theme } from "../types";

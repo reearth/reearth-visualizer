@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { PublishedData } from "@reearth/components/organisms/Published/core/types";
+import { PublishedData } from "@reearth/classic/components/organisms/Published/core/types";
 import { useGetScenePropertyQuery } from "@reearth/gql";
 
 // TODO: Remove this hook when we use reearth/core completely.

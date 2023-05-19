@@ -1,4 +1,4 @@
-import TimelineUI from "@reearth/components/atoms/Timeline";
+import TimelineUI from "@reearth/classic/components/atoms/Timeline";
 import { styled } from "@reearth/theme";
 
 import type { ComponentProps as WidgetProps } from "..";

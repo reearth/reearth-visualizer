@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 
-import Icon from "@reearth/components/atoms/Icon";
+import Icon from "@reearth/classic/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";

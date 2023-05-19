@@ -1,33 +1,35 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router, useRoutes, Navigate, useParams } from "react-router-dom";
 
-import Loading from "@reearth/components/atoms/Loading";
-import NotificationBanner from "@reearth/components/organisms/Notification";
-import LoginPage from "@reearth/components/pages/Authentication/LoginPage";
-import PasswordResetPage from "@reearth/components/pages/Authentication/PasswordReset";
-import SignupPage from "@reearth/components/pages/Authentication/SignupPage";
-import NotFound from "@reearth/components/pages/NotFound";
-import AccountSettings from "@reearth/components/pages/Settings/Account";
-import ProjectSettings from "@reearth/components/pages/Settings/Project";
-import DatasetSettings from "@reearth/components/pages/Settings/Project/Dataset";
-import PluginSettings from "@reearth/components/pages/Settings/Project/Plugin";
-import PublicSettings from "@reearth/components/pages/Settings/Project/Public";
-import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList";
-import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
-import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
-import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
+import Loading from "@reearth/classic/components/atoms/Loading";
+import NotificationBanner from "@reearth/classic/components/organisms/Notification";
+import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
+import PasswordResetPage from "@reearth/classic/components/pages/Authentication/PasswordReset";
+import SignupPage from "@reearth/classic/components/pages/Authentication/SignupPage";
+import NotFound from "@reearth/classic/components/pages/NotFound";
+import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
+import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
+import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
+import PluginSettings from "@reearth/classic/components/pages/Settings/Project/Plugin";
+import PublicSettings from "@reearth/classic/components/pages/Settings/Project/Public";
+import SettingsProjectList from "@reearth/classic/components/pages/Settings/ProjectList";
+import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
+import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
+import WorkspaceList from "@reearth/classic/components/pages/Settings/WorkspaceList";
 import { Provider as I18nProvider } from "@reearth/i18n";
 
 import { Provider as Auth0Provider } from "./auth";
-import RootPage from "./components/pages/Authentication/RootPage";
-import Preview from "./components/pages/Preview";
+import RootPage from "./classic/components/pages/Authentication/RootPage";
+import Preview from "./classic/components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
 
-const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
-const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
-const GraphQLPlayground = React.lazy(() => import("@reearth/components/pages/GraphQLPlayground"));
-const PluginEditor = React.lazy(() => import("./components/pages/PluginEditor"));
+const EarthEditor = React.lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
+const Dashboard = React.lazy(() => import("@reearth/classic/components/pages/Dashboard"));
+const GraphQLPlayground = React.lazy(
+  () => import("@reearth/classic/components/pages/GraphQLPlayground"),
+);
+const PluginEditor = React.lazy(() => import("./classic/components/pages/PluginEditor"));
 
 function AppRoutes() {
   return useRoutes([

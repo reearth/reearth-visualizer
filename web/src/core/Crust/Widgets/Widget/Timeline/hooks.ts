@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import type { TimeEventHandler } from "@reearth/components/atoms/Timeline";
+import type { TimeEventHandler } from "@reearth/classic/components/atoms/Timeline";
 import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 
 import type { Clock, Widget } from "../types";

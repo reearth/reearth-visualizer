@@ -8,9 +8,9 @@ import { isEqual } from "lodash-es";
 import type { ReactNode } from "react";
 
 import { useAuth } from "@reearth/auth";
+import { useError } from "@reearth/classic/state";
 import { e2eAccessToken } from "@reearth/config";
 import { reportError } from "@reearth/sentry";
-import { useError } from "@reearth/state";
 
 import fragmentMatcher from "./fragmentMatcher.json";
 

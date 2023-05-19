@@ -1,4 +1,4 @@
-import PublishedPage from "@reearth/components/pages/Published";
+import PublishedPage from "@reearth/classic/components/pages/Published";
 
 import { PublishedProvider as I18nProvider } from "./i18n";
 import { PublishedAppProvider as ThemeProvider } from "./theme";

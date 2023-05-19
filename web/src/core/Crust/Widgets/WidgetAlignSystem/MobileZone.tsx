@@ -1,8 +1,8 @@
 import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
-import Icon from "@reearth/components/atoms/Icon";
-import Slide from "@reearth/components/atoms/Slide";
+import Icon from "@reearth/classic/components/atoms/Icon";
+import Slide from "@reearth/classic/components/atoms/Slide";
 import { styled } from "@reearth/theme";
 
 import Area, { WidgetAreaType } from "./Area";

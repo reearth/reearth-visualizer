@@ -1,8 +1,8 @@
 import React, { type ReactNode } from "react";
 
-import AdditionButton from "@reearth/components/atoms/AdditionButton";
-import Icon from "@reearth/components/atoms/Icon";
-import Text from "@reearth/components/atoms/Text";
+import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
+import Icon from "@reearth/classic/components/atoms/Icon";
+import Text from "@reearth/classic/components/atoms/Text";
 import type { Layer } from "@reearth/core/mantle";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";

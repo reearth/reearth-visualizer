@@ -1,8 +1,8 @@
 import { CSSProperties, useMemo, type ReactNode } from "react";
 
 // TODO(@keiya01): Change directory structure
-import DropHolder from "@reearth/components/atoms/DropHolder";
-import Filled from "@reearth/components/atoms/Filled";
+import DropHolder from "@reearth/classic/components/atoms/DropHolder";
+import Filled from "@reearth/classic/components/atoms/Filled";
 
 import Crust, {
   type Alignment,

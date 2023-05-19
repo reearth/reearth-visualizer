@@ -3,7 +3,7 @@ import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2 } from "cesium"
 import { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
-import Icon from "@reearth/components/atoms/Icon";
+import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 import type { SceneProperty } from "../..";

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import GlobalModal from "@reearth/components/organisms/GlobalModal";
+import GlobalModal from "@reearth/classic/components/organisms/GlobalModal";
 
 import { useAuthenticationRequired } from "./hooks";
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import nl2br from "react-nl2br";
 
-import Icon from "@reearth/components/atoms/Icon";
-import Markdown from "@reearth/components/atoms/Markdown";
+import Icon from "@reearth/classic/components/atoms/Icon";
+import Markdown from "@reearth/classic/components/atoms/Markdown";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
