@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
+import { useLang, useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useLang, useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 export type Props = {
   policy: {

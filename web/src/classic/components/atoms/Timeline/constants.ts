@@ -1,4 +1,4 @@
-import { metricsSizes } from "@reearth/theme";
+import { metricsSizes } from "@reearth/beta/services/theme";
 
 export const EPOCH_SEC = 1000;
 export const PADDING_HORIZONTAL = metricsSizes["m"];

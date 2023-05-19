@@ -1,6 +1,6 @@
 import { ComponentType } from "react";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
 import type { SceneProperty } from "../Engine";

@@ -1,7 +1,7 @@
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
-import { styled } from "@reearth/theme";
 
 import { FieldProps } from "../types";
 

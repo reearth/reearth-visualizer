@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import Policy from "@reearth/classic/components/molecules/Common/Policy";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   title?: string;

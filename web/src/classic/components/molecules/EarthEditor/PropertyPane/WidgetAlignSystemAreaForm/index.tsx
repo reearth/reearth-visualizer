@@ -1,11 +1,11 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 import ColorField from "../PropertyField/ColorField";
 import NumberField from "../PropertyField/NumberField";

@@ -1,8 +1,8 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
+import { config } from "@reearth/beta/services/config";
 import type { Block, ClusterProperty } from "@reearth/classic/components/molecules/Visualizer";
-import { config } from "@reearth/config";
 import {
   InternalWidget,
   WidgetAlignSystem,

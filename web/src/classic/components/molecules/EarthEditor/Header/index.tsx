@@ -1,5 +1,7 @@
 import React, { useRef, useMemo } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Dropdown, { Ref as DropDownRef } from "@reearth/classic/components/atoms/Dropdown";
 import Flex from "@reearth/classic/components/atoms/Flex";
@@ -13,8 +15,6 @@ import {
   MenuListItemLabel,
 } from "@reearth/classic/components/molecules/Common/MenuList";
 import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 // Proxy dependent types
 export type { User, Workspace } from "@reearth/classic/components/molecules/Common/Header";

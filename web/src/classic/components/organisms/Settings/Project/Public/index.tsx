@@ -1,5 +1,6 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
 import ArchivedMessage from "@reearth/classic/components/molecules/Settings/Project/ArchivedMessage";
 import BasicAuthSection from "@reearth/classic/components/molecules/Settings/Project/BasicAuthSection";
 import PublicSection from "@reearth/classic/components/molecules/Settings/Project/PublicSection";
@@ -8,7 +9,6 @@ import StatusSection from "@reearth/classic/components/molecules/Settings/Projec
 import SettingsHeader from "@reearth/classic/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/classic/components/organisms/Settings/SettingPage";
-import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 

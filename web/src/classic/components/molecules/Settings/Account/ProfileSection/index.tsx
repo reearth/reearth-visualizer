@@ -1,9 +1,9 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 export type Props = {
   username?: string;

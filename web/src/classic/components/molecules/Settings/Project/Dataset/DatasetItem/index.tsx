@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, fonts } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
-import { useT } from "@reearth/i18n";
-import { styled, fonts } from "@reearth/theme";
 
 export type Item = {};
 

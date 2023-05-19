@@ -1,6 +1,6 @@
+import { styled, usePublishTheme } from "@reearth/beta/services/theme";
 import TimelineUI from "@reearth/classic/components/atoms/Timeline";
 import { ComponentProps as WidgetProps } from "@reearth/classic/components/molecules/Visualizer/Widget";
-import { styled, usePublishTheme } from "@reearth/theme";
 
 import { useTimeline } from "./hooks";
 

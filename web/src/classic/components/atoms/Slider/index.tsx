@@ -1,7 +1,7 @@
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
 
-import { styled, css } from "@reearth/theme";
+import { styled, css } from "@reearth/beta/services/theme";
 
 import "rc-slider/assets/index.css";
 

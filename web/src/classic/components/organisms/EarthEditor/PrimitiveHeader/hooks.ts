@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
+import { useLang } from "@reearth/beta/services/i18n";
 import { useSceneId, useSelected } from "@reearth/classic/state";
 import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/gql";
-import { useLang } from "@reearth/i18n";
 
 // ポリゴンやポリラインは現在編集できないため、それらを新規レイヤーとして追加しても何も表示されない
 const hiddenExtensions = ["reearth/polyline", "reearth/polygon", "reearth/rect"];

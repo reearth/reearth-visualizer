@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 
 import CheckGroup from ".";
 

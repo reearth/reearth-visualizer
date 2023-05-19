@@ -1,10 +1,10 @@
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon, { Icons } from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   className?: string;

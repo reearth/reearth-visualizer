@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
 // Components
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 import defaultProjectImage from "./defaultProjectImage.jpg";
 

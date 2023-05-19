@@ -1,7 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
+import {
+  withAuthenticationRequired,
+  AuthenticationRequiredPage,
+} from "@reearth/beta/services/auth";
 import BrowserWidthWarning from "@reearth/classic/components/molecules/Common/BrowserWidthWarning";
 import EarthEditorPage from "@reearth/classic/components/molecules/EarthEditor/EarthEditorPage";
 import CanvasArea from "@reearth/classic/components/organisms/EarthEditor/CanvasArea";

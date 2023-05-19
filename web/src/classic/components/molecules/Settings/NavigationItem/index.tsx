@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
+import { styled, fonts, useTheme } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, fonts, useTheme } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   children?: ReactNode;

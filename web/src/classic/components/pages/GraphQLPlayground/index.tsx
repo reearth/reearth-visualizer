@@ -2,7 +2,7 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import { useEffect, useState } from "react";
 
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
 import Filled from "@reearth/classic/components/atoms/Filled";
 
 const fetcher = createGraphiQLFetcher({

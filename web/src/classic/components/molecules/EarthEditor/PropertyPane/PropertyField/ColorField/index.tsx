@@ -2,10 +2,10 @@ import React from "react";
 import { RgbaColorPicker } from "react-colorful";
 import { usePopper } from "react-popper";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, css, useTheme, metricsSizes } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
 
 import { FieldProps } from "../types";
 

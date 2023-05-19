@@ -1,8 +1,8 @@
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/theme";
 
 import useHooks from "./hooks";
 

@@ -1,7 +1,7 @@
 import { difference } from "lodash-es";
 import React, { useMemo, useCallback } from "react";
 
-import { styled, useTheme } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import { Typography } from "@reearth/util/value";
 
 import ColorField from "../ColorField";

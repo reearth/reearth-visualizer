@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
-import { useTheme } from "@reearth/theme";
+import { useTheme } from "@reearth/beta/services/theme";
 
 import type {
   Alignment,

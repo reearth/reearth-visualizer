@@ -1,5 +1,7 @@
 import { useMemo, useEffect, useCallback } from "react";
 
+import { config } from "@reearth/beta/services/config";
+import { useLang } from "@reearth/beta/services/i18n";
 import {
   useSceneId,
   useSceneMode,
@@ -11,7 +13,6 @@ import {
   useZoomedLayerId,
   useSelectedWidgetArea,
 } from "@reearth/classic/state";
-import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
 import {
   convertLegacyLayer,
@@ -36,7 +37,6 @@ import {
   type WidgetAreaAlign,
   ValueType,
 } from "@reearth/gql";
-import { useLang } from "@reearth/i18n";
 import { valueTypeToGQL, type ValueTypes, valueToGQL, type LatLng } from "@reearth/util/value";
 
 import {

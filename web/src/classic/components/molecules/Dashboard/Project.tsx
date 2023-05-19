@@ -4,13 +4,13 @@ import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Project as ProjectType } from "@reearth/classic/components/molecules/Dashboard/types";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
 
 import defaultProjectImage from "./defaultProjectImage.jpg";
 

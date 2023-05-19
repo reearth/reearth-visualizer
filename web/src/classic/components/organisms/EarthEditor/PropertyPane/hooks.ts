@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { useLang } from "@reearth/beta/services/i18n";
 import {
   ValueTypes,
   ValueType,
@@ -36,7 +37,6 @@ import {
   WidgetSectionType,
   WidgetZoneType,
 } from "@reearth/gql";
-import { useLang } from "@reearth/i18n";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 
 import useQueries, { Mode as RawMode } from "./hooks-queries";

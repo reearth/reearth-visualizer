@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/theme";
 
 const AuthPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return (

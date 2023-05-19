@@ -1,7 +1,8 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
+import { useLang, useT } from "@reearth/beta/services/i18n";
 import { PluginItem } from "@reearth/classic/components/molecules/Settings/Project/Plugin/PluginSection";
 import { useProject, useNotification, useCurrentTheme } from "@reearth/classic/state";
 import {
@@ -11,7 +12,6 @@ import {
   useUploadPluginMutation,
   useUpgradePluginMutation,
 } from "@reearth/gql/graphql-client-api";
-import { useLang, useT } from "@reearth/i18n";
 
 export type Plugin = {
   fullId: string;

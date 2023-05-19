@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { withAuthenticationRequired } from "@reearth/auth";
+import { withAuthenticationRequired } from "@reearth/beta/services/auth";
 import Plugin from "@reearth/classic/components/organisms/Settings/Project/Plugin";
 
 export type Props = {

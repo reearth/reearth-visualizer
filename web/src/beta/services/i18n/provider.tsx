@@ -3,7 +3,7 @@ import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import "dayjs/locale/ja";
 
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
 import { useGetLanguageQuery } from "@reearth/gql";
 
 import i18n from "./i18n";

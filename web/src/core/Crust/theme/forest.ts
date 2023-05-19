@@ -1,4 +1,4 @@
-import { colors } from "@reearth/theme";
+import { colors } from "@reearth/beta/services/theme";
 
 import type { Theme } from ".";
 

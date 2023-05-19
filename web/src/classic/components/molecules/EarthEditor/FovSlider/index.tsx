@@ -1,10 +1,10 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Slider from "@reearth/classic/components/atoms/Slider";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
 import useHooks from "./hooks";

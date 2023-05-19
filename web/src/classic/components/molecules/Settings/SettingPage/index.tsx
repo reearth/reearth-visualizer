@@ -1,12 +1,12 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Header, { Props } from "@reearth/classic/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/classic/components/molecules/Settings/Navigation";
-import { styled } from "@reearth/theme";
 import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export type SettingPageProps = {

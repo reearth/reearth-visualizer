@@ -2,7 +2,7 @@
 
 import { createRoot } from "react-dom/client";
 
-import loadConfig from "./config";
+import loadConfig from "./beta/services/config";
 import App from "./publishedapp";
 import "./wdyr";
 

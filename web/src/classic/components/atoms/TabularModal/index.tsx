@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import Modal from "@reearth/classic/components/atoms/Modal";
-import { styled } from "@reearth/theme";
 
 export type Props<Tab extends string = string> = {
   children?: ReactNode;

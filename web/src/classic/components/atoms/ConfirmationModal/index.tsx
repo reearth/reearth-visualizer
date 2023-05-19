@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useT } from "@reearth/i18n";
+import { useT } from "@reearth/beta/services/i18n";
 
 import Button from "../Button";
 import Modal from "../Modal";

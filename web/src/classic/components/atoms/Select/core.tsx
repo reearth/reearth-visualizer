@@ -3,8 +3,8 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { useMergeRefs } from "use-callback-ref";
 
-import { styled, css, metrics } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
+import { styled, css, metrics } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 
 // Components
 

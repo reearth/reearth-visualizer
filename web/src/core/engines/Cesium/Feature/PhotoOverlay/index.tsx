@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import nl2br from "react-nl2br";
 import { BillboardGraphics } from "resium";
 
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import Text from "@reearth/classic/components/atoms/Text";
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
-import { styled, useTheme } from "@reearth/theme";
 
 import type { LegacyPhotooverlayAppearance } from "../../..";
 import { heightReference, ho, useIcon, vo } from "../../common";

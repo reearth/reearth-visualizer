@@ -1,6 +1,7 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
+import { config } from "@reearth/beta/services/config";
 import type {
   Layer,
   Widget,
@@ -9,7 +10,6 @@ import type {
   Alignment,
   ClusterProperty,
 } from "@reearth/classic/components/molecules/Visualizer";
-import { config } from "@reearth/config";
 
 import {
   PublishedData,

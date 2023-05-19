@@ -3,7 +3,7 @@ import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import React, { useRef, useEffect } from "react";
 import { useClickAway } from "react-use";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 import useBuffered from "@reearth/util/use-buffered";
 
 export type Props = {

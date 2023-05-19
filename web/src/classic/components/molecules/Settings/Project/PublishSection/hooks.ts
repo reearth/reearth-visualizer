@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
 import { Status as StatusType } from "@reearth/classic/components/atoms/PublicationStatus";
 import generateRandomString from "@reearth/util/generate-random-string";
 

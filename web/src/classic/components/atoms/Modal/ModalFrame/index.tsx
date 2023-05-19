@@ -2,8 +2,8 @@ import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { ReactNode, useRef, useCallback } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/theme";
 
 export type Props = {
   className?: string;

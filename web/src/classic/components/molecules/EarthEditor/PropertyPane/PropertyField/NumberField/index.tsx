@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
+import { styled, metrics } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, metrics } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 import { FieldProps } from "../types";
 

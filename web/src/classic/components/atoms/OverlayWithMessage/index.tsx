@@ -1,5 +1,5 @@
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import Overlay from "@reearth/classic/components/atoms/Overlay";
-import { styled, useTheme } from "@reearth/theme";
 
 import Flex from "../Flex";
 import Icon, { Icons } from "../Icon";

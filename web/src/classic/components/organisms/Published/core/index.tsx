@@ -1,5 +1,5 @@
+import { config } from "@reearth/beta/services/config";
 import Error from "@reearth/classic/components/molecules/Published/Error";
-import { config } from "@reearth/config";
 import Visualizer from "@reearth/core/Visualizer";
 
 import useHooks from "./hooks";

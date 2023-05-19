@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 
 import useHooks from "./hooks";
 

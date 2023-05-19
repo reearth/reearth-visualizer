@@ -1,5 +1,7 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import Dropdown from "@reearth/classic/components/atoms/Dropdown";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Project } from "@reearth/classic/components/molecules/Common/Header";
@@ -8,8 +10,6 @@ import {
   MenuList,
   MenuListItem,
 } from "@reearth/classic/components/molecules/Common/MenuList";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   currentProject: Project;

@@ -1,4 +1,4 @@
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
 import MoleculeHeader from "@reearth/classic/components/molecules/Common/Header";
 import MoleculeDashboard from "@reearth/classic/components/molecules/Dashboard";
 import Logo from "@reearth/classic/components/molecules/Dashboard/Logo";

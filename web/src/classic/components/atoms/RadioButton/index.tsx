@@ -1,6 +1,6 @@
 import React from "react";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 
 export type RadioButtonProps = {
   value: string | number;

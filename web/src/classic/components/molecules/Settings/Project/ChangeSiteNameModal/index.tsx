@@ -1,13 +1,13 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   show?: boolean;

@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 
+import { config } from "@reearth/beta/services/config";
 import ContentPicker from "@reearth/classic/components/atoms/ContentPicker";
 import FovSlider from "@reearth/classic/components/molecules/EarthEditor/FovSlider";
 import Visualizer, {
   Props as VisualizerProps,
 } from "@reearth/classic/components/molecules/Visualizer";
-import { config } from "@reearth/config";
 
 import useHooks from "./hooks";
 

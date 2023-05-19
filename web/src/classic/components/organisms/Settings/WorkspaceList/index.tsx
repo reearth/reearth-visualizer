@@ -1,11 +1,11 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
 import SettingsHeader from "@reearth/classic/components/molecules/Settings/SettingsHeader";
 import MoleculeWorkspaceList from "@reearth/classic/components/molecules/Settings/WorkspaceList/WorkspaceList";
 import SettingPage from "@reearth/classic/components/organisms/Settings/SettingPage";
-import { useT } from "@reearth/i18n";
 
 import useHooks from "../Workspace/hooks";
 

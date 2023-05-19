@@ -1,10 +1,10 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { useTheme } from "@reearth/beta/services/theme";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import TabCard from "@reearth/classic/components/atoms/TabCard";
 import Table from "@reearth/classic/components/atoms/Table";
-import { useT } from "@reearth/i18n";
-import { useTheme } from "@reearth/theme";
 
 import DatasetPropertyItem, {
   PrimitiveItem as PrimitiveItemType,

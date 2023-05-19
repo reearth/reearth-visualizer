@@ -1,13 +1,13 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
+import fonts from "@reearth/beta/services/theme/fonts";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import NavigationItem from "@reearth/classic/components/molecules/Settings/NavigationItem";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 type Workspace = {
   id?: string;

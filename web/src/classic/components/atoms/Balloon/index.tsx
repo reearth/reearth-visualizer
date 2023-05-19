@@ -1,9 +1,9 @@
 import { Placement as PopperPlacement } from "@popperjs/core";
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/theme";
 
 export type Placement = PopperPlacement;
 

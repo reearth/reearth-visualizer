@@ -7,9 +7,9 @@ import { createUploadLink } from "apollo-upload-client";
 import { isEqual } from "lodash-es";
 import type { ReactNode } from "react";
 
-import { useAuth } from "@reearth/auth";
+import { useAuth } from "@reearth/beta/services/auth";
+import { e2eAccessToken } from "@reearth/beta/services/config";
 import { useError } from "@reearth/classic/state";
-import { e2eAccessToken } from "@reearth/config";
 import { reportError } from "@reearth/sentry";
 
 import fragmentMatcher from "./fragmentMatcher.json";

@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
 import AddMemberModal, {
@@ -9,8 +11,6 @@ import MemberList from "@reearth/classic/components/molecules/Settings/Workspace
 import MemberListItem, {
   Role,
 } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 export type Me = {
   id?: string;

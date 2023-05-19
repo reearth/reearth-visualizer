@@ -1,8 +1,8 @@
 import { useRef, useCallback, useEffect, ReactNode } from "react";
 import { usePopper } from "react-popper";
 
+import { styled, css } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled, css } from "@reearth/theme";
 
 import Portal from "../Portal";
 

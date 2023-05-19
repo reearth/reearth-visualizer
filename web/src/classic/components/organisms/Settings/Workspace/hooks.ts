@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useT } from "@reearth/beta/services/i18n";
 import { Role as RoleUnion } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
 import {
   useWorkspace,
@@ -20,7 +21,6 @@ import {
   useRemoveMemberFromTeamMutation,
 } from "@reearth/gql";
 import { Team } from "@reearth/gql/graphql-client-api";
-import { useT } from "@reearth/i18n";
 
 type Params = {
   workspaceId: string;

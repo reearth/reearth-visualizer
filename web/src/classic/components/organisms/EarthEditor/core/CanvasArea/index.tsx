@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 
+import { config } from "@reearth/beta/services/config";
 import ContentPicker from "@reearth/classic/components/atoms/ContentPicker";
 import FovSlider from "@reearth/classic/components/molecules/EarthEditor/FovSlider";
-import { config } from "@reearth/config";
 import Visualizer, { type Props as VisualizerProps } from "@reearth/core/Visualizer";
 
 import useHooks from "./hooks";

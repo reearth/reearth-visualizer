@@ -1,7 +1,7 @@
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import DatasetItem from "@reearth/classic/components/molecules/Settings/Project/Dataset/DatasetItem";
-import { styled } from "@reearth/theme";
 
 export type Item = {
   id: string;

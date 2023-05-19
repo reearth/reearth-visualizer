@@ -1,7 +1,7 @@
 import { detect } from "detect-browser";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
-import { styled } from "@reearth/theme";
+import { styled } from "@reearth/beta/services/theme";
 
 export type Props = {
   className?: string;

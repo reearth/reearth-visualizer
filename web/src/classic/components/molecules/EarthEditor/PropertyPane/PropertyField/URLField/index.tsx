@@ -1,9 +1,9 @@
 import React, { useCallback, useState, ComponentType } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { Props as AssetModalPropsType } from "@reearth/classic/components/molecules/Common/AssetModal";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 import TextField from "../TextField";
 import { FieldProps } from "../types";

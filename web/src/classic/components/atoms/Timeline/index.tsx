@@ -1,9 +1,9 @@
 import { memo } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, PublishTheme } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { styled, PublishTheme } from "@reearth/theme";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";

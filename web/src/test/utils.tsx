@@ -2,8 +2,8 @@ import { MockedProvider as MockedGqlProvider, MockedResponse } from "@apollo/cli
 import { render as rtlRender } from "@testing-library/react";
 import { vitest } from "vitest";
 
-import { Provider as I18nProvider } from "../i18n";
-import { Provider as ThemeProvider } from "../theme";
+import { Provider as I18nProvider } from "../beta/services/i18n";
+import { Provider as ThemeProvider } from "../beta/services/theme";
 
 // react-inlinesvg is not displayed in test.
 // see detail: https://github.com/gilbarbara/react-inlinesvg/issues/145

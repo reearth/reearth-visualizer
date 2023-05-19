@@ -1,10 +1,10 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
 import AccountSection from "@reearth/classic/components/molecules/Settings/Account/AccountSection";
 import ProfileSection from "@reearth/classic/components/molecules/Settings/Account/ProfileSection";
 import SettingsHeader from "@reearth/classic/components/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/classic/components/organisms/Settings/SettingPage";
-import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 

@@ -1,10 +1,10 @@
 import React from "react";
 
-import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
+import { useT } from "@reearth/beta/services/i18n";
 // Theme
-import { styled } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
+import { styled } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
+import Text from "@reearth/classic/components/atoms/Text";
 
 export type Status = "published" | "limited" | "unpublished";
 

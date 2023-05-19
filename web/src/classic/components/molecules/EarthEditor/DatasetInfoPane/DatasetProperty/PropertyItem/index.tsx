@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import SelectField from "@reearth/classic/components/atoms/SelectBox";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 export type PrimitiveItem = { name: string; extensionId: string; icon: string; pluginId: string };
 

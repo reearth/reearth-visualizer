@@ -2,7 +2,7 @@ import fileDownload from "js-file-download";
 import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-import { config } from "@reearth/config";
+import { config } from "@reearth/beta/services/config";
 import type { WidgetSection, WidgetZone } from "@reearth/core/Crust";
 import type { Layer } from "@reearth/core/mantle";
 

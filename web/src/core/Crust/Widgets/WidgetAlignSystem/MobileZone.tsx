@@ -1,9 +1,9 @@
 import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Slide from "@reearth/classic/components/atoms/Slide";
-import { styled } from "@reearth/theme";
 
 import Area, { WidgetAreaType } from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";

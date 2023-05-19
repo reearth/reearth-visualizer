@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
 
 import App from "./app";
-import loadConfig from "./config";
+import loadConfig from "./beta/services/config";
 import { initialize as initializeSentry } from "./sentry";
 import wdyr from "./wdyr";
 

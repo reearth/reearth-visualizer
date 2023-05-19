@@ -1,11 +1,11 @@
 import React, { type ReactNode } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
 import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import type { Layer } from "@reearth/core/mantle";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
 
 import BlockComponent from "./Block";
 import Field from "./Field";

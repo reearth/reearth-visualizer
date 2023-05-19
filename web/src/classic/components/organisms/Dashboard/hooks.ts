@@ -2,6 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useT } from "@reearth/beta/services/i18n";
 import type { User } from "@reearth/classic/components/molecules/Common/Header";
 import type { Project, Workspace } from "@reearth/classic/components/molecules/Dashboard";
 import {
@@ -21,7 +22,6 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/gql";
-import { useT } from "@reearth/i18n";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 

@@ -1,9 +1,9 @@
 import MonacoEditor from "@monaco-editor/react";
 import React from "react";
 
+import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Visualizer from "@reearth/classic/components/molecules/Visualizer";
-import { styled } from "@reearth/theme";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
 import useHooks, { positions } from "./hooks";

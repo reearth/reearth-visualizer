@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 
-import { colors } from "@reearth/theme";
+import { colors } from "@reearth/beta/services/theme";
 
 import FontFamilyField from ".";
 

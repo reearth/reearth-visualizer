@@ -1,14 +1,14 @@
 import React from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled, useTheme } from "@reearth/beta/services/theme";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/classic/components/molecules/Settings/Project/ChangeSiteNameModal";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { useT } from "@reearth/i18n";
-import { styled, useTheme } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
 
 import useHooks, { Status } from "./hooks";
 

@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router, useRoutes, Navigate, useParams } from "react-router-dom";
 
+import { Provider as I18nProvider } from "@reearth/beta/services/i18n";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
@@ -16,13 +17,12 @@ import SettingsProjectList from "@reearth/classic/components/pages/Settings/Proj
 import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
 import WorkspaceList from "@reearth/classic/components/pages/Settings/WorkspaceList";
-import { Provider as I18nProvider } from "@reearth/i18n";
 
-import { Provider as Auth0Provider } from "./auth";
+import { Provider as Auth0Provider } from "./beta/services/auth";
+import { Provider as ThemeProvider, styled } from "./beta/services/theme";
 import RootPage from "./classic/components/pages/Authentication/RootPage";
 import Preview from "./classic/components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
-import { Provider as ThemeProvider, styled } from "./theme";
 
 const EarthEditor = React.lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/classic/components/pages/Dashboard"));

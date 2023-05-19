@@ -2,9 +2,9 @@ import React, { useState, useCallback, useRef } from "react";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
+import { styled, css } from "@reearth/beta/services/theme";
+import fonts from "@reearth/beta/services/theme/fonts";
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
-import { styled, css } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
 
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 

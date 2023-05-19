@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import TreeView, { Item, Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
-import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
 
 import LayerTreeViewItem, { Layer as LayerType } from "../LayerTreeViewItem";
 

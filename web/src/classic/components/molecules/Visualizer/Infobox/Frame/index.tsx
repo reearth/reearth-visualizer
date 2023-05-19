@@ -1,13 +1,13 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
+import { styled, css, usePublishTheme } from "@reearth/beta/services/theme";
+import fonts from "@reearth/beta/services/theme/fonts";
+import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, css, usePublishTheme } from "@reearth/theme";
-import fonts from "@reearth/theme/fonts";
-import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";

@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 
+import { useT } from "@reearth/beta/services/i18n";
+import { metricsSizes, styled, useTheme } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useT } from "@reearth/i18n";
-import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 

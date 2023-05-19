@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import useFileInput from "use-file-input";
 
-import { useT } from "@reearth/i18n";
+import { useT } from "@reearth/beta/services/i18n";
 
 export type SortType = "date" | "name" | "size";
 
