@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useContext } from "@reearth/classic/components/molecules/Visualizer/Plugin";
-import { EventCallback } from "@reearth/util/event";
+import { EventCallback } from "@reearth/classic/util/event";
 
 import { EdgeEventCallback, EdgeProperties } from "../Edge";
 

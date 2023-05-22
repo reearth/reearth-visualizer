@@ -5,6 +5,7 @@ import {
   Location,
   Alignment,
 } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -35,7 +36,6 @@ import {
   useClock,
   useSelectedWidgetArea,
 } from "@reearth/services/state";
-import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import {
   convertWidgets,

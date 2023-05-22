@@ -8,7 +8,7 @@ import {
   forwardRef,
 } from "react";
 
-import type { Camera, LatLng } from "@reearth/util/value";
+import type { Camera, LatLng } from "@reearth/classic/util/value";
 
 import { Clock, SelectLayerOptions } from "../Plugin/types";
 

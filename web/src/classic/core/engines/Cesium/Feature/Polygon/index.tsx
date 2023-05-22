@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Entity, PolygonGraphics, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
-import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
+import { Polygon as PolygonValue, toColor } from "@reearth/classic/util/value";
 
 import type { PolygonAppearance } from "../../..";
 import { classificationType, heightReference, shadowMode } from "../../common";

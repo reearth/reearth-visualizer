@@ -2,7 +2,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import { useState } from "react";
 
-import deepFind from "@reearth/util/deepFind";
+import deepFind from "@reearth/classic/util/deepFind";
 
 import Component, { Layer, Widget } from ".";
 

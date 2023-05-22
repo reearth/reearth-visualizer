@@ -36,8 +36,8 @@ import {
 import { useCallback, MutableRefObject } from "react";
 
 import { ClassificationType } from "@reearth/classic/core/mantle";
-import { useCanvas, useImage } from "@reearth/util/image";
-import { tweenInterval } from "@reearth/util/raf";
+import { useCanvas, useImage } from "@reearth/classic/util/image";
+import { tweenInterval } from "@reearth/classic/util/raf";
 
 import type { Camera, CameraOptions, Clock, FlyToDestination } from "..";
 

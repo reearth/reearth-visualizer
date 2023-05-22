@@ -16,7 +16,7 @@ import {
   CesiumComponentRef,
 } from "resium";
 
-import { Typography, toCSSFont, toColor } from "@reearth/util/value";
+import { Typography, toCSSFont, toColor } from "@reearth/classic/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import {

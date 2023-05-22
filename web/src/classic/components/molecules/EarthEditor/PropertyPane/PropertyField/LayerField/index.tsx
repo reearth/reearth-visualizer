@@ -4,8 +4,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import LayerSelectionModal, {
   Layer as LayerType,
 } from "@reearth/classic/components/molecules/EarthEditor/LayerSelectionModal";
+import deepFind from "@reearth/classic/util/deepFind";
 import { styled } from "@reearth/services/theme";
-import deepFind from "@reearth/util/deepFind";
 
 import { FieldProps } from "../types";
 

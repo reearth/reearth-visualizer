@@ -3,8 +3,8 @@ import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReduce
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
-import { useDrop, DropOptions } from "@reearth/util/use-dnd";
-import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
+import { useDrop, DropOptions } from "@reearth/classic/util/use-dnd";
+import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/classic/util/value";
 
 import type {
   OverriddenInfobox,

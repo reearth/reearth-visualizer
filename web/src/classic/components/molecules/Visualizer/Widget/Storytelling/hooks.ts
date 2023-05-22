@@ -1,7 +1,7 @@
 import { Math as CesiumMath } from "cesium";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
-import { Camera as CameraValue } from "@reearth/util/value";
+import { Camera as CameraValue } from "@reearth/classic/util/value";
 
 import { useContext } from "../../Plugin";
 import type { Layer } from "../../Plugin";

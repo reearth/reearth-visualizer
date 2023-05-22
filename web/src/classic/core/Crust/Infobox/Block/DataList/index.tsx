@@ -1,8 +1,8 @@
 import React, { Fragment, useCallback, useState } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { Typography, typographyStyles } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
-import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { CommonProps as BlockProps } from "..";
 import { Border, Title } from "../utils";

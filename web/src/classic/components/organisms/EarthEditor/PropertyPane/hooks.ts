@@ -4,6 +4,7 @@ import {
   ValueTypes,
   ValueType,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
+import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
 import {
   useUpdatePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
@@ -37,7 +38,6 @@ import {
   useSelectedWidgetArea,
   useSessionWorkspace,
 } from "@reearth/services/state";
-import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 
 import useQueries, { Mode as RawMode } from "./hooks-queries";
 

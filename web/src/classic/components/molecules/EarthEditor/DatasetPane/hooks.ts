@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 
+import { parseHost, DataSource as RawDataSource } from "@reearth/classic/util/path";
 import { useT } from "@reearth/services/i18n";
-import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
 export type DataSource = RawDataSource;
 

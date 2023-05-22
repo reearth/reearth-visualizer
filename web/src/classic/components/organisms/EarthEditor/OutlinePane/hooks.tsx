@@ -7,6 +7,8 @@ import {
   Cluster,
   WidgetType,
 } from "@reearth/classic/components/molecules/EarthEditor/OutlinePane";
+import deepFind from "@reearth/classic/util/deepFind";
+import deepGet from "@reearth/classic/util/deepGet";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -37,8 +39,6 @@ import {
   useZoomedLayerId,
   useSelectedWidgetArea,
 } from "@reearth/services/state";
-import deepFind from "@reearth/util/deepFind";
-import deepGet from "@reearth/util/deepGet";
 
 const convertFormat = (format: Format) => {
   if (format === "kml") return LayerEncodingFormat.Kml;

@@ -9,7 +9,7 @@ import { pick } from "lodash-es";
 import { useMemo } from "react";
 import { Globe as CesiumGlobe } from "resium";
 
-import { objKeys } from "@reearth/util/util";
+import { objKeys } from "@reearth/classic/util/util";
 
 import type { SceneProperty, TerrainProperty } from "../../ref";
 

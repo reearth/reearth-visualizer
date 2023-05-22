@@ -2,7 +2,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import { ReactNode } from "react";
 
-import { Camera as settings } from "@reearth/util/value";
+import { Camera as settings } from "@reearth/classic/util/value";
 
 import PropertyField, { Layer as LayerType } from ".";
 

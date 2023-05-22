@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
+import { truncMinutes } from "@reearth/classic/util/time";
 import { render, screen } from "@reearth/test/utils";
-import { truncMinutes } from "@reearth/util/time";
 
 import { EPOCH_SEC, GAP_HORIZONTAL, HOURS_SECS, SCALE_INTERVAL } from "./constants";
 import ScaleList from "./ScaleList";

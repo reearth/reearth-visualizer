@@ -12,7 +12,7 @@ import {
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 
 import { useContext } from "@reearth/classic/components/molecules/Visualizer/Plugin";
-import { EventCallback } from "@reearth/util/event";
+import { EventCallback } from "@reearth/classic/util/event";
 
 import { PointEventCallback, ScalePointProperties } from "../ScalePoints";
 

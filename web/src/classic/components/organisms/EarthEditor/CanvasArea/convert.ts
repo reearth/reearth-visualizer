@@ -16,6 +16,7 @@ import {
   isBuiltinWidget,
 } from "@reearth/classic/components/molecules/Visualizer/Widget/builtin";
 import { WidgetAreaPadding } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import { valueFromGQL } from "@reearth/classic/util/value";
 import {
   GetBlocksQuery,
   Maybe,
@@ -31,7 +32,6 @@ import {
   WidgetArea as WidgetAreaType,
   EarthLayer5Fragment,
 } from "@reearth/gql";
-import { valueFromGQL } from "@reearth/util/value";
 
 type BlockType = Item & {
   pluginId: string;

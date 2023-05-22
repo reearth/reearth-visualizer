@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
 import { useContext } from "@reearth/classic/components/molecules/Visualizer/Plugin";
-import { toColor } from "@reearth/util/value";
+import { toColor } from "@reearth/classic/util/value";
 
 import { Property } from "..";
 import { SceneProperty } from "../../..";

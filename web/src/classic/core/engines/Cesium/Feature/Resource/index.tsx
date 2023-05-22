@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
 import { ComputedFeature, evalFeature, Feature, guessType } from "@reearth/classic/core/mantle";
-import { requestIdleCallbackWithRequiredWork } from "@reearth/util/idle";
+import { requestIdleCallbackWithRequiredWork } from "@reearth/classic/util/idle";
 
 import type { ResourceAppearance } from "../../..";
 import {

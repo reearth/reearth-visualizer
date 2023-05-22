@@ -12,7 +12,7 @@ import type { Viewer as CesiumViewer } from "cesium";
 import { useEffect, useMemo, useState, RefObject } from "react";
 import { CesiumComponentRef } from "resium";
 
-import { Camera } from "@reearth/util/value";
+import { Camera } from "@reearth/classic/util/value";
 
 import type { SceneProperty } from "..";
 

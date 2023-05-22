@@ -2,8 +2,8 @@ import svgToMiniDataURI from "mini-svg-data-uri";
 import React, { AriaAttributes, AriaRole, CSSProperties, memo, useMemo } from "react";
 import SVG from "react-inlinesvg";
 
+import { ariaProps } from "@reearth/classic/util/aria";
 import { styled } from "@reearth/services/theme";
-import { ariaProps } from "@reearth/util/aria";
 
 import Icons from "./icons";
 

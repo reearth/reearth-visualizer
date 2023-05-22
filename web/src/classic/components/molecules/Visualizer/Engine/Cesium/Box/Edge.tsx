@@ -2,7 +2,7 @@ import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
 import { FC, memo } from "react";
 import { Entity, PolylineGraphics } from "resium";
 
-import { EventCallback } from "@reearth/util/event";
+import { EventCallback } from "@reearth/classic/util/event";
 
 import { useHooks } from "./hooks/edge";
 

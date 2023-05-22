@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
-import { Coordinates, toColor } from "@reearth/util/value";
+import { Coordinates, toColor } from "@reearth/classic/util/value";
 
 import type { PolylineAppearance } from "../../..";
 import { classificationType, shadowMode } from "../../common";

@@ -4,15 +4,15 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import PropertyTitle, {
   Props as PropertyTitleProps,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle";
-import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
-import { useBind } from "@reearth/util/use-bind";
+import { useBind } from "@reearth/classic/util/use-bind";
 import {
   ValueType as ValueTypeType,
   ValueTypes as ValueTypesType,
   LatLng as LatLngType,
   Camera,
-} from "@reearth/util/value";
+} from "@reearth/classic/util/value";
+import { styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import CameraField from "./CameraField";
 import ColorField from "./ColorField";

@@ -2,7 +2,7 @@ import { Cartesian3, Color, EntityCluster, HorizontalOrigin, VerticalOrigin } fr
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
-import { toCSSFont } from "@reearth/util/value";
+import { toCSSFont } from "@reearth/classic/util/value";
 
 import { ClusterProps } from "../ref";
 

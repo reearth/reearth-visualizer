@@ -9,6 +9,7 @@ import {
   GroupListItem,
   Layer,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
+import { valueTypeFromGQL, valueFromGQL, ValueType } from "@reearth/classic/util/value";
 import {
   ValueType as GQLValueType,
   PropertyFragmentFragment,
@@ -26,7 +27,6 @@ import {
   GetLayersFromLayerIdQuery,
   Maybe,
 } from "@reearth/gql";
-import { valueTypeFromGQL, valueFromGQL, ValueType } from "@reearth/util/value";
 
 export type Mode = RawMode;
 

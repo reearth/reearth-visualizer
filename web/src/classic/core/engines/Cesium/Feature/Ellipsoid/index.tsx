@@ -3,7 +3,7 @@ import { Cartesian3 } from "cesium";
 import { useMemo } from "react";
 import { EllipsoidGraphics } from "resium";
 
-import { LatLng, toColor } from "@reearth/util/value";
+import { LatLng, toColor } from "@reearth/classic/util/value";
 
 import type { EllipsoidAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";

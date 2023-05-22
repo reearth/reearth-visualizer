@@ -1,6 +1,6 @@
+import { typographyStyles } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
 import fonts from "@reearth/services/theme/fonts";
-import { typographyStyles } from "@reearth/util/value";
 
 import type { InfoboxProperty } from "../Infobox";
 

@@ -1,5 +1,5 @@
-import type { Events } from "@reearth/util/event";
-import { merge } from "@reearth/util/object";
+import type { Events } from "@reearth/classic/util/event";
+import { merge } from "@reearth/classic/util/object";
 
 import type { LayerStore } from "../Layers";
 import type { ClientStorage } from "../useClientStorage";

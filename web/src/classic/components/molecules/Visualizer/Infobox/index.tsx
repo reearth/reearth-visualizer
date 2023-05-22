@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { ValueTypes, ValueType } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { ValueTypes, ValueType } from "@reearth/util/value";
 
 import PluginBlock, { Layer, Block } from "../Block";
 import type { SceneProperty } from "../Engine";

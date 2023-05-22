@@ -1,4 +1,4 @@
-import { useDrag } from "@reearth/util/use-dnd";
+import { useDrag } from "@reearth/classic/util/use-dnd";
 
 export default (
   onDrop?: (

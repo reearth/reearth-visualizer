@@ -11,7 +11,7 @@ import React, {
   WheelEventHandler,
 } from "react";
 
-import { truncMinutes } from "@reearth/util/time";
+import { truncMinutes } from "@reearth/classic/util/time";
 
 import {
   BORDER_WIDTH,

@@ -14,7 +14,7 @@ import {
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
-import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
+import { EXPERIMENTAL_clipping, toColor } from "@reearth/classic/util/value";
 
 import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";

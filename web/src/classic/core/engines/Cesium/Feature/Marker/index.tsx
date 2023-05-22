@@ -2,7 +2,7 @@ import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from 
 import { useMemo } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
-import { toCSSFont } from "@reearth/util/value";
+import { toCSSFont } from "@reearth/classic/util/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";

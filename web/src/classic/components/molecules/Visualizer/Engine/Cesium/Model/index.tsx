@@ -8,7 +8,7 @@ import {
 import { useEffect, useMemo, useRef } from "react";
 import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
 
-import { toColor } from "@reearth/util/value";
+import { toColor } from "@reearth/classic/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../common";

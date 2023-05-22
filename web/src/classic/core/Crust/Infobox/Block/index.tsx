@@ -1,8 +1,8 @@
 import type { ComponentType, ReactNode } from "react";
 
 import type { Layer } from "@reearth/classic/core/mantle";
+import type { ValueType, ValueTypes } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
-import type { ValueType, ValueTypes } from "@reearth/util/value";
 
 import { Theme } from "../../types";
 import type { Block, BlockProps, InfoboxProperty } from "../types";

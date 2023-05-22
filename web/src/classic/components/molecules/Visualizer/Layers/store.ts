@@ -1,4 +1,4 @@
-import { objectFromGetter } from "@reearth/util/object";
+import { objectFromGetter } from "@reearth/classic/util/object";
 
 import type { Layer } from "../Primitive";
 

@@ -1,4 +1,4 @@
-export { default as generateRandomString } from "@reearth/util/generate-random-string";
+export { default as generateRandomString } from "@reearth/classic/util/generate-random-string";
 
 export type FetchOptions = {
   signal?: AbortSignal;

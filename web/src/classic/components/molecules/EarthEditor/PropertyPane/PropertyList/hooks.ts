@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import type { Item as TreeViewItem } from "@reearth/classic/components/atoms/TreeView";
-import arrayDiff from "@reearth/util/arrayDiff";
-import deepFind from "@reearth/util/deepFind";
+import arrayDiff from "@reearth/classic/util/arrayDiff";
+import deepFind from "@reearth/classic/util/deepFind";
 
 import type { Layer as LayerType } from "../PropertyItem";
 

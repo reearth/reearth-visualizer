@@ -7,8 +7,8 @@ import {
   useMemo,
 } from "react";
 
-import events, { EventEmitter } from "@reearth/util/event";
-import { Rect } from "@reearth/util/value";
+import events, { EventEmitter } from "@reearth/classic/util/event";
+import { Rect } from "@reearth/classic/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import { Viewport as VisualizerViewport } from "../hooks";

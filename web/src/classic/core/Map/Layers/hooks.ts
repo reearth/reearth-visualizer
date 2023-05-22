@@ -14,7 +14,7 @@ import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
 
 import { DATA_CACHE_KEYS } from "@reearth/classic/core/mantle/atoms/data";
-import { objectFromGetter } from "@reearth/util/object";
+import { objectFromGetter } from "@reearth/classic/util/object";
 
 import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";

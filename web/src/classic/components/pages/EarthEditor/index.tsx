@@ -9,9 +9,9 @@ import Header from "@reearth/classic/components/organisms/EarthEditor/Header";
 import LeftMenu from "@reearth/classic/components/organisms/EarthEditor/LeftMenu";
 import PrimitiveHeader from "@reearth/classic/components/organisms/EarthEditor/PrimitiveHeader";
 import RightMenu from "@reearth/classic/components/organisms/EarthEditor/RightMenu";
+import { useCore } from "@reearth/classic/util/use-core";
+import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/services/auth";
-import { useCore } from "@reearth/util/use-core";
-import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
 import useHooks from "./hooks";
 

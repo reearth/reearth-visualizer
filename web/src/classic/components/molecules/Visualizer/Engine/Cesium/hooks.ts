@@ -14,8 +14,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
+import { Camera, LatLng } from "@reearth/classic/util/value";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
-import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 import { Clock } from "../../Plugin/types";

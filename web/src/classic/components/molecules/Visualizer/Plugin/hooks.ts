@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/classic/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/classic/components/atoms/Plugin";
-import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
+import events, { EventEmitter, Events, mergeEvents } from "@reearth/classic/util/event";
 
 import { useGet } from "../utils";
 

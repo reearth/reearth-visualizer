@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { PolygonGraphics, Entity } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
-import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
+import { Polygon as PolygonValue, toColor } from "@reearth/classic/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { heightReference, shadowMode } from "../common";

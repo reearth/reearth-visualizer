@@ -7,7 +7,7 @@ import {
   NaiveLayer,
   LazyLayer,
 } from "@reearth/classic/core/Map";
-import { merge } from "@reearth/util/object";
+import { merge } from "@reearth/classic/util/object";
 
 import type { Block } from "../Infobox";
 import type { MapRef } from "../types";

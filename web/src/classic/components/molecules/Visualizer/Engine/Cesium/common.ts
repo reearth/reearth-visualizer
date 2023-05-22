@@ -33,9 +33,9 @@ import {
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
-import { useCanvas, useImage } from "@reearth/util/image";
-import { tweenInterval } from "@reearth/util/raf";
-import { Camera } from "@reearth/util/value";
+import { useCanvas, useImage } from "@reearth/classic/util/image";
+import { tweenInterval } from "@reearth/classic/util/raf";
+import { Camera } from "@reearth/classic/util/value";
 
 import { CameraOptions, Clock } from "../../Plugin/types";
 import { FlyToDestination } from "../ref";

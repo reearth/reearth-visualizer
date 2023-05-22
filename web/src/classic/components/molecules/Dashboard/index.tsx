@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useRef } from "react";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
+import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
 import { styled } from "@reearth/services/theme";
-import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export * from "./types";
 

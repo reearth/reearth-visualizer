@@ -2,8 +2,8 @@ import React from "react";
 
 import Published from "@reearth/classic/components/organisms/Published";
 import CorePublished from "@reearth/classic/components/organisms/Published/core";
-import { useCore } from "@reearth/util/use-core";
-import { Provider as DndProvider } from "@reearth/util/use-dnd";
+import { useCore } from "@reearth/classic/util/use-core";
+import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 
 const PublishedPage: React.FC<{
   path?: string;

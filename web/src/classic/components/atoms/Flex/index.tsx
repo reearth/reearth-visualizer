@@ -1,6 +1,6 @@
 import { ReactNode, CSSProperties, AriaRole, AriaAttributes } from "react";
 
-import { ariaProps } from "@reearth/util/aria";
+import { ariaProps } from "@reearth/classic/util/aria";
 
 export type Props = {
   className?: string;

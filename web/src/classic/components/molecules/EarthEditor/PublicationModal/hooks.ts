@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
-import generateRandomString from "@reearth/util/generate-random-string";
+import generateRandomString from "@reearth/classic/util/generate-random-string";
 
 export type Validation = "too short" | "not match";
 export type CopiedItemKey = {
