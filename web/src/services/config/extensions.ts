@@ -71,15 +71,15 @@ export type Extensions = {
 export async function loadExtensions(urls?: string[]): Promise<Extensions | undefined> {
   if (!urls) return undefined;
 
-  // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection/hooks.ts
+  // Entry point for publication extensions is @reearth/classic/components/molecules/Settings/Project/PublishSection/hooks.ts
   const publication: Extension<"publication">[] = [];
-  // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
+  // Entry point for dataset import extensions is @reearth/classic/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
   const datasetImport: Extension<"dataset-import">[] = [];
-  // Entry point for plugin library extensions is @reearth/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall/hooks.ts
+  // Entry point for plugin library extensions is @reearth/classic/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall/hooks.ts
   const pluginLibrary: Extension<"plugin-library">[] = [];
-  // Entry point for plugin installed extensions is @reearth/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall/hooks.ts
+  // Entry point for plugin installed extensions is @reearth/classic/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall/hooks.ts
   const pluginInstalled: Extension<"plugin-installed">[] = [];
-  // Entry point for globalModal extensions is @reearth/components/organisms/GlobalModal/hooks.ts
+  // Entry point for globalModal extensions is @reearth/classic/components/organisms/GlobalModal/hooks.ts
   const globalModal: Extension<"global-modal">[] = [];
 
   for (const url of urls) {

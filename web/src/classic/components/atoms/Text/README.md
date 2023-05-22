@@ -9,7 +9,7 @@ Text for property
 ## Usage
 
 ```tsx
-import Text from "@reearth/components/atoms/Text";
+import Text from "@reearth/classic/components/atoms/Text";
 
 
 <Text size="m" weight="bold"> This is Text </Text>

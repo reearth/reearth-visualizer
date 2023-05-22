@@ -17,9 +17,9 @@ overrides:
             - '@reearth/util/use-dnd'
             - 'reach-router'
           patterns:
-            - '@reearth/components/molecules/*'
-            - '@reearth/components/organisms/*'
-            - '@reearth/components/pages/*'
+            - '@reearth/classic/components/molecules/*'
+            - '@reearth/classic/components/organisms/*'
+            - '@reearth/classic/components/pages/*'
   - files: molecules/**/*
     rules:
       'no-restricted-imports':
@@ -29,27 +29,27 @@ overrides:
             - '@reearth/state'
             - 'reach-router'
           patterns:
-            - '@reearth/components/organisms/*'
-            - '@reearth/components/pages/*'
+            - '@reearth/classic/components/organisms/*'
+            - '@reearth/classic/components/pages/*'
   - files: organisms/**/*
     rules:
       'no-restricted-imports':
         - error
         - patterns:
-            - '@reearth/components/pages/*'
+            - '@reearth/classic/components/pages/*'
   - files: organisms/**/*
     rules:
       'no-restricted-imports':
         - error
         - paths:
-            - '@reearth/util/use-dnd'
-            - '@reearth/theme'
+            - '@reearth/classic/util/use-dnd'
+            - '@reearth/services/theme'
   - files: pages/**/*
     rules:
       'no-restricted-imports':
         - error
         - paths:
-            - '@reearth/theme'
+            - '@reearth/services/theme'
   - files: molecules/Visualizer/**/*
     rules:
       'no-restricted-imports':
