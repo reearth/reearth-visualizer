@@ -1,7 +1,7 @@
 import React from "react";
 import { RingLoader } from "react-spinners";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Portal from "../Portal";
 

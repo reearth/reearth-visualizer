@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
 import AutoComplete from "@reearth/classic/components/atoms/AutoComplete";
 import Box from "@reearth/classic/components/atoms/Box";
 import Flex from "@reearth/classic/components/atoms/Flex";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { DEFAULT_TAG_ID } from "../common";
 import TagGroup, { Tag } from "../TagGroup";

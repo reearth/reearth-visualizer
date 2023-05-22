@@ -1,7 +1,5 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { config } from "@reearth/beta/services/config";
-import { useLang } from "@reearth/beta/services/i18n";
 import type { Alignment, Location } from "@reearth/classic/core/Crust";
 import {
   convertLegacyLayer,
@@ -37,6 +35,8 @@ import {
   type WidgetAreaAlign,
   ValueType,
 } from "@reearth/gql";
+import { config } from "@reearth/services/config";
+import { useLang } from "@reearth/services/i18n";
 import { valueTypeToGQL, type ValueTypes, valueToGQL, type LatLng } from "@reearth/util/value";
 
 import {

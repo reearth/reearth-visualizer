@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import PublicationStatus, { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
   projectStatus?: Status;

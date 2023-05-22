@@ -2,7 +2,7 @@ import { Global } from "@emotion/react";
 import React from "react";
 import "github-markdown-css/github-markdown.css";
 
-import { css } from "@reearth/beta/services/theme";
+import { css } from "@reearth/services/theme";
 
 export const styles = css`
   html,

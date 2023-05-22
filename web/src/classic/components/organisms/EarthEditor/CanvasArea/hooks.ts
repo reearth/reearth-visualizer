@@ -1,7 +1,5 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { config } from "@reearth/beta/services/config";
-import { useLang } from "@reearth/beta/services/i18n";
 import { ClusterProperty, Layer } from "@reearth/classic/components/molecules/Visualizer";
 import {
   Location,
@@ -35,6 +33,8 @@ import {
   WidgetAreaAlign,
   ValueType,
 } from "@reearth/gql";
+import { config } from "@reearth/services/config";
+import { useLang } from "@reearth/services/i18n";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import {

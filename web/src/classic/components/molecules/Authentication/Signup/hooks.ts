@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
+import { useT } from "@reearth/services/i18n";
 
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 

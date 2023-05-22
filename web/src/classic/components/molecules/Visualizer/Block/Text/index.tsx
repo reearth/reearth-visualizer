@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import nl2br from "react-nl2br";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
-import fonts from "@reearth/beta/services/theme/fonts";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Markdown from "@reearth/classic/components/atoms/Markdown";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
+import fonts from "@reearth/services/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { Props as BlockProps } from "..";

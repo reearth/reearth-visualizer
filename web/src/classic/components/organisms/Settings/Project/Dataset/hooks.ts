@@ -1,8 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
-import { useT } from "@reearth/beta/services/i18n";
 import {
   useWorkspace,
   useProject,
@@ -16,6 +14,8 @@ import {
   useRemoveDatasetMutation,
   useDatasetsListQuery,
 } from "@reearth/gql";
+import { useAuth } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 
 type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 

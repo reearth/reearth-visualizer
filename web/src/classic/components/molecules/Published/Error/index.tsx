@@ -1,4 +1,4 @@
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 export default function Error() {
   return <Wrapper>Error!</Wrapper>;

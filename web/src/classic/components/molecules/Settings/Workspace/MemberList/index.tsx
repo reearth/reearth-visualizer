@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 const MemberList: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return <Wrapper>{children}</Wrapper>;

@@ -2,9 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme, metrics } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
 import Flex from "@reearth/classic/components/atoms/Flex";
@@ -12,6 +9,9 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import Policy from "@reearth/classic/components/molecules/Common/Policy";
 import { Workspace as WorkspaceType } from "@reearth/classic/components/molecules/Dashboard/types";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme, metrics } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import { Member } from "./types";
 

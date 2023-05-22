@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
 import MoleculesSettingPage from "@reearth/classic/components/molecules/Settings/SettingPage";
+import { useAuth } from "@reearth/services/auth";
 
 import useHooks from "./hooks";
 

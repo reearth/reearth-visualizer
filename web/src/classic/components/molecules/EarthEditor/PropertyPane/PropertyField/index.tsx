@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, ComponentType } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import PropertyTitle, {
   Props as PropertyTitleProps,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle";
+import { styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 import { useBind } from "@reearth/util/use-bind";
 import {
   ValueType as ValueTypeType,

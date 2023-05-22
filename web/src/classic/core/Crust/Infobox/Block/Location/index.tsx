@@ -3,7 +3,7 @@ import React, { useMemo, useCallback, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps, LatLng } from "..";
 import { Border, Title } from "../utils";

@@ -1,7 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
 
-import { useT, localesWithLabel } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import PasswordModal, {
   PasswordPolicy,
@@ -9,6 +7,8 @@ import PasswordModal, {
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { useT, localesWithLabel } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Theme = "dark" | "light" | "default";
 

@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
-import { useLang as useCurrentLang } from "@reearth/beta/services/i18n";
 import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import {
   useWorkspace,
@@ -18,6 +17,7 @@ import {
   usePublishProjectMutation,
   useUpdateProjectMutation,
 } from "@reearth/gql";
+import { useLang as useCurrentLang } from "@reearth/services/i18n";
 
 type Params = {
   projectId: string;

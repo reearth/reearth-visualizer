@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 
-import { e2eAccessToken } from "@reearth/beta/services/config";
+import { e2eAccessToken } from "@reearth/services/config";
 
 export const errorKey = "reeartherror";
 

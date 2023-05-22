@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
 import { useSceneId, useRootLayerId, useZoomedLayerId } from "@reearth/classic/state";
 import { useGetSceneQuery } from "@reearth/gql";
+import { useAuth } from "@reearth/services/auth";
 
 export type Mode = "layer" | "widget";
 

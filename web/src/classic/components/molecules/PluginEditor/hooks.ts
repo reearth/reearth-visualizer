@@ -2,12 +2,12 @@ import fileDownload from "js-file-download";
 import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-import { config } from "@reearth/beta/services/config";
 import type {
   WidgetZone,
   WidgetSection,
   Layer,
 } from "@reearth/classic/components/molecules/Visualizer";
+import { config } from "@reearth/services/config";
 
 export type Position = { section: string; area: string };
 

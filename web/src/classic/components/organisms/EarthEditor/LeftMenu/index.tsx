@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import TabArea from "@reearth/classic/components/atoms/TabArea";
+import { useT } from "@reearth/services/i18n";
 
 import DatasetPane from "../DataSourcePane";
 import OutlinePane from "../OutlinePane";

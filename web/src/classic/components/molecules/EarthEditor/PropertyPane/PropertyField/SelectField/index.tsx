@@ -1,5 +1,5 @@
-import { useTheme } from "@reearth/beta/services/theme";
 import SelectBox, { Item as ItemType } from "@reearth/classic/components/atoms/SelectBox";
+import { useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 

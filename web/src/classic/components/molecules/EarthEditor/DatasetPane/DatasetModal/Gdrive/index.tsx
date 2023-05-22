@@ -1,8 +1,5 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
@@ -11,6 +8,9 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
 import AssetCard from "@reearth/classic/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/classic/components/molecules/Common/AssetModal/AssetListItem";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import useHooks, { GoogleSheet, SheetParameter as SheetParam } from "./hooks";
 

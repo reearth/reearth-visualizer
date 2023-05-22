@@ -1,8 +1,8 @@
 import React, { forwardRef } from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Text from "@reearth/classic/components/atoms/Text";
 import { DropType, ItemProps } from "@reearth/classic/components/atoms/TreeView";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Item = {
   id: string;

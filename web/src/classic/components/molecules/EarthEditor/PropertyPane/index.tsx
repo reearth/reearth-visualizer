@@ -1,10 +1,10 @@
 import React, { useMemo, ComponentType } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import GroupWrapper from "@reearth/classic/components/atoms/TabCard";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 

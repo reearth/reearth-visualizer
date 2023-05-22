@@ -2,8 +2,8 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import { useEffect, useState } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
 import Filled from "@reearth/classic/components/atoms/Filled";
+import { useAuth } from "@reearth/services/auth";
 
 const fetcher = createGraphiQLFetcher({
   url: `${window.REEARTH_CONFIG?.api || "/api"}/graphql`,

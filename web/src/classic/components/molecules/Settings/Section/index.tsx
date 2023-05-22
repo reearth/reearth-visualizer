@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Props = {
   children?: ReactNode;

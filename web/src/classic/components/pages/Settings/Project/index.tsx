@@ -1,8 +1,8 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { AuthenticationRequiredPage } from "@reearth/beta/services/auth";
 import Project from "@reearth/classic/components/organisms/Settings/Project";
+import { AuthenticationRequiredPage } from "@reearth/services/auth";
 
 export type Props = {
   path?: string;

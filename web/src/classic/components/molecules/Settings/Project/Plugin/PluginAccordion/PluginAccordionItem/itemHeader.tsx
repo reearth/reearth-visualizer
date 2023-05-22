@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { fonts, styled } from "@reearth/beta/services/theme";
 import Box from "@reearth/classic/components/atoms/Box";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { fonts, styled } from "@reearth/services/theme";
 
 import DeleteModal from "./deleteModal";
 

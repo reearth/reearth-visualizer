@@ -1,8 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "@reearth/beta/services/auth";
-import { useT } from "@reearth/beta/services/i18n";
 import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import { User } from "@reearth/classic/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
@@ -21,6 +19,8 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
+import { useAuth } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");

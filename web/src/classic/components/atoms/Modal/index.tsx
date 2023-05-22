@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Wrapper from "@reearth/classic/components/atoms/Modal/ModalFrame";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 type Props = {
   className?: string;

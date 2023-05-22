@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Type = "primary" | "secondary" | "danger";
 

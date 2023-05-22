@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import { useWorkspace, useNotification, useSessionWorkspace } from "@reearth/classic/state";
 import {
   useGetProjectQuery,
@@ -8,6 +7,7 @@ import {
   useArchiveProjectMutation,
   useDeleteProjectMutation,
 } from "@reearth/gql";
+import { useT } from "@reearth/services/i18n";
 
 type Params = {
   projectId: string;

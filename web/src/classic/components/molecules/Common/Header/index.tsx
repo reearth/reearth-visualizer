@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-import { styled, metrics, css } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
+import { styled, metrics, css } from "@reearth/services/theme";
 
 import Profile from "./profile";
 import type { User, Workspace, Project } from "./types";

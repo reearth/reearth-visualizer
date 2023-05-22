@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { fonts, styled, useTheme } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { useT } from "@reearth/services/i18n";
+import { fonts, styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type ActionType = "archive" | "unarchive" | "delete";
 

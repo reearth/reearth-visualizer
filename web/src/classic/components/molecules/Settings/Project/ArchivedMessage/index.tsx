@@ -1,8 +1,8 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 const ArchivedMessage: React.FC = () => {
   const t = useT();

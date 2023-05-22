@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 import { ValueTypes, ValueType } from "@reearth/util/value";
 
 import PluginBlock, { Layer, Block } from "../Block";

@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;

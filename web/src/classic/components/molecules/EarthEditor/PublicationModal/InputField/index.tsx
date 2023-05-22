@@ -1,9 +1,9 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
-import fonts from "@reearth/beta/services/theme/fonts";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
+import fonts from "@reearth/services/theme/fonts";
 
 type Props = {
   subMessage?: string;

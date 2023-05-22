@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
+import { useT } from "@reearth/services/i18n";
 
 const NotFound: React.FC = () => {
   const t = useT();

@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, css, useTheme } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled, css, useTheme } from "@reearth/services/theme";
 import { Camera } from "@reearth/util/value";
 
 import { FieldProps } from "../types";

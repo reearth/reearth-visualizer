@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
-import { useLang as useCurrentLang } from "@reearth/beta/services/i18n";
 import {
   NotificationType,
   useCurrentTheme as useCurrentTheme,
   useNotification,
 } from "@reearth/classic/state";
+import { useAuth } from "@reearth/services/auth";
+import { useLang as useCurrentLang } from "@reearth/services/i18n";
 
 const GlobalModal: React.FC = () => {
   const extensions = window.REEARTH_CONFIG?.extensions?.globalModal;

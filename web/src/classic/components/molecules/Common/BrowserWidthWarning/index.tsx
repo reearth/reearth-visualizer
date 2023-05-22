@@ -1,7 +1,7 @@
 import { useMedia } from "react-use";
 
-import { useT } from "@reearth/beta/services/i18n";
 import OverlayWithMessage from "@reearth/classic/components/atoms/OverlayWithMessage";
+import { useT } from "@reearth/services/i18n";
 
 const BrowserWidthWarning: React.FC = () => {
   const isSmallWindow = useMedia("(max-width: 900px)");

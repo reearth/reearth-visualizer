@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 
-import { Extension } from "@reearth/beta/services/config/extensions";
-import { useT } from "@reearth/beta/services/i18n";
 import Box from "@reearth/classic/components/atoms/Box";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import TabSection from "@reearth/classic/components/atoms/TabSection";
 import { PluginItem as PluginItemType } from "@reearth/classic/components/molecules/Settings/Project/Plugin/PluginAccordion";
+import { Extension } from "@reearth/services/config/extensions";
+import { useT } from "@reearth/services/i18n";
 
 import PluginInstall from "./PluginInstall";
 

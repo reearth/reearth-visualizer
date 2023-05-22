@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Player from "react-player";
 
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/services/theme";
 
 import { Props as BlockProps } from "..";
 import { Border, Title } from "../common";

@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, usePublishTheme, PublishTheme, css } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 
 import { ComponentProps as WidgetProps } from "..";

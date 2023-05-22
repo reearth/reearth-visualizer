@@ -1,8 +1,8 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 

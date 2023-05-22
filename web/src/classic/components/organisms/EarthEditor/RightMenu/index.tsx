@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import TabArea from "@reearth/classic/components/atoms/TabArea";
 import DatasetInfoPane from "@reearth/classic/components/organisms/EarthEditor/DatasetInfoPane";
 import ExportPane from "@reearth/classic/components/organisms/EarthEditor/ExportPane";
+import { useT } from "@reearth/services/i18n";
 
 import PropertyPane from "../PropertyPane";
 import TagPane from "../TagPane";

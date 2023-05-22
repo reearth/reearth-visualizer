@@ -1,16 +1,10 @@
 import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 
-import {
-  styled,
-  usePublishTheme,
-  PublishTheme,
-  metricsSizes,
-  mask,
-} from "@reearth/beta/services/theme";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, usePublishTheme, PublishTheme, metricsSizes, mask } from "@reearth/services/theme";
 import { Camera } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";

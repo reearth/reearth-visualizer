@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "..";
 import { Border, Title } from "../utils";

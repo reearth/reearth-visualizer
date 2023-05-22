@@ -1,7 +1,7 @@
 import PublishedPage from "@reearth/classic/components/pages/Published";
 
-import { PublishedProvider as I18nProvider } from "./beta/services/i18n";
-import { PublishedAppProvider as ThemeProvider } from "./beta/services/theme";
+import { PublishedProvider as I18nProvider } from "./services/i18n";
+import { PublishedAppProvider as ThemeProvider } from "./services/theme";
 import { Provider as DndProvider } from "./util/use-dnd";
 
 export default function App() {

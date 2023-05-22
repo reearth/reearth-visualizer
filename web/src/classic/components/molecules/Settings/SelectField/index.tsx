@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/services/theme";
 
 interface SelectFieldProps<T extends string = string> {
   variant?: "filled" | "standard";

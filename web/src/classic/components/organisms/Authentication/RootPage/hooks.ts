@@ -2,8 +2,6 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth, useCleanUrl } from "@reearth/beta/services/auth";
-import { useT } from "@reearth/beta/services/i18n";
 import {
   useWorkspace,
   useNotification,
@@ -11,6 +9,8 @@ import {
   useSessionWorkspace,
 } from "@reearth/classic/state";
 import { useGetTeamsQuery } from "@reearth/gql";
+import { useAuth, useCleanUrl } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 
 export type Mode = "layer" | "widget";
 

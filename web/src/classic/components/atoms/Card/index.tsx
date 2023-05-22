@@ -1,8 +1,8 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 interface Props {
   id: string;

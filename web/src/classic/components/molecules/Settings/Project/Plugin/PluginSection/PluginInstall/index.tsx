@@ -1,11 +1,11 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
 import Box from "@reearth/classic/components/atoms/Box";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import { Icons } from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { PluginActions } from "..";
 import PluginAccordion, { PluginItem } from "../../PluginAccordion";

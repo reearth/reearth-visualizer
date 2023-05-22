@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { useClickAway } from "react-use";
 
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/services/theme";
 
 export interface Item {
   id: string;

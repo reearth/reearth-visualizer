@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
 import useFileInput from "use-file-input";
 
-import { useAuth } from "@reearth/beta/services/auth";
-import { useT } from "@reearth/beta/services/i18n";
+import { useAuth } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 
 import { SheetParameter } from "./Gdrive";
 

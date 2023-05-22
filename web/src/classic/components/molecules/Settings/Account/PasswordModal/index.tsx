@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme, metricsSizes } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme, metricsSizes } from "@reearth/services/theme";
 
 export type PasswordPolicy = {
   tooShort?: RegExp;

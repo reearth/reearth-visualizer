@@ -1,10 +1,10 @@
 import React from "react";
 import useFileInput from "use-file-input";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled } from "@reearth/beta/services/theme";
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 

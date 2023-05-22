@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 type RadioProps<Value extends string | number> = {
   value: Value;

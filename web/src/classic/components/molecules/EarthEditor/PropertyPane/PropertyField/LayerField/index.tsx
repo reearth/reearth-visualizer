@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import LayerSelectionModal, {
   Layer as LayerType,
 } from "@reearth/classic/components/molecules/EarthEditor/LayerSelectionModal";
+import { styled } from "@reearth/services/theme";
 import deepFind from "@reearth/util/deepFind";
 
 import { FieldProps } from "../types";

@@ -1,7 +1,7 @@
 import { forwardRef, ReactNode, Ref, useCallback, useMemo } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
 import type { ItemProps, DropType, Item } from "@reearth/classic/components/atoms/TreeView";
+import { styled } from "@reearth/services/theme";
 
 import Layer, { Layer as LayerType, Format } from "./Layer";
 

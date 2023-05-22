@@ -1,7 +1,5 @@
 import { useCallback, useMemo } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
-import { useT } from "@reearth/beta/services/i18n";
 import { DEFAULT_TAG_ID } from "@reearth/classic/components/molecules/EarthEditor/TagPane/common";
 import { TagGroup } from "@reearth/classic/components/molecules/EarthEditor/TagPane/SceneTagPane";
 import { useNotification, useSceneId, useSelected } from "@reearth/classic/state";
@@ -15,6 +13,8 @@ import {
   useRemoveTagMutation,
   useUpdateTagMutation,
 } from "@reearth/gql";
+import { useAuth } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 
 export default () => {
   const { isAuthenticated } = useAuth();

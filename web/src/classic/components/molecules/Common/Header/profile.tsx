@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Dropdown, { Ref as DropDownRef } from "@reearth/classic/components/atoms/Dropdown";
 import Text from "@reearth/classic/components/atoms/Text";
@@ -11,6 +9,8 @@ import {
   MenuListItemLabel,
 } from "@reearth/classic/components/molecules/Common/MenuList";
 import WorkspaceMenu from "@reearth/classic/components/molecules/Common/WorkspaceMenu";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { User, Workspace } from "./types";
 

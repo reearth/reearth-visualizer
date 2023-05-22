@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 
-import { useT, useLang } from "@reearth/beta/services/i18n";
 import { useError, useNotification, Notification } from "@reearth/classic/state";
+import { useT, useLang } from "@reearth/services/i18n";
 
 export type PolicyItems =
   | "layer"

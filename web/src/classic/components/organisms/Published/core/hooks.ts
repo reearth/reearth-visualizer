@@ -1,7 +1,6 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import { config } from "@reearth/beta/services/config";
 import type { Block, ClusterProperty } from "@reearth/classic/components/molecules/Visualizer";
 import {
   InternalWidget,
@@ -16,6 +15,7 @@ import {
   type LegacyLayer,
   convertLegacyCluster,
 } from "@reearth/classic/core/mantle";
+import { config } from "@reearth/services/config";
 
 import type {
   PublishedData,

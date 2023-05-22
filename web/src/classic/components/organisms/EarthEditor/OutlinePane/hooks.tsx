@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
 
-import { useLang, useT } from "@reearth/beta/services/i18n";
 import {
   Format,
   Layer,
@@ -37,6 +36,7 @@ import {
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
+import { useLang, useT } from "@reearth/services/i18n";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
 

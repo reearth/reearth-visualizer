@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 
-import { useAuth } from "@reearth/beta/services/auth";
 import { Format } from "@reearth/classic/components/molecules/EarthEditor/ExportPane";
 import { useRootLayerId, useSelected } from "@reearth/classic/state";
+import { useAuth } from "@reearth/services/auth";
 
 const ext: { [key in Format]: string } = {
   kml: "kml",

@@ -2,9 +2,9 @@ import fileDownload from "js-file-download";
 import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-import { config } from "@reearth/beta/services/config";
 import type { WidgetSection, WidgetZone } from "@reearth/classic/core/Crust";
 import type { Layer } from "@reearth/classic/core/mantle";
+import { config } from "@reearth/services/config";
 
 export type Position = { section: string; area: string };
 

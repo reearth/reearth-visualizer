@@ -1,7 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
 
-import { useT, useLang } from "@reearth/beta/services/i18n";
 import {
   DatasetSchema,
   DataSource,
@@ -21,6 +20,7 @@ import {
   useRemoveDatasetMutation,
   useGetDatasetSchemasWithCountQuery,
 } from "@reearth/gql";
+import { useT, useLang } from "@reearth/services/i18n";
 
 export default () => {
   const t = useT();

@@ -1,7 +1,7 @@
 import { memo } from "react";
 
-import { PublishTheme, styled } from "@reearth/beta/services/theme";
 import Text from "@reearth/classic/components/atoms/Text";
+import { PublishTheme, styled } from "@reearth/services/theme";
 
 import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
 import { formatDateForTimeline } from "./utils";

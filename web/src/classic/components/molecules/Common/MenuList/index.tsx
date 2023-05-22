@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export const MenuListItemLabel: React.FC<{
   icon?: string;

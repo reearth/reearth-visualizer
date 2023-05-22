@@ -1,4 +1,4 @@
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 const Filled = styled.div`
   width: 100%;

@@ -1,8 +1,5 @@
 import React, { useMemo } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
-import { metricsSizes } from "@reearth/beta/services/theme/metrics";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Icon from "@reearth/classic/components/atoms/Icon";
@@ -11,6 +8,9 @@ import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import useHooks from "./hooks";
 import InputField from "./InputField";

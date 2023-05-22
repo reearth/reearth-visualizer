@@ -1,10 +1,10 @@
 import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
-import { styled, usePublishTheme, PublishTheme } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Slide from "@reearth/classic/components/atoms/Slide";
 import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
+import { styled, usePublishTheme, PublishTheme } from "@reearth/services/theme";
 
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";

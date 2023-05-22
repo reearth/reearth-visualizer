@@ -1,7 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback, useState, useEffect } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import { useNotification } from "@reearth/classic/state";
 import {
   GetAssetsQuery,
@@ -11,6 +10,7 @@ import {
   Maybe,
   AssetSortType as GQLSortType,
 } from "@reearth/gql";
+import { useT } from "@reearth/services/i18n";
 
 export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
 

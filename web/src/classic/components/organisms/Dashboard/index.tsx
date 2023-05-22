@@ -1,4 +1,3 @@
-import { useAuth } from "@reearth/beta/services/auth";
 import MoleculeHeader from "@reearth/classic/components/molecules/Common/Header";
 import MoleculeDashboard from "@reearth/classic/components/molecules/Dashboard";
 import Logo from "@reearth/classic/components/molecules/Dashboard/Logo";
@@ -7,6 +6,7 @@ import ProjectList from "@reearth/classic/components/molecules/Dashboard/Project
 import QuickStart from "@reearth/classic/components/molecules/Dashboard/QuickStart";
 import Workspace from "@reearth/classic/components/molecules/Dashboard/Workspace";
 import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
+import { useAuth } from "@reearth/services/auth";
 
 import useHooks from "./hooks";
 

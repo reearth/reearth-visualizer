@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useState } from "react";
 
-import { styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/services/theme";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { Props as BlockProps } from "..";

@@ -1,7 +1,7 @@
 import React from "react";
 
 // Theme
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 interface CheckBoxProps {
   checked?: boolean;

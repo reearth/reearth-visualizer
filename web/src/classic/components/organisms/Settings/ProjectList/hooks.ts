@@ -2,7 +2,6 @@ import { useApolloClient } from "@apollo/client";
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useT } from "@reearth/beta/services/i18n";
 import { Project } from "@reearth/classic/components/molecules/Dashboard/types";
 import {
   useWorkspace,
@@ -19,6 +18,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/gql";
+import { useT } from "@reearth/services/i18n";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public

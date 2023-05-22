@@ -1,7 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import {
   useWorkspace,
   useProject,
@@ -9,6 +8,7 @@ import {
   useSessionWorkspace,
 } from "@reearth/classic/state";
 import { useUpdateMeMutation, useGetProfileQuery, Theme as GQLTheme } from "@reearth/gql";
+import { useT } from "@reearth/services/i18n";
 
 const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
   [GQLTheme.Default]: "default",

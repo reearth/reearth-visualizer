@@ -1,9 +1,9 @@
 import React from "react";
 import { RingLoader } from "react-spinners";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
   loading?: boolean;

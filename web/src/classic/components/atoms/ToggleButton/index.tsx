@@ -1,7 +1,7 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type ToggleSize = "sm" | "md";
 

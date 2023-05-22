@@ -1,17 +1,14 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  withAuthenticationRequired,
-  AuthenticationRequiredPage,
-} from "@reearth/beta/services/auth";
 import CanvasArea from "@reearth/classic/components/organisms/EarthEditor/CanvasArea";
 import CoreCanvasArea from "@reearth/classic/components/organisms/EarthEditor/core/CanvasArea";
 import { useSceneId } from "@reearth/classic/state";
+import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useCore } from "@reearth/util/use-core";
 import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
-import { PublishedAppProvider as ThemeProvider } from "../../../../beta/services/theme";
+import { PublishedAppProvider as ThemeProvider } from "../../../../services/theme";
 
 export type Props = {
   path?: string;

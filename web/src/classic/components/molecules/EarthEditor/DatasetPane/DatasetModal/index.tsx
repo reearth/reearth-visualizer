@@ -1,7 +1,5 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Button from "@reearth/classic/components/atoms/Button";
 import Card from "@reearth/classic/components/atoms/Card";
 import Divider from "@reearth/classic/components/atoms/Divider";
@@ -9,6 +7,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Gdrive from "./Gdrive";
 import useHooks from "./hooks";

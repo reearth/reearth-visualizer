@@ -1,6 +1,5 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import Button from "@reearth/classic/components/atoms/Button";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import TabSection from "@reearth/classic/components/atoms/TabSection";
@@ -9,6 +8,7 @@ import MoleculeProjectList from "@reearth/classic/components/molecules/Settings/
 import SettingsHeader from "@reearth/classic/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/classic/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";
 

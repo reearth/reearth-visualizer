@@ -1,11 +1,11 @@
 import React from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
-import { useTheme } from "@reearth/beta/services/theme";
 import Box from "@reearth/classic/components/atoms/Box";
 import ConfirmationModal from "@reearth/classic/components/atoms/ConfirmationModal";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
 export type Props = {
   onCancel: () => void;

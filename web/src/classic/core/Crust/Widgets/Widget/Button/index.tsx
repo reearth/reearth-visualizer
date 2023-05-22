@@ -1,4 +1,4 @@
-import { styled } from "@reearth/beta/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import { useVisible } from "../useVisible";

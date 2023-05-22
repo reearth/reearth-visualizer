@@ -1,8 +1,8 @@
 import React from "react";
 
-import { styled, useTheme } from "@reearth/beta/services/theme";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Size = "small" | "large";
 

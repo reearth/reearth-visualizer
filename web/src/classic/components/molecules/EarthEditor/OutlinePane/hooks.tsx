@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 
-import { useT } from "@reearth/beta/services/i18n";
 import { Item as TreeViewItemType } from "@reearth/classic/components/atoms/TreeView";
 import { arrayEquals } from "@reearth/classic/components/atoms/TreeView/util";
+import { useT } from "@reearth/services/i18n";
 
 import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "../LayerTreeViewItem";
 

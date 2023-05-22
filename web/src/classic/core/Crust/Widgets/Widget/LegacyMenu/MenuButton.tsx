@@ -4,8 +4,8 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
 
-import { fonts, styled } from "@reearth/beta/services/theme";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { fonts, styled } from "@reearth/services/theme";
 import { Camera } from "@reearth/util/value";
 
 import type { FlyToDestination, Theme } from "../types";

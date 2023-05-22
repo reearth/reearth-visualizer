@@ -8,7 +8,7 @@ import {
   RefObject,
 } from "react";
 
-import theme, { styled } from "@reearth/beta/services/theme";
+import theme, { styled } from "@reearth/services/theme";
 
 import type { PopupPosition } from "../../plugin_types";
 
