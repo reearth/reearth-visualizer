@@ -31,6 +31,8 @@ const GraphQLPlayground = React.lazy(
 );
 const PluginEditor = React.lazy(() => import("./classic/components/pages/PluginEditor"));
 
+// OJADLSFKJS
+
 function AppRoutes() {
   return useRoutes([
     { path: "/", element: <RootPage /> },
