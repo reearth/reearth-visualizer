@@ -6,18 +6,6 @@ import {
   Alignment,
 } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
-  useSceneId,
-  useSceneMode,
-  useIsCapturing,
-  useCamera,
-  useSelected,
-  useSelectedBlock,
-  useWidgetAlignEditorActivated,
-  useZoomedLayerId,
-  useClock,
-  useSelectedWidgetArea,
-} from "@reearth/classic/state";
-import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
@@ -35,6 +23,18 @@ import {
 } from "@reearth/gql";
 import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
+import {
+  useSceneId,
+  useSceneMode,
+  useIsCapturing,
+  useCamera,
+  useSelected,
+  useSelectedBlock,
+  useWidgetAlignEditorActivated,
+  useZoomedLayerId,
+  useClock,
+  useSelectedWidgetArea,
+} from "@reearth/services/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import {

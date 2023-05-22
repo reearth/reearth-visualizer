@@ -5,13 +5,6 @@ import { useNavigate } from "react-router-dom";
 import type { User } from "@reearth/classic/components/molecules/Common/Header";
 import type { Project, Workspace } from "@reearth/classic/components/molecules/Dashboard";
 import {
-  useWorkspace,
-  useProject,
-  useUnselectProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useGetMeQuery,
   useGetProjectsQuery,
   useCreateTeamMutation,
@@ -22,6 +15,13 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/services/i18n";
+import {
+  useWorkspace,
+  useProject,
+  useUnselectProject,
+  useNotification,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 

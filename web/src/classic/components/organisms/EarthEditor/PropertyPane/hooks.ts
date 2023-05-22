@@ -5,19 +5,6 @@ import {
   ValueType,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
 import {
-  useSelected,
-  useRootLayerId,
-  useIsCapturing,
-  useCamera,
-  useWorkspace,
-  useSceneId,
-  useSceneMode,
-  useSelectedBlock,
-  useWidgetAlignEditorActivated,
-  useSelectedWidgetArea,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useUpdatePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
@@ -37,6 +24,19 @@ import {
   WidgetZoneType,
 } from "@reearth/gql";
 import { useLang } from "@reearth/services/i18n";
+import {
+  useSelected,
+  useRootLayerId,
+  useIsCapturing,
+  useCamera,
+  useWorkspace,
+  useSceneId,
+  useSceneMode,
+  useSelectedBlock,
+  useWidgetAlignEditorActivated,
+  useSelectedWidgetArea,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 
 import useQueries, { Mode as RawMode } from "./hooks-queries";

@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from "react";
 
-import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/classic/state";
 import {
   useAddLayerGroupFromDatasetSchemaMutation,
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/services/i18n";
+import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/services/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
 

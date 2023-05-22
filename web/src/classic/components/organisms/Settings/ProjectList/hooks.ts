@@ -4,12 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Project } from "@reearth/classic/components/molecules/Dashboard/types";
 import {
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useGetMeQuery,
   PublishmentStatus,
   useCreateProjectMutation,
@@ -19,6 +13,12 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/services/i18n";
+import {
+  useWorkspace,
+  useProject,
+  useNotification,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public

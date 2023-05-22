@@ -2,14 +2,6 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import {
-  useWorkspace,
-  useProject,
-  useNotification,
-  NotificationType,
-  useCurrentTheme as useCurrentTheme,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useGetProjectQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
@@ -18,6 +10,14 @@ import {
   useUpdateProjectMutation,
 } from "@reearth/gql";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";
+import {
+  useWorkspace,
+  useProject,
+  useNotification,
+  NotificationType,
+  useCurrentTheme as useCurrentTheme,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 
 type Params = {
   projectId: string;

@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import { DEFAULT_TAG_ID } from "@reearth/classic/components/molecules/EarthEditor/TagPane/common";
 import { TagGroup } from "@reearth/classic/components/molecules/EarthEditor/TagPane/SceneTagPane";
-import { useNotification, useSceneId, useSelected } from "@reearth/classic/state";
 import {
   useAttachTagToLayerMutation,
   useCreateTagGroupMutation,
@@ -15,6 +14,7 @@ import {
 } from "@reearth/gql";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
+import { useNotification, useSceneId, useSelected } from "@reearth/services/state";
 
 export default () => {
   const { isAuthenticated } = useAuth();

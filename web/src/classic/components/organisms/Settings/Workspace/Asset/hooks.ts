@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import assetHooks from "@reearth/classic/components/organisms/Common/AssetContainer/hooks";
-import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/classic/state";
+import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/services/state";
 
 export type Params = {
   workspaceId: string;

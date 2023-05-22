@@ -5,13 +5,6 @@ import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import { User } from "@reearth/classic/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
 import {
-  useSceneId,
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useGetTeamsQuery,
   useGetProjectBySceneQuery,
   PublishmentStatus,
@@ -21,6 +14,13 @@ import {
 } from "@reearth/gql";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
+import {
+  useSceneId,
+  useWorkspace,
+  useProject,
+  useNotification,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");

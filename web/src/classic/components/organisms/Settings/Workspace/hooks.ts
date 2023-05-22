@@ -3,12 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Role as RoleUnion } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
 import {
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/classic/state";
-import {
   useGetTeamsQuery,
   useGetUserBySearchLazyQuery,
   useCreateTeamMutation,
@@ -21,6 +15,12 @@ import {
 } from "@reearth/gql";
 import { Team } from "@reearth/gql/graphql-client-api";
 import { useT } from "@reearth/services/i18n";
+import {
+  useWorkspace,
+  useProject,
+  useNotification,
+  useSessionWorkspace,
+} from "@reearth/services/state";
 
 type Params = {
   workspaceId: string;

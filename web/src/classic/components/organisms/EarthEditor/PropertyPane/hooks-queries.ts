@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 
-import { Selected } from "@reearth/classic/state";
 import {
   useGetScenePropertyQuery,
   useGetLayerPropertyQuery,
   useGetLinkableDatasetsQuery,
   useGetLayersFromLayerIdQuery,
 } from "@reearth/gql";
+import { Selected } from "@reearth/services/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 

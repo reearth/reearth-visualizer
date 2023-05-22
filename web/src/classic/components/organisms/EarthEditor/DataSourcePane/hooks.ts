@@ -6,14 +6,6 @@ import {
   DataSource,
 } from "@reearth/classic/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
-  useSceneId,
-  useNotification,
-  useSelected,
-  useProject,
-  NotificationType,
-  useCurrentTheme,
-} from "@reearth/classic/state";
-import {
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportDatasetFromGoogleSheetMutation,
@@ -21,6 +13,14 @@ import {
   useGetDatasetSchemasWithCountQuery,
 } from "@reearth/gql";
 import { useT, useLang } from "@reearth/services/i18n";
+import {
+  useSceneId,
+  useNotification,
+  useSelected,
+  useProject,
+  NotificationType,
+  useCurrentTheme,
+} from "@reearth/services/state";
 
 export default () => {
   const t = useT();

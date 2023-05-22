@@ -2,15 +2,15 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useGetTeamsQuery } from "@reearth/gql";
+import { useAuth, useCleanUrl } from "@reearth/services/auth";
+import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
   useNotification,
   useUserId,
   useSessionWorkspace,
-} from "@reearth/classic/state";
-import { useGetTeamsQuery } from "@reearth/gql";
-import { useAuth, useCleanUrl } from "@reearth/services/auth";
-import { useT } from "@reearth/services/i18n";
+} from "@reearth/services/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {

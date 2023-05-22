@@ -8,15 +8,6 @@ import {
   WidgetType,
 } from "@reearth/classic/components/molecules/EarthEditor/OutlinePane";
 import {
-  useSceneId,
-  useSelected,
-  useSelectedBlock,
-  useRootLayerId,
-  useWidgetAlignEditorActivated,
-  useZoomedLayerId,
-  useSelectedWidgetArea,
-} from "@reearth/classic/state";
-import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
   useUpdateLayerMutation,
@@ -37,6 +28,15 @@ import {
   GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
 import { useLang, useT } from "@reearth/services/i18n";
+import {
+  useSceneId,
+  useSelected,
+  useSelectedBlock,
+  useRootLayerId,
+  useWidgetAlignEditorActivated,
+  useZoomedLayerId,
+  useSelectedWidgetArea,
+} from "@reearth/services/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
 

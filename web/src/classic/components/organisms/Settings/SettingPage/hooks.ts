@@ -2,7 +2,6 @@ import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { User } from "@reearth/classic/components/molecules/Common/Header";
-import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/classic/state";
 import {
   useGetMeQuery,
   useGetProjectSceneQuery,
@@ -10,6 +9,7 @@ import {
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
+import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/services/state";
 
 type Params = {
   workspaceId?: string;
