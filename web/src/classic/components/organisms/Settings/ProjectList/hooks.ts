@@ -11,7 +11,7 @@ import {
   useGetProjectsQuery,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,

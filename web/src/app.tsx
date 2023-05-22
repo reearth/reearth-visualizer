@@ -20,8 +20,8 @@ import { Provider as I18nProvider } from "@reearth/services/i18n";
 
 import RootPage from "./classic/components/pages/Authentication/RootPage";
 import Preview from "./classic/components/pages/Preview";
-import { Provider as GqlProvider } from "./gql";
 import { Provider as Auth0Provider } from "./services/auth";
+import { Provider as GqlProvider } from "./services/gql";
 import { Provider as ThemeProvider, styled } from "./services/theme";
 
 const EarthEditor = React.lazy(() => import("@reearth/classic/components/pages/EarthEditor"));

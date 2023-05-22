@@ -26,7 +26,7 @@ import {
   PropertySchemaField,
   GetLayersFromLayerIdQuery,
   Maybe,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 
 export type Mode = RawMode;
 

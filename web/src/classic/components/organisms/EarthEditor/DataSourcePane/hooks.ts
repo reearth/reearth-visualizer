@@ -11,7 +11,7 @@ import {
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
   useGetDatasetSchemasWithCountQuery,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 import { useT, useLang } from "@reearth/services/i18n";
 import {
   useSceneId,

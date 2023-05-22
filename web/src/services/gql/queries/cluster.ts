@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { propertyFragment } from "@reearth/gql/fragments";
+import { propertyFragment } from "@reearth/services/gql/fragments";
 
 export const GET_CLUSTERS = gql`
   query GetClusters($sceneId: ID!, $lang: Lang) {

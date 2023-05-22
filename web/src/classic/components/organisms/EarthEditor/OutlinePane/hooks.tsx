@@ -28,7 +28,7 @@ import {
   useGetClustersQuery,
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 import { useLang, useT } from "@reearth/services/i18n";
 import {
   useSceneId,

@@ -8,7 +8,7 @@ import {
   useGetTeamsQuery,
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/services/state";
 
 type Params = {

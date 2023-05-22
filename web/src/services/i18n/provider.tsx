@@ -3,8 +3,8 @@ import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import "dayjs/locale/ja";
 
-import { useGetLanguageQuery } from "@reearth/gql";
 import { useAuth } from "@reearth/services/auth";
+import { useGetLanguageQuery } from "@reearth/services/gql";
 
 import i18n from "./i18n";
 

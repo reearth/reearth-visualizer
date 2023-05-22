@@ -12,8 +12,8 @@ import {
   useUpdateMemberOfTeamMutation,
   Role,
   useRemoveMemberFromTeamMutation,
-} from "@reearth/gql";
-import { Team } from "@reearth/gql/graphql-client-api";
+} from "@reearth/services/gql";
+import { Team } from "@reearth/services/gql/graphql-client-api";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,

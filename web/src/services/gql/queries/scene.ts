@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment } from "@reearth/gql/fragments";
+import { layerFragment } from "@reearth/services/gql/fragments";
 
 export const GET_SCENE = gql`
   query GetScene($sceneId: ID!) {

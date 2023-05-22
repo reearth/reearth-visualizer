@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { propertyFragment, layerFragment } from "@reearth/gql/fragments";
+import { propertyFragment, layerFragment } from "@reearth/services/gql/fragments";
 
 export const GET_LAYER_PROPERTY = gql`
   query GetLayerProperty($layerId: ID!, $lang: Lang) {

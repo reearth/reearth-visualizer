@@ -23,7 +23,7 @@ import {
   WidgetAreaType,
   WidgetSectionType,
   WidgetZoneType,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSelected,

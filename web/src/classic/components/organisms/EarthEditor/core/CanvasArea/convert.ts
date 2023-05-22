@@ -27,7 +27,7 @@ import type {
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
   EarthLayer5Fragment,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 
 import { WidgetAreaPadding } from "../../PropertyPane/hooks";
 

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment, propertyFragment } from "@reearth/gql/fragments";
+import { layerFragment, propertyFragment } from "@reearth/services/gql/fragments";
 
 export const GET_DATASETS = gql`
   query GetDatasetsForDatasetInfoPane(

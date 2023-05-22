@@ -31,7 +31,7 @@ import {
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
   EarthLayer5Fragment,
-} from "@reearth/gql";
+} from "@reearth/services/gql";
 
 type BlockType = Item & {
   pluginId: string;

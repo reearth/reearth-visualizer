@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { widgetAlignSysFragment } from "@reearth/gql/fragments";
+import { widgetAlignSysFragment } from "@reearth/services/gql/fragments";
 
 export const GET_WIDGETS = gql`
   query GetWidgets($sceneId: ID!, $lang: Lang) {

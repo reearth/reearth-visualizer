@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment, infoboxFragment } from "@reearth/gql/fragments";
+import { layerFragment, infoboxFragment } from "@reearth/services/gql/fragments";
 
 export const GET_BLOCKS = gql`
   query GetBlocks($sceneId: ID!, $lang: Lang) {

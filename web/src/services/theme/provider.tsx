@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@emotion/react";
 import { ReactNode, useEffect } from "react";
 
-import { Theme, useGetThemeQuery } from "@reearth/gql";
 import { useAuth } from "@reearth/services/auth";
+import { Theme, useGetThemeQuery } from "@reearth/services/gql";
 import { useCurrentTheme } from "@reearth/services/state";
 
 import darkTheme from "./darkTheme";

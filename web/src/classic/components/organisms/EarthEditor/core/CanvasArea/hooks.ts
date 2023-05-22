@@ -14,6 +14,7 @@ import {
   valueToGQL,
   type LatLng,
 } from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -29,8 +30,7 @@ import {
   type WidgetAreaType,
   type WidgetAreaAlign,
   ValueType,
-} from "@reearth/gql";
-import { config } from "@reearth/services/config";
+} from "@reearth/services/gql";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSceneId,

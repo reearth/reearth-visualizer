@@ -1,14 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
+import { useAuth } from "@reearth/services/auth";
 import {
   DatasetsListQuery,
   useGetProjectSceneQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
   useDatasetsListQuery,
-} from "@reearth/gql";
-import { useAuth } from "@reearth/services/auth";
+} from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
