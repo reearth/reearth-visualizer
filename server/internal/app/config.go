@@ -35,7 +35,6 @@ type Config struct {
 	Profiler         string
 	Tracer           string
 	TracerSample     float64
-	GCS              GCSConfig
 	Marketplace      MarketplaceConfig
 	AssetBaseURL     string `default:"http://localhost:8080/assets"`
 	Origins          []string
@@ -188,6 +187,19 @@ type PublishedConfig struct {
 type GCSConfig struct {
 	BucketName              string
 	PublicationCacheControl string
+}
+
+func (g GCSConfig) Configured() bool {
+	return g.BucketName != ""
+}
+
+type S3Config struct {
+	BucketName              string
+	PublicationCacheControl string
+}
+
+func (s S3Config) Configured() bool {
+	return s.BucketName != ""
 }
 
 type SendGridConfig struct {
