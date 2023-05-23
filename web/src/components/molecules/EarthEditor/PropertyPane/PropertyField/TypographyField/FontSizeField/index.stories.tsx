@@ -1,8 +1,12 @@
 import { action } from "@storybook/addon-actions";
-import { storiesOf } from "@storybook/react";
+import { Meta } from "@storybook/react";
 
 import FontSizeField from ".";
 
-storiesOf("molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontSizeField", module)
-  .add("default", () => <FontSizeField onChange={action("onchange")} />)
-  .add("selected", () => <FontSizeField value={10} onChange={action("onchange")} />);
+export default {
+  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontSizeField",
+  component: FontSizeField,
+} as Meta;
+
+export const Default = () => <FontSizeField onChange={action("onchange")} />;
+export const Selected = () => <FontSizeField value={10} onChange={action("onchange")} />;
