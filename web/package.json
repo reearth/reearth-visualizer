@@ -19,7 +19,7 @@
         "lint": "eslint .",
         "format": "eslint --fix .",
         "storybook": "storybook dev -p 9001",
-        "storybook:build": "build-storybook --quiet -o dist/storybook",
+        "storybook:build": "storybook build --quiet -o dist/storybook",
         "gql": "graphql-codegen --config codegen.yml",
         "i18n": "i18next",
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
