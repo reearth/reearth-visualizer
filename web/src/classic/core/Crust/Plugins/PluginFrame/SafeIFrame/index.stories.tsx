@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Component, { Props, Ref } from ".";
 
 export default {
-  title: "atoms/Plugin/SafeIFrame",
+  title: "atoms/Plugin/SafeIFrame(classic/core)",
   component: Component,
   argTypes: {
     onLoad: { action: "onLoad" },
