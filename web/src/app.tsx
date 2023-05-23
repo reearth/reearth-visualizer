@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, useRoutes, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, useParams, Routes, Route } from "react-router-dom";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
@@ -31,32 +31,6 @@ const GraphQLPlayground = React.lazy(
 );
 const PluginEditor = React.lazy(() => import("./classic/components/pages/PluginEditor"));
 
-function AppRoutes() {
-  return useRoutes([
-    { path: "/", element: <RootPage /> },
-    { path: "/login", element: <LoginPage /> },
-    { path: "/signup", element: <SignupPage /> },
-    { path: "/password-reset", element: <PasswordResetPage /> },
-    { path: "/dashboard/:workspaceId", element: <Dashboard /> },
-    { path: "/edit/:sceneId", element: <EarthEditor /> },
-    { path: "/edit/:sceneId/preview", element: <Preview /> },
-    { path: "/settings", element: <Navigate to="/settings/account" /> },
-    { path: "/settings/account", element: <AccountSettings /> },
-    { path: "/settings/workspaces", element: <WorkspaceList /> },
-    { path: "/settings/workspaces/:workspaceId", element: <WorkspaceSettings /> },
-    { path: "/settings/workspaces/:workspaceId/projects", element: <SettingsProjectList /> },
-    { path: "/settings/workspaces/:workspaceId/asset", element: <AssetSettings /> },
-    { path: "/settings/projects/:projectId", element: <ProjectSettings /> },
-    { path: "/settings/projects/:projectId/public", element: <PublicSettings /> },
-    { path: "/settings/projects/:projectId/dataset", element: <DatasetSettings /> },
-    { path: "/settings/projects/:projectId/plugins", element: <PluginSettings /> },
-    { path: "/plugin-editor", element: <PluginEditor /> },
-    { path: "/graphql", element: import.meta.env.DEV && <GraphQLPlayground /> },
-    ...redirects,
-    { path: "*", element: <NotFound /> },
-  ]);
-}
-
 export default function App() {
   return (
     <Auth0Provider>
@@ -66,7 +40,43 @@ export default function App() {
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
               <StyledRouter>
-                <AppRoutes />
+                <Routes>
+                  <Route path="/" element={<RootPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/password-reset" element={<PasswordResetPage />} />
+                  <Route path="/dashboard/:workspaceId" element={<Dashboard />} />
+                  <Route path="/edit/:sceneId" element={<EarthEditor />} />
+                  <Route path="/edit/:sceneId/preview" element={<Preview />} />
+                  <Route path="settings" element={<Navigate to="/settings/account" />} />
+                  <Route path="/settings/account" element={<AccountSettings />} />
+                  <Route path="/settings/workspaces" element={<WorkspaceList />} />
+                  <Route path="/settings/workspaces/:workspaceId" element={<WorkspaceSettings />} />
+                  <Route
+                    path="/settings/workspaces/:workspaceId/projects"
+                    element={<SettingsProjectList />}
+                  />
+                  <Route
+                    path="/settings/workspaces/:workspaceId/asset"
+                    element={<AssetSettings />}
+                  />
+                  <Route path="/settings/projects/:projectId" element={<ProjectSettings />} />
+                  <Route path="/settings/projects/:projectId/public" element={<PublicSettings />} />
+                  <Route
+                    path="/settings/projects/:projectId/dataset"
+                    element={<DatasetSettings />}
+                  />
+                  <Route
+                    path="/settings/projects/:projectId/plugins"
+                    element={<PluginSettings />}
+                  />
+                  <Route path="/plugin-editor" element={<PluginEditor />} />
+                  <Route path="/graphql" element={<GraphQLPlayground />} />
+                  {...redirects.map(([from, to]) => (
+                    <Route key={from} path={from} element={<Redirect to={to} />} />
+                  ))}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               </StyledRouter>
             </Suspense>
           </I18nProvider>
@@ -89,10 +99,7 @@ const redirects = [
   ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
   ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],
   ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
-].map(([from, to]) => ({
-  path: from,
-  element: <Redirect to={to} />,
-}));
+];
 
 function Redirect({ to }: { to: string }) {
   const { teamId, projectId } = useParams();
