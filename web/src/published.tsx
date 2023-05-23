@@ -2,8 +2,8 @@
 
 import { createRoot } from "react-dom/client";
 
-import loadConfig from "./config";
 import App from "./publishedapp";
+import loadConfig from "./services/config";
 import "./wdyr";
 
 loadConfig().finally(() => {
