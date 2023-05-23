@@ -1,0 +1,1 @@
+# Interfaces for direct access to libraries being used (will make any future library changes easy) (ie axios, etc)(aka the “facade pattern” for the nerds) <- Maybe not needed. Could combine lib and services
