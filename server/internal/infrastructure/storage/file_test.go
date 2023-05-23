@@ -1,4 +1,4 @@
-package fs
+package storage
 
 import (
 	"context"
@@ -19,13 +19,13 @@ import (
 )
 
 func TestNewFile(t *testing.T) {
-	f, err := NewFile(mockFs(), "")
+	f, err := NewFS(mockFs(), "")
 	assert.NoError(t, err)
 	assert.NotNil(t, f)
 }
 
 func TestFile_ReadAsset(t *testing.T) {
-	f, _ := NewFile(mockFs(), "")
+	f, _ := NewFS(mockFs(), "")
 
 	r, err := f.ReadAsset(context.Background(), "xxx.txt")
 	assert.NoError(t, err)
@@ -45,7 +45,7 @@ func TestFile_ReadAsset(t *testing.T) {
 
 func TestFile_UploadAsset(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "https://example.com/assets")
+	f, _ := NewFS(fs, "https://example.com/assets")
 
 	u, s, err := f.UploadAsset(context.Background(), &file.File{
 		Path:    "aaa.txt",
@@ -93,7 +93,7 @@ func TestFile_RemoveAsset(t *testing.T) {
 			t.Parallel()
 
 			fs := mockFs()
-			f, _ := NewFile(fs, "https://example.com/assets")
+			f, _ := NewFS(fs, "https://example.com/assets")
 
 			u, _ := url.Parse(tc.URL)
 			err := f.RemoveAsset(context.Background(), u)
@@ -115,7 +115,7 @@ func TestFile_RemoveAsset(t *testing.T) {
 }
 
 func TestFile_ReadPluginFile(t *testing.T) {
-	f, _ := NewFile(mockFs(), "")
+	f, _ := NewFS(mockFs(), "")
 
 	r, err := f.ReadPluginFile(context.Background(), id.MustPluginID("aaa~1.0.0"), "foo.js")
 	assert.NoError(t, err)
@@ -139,7 +139,7 @@ func TestFile_ReadPluginFile(t *testing.T) {
 
 func TestFile_UploadPluginFile(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "")
+	f, _ := NewFS(fs, "")
 
 	err := f.UploadPluginFile(context.Background(), id.MustPluginID("aaa~1.0.1"), &file.File{
 		Path:    "aaa.js",
@@ -154,7 +154,7 @@ func TestFile_UploadPluginFile(t *testing.T) {
 
 func TestFile_RemovePluginFile(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "")
+	f, _ := NewFS(fs, "")
 
 	err := f.RemovePlugin(context.Background(), id.MustPluginID("aaa~1.0.1"))
 	assert.NoError(t, err)
@@ -170,7 +170,7 @@ func TestFile_RemovePluginFile(t *testing.T) {
 }
 
 func TestFile_ReadBuiltSceneFile(t *testing.T) {
-	f, _ := NewFile(mockFs(), "")
+	f, _ := NewFS(mockFs(), "")
 
 	r, err := f.ReadBuiltSceneFile(context.Background(), "s")
 	assert.NoError(t, err)
@@ -190,7 +190,7 @@ func TestFile_ReadBuiltSceneFile(t *testing.T) {
 
 func TestFile_UploadBuiltScene(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "")
+	f, _ := NewFS(fs, "")
 
 	err := f.UploadBuiltScene(context.Background(), io.NopCloser(strings.NewReader("{\"aaa\":1}")), "a")
 	assert.NoError(t, err)
@@ -202,7 +202,7 @@ func TestFile_UploadBuiltScene(t *testing.T) {
 
 func TestFile_MoveBuiltScene(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "")
+	f, _ := NewFS(fs, "")
 
 	uf, _ := fs.Open(filepath.Join("published", "s.json"))
 	c, _ := io.ReadAll(uf)
@@ -226,7 +226,7 @@ func TestFile_MoveBuiltScene(t *testing.T) {
 
 func TestFile_RemoveBuiltScene(t *testing.T) {
 	fs := mockFs()
-	f, _ := NewFile(fs, "")
+	f, _ := NewFS(fs, "")
 
 	err := f.RemoveBuiltScene(context.Background(), "a")
 	assert.NoError(t, err)

@@ -49,6 +49,11 @@ type Config struct {
 	SignupSecret     string
 	SignupDisabled   bool
 	HTTPSREDIRECT    bool
+
+	// storage
+	GCS GCSConfig
+	S3  S3Config
+
 	// auth
 	Auth          AuthConfigs
 	Auth0         Auth0Config

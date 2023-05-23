@@ -1,4 +1,4 @@
-package gcs
+package storage
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/url"
 	"path"
-	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
@@ -23,16 +22,16 @@ const (
 	gcsAssetBasePath  string = "assets"
 	gcsPluginBasePath string = "plugins"
 	gcsMapBasePath    string = "maps"
-	fileSizeLimit     int64  = 1024 * 1024 * 100 // about 100MB
+	gcsFileSizeLimit  int64  = 1024 * 1024 * 100 // about 100MB
 )
 
-type fileRepo struct {
+type gcsFileRepo struct {
 	bucketName   string
 	base         *url.URL
 	cacheControl string
 }
 
-func NewFile(bucketName, base string, cacheControl string) (gateway.File, error) {
+func NewGCS(bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
 		return nil, errors.New("bucket name is empty")
 	}
@@ -48,14 +47,14 @@ func NewFile(bucketName, base string, cacheControl string) (gateway.File, error)
 		return nil, errors.New("invalid base URL")
 	}
 
-	return &fileRepo{
+	return &gcsFileRepo{
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
 	}, nil
 }
 
-func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *gcsFileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
 	if sn == "" {
 		return nil, rerror.ErrNotFound
@@ -63,11 +62,11 @@ func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, e
 	return f.read(ctx, path.Join(gcsAssetBasePath, sn))
 }
 
-func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
+func (f *gcsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
 	if file == nil {
 		return nil, 0, gateway.ErrInvalidFile
 	}
-	if file.Size >= fileSizeLimit {
+	if file.Size >= gcsFileSizeLimit {
 		return nil, 0, gateway.ErrFileTooLarge
 	}
 
@@ -77,7 +76,7 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 	}
 
 	filename := path.Join(gcsAssetBasePath, sn)
-	u := getGCSObjectURL(f.base, filename)
+	u := getObjectURL(f.base, filename)
 	if u == nil {
 		return nil, 0, gateway.ErrInvalidFile
 	}
@@ -89,10 +88,10 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 	return u, s, nil
 }
 
-func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
+func (f *gcsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	log.Infof("gcs: asset deleted: %s", u)
 
-	sn := getGCSObjectNameFromURL(f.base, u)
+	sn := getObjectNameFromURL(f.base, u)
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
@@ -101,7 +100,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 
 // plugin
 
-func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
+func (f *gcsFileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
 	sn := sanitize.Path(filename)
 	if sn == "" {
 		return nil, rerror.ErrNotFound
@@ -109,7 +108,7 @@ func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename
 	return f.read(ctx, path.Join(gcsPluginBasePath, pid.String(), sn))
 }
 
-func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
+func (f *gcsFileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
 	sn := sanitize.Path(file.Path)
 	if sn == "" {
 		return gateway.ErrInvalidFile
@@ -118,7 +117,7 @@ func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *
 	return err
 }
 
-func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
+func (f *gcsFileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 	log.Infof("gcs: plugin deleted: %s", pid)
 
 	return f.deleteAll(ctx, path.Join(gcsPluginBasePath, pid.String()))
@@ -126,14 +125,14 @@ func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 
 // built scene
 
-func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *gcsFileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound
 	}
 	return f.read(ctx, path.Join(gcsMapBasePath, sanitize.Path(name)+".json"))
 }
 
-func (f *fileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name string) error {
+func (f *gcsFileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name string) error {
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
 		return gateway.ErrInvalidFile
@@ -142,7 +141,7 @@ func (f *fileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name
 	return err
 }
 
-func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
+func (f *gcsFileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
 	from := sanitize.Path(oldName + ".json")
 	dest := sanitize.Path(name + ".json")
 	if from == "" || dest == "" {
@@ -151,7 +150,7 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 	return f.move(ctx, path.Join(gcsMapBasePath, from), path.Join(gcsMapBasePath, dest))
 }
 
-func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
+func (f *gcsFileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 	log.Infof("gcs: built scene deleted: %s", name)
 
 	sn := sanitize.Path(name + ".json")
@@ -163,7 +162,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 // helpers
 
-func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
+func (f *gcsFileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		return nil, err
@@ -172,7 +171,7 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 	return bucket, nil
 }
 
-func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
+func (f *gcsFileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
@@ -195,7 +194,7 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	return reader, nil
 }
 
-func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
+func (f *gcsFileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
 		return 0, gateway.ErrInvalidFile
 	}
@@ -229,7 +228,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	return size, nil
 }
 
-func (f *fileRepo) move(ctx context.Context, from, dest string) error {
+func (f *gcsFileRepo) move(ctx context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
@@ -258,7 +257,7 @@ func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 	return nil
 }
 
-func (f *fileRepo) delete(ctx context.Context, filename string) error {
+func (f *gcsFileRepo) delete(ctx context.Context, filename string) error {
 	if filename == "" {
 		return gateway.ErrInvalidFile
 	}
@@ -281,7 +280,7 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 	return nil
 }
 
-func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
+func (f *gcsFileRepo) deleteAll(ctx context.Context, path string) error {
 	if path == "" {
 		return gateway.ErrInvalidFile
 	}
@@ -311,35 +310,4 @@ func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 		}
 	}
 	return nil
-}
-
-func getGCSObjectURL(base *url.URL, objectName string) *url.URL {
-	if base == nil {
-		return nil
-	}
-
-	// https://github.com/golang/go/issues/38351
-	b := *base
-	b.Path = path.Join(b.Path, objectName)
-	return &b
-}
-
-func getGCSObjectNameFromURL(base, u *url.URL) string {
-	if u == nil {
-		return ""
-	}
-	if base == nil {
-		base = &url.URL{}
-	}
-	p := sanitize.Path(strings.TrimPrefix(u.Path, "/"))
-	if p == "" || u.Host != base.Host || u.Scheme != base.Scheme || !strings.HasPrefix(p, gcsAssetBasePath+"/") {
-		return ""
-	}
-
-	return p
-}
-
-func newAssetID() string {
-	// TODO: replace
-	return id.NewAssetID().String()
 }
