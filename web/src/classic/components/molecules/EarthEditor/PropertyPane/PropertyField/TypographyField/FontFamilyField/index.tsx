@@ -1,0 +1,70 @@
+import React from "react";
+
+import Icon from "@reearth/classic/components/atoms/Icon";
+import Select from "@reearth/classic/components/atoms/Select";
+import { Option, Props as OptionProps } from "@reearth/classic/components/atoms/SelectOption";
+import Text from "@reearth/classic/components/atoms/Text";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
+
+const safeFonts = {
+  Arial: { displayName: "Arial" } as const,
+  "Comic Sans MS": { displayName: "Comic Sans MS" } as const,
+  "Courier New": { displayName: "Courier New" } as const,
+  Georgia: { displayName: "Georgia" } as const,
+  Tahoma: { displayName: "Tahoma" } as const,
+  "Times New Roman": { displayName: "Times New Roman" } as const,
+  "Trebuchet MS": { displayName: "Trebuchet MS" } as const,
+  Verdana: { displayName: "Verdana" } as const,
+  YuGothic: { displayName: "游ゴシック" } as const,
+};
+
+export type SafeFontFamilies = keyof typeof safeFonts;
+
+const safeFontItems = Object.entries(safeFonts).map(([name, { displayName }]) => ({
+  key: name as SafeFontFamilies,
+  label: displayName,
+}));
+
+type Props = {
+  className?: string;
+  value?: SafeFontFamilies;
+  color?: string;
+  onChange?: (value: SafeFontFamilies) => void;
+};
+
+const FontFamilyField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
+  const t = useT();
+
+  return (
+    <Select
+      className={className}
+      value={selectedKey}
+      onChange={onChange}
+      placeholder={t("Font family")}
+      color={color}>
+      {safeFontItems.map(({ key, label }) => (
+        <StyledOption key={key} fontFamily={key} value={key} label={label}>
+          <OptionCheck size="xs">
+            {key === selectedKey && <Icon icon="check" size={10} />}
+          </OptionCheck>
+          {label}
+        </StyledOption>
+      ))}
+    </Select>
+  );
+};
+
+const StyledOption = styled(Option)<OptionProps & { fontFamily: SafeFontFamilies }>`
+  font-family: ${({ fontFamily }) => fontFamily};
+`;
+
+const OptionCheck = styled(Text)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  margin-right: 6px;
+`;
+
+export default FontFamilyField;

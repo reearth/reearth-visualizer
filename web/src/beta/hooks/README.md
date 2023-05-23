@@ -1,0 +1,1 @@
+# Shared (“global”) level hooks (ie. project creation/fetching/etc, workspace deleting/etc, etc)

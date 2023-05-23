@@ -1,11 +1,11 @@
 overwrite: true
 schema: http://localhost:8080/api/graphql
 documents:
-  - src/gql/fragments/*.ts
-  - src/gql/queries/*.ts
-  - src/**/*.graphql
+  - src/services/gql/fragments/*.ts
+  - src/services/gql/queries/*.ts
+  - src/services/**/*.graphql
 generates:
-  ./src/gql/graphql-client-api.tsx:
+  ./src/services/gql/graphql-client-api.tsx:
     plugins:
       - typescript
       - typescript-operations
@@ -20,10 +20,10 @@ generates:
         URL: string
         Lang: string
         TranslatedString: "{ [lang in string]?: string } | null"
-  ./src/gql/graphql.schema.json:
+  ./src/services/gql/graphql.schema.json:
     plugins:
       - introspection
-  ./src/gql/fragmentMatcher.json:
+  ./src/services/gql/fragmentMatcher.json:
     plugins:
       - fragment-matcher
     config:
