@@ -1,4 +1,4 @@
-import { storiesOf } from "@storybook/react";
+import { Meta } from "@storybook/react";
 
 import Balloon from ".";
 
@@ -9,6 +9,11 @@ const img = {
   alt: "sample image",
 };
 
-storiesOf("atoms/Balloon", module).add("default", () => (
+export default {
+  title: "atoms/Balloon",
+  component: Balloon,
+} as Meta;
+
+export const Default = () => (
   <Balloon title={descriptionTitle} description={descriptionText} img={img} />
-));
+);
