@@ -28,7 +28,7 @@
         "node": ">=16"
     },
     "lint-staged": {
-        "web/**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix"
+        "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix"
     },
     "devDependencies": {
         "@emotion/jest": "11.11.0",
