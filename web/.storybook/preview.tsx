@@ -5,11 +5,11 @@ import {
   ApolloLink,
   Observable,
 } from "@apollo/client";
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 
+import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
 import { Provider as ThemeProvider } from "../src/services/theme";
-import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 
 // apollo client that does nothing
 const mockClient = new ApolloClient({
