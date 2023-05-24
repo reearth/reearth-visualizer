@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -195,11 +196,18 @@ func (f *awsFileRepo) upload(ctx context.Context, filename string, content io.Re
 	// By default, uploading the file with same name. It will overwrite the existing file.
 	// No need to check if the file exists.
 
-	_, err := f.client.PutObject(ctx, &s3.PutObjectInput{
-		Body:         content,
-		Bucket:       aws.String(f.bucketName),
-		CacheControl: &f.cacheControl,
-		Key:          aws.String(filename),
+	ba, err := io.ReadAll(content)
+	if err != nil {
+		return 0, rerror.ErrInternalBy(err)
+	}
+	body := bytes.NewReader(ba)
+
+	_, err = f.client.PutObject(ctx, &s3.PutObjectInput{
+		Body:          body,
+		Bucket:        aws.String(f.bucketName),
+		CacheControl:  &f.cacheControl,
+		Key:           aws.String(filename),
+		ContentLength: body.Size(),
 	})
 	if err != nil {
 		log.Errorf("s3: upload err: %+v\n", err)
