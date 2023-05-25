@@ -91,3 +91,9 @@ func StartServerWithRepos(t *testing.T, cfg *app.Config, repos *repo.Container) 
 
 	return httpexpect.New(t, "http://"+l.Addr().String())
 }
+
+type GraphQLRequest struct {
+	OperationName string         `json:"operationName"`
+	Query         string         `json:"query"`
+	Variables     map[string]any `json:"variables"`
+}

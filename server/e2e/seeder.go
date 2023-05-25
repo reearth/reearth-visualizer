@@ -17,6 +17,8 @@ import (
 
 var (
 	uId    = user.NewID()
+	uEmail = "e2e@e2e.com"
+	uName  = "e2e"
 	wId    = workspace.NewID()
 	pId    = id.NewProjectID()
 	pAlias = "PROJECT_ALIAS"
@@ -33,8 +35,8 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	u := user.New().
 		ID(uId).
 		Workspace(wId).
-		Name("e2e").
-		Email("e2e@e2e.com").
+		Name(uName).
+		Email(uEmail).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
