@@ -17,6 +17,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -36,7 +37,7 @@ type User struct {
 	transaction       usecasex.Transaction
 	file              gateway.File
 	authenticator     gateway.Authenticator
-	mailer            gateway.Mailer
+	mailer            accountgateway.Mailer
 	signupSecret      string
 	authSrvUIDomain   string
 }
@@ -194,7 +195,7 @@ func (i *User) StartPasswordReset(ctx context.Context, email string) error {
 		return err
 	}
 
-	err = i.mailer.SendMail([]gateway.Contact{
+	err = i.mailer.SendMail([]accountgateway.Contact{
 		{
 			Email: u.Email(),
 			Name:  u.Name(),

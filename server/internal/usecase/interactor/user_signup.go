@@ -12,12 +12,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/user/userops"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -377,7 +377,7 @@ func (i *User) createVerification(ctx context.Context, u *user.User) error {
 	}
 
 	if err := i.mailer.SendMail(
-		[]gateway.Contact{
+		[]accountgateway.Contact{
 			{
 				Email: u.Email(),
 				Name:  u.Name(),
