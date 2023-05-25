@@ -632,6 +632,7 @@ type ComplexityRoot struct {
 		Alias             func(childComplexity int) int
 		BasicAuthPassword func(childComplexity int) int
 		BasicAuthUsername func(childComplexity int) int
+		CoreSupport       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Description       func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -4295,6 +4296,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.BasicAuthUsername(childComplexity), true
 
+	case "Project.coreSupport":
+		if e.complexity.Project.CoreSupport == nil {
+			break
+		}
+
+		return e.complexity.Project.CoreSupport(childComplexity), true
+
 	case "Project.createdAt":
 		if e.complexity.Project.CreatedAt == nil {
 			break
@@ -6675,6 +6683,7 @@ type Project implements Node {
   publishmentStatus: PublishmentStatus!
   team: Team @goField(forceResolver: true)
   scene: Scene @goField(forceResolver: true)
+  coreSupport: Boolean!
 }
 
 enum Visualizer {
@@ -7353,6 +7362,7 @@ input CreateProjectInput {
   imageUrl: URL
   alias: String
   archived: Boolean
+  coreSupport: Boolean
 }
 
 input UpdateProjectInput {
@@ -30154,6 +30164,50 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_coreSupport(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_coreSupport(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CoreSupport, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_coreSupport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -30373,6 +30427,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -30600,6 +30656,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -30688,6 +30746,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -37601,6 +37661,8 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -45880,7 +45942,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "imageUrl", "alias", "archived"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "imageUrl", "alias", "archived", "coreSupport"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45940,6 +46002,14 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("archived"))
 			it.Archived, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "coreSupport":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coreSupport"))
+			it.CoreSupport, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53102,6 +53172,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 				return innerFunc(ctx)
 
 			})
+		case "coreSupport":
+
+			out.Values[i] = ec._Project_coreSupport(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

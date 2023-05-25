@@ -70,7 +70,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	gateways.Google = google.NewGoogle()
 
 	// mailer
-	gateways.Mailer = initMailer(conf)
+	gateways.Mailer = initMailer(ctx, conf)
 
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
@@ -85,7 +85,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	return repos, gateways
 }
 
-func initMailer(conf *Config) gateway.Mailer {
+func initMailer(ctx context.Context, conf *Config) gateway.Mailer {
 	if conf.Mailer == "sendgrid" {
 		log.Infoln("mailer: sendgrid is used")
 		return mailer.NewSendGrid(conf.SendGrid.Name, conf.SendGrid.Email, conf.SendGrid.API)
@@ -93,6 +93,10 @@ func initMailer(conf *Config) gateway.Mailer {
 	if conf.Mailer == "smtp" {
 		log.Infoln("mailer: smtp is used")
 		return mailer.NewSMTP(conf.SMTP.Host, conf.SMTP.Port, conf.SMTP.SMTPUsername, conf.SMTP.Email, conf.SMTP.Password)
+	}
+	if conf.Mailer == "ses" {
+		log.Infoln("mailer: aws ses is used")
+		return mailer.NewSES(ctx, conf.SES.Name, conf.SES.Email)
 	}
 	log.Infoln("mailer: logger is used")
 	return mailer.NewLogger()

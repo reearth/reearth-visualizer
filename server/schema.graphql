@@ -249,6 +249,7 @@ type Project implements Node {
   publishmentStatus: PublishmentStatus!
   team: Team @goField(forceResolver: true)
   scene: Scene @goField(forceResolver: true)
+  coreSupport: Boolean!
 }
 
 enum Visualizer {
@@ -927,6 +928,7 @@ input CreateProjectInput {
   imageUrl: URL
   alias: String
   archived: Boolean
+  coreSupport: Boolean
 }
 
 input UpdateProjectInput {
