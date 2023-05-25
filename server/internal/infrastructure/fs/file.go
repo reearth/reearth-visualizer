@@ -189,3 +189,8 @@ func getAssetFileURL(base *url.URL, filename string) *url.URL {
 	b.Path = path.Join(b.Path, filename)
 	return &b
 }
+
+func newAssetID() string {
+	// TODO: replace
+	return id.NewAssetID().String()
+}
