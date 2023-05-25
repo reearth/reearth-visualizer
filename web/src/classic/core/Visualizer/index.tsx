@@ -1,4 +1,5 @@
 import { CSSProperties, useMemo, type ReactNode } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 // TODO(@keiya01): Change directory structure
 import DropHolder from "@reearth/classic/components/atoms/DropHolder";
@@ -28,6 +29,7 @@ import Map, {
 } from "../Map";
 
 import { engines, type EngineType } from "./engines";
+import Err from "./Error";
 import useHooks from "./hooks";
 
 export type {
@@ -195,79 +197,81 @@ export default function Visualizer({
   );
 
   return (
-    <Filled ref={wrapperRef}>
-      {isDroppable && <DropHolder />}
-      <Crust
-        engineName={engine}
-        tags={tags}
-        viewport={viewport}
-        isBuilt={isBuilt}
-        isEditable={isEditable && infobox?.isEditable}
-        inEditor={inEditor}
-        sceneProperty={overriddenSceneProperty}
-        overrideSceneProperty={overrideSceneProperty}
-        overriddenClock={overriddenClock}
-        blocks={infobox?.blocks}
-        camera={camera}
-        isMobile={isMobile}
-        selectedWidgetArea={selectedWidgetArea}
-        selectedComputedLayer={selectedLayer?.layer}
-        selectedFeature={selectedFeature}
-        selectedComputedFeature={selectedComputedFeature}
-        selectedReason={selectedLayer.reason}
-        infoboxProperty={infobox?.property}
-        infoboxTitle={infobox?.title}
-        infoboxVisible={!!infobox?.visible}
-        selectedBlockId={selectedBlock}
-        selectedLayerId={selectedLayerIdForCrust}
-        widgetAlignSystem={widgetAlignSystem}
-        widgetAlignSystemEditing={widgetAlignSystemEditing}
-        widgetLayoutConstraint={widgetLayoutConstraint}
-        floatingWidgets={floatingWidgets}
-        mapRef={mapRef}
-        externalPlugin={{ pluginBaseUrl, pluginProperty }}
-        useExperimentalSandbox={useExperimentalSandbox}
-        onWidgetLayoutUpdate={onWidgetLayoutUpdate}
-        onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
-        onWidgetAreaSelect={onWidgetAreaSelect}
-        onInfoboxMaskClick={onInfoboxMaskClick}
-        onInfoboxClose={handleInfoboxClose}
-        onBlockSelect={handleBlockSelect}
-        onBlockChange={onBlockChange}
-        onBlockMove={onBlockMove}
-        onBlockDelete={onBlockDelete}
-        onBlockInsert={onBlockInsert}
-        renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
-        onLayerEdit={onLayerEdit}
-      />
-      <Map
-        ref={mapRef}
-        isBuilt={isBuilt}
-        isEditable={isEditable}
-        engine={engine}
-        layers={layers}
-        engines={engines}
-        camera={camera}
-        overriddenClock={overriddenClock}
-        clusters={clusters}
-        hiddenLayers={hiddenLayers}
-        isLayerDragging={isLayerDragging}
-        isLayerDraggable={isEditable}
-        meta={meta}
-        style={style}
-        shouldRender={shouldRender}
-        // overrides={overrides} // not used for now
-        property={overriddenSceneProperty}
-        selectedLayerId={selectedLayerId}
-        layerSelectionReason={layerSelectionReason}
-        small={small}
-        ready={ready}
-        onCameraChange={handleCameraChange}
-        onLayerDrag={handleLayerDrag}
-        onLayerDrop={handleLayerDrop}
-        onLayerSelect={handleLayerSelect}
-        onLayerEdit={handleLayerEdit}
-      />
-    </Filled>
+    <ErrorBoundary FallbackComponent={Err}>
+      <Filled ref={wrapperRef}>
+        {isDroppable && <DropHolder />}
+        <Crust
+          engineName={engine}
+          tags={tags}
+          viewport={viewport}
+          isBuilt={isBuilt}
+          isEditable={isEditable && infobox?.isEditable}
+          inEditor={inEditor}
+          sceneProperty={overriddenSceneProperty}
+          overrideSceneProperty={overrideSceneProperty}
+          overriddenClock={overriddenClock}
+          blocks={infobox?.blocks}
+          camera={camera}
+          isMobile={isMobile}
+          selectedWidgetArea={selectedWidgetArea}
+          selectedComputedLayer={selectedLayer?.layer}
+          selectedFeature={selectedFeature}
+          selectedComputedFeature={selectedComputedFeature}
+          selectedReason={selectedLayer.reason}
+          infoboxProperty={infobox?.property}
+          infoboxTitle={infobox?.title}
+          infoboxVisible={!!infobox?.visible}
+          selectedBlockId={selectedBlock}
+          selectedLayerId={selectedLayerIdForCrust}
+          widgetAlignSystem={widgetAlignSystem}
+          widgetAlignSystemEditing={widgetAlignSystemEditing}
+          widgetLayoutConstraint={widgetLayoutConstraint}
+          floatingWidgets={floatingWidgets}
+          mapRef={mapRef}
+          externalPlugin={{ pluginBaseUrl, pluginProperty }}
+          useExperimentalSandbox={useExperimentalSandbox}
+          onWidgetLayoutUpdate={onWidgetLayoutUpdate}
+          onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
+          onWidgetAreaSelect={onWidgetAreaSelect}
+          onInfoboxMaskClick={onInfoboxMaskClick}
+          onInfoboxClose={handleInfoboxClose}
+          onBlockSelect={handleBlockSelect}
+          onBlockChange={onBlockChange}
+          onBlockMove={onBlockMove}
+          onBlockDelete={onBlockDelete}
+          onBlockInsert={onBlockInsert}
+          renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+          onLayerEdit={onLayerEdit}
+        />
+        <Map
+          ref={mapRef}
+          isBuilt={isBuilt}
+          isEditable={isEditable}
+          engine={engine}
+          layers={layers}
+          engines={engines}
+          camera={camera}
+          overriddenClock={overriddenClock}
+          clusters={clusters}
+          hiddenLayers={hiddenLayers}
+          isLayerDragging={isLayerDragging}
+          isLayerDraggable={isEditable}
+          meta={meta}
+          style={style}
+          shouldRender={shouldRender}
+          // overrides={overrides} // not used for now
+          property={overriddenSceneProperty}
+          selectedLayerId={selectedLayerId}
+          layerSelectionReason={layerSelectionReason}
+          small={small}
+          ready={ready}
+          onCameraChange={handleCameraChange}
+          onLayerDrag={handleLayerDrag}
+          onLayerDrop={handleLayerDrop}
+          onLayerSelect={handleLayerSelect}
+          onLayerEdit={handleLayerEdit}
+        />
+      </Filled>
+    </ErrorBoundary>
   );
 }

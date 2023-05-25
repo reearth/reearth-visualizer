@@ -55,11 +55,11 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	}
 }
 
-func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Operator) ([]*project.Project, error) {
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 	return i.projectRepo.FindByWorkspace(ctx, id, p)
 }
 
@@ -121,19 +121,22 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 	if p.Archived != nil {
 		pb = pb.IsArchived(*p.Archived)
 	}
+	if p.CoreSupport != nil {
+		pb = pb.CoreSupport(*p.CoreSupport)
+	}
 
-	project, err := pb.Build()
+	proj, err := pb.Build()
 	if err != nil {
 		return nil, err
 	}
 
-	err = i.projectRepo.Save(ctx, project)
+	err = i.projectRepo.Save(ctx, proj)
 	if err != nil {
 		return nil, err
 	}
 
 	tx.Commit()
-	return project, nil
+	return proj, nil
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {

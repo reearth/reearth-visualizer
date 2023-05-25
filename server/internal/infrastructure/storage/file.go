@@ -43,7 +43,7 @@ func (f *fsFileRepo) ReadAsset(ctx context.Context, filename string) (io.ReadClo
 }
 
 func (f *fsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
-	filename := sanitize.Path(newAssetID() + path.Ext(file.Path))
+	filename := sanitize.Path(newAssetID() + filepath.Ext(file.Path))
 	size, err := f.upload(ctx, filepath.Join(assetDir, filename), file.Content)
 	if err != nil {
 		return nil, 0, err
@@ -59,7 +59,7 @@ func (f *fsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != f.urlBase.Path {
 		return gateway.ErrInvalidFile
 	}
-	return f.delete(ctx, filepath.Join(assetDir, path.Base(p)))
+	return f.delete(ctx, filepath.Join(assetDir, filepath.Base(p)))
 }
 
 // plugin
@@ -122,7 +122,7 @@ func (f *fsFileRepo) upload(_ context.Context, filename string, content io.Reade
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
-	if fnd := path.Dir(filename); fnd != "" {
+	if fnd := filepath.Dir(filename); fnd != "" {
 		if err := f.fs.MkdirAll(fnd, 0755); err != nil {
 			return 0, rerror.ErrInternalBy(err)
 		}
@@ -149,7 +149,7 @@ func (f *fsFileRepo) move(_ context.Context, from, dest string) error {
 		return gateway.ErrInvalidFile
 	}
 
-	if destDir := path.Dir(dest); destDir != "" {
+	if destDir := filepath.Dir(dest); destDir != "" {
 		if err := f.fs.MkdirAll(destDir, 0755); err != nil {
 			return rerror.ErrInternalBy(err)
 		}
