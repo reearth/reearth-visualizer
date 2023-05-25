@@ -1208,25 +1208,10 @@ type MutationResolver interface {
 	PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error)
 	DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error)
 	CreateScene(ctx context.Context, input gqlmodel.CreateSceneInput) (*gqlmodel.CreateScenePayload, error)
-	AddWidget(ctx context.Context, input gqlmodel.AddWidgetInput) (*gqlmodel.AddWidgetPayload, error)
-	UpdateWidget(ctx context.Context, input gqlmodel.UpdateWidgetInput) (*gqlmodel.UpdateWidgetPayload, error)
-	UpdateWidgetAlignSystem(ctx context.Context, input gqlmodel.UpdateWidgetAlignSystemInput) (*gqlmodel.UpdateWidgetAlignSystemPayload, error)
-	RemoveWidget(ctx context.Context, input gqlmodel.RemoveWidgetInput) (*gqlmodel.RemoveWidgetPayload, error)
 	InstallPlugin(ctx context.Context, input gqlmodel.InstallPluginInput) (*gqlmodel.InstallPluginPayload, error)
 	UninstallPlugin(ctx context.Context, input gqlmodel.UninstallPluginInput) (*gqlmodel.UninstallPluginPayload, error)
 	UploadPlugin(ctx context.Context, input gqlmodel.UploadPluginInput) (*gqlmodel.UploadPluginPayload, error)
 	UpgradePlugin(ctx context.Context, input gqlmodel.UpgradePluginInput) (*gqlmodel.UpgradePluginPayload, error)
-	AddCluster(ctx context.Context, input gqlmodel.AddClusterInput) (*gqlmodel.AddClusterPayload, error)
-	UpdateCluster(ctx context.Context, input gqlmodel.UpdateClusterInput) (*gqlmodel.UpdateClusterPayload, error)
-	RemoveCluster(ctx context.Context, input gqlmodel.RemoveClusterInput) (*gqlmodel.RemoveClusterPayload, error)
-	UpdateDatasetSchema(ctx context.Context, input gqlmodel.UpdateDatasetSchemaInput) (*gqlmodel.UpdateDatasetSchemaPayload, error)
-	SyncDataset(ctx context.Context, input gqlmodel.SyncDatasetInput) (*gqlmodel.SyncDatasetPayload, error)
-	AddDynamicDatasetSchema(ctx context.Context, input gqlmodel.AddDynamicDatasetSchemaInput) (*gqlmodel.AddDynamicDatasetSchemaPayload, error)
-	AddDynamicDataset(ctx context.Context, input gqlmodel.AddDynamicDatasetInput) (*gqlmodel.AddDynamicDatasetPayload, error)
-	RemoveDatasetSchema(ctx context.Context, input gqlmodel.RemoveDatasetSchemaInput) (*gqlmodel.RemoveDatasetSchemaPayload, error)
-	ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error)
-	ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error)
-	AddDatasetSchema(ctx context.Context, input gqlmodel.AddDatasetSchemaInput) (*gqlmodel.AddDatasetSchemaPayload, error)
 	UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error)
 	UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error)
@@ -1236,6 +1221,19 @@ type MutationResolver interface {
 	MovePropertyItem(ctx context.Context, input gqlmodel.MovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
 	RemovePropertyItem(ctx context.Context, input gqlmodel.RemovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
 	UpdatePropertyItems(ctx context.Context, input gqlmodel.UpdatePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
+	CreateTagItem(ctx context.Context, input gqlmodel.CreateTagItemInput) (*gqlmodel.CreateTagItemPayload, error)
+	CreateTagGroup(ctx context.Context, input gqlmodel.CreateTagGroupInput) (*gqlmodel.CreateTagGroupPayload, error)
+	AttachTagItemToGroup(ctx context.Context, input gqlmodel.AttachTagItemToGroupInput) (*gqlmodel.AttachTagItemToGroupPayload, error)
+	DetachTagItemFromGroup(ctx context.Context, input gqlmodel.DetachTagItemFromGroupInput) (*gqlmodel.DetachTagItemFromGroupPayload, error)
+	UpdateTag(ctx context.Context, input gqlmodel.UpdateTagInput) (*gqlmodel.UpdateTagPayload, error)
+	RemoveTag(ctx context.Context, input gqlmodel.RemoveTagInput) (*gqlmodel.RemoveTagPayload, error)
+	AddCluster(ctx context.Context, input gqlmodel.AddClusterInput) (*gqlmodel.AddClusterPayload, error)
+	UpdateCluster(ctx context.Context, input gqlmodel.UpdateClusterInput) (*gqlmodel.UpdateClusterPayload, error)
+	RemoveCluster(ctx context.Context, input gqlmodel.RemoveClusterInput) (*gqlmodel.RemoveClusterPayload, error)
+	AddWidget(ctx context.Context, input gqlmodel.AddWidgetInput) (*gqlmodel.AddWidgetPayload, error)
+	UpdateWidget(ctx context.Context, input gqlmodel.UpdateWidgetInput) (*gqlmodel.UpdateWidgetPayload, error)
+	UpdateWidgetAlignSystem(ctx context.Context, input gqlmodel.UpdateWidgetAlignSystemInput) (*gqlmodel.UpdateWidgetAlignSystemPayload, error)
+	RemoveWidget(ctx context.Context, input gqlmodel.RemoveWidgetInput) (*gqlmodel.RemoveWidgetPayload, error)
 	AddLayerItem(ctx context.Context, input gqlmodel.AddLayerItemInput) (*gqlmodel.AddLayerItemPayload, error)
 	AddLayerGroup(ctx context.Context, input gqlmodel.AddLayerGroupInput) (*gqlmodel.AddLayerGroupPayload, error)
 	RemoveLayer(ctx context.Context, input gqlmodel.RemoveLayerInput) (*gqlmodel.RemoveLayerPayload, error)
@@ -1249,12 +1247,14 @@ type MutationResolver interface {
 	ImportLayer(ctx context.Context, input gqlmodel.ImportLayerInput) (*gqlmodel.ImportLayerPayload, error)
 	AttachTagToLayer(ctx context.Context, input gqlmodel.AttachTagToLayerInput) (*gqlmodel.AttachTagToLayerPayload, error)
 	DetachTagFromLayer(ctx context.Context, input gqlmodel.DetachTagFromLayerInput) (*gqlmodel.DetachTagFromLayerPayload, error)
-	CreateTagItem(ctx context.Context, input gqlmodel.CreateTagItemInput) (*gqlmodel.CreateTagItemPayload, error)
-	CreateTagGroup(ctx context.Context, input gqlmodel.CreateTagGroupInput) (*gqlmodel.CreateTagGroupPayload, error)
-	AttachTagItemToGroup(ctx context.Context, input gqlmodel.AttachTagItemToGroupInput) (*gqlmodel.AttachTagItemToGroupPayload, error)
-	DetachTagItemFromGroup(ctx context.Context, input gqlmodel.DetachTagItemFromGroupInput) (*gqlmodel.DetachTagItemFromGroupPayload, error)
-	UpdateTag(ctx context.Context, input gqlmodel.UpdateTagInput) (*gqlmodel.UpdateTagPayload, error)
-	RemoveTag(ctx context.Context, input gqlmodel.RemoveTagInput) (*gqlmodel.RemoveTagPayload, error)
+	UpdateDatasetSchema(ctx context.Context, input gqlmodel.UpdateDatasetSchemaInput) (*gqlmodel.UpdateDatasetSchemaPayload, error)
+	SyncDataset(ctx context.Context, input gqlmodel.SyncDatasetInput) (*gqlmodel.SyncDatasetPayload, error)
+	AddDynamicDatasetSchema(ctx context.Context, input gqlmodel.AddDynamicDatasetSchemaInput) (*gqlmodel.AddDynamicDatasetSchemaPayload, error)
+	AddDynamicDataset(ctx context.Context, input gqlmodel.AddDynamicDatasetInput) (*gqlmodel.AddDynamicDatasetPayload, error)
+	RemoveDatasetSchema(ctx context.Context, input gqlmodel.RemoveDatasetSchemaInput) (*gqlmodel.RemoveDatasetSchemaPayload, error)
+	ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error)
+	ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error)
+	AddDatasetSchema(ctx context.Context, input gqlmodel.AddDatasetSchemaInput) (*gqlmodel.AddDatasetSchemaPayload, error)
 }
 type PluginResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Plugin) (*gqlmodel.Scene, error)
@@ -1315,22 +1315,22 @@ type PropertySchemaGroupResolver interface {
 	TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaGroup, lang *language.Tag) (string, error)
 }
 type QueryResolver interface {
-	Me(ctx context.Context) (*gqlmodel.Me, error)
 	Node(ctx context.Context, id gqlmodel.ID, typeArg gqlmodel.NodeType) (gqlmodel.Node, error)
 	Nodes(ctx context.Context, id []gqlmodel.ID, typeArg gqlmodel.NodeType) ([]gqlmodel.Node, error)
-	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
-	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
+	Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
+	Me(ctx context.Context) (*gqlmodel.Me, error)
+	SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error)
+	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
+	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
+	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
+	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
+	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Layer(ctx context.Context, id gqlmodel.ID) (gqlmodel.Layer, error)
-	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
-	Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
 	DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 	Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error)
 	DynamicDatasetSchemas(ctx context.Context, sceneID gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error)
-	SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error)
-	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
 }
 type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
@@ -6432,10 +6432,14 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../../schema.graphql", Input: `# Built-in
-
-scalar Upload
+	{Name: "../../../gql/_shared.graphql", Input: `scalar Upload
 scalar Any
+scalar DateTime
+scalar URL
+scalar Lang
+scalar FileSize
+scalar TranslatedString
+scalar Cursor
 
 directive @goModel(
   model: String
@@ -6448,8 +6452,6 @@ directive @goField(
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
 # Meta Type
-
-scalar Cursor
 
 interface Node {
   id: ID!
@@ -6470,6 +6472,8 @@ enum NodeType {
   LAYER_ITEM
 }
 
+# Pagination
+
 type PageInfo {
   startCursor: Cursor
   endCursor: Cursor
@@ -6477,13 +6481,14 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
-# Basic types
+input Pagination{
+  first: Int
+  last: Int
+  after: Cursor
+  before: Cursor
+}
 
-scalar DateTime
-scalar URL
-scalar Lang
-scalar FileSize
-scalar TranslatedString
+# Basic types
 
 type LatLng {
   lat: Float!
@@ -6506,6 +6511,13 @@ type Camera {
   fov: Float!
 }
 
+type Rect {
+  west: Float!
+  south: Float!
+  east: Float!
+  north: Float!
+}
+
 type Typography {
   fontFamily: String
   fontWeight: String
@@ -6517,20 +6529,6 @@ type Typography {
   underline: Boolean
 }
 
-type Rect {
-  west: Float!
-  south: Float!
-  east: Float!
-  north: Float!
-}
-
-input Pagination{
-  first: Int
-  last: Int
-  after: Cursor
-  before: Cursor
-}
-
 enum TextAlign {
   LEFT
   CENTER
@@ -6539,36 +6537,21 @@ enum TextAlign {
   JUSTIFY_ALL
 }
 
-enum ValueType {
-  BOOL
-  NUMBER
-  STRING
-  REF
-  URL
-  LATLNG
-  LATLNGHEIGHT
-  CAMERA
-  TYPOGRAPHY
-  COORDINATES
-  POLYGON
-  RECT
+# Query & Mutation
+
+type Query {
+  node(id: ID!, type: NodeType!): Node
+  nodes(id: [ID!]!, type: NodeType!): [Node]!
 }
 
-enum ListOperation {
-  ADD
-  MOVE
-  REMOVE
+type Mutation
+
+schema {
+  query: Query
+  mutation: Mutation
 }
-
-enum Theme {
-  DEFAULT
-  LIGHT
-  DARK
-}
-
-# Asset
-
-type Asset implements Node {
+`, BuiltIn: false},
+	{Name: "../../../gql/asset.graphql", Input: `type Asset implements Node {
   id: ID!
   createdAt: DateTime!
   teamId: ID!
@@ -6576,7 +6559,7 @@ type Asset implements Node {
   size: FileSize!
   url: String!
   contentType: String!
-  team: Team @goField(forceResolver: true)
+  team: Team
 }
 
 enum AssetSortType {
@@ -6585,9 +6568,50 @@ enum AssetSortType {
   NAME
 }
 
-# User
+# InputType
 
-type User implements Node {
+input CreateAssetInput {
+  teamId: ID!
+  file: Upload!
+}
+
+input RemoveAssetInput {
+  assetId: ID!
+}
+
+# Payload
+
+type CreateAssetPayload {
+  asset: Asset!
+}
+
+type RemoveAssetPayload {
+  assetId: ID!
+}
+
+# Connection
+
+type AssetConnection {
+  edges: [AssetEdge!]!
+  nodes: [Asset]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AssetEdge {
+  cursor: Cursor!
+  node: Asset
+}
+
+extend type Query{
+  assets(teamId: ID!, keyword: String, sort: AssetSortType, pagination: Pagination): AssetConnection!
+}
+
+extend type Mutation {
+  createAsset(input: CreateAssetInput!): CreateAssetPayload
+  removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/user.graphql", Input: `type User implements Node {
   id: ID!
   name: String!
   email: String!
@@ -6601,703 +6625,17 @@ type Me {
   theme: Theme!
   myTeamId: ID!
   auths: [String!]!
-  teams: [Team!]! @goField(forceResolver: true)
-  myTeam: Team! @goField(forceResolver: true)
+  teams: [Team!]!
+  myTeam: Team!
 }
 
-type ProjectAliasAvailability {
-  alias: String!
-  available: Boolean!
-}
-
-type Team implements Node {
-  id: ID!
-  name: String!
-  members: [TeamMember!]!
-  personal: Boolean!
-  policyId: ID
-  policy: Policy
-  assets(
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): AssetConnection! @goField(forceResolver: true)
-  projects(
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection! @goField(forceResolver: true)
-}
-
-type TeamMember {
-  userId: ID!
-  role: Role!
-  user: User @goField(forceResolver: true)
-}
-
-type Policy {
-  id: ID!
-  name: String!
-	projectCount: Int
-	memberCount: Int
-	publishedProjectCount: Int
-	layerCount: Int
-	assetStorageSize: FileSize
-  datasetSchemaCount: Int
-  datasetCount: Int
-}
-
-enum Role {
-  # a role who can read project
-  READER
-  # a role who can read and write project
-  WRITER
-  # a eole who can have full controll of project
-  OWNER
-}
-
-# Project
-
-type Project implements Node {
-  id: ID!
-  isArchived: Boolean!
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  publishedAt: DateTime
-  name: String!
-  description: String!
-  alias: String!
-  publicTitle: String!
-  publicDescription: String!
-  publicImage: String!
-  publicNoIndex: Boolean!
-  imageUrl: URL
-  teamId: ID!
-  visualizer: Visualizer!
-  publishmentStatus: PublishmentStatus!
-  team: Team @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  coreSupport: Boolean!
-}
-
-enum Visualizer {
-  CESIUM
-}
-
-enum PublishmentStatus {
-  PUBLIC
-  LIMITED
-  PRIVATE
-}
-
-# Plugin
-
-type Plugin {
-  id: ID!
-  sceneId: ID
-  name: String!
-  version: String!
-  description: String!
-  author: String!
-  repositoryUrl: String!
-  propertySchemaId: ID
-  extensions: [PluginExtension!]!
-  scenePlugin(sceneId: ID): ScenePlugin
-  allTranslatedDescription: TranslatedString
-  allTranslatedName: TranslatedString
-  scene: Scene @goField(forceResolver: true)
-  translatedName(lang: Lang): String! @goField(forceResolver: true)
-  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
-  propertySchema: PropertySchema @goField(forceResolver: true)
-}
-
-enum WidgetAreaAlign {
-  START
-  CENTERED
-  END
-}
-
-enum WidgetZoneType {
-  INNER
-  OUTER
-}
-
-enum WidgetSectionType {
-  LEFT
-  CENTER
-  RIGHT
-}
-
-enum WidgetAreaType {
-  TOP
-  MIDDLE
-  BOTTOM
-}
-
-type WidgetLocation {
-  zone: WidgetZoneType!
-  section: WidgetSectionType!
-  area: WidgetAreaType!
-}
-
-type WidgetExtendable {
-  vertically: Boolean!
-  horizontally: Boolean!
-}
-
-type WidgetLayout {
-  extendable: WidgetExtendable!
-  extended: Boolean!
-  floating: Boolean!
-  defaultLocation: WidgetLocation
-}
-
-enum PluginExtensionType {
-  PRIMITIVE
-  WIDGET
-  BLOCK
-  VISUALIZER
-  INFOBOX
-}
-
-type PluginExtension {
-  extensionId: ID!
-  pluginId: ID!
-  type: PluginExtensionType!
-  name: String!
-  description: String!
-  icon: String!
-  singleOnly: Boolean
-  widgetLayout: WidgetLayout
-  visualizer: Visualizer
-  propertySchemaId: ID!
-  allTranslatedName: TranslatedString
-  allTranslatedDescription: TranslatedString
-  plugin: Plugin @goField(forceResolver: true)
-  sceneWidget(sceneId: ID!): SceneWidget @goField(forceResolver: true)
-  propertySchema: PropertySchema @goField(forceResolver: true)
-  translatedName(lang: Lang): String! @goField(forceResolver: true)
-  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
-}
-
-# Scene
-
-type Scene implements Node {
-  id: ID!
-  projectId: ID!
-  teamId: ID!
-  propertyId: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  rootLayerId: ID!
-  widgets: [SceneWidget!]!
-  plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
-  dynamicDatasetSchemas: [DatasetSchema!]!
-  project: Project @goField(forceResolver: true)
-  team: Team @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-  rootLayer: LayerGroup @goField(forceResolver: true)
-  datasetSchemas(
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): DatasetSchemaConnection! @goField(forceResolver: true)
-  tagIds: [ID!]!
-  tags: [Tag!]! @goField(forceResolver: true)
-  clusters: [Cluster!]!
-}
-
-type SceneWidget {
-  id: ID!
-  pluginId: ID!
-  extensionId: ID!
-  propertyId: ID!
-  enabled: Boolean!
-  extended: Boolean!
-  plugin: Plugin @goField(forceResolver: true)
-  extension: PluginExtension @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-}
-
-type ScenePlugin {
-  pluginId: ID!
-  propertyId: ID
-  plugin: Plugin @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-}
-
-type WidgetAlignSystem {
-  inner: WidgetZone
-  outer: WidgetZone
-}
-
-type WidgetZone {
-  left: WidgetSection
-  center: WidgetSection
-  right: WidgetSection
-}
-
-type WidgetSection {
-  top: WidgetArea
-  middle: WidgetArea
-  bottom: WidgetArea
-}
-
-type WidgetArea {
-  widgetIds: [ID!]!
-  align: WidgetAreaAlign!
-  padding: WidgetAreaPadding
-  gap: Int
-  centered: Boolean!
-  background: String
-}
-
-type WidgetAreaPadding {
-  top: Int!
-  bottom: Int!
-  left: Int!
-  right: Int!
-}
-
-# Property
-
-type PropertySchema {
-  id: ID!
-  groups: [PropertySchemaGroup!]!
-  linkableFields: PropertyLinkableFields!
-}
-
-type PropertyLinkableFields {
-  schemaId: ID!
-  latlng: ID
-  url: ID
-  latlngField: PropertySchemaField @goField(forceResolver: true)
-  urlField: PropertySchemaField @goField(forceResolver: true)
-  schema: PropertySchema @goField(forceResolver: true)
-}
-
-type PropertySchemaGroup {
-  schemaGroupId: ID!
-  schemaId: ID!
-  fields: [PropertySchemaField!]!
-  isList: Boolean!
-  isAvailableIf: PropertyCondition
-  title: String
-  allTranslatedTitle: TranslatedString
-  representativeFieldId: ID
-  representativeField: PropertySchemaField
-  schema: PropertySchema @goField(forceResolver: true)
-  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
-}
-
-type PropertySchemaField {
-  fieldId: ID!
-  type: ValueType!
-  title: String!
-  description: String!
-  prefix: String
-  suffix: String
-  defaultValue: Any
-  ui: PropertySchemaFieldUI
-  min: Float
-  max: Float
-  choices: [PropertySchemaFieldChoice!]
-  isAvailableIf: PropertyCondition
-  allTranslatedTitle: TranslatedString
-  allTranslatedDescription: TranslatedString
-  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
-  translatedDescription(lang: Lang): String! @goField(forceResolver: true)
-}
-
-enum PropertySchemaFieldUI {
-  LAYER
-  MULTILINE
-  SELECTION
-  COLOR
-  RANGE
-  SLIDER
-  IMAGE
-  VIDEO
-  FILE
-  CAMERA_POSE
-  DATETIME
-}
-
-type PropertySchemaFieldChoice {
-  key: String!
-  title: String!
-  icon: String
-  allTranslatedTitle: TranslatedString
-  translatedTitle(lang: Lang): String! @goField(forceResolver: true)
-}
-
-type PropertyCondition {
-  fieldId: ID!
-  type: ValueType!
-  value: Any
-}
-
-type Property implements Node {
-  id: ID!
-  schemaId: ID!
-  items: [PropertyItem!]!
-  schema: PropertySchema @goField(forceResolver: true)
-  layer: Layer @goField(forceResolver: true)
-  merged: MergedProperty @goField(forceResolver: true)
-}
-
-union PropertyItem = PropertyGroup | PropertyGroupList
-
-type PropertyGroup {
-  id: ID!
-  schemaId: ID!
-  schemaGroupId: ID!
-  fields: [PropertyField!]!
-  schema: PropertySchema @goField(forceResolver: true)
-  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
-}
-
-type PropertyGroupList {
-  id: ID!
-  schemaId: ID!
-  schemaGroupId: ID!
-  groups: [PropertyGroup!]!
-  schema: PropertySchema @goField(forceResolver: true)
-  schemaGroup: PropertySchemaGroup @goField(forceResolver: true)
-}
-
-type PropertyField {
-  id: String!
-  parentId: ID!
-  schemaId: ID!
-  fieldId: ID!
-  links: [PropertyFieldLink!]
-  type: ValueType!
-  value: Any
-  parent: Property @goField(forceResolver: true)
-  schema: PropertySchema @goField(forceResolver: true)
-  field: PropertySchemaField @goField(forceResolver: true)
-  actualValue: Any @goField(forceResolver: true)
-}
-
-type PropertyFieldLink {
-  datasetId: ID
-  datasetSchemaId: ID!
-  datasetSchemaFieldId: ID!
-  dataset: Dataset @goField(forceResolver: true)
-  datasetField: DatasetField @goField(forceResolver: true)
-  datasetSchema: DatasetSchema @goField(forceResolver: true)
-  datasetSchemaField: DatasetSchemaField @goField(forceResolver: true)
-}
-
-type MergedProperty {
-  originalId: ID
-  parentId: ID
-  # note: schemaId will not always be set
-  schemaId: ID
-  linkedDatasetId: ID
-  original: Property @goField(forceResolver: true)
-  parent: Property @goField(forceResolver: true)
-  schema: PropertySchema @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-  groups: [MergedPropertyGroup!]! @goField(forceResolver: true)
-}
-
-type MergedPropertyGroup {
-  originalPropertyId: ID
-  parentPropertyId: ID
-  originalId: ID
-  parentId: ID
-  schemaGroupId: ID!
-  # note: schemaId will not always be set
-  schemaId: ID
-  linkedDatasetId: ID
-  fields: [MergedPropertyField!]!
-  groups: [MergedPropertyGroup!]!
-  originalProperty: Property @goField(forceResolver: true)
-  parentProperty: Property @goField(forceResolver: true)
-  original: PropertyGroup @goField(forceResolver: true)
-  parent: PropertyGroup @goField(forceResolver: true)
-  schema: PropertySchema @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-}
-
-type MergedPropertyField {
-  schemaId: ID!
-  fieldId: ID!
-  value: Any
-  type: ValueType!
-  links: [PropertyFieldLink!]
-  overridden: Boolean!
-  schema: PropertySchema @goField(forceResolver: true)
-  field: PropertySchemaField @goField(forceResolver: true)
-  actualValue: Any @goField(forceResolver: true)
-}
-
-# Dataset
-
-type DatasetSchema implements Node {
-  id: ID!
-  source: String!
-  name: String!
-  sceneId: ID!
-  fields: [DatasetSchemaField!]!
-  totalCount: Int!
-  representativeFieldId: ID
-  dynamic: Boolean
-  datasets(
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): DatasetConnection! @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  representativeField: DatasetSchemaField @goField(forceResolver: true)
-}
-
-type DatasetSchemaField implements Node {
-  id: ID!
-  source: String!
-  name: String!
-  type: ValueType!
-  schemaId: ID!
-  refId: ID
-  schema: DatasetSchema @goField(forceResolver: true)
-  ref: DatasetSchema @goField(forceResolver: true)
-}
-
-type Dataset implements Node {
-  id: ID!
-  source: String!
-  schemaId: ID!
-  fields: [DatasetField!]!
-  schema: DatasetSchema @goField(forceResolver: true)
-  name: String @goField(forceResolver: true)
-}
-
-type DatasetField {
-  fieldId: ID!
-  schemaId: ID!
-  source: String!
-  type: ValueType!
-  value: Any
-  schema: DatasetSchema @goField(forceResolver: true)
-  field: DatasetSchemaField @goField(forceResolver: true)
-  valueRef: Dataset @goField(forceResolver: true)
-}
-
-# Layer
-
-interface Layer {
-  id: ID!
-  sceneId: ID!
-  name: String!
-  isVisible: Boolean!
-  propertyId: ID
-  pluginId: ID
-  extensionId: ID
-  infobox: Infobox
-  # parentId will not be always set
-  parentId: ID
-  parent: LayerGroup
-  property: Property
-  plugin: Plugin
-  extension: PluginExtension
-  scenePlugin: ScenePlugin
-  tags: [LayerTag!]!
-}
-
-enum LayerEncodingFormat {
-  KML
-  CZML
-  GEOJSON
-  SHAPE
-  REEARTH
-}
-
-type LayerItem implements Layer {
-  id: ID!
-  sceneId: ID!
-  name: String!
-  isVisible: Boolean!
-  propertyId: ID
-  pluginId: ID
-  extensionId: ID
-  infobox: Infobox
-  # parentId will not be always set
-  parentId: ID
-  linkedDatasetId: ID
-  tags: [LayerTag!]!
-  parent: LayerGroup @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-  plugin: Plugin @goField(forceResolver: true)
-  extension: PluginExtension @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-  merged: MergedLayer @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  scenePlugin: ScenePlugin @goField(forceResolver: true)
-}
-
-type LayerGroup implements Layer {
-  id: ID!
-  sceneId: ID!
-  name: String!
-  isVisible: Boolean!
-  propertyId: ID
-  pluginId: ID
-  extensionId: ID
-  infobox: Infobox
-  # parentId will not be always set
-  parentId: ID
-  linkedDatasetSchemaId: ID
-  root: Boolean!
-  layerIds: [ID!]!
-  tags: [LayerTag!]!
-  parent: LayerGroup @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-  plugin: Plugin @goField(forceResolver: true)
-  extension: PluginExtension @goField(forceResolver: true)
-  linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
-  layers: [Layer]! @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  scenePlugin: ScenePlugin @goField(forceResolver: true)
-}
-
-type Infobox {
-  sceneId: ID!
-  layerId: ID!
-  propertyId: ID!
-  fields: [InfoboxField!]!
-  linkedDatasetId: ID
-  layer: Layer! @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-  merged: MergedInfobox @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-}
-
-type InfoboxField {
-  id: ID!
-  sceneId: ID!
-  layerId: ID!
-  propertyId: ID!
-  pluginId: ID!
-  extensionId: ID!
-  linkedDatasetId: ID
-  layer: Layer! @goField(forceResolver: true)
-  infobox: Infobox! @goField(forceResolver: true)
-  property: Property @goField(forceResolver: true)
-  plugin: Plugin @goField(forceResolver: true)
-  extension: PluginExtension @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-  merged: MergedInfoboxField @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  scenePlugin: ScenePlugin @goField(forceResolver: true)
-}
-
-interface LayerTag {
-  tagId: ID!
-  tag: Tag
-}
-
-type LayerTagItem implements LayerTag {
-  tagId: ID!
-  tag: Tag @goField(forceResolver: true)
-}
-
-type LayerTagGroup implements LayerTag {
-  tagId: ID!
-  children: [LayerTagItem!]!
-  tag: Tag @goField(forceResolver: true)
-}
-
-type MergedLayer {
-  originalId: ID!
-  parentId: ID
-  sceneID: ID!
-  property: MergedProperty
-  infobox: MergedInfobox
-  original: LayerItem @goField(forceResolver: true)
-  parent: LayerGroup @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-}
-
-type MergedInfobox {
-  sceneID: ID!
-  property: MergedProperty
-  fields: [MergedInfoboxField!]!
-  scene: Scene @goField(forceResolver: true)
-}
-
-type MergedInfoboxField {
-  originalId: ID!
-  sceneID: ID!
-  pluginId: ID!
-  extensionId: ID!
-  property: MergedProperty
-  plugin: Plugin @goField(forceResolver: true)
-  extension: PluginExtension @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  scenePlugin: ScenePlugin @goField(forceResolver: true)
-}
-
-interface Tag {
-  id: ID!
-  sceneId: ID!
-  label: String!
-  layers: [Layer!]! @goField(forceResolver: true)
-}
-
-type TagItem implements Tag {
-  id: ID!
-  sceneId: ID!
-  label: String!
-  parentId: ID
-  linkedDatasetID: ID
-  linkedDatasetSchemaID: ID
-  linkedDatasetFieldID: ID
-  linkedDatasetSchema: DatasetSchema @goField(forceResolver: true)
-  linkedDataset: Dataset @goField(forceResolver: true)
-  linkedDatasetField: DatasetField @goField(forceResolver: true)
-  parent: TagGroup @goField(forceResolver: true)
-  layers: [Layer!]! @goField(forceResolver: true)
-}
-
-type TagGroup implements Tag {
-  id: ID!
-  sceneId: ID!
-  label: String!
-  tagIds: [ID!]
-  tags: [TagItem!]! @goField(forceResolver: true)
-  scene: Scene @goField(forceResolver: true)
-  layers: [Layer!]! @goField(forceResolver: true)
-}
-
-type Cluster {
-  id: ID!
-  name: String!
-  propertyId: ID!
-  property: Property @goField(forceResolver: true)
+enum Theme {
+  DEFAULT
+  LIGHT
+  DARK
 }
 
 # InputType
-
-input CreateAssetInput {
-  teamId: ID!
-  file: Upload!
-}
-
-input RemoveAssetInput {
-  assetId: ID!
-}
 
 input SignupInput {
   lang: Lang
@@ -7323,6 +6661,73 @@ input RemoveMyAuthInput {
 input DeleteMeInput {
   userId: ID!
 }
+
+# Payload
+
+
+type UpdateMePayload {
+  me: Me!
+}
+
+type SignupPayload {
+  user: User!
+  team: Team!
+}
+
+type DeleteMePayload {
+  userId: ID!
+}
+
+extend type Query{
+  me: Me
+  searchUser(nameOrEmail: String!): User
+}
+
+extend type Mutation {
+  signup(input: SignupInput!): SignupPayload
+  updateMe(input: UpdateMeInput!): UpdateMePayload
+  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
+  deleteMe(input: DeleteMeInput!): DeleteMePayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/team.graphql", Input: `type Team implements Node {
+  id: ID!
+  name: String!
+  members: [TeamMember!]!
+  personal: Boolean!
+  policyId: ID
+  policy: Policy
+  assets(first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+}
+
+type TeamMember {
+  userId: ID!
+  role: Role!
+  user: User
+}
+
+type Policy {
+  id: ID!
+  name: String!
+  projectCount: Int
+  memberCount: Int
+  publishedProjectCount: Int
+  layerCount: Int
+  assetStorageSize: FileSize
+  datasetSchemaCount: Int
+  datasetCount: Int
+}
+
+enum Role {
+  # a role who can read project
+  READER
+  # a role who can read and write project
+  WRITER
+  # a eole who can have full controll of project
+  OWNER
+}
+
+# InputType
 
 input CreateTeamInput {
   name: String!
@@ -7354,6 +6759,84 @@ input DeleteTeamInput {
   teamId: ID!
 }
 
+# Payload
+
+type CreateTeamPayload {
+  team: Team!
+}
+
+type UpdateTeamPayload {
+  team: Team!
+}
+
+type AddMemberToTeamPayload {
+  team: Team!
+}
+
+type RemoveMemberFromTeamPayload {
+  team: Team!
+}
+
+type UpdateMemberOfTeamPayload {
+  team: Team!
+}
+
+type DeleteTeamPayload {
+  teamId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  createTeam(input: CreateTeamInput!): CreateTeamPayload
+  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
+  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
+  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
+  removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
+  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/project.graphql", Input: `type Project implements Node {
+  id: ID!
+  isArchived: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+  name: String!
+  description: String!
+  alias: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+  imageUrl: URL
+  teamId: ID!
+  visualizer: Visualizer!
+  publishmentStatus: PublishmentStatus!
+  team: Team
+  scene: Scene
+  coreSupport: Boolean!
+}
+
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+enum Visualizer {
+  CESIUM
+}
+
+enum PublishmentStatus {
+  PUBLIC
+  LIMITED
+  PRIVATE
+}
+
+# InputType
+
 input CreateProjectInput {
   teamId: ID!
   visualizer: Visualizer!
@@ -7383,16 +6866,6 @@ input UpdateProjectInput {
   deletePublicImage: Boolean
 }
 
-input UploadPluginInput {
-  sceneId: ID!
-  file: Upload
-  url: URL
-}
-
-input CreateSceneInput {
-  projectId: ID!
-}
-
 input PublishProjectInput {
   projectId: ID!
   alias: String
@@ -7403,48 +6876,177 @@ input DeleteProjectInput {
   projectId: ID!
 }
 
-input WidgetLocationInput {
-  zone: WidgetZoneType!
-  section: WidgetSectionType!
-  area: WidgetAreaType!
+# Payload
+
+type ProjectPayload {
+  project: Project!
 }
 
-input AddWidgetInput {
-  sceneId: ID!
+type DeleteProjectPayload {
+  projectId: ID!
+}
+
+# Connection
+
+type ProjectConnection {
+  edges: [ProjectEdge!]!
+  nodes: [Project]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProjectEdge {
+  cursor: Cursor!
+  node: Project
+}
+
+extend type Query{
+  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+}
+
+extend type Mutation {
+  createProject(input: CreateProjectInput!): ProjectPayload
+  updateProject(input: UpdateProjectInput!): ProjectPayload
+  publishProject(input: PublishProjectInput!): ProjectPayload
+  deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/scene.graphql", Input: `type Scene implements Node {
+  id: ID!
+  projectId: ID!
+  teamId: ID!
+  propertyId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  rootLayerId: ID!
+  widgets: [SceneWidget!]!
+  plugins: [ScenePlugin!]!
+  widgetAlignSystem: WidgetAlignSystem
+  dynamicDatasetSchemas: [DatasetSchema!]!
+  project: Project
+  team: Team
+  property: Property
+  rootLayer: LayerGroup
+  datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
+  tagIds: [ID!]!
+  tags: [Tag!]!
+  clusters: [Cluster!]!
+}
+
+type SceneWidget {
+  id: ID!
   pluginId: ID!
   extensionId: ID!
+  propertyId: ID!
+  enabled: Boolean!
+  extended: Boolean!
+  plugin: Plugin
+  extension: PluginExtension
+  property: Property
 }
 
-input UpdateWidgetInput {
+type ScenePlugin {
+  pluginId: ID!
+  propertyId: ID
+  plugin: Plugin
+  property: Property
+}
+
+# InputType
+
+input CreateSceneInput {
+  projectId: ID!
+}
+
+# Payload
+
+type CreateScenePayload {
+  scene: Scene!
+}
+
+extend type Query{
+  scene(projectId: ID!): Scene
+}
+
+extend type Mutation {
+  createScene(input: CreateSceneInput!): CreateScenePayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
+  id: ID!
+  sceneId: ID
+  name: String!
+  version: String!
+  description: String!
+  author: String!
+  repositoryUrl: String!
+  propertySchemaId: ID
+  extensions: [PluginExtension!]!
+  scenePlugin(sceneId: ID): ScenePlugin
+  allTranslatedDescription: TranslatedString
+  allTranslatedName: TranslatedString
+  scene: Scene
+  translatedName(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+  propertySchema: PropertySchema
+}
+
+enum PluginExtensionType {
+  PRIMITIVE
+  WIDGET
+  BLOCK
+  VISUALIZER
+  INFOBOX
+}
+
+type PluginExtension {
+  extensionId: ID!
+  pluginId: ID!
+  type: PluginExtensionType!
+  name: String!
+  description: String!
+  icon: String!
+  singleOnly: Boolean
+  widgetLayout: WidgetLayout
+  visualizer: Visualizer
+  propertySchemaId: ID!
+  allTranslatedName: TranslatedString
+  allTranslatedDescription: TranslatedString
+  plugin: Plugin
+  sceneWidget(sceneId: ID!): SceneWidget
+  propertySchema: PropertySchema
+  translatedName(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+}
+
+# Payload
+
+type UploadPluginPayload {
+  plugin: Plugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type InstallPluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type UninstallPluginPayload {
+  pluginId: ID!
+  scene: Scene!
+}
+
+type UpgradePluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+# InputType
+
+input UploadPluginInput {
   sceneId: ID!
-  widgetId: ID!
-  enabled: Boolean
-  location: WidgetLocationInput
-  extended: Boolean
-  index: Int
-}
-
-input UpdateWidgetAlignSystemInput {
-  sceneId: ID!
-  location: WidgetLocationInput!
-  align: WidgetAreaAlign
-  padding: WidgetAreaPaddingInput
-  gap: Int
-  centered: Boolean
-  background: String
-}
-
-input WidgetAreaPaddingInput {
-  top: Int!
-  bottom: Int!
-  left: Int!
-  right: Int!
-}
-
-
-input RemoveWidgetInput {
-  sceneId: ID!
-  widgetId: ID!
+  file: Upload
+  url: URL
 }
 
 input InstallPluginInput {
@@ -7463,10 +7065,212 @@ input UpgradePluginInput {
   toPluginId: ID!
 }
 
-input SyncDatasetInput {
-  sceneId: ID!
-  url: String!
+extend type Query{
+  plugin(id: ID!): Plugin
+  plugins(id: [ID!]!): [Plugin!]!
 }
+
+extend type Mutation {
+  installPlugin(input: InstallPluginInput!): InstallPluginPayload
+  uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
+  upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/property.graphql", Input: `type PropertySchema {
+  id: ID!
+  groups: [PropertySchemaGroup!]!
+  linkableFields: PropertyLinkableFields!
+}
+
+type PropertyLinkableFields {
+  schemaId: ID!
+  latlng: ID
+  url: ID
+  latlngField: PropertySchemaField
+  urlField: PropertySchemaField
+  schema: PropertySchema
+}
+
+type PropertySchemaGroup {
+  schemaGroupId: ID!
+  schemaId: ID!
+  fields: [PropertySchemaField!]!
+  isList: Boolean!
+  isAvailableIf: PropertyCondition
+  title: String
+  allTranslatedTitle: TranslatedString
+  representativeFieldId: ID
+  representativeField: PropertySchemaField
+  schema: PropertySchema
+  translatedTitle(lang: Lang): String!
+}
+
+type PropertySchemaField {
+  fieldId: ID!
+  type: ValueType!
+  title: String!
+  description: String!
+  prefix: String
+  suffix: String
+  defaultValue: Any
+  ui: PropertySchemaFieldUI
+  min: Float
+  max: Float
+  choices: [PropertySchemaFieldChoice!]
+  isAvailableIf: PropertyCondition
+  allTranslatedTitle: TranslatedString
+  allTranslatedDescription: TranslatedString
+  translatedTitle(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+}
+
+enum PropertySchemaFieldUI {
+  LAYER
+  MULTILINE
+  SELECTION
+  COLOR
+  RANGE
+  SLIDER
+  IMAGE
+  VIDEO
+  FILE
+  CAMERA_POSE
+  DATETIME
+}
+
+type PropertySchemaFieldChoice {
+  key: String!
+  title: String!
+  icon: String
+  allTranslatedTitle: TranslatedString
+  translatedTitle(lang: Lang): String!
+}
+
+type PropertyCondition {
+  fieldId: ID!
+  type: ValueType!
+  value: Any
+}
+
+type Property implements Node {
+  id: ID!
+  schemaId: ID!
+  items: [PropertyItem!]!
+  schema: PropertySchema
+  layer: Layer
+  merged: MergedProperty
+}
+
+union PropertyItem = PropertyGroup | PropertyGroupList
+
+type PropertyGroup {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  fields: [PropertyField!]!
+  schema: PropertySchema
+  schemaGroup: PropertySchemaGroup
+}
+
+type PropertyGroupList {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  groups: [PropertyGroup!]!
+  schema: PropertySchema
+  schemaGroup: PropertySchemaGroup
+}
+
+type PropertyField {
+  id: String!
+  parentId: ID!
+  schemaId: ID!
+  fieldId: ID!
+  links: [PropertyFieldLink!]
+  type: ValueType!
+  value: Any
+  parent: Property
+  schema: PropertySchema
+  field: PropertySchemaField
+  actualValue: Any
+}
+
+type PropertyFieldLink {
+  datasetId: ID
+  datasetSchemaId: ID!
+  datasetSchemaFieldId: ID!
+  dataset: Dataset
+  datasetField: DatasetField
+  datasetSchema: DatasetSchema
+  datasetSchemaField: DatasetSchemaField
+}
+
+type MergedProperty {
+  originalId: ID
+  parentId: ID
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  original: Property
+  parent: Property
+  schema: PropertySchema
+  linkedDataset: Dataset
+  groups: [MergedPropertyGroup!]!
+}
+
+type MergedPropertyGroup {
+  originalPropertyId: ID
+  parentPropertyId: ID
+  originalId: ID
+  parentId: ID
+  schemaGroupId: ID!
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  fields: [MergedPropertyField!]!
+  groups: [MergedPropertyGroup!]!
+  originalProperty: Property
+  parentProperty: Property
+  original: PropertyGroup
+  parent: PropertyGroup
+  schema: PropertySchema
+  linkedDataset: Dataset
+}
+
+type MergedPropertyField {
+  schemaId: ID!
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+  links: [PropertyFieldLink!]
+  overridden: Boolean!
+  schema: PropertySchema
+  field: PropertySchemaField
+  actualValue: Any
+}
+
+enum ListOperation {
+  ADD
+  MOVE
+  REMOVE
+}
+
+enum ValueType {
+  BOOL
+  NUMBER
+  STRING
+  REF
+  URL
+  LATLNG
+  LATLNGHEIGHT
+  CAMERA
+  TYPOGRAPHY
+  COORDINATES
+  POLYGON
+  RECT
+}
+
+# InputType
 
 input UpdatePropertyValueInput {
   propertyId: ID!
@@ -7544,6 +7348,512 @@ input UpdatePropertyItemOperationInput {
   nameFieldType: ValueType
 }
 
+# Payload
+
+type PropertyFieldPayload {
+  property: Property!
+  propertyField: PropertyField
+}
+
+type PropertyItemPayload {
+  property: Property!
+  propertyItem: PropertyItem
+}
+
+extend type Query{
+  propertySchema(id: ID!): PropertySchema
+  propertySchemas(id: [ID!]!): [PropertySchema!]!
+}
+
+extend type Mutation {
+  updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
+  removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
+  uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
+  unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
+  addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
+  movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
+  removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
+  updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/tag.graphql", Input: `interface Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  layers: [Layer!]!
+}
+
+type TagItem implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  parentId: ID
+  linkedDatasetID: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetFieldID: ID
+  linkedDatasetSchema: DatasetSchema
+  linkedDataset: Dataset
+  linkedDatasetField: DatasetField
+  parent: TagGroup
+  layers: [Layer!]!
+}
+
+type TagGroup implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  tagIds: [ID!]
+  tags: [TagItem!]!
+  scene: Scene
+  layers: [Layer!]!
+}
+
+# InputType
+
+input CreateTagItemInput {
+  sceneId: ID!
+  label: String!
+  parent: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetID: ID
+  linkedDatasetField: ID
+}
+
+input CreateTagGroupInput {
+  sceneId: ID!
+  label: String!
+  tags: [ID!]
+}
+
+input UpdateTagInput {
+  tagId: ID!
+  sceneId: ID!
+  label: String
+}
+
+input AttachTagItemToGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input DetachTagItemFromGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input AttachTagToLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input DetachTagFromLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input RemoveTagInput {
+  tagID: ID!
+}
+
+# Payload
+
+type CreateTagItemPayload {
+  tag: TagItem!
+  parent: TagGroup
+}
+
+type CreateTagGroupPayload {
+  tag: TagGroup!
+}
+
+type AttachTagItemToGroupPayload {
+  tag: TagGroup!
+}
+
+type DetachTagItemFromGroupPayload {
+  tag: TagGroup!
+}
+
+type UpdateTagPayload {
+  tag: Tag!
+}
+
+type AttachTagToLayerPayload {
+  layer: Layer!
+}
+
+type DetachTagFromLayerPayload {
+  layer: Layer!
+}
+
+type RemoveTagPayload {
+  tagId: ID!
+  updatedLayers: [Layer!]!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  createTagItem(input: CreateTagItemInput!): CreateTagItemPayload
+  createTagGroup(input: CreateTagGroupInput!): CreateTagGroupPayload
+  attachTagItemToGroup(input: AttachTagItemToGroupInput!): AttachTagItemToGroupPayload
+  detachTagItemFromGroup(input: DetachTagItemFromGroupInput!): DetachTagItemFromGroupPayload
+  updateTag(input: UpdateTagInput!): UpdateTagPayload
+  removeTag(input: RemoveTagInput!): RemoveTagPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/cluster.graphql", Input: `type Cluster {
+  id: ID!
+  name: String!
+  propertyId: ID!
+  property: Property
+}
+
+# InputType
+
+input AddClusterInput {
+  sceneId: ID!
+  name: String!
+}
+
+input UpdateClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+  name: String
+  propertyId: ID
+}
+
+input RemoveClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+}
+
+# Payload
+
+type AddClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type UpdateClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type RemoveClusterPayload {
+  scene: Scene!
+  clusterId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  addCluster(input: AddClusterInput!): AddClusterPayload
+  updateCluster(input: UpdateClusterInput!): UpdateClusterPayload
+  removeCluster(input: RemoveClusterInput!): RemoveClusterPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystem {
+  inner: WidgetZone
+  outer: WidgetZone
+}
+
+type WidgetZone {
+  left: WidgetSection
+  center: WidgetSection
+  right: WidgetSection
+}
+
+type WidgetSection {
+  top: WidgetArea
+  middle: WidgetArea
+  bottom: WidgetArea
+}
+
+type WidgetArea {
+  widgetIds: [ID!]!
+  align: WidgetAreaAlign!
+  padding: WidgetAreaPadding
+  gap: Int
+  centered: Boolean!
+  background: String
+}
+
+type WidgetAreaPadding {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
+type WidgetLocation {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+type WidgetExtendable {
+  vertically: Boolean!
+  horizontally: Boolean!
+}
+
+type WidgetLayout {
+  extendable: WidgetExtendable!
+  extended: Boolean!
+  floating: Boolean!
+  defaultLocation: WidgetLocation
+}
+
+enum WidgetAreaAlign {
+  START
+  CENTERED
+  END
+}
+
+enum WidgetZoneType {
+  INNER
+  OUTER
+}
+
+enum WidgetSectionType {
+  LEFT
+  CENTER
+  RIGHT
+}
+
+enum WidgetAreaType {
+  TOP
+  MIDDLE
+  BOTTOM
+}
+
+# InputType
+
+input WidgetLocationInput {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+input AddWidgetInput {
+  sceneId: ID!
+  pluginId: ID!
+  extensionId: ID!
+}
+
+input UpdateWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+  enabled: Boolean
+  location: WidgetLocationInput
+  extended: Boolean
+  index: Int
+}
+
+input UpdateWidgetAlignSystemInput {
+  sceneId: ID!
+  location: WidgetLocationInput!
+  align: WidgetAreaAlign
+  padding: WidgetAreaPaddingInput
+  gap: Int
+  centered: Boolean
+  background: String
+}
+
+input WidgetAreaPaddingInput {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
+input RemoveWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+}
+
+# Payload
+
+type AddWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetAlignSystemPayload {
+  scene: Scene!
+}
+
+type RemoveWidgetPayload {
+  scene: Scene!
+  widgetId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  addWidget(input: AddWidgetInput!): AddWidgetPayload
+  updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
+  removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
+}`, BuiltIn: false},
+	{Name: "../../../gql/layer.graphql", Input: `interface Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  parent: LayerGroup
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+  scenePlugin: ScenePlugin
+  tags: [LayerTag!]!
+}
+
+enum LayerEncodingFormat {
+  KML
+  CZML
+  GEOJSON
+  SHAPE
+  REEARTH
+}
+
+type LayerItem implements Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetId: ID
+  tags: [LayerTag!]!
+  parent: LayerGroup
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+  linkedDataset: Dataset
+  merged: MergedLayer
+  scene: Scene
+  scenePlugin: ScenePlugin
+}
+
+type LayerGroup implements Layer {
+  id: ID!
+  sceneId: ID!
+  name: String!
+  isVisible: Boolean!
+  propertyId: ID
+  pluginId: ID
+  extensionId: ID
+  infobox: Infobox
+  # parentId will not be always set
+  parentId: ID
+  linkedDatasetSchemaId: ID
+  root: Boolean!
+  layerIds: [ID!]!
+  tags: [LayerTag!]!
+  parent: LayerGroup
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+  linkedDatasetSchema: DatasetSchema
+  layers: [Layer]!
+  scene: Scene
+  scenePlugin: ScenePlugin
+}
+
+type Infobox {
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  fields: [InfoboxField!]!
+  linkedDatasetId: ID
+  layer: Layer!
+  property: Property
+  linkedDataset: Dataset
+  merged: MergedInfobox
+  scene: Scene
+}
+
+type InfoboxField {
+  id: ID!
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  linkedDatasetId: ID
+  layer: Layer!
+  infobox: Infobox!
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+  linkedDataset: Dataset
+  merged: MergedInfoboxField
+  scene: Scene
+  scenePlugin: ScenePlugin
+}
+
+interface LayerTag {
+  tagId: ID!
+  tag: Tag
+}
+
+type LayerTagItem implements LayerTag {
+  tagId: ID!
+  tag: Tag
+}
+
+type LayerTagGroup implements LayerTag {
+  tagId: ID!
+  children: [LayerTagItem!]!
+  tag: Tag
+}
+
+type MergedLayer {
+  originalId: ID!
+  parentId: ID
+  sceneID: ID!
+  property: MergedProperty
+  infobox: MergedInfobox
+  original: LayerItem
+  parent: LayerGroup
+  scene: Scene
+}
+
+type MergedInfobox {
+  sceneID: ID!
+  property: MergedProperty
+  fields: [MergedInfoboxField!]!
+  scene: Scene
+}
+
+type MergedInfoboxField {
+  originalId: ID!
+  sceneID: ID!
+  pluginId: ID!
+  extensionId: ID!
+  property: MergedProperty
+  plugin: Plugin
+  extension: PluginExtension
+  scene: Scene
+  scenePlugin: ScenePlugin
+}
+
+# InputType
+
 input AddLayerItemInput {
   parentLayerId: ID!
   pluginId: ID!
@@ -7606,232 +7916,13 @@ input RemoveInfoboxFieldInput {
   infoboxFieldId: ID!
 }
 
-input UpdateDatasetSchemaInput {
-  schemaId: ID!
-  name: String!
-}
-
-input AddDynamicDatasetSchemaInput {
-  sceneId: ID!
-}
-
-input AddDynamicDatasetInput {
-  datasetSchemaId: ID!
-  author: String!
-  content: String!
-  lat: Float
-  lng: Float
-  target: String
-}
-
-input RemoveDatasetSchemaInput {
-  schemaId: ID!
-  force: Boolean
-}
-
 input ImportLayerInput {
   layerId: ID!
   file: Upload!
   format: LayerEncodingFormat!
 }
 
-input ImportDatasetInput {
-  file: Upload!
-  sceneId: ID!
-  datasetSchemaId: ID
-}
-
-input ImportDatasetFromGoogleSheetInput {
-  accessToken: String!
-  fileId: String!
-  sheetName: String!
-  sceneId: ID!
-  datasetSchemaId: ID
-}
-
-input AddDatasetSchemaInput {
-  sceneId: ID!
-  name: String!
-  representativefield: ID
-}
-
-input CreateTagItemInput {
-  sceneId: ID!
-  label: String!
-  parent: ID
-  linkedDatasetSchemaID: ID
-  linkedDatasetID: ID
-  linkedDatasetField: ID
-}
-
-input CreateTagGroupInput {
-  sceneId: ID!
-  label: String!
-  tags: [ID!]
-}
-
-input UpdateTagInput {
-  tagId: ID!
-  sceneId: ID!
-  label: String
-}
-
-input AttachTagItemToGroupInput {
-  itemID: ID!
-  groupID: ID!
-}
-
-input DetachTagItemFromGroupInput {
-  itemID: ID!
-  groupID: ID!
-}
-
-input AttachTagToLayerInput {
-  tagID: ID!
-  layerID: ID!
-}
-
-input DetachTagFromLayerInput {
-  tagID: ID!
-  layerID: ID!
-}
-
-input RemoveTagInput {
-  tagID: ID!
-}
-
-input AddClusterInput {
-  sceneId: ID!
-  name: String!
-}
-
-input UpdateClusterInput {
-  clusterId: ID!
-  sceneId: ID!
-  name: String
-  propertyId: ID
-}
-
-input RemoveClusterInput {
-  clusterId: ID!
-  sceneId: ID!
-}
-
 # Payload
-
-type CreateAssetPayload {
-  asset: Asset!
-}
-
-type RemoveAssetPayload {
-  assetId: ID!
-}
-
-type UpdateMePayload {
-  me: Me!
-}
-
-type SignupPayload {
-  user: User!
-  team: Team!
-}
-
-type DeleteMePayload {
-  userId: ID!
-}
-
-type CreateTeamPayload {
-  team: Team!
-}
-
-type UpdateTeamPayload {
-  team: Team!
-}
-
-type AddMemberToTeamPayload {
-  team: Team!
-}
-
-type RemoveMemberFromTeamPayload {
-  team: Team!
-}
-
-type UpdateMemberOfTeamPayload {
-  team: Team!
-}
-
-type DeleteTeamPayload {
-  teamId: ID!
-}
-
-type ProjectPayload {
-  project: Project!
-}
-
-type DeleteProjectPayload {
-  projectId: ID!
-}
-
-type UploadPluginPayload {
-  plugin: Plugin!
-  scene: Scene!
-  scenePlugin: ScenePlugin!
-}
-
-type CreateScenePayload {
-  scene: Scene!
-}
-
-type AddWidgetPayload {
-  scene: Scene!
-  sceneWidget: SceneWidget!
-}
-
-type UpdateWidgetPayload {
-  scene: Scene!
-  sceneWidget: SceneWidget!
-}
-
-type UpdateWidgetAlignSystemPayload {
-  scene: Scene!
-}
-
-type RemoveWidgetPayload {
-  scene: Scene!
-  widgetId: ID!
-}
-
-type InstallPluginPayload {
-  scene: Scene!
-  scenePlugin: ScenePlugin!
-}
-
-type UninstallPluginPayload {
-  pluginId: ID!
-  scene: Scene!
-}
-
-type UpgradePluginPayload {
-  scene: Scene!
-  scenePlugin: ScenePlugin!
-}
-
-type SyncDatasetPayload {
-  sceneId: ID!
-  url: String!
-  datasetSchema: [DatasetSchema!]!
-  dataset: [Dataset!]!
-}
-
-type PropertyFieldPayload {
-  property: Property!
-  propertyField: PropertyField
-}
-
-type PropertyItemPayload {
-  property: Property!
-  propertyItem: PropertyItem
-}
 
 type AddLayerItemPayload {
   layer: LayerItem!
@@ -7885,6 +7976,136 @@ type RemoveInfoboxFieldPayload {
   layer: Layer!
 }
 
+type ImportLayerPayload {
+  layers: [Layer!]!
+  parentLayer: LayerGroup!
+}
+
+extend type Query{
+  layer(id: ID!): Layer
+}
+
+extend type Mutation {
+  addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
+  addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
+  removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
+  updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
+  moveLayer(input: MoveLayerInput!): MoveLayerPayload
+  createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
+  removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
+  addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
+  moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
+  removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
+  importLayer(input: ImportLayerInput!): ImportLayerPayload
+  attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
+  detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
+
+}`, BuiltIn: false},
+	{Name: "../../../gql/dataset.graphql", Input: `type DatasetSchema implements Node {
+  id: ID!
+  source: String!
+  name: String!
+  sceneId: ID!
+  fields: [DatasetSchemaField!]!
+  totalCount: Int!
+  representativeFieldId: ID
+  dynamic: Boolean
+  datasets( first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
+  scene: Scene
+  representativeField: DatasetSchemaField
+}
+
+type DatasetSchemaField implements Node {
+  id: ID!
+  source: String!
+  name: String!
+  type: ValueType!
+  schemaId: ID!
+  refId: ID
+  schema: DatasetSchema
+  ref: DatasetSchema
+}
+
+type Dataset implements Node {
+  id: ID!
+  source: String!
+  schemaId: ID!
+  fields: [DatasetField!]!
+  schema: DatasetSchema
+  name: String
+}
+
+type DatasetField {
+  fieldId: ID!
+  schemaId: ID!
+  source: String!
+  type: ValueType!
+  value: Any
+  schema: DatasetSchema
+  field: DatasetSchemaField
+  valueRef: Dataset
+}
+
+# InputType
+
+input SyncDatasetInput {
+  sceneId: ID!
+  url: String!
+}
+
+input UpdateDatasetSchemaInput {
+  schemaId: ID!
+  name: String!
+}
+
+input AddDynamicDatasetSchemaInput {
+  sceneId: ID!
+}
+
+input AddDynamicDatasetInput {
+  datasetSchemaId: ID!
+  author: String!
+  content: String!
+  lat: Float
+  lng: Float
+  target: String
+}
+
+input RemoveDatasetSchemaInput {
+  schemaId: ID!
+  force: Boolean
+}
+
+
+input ImportDatasetInput {
+  file: Upload!
+  sceneId: ID!
+  datasetSchemaId: ID
+}
+
+input ImportDatasetFromGoogleSheetInput {
+  accessToken: String!
+  fileId: String!
+  sheetName: String!
+  sceneId: ID!
+  datasetSchemaId: ID
+}
+
+input AddDatasetSchemaInput {
+  sceneId: ID!
+  name: String!
+  representativefield: ID
+}
+
+# Payload
+
+type SyncDatasetPayload {
+  sceneId: ID!
+  url: String!
+  datasetSchema: [DatasetSchema!]!
+  dataset: [Dataset!]!
+}
+
 type UpdateDatasetSchemaPayload {
   datasetSchema: DatasetSchema
 }
@@ -7902,11 +8123,6 @@ type AddDynamicDatasetPayload {
   dataset: Dataset
 }
 
-type ImportLayerPayload {
-  layers: [Layer!]!
-  parentLayer: LayerGroup!
-}
-
 type ImportDatasetPayload {
   datasetSchema: DatasetSchema!
 }
@@ -7915,80 +8131,7 @@ type AddDatasetSchemaPayload {
   datasetSchema: DatasetSchema
 }
 
-type CreateTagItemPayload {
-  tag: TagItem!
-  parent: TagGroup
-}
-
-type CreateTagGroupPayload {
-  tag: TagGroup!
-}
-
-type AttachTagItemToGroupPayload {
-  tag: TagGroup!
-}
-
-type DetachTagItemFromGroupPayload {
-  tag: TagGroup!
-}
-
-type UpdateTagPayload {
-  tag: Tag!
-}
-
-type AttachTagToLayerPayload {
-  layer: Layer!
-}
-
-type DetachTagFromLayerPayload {
-  layer: Layer!
-}
-
-type RemoveTagPayload {
-  tagId: ID!
-  updatedLayers: [Layer!]!
-}
-
-type AddClusterPayload {
-  scene: Scene!
-  cluster: Cluster!
-}
-
-type UpdateClusterPayload {
-  scene: Scene!
-  cluster: Cluster!
-}
-
-type RemoveClusterPayload {
-  scene: Scene!
-  clusterId: ID!
-}
-
 # Connection
-
-type AssetConnection {
-  edges: [AssetEdge!]!
-  nodes: [Asset]!
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-type AssetEdge {
-  cursor: Cursor!
-  node: Asset
-}
-
-type ProjectConnection {
-  edges: [ProjectEdge!]!
-  nodes: [Project]!
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-type ProjectEdge {
-  cursor: Cursor!
-  node: Project
-}
 
 type DatasetSchemaConnection {
   edges: [DatasetSchemaEdge!]!
@@ -8014,160 +8157,22 @@ type DatasetEdge {
   node: Dataset
 }
 
-# Query
-
-type Query {
-  me: Me
-  node(id: ID!, type: NodeType!): Node
-  nodes(id: [ID!]!, type: NodeType!): [Node]!
-  propertySchema(id: ID!): PropertySchema
-  propertySchemas(id: [ID!]!): [PropertySchema!]!
-  plugin(id: ID!): Plugin
-  plugins(id: [ID!]!): [Plugin!]!
-  layer(id: ID!): Layer
-  scene(projectId: ID!): Scene
-  assets(
-    teamId: ID!
-    keyword: String
-    sort: AssetSortType
-    pagination: Pagination
-  ): AssetConnection!
-  projects(
-    teamId: ID!
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection!
-  datasetSchemas(
-    sceneId: ID!
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): DatasetSchemaConnection!
-  datasets(
-    datasetSchemaId: ID!
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): DatasetConnection!
+extend type Query{
+  datasetSchemas(sceneId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
+  datasets(datasetSchemaId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
   dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
-  searchUser(nameOrEmail: String!): User
-  checkProjectAlias(alias: String!): ProjectAliasAvailability!
 }
 
-# Mutation
-
-type Mutation {
-  # Asset
-  createAsset(input: CreateAssetInput!): CreateAssetPayload
-  removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
-
-  # User
-  signup(input: SignupInput!): SignupPayload
-  updateMe(input: UpdateMeInput!): UpdateMePayload
-  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
-  deleteMe(input: DeleteMeInput!): DeleteMePayload
-
-  # Team
-  createTeam(input: CreateTeamInput!): CreateTeamPayload
-  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
-  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
-  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-  removeMemberFromTeam(
-    input: RemoveMemberFromTeamInput!
-  ): RemoveMemberFromTeamPayload
-  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
-
-  # Project
-  createProject(input: CreateProjectInput!): ProjectPayload
-  updateProject(input: UpdateProjectInput!): ProjectPayload
-  publishProject(input: PublishProjectInput!): ProjectPayload
-  deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
-
-  # Scene
-  createScene(input: CreateSceneInput!): CreateScenePayload
-  addWidget(input: AddWidgetInput!): AddWidgetPayload
-  updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(
-    input: UpdateWidgetAlignSystemInput!
-  ): UpdateWidgetAlignSystemPayload
-  removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
-  installPlugin(input: InstallPluginInput!): InstallPluginPayload
-  uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
-  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
-  upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
-  addCluster(input: AddClusterInput!): AddClusterPayload
-  updateCluster(input: UpdateClusterInput!): UpdateClusterPayload
-  removeCluster(input: RemoveClusterInput!): RemoveClusterPayload
-
-  # Dataset
-  updateDatasetSchema(
-    input: UpdateDatasetSchemaInput!
-  ): UpdateDatasetSchemaPayload
+extend type Mutation {
+  updateDatasetSchema(input: UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload
   syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
-  addDynamicDatasetSchema(
-    input: AddDynamicDatasetSchemaInput!
-  ): AddDynamicDatasetSchemaPayload
+  addDynamicDatasetSchema(input: AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload
   addDynamicDataset(input: AddDynamicDatasetInput!): AddDynamicDatasetPayload
-  removeDatasetSchema(
-    input: RemoveDatasetSchemaInput!
-  ): RemoveDatasetSchemaPayload
+  removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
-  importDatasetFromGoogleSheet(
-    input: ImportDatasetFromGoogleSheetInput!
-  ): ImportDatasetPayload
+  importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
-
-  # Property
-  updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
-  removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
-  uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(
-    input: LinkDatasetToPropertyValueInput!
-  ): PropertyFieldPayload
-  unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
-  addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
-  movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
-  removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
-  updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
-
-  # Layer
-  addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
-  addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
-  removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
-  updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
-  moveLayer(input: MoveLayerInput!): MoveLayerPayload
-  createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
-  removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
-  addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
-  moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
-  removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
-  importLayer(input: ImportLayerInput!): ImportLayerPayload
-  attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
-  detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
-
-  # Tag
-  createTagItem(input: CreateTagItemInput!): CreateTagItemPayload
-  createTagGroup(input: CreateTagGroupInput!): CreateTagGroupPayload
-  attachTagItemToGroup(
-    input: AttachTagItemToGroupInput!
-  ): AttachTagItemToGroupPayload
-  detachTagItemFromGroup(
-    input: DetachTagItemFromGroupInput!
-  ): DetachTagItemFromGroupPayload
-  updateTag(input: UpdateTagInput!): UpdateTagPayload
-  removeTag(input: RemoveTagInput!): RemoveTagPayload
-}
-
-schema {
-  query: Query
-  mutation: Mutation
-}
-`, BuiltIn: false},
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -24300,236 +24305,6 @@ func (ec *executionContext) fieldContext_Mutation_createScene(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_addWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addWidget(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddWidget(rctx, fc.Args["input"].(gqlmodel.AddWidgetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddWidgetPayload)
-	fc.Result = res
-	return ec.marshalOAddWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddWidgetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_AddWidgetPayload_scene(ctx, field)
-			case "sceneWidget":
-				return ec.fieldContext_AddWidgetPayload_sceneWidget(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddWidgetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateWidget(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateWidget(rctx, fc.Args["input"].(gqlmodel.UpdateWidgetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.UpdateWidgetPayload)
-	fc.Result = res
-	return ec.marshalOUpdateWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_UpdateWidgetPayload_scene(ctx, field)
-			case "sceneWidget":
-				return ec.fieldContext_UpdateWidgetPayload_sceneWidget(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateWidgetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateWidgetAlignSystem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateWidgetAlignSystem(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateWidgetAlignSystem(rctx, fc.Args["input"].(gqlmodel.UpdateWidgetAlignSystemInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.UpdateWidgetAlignSystemPayload)
-	fc.Result = res
-	return ec.marshalOUpdateWidgetAlignSystemPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetAlignSystemPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateWidgetAlignSystem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_UpdateWidgetAlignSystemPayload_scene(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateWidgetAlignSystemPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateWidgetAlignSystem_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_removeWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeWidget(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveWidget(rctx, fc.Args["input"].(gqlmodel.RemoveWidgetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.RemoveWidgetPayload)
-	fc.Result = res
-	return ec.marshalORemoveWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveWidgetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_removeWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_RemoveWidgetPayload_scene(ctx, field)
-			case "widgetId":
-				return ec.fieldContext_RemoveWidgetPayload_widgetId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type RemoveWidgetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_installPlugin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_installPlugin(ctx, field)
 	if err != nil {
@@ -24758,636 +24533,6 @@ func (ec *executionContext) fieldContext_Mutation_upgradePlugin(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_upgradePlugin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addCluster(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddCluster(rctx, fc.Args["input"].(gqlmodel.AddClusterInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddClusterPayload)
-	fc.Result = res
-	return ec.marshalOAddClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddClusterPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_AddClusterPayload_scene(ctx, field)
-			case "cluster":
-				return ec.fieldContext_AddClusterPayload_cluster(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddClusterPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateCluster(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateCluster(rctx, fc.Args["input"].(gqlmodel.UpdateClusterInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.UpdateClusterPayload)
-	fc.Result = res
-	return ec.marshalOUpdateClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateClusterPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_UpdateClusterPayload_scene(ctx, field)
-			case "cluster":
-				return ec.fieldContext_UpdateClusterPayload_cluster(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateClusterPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_removeCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeCluster(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveCluster(rctx, fc.Args["input"].(gqlmodel.RemoveClusterInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.RemoveClusterPayload)
-	fc.Result = res
-	return ec.marshalORemoveClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveClusterPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_removeCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "scene":
-				return ec.fieldContext_RemoveClusterPayload_scene(ctx, field)
-			case "clusterId":
-				return ec.fieldContext_RemoveClusterPayload_clusterId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type RemoveClusterPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateDatasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateDatasetSchema(rctx, fc.Args["input"].(gqlmodel.UpdateDatasetSchemaInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.UpdateDatasetSchemaPayload)
-	fc.Result = res
-	return ec.marshalOUpdateDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateDatasetSchemaPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_UpdateDatasetSchemaPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateDatasetSchemaPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_syncDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_syncDataset(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SyncDataset(rctx, fc.Args["input"].(gqlmodel.SyncDatasetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.SyncDatasetPayload)
-	fc.Result = res
-	return ec.marshalOSyncDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSyncDatasetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_syncDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "sceneId":
-				return ec.fieldContext_SyncDatasetPayload_sceneId(ctx, field)
-			case "url":
-				return ec.fieldContext_SyncDatasetPayload_url(ctx, field)
-			case "datasetSchema":
-				return ec.fieldContext_SyncDatasetPayload_datasetSchema(ctx, field)
-			case "dataset":
-				return ec.fieldContext_SyncDatasetPayload_dataset(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SyncDatasetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_syncDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addDynamicDatasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddDynamicDatasetSchema(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetSchemaInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddDynamicDatasetSchemaPayload)
-	fc.Result = res
-	return ec.marshalOAddDynamicDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_AddDynamicDatasetSchemaPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetSchemaPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addDynamicDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addDynamicDataset(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddDynamicDataset(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddDynamicDatasetPayload)
-	fc.Result = res
-	return ec.marshalOAddDynamicDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_AddDynamicDatasetPayload_datasetSchema(ctx, field)
-			case "dataset":
-				return ec.fieldContext_AddDynamicDatasetPayload_dataset(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addDynamicDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_removeDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeDatasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveDatasetSchema(rctx, fc.Args["input"].(gqlmodel.RemoveDatasetSchemaInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.RemoveDatasetSchemaPayload)
-	fc.Result = res
-	return ec.marshalORemoveDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveDatasetSchemaPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_removeDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "schemaId":
-				return ec.fieldContext_RemoveDatasetSchemaPayload_schemaId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type RemoveDatasetSchemaPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_importDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_importDataset(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ImportDataset(rctx, fc.Args["input"].(gqlmodel.ImportDatasetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ImportDatasetPayload)
-	fc.Result = res
-	return ec.marshalOImportDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportDatasetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_importDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_ImportDatasetPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ImportDatasetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_importDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_importDatasetFromGoogleSheet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_importDatasetFromGoogleSheet(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ImportDatasetFromGoogleSheet(rctx, fc.Args["input"].(gqlmodel.ImportDatasetFromGoogleSheetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ImportDatasetPayload)
-	fc.Result = res
-	return ec.marshalOImportDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportDatasetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_importDatasetFromGoogleSheet(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_ImportDatasetPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ImportDatasetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_importDatasetFromGoogleSheet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addDatasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddDatasetSchema(rctx, fc.Args["input"].(gqlmodel.AddDatasetSchemaInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddDatasetSchemaPayload)
-	fc.Result = res
-	return ec.marshalOAddDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_AddDatasetSchemaPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddDatasetSchemaPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -25910,6 +25055,750 @@ func (ec *executionContext) fieldContext_Mutation_updatePropertyItems(ctx contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updatePropertyItems_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTagItem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTagItem(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTagItem(rctx, fc.Args["input"].(gqlmodel.CreateTagItemInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.CreateTagItemPayload)
+	fc.Result = res
+	return ec.marshalOCreateTagItemPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTagItemPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTagItem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tag":
+				return ec.fieldContext_CreateTagItemPayload_tag(ctx, field)
+			case "parent":
+				return ec.fieldContext_CreateTagItemPayload_parent(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateTagItemPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTagItem_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTagGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTagGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTagGroup(rctx, fc.Args["input"].(gqlmodel.CreateTagGroupInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.CreateTagGroupPayload)
+	fc.Result = res
+	return ec.marshalOCreateTagGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTagGroupPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTagGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tag":
+				return ec.fieldContext_CreateTagGroupPayload_tag(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateTagGroupPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTagGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_attachTagItemToGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_attachTagItemToGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AttachTagItemToGroup(rctx, fc.Args["input"].(gqlmodel.AttachTagItemToGroupInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AttachTagItemToGroupPayload)
+	fc.Result = res
+	return ec.marshalOAttachTagItemToGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAttachTagItemToGroupPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_attachTagItemToGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tag":
+				return ec.fieldContext_AttachTagItemToGroupPayload_tag(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AttachTagItemToGroupPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_attachTagItemToGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_detachTagItemFromGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_detachTagItemFromGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DetachTagItemFromGroup(rctx, fc.Args["input"].(gqlmodel.DetachTagItemFromGroupInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DetachTagItemFromGroupPayload)
+	fc.Result = res
+	return ec.marshalODetachTagItemFromGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDetachTagItemFromGroupPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_detachTagItemFromGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tag":
+				return ec.fieldContext_DetachTagItemFromGroupPayload_tag(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DetachTagItemFromGroupPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_detachTagItemFromGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTag(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTag(rctx, fc.Args["input"].(gqlmodel.UpdateTagInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateTagPayload)
+	fc.Result = res
+	return ec.marshalOUpdateTagPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTagPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tag":
+				return ec.fieldContext_UpdateTagPayload_tag(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateTagPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeTag(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveTag(rctx, fc.Args["input"].(gqlmodel.RemoveTagInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.RemoveTagPayload)
+	fc.Result = res
+	return ec.marshalORemoveTagPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveTagPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tagId":
+				return ec.fieldContext_RemoveTagPayload_tagId(ctx, field)
+			case "updatedLayers":
+				return ec.fieldContext_RemoveTagPayload_updatedLayers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RemoveTagPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addCluster(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddCluster(rctx, fc.Args["input"].(gqlmodel.AddClusterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AddClusterPayload)
+	fc.Result = res
+	return ec.marshalOAddClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddClusterPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_AddClusterPayload_scene(ctx, field)
+			case "cluster":
+				return ec.fieldContext_AddClusterPayload_cluster(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AddClusterPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateCluster(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateCluster(rctx, fc.Args["input"].(gqlmodel.UpdateClusterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateClusterPayload)
+	fc.Result = res
+	return ec.marshalOUpdateClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateClusterPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_UpdateClusterPayload_scene(ctx, field)
+			case "cluster":
+				return ec.fieldContext_UpdateClusterPayload_cluster(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateClusterPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeCluster(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveCluster(rctx, fc.Args["input"].(gqlmodel.RemoveClusterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.RemoveClusterPayload)
+	fc.Result = res
+	return ec.marshalORemoveClusterPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveClusterPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_RemoveClusterPayload_scene(ctx, field)
+			case "clusterId":
+				return ec.fieldContext_RemoveClusterPayload_clusterId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RemoveClusterPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addWidget(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddWidget(rctx, fc.Args["input"].(gqlmodel.AddWidgetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AddWidgetPayload)
+	fc.Result = res
+	return ec.marshalOAddWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddWidgetPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_AddWidgetPayload_scene(ctx, field)
+			case "sceneWidget":
+				return ec.fieldContext_AddWidgetPayload_sceneWidget(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AddWidgetPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateWidget(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateWidget(rctx, fc.Args["input"].(gqlmodel.UpdateWidgetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateWidgetPayload)
+	fc.Result = res
+	return ec.marshalOUpdateWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_UpdateWidgetPayload_scene(ctx, field)
+			case "sceneWidget":
+				return ec.fieldContext_UpdateWidgetPayload_sceneWidget(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateWidgetPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateWidgetAlignSystem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateWidgetAlignSystem(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateWidgetAlignSystem(rctx, fc.Args["input"].(gqlmodel.UpdateWidgetAlignSystemInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateWidgetAlignSystemPayload)
+	fc.Result = res
+	return ec.marshalOUpdateWidgetAlignSystemPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetAlignSystemPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateWidgetAlignSystem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_UpdateWidgetAlignSystemPayload_scene(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateWidgetAlignSystemPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateWidgetAlignSystem_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeWidget(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveWidget(rctx, fc.Args["input"].(gqlmodel.RemoveWidgetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.RemoveWidgetPayload)
+	fc.Result = res
+	return ec.marshalORemoveWidgetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveWidgetPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_RemoveWidgetPayload_scene(ctx, field)
+			case "widgetId":
+				return ec.fieldContext_RemoveWidgetPayload_widgetId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RemoveWidgetPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -26670,8 +26559,8 @@ func (ec *executionContext) fieldContext_Mutation_detachTagFromLayer(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTagItem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTagItem(ctx, field)
+func (ec *executionContext) _Mutation_updateDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateDatasetSchema(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26684,7 +26573,7 @@ func (ec *executionContext) _Mutation_createTagItem(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTagItem(rctx, fc.Args["input"].(gqlmodel.CreateTagItemInput))
+		return ec.resolvers.Mutation().UpdateDatasetSchema(rctx, fc.Args["input"].(gqlmodel.UpdateDatasetSchemaInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26693,12 +26582,12 @@ func (ec *executionContext) _Mutation_createTagItem(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.CreateTagItemPayload)
+	res := resTmp.(*gqlmodel.UpdateDatasetSchemaPayload)
 	fc.Result = res
-	return ec.marshalOCreateTagItemPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTagItemPayload(ctx, field.Selections, res)
+	return ec.marshalOUpdateDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateDatasetSchemaPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createTagItem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26706,12 +26595,10 @@ func (ec *executionContext) fieldContext_Mutation_createTagItem(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tag":
-				return ec.fieldContext_CreateTagItemPayload_tag(ctx, field)
-			case "parent":
-				return ec.fieldContext_CreateTagItemPayload_parent(ctx, field)
+			case "datasetSchema":
+				return ec.fieldContext_UpdateDatasetSchemaPayload_datasetSchema(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type CreateTagItemPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateDatasetSchemaPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -26721,15 +26608,15 @@ func (ec *executionContext) fieldContext_Mutation_createTagItem(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTagItem_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTagGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTagGroup(ctx, field)
+func (ec *executionContext) _Mutation_syncDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_syncDataset(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26742,7 +26629,7 @@ func (ec *executionContext) _Mutation_createTagGroup(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTagGroup(rctx, fc.Args["input"].(gqlmodel.CreateTagGroupInput))
+		return ec.resolvers.Mutation().SyncDataset(rctx, fc.Args["input"].(gqlmodel.SyncDatasetInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26751,12 +26638,12 @@ func (ec *executionContext) _Mutation_createTagGroup(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.CreateTagGroupPayload)
+	res := resTmp.(*gqlmodel.SyncDatasetPayload)
 	fc.Result = res
-	return ec.marshalOCreateTagGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTagGroupPayload(ctx, field.Selections, res)
+	return ec.marshalOSyncDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSyncDatasetPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createTagGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_syncDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26764,10 +26651,16 @@ func (ec *executionContext) fieldContext_Mutation_createTagGroup(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tag":
-				return ec.fieldContext_CreateTagGroupPayload_tag(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_SyncDatasetPayload_sceneId(ctx, field)
+			case "url":
+				return ec.fieldContext_SyncDatasetPayload_url(ctx, field)
+			case "datasetSchema":
+				return ec.fieldContext_SyncDatasetPayload_datasetSchema(ctx, field)
+			case "dataset":
+				return ec.fieldContext_SyncDatasetPayload_dataset(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type CreateTagGroupPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SyncDatasetPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -26777,15 +26670,15 @@ func (ec *executionContext) fieldContext_Mutation_createTagGroup(ctx context.Con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTagGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_syncDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_attachTagItemToGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_attachTagItemToGroup(ctx, field)
+func (ec *executionContext) _Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addDynamicDatasetSchema(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26798,7 +26691,7 @@ func (ec *executionContext) _Mutation_attachTagItemToGroup(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AttachTagItemToGroup(rctx, fc.Args["input"].(gqlmodel.AttachTagItemToGroupInput))
+		return ec.resolvers.Mutation().AddDynamicDatasetSchema(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetSchemaInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26807,12 +26700,12 @@ func (ec *executionContext) _Mutation_attachTagItemToGroup(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.AttachTagItemToGroupPayload)
+	res := resTmp.(*gqlmodel.AddDynamicDatasetSchemaPayload)
 	fc.Result = res
-	return ec.marshalOAttachTagItemToGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAttachTagItemToGroupPayload(ctx, field.Selections, res)
+	return ec.marshalOAddDynamicDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_attachTagItemToGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26820,10 +26713,10 @@ func (ec *executionContext) fieldContext_Mutation_attachTagItemToGroup(ctx conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tag":
-				return ec.fieldContext_AttachTagItemToGroupPayload_tag(ctx, field)
+			case "datasetSchema":
+				return ec.fieldContext_AddDynamicDatasetSchemaPayload_datasetSchema(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type AttachTagItemToGroupPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetSchemaPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -26833,15 +26726,15 @@ func (ec *executionContext) fieldContext_Mutation_attachTagItemToGroup(ctx conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_attachTagItemToGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_addDynamicDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_detachTagItemFromGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_detachTagItemFromGroup(ctx, field)
+func (ec *executionContext) _Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addDynamicDataset(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26854,7 +26747,7 @@ func (ec *executionContext) _Mutation_detachTagItemFromGroup(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DetachTagItemFromGroup(rctx, fc.Args["input"].(gqlmodel.DetachTagItemFromGroupInput))
+		return ec.resolvers.Mutation().AddDynamicDataset(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26863,12 +26756,12 @@ func (ec *executionContext) _Mutation_detachTagItemFromGroup(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.DetachTagItemFromGroupPayload)
+	res := resTmp.(*gqlmodel.AddDynamicDatasetPayload)
 	fc.Result = res
-	return ec.marshalODetachTagItemFromGroupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDetachTagItemFromGroupPayload(ctx, field.Selections, res)
+	return ec.marshalOAddDynamicDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_detachTagItemFromGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26876,10 +26769,12 @@ func (ec *executionContext) fieldContext_Mutation_detachTagItemFromGroup(ctx con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tag":
-				return ec.fieldContext_DetachTagItemFromGroupPayload_tag(ctx, field)
+			case "datasetSchema":
+				return ec.fieldContext_AddDynamicDatasetPayload_datasetSchema(ctx, field)
+			case "dataset":
+				return ec.fieldContext_AddDynamicDatasetPayload_dataset(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type DetachTagItemFromGroupPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -26889,15 +26784,15 @@ func (ec *executionContext) fieldContext_Mutation_detachTagItemFromGroup(ctx con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_detachTagItemFromGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_addDynamicDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTag(ctx, field)
+func (ec *executionContext) _Mutation_removeDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeDatasetSchema(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26910,7 +26805,7 @@ func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTag(rctx, fc.Args["input"].(gqlmodel.UpdateTagInput))
+		return ec.resolvers.Mutation().RemoveDatasetSchema(rctx, fc.Args["input"].(gqlmodel.RemoveDatasetSchemaInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26919,12 +26814,12 @@ func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.UpdateTagPayload)
+	res := resTmp.(*gqlmodel.RemoveDatasetSchemaPayload)
 	fc.Result = res
-	return ec.marshalOUpdateTagPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTagPayload(ctx, field.Selections, res)
+	return ec.marshalORemoveDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveDatasetSchemaPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_removeDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26932,10 +26827,10 @@ func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tag":
-				return ec.fieldContext_UpdateTagPayload_tag(ctx, field)
+			case "schemaId":
+				return ec.fieldContext_RemoveDatasetSchemaPayload_schemaId(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateTagPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type RemoveDatasetSchemaPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -26945,15 +26840,15 @@ func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_removeDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeTag(ctx, field)
+func (ec *executionContext) _Mutation_importDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_importDataset(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26966,7 +26861,7 @@ func (ec *executionContext) _Mutation_removeTag(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveTag(rctx, fc.Args["input"].(gqlmodel.RemoveTagInput))
+		return ec.resolvers.Mutation().ImportDataset(rctx, fc.Args["input"].(gqlmodel.ImportDatasetInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26975,12 +26870,12 @@ func (ec *executionContext) _Mutation_removeTag(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.RemoveTagPayload)
+	res := resTmp.(*gqlmodel.ImportDatasetPayload)
 	fc.Result = res
-	return ec.marshalORemoveTagPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveTagPayload(ctx, field.Selections, res)
+	return ec.marshalOImportDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportDatasetPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_importDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -26988,12 +26883,10 @@ func (ec *executionContext) fieldContext_Mutation_removeTag(ctx context.Context,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tagId":
-				return ec.fieldContext_RemoveTagPayload_tagId(ctx, field)
-			case "updatedLayers":
-				return ec.fieldContext_RemoveTagPayload_updatedLayers(ctx, field)
+			case "datasetSchema":
+				return ec.fieldContext_ImportDatasetPayload_datasetSchema(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type RemoveTagPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ImportDatasetPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -27003,7 +26896,119 @@ func (ec *executionContext) fieldContext_Mutation_removeTag(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_importDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_importDatasetFromGoogleSheet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_importDatasetFromGoogleSheet(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ImportDatasetFromGoogleSheet(rctx, fc.Args["input"].(gqlmodel.ImportDatasetFromGoogleSheetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ImportDatasetPayload)
+	fc.Result = res
+	return ec.marshalOImportDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportDatasetPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_importDatasetFromGoogleSheet(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "datasetSchema":
+				return ec.fieldContext_ImportDatasetPayload_datasetSchema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ImportDatasetPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_importDatasetFromGoogleSheet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addDatasetSchema(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddDatasetSchema(rctx, fc.Args["input"].(gqlmodel.AddDatasetSchemaInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AddDatasetSchemaPayload)
+	fc.Result = res
+	return ec.marshalOAddDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "datasetSchema":
+				return ec.fieldContext_AddDatasetSchemaPayload_datasetSchema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AddDatasetSchemaPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -34909,67 +34914,6 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_translatedTitle(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_me(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_me(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Me(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Me)
-	fc.Result = res
-	return ec.marshalOMe2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMe(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_me(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Me_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Me_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Me_email(ctx, field)
-			case "lang":
-				return ec.fieldContext_Me_lang(ctx, field)
-			case "theme":
-				return ec.fieldContext_Me_theme(ctx, field)
-			case "myTeamId":
-				return ec.fieldContext_Me_myTeamId(ctx, field)
-			case "auths":
-				return ec.fieldContext_Me_auths(ctx, field)
-			case "teams":
-				return ec.fieldContext_Me_teams(ctx, field)
-			case "myTeam":
-				return ec.fieldContext_Me_myTeam(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Me", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_node(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_node(ctx, field)
 	if err != nil {
@@ -35077,8 +35021,8 @@ func (ec *executionContext) fieldContext_Query_nodes(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_propertySchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_propertySchema(ctx, field)
+func (ec *executionContext) _Query_assets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_assets(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -35091,67 +35035,7 @@ func (ec *executionContext) _Query_propertySchema(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PropertySchema(rctx, fc.Args["id"].(gqlmodel.ID))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.PropertySchema)
-	fc.Result = res
-	return ec.marshalOPropertySchema2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertySchema(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_propertySchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PropertySchema_id(ctx, field)
-			case "groups":
-				return ec.fieldContext_PropertySchema_groups(ctx, field)
-			case "linkableFields":
-				return ec.fieldContext_PropertySchema_linkableFields(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PropertySchema", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_propertySchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_propertySchemas(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_propertySchemas(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PropertySchemas(rctx, fc.Args["id"].([]gqlmodel.ID))
+		return ec.resolvers.Query().Assets(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSortType), fc.Args["pagination"].(*gqlmodel.Pagination))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35163,12 +35047,12 @@ func (ec *executionContext) _Query_propertySchemas(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*gqlmodel.PropertySchema)
+	res := resTmp.(*gqlmodel.AssetConnection)
 	fc.Result = res
-	return ec.marshalNPropertySchema2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertySchemaᚄ(ctx, field.Selections, res)
+	return ec.marshalNAssetConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_propertySchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_assets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -35176,14 +35060,16 @@ func (ec *executionContext) fieldContext_Query_propertySchemas(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_PropertySchema_id(ctx, field)
-			case "groups":
-				return ec.fieldContext_PropertySchema_groups(ctx, field)
-			case "linkableFields":
-				return ec.fieldContext_PropertySchema_linkableFields(ctx, field)
+			case "edges":
+				return ec.fieldContext_AssetConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_AssetConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_AssetConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_AssetConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type PropertySchema", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AssetConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -35193,7 +35079,346 @@ func (ec *executionContext) fieldContext_Query_propertySchemas(ctx context.Conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_propertySchemas_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_assets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_me(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_me(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Me(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Me)
+	fc.Result = res
+	return ec.marshalOMe2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_me(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Me_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Me_name(ctx, field)
+			case "email":
+				return ec.fieldContext_Me_email(ctx, field)
+			case "lang":
+				return ec.fieldContext_Me_lang(ctx, field)
+			case "theme":
+				return ec.fieldContext_Me_theme(ctx, field)
+			case "myTeamId":
+				return ec.fieldContext_Me_myTeamId(ctx, field)
+			case "auths":
+				return ec.fieldContext_Me_auths(ctx, field)
+			case "teams":
+				return ec.fieldContext_Me_teams(ctx, field)
+			case "myTeam":
+				return ec.fieldContext_Me_myTeam(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Me", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_searchUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_searchUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SearchUser(rctx, fc.Args["nameOrEmail"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_searchUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_searchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_projects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_checkProjectAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectAliasAvailability)
+	fc.Result = res
+	return ec.marshalNProjectAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectAliasAvailability(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "alias":
+				return ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
+			case "available":
+				return ec.fieldContext_ProjectAliasAvailability_available(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectAliasAvailability", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_checkProjectAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_scene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_scene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Scene(rctx, fc.Args["projectId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Scene_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Scene_projectId(ctx, field)
+			case "teamId":
+				return ec.fieldContext_Scene_teamId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_Scene_propertyId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Scene_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Scene_updatedAt(ctx, field)
+			case "rootLayerId":
+				return ec.fieldContext_Scene_rootLayerId(ctx, field)
+			case "widgets":
+				return ec.fieldContext_Scene_widgets(ctx, field)
+			case "plugins":
+				return ec.fieldContext_Scene_plugins(ctx, field)
+			case "widgetAlignSystem":
+				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "dynamicDatasetSchemas":
+				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
+			case "project":
+				return ec.fieldContext_Scene_project(ctx, field)
+			case "team":
+				return ec.fieldContext_Scene_team(ctx, field)
+			case "property":
+				return ec.fieldContext_Scene_property(ctx, field)
+			case "rootLayer":
+				return ec.fieldContext_Scene_rootLayer(ctx, field)
+			case "datasetSchemas":
+				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_Scene_tagIds(ctx, field)
+			case "tags":
+				return ec.fieldContext_Scene_tags(ctx, field)
+			case "clusters":
+				return ec.fieldContext_Scene_clusters(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_scene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -35375,6 +35600,129 @@ func (ec *executionContext) fieldContext_Query_plugins(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_propertySchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_propertySchema(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PropertySchema(rctx, fc.Args["id"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.PropertySchema)
+	fc.Result = res
+	return ec.marshalOPropertySchema2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertySchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_propertySchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PropertySchema_id(ctx, field)
+			case "groups":
+				return ec.fieldContext_PropertySchema_groups(ctx, field)
+			case "linkableFields":
+				return ec.fieldContext_PropertySchema_linkableFields(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PropertySchema", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_propertySchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_propertySchemas(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_propertySchemas(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PropertySchemas(rctx, fc.Args["id"].([]gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.PropertySchema)
+	fc.Result = res
+	return ec.marshalNPropertySchema2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertySchemaᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_propertySchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PropertySchema_id(ctx, field)
+			case "groups":
+				return ec.fieldContext_PropertySchema_groups(ctx, field)
+			case "linkableFields":
+				return ec.fieldContext_PropertySchema_linkableFields(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PropertySchema", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_propertySchemas_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_layer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_layer(ctx, field)
 	if err != nil {
@@ -35421,228 +35769,6 @@ func (ec *executionContext) fieldContext_Query_layer(ctx context.Context, field 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_layer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_scene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_scene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Scene(rctx, fc.Args["projectId"].(gqlmodel.ID))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_scene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_assets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_assets(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Assets(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSortType), fc.Args["pagination"].(*gqlmodel.Pagination))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AssetConnection)
-	fc.Result = res
-	return ec.marshalNAssetConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_assets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_AssetConnection_edges(ctx, field)
-			case "nodes":
-				return ec.fieldContext_AssetConnection_nodes(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_AssetConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_AssetConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AssetConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_assets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_projects(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ProjectConnection)
-	fc.Result = res
-	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_ProjectConnection_edges(ctx, field)
-			case "nodes":
-				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -35852,127 +35978,6 @@ func (ec *executionContext) fieldContext_Query_dynamicDatasetSchemas(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_dynamicDatasetSchemas_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_searchUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_searchUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SearchUser(rctx, fc.Args["nameOrEmail"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_searchUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "name":
-				return ec.fieldContext_User_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_searchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_checkProjectAlias(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ProjectAliasAvailability)
-	fc.Result = res
-	return ec.marshalNProjectAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectAliasAvailability(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "alias":
-				return ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
-			case "available":
-				return ec.fieldContext_ProjectAliasAvailability_available(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ProjectAliasAvailability", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_checkProjectAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -52257,30 +52262,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createScene(ctx, field)
 			})
 
-		case "addWidget":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addWidget(ctx, field)
-			})
-
-		case "updateWidget":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateWidget(ctx, field)
-			})
-
-		case "updateWidgetAlignSystem":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateWidgetAlignSystem(ctx, field)
-			})
-
-		case "removeWidget":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeWidget(ctx, field)
-			})
-
 		case "installPlugin":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -52303,72 +52284,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_upgradePlugin(ctx, field)
-			})
-
-		case "addCluster":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addCluster(ctx, field)
-			})
-
-		case "updateCluster":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateCluster(ctx, field)
-			})
-
-		case "removeCluster":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeCluster(ctx, field)
-			})
-
-		case "updateDatasetSchema":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateDatasetSchema(ctx, field)
-			})
-
-		case "syncDataset":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_syncDataset(ctx, field)
-			})
-
-		case "addDynamicDatasetSchema":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addDynamicDatasetSchema(ctx, field)
-			})
-
-		case "addDynamicDataset":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addDynamicDataset(ctx, field)
-			})
-
-		case "removeDatasetSchema":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeDatasetSchema(ctx, field)
-			})
-
-		case "importDataset":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_importDataset(ctx, field)
-			})
-
-		case "importDatasetFromGoogleSheet":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_importDatasetFromGoogleSheet(ctx, field)
-			})
-
-		case "addDatasetSchema":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addDatasetSchema(ctx, field)
 			})
 
 		case "updatePropertyValue":
@@ -52423,6 +52338,84 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePropertyItems(ctx, field)
+			})
+
+		case "createTagItem":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTagItem(ctx, field)
+			})
+
+		case "createTagGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTagGroup(ctx, field)
+			})
+
+		case "attachTagItemToGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_attachTagItemToGroup(ctx, field)
+			})
+
+		case "detachTagItemFromGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_detachTagItemFromGroup(ctx, field)
+			})
+
+		case "updateTag":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTag(ctx, field)
+			})
+
+		case "removeTag":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeTag(ctx, field)
+			})
+
+		case "addCluster":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addCluster(ctx, field)
+			})
+
+		case "updateCluster":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateCluster(ctx, field)
+			})
+
+		case "removeCluster":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeCluster(ctx, field)
+			})
+
+		case "addWidget":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addWidget(ctx, field)
+			})
+
+		case "updateWidget":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateWidget(ctx, field)
+			})
+
+		case "updateWidgetAlignSystem":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateWidgetAlignSystem(ctx, field)
+			})
+
+		case "removeWidget":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeWidget(ctx, field)
 			})
 
 		case "addLayerItem":
@@ -52503,40 +52496,52 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_detachTagFromLayer(ctx, field)
 			})
 
-		case "createTagItem":
+		case "updateDatasetSchema":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTagItem(ctx, field)
+				return ec._Mutation_updateDatasetSchema(ctx, field)
 			})
 
-		case "createTagGroup":
+		case "syncDataset":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTagGroup(ctx, field)
+				return ec._Mutation_syncDataset(ctx, field)
 			})
 
-		case "attachTagItemToGroup":
+		case "addDynamicDatasetSchema":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_attachTagItemToGroup(ctx, field)
+				return ec._Mutation_addDynamicDatasetSchema(ctx, field)
 			})
 
-		case "detachTagItemFromGroup":
+		case "addDynamicDataset":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_detachTagItemFromGroup(ctx, field)
+				return ec._Mutation_addDynamicDataset(ctx, field)
 			})
 
-		case "updateTag":
+		case "removeDatasetSchema":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTag(ctx, field)
+				return ec._Mutation_removeDatasetSchema(ctx, field)
 			})
 
-		case "removeTag":
+		case "importDataset":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeTag(ctx, field)
+				return ec._Mutation_importDataset(ctx, field)
+			})
+
+		case "importDatasetFromGoogleSheet":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_importDatasetFromGoogleSheet(ctx, field)
+			})
+
+		case "addDatasetSchema":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addDatasetSchema(ctx, field)
 			})
 
 		default:
@@ -54381,26 +54386,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "me":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_me(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "node":
 			field := field
 
@@ -54431,6 +54416,178 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_nodes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "assets":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_assets(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "me":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_me(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "searchUser":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_searchUser(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "projects":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_projects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "checkProjectAlias":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_checkProjectAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "scene":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_scene(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "plugin":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_plugin(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "plugins":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_plugins(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -54487,49 +54644,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "plugin":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_plugin(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "plugins":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_plugins(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "layer":
 			field := field
 
@@ -54540,72 +54654,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_layer(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "scene":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_scene(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "assets":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_assets(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "projects":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_projects(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -54672,49 +54720,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_dynamicDatasetSchemas(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "searchUser":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_searchUser(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "checkProjectAlias":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_checkProjectAlias(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

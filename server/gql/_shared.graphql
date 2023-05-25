@@ -1,0 +1,118 @@
+scalar Upload
+scalar Any
+scalar DateTime
+scalar URL
+scalar Lang
+scalar FileSize
+scalar TranslatedString
+scalar Cursor
+
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+# Meta Type
+
+interface Node {
+  id: ID!
+}
+
+enum NodeType {
+  ASSET
+  USER
+  TEAM
+  PROJECT
+  PLUGIN
+  SCENE
+  PROPERTY_SCHEMA
+  PROPERTY
+  DATASET_SCHEMA
+  DATASET
+  LAYER_GROUP
+  LAYER_ITEM
+}
+
+# Pagination
+
+type PageInfo {
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+input Pagination{
+  first: Int
+  last: Int
+  after: Cursor
+  before: Cursor
+}
+
+# Basic types
+
+type LatLng {
+  lat: Float!
+  lng: Float!
+}
+
+type LatLngHeight {
+  lat: Float!
+  lng: Float!
+  height: Float!
+}
+
+type Camera {
+  lat: Float!
+  lng: Float!
+  altitude: Float!
+  heading: Float!
+  pitch: Float!
+  roll: Float!
+  fov: Float!
+}
+
+type Rect {
+  west: Float!
+  south: Float!
+  east: Float!
+  north: Float!
+}
+
+type Typography {
+  fontFamily: String
+  fontWeight: String
+  fontSize: Int
+  color: String
+  textAlign: TextAlign
+  bold: Boolean
+  italic: Boolean
+  underline: Boolean
+}
+
+enum TextAlign {
+  LEFT
+  CENTER
+  RIGHT
+  JUSTIFY
+  JUSTIFY_ALL
+}
+
+# Query & Mutation
+
+type Query {
+  node(id: ID!, type: NodeType!): Node
+  nodes(id: [ID!]!, type: NodeType!): [Node]!
+}
+
+type Mutation
+
+schema {
+  query: Query
+  mutation: Mutation
+}

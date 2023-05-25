@@ -1,0 +1,148 @@
+type WidgetAlignSystem {
+  inner: WidgetZone
+  outer: WidgetZone
+}
+
+type WidgetZone {
+  left: WidgetSection
+  center: WidgetSection
+  right: WidgetSection
+}
+
+type WidgetSection {
+  top: WidgetArea
+  middle: WidgetArea
+  bottom: WidgetArea
+}
+
+type WidgetArea {
+  widgetIds: [ID!]!
+  align: WidgetAreaAlign!
+  padding: WidgetAreaPadding
+  gap: Int
+  centered: Boolean!
+  background: String
+}
+
+type WidgetAreaPadding {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
+type WidgetLocation {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+type WidgetExtendable {
+  vertically: Boolean!
+  horizontally: Boolean!
+}
+
+type WidgetLayout {
+  extendable: WidgetExtendable!
+  extended: Boolean!
+  floating: Boolean!
+  defaultLocation: WidgetLocation
+}
+
+enum WidgetAreaAlign {
+  START
+  CENTERED
+  END
+}
+
+enum WidgetZoneType {
+  INNER
+  OUTER
+}
+
+enum WidgetSectionType {
+  LEFT
+  CENTER
+  RIGHT
+}
+
+enum WidgetAreaType {
+  TOP
+  MIDDLE
+  BOTTOM
+}
+
+# InputType
+
+input WidgetLocationInput {
+  zone: WidgetZoneType!
+  section: WidgetSectionType!
+  area: WidgetAreaType!
+}
+
+input AddWidgetInput {
+  sceneId: ID!
+  pluginId: ID!
+  extensionId: ID!
+}
+
+input UpdateWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+  enabled: Boolean
+  location: WidgetLocationInput
+  extended: Boolean
+  index: Int
+}
+
+input UpdateWidgetAlignSystemInput {
+  sceneId: ID!
+  location: WidgetLocationInput!
+  align: WidgetAreaAlign
+  padding: WidgetAreaPaddingInput
+  gap: Int
+  centered: Boolean
+  background: String
+}
+
+input WidgetAreaPaddingInput {
+  top: Int!
+  bottom: Int!
+  left: Int!
+  right: Int!
+}
+
+input RemoveWidgetInput {
+  sceneId: ID!
+  widgetId: ID!
+}
+
+# Payload
+
+type AddWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetPayload {
+  scene: Scene!
+  sceneWidget: SceneWidget!
+}
+
+type UpdateWidgetAlignSystemPayload {
+  scene: Scene!
+}
+
+type RemoveWidgetPayload {
+  scene: Scene!
+  widgetId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  addWidget(input: AddWidgetInput!): AddWidgetPayload
+  updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
+  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
+  removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
+}

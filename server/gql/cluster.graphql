@@ -1,0 +1,50 @@
+type Cluster {
+  id: ID!
+  name: String!
+  propertyId: ID!
+  property: Property
+}
+
+# InputType
+
+input AddClusterInput {
+  sceneId: ID!
+  name: String!
+}
+
+input UpdateClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+  name: String
+  propertyId: ID
+}
+
+input RemoveClusterInput {
+  clusterId: ID!
+  sceneId: ID!
+}
+
+# Payload
+
+type AddClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type UpdateClusterPayload {
+  scene: Scene!
+  cluster: Cluster!
+}
+
+type RemoveClusterPayload {
+  scene: Scene!
+  clusterId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  addCluster(input: AddClusterInput!): AddClusterPayload
+  updateCluster(input: UpdateClusterInput!): UpdateClusterPayload
+  removeCluster(input: RemoveClusterInput!): RemoveClusterPayload
+}
