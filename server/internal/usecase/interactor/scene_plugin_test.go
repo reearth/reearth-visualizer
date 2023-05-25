@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/internal/infrastructure/storage"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -230,7 +230,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			sc.Widgets().Add(sw)
 			sr := memory.NewSceneWith(sc)
 
-			fsg, _ := storage.NewFS(afero.NewMemMapFs(), "")
+			fsg, _ := fs.NewFile(afero.NewMemMapFs(), "")
 
 			uc := &Scene{
 				sceneRepo:          sr,

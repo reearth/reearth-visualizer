@@ -8,9 +8,9 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
-	"github.com/reearth/reearth/server/internal/infrastructure/storage"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/mongox/mongotest"
@@ -66,7 +66,7 @@ func StartServerWithRepos(t *testing.T, cfg *app.Config, repos *repo.Container) 
 		Config: cfg,
 		Repos:  repos,
 		Gateways: &gateway.Container{
-			File: lo.Must(storage.NewFS(afero.NewMemMapFs(), "https://example.com")),
+			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
 		},
 		Debug: true,
 	})

@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/internal/infrastructure/storage"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
@@ -91,7 +91,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 
 	repos := memory.New()
 	mfs := mockFS(nil)
-	files, err := storage.NewFS(mfs, "")
+	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
 	scene := scene.New().ID(sid).Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	_ = repos.Scene.Save(ctx, scene)
@@ -152,7 +152,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	mfs := mockFS(map[string]string{
 		"plugins/" + pid.String() + "/hogehoge": "foobar",
 	})
-	files, err := storage.NewFS(mfs, "")
+	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
 
 	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid1.String())).MustBuild()
@@ -267,7 +267,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	mfs := mockFS(map[string]string{
 		"plugins/" + oldpid.String() + "/hogehoge": "foobar",
 	})
-	files, err := storage.NewFS(mfs, "")
+	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
 
 	oldpsf := property.NewSchemaField().ID("field").Type(property.ValueTypeNumber).MustBuild()

@@ -1,4 +1,4 @@
-package storage
+package s3
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -309,4 +310,35 @@ func (f *awsFileRepo) deleteAll(ctx context.Context, path string) error {
 	}
 
 	return nil
+}
+
+func getObjectURL(base *url.URL, objectName string) *url.URL {
+	if base == nil {
+		return nil
+	}
+
+	// https://github.com/golang/go/issues/38351
+	b := *base
+	b.Path = path.Join(b.Path, objectName)
+	return &b
+}
+
+func getObjectNameFromURL(base, u *url.URL) string {
+	if u == nil {
+		return ""
+	}
+	if base == nil {
+		base = &url.URL{}
+	}
+	p := sanitize.Path(strings.TrimPrefix(u.Path, "/"))
+	if p == "" || u.Host != base.Host || u.Scheme != base.Scheme || !strings.HasPrefix(p, s3AssetBasePath+"/") {
+		return ""
+	}
+
+	return p
+}
+
+func newAssetID() string {
+	// TODO: replace
+	return id.NewAssetID().String()
 }

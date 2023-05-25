@@ -6,8 +6,8 @@ import (
 	"io"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/internal/infrastructure/storage"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -28,7 +28,7 @@ func TestAsset_Create(t *testing.T) {
 	ws := workspace.New().NewID().MustBuild()
 
 	mfs := afero.NewMemMapFs()
-	f, _ := storage.NewFS(mfs, "")
+	f, _ := fs.NewFile(mfs, "")
 	uc := &Asset{
 		repos: &repo.Container{
 			Asset:     memory.NewAsset(),

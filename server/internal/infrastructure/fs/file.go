@@ -1,4 +1,4 @@
-package storage
+package fs
 
 import (
 	"context"
@@ -17,12 +17,12 @@ import (
 	"github.com/spf13/afero"
 )
 
-type fsFileRepo struct {
+type fileRepo struct {
 	fs      afero.Fs
 	urlBase *url.URL
 }
 
-func NewFS(fs afero.Fs, urlBase string) (gateway.File, error) {
+func NewFile(fs afero.Fs, urlBase string) (gateway.File, error) {
 	var b *url.URL
 	var err error
 	b, err = url.Parse(urlBase)
@@ -30,7 +30,7 @@ func NewFS(fs afero.Fs, urlBase string) (gateway.File, error) {
 		return nil, errors.New("invalid base URL")
 	}
 
-	return &fsFileRepo{
+	return &fileRepo{
 		fs:      fs,
 		urlBase: b,
 	}, nil
@@ -38,11 +38,11 @@ func NewFS(fs afero.Fs, urlBase string) (gateway.File, error) {
 
 // asset
 
-func (f *fsFileRepo) ReadAsset(ctx context.Context, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadAsset(ctx context.Context, filename string) (io.ReadCloser, error) {
 	return f.read(ctx, filepath.Join(assetDir, sanitize.Path(filename)))
 }
 
-func (f *fsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
+func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
 	filename := sanitize.Path(newAssetID() + filepath.Ext(file.Path))
 	size, err := f.upload(ctx, filepath.Join(assetDir, filename), file.Content)
 	if err != nil {
@@ -51,7 +51,7 @@ func (f *fsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL
 	return getAssetFileURL(f.urlBase, filename), size, nil
 }
 
-func (f *fsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
+func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	if u == nil {
 		return nil
 	}
@@ -64,31 +64,31 @@ func (f *fsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 
 // plugin
 
-func (f *fsFileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
 	return f.read(ctx, filepath.Join(pluginDir, pid.String(), sanitize.Path(filename)))
 }
 
-func (f *fsFileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
+func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
 	_, err := f.upload(ctx, filepath.Join(pluginDir, pid.String(), sanitize.Path(file.Path)), file.Content)
 	return err
 }
 
-func (f *fsFileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
+func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 	return f.delete(ctx, filepath.Join(pluginDir, pid.String()))
 }
 
 // built scene
 
-func (f *fsFileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	return f.read(ctx, filepath.Join(publishedDir, sanitize.Path(name+".json")))
 }
 
-func (f *fsFileRepo) UploadBuiltScene(ctx context.Context, reader io.Reader, name string) error {
+func (f *fileRepo) UploadBuiltScene(ctx context.Context, reader io.Reader, name string) error {
 	_, err := f.upload(ctx, filepath.Join(publishedDir, sanitize.Path(name+".json")), reader)
 	return err
 }
 
-func (f *fsFileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
+func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
 	return f.move(
 		ctx,
 		filepath.Join(publishedDir, sanitize.Path(oldName+".json")),
@@ -96,28 +96,28 @@ func (f *fsFileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) e
 	)
 }
 
-func (f *fsFileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
+func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 	return f.delete(ctx, filepath.Join(publishedDir, sanitize.Path(name+".json")))
 }
 
 // helpers
 
-func (f *fsFileRepo) read(_ context.Context, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) read(_ context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
 
-	ff, err := f.fs.Open(filename)
+	file, err := f.fs.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, rerror.ErrNotFound
 		}
 		return nil, rerror.ErrInternalBy(err)
 	}
-	return ff, nil
+	return file, nil
 }
 
-func (f *fsFileRepo) upload(_ context.Context, filename string, content io.Reader) (int64, error) {
+func (f *fileRepo) upload(_ context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
 		return 0, gateway.ErrFailedToUploadFile
 	}
@@ -144,13 +144,13 @@ func (f *fsFileRepo) upload(_ context.Context, filename string, content io.Reade
 	return size, nil
 }
 
-func (f *fsFileRepo) move(_ context.Context, from, dest string) error {
+func (f *fileRepo) move(_ context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
 
-	if destDir := filepath.Dir(dest); destDir != "" {
-		if err := f.fs.MkdirAll(destDir, 0755); err != nil {
+	if destd := filepath.Dir(dest); destd != "" {
+		if err := f.fs.MkdirAll(destd, 0755); err != nil {
 			return rerror.ErrInternalBy(err)
 		}
 	}
@@ -165,7 +165,7 @@ func (f *fsFileRepo) move(_ context.Context, from, dest string) error {
 	return nil
 }
 
-func (f *fsFileRepo) delete(_ context.Context, filename string) error {
+func (f *fileRepo) delete(_ context.Context, filename string) error {
 	if filename == "" {
 		return gateway.ErrFailedToUploadFile
 	}

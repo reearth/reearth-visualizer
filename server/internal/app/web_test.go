@@ -11,8 +11,8 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/internal/infrastructure/storage"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -47,7 +47,7 @@ func TestWeb(t *testing.T) {
 	lo.Must0(afero.WriteFile(mfs, "web/test.js", []byte(testJS), 0777))
 	prjr := memory.NewProject()
 	lo.Must0(prjr.Save(ctx, prj))
-	fileg := lo.Must(storage.NewFS(mfs, ""))
+	fileg := lo.Must(fs.NewFile(mfs, ""))
 	lo.Must0(fileg.UploadBuiltScene(ctx, strings.NewReader(dataJSON), prj.Alias()))
 
 	tests := []struct {
