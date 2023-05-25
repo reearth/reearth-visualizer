@@ -26,9 +26,6 @@ type Config struct {
 	Host_Web         string
 	Dev              bool
 	DB               string `default:"mongodb://localhost"`
-	Mailer           string
-	SMTP             SMTPConfig
-	SendGrid         SendGridConfig
 	GraphQL          GraphQLConfig
 	Published        PublishedConfig
 	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`
@@ -49,6 +46,13 @@ type Config struct {
 	SignupSecret     string
 	SignupDisabled   bool
 	HTTPSREDIRECT    bool
+
+	// mailer
+	Mailer   string
+	SMTP     SMTPConfig
+	SendGrid SendGridConfig
+	SES      SESConfig
+
 	// auth
 	Auth          AuthConfigs
 	Auth0         Auth0Config
@@ -189,6 +193,11 @@ type SendGridConfig struct {
 	Email string
 	Name  string
 	API   string
+}
+
+type SESConfig struct {
+	Email string
+	Name  string
 }
 
 type SMTPConfig struct {
