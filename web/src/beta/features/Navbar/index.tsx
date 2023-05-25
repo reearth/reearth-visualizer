@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { styled } from "@reearth/services/theme";
 
-type Tab = "scene" | "story" | "widgets" | "publish";
+export type Tab = "scene" | "story" | "widgets" | "publish";
 
-const tabs = ["scene", "story", "widgets", "publish"];
+type Props = {
+  currentTab?: Tab;
+};
 
-const Navbar: React.FC = () => {
-  const [currentTab, setTab] = useState<Tab | undefined>();
-
+const Navbar: React.FC<Props> = ({ currentTab }) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleNavigation = useCallback(
     (tab: Tab) => {
@@ -20,22 +19,13 @@ const Navbar: React.FC = () => {
     [navigate],
   );
 
-  useEffect(() => {
-    const splitPathname = location.pathname.split("/");
-    const tab = splitPathname[splitPathname.length - 1];
-
-    if (!tabs.includes(tab)) {
-      setTab("scene");
-    } else {
-      setTab(tab as Tab);
-    }
-  }, [location.pathname]);
-
   return (
     <Wrapper>
-      Navbar
-      <p>{location.pathname}</p>
-      <p>{currentTab}</p>
+      <p>Navbar</p>
+      <div>
+        <p>current path: {location.pathname}</p>
+        <p> current tab: {currentTab}</p>
+      </div>
       <div>
         <button
           onClick={() => handleNavigation("scene")}
@@ -65,7 +55,6 @@ const Navbar: React.FC = () => {
 export default Navbar;
 
 const Wrapper = styled.div`
-  // flex: 1;
   display: flex;
   justify-content: space-between;
   height: 53px;
