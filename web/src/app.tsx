@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router, Navigate, useParams, Routes, Route } from "react-router-dom";
 
+// import BetaEditor from "@reearth/beta/pages/Editor";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
@@ -24,6 +25,8 @@ import { Provider as Auth0Provider } from "./services/auth";
 import { Provider as GqlProvider } from "./services/gql";
 import { Provider as ThemeProvider, styled } from "./services/theme";
 
+const BetaEditor = React.lazy(() => import("@reearth/beta/pages/Editor"));
+
 const EarthEditor = React.lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/classic/components/pages/Dashboard"));
 const GraphQLPlayground = React.lazy(
@@ -46,8 +49,16 @@ export default function App() {
                   <Route path="/signup" element={<SignupPage />} />
                   <Route path="/password-reset" element={<PasswordResetPage />} />
                   <Route path="/dashboard/:workspaceId" element={<Dashboard />} />
+                  {/* classic routes - start */}
                   <Route path="/edit/:sceneId" element={<EarthEditor />} />
                   <Route path="/edit/:sceneId/preview" element={<Preview />} />
+                  <Route path="/plugin-editor" element={<PluginEditor />} />
+                  {/* classic routes - end */}
+                  <Route path="/scene/:sceneId" element={<BetaEditor />}>
+                    <Route path="story" element={<BetaEditor />} />
+                    <Route path="widgets" element={<BetaEditor />} />
+                    <Route path="publish" element={<BetaEditor />} />
+                  </Route>
                   <Route path="settings" element={<Navigate to="/settings/account" />} />
                   <Route path="/settings/account" element={<AccountSettings />} />
                   <Route path="/settings/workspaces" element={<WorkspaceList />} />
@@ -70,7 +81,6 @@ export default function App() {
                     path="/settings/projects/:projectId/plugins"
                     element={<PluginSettings />}
                   />
-                  <Route path="/plugin-editor" element={<PluginEditor />} />
                   <Route path="/graphql" element={<GraphQLPlayground />} />
                   {...redirects.map(([from, to]) => (
                     <Route key={from} path={from} element={<Redirect to={to} />} />
