@@ -234,6 +234,7 @@ type CreateProjectInput struct {
 	ImageURL    *url.URL   `json:"imageUrl"`
 	Alias       *string    `json:"alias"`
 	Archived    *bool      `json:"archived"`
+	CoreSupport *bool      `json:"coreSupport"`
 }
 
 type CreateSceneInput struct {
@@ -753,6 +754,7 @@ type Project struct {
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	Team              *Team             `json:"team"`
 	Scene             *Scene            `json:"scene"`
+	CoreSupport       bool              `json:"coreSupport"`
 }
 
 func (Project) IsNode() {}

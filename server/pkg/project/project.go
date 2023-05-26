@@ -33,6 +33,7 @@ type Project struct {
 	workspace         WorkspaceID
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
+	coreSupport       bool
 }
 
 func (p *Project) ID() ID {
@@ -98,6 +99,10 @@ func (p *Project) PublicImage() string {
 
 func (p *Project) PublicNoIndex() bool {
 	return p.publicNoIndex
+}
+
+func (p *Project) CoreSupport() bool {
+	return p.coreSupport
 }
 
 func (p *Project) PublishmentStatus() PublishmentStatus {

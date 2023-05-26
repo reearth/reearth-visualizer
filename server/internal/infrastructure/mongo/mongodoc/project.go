@@ -29,6 +29,7 @@ type ProjectDocument struct {
 	Team              string // DON'T CHANGE NAME'
 	Visualizer        string
 	PublishmentStatus string
+	CoreSupport       bool
 }
 
 type ProjectConsumer = mongox.SliceFuncConsumer[*ProjectDocument, *project.Project]
@@ -64,6 +65,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Team:              project.Workspace().String(),
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
+		CoreSupport:       project.CoreSupport(),
 	}, pid
 }
 
@@ -103,5 +105,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
+		CoreSupport(d.CoreSupport).
 		Build()
 }

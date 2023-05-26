@@ -22,7 +22,7 @@ func TestProject_Create(t *testing.T) {
 
 	po := workspace.NewPolicy(workspace.PolicyOption{
 		ID:           workspace.PolicyID("policy"),
-		ProjectCount: lo.ToPtr(1),
+		ProjectCount: lo.ToPtr(2),
 	})
 
 	uc := &Project{
@@ -35,8 +35,8 @@ func TestProject_Create(t *testing.T) {
 	ws := workspace.New().NewID().Policy(workspace.PolicyID("policy").Ref()).MustBuild()
 	wsid2 := workspace.NewID()
 	_ = uc.workspaceRepo.Save(ctx, ws)
-	pid := project.NewID()
-	defer project.MockNewID(pid)()
+	pId1, pId2 := project.NewID(), project.NewID()
+	defer project.MockNewID(pId1)()
 
 	// normal
 	got, err := uc.Create(ctx, interfaces.CreateProjectParam{
@@ -50,8 +50,9 @@ func TestProject_Create(t *testing.T) {
 	}, &usecase.Operator{
 		WritableWorkspaces: workspace.IDList{ws.ID()},
 	})
+	assert.NoError(t, err)
 	want := project.New().
-		ID(pid).
+		ID(pId1).
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
@@ -59,10 +60,39 @@ func TestProject_Create(t *testing.T) {
 		Alias("aliasalias").
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
+		CoreSupport(false).
 		MustBuild()
-	assert.NoError(t, err)
 	assert.Equal(t, want, got)
-	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pid)))
+	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId1)))
+
+	// Experimental
+	defer project.MockNewID(pId2)()
+	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
+		WorkspaceID: ws.ID(),
+		Visualizer:  visualizer.VisualizerCesium,
+		Name:        lo.ToPtr("aaa"),
+		Description: lo.ToPtr("bbb"),
+		ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
+		Alias:       lo.ToPtr("aliasalias"),
+		Archived:    lo.ToPtr(false),
+		CoreSupport: lo.ToPtr(true),
+	}, &usecase.Operator{
+		WritableWorkspaces: workspace.IDList{ws.ID()},
+	})
+	assert.NoError(t, err)
+	want = project.New().
+		ID(pId2).
+		Workspace(ws.ID()).
+		Name("aaa").
+		Description("bbb").
+		ImageURL(lo.Must(url.Parse("https://example.com/hoge.gif"))).
+		Alias("aliasalias").
+		Visualizer(visualizer.VisualizerCesium).
+		UpdatedAt(got.UpdatedAt()).
+		CoreSupport(true).
+		MustBuild()
+	assert.Equal(t, want, got)
+	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId2)))
 
 	// nonexistent workspace
 	got, err = uc.Create(ctx, interfaces.CreateProjectParam{

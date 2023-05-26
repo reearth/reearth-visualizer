@@ -122,6 +122,11 @@ func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
 	return b
 }
 
+func (b *Builder) CoreSupport(coreSupport bool) *Builder {
+	b.p.coreSupport = coreSupport
+	return b
+}
+
 func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
 	b.p.workspace = workspace
 	return b
