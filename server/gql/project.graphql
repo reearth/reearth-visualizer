@@ -1,0 +1,116 @@
+type Project implements Node {
+  id: ID!
+  isArchived: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+  name: String!
+  description: String!
+  alias: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+  imageUrl: URL
+  teamId: ID!
+  visualizer: Visualizer!
+  publishmentStatus: PublishmentStatus!
+  team: Team
+  scene: Scene
+  coreSupport: Boolean!
+}
+
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+enum Visualizer {
+  CESIUM
+}
+
+enum PublishmentStatus {
+  PUBLIC
+  LIMITED
+  PRIVATE
+}
+
+# InputType
+
+input CreateProjectInput {
+  teamId: ID!
+  visualizer: Visualizer!
+  name: String
+  description: String
+  imageUrl: URL
+  alias: String
+  archived: Boolean
+  coreSupport: Boolean
+}
+
+input UpdateProjectInput {
+  projectId: ID!
+  name: String
+  description: String
+  archived: Boolean
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  imageUrl: URL
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deleteImageUrl: Boolean
+  deletePublicImage: Boolean
+}
+
+input PublishProjectInput {
+  projectId: ID!
+  alias: String
+  status: PublishmentStatus!
+}
+
+input DeleteProjectInput {
+  projectId: ID!
+}
+
+# Payload
+
+type ProjectPayload {
+  project: Project!
+}
+
+type DeleteProjectPayload {
+  projectId: ID!
+}
+
+# Connection
+
+type ProjectConnection {
+  edges: [ProjectEdge!]!
+  nodes: [Project]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProjectEdge {
+  cursor: Cursor!
+  node: Project
+}
+
+extend type Query{
+  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+}
+
+extend type Mutation {
+  createProject(input: CreateProjectInput!): ProjectPayload
+  updateProject(input: UpdateProjectInput!): ProjectPayload
+  publishProject(input: PublishProjectInput!): ProjectPayload
+  deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+}

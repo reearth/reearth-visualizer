@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/reearth/reearth/server/internal/infrastructure/mailer"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/mailer"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
@@ -39,7 +39,7 @@ func TestUser_Signup(t *testing.T) {
 		args             interfaces.SignupParam
 		wantUser         *user.User
 		wantWorkspace    *workspace.Workspace
-		wantMailTo       []gateway.Contact
+		wantMailTo       []mailer.Contact
 		wantMailSubject  string
 		wantMailContent  string
 		wantError        error
@@ -73,7 +73,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "https://reearth.io/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -103,7 +103,7 @@ func TestUser_Signup(t *testing.T) {
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
 			wantWorkspace:   nil,
-			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: ""}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: ""}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -162,7 +162,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -201,7 +201,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []gateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
