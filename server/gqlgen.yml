@@ -3,20 +3,7 @@
 # Refer to https://gqlgen.com/config/
 # for detailed .gqlgen.yml documentation.
 
-schema:
-  - ./gql/_shared.graphql
-  - ./gql/asset.graphql
-  - ./gql/user.graphql
-  - ./gql/team.graphql
-  - ./gql/project.graphql
-  - ./gql/scene.graphql
-  - ./gql/plugin.graphql
-  - ./gql/property.graphql
-  - ./gql/tag.graphql
-  - ./gql/cluster.graphql
-  - ./gql/was.graphql
-  - ./gql/layer.graphql
-  - ./gql/dataset.graphql
+schema: ./gql/*.graphql
 exec:
   filename: internal/adapter/gql/generated.go
 model:
