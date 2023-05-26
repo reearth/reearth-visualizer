@@ -1,0 +1,125 @@
+interface Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  layers: [Layer!]!
+}
+
+type TagItem implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  parentId: ID
+  linkedDatasetID: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetFieldID: ID
+  linkedDatasetSchema: DatasetSchema
+  linkedDataset: Dataset
+  linkedDatasetField: DatasetField
+  parent: TagGroup
+  layers: [Layer!]!
+}
+
+type TagGroup implements Tag {
+  id: ID!
+  sceneId: ID!
+  label: String!
+  tagIds: [ID!]
+  tags: [TagItem!]!
+  scene: Scene
+  layers: [Layer!]!
+}
+
+# InputType
+
+input CreateTagItemInput {
+  sceneId: ID!
+  label: String!
+  parent: ID
+  linkedDatasetSchemaID: ID
+  linkedDatasetID: ID
+  linkedDatasetField: ID
+}
+
+input CreateTagGroupInput {
+  sceneId: ID!
+  label: String!
+  tags: [ID!]
+}
+
+input UpdateTagInput {
+  tagId: ID!
+  sceneId: ID!
+  label: String
+}
+
+input AttachTagItemToGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input DetachTagItemFromGroupInput {
+  itemID: ID!
+  groupID: ID!
+}
+
+input AttachTagToLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input DetachTagFromLayerInput {
+  tagID: ID!
+  layerID: ID!
+}
+
+input RemoveTagInput {
+  tagID: ID!
+}
+
+# Payload
+
+type CreateTagItemPayload {
+  tag: TagItem!
+  parent: TagGroup
+}
+
+type CreateTagGroupPayload {
+  tag: TagGroup!
+}
+
+type AttachTagItemToGroupPayload {
+  tag: TagGroup!
+}
+
+type DetachTagItemFromGroupPayload {
+  tag: TagGroup!
+}
+
+type UpdateTagPayload {
+  tag: Tag!
+}
+
+type AttachTagToLayerPayload {
+  layer: Layer!
+}
+
+type DetachTagFromLayerPayload {
+  layer: Layer!
+}
+
+type RemoveTagPayload {
+  tagId: ID!
+  updatedLayers: [Layer!]!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  createTagItem(input: CreateTagItemInput!): CreateTagItemPayload
+  createTagGroup(input: CreateTagGroupInput!): CreateTagGroupPayload
+  attachTagItemToGroup(input: AttachTagItemToGroupInput!): AttachTagItemToGroupPayload
+  detachTagItemFromGroup(input: DetachTagItemFromGroupInput!): DetachTagItemFromGroupPayload
+  updateTag(input: UpdateTagInput!): UpdateTagPayload
+  removeTag(input: RemoveTagInput!): RemoveTagPayload
+}
