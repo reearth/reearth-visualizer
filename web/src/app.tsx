@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router, Navigate, useParams, Routes, Route } from "react-router-dom";
 
-// import BetaEditor from "@reearth/beta/pages/Editor";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
