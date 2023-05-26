@@ -48,6 +48,7 @@ export const AppRoutes = () => {
           <Route path="publish" element={<BetaEditor />} />
         </Route>
         <Route path="settings">
+          <Route index={true} element={<Navigate to="/settings/account" />} />
           <Route path="account" element={<AccountSettings />} />
           <Route path="workspaces">
             <Route index={true} element={<WorkspaceList />} />
