@@ -9,12 +9,12 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
-	"github.com/reearth/reearth/server/internal/infrastructure/mailer"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/spf13/afero"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -85,7 +85,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	return repos, gateways
 }
 
-func initMailer(ctx context.Context, conf *Config) gateway.Mailer {
+func initMailer(ctx context.Context, conf *Config) mailer.Mailer {
 	if conf.Mailer == "sendgrid" {
 		log.Infoln("mailer: sendgrid is used")
 		return mailer.NewSendGrid(conf.SendGrid.Name, conf.SendGrid.Email, conf.SendGrid.API)
