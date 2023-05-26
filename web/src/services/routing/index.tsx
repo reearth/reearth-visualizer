@@ -30,35 +30,42 @@ export const AppRoutes = () => {
   return (
     <StyledRouter>
       <Routes>
-        <Route path="/" element={<RootPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/password-reset" element={<PasswordResetPage />} />
-        <Route path="/dashboard/:workspaceId" element={<Dashboard />} />
+        <Route index={true} element={<RootPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="signup" element={<SignupPage />} />
+        <Route path="password-reset" element={<PasswordResetPage />} />
+        <Route path="dashboard/:workspaceId" element={<Dashboard />} />
         {/* classic routes - start */}
-        <Route path="/edit/:sceneId" element={<EarthEditor />} />
-        <Route path="/edit/:sceneId/preview" element={<Preview />} />
-        <Route path="/plugin-editor" element={<PluginEditor />} />
+        <Route path="edit/:sceneId">
+          <Route index={true} element={<EarthEditor />} />
+          <Route path="preview" element={<Preview />} />
+        </Route>
+        <Route path="plugin-editor" element={<PluginEditor />} />
         {/* classic routes - end */}
-        <Route path="/scene/:sceneId" element={<BetaEditor />}>
+        <Route path="scene/:sceneId" element={<BetaEditor />}>
           <Route path="story" element={<BetaEditor />} />
           <Route path="widgets" element={<BetaEditor />} />
           <Route path="publish" element={<BetaEditor />} />
         </Route>
-        <Route path="settings" element={<Navigate to="/settings/account" />} />
-        <Route path="/settings/account" element={<AccountSettings />} />
-        <Route path="/settings/workspaces" element={<WorkspaceList />} />
-        <Route path="/settings/workspaces/:workspaceId" element={<WorkspaceSettings />} />
-        <Route
-          path="/settings/workspaces/:workspaceId/projects"
-          element={<SettingsProjectList />}
-        />
-        <Route path="/settings/workspaces/:workspaceId/asset" element={<AssetSettings />} />
-        <Route path="/settings/projects/:projectId" element={<ProjectSettings />} />
-        <Route path="/settings/projects/:projectId/public" element={<PublicSettings />} />
-        <Route path="/settings/projects/:projectId/dataset" element={<DatasetSettings />} />
-        <Route path="/settings/projects/:projectId/plugins" element={<PluginSettings />} />
-        <Route path="/graphql" element={<GraphQLPlayground />} />
+        <Route path="settings">
+          <Route path="account" element={<AccountSettings />} />
+          <Route path="workspaces">
+            <Route index={true} element={<WorkspaceList />} />
+            <Route path=":workspaceId">
+              <Route index={true} element={<WorkspaceSettings />} />
+              <Route path="projects" element={<SettingsProjectList />} />
+              <Route path="asset" element={<AssetSettings />} />
+            </Route>
+          </Route>
+          <Route path="projects/:projectId">
+            <Route index={true} element={<ProjectSettings />} />
+            <Route path="public" element={<PublicSettings />} />
+            <Route path="dataset" element={<DatasetSettings />} />
+            <Route path="plugins" element={<PluginSettings />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/settings/account" />} />
+        </Route>
+        <Route path="graphql" element={<GraphQLPlayground />} />
         {...redirects.map(([from, to]) => (
           <Route key={from} path={from} element={<Redirect to={to} />} />
         ))}
@@ -73,7 +80,7 @@ const StyledRouter = styled(Router)`
 `;
 
 // Redirections for breaking changes in URLs
-export const redirects = [
+const redirects = [
   ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
   ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
   ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
@@ -83,7 +90,7 @@ export const redirects = [
   ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
 ];
 
-export function Redirect({ to }: { to: string }) {
+function Redirect({ to }: { to: string }) {
   const { teamId, projectId } = useParams();
   return (
     <Navigate
