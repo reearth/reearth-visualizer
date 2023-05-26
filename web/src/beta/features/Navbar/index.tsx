@@ -1,23 +1,15 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavbarHooks, Tab } from "@reearth/beta/hooks/navbarHooks";
 import { styled } from "@reearth/services/theme";
 
-export type Tab = "scene" | "story" | "widgets" | "publish";
+export type { Tab };
 
 type Props = {
+  sceneId?: string;
   currentTab?: Tab;
 };
 
-const Navbar: React.FC<Props> = ({ currentTab }) => {
-  const navigate = useNavigate();
-
-  const handleNavigation = useCallback(
-    (tab: Tab) => {
-      navigate(tab !== "scene" ? `/scene/asdfasdf222/${tab}` : "");
-    },
-    [navigate],
-  );
+const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
+  const { handleEditorNavigation } = useNavbarHooks({ sceneId });
 
   return (
     <Wrapper>
@@ -28,22 +20,22 @@ const Navbar: React.FC<Props> = ({ currentTab }) => {
       </div>
       <div>
         <button
-          onClick={() => handleNavigation("scene")}
+          onClick={() => handleEditorNavigation("scene")}
           style={{ background: "white", marginRight: "3px" }}>
           Scene
         </button>
         <button
-          onClick={() => handleNavigation("story")}
+          onClick={() => handleEditorNavigation("story")}
           style={{ background: "white", marginRight: "3px" }}>
           Storytelling
         </button>
         <button
-          onClick={() => handleNavigation("widgets")}
+          onClick={() => handleEditorNavigation("widgets")}
           style={{ background: "white", marginRight: "3px" }}>
           Widgets
         </button>
         <button
-          onClick={() => handleNavigation("publish")}
+          onClick={() => handleEditorNavigation("publish")}
           style={{ background: "white", marginRight: "3px" }}>
           Publish
         </button>
