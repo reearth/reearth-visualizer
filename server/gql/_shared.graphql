@@ -7,16 +7,6 @@ scalar FileSize
 scalar TranslatedString
 scalar Cursor
 
-directive @goModel(
-  model: String
-  models: [String!]
-) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
-
-directive @goField(
-  forceResolver: Boolean
-  name: String
-) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
-
 # Meta Type
 
 interface Node {
