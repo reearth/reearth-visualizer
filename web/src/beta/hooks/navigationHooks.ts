@@ -13,9 +13,3 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
     [sceneId, navigate],
   );
 };
-
-export const useNavigationHooks = () => {
-  return {
-    useEditorNavigation,
-  };
-};
