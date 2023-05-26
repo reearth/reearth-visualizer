@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import LeftPanel from "@reearth/beta/features/LeftPanel";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
@@ -12,9 +12,9 @@ type Props = {};
 const tabs = ["scene", "story", "widgets", "publish"];
 
 const Editor: React.FC<Props> = () => {
-  const [sceneId, setSceneId] = useState<string | undefined>(undefined); // This will come from project query once beta project creation works
   const [currentTab, setTab] = useState<Tab | undefined>();
   const location = useLocation();
+  const { sceneId } = useParams();
 
   useEffect(() => {
     const splitPathname = location.pathname.split("/");
@@ -22,12 +22,6 @@ const Editor: React.FC<Props> = () => {
       splitPathname[
         splitPathname.length === 4 ? splitPathname.length - 1 : splitPathname.length - 2
       ];
-    const sceneId =
-      splitPathname[
-        splitPathname.length === 4 ? splitPathname.length - 2 : splitPathname.length - 1
-      ];
-
-    setSceneId(sceneId);
 
     if (!tabs.includes(tab)) {
       setTab("scene");
