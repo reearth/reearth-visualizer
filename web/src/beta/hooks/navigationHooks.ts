@@ -3,17 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 export type Tab = "scene" | "story" | "widgets" | "publish";
 
-export const useNavbarHooks = ({ sceneId }: { sceneId?: string }) => {
+export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
   const navigate = useNavigate();
 
-  const handleEditorNavigation = useCallback(
+  return useCallback(
     (tab: Tab) => {
       navigate(tab !== "scene" ? `/scene/${sceneId}/${tab}` : "");
     },
     [sceneId, navigate],
   );
+};
 
+export const useNavigationHooks = () => {
   return {
-    handleEditorNavigation,
+    useEditorNavigation,
   };
 };

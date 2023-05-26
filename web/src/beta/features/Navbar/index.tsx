@@ -1,4 +1,4 @@
-import { useNavbarHooks, Tab } from "@reearth/beta/hooks/navbarHooks";
+import { useEditorNavigation, Tab } from "@reearth/beta/hooks";
 import { styled } from "@reearth/services/theme";
 
 export type { Tab };
@@ -9,7 +9,7 @@ type Props = {
 };
 
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
-  const { handleEditorNavigation } = useNavbarHooks({ sceneId });
+  const handleEditorNavigation = useEditorNavigation({ sceneId });
 
   return (
     <Wrapper>
