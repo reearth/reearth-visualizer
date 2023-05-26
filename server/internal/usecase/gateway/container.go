@@ -1,10 +1,10 @@
 package gateway
 
-import "github.com/reearth/reearthx/account/accountusecase/accountgateway"
+import "github.com/reearth/reearthx/mailer"
 
 type Container struct {
 	Authenticator  Authenticator
-	Mailer         accountgateway.Mailer
+	Mailer         mailer.Mailer
 	DataSource     DataSource
 	PluginRegistry PluginRegistry
 	File           File

@@ -15,7 +15,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -40,7 +39,7 @@ func TestUser_Signup(t *testing.T) {
 		args             interfaces.SignupParam
 		wantUser         *user.User
 		wantWorkspace    *workspace.Workspace
-		wantMailTo       []accountgateway.Contact
+		wantMailTo       []mailer.Contact
 		wantMailSubject  string
 		wantMailContent  string
 		wantError        error
@@ -74,7 +73,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []accountgateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "https://reearth.io/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -104,7 +103,7 @@ func TestUser_Signup(t *testing.T) {
 				Verification(user.VerificationFrom(mockcode, mocktime.Add(24*time.Hour), false)).
 				MustBuild(),
 			wantWorkspace:   nil,
-			wantMailTo:      []accountgateway.Contact{{Email: "aaa@bbb.com", Name: ""}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: ""}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -163,7 +162,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []accountgateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
@@ -202,7 +201,7 @@ func TestUser_Signup(t *testing.T) {
 				Members(map[id.UserID]workspace.Role{uid: workspace.RoleOwner}).
 				Personal(true).
 				MustBuild(),
-			wantMailTo:      []accountgateway.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
+			wantMailTo:      []mailer.Contact{{Email: "aaa@bbb.com", Name: "NAME"}},
 			wantMailSubject: "email verification",
 			wantMailContent: "/?user-verification-token=CODECODE",
 			wantError:       nil,
