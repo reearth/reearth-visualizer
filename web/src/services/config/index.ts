@@ -10,6 +10,15 @@ export type Config = {
   auth0ClientId?: string;
   auth0Domain?: string;
   auth0Audience?: string;
+  authProvider?: string;
+  cognitoRegion?: string;
+  cognitoUserPoolId?: string;
+  cognitoUserPoolWebClientId?: string;
+  cognitoOauthScope?: string;
+  cognitoOauthDomain?: string;
+  cognitoOauthRedirectSignIn?: string;
+  cognitoOauthRedirectSignOut?: string;
+  cognitoOauthResponseType?: string;
   googleApiKey?: string;
   googleClientId?: string;
   sentryDsn?: string;
@@ -63,6 +72,7 @@ export const defaultConfig: Config = {
   auth0Audience: "http://localhost:8080",
   auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
+  authProvider: "auth0",
   policy: {
     modalTitle: {
       en: "Re:Earth Cloud",

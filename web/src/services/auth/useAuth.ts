@@ -1,38 +1,26 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
-import { e2eAccessToken } from "@reearth/services/config";
+import { AuthContext } from "./authProvider";
 
 export const errorKey = "reeartherror";
 
-export default function useAuth() {
-  const { isAuthenticated, error, isLoading, loginWithRedirect, logout, getAccessTokenSilently } =
-    useAuth0();
+export const useAuth = () => {
+  const auth = useContext(AuthContext);
 
-  return {
-    isAuthenticated: !!e2eAccessToken() || (isAuthenticated && !error),
-    isLoading,
-    error: error?.message,
-    getAccessToken: () => getAccessTokenSilently(),
-    login: () => loginWithRedirect(),
-    logout: () =>
-      logout({
-        logoutParams: {
-          returnTo: error
-            ? `${window.location.origin}?${errorKey}=${encodeURIComponent(error?.message)}`
-            : window.location.origin,
-        },
-      }),
-  };
-}
+  if (!auth) {
+    throw new Error("No auth provider configured");
+  }
+
+  return auth;
+};
 
 export function useCleanUrl(): [string | undefined, boolean] {
-  const { isLoading } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth();
   const [error, setError] = useState<string>();
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return; // ensure that Auth0 can detect errors
+    if (isLoading) return;
 
     const params = new URLSearchParams(window.location.search);
 
@@ -50,7 +38,7 @@ export function useCleanUrl(): [string | undefined, boolean] {
 
     history.replaceState(null, document.title, url);
     setDone(true);
-  }, [isLoading]);
+  }, [isAuthenticated, isLoading]);
 
   return [error, done];
 }
