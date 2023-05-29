@@ -78,6 +78,11 @@ Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
+Choose Project Type: Choose Project Type
+classic: classic
+create project with classic UI: create project with classic UI
+Experimental: Experimental
+create project with latest features and UI system with preview version: create project with latest features and UI system with preview version
 Create New Workspace: Create New Workspace
 Workspace Name: Workspace Name
 Workspaces: Workspaces

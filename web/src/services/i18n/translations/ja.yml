@@ -72,6 +72,11 @@ Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
+Choose Project Type: Choose Project Type
+classic: classic
+create project with classic UI: create project with classic UI
+Experimental: Experimental
+create project with latest features and UI system with preview version: create project with latest features and UI system with preview version
 Create New Workspace: 新規ワークスペース作成
 Workspace Name: ワークスペース名
 Workspaces: ワークスペース
