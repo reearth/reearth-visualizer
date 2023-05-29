@@ -34,8 +34,8 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			// debug mode
 			if cfg.Debug {
 				if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
-					if id, err := id.UserIDFrom(userID); err == nil {
-						user2, err := cfg.Repos.User.FindByID(ctx, id)
+					if uId, err := id.UserIDFrom(userID); err == nil {
+						user2, err := cfg.Repos.User.FindByID(ctx, uId)
 						if err == nil && user2 != nil {
 							u = user2
 						}

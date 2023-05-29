@@ -32,7 +32,7 @@ type customClaims struct {
 	EmailVerified *bool  `json:"email_verified"`
 }
 
-func (c *customClaims) Validate(ctx context.Context) error {
+func (c *customClaims) Validate(_ context.Context) error {
 	return nil
 }
 
