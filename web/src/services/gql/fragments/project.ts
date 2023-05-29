@@ -16,5 +16,6 @@ export const projectFragment = gql`
     alias
     publishmentStatus
     updatedAt
+    coreSupport
   }
 `;

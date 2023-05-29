@@ -22,6 +22,7 @@ import {
   useNotification,
   useSessionWorkspace,
 } from "@reearth/services/state";
+import { ProjectType } from "@reearth/types";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
@@ -38,6 +39,7 @@ export default (workspaceId?: string) => {
   const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const handleModalOpen = useCallback(() => setModalShown(true), []);
+
   const t = useT();
   const navigate = useNavigate();
 
@@ -156,6 +158,7 @@ export default (workspaceId?: string) => {
               isArchived: project.isArchived,
               sceneId: project.scene?.id,
               updatedAt: project.updatedAt.toString(),
+              projectType: project.coreSupport ? "beta" : "classic",
             }
           : undefined,
       )
@@ -184,7 +187,12 @@ export default (workspaceId?: string) => {
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
   const handleProjectCreate = useCallback(
-    async (data: { name: string; description: string; imageUrl: string | null }) => {
+    async (data: {
+      name: string;
+      description: string;
+      imageUrl: string | null;
+      projectType: ProjectType;
+    }) => {
       if (!workspaceId) return;
       const project = await createNewProject({
         variables: {
@@ -193,6 +201,7 @@ export default (workspaceId?: string) => {
           name: data.name,
           description: data.description,
           imageUrl: data.imageUrl,
+          coreSupport: data.projectType === "beta" ? true : false ?? false,
         },
       });
       if (project.errors || !project.data?.createProject) {

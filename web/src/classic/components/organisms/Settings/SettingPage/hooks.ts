@@ -84,6 +84,7 @@ export default (params: Params) => {
               name: project.name,
               isArchived: project.isArchived,
               sceneId: project.scene?.id,
+              projectType: project.coreSupport ? "beta" : "classic" ?? "classic",
             }
           : undefined
         : p,
