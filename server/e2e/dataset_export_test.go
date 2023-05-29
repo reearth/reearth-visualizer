@@ -5,13 +5,14 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/app"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 func TestDatasetExport(t *testing.T) {
 	e := StartServer(t, &app.Config{
 		Origins: []string{"https://example.com"},
-		AuthSrv: app.AuthSrvConfig{
+		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
 	}, true, baseSeeder)

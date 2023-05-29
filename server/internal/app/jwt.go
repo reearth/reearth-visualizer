@@ -12,7 +12,9 @@ import (
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/log"
+	"github.com/samber/lo"
 )
 
 type contextKey string
@@ -20,7 +22,7 @@ type contextKey string
 const (
 	debugUserHeader            = "X-Reearth-Debug-User"
 	contextUser     contextKey = "reearth_user"
-	defaultJWTTTL              = 5 * time.Minute
+	defaultJWTTTL              = 5 // minutes
 )
 
 type customClaims struct {
@@ -36,22 +38,27 @@ func (c *customClaims) Validate(ctx context.Context) error {
 
 type MultiValidator []*validator.Validator
 
-func NewMultiValidator(providers []AuthConfig) (MultiValidator, error) {
+func NewMultiValidator(providers []config.AuthConfig) (MultiValidator, error) {
 	validators := make([]*validator.Validator, 0, len(providers))
 	for _, p := range providers {
 		issuerURL, err := url.Parse(p.ISS)
-		issuerURL.Path = "/"
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse the issuer url: %w", err)
 		}
-
-		var ttl time.Duration
-		if p.TTL != nil {
-			ttl = time.Duration(*p.TTL) * time.Minute
-		} else {
-			ttl = defaultJWTTTL
+		if issuerURL.Path == "" {
+			issuerURL.Path = "/"
 		}
-		provider := jwks.NewCachingProvider(issuerURL, ttl)
+
+		ttl := time.Duration(lo.FromPtrOr(p.TTL, defaultJWTTTL)) * time.Minute
+		var opts []jwks.ProviderOption
+		if p.JWKSURI != nil && *p.JWKSURI != "" {
+			u, err := url.Parse(*p.JWKSURI)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse the jwks uri: %w", err)
+			}
+			opts = append(opts, jwks.WithCustomJWKSURI(u))
+		}
+		provider := jwks.NewCachingProvider(issuerURL, ttl, opts...)
 
 		alg := "RS256"
 		if p.ALG != nil && *p.ALG != "" {
@@ -108,7 +115,7 @@ func jwtEchoMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 }
 
 // load claim from ctx and inject the user sub into ctx
-func parseJwtMiddleware() echo.MiddlewareFunc {
+func loadAuthInfoMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()

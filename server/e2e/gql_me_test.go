@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/app"
+	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func TestMe(t *testing.T) {
 	e := StartServer(t, &app.Config{
 		Origins: []string{"https://example.com"},
-		AuthSrv: app.AuthSrvConfig{
+		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
 	},
