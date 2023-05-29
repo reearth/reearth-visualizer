@@ -1,38 +1,28 @@
-import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import LeftPanel from "@reearth/beta/features/LeftPanel";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import RightPanel from "@reearth/beta/features/RightPanel";
 import Visualizer from "@reearth/beta/features/Visualizer";
+import NotFound from "@reearth/classic/components/atoms/NotFound";
 import { styled } from "@reearth/services/theme";
 
 type Props = {};
 
-const tabs = ["scene", "story", "widgets", "publish"];
+function isTab(tab: string): tab is Tab {
+  return ["scene", "story", "widgets", "publish"].includes(tab);
+}
 
 const Editor: React.FC<Props> = () => {
-  const [currentTab, setTab] = useState<Tab | undefined>();
-  const location = useLocation();
-  const { sceneId } = useParams();
+  const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();
 
-  useEffect(() => {
-    const splitPathname = location.pathname.split("/");
-    const tab =
-      splitPathname[
-        splitPathname.length === 4 ? splitPathname.length - 1 : splitPathname.length - 2
-      ];
-
-    if (!tabs.includes(tab)) {
-      setTab("scene");
-    } else {
-      setTab(tab as Tab);
-    }
-  }, [location.pathname]);
+  if (!sceneId || !tab || !isTab(tab)) {
+    return <NotFound />;
+  }
 
   return (
     <Wrapper>
-      <Navbar sceneId={sceneId} currentTab={currentTab} />
+      <Navbar sceneId={sceneId} currentTab={tab} />
       <MainSection>
         <LeftPanel />
         <Visualizer />

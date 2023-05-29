@@ -4,8 +4,8 @@ import { styled } from "@reearth/services/theme";
 export type { Tab };
 
 type Props = {
-  sceneId?: string;
-  currentTab?: Tab;
+  sceneId: string;
+  currentTab: Tab;
 };
 
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
