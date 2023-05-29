@@ -43,4 +43,5 @@ const Wrapper = styled.div`
 const MainSection = styled.div`
   display: flex;
   flex: 1;
+  background-color: #070707;
 `;
