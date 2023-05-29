@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 
 import LeftPanel from "@reearth/beta/features/LeftPanel";
@@ -5,7 +6,8 @@ import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import RightPanel from "@reearth/beta/features/RightPanel";
 import Visualizer from "@reearth/beta/features/Visualizer";
 import NotFound from "@reearth/classic/components/atoms/NotFound";
-import { styled } from "@reearth/services/theme";
+import Resizable from "@reearth/classic/components/atoms/Resizable";
+import { metrics, styled } from "@reearth/services/theme";
 
 type Props = {};
 
@@ -24,9 +26,26 @@ const Editor: React.FC<Props> = () => {
     <Wrapper>
       <Navbar sceneId={sceneId} currentTab={tab} />
       <MainSection>
-        <LeftPanel />
-        <Visualizer />
-        <RightPanel />
+        {/* TODO: need to copy, and then delete gutter and change theme values */}
+        <Resizable
+          direction="vertical"
+          gutter="end"
+          size={metrics.propertyMenuMinWidth}
+          minSize={metrics.propertyMenuMinWidth}
+          maxSize={metrics.propertyMenuMaxWidth}>
+          <LeftPanel />
+        </Resizable>
+        <Center>
+          <Visualizer />
+        </Center>
+        <Resizable
+          direction="vertical"
+          gutter="start"
+          size={metrics.propertyMenuMinWidth}
+          minSize={metrics.propertyMenuMinWidth}
+          maxSize={metrics.propertyMenuMaxWidth}>
+          <RightPanel />
+        </Resizable>
       </MainSection>
     </Wrapper>
   );
@@ -38,6 +57,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+`;
+
+const Center = styled.div`
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+  flex: auto;
 `;
 
 const MainSection = styled.div`
