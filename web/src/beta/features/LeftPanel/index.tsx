@@ -1,27 +1,59 @@
+import React, { useMemo } from "react";
+
+import SidePanelCard from "@reearth/beta/features/SidePanelCard";
+import { Tab } from "@reearth/beta/hooks";
 import { styled } from "@reearth/services/theme";
 
-const LeftPanel: React.FC = () => {
+type PanelcContent = {
+  maxHeight?: string;
+  children: React.ReactNode;
+};
+
+type Props = {
+  tab: Tab;
+};
+
+const LeftPanel: React.FC<Props> = ({ tab }) => {
+  const contents = useMemo<PanelcContent[]>(() => {
+    switch (tab) {
+      case "scene":
+        return [
+          {
+            children: (
+              <SidePanelCard title={"Outline"}>
+                {[...Array(100)].map((_, i) => (
+                  <div key={i}>scrollable / {i}</div>
+                ))}
+              </SidePanelCard>
+            ),
+          },
+        ];
+      case "story":
+        return [
+          {
+            children: (
+              <SidePanelCard title={"Pages"}>
+                {[...Array(100)].map((_, i) => (
+                  <div key={i}>scrollable / {i}</div>
+                ))}
+              </SidePanelCard>
+            ),
+          },
+        ];
+      case "widgets":
+      case "publish":
+      default:
+        return [];
+    }
+  }, [tab]);
+
   return (
     <S.Wrapper>
-      <S.SectionWrapper>
-        <S.Container>
-          <S.Title>Title1</S.Title>
-          <S.Content>
-            {[...Array(100)].map((_, i) => (
-              <div key={i}>scrollable / {i}</div>
-            ))}
-          </S.Content>
-        </S.Container>
-      </S.SectionWrapper>
-      <S.SectionWrapper maxHeight="20%">
-        <S.Container>
-          <S.Title>Title1</S.Title>
-          <S.Content>
-            <div>aaa</div>
-            <div>aaa</div>
-          </S.Content>
-        </S.Container>
-      </S.SectionWrapper>
+      {contents.map((content, i) => (
+        <S.Item maxHeight={content.maxHeight} key={i}>
+          {content.children}
+        </S.Item>
+      ))}
     </S.Wrapper>
   );
 };
@@ -36,35 +68,11 @@ const S = {
     height: 100%;
     padding: 4px;
     gap: 4px;
-  `,
-  SectionWrapper: styled.div<{ maxHeight?: string }>`
-    flex-grow: 1;
-    max-height: ${props => props.maxHeight};
-  `,
-  Container: styled.div`
     background: #171618;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
   `,
-  Title: styled.div`
-    background: #3f3d45;
-    padding: 8px;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 1.34;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-  `,
-  Content: styled.div`
-    padding: 8px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    overflow-y: auto;
+  Item: styled.div<{ maxHeight?: string }>`
     flex-grow: 1;
-    height: 0;
-    ::-webkit-scrollbar {
-      display: none;
-    }
+    height: 100%;
+    ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight};`}
   `,
 };

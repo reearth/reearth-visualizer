@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import LeftPanel from "@reearth/beta/features/LeftPanel";
@@ -18,6 +18,14 @@ function isTab(tab: string): tab is Tab {
 const Editor: React.FC<Props> = () => {
   const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();
 
+  const showLeftPanel = useMemo(() => {
+    return ["scene", "story"].includes(tab || "");
+  }, [tab]);
+
+  const showRightPanel = useMemo(() => {
+    return ["scene", "story", "widgets"].includes(tab || "");
+  }, [tab]);
+
   if (!sceneId || !tab || !isTab(tab)) {
     return <NotFound />;
   }
@@ -26,26 +34,30 @@ const Editor: React.FC<Props> = () => {
     <Wrapper>
       <Navbar sceneId={sceneId} currentTab={tab} />
       <MainSection>
-        {/* TODO: need to copy, and then delete gutter and change theme values */}
-        <Resizable
-          direction="vertical"
-          gutter="end"
-          size={metrics.propertyMenuMinWidth}
-          minSize={metrics.propertyMenuMinWidth}
-          maxSize={metrics.propertyMenuMaxWidth}>
-          <LeftPanel />
-        </Resizable>
+        {showLeftPanel && (
+          // TODO: need to copy, and then delete gutter and change theme values
+          <Resizable
+            direction="vertical"
+            gutter="end"
+            size={metrics.propertyMenuMinWidth}
+            minSize={metrics.propertyMenuMinWidth}
+            maxSize={metrics.propertyMenuMaxWidth}>
+            <LeftPanel tab={tab} />
+          </Resizable>
+        )}
         <Center>
           <Visualizer />
         </Center>
-        <Resizable
-          direction="vertical"
-          gutter="start"
-          size={metrics.propertyMenuMinWidth}
-          minSize={metrics.propertyMenuMinWidth}
-          maxSize={metrics.propertyMenuMaxWidth}>
-          <RightPanel />
-        </Resizable>
+        {showRightPanel && (
+          <Resizable
+            direction="vertical"
+            gutter="start"
+            size={metrics.propertyMenuMinWidth}
+            minSize={metrics.propertyMenuMinWidth}
+            maxSize={metrics.propertyMenuMaxWidth}>
+            <RightPanel tab={tab} />
+          </Resizable>
+        )}
       </MainSection>
     </Wrapper>
   );
