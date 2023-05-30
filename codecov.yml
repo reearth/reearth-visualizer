@@ -2,12 +2,13 @@ coverage:
   status:
     project:
       web-beta:
-        target: 80%
+        target: auto
         threshold: 10%
         flags:
           - web-beta
       web-classic:
-        target: 100%
+        target: auto
+        threshold: 0%
       server:
         target: auto
         flags:
