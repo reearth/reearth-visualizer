@@ -1,15 +1,14 @@
-package app
+package config
 
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestReadConfig(t *testing.T) {
-	clientID := config.AuthServerDefaultClientID
-	localAuth := config.AuthConfig{
+	clientID := AuthServerDefaultClientID
+	localAuth := AuthConfig{
 		ISS:      "http://localhost:8080",
 		AUD:      []string{"http://localhost:8080"},
 		ClientID: &clientID,
@@ -18,7 +17,7 @@ func TestReadConfig(t *testing.T) {
 	cfg, err := ReadConfig(false)
 	assert.NoError(t, err)
 	assert.Nil(t, cfg.Auth)
-	assert.Equal(t, []config.AuthConfig{localAuth}, cfg.Auths())
+	assert.Equal(t, AuthConfigs{localAuth}, cfg.Auths())
 
 	t.Setenv("REEARTH_AUTH", `[{"iss":"bar"}]`)
 	t.Setenv("REEARTH_AUTH_ISS", "hoge")
@@ -26,8 +25,8 @@ func TestReadConfig(t *testing.T) {
 	t.Setenv("REEARTH_WEB_CONFIG", `{"c":3}`)
 	cfg, err = ReadConfig(false)
 	assert.NoError(t, err)
-	assert.Equal(t, config.AuthConfigs([]config.AuthConfig{{ISS: "bar"}}), cfg.Auth)
-	assert.Equal(t, []config.AuthConfig{
+	assert.Equal(t, AuthConfigs([]AuthConfig{{ISS: "bar"}}), cfg.Auth)
+	assert.Equal(t, AuthConfigs{
 		{ISS: "hoge"}, // REEARTH_AUTH_*
 		localAuth,     // local auth srv
 		{ISS: "bar"},  // REEARTH_AUTH
@@ -42,7 +41,7 @@ func TestReadConfig(t *testing.T) {
 	t.Setenv("REEARTH_WEB", "")
 	cfg, err = ReadConfig(false)
 	assert.NoError(t, err)
-	assert.Equal(t, []config.AuthConfig{
+	assert.Equal(t, AuthConfigs{
 		{ISS: "https://foo", ClientID: &clientID}, // Auth0
 		{ISS: "hoge", AUD: []string{"foo"}},       // REEARTH_AUTH_*
 		localAuth,                                 // local auth srv

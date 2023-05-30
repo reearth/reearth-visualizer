@@ -1,4 +1,4 @@
-package app
+package config
 
 import (
 	"fmt"
@@ -8,51 +8,48 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/mailer"
+	"github.com/samber/lo"
 )
 
 const configPrefix = "reearth"
 
+type Mailer mailer.Mailer
 type Config struct {
+	mailer.Config
 	Port             string `default:"8080" envconfig:"PORT"`
 	ServerHost       string
 	Host             string `default:"http://localhost:8080"`
 	Host_Web         string
 	Dev              bool
 	DB               string `default:"mongodb://localhost"`
-	GraphQL          config.GraphQLConfig
-	Published        config.PublishedConfig
+	GraphQL          GraphQLConfig
+	Published        PublishedConfig
 	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`
 	Profiler         string
 	Tracer           string
 	TracerSample     float64
-	GCS              config.GCSConfig
-	Marketplace      config.MarketplaceConfig
+	GCS              GCSConfig
+	Marketplace      MarketplaceConfig
 	AssetBaseURL     string `default:"http://localhost:8080/assets"`
 	Origins          []string
-	Policy           config.PolicyConfig
+	Policy           PolicyConfig
 	Web_Disabled     bool
 	Web_App_Disabled bool
 	Web              map[string]string
-	Web_Config       config.JSON
+	Web_Config       JSON
 	Web_Title        string
 	Web_FaviconURL   string
 	SignupSecret     string
 	SignupDisabled   bool
 	HTTPSREDIRECT    bool
 
-	// mailer
-	Mailer   string
-	SMTP     config.SMTPConfig
-	SendGrid config.SendGridConfig
-	SES      config.SESConfig
-
 	// auth
-	Auth          config.AuthConfigs
-	Auth0         config.Auth0Config
-	Cognito       config.CognitoConfig
-	AuthSrv       config.AuthSrvConfig
+	Auth          AuthConfigs
+	Auth0         Auth0Config
+	Cognito       CognitoConfig
+	AuthSrv       AuthSrvConfig
 	Auth_ISS      string
 	Auth_AUD      string
 	Auth_ALG      *string
@@ -130,19 +127,18 @@ func (c Config) HostWebURL() *url.URL {
 	return u
 }
 
-func (c Config) Auths() (res []config.AuthConfig) {
-	if ac := c.Auth0.AuthConfigs(); len(ac) > 0 {
-		res = append(res, ac...)
-	}
-	if ac := c.Cognito.AuthConfig(); ac != nil {
-		res = append(res, *ac)
-	}
+func (c Config) AuthConfigs() []AuthProvider {
+	return []AuthProvider{c.Auth0, c.Cognito}
+}
+
+func (c Config) Auths() (res AuthConfigs) {
+	res = lo.FlatMap(c.AuthConfigs(), func(c AuthProvider, _ int) []AuthConfig { return c.Configs() })
 	if c.Auth_ISS != "" {
 		var aud []string
 		if len(c.Auth_AUD) > 0 {
 			aud = append(aud, c.Auth_AUD)
 		}
-		res = append(res, config.AuthConfig{
+		res = append(res, AuthConfig{
 			ISS:      c.Auth_ISS,
 			AUD:      aud,
 			ALG:      c.Auth_ALG,
@@ -157,7 +153,7 @@ func (c Config) Auths() (res []config.AuthConfig) {
 	return append(res, c.Auth...)
 }
 
-func (c Config) AuthForWeb() *config.AuthConfig {
+func (c Config) AuthForWeb() *AuthConfig {
 	if ac := c.Auth0.AuthConfigForWeb(); ac != nil {
 		return ac
 	}
@@ -166,7 +162,7 @@ func (c Config) AuthForWeb() *config.AuthConfig {
 		if len(c.Auth_AUD) > 0 {
 			aud = append(aud, c.Auth_AUD)
 		}
-		return &config.AuthConfig{
+		return &AuthConfig{
 			ISS:      c.Auth_ISS,
 			AUD:      aud,
 			ALG:      c.Auth_ALG,

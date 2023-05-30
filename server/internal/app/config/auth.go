@@ -19,6 +19,10 @@ type AuthConfig struct {
 
 type AuthConfigs []AuthConfig
 
+type AuthProvider interface {
+	Configs() AuthConfigs
+}
+
 // Decode is a custom decoder for AuthConfigs
 func (ipd *AuthConfigs) Decode(value string) error {
 	if value == "" {
@@ -76,7 +80,7 @@ func (c Auth0Config) AuthConfigForM2M() *AuthConfig {
 	}
 }
 
-func (c Auth0Config) AuthConfigs() (res []AuthConfig) {
+func (c Auth0Config) Configs() (res AuthConfigs) {
 	if c := c.AuthConfigForWeb(); c != nil {
 		res = append(res, *c)
 	}
@@ -92,15 +96,17 @@ type CognitoConfig struct {
 	ClientID   string
 }
 
-func (c CognitoConfig) AuthConfig() *AuthConfig {
+func (c CognitoConfig) Configs() AuthConfigs {
 	if c.UserPoolID == "" || c.Region == "" || c.ClientID == "" {
 		return nil
 	}
-	return &AuthConfig{
-		ISS:      fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", c.Region, c.UserPoolID),
-		AUD:      []string{c.ClientID},
-		ClientID: &c.ClientID,
-		JWKSURI:  lo.ToPtr(fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", c.Region, c.UserPoolID)),
+	return AuthConfigs{
+		AuthConfig{
+			ISS:      fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", c.Region, c.UserPoolID),
+			AUD:      []string{c.ClientID},
+			ClientID: &c.ClientID,
+			JWKSURI:  lo.ToPtr(fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", c.Region, c.UserPoolID)),
+		},
 	}
 }
 

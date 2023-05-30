@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/log"
@@ -20,7 +21,7 @@ func Start(debug bool, version string) {
 	ctx := context.Background()
 
 	// Load config
-	conf, cerr := ReadConfig(debug)
+	conf, cerr := config.ReadConfig(debug)
 	if cerr != nil {
 		log.Fatal(cerr)
 	}
@@ -57,7 +58,7 @@ type WebServer struct {
 }
 
 type ServerConfig struct {
-	Config   *Config
+	Config   *config.Config
 	Debug    bool
 	Repos    *repo.Container
 	Gateways *gateway.Container
