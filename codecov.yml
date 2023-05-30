@@ -9,6 +9,8 @@ coverage:
       web-classic:
         target: auto
         threshold: 0%
+        flags:
+          - web-classic
       server:
         target: auto
         flags:
