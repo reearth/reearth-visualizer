@@ -13,6 +13,7 @@ import (
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -22,10 +23,7 @@ const (
 	maxMemorySize     = 100 * 1024 * 1024       // 100MB
 )
 
-func GraphqlAPI(
-	conf GraphQLConfig,
-	dev bool,
-) echo.HandlerFunc {
+func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	schema := gql.NewExecutableSchema(gql.Config{
 		Resolvers: gql.NewResolver(),
 	})

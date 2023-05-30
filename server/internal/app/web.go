@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/log"
 	"github.com/spf13/afero"
 )
@@ -14,7 +15,7 @@ type WebHandler struct {
 	Disabled    bool
 	AppDisabled bool
 	WebConfig   map[string]any
-	AuthConfig  *AuthConfig
+	AuthConfig  *config.AuthConfig
 	HostPattern string
 	Title       string
 	FaviconURL  string
@@ -56,24 +57,24 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 
 	e.Logger.Info("web: web directory will be delivered\n")
 
-	config := map[string]any{}
+	cfg := map[string]any{}
 	if w.AuthConfig != nil {
 		if w.AuthConfig.ISS != "" {
-			config["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
+			cfg["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
 		}
 		if w.AuthConfig.ClientID != nil {
-			config["auth0ClientId"] = *w.AuthConfig.ClientID
+			cfg["auth0ClientId"] = *w.AuthConfig.ClientID
 		}
 		if len(w.AuthConfig.AUD) > 0 {
-			config["auth0Audience"] = w.AuthConfig.AUD[0]
+			cfg["auth0Audience"] = w.AuthConfig.AUD[0]
 		}
 	}
 	if w.HostPattern != "" {
-		config["published"] = w.hostWithSchema()
+		cfg["published"] = w.hostWithSchema()
 	}
 
 	for k, v := range w.WebConfig {
-		config[k] = v
+		cfg[k] = v
 	}
 
 	static := middleware.StaticWithConfig(middleware.StaticConfig{
@@ -86,7 +87,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
 	e.GET("/reearth_config.json", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, config)
+		return c.JSON(http.StatusOK, cfg)
 	})
 	e.GET("/data.json", PublishedData(w.HostPattern, false))
 	if favicon != nil && faviconPath != "" {
