@@ -43,16 +43,18 @@ const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit })
             {t("classic")}
           </Text>
           <HintText size="xs" color={theme.main.weak} weight="normal">
-            {t("create project with classic UI")}
+            {t("Create project with classic UI")}
           </HintText>
         </ProjectTypeItem>
         <ProjectTypeItem onClick={() => handleTypeSelect("beta")}>
           <Icon icon="logoColorful" size={101} />
           <Text size="s" color={theme.other.white} weight={"bold"}>
-            {t("Experimental")}
+            {t("Beta")}
           </Text>
           <HintText size="xs" color={theme.main.weak} weight="normal">
-            {t("create project with latest features and UI system with preview version")}
+            {t(
+              "Create project with the latest features and UI system (projects might break without prior notice)",
+            )}
           </HintText>
         </ProjectTypeItem>
       </ProjectTypeContainer>

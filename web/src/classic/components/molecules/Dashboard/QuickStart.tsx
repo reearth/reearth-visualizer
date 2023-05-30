@@ -41,14 +41,14 @@ const QuickStart: React.FC<Props> = ({
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
-  const [prjTypeSlctOpen, setPrjTypeSlctOpen] = useState(false);
+  const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
   const [projectType, setProjectType] = useState<ProjectType>("classic");
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
 
   const handleCreateProjectClick = useCallback(() => {
-    if (window.REEARTH_CONFIG?.showBetaOption) setPrjTypeSlctOpen(true);
+    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
     else setProjCreateOpen(true);
   }, []);
 
@@ -58,7 +58,7 @@ const QuickStart: React.FC<Props> = ({
   }, [onAssetSelect]);
 
   const handlePrjTypeSlctModalClose = useCallback(() => {
-    setPrjTypeSlctOpen(false);
+    setPrjTypeSelectOpen(false);
     setProjCreateOpen(true);
   }, []);
 
@@ -109,7 +109,7 @@ const QuickStart: React.FC<Props> = ({
         </Flex>
       </Content>
       <ProjectTypeSelectionModal
-        open={prjTypeSlctOpen}
+        open={prjTypeSelectOpen}
         onClose={handlePrjTypeSlctModalClose}
         onSubmit={handleProjectTypeSelect}
       />

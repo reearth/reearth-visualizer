@@ -74,9 +74,9 @@ Manage projects: プロジェクト管理
 Documentation: ヘルプ
 Choose Project Type: Choose Project Type
 classic: classic
-create project with classic UI: create project with classic UI
-Experimental: Experimental
-create project with latest features and UI system with preview version: create project with latest features and UI system with preview version
+Create project with classic UI: Create project with classic UI
+Beta: Beta
+Create project with the latest features and UI system (projects might break without prior notice): Create project with the latest features and UI system (projects might break without prior notice)
 Create New Workspace: 新規ワークスペース作成
 Workspace Name: ワークスペース名
 Workspaces: ワークスペース

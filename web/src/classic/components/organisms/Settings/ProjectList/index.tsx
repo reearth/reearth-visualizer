@@ -28,7 +28,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
     modalShown,
     openModal,
     projectType,
-    prjTypeSlctOpen,
+    prjTypeSelectOpen,
     handleModalClose,
     createProject,
     selectProject,
@@ -69,7 +69,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
         }}
       </TabSection>
       <ProjectTypeSelectionModal
-        open={prjTypeSlctOpen}
+        open={prjTypeSelectOpen}
         onClose={handlePrjTypeSlctModalClose}
         onSubmit={handleProjectTypeSelect}
       />

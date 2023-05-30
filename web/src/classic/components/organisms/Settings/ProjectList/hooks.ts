@@ -37,7 +37,7 @@ export default (workspaceId: string) => {
   const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [lastWorkspace, setLastWorkspace] = useWorkspace();
   const [projectType, setProjectType] = useState<ProjectType>("classic");
-  const [prjTypeSlctOpen, setPrjTypeSlctOpen] = useState(false);
+  const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
 
   const [, setProject] = useProject();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default (workspaceId: string) => {
 
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => {
-    if (window.REEARTH_CONFIG?.showBetaOption) setPrjTypeSlctOpen(true);
+    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
     else setModalShown(true);
   }, []);
 
@@ -210,7 +210,7 @@ export default (workspaceId: string) => {
   }, [gqlCache]);
 
   const handlePrjTypeSlctModalClose = useCallback(() => {
-    setPrjTypeSlctOpen(false);
+    setPrjTypeSelectOpen(false);
     setModalShown(true);
   }, []);
 
@@ -229,7 +229,7 @@ export default (workspaceId: string) => {
     modalShown,
     openModal,
     projectType,
-    prjTypeSlctOpen,
+    prjTypeSelectOpen,
     handleModalClose,
     createProject,
     selectProject,
