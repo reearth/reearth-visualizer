@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/user"
@@ -55,7 +56,7 @@ func TestEndpoint(t *testing.T) {
 	ts := httptest.NewServer(e)
 	defer ts.Close()
 
-	authServer(ctx, e, &AuthSrvConfig{
+	authServer(ctx, e, &config.AuthSrvConfig{
 		Domain:   "https://example.com",
 		UIDomain: "https://web.example.com",
 	}, &repo.Container{
@@ -68,7 +69,7 @@ func TestEndpoint(t *testing.T) {
 	verifier, challenge := randomCodeChallenge()
 	res := send(http.MethodGet, ts.URL+"/authorize", false, map[string]string{
 		"response_type":         "code",
-		"client_id":             authServerDefaultClientID,
+		"client_id":             config.AuthServerDefaultClientID,
 		"redirect_uri":          "https://web.example.com",
 		"scope":                 "openid email profile",
 		"state":                 "hogestate",
@@ -110,7 +111,7 @@ func TestEndpoint(t *testing.T) {
 	res2 := send(http.MethodPost, ts.URL+"/oauth/token", true, map[string]string{
 		"grant_type":    "authorization_code",
 		"redirect_uri":  "https://web.example.com",
-		"client_id":     authServerDefaultClientID,
+		"client_id":     config.AuthServerDefaultClientID,
 		"code":          code,
 		"code_verifier": verifier,
 	}, nil)

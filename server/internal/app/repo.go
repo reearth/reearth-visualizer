@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/log"
@@ -22,7 +24,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.Container, *gateway.Container) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container) {
 	gateways := &gateway.Container{}
 
 	// Mongo
@@ -43,25 +45,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	}
 
 	// File
-	datafs := afero.NewBasePathFs(afero.NewOsFs(), "data")
-	var fileRepo gateway.File
-	if conf.GCS.BucketName == "" {
-		log.Infoln("file: local storage is used")
-		fileRepo, err = fs.NewFile(datafs, conf.AssetBaseURL)
-	} else {
-		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
-		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
-		if err != nil {
-			if debug {
-				log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
-				err = nil
-			}
-		}
-	}
-	if err != nil {
-		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
-	}
-	gateways.File = fileRepo
+	gateways.File = initFile(ctx, conf)
 
 	// Auth0
 	gateways.Authenticator = auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
@@ -70,7 +54,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	gateways.Google = google.NewGoogle()
 
 	// mailer
-	gateways.Mailer = initMailer(ctx, conf)
+	gateways.Mailer = mailer.New(ctx, &conf.Config)
 
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
@@ -85,19 +69,32 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	return repos, gateways
 }
 
-func initMailer(ctx context.Context, conf *Config) mailer.Mailer {
-	if conf.Mailer == "sendgrid" {
-		log.Infoln("mailer: sendgrid is used")
-		return mailer.NewSendGrid(conf.SendGrid.Name, conf.SendGrid.Email, conf.SendGrid.API)
+func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
+	var err error
+	if conf.GCS.IsConfigured() {
+		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
+		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
+		if err != nil {
+			log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
+		}
+		return
+
 	}
-	if conf.Mailer == "smtp" {
-		log.Infoln("mailer: smtp is used")
-		return mailer.NewSMTP(conf.SMTP.Host, conf.SMTP.Port, conf.SMTP.SMTPUsername, conf.SMTP.Email, conf.SMTP.Password)
+
+	if conf.S3.IsConfigured() {
+		log.Infof("file: S3 storage is used: %s\n", conf.S3.BucketName)
+		fileRepo, err = s3.NewS3(ctx, conf.S3.BucketName, conf.AssetBaseURL, conf.S3.PublicationCacheControl)
+		if err != nil {
+			log.Warnf("file: failed to init S3 storage: %s\n", err.Error())
+		}
+		return
 	}
-	if conf.Mailer == "ses" {
-		log.Infoln("mailer: aws ses is used")
-		return mailer.NewSES(ctx, conf.SES.Name, conf.SES.Email)
+
+	log.Infoln("file: local storage is used")
+	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
+	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
+	if err != nil {
+		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
 	}
-	log.Infoln("mailer: logger is used")
-	return mailer.NewLogger()
+	return fileRepo
 }
