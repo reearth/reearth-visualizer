@@ -1,13 +1,13 @@
 coverage:
   status:
     project:
-      default:
-        target: auto
-      web:
+      web-beta:
         target: 80%
         threshold: 10%
         flags:
-          - web
+          - web-beta
+      web-classic:
+        target: 100%
       server:
         target: auto
         flags:
@@ -34,10 +34,14 @@ ignore:
   - web/src/gql/graphql-client-api.tsx
 
 flags:
-  web:
+  web-beta:
     paths:
       - web/src/beta
       - web/src/services
+    carryforward: true
+  web-classic:
+    paths:
+      - web/src/classic
     carryforward: true
   server:
     paths:
