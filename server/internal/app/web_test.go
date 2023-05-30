@@ -11,6 +11,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
@@ -186,7 +187,7 @@ func TestWeb(t *testing.T) {
 				WebConfig: map[string]any{
 					"a": "b",
 				},
-				AuthConfig: &AuthConfig{
+				AuthConfig: &config.AuthConfig{
 					ISS:      "https://iss.example.com",
 					AUD:      []string{"https://aud.example.com"},
 					ClientID: lo.ToPtr("clientID"),
