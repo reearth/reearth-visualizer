@@ -5,14 +5,14 @@ rules:
   no-restricted-imports:
     - error
     - paths:
-      - name: lodash
-        message: Use lodash-es instead.
+        - name: lodash
+          message: Use lodash-es instead.
   import/order:
     - warn
     - pathGroups:
-      - pattern: '@reearth/**'
-        group: external
-        position: after
+        - pattern: "@reearth/**"
+          group: external
+          position: after
       pathGroupsExcludedImportTypes: ["builtin"]
       newlines-between: always
       alphabetize:
@@ -30,9 +30,13 @@ overrides:
       no-restricted-imports:
         - error
         - paths:
-          - name: '@playwright/test'
-            message: Use @reearth/e2e/utils instead.
+            - name: "@playwright/test"
+              message: Use @reearth/e2e/utils instead.
   - files:
       - i18next-parser.config.js
     extends:
       - reearth/commonjs
+  - files: src/beta/**
+    rules:
+      "@typescript-eslint/no-explicit-any":
+        - warn
