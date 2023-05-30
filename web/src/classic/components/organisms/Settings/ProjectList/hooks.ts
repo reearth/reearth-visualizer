@@ -209,7 +209,7 @@ export default (workspaceId: string) => {
     };
   }, [gqlCache]);
 
-  const handlePrjTypeSlctModalClose = useCallback(() => {
+  const handlePrjTypeSelectModalClose = useCallback(() => {
     setPrjTypeSelectOpen(false);
     setModalShown(true);
   }, []);
@@ -238,7 +238,7 @@ export default (workspaceId: string) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
-    handlePrjTypeSlctModalClose,
+    handlePrjTypeSelectModalClose,
     handleProjectTypeSelect,
   };
 };

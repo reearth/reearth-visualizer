@@ -37,7 +37,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
-    handlePrjTypeSlctModalClose,
+    handlePrjTypeSelectModalClose,
     handleProjectTypeSelect,
   } = useHooks(workspaceId);
 
@@ -70,7 +70,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
       </TabSection>
       <ProjectTypeSelectionModal
         open={prjTypeSelectOpen}
-        onClose={handlePrjTypeSlctModalClose}
+        onClose={handlePrjTypeSelectModalClose}
         onSubmit={handleProjectTypeSelect}
       />
       <ProjectCreationModal

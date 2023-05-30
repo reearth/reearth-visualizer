@@ -57,7 +57,7 @@ const QuickStart: React.FC<Props> = ({
     onAssetSelect?.();
   }, [onAssetSelect]);
 
-  const handlePrjTypeSlctModalClose = useCallback(() => {
+  const handlePrjTypeSelectModalClose = useCallback(() => {
     setPrjTypeSelectOpen(false);
     setProjCreateOpen(true);
   }, []);
@@ -110,7 +110,7 @@ const QuickStart: React.FC<Props> = ({
       </Content>
       <ProjectTypeSelectionModal
         open={prjTypeSelectOpen}
-        onClose={handlePrjTypeSlctModalClose}
+        onClose={handlePrjTypeSelectModalClose}
         onSubmit={handleProjectTypeSelect}
       />
       <ProjectCreationModal
