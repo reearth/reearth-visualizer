@@ -156,7 +156,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/dgryski/trifles v0.0.0-20200705224438-cafc02a1ee2b h1:8xx0j7yceTAgVxonE+qOOepmwWS/Ic3OLQapY9HJajc=
-github.com/dgryski/trifles v0.0.0-20200705224438-cafc02a1ee2b/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
@@ -481,12 +480,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/ravilushqa/otelgqlgen v0.8.0 h1:x48k+D1GMgm87xhMO2Lekrr9YGzFbpG3yijn9GpxuAY=
 github.com/ravilushqa/otelgqlgen v0.8.0/go.mod h1:6JO5YO2iY4POC7R6yB/L/RKXCcyISL8qQt5NnHOhh0o=
-github.com/reearth/reearthx v0.0.0-20230417135043-7b80b5104916 h1:L7aw1N3g8YNspo/9gcikpGePQlXL8C/6L+Dj+Fu3RBY=
-github.com/reearth/reearthx v0.0.0-20230417135043-7b80b5104916/go.mod h1:AsJomXOp70gxN3lq8amcJ1Erd6gl7dwCj4P2K5ih4DM=
-github.com/reearth/reearthx v0.0.0-20230525175729-1a205c0ffb05 h1:2rBmqZtFlOUb0O4jP/IsblQvTSTl0tO3Y/QMMlci2dk=
-github.com/reearth/reearthx v0.0.0-20230525175729-1a205c0ffb05/go.mod h1:845tCGtkSH+HTYzb52oTlJRkDJPD0hRvLdCOcU2G9jQ=
-github.com/reearth/reearthx v0.0.0-20230526094658-d163edc277db h1:Ho8UcqeIz81iGE83qcxDu6AudktaHvkt93kQSZjP/MI=
-github.com/reearth/reearthx v0.0.0-20230526094658-d163edc277db/go.mod h1:Rh7MJPKq43f+HZ/PwjZ5vEbGPpllNFvUrxn9sBn2b+s=
+github.com/reearth/reearthx v0.0.0-20230530055440-86a8d4675853 h1:eO1u6WJ/B1j/uC0ZnHS21EYuaREbdYDgHAExy7LLAnw=
+github.com/reearth/reearthx v0.0.0-20230530055440-86a8d4675853/go.mod h1:Rh7MJPKq43f+HZ/PwjZ5vEbGPpllNFvUrxn9sBn2b+s=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481/go.mod h1:C9WhFzY47SzYBIvzFqSvHIR6ROgDo4TtdTuRaOMjF/s=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
@@ -545,7 +540,6 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/thoas/go-funk v0.9.1 h1:O549iLZqPpTUQ10ykd26sZhzD+rmR5pWhuElrhbC20M=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/tidwall/pretty v1.0.1 h1:WE4RBSZ1x6McVVC8S/Md+Qse8YUv6HRObAx6ke00NY8=
-github.com/tidwall/pretty v1.0.1/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/twpayne/go-kml v1.5.2 h1:rFMw2/EwgkVssGS2MT6YfWSPZz6BgcJkLxQ53jnE8rQ=
 github.com/twpayne/go-kml v1.5.2/go.mod h1:kz8jAiIz6FIdU2Zjce9qGlVtgFYES9vt7BTPBHf5jl4=
 github.com/twpayne/go-polyline v1.0.0/go.mod h1:ICh24bcLYBX8CknfvNPKqoTbe+eg+MX1NPyJmSBo7pU=

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
@@ -22,7 +23,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.Container, *gateway.Container) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container) {
 	gateways := &gateway.Container{}
 
 	// Mongo
@@ -70,7 +71,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	gateways.Google = google.NewGoogle()
 
 	// mailer
-	gateways.Mailer = initMailer(ctx, conf)
+	gateways.Mailer = mailer.New(ctx, &conf.Config)
 
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
@@ -83,21 +84,4 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	}
 
 	return repos, gateways
-}
-
-func initMailer(ctx context.Context, conf *Config) mailer.Mailer {
-	if conf.Mailer == "sendgrid" {
-		log.Infoln("mailer: sendgrid is used")
-		return mailer.NewSendGrid(conf.SendGrid.Name, conf.SendGrid.Email, conf.SendGrid.API)
-	}
-	if conf.Mailer == "smtp" {
-		log.Infoln("mailer: smtp is used")
-		return mailer.NewSMTP(conf.SMTP.Host, conf.SMTP.Port, conf.SMTP.SMTPUsername, conf.SMTP.Email, conf.SMTP.Password)
-	}
-	if conf.Mailer == "ses" {
-		log.Infoln("mailer: aws ses is used")
-		return mailer.NewSES(ctx, conf.SES.Name, conf.SES.Email)
-	}
-	log.Infoln("mailer: logger is used")
-	return mailer.NewLogger()
 }
