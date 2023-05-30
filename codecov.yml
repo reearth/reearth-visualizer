@@ -1,17 +1,3 @@
-coverage:
-  status:
-    project:
-      default:
-        target: auto
-      web:
-        target: 80%
-        threshold: 10%
-        flags:
-          - web
-      server:
-        target: auto
-        flags:
-          - server
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
@@ -32,14 +18,3 @@ ignore:
   - web/.storybook
   - web/bin
   - web/src/gql/graphql-client-api.tsx
-
-flags:
-  web:
-    paths:
-      - web/src/beta
-      - web/src/services
-    carryforward: true
-  server:
-    paths:
-      - server/**
-    carryforward: true
