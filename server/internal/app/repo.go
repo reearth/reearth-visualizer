@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/log"
@@ -44,25 +45,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	}
 
 	// File
-	datafs := afero.NewBasePathFs(afero.NewOsFs(), "data")
-	var fileRepo gateway.File
-	if conf.GCS.BucketName == "" {
-		log.Infoln("file: local storage is used")
-		fileRepo, err = fs.NewFile(datafs, conf.AssetBaseURL)
-	} else {
-		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
-		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
-		if err != nil {
-			if debug {
-				log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
-				err = nil
-			}
-		}
-	}
-	if err != nil {
-		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
-	}
-	gateways.File = fileRepo
+	gateways.File = initFile(ctx, conf)
 
 	// Auth0
 	gateways.Authenticator = auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
@@ -84,4 +67,34 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	}
 
 	return repos, gateways
+}
+
+func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
+	var err error
+	if conf.GCS.IsConfigured() {
+		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
+		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
+		if err != nil {
+			log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
+		}
+		return
+
+	}
+
+	if conf.S3.IsConfigured() {
+		log.Infof("file: S3 storage is used: %s\n", conf.S3.BucketName)
+		fileRepo, err = s3.NewS3(ctx, conf.S3.BucketName, conf.AssetBaseURL, conf.S3.PublicationCacheControl)
+		if err != nil {
+			log.Warnf("file: failed to init S3 storage: %s\n", err.Error())
+		}
+		return
+	}
+
+	log.Infoln("file: local storage is used")
+	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
+	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
+	if err != nil {
+		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
+	}
+	return fileRepo
 }
