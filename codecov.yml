@@ -15,6 +15,7 @@ coverage:
         target: auto
         flags:
           - server
+    patch: off
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
