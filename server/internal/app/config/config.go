@@ -30,7 +30,6 @@ type Config struct {
 	Profiler         string
 	Tracer           string
 	TracerSample     float64
-	GCS              GCSConfig
 	Marketplace      MarketplaceConfig
 	AssetBaseURL     string `default:"http://localhost:8080/assets"`
 	Origins          []string
@@ -44,6 +43,10 @@ type Config struct {
 	SignupSecret     string
 	SignupDisabled   bool
 	HTTPSREDIRECT    bool
+
+	// storage
+	GCS GCSConfig
+	S3  S3Config
 
 	// auth
 	Auth          AuthConfigs

@@ -10,7 +10,6 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.33.1
-	github.com/aws/aws-sdk-go-v2/service/ses v1.15.9
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/goccy/go-yaml v1.9.8
@@ -68,8 +67,6 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
 	github.com/andybalholm/brotli v1.0.2 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.18.0 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.18.25 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.10 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.3 // indirect

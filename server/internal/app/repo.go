@@ -69,7 +69,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	return repos, gateways
 }
 
-func initFile(ctx context.Context, conf *Config) (fileRepo gateway.File) {
+func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
 	var err error
 	if conf.GCS.IsConfigured() {
 		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
@@ -98,4 +98,3 @@ func initFile(ctx context.Context, conf *Config) (fileRepo gateway.File) {
 	}
 	return fileRepo
 }
-
