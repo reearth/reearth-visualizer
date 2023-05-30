@@ -7,7 +7,7 @@ import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import { FieldProps } from "../types";
 
-export type Props = FieldProps<number> & {
+export type Props = FieldProps<number | null> & {
   suffix?: string;
   range?: boolean;
   min?: number;
