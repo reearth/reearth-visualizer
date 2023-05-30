@@ -192,7 +192,7 @@ type GCSConfig struct {
 	PublicationCacheControl string
 }
 
-func (g GCSConfig) Configured() bool {
+func (g GCSConfig) IsConfigured() bool {
 	return g.BucketName != ""
 }
 
@@ -201,7 +201,7 @@ type S3Config struct {
 	PublicationCacheControl string
 }
 
-func (s S3Config) Configured() bool {
+func (s S3Config) IsConfigured() bool {
 	return s.BucketName != ""
 }
 

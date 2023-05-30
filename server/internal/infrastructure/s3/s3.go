@@ -24,13 +24,13 @@ import (
 )
 
 const (
-	s3AssetBasePath  string = "assets"
-	s3PluginBasePath string = "plugins"
-	s3MapBasePath    string = "maps"
-	s3FileSizeLimit  int64  = 1024 * 1024 * 100 // about 100MB
+	assetBasePath  string = "assets"
+	pluginBasePath string = "plugins"
+	mapBasePath    string = "maps"
+	fileSizeLimit  int64  = 1024 * 1024 * 100 // about 100MB
 )
 
-type awsFileRepo struct {
+type fileRepo struct {
 	bucketName   string
 	base         *url.URL
 	cacheControl string
@@ -56,7 +56,7 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 		return nil, err
 	}
 
-	return &awsFileRepo{
+	return &fileRepo{
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
@@ -64,19 +64,19 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 	}, nil
 }
 
-func (f *awsFileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
 	if sn == "" {
 		return nil, rerror.ErrNotFound
 	}
-	return f.read(ctx, path.Join(s3AssetBasePath, sn))
+	return f.read(ctx, path.Join(assetBasePath, sn))
 }
 
-func (f *awsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
+func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
 	if file == nil {
 		return nil, 0, gateway.ErrInvalidFile
 	}
-	if file.Size >= s3FileSizeLimit {
+	if file.Size >= fileSizeLimit {
 		return nil, 0, gateway.ErrFileTooLarge
 	}
 
@@ -85,7 +85,7 @@ func (f *awsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.UR
 		return nil, 0, gateway.ErrInvalidFile
 	}
 
-	filename := path.Join(s3AssetBasePath, sn)
+	filename := path.Join(assetBasePath, sn)
 	u := getObjectURL(f.base, filename)
 	if u == nil {
 		return nil, 0, gateway.ErrInvalidFile
@@ -98,7 +98,7 @@ func (f *awsFileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.UR
 	return u, s, nil
 }
 
-func (f *awsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
+func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	log.Infof("s3: asset deleted: %s", u)
 
 	sn := getObjectNameFromURL(f.base, u)
@@ -110,69 +110,69 @@ func (f *awsFileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 
 // plugin
 
-func (f *awsFileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
 	sn := sanitize.Path(filename)
 	if sn == "" {
 		return nil, rerror.ErrNotFound
 	}
-	return f.read(ctx, path.Join(s3PluginBasePath, pid.String(), sn))
+	return f.read(ctx, path.Join(pluginBasePath, pid.String(), sn))
 }
 
-func (f *awsFileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
+func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *file.File) error {
 	sn := sanitize.Path(file.Path)
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
-	_, err := f.upload(ctx, path.Join(s3PluginBasePath, pid.String(), sanitize.Path(file.Path)), file.Content)
+	_, err := f.upload(ctx, path.Join(pluginBasePath, pid.String(), sanitize.Path(file.Path)), file.Content)
 	return err
 }
 
-func (f *awsFileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
+func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 	log.Infof("s3: plugin deleted: %s", pid)
 
-	return f.deleteAll(ctx, path.Join(s3PluginBasePath, pid.String()))
+	return f.deleteAll(ctx, path.Join(pluginBasePath, pid.String()))
 }
 
 // built scene
 
-func (f *awsFileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound
 	}
-	return f.read(ctx, path.Join(s3MapBasePath, sanitize.Path(name)+".json"))
+	return f.read(ctx, path.Join(mapBasePath, sanitize.Path(name)+".json"))
 }
 
-func (f *awsFileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name string) error {
+func (f *fileRepo) UploadBuiltScene(ctx context.Context, content io.Reader, name string) error {
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
-	_, err := f.upload(ctx, path.Join(s3MapBasePath, sn), content)
+	_, err := f.upload(ctx, path.Join(mapBasePath, sn), content)
 	return err
 }
 
-func (f *awsFileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
+func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) error {
 	from := sanitize.Path(oldName + ".json")
 	dest := sanitize.Path(name + ".json")
 	if from == "" || dest == "" {
 		return gateway.ErrInvalidFile
 	}
-	return f.move(ctx, path.Join(s3MapBasePath, from), path.Join(s3MapBasePath, dest))
+	return f.move(ctx, path.Join(mapBasePath, from), path.Join(mapBasePath, dest))
 }
 
-func (f *awsFileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
+func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 	log.Infof("s3: built scene deleted: %s", name)
 
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
 		return gateway.ErrInvalidFile
 	}
-	return f.delete(ctx, path.Join(s3MapBasePath, sn))
+	return f.delete(ctx, path.Join(mapBasePath, sn))
 }
 
 // helpers
 
-func (f *awsFileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
@@ -189,7 +189,7 @@ func (f *awsFileRepo) read(ctx context.Context, filename string) (io.ReadCloser,
 	return obj.Body, nil
 }
 
-func (f *awsFileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
+func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
 		return 0, gateway.ErrInvalidFile
 	}
@@ -227,7 +227,7 @@ func (f *awsFileRepo) upload(ctx context.Context, filename string, content io.Re
 	return result.ContentLength, nil
 }
 
-func (f *awsFileRepo) copy(ctx context.Context, from, dest string) error {
+func (f *fileRepo) copy(ctx context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
@@ -246,7 +246,7 @@ func (f *awsFileRepo) copy(ctx context.Context, from, dest string) error {
 	return nil
 }
 
-func (f *awsFileRepo) move(ctx context.Context, from, dest string) error {
+func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
@@ -264,7 +264,7 @@ func (f *awsFileRepo) move(ctx context.Context, from, dest string) error {
 	return nil
 }
 
-func (f *awsFileRepo) delete(ctx context.Context, filename string) error {
+func (f *fileRepo) delete(ctx context.Context, filename string) error {
 	if filename == "" {
 		return gateway.ErrInvalidFile
 	}
@@ -281,7 +281,7 @@ func (f *awsFileRepo) delete(ctx context.Context, filename string) error {
 	return nil
 }
 
-func (f *awsFileRepo) deleteAll(ctx context.Context, path string) error {
+func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 	if path == "" {
 		return gateway.ErrInvalidFile
 	}
@@ -331,7 +331,7 @@ func getObjectNameFromURL(base, u *url.URL) string {
 		base = &url.URL{}
 	}
 	p := sanitize.Path(strings.TrimPrefix(u.Path, "/"))
-	if p == "" || u.Host != base.Host || u.Scheme != base.Scheme || !strings.HasPrefix(p, s3AssetBasePath+"/") {
+	if p == "" || u.Host != base.Host || u.Scheme != base.Scheme || !strings.HasPrefix(p, assetBasePath+"/") {
 		return ""
 	}
 

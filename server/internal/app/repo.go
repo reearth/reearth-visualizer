@@ -44,7 +44,7 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	}
 
 	// File
-	gateways.File = initStorage(ctx, conf)
+	gateways.File = initFile(ctx, conf)
 
 	// Auth0
 	gateways.Authenticator = auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
@@ -68,9 +68,9 @@ func initReposAndGateways(ctx context.Context, conf *Config, debug bool) (*repo.
 	return repos, gateways
 }
 
-func initStorage(ctx context.Context, conf *Config) (fileRepo gateway.File) {
+func initFile(ctx context.Context, conf *Config) (fileRepo gateway.File) {
 	var err error
-	if conf.GCS.Configured() {
+	if conf.GCS.IsConfigured() {
 		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
 		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
 		if err != nil {
@@ -80,7 +80,7 @@ func initStorage(ctx context.Context, conf *Config) (fileRepo gateway.File) {
 
 	}
 
-	if conf.S3.Configured() {
+	if conf.S3.IsConfigured() {
 		log.Infof("file: S3 storage is used: %s\n", conf.S3.BucketName)
 		fileRepo, err = s3.NewS3(ctx, conf.S3.BucketName, conf.AssetBaseURL, conf.S3.PublicationCacheControl)
 		if err != nil {
