@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -56,9 +55,9 @@ func TestFile_UploadAsset(t *testing.T) {
 	assert.Equal(t, "https", u.Scheme)
 	assert.Equal(t, "example.com", u.Host)
 	assert.True(t, strings.HasPrefix(u.Path, "/assets/"))
-	assert.Equal(t, ".txt", path.Ext(u.Path))
+	assert.Equal(t, ".txt", filepath.Ext(u.Path))
 
-	uf, _ := fs.Open(filepath.Join("assets", path.Base(u.Path)))
+	uf, _ := fs.Open(filepath.Join("assets", filepath.Base(u.Path)))
 	c, _ := io.ReadAll(uf)
 	assert.Equal(t, "aaa", string(c))
 }
@@ -251,9 +250,9 @@ func TestGetAssetFileURL(t *testing.T) {
 
 func mockFs() afero.Fs {
 	files := map[string]string{
-		"assets/xxx.txt":           "hello",
-		"plugins/aaa~1.0.0/foo.js": "bar",
-		"published/s.json":         "{}",
+		filepath.Join("assets", "xxx.txt"):              "hello",
+		filepath.Join("plugins", "aaa~1.0.0", "foo.js"): "bar",
+		filepath.Join("published", "s.json"):            "{}",
 	}
 
 	fs := afero.NewMemMapFs()

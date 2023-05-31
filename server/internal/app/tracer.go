@@ -5,6 +5,7 @@ import (
 	"io"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/log"
 	jaeger "github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
@@ -14,7 +15,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
-func initTracer(ctx context.Context, conf *Config) io.Closer {
+func initTracer(ctx context.Context, conf *config.Config) io.Closer {
 	if conf.Tracer == "gcp" {
 		initGCPTracer(ctx, conf)
 	} else if conf.Tracer == "jaeger" {
@@ -23,7 +24,7 @@ func initTracer(ctx context.Context, conf *Config) io.Closer {
 	return nil
 }
 
-func initGCPTracer(ctx context.Context, conf *Config) {
+func initGCPTracer(ctx context.Context, conf *config.Config) {
 	exporter, err := texporter.New(texporter.WithProjectID(conf.GCPProject))
 	if err != nil {
 		log.Fatalln(err)
@@ -39,7 +40,7 @@ func initGCPTracer(ctx context.Context, conf *Config) {
 	log.Infof("tracer: initialized cloud trace with sample fraction: %g", conf.TracerSample)
 }
 
-func initJaegerTracer(conf *Config) io.Closer {
+func initJaegerTracer(conf *config.Config) io.Closer {
 	cfg := jaegercfg.Configuration{
 		Sampler: &jaegercfg.SamplerConfig{
 			Type:  jaeger.SamplerTypeConst,

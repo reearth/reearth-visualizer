@@ -59,7 +59,7 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
-        "src/gql/graphql-client-api.tsx",
+        "src/services/gql/graphql-client-api.tsx",
         "src/test/**/*",
       ],
       reporter: ["text", "json", "lcov"],

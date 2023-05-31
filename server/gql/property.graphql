@@ -1,0 +1,300 @@
+type PropertySchema {
+  id: ID!
+  groups: [PropertySchemaGroup!]!
+  linkableFields: PropertyLinkableFields!
+}
+
+type PropertyLinkableFields {
+  schemaId: ID!
+  latlng: ID
+  url: ID
+  latlngField: PropertySchemaField
+  urlField: PropertySchemaField
+  schema: PropertySchema
+}
+
+type PropertySchemaGroup {
+  schemaGroupId: ID!
+  schemaId: ID!
+  fields: [PropertySchemaField!]!
+  isList: Boolean!
+  isAvailableIf: PropertyCondition
+  title: String
+  allTranslatedTitle: TranslatedString
+  representativeFieldId: ID
+  representativeField: PropertySchemaField
+  schema: PropertySchema
+  translatedTitle(lang: Lang): String!
+}
+
+type PropertySchemaField {
+  fieldId: ID!
+  type: ValueType!
+  title: String!
+  description: String!
+  prefix: String
+  suffix: String
+  defaultValue: Any
+  ui: PropertySchemaFieldUI
+  min: Float
+  max: Float
+  choices: [PropertySchemaFieldChoice!]
+  isAvailableIf: PropertyCondition
+  allTranslatedTitle: TranslatedString
+  allTranslatedDescription: TranslatedString
+  translatedTitle(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+}
+
+enum PropertySchemaFieldUI {
+  LAYER
+  MULTILINE
+  SELECTION
+  COLOR
+  RANGE
+  SLIDER
+  IMAGE
+  VIDEO
+  FILE
+  CAMERA_POSE
+  DATETIME
+}
+
+type PropertySchemaFieldChoice {
+  key: String!
+  title: String!
+  icon: String
+  allTranslatedTitle: TranslatedString
+  translatedTitle(lang: Lang): String!
+}
+
+type PropertyCondition {
+  fieldId: ID!
+  type: ValueType!
+  value: Any
+}
+
+type Property implements Node {
+  id: ID!
+  schemaId: ID!
+  items: [PropertyItem!]!
+  schema: PropertySchema
+  layer: Layer
+  merged: MergedProperty
+}
+
+union PropertyItem = PropertyGroup | PropertyGroupList
+
+type PropertyGroup {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  fields: [PropertyField!]!
+  schema: PropertySchema
+  schemaGroup: PropertySchemaGroup
+}
+
+type PropertyGroupList {
+  id: ID!
+  schemaId: ID!
+  schemaGroupId: ID!
+  groups: [PropertyGroup!]!
+  schema: PropertySchema
+  schemaGroup: PropertySchemaGroup
+}
+
+type PropertyField {
+  id: String!
+  parentId: ID!
+  schemaId: ID!
+  fieldId: ID!
+  links: [PropertyFieldLink!]
+  type: ValueType!
+  value: Any
+  parent: Property
+  schema: PropertySchema
+  field: PropertySchemaField
+  actualValue: Any
+}
+
+type PropertyFieldLink {
+  datasetId: ID
+  datasetSchemaId: ID!
+  datasetSchemaFieldId: ID!
+  dataset: Dataset
+  datasetField: DatasetField
+  datasetSchema: DatasetSchema
+  datasetSchemaField: DatasetSchemaField
+}
+
+type MergedProperty {
+  originalId: ID
+  parentId: ID
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  original: Property
+  parent: Property
+  schema: PropertySchema
+  linkedDataset: Dataset
+  groups: [MergedPropertyGroup!]!
+}
+
+type MergedPropertyGroup {
+  originalPropertyId: ID
+  parentPropertyId: ID
+  originalId: ID
+  parentId: ID
+  schemaGroupId: ID!
+  # note: schemaId will not always be set
+  schemaId: ID
+  linkedDatasetId: ID
+  fields: [MergedPropertyField!]!
+  groups: [MergedPropertyGroup!]!
+  originalProperty: Property
+  parentProperty: Property
+  original: PropertyGroup
+  parent: PropertyGroup
+  schema: PropertySchema
+  linkedDataset: Dataset
+}
+
+type MergedPropertyField {
+  schemaId: ID!
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+  links: [PropertyFieldLink!]
+  overridden: Boolean!
+  schema: PropertySchema
+  field: PropertySchemaField
+  actualValue: Any
+}
+
+enum ListOperation {
+  ADD
+  MOVE
+  REMOVE
+}
+
+enum ValueType {
+  BOOL
+  NUMBER
+  STRING
+  REF
+  URL
+  LATLNG
+  LATLNGHEIGHT
+  CAMERA
+  TYPOGRAPHY
+  COORDINATES
+  POLYGON
+  RECT
+}
+
+# InputType
+
+input UpdatePropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+}
+
+input RemovePropertyFieldInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+}
+
+input UploadFileToPropertyInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  file: Upload!
+}
+
+input LinkDatasetToPropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+  datasetSchemaIds: [ID!]!
+  datasetSchemaFieldIds: [ID!]!
+  datasetIds: [ID!]
+}
+
+input UnlinkPropertyValueInput {
+  propertyId: ID!
+  schemaGroupId: ID
+  itemId: ID
+  fieldId: ID!
+}
+
+input AddPropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
+}
+
+input MovePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  itemId: ID!
+  index: Int!
+}
+
+input RemovePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  itemId: ID!
+}
+
+input UpdatePropertyItemInput {
+  propertyId: ID!
+  schemaGroupId: ID!
+  operations: [UpdatePropertyItemOperationInput!]!
+}
+
+input UpdatePropertyItemOperationInput {
+  operation: ListOperation!
+  itemId: ID
+  index: Int
+  nameFieldValue: Any
+  nameFieldType: ValueType
+}
+
+# Payload
+
+type PropertyFieldPayload {
+  property: Property!
+  propertyField: PropertyField
+}
+
+type PropertyItemPayload {
+  property: Property!
+  propertyItem: PropertyItem
+}
+
+extend type Query{
+  propertySchema(id: ID!): PropertySchema
+  propertySchemas(id: [ID!]!): [PropertySchema!]!
+}
+
+extend type Mutation {
+  updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
+  removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
+  uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
+  unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
+  addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
+  movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
+  removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
+  updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
+}

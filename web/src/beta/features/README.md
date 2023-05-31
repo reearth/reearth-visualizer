@@ -1,0 +1,1 @@
+# App-specific features (ie header, left panel, Visualizer (uses core), widgets, etc)

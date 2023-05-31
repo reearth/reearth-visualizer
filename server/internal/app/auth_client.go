@@ -13,7 +13,10 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
-func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
+// load user from db and attach it to context along with operator
+// user id can be from debug header or jwt token
+// if its new user, create new user and attach it to context
+func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()
@@ -31,8 +34,8 @@ func authMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			// debug mode
 			if cfg.Debug {
 				if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
-					if id, err := id.UserIDFrom(userID); err == nil {
-						user2, err := cfg.Repos.User.FindByID(ctx, id)
+					if uId, err := id.UserIDFrom(userID); err == nil {
+						user2, err := cfg.Repos.User.FindByID(ctx, uId)
 						if err == nil && user2 != nil {
 							u = user2
 						}

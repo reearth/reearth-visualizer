@@ -13,6 +13,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "noImplicitReturns": true,
+    "noImplicitAny": true,
     "pretty": true,
     "sourceMap": true,
     "strict": true,
