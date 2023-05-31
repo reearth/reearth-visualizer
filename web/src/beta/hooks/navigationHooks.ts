@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-export type Tab = "scene" | "story" | "widgets" | "publish";
+import { Tab } from "@reearth/beta/features/Navbar";
 
 export const useEditorNavigation = ({ sceneId }: { sceneId: string }) => {
   const navigate = useNavigate();

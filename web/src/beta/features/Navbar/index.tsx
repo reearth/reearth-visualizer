@@ -1,12 +1,17 @@
-import { useEditorNavigation, Tab } from "@reearth/beta/hooks";
+import { useEditorNavigation } from "@reearth/beta/hooks";
 import { styled } from "@reearth/services/theme";
-
-export type { Tab };
 
 type Props = {
   sceneId: string;
   currentTab: Tab;
 };
+
+export const Tabs = ["scene", "story", "widgets", "publish"] as const;
+export type Tab = (typeof Tabs)[number];
+
+export function isTab(tab: string): tab is Tab {
+  return Tabs.includes(tab as never);
+}
 
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
   const handleEditorNavigation = useEditorNavigation({ sceneId });
