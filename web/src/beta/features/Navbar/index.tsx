@@ -8,6 +8,13 @@ type Props = {
   currentTab: Tab;
 };
 
+export const Tabs = ["scene", "story", "widgets", "publish"] as const;
+export type Tab = (typeof Tabs)[number];
+
+export function isTab(tab: string): tab is Tab {
+  return Tabs.includes(tab as never);
+}
+
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
   const handleEditorNavigation = useEditorNavigation({ sceneId });
 
