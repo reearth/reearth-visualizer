@@ -20,6 +20,7 @@ export default SidePanelCard;
 const S = {
   Wrapper: styled.div`
     background: #171618;
+    border-radius: 4px;
     height: 100%;
     display: flex;
     flex-direction: column;

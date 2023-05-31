@@ -14,7 +14,7 @@ const RightPanelWidgets: React.FC<Props> = () => {
           ))}
         </SidePanelCard>
       </SidePanelItem>
-      <SidePanelItem>
+      <SidePanelItem maxHeight="30%">
         <SidePanelCard title={"Widget Setting"}>
           {[...Array(100)].map((_, i) => (
             <div key={i}>scrollable / {i}</div>

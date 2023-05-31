@@ -6,6 +6,9 @@ import Resizable from "@reearth/beta/components/Resizable";
 import LeftPanelScene from "@reearth/beta/features/LeftPanelScene";
 import LeftPanelStory from "@reearth/beta/features/LeftPanelStory";
 import Navbar, { isTab, Tab } from "@reearth/beta/features/Navbar";
+import RightPanelScene from "@reearth/beta/features/RightPanelScene";
+import RightPanelStory from "@reearth/beta/features/RightPanelStory";
+import RightPanelWidgets from "@reearth/beta/features/RightPanelWidgets";
 import Visualizer from "@reearth/beta/features/Visualizer";
 import VisualizerNav from "@reearth/beta/features/VisualizerNav";
 import { metrics, styled } from "@reearth/services/theme";
@@ -32,11 +35,11 @@ const Editor: React.FC<Props> = () => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab as Tab | string) {
       case "scene":
-        return <LeftPanelScene />;
+        return <RightPanelScene />;
       case "story":
-        return <LeftPanelScene />;
+        return <RightPanelStory />;
       case "widgets":
-        return <LeftPanelScene />;
+        return <RightPanelWidgets />;
       case "publish":
       default:
         return undefined;
