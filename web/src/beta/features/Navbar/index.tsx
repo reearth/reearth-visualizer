@@ -1,7 +1,5 @@
-import { useEditorNavigation, Tab } from "@reearth/beta/hooks";
+import { useEditorNavigation } from "@reearth/beta/hooks";
 import { styled } from "@reearth/services/theme";
-
-export type { Tab };
 
 type Props = {
   sceneId: string;
