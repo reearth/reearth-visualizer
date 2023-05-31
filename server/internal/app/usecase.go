@@ -12,18 +12,15 @@ import (
 
 func UsecaseMiddleware(r *repo.Container, g *gateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
-		var r2 *repo.Container
-		if op := adapter.Operator(ctx); op != nil && r != nil {
+		if op := adapter.Operator(ctx); op != nil {
 			// apply filters to repos
-			r2 = r.Filtered(
+			r = r.Filtered(
 				repo.WorkspaceFilterFromOperator(op),
 				repo.SceneFilterFromOperator(op),
 			)
-		} else {
-			r2 = r
 		}
 
-		uc := interactor.NewContainer(r2, g, config)
+		uc := interactor.NewContainer(r, g, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		return ctx
 	})
