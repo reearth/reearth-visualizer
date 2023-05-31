@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
+import NotFound from "@reearth/beta/components/NotFound";
+import Resizable from "@reearth/beta/components/Resizable";
 import LeftPanel from "@reearth/beta/features/LeftPanel";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import RightPanel from "@reearth/beta/features/RightPanel";
 import Visualizer from "@reearth/beta/features/Visualizer";
-import NotFound from "@reearth/classic/components/atoms/NotFound";
-import Resizable from "@reearth/classic/components/atoms/Resizable";
 import { metrics, styled } from "@reearth/services/theme";
 
 type Props = {};
