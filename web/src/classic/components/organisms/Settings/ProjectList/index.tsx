@@ -27,7 +27,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
     hasMoreProjects,
     modalShown,
     openModal,
-    projectType,
+    prjectType,
     prjTypeSelectOpen,
     handleModalClose,
     createProject,
@@ -79,7 +79,7 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
         onSubmit={createProject}
         toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
-        projectType={projectType}
+        projectType={prjectType}
         assetModal={
           <AssetModal
             workspaceId={workspaceId}

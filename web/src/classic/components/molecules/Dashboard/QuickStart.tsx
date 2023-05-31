@@ -40,31 +40,31 @@ const QuickStart: React.FC<Props> = ({
 }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
-  const [projCreateOpen, setProjCreateOpen] = useState(false);
+  const [prjCreateOpen, setPrjCreateOpen] = useState(false);
   const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
-  const [projectType, setProjectType] = useState<ProjectType>("classic");
+  const [prjectType, setPrjectType] = useState<ProjectType>("classic");
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
 
   const handleCreateProjectClick = useCallback(() => {
     if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
-    else setProjCreateOpen(true);
+    else setPrjCreateOpen(true);
   }, []);
 
   const handleProjModalClose = useCallback(() => {
-    setProjCreateOpen(false);
+    setPrjCreateOpen(false);
     onAssetSelect?.();
   }, [onAssetSelect]);
 
   const handlePrjTypeSelectModalClose = useCallback(() => {
     setPrjTypeSelectOpen(false);
-    setProjCreateOpen(true);
+    setPrjCreateOpen(true);
   }, []);
 
   const handleProjectTypeSelect = (type: ProjectType) => {
-    setProjectType(type);
-    setProjCreateOpen(true);
+    setPrjectType(type);
+    setPrjCreateOpen(true);
   };
 
   return (
@@ -114,8 +114,8 @@ const QuickStart: React.FC<Props> = ({
         onSubmit={handleProjectTypeSelect}
       />
       <ProjectCreationModal
-        open={projCreateOpen}
-        projectType={projectType}
+        open={prjCreateOpen}
+        projectType={prjectType}
         onClose={handleProjModalClose}
         onSubmit={onProjectCreate}
         toggleAssetModal={toggleAssetModal}

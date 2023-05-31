@@ -36,7 +36,7 @@ export default (workspaceId: string) => {
   const [, setNotification] = useNotification();
   const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [lastWorkspace, setLastWorkspace] = useWorkspace();
-  const [projectType, setProjectType] = useState<ProjectType>("classic");
+  const [prjectType, setPrjectType] = useState<ProjectType>("classic");
   const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
 
   const [, setProject] = useProject();
@@ -215,7 +215,7 @@ export default (workspaceId: string) => {
   }, []);
 
   const handleProjectTypeSelect = (type: ProjectType) => {
-    setProjectType(type);
+    setPrjectType(type);
     setModalShown(true);
   };
 
@@ -228,7 +228,7 @@ export default (workspaceId: string) => {
     loading,
     modalShown,
     openModal,
-    projectType,
+    prjectType,
     prjTypeSelectOpen,
     handleModalClose,
     createProject,
