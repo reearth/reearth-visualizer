@@ -154,11 +154,7 @@ func (ll List) Remove(lids ...ID) List {
 }
 
 func (ll List) AddUnique(newList ...*Layer) List {
-	res := make(List, 0, len(ll))
-
-	for _, l := range ll {
-		res = append(res, l)
-	}
+	res := append(List{}, ll...)
 
 	for _, l := range newList {
 		if l == nil {
