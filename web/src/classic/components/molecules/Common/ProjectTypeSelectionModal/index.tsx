@@ -1,13 +1,11 @@
 import React, { useCallback } from "react";
 
-// import Button from "@reearth/classic/components/atoms/Button";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
-// import fonts from "@reearth/services/theme/fonts";
 
 export interface Props {
   open?: boolean;
@@ -18,7 +16,6 @@ export interface Props {
 const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit }) => {
   const t = useT();
   const theme = useTheme();
-  console.log(open);
   const handleTypeSelect = useCallback(
     (projectType: ProjectType) => {
       onSubmit?.(projectType);
