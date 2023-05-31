@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/samber/lo"
 )
 
 type PluginMigrator struct {
@@ -25,7 +24,6 @@ type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Layers            layer.List
 	Properties        []*property.Property
-	RemovedLayers     []layer.ID
 	RemovedProperties []property.ID
 }
 
@@ -65,9 +63,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	modifiedLayers := layer.List{}
-	removedLayers := layer.IDList{}
-	propertyIDs := []property.ID{}
-	removedPropertyIDs := []property.ID{}
+	propertyIDs := property.IDList{}
+	removedPropertyIDs := property.IDList{}
 
 	// Obtain property schema and map old schema to new schema
 	schemaMap, err := s.loadSchemas(ctx, oldPlugin, newPlugin)
@@ -101,14 +98,6 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 			continue
 		}
 		ll := *l
-		llp, lle := ll.Plugin(), ll.Extension()
-
-		// Detect invalid layers
-		if isInvalidLayer(llp, lle, oldPlugin, newPlugin) {
-			removedLayers.AppendLayers(ll.ID())
-			removedPropertyIDs = append(removedPropertyIDs, collectLayerPropertyIds(ll)...)
-			continue
-		}
 
 		if p := ll.Property(); p != nil {
 			propertyIDs = append(propertyIDs, *p)
@@ -119,33 +108,17 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		}
 
 		// Remove invalid Infobox Fields
-		modified := false
 		for _, f := range ll.Infobox().Fields() {
-			if f.Plugin() != oldPlugin.ID() {
+			if !f.Plugin().Equal(oldPlugin.ID()) {
 				continue
 			}
-			modified = true
+			modifiedLayers.AddUnique(l)
 			if newPlugin.Extension(f.Extension()) == nil {
 				ll.Infobox().Remove(f.ID())
 				removedPropertyIDs = append(removedPropertyIDs, f.Property())
 			} else {
+				f.Upgrade(newPluginID)
 				propertyIDs = append(propertyIDs, f.Property())
-			}
-		}
-
-		if modified {
-			modifiedLayers = append(modifiedLayers, l)
-		}
-	}
-
-	// Remove invalid layers group inside layer group
-	for _, lg := range layers.ToLayerGroupList() {
-		if removedLayers.HasLayer(lg.ID()) {
-			continue
-		}
-		if lg.Layers().RemoveLayer(removedLayers.Layers()...) > 0 {
-			if modifiedLayers.Find(lg.ID()) != nil {
-				modifiedLayers = append(modifiedLayers, lo.ToPtr(layer.Layer(lg)))
 			}
 		}
 	}
@@ -175,34 +148,12 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		Scene:             sc,
 		Layers:            modifiedLayers,
 		Properties:        properties,
-		RemovedLayers:     removedLayers.Layers(),
 		RemovedProperties: removedPropertyIDs,
 	}, nil
 }
 
-func isInvalidLayer(llp *layer.PluginID, lle *layer.PluginExtensionID, oldPlugin, newPlugin *plugin.Plugin) bool {
-	// a layer considered invalid if it is related to the old plugin
-	// and if the new plugin version does not support the extension
-	return llp != nil && lle != nil && (*llp).Equal(oldPlugin.ID()) && newPlugin.Extension(*lle) == nil
-}
-
-func collectLayerPropertyIds(ll layer.Layer) []property.ID {
-	removedPropertyIDs := []property.ID{}
-	if p := ll.Property(); p != nil {
-		removedPropertyIDs = append(removedPropertyIDs, *p)
-	}
-	if ib := ll.Infobox(); ib != nil {
-		removedPropertyIDs = append(removedPropertyIDs, ib.Property())
-		for _, f := range ib.Fields() {
-			removedPropertyIDs = append(removedPropertyIDs, f.Property())
-		}
-	}
-	return removedPropertyIDs
-}
-
 func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
-	schemaIDs := collectSchemaIds(oldPlugin, newPlugin)
-	schemas, err := s.PropertySchema(ctx, schemaIDs...)
+	schemas, err := s.PropertySchema(ctx, newPlugin.PropertySchemas()...)
 	if err != nil {
 		return nil, err
 	}
@@ -226,19 +177,6 @@ func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plug
 		}
 	}
 	return schemaMap, nil
-}
-
-func collectSchemaIds(oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) []property.SchemaID {
-	schemaIDs := []property.SchemaID{}
-	if oldPlugin.Schema() != nil {
-		if npsId := newPlugin.Schema(); npsId != nil {
-			schemaIDs = append(schemaIDs, *npsId)
-		}
-	}
-	for _, e := range newPlugin.Extensions() {
-		schemaIDs = append(schemaIDs, e.Schema())
-	}
-	return schemaIDs
 }
 
 func collectDatasetIDs(properties []*property.Property) []property.DatasetID {

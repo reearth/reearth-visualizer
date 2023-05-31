@@ -3,6 +3,7 @@ package layer
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -50,4 +51,11 @@ func (i *InfoboxField) ValidateProperty(pm property.Map) error {
 	}
 
 	return nil
+}
+
+func (i *InfoboxField) Upgrade(id plugin.ID) {
+	if i == nil {
+		return
+	}
+	i.plugin = id
 }

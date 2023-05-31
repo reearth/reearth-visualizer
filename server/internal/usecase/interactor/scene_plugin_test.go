@@ -416,7 +416,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			assert.NotNil(ll1.Infobox().Field(ibf1.ID()))
 			assert.Equal(id.OfficialPluginID, ll1.Infobox().Field(ibf1.ID()).Plugin())
 			assert.NotNil(ll1.Infobox().Field(ibf2.ID()))
-			// assert.Equal(tt.args.new, ll1.Infobox().Field(ibf2.ID()).Plugin())
+			assert.Equal(tt.args.new, ll1.Infobox().Field(ibf2.ID()).Plugin())
 			prop, err := prr.FindByID(ctx, ll1.Infobox().Field(ibf2.ID()).Property())
 			assert.NoError(err)
 			assert.Equal(tt.args.new, prop.Schema().Plugin())
