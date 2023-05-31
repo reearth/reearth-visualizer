@@ -26,6 +26,10 @@ const Editor: React.FC<Props> = () => {
     return ["scene", "story", "widgets"].includes(tab || "");
   }, [tab]);
 
+  const showWidgetNav = useMemo(() => {
+    return ["widgets", "publish"].includes(tab || "");
+  }, [tab]);
+
   if (!sceneId || !tab || !isTab(tab)) {
     return <NotFound />;
   }
@@ -46,6 +50,7 @@ const Editor: React.FC<Props> = () => {
           </Resizable>
         )}
         <Center>
+          {showWidgetNav && <div style={{ height: "48px" }}>Widget/Publish Nav</div>}
           <Visualizer />
         </Center>
         {showRightPanel && (
