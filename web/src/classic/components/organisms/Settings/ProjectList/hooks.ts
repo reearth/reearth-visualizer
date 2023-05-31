@@ -149,7 +149,7 @@ export default (workspaceId: string) => {
           name: data.name,
           description: data.description,
           imageUrl: data.imageUrl,
-          coreSupport: data.projectType === "beta" ? true : false ?? false,
+          coreSupport: data.projectType === "beta" ? true : false,
         },
       });
       if (project.errors || !project.data?.createProject) {

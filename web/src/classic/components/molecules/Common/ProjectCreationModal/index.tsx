@@ -175,7 +175,7 @@ const Thumbnail = styled.div<{ url: string; projectType?: ProjectType }>`
       ? `url(${props.url})`
       : props.projectType === "beta"
       ? `url(${defaultBetaProjectImage})`
-      : `url(${defaultProjectImage})` ?? `url(${defaultProjectImage})`};
+      : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
   height: 242px;
