@@ -75,8 +75,10 @@ const Editor: React.FC<Props> = () => {
           </Resizable>
         )}
         <Center>
-          {visualizerNav && <div style={{ height: "48px" }}>{visualizerNav}</div>}
-          <Visualizer />
+          <VisualizerWrapper>
+            {visualizerNav && <div>{visualizerNav}</div>}
+            <Visualizer />
+          </VisualizerWrapper>
         </Center>
         {rightPanel && (
           <Resizable
@@ -112,4 +114,12 @@ const MainSection = styled.div`
   display: flex;
   flex: 1;
   background-color: #070707;
+`;
+
+const VisualizerWrapper = styled.div`
+  border: 1px solid #171618;
+  border-radius: 4px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
