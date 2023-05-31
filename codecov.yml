@@ -1,3 +1,25 @@
+coverage:
+  status:
+    project:
+      web-classic:
+        target: auto
+        threshold: 0%
+        flags:
+          - web-classic
+      web-beta:
+        target: auto
+        threshold: 10%
+        flags:
+          - web-beta
+      web-utils:
+        target: 80%
+        flags:
+          - web-utils
+      server:
+        target: auto
+        flags:
+          - server
+    patch: off
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
@@ -18,3 +40,24 @@ ignore:
   - web/.storybook
   - web/bin
   - web/src/gql/graphql-client-api.tsx
+
+flags:
+  web-classic:
+    paths:
+      - web/src/classic
+    carryforward: true
+  web-beta:
+    paths:
+      - web/src/beta
+      - web/src/services
+    carryforward: true
+    ignore:
+      - web/src/beta/utils
+  web-utils:
+    paths:
+      - web/src/beta/utils
+    carryforward: true
+  server:
+    paths:
+      - server/**
+    carryforward: true
