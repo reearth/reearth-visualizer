@@ -42,11 +42,7 @@ export const AppRoutes = () => {
         </Route>
         <Route path="plugin-editor" element={<PluginEditor />} />
         {/* classic routes - end */}
-        <Route path="scene/:sceneId" element={<BetaEditor />}>
-          <Route path="story" element={<BetaEditor />} />
-          <Route path="widgets" element={<BetaEditor />} />
-          <Route path="publish" element={<BetaEditor />} />
-        </Route>
+        <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
         <Route path="settings">
           <Route index={true} element={<Navigate to="/settings/account" />} />
           <Route path="account" element={<AccountSettings />} />
