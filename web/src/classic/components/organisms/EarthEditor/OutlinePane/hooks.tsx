@@ -195,7 +195,7 @@ export default () => {
   useEffect(() => {
     if (selected?.type !== "widgets") {
       toggleWidgetAlignEditor(false);
-      selectWidgetArea();
+      selectWidgetArea(undefined);
     }
   }, [selected?.type, toggleWidgetAlignEditor, selectWidgetArea]);
 

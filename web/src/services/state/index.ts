@@ -1,6 +1,7 @@
-import { atom } from "jotai";
 import { useAtom } from "jotai/react";
-import { atomWithStorage, SyncStorage } from "jotai/utils/atomWithStorage";
+import { atom } from "jotai/vanilla";
+import { atomWithStorage } from "jotai/vanilla/utils";
+import { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
 import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
 import { LayerSelectionReason } from "@reearth/classic/core/Map";
@@ -95,7 +96,7 @@ export type Workspace = {
   policy?: Policy | null;
 };
 
-const workspace = atomWithStorage<Workspace | undefined>("workspace", undefined);
+const workspace = atom<Workspace | undefined>(undefined);
 export const useWorkspace = () => useAtom(workspace);
 
 const sessionStorageObj: SyncStorage<Workspace | undefined> = {

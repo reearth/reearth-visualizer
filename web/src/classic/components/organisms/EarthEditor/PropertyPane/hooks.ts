@@ -325,7 +325,7 @@ export default (mode: Mode) => {
   const onWidgetEditorActivate = useCallback(
     (enabled: boolean) => {
       setWidgetAlignEditorActivated(enabled);
-      if (!enabled) selectWidgetArea();
+      if (!enabled) selectWidgetArea(undefined);
     },
     [setWidgetAlignEditorActivated, selectWidgetArea],
   );
