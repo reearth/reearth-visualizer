@@ -43,6 +43,7 @@
         "@storybook/addon-essentials": "7.0.18",
         "@storybook/addons": "7.0.18",
         "@storybook/builder-vite": "7.0.18",
+        "@storybook/manager-api": "7.0.18",
         "@storybook/react": "7.0.18",
         "@storybook/react-vite": "7.0.18",
         "@storybook/theming": "7.0.18",
