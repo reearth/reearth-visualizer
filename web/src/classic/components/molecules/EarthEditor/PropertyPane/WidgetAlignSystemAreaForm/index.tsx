@@ -33,7 +33,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
                 suffix="px"
                 min={0}
                 value={selectedWidgetArea.padding?.top}
-                onChange={(value?: number) =>
+                onChange={(value?: number | null) =>
                   onAreaStateChange?.({
                     ...selectedWidgetArea,
                     padding: {
@@ -52,7 +52,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
                 suffix="px"
                 min={0}
                 value={selectedWidgetArea.padding?.left}
-                onChange={(value?: number) =>
+                onChange={(value?: number | null) =>
                   onAreaStateChange?.({
                     ...selectedWidgetArea,
                     padding: {
@@ -68,7 +68,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
                 suffix="px"
                 min={0}
                 value={selectedWidgetArea.padding?.right}
-                onChange={(value?: number) =>
+                onChange={(value?: number | null) =>
                   onAreaStateChange?.({
                     ...selectedWidgetArea,
                     padding: {
@@ -86,7 +86,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
                 suffix="px"
                 min={0}
                 value={selectedWidgetArea.padding?.bottom}
-                onChange={(value?: number) =>
+                onChange={(value?: number | null) =>
                   onAreaStateChange?.({
                     ...selectedWidgetArea,
                     padding: {
@@ -112,7 +112,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
             suffix="px"
             min={0}
             value={selectedWidgetArea.gap}
-            onChange={(value?: number) =>
+            onChange={(value?: number | null) =>
               onAreaStateChange?.({
                 ...selectedWidgetArea,
                 gap: value,

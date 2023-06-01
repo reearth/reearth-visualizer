@@ -108,6 +108,7 @@ export const CREATE_PROJECT = gql`
     $name: String!
     $description: String!
     $imageUrl: URL
+    $coreSupport: Boolean
   ) {
     createProject(
       input: {
@@ -116,6 +117,7 @@ export const CREATE_PROJECT = gql`
         name: $name
         description: $description
         imageUrl: $imageUrl
+        coreSupport: $coreSupport
       }
     ) {
       project {
@@ -123,6 +125,7 @@ export const CREATE_PROJECT = gql`
         name
         description
         imageUrl
+        coreSupport
       }
     }
   }

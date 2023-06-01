@@ -4,6 +4,7 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import TabSection from "@reearth/classic/components/atoms/TabSection";
 import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
+import ProjectTypeSelectionModal from "@reearth/classic/components/molecules/Common/ProjectTypeSelectionModal";
 import MoleculeProjectList from "@reearth/classic/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/classic/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
@@ -26,6 +27,8 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
     hasMoreProjects,
     modalShown,
     openModal,
+    prjectType,
+    prjTypeSelectOpen,
     handleModalClose,
     createProject,
     selectProject,
@@ -34,6 +37,8 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
+    handlePrjTypeSelectModalClose,
+    handleProjectTypeSelect,
   } = useHooks(workspaceId);
 
   type Tab = "Working";
@@ -63,12 +68,18 @@ const ProjectList: React.FC<Props> = ({ workspaceId }) => {
           ),
         }}
       </TabSection>
+      <ProjectTypeSelectionModal
+        open={prjTypeSelectOpen}
+        onClose={handlePrjTypeSelectModalClose}
+        onSubmit={handleProjectTypeSelect}
+      />
       <ProjectCreationModal
         open={modalShown}
         onClose={handleModalClose}
         onSubmit={createProject}
         toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
+        projectType={prjectType}
         assetModal={
           <AssetModal
             workspaceId={workspaceId}
