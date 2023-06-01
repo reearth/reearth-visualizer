@@ -3,6 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import HTML, { Props } from ".";
 
 export default {
+  title: "molecules/Visualizer/Block/HTML",
   component: HTML,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
