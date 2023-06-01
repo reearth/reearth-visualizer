@@ -84,7 +84,7 @@ export type WidgetArea = {
   widgetIds: string[];
   align: WidgetAlignment;
   padding?: WidgetAreaPadding;
-  gap?: number;
+  gap?: number | null;
   centered?: boolean;
   background?: string;
 };

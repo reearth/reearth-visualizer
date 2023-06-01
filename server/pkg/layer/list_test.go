@@ -83,3 +83,12 @@ func TestList_Remove(t *testing.T) {
 	assert.Equal(t, List(nil), List(nil).Remove(l1.ID()))
 	assert.Equal(t, List{}, List{}.Remove(l1.ID()))
 }
+
+func TestList_AddUnique(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	assert.Equal(t, List{l2.LayerRef(), l1.LayerRef()}, List{l2.LayerRef()}.AddUnique(l1.LayerRef()))
+	assert.Equal(t, List{l2.LayerRef()}, List{l2.LayerRef()}.AddUnique(l2.LayerRef()))
+	assert.Equal(t, List{l1.LayerRef()}, List{}.AddUnique(l1.LayerRef(), l1.LayerRef()))
+}

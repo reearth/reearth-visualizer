@@ -220,6 +220,9 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 	}
 
 	result, err := pluginMigrator.MigratePlugins(ctx, s, oldPluginID, newPluginID)
+	if err != nil {
+		return nil, err
+	}
 
 	if err := i.sceneRepo.Save(ctx, result.Scene); err != nil {
 		return nil, err
@@ -228,9 +231,6 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 		return nil, err
 	}
 	if err := i.layerRepo.SaveAll(ctx, result.Layers); err != nil {
-		return nil, err
-	}
-	if err := i.layerRepo.RemoveAll(ctx, result.RemovedLayers); err != nil {
 		return nil, err
 	}
 	if err := i.propertyRepo.RemoveAll(ctx, result.RemovedProperties); err != nil {
