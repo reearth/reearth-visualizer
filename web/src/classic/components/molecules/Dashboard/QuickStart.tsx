@@ -90,7 +90,7 @@ const QuickStart: React.FC<Props> = ({
             align="center"
             justify="center"
             linearGradient={window.REEARTH_CONFIG?.brand?.background}
-            onClick={() => handleCreateProjectClick()}>
+            onClick={handleCreateProjectClick}>
             <StyledIcon icon="newProject" size={70} />
             <Text size="m" weight="bold" customColor>
               {t("New project")}
