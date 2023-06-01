@@ -3,9 +3,6 @@
 // Primitives
 import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg";
 
-// Dataset
-import File from "./Icons/fileIcon.svg";
-
 // Infobox Blocks
 import Infobox from "./Icons/infoboxIcon.svg";
 import InfoHTML from "./Icons/infoboxHTMLIcon.svg";
@@ -27,6 +24,10 @@ import Crosshair from "./Icons/crosshair.svg";
 // Fields / Actions
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
+import ActionButton from "./Icons/actionButton.svg";
+
+// Dataset
+import File from "./Icons/fileIcon.svg";
 
 // Timeline
 import Timeline from "./Icons/timeline.svg";
@@ -55,4 +56,5 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   timeline: Timeline,
+  actionbutton: ActionButton,
 };
