@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloProvider,
   ApolloClient,
@@ -5,7 +6,8 @@ import {
   ApolloLink,
   Observable,
 } from "@apollo/client";
-import { ReactElement } from "react";
+import type { Preview } from "@storybook/react";
+import React, { ReactElement } from "react";
 
 import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
@@ -22,19 +24,23 @@ const mockClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export const parameters = {
-  layout: "fullscreen",
-  controls: { expanded: true },
+const preview: Preview = {
+  parameters: {
+    layout: "fullscreen",
+    controls: { expanded: true },
+    actions: { argTypesRegex: "^on.*" },
+  },
+  decorators: [
+    (storyFn: () => ReactElement) => (
+      <ApolloProvider client={mockClient}>
+        <ThemeProvider>
+          <I18nProvider>
+            <DndProvider>{storyFn()}</DndProvider>
+          </I18nProvider>
+        </ThemeProvider>
+      </ApolloProvider>
+    ),
+  ],
 };
 
-export const decorators = [
-  (storyFn: () => ReactElement) => (
-    <ApolloProvider client={mockClient}>
-      <ThemeProvider>
-        <I18nProvider>
-          <DndProvider>{storyFn()}</DndProvider>
-        </I18nProvider>
-      </ThemeProvider>
-    </ApolloProvider>
-  ),
-];
+export default preview;

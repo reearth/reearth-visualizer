@@ -5,19 +5,18 @@ import (
 	"errors"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/config"
+	authconfig "github.com/reearth/reearth/server/pkg/config"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/zitadel/oidc/pkg/oidc"
 )
 
-const authServerDefaultClientID = "reearth-authsrv-client-default"
-
 var ErrInvalidEmailORPassword = errors.New("wrong email or password")
 
-func authServer(ctx context.Context, e *echo.Echo, cfg *AuthSrvConfig, repos *repo.Container) {
+func authServer(ctx context.Context, e *echo.Echo, cfg *config.AuthSrvConfig, repos *repo.Container) {
 	if cfg.Disabled {
 		return
 	}
@@ -26,7 +25,7 @@ func authServer(ctx context.Context, e *echo.Echo, cfg *AuthSrvConfig, repos *re
 		Issuer:          cfg.Issuer,
 		URL:             cfg.DomainURL(),
 		WebURL:          cfg.UIDomainURL(),
-		DefaultClientID: authServerDefaultClientID,
+		DefaultClientID: config.AuthServerDefaultClientID,
 		Dev:             cfg.Dev,
 		Key:             cfg.Key,
 		DN:              cfg.DN.AuthServerDNConfig(),
@@ -101,7 +100,7 @@ func (c *authServerConfig) Save(ctx context.Context, cfg *authserver.Config) err
 	if cfg == nil {
 		return nil
 	}
-	return c.Config.SaveAuth(ctx, &config.Auth{
+	return c.Config.SaveAuth(ctx, &authconfig.Auth{
 		Cert: cfg.Cert,
 		Key:  cfg.Key,
 	})

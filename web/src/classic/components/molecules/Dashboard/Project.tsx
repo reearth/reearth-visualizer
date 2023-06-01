@@ -6,17 +6,18 @@ import { useMedia } from "react-use";
 
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
-import { Project as ProjectType } from "@reearth/classic/components/molecules/Dashboard/types";
+import { Project as ProjectObjType } from "@reearth/classic/components/molecules/Dashboard/types";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-
-import defaultProjectImage from "./defaultProjectImage.jpg";
+import { ProjectType } from "@reearth/types";
 
 export type Props = {
   className?: string;
-  project: ProjectType;
+  project: ProjectObjType;
 };
 
 const Project: React.FC<Props> = ({ className, project }) => {
@@ -39,6 +40,7 @@ const Project: React.FC<Props> = ({ className, project }) => {
     <StyledWrapper className={className}>
       <Block
         projectImage={image}
+        projectType={project.projectType}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
         <Content isHovered={isHovered}>
@@ -47,7 +49,10 @@ const Project: React.FC<Props> = ({ className, project }) => {
           </Text>
           <Actions isHovered={isHovered}>
             <ButtonWrapper>
-              <StyledLink to={`/edit/${sceneId}`}>
+              <StyledLink
+                to={
+                  project.projectType === "beta" ? `/scene/${sceneId}/scene` : `/edit/${sceneId}`
+                }>
                 <Button large buttonType="primary" icon="earthEditor" />
               </StyledLink>
               <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
@@ -86,13 +91,17 @@ const StyledWrapper = styled.div`
   }
 `;
 
-const Block = styled.div<{ projectImage?: string | null }>`
+const Block = styled.div<{ projectImage?: string | null; projectType?: ProjectType }>`
   display: flex;
   height: 238px;
   border-radius: 12px;
   margin: 7px;
-  background-image: ${({ projectImage }) =>
-    projectImage ? `url(${projectImage})` : `url(${defaultProjectImage})`};
+  background-image: ${({ projectImage, projectType }) =>
+    projectImage
+      ? `url(${projectImage})`
+      : projectType === "beta"
+      ? `url(${defaultBetaProjectImage})`
+      : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
   ${({ projectImage }) => !projectImage && "background-size: 560px 290px;"}

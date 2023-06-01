@@ -10,6 +10,9 @@ import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme, metrics, css } from "@reearth/services/theme";
 import { metricsSizes } from "@reearth/services/theme/metrics";
+import { ProjectType } from "@reearth/types";
+
+import ProjectTypeSelectionModal from "../Common/ProjectTypeSelectionModal";
 
 export interface Props {
   className?: string;
@@ -20,6 +23,7 @@ export interface Props {
     name: string;
     description: string;
     imageUrl: string;
+    projectType: ProjectType;
   }) => Promise<void>;
   toggleAssetModal?: () => void;
   onAssetSelect?: (asset?: string) => void;
@@ -36,17 +40,32 @@ const QuickStart: React.FC<Props> = ({
 }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
-  const [projCreateOpen, setProjCreateOpen] = useState(false);
+  const [prjCreateOpen, setPrjCreateOpen] = useState(false);
+  const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
+  const [prjectType, setPrjectType] = useState<ProjectType>("classic");
+  const theme = useTheme();
+  const isSmallWindow = useMedia("(max-width: 1024px)");
+
+  const handleCreateProjectClick = useCallback(() => {
+    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
+    else setPrjCreateOpen(true);
+  }, []);
 
   const handleProjModalClose = useCallback(() => {
-    setProjCreateOpen(false);
+    setPrjCreateOpen(false);
     onAssetSelect?.();
   }, [onAssetSelect]);
 
-  const theme = useTheme();
+  const handlePrjTypeSelectModalClose = useCallback(() => {
+    setPrjTypeSelectOpen(false);
+    setPrjCreateOpen(true);
+  }, []);
 
-  const isSmallWindow = useMedia("(max-width: 1024px)");
+  const handleProjectTypeSelect = (type: ProjectType) => {
+    setPrjectType(type);
+    setPrjCreateOpen(true);
+  };
 
   return (
     <StyledDashboardBlock className={className} grow={4}>
@@ -71,7 +90,7 @@ const QuickStart: React.FC<Props> = ({
             align="center"
             justify="center"
             linearGradient={window.REEARTH_CONFIG?.brand?.background}
-            onClick={() => setProjCreateOpen(true)}>
+            onClick={handleCreateProjectClick}>
             <StyledIcon icon="newProject" size={70} />
             <Text size="m" weight="bold" customColor>
               {t("New project")}
@@ -89,8 +108,14 @@ const QuickStart: React.FC<Props> = ({
           </BannerButton>
         </Flex>
       </Content>
+      <ProjectTypeSelectionModal
+        open={prjTypeSelectOpen}
+        onClose={handlePrjTypeSelectModalClose}
+        onSubmit={handleProjectTypeSelect}
+      />
       <ProjectCreationModal
-        open={projCreateOpen}
+        open={prjCreateOpen}
+        projectType={prjectType}
         onClose={handleProjModalClose}
         onSubmit={onProjectCreate}
         toggleAssetModal={toggleAssetModal}
