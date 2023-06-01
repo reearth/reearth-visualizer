@@ -13,13 +13,13 @@ type Story = StoryObj<typeof TabButton>;
 export const Clolse: Story = {
   args: {
     label: "Editor",
-    disabled: true,
+    selected: false,
   },
 };
 
 export const Open: Story = {
   args: {
     label: "Editor",
-    disabled: false,
+    selected: true,
   },
 };

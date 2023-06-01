@@ -5,12 +5,12 @@ import { styled } from "@reearth/services/theme";
 export type Props = {
   label: string;
   onClick: () => void;
-  disabled: boolean;
+  selected: boolean;
 };
 
-const TabButton: FC<Props> = ({ label, onClick, disabled }) => {
+const TabButton: FC<Props> = ({ label, onClick, selected }) => {
   return (
-    <Button data-testid="atoms-tabbutton" disabled={disabled} onClick={onClick}>
+    <Button data-testid="atoms-tabbutton" onClick={onClick} disabled={selected}>
       {label}
     </Button>
   );
@@ -22,7 +22,7 @@ type ButtonProps = {
 
 const Button = styled.button<ButtonProps>`
   // Button Settings
-  background: ${({ disabled }) => (disabled ? "#232226" : "#232226")};
+  background: ${({ disabled }) => (disabled ? "#232226" : "inherit")};
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -34,10 +34,10 @@ const Button = styled.button<ButtonProps>`
   top: 0px;
   border-radius: 4px;
   :hover {
-    background: ${({ disabled }) => (disabled ? "lightgrey" : "#232226")};
+    background: ${({ disabled }) => (disabled ? "#232226" : "lightgrey")};
   }
   // Text Settings
-  color: ${({ disabled }) => (disabled ? "#4A4A4A" : "#C7C5C5")};
+  color: ${({ disabled }) => (disabled ? "#C7C5C5" : "#4A4A4A")};
   font-family: "Noto Sans";
   font-style: normal;
   font-weight: 700;
