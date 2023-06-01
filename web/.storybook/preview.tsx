@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloProvider,
   ApolloClient,
@@ -5,7 +6,7 @@ import {
   ApolloLink,
   Observable,
 } from "@apollo/client";
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 
 import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
