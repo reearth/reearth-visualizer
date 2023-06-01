@@ -9,9 +9,7 @@ func NewInfoboxField() *InfoboxFieldBuilder {
 }
 
 func (b *InfoboxFieldBuilder) Build() (*InfoboxField, error) {
-	if b.i.id.IsNil() ||
-		string(b.i.extension) == "" ||
-		b.i.property.IsNil() {
+	if b.i.id.IsNil() || string(b.i.extension) == "" || b.i.property.IsNil() || b.i.plugin.IsNil() {
 		return nil, ErrInvalidID
 	}
 	return b.i, nil

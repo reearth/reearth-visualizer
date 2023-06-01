@@ -153,6 +153,22 @@ func (ll List) Remove(lids ...ID) List {
 	return res
 }
 
+func (ll List) AddUnique(newList ...*Layer) List {
+	res := append(List{}, ll...)
+
+	for _, l := range newList {
+		if l == nil {
+			continue
+		}
+		if res.Find((*l).ID()) != nil {
+			continue
+		}
+		res = append(res, l)
+	}
+
+	return res
+}
+
 type ItemList []*Item
 
 func (ll ItemList) FindByDataset(ds DatasetID) *Item {
