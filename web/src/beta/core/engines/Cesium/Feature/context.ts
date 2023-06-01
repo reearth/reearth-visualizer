@@ -1,6 +1,6 @@
 import { createContext, useContext as useReactContext } from "react";
 
-import { LayerEditEvent } from "@reearth/classic/core/Map";
+import { LayerEditEvent } from "@reearth/beta/core/Map";
 
 import type { Camera, FlyToDestination, CameraOptions, LayerSelectionReason } from "../..";
 

@@ -12,7 +12,7 @@ import {
   TranslationRotationScale,
 } from "cesium";
 
-import type { Geometry } from "@reearth/classic/core/mantle";
+import type { Geometry } from "@reearth/beta/core/mantle";
 
 import { translationWithClamping } from "../../utils";
 
@@ -79,6 +79,34 @@ function screenProjectVector(
 }
 
 const dotMousePosition = (
+  scene: Scene,
+  mouseMove: {
+    startPosition: Cartesian2;
+    endPosition: Cartesian2;
+  },
+  position: Cartesian3,
+  direction: Cartesian3,
+) => {
+  const mouseVector2d = Cartesian2.subtract(
+    mouseMove.endPosition,
+    mouseMove.startPosition,
+    new Cartesian2(),
+  );
+
+  // Project the vector of unit length to the screen
+  const screenVector2d = screenProjectVector(scene, position, direction, 1, new Cartesian2());
+  const screenNormal2d = Cartesian2.normalize(screenVector2d, new Cartesian2());
+
+  const pixelsPerStep = Cartesian2.magnitude(screenVector2d);
+  const moveAmountPixels = Cartesian2.dot(mouseVector2d, screenNormal2d);
+
+  return {
+    pixelsPerStep,
+    moveAmount: moveAmountPixels / pixelsPerStep,
+  };
+};
+
+export const computeMoveAmount = (
   scene: Scene,
   mouseMove: {
     startPosition: Cartesian2;

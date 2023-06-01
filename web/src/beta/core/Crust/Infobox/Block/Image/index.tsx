@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "..";

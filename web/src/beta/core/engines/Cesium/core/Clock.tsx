@@ -2,7 +2,7 @@ import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium"
 import { useCallback, useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
-import { truncMinutes } from "@reearth/classic/util/time";
+import { truncMinutes } from "@reearth/beta/utils/time";
 
 import type { Clock as ClockType, SceneProperty } from "../..";
 

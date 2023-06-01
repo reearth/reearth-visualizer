@@ -1,6 +1,6 @@
 import type { ReactNode, RefObject } from "react";
 
-import type { SelectedFeatureInfo, Tag } from "@reearth/classic/core/mantle";
+import type { SelectedFeatureInfo, Tag } from "@reearth/beta/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { Clock, LayerEditEvent, LayerSelectionReason } from "../Map";

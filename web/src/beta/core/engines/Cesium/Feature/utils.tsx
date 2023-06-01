@@ -27,7 +27,7 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/classic/core/mantle";
+import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/beta/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 import type { InternalCesium3DTileFeature } from "../types";

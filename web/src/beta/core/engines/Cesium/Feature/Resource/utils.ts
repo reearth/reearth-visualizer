@@ -12,8 +12,8 @@ import {
   ComputedFeature,
   ComputedLayer,
   Feature,
-} from "@reearth/classic/core/mantle";
-import { EvalFeature } from "@reearth/classic/core/Map";
+} from "@reearth/beta/core/mantle";
+import { EvalFeature } from "@reearth/beta/core/Map";
 
 import { heightReference, shadowMode, toColor } from "../../common";
 import { attachTag, extractSimpleLayer, getTag, Tag } from "../utils";

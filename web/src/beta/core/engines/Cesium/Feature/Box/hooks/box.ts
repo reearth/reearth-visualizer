@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import { LayerEditEvent } from "@reearth/classic/core/Map";
+import { LayerEditEvent } from "@reearth/beta/core/Map";
 
 import type { Property } from "..";
 import { sampleTerrainHeightFromCartesian, updateMapController } from "../../../common";

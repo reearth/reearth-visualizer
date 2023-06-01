@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 
-import type { Layer } from "@reearth/classic/core/mantle";
+import type { Layer } from "@reearth/beta/core/mantle";
 
 import type { Block } from "../../Infobox";
 import type { MapRef } from "../../types";

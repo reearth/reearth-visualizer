@@ -1,9 +1,9 @@
 import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled, metricsSizes, mask } from "@reearth/services/theme";
 
 import type { Camera, FlyToDestination, Theme } from "../types";

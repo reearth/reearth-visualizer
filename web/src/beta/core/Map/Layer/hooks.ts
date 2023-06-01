@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 import { isEqual, pick } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
-import { requestIdleCallbackWithRequiredWork } from "@reearth/classic/util/idle";
+import { requestIdleCallbackWithRequiredWork } from "@reearth/beta/utils/idle";
 
 import {
   clearAllExpressionCaches,

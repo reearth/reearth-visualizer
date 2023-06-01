@@ -1,6 +1,6 @@
 import { forwardRef, type ForwardRefRenderFunction } from "react";
 
-import { SelectedFeatureInfo } from "@reearth/classic/core/mantle";
+import { SelectedFeatureInfo } from "@reearth/beta/core/mantle";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
 import type { ComputedLayer } from "../types";

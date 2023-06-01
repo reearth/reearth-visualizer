@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 
-import type { Layer } from "@reearth/classic/core/mantle";
-import type { ValueType, ValueTypes } from "@reearth/classic/util/value";
+import type { Layer } from "@reearth/beta/core/mantle";
+import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { Theme } from "../../types";

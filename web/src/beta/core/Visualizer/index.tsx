@@ -1,9 +1,8 @@
 import { CSSProperties, useMemo, type ReactNode } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-// TODO(@keiya01): Change directory structure
-import DropHolder from "@reearth/classic/components/atoms/DropHolder";
-import Filled from "@reearth/classic/components/atoms/Filled";
+import DropHolder from "@reearth/beta/components/DropHolder";
+import { styled } from "@reearth/services/theme";
 
 import Crust, {
   type Alignment,
@@ -275,3 +274,10 @@ export default function Visualizer({
     </ErrorBoundary>
   );
 }
+
+const Filled = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+`;

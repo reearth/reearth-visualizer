@@ -14,7 +14,7 @@ import {
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useCesium } from "resium";
 
-import type { EventCallback } from "@reearth/classic/core/Map";
+import type { EventCallback } from "@reearth/beta/core/Map";
 
 import { getTag } from "../../utils";
 import type { PointEventCallback, ScalePointProperties } from "../ScalePoints";

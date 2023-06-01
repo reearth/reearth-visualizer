@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-import { Provider } from "@reearth/classic/util/use-dnd";
+import { Provider } from "@reearth/beta/utils/use-dnd";
 import { render, screen } from "@reearth/test/utils";
 
 import Infobox from ".";

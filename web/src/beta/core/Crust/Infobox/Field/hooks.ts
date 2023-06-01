@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 
-import { useDrag, useDrop, DropOptions } from "@reearth/classic/util/use-dnd";
+import { useDrag, useDrop, DropOptions } from "@reearth/beta/utils/use-dnd";
 
 export default ({
   id,

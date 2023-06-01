@@ -7,7 +7,7 @@ import type {
   Tag,
   NaiveLayer,
   LayerSimple,
-} from "@reearth/classic/core/mantle";
+} from "@reearth/beta/core/mantle";
 import type {
   CameraOptions,
   FlyToDestination,
@@ -20,7 +20,7 @@ import type {
   OverriddenLayer,
   Undefinable,
   WrappedRef,
-} from "@reearth/classic/core/Map";
+} from "@reearth/beta/core/Map";
 
 import { Block } from "../Infobox";
 import { Widget } from "../Widgets";

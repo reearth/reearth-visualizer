@@ -14,6 +14,14 @@ export const Cesium = Template.bind({});
 Cesium.args = {
   ready: true,
   engine: "cesium",
+  sceneProperty: {
+    tiles: [
+      {
+        id: "default",
+        tile_type: "default",
+      },
+    ],
+  },
 };
 
 export const Plugin = Template.bind({});
@@ -21,6 +29,14 @@ export const Plugin = Template.bind({});
 Plugin.args = {
   ready: true,
   engine: "cesium",
+  sceneProperty: {
+    tiles: [
+      {
+        id: "default",
+        tile_type: "default",
+      },
+    ],
+  },
   widgetAlignSystem: {
     outer: {
       left: {

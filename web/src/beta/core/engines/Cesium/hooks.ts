@@ -19,8 +19,8 @@ import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
-import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/classic/core/mantle";
-import { LayersRef } from "@reearth/classic/core/Map";
+import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/core/mantle";
+import { LayersRef } from "@reearth/beta/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {

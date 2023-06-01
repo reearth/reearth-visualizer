@@ -3,7 +3,7 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
-import { TickEventCallback } from "@reearth/classic/core/Map";
+import { TickEventCallback } from "@reearth/beta/core/Map";
 
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 

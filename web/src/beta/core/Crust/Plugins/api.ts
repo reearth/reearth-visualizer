@@ -1,4 +1,4 @@
-import type { Tag } from "@reearth/classic/core/mantle/compat";
+import type { Tag } from "@reearth/beta/core/mantle/compat";
 import {
   Events,
   Layer,
@@ -6,8 +6,8 @@ import {
   LayersRef,
   NaiveLayer,
   LazyLayer,
-} from "@reearth/classic/core/Map";
-import { merge } from "@reearth/classic/util/object";
+} from "@reearth/beta/core/Map";
+import { merge } from "@reearth/beta/utils/object";
 
 import type { Block } from "../Infobox";
 import type { MapRef } from "../types";

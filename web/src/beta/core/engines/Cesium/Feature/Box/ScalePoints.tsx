@@ -9,7 +9,7 @@ import {
 import { FC, memo } from "react";
 import { BoxGraphics, PolylineGraphics } from "resium";
 
-import type { EventCallback } from "@reearth/classic/core/Map";
+import type { EventCallback } from "@reearth/beta/core/Map";
 
 import { EntityExt } from "../utils";
 

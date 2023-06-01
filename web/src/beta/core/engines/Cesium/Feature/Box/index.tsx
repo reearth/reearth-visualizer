@@ -3,9 +3,9 @@ import React, { memo } from "react";
 import type {
   FeatureComponentConfig,
   FeatureProps,
-} from "@reearth/classic/core/engines/Cesium/Feature";
-import type { BoxAppearance, LatLngHeight } from "@reearth/classic/core/mantle";
-import { LayerEditEvent } from "@reearth/classic/core/Map";
+} from "@reearth/beta/core/engines/Cesium/Feature";
+import type { BoxAppearance, LatLngHeight } from "@reearth/beta/core/mantle";
+import { LayerEditEvent } from "@reearth/beta/core/Map";
 
 import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./constants";
 import { Edge } from "./Edge";

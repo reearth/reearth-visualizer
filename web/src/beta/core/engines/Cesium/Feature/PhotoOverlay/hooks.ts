@@ -2,7 +2,7 @@ import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { Math as CesiumMath, EasingFunction } from "cesium";
 import { useCallback, useEffect, useRef } from "react";
 
-import { useDelayedCount, Durations } from "@reearth/classic/util/use-delayed-count";
+import { useDelayedCount, Durations } from "@reearth/beta/utils/use-delayed-count";
 
 import type { Camera } from "../../..";
 import { useContext } from "../context";

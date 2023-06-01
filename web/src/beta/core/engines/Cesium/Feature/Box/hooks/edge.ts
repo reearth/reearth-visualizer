@@ -11,7 +11,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import type { EventCallback } from "@reearth/classic/core/Map";
+import type { EventCallback } from "@reearth/beta/core/Map";
 
 import { getTag } from "../../utils";
 import type { EdgeEventCallback, EdgeProperties } from "../Edge";

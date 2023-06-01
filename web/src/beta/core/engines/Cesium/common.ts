@@ -35,9 +35,9 @@ import {
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
-import { ClassificationType } from "@reearth/classic/core/mantle";
-import { useCanvas, useImage } from "@reearth/classic/util/image";
-import { tweenInterval } from "@reearth/classic/util/raf";
+import { ClassificationType } from "@reearth/beta/core/mantle";
+import { useCanvas, useImage } from "@reearth/beta/utils/image";
+import { tweenInterval } from "@reearth/beta/utils/raf";
 
 import type { Camera, CameraOptions, Clock, FlyToDestination } from "..";
 

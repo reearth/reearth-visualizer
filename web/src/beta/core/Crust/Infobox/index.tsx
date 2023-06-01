@@ -1,9 +1,9 @@
 import React, { type ReactNode } from "react";
 
-import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import type { Layer } from "@reearth/classic/core/mantle";
+import AdditionButton from "@reearth/beta/components/AdditionButton";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import type { Layer } from "@reearth/beta/core/mantle";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

@@ -9,7 +9,7 @@ import {
   type EventEmitter,
   type Events,
   useGet,
-} from "@reearth/classic/core/Map";
+} from "@reearth/beta/core/Map";
 
 import type { Block } from "../../Infobox";
 import type { MapRef } from "../../types";

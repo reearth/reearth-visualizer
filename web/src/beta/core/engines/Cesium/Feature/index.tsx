@@ -1,7 +1,7 @@
 import LRUCache from "lru-cache";
 import { useMemo } from "react";
 
-import { ComputedFeature, DataType, guessType } from "@reearth/classic/core/mantle";
+import { ComputedFeature, DataType, guessType } from "@reearth/beta/core/mantle";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 

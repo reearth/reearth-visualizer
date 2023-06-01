@@ -2,7 +2,7 @@ import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Transforms } from "ce
 import { useMemo } from "react";
 import { ModelGraphics } from "resium";
 
-import { toColor } from "@reearth/classic/util/value";
+import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
-import { convertTime, truncMinutes } from "@reearth/classic/util/time";
-import { type DropOptions, useDrop } from "@reearth/classic/util/use-dnd";
+// TODO: Move these utils
+import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
+import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";

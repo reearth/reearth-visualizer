@@ -1,4 +1,4 @@
-import { RasterAppearance } from "@reearth/classic/core/mantle";
+import { RasterAppearance } from "@reearth/beta/core/mantle";
 
 import { FeatureProps } from "../utils";
 

@@ -1,7 +1,7 @@
 import { Feature, LineString, Point, Polygon } from "geojson";
 import { omitBy } from "lodash-es";
 
-import { Cluster } from "@reearth/classic/core/Map";
+import { Cluster } from "@reearth/beta/core/Map";
 
 import type { Data, Layer, LayerGroup, LayerSimple } from "../types";
 

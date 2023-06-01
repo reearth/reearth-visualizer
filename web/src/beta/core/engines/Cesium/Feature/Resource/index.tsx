@@ -2,8 +2,8 @@ import { Entity, type DataSource, Color } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
-import { ComputedFeature, evalFeature, Feature, guessType } from "@reearth/classic/core/mantle";
-import { requestIdleCallbackWithRequiredWork } from "@reearth/classic/util/idle";
+import { ComputedFeature, evalFeature, Feature, guessType } from "@reearth/beta/core/mantle";
+import { requestIdleCallbackWithRequiredWork } from "@reearth/beta/utils/idle";
 
 import type { ResourceAppearance } from "../../..";
 import {

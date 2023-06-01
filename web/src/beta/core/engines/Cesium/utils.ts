@@ -14,8 +14,8 @@ import {
   ImageryLayerFeatureInfo,
 } from "cesium";
 
-import { InfoboxProperty } from "@reearth/classic/core/Crust/Infobox";
-import { DefaultInfobox } from "@reearth/classic/core/Map";
+import { InfoboxProperty } from "@reearth/beta/core/Crust/Infobox";
+import { DefaultInfobox } from "@reearth/beta/core/Map";
 
 import { getTag } from "./Feature";
 import type { InternalCesium3DTileFeature } from "./types";

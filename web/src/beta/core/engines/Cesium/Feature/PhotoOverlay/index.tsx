@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import nl2br from "react-nl2br";
 import { BillboardGraphics } from "resium";
 
-import defaultImage from "@reearth/classic/components/atoms/Icon/Icons/primPhotoIcon.svg";
-import Text from "@reearth/classic/components/atoms/Text";
+import defaultImage from "@reearth/beta/components/Icon/Icons/primPhotoIcon.svg";
+import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import type { LegacyPhotooverlayAppearance } from "../../..";

@@ -1,6 +1,6 @@
 import { ComponentType, ReactNode, useMemo } from "react";
 
-import type { TickEvent } from "@reearth/classic/core/Map";
+import type { TickEvent } from "@reearth/beta/core/Map";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {

@@ -1,17 +1,8 @@
 import type { PropsWithChildren, RefObject } from "react";
 
-import type {
-  Camera,
-  ComputedFeature,
-  SelectedFeatureInfo,
-  Tag,
-} from "@reearth/classic/core/mantle";
-import type {
-  ComputedLayer,
-  LayerEditEvent,
-  LayerSelectionReason,
-} from "@reearth/classic/core/Map";
-import type { Viewport } from "@reearth/classic/core/Visualizer";
+import type { Camera, ComputedFeature, SelectedFeatureInfo, Tag } from "@reearth/beta/core/mantle";
+import type { ComputedLayer, LayerEditEvent, LayerSelectionReason } from "@reearth/beta/core/Map";
+import type { Viewport } from "@reearth/beta/core/Visualizer";
 
 import type { MapRef } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";

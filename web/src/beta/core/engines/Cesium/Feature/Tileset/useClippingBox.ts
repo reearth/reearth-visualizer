@@ -9,9 +9,8 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RootEventTarget, useCesium } from "resium";
 
-import { computeMoveAmount } from "@reearth/classic/components/molecules/Visualizer/Engine/Cesium/Box/utils";
-import { Camera, EXPERIMENTAL_clipping } from "@reearth/classic/core/mantle";
-import { LayerEditEvent } from "@reearth/classic/core/Map";
+import { Camera, EXPERIMENTAL_clipping } from "@reearth/beta/core/mantle";
+import { LayerEditEvent } from "@reearth/beta/core/Map";
 
 import {
   getCamera,
@@ -19,6 +18,7 @@ import {
   sampleTerrainHeight,
   updateMapController,
 } from "../../common";
+import { computeMoveAmount } from "../Box/utils";
 import { getTag } from "../utils";
 
 type BoxState = {
