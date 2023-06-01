@@ -1,14 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 
+import { useAuth0Auth } from "./authOAuth";
 import { AuthContext } from "./authProvider";
 
 export const errorKey = "reeartherror";
 
 export const useAuth = () => {
-  const auth = useContext(AuthContext);
+  let auth = useContext(AuthContext);
 
   if (!auth) {
-    throw new Error("No auth provider configured");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    auth = useAuth0Auth();
   }
 
   return auth;
