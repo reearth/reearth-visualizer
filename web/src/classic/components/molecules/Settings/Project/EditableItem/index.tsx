@@ -2,8 +2,8 @@ import React, { useState, useCallback } from "react";
 
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
-import defaultProjectImage from "@reearth/classic/components/molecules/Dashboard/defaultProjectImage.jpg";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import SelectField from "@reearth/classic/components/molecules/Settings/SelectField";
 import { styled } from "@reearth/services/theme";

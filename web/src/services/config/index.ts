@@ -24,6 +24,7 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
+  developerMode?: boolean;
   brand?: {
     logoUrl?: string;
     background?: string;
@@ -73,6 +74,7 @@ export const defaultConfig: Config = {
   auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
   authProvider: "auth0",
+  developerMode: true,
   policy: {
     modalTitle: {
       en: "Re:Earth Cloud",

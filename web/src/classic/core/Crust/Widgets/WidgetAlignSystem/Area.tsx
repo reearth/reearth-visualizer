@@ -22,7 +22,7 @@ export type WidgetAreaType = {
   align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
-  gap?: number;
+  gap?: number | null;
   centered?: boolean;
   background?: string;
 };
@@ -35,7 +35,7 @@ type Props = {
   align?: Alignment;
   padding?: WidgetAreaPadding;
   backgroundColor?: string;
-  gap?: number;
+  gap?: number | null;
   centered?: boolean;
   built?: boolean;
   widgets?: InternalWidget[];
@@ -112,7 +112,7 @@ export default function Area({
           ? `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`
           : "0",
         backgroundColor: backgroundColor,
-        gap: gap,
+        gap: gap ?? 0,
         alignItems: centered ? "center" : "unset",
         borderRadius: 0,
         transition: built ? "none" : undefined,
@@ -132,7 +132,7 @@ export default function Area({
             : area === "middle"
             ? `1px solid ${theme.alignSystem.blueHighlight}`
             : `1px solid ${theme.alignSystem.orangeHighlight}`,
-        gap: gap,
+        gap: gap ?? 0,
         alignItems: centered ? "center" : "unset",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
