@@ -88,25 +88,23 @@ func (p *Plugins) Remove(pid PluginID) {
 }
 
 func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool) {
-	if p == nil || from.IsNil() || to.IsNil() {
+	if p == nil || from.IsNil() || to.IsNil() || from.Equal(to) || from.Equal(OfficialPluginID) {
 		return
 	}
 
 	for i, p2 := range p.plugins {
-		if p2.plugin.Equal(OfficialPluginID) {
+		if !p2.plugin.Equal(from) {
 			continue
 		}
-		if p2.plugin.Equal(from) {
-			var newpr *PropertyID
-			if !deleteProperty {
-				newpr = pr.CloneRef()
-				if newpr == nil {
-					newpr = p2.property.CloneRef()
-				}
+		var newpr *PropertyID
+		if !deleteProperty {
+			newpr = pr.CloneRef()
+			if newpr == nil {
+				newpr = p2.property.CloneRef()
 			}
-			p.plugins[i] = &Plugin{plugin: to, property: newpr}
-			return
 		}
+		p.plugins[i] = &Plugin{plugin: to, property: newpr}
+		return
 	}
 }
 

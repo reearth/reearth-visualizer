@@ -1,9 +1,7 @@
-import { addons } from "@storybook/addons";
-import { create } from "@storybook/theming/create";
+import { addons } from "@storybook/manager-api";
+
+import theme from "./theme";
 
 addons.setConfig({
-  theme: create({
-    base: "dark",
-    brandTitle: "Re:Earth",
-  }),
+  theme,
 });

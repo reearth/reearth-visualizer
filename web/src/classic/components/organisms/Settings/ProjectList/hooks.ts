@@ -19,6 +19,7 @@ import {
   useNotification,
   useSessionWorkspace,
 } from "@reearth/services/state";
+import { ProjectType } from "@reearth/types";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -35,6 +36,8 @@ export default (workspaceId: string) => {
   const [, setNotification] = useNotification();
   const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [lastWorkspace, setLastWorkspace] = useWorkspace();
+  const [prjectType, setPrjectType] = useState<ProjectType>("classic");
+  const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
 
   const [, setProject] = useProject();
   const navigate = useNavigate();
@@ -42,7 +45,10 @@ export default (workspaceId: string) => {
   const gqlCache = useApolloClient().cache;
 
   const [modalShown, setModalShown] = useState(false);
-  const openModal = useCallback(() => setModalShown(true), []);
+  const openModal = useCallback(() => {
+    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
+    else setModalShown(true);
+  }, []);
 
   const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({
@@ -92,6 +98,7 @@ export default (workspaceId: string) => {
             isArchived: project.isArchived,
             status: toPublishmentStatus(project.publishmentStatus),
             sceneId: project.scene?.id,
+            projectType: project.coreSupport ? "beta" : "classic",
           }
         : undefined,
     )
@@ -128,7 +135,12 @@ export default (workspaceId: string) => {
 
   // Submit Form
   const createProject = useCallback(
-    async (data: { name: string; description: string; imageUrl: string | null }) => {
+    async (data: {
+      name: string;
+      description: string;
+      imageUrl: string | null;
+      projectType: ProjectType;
+    }) => {
       if (!workspaceId) return;
       const project = await createNewProject({
         variables: {
@@ -137,6 +149,7 @@ export default (workspaceId: string) => {
           name: data.name,
           description: data.description,
           imageUrl: data.imageUrl,
+          coreSupport: data.projectType === "beta" ? true : false,
         },
       });
       if (project.errors || !project.data?.createProject) {
@@ -196,6 +209,16 @@ export default (workspaceId: string) => {
     };
   }, [gqlCache]);
 
+  const handlePrjTypeSelectModalClose = useCallback(() => {
+    setPrjTypeSelectOpen(false);
+    setModalShown(true);
+  }, []);
+
+  const handleProjectTypeSelect = (type: ProjectType) => {
+    setPrjectType(type);
+    setModalShown(true);
+  };
+
   return {
     currentProjects,
     totalProjects,
@@ -205,6 +228,8 @@ export default (workspaceId: string) => {
     loading,
     modalShown,
     openModal,
+    prjectType,
+    prjTypeSelectOpen,
     handleModalClose,
     createProject,
     selectProject,
@@ -213,5 +238,7 @@ export default (workspaceId: string) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
+    handlePrjTypeSelectModalClose,
+    handleProjectTypeSelect,
   };
 };

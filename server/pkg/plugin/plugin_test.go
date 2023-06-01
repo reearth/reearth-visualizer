@@ -51,22 +51,22 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 	tests := []struct {
 		name     string
 		plugin   *Plugin
-		expected []PropertySchemaID
+		expected PropertySchemaIDList
 	}{
 		{
 			name:     "normal",
 			plugin:   New().ID(MustID("aaa~1.1.1")).Schema(&ps1).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
-			expected: []PropertySchemaID{ps1, ps2, ps3},
+			expected: PropertySchemaIDList{ps1, ps2, ps3},
 		},
 		{
 			name:     "no plugin property schema",
 			plugin:   New().ID(MustID("aaa~1.1.1")).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
-			expected: []PropertySchemaID{ps2, ps3},
+			expected: PropertySchemaIDList{ps2, ps3},
 		},
 		{
 			name:     "nil",
 			plugin:   nil,
-			expected: []PropertySchemaID(nil),
+			expected: PropertySchemaIDList(nil),
 		},
 	}
 
