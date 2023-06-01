@@ -4,7 +4,6 @@ import { engine } from "../..";
 import Component, { Props } from "../../../../Map";
 
 export default {
-  title: "core/engines/Cesium/Feature/Raster",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
