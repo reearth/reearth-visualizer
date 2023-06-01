@@ -153,8 +153,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 }
 
 func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
-	schemasIds := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
-	schemas, err := s.PropertySchema(ctx, schemasIds...)
+	schemasIDs := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
+	schemas, err := s.PropertySchema(ctx, schemasIDs...)
 	if err != nil {
 		return nil, err
 	}
