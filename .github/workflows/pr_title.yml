@@ -7,6 +7,11 @@ on:
       - synchronize
       - labeled
       - unlabeled
+# below permissions are needed to allow forked PR creators to edit title: https://github.com/actions/labeler/issues/12#issuecomment-1095272652
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
 jobs:
   pr_title:
     runs-on: ubuntu-latest
