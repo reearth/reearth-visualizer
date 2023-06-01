@@ -45,7 +45,8 @@ const SettingPage: React.FC<SettingPageProps> = ({
         currentWorkspace={currentWorkspace}
         icon={
           currentProject && (
-            <StyledLink to={`/edit/${sceneId}`}>
+            <StyledLink
+              to={currentProject.projectType === "beta" ? `/scene/${sceneId}` : `/edit/${sceneId}`}>
               <StyledIcon icon="earthEditor" size={25} />
             </StyledLink>
           )
