@@ -53,8 +53,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	e.Use(
 		jwtEchoMiddleware(cfg),
-		parseJwtMiddleware(),
-		authMiddleware(cfg),
+		loadAuthInfoMiddleware(),
+		attachOpMiddleware(cfg),
 	)
 
 	// enable pprof
@@ -100,11 +100,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	// apis
 	api := e.Group("/api")
-	api.GET("/ping", Ping(), private)
+	api.GET("/ping", Ping(), privateCache)
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/published_data/:name", PublishedData("", true))
 
-	apiPrivate := api.Group("", private)
+	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
 	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
@@ -196,7 +196,7 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 	return code, msg
 }
 
-func private(next echo.HandlerFunc) echo.HandlerFunc {
+func privateCache(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderCacheControl, "private, no-store, no-cache, must-revalidate")
 		return next(c)
