@@ -10,8 +10,8 @@ export default {
   component: Icon,
 } as Meta;
 
-export const Default = () => <Icon icon="layer" alt="icon" size={20} />;
-export const Color = () => <Icon icon="layer" color="red" alt="icon" size={20} />;
+export const Default = () => <Icon icon="file" alt="icon" size={20} />;
+export const Color = () => <Icon icon="file" color="red" alt="icon" size={20} />;
 export const Image = () => <Icon icon={`/sample.svg`} alt="icon" size={20} />;
 export const Svg = () => <Icon icon={icon} alt="icon" size={20} />;
 export const Wrapped = () => (
