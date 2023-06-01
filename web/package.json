@@ -88,7 +88,7 @@
         "type-fest": "3.10.0",
         "typescript": "5.0.4",
         "typescript-styled-plugin": "0.18.3",
-        "vite": "4.0.4",
+        "vite": "4.3.2",
         "vite-plugin-cesium": "1.2.22",
         "vite-tsconfig-paths": "4.2.0",
         "vitest": "0.31.0",
