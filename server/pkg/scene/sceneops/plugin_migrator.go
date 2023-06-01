@@ -24,7 +24,7 @@ type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Layers            layer.List
 	Properties        []*property.Property
-	RemovedProperties []property.ID
+	RemovedProperties property.IDList
 }
 
 var (
@@ -117,7 +117,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 				ll.Infobox().Remove(f.ID())
 				removedPropertyIDs = append(removedPropertyIDs, f.Property())
 			} else {
-				f.Upgrade(newPluginID)
+				f.UpgradePlugin(newPluginID)
 				propertyIDs = append(propertyIDs, f.Property())
 			}
 		}
@@ -153,7 +153,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 }
 
 func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
-	schemas, err := s.PropertySchema(ctx, newPlugin.PropertySchemas()...)
+	schemasIds := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
+	schemas, err := s.PropertySchema(ctx, schemasIds...)
 	if err != nil {
 		return nil, err
 	}

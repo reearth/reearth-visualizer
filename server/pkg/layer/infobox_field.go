@@ -53,8 +53,8 @@ func (i *InfoboxField) ValidateProperty(pm property.Map) error {
 	return nil
 }
 
-func (i *InfoboxField) Upgrade(id plugin.ID) {
-	if i == nil {
+func (i *InfoboxField) UpgradePlugin(id plugin.ID) {
+	if i == nil || i.plugin.Name() != id.Name() {
 		return
 	}
 	i.plugin = id
