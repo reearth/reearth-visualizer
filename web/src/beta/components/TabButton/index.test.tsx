@@ -5,7 +5,6 @@ import { render, screen } from "@reearth/test/utils";
 import TabButton from ".";
 
 const handleClick = () => {
-  console.log("Button has been clicked");
 };
 
 test("1. should be rendered", () => {
