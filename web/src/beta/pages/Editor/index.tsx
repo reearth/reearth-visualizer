@@ -11,12 +11,13 @@ import RightPanelStory from "@reearth/beta/features/RightPanelStory";
 import RightPanelWidgets from "@reearth/beta/features/RightPanelWidgets";
 import Visualizer from "@reearth/beta/features/Visualizer";
 import VisualizerNav from "@reearth/beta/features/VisualizerNav";
-import { metrics, styled } from "@reearth/services/theme";
+import { metrics, styled, Theme, useTheme } from "@reearth/services/theme";
 
 type Props = {};
 
 const Editor: React.FC<Props> = () => {
   const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();
+  const theme = useTheme();
 
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     // need to wrap with page component
@@ -64,9 +65,9 @@ const Editor: React.FC<Props> = () => {
   }
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       <Navbar sceneId={sceneId} currentTab={tab} />
-      <MainSection>
+      <MainSection theme={theme}>
         {leftPanel && (
           <Resizable
             direction="vertical"
@@ -78,7 +79,7 @@ const Editor: React.FC<Props> = () => {
           </Resizable>
         )}
         <Center>
-          <VisualizerWrapper>
+          <VisualizerWrapper theme={theme} hasNav={!!visualizerNav}>
             {visualizerNav && <div>{visualizerNav}</div>}
             <Visualizer />
           </VisualizerWrapper>
@@ -104,6 +105,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  color: ${({ theme }) => theme.main.text};
 `;
 
 const Center = styled.div`
@@ -113,14 +115,14 @@ const Center = styled.div`
   flex: auto;
 `;
 
-const MainSection = styled.div`
+const MainSection = styled.div<{ theme: Theme }>`
   display: flex;
   flex: 1;
-  background-color: #070707;
+  background-color: ${({ theme }) => theme.main.deepestBg};
 `;
 
-const VisualizerWrapper = styled.div`
-  border: 1px solid #171618;
+const VisualizerWrapper = styled.div<{ theme: Theme; hasNav: boolean }>`
+  ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.main.deepBg}`};
   border-radius: 4px;
   flex: 1;
   display: flex;

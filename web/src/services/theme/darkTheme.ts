@@ -70,8 +70,12 @@ const darkTheme: Theme = {
     published: colors.dark.functional.success,
     unpublished: colors.dark.outline.main,
   },
+  editorNavBar: {
+    bg: colors.dark.bg[2],
+  },
   leftMenu: {
     bg: colors.dark.bg[2],
+    bgTitle: colors.dark.bg[5],
     hoverBg: colors.dark.bg[1],
     highlighted: colors.dark.functional.select,
     icon: colors.dark.functional.select,

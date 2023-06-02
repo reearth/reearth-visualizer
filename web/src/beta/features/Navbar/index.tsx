@@ -1,5 +1,5 @@
 import { useEditorNavigation } from "@reearth/beta/hooks";
-import { styled } from "@reearth/services/theme";
+import { styled, Theme, useTheme } from "@reearth/services/theme";
 
 type Props = {
   sceneId: string;
@@ -15,9 +15,10 @@ export function isTab(tab: string): tab is Tab {
 
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
   const handleEditorNavigation = useEditorNavigation({ sceneId });
+  const theme = useTheme();
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       <p>Navbar</p>
       <div>
         <p>current path: {location.pathname}</p>
@@ -51,9 +52,9 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
 
 export default Navbar;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ theme: Theme }>`
   display: flex;
   justify-content: space-between;
   height: 53px;
-  background: #171618;
+  background: ${({ theme }) => theme.editorNavBar.bg};
 `;

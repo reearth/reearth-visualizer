@@ -1,15 +1,17 @@
 import type { PropsWithChildren } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme, Theme } from "@reearth/services/theme";
 
 type Props = {
   title: string;
 };
 
 const SidePanelCard: React.FC<PropsWithChildren<Props>> = ({ title, children }) => {
+  const theme = useTheme();
+
   return (
-    <Wrapper>
-      <Title>{title}</Title>
+    <Wrapper theme={theme}>
+      <Title theme={theme}>{title}</Title>
       <Content>{children}</Content>
     </Wrapper>
   );
@@ -17,16 +19,16 @@ const SidePanelCard: React.FC<PropsWithChildren<Props>> = ({ title, children }) 
 
 export default SidePanelCard;
 
-const Wrapper = styled.div`
-  background: #171618;
+const Wrapper = styled.div<{ theme: Theme }>`
+  background: ${({ theme }) => theme.leftMenu.bg};
   border-radius: 4px;
   height: 100%;
   display: flex;
   flex-direction: column;
 `;
 
-const Title = styled.div`
-  background: #3f3d45;
+const Title = styled.div<{ theme: Theme }>`
+  background: ${({ theme }) => theme.leftMenu.bgTitle};
   padding: 8px;
   font-weight: 500;
   font-size: 12px;
