@@ -55,7 +55,6 @@ const StyledResizable = styled.div<Pick<Props, "direction" | "size">>`
 
 const Wrapper = styled.div`
   width: calc(100% - 4px);
-  padding: 4px 0;
   background: ${props => props.theme.main.deepestBg};
 `;
 
