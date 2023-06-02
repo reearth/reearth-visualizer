@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
 // Components
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/classic/components/atoms/PublicationStatus";
@@ -8,8 +10,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { metricsSizes } from "@reearth/services/theme/metrics";
-
-import defaultProjectImage from "./defaultProjectImage.jpg";
+import { ProjectType } from "@reearth/types";
 
 export type Status = StatusType;
 
@@ -21,6 +22,7 @@ export type Project = {
   isArchived?: boolean;
   description: string;
   sceneId?: string;
+  projectType?: ProjectType;
 };
 
 export type Props = {
@@ -66,7 +68,11 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
 
 const StyledWrapper = styled.div<{ project: Project }>`
   background: ${props =>
-    props.project.imageUrl ? `url(${props.project.imageUrl})` : `url(${defaultProjectImage})`};
+    props.project.imageUrl
+      ? `url(${props.project.imageUrl})`
+      : props.project.projectType === "beta"
+      ? `url(${defaultBetaProjectImage})`
+      : `url(${defaultProjectImage})`};
   background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
   background-position: center;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};

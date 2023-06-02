@@ -1,3 +1,5 @@
+import { ProjectType } from "@reearth/types";
+
 export type User = {
   name: string;
 };
@@ -15,4 +17,5 @@ export type Workspace = {
 export type Project = {
   id?: string;
   name?: string;
+  projectType?: ProjectType;
 };

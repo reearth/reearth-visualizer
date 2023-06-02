@@ -58,7 +58,7 @@ export type WidgetAreaState = {
   area: "top" | "middle" | "bottom";
   align?: WidgetAlignment;
   padding?: WidgetAreaPadding;
-  gap?: number;
+  gap?: number | null;
   centered?: boolean;
   background?: string;
 };

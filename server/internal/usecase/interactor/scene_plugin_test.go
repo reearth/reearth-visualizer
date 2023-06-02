@@ -346,14 +346,24 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			pl2ps := property.NewSchema().ID(id.NewPropertySchemaID(pid2, "@")).MustBuild()
 			psr := memory.NewPropertySchemaWith(pl1ps, pl2ps)
 
-			pl1 := plugin.New().ID(pid1).Schema(pl1ps.ID().Ref()).MustBuild()
-			pl2 := plugin.New().ID(pid2).Schema(pl2ps.ID().Ref()).MustBuild()
+			pl1 := plugin.New().ID(pid1).Schema(pl1ps.ID().Ref()).Extensions([]*plugin.Extension{
+				plugin.NewExtension().ID("a").Type(plugin.ExtensionTypeBlock).Schema(pl1ps.ID()).MustBuild(),
+			}).MustBuild()
+			pl2 := plugin.New().ID(pid2).Schema(pl2ps.ID().Ref()).Extensions([]*plugin.Extension{
+				plugin.NewExtension().ID("a").Type(plugin.ExtensionTypeBlock).Schema(pl2ps.ID()).MustBuild(),
+			}).MustBuild()
 			pr := memory.NewPluginWith(pl1, pl2)
 
 			pl1p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
-			prr := memory.NewPropertyWith(pl1p)
+			pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
+			prr := memory.NewPropertyWith(pl1p, pl2p)
 
-			lr := memory.NewLayerWith()
+			ibf1 := layer.NewInfoboxField().NewID().Plugin(plugin.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
+			ibf2 := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(pl2p.ID()).MustBuild()
+			ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, id.NewPropertyID())
+			l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
+			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+			lr := memory.NewLayerWith(l1, l2)
 
 			dsr := memory.NewDataset()
 
@@ -384,14 +394,32 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			if tt.wantErr != nil {
 				assert.Equal(tt.wantErr, err)
 				assert.Nil(gotSc)
-			} else {
-				assert.NoError(err)
-				assert.Same(sc, gotSc)
-				assert.False(gotSc.Plugins().Has(tt.args.old))
-				assert.True(gotSc.Plugins().Has(tt.args.new))
-				p, _ := prr.FindByID(ctx, *gotSc.Plugins().Plugin(tt.args.new).Property())
-				assert.Equal(*pl2.Schema(), p.Schema())
+				return
 			}
+
+			assert.NoError(err)
+			assert.Same(sc, gotSc)
+			assert.False(gotSc.Plugins().Has(tt.args.old))
+			assert.True(gotSc.Plugins().Has(tt.args.new))
+			p, _ := prr.FindByID(ctx, *gotSc.Plugins().Plugin(tt.args.new).Property())
+			assert.Equal(*pl2.Schema(), p.Schema())
+
+			// layers plugin id should not be changed
+			ls, err := lr.FindByScene(ctx, sid)
+			assert.NoError(err)
+			for _, l := range ls {
+				assert.Equal(plugin.OfficialPluginID.Ref(), (*l).Plugin())
+			}
+
+			// layer > infobox > field
+			ll1 := *ls.Find(l1.ID())
+			assert.NotNil(ll1.Infobox().Field(ibf1.ID()))
+			assert.Equal(id.OfficialPluginID, ll1.Infobox().Field(ibf1.ID()).Plugin())
+			assert.NotNil(ll1.Infobox().Field(ibf2.ID()))
+			assert.Equal(tt.args.new, ll1.Infobox().Field(ibf2.ID()).Plugin())
+			prop, err := prr.FindByID(ctx, ll1.Infobox().Field(ibf2.ID()).Property())
+			assert.NoError(err)
+			assert.Equal(tt.args.new, prop.Schema().Plugin())
 		})
 	}
 }

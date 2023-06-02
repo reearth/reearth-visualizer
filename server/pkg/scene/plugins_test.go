@@ -451,6 +451,15 @@ func TestPlugins_Upgrade(t *testing.T) {
 			want:   NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
 		},
 		{
+			name: "same plugin",
+			args: args{
+				From: pid,
+				To:   pid,
+			},
+			target: NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+			want:   NewPlugins([]*Plugin{NewPlugin(OfficialPluginID, pr)}),
+		},
+		{
 			name: "nil",
 			args: args{
 				From: pid,

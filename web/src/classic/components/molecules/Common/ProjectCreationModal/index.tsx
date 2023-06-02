@@ -3,22 +3,26 @@ import React, { useCallback, useEffect } from "react";
 
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import defaultProjectImage from "@reearth/classic/components/molecules/Dashboard/defaultProjectImage.jpg";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import fonts from "@reearth/services/theme/fonts";
+import { ProjectType } from "@reearth/types";
 
 export interface FormValues {
   name: string;
   description: string;
   imageUrl: string;
+  projectType: ProjectType;
 }
 
 export interface Props {
   open?: boolean;
+  projectType?: ProjectType;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
   selectedAsset?: string;
@@ -30,10 +34,12 @@ const initialValues: FormValues = {
   name: "",
   description: "",
   imageUrl: "",
+  projectType: "classic",
 };
 
 const ProjectCreationModal: React.FC<Props> = ({
   open,
+  projectType,
   onClose,
   onSubmit,
   selectedAsset,
@@ -62,7 +68,10 @@ const ProjectCreationModal: React.FC<Props> = ({
     if (selectedAsset) {
       formik.setFieldValue("imageUrl", selectedAsset);
     }
-  }, [selectedAsset]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (projectType) {
+      formik.setFieldValue("projectType", projectType);
+    }
+  }, [selectedAsset, projectType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreate = useCallback(async () => {
     await formik.submitForm();
@@ -117,7 +126,11 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
             {t("Select thumbnail image")}
           </Text>
-          <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetModal} />
+          <Thumbnail
+            url={formik.values.imageUrl}
+            projectType={projectType}
+            onClick={toggleAssetModal}
+          />
         </FormInputWrapper>
       </NewProjectForm>
       {assetModal}
@@ -156,8 +169,13 @@ const StyledTextArea = styled.textarea`
   padding: 5px;
 `;
 
-const Thumbnail = styled.div<{ url: string }>`
-  background-image: ${props => (props.url ? `url(${props.url})` : `url(${defaultProjectImage})`)};
+const Thumbnail = styled.div<{ url: string; projectType?: ProjectType }>`
+  background-image: ${props =>
+    props.url
+      ? `url(${props.url})`
+      : props.projectType === "beta"
+      ? `url(${defaultBetaProjectImage})`
+      : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
   height: 242px;

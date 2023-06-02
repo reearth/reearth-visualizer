@@ -1,4 +1,5 @@
 import { Status as StatusType } from "@reearth/classic/components/atoms/PublicationStatus";
+import { ProjectType } from "@reearth/types";
 
 export type User = {
   name: string;
@@ -32,4 +33,5 @@ export type Project = {
   description: string;
   sceneId?: string;
   updatedAt?: string;
+  projectType?: ProjectType;
 };
