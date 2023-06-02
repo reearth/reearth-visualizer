@@ -1,0 +1,22 @@
+user: user
+data: data
+layer: Layer
+feature: Feature
+computedLayer: ComputedLayer
+computedFeature: ComputedFeature
+eval: Evaluator
+mantle: mantle
+layersComponent: Map/Layers
+layerComponent: Map/Layer
+featureComponent: engines/Cesium/Feature
+
+user -> data: add
+data -> layersComponent: add
+layersComponent -> layerComponent: eval each layer
+layerComponent <-> mantle: store layer
+mantle -> eval: evaluate layer and each features
+eval -> layer: compute
+eval -> feature: compute
+layer -> computedLayer
+feature -> computedFeature
+layerComponent -> featureComponent: display each feature
