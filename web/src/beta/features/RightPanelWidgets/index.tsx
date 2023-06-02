@@ -6,7 +6,7 @@ type Props = {};
 
 const RightPanelWidgets: React.FC<Props> = () => {
   return (
-    <SidePanel>
+    <SidePanel location="right">
       <SidePanelItem>
         <SidePanelCard title={"Widget Manager"}>
           {[...Array(100)].map((_, i) => (

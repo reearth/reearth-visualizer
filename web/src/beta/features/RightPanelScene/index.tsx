@@ -6,7 +6,7 @@ type Props = {};
 
 const RightPanelScene: React.FC<Props> = () => {
   return (
-    <SidePanel>
+    <SidePanel location="right">
       <SidePanelItem>
         <SidePanelCard title={"Outline"}>
           {[...Array(100)].map((_, i) => (
