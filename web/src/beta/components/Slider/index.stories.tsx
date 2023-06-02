@@ -1,0 +1,13 @@
+import { action } from "@storybook/addon-actions";
+import { Meta } from "@storybook/react";
+
+import Slider from ".";
+
+export default {
+  component: Slider,
+} as Meta;
+
+export const Default = () => <Slider value={120} min={0} max={100} onChange={action("onchange")} />;
+export const Frame = () => (
+  <Slider value={120} min={0} max={100} onChange={action("onchange")} frame />
+);
