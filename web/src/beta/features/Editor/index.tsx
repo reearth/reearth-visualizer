@@ -6,6 +6,7 @@ import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import Visualizer from "@reearth/beta/features/Visualizer";
+import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { metrics, styled, Theme, useTheme } from "@reearth/services/theme";
 
 type Props = {
@@ -21,37 +22,39 @@ const Editor: FC<Props> = ({ sceneId, tab }) => {
   const { visualizerNav } = useVisualizerNav({ tab });
 
   return (
-    <Wrapper theme={theme}>
-      <Navbar sceneId={sceneId} currentTab={tab} />
-      <MainSection theme={theme}>
-        {leftPanel && (
-          <Resizable
-            direction="vertical"
-            gutter="end"
-            size={metrics.propertyMenuMinWidth}
-            minSize={metrics.propertyMenuMinWidth}
-            maxSize={metrics.propertyMenuMaxWidth}>
-            {leftPanel}
-          </Resizable>
-        )}
-        <Center>
-          <VisualizerWrapper theme={theme} hasNav={!!visualizerNav}>
-            {visualizerNav && <div>{visualizerNav}</div>}
-            <Visualizer />
-          </VisualizerWrapper>
-        </Center>
-        {rightPanel && (
-          <Resizable
-            direction="vertical"
-            gutter="start"
-            size={metrics.propertyMenuMinWidth}
-            minSize={metrics.propertyMenuMinWidth}
-            maxSize={metrics.propertyMenuMaxWidth}>
-            {rightPanel}
-          </Resizable>
-        )}
-      </MainSection>
-    </Wrapper>
+    <DndProvider>
+      <Wrapper theme={theme}>
+        <Navbar sceneId={sceneId} currentTab={tab} />
+        <MainSection theme={theme}>
+          {leftPanel && (
+            <Resizable
+              direction="vertical"
+              gutter="end"
+              size={metrics.propertyMenuMinWidth}
+              minSize={metrics.propertyMenuMinWidth}
+              maxSize={metrics.propertyMenuMaxWidth}>
+              {leftPanel}
+            </Resizable>
+          )}
+          <Center>
+            <VisualizerWrapper theme={theme} hasNav={!!visualizerNav}>
+              {visualizerNav && <div>{visualizerNav}</div>}
+              <Visualizer />
+            </VisualizerWrapper>
+          </Center>
+          {rightPanel && (
+            <Resizable
+              direction="vertical"
+              gutter="start"
+              size={metrics.propertyMenuMinWidth}
+              minSize={metrics.propertyMenuMinWidth}
+              maxSize={metrics.propertyMenuMaxWidth}>
+              {rightPanel}
+            </Resizable>
+          )}
+        </MainSection>
+      </Wrapper>
+    </DndProvider>
   );
 };
 
@@ -61,6 +64,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   color: ${({ theme }) => theme.main.text};
 `;
 

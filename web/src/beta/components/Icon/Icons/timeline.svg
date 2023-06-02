@@ -1,0 +1,15 @@
+<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line x1="0.5" y1="12" x2="0.499999" y2="24" stroke="currentColor"/>
+<line x1="2.8999" y1="17" x2="2.8999" y2="24" stroke="currentColor"/>
+<line x1="5.30005" y1="17" x2="5.30005" y2="24" stroke="currentColor"/>
+<line x1="7.69995" y1="17" x2="7.69995" y2="24" stroke="currentColor"/>
+<line x1="10.1001" y1="17" x2="10.1001" y2="24" stroke="currentColor"/>
+<line x1="12.5" y1="12" x2="12.5" y2="24" stroke="currentColor"/>
+<line x1="14.8999" y1="17" x2="14.8999" y2="24" stroke="currentColor"/>
+<line x1="17.3" y1="17" x2="17.3" y2="24" stroke="currentColor"/>
+<line x1="19.7" y1="17" x2="19.7" y2="24" stroke="currentColor"/>
+<line x1="22.1001" y1="17" x2="22.1001" y2="24" stroke="currentColor"/>
+<line x1="24.5" y1="12" x2="24.5" y2="24" stroke="currentColor"/>
+<path d="M18 10.5C20.4853 10.5 22.5 8.48528 22.5 6C22.5 3.51472 20.4853 1.5 18 1.5C15.5147 1.5 13.5 3.51472 13.5 6C13.5 8.48528 15.5147 10.5 18 10.5Z" stroke="currentColor" stroke-miterlimit="10"/>
+<path d="M18 3.375V6H20.625" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,9 +1,10 @@
 import React from "react";
 
-import NotFound from "@reearth/classic/components/atoms/NotFound";
+import { useT } from "@reearth/services/i18n";
 
-const NotFoundPage: React.FC<{ default?: boolean }> = () => {
-  return <NotFound />;
+const NotFound: React.FC = () => {
+  const t = useT();
+  return <div>{t("Notfound")}</div>;
 };
 
-export default NotFoundPage;
+export default NotFound;
