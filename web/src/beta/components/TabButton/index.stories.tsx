@@ -10,7 +10,7 @@ export default meta;
 
 type Story = StoryObj<typeof TabButton>;
 
-export const Clolse: Story = {
+export const Close: Story = {
   args: {
     label: "Editor",
     selected: false,
