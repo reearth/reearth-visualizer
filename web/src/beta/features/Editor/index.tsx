@@ -68,23 +68,23 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.main.text};
 `;
 
-const Center = styled.div`
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
-  flex: auto;
-`;
-
 const MainSection = styled.div<{ theme: Theme }>`
   display: flex;
-  flex: 1;
+  flex-grow: 1;
+  height: 100%;
   background-color: ${({ theme }) => theme.main.deepestBg};
+`;
+
+const Center = styled.div`
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const VisualizerWrapper = styled.div<{ theme: Theme; hasNav: boolean }>`
   ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.main.deepBg}`};
+  height: 100%;
   border-radius: 4px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  flex-grow: 1;
 `;

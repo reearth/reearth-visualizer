@@ -16,9 +16,5 @@ export default Visualizer;
 
 const Wrapper = styled.div<{ theme: Theme }>`
   background: ${({ theme }) => theme.main.bg};
-  display: flex;
-  flex-flow: column;
-  flex: auto;
-  width: 100%;
   height: 100%;
 `;
