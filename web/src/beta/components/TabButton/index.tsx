@@ -40,12 +40,11 @@ const Button = styled.button<ButtonProps>`
 
   // Text Settings
   color: ${({ disabled }) => (disabled ? "#C7C5C5" : "#4A4A4A")};
-  font - family: "Noto Sans";
-  font - style: normal;
-  font - weight: 700;
-  font - size: 14px;
-  line - height: 19px;
-  text - align: center;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
 `;
 
 export default TabButton;
