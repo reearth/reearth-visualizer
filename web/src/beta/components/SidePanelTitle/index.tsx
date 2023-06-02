@@ -4,13 +4,12 @@ import { styled } from "@reearth/services/theme";
 
 export type Props = {
   title: string;
-  fontSize?: string | number;
 };
 
-const SidePanelTitle: FC<Props> = ({ title, fontSize }) => {
+const SidePanelTitle: FC<Props> = ({ title }) => {
   return (
     <StyledDiv>
-      <StyledText fontSize={fontSize}>{title}</StyledText>
+      <StyledText>{title}</StyledText>
     </StyledDiv>
   );
 };
@@ -42,7 +41,7 @@ const StyledText = styled.text`
   font-family: "Noto Sans";
   font-style: normal;
   font-weight: 500;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : "16px")};
+  font-size: 12px;
   line-height: 16px;
 
   color: #ffffff;
