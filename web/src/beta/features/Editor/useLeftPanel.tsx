@@ -10,8 +10,7 @@ type Props = {
 
 export default ({ tab }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
-    // need to wrap with page component
-    switch (tab as Tab | string) {
+    switch (tab) {
       case "scene":
         return <LeftPanelScene />;
       case "story":

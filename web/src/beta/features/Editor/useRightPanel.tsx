@@ -11,7 +11,7 @@ type Props = {
 
 export default ({ tab }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
-    switch (tab as Tab | string) {
+    switch (tab) {
       case "scene":
         return <RightPanelScene />;
       case "story":

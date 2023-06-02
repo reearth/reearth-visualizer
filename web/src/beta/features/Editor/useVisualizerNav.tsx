@@ -9,7 +9,7 @@ type Props = {
 
 export default ({ tab }: Props) => {
   const visualizerNav = useMemo<ReactNode | undefined>(() => {
-    switch (tab as Tab | string) {
+    switch (tab) {
       case "widgets":
         return <VisualizerNav />;
       case "publish":
