@@ -7,7 +7,7 @@ import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { metrics, styled, Theme, useTheme } from "@reearth/services/theme";
+import { metrics, styled } from "@reearth/services/theme";
 
 type Props = {
   sceneId: string;
@@ -15,17 +15,15 @@ type Props = {
 };
 
 const Editor: FC<Props> = ({ sceneId, tab }) => {
-  const theme = useTheme();
-
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
   const { visualizerNav } = useVisualizerNav({ tab });
 
   return (
     <DndProvider>
-      <Wrapper theme={theme}>
+      <Wrapper>
         <Navbar sceneId={sceneId} currentTab={tab} />
-        <MainSection theme={theme}>
+        <MainSection>
           {leftPanel && (
             <Resizable
               direction="vertical"
@@ -37,7 +35,7 @@ const Editor: FC<Props> = ({ sceneId, tab }) => {
             </Resizable>
           )}
           <Center>
-            <VisualizerWrapper theme={theme} hasNav={!!visualizerNav}>
+            <VisualizerWrapper hasNav={!!visualizerNav}>
               {visualizerNav && <div>{visualizerNav}</div>}
               <Visualizer />
             </VisualizerWrapper>
@@ -68,7 +66,7 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.main.text};
 `;
 
-const MainSection = styled.div<{ theme: Theme }>`
+const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 100%;
@@ -82,7 +80,7 @@ const Center = styled.div`
   flex-direction: column;
 `;
 
-const VisualizerWrapper = styled.div<{ theme: Theme; hasNav: boolean }>`
+const VisualizerWrapper = styled.div<{ hasNav: boolean }>`
   ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.main.deepBg}`};
   height: 100%;
   border-radius: 4px;

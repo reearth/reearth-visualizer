@@ -1,12 +1,10 @@
-import { styled, useTheme, Theme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import CanvasArea from "./CanvasArea";
 
 const Visualizer: React.FC = () => {
-  const theme = useTheme();
-
   return (
-    <Wrapper theme={theme}>
+    <Wrapper>
       <CanvasArea isBuilt={false} inEditor={true} />
     </Wrapper>
   );
@@ -14,7 +12,7 @@ const Visualizer: React.FC = () => {
 
 export default Visualizer;
 
-const Wrapper = styled.div<{ theme: Theme }>`
+const Wrapper = styled.div`
   background: ${({ theme }) => theme.main.bg};
   height: 100%;
 `;
