@@ -14,7 +14,7 @@ test("1. should be rendered", () => {
 
 test("2. should display button label", () => {
   render(<TabButton label="test2" onClick={handleClick} selected={false} />);
-  expect(screen.getByTestId("atoms-tabbutton")).toBeInTheDocument();
+  expect(screen.getByRole("button")).toBeInTheDocument();
   expect(screen.getByText(/test2/)).toBeInTheDocument();
 });
 
