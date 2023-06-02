@@ -25,5 +25,5 @@ test("3. should disabled true button", () => {
 
 test("4. should disabled false button", () => {
   render(<TabButton label="test4" onClick={handleClick} selected={false} />);
-  expect(screen.getAllByTestId("atoms-tabbutton")[0]).not.toBeDisabled();
+  expect(screen.getByRole("button")).not.toBeDisabled();
 });
