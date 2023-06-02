@@ -1,12 +1,13 @@
-import React, { PropsWithChildren } from "react";
+import React, { ReactNode } from "react";
 
 import { styled } from "@reearth/services/theme";
 
 type Props = {
   location: "left" | "right";
+  children: ReactNode;
 };
 
-const SidePanel: React.FC<PropsWithChildren<Props>> = ({ children, location }) => {
+const SidePanel: React.FC<Props> = ({ children, location }) => {
   return <Wrapper location={location}>{children}</Wrapper>;
 };
 

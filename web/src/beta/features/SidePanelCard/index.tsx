@@ -1,12 +1,13 @@
-import type { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
 import { styled } from "@reearth/services/theme";
 
 type Props = {
   title: string;
+  children: ReactNode;
 };
 
-const SidePanelCard: React.FC<PropsWithChildren<Props>> = ({ title, children }) => {
+const SidePanelCard: React.FC<Props> = ({ title, children }) => {
   return (
     <Wrapper>
       <Title>{title}</Title>
