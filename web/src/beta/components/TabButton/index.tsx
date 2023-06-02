@@ -10,7 +10,7 @@ export type Props = {
 
 const TabButton: FC<Props> = ({ label, onClick, selected }) => {
   return (
-    <Button data-testid="atoms-tabbutton" onClick={onClick} disabled={selected}>
+    <Button onClick={onClick} disabled={selected}>
       {label}
     </Button>
   );
