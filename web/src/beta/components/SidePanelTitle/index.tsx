@@ -36,9 +36,6 @@ const StyledText = styled.text`
 
   color: #ffffff;
 
-  flex: none;
-  order: 0;
-  flex-grow: 0;
 `;
 
 export default SidePanelTitle;
