@@ -1,5 +1,3 @@
-import { FC } from "react";
-
 import Resizable from "@reearth/beta/components/Resizable";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
@@ -14,7 +12,7 @@ type Props = {
   tab: Tab;
 };
 
-const Editor: FC<Props> = ({ sceneId, tab }) => {
+const Editor: React.FC<Props> = ({ sceneId, tab }) => {
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
   const { visualizerNav } = useVisualizerNav({ tab });
