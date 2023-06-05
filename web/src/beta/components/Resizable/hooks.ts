@@ -71,14 +71,11 @@ export default (
     [isResizing, position, direction, gutter, size, minSize, maxSize],
   );
 
-  let unbind = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
-
   const onResizeEnd = useCallback(() => {
     if (!isResizing) return;
 
     setIsResizing(false);
     setPosition({ x: 0, y: 0 });
-    unbind();
   }, [isResizing]);
 
   const bindEventListeners = useCallback(() => {
@@ -99,12 +96,14 @@ export default (
     window.removeEventListener("touchend", onResizeEnd);
   }, [onResize, onResizeEnd]);
 
-  unbind = unbindEventListeners;
-
   useEffect(() => {
+    if (!isResizing) {
+      unbindEventListeners();
+      return;
+    }
     bindEventListeners();
     return () => unbindEventListeners();
-  });
+  }, [bindEventListeners, isResizing, unbindEventListeners]);
 
   const gutterProps = useMemo(
     () => ({
