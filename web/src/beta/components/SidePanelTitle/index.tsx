@@ -31,7 +31,6 @@ const StyledDiv = styled.div`
 
 const StyledText = styled.text`
 
-  font-style: normal;
   font-size: 12px;
   line-height: 16px;
 
