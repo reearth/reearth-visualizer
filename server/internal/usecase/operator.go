@@ -5,26 +5,24 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/util"
 )
 
 type Operator struct {
-	User               user.ID
-	ReadableWorkspaces user.WorkspaceIDList
-	WritableWorkspaces user.WorkspaceIDList
-	OwningWorkspaces   user.WorkspaceIDList
-	ReadableScenes     scene.IDList
-	WritableScenes     scene.IDList
-	OwningScenes       scene.IDList
-	DefaultPolicy      *workspace.PolicyID
+	AcOperator     *accountusecase.Operator
+	ReadableScenes scene.IDList
+	WritableScenes scene.IDList
+	OwningScenes   scene.IDList
+	DefaultPolicy  *workspace.PolicyID
 }
 
-func (o *Operator) Workspaces(r workspace.Role) user.WorkspaceIDList {
+func (o *Operator) Workspaces(r workspace.Role) workspace.WorkspaceIDList {
 	if o == nil {
 		return nil
 	}
 	if r == workspace.RoleReader {
-		return o.ReadableWorkspaces
+		return o.AcOperator.ReadableWorkspaces
 	}
 	if r == workspace.RoleWriter {
 		return o.WritableWorkspaces

@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 func (r *mutationResolver) CreateTeam(ctx context.Context, input gqlmodel.CreateTeamInput) (*gqlmodel.CreateTeamPayload, error) {
-	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getUser(ctx).ID(), getOperator(ctx))
+	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getAcUser(ctx).ID(), getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -17,12 +17,12 @@ func (r *mutationResolver) CreateTeam(ctx context.Context, input gqlmodel.Create
 }
 
 func (r *mutationResolver) DeleteTeam(ctx context.Context, input gqlmodel.DeleteTeamInput) (*gqlmodel.DeleteTeamPayload, error) {
-	tid, err := gqlmodel.ToID[id.Workspace](input.TeamID)
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.TeamID)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := usecases(ctx).Workspace.Remove(ctx, tid, getOperator(ctx)); err != nil {
+	if err := usecases(ctx).Workspace.Remove(ctx, tid, getAcOperator(ctx)); err != nil {
 		return nil, err
 	}
 
@@ -30,12 +30,12 @@ func (r *mutationResolver) DeleteTeam(ctx context.Context, input gqlmodel.Delete
 }
 
 func (r *mutationResolver) UpdateTeam(ctx context.Context, input gqlmodel.UpdateTeamInput) (*gqlmodel.UpdateTeamPayload, error) {
-	tid, err := gqlmodel.ToID[id.Workspace](input.TeamID)
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.TeamID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.Update(ctx, tid, input.Name, getOperator(ctx))
+	res, err := usecases(ctx).Workspace.Update(ctx, tid, input.Name, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +44,12 @@ func (r *mutationResolver) UpdateTeam(ctx context.Context, input gqlmodel.Update
 }
 
 func (r *mutationResolver) AddMemberToTeam(ctx context.Context, input gqlmodel.AddMemberToTeamInput) (*gqlmodel.AddMemberToTeamPayload, error) {
-	tid, uid, err := gqlmodel.ToID2[id.Workspace, id.User](input.TeamID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.TeamID, input.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.AddMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
+	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +58,12 @@ func (r *mutationResolver) AddMemberToTeam(ctx context.Context, input gqlmodel.A
 }
 
 func (r *mutationResolver) RemoveMemberFromTeam(ctx context.Context, input gqlmodel.RemoveMemberFromTeamInput) (*gqlmodel.RemoveMemberFromTeamPayload, error) {
-	tid, uid, err := gqlmodel.ToID2[id.Workspace, id.User](input.TeamID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.TeamID, input.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.RemoveMember(ctx, tid, uid, getOperator(ctx))
+	res, err := usecases(ctx).Workspace.RemoveUserMember(ctx, tid, uid, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +72,12 @@ func (r *mutationResolver) RemoveMemberFromTeam(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) UpdateMemberOfTeam(ctx context.Context, input gqlmodel.UpdateMemberOfTeamInput) (*gqlmodel.UpdateMemberOfTeamPayload, error) {
-	tid, uid, err := gqlmodel.ToID2[id.Workspace, id.User](input.TeamID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.TeamID, input.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.UpdateMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
+	res, err := usecases(ctx).Workspace.UpdateUserMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

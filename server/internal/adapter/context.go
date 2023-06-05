@@ -6,6 +6,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/user"
+	acuser "github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"golang.org/x/text/language"
 )
 
@@ -33,7 +35,15 @@ func AttachUser(ctx context.Context, u *user.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
 }
 
+func AttachAcUser(ctx context.Context, u *acuser.User) context.Context {
+	return context.WithValue(ctx, contextUser, u)
+}
+
 func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
+	return context.WithValue(ctx, contextOperator, o)
+}
+
+func AttachAcOperator(ctx context.Context, o *accountusecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
 }
 
@@ -49,6 +59,15 @@ func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Contex
 func User(ctx context.Context) *user.User {
 	if v := ctx.Value(contextUser); v != nil {
 		if u, ok := v.(*user.User); ok {
+			return u
+		}
+	}
+	return nil
+}
+
+func AcUser(ctx context.Context) *acuser.User {
+	if v := ctx.Value(contextUser); v != nil {
+		if u, ok := v.(*acuser.User); ok {
 			return u
 		}
 	}
@@ -76,6 +95,15 @@ func Lang(ctx context.Context, lang *language.Tag) string {
 func Operator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*usecase.Operator); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+func AcOperator(ctx context.Context) *accountusecase.Operator {
+	if v := ctx.Value(contextOperator); v != nil {
+		if v2, ok := v.(*accountusecase.Operator); ok {
 			return v2
 		}
 	}
