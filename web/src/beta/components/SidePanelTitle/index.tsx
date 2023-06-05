@@ -19,7 +19,6 @@ const StyledDiv = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 8px;
-  gap: 166px;
 
   width: 286px;
   height: 32px;
