@@ -24,10 +24,6 @@ const StyledDiv = styled.div`
 
   background: #3f3d45;
 
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
 
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
