@@ -85,6 +85,7 @@
         "rollup": "3.22.1",
         "rollup-plugin-visualizer": "5.9.0",
         "storybook": "7.0.18",
+        "storybook-addon-react-router-v6": "^1.0.2",
         "ts-node": "10.9.1",
         "type-fest": "3.10.0",
         "typescript": "5.0.4",

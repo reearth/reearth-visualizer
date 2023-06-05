@@ -12996,7 +12996,7 @@ react-inlinesvg@3.0.2:
     exenv "^1.2.2"
     react-from-dom "^0.6.2"
 
-react-inspector@^6.0.0:
+react-inspector@^6.0.0, react-inspector@^6.0.1:
   version "6.0.1"
   resolved "https://registry.npmjs.org/react-inspector/-/react-inspector-6.0.1.tgz"
   integrity sha512-cxKSeFTf7jpSSVddm66sKdolG90qURAX3g1roTeaN6x0YEbtWc8JpmFN9+yIqLNH2uEkYerWLtJZIXRIFuBKrg==
@@ -14190,6 +14190,13 @@ store2@^2.14.2:
   version "2.14.2"
   resolved "https://registry.npmjs.org/store2/-/store2-2.14.2.tgz"
   integrity sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==
+
+storybook-addon-react-router-v6@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/storybook-addon-react-router-v6/-/storybook-addon-react-router-v6-1.0.2.tgz#0f1239de31291821c93e8266079b8f6235a9c717"
+  integrity sha512-38W+9D2sIrYAi+oRSbsLhR/umNoLVw2DWF84Jp4f/ZoB8Cg0Qtbvwk043oHqzNOpZrfgj0FaV006oaJBVpE8Kw==
+  dependencies:
+    react-inspector "^6.0.1"
 
 storybook@7.0.18:
   version "7.0.18"
