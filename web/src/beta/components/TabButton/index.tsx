@@ -5,7 +5,7 @@ import { styled } from "@reearth/services/theme";
 export type Props = {
   label: string;
   onClick?: () => void;
-  selected: boolean;
+  selected?: boolean;
 };
 
 const TabButton: FC<Props> = ({ label, onClick, selected }) => {
