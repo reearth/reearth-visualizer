@@ -30,7 +30,6 @@ const StyledDiv = styled.div`
 `;
 
 const StyledText = styled.text`
-  height: 16px;
 
   font-style: normal;
   font-weight: 500;
