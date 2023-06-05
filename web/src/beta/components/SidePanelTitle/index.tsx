@@ -20,8 +20,7 @@ const StyledDiv = styled.div`
   align-items: center;
   padding: 8px;
 
-  width: 286px;
-  height: 32px;
+  width: 100%;
 
   background: #3f3d45;
 
