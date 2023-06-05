@@ -28,7 +28,6 @@ const Button = styled.button<ButtonProps>`
   align-items: flex-start;
   padding: 8px 12px;
   gap: 10px;
-  position: absolute;
   height: 35px;
   left: 0px;
   top: 0px;
