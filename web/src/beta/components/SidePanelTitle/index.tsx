@@ -32,7 +32,6 @@ const StyledDiv = styled.div`
 const StyledText = styled.text`
   height: 16px;
 
-  font-family: "Noto Sans";
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
