@@ -13,10 +13,6 @@ const Visualizer: React.FC = () => {
 export default Visualizer;
 
 const Wrapper = styled.div`
-  background: #3f3d45;
-  display: flex;
-  flex-flow: column;
-  flex: auto;
-  width: 100%;
+  background: ${({ theme }) => theme.main.bg};
   height: 100%;
 `;
