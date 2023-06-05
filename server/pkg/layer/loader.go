@@ -3,6 +3,8 @@ package layer
 import (
 	"context"
 	"errors"
+
+	"github.com/samber/lo"
 )
 
 type Loader func(context.Context, ...ID) (List, error)
@@ -69,4 +71,13 @@ func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, i
 		return nil
 	}
 	return walk(init, nil)
+}
+
+func LoaderBySceneFrom(data ...Layer) LoaderByScene {
+	return func(ctx context.Context, id SceneID) (List, error) {
+		res := lo.Filter(data, func(l Layer, _ int) bool {
+			return l.Scene() == id
+		})
+		return ListFrom(res), nil
+	}
 }
