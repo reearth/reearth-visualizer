@@ -4,7 +4,7 @@ import { styled } from "@reearth/services/theme";
 
 export type Props = {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
   selected: boolean;
 };
 
