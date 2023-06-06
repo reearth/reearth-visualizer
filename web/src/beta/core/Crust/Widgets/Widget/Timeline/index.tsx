@@ -1,4 +1,4 @@
-import TimelineUI from "@reearth/beta/components/Timeline";
+import TimelineUI from "@reearth/beta/core/Crust/Widgets/Widget/Timeline/UI";
 import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";

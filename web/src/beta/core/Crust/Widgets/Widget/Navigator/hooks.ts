@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import type { Camera, FlyToDestination, Widget } from "../types";
 import { useVisible } from "../useVisible";
 
-import { degreeToRadian, radianToDegree } from "./NavigatorPresenter";
+import { degreeToRadian, radianToDegree } from "./UI";
 
 export default function ({
   camera,

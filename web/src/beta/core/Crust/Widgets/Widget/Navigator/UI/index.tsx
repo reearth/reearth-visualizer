@@ -40,7 +40,7 @@ export type Props = {
   onZoomOut?: () => void;
 };
 
-const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
+const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   theme,
   degree,
   editing,
@@ -196,4 +196,4 @@ const ToolIconButton = styled.button<{ publishedTheme?: Theme }>`
   place-items: center;
 `;
 
-export default NavigatorPresenter;
+export default NavigatorUI;
