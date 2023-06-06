@@ -35,6 +35,9 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
+// Plus
+import Plus from "./Icons/plus.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -55,6 +58,7 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  plus: Plus,
   timeline: Timeline,
   actionbutton: ActionButton,
 };
