@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  info: 
+  info:
     name: Collect information
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (startsWith(github.event.workflow_run.head_branch, 'release/') || github.event.workflow_run.head_branche == 'release' || github.event.workflow_run.head_branch == 'main' || !startsWith(github.event.head_commit.message, 'v')) }}
@@ -69,7 +69,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: "1.19"
+          go-version: "1.20"
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -107,7 +107,7 @@ jobs:
           name: ${{ needs.info.outputs.new_tag }}
           tag: ${{ needs.info.outputs.new_tag}}
           bodyFile: CHANGELOG_latest.md
-    
+
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest

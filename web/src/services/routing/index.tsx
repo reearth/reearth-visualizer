@@ -19,7 +19,7 @@ import { styled } from "@reearth/services/theme";
 import RootPage from "../../classic/components/pages/Authentication/RootPage";
 import Preview from "../../classic/components/pages/Preview";
 
-const BetaEditor = lazy(() => import("@reearth/beta/pages/Editor"));
+const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 
 const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = lazy(() => import("@reearth/classic/components/pages/Dashboard"));
