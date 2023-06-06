@@ -38,6 +38,10 @@ import Ellipse from "./Icons/ellipse.svg";
 // Plus
 import Plus from "./Icons/plus.svg";
 
+// Square
+import Square from "./Icons/square.svg";
+import TwoRectangle from "./Icons/two-rectangle.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -59,6 +63,8 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   plus: Plus,
+  square: Square,
   timeline: Timeline,
+  twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
 };
