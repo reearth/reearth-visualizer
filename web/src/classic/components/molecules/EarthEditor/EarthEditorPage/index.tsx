@@ -33,9 +33,9 @@ const EarthEditorPage: React.FC<Props> = ({
             <Resizable
               direction="vertical"
               gutter="end"
-              size={metrics.propertyMenuMinWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              maxSize={metrics.propertyMenuMaxWidth}>
+              size={metrics.propertyMenuMinWidthClassic}
+              minSize={metrics.propertyMenuMinWidthClassic}
+              maxSize={metrics.propertyMenuMaxWidthClassic}>
               {left}
             </Resizable>
             <Center>
@@ -45,9 +45,9 @@ const EarthEditorPage: React.FC<Props> = ({
             <Resizable
               direction="vertical"
               gutter="start"
-              size={metrics.propertyMenuMinWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              maxSize={metrics.propertyMenuMaxWidth}>
+              size={metrics.propertyMenuMinWidthClassic}
+              minSize={metrics.propertyMenuMinWidthClassic}
+              maxSize={metrics.propertyMenuMaxWidthClassic}>
               {right}
             </Resizable>
           </Wrapper2>

@@ -15,7 +15,6 @@ export function isTab(tab: string): tab is Tab {
 
 const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
   const handleEditorNavigation = useEditorNavigation({ sceneId });
-
   return (
     <Wrapper>
       <p>Navbar</p>
@@ -55,5 +54,5 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   height: 53px;
-  background: #171618;
+  background: ${({ theme }) => theme.editorNavBar.bg};
 `;

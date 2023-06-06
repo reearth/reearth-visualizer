@@ -4,9 +4,11 @@ on:
     branches: [main, release/*, release]
     paths:
       - web/**
+      - .github/workflows/ci_web.yml
   pull_request:
     paths:
       - web/**
+      - .github/workflows/ci_web.yml
 
 jobs:
   ci:

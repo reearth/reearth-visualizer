@@ -70,8 +70,12 @@ const lightheme: Theme = {
     published: colors.light.functional.success,
     unpublished: colors.light.outline.main,
   },
+  editorNavBar: {
+    bg: colors.light.bg[2],
+  },
   leftMenu: {
     bg: colors.light.bg[2],
+    bgTitle: colors.light.bg[5],
     hoverBg: colors.light.bg[1],
     highlighted: colors.light.functional.select,
     icon: colors.light.functional.select,

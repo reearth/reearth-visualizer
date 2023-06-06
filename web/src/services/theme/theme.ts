@@ -72,8 +72,12 @@ export type Theme = {
     published: string;
     unpublished: string;
   };
+  editorNavBar: {
+    bg: string;
+  };
   leftMenu: {
     bg: string;
+    bgTitle: string;
     highlighted: string;
     hoverBg: string;
     icon: string;
