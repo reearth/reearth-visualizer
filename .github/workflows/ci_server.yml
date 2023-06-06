@@ -4,18 +4,37 @@ on:
     branches: [main, release/*, release]
     paths:
       - server/**
+      - .github/workflows/ci_server.yml
   pull_request:
     paths:
       - server/**
+      - .github/workflows/ci_server.yml
+
+env:
+  GO_VERSION: "1.20"
 
 jobs:
-  ci:
-    name: ci
+  ci-server-lint:
     runs-on: ubuntu-latest
     if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
-    defaults:
-      run:
-        working-directory: server
+    steps:
+      - name: set up
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52
+          args: --timeout=10m
+          working-directory: server
+
+  ci-server-test:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     services:
       mongo:
         image: mongo:5-focal
@@ -23,24 +42,11 @@ jobs:
           - 27017:27017
     steps:
       - name: set up
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          go-version: "1.19"
+          go-version: ${{ env.GO_VERSION }}
       - name: checkout
         uses: actions/checkout@v3
-      - name: cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.52
-          args: --timeout=10m
-          working-directory: server
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:

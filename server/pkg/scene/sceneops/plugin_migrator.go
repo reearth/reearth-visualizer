@@ -24,13 +24,12 @@ type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Layers            layer.List
 	Properties        []*property.Property
-	RemovedLayers     []layer.ID
-	RemovedProperties []property.ID
+	RemovedProperties property.IDList
 }
 
 var (
-	ErrPluginNotInstalled error = errors.New("plugin not installed")
-	ErrInvalidPlugins     error = errors.New("invalid plugins")
+	ErrPluginNotInstalled = errors.New("plugin not installed")
+	ErrInvalidPlugins     = errors.New("invalid plugins")
 )
 
 func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID plugin.ID) (MigratePluginsResult, error) {
@@ -38,14 +37,17 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, rerror.ErrInternalBy(errors.New("scene is nil"))
 	}
 
+	// should be same plugin but different version
 	if oldPluginID.Equal(newPluginID) || !oldPluginID.NameEqual(newPluginID) {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
 
+	// should be installed
 	if !sc.Plugins().Has(oldPluginID) {
 		return MigratePluginsResult{}, ErrPluginNotInstalled
 	}
 
+	// Get plugins
 	plugins, err := s.Plugin(ctx, []plugin.ID{oldPluginID, newPluginID})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
@@ -54,52 +56,23 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	oldPlugin := plugins[0]
 	newPlugin := plugins[1]
 
-	// 全レイヤーの取得
+	// Get all layers
 	layers, err := s.Layer(ctx, sc.ID())
 	if err != nil {
 		return MigratePluginsResult{}, err
 	}
 
 	modifiedLayers := layer.List{}
-	removedLayers := []layer.ID{}
-	propertyIDs := []property.ID{}
-	removedPropertyIDs := []property.ID{}
-	schemaMap := map[property.SchemaID]*property.Schema{}
+	propertyIDs := property.IDList{}
+	removedPropertyIDs := property.IDList{}
 
-	// プロパティスキーマの取得と、古いスキーマと新しいスキーマのマップ作成
-	schemaIDs := []property.SchemaID{}
-	if oldPlugin.Schema() != nil {
-		if pps := newPlugin.Schema(); pps != nil {
-			schemaIDs = append(schemaIDs, *pps)
-		}
-	}
-	for _, e := range newPlugin.Extensions() {
-		schemaIDs = append(schemaIDs, e.Schema())
-	}
-	schemas, err := s.PropertySchema(ctx, schemaIDs...)
+	// Obtain property schema and map old schema to new schema
+	schemaMap, err := s.loadSchemas(ctx, oldPlugin, newPlugin)
 	if err != nil {
 		return MigratePluginsResult{}, err
 	}
-	if oops := oldPlugin.Schema(); oops != nil {
-		if pps := newPlugin.Schema(); pps != nil {
-			for _, s := range schemas {
-				if s.ID() == *pps {
-					schemaMap[*oops] = s
-				}
-			}
-		}
-	}
-	for _, e := range oldPlugin.Extensions() {
-		if ne := newPlugin.Extension(e.ID()); ne != nil {
-			for _, s := range schemas {
-				if s.ID() == ne.Schema() {
-					schemaMap[e.Schema()] = s
-				}
-			}
-		}
-	}
 
-	// シーンのプラグイン
+	// Scene Plug-ins
 	sc.Plugins().Upgrade(oldPluginID, newPluginID, nil, false)
 	for _, sp := range sc.Plugins().Plugins() {
 		if sp.Plugin().Equal(newPluginID) && sp.Property() != nil {
@@ -107,7 +80,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		}
 	}
 
-	// シーンのウィジェット
+	// Scene widgets
 	sc.Widgets().UpgradePlugin(oldPluginID, newPluginID)
 	for _, w := range sc.Widgets().Widgets() {
 		if w.Plugin().Equal(newPluginID) {
@@ -119,97 +92,45 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		}
 	}
 
-	// レイヤー
+	// layers
 	for _, l := range layers {
 		if l == nil {
 			continue
 		}
 		ll := *l
-		llp := ll.Plugin()
-		lle := ll.Extension()
-
-		// 不正なレイヤーの検出
-		if llp != nil && lle != nil && (*llp).Equal(oldPluginID) {
-			if newPlugin.Extension(*lle) == nil {
-				// 削除
-				removedLayers = append(removedLayers, ll.ID())
-				if p := ll.Property(); p != nil {
-					removedPropertyIDs = append(removedPropertyIDs, *p)
-				}
-				if ib := ll.Infobox(); ib != nil {
-					removedPropertyIDs = append(removedPropertyIDs, ib.Property())
-					for _, f := range ib.Fields() {
-						removedPropertyIDs = append(removedPropertyIDs, f.Property())
-					}
-				}
-				continue
-			}
-		}
 
 		if p := ll.Property(); p != nil {
 			propertyIDs = append(propertyIDs, *p)
 		}
 
-		// 不正なInfoboxFieldの削除
-		if ib := ll.Infobox(); ib != nil {
-			removeFields := []layer.InfoboxFieldID{}
-			for _, f := range ib.Fields() {
-				if newPlugin.Extension(f.Extension()) == nil {
-					removeFields = append(removeFields, f.ID())
-					removedPropertyIDs = append(removedPropertyIDs, f.Property())
-				} else {
-					propertyIDs = append(propertyIDs, f.Property())
-				}
-			}
-			for _, f := range removeFields {
-				ib.Remove(f)
-			}
-		}
-
-		ll.SetPlugin(&newPluginID)
-		modifiedLayers = append(modifiedLayers, l)
-	}
-
-	// 不正なレイヤーのグループからの削除
-	for _, lg := range layers.ToLayerGroupList() {
-		modified := false
-		canceled := false
-		for _, l := range removedLayers {
-			if l == lg.ID() {
-				canceled = true
-				break
-			}
-			if lg.Layers().HasLayer(l) {
-				lg.Layers().RemoveLayer(l)
-				modified = true
-			}
-		}
-		if canceled {
+		if ll.Infobox() == nil {
 			continue
 		}
-		if modified {
-			already := false
-			for _, l := range modifiedLayers {
-				if l != nil && (*l).ID() == lg.ID() {
-					already = true
-					break
-				}
-			}
-			if already {
+
+		// Remove invalid Infobox Fields
+		for _, f := range ll.Infobox().Fields() {
+			if !f.Plugin().Equal(oldPlugin.ID()) {
 				continue
 			}
-			var lg2 layer.Layer = lg
-			modifiedLayers = append(modifiedLayers, &lg2)
+
+			modifiedLayers = modifiedLayers.AddUnique(l)
+			if newPlugin.Extension(f.Extension()) == nil {
+				ll.Infobox().Remove(f.ID())
+				removedPropertyIDs = append(removedPropertyIDs, f.Property())
+			} else {
+				f.UpgradePlugin(newPluginID)
+				propertyIDs = append(propertyIDs, f.Property())
+			}
 		}
 	}
 
-	// プロパティの取得
+	// Get all Properties
 	properties, err := s.Property(ctx, propertyIDs...)
 	if err != nil {
 		return MigratePluginsResult{}, err
 	}
 
-	// データセットの取得
+	// Get all Datasets
 	datasetIDs := collectDatasetIDs(properties)
 	datasets, err := s.Dataset(ctx, datasetIDs...)
 	if err != nil {
@@ -217,7 +138,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 	datasetLoader := datasets.Map().Loader()
 
-	// プロパティの移行作業
+	// Migrate Properties
 	for _, p := range properties {
 		if schema := schemaMap[p.Schema()]; schema != nil {
 			p.MigrateSchema(ctx, schema, datasetLoader)
@@ -228,9 +149,36 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		Scene:             sc,
 		Layers:            modifiedLayers,
 		Properties:        properties,
-		RemovedLayers:     removedLayers,
 		RemovedProperties: removedPropertyIDs,
 	}, nil
+}
+
+func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
+	schemasIDs := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
+	schemas, err := s.PropertySchema(ctx, schemasIDs...)
+	if err != nil {
+		return nil, err
+	}
+	schemaMap := map[property.SchemaID]*property.Schema{}
+	if opsId := oldPlugin.Schema(); opsId != nil {
+		if npsId := newPlugin.Schema(); npsId != nil {
+			for _, s := range schemas {
+				if s.ID() == *npsId {
+					schemaMap[*opsId] = s
+				}
+			}
+		}
+	}
+	for _, e := range oldPlugin.Extensions() {
+		if npe := newPlugin.Extension(e.ID()); npe != nil {
+			for _, s := range schemas {
+				if s.ID() == npe.Schema() {
+					schemaMap[e.Schema()] = s
+				}
+			}
+		}
+	}
+	return schemaMap, nil
 }
 
 func collectDatasetIDs(properties []*property.Property) []property.DatasetID {

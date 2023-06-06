@@ -1,0 +1,60 @@
+type Scene implements Node {
+  id: ID!
+  projectId: ID!
+  teamId: ID!
+  propertyId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  rootLayerId: ID!
+  widgets: [SceneWidget!]!
+  plugins: [ScenePlugin!]!
+  widgetAlignSystem: WidgetAlignSystem
+  dynamicDatasetSchemas: [DatasetSchema!]!
+  project: Project
+  team: Team
+  property: Property
+  rootLayer: LayerGroup
+  datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
+  tagIds: [ID!]!
+  tags: [Tag!]!
+  clusters: [Cluster!]!
+}
+
+type SceneWidget {
+  id: ID!
+  pluginId: ID!
+  extensionId: ID!
+  propertyId: ID!
+  enabled: Boolean!
+  extended: Boolean!
+  plugin: Plugin
+  extension: PluginExtension
+  property: Property
+}
+
+type ScenePlugin {
+  pluginId: ID!
+  propertyId: ID
+  plugin: Plugin
+  property: Property
+}
+
+# InputType
+
+input CreateSceneInput {
+  projectId: ID!
+}
+
+# Payload
+
+type CreateScenePayload {
+  scene: Scene!
+}
+
+extend type Query{
+  scene(projectId: ID!): Scene
+}
+
+extend type Mutation {
+  createScene(input: CreateSceneInput!): CreateScenePayload
+}

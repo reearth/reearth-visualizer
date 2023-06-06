@@ -1,18 +1,16 @@
 import { resolve } from "path";
 
-import yaml from "@rollup/plugin-yaml";
-import type { StorybookViteConfig } from "@storybook/builder-vite";
+import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
-import cesium from "vite-plugin-cesium";
 
-const config: StorybookViteConfig = {
+const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(js|ts|tsx|mdx)"],
   addons: [
     {
       name: "@storybook/addon-essentials",
     },
   ],
-  framework: "@storybook/react",
+  framework: "@storybook/react-vite",
   core: {
     builder: "@storybook/builder-vite",
     disableTelemetry: true,
@@ -20,14 +18,13 @@ const config: StorybookViteConfig = {
   staticDirs: ["./public"],
   viteFinal(config, { configType }) {
     return mergeConfig(config, {
-      plugins: [yaml(), cesium()],
       define: {
         "process.env.QTS_DEBUG": "false", // quickjs-emscripten
       },
       build:
         configType === "PRODUCTION"
           ? {
-              // https://github.com/storybookjs/builder-vite/issues /409
+              // https://github.com/storybookjs/builder-vite/issues/409
               minify: false,
               sourcemap: false,
             }
@@ -38,8 +35,6 @@ const config: StorybookViteConfig = {
           { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
           { find: "csv-parse", replacement: "csv-parse/browser/esm" },
         ],
-        // WORKAROUND: https://github.com/storybookjs/builder-vite/issues/255
-        dedupe: ["@storybook/client-api"],
       },
     });
   },

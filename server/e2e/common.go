@@ -8,6 +8,7 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
@@ -24,12 +25,12 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func StartServer(t *testing.T, cfg *app.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
+func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
 	e, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
 	return e
 }
 
-func StartServerAndRepos(t *testing.T, cfg *app.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
+func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
 	ctx := context.Background()
 
 	var repos *repo.Container
@@ -48,7 +49,7 @@ func StartServerAndRepos(t *testing.T, cfg *app.Config, useMongo bool, seeder Se
 
 	return StartServerWithRepos(t, cfg, repos), repos
 }
-func StartServerWithRepos(t *testing.T, cfg *app.Config, repos *repo.Container) *httpexpect.Expect {
+func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) *httpexpect.Expect {
 	t.Helper()
 
 	if testing.Short() {
@@ -90,4 +91,10 @@ func StartServerWithRepos(t *testing.T, cfg *app.Config, repos *repo.Container) 
 	})
 
 	return httpexpect.New(t, "http://"+l.Addr().String())
+}
+
+type GraphQLRequest struct {
+	OperationName string         `json:"operationName"`
+	Query         string         `json:"query"`
+	Variables     map[string]any `json:"variables"`
 }

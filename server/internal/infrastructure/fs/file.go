@@ -43,7 +43,7 @@ func (f *fileRepo) ReadAsset(ctx context.Context, filename string) (io.ReadClose
 }
 
 func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, int64, error) {
-	filename := sanitize.Path(newAssetID() + path.Ext(file.Path))
+	filename := sanitize.Path(newAssetID() + filepath.Ext(file.Path))
 	size, err := f.upload(ctx, filepath.Join(assetDir, filename), file.Content)
 	if err != nil {
 		return nil, 0, err
@@ -59,7 +59,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != f.urlBase.Path {
 		return gateway.ErrInvalidFile
 	}
-	return f.delete(ctx, filepath.Join(assetDir, path.Base(p)))
+	return f.delete(ctx, filepath.Join(assetDir, filepath.Base(p)))
 }
 
 // plugin
@@ -102,7 +102,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 // helpers
 
-func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) read(_ context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
@@ -117,12 +117,12 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	return file, nil
 }
 
-func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
+func (f *fileRepo) upload(_ context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
-	if fnd := path.Dir(filename); fnd != "" {
+	if fnd := filepath.Dir(filename); fnd != "" {
 		if err := f.fs.MkdirAll(fnd, 0755); err != nil {
 			return 0, rerror.ErrInternalBy(err)
 		}
@@ -144,12 +144,12 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	return size, nil
 }
 
-func (f *fileRepo) move(ctx context.Context, from, dest string) error {
+func (f *fileRepo) move(_ context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
 
-	if destd := path.Dir(dest); destd != "" {
+	if destd := filepath.Dir(dest); destd != "" {
 		if err := f.fs.MkdirAll(destd, 0755); err != nil {
 			return rerror.ErrInternalBy(err)
 		}
@@ -165,7 +165,7 @@ func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 	return nil
 }
 
-func (f *fileRepo) delete(ctx context.Context, filename string) error {
+func (f *fileRepo) delete(_ context.Context, filename string) error {
 	if filename == "" {
 		return gateway.ErrFailedToUploadFile
 	}

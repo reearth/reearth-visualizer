@@ -1,0 +1,78 @@
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Me {
+  id: ID!
+  name: String!
+  email: String!
+  lang: Lang!
+  theme: Theme!
+  myTeamId: ID!
+  auths: [String!]!
+  teams: [Team!]!
+  myTeam: Team!
+}
+
+enum Theme {
+  DEFAULT
+  LIGHT
+  DARK
+}
+
+# InputType
+
+input SignupInput {
+  lang: Lang
+  theme: Theme
+  userId: ID
+  teamId: ID
+  secret: String
+}
+
+input UpdateMeInput {
+  name: String
+  email: String
+  lang: Lang
+  theme: Theme
+  password: String
+  passwordConfirmation: String
+}
+
+input RemoveMyAuthInput {
+  auth: String!
+}
+
+input DeleteMeInput {
+  userId: ID!
+}
+
+# Payload
+
+
+type UpdateMePayload {
+  me: Me!
+}
+
+type SignupPayload {
+  user: User!
+  team: Team!
+}
+
+type DeleteMePayload {
+  userId: ID!
+}
+
+extend type Query{
+  me: Me
+  searchUser(nameOrEmail: String!): User
+}
+
+extend type Mutation {
+  signup(input: SignupInput!): SignupPayload
+  updateMe(input: UpdateMeInput!): UpdateMePayload
+  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
+  deleteMe(input: DeleteMeInput!): DeleteMePayload
+}

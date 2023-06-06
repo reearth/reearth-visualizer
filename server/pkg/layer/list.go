@@ -1,6 +1,12 @@
 package layer
 
+import "github.com/samber/lo"
+
 type List []*Layer
+
+func ListFrom(l []Layer) []*Layer {
+	return lo.ToSlicePtr(l)
+}
 
 func (ll List) Last() *Layer {
 	if len(ll) == 0 {
@@ -148,6 +154,22 @@ func (ll List) Remove(lids ...ID) List {
 		if !hit {
 			res = append(res, l)
 		}
+	}
+
+	return res
+}
+
+func (ll List) AddUnique(newList ...*Layer) List {
+	res := append(List{}, ll...)
+
+	for _, l := range newList {
+		if l == nil {
+			continue
+		}
+		if res.Find((*l).ID()) != nil {
+			continue
+		}
+		res = append(res, l)
 	}
 
 	return res

@@ -1,0 +1,105 @@
+type Plugin {
+  id: ID!
+  sceneId: ID
+  name: String!
+  version: String!
+  description: String!
+  author: String!
+  repositoryUrl: String!
+  propertySchemaId: ID
+  extensions: [PluginExtension!]!
+  scenePlugin(sceneId: ID): ScenePlugin
+  allTranslatedDescription: TranslatedString
+  allTranslatedName: TranslatedString
+  scene: Scene
+  translatedName(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+  propertySchema: PropertySchema
+}
+
+enum PluginExtensionType {
+  PRIMITIVE
+  WIDGET
+  BLOCK
+  VISUALIZER
+  INFOBOX
+}
+
+type PluginExtension {
+  extensionId: ID!
+  pluginId: ID!
+  type: PluginExtensionType!
+  name: String!
+  description: String!
+  icon: String!
+  singleOnly: Boolean
+  widgetLayout: WidgetLayout
+  visualizer: Visualizer
+  propertySchemaId: ID!
+  allTranslatedName: TranslatedString
+  allTranslatedDescription: TranslatedString
+  plugin: Plugin
+  sceneWidget(sceneId: ID!): SceneWidget
+  propertySchema: PropertySchema
+  translatedName(lang: Lang): String!
+  translatedDescription(lang: Lang): String!
+}
+
+# Payload
+
+type UploadPluginPayload {
+  plugin: Plugin!
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type InstallPluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+type UninstallPluginPayload {
+  pluginId: ID!
+  scene: Scene!
+}
+
+type UpgradePluginPayload {
+  scene: Scene!
+  scenePlugin: ScenePlugin!
+}
+
+# InputType
+
+input UploadPluginInput {
+  sceneId: ID!
+  file: Upload
+  url: URL
+}
+
+input InstallPluginInput {
+  sceneId: ID!
+  pluginId: ID!
+}
+
+input UninstallPluginInput {
+  sceneId: ID!
+  pluginId: ID!
+}
+
+input UpgradePluginInput {
+  sceneId: ID!
+  pluginId: ID!
+  toPluginId: ID!
+}
+
+extend type Query{
+  plugin(id: ID!): Plugin
+  plugins(id: [ID!]!): [Plugin!]!
+}
+
+extend type Mutation {
+  installPlugin(input: InstallPluginInput!): InstallPluginPayload
+  uninstallPlugin(input: UninstallPluginInput!): UninstallPluginPayload
+  uploadPlugin(input: UploadPluginInput!): UploadPluginPayload
+  upgradePlugin(input: UpgradePluginInput!): UpgradePluginPayload
+}
