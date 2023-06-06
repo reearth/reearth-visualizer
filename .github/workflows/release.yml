@@ -49,7 +49,7 @@ jobs:
           TAG: ${{ steps.changelog.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
-          git add CHANGELOG.md
+          git add CHANGELOG.md web/package.json
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
