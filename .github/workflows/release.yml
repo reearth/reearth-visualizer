@@ -39,17 +39,12 @@ jobs:
         with:
           name: changelog-${{ steps.changelog.outputs.version }}
           path: CHANGELOG_latest.md
-      - name: Update package.json version
-        env:
-          VERSION: ${{ steps.changelog.outputs.version }}
-        run: |
-          yarn --cwd web version --no-git-tag-version --new-version ${VERSION/v}
       - name: Commit & push to release
         env:
           TAG: ${{ steps.changelog.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
-          git add CHANGELOG.md web/package.json
+          git add CHANGELOG.md
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
