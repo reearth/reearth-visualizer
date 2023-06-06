@@ -51,7 +51,7 @@ jobs:
     steps:
       - run: echo OK
   build-web:
-    needs: ci-web
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch Web Build
@@ -59,7 +59,7 @@ jobs:
         with:
           event-type: build-web
   build-server:
-    needs: ci-server
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch Web Build
