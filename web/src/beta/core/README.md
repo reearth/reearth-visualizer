@@ -1,4 +1,4 @@
-# @reearth/core
+# @reearth/beta/core
 
 - **Visualizer**: Map + Crust
 - **Crust**: Plugins + Widgets + Infobox
