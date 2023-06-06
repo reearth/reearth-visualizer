@@ -52,10 +52,17 @@ jobs:
       - run: echo OK
   build-web:
     needs: ci-web
-    if: success() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release')
-    uses: ./.github/workflows/ci_web_build.yml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Web Build
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: build-web
   build-server:
     needs: ci-server
-    if: success() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release')
-    uses: ./.github/workflows/ci_server_build.yml
-  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Web Build
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: build-server

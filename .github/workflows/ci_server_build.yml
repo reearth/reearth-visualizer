@@ -1,7 +1,8 @@
 name: build-server
 on:
   workflow_dispatch:
-  workflow_call:
+  repository_dispatch:
+    types: [build-server]
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
@@ -10,6 +11,7 @@ jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       new_tag: ${{ steps.info.outputs.new_tag }}
