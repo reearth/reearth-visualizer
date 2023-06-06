@@ -34,7 +34,6 @@ jobs:
             .github/workflows/ci_server.yml
             .github/workflows/ci_server_build.yml
             .github/workflows/ci_deploy_server_nightly.yml
-
   ci-web:
     needs: prepare
     if: needs.prepare.outputs.web == 'true'
@@ -51,3 +50,12 @@ jobs:
     if: '!failure()'
     steps:
       - run: echo OK
+  build-web:
+    needs: ci-web
+    if: success() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release')
+    uses: ./.github/workflows/ci_web_build.yml
+  build-server:
+    needs: ci-server
+    if: success() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release')
+    uses: ./.github/workflows/ci_server_build.yml
+  
