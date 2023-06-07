@@ -3,6 +3,8 @@
 /server/        @rot1024
 /web/           @KaWaite
 /web/e2e/       @keiya01
+
 /web/src/classic/core/  @keiya01
+
 /web/src/beta/core/     @keiya01
-/web/src/beta/features/ @keiya01
+/web/src/beta/features/ @keiya01 @KaWaite
