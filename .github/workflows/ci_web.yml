@@ -1,15 +1,6 @@
 name: ci-web
 on:
-  push:
-    branches: [main, release/*, release]
-    paths:
-      - web/**
-      - .github/workflows/ci_web.yml
-  pull_request:
-    paths:
-      - web/**
-      - .github/workflows/ci_web.yml
-
+  workflow_call:
 jobs:
   ci:
     name: ci
