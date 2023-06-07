@@ -53,6 +53,7 @@ jobs:
   build-web:
     needs: ci
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))
     steps:
       - name: Dispatch Web Build
         uses: peter-evans/repository-dispatch@v2
@@ -61,6 +62,7 @@ jobs:
   build-server:
     needs: ci
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))
     steps:
       - name: Dispatch Web Build
         uses: peter-evans/repository-dispatch@v2
