@@ -15,6 +15,7 @@ import {
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
+import { recursiveJSONParse } from "./utils";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -65,6 +66,7 @@ export function evalLayerAppearances(
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any {
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
@@ -88,6 +90,7 @@ export function clearAllExpressionCaches(
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Feature | undefined) {
   Object.entries(obj).forEach(([, v]) => {
     // if v is an object itself and not a null, recurse deeper
@@ -110,15 +113,18 @@ function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Featu
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasExpression(e: any): e is ExpressionContainer {
   return typeof e === "object" && e && "expression" in e;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
   return typeof v === "object" && v && !("expression" in v);
 }
 
 function evalExpression(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expressionContainer: any,
   layer: LayerSimple,
   feature?: Feature,
@@ -126,14 +132,15 @@ function evalExpression(
   try {
     if (hasExpression(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
+      const parsedFeature = recursiveJSONParse(feature);
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
+        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
       } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), feature, layer.defines).evaluate();
+        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
       } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, feature, layer.defines).evaluate();
+        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
       }
       return styleExpression;
     }

@@ -15,6 +15,7 @@ import {
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
+import { recursiveJSONParse } from "./utils";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -126,14 +127,15 @@ function evalExpression(
   try {
     if (hasExpression(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
+      const parsedFeature = recursiveJSONParse(feature);
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
+        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
       } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), feature, layer.defines).evaluate();
+        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
       } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, feature, layer.defines).evaluate();
+        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
       }
       return styleExpression;
     }
