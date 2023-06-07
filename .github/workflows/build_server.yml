@@ -3,10 +3,6 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [build-server]
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
-
 jobs:
   info:
     name: Collect information
