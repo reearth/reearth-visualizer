@@ -69,7 +69,6 @@ const TitleArea = styled.div<{ active?: boolean }>`
   border: 1px solid #3f3d45;
   border-radius: 6px;
 
-  width: 198px; //
   min-height: 56px;
 `;
 
@@ -78,8 +77,6 @@ const TitleText = styled.text`
   font-weight: 400;
   font-size: 12px;
   color: #ffffff;
-
-  width: 166px; //
 `;
 
 export default StorytellingPageSectionItem;
