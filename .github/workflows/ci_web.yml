@@ -1,13 +1,6 @@
 name: ci-web
 on:
-  push:
-    branches: [main, release/*, release]
-    paths:
-      - web/**
-  pull_request:
-    paths:
-      - web/**
-
+  workflow_call:
 jobs:
   ci:
     name: ci

@@ -1,19 +1,15 @@
 name: build-server
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [ci-server]
-    types: [completed]
-    branches: [main, release/*, release]
+  workflow_call:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
-  info: 
+  info:
     name: Collect information
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth' && (startsWith(github.event.workflow_run.head_branch, 'release/') || github.event.workflow_run.head_branche == 'release' || github.event.workflow_run.head_branch == 'main' || !startsWith(github.event.head_commit.message, 'v')) }}
     outputs:
       sha_short: ${{ steps.info.outputs.sha_short }}
       new_tag: ${{ steps.info.outputs.new_tag }}
@@ -69,7 +65,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: "1.19"
+          go-version: "1.20"
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -81,6 +77,8 @@ jobs:
       - name: Rename artifacts
         if: needs.info.outputs.name
         run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ needs.info.outputs.name }}/'); done
+      - name: List artifacts
+        run: ls -l server/dist
       - name: Release nightly/rc
         if: needs.info.outputs.name
         uses: ncipollo/release-action@v1
@@ -107,7 +105,7 @@ jobs:
           name: ${{ needs.info.outputs.new_tag }}
           tag: ${{ needs.info.outputs.new_tag}}
           bodyFile: CHANGELOG_latest.md
-    
+
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
