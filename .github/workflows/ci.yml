@@ -51,18 +51,22 @@ jobs:
     steps:
       - run: echo OK
   build-web:
-    needs: ci
+    needs: 
+      - ci
+      - ci-web
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))
+    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Web Build
         uses: peter-evans/repository-dispatch@v2
         with:
           event-type: build-web
   build-server:
-    needs: ci
+    needs: 
+      - ci
+      - ci-server
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))
+    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Web Build
         uses: peter-evans/repository-dispatch@v2
