@@ -66,6 +66,7 @@ export function evalLayerAppearances(
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any {
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
@@ -89,6 +90,7 @@ export function clearAllExpressionCaches(
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Feature | undefined) {
   Object.entries(obj).forEach(([, v]) => {
     // if v is an object itself and not a null, recurse deeper
@@ -111,15 +113,18 @@ function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Featu
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasExpression(e: any): e is ExpressionContainer {
   return typeof e === "object" && e && "expression" in e;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
   return typeof v === "object" && v && !("expression" in v);
 }
 
 function evalExpression(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expressionContainer: any,
   layer: LayerSimple,
   feature?: Feature,
