@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
-import ProjectMenu from "../../Menus/ProjectMenu";
 import WorkspaceCreationModal from "../../Modals/WorkspaceCreationModal";
+import ProjectMenu from "../Menus/ProjectMenu";
 import { Project, User, Workspace } from "../types";
 
 import Profile from "./Profile";

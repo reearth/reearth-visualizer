@@ -3,8 +3,12 @@ import React, { useRef } from "react";
 import Avatar from "@reearth/beta/components/Avatar";
 import Dropdown, { Ref as DropDownRef } from "@reearth/beta/components/Dropdown";
 import Text from "@reearth/beta/components/Text";
-import { MenuList, MenuListItem, MenuListItemLabel } from "@reearth/beta/features/Menus/MenuList";
-import WorkspaceMenu from "@reearth/beta/features/Menus/WorkspaceMenu";
+import {
+  MenuList,
+  MenuListItem,
+  MenuListItemLabel,
+} from "@reearth/beta/features/Navbar/Menus/MenuList";
+import WorkspaceMenu from "@reearth/beta/features/Navbar/Menus/WorkspaceMenu";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

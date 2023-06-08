@@ -2,7 +2,11 @@ import React, { useRef } from "react";
 
 import Dropdown, { Ref as DropDownRef } from "@reearth/beta/components/Dropdown";
 import Text from "@reearth/beta/components/Text";
-import { MenuListItemLabel, MenuList, MenuListItem } from "@reearth/beta/features/Menus/MenuList";
+import {
+  MenuListItemLabel,
+  MenuList,
+  MenuListItem,
+} from "@reearth/beta/features/Navbar/Menus/MenuList";
 import { Project } from "@reearth/beta/features/Navbar/types";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
