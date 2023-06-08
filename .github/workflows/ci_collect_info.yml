@@ -19,42 +19,4 @@ on:
             value: ${{ jobs.info.outputs.name }}
 
 jobs:
-    info:
-        name: Collect information
-        runs-on: ubuntu-latest
-        outputs:
-          sha_short: ${{ steps.info.outputs.sha_short }}
-          new_tag: ${{ steps.info.outputs.new_tag }}
-          new_tag_short: ${{ steps.info.outputs.new_tag_short }}
-          name: ${{ steps.info.outputs.name }}
-        steps:
-          - name: checkout
-            uses: actions/checkout@v3
-          - name: Fetch tags
-            run: git fetch --prune --unshallow --tags
-          - name: Get info
-            id: info
-            # The tag name should be retrieved lazily, as tagging may be delayed.
-            env:
-              BRANCH: ${{github.event.workflow_run.inputs.branch}}
-            run: |
-              echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-              echo "BRANCH=$BRANCH"
-              if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* ]]; then
-                TAG=$(git tag --points-at HEAD)
-                if [[ ! -z "$TAG" ]]; then
-                  echo "::set-output name=new_tag::$TAG"
-                  echo "::set-output name=new_tag_short::${TAG#v}"
-                else
-                  echo "::set-output name=name::rc"
-                fi
-              else
-                echo "::set-output name=name::nightly"
-              fi
-          - name: Show info
-            env:
-              SHA_SHORT: ${{ steps.info.outputs.sha_short }}
-              NEW_TAG: ${{ steps.info.outputs.new_tag }}
-              NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
-              NAME: ${{ steps.info.outputs.name }}
-            run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, name=$NAME"
+    
