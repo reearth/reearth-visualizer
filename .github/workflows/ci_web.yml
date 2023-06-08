@@ -1,15 +1,6 @@
 name: ci-web
 on:
-  push:
-    branches: [main, release/*, release]
-    paths:
-      - web/**
-      - .github/workflows/ci_web.yml
-  pull_request:
-    paths:
-      - web/**
-      - .github/workflows/ci_web.yml
-
+  workflow_call:
 jobs:
   ci:
     name: ci
@@ -45,6 +36,6 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          flags: web-beta,web-classic,web-utils
+          flags: web,web-beta,web-classic,web-utils
       - name: Check translations
         run: yarn run i18n --fail-on-update

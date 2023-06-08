@@ -2,8 +2,8 @@ import Resizable from "@reearth/beta/components/Resizable";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
+import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
-import Visualizer from "@reearth/beta/features/Visualizer";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { metrics, styled } from "@reearth/services/theme";
 
