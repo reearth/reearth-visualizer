@@ -1,4 +1,4 @@
-import { pick } from "lodash-es";
+import { cloneDeep, pick } from "lodash-es";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -127,7 +127,7 @@ function evalExpression(
   try {
     if (hasExpression(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
-      const parsedFeature = recursiveJSONParse(feature);
+      const parsedFeature = recursiveJSONParse(cloneDeep(feature));
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
