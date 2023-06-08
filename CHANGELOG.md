@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.16.1 - 2023-06-08
+
+### Web
+
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.1 for the fix release [`707942`](https://github.com/reearth/reearth/commit/707942)
+
+### server, web
+
+
+### web, server
+
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.1 for the fix release [`707942`](https://github.com/reearth/reearth/commit/707942)
+
 ## 0.16.0 - 2023-06-08
 
 ### Web
