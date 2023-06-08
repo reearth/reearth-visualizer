@@ -1,12 +1,12 @@
 import React, { type ReactNode } from "react";
 
-import AdditionButton from "@reearth/beta/components/AdditionButton";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import AdditionButton from "./AdditionButton";
 import BlockComponent from "./Block";
 import Field from "./Field";
 import Frame from "./Frame";
