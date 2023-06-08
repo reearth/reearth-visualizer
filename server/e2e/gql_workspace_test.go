@@ -8,87 +8,11 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
 )
-
-var (
-	uId1 = accountdomain.NewUserID()
-	uId2 = accountdomain.NewUserID()
-	uId3 = accountdomain.NewUserID()
-	wId  = accountdomain.NewWorkspaceID()
-	wId2 = accountdomain.NewWorkspaceID()
-	iId1 = accountdomain.NewIntegrationID()
-)
-
-func baseSeederWorkspace(ctx context.Context, r *repo.Container) error {
-	u := user.New().ID(uId1).
-		Name("e2e").
-		Email("e2e@e2e.com").
-		Workspace(wId).
-		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
-		return err
-	}
-	u2 := user.New().ID(uId2).
-		Name("e2e2").
-		Email("e2e2@e2e.com").
-		Workspace(wId2).
-		MustBuild()
-	if err := r.User.Save(ctx, u2); err != nil {
-		return err
-	}
-	u3 := user.New().ID(uId3).
-		Name("e2e3").
-		Email("e2e3@e2e.com").
-		Workspace(wId2).
-		MustBuild()
-	if err := r.User.Save(ctx, u3); err != nil {
-		return err
-	}
-	roleOwner := workspace.Member{
-		Role:      workspace.RoleOwner,
-		InvitedBy: uId2,
-	}
-	roleReader := workspace.Member{
-		Role:      workspace.RoleReader,
-		InvitedBy: uId1,
-	}
-
-	w := workspace.New().ID(wId).
-		Name("e2e").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
-			uId1: roleOwner,
-		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
-			iId1: roleOwner,
-		}).
-		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
-		return err
-	}
-
-	w2 := workspace.New().ID(wId2).
-		Name("e2e2").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
-			uId1: roleOwner,
-			uId3: roleReader,
-		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
-			iId1: roleOwner,
-		}).
-		MustBuild()
-	if err := r.Workspace.Save(ctx, w2); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func TestCreateTeam(t *testing.T) {
 	e, _ := StartGQLServer(t, &config.Config{
@@ -120,9 +44,9 @@ func TestDeleteTeam(t *testing.T) {
 			Disabled: true,
 		},
 	}, true, baseSeederUser)
-	_, err := r.Workspace.FindByID(context.Background(), wId)
+	_, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
-	query := fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, wId)
+	query := fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, wId1)
 	request := GraphQLRequest{
 		Query: query,
 	}
@@ -134,9 +58,9 @@ func TestDeleteTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().Equal(wId.String())
+	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().Equal(wId1.String())
 
-	_, err = r.Workspace.FindByID(context.Background(), wId)
+	_, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Equal(t, rerror.ErrNotFound, err)
 
 	query = fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, accountdomain.NewWorkspaceID())
@@ -163,11 +87,11 @@ func TestUpdateTeam(t *testing.T) {
 		},
 	}, true, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId)
+	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.Equal(t, "e2e", w.Name())
 
-	query := fmt.Sprintf(`mutation { updateTeam(input: {teamId: "%s",name: "%s"}){ team{ id name } }}`, wId, "updated")
+	query := fmt.Sprintf(`mutation { updateTeam(input: {teamId: "%s",name: "%s"}){ team{ id name } }}`, wId1, "updated")
 	request := GraphQLRequest{
 		Query: query,
 	}
@@ -182,7 +106,7 @@ func TestUpdateTeam(t *testing.T) {
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
 	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().Equal("updated")
 
-	w, err = r.Workspace.FindByID(context.Background(), wId)
+	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.Equal(t, "updated", w.Name())
 
@@ -210,11 +134,11 @@ func TestAddMemberToTeam(t *testing.T) {
 		},
 	}, true, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId)
+	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.False(t, w.Members().HasUser(uId2))
 
-	query := fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId, uId2)
+	query := fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId1, uId2)
 	request := GraphQLRequest{
 		Query: query,
 	}
@@ -228,12 +152,12 @@ func TestAddMemberToTeam(t *testing.T) {
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK)
 
-	w, err = r.Workspace.FindByID(context.Background(), wId)
+	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.True(t, w.Members().HasUser(uId2))
 	assert.Equal(t, w.Members().User(uId2).Role, workspace.RoleReader)
 
-	query = fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId, uId2)
+	query = fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId1, uId2)
 	request = GraphQLRequest{
 		Query: query,
 	}
@@ -275,7 +199,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK)
 
-	w, err = r.Workspace.FindByID(context.Background(), wId)
+	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.False(t, w.Members().HasUser(uId3))
 

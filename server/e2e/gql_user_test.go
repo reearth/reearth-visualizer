@@ -18,6 +18,15 @@ import (
 	"golang.org/x/text/language"
 )
 
+var (
+	uId1 = accountdomain.NewUserID()
+	uId2 = accountdomain.NewUserID()
+	uId3 = accountdomain.NewUserID()
+	wId1 = accountdomain.NewWorkspaceID()
+	wId2 = accountdomain.NewWorkspaceID()
+	iId1 = accountdomain.NewIntegrationID()
+)
+
 func baseSeederUser(ctx context.Context, r *repo.Container) error {
 	auth := user.ReearthSub(uId1.String())
 	u := user.New().ID(uId1).
@@ -26,7 +35,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 		Auths([]user.Auth{*auth}).
 		Theme(user.ThemeDark).
 		Lang(language.Japanese).
-		Workspace(wId).
+		Workspace(wId1).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
@@ -56,7 +65,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 		InvitedBy: uId2,
 	}
 
-	w := workspace.New().ID(wId).
+	w := workspace.New().ID(wId1).
 		Name("e2e").
 		Members(map[idx.ID[accountdomain.User]]workspace.Member{
 			uId1: roleOwner,
