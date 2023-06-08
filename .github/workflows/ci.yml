@@ -1,7 +1,7 @@
 name: ci
 on:
   push:
-    branches: [main, release/*, release, fix/ci-blank-issue]
+    branches: [main, release/*, release]
   # pull_request:
 jobs:
   prepare:
@@ -97,7 +97,7 @@ jobs:
       - ci-web
       - ci-collect-info
     runs-on: ubuntu-latest
-    if: ${{!failure()}}
+    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Web Build
         uses: benc-uk/workflow-dispatch@v1
@@ -116,7 +116,7 @@ jobs:
       - ci-server
       - ci-collect-info
     runs-on: ubuntu-latest
-    if: ${{!failure()}}
+    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Server Build
         uses: benc-uk/workflow-dispatch@v1
