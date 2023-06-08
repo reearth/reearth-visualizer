@@ -9,8 +9,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -19,7 +20,7 @@ var (
 	uId    = user.NewID()
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
-	wId    = workspace.NewID()
+	wId222 = workspace.NewID()
 	pId    = id.NewProjectID()
 	pAlias = "PROJECT_ALIAS"
 
@@ -34,7 +35,7 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 
 	u := user.New().
 		ID(uId).
-		Workspace(wId).
+		Workspace(wId222).
 		Name(uName).
 		Email(uEmail).
 		MustBuild()
@@ -42,10 +43,13 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-	w := workspace.New().ID(wId).
+	m := workspace.Member{
+		Role: workspace.RoleOwner,
+	}
+	w := workspace.New().ID(wId222).
 		Name("e2e").
 		Personal(false).
-		Members(map[id.UserID]workspace.Role{u.ID(): workspace.RoleOwner}).
+		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err

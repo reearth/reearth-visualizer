@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
@@ -15,8 +15,8 @@ import (
 func TestProject_CountByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := id.NewWorkspaceID()
-	wid2 := id.NewWorkspaceID()
+	wid := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
@@ -30,7 +30,7 @@ func TestProject_CountByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: id.WorkspaceIDList{wid2},
+		Readable: accountdomain.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
@@ -40,8 +40,8 @@ func TestProject_CountByWorkspace(t *testing.T) {
 func TestProject_CountPublicByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := id.NewWorkspaceID()
-	wid2 := id.NewWorkspaceID()
+	wid := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
@@ -55,7 +55,7 @@ func TestProject_CountPublicByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: id.WorkspaceIDList{wid2},
+		Readable: accountdomain.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountPublicByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)

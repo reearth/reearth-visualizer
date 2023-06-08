@@ -52,10 +52,10 @@ type VerifyUserOutput struct {
 }
 
 type CreateUserInput struct {
-	Sub         string          `json:"sub"`
-	Secret      string          `json:"secret"`
-	UserID      *id.UserID      `json:"userId"`
-	WorkspaceID *id.WorkspaceID `json:"teamId"`
+	Sub         string                     `json:"sub"`
+	Secret      string                     `json:"secret"`
+	UserID      *id.UserID                 `json:"userId"`
+	WorkspaceID *accountdomain.WorkspaceID `json:"teamId"`
 }
 
 type SignupOutput struct {

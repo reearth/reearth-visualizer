@@ -15,6 +15,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -93,7 +95,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			assert := assert.New(t)
 			ctx := context.Background()
 
-			tid := id.NewWorkspaceID()
+			tid := accountdomain.NewWorkspaceID()
 			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
@@ -117,7 +119,9 @@ func TestScene_InstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableWorkspaces: id.WorkspaceIDList{tid},
+					AcOperator: &accountusecase.Operator{
+						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+					},
 				}
 			}
 			gotSc, gotPrid, err := uc.InstallPlugin(ctx, sid, tt.args.pluginID, o)
@@ -222,7 +226,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			l2 := layer.New().NewID().Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
 			lr := memory.NewLayerWith(l1, l2)
 
-			tid := id.NewWorkspaceID()
+			tid := accountdomain.NewWorkspaceID()
 			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
@@ -245,7 +249,9 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableWorkspaces: id.WorkspaceIDList{tid},
+					AcOperator: &accountusecase.Operator{
+						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+					},
 				}
 			}
 			gotSc, err := uc.UninstallPlugin(ctx, sid, tt.args.pluginID, o)
@@ -367,7 +373,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 
 			dsr := memory.NewDataset()
 
-			tid := id.NewWorkspaceID()
+			tid := accountdomain.NewWorkspaceID()
 			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
@@ -386,7 +392,9 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					WritableWorkspaces: id.WorkspaceIDList{tid},
+					AcOperator: &accountusecase.Operator{
+						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+					},
 				}
 			}
 			gotSc, err := uc.UpgradePlugin(ctx, sid, tt.args.old, tt.args.new, o)

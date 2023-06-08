@@ -494,6 +494,8 @@ github.com/ravilushqa/otelgqlgen v0.8.0 h1:x48k+D1GMgm87xhMO2Lekrr9YGzFbpG3yijn9
 github.com/ravilushqa/otelgqlgen v0.8.0/go.mod h1:6JO5YO2iY4POC7R6yB/L/RKXCcyISL8qQt5NnHOhh0o=
 github.com/reearth/reearthx v0.0.0-20230530055440-86a8d4675853 h1:eO1u6WJ/B1j/uC0ZnHS21EYuaREbdYDgHAExy7LLAnw=
 github.com/reearth/reearthx v0.0.0-20230530055440-86a8d4675853/go.mod h1:Rh7MJPKq43f+HZ/PwjZ5vEbGPpllNFvUrxn9sBn2b+s=
+github.com/reearth/reearthx v0.0.0-20230607014200-f190f6c5ab07 h1:1YHwZ/m3ko/KZLTaaU+lV/PuNMSylonHJ8k5XeS8ITk=
+github.com/reearth/reearthx v0.0.0-20230607014200-f190f6c5ab07/go.mod h1:Rh7MJPKq43f+HZ/PwjZ5vEbGPpllNFvUrxn9sBn2b+s=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481/go.mod h1:C9WhFzY47SzYBIvzFqSvHIR6ROgDo4TtdTuRaOMjF/s=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=

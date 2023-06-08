@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
- "github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
 
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/samber/lo"
@@ -44,7 +44,7 @@ func getOperator(ctx context.Context) *usecase.Operator {
 }
 
 func getAcOperator(ctx context.Context) *accountusecase.Operator {
-	return adapter.AcOperator(ctx)
+	return adapter.Operator(ctx).AcOperator
 }
 
 func usecases(ctx context.Context) *interfaces.Container {

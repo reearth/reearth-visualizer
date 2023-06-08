@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -64,7 +65,7 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 	return filterProjects(ids, res), nil
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -86,7 +87,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	})
 }
 
-func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -97,7 +98,7 @@ func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int,
 	return int(count), err
 }
 
-func (r *Project) CountPublicByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}

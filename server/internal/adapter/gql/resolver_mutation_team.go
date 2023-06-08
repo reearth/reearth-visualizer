@@ -5,10 +5,11 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
 func (r *mutationResolver) CreateTeam(ctx context.Context, input gqlmodel.CreateTeamInput) (*gqlmodel.CreateTeamPayload, error) {
-	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getAcUser(ctx).ID(), getAcOperator(ctx))
+	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getUser(ctx).ID(), getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func (r *mutationResolver) AddMemberToTeam(ctx context.Context, input gqlmodel.A
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getOperator(ctx))
+	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountdomain.UserID]workspace.Role{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
