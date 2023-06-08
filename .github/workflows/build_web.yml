@@ -176,7 +176,7 @@ jobs:
         with:
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
-          commit: ${{ github.event.inputs.github.sha }}
+          commit: ${{ github.event.inputs.sha }}
           name: ${{ github.event.inputs.new_tag }}
           tag: ${{ github.event.inputs.new_tag }}
           bodyFile: CHANGELOG_latest.md
