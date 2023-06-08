@@ -21,8 +21,8 @@ jobs:
             web
             .github/workflows/ci.yml
             .github/workflows/ci_web.yml
-            .github/workflows/ci_web_build.yml
-            .github/workflows/ci_deploy_web_nightly.yml
+            .github/workflows/build_web.yml
+            .github/workflows/deploy_web_nightly.yml
 
       - name: changed files for server
         id: server
@@ -32,8 +32,8 @@ jobs:
             server
             .github/workflows/ci.yml
             .github/workflows/ci_server.yml
-            .github/workflows/ci_server_build.yml
-            .github/workflows/ci_deploy_server_nightly.yml
+            .github/workflows/build_server.yml
+            .github/workflows/deploy_server_nightly.yml
   ci-web:
     needs: prepare
     if: needs.prepare.outputs.web == 'true'
@@ -50,10 +50,52 @@ jobs:
     if: '!failure()'
     steps:
       - run: echo OK
+  ci-collect-info:
+    name: Collect information
+    needs: ci
+    if: '!failure()'
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.info.outputs.sha_short || 'blank' }}
+      new_tag: ${{ steps.info.outputs.new_tag || 'blank' }}
+      new_tag_short: ${{ steps.info.outputs.new_tag_short || 'blank' }}
+      name: ${{ steps.info.outputs.name || 'blank' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Fetch tags
+        run: git fetch --prune --unshallow --tags
+      - name: Get info
+        id: info
+        # The tag name should be retrieved lazily, as tagging may be delayed.
+        env:
+          BRANCH: ${{github.ref_name}}
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "BRANCH=$BRANCH"
+          if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* ]]; then
+            TAG=$(git tag --points-at HEAD)
+            if [[ ! -z "$TAG" ]]; then
+              echo "::set-output name=new_tag::$TAG"
+              echo "::set-output name=new_tag_short::${TAG#v}"
+            else
+              echo "::set-output name=name::rc"
+            fi
+          else
+            echo "::set-output name=name::nightly"
+          fi
+      - name: Show info
+        env:
+          SHA_SHORT: ${{ steps.info.outputs.sha_short }}
+          NEW_TAG: ${{ steps.info.outputs.new_tag }}
+          NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
+          NAME: ${{ steps.info.outputs.name }}
+        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, name=$NAME"
   build-web:
     needs: 
       - ci
       - ci-web
+      - ci-collect-info
     runs-on: ubuntu-latest
     if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
@@ -61,14 +103,29 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_web.yml
+          inputs: '{
+            "sha_short": "${{ needs.ci-collect-info.outputs.sha_short }}", 
+            "new_tag": "${{ needs.ci-collect-info.outputs.new_tag }}", 
+            "new_tag_short": "${{ needs.ci-collect-info.outputs.new_tag_short }}", 
+            "name": "${{ needs.ci-collect-info.outputs.name }}",
+            "sha": "${{ github.sha }}"
+            }'
   build-server:
     needs: 
       - ci
       - ci-server
+      - ci-collect-info
     runs-on: ubuntu-latest
     if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
-      - name: Dispatch Web Build
+      - name: Dispatch Server Build
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_server.yml
+          inputs: '{
+            "sha_short": "${{ needs.ci-collect-info.outputs.sha_short }}", 
+            "new_tag": "${{ needs.ci-collect-info.outputs.new_tag }}", 
+            "new_tag_short": "${{ needs.ci-collect-info.outputs.new_tag_short }}", 
+            "name": "${{ needs.ci-collect-info.outputs.name }}",
+            "sha": "${{ github.sha }}"
+            }'
