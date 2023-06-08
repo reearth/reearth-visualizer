@@ -36,7 +36,7 @@ jobs:
             id: info
             # The tag name should be retrieved lazily, as tagging may be delayed.
             env:
-              BRANCH: ${{ github.event.inputs.branch}}
+              BRANCH: ${{github.event.workflow_run.inputs.branch}}
             run: |
               echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
               echo "BRANCH=$BRANCH"
