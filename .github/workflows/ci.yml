@@ -1,7 +1,7 @@
 name: ci
 on:
   push:
-    branches: [main, release/*, release]
+    branches: [main, release/*, release, dummy-workflow]
   pull_request:
 jobs:
   prepare:
