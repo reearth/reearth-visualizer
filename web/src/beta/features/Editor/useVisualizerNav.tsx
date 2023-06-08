@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
 
+import VisualizerNav from "@reearth/beta/features/Editor/VisualizerNav";
 import { Tab } from "@reearth/beta/features/Navbar";
-import VisualizerNav from "@reearth/beta/features/VisualizerNav";
 
 type Props = {
   tab: Tab;
