@@ -2,16 +2,13 @@ name: build-server
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Target branch'
-        required: true
-      ref:
-        description: 'Ref'
+      github:
+        description: 'Github'
         required: false
   repository_dispatch:
-    types: [build-server]
+      types: [build-server]
 jobs:
-  info:
+  info: 
     name: Collect information
     runs-on: ubuntu-latest
     outputs:
@@ -23,14 +20,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.ref.head_sha }}
+          ref: ${{ github.event.inputs.github.head_sha }}
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
         # The tag name should be retrieved lazily, as tagging may be delayed.
         env:
-          BRANCH: ${{ github.event.inputs.branch }}
+          BRANCH: ${{ github.event.inputs.github.ref_name }}
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           echo "BRANCH=$BRANCH"
@@ -65,7 +62,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.inputs.github.head_sha }}
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -89,7 +86,7 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.sha }}
+          commit: ${{ github.event.inputs.github.sha }}
           name: ${{ needs.info.outputs.name }}
           tag: ${{ needs.info.outputs.name }}
           body: ${{ needs.info.outputs.sha_short }}
@@ -105,7 +102,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.sha }}
+          commit: ${{ github.event.inputs.github.sha }}
           name: ${{ needs.info.outputs.new_tag }}
           tag: ${{ needs.info.outputs.new_tag}}
           bodyFile: CHANGELOG_latest.md

@@ -61,7 +61,7 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_web.yml
-          inputs: '{ "branch": "${{ github.ref_name}}", "ref": "${{ github.ref }}"}'
+          inputs: '{"github": "${{ github }}"}'
   build-server:
     needs: 
       - ci
@@ -73,4 +73,4 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_server.yml
-          inputs: '{ "branch": "${{ github.ref_name}}", "ref": "${{ github.ref }}"}'
+          inputs: '{"github": "${{ github }}"}'
