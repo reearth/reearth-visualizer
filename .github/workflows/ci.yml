@@ -73,4 +73,4 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_server.yml
-          inputs: '{"github": "${{ github }}"}'
+          inputs: '{"github": "${{ github.ref }}"}'
