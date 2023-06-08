@@ -13,7 +13,6 @@ export const Default: Story = {
     title: "New Page",
     index: 1,
     icon: "square",
-    onClick: () => alert("??"),
-    onAction: () => alert("!!"),
+    active: false,
   },
 };
