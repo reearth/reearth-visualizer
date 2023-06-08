@@ -12,6 +12,8 @@ import InfoText from "./Icons/infoboxTextIcon.svg";
 import InfoVideo from "./Icons/infoboxVideoIcon.svg";
 
 // Arrow
+import ArrowDown from "./Icons/arrowDown.svg";
+import ArrowUp from "./Icons/arrowUp.svg";
 import ArrowUpDown from "./Icons/arrowUpDown.svg";
 import ArrowLeft from "./Icons/arrowLeft.svg";
 import ArrowRight from "./Icons/arrowRight.svg";
@@ -35,6 +37,9 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
+// circle
+import PrimSphereIcon from "./Icons/primSphereIcon.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -45,6 +50,8 @@ export default {
   location: InfoLocation,
   photooverlay: PrimPhotoOverlay,
   arrowUpDown: ArrowUpDown,
+  arrowDown: ArrowDown,
+  arrowUp: ArrowUp,
   arrowRight: ArrowRight,
   arrowLeft: ArrowLeft,
   arrowLongLeft: ArrowLongLeft,
@@ -55,6 +62,7 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  primSphereIcon: PrimSphereIcon,
   timeline: Timeline,
   actionbutton: ActionButton,
 };
