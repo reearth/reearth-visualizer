@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.16.2 - 2023-06-08
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Update package.json [`4051be`](https://github.com/reearth/reearth/commit/4051be)
+
+### web, server
+
 ## 0.16.1 - 2023-06-08
 
 ### Web
