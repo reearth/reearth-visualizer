@@ -7,8 +7,7 @@ export type User = {
 export type Workspace = {
   id?: string;
   name?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  members?: Array<any>;
+  members?: Array<unknown>;
   policy?: {
     id: string;
     name: string;
