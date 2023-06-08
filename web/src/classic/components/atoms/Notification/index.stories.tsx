@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import Notification from ".";
 
 export default {
-  title: "atoms/NotificationBanner",
+  title: "classic/atoms/NotificationBanner",
   component: Notification,
 } as Meta;
 

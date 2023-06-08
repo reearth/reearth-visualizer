@@ -11,7 +11,7 @@ const items: RadioLabelProps[] = [
 ];
 
 export default {
-  title: "atoms/RadioLabelGroup",
+  title: "classic/atoms/RadioLabelGroup",
   component: RadioLabelGroup,
 } as Meta;
 

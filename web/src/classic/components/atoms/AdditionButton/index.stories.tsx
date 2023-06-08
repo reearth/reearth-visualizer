@@ -4,7 +4,7 @@ import { Component } from "react";
 import AdditionButton, { Props } from ".";
 
 export default {
-  title: "atoms/Buttons/AdditionButton",
+  title: "classic/atoms/Buttons/AdditionButton",
   component: AdditionButton,
 } as Meta;
 

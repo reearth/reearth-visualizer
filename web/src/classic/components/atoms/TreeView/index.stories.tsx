@@ -7,7 +7,7 @@ import { ItemProps } from "./types";
 import Component, { Props, Item } from ".";
 
 export default {
-  title: "atoms/TreeView",
+  title: "classic/atoms/TreeView",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

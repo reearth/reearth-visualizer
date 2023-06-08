@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "atoms/Scroll",
+  title: "classic/atoms/Scroll",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
