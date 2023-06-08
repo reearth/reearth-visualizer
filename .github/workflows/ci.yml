@@ -55,7 +55,7 @@ jobs:
     if: '!failure()'
     uses: ./.github/workflows/ci_collect_info.yml
     with:
-      branch: ${{ github.ref_name }}
+      branch: ${{github.ref}}
   build-web:
     needs: 
       - ci
