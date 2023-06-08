@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/reearth/reearthx/appx"
 	"github.com/samber/lo"
 )
 
@@ -15,6 +16,16 @@ type AuthConfig struct {
 	TTL      *int
 	ClientID *string
 	JWKSURI  *string
+}
+
+func (a AuthConfig) JWTProvider() appx.JWTProvider {
+	return appx.JWTProvider{
+		ISS:     a.ISS,
+		AUD:     a.AUD,
+		ALG:     a.ALG,
+		TTL:     a.TTL,
+		JWKSURI: a.JWKSURI,
+	}
 }
 
 type AuthConfigs []AuthConfig
@@ -38,6 +49,10 @@ func (ipd *AuthConfigs) Decode(value string) error {
 
 	*ipd = providers
 	return nil
+}
+
+func (a AuthConfigs) JWTProviders() []appx.JWTProvider {
+	return lo.Map(a, func(a AuthConfig, _ int) appx.JWTProvider { return a.JWTProvider() })
 }
 
 type Auth0Config struct {
@@ -114,6 +129,9 @@ func prepareUrl(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "https://" + url
 	}
-	url = strings.TrimSuffix(url, "/")
+	// url = strings.TrimSuffix(url, "/")
+	if !strings.HasSuffix(url, "/") {
+		url = url + "/"
+	}
 	return url
 }

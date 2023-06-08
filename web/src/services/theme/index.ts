@@ -9,3 +9,6 @@ export { default as Provider } from "./provider";
 export { default as PublishedAppProvider } from "./publishedAppProvider";
 export { usePublishTheme, publishTheme, mask, type SceneThemeOptions } from "./publishTheme";
 export type { PublishTheme } from "./publishTheme";
+export { default as GlobalStyles } from "./globalstyle";
+export { default as lightTheme } from "./lightheme";
+export { default as darkTheme } from "./darkTheme";
