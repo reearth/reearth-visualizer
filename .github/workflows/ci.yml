@@ -126,6 +126,6 @@ jobs:
             "sha_short": "${{ needs.ci-collect-info.outputs.sha_short }}", 
             "new_tag": "${{ needs.ci-collect-info.outputs.new_tag }}", 
             "new_tag_short": "${{ needs.ci-collect-info.outputs.new_tag_short }}", 
-            "name": "${{ needs.ci-collect-info.outputs.name }}"
+            "name": "${{ needs.ci-collect-info.outputs.name }}",
             "sha": "${{ github.sha }}"
             }'
