@@ -8,43 +8,43 @@ jobs:
   ci-server-lint:
     runs-on: ubuntu-latest
     if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
-    # steps:
-    #   - name: set up
-    #     uses: actions/setup-go@v4
-    #     with:
-    #       go-version: ${{ env.GO_VERSION }}
-    #       cache: false
-    #   - name: checkout
-    #     uses: actions/checkout@v3
-    #   - name: golangci-lint
-    #     uses: golangci/golangci-lint-action@v3
-    #     with:
-    #       version: v1.52
-    #       args: --timeout=10m
-    #       working-directory: server
+    steps:
+      - name: set up
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52
+          args: --timeout=10m
+          working-directory: server
 
-  ci-server-test:
-    runs-on: ubuntu-latest
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
-    services:
-      mongo:
-        image: mongo:5-focal
-        ports:
-          - 27017:27017
-    # steps:
-    #   - name: set up
-    #     uses: actions/setup-go@v4
-    #     with:
-    #       go-version: ${{ env.GO_VERSION }}
-    #   - name: checkout
-    #     uses: actions/checkout@v3
-    #   - name: test
-    #     run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
-    #     env:
-    #       REEARTH_DB: mongodb://localhost
-    #     working-directory: server
-    #   - name: Send coverage report
-    #     uses: codecov/codecov-action@v2
-    #     with:
-    #       token: ${{ secrets.CODECOV_TOKEN }}
-    #       flags: server
+  # ci-server-test:
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
+  #   services:
+  #     mongo:
+  #       image: mongo:5-focal
+  #       ports:
+  #         - 27017:27017
+  #   steps:
+  #     - name: set up
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: ${{ env.GO_VERSION }}
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #     - name: test
+  #       run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+  #       env:
+  #         REEARTH_DB: mongodb://localhost
+  #       working-directory: server
+  #     - name: Send coverage report
+  #       uses: codecov/codecov-action@v2
+  #       with:
+  #         token: ${{ secrets.CODECOV_TOKEN }}
+  #         flags: server
