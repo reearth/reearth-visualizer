@@ -174,6 +174,7 @@ jobs:
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
           commit: ${{ github.event.inputs.sha }}

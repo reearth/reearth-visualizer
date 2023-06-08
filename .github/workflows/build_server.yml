@@ -67,6 +67,7 @@ jobs:
         if: ${{ github.event.inputs.new_tag != 'blank' }}
         uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}
           commit: ${{ github.event.inputs.sha }}
           name: ${{ github.event.inputs.new_tag }}
@@ -122,8 +123,8 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth
-          version: tags/${{ github.event.inputs.name || needs.info.outputs.tag }}
-          file: reearth-web_${{ github.event.inputs.name || needs.info.outputs.tag }}.tar.gz
+          version: tags/${{ github.event.inputs.name && github.event.inputs.new_name != 'blank' && github.event.inputs.name || github.event.inputs.tag }}
+          file: reearth-web_${{ github.event.inputs.name && github.event.inputs.new_name != 'blank' && github.event.inputs.name || github.event.inputs.tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth/web
