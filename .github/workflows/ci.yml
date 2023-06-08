@@ -1,7 +1,7 @@
 name: ci
 on:
   push:
-    branches: [main, release/*, release]
+    branches: [main, release/*, release, dummy-workflow]
   pull_request:
 jobs:
   prepare:
@@ -61,14 +61,16 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_web.yml
+          inputs: '{"github": "${{ github }}"}'
   build-server:
     needs: 
       - ci
       - ci-server
     runs-on: ubuntu-latest
-    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
+    if: ${{!failure()}}
     steps:
-      - name: Dispatch Web Build
+      - name: Dispatch Server Build
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: build_server.yml
+          inputs: '{"github": "${{ github }}"}'

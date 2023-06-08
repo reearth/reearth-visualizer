@@ -1,6 +1,10 @@
 name: build-web
 on:
   workflow_dispatch:
+    inputs:
+      github:
+        description: 'Github'
+        required: false
   repository_dispatch:
       types: [build-web]
 jobs:
@@ -16,14 +20,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.inputs.github.head_sha }}
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info
         id: info
         # The tag name should be retrieved lazily, as tagging may be delayed.
         env:
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          BRANCH: ${{ github.event.inputs.github.ref_name }}
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           echo "BRANCH=$BRANCH"
@@ -61,7 +65,7 @@ jobs:
           node-version: lts/*
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.inputs.github.head_sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -102,10 +106,10 @@ jobs:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
-          commit: ${{ github.sha }}
+          commit: ${{ github.event.inputs.github.sha }}
           name: ${{ needs.info.outputs.name }}
           tag: ${{ needs.info.outputs.name }}
-          body: ${{ github.sha }}
+          body: ${{ github.event.inputs.github.sha }}
           prerelease: true
       - name: Invoke ci-deploy-web-nightly workflow
         uses: benc-uk/workflow-dispatch@v1
@@ -208,7 +212,7 @@ jobs:
         with:
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
-          commit: ${{ github.sha }}
+          commit: ${{ github.event.inputs.github.sha }}
           name: ${{ needs.info.outputs.new_tag }}
           tag: ${{ needs.info.outputs.new_tag }}
           bodyFile: CHANGELOG_latest.md
