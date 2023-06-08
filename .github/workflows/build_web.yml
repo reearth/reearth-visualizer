@@ -111,7 +111,7 @@ jobs:
         env:
           TAG: ${{ github.event.inputs.new_tag_short }}
           NAME: ${{ github.event.inputs.name }}
-          SHA: ${{ github.event.inputs.new_tag_short }}
+          SHA: ${{ github.event.inputs.sha_short }}
         run: |
           if [[ -n $TAG ]]; then
             PLATFORMS=linux/amd64,linux/arm64
