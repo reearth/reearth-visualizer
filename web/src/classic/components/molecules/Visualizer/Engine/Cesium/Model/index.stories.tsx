@@ -5,7 +5,7 @@ import { V, location, SceneProperty } from "../storybook";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Model",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Model",
   component: Component,
 } as Meta;
 

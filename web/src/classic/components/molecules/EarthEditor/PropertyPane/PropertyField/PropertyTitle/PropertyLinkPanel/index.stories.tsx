@@ -36,7 +36,7 @@ const datasetSchemas: DatasetSchema[] = [
 ];
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle/PropertyLinkPanel",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle/PropertyLinkPanel",
   component: PropertyLinkPanel,
 } as Meta;
 
