@@ -38,7 +38,7 @@ import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
 //Dashboard
-import Dashboard from "./Icons/Dashboard.svg";
+import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
 
 //Workspaces
