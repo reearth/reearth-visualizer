@@ -28,11 +28,9 @@ jobs:
         # The tag name should be retrieved lazily, as tagging may be delayed.
         env:
           BRANCH: ${{ github.event.inputs.github.ref_name }}
-          GITHUB: ${{ github.event.inputs.github }}
+          GITHUB: ${{ toJson(github.event.inputs.github) }}
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          echo "BRANCH=$BRANCH"
-          echo "GITHUB=$GITHUB"
           if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* || "$BRANCH" = "fix/ci-workflow-dispatch-branch" ]]; then
             TAG=$(git tag --points-at HEAD)
             if [[ ! -z "$TAG" ]]; then
