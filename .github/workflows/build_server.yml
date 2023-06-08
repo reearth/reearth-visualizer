@@ -97,7 +97,7 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ github.event.inputs.new_tag_short == 'blank' && '' || github.event.inputs.new_tag_short}}
+          TAG: ${{ github.event.inputs.new_tag_short && github.event.inputs.new_tag_short != 'blank' && github.event.inputs.new_tag_short || '' }}
           NAME: ${{ github.event.inputs.name }}
           SHA: ${{ github.event.inputs.sha_short }}
         run: |
