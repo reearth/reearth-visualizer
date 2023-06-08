@@ -1,8 +1,8 @@
 name: ci
 on:
   push:
-    branches: [main, release/*, release]
-  pull_request:
+    branches: [main, release/*, release, fix/ci-blank-issue]
+  # pull_request:
 jobs:
   prepare:
     runs-on: ubuntu-latest
