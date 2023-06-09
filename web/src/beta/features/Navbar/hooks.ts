@@ -106,9 +106,7 @@ export default (sceneId: string) => {
 
   return {
     workspaces,
-    workspaceId,
     currentProject,
-    projectId: currentProject?.id ?? project?.id,
     isPersonal: personal,
     user,
     currentWorkspace,
