@@ -9,5 +9,5 @@ export default {
 type Story = StoryObj<typeof InsertionButton>;
 
 export const Default: Story = {
-  args: {},
+  render: () => <InsertionButton />,
 };
