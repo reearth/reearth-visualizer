@@ -1,6 +1,5 @@
 export * from "./common";
 export * from "./styled";
-export { default as colors } from "./values/colors";
 export { default as fonts } from "./common/fonts";
 export { default as metrics, metricsSizes } from "./common/metrics";
 export { default } from "./darkTheme";

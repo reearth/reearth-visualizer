@@ -23,6 +23,11 @@ const commonColors = {
       2: "#df3013",
     },
   },
+  publish: {
+    published: "#00A0E8",
+    building: "#A0A0A0",
+    unpublished: "#3B383F",
+  },
 };
 
 export default commonColors;

@@ -1,5 +1,4 @@
-import colors from "../values/colors";
-
+import colors from "./colors";
 import { metricsSizes } from "./metrics";
 import zIndexes from "./zIndex";
 
@@ -8,8 +7,8 @@ export default {
   colors,
   metrics: metricsSizes,
   publishStatus: {
-    published: colors.dark.primary.main,
-    building: colors.dark.outline.main,
-    unpublished: colors.dark.secondary.weakest,
+    published: colors.publish.published,
+    building: colors.publish.building,
+    unpublished: colors.publish.unpublished,
   },
 };
