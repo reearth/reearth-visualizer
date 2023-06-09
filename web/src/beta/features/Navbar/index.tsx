@@ -1,3 +1,4 @@
+import TabButton from "@reearth/beta/features/Navbar/TabButton";
 import { useEditorNavigation } from "@reearth/beta/hooks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -55,24 +56,27 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
       <RightSection>
         <TabButton
           onClick={() => handleEditorNavigation("scene")}
-          isSelected={currentTab === "scene"}>
-          {t("Scene")}
-        </TabButton>
+          selected={currentTab === "scene"}
+          label={t("Scene")}
+        />
+
         <TabButton
           onClick={() => handleEditorNavigation("story")}
-          isSelected={currentTab === "story"}>
-          {t("Story")}
-        </TabButton>
+          selected={currentTab === "story"}
+          label={t("Story")}
+        />
+
         <TabButton
           onClick={() => handleEditorNavigation("widgets")}
-          isSelected={currentTab === "widgets"}>
-          {t("Widgets")}
-        </TabButton>
+          selected={currentTab === "widgets"}
+          label={t("Widgets")}
+        />
+
         <TabButton
           onClick={() => handleEditorNavigation("publish")}
-          isSelected={currentTab === "publish"}>
-          {t("Publish")}
-        </TabButton>
+          selected={currentTab === "publish"}
+          label={t("Publish")}
+        />
       </RightSection>
     </Wrapper>
   );
@@ -87,7 +91,7 @@ const Wrapper = styled.div`
   align-items: center;
   padding: 8px 24px;
   gap: 24px;
-  width: 1920px;
+  width: 100%;
   height: 51px;
   background: ${({ theme }) => theme.editorNavBar.bg};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -100,25 +104,4 @@ const RightSection = styled.div`
   gap: 4px;
   width: 301px;
   height: 35px;
-`;
-
-const TabButton = styled.button<{ isSelected: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 8px 12px;
-  gap: 10px;
-  width: 67px;
-  height: 35px;
-  border-radius: 4px;
-  color: ${({ isSelected, theme }) => (isSelected ? theme.main.text : theme.main.weak)};
-  background: ${({ isSelected, theme }) =>
-    isSelected ? theme.main.lighterBg : theme.editorNavBar.bg};
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 19px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
