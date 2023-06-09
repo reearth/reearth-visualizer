@@ -8,7 +8,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 import {
   Asset as AssetType,

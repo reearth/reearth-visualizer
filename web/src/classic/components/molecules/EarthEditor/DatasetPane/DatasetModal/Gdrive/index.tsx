@@ -10,7 +10,7 @@ import AssetCard from "@reearth/classic/components/molecules/Common/AssetModal/A
 import AssetListItem from "@reearth/classic/components/molecules/Common/AssetModal/AssetListItem";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 import useHooks, { GoogleSheet, SheetParameter as SheetParam } from "./hooks";
 

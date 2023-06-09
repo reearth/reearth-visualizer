@@ -1,21 +1,11 @@
 import { useMemo } from "react";
 import tinycolor from "tinycolor2";
 
+import { PublishTheme } from "../types";
+
 import { dark } from "./dark";
 import { forest } from "./forest";
 import { light } from "./light";
-
-export type PublishTheme = {
-  strongText: string;
-  mainText: string;
-  weakText: string;
-  strongIcon: string;
-  mainIcon: string;
-  weakIcon: string;
-  select: string;
-  mask: string;
-  background: string;
-};
 
 export type SceneThemeOptions = {
   themeType?: "light" | "dark" | "forest" | "custom";

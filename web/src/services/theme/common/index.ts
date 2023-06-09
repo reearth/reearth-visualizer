@@ -1,8 +1,9 @@
-import colors from "./values/colors";
-import { metricsSizes } from "./values/metrics";
-import zIndexes from "./values/z-index";
+import colors from "../values/colors";
 
-export const commonTheme = {
+import { metricsSizes } from "./metrics";
+import zIndexes from "./z-index";
+
+export default {
   zIndexes,
   colors,
   metrics: metricsSizes,

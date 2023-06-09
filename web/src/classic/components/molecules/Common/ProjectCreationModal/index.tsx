@@ -10,7 +10,7 @@ import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/values/fonts";
+import fonts from "@reearth/services/theme/common/fonts";
 import { ProjectType } from "@reearth/types";
 
 export interface FormValues {

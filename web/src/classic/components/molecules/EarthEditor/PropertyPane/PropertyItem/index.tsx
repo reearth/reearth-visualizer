@@ -10,7 +10,7 @@ import { useBind } from "@reearth/classic/util/use-bind";
 import { zeroValues } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 import { ExtendedFuncProps2 } from "@reearth/types";
 
 import PropertyField, {

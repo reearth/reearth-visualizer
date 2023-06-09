@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 import Icon from "@reearth/beta/components/Icon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/values/fonts";
+import fonts from "@reearth/services/theme/common/fonts";
 
 import { CommonProps as BlockProps } from "..";
 import { Border } from "../utils";

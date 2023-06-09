@@ -4,7 +4,7 @@ import { useClickAway } from "react-use";
 import { useMergeRefs } from "use-callback-ref";
 
 import { styled, css, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 // Components
 

@@ -4,7 +4,7 @@ import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 export type Props = {
   children?: ReactNode;

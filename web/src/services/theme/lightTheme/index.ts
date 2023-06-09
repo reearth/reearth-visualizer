@@ -1,8 +1,8 @@
-import commonTheme from "./common";
-import { Theme } from "./types/theme";
-import colors from "./values/colors";
+import commonTheme from "../common";
+import { Theme } from "../types";
+import colors from "../values/colors";
 
-const lightheme: Theme = {
+export default <Theme>{
   ...commonTheme,
   main: {
     accent: colors.light.primary.main,
@@ -215,5 +215,3 @@ const lightheme: Theme = {
     orangeHighlight: colors.brand.orange.main,
   },
 };
-
-export default lightheme;

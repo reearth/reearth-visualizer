@@ -5,8 +5,8 @@ import { useAuth } from "@reearth/services/auth";
 import { Theme, useGetThemeQuery } from "@reearth/services/gql";
 import { useCurrentTheme } from "@reearth/services/state";
 
+import GlobalStyle from "./common/globalstyle";
 import darkTheme from "./darkTheme";
-import GlobalStyle from "./globalstyle";
 import lightTheme from "./lightheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {

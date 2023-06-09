@@ -9,7 +9,7 @@ import ProjectCreationModal from "@reearth/classic/components/molecules/Common/P
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme, metrics, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 import { ProjectType } from "@reearth/types";
 
 import ProjectTypeSelectionModal from "../Common/ProjectTypeSelectionModal";

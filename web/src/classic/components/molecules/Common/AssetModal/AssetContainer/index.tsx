@@ -11,7 +11,7 @@ import AssetDeleteModal from "@reearth/classic/components/molecules/Common/Asset
 import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";

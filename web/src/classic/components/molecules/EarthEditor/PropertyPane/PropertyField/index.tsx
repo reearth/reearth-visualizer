@@ -12,7 +12,7 @@ import {
   Camera,
 } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 import CameraField from "./CameraField";
 import ColorField from "./ColorField";

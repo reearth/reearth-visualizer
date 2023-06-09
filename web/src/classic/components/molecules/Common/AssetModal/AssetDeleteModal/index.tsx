@@ -6,7 +6,7 @@ import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Props {

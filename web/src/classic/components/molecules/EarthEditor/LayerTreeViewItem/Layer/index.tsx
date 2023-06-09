@@ -7,7 +7,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
 import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/values/fonts";
+import fonts from "@reearth/services/theme/common/fonts";
 
 import LayerActions, { Format } from "../LayerActions";
 import LayerActionsList from "../LayerActionsList";

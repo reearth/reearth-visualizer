@@ -5,7 +5,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import Policy from "@reearth/classic/components/molecules/Common/Policy";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 export type Props = {
   title?: string;

@@ -4,7 +4,7 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/values/metrics";
+import { metricsSizes } from "@reearth/services/theme/common/metrics";
 
 const MarketplaceButton: React.FC = () => {
   const t = useT();

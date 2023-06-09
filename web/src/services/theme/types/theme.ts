@@ -1,5 +1,17 @@
-import { Colors } from "./values/colors";
-import { MetricsSizesType } from "./values/metrics";
+import type { MetricsSizesType } from "../common/metrics";
+import type { Colors } from "../values/colors";
+
+export type PublishTheme = {
+  strongText: string;
+  mainText: string;
+  weakText: string;
+  strongIcon: string;
+  mainIcon: string;
+  weakIcon: string;
+  select: string;
+  mask: string;
+  background: string;
+};
 
 export type Theme = {
   colors: Colors;
