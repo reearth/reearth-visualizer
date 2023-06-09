@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 
 type SwitchField<T> = {
   id: string;
-  name?: string;
   active?: boolean;
 } & T;
 
