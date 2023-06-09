@@ -1,5 +1,6 @@
-import colors from "./colors";
-import { Theme, commonTheme } from "./theme";
+import { commonTheme } from "./commonTheme";
+import { Theme } from "./types";
+import colors from "./values/colors";
 
 const darkTheme: Theme = {
   ...commonTheme,

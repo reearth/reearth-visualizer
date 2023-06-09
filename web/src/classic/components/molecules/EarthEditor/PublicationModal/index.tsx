@@ -10,7 +10,7 @@ import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/values/metrics";
 
 import useHooks from "./hooks";
 import InputField from "./InputField";

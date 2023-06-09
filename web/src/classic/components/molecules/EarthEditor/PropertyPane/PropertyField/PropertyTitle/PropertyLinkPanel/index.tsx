@@ -7,7 +7,7 @@ import Slide from "@reearth/classic/components/atoms/Slide";
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/values/metrics";
 
 import Header from "./Header";
 import useHooks from "./hooks";

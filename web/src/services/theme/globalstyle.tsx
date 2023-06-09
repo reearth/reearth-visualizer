@@ -1,5 +1,4 @@
 import { Global } from "@emotion/react";
-import React from "react";
 import "github-markdown-css/github-markdown.css";
 
 import { css } from "@reearth/services/theme";
@@ -96,4 +95,5 @@ export const styles = css`
 `;
 
 const GlobalStyle: React.FC = () => <Global styles={styles} />;
+
 export default GlobalStyle;

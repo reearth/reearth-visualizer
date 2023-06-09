@@ -1,4 +1,4 @@
-import { styled } from "./styled";
+import { styled } from "../styled";
 
 const type = {
   base: '"Noto Sans", "hiragino sans", "hiragino kaku gothic proN", -apple-system, BlinkMacSystem, sans-serif',

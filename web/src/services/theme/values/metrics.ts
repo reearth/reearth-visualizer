@@ -50,6 +50,8 @@ export const metricsSizes = {
   "4xl": 32,
 } as const;
 
+export type MetricsSizesType = typeof metricsSizes;
+
 export type MetricsSizes = keyof typeof metricsSizes;
 
 export default metrics;

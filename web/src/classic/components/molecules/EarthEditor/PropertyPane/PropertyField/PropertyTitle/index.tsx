@@ -4,7 +4,7 @@ import { useClickAway } from "react-use";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import { styled, css } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/values/fonts";
 
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 

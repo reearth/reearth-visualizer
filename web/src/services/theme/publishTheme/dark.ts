@@ -1,4 +1,4 @@
-import colors from "../colors";
+import colors from "../values/colors";
 
 import type { PublishTheme } from ".";
 

@@ -9,7 +9,7 @@ import PublicationStatus, {
 import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/values/metrics";
 import { ProjectType } from "@reearth/types";
 
 export type Status = StatusType;

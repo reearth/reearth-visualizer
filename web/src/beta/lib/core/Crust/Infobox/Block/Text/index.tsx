@@ -5,7 +5,7 @@ import Icon from "@reearth/beta/components/Icon";
 import Markdown from "@reearth/beta/components/Markdown";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/values/fonts";
 
 import { CommonProps as BlockProps, Typography } from "..";
 import { Border, typographyStyles } from "../utils";

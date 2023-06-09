@@ -2,7 +2,7 @@ import React from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/values/metrics";
 
 type Props = {
   className?: string;

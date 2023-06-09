@@ -1,5 +1,5 @@
 import "@emotion/react";
-import { Theme as ReearthTheme } from "./theme";
+import { Theme as ReearthTheme } from "./commonTheme";
 
 declare module "@emotion/react" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

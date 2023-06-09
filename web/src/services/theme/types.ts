@@ -1,21 +1,9 @@
-import colors from "./colors";
-import { metricsSizes } from "./metrics";
-import zIndexes from "./z-index";
-
-export const commonTheme = {
-  zIndexes,
-  colors,
-  metrics: metricsSizes,
-  publishStatus: {
-    published: colors.dark.primary.main,
-    building: colors.dark.outline.main,
-    unpublished: colors.dark.secondary.weakest,
-  },
-};
+import { Colors } from "./values/colors";
+import { MetricsSizesType } from "./values/metrics";
 
 export type Theme = {
-  colors: typeof colors;
-  metrics: typeof metricsSizes;
+  colors: Colors;
+  metrics: MetricsSizesType;
   main: {
     accent: string;
     alert: string;

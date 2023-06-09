@@ -6,7 +6,7 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Camera as CameraValue } from "@reearth/classic/util/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/values/metrics";
 
 import { ComponentProps as WidgetProps } from "..";
 
