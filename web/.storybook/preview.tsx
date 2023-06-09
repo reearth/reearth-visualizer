@@ -9,8 +9,7 @@ import {
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 import type { Preview } from "@storybook/react";
-import React, { ReactElement } from "react";
-import { withRouter } from "storybook-addon-react-router-v6";
+import React from "react";
 
 import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
@@ -43,7 +42,6 @@ const preview: Preview = {
     },
   },
   decorators: [
-    withRouter,
     withThemeFromJSXProvider({
       themes: {
         light: lightTheme,
