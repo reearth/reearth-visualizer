@@ -92,7 +92,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 
 	res, err := r.findOneWithoutReadFilter(ctx, f)
 	if errors.Is(err, rerror.ErrNotFound) {
-		log.Infof("mongo: project.FindByPublicName: name=%s err=%v filter=%#v", name, err, f)
+		log.Infof("mongo: project.FindByPublicName: name=%s err=%v filter=%v q=%#v", name, err, r.f.Readable.Strings(), f)
 	}
 	return res, err
 }

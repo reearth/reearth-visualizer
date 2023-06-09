@@ -75,7 +75,7 @@ func TestProject_FindByPublicName(t *testing.T) {
 	wid := id.NewWorkspaceID()
 	wid2 := id.NewWorkspaceID()
 	prj1 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("alias").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
-	prj2 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("aaaaa").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
+	prj2 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("aaaaa").PublishmentStatus(project.PublishmentStatusLimited).MustBuild()
 	prj3 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("bbbbb").MustBuild()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		util.DR(mongodoc.NewProject(prj1)),
@@ -84,11 +84,20 @@ func TestProject_FindByPublicName(t *testing.T) {
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
+
 	got, err := r.FindByPublicName(ctx, "alias")
 	assert.NoError(t, err)
 	assert.Equal(t, prj1, got)
 
+	got, err = r.FindByPublicName(ctx, "aaaaa")
+	assert.NoError(t, err)
+	assert.Equal(t, prj2, got)
+
 	got, err = r.FindByPublicName(ctx, "alias2")
+	assert.Equal(t, rerror.ErrNotFound, err)
+	assert.Nil(t, got)
+
+	got, err = r.FindByPublicName(ctx, "bbbbb")
 	assert.Equal(t, rerror.ErrNotFound, err)
 	assert.Nil(t, got)
 
@@ -96,6 +105,7 @@ func TestProject_FindByPublicName(t *testing.T) {
 	r2 := r.Filtered(repo.WorkspaceFilter{
 		Readable: id.WorkspaceIDList{wid2},
 	})
+
 	got, err = r2.FindByPublicName(ctx, "alias")
 	assert.NoError(t, err)
 	assert.Equal(t, prj1, got)
