@@ -62,13 +62,15 @@ const TitleArea = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  justify-content: space-between;
   padding: 8px;
   gap: 4px;
 
   background: ${({ active }) => (active ? "#3b3cd0" : "#232226")};
-  border: 1px solid #3f3d45;
+  border: ${({ active }) => (active ? "1px solid #3b3cd0" : "1px solid #3f3d45")};
   border-radius: 6px;
 
+  width: 100%;
   min-height: 56px;
 `;
 
