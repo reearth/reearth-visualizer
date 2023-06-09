@@ -61,7 +61,7 @@ export default function Resource({
     return [
       type ?? (data?.type as ResourceAppearance["type"]),
       url ?? data?.url,
-      !!data?.time?.updateClockOnLoad,
+      data?.time?.updateClockOnLoad ?? true,
     ];
   }, [property, layer]);
   const { viewer } = useCesium();

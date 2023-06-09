@@ -1,6 +1,12 @@
 package layer
 
+import "github.com/samber/lo"
+
 type List []*Layer
+
+func ListFrom(l []Layer) []*Layer {
+	return lo.ToSlicePtr(l)
+}
 
 func (ll List) Last() *Layer {
 	if len(ll) == 0 {

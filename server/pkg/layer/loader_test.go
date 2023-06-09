@@ -77,3 +77,16 @@ func TestLoader_Walk3(t *testing.T) {
 	assert.Equal(t, []Layer{l5, l3, l4}, layers)
 	assert.Equal(t, []GroupList{nil, {l5}, {l5}}, parents)
 }
+
+func TestLoaderBySceneFrom(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	l3 := NewItem().NewID().Scene(sid).MustBuild()
+	l4 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l1.ID(), l2.ID()})).MustBuild()
+	l5 := NewGroup().NewID().Scene(sid).Layers(NewIDList([]ID{l3.ID(), l4.ID()})).MustBuild()
+	res, err := LoaderFrom([]Layer{l1, l2, l3, l4, l5})(context.Background(), l1.ID(), l5.ID())
+
+	assert.NoError(t, err)
+	assert.Equal(t, List{l1.LayerRef(), l5.LayerRef()}, res)
+}
