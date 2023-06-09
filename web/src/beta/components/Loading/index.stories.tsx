@@ -1,10 +1,13 @@
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import Loading from ".";
 
-export default {
-  title: "atoms/Loading",
+const meta: Meta<typeof Loading> = {
   component: Loading,
-} as Meta;
+};
 
-export const Default = () => <Loading />;
+export default meta;
+
+type Story = StoryObj<typeof Loading>;
+
+export const Default: Story = { render: () => <Loading /> };

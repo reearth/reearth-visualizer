@@ -1,16 +1,31 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
-import Modal, { Props } from ".";
+import Modal from ".";
 
-export default {
-  title: "atoms/Modal",
+const meta: Meta<typeof Modal> = {
   component: Modal,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
-} as Meta;
+};
 
-export const Default: Story<Props> = args => <Modal {...args} />;
+export default meta;
 
-Default.args = {
-  size: "sm",
-  isVisible: true,
+type Story = StoryObj<typeof Modal>;
+
+export const Small: Story = {
+  args: {
+    size: "sm",
+    isVisible: true,
+  },
+};
+
+export const Medium: Story = {
+  args: {
+    size: "md",
+    isVisible: true,
+  },
+};
+export const Large: Story = {
+  args: {
+    size: "lg",
+    isVisible: true,
+  },
 };

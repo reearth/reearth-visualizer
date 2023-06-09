@@ -1,11 +1,15 @@
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import Avatar from ".";
 
-export default {
-  title: "atoms/Avatar",
+const meta: Meta<typeof Avatar> = {
   component: Avatar,
-} as Meta;
+};
 
-export const Default = () => <Avatar innerText="ReEarth" />;
-export const Large = () => <Avatar size="large" innerText="ReEarth" />;
+export default meta;
+
+type Story = StoryObj<typeof Avatar>;
+
+export const Default: Story = { render: () => <Avatar innerText="ReEarth" /> };
+export const Small: Story = { render: () => <Avatar size="small" innerText="ReEarth" /> };
+export const Large: Story = { render: () => <Avatar size="large" innerText="ReEarth" /> };
