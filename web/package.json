@@ -1,6 +1,6 @@
 {
     "name": "@reearth/web",
-    "version": "0.15.1",
+    "version": "0.16.2",
     "repository": "https://github.com/reearth/reearth.git",
     "author": "Re:Earth contributors <community@reearth.io>",
     "license": "Apache-2.0",
@@ -41,6 +41,7 @@
         "@playwright/test": "1.33.0",
         "@rollup/plugin-yaml": "4.1.0",
         "@storybook/addon-essentials": "7.0.18",
+        "@storybook/addon-styling": "1.0.8",
         "@storybook/addons": "7.0.18",
         "@storybook/builder-vite": "7.0.18",
         "@storybook/manager-api": "7.0.18",
