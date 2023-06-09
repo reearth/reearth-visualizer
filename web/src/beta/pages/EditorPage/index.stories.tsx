@@ -1,10 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { ComponentProps } from "react";
 
-import Component from ".";
+import EditorPage from ".";
 
-export default {
-  component: Component,
+const meta: Meta<typeof EditorPage> = {
+  component: EditorPage,
   parameters: {
     reactRouter: {
       routePath: "/scene/:sceneId/:tab",
@@ -14,11 +13,15 @@ export default {
       },
     },
   },
-} as Meta<ComponentProps<typeof Component>>;
+};
 
-export const Default: StoryObj<typeof Component> = {};
+export default meta;
 
-export const NotFound: StoryObj<typeof Component> = {
+type Story = StoryObj<typeof EditorPage>;
+
+export const Default: Story = {};
+
+export const NotFound: Story = {
   parameters: {
     reactRouter: {
       routeParams: {

@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { ComponentProps } from "react";
 
-import Component from ".";
+import VisualizerNav from ".";
 
-export default {
-  component: Component,
-} as Meta<ComponentProps<typeof Component>>;
-
-export const Default: StoryObj<typeof Component> = {
-  args: {},
+const meta: Meta<typeof VisualizerNav> = {
+  component: VisualizerNav,
 };
+
+export default meta;
+
+type Story = StoryObj<typeof VisualizerNav>;
+
+export const Default: Story = {};

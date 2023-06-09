@@ -1,20 +1,23 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { ComponentProps } from "react";
 
-import Component from ".";
+import SidePanel from ".";
 
-export default {
-  component: Component,
+const meta: Meta<typeof SidePanel> = {
+  component: SidePanel,
   render: args => {
     return (
       <div style={{ height: "100vh", backgroundColor: "red" }}>
-        <Component {...args} />
+        <SidePanel {...args} />
       </div>
     );
   },
-} as Meta<ComponentProps<typeof Component>>;
+};
 
-export const LeftSingleContent: StoryObj<typeof Component> = {
+export default meta;
+
+type Story = StoryObj<typeof SidePanel>;
+
+export const LeftSingleContent: Story = {
   args: {
     location: "left",
     contents: [
@@ -27,7 +30,7 @@ export const LeftSingleContent: StoryObj<typeof Component> = {
   },
 };
 
-export const RightMultiContents: StoryObj<typeof Component> = {
+export const RightMultiContents: Story = {
   args: {
     location: "left",
     contents: [
