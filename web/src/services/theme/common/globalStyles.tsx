@@ -94,6 +94,6 @@ export const styles = css`
   }
 `;
 
-const GlobalStyle: React.FC = () => <Global styles={styles} />;
+const GlobalStyles: React.FC = () => <Global styles={styles} />;
 
-export default GlobalStyle;
+export default GlobalStyles;

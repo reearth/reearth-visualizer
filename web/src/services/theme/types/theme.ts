@@ -1,5 +1,5 @@
 import type { MetricsSizesType } from "../common/metrics";
-import { ZIndex } from "../common/z-index";
+import { ZIndex } from "../common/zIndex";
 import type { Colors } from "../values/colors";
 
 export type PublishTheme = {

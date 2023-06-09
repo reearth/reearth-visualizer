@@ -1,7 +1,7 @@
 import colors from "../values/colors";
 
 import { metricsSizes } from "./metrics";
-import zIndexes from "./z-index";
+import zIndexes from "./zIndex";
 
 export default {
   zIndexes,
