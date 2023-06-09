@@ -35,9 +35,6 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
-// Plus
-import Plus from "./Icons/plus.svg";
-
 // Square
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
@@ -62,7 +59,6 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
-  plus: Plus,
   square: Square,
   timeline: Timeline,
   twoRectangle: TwoRectangle,
