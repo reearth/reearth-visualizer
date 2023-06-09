@@ -1,4 +1,5 @@
 import type { MetricsSizesType } from "../common/metrics";
+import { ZIndex } from "../common/z-index";
 import type { Colors } from "../values/colors";
 
 export type PublishTheme = {
@@ -16,6 +17,7 @@ export type PublishTheme = {
 export type Theme = {
   colors: Colors;
   metrics: MetricsSizesType;
+  zIndexes: ZIndex;
   main: {
     accent: string;
     alert: string;
@@ -200,23 +202,6 @@ export type Theme = {
     activeBgBorder: string;
     activeToggle: string;
     highlight: string;
-  };
-  zIndexes: {
-    base: number;
-    hidden: number;
-    form: number;
-    infoBox: number;
-    pluginModal: number;
-    pluginPopup: number;
-    propertyFieldPopup: number;
-    descriptionBalloon: number;
-    dropDown: number;
-    fullScreenModal: number;
-    loading: number;
-    notificationBar: number;
-    splashScreen: number;
-    settingHeader: number;
-    menuForDevice: number;
   };
   descriptionBalloon: {
     bg: string;

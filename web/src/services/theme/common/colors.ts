@@ -1,6 +1,4 @@
-import { CommonColors } from "../types";
-
-export default <CommonColors>{
+const commonColors = {
   general: {
     transparent: "transparent",
     transparentLight: "rgba(0,0,0,0.4)",
@@ -26,3 +24,7 @@ export default <CommonColors>{
     },
   },
 };
+
+export default commonColors;
+
+export type CommonColors = typeof commonColors;

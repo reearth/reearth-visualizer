@@ -1,8 +1,4 @@
-import type { Colors } from "../types";
-
-export { Colors } from "../types";
-
-const colors: Colors = {
+const colors = {
   bg: {
     1: "#070707",
     2: "#171618",
@@ -52,3 +48,5 @@ const colors: Colors = {
 };
 
 export default colors;
+
+export type Colors = typeof colors;
