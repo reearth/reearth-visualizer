@@ -23,7 +23,7 @@ type Props = {
   openModal?: () => void;
   onModalClose?: (r?: boolean) => void;
 };
-const CommonHeader: React.FC<Props> = ({
+const LeftSection: React.FC<Props> = ({
   user,
   dashboard,
   currentProject,
@@ -65,7 +65,7 @@ const CommonHeader: React.FC<Props> = ({
     </Wrapper>
   );
 };
-export default CommonHeader;
+export default LeftSection;
 
 const Wrapper = styled.div`
   display: flex;

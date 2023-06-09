@@ -2,8 +2,8 @@ import { useEditorNavigation } from "@reearth/beta/hooks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import CommonHeader from "./CommonHeader";
 import useHook from "./hooks";
+import LeftSection from "./LeftSection";
 
 type Props = {
   sceneId: string;
@@ -37,7 +37,7 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
   const t = useT();
   return (
     <Wrapper>
-      <CommonHeader
+      <LeftSection
         currentProject={currentProject}
         dashboard={isDashboard}
         currentWorkspace={currentWorkspace}
@@ -52,7 +52,7 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
         openModal={handleWorkspaceModalOpen}
       />
 
-      <RightHeader>
+      <RightSection>
         <TabButton
           onClick={() => handleEditorNavigation("scene")}
           isSelected={currentTab === "scene"}>
@@ -73,7 +73,7 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
           isSelected={currentTab === "publish"}>
           {t("Publish")}
         </TabButton>
-      </RightHeader>
+      </RightSection>
     </Wrapper>
   );
 };
@@ -92,7 +92,7 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.editorNavBar.bg};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
-const RightHeader = styled.div`
+const RightSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;   
