@@ -112,7 +112,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 			if !f.Plugin().Equal(oldPlugin.ID()) {
 				continue
 			}
-			modifiedLayers.AddUnique(l)
+
+			modifiedLayers = modifiedLayers.AddUnique(l)
 			if newPlugin.Extension(f.Extension()) == nil {
 				ll.Infobox().Remove(f.ID())
 				removedPropertyIDs = append(removedPropertyIDs, f.Property())

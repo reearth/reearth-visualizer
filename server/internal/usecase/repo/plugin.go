@@ -16,7 +16,7 @@ type Plugin interface {
 }
 
 func PluginLoaderFrom(r Plugin) plugin.Loader {
-	return func(ctx context.Context, ids []id.PluginID) ([]*plugin.Plugin, error) {
+	return func(ctx context.Context, ids []id.PluginID) (plugin.List, error) {
 		return r.FindByIDs(ctx, ids)
 	}
 }

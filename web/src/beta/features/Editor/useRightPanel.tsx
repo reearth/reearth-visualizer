@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
 
+import SidePanel, { SidePanelContent } from "@reearth/beta/features/Editor/SidePanel";
 import { Tab } from "@reearth/beta/features/Navbar";
-import SidePanel, { SidePanelContent } from "@reearth/beta/features/SidePanel";
 
 type Props = {
   tab: Tab;

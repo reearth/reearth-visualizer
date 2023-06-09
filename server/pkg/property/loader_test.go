@@ -43,6 +43,18 @@ func TestLoaderFromMap(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestSchemaLoaderFrom(t *testing.T) {
+	pid1 := MustSchemaID("xxx~1.1.1/aa")
+	pid2 := MustSchemaID("xxx~1.1.1/bb")
+	p1 := NewSchema().ID(pid1).MustBuild()
+	p2 := NewSchema().ID(pid2).MustBuild()
+	pl := SchemaLoaderFrom(p1, p2)
+	res, err := pl(context.Background(), pid1, pid2)
+
+	assert.Equal(t, SchemaList{p1, p2}, res)
+	assert.NoError(t, err)
+}
+
 func TestSchemaLoaderFromMap(t *testing.T) {
 	psid1 := MustSchemaID("xxx~1.1.1/aa")
 	psid2 := MustSchemaID("xxx~1.1.1/bb")
