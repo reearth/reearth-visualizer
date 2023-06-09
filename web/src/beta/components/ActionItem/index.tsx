@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { FC } from "react";
 
 import Icon from "../Icon";
+import Text from "../Text";
 
 type Props = {
   icon: string;
@@ -13,7 +14,9 @@ const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
   return (
     <Box onClick={onClick}>
       <Icon icon={icon} style={{ width: "8px", height: "8px" }} />
-      <Text>{title}</Text>
+      <Text size={"s"} color={"#c7c5c5"}>
+        {title}
+      </Text>
     </Box>
   );
 };
@@ -31,14 +34,6 @@ const Box = styled.div`
   :hover {
     background: #2b2a2f;
   }
-`;
-
-const Text = styled.text`
-  font-family: "Noto Sans";
-  font-weight: 400;
-  font-size: 12px;
-
-  color: #c7c5c5;
 `;
 
 export default ActionItem;

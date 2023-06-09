@@ -9,7 +9,5 @@ export default {
 type Story = StoryObj<typeof ActionItem>;
 
 export const Default: Story = {
-  args: {
-    title: "NewPage",
-  },
+  render: () => <ActionItem title={"New Page"} icon={"square"} />,
 };
