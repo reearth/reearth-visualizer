@@ -1,34 +1,37 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { ComponentProps } from "react";
+import { Meta, Story, StoryObj } from "@storybook/react";
 
-import Component from ".";
+import Editor from ".";
 
-export default {
-  component: Component,
-} as Meta<ComponentProps<typeof Component>>;
+const meta: Meta<typeof Editor> = {
+  component: Editor,
+};
 
-export const Scene: StoryObj<typeof Component> = {
+export default meta;
+
+type Story = StoryObj<typeof Editor>;
+
+export const Scene: Story = {
   args: {
     sceneId: "dummy",
     tab: "scene",
   },
 };
 
-export const Storytelling: StoryObj<typeof Component> = {
+export const Storytelling: Story = {
   args: {
     sceneId: "dummy",
     tab: "story",
   },
 };
 
-export const Widgets: StoryObj<typeof Component> = {
+export const Widgets: Story = {
   args: {
     sceneId: "dummy",
     tab: "widgets",
   },
 };
 
-export const Publish: StoryObj<typeof Component> = {
+export const Publish: Story = {
   args: {
     sceneId: "dummy",
     tab: "publish",
