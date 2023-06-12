@@ -1,6 +1,6 @@
-import darkColors from "../darkTheme/colors";
 import commonTheme from "../reearthTheme/common";
 import commonColors from "../reearthTheme/common/colors";
+import darkColors from "../reearthTheme/darkTheme/colors";
 
 import colors from "./colors";
 
