@@ -1,4 +1,4 @@
-import type { PublishTheme } from "../../types";
+import { PublishTheme } from "../types";
 
 import colors from "./colors";
 
