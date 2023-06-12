@@ -24,7 +24,6 @@ export default (sceneId: string) => {
 
   const { data: workspaceData } = useGetTeamsQuery();
   const navigate = useNavigate();
-  // const workspaces = workspaceData?.me?.teams;
   const workspaces = useMemo(() => {
     return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
   }, [workspaceData?.me?.teams]);
@@ -33,7 +32,11 @@ export default (sceneId: string) => {
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
   });
-  const workspaceId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+
+  const workspaceId = useMemo(() => {
+    return data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+  }, [data?.node]);
+
   const project = useMemo(
     () =>
       data?.node?.__typename === "Scene" && data.node.project
@@ -42,11 +45,15 @@ export default (sceneId: string) => {
     [data?.node],
   );
 
-  const user: User = {
-    name: workspaceData?.me?.name || "",
-  };
+  const user: User = useMemo(() => {
+    return {
+      name: workspaceData?.me?.name || "",
+    };
+  }, [workspaceData?.me]);
 
-  const personal = workspaceId === workspaceData?.me?.myTeam.id;
+  const personal = useMemo(() => {
+    return workspaceId === workspaceData?.me?.myTeam.id;
+  }, [workspaceId, workspaceData?.me]);
 
   const handleWorkspaceModalOpen = useCallback(() => setWorkspaceModalVisible(true), []);
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
@@ -62,6 +69,7 @@ export default (sceneId: string) => {
     setWorkspace(workspace);
     setLastWorkspace(currentWorkspace);
   }, [workspaces, currentWorkspace, setWorkspace, setLastWorkspace, workspaceId]);
+
   useEffect(() => {
     setProject(p =>
       p?.id !== project?.id
@@ -76,6 +84,7 @@ export default (sceneId: string) => {
         : p,
     );
   }, [project, setProject]);
+
   const handleWorkspaceChange = useCallback(
     (workspaceId: string) => {
       const workspace = workspaces?.find(team => team.id === workspaceId);
