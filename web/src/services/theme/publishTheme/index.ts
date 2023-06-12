@@ -7,6 +7,8 @@ import { dark } from "./dark";
 import { forest } from "./forest";
 import { light } from "./light";
 
+export { default as publishColors } from "./colors";
+
 export type SceneThemeOptions = {
   themeType?: "light" | "dark" | "forest" | "custom";
   themeTextColor?: string;

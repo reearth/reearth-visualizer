@@ -1,16 +1,8 @@
-import { CommonColors } from "../common/colors";
+import type { CommonColors } from "../common/colors";
 import type { MetricsSizesType } from "../common/metrics";
 import { ZIndex } from "../common/zIndex";
 import { Colors as DarkColors } from "../darkTheme/colors";
 import { Colors as LightColors } from "../lightTheme/colors";
-
-export type DarkColorsType = {
-  dark: DarkColors;
-};
-
-export type LightColorsType = {
-  light: LightColors;
-};
 
 export type PublishTheme = {
   strongText: string;
@@ -24,8 +16,13 @@ export type PublishTheme = {
   background: string;
 };
 
+export type ThemeColors = CommonColors & {
+  dark: DarkColors;
+  light: LightColors;
+};
+
 export type Theme = {
-  colors: CommonColors & DarkColorsType & LightColorsType;
+  colors: ThemeColors;
   metrics: MetricsSizesType;
   zIndexes: ZIndex;
   main: {
