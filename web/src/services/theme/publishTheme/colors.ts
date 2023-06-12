@@ -3,7 +3,7 @@ import forest from "./forestTheme/colors";
 import light from "./lightTheme/colors";
 import type { PublishColors } from "./types";
 
-const publishColors: PublishColors = {
+const publishColors: Omit<PublishColors, "custom"> = {
   dark,
   light,
   forest,
