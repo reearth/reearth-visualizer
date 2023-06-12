@@ -4,7 +4,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 // Theme
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/common/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Status = "published" | "limited" | "unpublished";
 

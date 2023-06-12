@@ -11,7 +11,7 @@ import Policy from "@reearth/classic/components/molecules/Common/Policy";
 import { Workspace as WorkspaceType } from "@reearth/classic/components/molecules/Dashboard/types";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/common/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { Member } from "./types";
 

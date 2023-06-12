@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@emotion/react";
 import { ReactNode } from "react";
 
-import GlobalStyle from "./common/globalStyles";
 import theme from "./darkTheme";
+import GlobalStyle from "./reearthTheme/common/globalStyles";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return (

@@ -1,8 +1,8 @@
-import type { CommonColors } from "../common/colors";
-import type { MetricsSizesType } from "../common/metrics";
-import { ZIndex } from "../common/zIndex";
 import { Colors as DarkColors } from "../darkTheme/colors";
 import { Colors as LightColors } from "../lightTheme/colors";
+import type { CommonColors } from "../reearthTheme/common/colors";
+import type { MetricsSizesType } from "../reearthTheme/common/metrics";
+import { ZIndex } from "../reearthTheme/common/zIndex";
 
 export type PublishTheme = {
   strongText: string;

@@ -6,7 +6,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import TreeView, { Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/common/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { Layer as LayerType } from "./hooks";
 

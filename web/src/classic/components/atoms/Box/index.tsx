@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 
 import { styled } from "@reearth/services/theme";
-import { MetricsSizes, metricsSizes } from "@reearth/services/theme/common/metrics";
+import { MetricsSizes, metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Props = {
   className?: string;

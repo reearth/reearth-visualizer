@@ -1,6 +1,6 @@
 import Text from "@reearth/classic/components/atoms/Text";
 import theme, { fonts, styled } from "@reearth/services/theme";
-import { TypographySize } from "@reearth/services/theme/common/fonts";
+import { TypographySize } from "@reearth/services/theme/reearthTheme/common/fonts";
 
 export type Props<T> = {
   className?: string;

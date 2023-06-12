@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/common/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { FieldProps } from "../types";
 
