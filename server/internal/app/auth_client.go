@@ -14,6 +14,13 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
+type contextKey string
+
+const (
+	debugUserHeader            = "X-Reearth-Debug-User"
+	contextUser     contextKey = "reearth_user"
+)
+
 // load user from db and attach it to context along with operator
 // user id can be from debug header or jwt token
 // if its new user, create new user and attach it to context

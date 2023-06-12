@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountusecase"
+	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 )
 
@@ -15,7 +16,7 @@ type ContextKey string
 const (
 	contextUser     ContextKey = "user"
 	contextOperator ContextKey = "operator"
-	contextAuthInfo ContextKey = "authinfo"
+	ContextAuthInfo ContextKey = "authinfo"
 	contextUsecases ContextKey = "usecases"
 )
 
@@ -36,10 +37,6 @@ func AttachUser(ctx context.Context, u *user.User) context.Context {
 
 func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
-}
-
-func AttachAuthInfo(ctx context.Context, a AuthInfo) context.Context {
-	return context.WithValue(ctx, contextAuthInfo, a)
 }
 
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
@@ -92,9 +89,9 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 	return nil
 }
 
-func GetAuthInfo(ctx context.Context) *AuthInfo {
-	if v := ctx.Value(contextAuthInfo); v != nil {
-		if v2, ok := v.(AuthInfo); ok {
+func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
+	if v := ctx.Value(ContextAuthInfo); v != nil {
+		if v2, ok := v.(appx.AuthInfo); ok {
 			return &v2
 		}
 	}

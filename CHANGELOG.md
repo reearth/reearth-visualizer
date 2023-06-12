@@ -2,6 +2,143 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.16.2 - 2023-06-08
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Update package.json [`4051be`](https://github.com/reearth/reearth/commit/4051be)
+
+### web, server
+
+## 0.16.1 - 2023-06-08
+
+### Web
+
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.1 for the fix release [`707942`](https://github.com/reearth/reearth/commit/707942)
+
+### server, web
+
+
+### web, server
+
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.1 for the fix release [`707942`](https://github.com/reearth/reearth/commit/707942)
+
+## 0.16.0 - 2023-06-08
+
+### Web
+
+#### 🚀 Features
+
+- Support create beta project ([#451](https://github.com/reearth/reearth/pull/451)) [`7c89bf`](https://github.com/reearth/reearth/commit/7c89bf)
+- Re:Earth Beta routing and basic component structure ([#444](https://github.com/reearth/reearth/pull/444)) [`75b7bb`](https://github.com/reearth/reearth/commit/75b7bb)
+- Split code between beta and classic ([#434](https://github.com/reearth/reearth/pull/434)) [`a8a680`](https://github.com/reearth/reearth/commit/a8a680)
+
+#### 🔧 Bug Fixes
+
+- Infobox showing [object object] on click ([#487](https://github.com/reearth/reearth/pull/487)) [`90c38e`](https://github.com/reearth/reearth/commit/90c38e)
+- Parse properties(feature) recursively before using in evaluator at core ([#479](https://github.com/reearth/reearth/pull/479)) [`20635b`](https://github.com/reearth/reearth/commit/20635b)
+- UpdateClockLoad deafault true in beta-core ([#480](https://github.com/reearth/reearth/pull/480)) [`6e27b8`](https://github.com/reearth/reearth/commit/6e27b8)
+- Set updateClockOnLoad default value as true ([#470](https://github.com/reearth/reearth/pull/470)) [`b61d6e`](https://github.com/reearth/reearth/commit/b61d6e)
+- Use error boundary in core Visualizer ([#442](https://github.com/reearth/reearth/pull/442)) [`c3bca4`](https://github.com/reearth/reearth/commit/c3bca4)
+- Stories name conflicts ([#439](https://github.com/reearth/reearth/pull/439)) [`e59e2a`](https://github.com/reearth/reearth/commit/e59e2a)
+- Storybook v7 setup ([#438](https://github.com/reearth/reearth/pull/438)) [`77fe8e`](https://github.com/reearth/reearth/commit/77fe8e)
+- Auth0 error when refresh token ([#436](https://github.com/reearth/reearth/pull/436)) [`db7b69`](https://github.com/reearth/reearth/commit/db7b69)
+
+#### ✨ Refactor
+
+- Beta visualizer ([#469](https://github.com/reearth/reearth/pull/469)) [`332db7`](https://github.com/reearth/reearth/commit/332db7)
+- Storybook setup ([#457](https://github.com/reearth/reearth/pull/457)) [`4b0c52`](https://github.com/reearth/reearth/commit/4b0c52)
+- Beta tab routing ([#448](https://github.com/reearth/reearth/pull/448)) [`4f1678`](https://github.com/reearth/reearth/commit/4f1678)
+- Routing ([#447](https://github.com/reearth/reearth/pull/447)) [`ca7216`](https://github.com/reearth/reearth/commit/ca7216)
+
+#### Miscellaneous Tasks
+
+- Add theming support for components in storybook ([#481](https://github.com/reearth/reearth/pull/481)) [`7cdea3`](https://github.com/reearth/reearth/commit/7cdea3)
+- Add TabButton component ([#464](https://github.com/reearth/reearth/pull/464)) [`342a03`](https://github.com/reearth/reearth/commit/342a03)
+- Add beta editor layout ([#463](https://github.com/reearth/reearth/pull/463)) [`96c473`](https://github.com/reearth/reearth/commit/96c473)
+- Move visualizer to beta ([#460](https://github.com/reearth/reearth/pull/460)) [`5ed819`](https://github.com/reearth/reearth/commit/5ed819)
+- Copy Icon component from classic ([#455](https://github.com/reearth/reearth/pull/455)) [`994287`](https://github.com/reearth/reearth/commit/994287)
+- Upgrade vite version ([#458](https://github.com/reearth/reearth/pull/458)) [`3e3cb9`](https://github.com/reearth/reearth/commit/3e3cb9)
+- Improve storybook preview setting ([#456](https://github.com/reearth/reearth/pull/456)) [`16d7ac`](https://github.com/reearth/reearth/commit/16d7ac)
+- Update eslint and tsconfig to include &#x60;any&#x60; use ([#452](https://github.com/reearth/reearth/pull/452)) [`13ae38`](https://github.com/reearth/reearth/commit/13ae38)
+
+### Server
+
+#### 🚀 Features
+
+- Support AWS S3 storage ([#440](https://github.com/reearth/reearth/pull/440)) [`8c56c7`](https://github.com/reearth/reearth/commit/8c56c7)
+- Support AWS Cognito auth server ([#450](https://github.com/reearth/reearth/pull/450)) [`2002db`](https://github.com/reearth/reearth/commit/2002db)
+- Support AWS SES mailer ([#441](https://github.com/reearth/reearth/pull/441)) [`23be7b`](https://github.com/reearth/reearth/commit/23be7b)
+- Add coreSupport flag to project ([#424](https://github.com/reearth/reearth/pull/424)) [`dacc3d`](https://github.com/reearth/reearth/commit/dacc3d)
+
+#### 🔧 Bug Fixes
+
+- Plugin migrator did not update layers [`d0524e`](https://github.com/reearth/reearth/commit/d0524e)
+- Plugin update cause layer corruption ([#431](https://github.com/reearth/reearth/pull/431)) [`f2dd7b`](https://github.com/reearth/reearth/commit/f2dd7b)
+- Fs does not work on windows ([#430](https://github.com/reearth/reearth/pull/430)) [`189039`](https://github.com/reearth/reearth/commit/189039)
+
+#### ✨ Refactor
+
+- Use reearthx auth middleware ([#468](https://github.com/reearth/reearth/pull/468)) [`e9e4c6`](https://github.com/reearth/reearth/commit/e9e4c6)
+- Graphql schema ([#446](https://github.com/reearth/reearth/pull/446)) [`ee0710`](https://github.com/reearth/reearth/commit/ee0710)
+- Use reearthx mailer ([#445](https://github.com/reearth/reearth/pull/445)) [`f27b78`](https://github.com/reearth/reearth/commit/f27b78)
+
+#### 🧪 Testing
+
+- Fix project created at in unit test ([#477](https://github.com/reearth/reearth/pull/477)) [`640c7e`](https://github.com/reearth/reearth/commit/640c7e)
+
+#### Miscellaneous Tasks
+
+- Upgrade go to v1.20 [`e0790f`](https://github.com/reearth/reearth/commit/e0790f)
+
+### Misc
+
+#### 📖 Documentation
+
+- Add badges to server and web READMEs ([#454](https://github.com/reearth/reearth/pull/454)) [`7cbce1`](https://github.com/reearth/reearth/commit/7cbce1)
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.0 for the release [`561ed8`](https://github.com/reearth/reearth/commit/561ed8)
+- Update CODEOWNERS ([#482](https://github.com/reearth/reearth/pull/482)) [`dbac02`](https://github.com/reearth/reearth/commit/dbac02)
+- Add ActionButton icon ([#461](https://github.com/reearth/reearth/pull/461)) [`ef30ad`](https://github.com/reearth/reearth/commit/ef30ad)
+- Remove netlify.toml ([#435](https://github.com/reearth/reearth/pull/435)) [`48a8cf`](https://github.com/reearth/reearth/commit/48a8cf)
+
+#### 
+
+- Update readmes [`976835`](https://github.com/reearth/reearth/commit/976835)
+- Update for v0.15.1 [`a4ada6`](https://github.com/reearth/reearth/commit/a4ada6)
+
+### 
+
+#### 📖 Documentation
+
+- Add badges to server and web READMEs ([#454](https://github.com/reearth/reearth/pull/454)) [`7cbce1`](https://github.com/reearth/reearth/commit/7cbce1)
+
+#### Miscellaneous Tasks
+
+- Update to 0.16.0 for the release [`561ed8`](https://github.com/reearth/reearth/commit/561ed8)
+- Update CODEOWNERS ([#482](https://github.com/reearth/reearth/pull/482)) [`dbac02`](https://github.com/reearth/reearth/commit/dbac02)
+- Add ActionButton icon ([#461](https://github.com/reearth/reearth/pull/461)) [`ef30ad`](https://github.com/reearth/reearth/commit/ef30ad)
+- Remove netlify.toml ([#435](https://github.com/reearth/reearth/pull/435)) [`48a8cf`](https://github.com/reearth/reearth/commit/48a8cf)
+
+#### 
+
+- Update readmes [`976835`](https://github.com/reearth/reearth/commit/976835)
+- Update for v0.15.1 [`a4ada6`](https://github.com/reearth/reearth/commit/a4ada6)
+
 ## 0.15.0 - 2023-05-18
 
 ### Web
