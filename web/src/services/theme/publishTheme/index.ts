@@ -1,65 +1,12 @@
 import { useMemo } from "react";
-import tinycolor from "tinycolor2";
 
-import { PublishTheme } from "../types";
-
-import { dark } from "./darkTheme";
-import { forest } from "./forestTheme";
-import { light } from "./lightTheme";
+import type { PublishTheme, SceneThemeOptions } from "./types";
+import { publishTheme } from "./utils";
 
 export { default as publishColors } from "./colors";
 
-export type SceneThemeOptions = {
-  themeType?: "light" | "dark" | "forest" | "custom";
-  themeTextColor?: string;
-  themeSelectColor?: string;
-  themeBackgroundColor?: string;
-};
-
-const isDark = (hex: string): boolean => tinycolor(hex).isDark();
-
-const defaultThemeType = "dark";
-const premade: Record<string, PublishTheme | undefined> = {
-  dark,
-  light,
-  forest,
-};
-
-export function mask(color?: string) {
-  if (!color) return;
-  return isDark(color) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)";
-}
+export { mask } from "./utils";
 
 export function usePublishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
   return useMemo(() => publishTheme(sceneThemeOptions), [sceneThemeOptions]);
-}
-
-function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
-  const premadeTheme = premade[sceneThemeOptions?.themeType || defaultThemeType];
-  if (premadeTheme) return premadeTheme;
-
-  const options = {
-    ...sceneThemeOptions,
-    themeBackgroundColor: sceneThemeOptions?.themeBackgroundColor || "#dfe5f0",
-    themeTextColor: sceneThemeOptions?.themeTextColor || "#434343",
-    themeSelectColor: sceneThemeOptions?.themeSelectColor || "#C52C63",
-  };
-
-  const isBackgroundDark = isDark(options?.themeBackgroundColor);
-
-  return {
-    mask: mask(options?.themeBackgroundColor) || "rgba(255, 255, 255, 0.15)",
-    background: options.themeBackgroundColor,
-    mainText: options.themeTextColor,
-    select: options.themeSelectColor,
-    strongIcon: isBackgroundDark
-      ? tinycolor(options.themeTextColor).lighten(25).toHex8String()
-      : "#FFFFFF",
-    strongText: isBackgroundDark
-      ? tinycolor(options.themeTextColor).lighten(25).toHex8String()
-      : "#FFFFFF",
-    weakText: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
-    mainIcon: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
-    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String(),
-  };
 }

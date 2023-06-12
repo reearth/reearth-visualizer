@@ -31,3 +31,10 @@ export type PublishTheme = {
   mask: string;
   background: string;
 };
+
+export type SceneThemeOptions = {
+  themeType?: "light" | "dark" | "forest" | "custom";
+  themeTextColor?: string;
+  themeSelectColor?: string;
+  themeBackgroundColor?: string;
+};
