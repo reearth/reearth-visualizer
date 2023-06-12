@@ -1,4 +1,4 @@
-export type PublishThemeType = "dark" | "light" | "forest";
+export type PublishThemeType = "dark" | "light" | "forest" | "custom";
 
 export type PublishColors = { [key in PublishThemeType]: Colors };
 
@@ -33,7 +33,7 @@ export type PublishTheme = {
 };
 
 export type SceneThemeOptions = {
-  themeType?: "light" | "dark" | "forest" | "custom";
+  themeType?: PublishThemeType;
   themeTextColor?: string;
   themeSelectColor?: string;
   themeBackgroundColor?: string;
