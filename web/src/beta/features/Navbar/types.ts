@@ -7,11 +7,6 @@ export type User = {
 export type Workspace = {
   id?: string;
   name?: string;
-  members?: Array<unknown>;
-  policy?: {
-    id: string;
-    name: string;
-  } | null;
 };
 
 export type Project = {

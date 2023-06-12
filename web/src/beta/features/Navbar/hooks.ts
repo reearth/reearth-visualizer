@@ -24,7 +24,10 @@ export default (sceneId: string) => {
 
   const { data: workspaceData } = useGetTeamsQuery();
   const navigate = useNavigate();
-  const workspaces = workspaceData?.me?.teams;
+  // const workspaces = workspaceData?.me?.teams;
+  const workspaces = useMemo(() => {
+    return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
+  }, [workspaceData?.me?.teams]);
 
   const { data } = useGetProjectBySceneQuery({
     variables: { sceneId: sceneId ?? "" },
