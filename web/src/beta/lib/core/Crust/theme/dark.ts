@@ -1,15 +1,15 @@
-import publishColors from "@reearth/services/theme/publishTheme/colors";
+import { publishColors as colors } from "@reearth/services/theme/publishTheme";
 
 import type { Theme } from ".";
 
 export const dark: Theme = {
-  strongText: publishColors.dark.text.strong,
-  mainText: publishColors.dark.text.main,
-  weakText: publishColors.dark.text.weak,
-  strongIcon: publishColors.dark.icon.strong,
-  mainIcon: publishColors.dark.icon.main,
-  weakIcon: publishColors.dark.icon.weak,
-  select: publishColors.dark.other.select,
-  mask: publishColors.dark.other.mask,
-  background: publishColors.dark.other.background,
+  strongText: colors.dark.text.strong,
+  mainText: colors.dark.text.main,
+  weakText: colors.dark.text.weak,
+  strongIcon: colors.dark.icon.strong,
+  mainIcon: colors.dark.icon.main,
+  weakIcon: colors.dark.icon.weak,
+  select: colors.dark.other.select,
+  mask: colors.dark.other.mask,
+  background: colors.dark.other.background,
 };
