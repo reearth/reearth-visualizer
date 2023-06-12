@@ -35,6 +35,14 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
+// SettingsButton
+import Audio from "./Icons/audio.svg";
+import EditIcon from "./Icons/editIcon.svg";
+import Settings from "./Icons/settings.svg";
+import ButtonBlock from "./Icons/buttonBlock.svg";
+import Camera from "./Icons/camera.svg";
+import MdFile from "./Icons/mdFile.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -57,4 +65,10 @@ export default {
   playLeft: PlayLeft,
   timeline: Timeline,
   actionbutton: ActionButton,
+  audio: Audio,
+  editIcon: EditIcon,
+  settings: Settings,
+  buttonBlock: ButtonBlock,
+  camera: Camera,
+  mdFile: MdFile,
 };
