@@ -1,13 +1,16 @@
 import commonTheme from "../common";
 import commonColors from "../common/colors";
 import darkColors from "../darkTheme/colors";
-import { Theme } from "../types";
 
-import colors, { Colors } from "./colors";
+import colors from "./colors";
 
-const lightTheme: Theme<Colors> = {
+const lightTheme = {
   ...commonTheme,
-  colors: { ...commonColors, ...colors },
+  colors: {
+    ...commonColors,
+    light: { ...colors },
+    dark: { ...darkColors },
+  },
   main: {
     accent: colors.primary.main,
     alert: colors.functional.error,
