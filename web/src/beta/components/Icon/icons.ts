@@ -13,7 +13,6 @@ import InfoVideo from "./Icons/infoboxVideoIcon.svg";
 
 // Arrow
 import ArrowDown from "./Icons/arrowDown.svg";
-import ArrowUp from "./Icons/arrowUp.svg";
 import ArrowUpDown from "./Icons/arrowUpDown.svg";
 import ArrowLeft from "./Icons/arrowLeft.svg";
 import ArrowRight from "./Icons/arrowRight.svg";
@@ -51,7 +50,6 @@ export default {
   photooverlay: PrimPhotoOverlay,
   arrowUpDown: ArrowUpDown,
   arrowDown: ArrowDown,
-  arrowUp: ArrowUp,
   arrowRight: ArrowRight,
   arrowLeft: ArrowLeft,
   arrowLongLeft: ArrowLongLeft,

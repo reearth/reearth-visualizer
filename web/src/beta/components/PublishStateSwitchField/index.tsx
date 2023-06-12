@@ -1,65 +1,114 @@
 import styled from "@emotion/styled";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import Icon from "../Icon";
+import Text from "../Text";
 
 type Props = {
-  icon: string;
-  title: string;
+  list: string[];
+  selected?: string;
+  onChange: () => void;
 };
 
-const PublishStateSwitchField: FC<Props> = ({ icon, title }) => {
+const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Box>
-      <Icon
-        icon={icon}
-        style={{
-          width: "8px",
-          height: "8px",
-          borderRadius: "50%",
-          background: "#4C4C4C",
-          color: "#4C4C4C",
-        }}
-      />
-      <Title>{title}</Title>
-      <Icon
-        icon={"arrowDown"}
-        style={{
-          width: "16px",
-          height: "16px",
-          color: "#888686",
-        }}
-      />
-    </Box>
+    <Dropdown>
+      <SelectedState onClick={() => setOpen(o => !o)}>
+        <StatusCircle />
+        <Text color="#888686" size="s">
+          {selected ? selected : list[0]}
+        </Text>
+        <Icon
+          icon={"arrowDown"}
+          style={{
+            width: "16px",
+            height: "16px",
+            color: "#888686",
+          }}
+        />
+      </SelectedState>
+      {open && (
+        <StateLists onClick={() => setOpen(o => !o)}>
+          <ListWrapper>
+            {list.map((value, index) => (
+              <ListItem key={index}>
+                <MenuItemWrapper onClick={onChange}>
+                  <Text color={"#888686"} size={"s"}>
+                    {value}
+                  </Text>
+                </MenuItemWrapper>
+              </ListItem>
+            ))}
+          </ListWrapper>
+        </StateLists>
+      )}
+    </Dropdown>
   );
 };
+const Dropdown = styled.div`
+  position: relative; // 必要
+  height: 100%;
+  width: 100%;
+`;
 
-const Box = styled.div`
-  box-sizing: border-box;
-
+const SelectedState = styled.div`
+  box-sizing: border-box; // 必要
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 4px 20px;
   gap: 8px;
 
-  right: 15px;
-  top: calc(50% - 24px / 2 + 2px);
+  height: inherit;
+  width: 100%;
 
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 6px;
+  background: #171618;
+
+  &:hover {
+    background-color: #232226;
+  }
 `;
 
-const Title = styled.text`
-  font-family: "Noto Sans";
-  font-weight: 500;
-  font-size: 12px;
+// 一旦、＃4c4c4c固定 → 要件が書いてない
+const StatusCircle = styled.object`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4c4c4c;
+`;
 
+const StateLists = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: 0;
+  transform: translateY(100%);
+  box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
+  z-index: ${props => props.theme.zIndexes.dropDown};
+  background: #171618;
+`;
+const ListWrapper = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+const ListItem = styled.li`
   display: flex;
+  &:hover {
+    background-color: #232226;
+  }
+`;
+const MenuItemWrapper = styled.div`
+  display: flex;
+  padding: 0 16px;
   align-items: center;
-  text-align: center;
-
-  color: #888686;
+  min-height: 30px;
+  cursor: pointer;
+  height: 100%;
 `;
 
 export default PublishStateSwitchField;
