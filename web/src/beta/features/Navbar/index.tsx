@@ -1,10 +1,8 @@
-import TabButton from "@reearth/beta/features/Navbar/TabButton";
-import { useEditorNavigation } from "@reearth/beta/hooks";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import useHook from "./hooks";
 import LeftSection from "./LeftSection";
+import useRightSide from "./useRightSection";
 
 type Props = {
   sceneId: string;
@@ -34,8 +32,12 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
     handleWorkspaceModalOpen,
   } = useHook(sceneId);
 
-  const handleEditorNavigation = useEditorNavigation({ sceneId });
-  const t = useT();
+  const { rightSide } = useRightSide({
+    currentTab,
+    sceneId,
+    page: "editor",
+  });
+
   return (
     <Wrapper>
       <LeftSection
@@ -53,31 +55,7 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
         openModal={handleWorkspaceModalOpen}
       />
 
-      <RightSection>
-        <TabButton
-          onClick={() => handleEditorNavigation("scene")}
-          selected={currentTab === "scene"}
-          label={t("Scene")}
-        />
-
-        <TabButton
-          onClick={() => handleEditorNavigation("story")}
-          selected={currentTab === "story"}
-          label={t("Story")}
-        />
-
-        <TabButton
-          onClick={() => handleEditorNavigation("widgets")}
-          selected={currentTab === "widgets"}
-          label={t("Widgets")}
-        />
-
-        <TabButton
-          onClick={() => handleEditorNavigation("publish")}
-          selected={currentTab === "publish"}
-          label={t("Publish")}
-        />
-      </RightSection>
+      {rightSide}
     </Wrapper>
   );
 };
@@ -95,13 +73,4 @@ const Wrapper = styled.div`
   height: 51px;
   background: ${({ theme }) => theme.editorNavBar.bg};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-`;
-const RightSection = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;   
-  padding-right:24px
-  gap: 4px;
-  width: 301px;
-  height: 35px;
 `;
