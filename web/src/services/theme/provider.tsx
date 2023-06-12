@@ -5,9 +5,9 @@ import { useAuth } from "@reearth/services/auth";
 import { Theme, useGetThemeQuery } from "@reearth/services/gql";
 import { useCurrentTheme } from "@reearth/services/state";
 
-import lightTheme from "./lightTheme";
 import GlobalStyle from "./reearthTheme/common/globalStyles";
 import darkTheme from "./reearthTheme/darkTheme";
+import lightTheme from "./reearthTheme/lightTheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();

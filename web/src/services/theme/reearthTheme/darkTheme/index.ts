@@ -1,7 +1,7 @@
-import lightColors from "../../lightTheme/colors";
 import { Theme } from "../../types";
 import commonTheme from "../common";
 import commonColors from "../common/colors";
+import lightColors from "../lightTheme/colors";
 
 import colors from "./colors";
 
