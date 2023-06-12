@@ -1,14 +1,17 @@
-import colors from "./colors";
-import { metricsSizes } from "./metrics";
-import zIndexes from "./zIndex";
+import colors, { Colors } from "./colors";
+import { MetricsSizesType, metricsSizes } from "./metrics";
+import zIndexes, { ZIndex } from "./zIndex";
 
-export default {
+export type Common = {
+  zIndexes: ZIndex;
+  colors: Colors;
+  metrics: MetricsSizesType;
+};
+
+const common: Common = {
   zIndexes,
   colors,
   metrics: metricsSizes,
-  publishStatus: {
-    published: colors.publish.published,
-    building: colors.publish.building,
-    unpublished: colors.publish.unpublished,
-  },
 };
+
+export default common;

@@ -10,4 +10,4 @@ export { default as GlobalStyles } from "./reearthTheme/common/globalStyles";
 export { default as lightTheme } from "./reearthTheme/lightTheme";
 export { default as darkTheme } from "./reearthTheme/darkTheme";
 
-export type { PublishTheme } from "./types";
+export type { PublishTheme } from "./publishTheme/types";

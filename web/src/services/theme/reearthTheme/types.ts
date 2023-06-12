@@ -1,22 +1,10 @@
-import type { CommonColors } from "../reearthTheme/common/colors";
-import type { MetricsSizesType } from "../reearthTheme/common/metrics";
-import { ZIndex } from "../reearthTheme/common/zIndex";
-import { Colors as DarkColors } from "../reearthTheme/darkTheme/colors";
-import { Colors as LightColors } from "../reearthTheme/lightTheme/colors";
+import type { Colors as CommonColors } from "./common/colors";
+import type { MetricsSizesType } from "./common/metrics";
+import type { ZIndex } from "./common/zIndex";
+import type { Colors as DarkColors } from "./darkTheme/colors";
+import type { Colors as LightColors } from "./lightTheme/colors";
 
-export type PublishTheme = {
-  strongText: string;
-  mainText: string;
-  weakText: string;
-  strongIcon: string;
-  mainIcon: string;
-  weakIcon: string;
-  select: string;
-  mask: string;
-  background: string;
-};
-
-export type ThemeColors = CommonColors & {
+type ThemeColors = CommonColors & {
   dark: DarkColors;
   light: LightColors;
 };

@@ -1,4 +1,4 @@
-const commonColors = {
+const colors = {
   general: {
     transparent: "transparent",
     transparentLight: "rgba(0,0,0,0.4)",
@@ -23,13 +23,8 @@ const commonColors = {
       2: "#df3013",
     },
   },
-  publish: {
-    published: "#00A0E8",
-    building: "#A0A0A0",
-    unpublished: "#3B383F",
-  },
 };
 
-export default commonColors;
+export default colors;
 
-export type CommonColors = typeof commonColors;
+export type Colors = typeof colors;
