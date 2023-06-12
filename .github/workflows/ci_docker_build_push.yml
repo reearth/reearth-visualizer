@@ -1,0 +1,85 @@
+name: build-push-docker
+on:
+  workflow_dispatch:
+    inputs:
+      sha_short:
+        description: 'sha_short'
+        required: true
+      new_tag:
+        description: 'new_tag'
+        required: true
+      new_tag_short:
+        description: 'new_tag_short'
+        required: true
+      name:
+        description: 'name'
+        required: true
+      sha:
+        description: "sha"
+        required: true
+jobs:
+  build-docker-image:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    if: github.event.inputs.name || github.event.inputs.new_tag
+    env:
+      IMAGE_NAME: reearth/reearth
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Get options
+        id: options
+        env:
+          TAG: ${{ github.event.inputs.new_tag_short }}
+          NAME: ${{ github.event.inputs.name }}
+          SHA: ${{ github.event.inputs.sha_short }}
+        run: |
+          if [[ -n $TAG ]]; then
+            PLATFORMS=linux/amd64,linux/arm64
+            VERSION=$TAG
+            TAGS=$IMAGE_NAME:$TAG
+            if [[ ! $TAG =~ '-' ]]; then
+              TAGS+=,${IMAGE_NAME}:${TAG%.*}
+              TAGS+=,${IMAGE_NAME}:${TAG%%.*}
+              TAGS+=,${IMAGE_NAME}:latest
+            fi
+          else
+            PLATFORMS=linux/amd64
+            VERSION=$SHA
+            TAGS=$IMAGE_NAME:$NAME
+          fi
+          echo "::set-output name=platforms::$PLATFORMS"
+          echo "::set-output name=version::$VERSION"
+          echo "::set-output name=tags::$TAGS"
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: reearth/reearth
+          version: tags/${{ github.event.inputs.name || needs.info.outputs.tag }}
+          file: reearth-web_${{ github.event.inputs.name || needs.info.outputs.tag }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: server/reearth-web.tar.gz
+      - name: Extract reearth/web
+        run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
+      - name: Build and push docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: server
+          platforms: ${{ steps.options.outputs.platforms }}
+          push: true
+          build-args: VERSION=${{ steps.options.outputs.version }}
+          tags: ${{ steps.options.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
