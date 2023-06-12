@@ -7,7 +7,7 @@ import Text from "../Text";
 type Props = {
   list: string[];
   selected?: string;
-  onChange: () => void;
+  onChange?: (label: string) => void;
 };
 
 const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
@@ -33,8 +33,8 @@ const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
           <ListWrapper>
             {list.map((value, index) => (
               <ListItem key={index}>
-                <MenuItemWrapper onClick={onChange}>
-                  <Text color={"#888686"} size={"s"}>
+                <MenuItemWrapper>
+                  <Text color={"#888686"} size={"s"} onClick={() => onChange?.(value)}>
                     {value}
                   </Text>
                 </MenuItemWrapper>
