@@ -1,5 +1,7 @@
 export type PublishThemeType = "dark" | "light" | "forest" | "custom";
 
+export type PremadeThemeType = Exclude<PublishThemeType, "custom">;
+
 export type PublishColors = { [key in PublishThemeType]: Colors };
 
 export type Colors = {
