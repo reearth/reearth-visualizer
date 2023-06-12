@@ -34,7 +34,7 @@ func TestAsset_Create(t *testing.T) {
 	uc := &Asset{
 		repos: &repo.Container{
 			Asset:     memory.NewAsset(),
-			Workspace: accountmemory.NewWorkspace(),
+			Workspace: accountmemory.NewWorkspaceWith(ws),
 		},
 		gateways: &gateway.Container{
 			File: f,

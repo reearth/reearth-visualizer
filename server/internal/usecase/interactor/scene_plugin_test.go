@@ -82,7 +82,9 @@ func TestScene_InstallPlugin(t *testing.T) {
 		{
 			name: "operation denied",
 			args: args{
-				operator: &usecase.Operator{},
+				operator: &usecase.Operator{
+					AcOperator: &accountusecase.Operator{},
+				},
 			},
 			wantErr: interfaces.ErrOperationDenied,
 		},
@@ -194,8 +196,9 @@ func TestScene_UninstallPlugin(t *testing.T) {
 		{
 			name: "operation denied",
 			args: args{
-				operator: &usecase.Operator{},
-			},
+				operator: &usecase.Operator{
+					AcOperator: &accountusecase.Operator{},
+				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
 	}
@@ -335,8 +338,9 @@ func TestScene_UpgradePlugin(t *testing.T) {
 		{
 			name: "operation denied",
 			args: args{
-				operator: &usecase.Operator{},
-			},
+				operator: &usecase.Operator{
+					AcOperator: &accountusecase.Operator{},
+				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
 	}
