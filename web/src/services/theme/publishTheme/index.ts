@@ -3,9 +3,9 @@ import tinycolor from "tinycolor2";
 
 import { PublishTheme } from "../types";
 
-import { dark } from "./dark";
-import { forest } from "./forest";
-import { light } from "./light";
+import { dark } from "./darkTheme";
+import { forest } from "./forestTheme";
+import { light } from "./lightTheme";
 
 export { default as publishColors } from "./colors";
 
@@ -34,7 +34,7 @@ export function usePublishTheme(sceneThemeOptions?: SceneThemeOptions): PublishT
   return useMemo(() => publishTheme(sceneThemeOptions), [sceneThemeOptions]);
 }
 
-export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
+function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
   const premadeTheme = premade[sceneThemeOptions?.themeType || defaultThemeType];
   if (premadeTheme) return premadeTheme;
 
