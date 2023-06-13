@@ -33,7 +33,7 @@ const StorytellingPageSectionItem: FC<Props> = ({
         <Text onClick={onClick} size={"s"} color="#ffffff">
           {title}
         </Text>
-        <Icon icon={"actionbutton"} onClick={onAction} />
+        <Icon icon="actionbutton" onClick={onAction} />
       </TitleArea>
     </HorizontalBox>
   );
