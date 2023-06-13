@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/WidgetAlignSystemToggle",
+  title: "classic/molecules/EarthEditor/PropertyPane/WidgetAlignSystemToggle",
   component: Component,
 } as Meta;
 

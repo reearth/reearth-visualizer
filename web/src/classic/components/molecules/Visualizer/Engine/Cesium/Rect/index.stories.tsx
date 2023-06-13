@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Rect, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Rect",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Rect",
   component: Rect,
   argTypes: {
     api: {

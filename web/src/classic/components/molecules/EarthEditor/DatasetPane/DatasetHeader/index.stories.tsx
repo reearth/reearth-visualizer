@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import DatasetHeader from ".";
 
 export default {
-  title: "molecules/EarthEditor/DatasetPane/DatasetHeader",
+  title: "classic/molecules/EarthEditor/DatasetPane/DatasetHeader",
   component: DatasetHeader,
 } as Meta;
 

@@ -9,7 +9,7 @@ const filterOptions: { key: string; label: string }[] = [
 ];
 
 export default {
-  title: "molecules/EarthEditor/AssetsModal/AssetSelect",
+  title: "classic/molecules/EarthEditor/AssetsModal/AssetSelect",
   component: Component,
 } as Meta;
 

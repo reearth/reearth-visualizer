@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import TagGroup, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/TagGroup/TagGroup",
+  title: "classic/molecules/EarthEditor/TagGroup/TagGroup",
   component: TagGroup,
 } as Meta;
 

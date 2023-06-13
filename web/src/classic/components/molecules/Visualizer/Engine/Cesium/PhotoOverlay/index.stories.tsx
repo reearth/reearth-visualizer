@@ -6,7 +6,7 @@ import { V, location } from "../storybook";
 import PhotoOverlay, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/PhotoOverlay",
+  title: "classic/molecules/Visualizer/Engine/Cesium/PhotoOverlay",
   component: PhotoOverlay,
 } as Meta;
 

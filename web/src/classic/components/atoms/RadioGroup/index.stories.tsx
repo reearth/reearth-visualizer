@@ -14,7 +14,7 @@ const items: { value: string; label: string }[] = [
 const Radio = styled.div<{ value: string; label: string }>``;
 
 export default {
-  title: "atoms/RadioGroup",
+  title: "classic/atoms/RadioGroup",
   component: RadioGroup,
 } as Meta;
 
