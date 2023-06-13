@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Type = "primary" | "secondary" | "danger";
 

@@ -7,7 +7,7 @@ import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 export interface FormValues {
   name: string;
