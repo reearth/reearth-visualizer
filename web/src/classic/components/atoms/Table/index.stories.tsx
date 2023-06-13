@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Table, { Props } from ".";
 
 export default {
-  title: "atoms/Table",
+  title: "classic/atoms/Table",
   component: Table,
 } as Meta;
 

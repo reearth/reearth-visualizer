@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { PluginAccordionProps } from ".";
 
 export default {
-  title: "molecules/Settings/Project/PluginAccordion",
+  title: "classic/molecules/Settings/Project/PluginAccordion",
   component: Component,
 } as Meta;
 

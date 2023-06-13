@@ -5,7 +5,7 @@ import { V } from "../storybook";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Tileset",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Tileset",
   component: Component,
 } as Meta;
 

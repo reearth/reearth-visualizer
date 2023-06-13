@@ -10,7 +10,7 @@ const Container: React.FC<{ children?: ReactNode }> = ({ children }) => (
 );
 
 export default {
-  title: "atoms/Overlay",
+  title: "classic/atoms/Overlay",
   component: Overlay,
 } as Meta;
 

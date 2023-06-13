@@ -6,7 +6,7 @@ import darkColors from "@reearth/services/theme/reearthTheme/darkTheme/colors";
 import FontFamilyField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFamilyField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFamilyField",
   component: FontFamilyField,
 } as Meta;
 
