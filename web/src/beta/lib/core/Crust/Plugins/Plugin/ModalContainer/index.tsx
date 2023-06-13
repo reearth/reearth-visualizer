@@ -6,7 +6,7 @@ import {
   useCallback,
 } from "react";
 
-import theme, { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 export type PluginModalInfo = {
   id?: string;
@@ -52,7 +52,8 @@ const Wrapper = styled.div<{ visible: boolean }>`
   top: 50%;
   transform: translate(-50%, -50%);
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible }) => (visible ? theme.zIndexes.pluginModal : theme.zIndexes.hidden)};
+  z-index: ${({ visible, theme }) =>
+    visible ? theme.zIndexes.pluginModal : theme.zIndexes.hidden};
   transition: opacity 0.25s;
   opacity: ${({ visible }) => (visible ? "1" : "0")};
 `;
@@ -66,7 +67,8 @@ const Background = styled.div<{ visible: boolean; background?: string }>`
   height: 100%;
   background: ${({ background }) => background};
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible }) => (visible ? theme.zIndexes.pluginModal - 1 : theme.zIndexes.hidden)};
+  z-index: ${({ visible, theme }) =>
+    visible ? theme.zIndexes.pluginModal - 1 : theme.zIndexes.hidden};
 `;
 
 export default forwardRef(ModalContainer);

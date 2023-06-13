@@ -1,5 +1,5 @@
 import Text from "@reearth/classic/components/atoms/Text";
-import theme, { fonts, styled } from "@reearth/services/theme";
+import { fonts, styled } from "@reearth/services/theme";
 import { TypographySize } from "@reearth/services/theme/reearthTheme/common/fonts";
 
 export type Props<T> = {
@@ -95,7 +95,7 @@ const StyledTable = styled.table<{
   white-space: ${({ multiLine }) => (multiLine ? "normal" : "nowrap")};
   background: ${({ bg, theme }) => (bg ? bg : theme.main.bg)};
   border-color: ${({ borderColor, theme }) => (borderColor ? borderColor : theme.main.lighterBg)};
-  color: ${({ textColor }) => (textColor ? textColor : theme.main.text)};
+  color: ${({ textColor, theme }) => (textColor ? textColor : theme.main.text)};
   font-size: ${({ textSize }) => `${textSize}px`};
   width: ${({ width }) => (width ? width : "100%")};
   height: ${({ columnHeight }) => columnHeight};

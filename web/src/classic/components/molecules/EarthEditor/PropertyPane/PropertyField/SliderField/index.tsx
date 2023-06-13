@@ -2,7 +2,7 @@ import RCSlider from "rc-slider";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
-import theme, { styled, metrics } from "@reearth/services/theme";
+import { styled, metrics, useTheme } from "@reearth/services/theme";
 import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { FieldProps } from "../types";
@@ -29,6 +29,7 @@ const SliderField: React.FC<Props> = ({
   const [sliderValue, setSliderValue] = useState(value);
   const isEditing = useRef(false);
   const isDirty = useRef(false);
+  const theme = useTheme();
 
   const calculatedStep = step ? step : max ? max / 10 : 0.1;
 
