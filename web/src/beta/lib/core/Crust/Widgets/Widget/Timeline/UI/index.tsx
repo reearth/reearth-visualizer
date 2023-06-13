@@ -132,7 +132,12 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
        * TODO: Support keyboard operation for accessibility
        * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
        */}
-      <ScaleBox role="slider" {...events} ref={scaleElement} shouldScroll={shouldScroll}>
+      <ScaleBox
+        role="slider"
+        {...events}
+        ref={scaleElement}
+        shouldScroll={shouldScroll}
+        publishedTheme={theme}>
         <ScaleList
           start={startDate}
           scaleCount={scaleCount}
@@ -274,7 +279,7 @@ const CurrentTime = styled(Text)<StyledColorProps>`
   white-space: pre-line;
 `;
 
-const ScaleBox = styled.div<{ shouldScroll: boolean }>`
+const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
   border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
@@ -302,7 +307,7 @@ const ScaleBox = styled.div<{ shouldScroll: boolean }>`
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
+    background-color: ${({ publishedTheme }) => publishedTheme?.mainIcon};
   }
   margin: ${({ theme }) =>
     `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
