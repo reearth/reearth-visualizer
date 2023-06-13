@@ -1,21 +1,18 @@
-import colors from "./colors";
-import { metricsSizes } from "./metrics";
-import zIndexes from "./z-index";
+import type { Colors as CommonColors } from "./common/colors";
+import type { MetricsSizesType } from "./common/metrics";
+import type { ZIndex } from "./common/zIndex";
+import type { Colors as DarkColors } from "./darkTheme/colors";
+import type { Colors as LightColors } from "./lightTheme/colors";
 
-export const commonTheme = {
-  zIndexes,
-  colors,
-  metrics: metricsSizes,
-  publishStatus: {
-    published: colors.dark.primary.main,
-    building: colors.dark.outline.main,
-    unpublished: colors.dark.secondary.weakest,
-  },
+type ThemeColors = CommonColors & {
+  dark: DarkColors;
+  light: LightColors;
 };
 
 export type Theme = {
-  colors: typeof colors;
-  metrics: typeof metricsSizes;
+  colors: ThemeColors;
+  metrics: MetricsSizesType;
+  zIndexes: ZIndex;
   main: {
     accent: string;
     alert: string;
@@ -200,23 +197,6 @@ export type Theme = {
     activeBgBorder: string;
     activeToggle: string;
     highlight: string;
-  };
-  zIndexes: {
-    base: number;
-    hidden: number;
-    form: number;
-    infoBox: number;
-    pluginModal: number;
-    pluginPopup: number;
-    propertyFieldPopup: number;
-    descriptionBalloon: number;
-    dropDown: number;
-    fullScreenModal: number;
-    loading: number;
-    notificationBar: number;
-    splashScreen: number;
-    settingHeader: number;
-    menuForDevice: number;
   };
   descriptionBalloon: {
     bg: string;

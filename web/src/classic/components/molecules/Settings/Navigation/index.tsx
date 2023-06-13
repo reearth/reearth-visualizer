@@ -6,8 +6,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import NavigationItem from "@reearth/classic/components/molecules/Settings/NavigationItem";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 type Workspace = {
   id?: string;

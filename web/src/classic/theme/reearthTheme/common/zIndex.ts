@@ -1,4 +1,4 @@
-const zIndexes = {
+const zIndex = {
   base: 1,
   hidden: -1,
   form: 100,
@@ -16,4 +16,6 @@ const zIndexes = {
   menuForDevice: 200,
 };
 
-export default zIndexes;
+export default zIndex;
+
+export type ZIndex = typeof zIndex;

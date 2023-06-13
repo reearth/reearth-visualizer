@@ -4,7 +4,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 // Theme
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Status = "published" | "limited" | "unpublished";
 
@@ -54,20 +54,20 @@ const StyledStatus = styled.div`
 const StatusCircle = styled.div<PublishStatusProps>`
   width: ${({ size }) => (size === "lg" || size === "md" ? "10px" : "9px")};
   height: ${({ size }) => (size === "lg" || size === "md" ? "10px" : "9px")};
-  background: ${props =>
-    props.status === "published" || props.status === "limited"
-      ? props.theme.publishStatus.published
-      : props.status === "unpublished"
-      ? props.theme.publishStatus.unpublished
-      : props.status === "building"
-      ? props.theme.publishStatus.building
+  background: ${({ theme, status }) =>
+    status === "published" || status === "limited"
+      ? theme.publishStatus.published
+      : status === "unpublished"
+      ? theme.publishStatus.unpublished
+      : status === "building"
+      ? theme.publishStatus.building
       : null};
   border-radius: 50px;
   margin: auto ${metricsSizes["s"]}px auto 0;
 `;
 
 const PublishLink = styled.a`
-  color: ${props => props.theme.main.strongText};
+  color: ${({ theme }) => theme.main.strongText};
   text-decoration: none;
 `;
 
