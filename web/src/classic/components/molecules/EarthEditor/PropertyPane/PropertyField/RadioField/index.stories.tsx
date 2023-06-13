@@ -10,7 +10,7 @@ const items: { key: string; label?: string; icon?: string }[] = [
 ];
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/RadioField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/RadioField",
   component: RadioField,
 } as Meta;
 

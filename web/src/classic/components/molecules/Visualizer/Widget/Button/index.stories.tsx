@@ -6,7 +6,7 @@ import { Provider } from "../../storybook";
 import Button, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Widget/Button",
+  title: "classic/molecules/Visualizer/Widget/Button",
   component: Button,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

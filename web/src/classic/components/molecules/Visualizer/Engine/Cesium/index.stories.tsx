@@ -5,7 +5,7 @@ import { Entity } from "resium";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium",
+  title: "classic/molecules/Visualizer/Engine/Cesium",
   component: Component,
   argTypes: {
     onCameraChange: { action: "onCameraChange" },

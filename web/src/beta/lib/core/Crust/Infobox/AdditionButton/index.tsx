@@ -2,9 +2,8 @@ import React, { useRef, useCallback, useEffect } from "react";
 import { usePopper } from "react-popper";
 
 import Icon from "@reearth/beta/components/Icon";
+import Portal from "@reearth/beta/components/Portal";
 import { styled } from "@reearth/services/theme";
-
-import Portal from "../Portal";
 
 export interface Props {
   className?: string;
