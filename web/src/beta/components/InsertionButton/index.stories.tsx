@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
 
 import InsertionButton from ".";
@@ -9,5 +10,5 @@ export default {
 type Story = StoryObj<typeof InsertionButton>;
 
 export const Default: Story = {
-  render: () => <InsertionButton />,
+  render: () => <InsertionButton onClick={action("onClick")} />,
 };

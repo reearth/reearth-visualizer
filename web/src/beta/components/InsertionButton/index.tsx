@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
+
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 
@@ -40,13 +41,14 @@ const Box = styled.div`
     opacity: 1;
     transition: all 0.5s ease;
   }
+  cursor: pointer;
 `;
 
 const Border = styled.object`
   height: 1px;
   width: 100%;
 
-  background: #3b3cd0;
+  background: ${props => props.theme.main.select};
   border-radius: 1px;
 `;
 export default InsertionButton;
