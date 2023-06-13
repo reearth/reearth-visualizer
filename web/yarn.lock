@@ -1267,21 +1267,21 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cesium/engine@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.4.0.tgz#5716c992358330367046cb53810128a0a34984ba"
-  integrity sha512-U5/m0XSpoxr5uo7rf0+rBNw4AwTMdQRRB5FX5bcunfE6J2eyKWtMp0lRhcTKVDN0O7HZwJIIZt0rtiXt/aC0tQ==
+"@cesium/engine@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.0.0.tgz#8b7deadf50563aac8b89df228d86199542ebacff"
+  integrity sha512-P0LMwJD5bJ2pvYp2s6B4B8Wx375TCMjV19/pyPUnqGeEDK85GHPcd50NNACXC8F+MqOrNZKlrzcfrksK/RTIuA==
   dependencies:
     "@tweenjs/tween.js" "^18.6.4"
     "@zip.js/zip.js" "2.4.x"
     autolinker "^4.0.0"
     bitmap-sdf "^1.0.3"
-    dompurify "^3.0.2"
+    dompurify "^2.2.2"
     earcut "^2.2.4"
     grapheme-splitter "^1.0.4"
     jsep "^1.3.8"
-    kdbush "^4.0.1"
-    ktx-parse "^0.5.0"
+    kdbush "^3.0.0"
+    ktx-parse "^0.4.5"
     lerc "^2.0.0"
     mersenne-twister "^1.1.0"
     meshoptimizer "^0.18.1"
@@ -1291,12 +1291,12 @@
     topojson-client "^3.1.0"
     urijs "^1.19.7"
 
-"@cesium/widgets@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.3.0.tgz#eb82d8e43424c1faa62cf001afbf42e0b0926143"
-  integrity sha512-U+lHh1LoDezuKN/f4Hu5WROh87S5YECsO8Vb0gcXoEEG6hHyHz2zOO8GXmDWtKPSTjq88gxAp4APGKztvn7pxQ==
+"@cesium/widgets@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.0.0.tgz#e889224830d35c988e8ba782142ff8708216edbe"
+  integrity sha512-9pYmRCMhhEXB3BDdD9YixUIjd6RT7v35mFRtvLFf5psm7IRRxz2lgF87JuQGtoXNyG0rZRN5b2IwD99VeiidKg==
   dependencies:
-    "@cesium/engine" "2.4.0"
+    "@cesium/engine" "2.0.0"
     nosleep.js "^0.12.0"
 
 "@changesets/apply-release-plan@^6.1.2":
@@ -6727,13 +6727,13 @@ cesium-mvt-imagery-provider@1.3.0:
     "@mapbox/vector-tile" "1.3.1"
     pbf "3.2.1"
 
-cesium@1.105.2:
-  version "1.105.2"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.105.2.tgz#af488a05d646dcb5ce13cd8ffd51750465bfc70a"
-  integrity sha512-iX4YpOuF4qgce2iHrimMs3Yi0TY+qWiIWoeM7GZyy8fo0zubzqPd/sadr37bEtKhzOFn+JaP5nodxNUJ5exRWQ==
+cesium@1.102:
+  version "1.102.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.102.0.tgz#64fab4b38d5cbcd5d5c0bc9e9c72311c240cacea"
+  integrity sha512-6reR5r2l9vkNClAEbK0NB+7vg27fzHplM1atdDM5CdUQUwKF3my9edi5BHcGRCgZ3ONmjU+ruGHwRXtmMG7dng==
   dependencies:
-    "@cesium/engine" "2.4.0"
-    "@cesium/widgets" "2.3.0"
+    "@cesium/engine" "2.0.0"
+    "@cesium/widgets" "2.0.0"
 
 chai@^4.3.7:
   version "4.3.7"
@@ -7834,10 +7834,10 @@ domhandler@^5.0.1, domhandler@^5.0.2, domhandler@^5.0.3:
   dependencies:
     domelementtype "^2.3.0"
 
-dompurify@^3.0.2:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.3.tgz#4b115d15a091ddc96f232bcef668550a2f6f1430"
-  integrity sha512-axQ9zieHLnAnHh0sfAamKYiqXMJAVwu+LM/alQ7WDagoWessyWvMSFyW65CqF3owufNu8HBcE4cM2Vflu7YWcQ==
+dompurify@^2.2.2:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.5.tgz#0e89a27601f0bad978f9a924e7a05d5d2cccdd87"
+  integrity sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA==
 
 domutils@^3.0.1:
   version "3.0.1"
@@ -10620,10 +10620,10 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-kdbush@^4.0.1:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-4.0.2.tgz#2f7b7246328b4657dd122b6c7f025fbc2c868e39"
-  integrity sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==
+kdbush@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-3.0.0.tgz#f8484794d47004cc2d85ed3a79353dbe0abc2bf0"
+  integrity sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==
 
 kind-of@^6.0.2, kind-of@^6.0.3:
   version "6.0.3"
@@ -10645,10 +10645,10 @@ klona@^2.0.6:
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.6.tgz#85bffbf819c03b2f53270412420a4555ef882e22"
   integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
 
-ktx-parse@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.5.0.tgz#b4025bbc73ac5386ac37e869de455eab915261bc"
-  integrity sha512-5IZrv5s1byUeDTIee1jjJQBiD5LPDB0w9pJJ0oT9BCKKJf16Tuj123vm1Ps0GOHSHmeWPgKM0zuViCVuTRpqaA==
+ktx-parse@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.4.5.tgz#79905e22281a9d3e602b2ff522df1ee7d1813aa6"
+  integrity sha512-MK3FOody4TXbFf8Yqv7EBbySw7aPvEcPX++Ipt6Sox+/YMFvR5xaTyhfNSk1AEmMy+RYIw81ctN4IMxCB8OAlg==
 
 lazy-universal-dotenv@^4.0.0:
   version "4.0.0"
