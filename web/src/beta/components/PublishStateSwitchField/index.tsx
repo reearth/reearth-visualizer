@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
 import { FC, useState } from "react";
+
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -21,9 +22,8 @@ const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
         </Text>
         <Icon
           icon={"arrowDown"}
+          size={16}
           style={{
-            width: "16px",
-            height: "16px",
             color: "#888686",
           }}
         />
@@ -55,7 +55,6 @@ const Dropdown = styled.div`
 const SelectedState = styled.div`
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
   align-items: center;
   padding: 4px 20px;
   gap: 8px;
@@ -65,10 +64,10 @@ const SelectedState = styled.div`
 
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 6px;
-  background: #171618;
+  background: ${props => props.theme.main.deepBg};
 
   &:hover {
-    background-color: #232226;
+    background-color: ${props => props.theme.main.bg};
   }
 `;
 
@@ -76,7 +75,7 @@ const StatusCircle = styled.object`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4c4c4c;
+  background: ${props => props.theme.main.weak};
 `;
 
 const StateLists = styled.div`
@@ -88,7 +87,7 @@ const StateLists = styled.div`
   transform: translateY(100%);
   box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
   z-index: ${props => props.theme.zIndexes.dropDown};
-  background: #171618;
+  background: ${props => props.theme.main.deepBg};
 `;
 const ListWrapper = styled.ul`
   list-style: none;
@@ -98,7 +97,7 @@ const ListWrapper = styled.ul`
 const ListItem = styled.li`
   display: flex;
   &:hover {
-    background-color: #232226;
+    background-color: ${props => props.theme.main.bg};
   }
 `;
 const MenuItemWrapper = styled.div`
