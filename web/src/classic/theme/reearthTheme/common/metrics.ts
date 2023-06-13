@@ -14,28 +14,6 @@ const metrics = {
   dashboardQuickMinWidth: 270,
   dashboardContentHeight: 250,
   dashboardContentSmallHeight: 156,
-  //   marginHorizontal: 10,
-  //   marginVertical: 10,
-  //   section: 25,
-  //   baseMargin: 10,
-  //   doubleBaseMargin: 20,
-  //   smallMargin: 5,
-  //   doubleSection: 50,
-  //   horizontalLineHeight: 1,
-  //   buttonRadius: 4,
-  //   icons: {
-  //     tiny: 15,
-  //     small: 20,
-  //     medium: 30,
-  //     large: 45,
-  //     xl: 50,
-  //   },
-  //   images: {
-  //     small: 20,
-  //     medium: 40,
-  //     large: 60,
-  //     logo: 200,
-  //   },
 };
 
 export const metricsSizes = {
@@ -49,6 +27,8 @@ export const metricsSizes = {
   "3xl": 28,
   "4xl": 32,
 } as const;
+
+export type MetricsSizesType = typeof metricsSizes;
 
 export type MetricsSizes = keyof typeof metricsSizes;
 

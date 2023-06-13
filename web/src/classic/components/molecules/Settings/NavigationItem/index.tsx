@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 import Text from "@reearth/classic/components/atoms/Text";
 import { styled, fonts, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Props = {
   children?: ReactNode;

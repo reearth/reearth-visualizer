@@ -7,8 +7,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
 import { styled, css, usePublishTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { SceneProperty } from "../../Engine";
 

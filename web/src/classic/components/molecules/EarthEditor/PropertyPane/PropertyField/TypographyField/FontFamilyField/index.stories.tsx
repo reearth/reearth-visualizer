@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 
-import { colors } from "@reearth/services/theme";
+import darkColors from "@reearth/services/theme/reearthTheme/darkTheme/colors";
 
 import FontFamilyField from ".";
 
@@ -17,14 +17,14 @@ export const Selected = () => (
 export const Linked = () => (
   <FontFamilyField
     value="Comic Sans MS"
-    color={colors.dark.primary.main}
+    color={darkColors.primary.main}
     onChange={action("onchange")}
   />
 );
 export const Overridden = () => (
   <FontFamilyField
     value="Tahoma"
-    color={colors.dark.functional.attention}
+    color={darkColors.functional.attention}
     onChange={action("onchange")}
   />
 );
