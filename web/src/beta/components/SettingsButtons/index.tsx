@@ -51,14 +51,12 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  padding: 0px;
 
   width: 100%;
   height: 100%;
-  background: #3b3cd0;
+  background: ${props => props.theme.infoBox.accent2};
 `;
 
 export default SettingsButtons;
