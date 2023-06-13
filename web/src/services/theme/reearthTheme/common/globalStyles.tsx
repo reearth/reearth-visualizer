@@ -3,6 +3,9 @@ import "github-markdown-css/github-markdown.css";
 
 import { css } from "@reearth/services/theme";
 
+const fontFamilies =
+  "Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif;";
+
 export const styles = css`
   html,
   body,
@@ -11,8 +14,7 @@ export const styles = css`
     width: 100%;
     height: 100%;
     margin: 0;
-    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
-      sans-serif;
+    font-family: ${fontFamilies}
     background-color: #000;
     color: #fff;
   }
@@ -22,8 +24,7 @@ export const styles = css`
   input {
     margin: 0;
     padding: 0;
-    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
-      sans-serif;
+    font-family: ${fontFamilies}
   }
 
   button {
@@ -36,8 +37,7 @@ export const styles = css`
   }
 
   textarea {
-    font-family: Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem,
-      sans-serif;
+    font-family: ${fontFamilies}
   }
 
   /* Split Pane Styles */
