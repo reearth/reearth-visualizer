@@ -47,13 +47,13 @@ const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
   );
 };
 const Dropdown = styled.div`
-  position: relative; // 必要
+  position: relative;
   height: 100%;
   width: 100%;
 `;
 
 const SelectedState = styled.div`
-  box-sizing: border-box; // 必要
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -72,7 +72,6 @@ const SelectedState = styled.div`
   }
 `;
 
-// 一旦、＃4c4c4c固定 → 要件が書いてない
 const StatusCircle = styled.object`
   width: 8px;
   height: 8px;
