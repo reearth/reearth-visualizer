@@ -42,8 +42,6 @@ const StorytellingPageSectionItem: FC<Props> = ({
 
 const HorizontalBox = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   gap: 4px;
 `;
 
@@ -56,8 +54,6 @@ const VerticalBox = styled.div`
 
 const TitleArea = styled.div<{ active?: boolean }>`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   justify-content: space-between;
   padding: 8px;
   gap: 4px;
