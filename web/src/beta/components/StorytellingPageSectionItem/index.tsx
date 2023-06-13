@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
+
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -30,10 +31,10 @@ const StorytellingPageSectionItem: FC<Props> = ({
         <Icon icon={icon} />
       </VerticalBox>
       <TitleArea active={active}>
-        <Text onClick={onClick} size={"s"} color="#ffffff">
+        <Text onClick={onClick} size={"s"} color="#ffffff" otherProperties={{ cursor: "pointer" }}>
           {title}
         </Text>
-        <Icon icon="actionbutton" onClick={onAction} />
+        <Icon icon="actionbutton" onClick={onAction} style={{ cursor: "pointer" }} />
       </TitleArea>
     </HorizontalBox>
   );
@@ -43,7 +44,6 @@ const HorizontalBox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0px;
   gap: 4px;
 `;
 
@@ -51,7 +51,6 @@ const VerticalBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 4px;
 `;
 
@@ -63,8 +62,8 @@ const TitleArea = styled.div<{ active?: boolean }>`
   padding: 8px;
   gap: 4px;
 
-  background: ${({ active }) => (active ? "#3b3cd0" : "#232226")};
-  border: ${({ active }) => (active ? "1px solid #3b3cd0" : "1px solid #3f3d45")};
+  background: ${props => (props.active ? props.theme.main.select : props.theme.main.bg)};
+  border: 1px solid ${props => (props.active ? props.theme.main.select : props.theme.main.border)};
   border-radius: 6px;
 
   width: 100%;
