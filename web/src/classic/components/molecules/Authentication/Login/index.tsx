@@ -5,8 +5,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import AuthPage from "..";
 

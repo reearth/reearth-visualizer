@@ -3,8 +3,8 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import TabCard from "@reearth/classic/components/atoms/TabCard";
 import Table from "@reearth/classic/components/atoms/Table";
+import { useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { useTheme } from "@reearth/services/theme";
 
 import DatasetPropertyItem, {
   PrimitiveItem as PrimitiveItemType,

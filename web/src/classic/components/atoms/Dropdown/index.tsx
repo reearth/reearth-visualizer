@@ -2,7 +2,7 @@ import { ReactNode, useState, useRef, forwardRef, useImperativeHandle } from "re
 import { useClickAway } from "react-use";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 type Direction = "right" | "down" | "none";
 

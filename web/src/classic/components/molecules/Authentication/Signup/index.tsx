@@ -6,8 +6,8 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import AuthPage from "..";
 

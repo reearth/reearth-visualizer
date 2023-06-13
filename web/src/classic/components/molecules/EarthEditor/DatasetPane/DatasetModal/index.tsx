@@ -7,8 +7,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 import Gdrive from "./Gdrive";
 import useHooks from "./hooks";

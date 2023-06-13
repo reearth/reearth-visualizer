@@ -3,8 +3,8 @@ import React from "react";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import TreeView, { Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import LayerMultipleSelectionModal from "../../LayerMultipleSelectionModal";
 import type { Layer as LayerType } from "../PropertyItem";

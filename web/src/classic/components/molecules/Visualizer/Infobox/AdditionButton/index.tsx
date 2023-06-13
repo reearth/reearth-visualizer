@@ -3,7 +3,7 @@ import { usePopper } from "react-popper";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Portal from "@reearth/classic/components/atoms/Portal";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 export interface Props {
   className?: string;

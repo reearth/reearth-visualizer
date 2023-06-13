@@ -4,7 +4,7 @@ import { usePopper } from "react-popper";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, metricsSizes, mask } from "@reearth/services/theme";
+import { styled, metricsSizes, mask } from "@reearth/classic/theme";
 
 import type { Camera, FlyToDestination, Theme } from "../types";
 import { Visible } from "../useVisible";

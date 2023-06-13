@@ -2,9 +2,9 @@ import React, { Fragment } from "react";
 
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export interface Props {
   className?: string;

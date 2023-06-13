@@ -1,7 +1,7 @@
 import React from "react";
 
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import NumberField from "../NumberField";
 import { FieldProps } from "../types";

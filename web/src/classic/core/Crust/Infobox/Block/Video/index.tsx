@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Player from "react-player";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import { CommonProps as BlockProps } from "..";
 import { Border, Title } from "../utils";

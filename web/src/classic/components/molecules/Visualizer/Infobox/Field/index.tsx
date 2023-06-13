@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import InsertionBar from "@reearth/classic/components/atoms/InsertionBar";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import useHooks from "./hooks";
 

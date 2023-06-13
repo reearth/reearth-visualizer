@@ -3,8 +3,8 @@ import useFileInput from "use-file-input";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 

@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import TreeView, { Item, Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import LayerTreeViewItem, { Layer as LayerType } from "../LayerTreeViewItem";
 

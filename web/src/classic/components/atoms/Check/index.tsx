@@ -1,5 +1,5 @@
-import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
+import { styled } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 
 type Props = {
   linked?: boolean;

@@ -3,8 +3,8 @@ import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import React, { useRef, useEffect } from "react";
 import { useClickAway } from "react-use";
 
+import { styled } from "@reearth/classic/theme";
 import useBuffered from "@reearth/classic/util/use-buffered";
-import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;

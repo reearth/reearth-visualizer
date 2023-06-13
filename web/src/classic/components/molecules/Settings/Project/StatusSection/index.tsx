@@ -4,8 +4,8 @@ import PublicationStatus, { Status } from "@reearth/classic/components/atoms/Pub
 import Text from "@reearth/classic/components/atoms/Text";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
   projectStatus?: Status;

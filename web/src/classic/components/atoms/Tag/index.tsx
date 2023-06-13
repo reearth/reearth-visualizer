@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 import Box from "../Box";
 import Flex from "../Flex";

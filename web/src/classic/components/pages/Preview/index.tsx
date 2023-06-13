@@ -8,7 +8,7 @@ import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useSceneId } from "@reearth/services/state";
 
-import { PublishedAppProvider as ThemeProvider } from "../../../../services/theme";
+import { PublishedAppProvider as ThemeProvider } from "../../../../classic/theme";
 
 export type Props = {
   path?: string;

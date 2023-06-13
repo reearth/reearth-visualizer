@@ -3,7 +3,7 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, metrics, useTheme } from "@reearth/services/theme";
+import { styled, metrics, useTheme } from "@reearth/classic/theme";
 
 export type NotificationType = "error" | "warning" | "info" | "success";
 export type Notification = {

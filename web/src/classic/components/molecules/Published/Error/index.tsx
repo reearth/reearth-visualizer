@@ -1,4 +1,4 @@
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 export default function Error() {
   return <Wrapper>Error!</Wrapper>;

@@ -3,8 +3,8 @@ import React, { useState, useCallback } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import SelectBox, { Props as SelectBoxProps } from "@reearth/classic/components/atoms/SelectBox";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape";
 

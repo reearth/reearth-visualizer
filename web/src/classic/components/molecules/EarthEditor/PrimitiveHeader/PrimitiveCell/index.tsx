@@ -2,7 +2,7 @@ import React from "react";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import useHooks from "./hooks";
 

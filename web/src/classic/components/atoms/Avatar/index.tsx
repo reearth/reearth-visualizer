@@ -2,7 +2,7 @@ import React from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 export type Size = "small" | "large";
 

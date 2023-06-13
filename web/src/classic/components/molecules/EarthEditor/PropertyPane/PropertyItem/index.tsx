@@ -6,11 +6,11 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import GroupWrapper from "@reearth/classic/components/atoms/TabCard";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useBind } from "@reearth/classic/util/use-bind";
 import { zeroValues } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 import { ExtendedFuncProps2 } from "@reearth/types";
 
 import PropertyField, {

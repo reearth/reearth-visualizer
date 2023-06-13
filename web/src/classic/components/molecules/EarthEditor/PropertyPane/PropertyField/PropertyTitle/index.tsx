@@ -3,8 +3,8 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
-import { styled, css } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
+import { styled, css } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 

@@ -7,8 +7,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Tag from "@reearth/classic/components/atoms/Tag";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 export type Tag = {
   id: string;

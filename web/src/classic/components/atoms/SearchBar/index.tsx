@@ -1,6 +1,6 @@
 import React from "react";
 
-import { fonts, styled, useTheme } from "@reearth/services/theme";
+import { fonts, styled, useTheme } from "@reearth/classic/theme";
 
 import Box from "../Box";
 import Flex from "../Flex";

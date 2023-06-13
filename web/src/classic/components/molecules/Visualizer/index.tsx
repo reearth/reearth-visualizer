@@ -5,8 +5,8 @@ import DropHolder from "@reearth/classic/components/atoms/DropHolder";
 import Filled from "@reearth/classic/components/atoms/Filled";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
+import { styled } from "@reearth/classic/theme";
 import { LatLng } from "@reearth/classic/util/value";
-import { styled } from "@reearth/services/theme";
 
 import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
 import Err from "./Error";

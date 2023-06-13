@@ -5,7 +5,7 @@ import { BillboardGraphics } from "resium";
 
 import defaultImage from "@reearth/classic/components/atoms/Icon/Icons/primPhotoIcon.svg";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 import type { LegacyPhotooverlayAppearance } from "../../..";
 import { heightReference, ho, useIcon, vo } from "../../common";

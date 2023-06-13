@@ -3,7 +3,7 @@ import { RingLoader } from "react-spinners";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 export type Props = {
   loading?: boolean;

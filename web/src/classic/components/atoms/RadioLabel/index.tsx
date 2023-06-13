@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import RadioButton, { RadioButtonProps } from "@reearth/classic/components/atoms/RadioButton";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 export type RadioLabelProps = RadioButtonProps & {
   label: string;

@@ -8,9 +8,9 @@ import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
+import { styled, useTheme } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks from "./hooks";
 import InputField from "./InputField";

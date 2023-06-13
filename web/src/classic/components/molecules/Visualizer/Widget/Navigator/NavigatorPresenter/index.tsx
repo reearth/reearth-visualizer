@@ -1,8 +1,8 @@
 import { memo } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { PublishTheme, styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { PublishTheme, styled } from "@reearth/services/theme";
 
 import { SceneMode } from "../../../Engine/ref";
 

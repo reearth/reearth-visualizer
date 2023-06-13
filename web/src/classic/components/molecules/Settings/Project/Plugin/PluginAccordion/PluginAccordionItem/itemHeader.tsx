@@ -4,8 +4,8 @@ import Box from "@reearth/classic/components/atoms/Box";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { fonts, styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { fonts, styled } from "@reearth/services/theme";
 
 import DeleteModal from "./deleteModal";
 

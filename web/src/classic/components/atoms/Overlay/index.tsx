@@ -1,4 +1,4 @@
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 type Props = {
   show?: boolean;

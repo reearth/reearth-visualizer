@@ -5,7 +5,7 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, css, fonts, metricsSizes } from "@reearth/services/theme";
+import { styled, css, fonts, metricsSizes } from "@reearth/classic/theme";
 
 import type { Theme } from "../types";
 import { type Typography, typographyStyles } from "../utils";

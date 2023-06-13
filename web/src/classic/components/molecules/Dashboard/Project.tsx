@@ -11,8 +11,8 @@ import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/de
 import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Project as ProjectObjType } from "@reearth/classic/components/molecules/Dashboard/types";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 
 export type Props = {

@@ -3,7 +3,7 @@ import { ReactNode, useRef, useCallback } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 export type Props = {
   className?: string;

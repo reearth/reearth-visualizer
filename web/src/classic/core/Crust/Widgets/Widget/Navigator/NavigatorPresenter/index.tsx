@@ -1,8 +1,8 @@
 import { memo } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import type { Theme } from "../../types";
 

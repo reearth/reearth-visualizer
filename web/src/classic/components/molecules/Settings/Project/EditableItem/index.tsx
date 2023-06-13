@@ -6,8 +6,8 @@ import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/de
 import TextBox from "@reearth/classic/components/atoms/TextBox";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import SelectField from "@reearth/classic/components/molecules/Settings/SelectField";
-import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import { styled } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 
 export type Props<T extends string = string> = {
   className?: string;

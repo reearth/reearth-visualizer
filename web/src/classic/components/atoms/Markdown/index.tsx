@@ -3,8 +3,8 @@ import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
 
+import { styled } from "@reearth/classic/theme";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
-import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -32,7 +32,7 @@ const Markdown: React.FC<Props> = ({
 
   return (
     <Wrapper
-      className="markdown-body" // github-markdown-css is imported at src/services/theme/globalstyle.tsx
+      className="markdown-body" // github-markdown-css is imported at src/classic/theme/globalstyle.tsx
       styles={styles}
       dark={dark}
       onClick={onClick}

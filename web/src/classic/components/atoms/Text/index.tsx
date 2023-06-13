@@ -1,11 +1,11 @@
 import { CSSProperties } from "react";
 
-import { useTheme } from "@reearth/services/theme";
+import { useTheme } from "@reearth/classic/theme";
 import {
   FontWeight,
   typography,
   TypographySize,
-} from "@reearth/services/theme/reearthTheme/common/fonts";
+} from "@reearth/classic/theme/reearthTheme/common/fonts";
 
 type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
 

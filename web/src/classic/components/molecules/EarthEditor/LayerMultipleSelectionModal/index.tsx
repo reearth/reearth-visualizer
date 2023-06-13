@@ -4,9 +4,9 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TreeView, { Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
+import { styled } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { Layer as LayerType } from "./hooks";
 

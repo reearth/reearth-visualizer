@@ -2,8 +2,8 @@ import RCSlider from "rc-slider";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
-import { styled, metrics, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import { styled, metrics, useTheme } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 
 import { FieldProps } from "../types";
 

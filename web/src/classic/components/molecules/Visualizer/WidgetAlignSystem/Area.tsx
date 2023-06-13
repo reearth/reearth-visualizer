@@ -4,7 +4,7 @@ import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
 import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
-import { useTheme } from "@reearth/services/theme";
+import { useTheme } from "@reearth/classic/theme";
 
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";

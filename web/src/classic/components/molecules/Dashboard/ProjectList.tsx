@@ -4,8 +4,8 @@ import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Project from "@reearth/classic/components/molecules/Dashboard/Project";
 import { Project as ProjectType } from "@reearth/classic/components/molecules/Dashboard/types";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;

@@ -1,4 +1,4 @@
-import { css } from "@reearth/services/theme";
+import { css } from "@reearth/classic/theme";
 
 import { Typography } from "./types";
 

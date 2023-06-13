@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
-import { styled, metrics, css } from "@reearth/services/theme";
+import { styled, metrics, css } from "@reearth/classic/theme";
 
 import Profile from "./profile";
 import type { User, Workspace, Project } from "./types";

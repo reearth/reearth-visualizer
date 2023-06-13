@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 
 import { RadioLabelProps as BasedRadioLabelProps } from "@reearth/classic/components/atoms/RadioLabel";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 type RadioLabelProps<Value extends string | number> = Omit<BasedRadioLabelProps, "value"> & {
   value: Value;

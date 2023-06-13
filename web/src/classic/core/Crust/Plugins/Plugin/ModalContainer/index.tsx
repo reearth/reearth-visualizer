@@ -6,7 +6,7 @@ import {
   useCallback,
 } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 export type PluginModalInfo = {
   id?: string;

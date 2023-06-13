@@ -9,8 +9,8 @@ import {
   MenuListItemLabel,
 } from "@reearth/classic/components/molecules/Common/MenuList";
 import WorkspaceMenu from "@reearth/classic/components/molecules/Common/WorkspaceMenu";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 import { User, Workspace } from "./types";
 

@@ -3,10 +3,10 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Markdown from "@reearth/classic/components/atoms/Markdown";
+import { styled, useTheme } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { Props as BlockProps } from "..";
 import { Border } from "../common";

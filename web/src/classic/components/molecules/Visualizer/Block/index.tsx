@@ -1,7 +1,7 @@
 import { ComponentType } from "react";
 
+import { styled } from "@reearth/classic/theme";
 import { ValueType, ValueTypes } from "@reearth/classic/util/value";
-import { styled } from "@reearth/services/theme";
 
 import type { SceneProperty } from "../Engine";
 import { Viewport } from "../hooks";

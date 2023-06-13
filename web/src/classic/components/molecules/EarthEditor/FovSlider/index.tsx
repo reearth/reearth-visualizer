@@ -3,9 +3,9 @@ import React from "react";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Slider from "@reearth/classic/components/atoms/Slider";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/classic/theme";
 import { Camera } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 

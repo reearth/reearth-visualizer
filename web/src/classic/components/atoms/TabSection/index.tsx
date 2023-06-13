@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import Divider from "../Divider";
 

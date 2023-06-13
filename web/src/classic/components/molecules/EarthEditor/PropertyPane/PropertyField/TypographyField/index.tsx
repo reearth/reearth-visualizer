@@ -1,8 +1,8 @@
 import { difference } from "lodash-es";
 import React, { useMemo, useCallback } from "react";
 
+import { styled, useTheme } from "@reearth/classic/theme";
 import { Typography } from "@reearth/classic/util/value";
-import { styled, useTheme } from "@reearth/services/theme";
 
 import ColorField from "../ColorField";
 import RadioField from "../RadioField";

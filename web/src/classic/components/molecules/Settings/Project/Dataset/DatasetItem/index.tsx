@@ -3,8 +3,8 @@ import React, { useState, useCallback } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
+import { styled, fonts } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, fonts } from "@reearth/services/theme";
 
 export type Item = {};
 

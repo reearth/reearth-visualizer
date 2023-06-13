@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { styled } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { CommonProps as BlockProps } from "..";
 import { Border } from "../utils";

@@ -9,8 +9,8 @@ import MemberList from "@reearth/classic/components/molecules/Settings/Workspace
 import MemberListItem, {
   Role,
 } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 export type Me = {
   id?: string;

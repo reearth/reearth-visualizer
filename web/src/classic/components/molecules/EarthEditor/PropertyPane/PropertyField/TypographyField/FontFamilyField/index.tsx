@@ -4,8 +4,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option, Props as OptionProps } from "@reearth/classic/components/atoms/SelectOption";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 const safeFonts = {
   Arial: { displayName: "Arial" } as const,

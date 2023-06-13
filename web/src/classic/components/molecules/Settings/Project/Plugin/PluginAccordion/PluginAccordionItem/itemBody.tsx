@@ -1,6 +1,6 @@
 import Box from "@reearth/classic/components/atoms/Box";
 import Markdown from "@reearth/classic/components/atoms/Markdown";
-import { useTheme } from "@reearth/services/theme";
+import { useTheme } from "@reearth/classic/theme";
 
 export type Props = {
   children?: string;

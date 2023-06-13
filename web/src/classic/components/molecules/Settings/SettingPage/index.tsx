@@ -6,8 +6,8 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Header, { Props } from "@reearth/classic/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/classic/components/molecules/Settings/Navigation";
+import { styled } from "@reearth/classic/theme";
 import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
-import { styled } from "@reearth/services/theme";
 
 export type SettingPageProps = {
   loading?: boolean;

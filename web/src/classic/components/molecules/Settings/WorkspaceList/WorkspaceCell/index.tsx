@@ -3,9 +3,9 @@ import React from "react";
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { styled, useTheme } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { Workspace as WorkspaceType } from "../WorkspaceList";
 

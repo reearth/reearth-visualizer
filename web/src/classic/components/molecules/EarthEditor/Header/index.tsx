@@ -13,8 +13,8 @@ import {
   MenuListItemLabel,
 } from "@reearth/classic/components/molecules/Common/MenuList";
 import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 // Proxy dependent types
 export type { User, Workspace } from "@reearth/classic/components/molecules/Common/Header";

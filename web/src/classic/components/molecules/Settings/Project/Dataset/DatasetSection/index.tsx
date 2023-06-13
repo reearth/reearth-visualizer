@@ -6,8 +6,8 @@ import DatasetList, {
   Item,
 } from "@reearth/classic/components/molecules/Settings/Project/Dataset/DatasetList";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 type Props = {
   datasetSchemas: Item[];

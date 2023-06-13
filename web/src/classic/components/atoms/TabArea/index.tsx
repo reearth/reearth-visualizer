@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Overlay from "@reearth/classic/components/atoms/Overlay";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/classic/theme";
 
 export type MenuAlignment = "left" | "top";
 

@@ -3,9 +3,9 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Markdown from "@reearth/classic/components/atoms/Markdown";
+import { styled, useTheme } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { CommonProps as BlockProps, Typography } from "..";
 import { Border, typographyStyles } from "../utils";

@@ -2,7 +2,7 @@ import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import { useState, useEffect } from "react";
 import { useTimeoutFn } from "react-use";
 
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import type { Camera } from "../types";

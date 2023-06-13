@@ -1,6 +1,6 @@
 import React from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 export type Props = {
   color?: string;

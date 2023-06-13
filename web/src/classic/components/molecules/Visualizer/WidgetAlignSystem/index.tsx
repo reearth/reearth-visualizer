@@ -2,7 +2,7 @@ import React from "react";
 import { GridWrapper } from "react-align";
 
 import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
-import { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/classic/theme";
 
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
