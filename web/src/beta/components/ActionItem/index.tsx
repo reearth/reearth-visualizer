@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
+
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -13,7 +14,7 @@ type Props = {
 const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
   return (
     <Box onClick={onClick}>
-      <Icon icon={icon} style={{ width: "8px", height: "8px" }} />
+      <Icon icon={icon} size={8} />
       <Text size={"s"} color={"#c7c5c5"}>
         {title}
       </Text>
@@ -30,9 +31,9 @@ const Box = styled.div`
 
   height: 28px;
 
-  background: #232226;
+  background: ${props => props.theme.main.paleBg};
   :hover {
-    background: #2b2a2f;
+    background: ${props => props.theme.main.bg};
   }
 `;
 
