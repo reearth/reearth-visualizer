@@ -21,18 +21,27 @@ type ButtonProps = {
 };
 
 const Button = styled.button<ButtonProps>`
-  background: ${({ disabled }) => (disabled ? "#232226" : "inherit")};
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
   padding: 8px 12px;
+  gap: 10px;
+  width: 67px;
   height: 35px;
   border-radius: 4px;
-  :hover {
-    background: #232226;
-    transition: all 0.5s ease;
-  }
-  color: ${({ disabled }) => (disabled ? "#C7C5C5" : "#4A4A4A")};
+  color: ${({ disabled, theme }) => (disabled ? theme.main.text : theme.main.weak)};
+  background: ${({ disabled, theme }) => (disabled ? theme.main.lighterBg : theme.editorNavBar.bg)};
+  font-weight: 700;
   font-size: 14px;
   line-height: 19px;
-  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  :hover {
+    background: ${({ theme }) => theme.main.lighterBg};
+    transition: all 0.5s ease;
+  }
 `;
 
 export default TabButton;

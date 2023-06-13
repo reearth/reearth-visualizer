@@ -4,8 +4,7 @@ import { render, screen } from "@reearth/test/utils";
 
 import TabButton from ".";
 
-const handleClick = () => {
-};
+const handleClick = () => {};
 
 test("1. should be rendered", () => {
   render(<TabButton label="test1" onClick={handleClick} selected={false} />);
