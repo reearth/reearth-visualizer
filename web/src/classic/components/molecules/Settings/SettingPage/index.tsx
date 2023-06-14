@@ -37,7 +37,6 @@ const SettingPage: React.FC<SettingPageProps> = ({
   useEffect(() => {
     if (wrapperRef.current && !loading && hasMoreItems) autoFillPage(wrapperRef, onScroll);
   }, [hasMoreItems, loading, onScroll]);
-
   return (
     <Wrapper>
       <StyledHeader
@@ -46,7 +45,11 @@ const SettingPage: React.FC<SettingPageProps> = ({
         icon={
           currentProject && (
             <StyledLink
-              to={currentProject.projectType === "beta" ? `/scene/${sceneId}` : `/edit/${sceneId}`}>
+              to={
+                currentProject.projectType === "beta"
+                  ? `/scene/${sceneId}/scene`
+                  : `/edit/${sceneId}`
+              }>
               <StyledIcon icon="earthEditor" size={25} />
             </StyledLink>
           )
