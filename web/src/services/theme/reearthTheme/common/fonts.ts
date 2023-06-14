@@ -24,14 +24,14 @@ const fontWeights = {
 
 export type FontWeight = keyof typeof fontWeights;
 
-// H1
+// H1 components
 export const H1Medium = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h1}px;
   font-weight: ${fontWeights.medium};
 `;
 
-// H2
+// H2 components
 export const H2Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h2}px;
@@ -50,7 +50,7 @@ export const H2Regular = styled.p`
   font-weight: ${fontWeights.regular};
 `;
 
-// H3
+// H3 components
 export const H3Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h3}px;
@@ -69,7 +69,7 @@ export const H3Regular = styled.p`
   font-weight: ${fontWeights.regular};
 `;
 
-// H4
+// H4 components
 export const H4Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h4}px;
@@ -82,7 +82,7 @@ export const H4Medium = styled.p`
   font-weight: ${fontWeights.medium};
 `;
 
-// H5
+// H5 components
 export const H5Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h5}px;
@@ -95,7 +95,7 @@ export const H5Medium = styled.p`
   font-weight: ${fontWeights.medium};
 `;
 
-// Body
+// Body components
 export const BodyBold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.body}px;
@@ -135,7 +135,7 @@ export const BodyRegularItalic = styled.p`
   font-style: italic;
 `;
 
-// Footnote
+// Footnote components
 export const FootnoteRegular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.footnote}px;
@@ -151,7 +151,9 @@ export const XFootnoteRegular = styled.p`
 `;
 
 type Typography = {
-  [key in FontSize]: { [key in FontWeight | "underline" | "strike" | "italic"]?: any };
+  [key in FontSize]: {
+    [key in FontWeight | "underline" | "strike" | "italic"]?: React.FC;
+  };
 };
 
 export const typography: Typography = {
