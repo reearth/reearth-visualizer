@@ -54,13 +54,13 @@ const darkTheme: Theme = {
   buttonSecondary: {
     bgHover: colors.secondary.main,
     color: colors.secondary.main,
-    colorHover: colors.other.white,
+    colorHover: commonColors.general.white,
     disabled: colors.secondary.weakest,
   },
   buttonDanger: {
     bgHover: colors.danger.main,
     color: colors.danger.main,
-    colorHover: colors.other.white,
+    colorHover: commonColors.general.white,
     disabled: colors.danger.weakest,
   },
   infoBox: {
@@ -201,10 +201,6 @@ const darkTheme: Theme = {
     bg: colors.bg[5],
     textColor: colors.text.main,
     shadowColor: colors.bg[1],
-  },
-  other: {
-    black: colors.other.black,
-    white: colors.other.white,
   },
   pluginList: {
     bg: colors.bg[3],

@@ -48,19 +48,19 @@ const lightTheme: Theme = {
   buttonPrimary: {
     bgHover: colors.primary.main,
     color: colors.primary.main,
-    colorHover: colors.other.white,
+    colorHover: commonColors.general.white,
     disabled: colors.primary.weakest,
   },
   buttonSecondary: {
     bgHover: colors.secondary.main,
     color: colors.secondary.main,
-    colorHover: colors.other.white,
+    colorHover: commonColors.general.white,
     disabled: colors.secondary.weakest,
   },
   buttonDanger: {
     bgHover: colors.danger.main,
     color: colors.danger.main,
-    colorHover: colors.other.white,
+    colorHover: commonColors.general.white,
     disabled: colors.danger.weakest,
   },
   infoBox: {
@@ -201,10 +201,6 @@ const lightTheme: Theme = {
     bg: colors.bg[5],
     textColor: colors.text.main,
     shadowColor: colors.bg[1],
-  },
-  other: {
-    black: colors.other.black,
-    white: colors.other.white,
   },
   pluginList: {
     bg: colors.bg[3],

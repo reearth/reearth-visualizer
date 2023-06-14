@@ -7,8 +7,8 @@ const colors = {
     5: "#3F3D45",
   },
   text: {
-    strong: "#F2F2F2",
-    main: "#B4B4B4",
+    strong: "#FFFFFF",
+    main: "#C7C5C5",
     weak: "#4A4A4A",
   },
   outline: {
@@ -35,15 +35,12 @@ const colors = {
   },
   functional: {
     link: "#3592FF",
+    notice: "#6E9CD2",
+    select: "#3B3CD0",
     success: "#07B28C",
     attention: "#CFBF01",
+    override: "#D6C71C",
     error: "#FF3C53",
-    select: "#3B3CD0",
-    notice: "#6E9CD2",
-  },
-  other: {
-    black: "#000000",
-    white: "#FFFFFF",
   },
 };
 

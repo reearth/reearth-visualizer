@@ -203,10 +203,6 @@ export type Theme = {
     textColor: string;
     shadowColor: string;
   };
-  other: {
-    black: string;
-    white: string;
-  };
   pluginList: {
     bg: string;
   };
