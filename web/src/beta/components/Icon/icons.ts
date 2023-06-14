@@ -25,6 +25,7 @@ import Crosshair from "./Icons/crosshair.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
+import CheckMark from "./Icons/checkMark.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -57,4 +58,5 @@ export default {
   playLeft: PlayLeft,
   timeline: Timeline,
   actionbutton: ActionButton,
+  checkmark: CheckMark,
 };
