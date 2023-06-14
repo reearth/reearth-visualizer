@@ -4,128 +4,186 @@ export const fontFamilies =
   "Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif;";
 
 const fontSizes = {
-  xl: 28,
-  l: 20,
-  m: 16,
-  s: 14,
-  xs: 12,
-  "2xs": 10,
+  h1: 38,
+  h2: 30,
+  h3: 24,
+  h4: 20,
+  h5: 16,
+  body: 14,
+  footnote: 12,
 };
 
-const weight = {
-  normal: "normal",
+export type FontSize = keyof typeof fontSizes;
+
+const fontWeights = {
+  regular: "normal",
+  medium: 500,
   bold: "bold",
 };
 
-export const XLBold = styled.p`
+export type FontWeight = keyof typeof fontWeights;
+
+// H1
+export const H1Medium = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.xl}px;
-  font-weight: ${weight.bold};
+  font-size: ${fontSizes.h1}px;
+  font-weight: ${fontWeights.medium};
 `;
 
-export const XLRegular = styled.p`
+// H2
+export const H2Bold = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.xl}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h2}px;
+  font-weight: ${fontWeights.bold};
 `;
 
-export const LBold = styled.p`
+export const H2Medium = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.l}px;
-  font-weight: ${weight.bold};
+  font-size: ${fontSizes.h2}px;
+  font-weight: ${fontWeights.medium};
 `;
 
-export const LRegular = styled.p`
+export const H2Regular = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.l}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h2}px;
+  font-weight: ${fontWeights.regular};
 `;
 
-export const MBold = styled.p`
+// H3
+export const H3Bold = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.m}px;
-  font-weight: ${weight.bold};
+  font-size: ${fontSizes.h3}px;
+  font-weight: ${fontWeights.bold};
 `;
 
-export const MRegular = styled.p`
+export const H3Medium = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.m}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h3}px;
+  font-weight: ${fontWeights.medium};
 `;
 
-export const MParagraph = styled(MRegular)`
-  line-height: 1.5;
-`;
-
-export const SBold = styled.p`
+export const H3Regular = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.s}px;
-  font-weight: ${weight.bold};
+  font-size: ${fontSizes.h3}px;
+  font-weight: ${fontWeights.regular};
 `;
 
-export const SRegular = styled.p`
+// H4
+export const H4Bold = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.s}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h4}px;
+  font-weight: ${fontWeights.bold};
 `;
 
-export const SParagraph = styled(SRegular)`
-  line-height: 1.5;
-`;
-
-export const XSBold = styled.p`
+export const H4Medium = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.xs}px;
-  font-weight: ${weight.bold};
+  font-size: ${fontSizes.h4}px;
+  font-weight: ${fontWeights.medium};
 `;
 
-export const XSRegular = styled.p`
+// H5
+export const H5Bold = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes.xs}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h5}px;
+  font-weight: ${fontWeights.bold};
 `;
 
-export const XXSRegular = styled.p`
+export const H5Medium = styled.p`
   font-family: ${fontFamilies};
-  font-size: ${fontSizes["2xs"]}px;
-  font-weight: ${weight.normal};
+  font-size: ${fontSizes.h5}px;
+  font-weight: ${fontWeights.medium};
 `;
 
-export const typography = {
-  xl: {
-    bold: XLBold,
-    regular: XLRegular,
+// Body
+export const BodyBold = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.bold};
+`;
+
+export const BodyMedium = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.medium};
+`;
+
+export const BodyRegular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.regular};
+`;
+
+export const BodyRegularUnderline = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.regular};
+  text-decoration: underline;
+`;
+
+export const BodyRegularStrike = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.regular};
+  text-decoration: line-through;
+`;
+
+export const BodyRegularItalic = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.body}px;
+  font-weight: ${fontWeights.regular};
+  font-style: italic;
+`;
+
+// Footnote
+export const FootnoteRegular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.footnote}px;
+  font-weight: ${fontWeights.regular};
+  font-style: italic;
+`;
+
+type Typography = {
+  [key in FontSize]: { [key in FontWeight | "underline" | "strike" | "italic"]?: any };
+};
+
+export const typography: Typography = {
+  h1: {
+    medium: H1Medium,
   },
-  l: {
-    bold: LBold,
-    regular: LRegular,
+  h2: {
+    bold: H2Bold,
+    medium: H2Medium,
+    regular: H2Regular,
   },
-  m: {
-    bold: MBold,
-    regular: MRegular,
-    paragraph: MParagraph,
+  h3: {
+    bold: H3Bold,
+    medium: H3Medium,
+    regular: H3Regular,
   },
-  s: {
-    bold: SBold,
-    regular: SRegular,
-    paragraph: SParagraph,
+  h4: {
+    bold: H4Bold,
+    medium: H4Medium,
   },
-  xs: {
-    bold: XSBold,
-    regular: XSRegular,
+  h5: {
+    bold: H5Bold,
+    medium: H5Medium,
   },
-  "2xs": {
-    regular: XXSRegular,
+  body: {
+    bold: BodyBold,
+    medium: BodyMedium,
+    regular: BodyRegular,
+    underline: BodyRegularUnderline,
+    strike: BodyRegularStrike,
+    italic: BodyRegularItalic,
+  },
+  footnote: {
+    regular: FootnoteRegular,
   },
 };
 
-export type TypographySize = keyof typeof typography;
-
-export type FontWeight = keyof typeof weight;
-
 const fonts = {
   typography: typography,
-  weight: weight,
+  weight: fontWeights,
   sizes: fontSizes,
 };
 
