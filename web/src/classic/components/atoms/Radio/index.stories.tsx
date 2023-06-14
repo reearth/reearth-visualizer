@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import Radio from ".";
 
 export default {
-  title: "atoms/Radio",
+  title: "classic/atoms/Radio",
   component: Radio,
 } as Meta;
 

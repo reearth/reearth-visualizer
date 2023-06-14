@@ -8,8 +8,8 @@ import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 type Props = {
   className?: string;

@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Navigator, { Props } from ".";
 
 export default {
-  title: "atoms/Navigator",
+  title: "classic/atoms/Navigator",
   component: Navigator,
 } as Meta;
 

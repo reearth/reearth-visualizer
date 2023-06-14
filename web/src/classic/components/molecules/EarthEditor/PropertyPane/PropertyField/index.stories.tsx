@@ -26,7 +26,7 @@ const camera: settings = {
 };
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField",
   component: PropertyField,
 } as Meta;
 

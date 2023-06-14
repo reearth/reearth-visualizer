@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import { Option } from ".";
 
 export default {
-  title: "atoms/SelectOption",
+  title: "classic/atoms/SelectOption",
   component: Option,
 } as Meta;
 
