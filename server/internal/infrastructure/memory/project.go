@@ -113,7 +113,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		return nil, nil
 	}
 	for _, p := range r.data {
-		if p.MatchWithPublicName(name) && r.f.CanRead(p.Workspace()) {
+		if p.MatchWithPublicName(name) {
 			return p, nil
 		}
 	}
