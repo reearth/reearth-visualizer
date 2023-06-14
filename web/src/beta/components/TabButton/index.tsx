@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled, colors } from "@reearth/services/theme";
 
 export type Props = {
   label: string;
@@ -21,17 +21,17 @@ type ButtonProps = {
 };
 
 const Button = styled.button<ButtonProps>`
-  background: ${({ disabled }) => (disabled ? "#232226" : "inherit")};
+  background: ${({ disabled }) => (disabled ? colors.dark.functional.select : "inherit")};
   padding: 8px 12px;
   height: 35px;
-  border-radius: 4px;
+  border-radius: 4px 4px 0px 0px;
   :hover {
-    background: #232226;
+    background: ${colors.dark.functional.select};
     transition: all 0.5s ease;
   }
-  color: ${({ disabled }) => (disabled ? "#C7C5C5" : "#4A4A4A")};
+  color: ${({ disabled }) =>
+    disabled ? colors.publish.dark.text.main : colors.publish.dark.text.weak};
   font-size: 14px;
-  line-height: 19px;
   text-align: center;
 `;
 
