@@ -14,9 +14,15 @@ const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
   <div style={{ width: "174px", height: "24px" }}>{children}</div>
 );
 export const Default: Story = {
-  render: () => (
-    <Wrapper>
-      <PublishStateSwitchField list={["Unpublished", "Published"]} onChange={action("onchange")} />
-    </Wrapper>
-  ),
+  args: {
+    list: ["Unpublished", "Published"],
+    onChange: action("onchange"),
+  },
+  render: args => {
+    return (
+      <Wrapper>
+        <PublishStateSwitchField {...args} />
+      </Wrapper>
+    );
+  },
 };
