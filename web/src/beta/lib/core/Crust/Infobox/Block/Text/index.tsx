@@ -193,7 +193,7 @@ const InputField = styled.textarea`
   box-sizing: border-box;
   background-color: transparent;
   color: ${props => props.theme.infoBox.mainText};
-  font-size: ${fonts.sizes.s}px;
+  font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
   padding: 4px;

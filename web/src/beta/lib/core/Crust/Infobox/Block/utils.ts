@@ -9,7 +9,7 @@ export { typographyStyles } from "../utils";
 
 export const Title = styled.div<{ infoboxProperty?: InfoboxProperty }>`
   color: ${props => props.theme.infoBox.mainText};
-  font-size: ${fonts.sizes.xs}px;
+  font-size: ${fonts.sizes.footnote}px;
   ${({ infoboxProperty }) => typographyStyles(infoboxProperty?.typography)}
 `;
 

@@ -11,6 +11,7 @@ const fontSizes = {
   h5: 16,
   body: 14,
   footnote: 12,
+  xFootnote: 10,
 };
 
 export type FontSize = keyof typeof fontSizes;
@@ -142,6 +143,13 @@ export const FootnoteRegular = styled.p`
   font-style: italic;
 `;
 
+export const XFootnoteRegular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.xFootnote}px;
+  font-weight: ${fontWeights.regular};
+  font-style: italic;
+`;
+
 type Typography = {
   [key in FontSize]: { [key in FontWeight | "underline" | "strike" | "italic"]?: any };
 };
@@ -178,6 +186,9 @@ export const typography: Typography = {
   },
   footnote: {
     regular: FootnoteRegular,
+  },
+  xFootnote: {
+    regular: XFootnoteRegular,
   },
 };
 

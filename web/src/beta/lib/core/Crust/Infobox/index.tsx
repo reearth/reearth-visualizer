@@ -148,7 +148,7 @@ const Infobox: React.FC<Props> = ({
               renderInsertionPopup?.(handleBlockInsert, onInsertionPopUpClose)}
           </AdditionButton>
           <NoContentInfo>
-            <InnerWrapper size="xs" color={theme.infoBox.weakText}>
+            <InnerWrapper size="footnote" color={theme.infoBox.weakText}>
               <StyledIcon icon="arrowLong" />
               <span>{t(`Move mouse here and click "+" to add content`)}</span>
             </InnerWrapper>

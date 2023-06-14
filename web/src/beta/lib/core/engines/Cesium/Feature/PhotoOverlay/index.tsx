@@ -114,7 +114,7 @@ export default function PhotoOverlay({
         <PhotoWrapper transition={photoOverlayImageTransiton} onClick={exitPhotoOverlay}>
           <Photo src={photoOverlayImage} />
           {photoOverlayDescription && (
-            <Description size="xs" color={theme.main.text}>
+            <Description size="footnote" color={theme.main.text}>
               {nl2br(photoOverlayDescription)}
             </Description>
           )}

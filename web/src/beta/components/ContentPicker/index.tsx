@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useClickAway } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -33,7 +33,7 @@ const ContentPicker: React.FC<ContentsPickerProps> = ({
           <ContentItem key={item.id}>
             <ContentButton onClick={() => onSelect?.(i)}>
               <StyledIcon icon={item.icon} size={20} />
-              <ButtonText size="xs">{item.name}</ButtonText>
+              <ButtonText size="footnote">{item.name}</ButtonText>
             </ContentButton>
           </ContentItem>
         ))}

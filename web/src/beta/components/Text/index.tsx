@@ -4,7 +4,7 @@ import { useTheme } from "@reearth/services/theme";
 import {
   FontWeight,
   typography,
-  TypographySize,
+  FontSize,
 } from "@reearth/services/theme/reearthTheme/common/fonts";
 
 type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
@@ -16,7 +16,7 @@ export type TextProps = {
   children: any;
   color?: string;
   customColor?: boolean;
-  size: TypographySize;
+  size: FontSize;
   isParagraph?: boolean;
   weight?: FontWeight;
   otherProperties?: Partial<ChangeableProperties>;

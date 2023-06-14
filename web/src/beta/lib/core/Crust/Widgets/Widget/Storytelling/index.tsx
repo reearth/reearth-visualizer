@@ -75,7 +75,7 @@ const Storytelling = ({
               color={selected?.story.layer === story.layer ? theme?.strongText : theme?.mainText}
             />
             <Text
-              size="m"
+              size="h5"
               color={selected?.story.layer === story.layer ? theme?.strongText : theme?.mainText}
               otherProperties={{
                 textOverflow: "ellipsis",
@@ -101,12 +101,12 @@ const Storytelling = ({
             onClick={toggleMenu}
             menuOpen={menuOpen}
           />
-          <Title color={theme?.mainText} size="m" weight="bold">
+          <Title color={theme?.mainText} size="h5" weight="bold">
             {selected?.story.title}
           </Title>
           <Text
             color={theme?.weakText}
-            size={isExtraSmallWindow ? "xs" : "m"}
+            size={isExtraSmallWindow ? "footnote" : "h5"}
             weight="bold"
             otherProperties={{ userSelect: "none" }}>
             {typeof selected === "undefined" ? "-" : selected.index + 1} /{" "}

@@ -117,7 +117,9 @@ const HTMLBlock: React.FC<Props> = ({
     // Update the content of the existing or new style element
     style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
     font-family:Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif; 
-    font-size: ${fonts.sizes.s}px; } a { color:${themeColor ?? getComputedStyle(frameRef).color};}`;
+    font-size: ${fonts.sizes.body}px; } a { color:${
+      themeColor ?? getComputedStyle(frameRef).color
+    };}`;
 
     const handleFrameClick = () => handleClick();
 
@@ -230,7 +232,7 @@ const InputField = styled.textarea<{ minHeight: number }>`
   box-sizing: border-box;
   background-color: transparent;
   color: ${props => props.theme.infoBox.mainText};
-  font-size: ${fonts.sizes.s}px;
+  font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
   padding: 4px;

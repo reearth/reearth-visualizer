@@ -106,7 +106,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
         <li>
           <InputRangeLabel>
-            <InputRangeLabelText size="xs" customColor publishedTheme={theme}>
+            <InputRangeLabelText size="footnote" customColor publishedTheme={theme}>
               X{speed}
             </InputRangeLabelText>
             <InputRange
@@ -121,10 +121,10 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         </li>
       </ToolBox>
       <CurrentTimeWrapper>
-        <CurrentTime size="xs" customColor publishedTheme={theme}>
+        <CurrentTime size="footnote" customColor publishedTheme={theme}>
           {formattedCurrentTime.date}
         </CurrentTime>
-        <CurrentTime size="xs" customColor publishedTheme={theme}>
+        <CurrentTime size="footnote" customColor publishedTheme={theme}>
           {formattedCurrentTime.time}
         </CurrentTime>
       </CurrentTimeWrapper>
