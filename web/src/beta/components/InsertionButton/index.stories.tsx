@@ -10,5 +10,7 @@ export default {
 type Story = StoryObj<typeof InsertionButton>;
 
 export const Default: Story = {
-  render: () => <InsertionButton onClick={action("onClick")} />,
+  args: {
+    onClick: action("onClick"),
+  },
 };
