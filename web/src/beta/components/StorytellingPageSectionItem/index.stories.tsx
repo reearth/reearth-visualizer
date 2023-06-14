@@ -9,7 +9,10 @@ export default {
 type Story = StoryObj<typeof StorytellingPageSectionItem>;
 
 export const Default: Story = {
-  render: () => (
-    <StorytellingPageSectionItem icon={"square"} title={"New Page"} index={1} active={false} />
-  ),
+  args: {
+    icon: "square",
+    title: "New Page",
+    index: 1,
+    active: false,
+  },
 };
