@@ -15,9 +15,6 @@ type Props = {
 const ImageBlock: FC<Props> = ({ src, align, fit, maxHeight, alt, width, height }) => {
   return (
     <Wrapper>
-      <SettingsWrapper className={"SETTINGS_BUTTONS_WRAPPER"}>
-        <TestBox />
-      </SettingsWrapper>
       <ImageBox
         src={src}
         fit={fit}
@@ -33,31 +30,7 @@ const ImageBlock: FC<Props> = ({ src, align, fit, maxHeight, alt, width, height 
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 20px;
   display: flex;
-  border: 0.5px solid ${props => props.theme.main.deepBg};
-  &:hover {
-    border: 0.5px solid ${props => props.theme.main.select};
-    transition: border 0.5s ease;
-  }
-  &:hover .SETTINGS_BUTTONS_WRAPPER {
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }
-`;
-
-const SettingsWrapper = styled.div`
-  position: absolute;
-  right: 0px;
-  top: -20px;
-  opacity: 0;
-`;
-
-const TestBox = styled.div`
-  width: 97px;
-  height: 20px;
-  display: flex;
-  background: #3b3cd0;
 `;
 
 const ImageBox = styled.img<{
