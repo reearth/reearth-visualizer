@@ -1,8 +1,7 @@
 import { styled } from "../../styled";
 
-const type = {
-  base: '"Noto Sans", "hiragino sans", "hiragino kaku gothic proN", -apple-system, BlinkMacSystem, sans-serif',
-};
+export const fontFamilies =
+  "Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif;";
 
 const fontSizes = {
   xl: 28,
@@ -19,37 +18,37 @@ const weight = {
 };
 
 export const XLBold = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.xl}px;
   font-weight: ${weight.bold};
 `;
 
 export const XLRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.xl}px;
   font-weight: ${weight.normal};
 `;
 
 export const LBold = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.l}px;
   font-weight: ${weight.bold};
 `;
 
 export const LRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.l}px;
   font-weight: ${weight.normal};
 `;
 
 export const MBold = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.m}px;
   font-weight: ${weight.bold};
 `;
 
 export const MRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.m}px;
   font-weight: ${weight.normal};
 `;
@@ -59,13 +58,13 @@ export const MParagraph = styled(MRegular)`
 `;
 
 export const SBold = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.s}px;
   font-weight: ${weight.bold};
 `;
 
 export const SRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.s}px;
   font-weight: ${weight.normal};
 `;
@@ -75,19 +74,19 @@ export const SParagraph = styled(SRegular)`
 `;
 
 export const XSBold = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.xs}px;
   font-weight: ${weight.bold};
 `;
 
 export const XSRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes.xs}px;
   font-weight: ${weight.normal};
 `;
 
 export const XXSRegular = styled.p`
-  font-family: ${type.base};
+  font-family: ${fontFamilies};
   font-size: ${fontSizes["2xs"]}px;
   font-weight: ${weight.normal};
 `;
