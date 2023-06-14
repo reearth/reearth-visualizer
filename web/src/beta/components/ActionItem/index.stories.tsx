@@ -10,5 +10,9 @@ export default {
 type Story = StoryObj<typeof ActionItem>;
 
 export const Default: Story = {
-  render: () => <ActionItem title={"New Page"} icon={"square"} onClick={action("onClick")} />,
+  args: {
+    title: "New Page",
+    icon: "square",
+    onClick: action("onClick"),
+  },
 };
