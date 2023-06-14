@@ -15,15 +15,18 @@ const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
 );
 
 export const Default: Story = {
-  render: () => (
-    <Wrapper>
-      <SettingsButtons
-        title={"Audio"}
-        icon={"audio"}
-        onBlock={action("onBlock")}
-        onEdit={action("onEdit")}
-        onSetting={action("onSetting")}
-      />
-    </Wrapper>
-  ),
+  args: {
+    title: "Audio",
+    icon: "audio",
+    onBlock: action("onBlock"),
+    onEdit: action("onEdit"),
+    onSetting: action("onSetting"),
+  },
+  render: args => {
+    return (
+      <Wrapper>
+        <SettingsButtons {...args} />
+      </Wrapper>
+    );
+  },
 };
