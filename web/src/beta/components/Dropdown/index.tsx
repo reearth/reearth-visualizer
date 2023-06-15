@@ -85,13 +85,13 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: ${props => props.centered && `center;`}
-  background-color: ${props => props.theme.header.bg};
+  justify-content: ${({ centered }) => centered && `center;`}
+  background-color: ${({ theme }) => theme.navbar.bg.main};
   &:hover {
     ${({ noHover, theme }) =>
       !noHover &&
       `
-      background-color: ${theme.main.bg};
+      background-color: ${theme.navbar.bg.hover};
       `}
     }
     `;
@@ -118,7 +118,7 @@ const childTransform = (direction: Direction) => {
 
 const Child = styled.div<{ direction: Direction }>`
   position: absolute;
-  background-color: ${props => props.theme.header.bg};
+  background-color: ${({ theme }) => theme.navbar.bg.main};
   max-width: 230px;
   margin: 0 auto;
   left: 0;
@@ -132,7 +132,7 @@ const Child = styled.div<{ direction: Direction }>`
 
 const StyledIcon = styled(Icon)`
   margin: 0 12px;
-  color: ${props => props.theme.main.weak};
+  color: ${({ theme }) => theme.general.content.weak};
 `;
 
 export default forwardRef(Dropdown);

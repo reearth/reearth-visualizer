@@ -2,6 +2,7 @@ import commonColors from "../common/colors";
 
 const colors = {
   bg: {
+    transparent: commonColors.general.transparentBlack,
     1: "#070707",
     2: "#171618",
     3: "#232226",
@@ -38,7 +39,7 @@ const colors = {
   functional: {
     link: "#3592FF",
     notice: "#6E9CD2",
-    select: commonColors.brand.blue.strong,
+    select: commonColors.brand.blue.strong, // Might not need
     success: "#07B28C",
     attention: "#CFBF01",
     override: "#D6C71C",

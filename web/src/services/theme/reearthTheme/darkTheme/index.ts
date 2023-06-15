@@ -13,35 +13,40 @@ const darkTheme: Theme = {
     light: { ...lightColors },
   },
   general: {
-    brand: commonColors.brand.blue.strong,
+    select: colors.functional.select,
     bg: {
-      dark: colors.bg[2],
-      regular: colors.bg[3],
-      light: colors.bg[4],
-      veryLight: colors.bg[5],
+      transparent: commonColors.general.transparentBlack,
+      veryWeak: colors.bg[5],
+      weak: colors.bg[4],
+      main: colors.bg[3],
+      strong: colors.bg[2],
+      veryStrong: colors.bg[1],
     },
     border: colors.bg[5],
     button: {
       primary: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
       secondary: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
       danger: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
     },
     content: {
@@ -58,6 +63,11 @@ const darkTheme: Theme = {
   editor: {
     secondaryNavbar: {},
     infobox: {},
+    slider: {
+      bg: colors.bg[3],
+      border: colors.outline.weak,
+      main: colors.primary.main,
+    },
   },
   settings: {},
   notifications: {
@@ -69,9 +79,11 @@ const darkTheme: Theme = {
     },
     content: "",
   },
-  modal: {},
   navbar: {
-    bg: "",
+    bg: {
+      main: "",
+      hover: "",
+    },
     avatarBg: "",
     tabButton: {
       selectedBg: "",

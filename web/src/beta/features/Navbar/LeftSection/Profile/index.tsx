@@ -32,10 +32,10 @@ const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar color={theme.main.avatarBg} innerText={user.name} boarderRadius="4px" />
+        <Avatar innerText={user.name} borderRadius="4px" />
       </LabelLeft>
       <LabelRight>
-        <LabelWorkspaceName size="m" color={theme.main.weak}>
+        <LabelWorkspaceName size="h5" color={theme.general.content.strong}>
           {currentWorkspace.name}
         </LabelWorkspaceName>
       </LabelRight>
@@ -108,7 +108,7 @@ const StyledDropdown = styled(Dropdown)`
 
 const ChildrenWrapper = styled.div`
   width: 230px;
-  background-color: ${({ theme }) => theme.header.bg};
+  background-color: ${({ theme }) => theme.general.bg.strong};
   padding: 0;
 `;
 

@@ -43,9 +43,9 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, onClose, children 
 };
 
 const Bg = styled.div<{ state: TransitionStatus }>`
-  background: ${props => props.theme.main.transparentBg};
+  background: ${({ theme }) => theme.general.bg.transparent};
   position: fixed;
-  z-index: ${props => props.theme.zIndexes.fullScreenModal};
+  z-index: ${({ theme }) => theme.zIndexes.fullScreenModal};
   left: 0;
   top: 0;
   width: 100%;
@@ -57,11 +57,11 @@ const Bg = styled.div<{ state: TransitionStatus }>`
 `;
 
 const Wrapper = styled.div<{ size?: string }>`
-  margin: ${props => (props.size === "sm" ? "15%" : props.size === "lg" ? "4%" : "8%")} auto;
+  margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
   padding: 36px 32px;
   border-radius: 3px;
-  width: ${props => (props.size === "sm" ? "372px" : props.size === "lg" ? "684px" : "620px")};
-  background: ${props => props.theme.main.deepBg};
+  width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
+  background: ${({ theme }) => theme.general.bg.strong};
   position: relative;
 `;
 
@@ -70,7 +70,7 @@ const InnerWrapper = styled.div<{ size?: string }>`
 `;
 
 const CloseButton = styled.span`
-  color: ${props => props.theme.main.text};
+  color: ${({ theme }) => theme.general.content.main};
   font-size: 24px;
   position: absolute;
   right: 32px;

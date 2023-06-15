@@ -10,11 +10,21 @@ type ThemeColors = CommonColors & {
 };
 
 type InteractiveElementTheme = {
-  default: string;
+  main: string;
   hover: string;
   disable: string;
   content: string;
-  contentHover: string;
+  contentHover?: string;
+  contentDisable?: string;
+};
+
+type BackgroundTheme = {
+  transparent?: string;
+  veryWeak?: string;
+  weak?: string;
+  main: string;
+  strong?: string;
+  veryStrong?: string;
 };
 
 // Note: anything typed unknown is not set yet and just anticipated with high likelihood
@@ -25,13 +35,8 @@ export type Theme = {
   metrics: MetricsSizesType;
   zIndexes: ZIndex;
   general: {
-    brand: string;
-    bg: {
-      dark: string;
-      regular: string;
-      light: string;
-      veryLight: string;
-    };
+    select: string;
+    bg: BackgroundTheme; // Do we need????
     border: string;
     button: {
       primary: InteractiveElementTheme;
@@ -52,17 +57,25 @@ export type Theme = {
   editor: {
     secondaryNavbar: unknown;
     infobox: unknown;
+    slider: {
+      bg: string;
+      main: string;
+      border: string;
+    };
   };
   settings: unknown;
   navbar: {
-    bg: string;
+    bg: {
+      main: string;
+      hover: string;
+    };
     avatarBg: string;
     tabButton: {
       selectedBg: string;
       selectedContent: string;
     };
   };
-  modal: unknown;
+  modal?: unknown;
   notifications: {
     bg: {
       success: string;

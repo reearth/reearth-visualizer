@@ -24,6 +24,14 @@ const fontWeights = {
 
 export type FontWeight = keyof typeof fontWeights;
 
+const uniqueTraits = {
+  underline: "underline",
+  italic: "italic",
+  strike: "strike",
+};
+
+export type UniqueTraits = keyof typeof uniqueTraits;
+
 // H1 components
 export const H1Medium = styled.p`
   font-family: ${fontFamilies};
@@ -152,7 +160,7 @@ export const XFootnoteRegular = styled.p`
 
 type Typography = {
   [key in FontSize]: {
-    [key in FontWeight | "underline" | "strike" | "italic"]?: React.FC;
+    [key in FontWeight | UniqueTraits]?: React.FC<any>;
   };
 };
 
