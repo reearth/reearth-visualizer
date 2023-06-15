@@ -1,3 +1,5 @@
+import commonColors from "../common/colors";
+
 const colors = {
   bg: {
     1: "#8C8A8A",
@@ -5,7 +7,6 @@ const colors = {
     3: "#D0D0D0",
     4: "#E0E0E0",
     5: "#FFFCFC",
-    6: "#3F3D45",
   },
   text: {
     strong: "#272727",
@@ -38,7 +39,7 @@ const colors = {
   functional: {
     link: "#0063D8",
     notice: "#6E9CD2",
-    select: "#F57C4B",
+    select: commonColors.brand.orange.strong,
     success: "#00B68D",
     attention: "#E17A00",
     override: "#D58000",
