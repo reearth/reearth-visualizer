@@ -46,14 +46,15 @@ export default () => {
 
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
 
-  const { data: teamsData } = useGetTeamsQuery();
-  const teams = teamsData?.me?.teams;
+  const { data: WorkspacesData } = useGetTeamsQuery();
+  const workspaces = WorkspacesData?.me?.teams;
 
   const { data } = useGetProjectBySceneQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
   });
-  const teamId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+
+  const workspaceId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
   const project = useMemo(
     () =>
       data?.node?.__typename === "Scene" && data.node.project
@@ -63,7 +64,7 @@ export default () => {
   );
 
   const user: User = {
-    name: teamsData?.me?.name || "",
+    name: WorkspacesData?.me?.name || "",
   };
 
   const [validAlias, setValidAlias] = useState(false);
@@ -80,9 +81,16 @@ export default () => {
     },
     [checkProjectAliasQuery, project],
   );
+
   useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setWorkspace]);
+    if (!currentWorkspace && lastWorkspace && workspaceId == lastWorkspace.id)
+      setWorkspace(lastWorkspace);
+    else {
+      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
+      setWorkspace(workspace);
+      setLastWorkspace(workspace);
+    }
+  }, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
 
   useEffect(() => {
     setValidAlias(
@@ -93,14 +101,6 @@ export default () => {
           checkProjectAliasData.checkProjectAlias.available),
     );
   }, [validatingAlias, checkProjectAliasData, project]);
-
-  useEffect(() => {
-    if (currentWorkspace) return;
-    const team = teams?.find(t => t.id === teamId);
-    if (!team) return;
-    setWorkspace(team);
-    setLastWorkspace(currentWorkspace);
-  }, [teams, currentWorkspace, teamId, setWorkspace, setLastWorkspace]);
 
   useEffect(() => {
     setProject(p =>
@@ -171,16 +171,16 @@ export default () => {
   );
 
   const handleTeamChange = useCallback(
-    (teamId: string) => {
-      const team = teams?.find(team => team.id === teamId);
-      if (team && teamId !== currentWorkspace?.id) {
-        setWorkspace(team);
+    (workspaceId: string) => {
+      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
+      if (workspace && workspaceId !== currentWorkspace?.id) {
+        setWorkspace(workspace);
         setLastWorkspace(currentWorkspace);
 
-        navigate(`/dashboard/${teamId}`);
+        navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [teams, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
+    [workspaces, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -217,8 +217,8 @@ export default () => {
   }, [t, setNotification]);
 
   return {
-    teams,
-    teamId,
+    workspaces,
+    workspaceId,
     publicationModalVisible,
     searchIndex,
     publishing,
