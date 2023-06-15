@@ -18,15 +18,6 @@ type InteractiveElementTheme = {
   contentDisable?: string;
 };
 
-type BackgroundTheme = {
-  transparent?: string;
-  veryWeak?: string;
-  weak?: string;
-  main: string;
-  strong?: string;
-  veryStrong?: string;
-};
-
 // Note: anything typed unknown is not set yet and just anticipated with high likelihood
 // But, might not be necessary so keep in mind. 2023/06/15 @KaWaite
 
@@ -36,7 +27,14 @@ export type Theme = {
   zIndexes: ZIndex;
   general: {
     select: string;
-    bg: BackgroundTheme; // Do we need????
+    bg: {
+      transparent: string;
+      veryWeak: string;
+      weak: string;
+      main: string;
+      strong: string;
+      veryStrong: string;
+    }; // Do we need????
     border: string;
     button: {
       primary: InteractiveElementTheme;
