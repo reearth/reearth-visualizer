@@ -5,10 +5,6 @@ import type { Theme } from "../types";
 
 import colors from "./colors";
 
-// Note: This file mirrors darkTheme as of 2023/06/15
-// At this time, there is no Beta light theme, so any values here
-// are not guaranteed to look right in the UI. @KaWaite
-
 const lightTheme: Theme = {
   ...commonTheme,
   colors: {
@@ -19,33 +15,38 @@ const lightTheme: Theme = {
   general: {
     select: colors.functional.select,
     bg: {
-      dark: colors.bg[2],
-      regular: colors.bg[3],
-      light: colors.bg[4],
-      veryLight: colors.bg[5],
+      transparent: commonColors.general.transparentBlack,
+      veryWeak: colors.bg[5],
+      weak: colors.bg[4],
+      main: colors.bg[3],
+      strong: colors.bg[2],
+      veryStrong: colors.bg[1],
     },
     border: colors.bg[5],
     button: {
       primary: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
       secondary: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
       danger: {
-        default: "",
+        main: "",
         hover: "",
         disable: "",
         content: "",
         contentHover: "",
+        contentDisable: "",
       },
     },
     content: {
@@ -62,6 +63,11 @@ const lightTheme: Theme = {
   editor: {
     secondaryNavbar: {},
     infobox: {},
+    slider: {
+      bg: colors.bg[3],
+      border: colors.outline.weak,
+      main: colors.primary.main,
+    },
   },
   settings: {},
   notifications: {
@@ -73,9 +79,11 @@ const lightTheme: Theme = {
     },
     content: "",
   },
-  modal: {},
   navbar: {
-    bg: "",
+    bg: {
+      main: "",
+      hover: "",
+    },
     avatarBg: "",
     tabButton: {
       selectedBg: "",
