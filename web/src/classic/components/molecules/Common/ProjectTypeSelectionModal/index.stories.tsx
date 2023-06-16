@@ -4,7 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import ProjectTypeSelectionModal, { Props } from ".";
 
 export default {
-  title: "molecules/common/ProjectTypeSelectionModal",
+  title: "classic/molecules/common/ProjectTypeSelectionModal",
   component: ProjectTypeSelectionModal,
 } as Meta;
 

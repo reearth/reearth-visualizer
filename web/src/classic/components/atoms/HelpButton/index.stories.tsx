@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "atoms/HelpButton",
+  title: "classic/atoms/HelpButton",
   component: Component,
 } as Meta;
 

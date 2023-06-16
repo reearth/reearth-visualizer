@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { InfoboxProperty } from "../types";
 

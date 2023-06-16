@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Box, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Box",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Box",
   component: Box,
 } as Meta;
 

@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Video, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Block/Video",
+  title: "classic/molecules/Visualizer/Block/Video",
   component: Video,
   argTypes: {
     onClick: { action: "onClick" },

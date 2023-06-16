@@ -54,7 +54,7 @@ const defaultProps = {
 };
 
 export default {
-  title: "molecules/EarthEditor/Header",
+  title: "classic/molecules/EarthEditor/Header",
   component: Header,
 } as Meta;
 

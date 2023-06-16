@@ -1,8 +1,12 @@
-import { useEditorNavigation } from "@reearth/beta/hooks";
 import { styled } from "@reearth/services/theme";
+
+import useHook from "./hooks";
+import LeftSection from "./LeftSection";
+import useRightSide from "./useRightSection";
 
 type Props = {
   sceneId: string;
+  isDashboard?: boolean;
   currentTab: Tab;
 };
 
@@ -13,37 +17,45 @@ export function isTab(tab: string): tab is Tab {
   return Tabs.includes(tab as never);
 }
 
-const Navbar: React.FC<Props> = ({ sceneId, currentTab }) => {
-  const handleEditorNavigation = useEditorNavigation({ sceneId });
+const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = false }) => {
+  const {
+    currentProject,
+    currentWorkspace,
+    isPersonal,
+    user,
+    workspaces,
+    workspaceModalVisible,
+    handleLogout,
+    handleWorkspaceChange,
+    handleWorkspaceCreate,
+    handleWorkspaceModalClose,
+    handleWorkspaceModalOpen,
+  } = useHook(sceneId);
+
+  const { rightSide } = useRightSide({
+    currentTab,
+    sceneId,
+    page: "editor",
+  });
+
   return (
     <Wrapper>
-      <p>Navbar</p>
-      <div>
-        <p>current path: {location.pathname}</p>
-        <p> current tab: {currentTab}</p>
-      </div>
-      <div>
-        <button
-          onClick={() => handleEditorNavigation("scene")}
-          style={{ background: "white", marginRight: "3px" }}>
-          Scene
-        </button>
-        <button
-          onClick={() => handleEditorNavigation("story")}
-          style={{ background: "white", marginRight: "3px" }}>
-          Storytelling
-        </button>
-        <button
-          onClick={() => handleEditorNavigation("widgets")}
-          style={{ background: "white", marginRight: "3px" }}>
-          Widgets
-        </button>
-        <button
-          onClick={() => handleEditorNavigation("publish")}
-          style={{ background: "white", marginRight: "3px" }}>
-          Publish
-        </button>
-      </div>
+      <LeftSection
+        currentProject={currentProject}
+        dashboard={isDashboard}
+        currentWorkspace={currentWorkspace}
+        user={user}
+        personalWorkspace={isPersonal}
+        modalShown={workspaceModalVisible}
+        workspaces={workspaces}
+        onWorkspaceChange={handleWorkspaceChange}
+        onWorkspaceCreate={handleWorkspaceCreate}
+        onSignOut={handleLogout}
+        onModalClose={handleWorkspaceModalClose}
+        openModal={handleWorkspaceModalOpen}
+      />
+
+      {rightSide}
     </Wrapper>
   );
 };
@@ -52,7 +64,13 @@ export default Navbar;
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  height: 53px;
+  align-items: center;
+  padding: 8px 24px;
+  gap: 24px;
+  width: 100%;
+  height: 51px;
   background: ${({ theme }) => theme.editorNavBar.bg};
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
