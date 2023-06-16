@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export type SwitchField<T> = {
+type SwitchField<T> = {
   id: string;
   active?: boolean;
 } & T;
