@@ -6,6 +6,7 @@ import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
 export { useGet, type WrappedRef, type Undefinable, useOverriddenProperty } from "./utils";
+export { MAP_FEATURE_FLAGS } from "./featureFlags";
 
 export type {
   NaiveLayer,
