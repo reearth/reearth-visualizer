@@ -13,14 +13,14 @@ type Story = StoryObj<typeof Text>;
 export const Regular: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Text size="h1">H1</Text>
-      <Text size="h2">H2</Text>
-      <Text size="h3">H3</Text>
-      <Text size="h4">H4</Text>
-      <Text size="h5">H5</Text>
-      <Text size="body">Body</Text>
-      <Text size="footnote">Footnote</Text>
-      <Text size="xFootnote">XFootnote</Text>
+      <Text size="h1">H1 Regular</Text>
+      <Text size="h2">H2 Regular</Text>
+      <Text size="h3">H3 Regular</Text>
+      <Text size="h4">H4 Regular</Text>
+      <Text size="h5">H5 Regular</Text>
+      <Text size="body">Body Regular</Text>
+      <Text size="footnote">Footnote Regular</Text>
+      <Text size="xFootnote">XFootnote Regular</Text>
     </div>
   ),
 };
@@ -60,28 +60,28 @@ export const Bold: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <Text size="h1" weight="bold">
-        H1
+        H1 Bold
       </Text>
       <Text size="h2" weight="bold">
-        H2
+        H2 Bold
       </Text>
       <Text size="h3" weight="bold">
-        H3
+        H3 Bold
       </Text>
       <Text size="h4" weight="bold">
-        H4
+        H4 Bold
       </Text>
       <Text size="h5" weight="bold">
-        H5
+        H5 Bold
       </Text>
       <Text size="body" weight="bold">
-        Body
+        Body Bold
       </Text>
       <Text size="footnote" weight="bold">
-        Footnote
+        Footnote Bold
       </Text>
       <Text size="xFootnote" weight="bold">
-        XFootnote
+        XFootnote Bold
       </Text>
     </div>
   ),

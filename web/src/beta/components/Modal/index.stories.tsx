@@ -7,7 +7,6 @@ import Modal from ".";
 
 const meta: Meta<typeof Modal> = {
   component: Modal,
-  title: "classic/atoms/Modal",
 };
 
 export default meta;
