@@ -4,5 +4,4 @@ export const MAP_FEATURE_FLAGS = {
   SINGLE_SELECTION: 1 << 2,
   MULTIPLE_SELECTION: 1 << 3,
   SKETCH: 1 << 4,
-  PEDESTRIAN: 1 << 5,
 };
