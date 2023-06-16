@@ -1,4 +1,3 @@
-import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
 
 import ActionItem from ".";
@@ -13,6 +12,5 @@ export const Default: Story = {
   args: {
     title: "New Page",
     icon: "square",
-    onClick: action("onClick"),
   },
 };
