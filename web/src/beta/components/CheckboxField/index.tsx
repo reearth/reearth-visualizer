@@ -1,24 +1,28 @@
 import type { FC } from "react";
 
-import { styled, colors } from "@reearth/services/theme";
+import { styled, useTheme, PublishTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
 
 export type Props = {
+  publishedTheme?: PublishTheme;
   onChange?: (value: boolean) => void;
   checked?: boolean;
   label: string;
 };
 
-const CheckBoxField: FC<Props> = ({ onChange, checked, label }) => {
+const CheckBoxField: FC<Props> = ({ onChange, checked, label, publishedTheme }) => {
+  const theme = useTheme();
   return (
     <Field>
-      <BoxFeild onClick={() => onChange?.(checked !== undefined ? checked : false)}>
-        {checked && <CheckMark icon="checkmark" />}
+      <BoxFeild
+        onClick={() => onChange?.(checked !== undefined ? checked : false)}
+        publishedTheme={publishedTheme}>
+        {checked && <CheckMark icon="checkmark" publishedTheme={publishedTheme} />}
       </BoxFeild>
       {label && (
-        <Text size="xs" color={colors.publish.dark.text.main}>
+        <Text size="xs" color={publishedTheme?.mainText || theme.main.text}>
           {label}
         </Text>
       )}
@@ -34,20 +38,20 @@ const Field = styled.div`
   height: 20px;
 `;
 
-const BoxFeild = styled.button`
+const BoxFeild = styled.button<{ publishedTheme?: PublishTheme }>`
   box-sizing: border-box;
   width: 20px;
   height: 20px;
-  border: 1px solid ${({ theme }) => theme.main.border};
+  border: 1px solid ${({ theme, publishedTheme }) => publishedTheme?.weakText || theme.main.weak};
   border-radius: 4px;
 `;
 
-const CheckMark = styled(Icon)`
+const CheckMark = styled(Icon)<{ publishedTheme?: PublishTheme }>`
   padding-left: 15%;
   padding-right: 10%;
   padding-top: 25%;
   padding-bottom: 20.83%;
-  color: ${colors.publish.dark.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
 `;
 
 export default CheckBoxField;
