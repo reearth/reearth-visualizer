@@ -1,17 +1,11 @@
 import commonTheme from "../common";
 import commonColors from "../common/colors";
-import darkColors from "../darkTheme/colors";
 import type { Theme } from "../types";
 
 import colors from "./colors";
 
 const lightTheme: Theme = {
   ...commonTheme,
-  colors: {
-    ...commonColors,
-    dark: { ...darkColors },
-    light: { ...colors },
-  },
   general: {
     select: colors.functional.select,
     bg: {

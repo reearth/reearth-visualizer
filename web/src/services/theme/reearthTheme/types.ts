@@ -1,18 +1,10 @@
 import { Theme as ClassicTheme } from "@reearth/classic/theme/reearthTheme/types";
 
-import type { Colors as CommonColors } from "./common/colors";
 import type { MetricsSizesType } from "./common/metrics";
 import type { ZIndex } from "./common/zIndex";
-import type { Colors as DarkColors } from "./darkTheme/colors";
-import type { Colors as LightColors } from "./lightTheme/colors";
 
 export type TempTheme = Theme & {
   classic: ClassicTheme;
-};
-
-type ThemeColors = CommonColors & {
-  dark: DarkColors;
-  light: LightColors;
 };
 
 type InteractiveElementTheme = {
@@ -28,7 +20,6 @@ type InteractiveElementTheme = {
 // But, might not be necessary so keep in mind. 2023/06/15 @KaWaite
 
 export type Theme = {
-  colors: ThemeColors;
   metrics: MetricsSizesType;
   zIndexes: ZIndex;
   general: {
