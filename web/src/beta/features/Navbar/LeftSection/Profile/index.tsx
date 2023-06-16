@@ -35,9 +35,9 @@ const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
         <Avatar innerText={user.name} borderRadius="4px" />
       </LabelLeft>
       <LabelRight>
-        <LabelWorkspaceName size="h5" color={theme.general.content.strong}>
+        <Text size="h5" color={theme.general.content.weak}>
           {currentWorkspace.name}
-        </LabelWorkspaceName>
+        </Text>
       </LabelRight>
     </LabelWrapper>
   );
@@ -76,7 +76,7 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
             <MenuListItem>
               <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
             </MenuListItem>
-            <MenuListItem noHover>
+            <MenuListItem>
               <WorkspaceMenu
                 currentWorkspace={currentWorkspace}
                 workspaces={workspaces}
@@ -87,10 +87,11 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
             <MenuListItem>
               <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
             </MenuListItem>
-            <MenuListItem>
-              <MenuListItemLabel text={`v${__APP_VERSION__}`} />
-            </MenuListItem>
+            {/* <MenuListItem noHover>
+            </MenuListItem> */}
           </MenuList>
+          {/* <MenuListItemLabel text={`v${__APP_VERSION__}`} /> */}
+          <CurrentVersion size="h5">{`v${__APP_VERSION__}`}</CurrentVersion>
         </ChildrenWrapper>
       </StyledDropdown>
     </Wrapper>
@@ -131,11 +132,10 @@ const LabelLeft = styled.div`
   margin-right: 16px;
 `;
 
-const LabelWorkspaceName = styled(Text)`
-  text-align: center;
-  margin-top: 2px;
-  font-weight: 700;
-  line-height: 22px;
+const CurrentVersion = styled(Text)`
+  padding: 5px 16px;
+  cursor: default;
+  border-top: ${({ theme }) => `0.5px solid ${theme.general.border}`};
 `;
 
 export default HeaderProfile;

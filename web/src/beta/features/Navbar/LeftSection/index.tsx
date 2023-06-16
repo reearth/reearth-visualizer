@@ -78,6 +78,7 @@ const Wrapper = styled.div`
 `;
 
 const StyledLink = styled(Link)`
+  display: flex;
   color: ${props => props.theme.general.content.main};
   text-decoration: none;
   &:hover {
@@ -91,7 +92,7 @@ const StyledIcon = styled(Icon)`
   padding: 5px;
   color: ${props => props.theme.general.content.main};
   &:hover {
-    background: ${props => props.theme.general.bg.main};
+    background: ${props => props.theme.general.bg.weak};
   }
 `;
 

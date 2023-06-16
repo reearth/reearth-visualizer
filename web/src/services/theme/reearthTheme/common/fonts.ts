@@ -90,6 +90,12 @@ export const H4Medium = styled.p`
   font-weight: ${fontWeights.medium};
 `;
 
+export const H4Regular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.h4}px;
+  font-weight: ${fontWeights.regular};
+`;
+
 // H5 components
 export const H5Bold = styled.p`
   font-family: ${fontFamilies};
@@ -101,6 +107,12 @@ export const H5Medium = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h5}px;
   font-weight: ${fontWeights.medium};
+`;
+
+export const H5Regular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.h5}px;
+  font-weight: ${fontWeights.regular};
 `;
 
 // Body components
@@ -181,10 +193,12 @@ export const typography: Typography = {
   h4: {
     bold: H4Bold,
     medium: H4Medium,
+    regular: H4Regular,
   },
   h5: {
     bold: H5Bold,
     medium: H5Medium,
+    regular: H5Medium,
   },
   body: {
     bold: BodyBold,
