@@ -15,12 +15,12 @@ export const MenuListItemLabel: React.FC<{
 }> = ({ icon, text, linkTo, onClick, disabled, color, center }) => {
   const theme = useTheme();
   const content = (
-    <MenuItemWrapper
-      color={(disabled && theme.general.content.main) || color || theme.general.content.main}
-      onClick={onClick}
-      disabled={disabled}>
+    <MenuItemWrapper onClick={onClick} disabled={disabled}>
       {icon ? <StyledIcon icon={icon} size={20} color={color} disabled={disabled} /> : null}
-      <StyledLabel size="h5" center={center}>
+      <StyledLabel
+        size="h5"
+        center={center}
+        color={(disabled && theme.general.content.main) || color || theme.general.content.main}>
         {text}
       </StyledLabel>
     </MenuItemWrapper>
