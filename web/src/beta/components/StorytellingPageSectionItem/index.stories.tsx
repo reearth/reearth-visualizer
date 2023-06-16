@@ -16,3 +16,13 @@ export const Default: Story = {
     active: false,
   },
 };
+
+export const LongText: Story = {
+  args: {
+    icon: "square",
+    title:
+      "gashjdjahasdasdasdasdasdjjashdjkashdjkahdjkhaskjdhasdasdasdasddfggjsdhasjkdhjkashdkjahskjdhakjshdkahskjdakjshdkjahsdkjhajksdhakjhsdkjhaksjhdakjhsdkjhakjsdhakjhsdkjsadasdasdahskdjhasdasdasdasdasdasdakjsdhksadasd",
+    index: 1,
+    active: false,
+  },
+};

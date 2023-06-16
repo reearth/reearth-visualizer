@@ -31,10 +31,14 @@ const StorytellingPageSectionItem: FC<Props> = ({
         <Icon icon={icon} />
       </VerticalBox>
       <TitleArea active={active}>
-        <Text onClick={onClick} size={"s"} color="#ffffff" otherProperties={{ cursor: "pointer" }}>
+        <Text
+          onClick={onClick}
+          size={"s"}
+          color="#ffffff"
+          otherProperties={{ wordBreak: "break-all" }}>
           {title}
         </Text>
-        <Icon icon="actionbutton" onClick={onAction} style={{ cursor: "pointer" }} />
+        <Icon icon="actionbutton" onClick={onAction} />
       </TitleArea>
     </HorizontalBox>
   );
@@ -42,7 +46,9 @@ const StorytellingPageSectionItem: FC<Props> = ({
 
 const HorizontalBox = styled.div`
   display: flex;
+  min-height: 56px;
   gap: 4px;
+  cursor: pointer;
 `;
 
 const VerticalBox = styled.div`
@@ -63,7 +69,6 @@ const TitleArea = styled.div<{ active?: boolean }>`
   border-radius: 6px;
 
   width: 100%;
-  min-height: 56px;
 `;
 
 export default StorytellingPageSectionItem;
