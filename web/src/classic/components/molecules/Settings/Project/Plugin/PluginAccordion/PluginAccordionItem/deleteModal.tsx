@@ -4,8 +4,8 @@ import Box from "@reearth/classic/components/atoms/Box";
 import ConfirmationModal from "@reearth/classic/components/atoms/ConfirmationModal";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
 export type Props = {
   onCancel: () => void;
@@ -22,7 +22,7 @@ const DeleteModal: React.FC<Props> = ({ onCancel, onProceed, onClose, isOpen }) 
       buttonAction={t("Uninstall")}
       body={
         <>
-          <Icon icon="alert" size={24} color={theme.main.danger} />
+          <Icon icon="alert" size={24} color={theme.classic.main.danger} />
           <Box mt={"2xl"} mb={"m"}>
             <Text size="m">
               {t(

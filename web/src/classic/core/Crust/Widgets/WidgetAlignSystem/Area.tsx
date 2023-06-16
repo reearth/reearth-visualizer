@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
-import { useTheme } from "@reearth/classic/theme";
+import { useTheme } from "@reearth/services/theme";
 
 import type {
   Alignment,
@@ -123,15 +123,15 @@ export default function Area({
         background: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.alignSystem.blueBg
-          : theme.alignSystem.orangeBg,
+          ? theme.classic.alignSystem.blueBg
+          : theme.classic.alignSystem.orangeBg,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.alignSystem.blueHighlight}`
-            : `1px solid ${theme.alignSystem.orangeHighlight}`,
+            ? `1px solid ${theme.classic.alignSystem.blueHighlight}`
+            : `1px solid ${theme.classic.alignSystem.orangeHighlight}`,
         gap: gap ?? 0,
         alignItems: centered ? "center" : "unset",
       }}

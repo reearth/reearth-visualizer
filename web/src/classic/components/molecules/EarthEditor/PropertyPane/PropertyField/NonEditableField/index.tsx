@@ -1,8 +1,8 @@
 import React from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -17,7 +17,7 @@ const NonEditableField: React.FC<Props> = ({ className, linkedDatasetFieldName }
   return (
     <Wrapper
       size="2xs"
-      color={linkedDatasetFieldName ? theme.main.link : theme.layers.smallText}
+      color={linkedDatasetFieldName ? theme.classic.main.link : theme.classic.layers.smallText}
       className={className}>
       {linkedDatasetFieldName
         ? t("This field is linked to {{datasetField}}.", { datasetField: linkedDatasetFieldName })

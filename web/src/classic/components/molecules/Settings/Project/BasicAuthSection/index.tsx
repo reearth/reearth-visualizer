@@ -1,7 +1,7 @@
 import React from "react";
 
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import Section from "../../Section";
 import EditableItem from "../EditableItem";
@@ -48,7 +48,7 @@ const BasicAuthSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.classic.main.lighterBg};
 `;
 
 export default BasicAuthSection;

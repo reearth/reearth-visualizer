@@ -5,9 +5,9 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export interface FormValues {
   name: string;
@@ -64,7 +64,10 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
       {formik.isSubmitting && <Loading overlay />}
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
-          <Text size="s" color={theme.main.text} otherProperties={{ flex: 1, margin: "1em 0" }}>
+          <Text
+            size="s"
+            color={theme.classic.main.text}
+            otherProperties={{ flex: 1, margin: "1em 0" }}>
             {t("Workspace Name")}
           </Text>
           <StyledInput
@@ -92,8 +95,8 @@ const FormInputWrapper = styled.div`
 
 const StyledInput = styled.input`
   flex: 2;
-  color: ${props => props.theme.main.text};
-  background: ${props => props.theme.main.deepBg};
+  color: ${props => props.theme.classic.main.text};
+  background: ${props => props.theme.classic.main.deepBg};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.s}px;
   outline: none;

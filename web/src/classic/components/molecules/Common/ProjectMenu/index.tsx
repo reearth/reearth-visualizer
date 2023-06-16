@@ -8,8 +8,8 @@ import {
   MenuList,
   MenuListItem,
 } from "@reearth/classic/components/molecules/Common/MenuList";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 type Props = {
   currentProject: Project;
@@ -25,7 +25,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
     <Wrapper>
       <Dropdown
         label={
-          <Text size="m" weight="bold" color={theme.main.strongText}>
+          <Text size="m" weight="bold" color={theme.classic.main.strongText}>
             {currentProject?.name}
           </Text>
         }

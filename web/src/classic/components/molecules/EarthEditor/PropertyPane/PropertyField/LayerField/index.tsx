@@ -4,8 +4,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import LayerSelectionModal, {
   Layer as LayerType,
 } from "@reearth/classic/components/molecules/EarthEditor/LayerSelectionModal";
-import { styled } from "@reearth/classic/theme";
 import deepFind from "@reearth/classic/util/deepFind";
+import { styled } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -80,11 +80,11 @@ const Title = styled.div<{ selected?: boolean; linked?: boolean; overridden?: bo
   color: ${({ selected, overridden, linked, theme }) =>
     selected
       ? overridden
-        ? theme.main.danger
+        ? theme.classic.main.danger
         : linked
-        ? theme.main.link
-        : theme.main.text
-      : theme.main.paleBg};
+        ? theme.classic.main.link
+        : theme.classic.main.text
+      : theme.classic.main.paleBg};
 `;
 
 export default LayerField;

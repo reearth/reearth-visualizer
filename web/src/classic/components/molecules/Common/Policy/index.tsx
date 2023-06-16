@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/classic/theme";
 import { useLang, useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   policy: {
@@ -99,9 +99,9 @@ const PolicyText = styled(Text)<{ clickable?: boolean }>`
 
 const PolicyLink = styled.a`
   text-decoration: none;
-  color: ${({ theme }) => theme.main.accent};
+  color: ${({ theme }) => theme.classic.main.accent};
 
   :hover {
-    color: ${({ theme }) => theme.main.select};
+    color: ${({ theme }) => theme.classic.main.select};
   }
 `;

@@ -3,9 +3,9 @@ import React, { useMemo, ComponentType } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import GroupWrapper from "@reearth/classic/components/atoms/TabCard";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useBind } from "@reearth/classic/util/use-bind";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 
 import PropertyItem, {
@@ -186,7 +186,7 @@ const PropertyPane: React.FC<Props> = ({
           )}
           {mode === "layer" && props.isTemplate && (
             <GroupWrapper className={className} name={t("Dataset")}>
-              <Text size="xs" color={theme.main.strongText}>
+              <Text size="xs" color={theme.classic.main.strongText}>
                 {props.title}
               </Text>
             </GroupWrapper>
@@ -223,7 +223,7 @@ const searchField = (
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.properties};
+  background: ${props => props.theme.classic.properties};
   margin: 14px 0;
 `;
 

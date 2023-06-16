@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect, ReactNode } from "react";
 import { usePopper } from "react-popper";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled, css } from "@reearth/classic/theme";
+import { styled, css } from "@reearth/services/theme";
 
 import Portal from "../Portal";
 
@@ -81,10 +81,10 @@ const InsertionBar: React.FC<Props> = ({
 };
 
 const StyledAddButton = styled(Icon)`
-  background: ${props => props.theme.infoBox.bg};
+  background: ${props => props.theme.classic.infoBox.bg};
   cursor: pointer;
   display: block;
-  user-select: nocolor: ${props => props.theme.infoBox.accent};
+  user-select: nocolor: ${props => props.theme.classic.infoBox.accent};
   padding: 0 3px;
   `;
 
@@ -94,7 +94,8 @@ const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${props => (props.hovered ? props.theme.infoBox.mainText : props.theme.infoBox.accent)};
+  color: ${props =>
+    props.hovered ? props.theme.classic.infoBox.mainText : props.theme.classic.infoBox.accent};
 `;
 
 const InsertLine = styled.div<{ circleVisible?: boolean }>`
@@ -104,7 +105,7 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: ${props => props.theme.main.accent};
+  background: ${props => props.theme.classic.main.accent};
 
   &::before {
     display: ${props => (props.circleVisible ? "block" : "none")};
@@ -114,9 +115,9 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
     top: -4px;
     width: 6px;
     height: 6px;
-    border: 2px solid ${props => props.theme.main.accent};
+    border: 2px solid ${props => props.theme.classic.main.accent};
     border-radius: 50%;
-    background: ${props => props.theme.layers.bg};
+    background: ${props => props.theme.classic.layers.bg};
   }
 `;
 
@@ -136,7 +137,7 @@ const Wrapper = styled.div<WrapperProps>`
   position: absolute;
   left: 0;
   width: 100%;
-  z-index: ${props => props.theme.zIndexes.infoBox};
+  z-index: ${props => props.theme.classic.zIndexes.infoBox};
   top: ${props => (props.pos === "top" ? "0%" : "100%")};
   transform: translateY(-50%);
   height: 15px;

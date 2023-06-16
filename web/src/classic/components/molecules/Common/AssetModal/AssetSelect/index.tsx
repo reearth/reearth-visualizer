@@ -3,8 +3,8 @@ import { useState, useCallback } from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Item<Value extends string | number = string> = {
   key: Value;
@@ -37,10 +37,10 @@ const AssetSelect = <Value extends string | number = string>({
   return (
     <Wrapper>
       <Selected align="center" justify="space-between" onClick={() => setHidden(!hidden)}>
-        <StyledText size="xs" color={theme.main.text}>
+        <StyledText size="xs" color={theme.classic.main.text}>
           {items.find(i => i.key === value)?.label}
         </StyledText>
-        <Icon icon="arrowDown" color={theme.main.text} size={9} />
+        <Icon icon="arrowDown" color={theme.classic.main.text} size={9} />
       </Selected>
       <Options onClick={() => setHidden(!hidden)} hidden={hidden}>
         {items?.map(({ key, label }) => (
@@ -64,7 +64,7 @@ const Wrapper = styled.div`
 
 const Selected = styled(Flex)`
   padding: 6px ${metricsSizes["s"]}px;
-  border: 1px solid ${({ theme }) => theme.properties.border};
+  border: 1px solid ${({ theme }) => theme.classic.properties.border};
   cursor: pointer;
   user-select: none;
 `;
@@ -78,19 +78,19 @@ const Options = styled.div<{ hidden?: boolean }>`
   width: 100%;
   margin: ${metricsSizes["2xs"]}px 0 0 0;
   box-sizing: border-box;
-  z-index: ${({ theme }) => theme.zIndexes["propertyFieldPopup"]};
-  background: ${({ theme }) => theme.main.bg};
-  border: 1px solid ${({ theme }) => theme.properties.border};
+  z-index: ${({ theme }) => theme.classic.zIndexes["propertyFieldPopup"]};
+  background: ${({ theme }) => theme.classic.main.bg};
+  border: 1px solid ${({ theme }) => theme.classic.properties.border};
   position: absolute;
   cursor: pointer;
 `;
 
 const Item = styled(Flex)`
   padding: ${metricsSizes["xs"]}px ${metricsSizes["s"]}px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
 
   &:hover {
-    background: ${({ theme }) => theme.main.lighterBg};
+    background: ${({ theme }) => theme.classic.main.lighterBg};
   }
 `;
 

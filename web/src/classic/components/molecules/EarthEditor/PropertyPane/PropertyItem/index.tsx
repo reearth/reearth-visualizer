@@ -6,11 +6,11 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import GroupWrapper from "@reearth/classic/components/atoms/TabCard";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useBind } from "@reearth/classic/util/use-bind";
 import { zeroValues } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 import { ExtendedFuncProps2 } from "@reearth/types";
 
 import PropertyField, {
@@ -338,7 +338,7 @@ const PropertyItem: React.FC<Props> = ({
         <StyledIcon icon="alert" size={24} />
         <Text
           size="m"
-          color={theme.main.text}
+          color={theme.classic.main.text}
           otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
           {t(
             "You are deleting the infobox and all its contents. Are you sure you want to do that?",
@@ -362,7 +362,7 @@ const TrashIcon = styled(Icon)`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.main.alert};
+  color: ${props => props.theme.classic.main.alert};
 `;
 
 const valueToString = (v: ValueTypesType[ValueTypeType] | undefined): string | undefined => {

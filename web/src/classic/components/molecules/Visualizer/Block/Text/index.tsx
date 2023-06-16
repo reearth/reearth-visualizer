@@ -3,10 +3,10 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Markdown from "@reearth/classic/components/atoms/Markdown";
-import { styled, useTheme } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { Props as BlockProps } from "..";
 import { Border } from "../common";
@@ -138,7 +138,7 @@ const TextBlock: React.FC<Props> = ({
           ) : markdown ? (
             <Markdown
               styles={typography}
-              backgroundColor={bg || theme.infoBox.bg}
+              backgroundColor={bg || theme.classic.infoBox.bg}
               onDoubleClick={startEditing}>
               {text}
             </Markdown>
@@ -170,10 +170,10 @@ const Wrapper = styled(Border)<{
       (!isTemplate && !isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.classic.infoBox.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.classic.infoBox.accent2
+        : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;
 
@@ -195,7 +195,7 @@ const InputField = styled.textarea`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.infoBox.mainText};
+  color: ${props => props.theme.classic.infoBox.mainText};
   font-size: ${fonts.sizes.s}px;
   outline: none;
   border: none;
@@ -215,12 +215,20 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.classic.infoBox.border
+      : isSelected
+      ? theme.classic.main.select
+      : theme.classic.infoBox.weakText};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.classic.infoBox.border
+      : isSelected
+      ? theme.classic.main.select
+      : theme.classic.infoBox.weakText};
 `;
 
 export default TextBlock;

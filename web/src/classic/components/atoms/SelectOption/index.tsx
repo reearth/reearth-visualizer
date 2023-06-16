@@ -1,6 +1,6 @@
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   label: string;
@@ -12,9 +12,9 @@ export const Option = styled.li<Props>`
   list-style: none;
   padding: 6px;
   font-size: ${fonts.sizes.xs}px;
-  color: ${({ theme }) => theme.properties.contentsText};
+  color: ${({ theme }) => theme.classic.properties.contentsText};
   background: ${({ focused, theme }) =>
-    focused ? theme.selectList.option.hoverBg : "transparent"};
+    focused ? theme.classic.selectList.option.hoverBg : "transparent"};
   cursor: pointer;
 `;
 

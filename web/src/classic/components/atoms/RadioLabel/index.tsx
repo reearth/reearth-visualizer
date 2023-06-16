@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import RadioButton, { RadioButtonProps } from "@reearth/classic/components/atoms/RadioButton";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type RadioLabelProps = RadioButtonProps & {
   label: string;
@@ -23,7 +23,7 @@ const RadioLabel: React.FC<RadioLabelProps> = ({
   const theme = useTheme();
   return (
     <>
-      <Label size="m" weight="bold" color={theme.main.strongText} disabled={disabled}>
+      <Label size="m" weight="bold" color={theme.classic.main.strongText} disabled={disabled}>
         <RadioButton
           value={value}
           disabled={disabled}

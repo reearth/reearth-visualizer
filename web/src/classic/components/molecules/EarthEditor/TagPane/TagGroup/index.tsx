@@ -7,8 +7,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Tag from "@reearth/classic/components/atoms/Tag";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Tag = {
   id: string;
@@ -92,7 +92,7 @@ const TagGroup: React.FC<Props> = ({
                 icon="edit"
                 size={12}
                 alt="tag-remove-icon"
-                color={isGroupRemovable ? theme.text.default : theme.text.pale}
+                color={isGroupRemovable ? theme.classic.text.default : theme.classic.text.pale}
               />
             </IconWrapper>
           )}
@@ -100,7 +100,7 @@ const TagGroup: React.FC<Props> = ({
             <IconWrapper align="center" onClick={onRemove} testId="atoms-tag-event-trigger">
               <Icon
                 icon={icon}
-                color={theme.text.default}
+                color={theme.classic.text.default}
                 data-testid="atoms-tag-icon"
                 alt="tag-icon"
                 size={12}
@@ -132,11 +132,11 @@ const TagGroup: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  box-shadow: ${({ theme }) => `0px 4px 4px${theme.descriptionBalloon.shadowColor}`};
-  padding: ${({ theme }) => `${theme.metrics.s}px`};
+  box-shadow: ${({ theme }) => `0px 4px 4px${theme.classic.descriptionBalloon.shadowColor}`};
+  padding: ${({ theme }) => `${theme.classic.metrics.s}px`};
   min-width: 60px;
   width: auto;
-  background: ${({ theme }) => theme.properties.bg};
+  background: ${({ theme }) => theme.classic.properties.bg};
 `;
 
 const TitleWrapper = styled.div`
@@ -146,12 +146,12 @@ const TitleWrapper = styled.div`
 `;
 const IconWrapper = styled(Flex)`
   cursor: pointer;
-  margin-right: ${({ theme }) => theme.metrics.s}px;
-  margin-right: ${({ theme }) => theme.metrics.s}px;
+  margin-right: ${({ theme }) => theme.classic.metrics.s}px;
+  margin-right: ${({ theme }) => theme.classic.metrics.s}px;
 `;
 
 const TagsWrapper = styled(Flex)`
-  margin: ${({ theme }) => `${theme.metrics.l}px 0px`};
+  margin: ${({ theme }) => `${theme.classic.metrics.l}px 0px`};
   width: 100%;
 `;
 

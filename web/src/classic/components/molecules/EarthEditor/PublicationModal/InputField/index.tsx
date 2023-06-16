@@ -2,8 +2,8 @@ import React from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import { styled, useTheme } from "@reearth/services/theme";
 
 type Props = {
   subMessage?: string;
@@ -43,7 +43,7 @@ const InputField: React.FC<Props> = ({
           {actioned ? <Icon icon="check" size={15} /> : button2}
         </InputLinkButton>
       </InputContent>
-      <SubMessage size="2xs" color={theme.main.weak}>
+      <SubMessage size="2xs" color={theme.classic.main.weak}>
         {subMessage}
       </SubMessage>
     </Wrapper>
@@ -56,7 +56,7 @@ const Wrapper = styled.div`
 
 const InputContent = styled.div`
   padding: 5px;
-  border: solid 1.5px ${props => props.theme.main.border};
+  border: solid 1.5px ${props => props.theme.classic.main.border};
   text-align: left;
   height: auto;
   display: flex;
@@ -69,7 +69,7 @@ const InputLinkButton = styled.button`
   flex: 0 0 auto;
   cursor: pointer;
   background: transparent;
-  color: ${props => props.theme.main.accent};
+  color: ${props => props.theme.classic.main.accent};
   padding: 5px 10px;
   > svg {
     font-size: 24px;
@@ -81,11 +81,11 @@ const InputURL = styled.input`
   border: none;
   outline: none;
   padding: 5px 10px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: ${props => props.theme.main.highlighted};
+  color: ${props => props.theme.classic.main.highlighted};
   text-decoration-line: underline;
 `;
 
@@ -94,7 +94,7 @@ const URL = styled.a<{ disabled?: boolean }>`
   border: none;
   outline: none;
   padding: 5px 10px;
-  color: ${props => props.theme.main.accent};
+  color: ${props => props.theme.classic.main.accent};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

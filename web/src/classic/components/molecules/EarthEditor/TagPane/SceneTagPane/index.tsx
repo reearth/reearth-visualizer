@@ -3,8 +3,8 @@ import React from "react";
 import AutoComplete from "@reearth/classic/components/atoms/AutoComplete";
 import Box from "@reearth/classic/components/atoms/Box";
 import Flex from "@reearth/classic/components/atoms/Flex";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { DEFAULT_TAG_ID } from "../common";
 import TagGroup, { Tag } from "../TagGroup";
@@ -60,7 +60,7 @@ const SceneTagPane: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  padding: ${({ theme }) => `${theme.metrics.l}px`};
+  padding: ${({ theme }) => `${theme.classic.metrics.l}px`};
 `;
 
 export default SceneTagPane;

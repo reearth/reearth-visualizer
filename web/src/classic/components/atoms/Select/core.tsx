@@ -3,8 +3,8 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { useMergeRefs } from "use-callback-ref";
 
-import { styled, css, metrics } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
+import { styled, css, metrics } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 // Components
 
@@ -240,8 +240,8 @@ const Wrapper = styled.div<{ fullWidth: boolean }>`
 `;
 
 const SelectWrapper = styled.div`
-  border: solid 1px ${props => props.theme.properties.border};
-  background: ${props => props.theme.properties.bg};
+  border: solid 1px ${props => props.theme.classic.properties.border};
+  background: ${props => props.theme.classic.properties.bg};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -268,12 +268,12 @@ const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`
         `};
   margin: 0;
   padding: 0;
-  border: solid 1px ${props => props.theme.properties.border};
+  border: solid 1px ${props => props.theme.classic.properties.border};
   border-radius: 3px;
-  background: ${({ theme }) => theme.selectList.option.bg};
+  background: ${({ theme }) => theme.classic.selectList.option.bg};
   box-sizing: border-box;
   overflow: hidden;
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.classic.zIndexes.dropDown};
 
   &:focus {
     outline: none;

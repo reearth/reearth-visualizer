@@ -3,7 +3,7 @@ import { GridSection } from "react-align";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Slide from "@reearth/classic/components/atoms/Slide";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import Area, { WidgetAreaType } from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";

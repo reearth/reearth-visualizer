@@ -2,8 +2,8 @@ import React from "react";
 
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   currentProject?: {
@@ -62,7 +62,7 @@ const PublicSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.main.paleBg};
+  background-color: ${props => props.theme.classic.main.paleBg};
 `;
 
 export default PublicSection;

@@ -3,8 +3,8 @@ import React from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Visualizer from "@reearth/classic/components/molecules/Visualizer";
-import { styled } from "@reearth/classic/theme";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
+import { styled } from "@reearth/services/theme";
 
 import useHooks, { positions } from "./hooks";
 

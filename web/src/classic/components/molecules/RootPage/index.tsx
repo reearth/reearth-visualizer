@@ -3,7 +3,7 @@ import { RingLoader } from "react-spinners";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
   loading?: boolean;
@@ -23,7 +23,7 @@ const RootPage: React.FC<Props> = ({ loading }) => {
       ) : (
         <Icon icon="logo" size={200} />
       )}
-      {loading && <RingLoader size={35} color={theme.main.strongText} />}
+      {loading && <RingLoader size={35} color={theme.classic.main.strongText} />}
     </Wrapper>
   );
 };
@@ -32,7 +32,7 @@ const Wrapper = styled(Flex)<{ bg?: string }>`
   height: 100%;
   background: ${({ theme, bg }) =>
     bg ||
-    `linear-gradient(70deg, ${theme.main.brandBlue} 10%, ${theme.main.brandRed} 60%, ${theme.main.brandBlue} 90%)`};
+    `linear-gradient(70deg, ${theme.classic.main.brandBlue} 10%, ${theme.classic.main.brandRed} 60%, ${theme.classic.main.brandBlue} 90%)`};
 `;
 
 export default RootPage;

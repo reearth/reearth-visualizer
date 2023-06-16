@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { SceneProperty } from "../..";
 import { useIcon } from "../common";

@@ -4,8 +4,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import SelectField from "@reearth/classic/components/atoms/SelectBox";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type PrimitiveItem = { name: string; extensionId: string; icon: string; pluginId: string };
 

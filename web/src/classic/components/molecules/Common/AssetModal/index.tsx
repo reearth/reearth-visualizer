@@ -6,9 +6,9 @@ import Modal from "@reearth/classic/components/atoms/Modal";
 import TabularModal from "@reearth/classic/components/atoms/TabularModal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
-import { styled } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import {
   Asset as AssetType,

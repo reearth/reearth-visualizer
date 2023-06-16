@@ -1,7 +1,7 @@
 import React from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -13,7 +13,7 @@ const Header: React.FC<Props> = ({ className, title, onBack }) => {
   const theme = useTheme();
   return (
     <Wrapper className={className}>
-      <StyledIcon icon="arrowLeft" size={16} onClick={onBack} color={theme.main.text} />
+      <StyledIcon icon="arrowLeft" size={16} onClick={onBack} color={theme.classic.main.text} />
       <Title>{title}</Title>
     </Wrapper>
   );

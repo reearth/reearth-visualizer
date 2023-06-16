@@ -2,7 +2,7 @@ import React from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 interface Props {
   id: string;
@@ -36,9 +36,9 @@ const Card: React.FC<Props> = ({
       margin={margin}
       onClick={onClick && (() => onClick(id))}>
       <Content>
-        <Icon icon={icon} size={iconSize} color={theme.main.text} />
+        <Icon icon={icon} size={iconSize} color={theme.classic.main.text} />
         <Text size="xs">{text}</Text>
-        <Text size="2xs" color={theme.main.text}>
+        <Text size="2xs" color={theme.classic.main.text}>
           {subtext}
         </Text>
       </Content>
@@ -55,9 +55,9 @@ const StyledContainer = styled.div<{
   height: 192px;
   width: 193px;
   margin: ${props => props.margin}px;
-  background-color: ${({ theme }) => theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.classic.main.lighterBg};
   border: 1px ${props => props.border || "solid"}
-    ${props => (props.borderColor ? props.borderColor : props.theme.assetCard.highlight)};
+    ${props => (props.borderColor ? props.borderColor : props.theme.classic.assetCard.highlight)};
   display: flex;
   justify-content: center;
   align-items: center;

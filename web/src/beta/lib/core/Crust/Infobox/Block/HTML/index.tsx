@@ -202,10 +202,10 @@ const Wrapper = styled(Border)<{
       (!isTemplate && !isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.general.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.general.select
+        : theme.general.content.weak};
   border-radius: 6px;
 `;
 
@@ -231,7 +231,7 @@ const InputField = styled.textarea<{ minHeight: number }>`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.infoBox.mainText};
+  color: ${({ theme }) => theme.general.content.main};
   font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
@@ -251,12 +251,20 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 export default HTMLBlock;

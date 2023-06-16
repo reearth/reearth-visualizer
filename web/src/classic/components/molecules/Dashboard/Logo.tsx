@@ -2,7 +2,7 @@ import React from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;

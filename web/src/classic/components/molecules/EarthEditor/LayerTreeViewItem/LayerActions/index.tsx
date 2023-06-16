@@ -3,8 +3,8 @@ import useFileInput from "use-file-input";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 
@@ -100,10 +100,10 @@ const Action = styled.span<{ disabled?: boolean }>`
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  color: ${({ disabled, theme }) => (disabled ? theme.main.weak : theme.main.text)};
+  color: ${({ disabled, theme }) => (disabled ? theme.classic.main.weak : theme.classic.main.text)};
   border-radius: 5px;
   &:hover {
-    background-color: ${({ disabled, theme }) => (disabled ? null : theme.main.bg)};
+    background-color: ${({ disabled, theme }) => (disabled ? null : theme.classic.main.bg)};
   }
 `;
 

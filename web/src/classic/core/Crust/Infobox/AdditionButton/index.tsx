@@ -3,7 +3,7 @@ import { usePopper } from "react-popper";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Portal from "@reearth/classic/components/atoms/Portal";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;
@@ -90,17 +90,17 @@ const InsertArea = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.infoBox.accent};
+  color: ${props => props.theme.classic.infoBox.accent};
 `;
 
 const Button = styled.div`
-  color: ${props => props.theme.infoBox.accent};
+  color: ${props => props.theme.classic.infoBox.accent};
   margin: 0 3px;
 `;
 
 const Line = styled.div`
   width: 43%;
-  background-color: ${props => props.theme.main.accent};
+  background-color: ${props => props.theme.classic.main.accent};
   height: 2px;
   margin-top: -2px;
 `;

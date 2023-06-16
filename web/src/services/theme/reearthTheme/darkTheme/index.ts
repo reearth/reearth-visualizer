@@ -63,6 +63,16 @@ const darkTheme: Theme = {
   editor: {
     secondaryNavbar: {},
     infobox: {},
+    widgetAlignSystem: {
+      vertical: {
+        bg: commonColors.brand.blue.strongest50,
+        border: commonColors.brand.blue.strongest,
+      },
+      horizontal: {
+        bg: commonColors.brand.orange.main50,
+        border: commonColors.brand.orange.main,
+      },
+    },
     slider: {
       bg: colors.bg[3],
       border: colors.outline.weak,
@@ -81,7 +91,7 @@ const darkTheme: Theme = {
   },
   navbar: {
     bg: {
-      main: "",
+      main: colors.bg[2],
       hover: "",
     },
     avatarBg: "",

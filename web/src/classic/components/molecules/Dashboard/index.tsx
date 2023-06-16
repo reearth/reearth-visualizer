@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useRef } from "react";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
-import { styled } from "@reearth/classic/theme";
 import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
+import { styled } from "@reearth/services/theme";
 
 export * from "./types";
 
@@ -47,7 +47,7 @@ const Dashboard: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background: ${({ theme }) => theme.dashboard.bg};
+  background: ${({ theme }) => theme.classic.dashboard.bg};
   height: 100%;
   overflow: auto;
 `;

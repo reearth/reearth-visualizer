@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Player from "react-player";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "..";
 import { Border, Title } from "../utils";
@@ -105,10 +105,10 @@ const Template = styled.div<{ infoboxSize?: string }>`
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${props =>
     props.isHovered
-      ? props.theme.infoBox.border
+      ? props.theme.classic.infoBox.border
       : props.isSelected
-      ? props.theme.infoBox.accent2
-      : props.theme.infoBox.weakText};
+      ? props.theme.classic.infoBox.accent2
+      : props.theme.classic.infoBox.weakText};
 `;
 
 export default VideoBlock;

@@ -2,7 +2,7 @@ import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import { useState, useEffect } from "react";
 import { useTimeoutFn } from "react-use";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import type { Camera } from "../types";
@@ -128,7 +128,7 @@ const Wrapper = styled.div<{ state: TransitionStatus; bgcolor?: string; duration
   justify-content: center;
   color: #fff;
   padding: 16px;
-  z-index: ${props => props.theme.zIndexes.splashScreen};
+  z-index: ${props => props.theme.classic.zIndexes.splashScreen};
 `;
 
 const Image = styled.img`

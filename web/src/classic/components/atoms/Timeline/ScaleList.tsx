@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
-import { PublishTheme, styled } from "@reearth/classic/theme";
+import { PublishTheme, styled } from "@reearth/services/theme";
 
 import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
 import { formatDateForTimeline } from "./utils";
@@ -104,7 +104,7 @@ const ScaleLabel = styled(Text)<StyledColorProps>`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   white-space: nowrap;
 `;
 

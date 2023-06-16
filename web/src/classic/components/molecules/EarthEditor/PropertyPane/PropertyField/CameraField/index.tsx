@@ -3,9 +3,9 @@ import React from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, css, useTheme } from "@reearth/classic/theme";
 import { Camera } from "@reearth/classic/util/value";
 import { useT } from "@reearth/services/i18n";
+import { styled, css, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -83,7 +83,11 @@ const CameraField: React.FC<Props> = ({
       <CameraWrapper ref={cameraWrapperRef}>
         <StyledText
           size="xs"
-          color={value ? theme.properties.contentsFloatText : theme.properties.contentsText}
+          color={
+            value
+              ? theme.classic.properties.contentsFloatText
+              : theme.classic.properties.contentsText
+          }
           onClick={value ? openPopup : undefined}>
           {value ? (onlyPose ? t("Pose Set") : t("Position Set")) : t("Not Set")}
         </StyledText>
@@ -97,7 +101,7 @@ const CameraField: React.FC<Props> = ({
         {!onlyPose && (
           <FormGroup>
             <FormIcon>
-              <Icon icon="marker" size={16} color={theme.properties.contentsText} />
+              <Icon icon="marker" size={16} color={theme.classic.properties.contentsText} />
             </FormIcon>
             <FormFieldGroup>
               <FormFieldRow>
@@ -109,7 +113,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handleLatChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Latitude")}
                   </FloatText>
                 </FormWrapper>
@@ -121,7 +125,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handleLngChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Longtitude")}
                   </FloatText>
                 </FormWrapper>
@@ -133,7 +137,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handleAltitudeChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Altitude")}
                   </FloatText>
                 </FormWrapper>
@@ -144,7 +148,7 @@ const CameraField: React.FC<Props> = ({
         {!onlyPosition && (
           <FormGroup>
             <FormIcon>
-              <Icon icon="camera" size={16} color={theme.properties.contentsText} />
+              <Icon icon="camera" size={16} color={theme.classic.properties.contentsText} />
             </FormIcon>
             <FormFieldGroup>
               <FormFieldRow>
@@ -156,7 +160,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handleHeadingChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Heading")}
                   </FloatText>
                 </FormWrapper>
@@ -168,7 +172,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handlePitchChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Pitch")}
                   </FloatText>
                 </FormWrapper>
@@ -180,7 +184,7 @@ const CameraField: React.FC<Props> = ({
                     readOnly={!isCapturing}
                     onChange={handleRollChange}
                   />
-                  <FloatText size="2xs" color={theme.properties.contentsFloatText}>
+                  <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
                     {t("Roll")}
                   </FloatText>
                 </FormWrapper>
@@ -221,7 +225,7 @@ const CameraField: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  border: solid 1px ${props => props.theme.properties.border};
+  border: solid 1px ${props => props.theme.classic.properties.border};
 `;
 
 const CameraWrapper = styled.div`
@@ -235,7 +239,7 @@ const CameraWrapper = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.properties.contentsText};
+  color: ${props => props.theme.classic.properties.contentsText};
   margin-right: 5px;
 `;
 
@@ -256,12 +260,12 @@ const Popup = styled.ul<{ open: boolean }>`
   flex-direction: column;
   width: 286px;
   margin: 0;
-  border: solid 1px ${props => props.theme.properties.border};
+  border: solid 1px ${props => props.theme.classic.properties.border};
   border-radius: 5px;
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
   box-sizing: border-box;
   padding: 10px 16px;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${props => props.theme.classic.zIndexes.propertyFieldPopup};
 `;
 
 const FormGroup = styled.div`
@@ -306,11 +310,11 @@ const FormWrapper = styled.div`
 const Input = styled.input`
   font-size: 11px;
   display: block;
-  border: solid 1px ${props => props.theme.properties.border};
+  border: solid 1px ${props => props.theme.classic.properties.border};
   border-radius: 3px;
-  background: ${({ theme }) => theme.main.deepBg};
+  background: ${({ theme }) => theme.classic.main.deepBg};
   outline: none;
-  color: ${({ theme }) => theme.properties.contentsText};
+  color: ${({ theme }) => theme.classic.properties.contentsText};
   width: 100%;
   padding: 5px;
   box-sizing: border-box;

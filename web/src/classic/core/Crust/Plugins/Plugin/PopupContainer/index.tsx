@@ -8,7 +8,7 @@ import {
   RefObject,
 } from "react";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { PopupPosition } from "../../plugin_types";
 
@@ -60,7 +60,7 @@ const Wrapper = styled.div<{ visible: boolean }>`
   position: absolute;
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
   z-index: ${({ visible, theme }) =>
-    visible ? theme.zIndexes.pluginPopup : theme.zIndexes.hidden};
+    visible ? theme.classic.zIndexes.pluginPopup : theme.classic.zIndexes.hidden};
   transition: opacity 0.25s;
   opacity: ${({ visible }) => (visible ? "1" : "0")};
 `;

@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo } from "react";
 import { GridWrapper } from "react-align";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import MobileZone from "./MobileZone";
@@ -121,7 +121,7 @@ export default WidgetAlignSystem;
 const WidetAlignSystemWrapper = styled.div<{ editorMode?: boolean }>`
   width: 100%;
   height: 100%;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: ${({ theme }) => theme.classic.zIndexes.base};
   position: absolute;
   pointer-events: ${({ editorMode }) => (editorMode ? "auto" : "none")};
 `;

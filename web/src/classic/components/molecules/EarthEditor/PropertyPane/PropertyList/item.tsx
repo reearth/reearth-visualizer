@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
 import { DropType, ItemProps } from "@reearth/classic/components/atoms/TreeView";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Item = {
   id: string;
@@ -25,10 +25,13 @@ const PropertyListItem: React.ForwardRefRenderFunction<HTMLDivElement, Props> = 
       dropType={canDrop ? dropType : undefined}
       onClick={onSelect}
       selected={selected}>
-      <Text size="xs" color={theme.main.strongText} otherProperties={{ marginRight: "10px" }}>
+      <Text
+        size="xs"
+        color={theme.classic.main.strongText}
+        otherProperties={{ marginRight: "10px" }}>
         {index[index.length - 1] + 1}
       </Text>
-      <Text size="xs" color={theme.main.strongText} otherProperties={{ flex: 1 }}>
+      <Text size="xs" color={theme.classic.main.strongText} otherProperties={{ flex: 1 }}>
         {item.content.title}
       </Text>
     </Wrapper>
@@ -38,19 +41,27 @@ const PropertyListItem: React.ForwardRefRenderFunction<HTMLDivElement, Props> = 
 const Wrapper = styled.div<{ dropType?: DropType; selected?: boolean }>`
   display: flex;
   padding: 10px;
-  background: ${({ selected, theme }) => (selected ? theme.main.select : "transparent")};
+  background: ${({ selected, theme }) => (selected ? theme.classic.main.select : "transparent")};
   color: ${({ selected, theme }) =>
-    selected ? theme.properties.titleText : theme.properties.contentsText};
+    selected ? theme.classic.properties.titleText : theme.classic.properties.contentsText};
   align-items: center;
   cursor: pointer;
   user-select: none;
   border: 2px solid transparent;
   border-top-color: ${({ dropType, selected, theme }) =>
-    dropType === "top" ? theme.main.danger : selected ? theme.layers.selectedLayer : "transparent"};
+    dropType === "top"
+      ? theme.classic.main.danger
+      : selected
+      ? theme.classic.layers.selectedLayer
+      : "transparent"};
   border-bottom-color: ${({ dropType, selected, theme }) =>
-    dropType === "bottom" ? theme.main.alert : selected ? theme.main.select : "transparent"};
+    dropType === "bottom"
+      ? theme.classic.main.alert
+      : selected
+      ? theme.classic.main.select
+      : "transparent"};
   &:hover {
-    background: ${({ selected, theme }) => (selected ? null : theme.main.paleBg)};
+    background: ${({ selected, theme }) => (selected ? null : theme.classic.main.paleBg)};
   }
 `;
 

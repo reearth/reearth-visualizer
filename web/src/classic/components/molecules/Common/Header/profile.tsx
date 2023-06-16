@@ -9,8 +9,8 @@ import {
   MenuListItemLabel,
 } from "@reearth/classic/components/molecules/Common/MenuList";
 import WorkspaceMenu from "@reearth/classic/components/molecules/Common/WorkspaceMenu";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { User, Workspace } from "./types";
 
@@ -32,14 +32,14 @@ const Label: React.FC<LoginProps> = ({ user, personalWorkspace, currentWorkspace
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar color={theme.main.avatarBg} innerText={user.name} />
+        <Avatar color={theme.classic.main.avatarBg} innerText={user.name} />
       </LabelLeft>
       <LabelRight>
-        <LabelUserName size="m" weight="bold" color={theme.main.strongText}>
+        <LabelUserName size="m" weight="bold" color={theme.classic.main.strongText}>
           {user.name}
         </LabelUserName>
         {!personalWorkspace && (
-          <LabelWorkspaceName size="xs" color={theme.main.strongText}>
+          <LabelWorkspaceName size="xs" color={theme.classic.main.strongText}>
             {currentWorkspace.name}
           </LabelWorkspaceName>
         )}
@@ -113,7 +113,7 @@ const StyledDropdown = styled(Dropdown)`
 
 const ChildrenWrapper = styled.div`
   width: 230px;
-  background-color: ${({ theme }) => theme.header.bg};
+  background-color: ${({ theme }) => theme.classic.header.bg};
   padding: 0;
 `;
 

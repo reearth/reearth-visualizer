@@ -3,7 +3,7 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 type CardSize = "small" | "medium" | "large";
 
@@ -57,10 +57,11 @@ const AssetCard: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
-  background: ${({ selected, theme }) => (selected ? theme.assetCard.bgHover : theme.assetCard.bg)};
-  box-shadow: 0 6px 6px -6px ${props => props.theme.other.black};
+  background: ${({ selected, theme }) =>
+    selected ? theme.classic.assetCard.bgHover : theme.classic.assetCard.bg};
+  box-shadow: 0 6px 6px -6px ${props => props.theme.classic.other.black};
   border: 2px solid
-    ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
+    ${props => (props.selected ? `${props.theme.classic.assetCard.highlight}` : "transparent")};
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};
   width: ${({ cardSize }) =>
@@ -69,13 +70,13 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
     cardSize === "small" ? "104px" : cardSize === "medium" ? "186px" : "257px"};
   position: relative;
   cursor: pointer;
-  color: ${({ theme }) => theme.assetCard.text};
+  color: ${({ theme }) => theme.classic.assetCard.text};
   box-sizing: border-box;
 
   &:hover {
-    background: ${({ theme }) => theme.assetCard.bgHover};
-    color: ${({ theme }) => theme.assetCard.textHover};
-    box-shadow: 0 8px 7px -6px ${props => props.theme.other.black};
+    background: ${({ theme }) => theme.classic.assetCard.bgHover};
+    color: ${({ theme }) => theme.classic.assetCard.textHover};
+    box-shadow: 0 8px 7px -6px ${props => props.theme.classic.other.black};
   }
 `;
 
@@ -107,7 +108,7 @@ const StyledIcon = styled(Icon)`
   position: absolute;
   bottom: 7px;
   right: 7px;
-  color: ${({ theme }) => theme.assetCard.highlight};
+  color: ${({ theme }) => theme.classic.assetCard.highlight};
 `;
 
 export default AssetCard;

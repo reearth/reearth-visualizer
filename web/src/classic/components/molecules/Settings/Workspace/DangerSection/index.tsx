@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import Modal from "./Modal";
 
@@ -48,7 +48,7 @@ const DangerSection: React.FC<Props> = ({ workspace, deleteWorkspace }) => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
   border: 1px solid #ff3c53;
 `;
 

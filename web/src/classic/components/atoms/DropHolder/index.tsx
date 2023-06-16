@@ -1,7 +1,7 @@
 import React from "react";
 
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;
@@ -19,12 +19,12 @@ const DropHolder: React.FC<Props> = ({ className }) => {
 
 const DraggableView = styled.div`
   position: absolute;
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.classic.zIndexes.dropDown};
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: ${props => props.theme.main.accent};
+  background: ${props => props.theme.classic.main.accent};
   opacity: 0.5;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@ const DraggableView = styled.div`
 `;
 
 const DragMessage = styled.p`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   opacity: 1;
 `;
 

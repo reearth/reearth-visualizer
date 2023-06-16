@@ -7,8 +7,8 @@ import PasswordModal, {
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { styled } from "@reearth/classic/theme";
 import { useT, localesWithLabel } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Theme = "dark" | "light" | "default";
 
@@ -119,13 +119,13 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.main.paleBg};
+  background-color: ${({ theme }) => theme.classic.main.paleBg};
 `;
 
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   &:hover {
-    color: ${({ theme }) => theme.main.strongText};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 `;
 

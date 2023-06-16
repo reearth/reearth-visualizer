@@ -1,5 +1,5 @@
 import { ComponentProps as WidgetProps } from "@reearth/classic/components/molecules/Visualizer/Widget";
-import { usePublishTheme } from "@reearth/classic/theme";
+import { usePublishTheme } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
 

@@ -1,8 +1,8 @@
 import { memo } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { PublishTheme, styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { PublishTheme, styled } from "@reearth/services/theme";
 
 import { SceneMode } from "../../../Engine/ref";
 
@@ -142,12 +142,13 @@ const CompassIcon = styled.div<{ publishedTheme?: PublishTheme }>`
   left: 0;
   width: 64px;
   height: 64px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   & path {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   }
   & circle {
-    stroke: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+    stroke: ${({ theme, publishedTheme }) =>
+      publishedTheme?.background || theme.classic.main.deepBg};
   }
 `;
 
@@ -162,10 +163,10 @@ const CompassFocusIcon = styled.div`
 
 const AngleIcon = styled.div<{ publishedTheme?: PublishTheme }>`
   & circle {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.classic.main.deepBg};
   }
   & g {
-    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   }
   display: inline-block;
   height: 32px;
@@ -177,13 +178,14 @@ const Tool = styled.div<{ publishedTheme?: PublishTheme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.classic.main.deepBg};
   border-radius: 16px;
   margin-top: 8px;
 `;
 
 const ToolIconButton = styled.button<{ publishedTheme?: PublishTheme }>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   height: 32px;
   width: 32px;
   display: grid;

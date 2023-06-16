@@ -27,11 +27,11 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     actualThemeType === "light"
       ? {
           classic: classicLightTheme,
-          lightTheme,
+          ...lightTheme,
         }
       : {
           classic: classicDarkTheme,
-          darkTheme,
+          ...darkTheme,
         };
 
   return (

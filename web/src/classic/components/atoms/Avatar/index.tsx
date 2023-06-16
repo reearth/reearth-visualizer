@@ -2,7 +2,7 @@ import React from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type Size = "small" | "large";
 
@@ -24,9 +24,9 @@ const Avatar: React.FC<Props> = ({ className, size = "small", color, avatar, inn
       justify="center"
       size={size}
       avatar={avatar}
-      color={color ?? theme.main.avatarBg}>
+      color={color ?? theme.classic.main.avatarBg}>
       {innerText && (
-        <Text size={"l"} color={theme.text.pale}>
+        <Text size={"l"} color={theme.classic.text.pale}>
           {typeof innerText === "number" ? `+${innerText.toString()}` : innerText.charAt(0)}
         </Text>
       )}

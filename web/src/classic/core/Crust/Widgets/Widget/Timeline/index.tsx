@@ -1,5 +1,5 @@
 import TimelineUI from "@reearth/classic/components/atoms/Timeline";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import { Visible } from "../useVisible";

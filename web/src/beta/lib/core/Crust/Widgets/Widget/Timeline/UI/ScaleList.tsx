@@ -104,7 +104,7 @@ const ScaleLabel = styled(Text)<StyledColorProps>`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   white-space: nowrap;
 `;
 

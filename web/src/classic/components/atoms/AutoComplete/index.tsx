@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { metricsSizes, styled } from "@reearth/classic/theme";
+import { metricsSizes, styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import SelectCore from "../Select/core";
@@ -97,11 +97,11 @@ const StyledTextBox = styled.input`
   outline: none;
   width: 100%;
   border: none;
-  background-color: ${({ theme }) => theme.properties.bg};
+  background-color: ${({ theme }) => theme.classic.properties.bg};
   padding-left: ${metricsSizes.xs}px;
   padding-right: ${metricsSizes.xs}px;
-  caret-color: ${({ theme }) => theme.main.text};
-  color: ${({ theme }) => theme.main.text};
+  caret-color: ${({ theme }) => theme.classic.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
 `;
 
 export default AutoComplete;

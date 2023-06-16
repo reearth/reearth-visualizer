@@ -1,7 +1,7 @@
 import { ComponentType } from "react";
 
-import { styled } from "@reearth/classic/theme";
 import { ValueType, ValueTypes } from "@reearth/classic/util/value";
+import { styled } from "@reearth/services/theme";
 
 import type { SceneProperty } from "../Engine";
 import { Viewport } from "../hooks";
@@ -74,10 +74,10 @@ export default function BlockComponent<P = any>({
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) =>
-      editable && selected ? theme.infoBox.accent2 : "transparent"};
+      editable && selected ? theme.classic.infoBox.accent2 : "transparent"};
   border-radius: 6px;
 
   &:hover {
-    border-color: ${({ editable, theme }) => (editable ? theme.infoBox.border : null)};
+    border-color: ${({ editable, theme }) => (editable ? theme.classic.infoBox.border : null)};
   }
 `;

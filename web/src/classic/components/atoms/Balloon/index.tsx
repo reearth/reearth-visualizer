@@ -3,7 +3,7 @@ import React from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Placement = PopperPlacement;
 
@@ -32,12 +32,12 @@ const Balloon: React.FC<Props> = ({ className, title, description, img }) => {
 
 const Wrapper = styled.div`
   border-radius: 3px;
-  color: ${props => props.theme.descriptionBalloon.textColor};
-  background-color: ${props => props.theme.descriptionBalloon.bg};
-  box-shadow: ${props => `0px 5px 10px -5px ${props.theme.descriptionBalloon.shadowColor}`};
+  color: ${props => props.theme.classic.descriptionBalloon.textColor};
+  background-color: ${props => props.theme.classic.descriptionBalloon.bg};
+  box-shadow: ${props => `0px 5px 10px -5px ${props.theme.classic.descriptionBalloon.shadowColor}`};
   padding: 12px;
   max-width: 200px;
-  z-index: ${props => props.theme.zIndexes.descriptionBalloon};
+  z-index: ${props => props.theme.classic.zIndexes.descriptionBalloon};
 `;
 
 const StyledImage = styled.img`

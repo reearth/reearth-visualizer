@@ -2,8 +2,8 @@ import React, { useCallback, useState, ComponentType } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { Props as AssetModalPropsType } from "@reearth/classic/components/molecules/Common/AssetModal";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import TextField from "../TextField";
 import { FieldProps } from "../types";
@@ -96,10 +96,10 @@ const AssetButton = styled(Icon)<{ active?: boolean }>`
   margin-left: 6px;
   padding: 4px;
   border-radius: 6px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &:hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.classic.main.bg};
   }
 `;
 

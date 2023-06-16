@@ -71,6 +71,6 @@ const Wrapper = styled.div`
   gap: 24px;
   width: 100%;
   height: 51px;
-  background: ${({ theme }) => theme.editorNavBar.bg};
+  background: ${({ theme }) => theme.navbar.bg.main};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;

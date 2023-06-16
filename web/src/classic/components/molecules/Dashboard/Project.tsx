@@ -11,8 +11,8 @@ import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/de
 import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Project as ProjectObjType } from "@reearth/classic/components/molecules/Dashboard/types";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 
 export type Props = {
@@ -44,7 +44,7 @@ const Project: React.FC<Props> = ({ className, project }) => {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
         <Content isHovered={isHovered}>
-          <Text size={isSmallWindow ? "m" : "l"} color={theme.dashboard.projectName}>
+          <Text size={isSmallWindow ? "m" : "l"} color={theme.classic.dashboard.projectName}>
             {name}
           </Text>
           <Actions isHovered={isHovered}>
@@ -61,13 +61,16 @@ const Project: React.FC<Props> = ({ className, project }) => {
               </StyledLink>
             </ButtonWrapper>
             <DescriptionWrapper>
-              <Description size="s" isParagraph={true} color={theme.dashboard.projectDescription}>
+              <Description
+                size="s"
+                isParagraph={true}
+                color={theme.classic.dashboard.projectDescription}>
                 {description}
               </Description>
             </DescriptionWrapper>
           </Actions>
           <Flex gap={36}>
-            <PublicationStatus status={status} color={theme.dashboard.publicationStatus} />
+            <PublicationStatus status={status} color={theme.classic.dashboard.publicationStatus} />
             {timeSinceLastEdit && (
               <Text size="xs">{t("timeSince", { timeSince: timeSinceLastEdit })}</Text>
             )}
@@ -118,8 +121,9 @@ const Content = styled.div<{ isHovered?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: ${({ theme }) => theme.main.text};
-  background-color: ${({ isHovered, theme }) => (isHovered ? theme.main.transparentBg : "")};
+  color: ${({ theme }) => theme.classic.main.text};
+  background-color: ${({ isHovered, theme }) =>
+    isHovered ? theme.classic.main.transparentBg : ""};
   border-radius: 12px;
   transition: all 0.4s;
 `;
@@ -158,7 +162,7 @@ const Actions = styled.div<{ isHovered?: boolean }>`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   text-decoration: none;
 
   &:hover {

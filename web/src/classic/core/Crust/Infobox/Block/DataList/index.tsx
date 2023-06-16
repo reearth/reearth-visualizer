@@ -1,8 +1,8 @@
 import React, { Fragment, useCallback, useState } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
+import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "..";
 import { Border, Title } from "../utils";
@@ -114,10 +114,10 @@ const Template = styled.div`
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${props =>
     props.isHovered
-      ? props.theme.infoBox.border
+      ? props.theme.classic.infoBox.border
       : props.isSelected
-      ? props.theme.infoBox.accent2
-      : props.theme.infoBox.weakText};
+      ? props.theme.classic.infoBox.accent2
+      : props.theme.classic.infoBox.weakText};
 `;
 
 export default DataList;

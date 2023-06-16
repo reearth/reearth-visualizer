@@ -1,8 +1,8 @@
 import { difference } from "lodash-es";
 import React, { useMemo, useCallback } from "react";
 
-import { styled, useTheme } from "@reearth/classic/theme";
 import { Typography } from "@reearth/classic/util/value";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import ColorField from "../ColorField";
 import RadioField from "../RadioField";
@@ -41,7 +41,11 @@ const TypographyField: React.FC<Props> = ({
 }) => {
   const { fontFamily, fontSize, color, textAlign, bold, italic, underline } = value ?? {};
   const theme = useTheme();
-  const tColor = overridden ? theme.main.warning : linked ? theme.main.link : undefined;
+  const tColor = overridden
+    ? theme.classic.main.warning
+    : linked
+    ? theme.classic.main.link
+    : undefined;
 
   const updateTypography = useCallback(
     (typography: Partial<Typography>) => onChange?.({ ...(value ?? {}), ...typography }),

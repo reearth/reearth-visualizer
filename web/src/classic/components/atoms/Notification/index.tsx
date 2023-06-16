@@ -3,7 +3,7 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, metrics, useTheme } from "@reearth/classic/theme";
+import { styled, metrics, useTheme } from "@reearth/services/theme";
 
 export type NotificationType = "error" | "warning" | "info" | "success";
 export type Notification = {
@@ -37,7 +37,7 @@ const NotificationBanner: React.FC<Props> = ({
       <HeadingArea justify="space-between">
         <Text
           size="m"
-          color={theme.notification.text}
+          color={theme.classic.notification.text}
           weight="bold"
           otherProperties={{ padding: "0 0 8px 0" }}>
           {notification?.heading}
@@ -52,7 +52,7 @@ const NotificationBanner: React.FC<Props> = ({
           }}
         />
       </HeadingArea>
-      <Text size="s" color={theme.notification.text}>
+      <Text size="s" color={theme.classic.notification.text}>
         {notification?.text}
       </Text>
     </StyledNotificationBanner>
@@ -70,14 +70,14 @@ const StyledNotificationBanner = styled(Flex)<{
   padding: 8px 12px;
   background-color: ${({ type, theme }) =>
     type === "error"
-      ? theme.notification.errorBg
+      ? theme.classic.notification.errorBg
       : type === "warning"
-      ? theme.notification.warningBg
+      ? theme.classic.notification.warningBg
       : type === "success"
-      ? theme.notification.successBg
-      : theme.notification.infoBg};
-  color: ${({ theme }) => theme.notification.text};
-  z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.notificationBar : 0)};
+      ? theme.classic.notification.successBg
+      : theme.classic.notification.infoBg};
+  color: ${({ theme }) => theme.classic.notification.text};
+  z-index: ${({ theme, visible }) => (visible ? theme.classic.zIndexes.notificationBar : 0)};
   opacity: ${({ visible }) => (visible ? "1" : "0")};
   transition: all 0.5s;
   pointer-events: ${({ visible }) => (visible ? "auto" : "none")};

@@ -1,7 +1,7 @@
 import { Meta } from "@storybook/react";
 import { useState } from "react";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import Slide from ".";
 

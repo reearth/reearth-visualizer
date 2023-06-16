@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export const MenuListItemLabel: React.FC<{
   icon?: string;
@@ -16,7 +16,7 @@ export const MenuListItemLabel: React.FC<{
   const theme = useTheme();
   const content = (
     <MenuItemWrapper
-      color={(disabled && theme.properties.text) || color || theme.main.text}
+      color={(disabled && theme.classic.properties.text) || color || theme.classic.main.text}
       onClick={onClick}
       disabled={disabled}>
       {icon ? <StyledIcon icon={icon} size={20} color={color} disabled={disabled} /> : null}
@@ -30,7 +30,9 @@ export const MenuListItemLabel: React.FC<{
     content
   ) : (
     <StyledLinkButton
-      style={{ color: (disabled && theme.properties.text) || color || theme.main.text }}
+      style={{
+        color: (disabled && theme.classic.properties.text) || color || theme.classic.main.text,
+      }}
       to={linkTo}>
       {content}
     </StyledLinkButton>
@@ -49,7 +51,7 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
     ${props =>
       !props.noHover &&
       `
-      background-color: ${props.theme.main.bg};
+      background-color: ${props.theme.classic.main.bg};
     `}
   }
 `;
@@ -82,5 +84,5 @@ const StyledLinkButton = styled(Link)`
 const StyledIcon = styled(Icon)<{ color?: string; disabled?: boolean }>`
   margin-right: 10px;
   color: ${({ disabled, color, theme }) =>
-    disabled ? theme.properties.text : color ? color : theme.main.text};
+    disabled ? theme.classic.properties.text : color ? color : theme.classic.main.text};
 `;

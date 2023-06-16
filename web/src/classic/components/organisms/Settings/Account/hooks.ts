@@ -93,7 +93,7 @@ export default () => {
       if (newTheme.errors) {
         setNotification({
           type: "error",
-          text: t("Failed to change theme."),
+          text: t("Failed to change theme.classic."),
         });
       }
     },

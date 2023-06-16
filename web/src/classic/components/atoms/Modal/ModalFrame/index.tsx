@@ -3,7 +3,7 @@ import { ReactNode, useRef, useCallback } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -43,9 +43,9 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, onClose, children 
 };
 
 const Bg = styled.div<{ state: TransitionStatus }>`
-  background: ${props => props.theme.main.transparentBg};
+  background: ${props => props.theme.classic.main.transparentBg};
   position: fixed;
-  z-index: ${props => props.theme.zIndexes.fullScreenModal};
+  z-index: ${props => props.theme.classic.zIndexes.fullScreenModal};
   left: 0;
   top: 0;
   width: 100%;
@@ -61,7 +61,7 @@ const Wrapper = styled.div<{ size?: string }>`
   padding: 36px 32px;
   border-radius: 3px;
   width: ${props => (props.size === "sm" ? "372px" : props.size === "lg" ? "684px" : "620px")};
-  background: ${props => props.theme.main.deepBg};
+  background: ${props => props.theme.classic.main.deepBg};
   position: relative;
 `;
 
@@ -70,7 +70,7 @@ const InnerWrapper = styled.div<{ size?: string }>`
 `;
 
 const CloseButton = styled.span`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   font-size: 24px;
   position: absolute;
   right: 32px;

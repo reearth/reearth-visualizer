@@ -5,8 +5,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import AuthPage from "..";
 
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
           className="form-item"
           name="username"
           placeholder={t("Username or email")}
-          color={theme.main.weak}
+          color={theme.classic.main.weak}
           value={username}
           autoFocus
           onChange={handleUsernameInput}
@@ -70,7 +70,7 @@ const Login: React.FC = () => {
           placeholder={t("Password")}
           type="password"
           autoComplete="new-password"
-          color={theme.main.weak}
+          color={theme.classic.main.weak}
           value={password}
           onChange={handlePasswordInput}
         />
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
             <Text
               className="form-item"
               size="xs"
-              color={theme.main.link}
+              color={theme.classic.main.link}
               otherProperties={{ display: "inline-block" }}>
               {t("Forgot password?")}
             </Text>
@@ -90,19 +90,19 @@ const Login: React.FC = () => {
           large
           type="submit"
           disabled={disabled}
-          color={disabled ? theme.main.text : theme.other.white}
-          background={disabled ? theme.main.weak : theme.main.link}
+          color={disabled ? theme.classic.main.text : theme.classic.other.white}
+          background={disabled ? theme.classic.main.weak : theme.classic.main.link}
           text={t("Continue")}
         />
       </StyledForm>
       <Footer className="form-item">
-        <Text size="xs" color={theme.main.weak}>
+        <Text size="xs" color={theme.classic.main.weak}>
           {t("Don't have an account?")}
         </Text>
         <StyledLink to={"/signup"}>
           <Text
             size="xs"
-            color={theme.main.link}
+            color={theme.classic.main.link}
             weight="bold"
             otherProperties={{ marginLeft: "6px" }}>
             {t("Sign up")}
@@ -126,7 +126,8 @@ const StyledForm = styled.form`
 const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
   background: ${({ background }) => background};
-  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
+  border: ${({ border, theme }) =>
+    border ? `1px solid ${theme.classic.main.borderStrong}` : "none"};
   border-radius: 2px;
   color: ${({ color }) => color};
 
@@ -142,13 +143,13 @@ const StyledInput = styled.input`
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   background: inherit;
-  border: 1px solid ${({ theme }) => theme.main.border};
+  border: 1px solid ${({ theme }) => theme.classic.main.border};
   border-radius: 3px;
   padding: ${metricsSizes.s}px;
   outline: none;
 
   :focus {
-    border: 2px solid ${({ theme }) => theme.main.link};
+    border: 2px solid ${({ theme }) => theme.classic.main.link};
     margin: -1px -1px 23px -1px;
   }
 `;

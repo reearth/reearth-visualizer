@@ -78,7 +78,7 @@ const Wrapper = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.general.content.main};
   text-decoration: none;
   &:hover {
     text-decoration: none;
@@ -89,9 +89,9 @@ const StyledIcon = styled(Icon)`
   margin-right: 4px;
   border-radius: 5px;
   padding: 5px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.general.content.main};
   &:hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.general.bg.main};
   }
 `;
 
@@ -104,5 +104,5 @@ const NavMenusWrapper = styled.div`
 `;
 
 const Separator = styled.div`
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.general.content.weak};
 `;

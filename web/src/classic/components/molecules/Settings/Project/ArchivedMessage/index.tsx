@@ -1,8 +1,8 @@
 import React from "react";
 
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 const ArchivedMessage: React.FC = () => {
   const t = useT();
@@ -22,7 +22,7 @@ const ArchivedMessage: React.FC = () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
 `;
 
 const Description = styled.p``;

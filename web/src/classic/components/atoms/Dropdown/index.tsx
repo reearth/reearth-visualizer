@@ -2,7 +2,7 @@ import { ReactNode, useState, useRef, forwardRef, useImperativeHandle } from "re
 import { useClickAway } from "react-use";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 type Direction = "right" | "down" | "none";
 
@@ -86,12 +86,12 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: ${props => props.centered && `center;`}
-  background-color: ${props => props.theme.header.bg};
+  background-color: ${props => props.theme.classic.header.bg};
   &:hover {
     ${({ noHover, theme }) =>
       !noHover &&
       `
-      background-color: ${theme.main.bg};
+      background-color: ${theme.classic.main.bg};
       `}
     }
     `;
@@ -118,7 +118,7 @@ const childTransform = (direction: Direction) => {
 
 const Child = styled.div<{ direction: Direction }>`
   position: absolute;
-  background-color: ${props => props.theme.header.bg};
+  background-color: ${props => props.theme.classic.header.bg};
   max-width: 230px;
   margin: 0 auto;
   left: 0;
@@ -127,12 +127,12 @@ const Child = styled.div<{ direction: Direction }>`
   bottom: ${({ direction }) => (direction === "down" ? "0" : "auto")};
   transform: ${({ direction }) => childTransform(direction)};
   box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.classic.zIndexes.dropDown};
 `;
 
 const StyledIcon = styled(Icon)`
   margin: 0 16px;
-  color: ${props => props.theme.header.text};
+  color: ${props => props.theme.classic.header.text};
 `;
 
 export default forwardRef(Dropdown);

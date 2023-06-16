@@ -1,7 +1,7 @@
 import { forwardRef, ReactNode, Ref, useCallback, useMemo } from "react";
 
 import type { ItemProps, DropType, Item } from "@reearth/classic/components/atoms/TreeView";
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import Layer, { Layer as LayerType, Format } from "./Layer";
 
@@ -117,9 +117,9 @@ const Children = styled.div<{ dropType?: DropType; expanded?: boolean }>`
   border: 2px ${({ expanded }) => (expanded ? "solid" : "none")} transparent;
   border-top-color: ${({ dropType, expanded, theme }) =>
     dropType === "topOfChildren"
-      ? theme.main.danger
+      ? theme.classic.main.danger
       : dropType === "bottom" && expanded
-      ? `transparent transparent ${theme.main.danger} transparent`
+      ? `transparent transparent ${theme.classic.main.danger} transparent`
       : "transparent"};
 `;
 

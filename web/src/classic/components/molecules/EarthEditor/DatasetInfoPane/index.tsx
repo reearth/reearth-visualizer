@@ -3,8 +3,8 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import TabCard from "@reearth/classic/components/atoms/TabCard";
 import Table from "@reearth/classic/components/atoms/Table";
-import { useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
 import DatasetPropertyItem, {
   PrimitiveItem as PrimitiveItemType,
@@ -38,8 +38,8 @@ const DatasetInfoPane: React.FC<Props> = ({
           <Table
             headers={datasetHeaders}
             items={datasets}
-            bg={theme.properties.bg}
-            borderColor={theme.properties.border}
+            bg={theme.classic.properties.bg}
+            borderColor={theme.classic.properties.border}
             textSize="xs"
           />
           {/* <Button

@@ -33,43 +33,43 @@ export const AppRoutes = () => {
       <StyledRouter>
         <Routes>
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
-        </Routes>
-        {/* Beta routes - end */}
-        {/* classic routes - start */}
-        <Route index={true} element={<RootPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-        <Route path="password-reset" element={<PasswordResetPage />} />
-        <Route path="dashboard/:workspaceId" element={<Dashboard />} />
-        <Route path="edit/:sceneId">
-          <Route index={true} element={<EarthEditor />} />
-          <Route path="preview" element={<Preview />} />
-        </Route>
-        <Route path="plugin-editor" element={<PluginEditor />} />
-        <Route path="settings">
-          <Route index={true} element={<Navigate to="/settings/account" />} />
-          <Route path="account" element={<AccountSettings />} />
-          <Route path="workspaces">
-            <Route index={true} element={<WorkspaceList />} />
-            <Route path=":workspaceId">
-              <Route index={true} element={<WorkspaceSettings />} />
-              <Route path="projects" element={<SettingsProjectList />} />
-              <Route path="asset" element={<AssetSettings />} />
+          {/* Beta routes - end */}
+          {/* classic routes - start */}
+          <Route index={true} element={<RootPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="password-reset" element={<PasswordResetPage />} />
+          <Route path="dashboard/:workspaceId" element={<Dashboard />} />
+          <Route path="edit/:sceneId">
+            <Route index={true} element={<EarthEditor />} />
+            <Route path="preview" element={<Preview />} />
+          </Route>
+          <Route path="plugin-editor" element={<PluginEditor />} />
+          <Route path="settings">
+            <Route index={true} element={<Navigate to="/settings/account" />} />
+            <Route path="account" element={<AccountSettings />} />
+            <Route path="workspaces">
+              <Route index={true} element={<WorkspaceList />} />
+              <Route path=":workspaceId">
+                <Route index={true} element={<WorkspaceSettings />} />
+                <Route path="projects" element={<SettingsProjectList />} />
+                <Route path="asset" element={<AssetSettings />} />
+              </Route>
             </Route>
+            <Route path="projects/:projectId">
+              <Route index={true} element={<ProjectSettings />} />
+              <Route path="public" element={<PublicSettings />} />
+              <Route path="dataset" element={<DatasetSettings />} />
+              <Route path="plugins" element={<PluginSettings />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/settings/account" />} />
           </Route>
-          <Route path="projects/:projectId">
-            <Route index={true} element={<ProjectSettings />} />
-            <Route path="public" element={<PublicSettings />} />
-            <Route path="dataset" element={<DatasetSettings />} />
-            <Route path="plugins" element={<PluginSettings />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/settings/account" />} />
-        </Route>
-        <Route path="graphql" element={<GraphQLPlayground />} />
-        {...redirects.map(([from, to]) => (
-          <Route key={from} path={from} element={<Redirect to={to} />} />
-        ))}
-        <Route path="*" element={<NotFound />} />
+          <Route path="graphql" element={<GraphQLPlayground />} />
+          {...redirects.map(([from, to]) => (
+            <Route key={from} path={from} element={<Redirect to={to} />} />
+          ))}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </StyledRouter>
       {/* classic routes - end */}
     </>

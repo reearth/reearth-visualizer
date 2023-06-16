@@ -4,8 +4,8 @@ import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import DatasetHeader from "./DatasetHeader";
 import DatasetModal, { NotificationType } from "./DatasetModal";
@@ -89,7 +89,10 @@ const DatasetPane: React.FC<Props> = ({
         ) : (
           <NoDataset wrap="wrap" justify="center" align="center">
             {/* TODO 画像入れたい */}
-            <Text size="2xs" color={theme.main.text} otherProperties={{ textAlign: "center" }}>
+            <Text
+              size="2xs"
+              color={theme.classic.main.text}
+              otherProperties={{ textAlign: "center" }}>
               {t("No Dataset is here")}
             </Text>
           </NoDataset>

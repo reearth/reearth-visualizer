@@ -1,4 +1,4 @@
-import { publishColors as colors } from "@reearth/classic/theme/publishTheme";
+import { publishColors as colors } from "@reearth/services/theme/publishTheme";
 
 import type { Theme } from ".";
 

@@ -5,8 +5,8 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type User = {
   id: string;
@@ -102,7 +102,7 @@ const AddMemberModal: React.FC<Props> = ({
           <UserListItem key={id}>
             <UserIdentity>
               <Text size="m">{name}</Text>
-              <Text size="s" color={theme.infoBox.weakText}>
+              <Text size="s" color={theme.classic.infoBox.weakText}>
                 {email}
               </Text>
             </UserIdentity>
@@ -138,7 +138,7 @@ const UserIdentity = styled.div`
 `;
 
 const RemoveIcon = styled(Icon)`
-  color: ${({ theme }) => theme.main.danger};
+  color: ${({ theme }) => theme.classic.main.danger};
   cursor: pointer;
 `;
 

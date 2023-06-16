@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;
@@ -23,7 +23,7 @@ const StyledWrapper = styled.div<{ grow?: number }>`
 const Block = styled.div`
   border-radius: 12px;
   margin: 14px;
-  background-color: ${({ theme }) => theme.dashboard.itemBg};
+  background-color: ${({ theme }) => theme.classic.dashboard.itemBg};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;
 

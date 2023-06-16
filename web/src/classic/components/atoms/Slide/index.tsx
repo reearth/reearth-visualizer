@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;

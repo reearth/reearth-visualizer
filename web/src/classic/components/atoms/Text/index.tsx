@@ -1,11 +1,11 @@
 import { CSSProperties } from "react";
 
-import { useTheme } from "@reearth/classic/theme";
 import {
   FontWeight,
   typography,
   TypographySize,
 } from "@reearth/classic/theme/reearthTheme/common/fonts";
+import { useTheme } from "@reearth/services/theme";
 
 type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
 
@@ -35,7 +35,7 @@ const Text: React.FC<TextProps> = ({
   onClick,
 }) => {
   const theme = useTheme();
-  const defaultColor = theme.text.default;
+  const defaultColor = theme.classic.text.default;
   const typographyBySize = typography[size];
 
   // Default is "regular"

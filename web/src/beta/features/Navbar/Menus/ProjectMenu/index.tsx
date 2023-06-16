@@ -31,7 +31,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
         direction="down"
         hasIcon
         label={
-          <Text size="m" weight="bold" color={theme.main.weak}>
+          <Text size="h5" weight="bold" color={theme.general.content.weak}>
             {currentProject?.name}
           </Text>
         }>

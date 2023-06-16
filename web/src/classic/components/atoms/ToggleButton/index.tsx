@@ -1,7 +1,7 @@
 import React from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type ToggleSize = "sm" | "md";
 
@@ -35,7 +35,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
         <TopSlider size={size} checked={checked} disabled={disabled} selected={parentSelected} />
       </Switch>
       {label && (
-        <Label size="2xs" color={theme.main.text}>
+        <Label size="2xs" color={theme.classic.main.text}>
           {label}
         </Label>
       )}
@@ -59,10 +59,10 @@ const Switch = styled.label<{
   border: 1px solid
     ${({ checked, selected, theme }) =>
       selected
-        ? theme.toggleButton.highlight
+        ? theme.classic.toggleButton.highlight
         : checked
-        ? theme.toggleButton.activeBgBorder
-        : theme.toggleButton.bgBorder};
+        ? theme.classic.toggleButton.activeBgBorder
+        : theme.classic.toggleButton.bgBorder};
   opacity: ${({ checked, selected }) => (checked || selected ? 1 : 0.35)};
   transition: 0.4s;
   vertical-align: middle;
@@ -78,10 +78,10 @@ const TopSlider = styled.div<{
   height: ${({ size }) => (size === "sm" ? "12px" : "18px")};
   background-color: ${({ checked, selected, theme }) =>
     selected
-      ? theme.toggleButton.highlight
+      ? theme.classic.toggleButton.highlight
       : checked
-      ? theme.toggleButton.activeToggle
-      : theme.toggleButton.toggle};
+      ? theme.classic.toggleButton.activeToggle
+      : theme.classic.toggleButton.toggle};
   transition: 0.4s;
   border-radius: 50%;
   transform: ${({ checked }) => checked && "translateX(100%)"};

@@ -5,8 +5,8 @@ import { Entity, BillboardGraphics, CesiumComponentRef } from "resium";
 
 import defaultImage from "@reearth/classic/components/atoms/Icon/Icons/primPhotoIcon.svg";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
 import { Camera, LatLng } from "@reearth/classic/util/value";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../common";
@@ -98,7 +98,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
         <PhotoWrapper transition={photoOverlayImageTransiton} onClick={exitPhotoOverlay}>
           <Photo src={photoOverlayImage} />
           {photoOverlayDescription && (
-            <Description size="xs" color={theme.main.text}>
+            <Description size="xs" color={theme.classic.main.text}>
               {nl2br(photoOverlayDescription)}
             </Description>
           )}

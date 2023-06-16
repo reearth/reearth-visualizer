@@ -7,7 +7,7 @@ import {
   AccordionItemState,
 } from "react-accessible-accordion";
 
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Box from "../Box";
 import Flex from "../Flex";
@@ -34,7 +34,7 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
                   {({ expanded }) => (
                     <>
                       <StyledIcon
-                        color={theme.text.pale}
+                        color={theme.classic.text.pale}
                         icon="arrowToggle"
                         size={16}
                         open={!!expanded}

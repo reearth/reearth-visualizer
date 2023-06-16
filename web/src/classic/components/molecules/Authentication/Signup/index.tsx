@@ -6,8 +6,8 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import AuthPage from "..";
 
@@ -42,7 +42,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
       {!loading && sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
-            <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
+            <Icon icon="mailCircle" color={theme.classic.colors.brand.blue.strongest} />
             <Text size="l" customColor>
               {t("Check Your Email")}
             </Text>
@@ -54,15 +54,15 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               large
               onClick={handleSignup}
               border
-              color={theme.main.weak}
-              background={theme.other.white}
+              color={theme.classic.main.weak}
+              background={theme.classic.other.white}
               text={t("Resend email")}
             />
           </SentForm>
           <StyledLink to={"/login"}>
             <Text
               size="xs"
-              color={theme.main.link}
+              color={theme.classic.main.link}
               weight="bold"
               otherProperties={{ marginLeft: "6px" }}>
               {t("Go to log in page.")}
@@ -80,7 +80,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           <StyledInput
             className="form-item"
             placeholder={t("Email address")}
-            color={theme.main.weak}
+            color={theme.classic.main.weak}
             value={email}
             autoFocus
             onChange={handleEmailInput}
@@ -88,7 +88,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           <StyledInput
             className="form-item"
             placeholder={t("Username")}
-            color={theme.main.weak}
+            color={theme.classic.main.weak}
             value={username}
             autoFocus
             onChange={handleUsernameInput}
@@ -104,11 +104,11 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               color={
                 password
                   ? passwordPolicy?.tooLong?.test(password)
-                    ? theme.main.danger
+                    ? theme.classic.main.danger
                     : passwordPolicy?.highSecurity?.test(password)
-                    ? theme.main.accent
-                    : theme.main.weak
-                  : theme.main.weak
+                    ? theme.classic.main.accent
+                    : theme.classic.main.weak
+                  : theme.classic.main.weak
               }
             />
             <PasswordMessage size="xs" customColor>
@@ -120,18 +120,18 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
             large
             onClick={handleSignup}
             disabled={disabled}
-            color={disabled ? theme.main.text : theme.other.white}
-            background={disabled ? theme.main.weak : theme.main.link}
+            color={disabled ? theme.classic.main.text : theme.classic.other.white}
+            background={disabled ? theme.classic.main.weak : theme.classic.main.link}
             text={t("Continue")}
           />
           <Footer className="form-item">
-            <Text size="xs" color={theme.main.weak}>
+            <Text size="xs" color={theme.classic.main.weak}>
               {t("Already have an account?")}
             </Text>
             <StyledLink to={"/login"}>
               <Text
                 size="xs"
-                color={theme.main.link}
+                color={theme.classic.main.link}
                 weight="bold"
                 otherProperties={{ marginLeft: "6px" }}>
                 {t("Log in")}
@@ -147,7 +147,8 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
 const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
   background: ${({ background }) => background};
-  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
+  border: ${({ border, theme }) =>
+    border ? `1px solid ${theme.classic.main.borderStrong}` : "none"};
   border-radius: 2px;
   color: ${({ color }) => color};
   margin-top: 30px;
@@ -164,14 +165,14 @@ const StyledInput = styled.input<{ color?: string }>`
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   background: inherit;
-  border: 1px solid ${({ theme }) => theme.main.border};
+  border: 1px solid ${({ theme }) => theme.classic.main.border};
   border-radius: 3px;
   padding: ${metricsSizes.s}px;
   outline: none;
   ${({ color }) => color && `color: ${color};`}
 
   :focus {
-    border: 1px solid ${({ theme }) => theme.main.link};
+    border: 1px solid ${({ theme }) => theme.classic.main.link};
   }
 `;
 
@@ -181,7 +182,7 @@ const StyledLink = styled(Link)`
 
 const PasswordWrapper = styled(Flex)`
   width: 100%;
-  color: ${({ theme }) => theme.text.pale};
+  color: ${({ theme }) => theme.classic.text.pale};
 `;
 
 const PasswordMessage = styled(Text)`

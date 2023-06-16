@@ -165,7 +165,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
 });
 
 const Container = styled.div<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.general.bg.veryStrong};
   width: 100%;
   height: 40px;
   display: flex;
@@ -177,14 +178,15 @@ const Container = styled.div<StyledColorProps>`
 `;
 
 const OpenButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.general.bg.veryStrong};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   padding: 8px 12px;
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.general.select};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -210,16 +212,16 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   border-width: 1px;
   border-style: solid;
   border-color: ${({ theme, isPlaying, publishedTheme }) =>
-    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.main.text};
+    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.general.content.main};
   width: 22px;
   height: 22px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
   background: ${({ isPlaying, publishedTheme, theme }) =>
-    isPlaying ? publishedTheme?.select || theme.main.select : "transparent"};
+    isPlaying ? publishedTheme?.select || theme.general.select : "transparent"};
 
   @media (max-width: 768px) {
     margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.xs}px` : 0)};
@@ -234,7 +236,7 @@ const InputRangeLabel = styled.label`
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
@@ -243,13 +245,13 @@ const InputRangeLabelText = styled(Text)<StyledColorProps>`
 
 const InputRange = styled.input<StyledColorProps>`
   -webkit-appearance: none;
-  background: ${({ theme }) => theme.main.weak};
+  background: ${({ theme }) => theme.general.bg.weak};
   height: 1px;
   width: 100px;
   border: none;
   ::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
+    background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.general.select};
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -261,7 +263,7 @@ const InputRange = styled.input<StyledColorProps>`
 `;
 
 const CurrentTimeWrapper = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.main.weak}`};
+  border: ${({ theme }) => `1px solid ${theme.general.bg.weak}`};
   border-radius: 4px;
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
   margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
@@ -274,13 +276,13 @@ const CurrentTimeWrapper = styled.div`
 `;
 
 const CurrentTime = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   line-height: 16px;
   white-space: pre-line;
 `;
 
 const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
-  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
+  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.general.border}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
@@ -320,7 +322,7 @@ const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
 const IconWrapper = styled.div<StyledColorProps>`
   position: absolute;
   top: 2px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.general.select};
 `;
 
 export default Timeline;

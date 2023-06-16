@@ -4,8 +4,8 @@ import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Project from "@reearth/classic/components/molecules/Dashboard/Project";
 import { Project as ProjectType } from "@reearth/classic/components/molecules/Dashboard/types";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   className?: string;
@@ -53,7 +53,7 @@ const Content = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   align-content: flex-start;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &::after {
     content: "";
@@ -77,7 +77,7 @@ const Template = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.classic.main.weak};
 `;
 
 const Text = styled.p`

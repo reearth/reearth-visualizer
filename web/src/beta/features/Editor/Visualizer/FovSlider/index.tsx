@@ -33,7 +33,7 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
         <FovField>
           <Text
             size="footnote"
-            color={theme.main.strongText}
+            color={theme.general.content.strong}
             otherProperties={{ marginRight: "16px" }}>
             {t("Angle")}
           </Text>
@@ -68,7 +68,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 220px;
-  background: ${({ theme }) => theme.slider.background};
+  background: ${({ theme }) => theme.editor.slider.bg};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   padding: 10px;

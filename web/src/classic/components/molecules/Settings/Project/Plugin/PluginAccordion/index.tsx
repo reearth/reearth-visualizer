@@ -1,7 +1,7 @@
 import React from "react";
 
 import Accordion from "@reearth/classic/components/atoms/Accordion";
-import { useTheme } from "@reearth/classic/theme";
+import { useTheme } from "@reearth/services/theme";
 
 import PluginAccordionItemBody from "./PluginAccordionItem/itemBody";
 import PluginAccordionItemHeader from "./PluginAccordionItem/itemHeader";
@@ -31,7 +31,7 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({
     <Accordion
       className={className}
       allowMultipleExpanded
-      itemBgColor={theme.main.lighterBg}
+      itemBgColor={theme.classic.main.lighterBg}
       items={plugins?.map(p => {
         const version = p.pluginId.split("~")[2] ?? "x.x.x";
         return {

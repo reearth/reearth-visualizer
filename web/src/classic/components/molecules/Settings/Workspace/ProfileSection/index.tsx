@@ -3,8 +3,8 @@ import React from "react";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   currentWorkspace?: {
@@ -56,7 +56,7 @@ const ProfileSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
 `;
 
 export default ProfileSection;

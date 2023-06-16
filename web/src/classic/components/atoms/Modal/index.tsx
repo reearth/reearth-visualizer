@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import Wrapper from "@reearth/classic/components/atoms/Modal/ModalFrame";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 type Props = {
   className?: string;
@@ -28,7 +28,7 @@ const Modal: React.FC<Props> = ({
   const theme = useTheme();
   return (
     <Wrapper className={className} size={size} isVisible={isVisible} onClose={onClose}>
-      <Title size="l" weight="bold" color={theme.main.strongText}>
+      <Title size="l" weight="bold" color={theme.classic.main.strongText}>
         {title}
       </Title>
       {children}

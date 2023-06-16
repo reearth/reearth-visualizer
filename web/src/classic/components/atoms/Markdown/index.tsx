@@ -3,8 +3,8 @@ import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
 
-import { styled } from "@reearth/classic/theme";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;

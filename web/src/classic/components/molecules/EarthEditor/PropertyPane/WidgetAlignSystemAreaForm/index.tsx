@@ -3,9 +3,9 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
-import { styled } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import ColorField from "../PropertyField/ColorField";
 import NumberField from "../PropertyField/NumberField";

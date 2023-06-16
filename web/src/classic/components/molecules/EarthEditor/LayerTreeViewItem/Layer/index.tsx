@@ -5,9 +5,9 @@ import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
-import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
+import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import LayerActions, { Format } from "../LayerActions";
 import LayerActionsList from "../LayerActionsList";
@@ -161,12 +161,12 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
           size={16}
           color={
             selected
-              ? theme.layers.selectedTextColor
+              ? theme.classic.layers.selectedTextColor
               : deactivated
               ? isHover
-                ? theme.layers.highlight
-                : theme.layers.disableTextColor
-              : theme.layers.textColor
+                ? theme.classic.layers.highlight
+                : theme.classic.layers.disableTextColor
+              : theme.classic.layers.textColor
           }
         />
       </Flex>
@@ -180,12 +180,12 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             disabled={deactivated}
             color={
               selected
-                ? theme.layers.selectedTextColor
+                ? theme.classic.layers.selectedTextColor
                 : deactivated
                 ? isHover
-                  ? theme.layers.highlight
-                  : theme.layers.disableTextColor
-                : theme.layers.textColor
+                  ? theme.classic.layers.highlight
+                  : theme.classic.layers.disableTextColor
+                : theme.classic.layers.textColor
             }>
             {editingName}
           </LayerName>
@@ -195,10 +195,10 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               selected={selected}
               color={
                 selected
-                  ? theme.layers.selectedTextColor
+                  ? theme.classic.layers.selectedTextColor
                   : deactivated
-                  ? theme.layers.disableTextColor
-                  : theme.layers.textColor
+                  ? theme.classic.layers.disableTextColor
+                  : theme.classic.layers.textColor
               }>
               {childrenCount}
             </LayerCount>
@@ -277,31 +277,32 @@ const Wrapper = styled.div<{
   color: ${({ selected, disabled, type, theme }) =>
     type === "widget" && disabled !== undefined
       ? disabled && !selected
-        ? theme.main.weak
+        ? theme.classic.main.weak
         : selected || !disabled
-        ? theme.main.strongText
-        : theme.main.text
+        ? theme.classic.main.strongText
+        : theme.classic.main.text
       : selected
-      ? theme.main.strongText
-      : theme.main.text};
+      ? theme.classic.main.strongText
+      : theme.classic.main.text};
   box-sizing: border-box;
   background-color: ${({ selected, theme, hover }) =>
-    selected ? theme.layers.selectedLayer : hover ? theme.main.bg : "transparent"};
+    selected ? theme.classic.layers.selectedLayer : hover ? theme.classic.main.bg : "transparent"};
   border: 2px solid transparent;
   border-color: ${({ dropType, selected, theme }) =>
     dropType === "bottomOfChildren" || dropType === "top" || dropType === "bottom"
       ? dropType === "top"
-        ? `${theme.main.danger} transparent transparent transparent`
+        ? `${theme.classic.main.danger} transparent transparent transparent`
         : dropType === "bottom"
-        ? `transparent transparent ${theme.main.danger} transparent`
-        : theme.main.danger
+        ? `transparent transparent ${theme.classic.main.danger} transparent`
+        : theme.classic.main.danger
       : selected
-      ? theme.layers.selectedLayer
+      ? theme.classic.layers.selectedLayer
       : "transparent"};
-  border-bottom-color: ${({ underlined, theme }) => underlined && theme.layers.bottomBorder};
+  border-bottom-color: ${({ underlined, theme }) =>
+    underlined && theme.classic.layers.bottomBorder};
   font-size: ${fonts.sizes.xs}px;
   border-right: ${({ childSelected, theme }) =>
-    childSelected ? `2px solid ${theme.main.select}` : undefined};
+    childSelected ? `2px solid ${theme.classic.main.select}` : undefined};
 `;
 
 const ArrowIconWrapper = styled.div<{ allSiblingsDoesNotHaveChildren?: boolean }>`
@@ -314,7 +315,7 @@ const ArrowIconWrapper = styled.div<{ allSiblingsDoesNotHaveChildren?: boolean }
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.main.strongText};
+  color: ${props => props.theme.classic.main.strongText};
 `;
 
 const ArrowIcon = styled(Icon)<{ open?: boolean }>`
@@ -324,9 +325,9 @@ const ArrowIcon = styled(Icon)<{ open?: boolean }>`
 
 const Input = styled.input`
   border: none;
-  background: ${props => props.theme.properties.deepBg};
+  background: ${props => props.theme.classic.properties.deepBg};
   outline: none;
-  color: ${props => props.theme.leftMenu.text};
+  color: ${props => props.theme.classic.leftMenu.text};
   padding: 3px;
   flex: auto;
   overflow: hidden;

@@ -7,9 +7,9 @@ import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, useTheme } from "@reearth/classic/theme";
-import { metricsSizes } from "@reearth/classic/theme/reearthTheme/common/metrics";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 import { ProjectType } from "@reearth/types";
 
 export type Status = StatusType;
@@ -42,12 +42,12 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
         isHover={isHover}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
-        <Title size="l" color={theme.projectCell.title}>
+        <Title size="l" color={theme.classic.projectCell.title}>
           {project.name ? project.name : t("No Title Project")}
         </Title>
         {isHover && (
           <DescriptionWrapper>
-            <Desc size="s" color={theme.projectCell.description} isParagraph={true}>
+            <Desc size="s" color={theme.classic.projectCell.description} isParagraph={true}>
               {project.description ? project.description : t("No Description...")}
             </Desc>
           </DescriptionWrapper>
@@ -75,7 +75,7 @@ const StyledWrapper = styled.div<{ project: Project }>`
       : `url(${defaultProjectImage})`};
   background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
   background-position: center;
-  box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
+  box-shadow: 0 0 5px ${props => props.theme.classic.projectCell.shadow};
   height: 240px;
 `;
 
@@ -84,9 +84,12 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   padding: ${metricsSizes["2xl"]}px ${metricsSizes["l"]}px;
   cursor: pointer;
   height: 100%;
-  background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
+  background-color: ${props => (props.isHover ? props.theme.classic.main.lightTransparentBg : "")};
   border: 1px solid
-    ${props => (props.isHover ? props.theme.main.select : props.theme.main.lightTransparentBg)};
+    ${props =>
+      props.isHover
+        ? props.theme.classic.main.select
+        : props.theme.classic.main.lightTransparentBg};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -120,7 +123,7 @@ const StatusWrapper = styled.div`
 `;
 
 const Public = styled(PublicationStatus)`
-  color: ${props => props.theme.projectCell.description};
+  color: ${props => props.theme.classic.projectCell.description};
   margin: 8px;
 `;
 
@@ -133,7 +136,7 @@ const ArchiveStatus = styled.div`
 const StatusCircle = styled.div`
   width: 9px;
   height: 9px;
-  background: ${props => props.theme.notification.infoBg};
+  background: ${props => props.theme.classic.notification.infoBg};
   border-radius: 50px;
   margin: auto ${metricsSizes["s"]}px auto 0;
 `;

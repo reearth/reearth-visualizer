@@ -6,8 +6,8 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Header, { Props } from "@reearth/classic/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/classic/components/molecules/Settings/Navigation";
-import { styled } from "@reearth/classic/theme";
 import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
+import { styled } from "@reearth/services/theme";
 
 export type SettingPageProps = {
   loading?: boolean;
@@ -94,12 +94,12 @@ const SettingPage: React.FC<SettingPageProps> = ({
 const StyledHeader = styled(Header)`
   position: fixed;
   box-shadow: 0 4px 24px #1d1d1d;
-  z-index: ${props => props.theme.zIndexes.settingHeader};
+  z-index: ${props => props.theme.classic.zIndexes.settingHeader};
 `;
 
 const Wrapper = styled.div`
   height: 100%;
-  background-color: ${({ theme }) => theme.main.deepBg};
+  background-color: ${({ theme }) => theme.classic.main.deepBg};
   display: flex;
   flex-direction: column;
 `;
@@ -113,7 +113,7 @@ const BodyWrapper = styled.div`
 const LeftWrapper = styled.div`
   width: 264px;
   height: 100%;
-  background-color: ${({ theme }) => theme.main.paleBg};
+  background-color: ${({ theme }) => theme.classic.main.paleBg};
   position: fixed;
   @media only screen and (max-width: 1024px) {
     display: none;
@@ -156,12 +156,12 @@ const Menu = styled.div`
   display: flex;
   justify-content: center;
   box-shadow: 0 4px 16px #1d1d1d;
-  background-color: ${({ theme }) => theme.main.paleBg};
-  z-index: ${props => props.theme.zIndexes.menuForDevice};
+  background-color: ${({ theme }) => theme.classic.main.paleBg};
+  z-index: ${props => props.theme.classic.zIndexes.menuForDevice};
 `;
 
 const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   text-decoration: none;
   &:hover {
     text-decoration: none;
@@ -172,9 +172,9 @@ const StyledIcon = styled(Icon)`
   border-radius: 5px;
   margin-right: 8px;
   padding: 5px 4px 5px 8px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   &:hover {
-    background: ${({ theme }) => theme.main.bg};
+    background: ${({ theme }) => theme.classic.main.bg};
   }
 `;
 
@@ -182,10 +182,10 @@ const MenuIcon = styled(Icon)`
   border-radius: 4px;
   margin-bottom: 12px;
   padding: 4px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   cursor: pointer;
   &:hover {
-    background: ${({ theme }) => theme.main.bg};
+    background: ${({ theme }) => theme.classic.main.bg};
   }
 `;
 

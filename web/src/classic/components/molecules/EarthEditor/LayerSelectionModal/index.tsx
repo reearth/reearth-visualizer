@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import TreeView, { Item, Props as TreeViewProps } from "@reearth/classic/components/atoms/TreeView";
-import { styled } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import LayerTreeViewItem, { Layer as LayerType } from "../LayerTreeViewItem";
 
@@ -87,7 +87,7 @@ const Main = styled.main`
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
-  color: ${props => props.theme.main.strongText};
+  color: ${props => props.theme.classic.main.strongText};
 `;
 
 const InnerTreeView = (props: TreeViewProps<LayerType, HTMLDivElement>) => (
@@ -95,7 +95,7 @@ const InnerTreeView = (props: TreeViewProps<LayerType, HTMLDivElement>) => (
 );
 
 const StyledTreeView = styled(InnerTreeView)`
-  border: 1px solid ${props => props.theme.main.border};
+  border: 1px solid ${props => props.theme.classic.main.border};
   height: 250px;
   box-sizing: border-box;
   width: 80%;

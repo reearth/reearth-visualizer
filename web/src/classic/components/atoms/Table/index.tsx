@@ -1,6 +1,7 @@
 import Text from "@reearth/classic/components/atoms/Text";
-import { fonts, styled } from "@reearth/classic/theme";
+import { fonts } from "@reearth/classic/theme";
 import { TypographySize } from "@reearth/classic/theme/reearthTheme/common/fonts";
+import { styled } from "@reearth/services/theme";
 
 export type Props<T> = {
   className?: string;
@@ -93,9 +94,10 @@ const StyledTable = styled.table<{
   table-layout: ${({ layout }) => layout};
   text-align: ${({ textAlign }) => textAlign};
   white-space: ${({ multiLine }) => (multiLine ? "normal" : "nowrap")};
-  background: ${({ bg, theme }) => (bg ? bg : theme.main.bg)};
-  border-color: ${({ borderColor, theme }) => (borderColor ? borderColor : theme.main.lighterBg)};
-  color: ${({ textColor, theme }) => (textColor ? textColor : theme.main.text)};
+  background: ${({ bg, theme }) => (bg ? bg : theme.classic.main.bg)};
+  border-color: ${({ borderColor, theme }) =>
+    borderColor ? borderColor : theme.classic.main.lighterBg};
+  color: ${({ textColor, theme }) => (textColor ? textColor : theme.classic.main.text)};
   font-size: ${({ textSize }) => `${textSize}px`};
   width: ${({ width }) => (width ? width : "100%")};
   height: ${({ columnHeight }) => columnHeight};
@@ -104,13 +106,13 @@ const StyledTable = styled.table<{
 `;
 
 const StyledTh = styled.th<{ width?: string }>`
-  padding: ${({ theme }) => theme.metrics.s}px;
+  padding: ${({ theme }) => theme.classic.metrics.s}px;
   width: ${({ width }) => width};
 `;
 
 const StyledTd = styled.td`
   width: ${({ width }) => width};
-  padding: ${({ theme }) => theme.metrics.s}px;
+  padding: ${({ theme }) => theme.classic.metrics.s}px;
 `;
 
 const StyledText = styled(Text)`

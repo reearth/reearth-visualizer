@@ -1,4 +1,4 @@
-import { styled } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
 

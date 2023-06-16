@@ -1,7 +1,7 @@
 import React from "react";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
-import { metrics, styled } from "@reearth/classic/theme";
+import { metrics, styled } from "@reearth/services/theme";
 
 import PrimitiveCell from "./PrimitiveCell";
 
@@ -51,7 +51,7 @@ const Wrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: ${metrics.primitiveHeaderHeight}px;
-  background: ${props => props.theme.primitiveHeader.bg};
+  background: ${props => props.theme.classic.primitiveHeader.bg};
 `;
 
 export default PrimitiveHeader;

@@ -6,8 +6,8 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes, styled, useTheme } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
+import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
 
 import AuthPage from "..";
 import { PasswordPolicy as PasswordPolicyType } from "../common";
@@ -71,7 +71,7 @@ const PasswordReset: React.FC<Props> = ({
       ) : sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
-            <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
+            <Icon icon="mailCircle" color={theme.classic.colors.brand.blue.strongest} />
             <Text size="l" customColor>
               {t("Check Your Email")}
             </Text>
@@ -83,15 +83,15 @@ const PasswordReset: React.FC<Props> = ({
               large
               onClick={handlePasswordResetRequest}
               border
-              color={theme.main.weak}
-              background={theme.other.white}
+              color={theme.classic.main.weak}
+              background={theme.classic.other.white}
               text={t("Resend email")}
             />
           </SentForm>
           <StyledLink to={"/login"}>
             <Text
               size="xs"
-              color={theme.main.link}
+              color={theme.classic.main.link}
               weight="bold"
               otherProperties={{ marginLeft: "6px" }}>
               {t("Go to log in page.")}
@@ -113,7 +113,7 @@ const PasswordReset: React.FC<Props> = ({
           <StyledInput
             className="form-item"
             placeholder={t("Email address")}
-            color={theme.main.weak}
+            color={theme.classic.main.weak}
             value={email}
             autoFocus
             onChange={handleEmailInput}
@@ -123,12 +123,12 @@ const PasswordReset: React.FC<Props> = ({
             large
             onClick={handlePasswordResetRequest}
             disabled={disabled}
-            color={disabled ? theme.main.text : theme.other.white}
-            background={disabled ? theme.main.weak : theme.main.link}
+            color={disabled ? theme.classic.main.text : theme.classic.other.white}
+            background={disabled ? theme.classic.main.weak : theme.classic.main.link}
             text={t("Continue")}
           />
           <StyledLink to={"/login"}>
-            <Text size="xs" color={theme.main.link} weight="bold">
+            <Text size="xs" color={theme.classic.main.link} weight="bold">
               {t("Go back to log in page")}
             </Text>
           </StyledLink>
@@ -141,7 +141,8 @@ const PasswordReset: React.FC<Props> = ({
 const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
   background: ${({ background }) => background};
-  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
+  border: ${({ border, theme }) =>
+    border ? `1px solid ${theme.classic.main.borderStrong}` : "none"};
   border-radius: 2px;
   color: ${({ color }) => color};
 
@@ -157,14 +158,14 @@ const StyledInput = styled.input<{ color?: string }>`
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   background: inherit;
-  border: 1px solid ${({ theme }) => theme.main.border};
+  border: 1px solid ${({ theme }) => theme.classic.main.border};
   border-radius: 3px;
   padding: ${metricsSizes.s}px;
   outline: none;
   ${({ color }) => color && `color: ${color};`}
 
   :focus {
-    border: 1px solid ${({ theme }) => theme.main.link};
+    border: 1px solid ${({ theme }) => theme.classic.main.link};
   }
 `;
 
