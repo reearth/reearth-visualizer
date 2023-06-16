@@ -34,11 +34,9 @@ const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
       <LabelLeft>
         <Avatar innerText={user.name} borderRadius="4px" />
       </LabelLeft>
-      <LabelRight>
-        <Text size="h5" color={theme.general.content.weak}>
-          {currentWorkspace.name}
-        </Text>
-      </LabelRight>
+      <WorkspaceName size="h5" color={theme.general.content.weak}>
+        {currentWorkspace.name}
+      </WorkspaceName>
     </LabelWrapper>
   );
 };
@@ -57,54 +55,45 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
   const dropDownRef = useRef<DropDownRef>(null);
 
   return (
-    <Wrapper>
-      <StyledDropdown
-        ref={dropDownRef}
-        openOnClick
-        noHoverStyle
-        direction="down"
-        hasIcon
-        label={
-          <Label
-            user={user}
-            personalWorkspace={personalWorkspace}
-            currentWorkspace={currentWorkspace}
-          />
-        }>
-        <ChildrenWrapper>
-          <MenuList>
-            <MenuListItem>
-              <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
-            </MenuListItem>
-            <MenuListItem>
-              <WorkspaceMenu
-                currentWorkspace={currentWorkspace}
-                workspaces={workspaces}
-                onWorkspaceChange={onWorkspaceChange}
-                openModal={openModal}
-              />
-            </MenuListItem>
-            <MenuListItem>
-              <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
-            </MenuListItem>
-            {/* <MenuListItem noHover>
-            </MenuListItem> */}
-          </MenuList>
-          {/* <MenuListItemLabel text={`v${__APP_VERSION__}`} /> */}
-          <CurrentVersion size="h5">{`v${__APP_VERSION__}`}</CurrentVersion>
-        </ChildrenWrapper>
-      </StyledDropdown>
-    </Wrapper>
+    <StyledDropdown
+      ref={dropDownRef}
+      openOnClick
+      noHoverStyle
+      direction="down"
+      hasIcon
+      label={
+        <Label
+          user={user}
+          personalWorkspace={personalWorkspace}
+          currentWorkspace={currentWorkspace}
+        />
+      }>
+      <ChildrenWrapper>
+        <MenuList>
+          <MenuListItem>
+            <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
+          </MenuListItem>
+          <MenuListItem>
+            <WorkspaceMenu
+              currentWorkspace={currentWorkspace}
+              workspaces={workspaces}
+              onWorkspaceChange={onWorkspaceChange}
+              openModal={openModal}
+            />
+          </MenuListItem>
+          <MenuListItem>
+            <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
+          </MenuListItem>
+        </MenuList>
+        <CurrentVersion size="h5">{`v${__APP_VERSION__}`}</CurrentVersion>
+      </ChildrenWrapper>
+    </StyledDropdown>
   );
 };
 
-const Wrapper = styled.div`
+const StyledDropdown = styled(Dropdown)`
   cursor: pointer;
   height: 100%;
-`;
-
-const StyledDropdown = styled(Dropdown)`
-  padding: 0 24px;
 `;
 
 const ChildrenWrapper = styled.div`
@@ -119,16 +108,11 @@ const LabelWrapper = styled.div`
   padding-left: 10px;
 `;
 
-const LabelRight = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const WorkspaceName = styled(Text)`
+  align-self: center;
 `;
 
 const LabelLeft = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   margin-right: 16px;
 `;
 

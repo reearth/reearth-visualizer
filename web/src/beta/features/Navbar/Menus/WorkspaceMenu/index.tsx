@@ -97,7 +97,7 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   margin-left: 4px;
   order: 2;
-  background-color: ${({ theme }) => theme.general.content.main};
+  background-color: ${({ theme }) => theme.general.select};
 `;
 
 export default WorkspaceMenu;

@@ -42,26 +42,24 @@ const LeftSection: React.FC<Props> = ({
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
         {!dashboard && <StyledIcon icon="dashboard" size={24} />}
       </StyledLink>
-      <NavMenusWrapper>
-        <Profile
-          onSignOut={onSignOut}
-          currentWorkspace={currentWorkspace}
-          onWorkspaceChange={onWorkspaceChange}
-          openModal={openModal}
-          personalWorkspace={personalWorkspace}
-          workspaces={workspaces}
-          user={user}
-        />
-        <WorkspaceCreationModal
-          open={modalShown}
-          onClose={onModalClose}
-          onSubmit={onWorkspaceCreate}
-        />
-        <Separator>/</Separator>
-        {currentProject && (
-          <ProjectMenu currentProject={currentProject} workspaceId={currentWorkspace?.id} />
-        )}
-      </NavMenusWrapper>
+      <Profile
+        onSignOut={onSignOut}
+        currentWorkspace={currentWorkspace}
+        onWorkspaceChange={onWorkspaceChange}
+        openModal={openModal}
+        personalWorkspace={personalWorkspace}
+        workspaces={workspaces}
+        user={user}
+      />
+      <WorkspaceCreationModal
+        open={modalShown}
+        onClose={onModalClose}
+        onSubmit={onWorkspaceCreate}
+      />
+      <Separator>/</Separator>
+      {currentProject && (
+        <ProjectMenu currentProject={currentProject} workspaceId={currentWorkspace?.id} />
+      )}
     </Wrapper>
   );
 };
@@ -71,9 +69,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px;
-  gap: 12px;
-  width: 368px;
   height: 32px;
 `;
 
@@ -87,7 +82,6 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledIcon = styled(Icon)`
-  margin-right: 4px;
   border-radius: 5px;
   padding: 5px;
   color: ${props => props.theme.general.content.main};
@@ -96,14 +90,7 @@ const StyledIcon = styled(Icon)`
   }
 `;
 
-const NavMenusWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 320px;
-  height: 32px;
-`;
-
 const Separator = styled.div`
   color: ${props => props.theme.general.content.weak};
+  margin: 0px 12px;
 `;

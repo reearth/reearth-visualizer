@@ -119,6 +119,7 @@ const childTransform = (direction: Direction) => {
 const Child = styled.div<{ direction: Direction }>`
   position: absolute;
   background-color: ${({ theme }) => theme.navbar.bg.main};
+  min-width: 200px;
   max-width: 230px;
   margin: 0 auto;
   left: 0;
@@ -131,7 +132,7 @@ const Child = styled.div<{ direction: Direction }>`
 `;
 
 const StyledIcon = styled(Icon)`
-  margin: 0 12px;
+  margin-left: 8px;
   color: ${({ theme }) => theme.general.content.weak};
 `;
 

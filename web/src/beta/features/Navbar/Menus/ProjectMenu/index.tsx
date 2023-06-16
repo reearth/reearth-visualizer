@@ -82,7 +82,6 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
 };
 
 const Wrapper = styled.div`
-  min-width: 200px;
   height: 100%;
 `;
 
