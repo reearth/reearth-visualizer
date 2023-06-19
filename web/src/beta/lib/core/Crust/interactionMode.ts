@@ -2,8 +2,8 @@ import { MAP_FEATURE_FLAGS } from "../Map/featureFlags";
 
 export type InteractionModeType = "default" | "move" | "selection" | "sketch";
 
-// If you would like to use something feature by each mode,
-// you just set the flags to enable the feature.
+// If you would like enable a feature in a specific mode,
+// just set the feature's flag here to that mode.
 export const INTERACTION_MODES: Record<InteractionModeType, number> = {
   default:
     MAP_FEATURE_FLAGS.CAMERA_MOVE |
