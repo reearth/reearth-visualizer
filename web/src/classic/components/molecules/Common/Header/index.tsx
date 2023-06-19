@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
-import { styled, metrics, css } from "@reearth/services/theme";
+import { metrics } from "@reearth/classic/theme";
+import { styled, css } from "@reearth/services/theme";
 
 import Profile from "./profile";
 import type { User, Workspace, Project } from "./types";
@@ -82,7 +83,7 @@ const Header: React.FC<Props> = ({
 const Wrapper = styled.header`
   width: 100%;
   height: ${metrics.headerHeight}px;
-  background: ${props => props.theme.header.bg};
+  background: ${props => props.theme.classic.header.bg};
 `;
 
 const Content = styled.div`
@@ -119,14 +120,14 @@ const StyledIcon = styled(Icon)`
   margin-right: 8px;
   border-radius: 5px;
   padding: 5px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   &:hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.classic.main.bg};
   }
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   text-decoration: none;
   &:hover {
     text-decoration: none;

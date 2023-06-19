@@ -6,9 +6,9 @@ import Divider from "@reearth/classic/components/atoms/Divider";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
 import TreeView from "@reearth/classic/components/atoms/TreeView";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { Format, Layer, Widget, Cluster, WidgetType, TreeViewItem } from "./hooks";
 
@@ -230,7 +230,7 @@ const Wrapper = styled.div`
 const OutlineItemsWrapper = styled.div`
   margin-top: ${metricsSizes["4xl"]}px;
   position: relative;
-  background-color: ${props => props.theme.layers.bg};
+  background-color: ${props => props.theme.classic.layers.bg};
 `;
 
 const ItemsGroupWrapper = styled(OutlineItemsWrapper)`

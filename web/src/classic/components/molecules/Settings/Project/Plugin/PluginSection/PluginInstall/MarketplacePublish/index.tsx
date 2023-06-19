@@ -1,8 +1,8 @@
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon, { Icons } from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Props = {
   className?: string;
@@ -29,19 +29,19 @@ const MarketplacePublish: React.FC<Props> = ({ className, icon, buttonText, url 
 
 const StyledFlex = styled(Flex)`
   position: relative;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: ${({ theme }) => theme.classic.zIndexes.base};
   overflow: hidden;
   flex: 0 0 auto;
   box-sizing: border-box;
   width: 100%;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: ${({ theme }) => theme.metrics.l}px;
+  border-radius: ${({ theme }) => theme.classic.metrics.l}px;
   padding: ${metricsSizes["m"]}px;
   cursor: pointer;
   transition: color 0.3s;
   &:hover {
-    color: ${({ theme }) => theme.main.strongText};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 
   &:before {
@@ -53,7 +53,7 @@ const StyledFlex = styled(Flex)`
     height: 100%;
     background: linear-gradient(10.66deg, #232226 30%, #1e2086 70%);
     transition: transform 0.3s;
-    z-index: ${({ theme }) => theme.zIndexes.hidden};
+    z-index: ${({ theme }) => theme.classic.zIndexes.hidden};
   }
 
   &:hover: :before {

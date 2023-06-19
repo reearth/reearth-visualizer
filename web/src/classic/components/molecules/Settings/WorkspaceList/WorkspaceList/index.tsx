@@ -42,7 +42,7 @@ const WorkspaceList: React.FC<Props> = ({
   return (
     <>
       <SubHeader>
-        <Text size="m" color={theme.main.text} weight="normal">
+        <Text size="m" color={theme.classic.main.text} weight="normal">
           {title || `${t("All workspaces")} (${filteredWorkspaces?.length || 0})`}
         </Text>
         <Button
@@ -79,7 +79,7 @@ const SubHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: solid 1px ${({ theme }) => theme.projectCell.divider};
+  border-bottom: solid 1px ${({ theme }) => theme.classic.projectCell.divider};
 `;
 
 const StyledListView = styled.div`
@@ -91,7 +91,7 @@ const StyledListView = styled.div`
 `;
 
 const StyledWorkspaceCell = styled(WorkspaceCell)`
-  border: ${props => `2px solid ${props.theme.main.select}`};
+  border: ${props => `2px solid ${props.theme.classic.main.select}`};
 `;
 
 export default WorkspaceList;

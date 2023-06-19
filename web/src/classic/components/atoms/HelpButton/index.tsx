@@ -103,7 +103,7 @@ const HelpArea = styled.div`
 `;
 
 const BalloonWrapper = styled.div<{ visible: boolean; direction?: string }>`
-  z-index: ${props => props.theme.zIndexes.descriptionBalloon};
+  z-index: ${props => props.theme.classic.zIndexes.descriptionBalloon};
   visibility: ${props => (props.visible ? "visible" : "hidden")};
 `;
 
@@ -112,7 +112,7 @@ const BalloonArrow = styled.div<{ direction?: string }>`
   width: 10px;
   height: 10px;
   &:after {
-    background-color: ${props => props.theme.descriptionBalloon.bg};
+    background-color: ${props => props.theme.classic.descriptionBalloon.bg};
     content: " ";
     box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
     position: absolute;

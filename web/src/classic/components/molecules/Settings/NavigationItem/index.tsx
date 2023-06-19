@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled, fonts, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Props = {
   children?: ReactNode;
@@ -23,8 +23,8 @@ const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
         style={({ isActive }) =>
           isActive
             ? {
-                background: theme.main.select,
-                color: theme.main.strongText,
+                background: theme.classic.main.select,
+                color: theme.classic.main.strongText,
               }
             : {}
         }>
@@ -40,7 +40,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
 const LinkItem = styled(NavLink)`
   display: flex;
   padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   text-decoration: none;
 
   &:hover {
@@ -56,7 +56,7 @@ const StyledText = styled(Text)<{ level?: 1 | 2 | 3 }>`
 `;
 
 const NavigationList = styled.ul`
-  font-size: ${fonts.sizes.m}px;
+  font-size: ${fonts.sizes["body"]}px;
   width: 100%;
   margin: 0;
   padding: 0;

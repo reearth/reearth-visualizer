@@ -97,7 +97,7 @@ const Wrapper = styled.div`
 const StyledIcon = styled(Icon)`
   width: 25px;
   height: 25px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 `;
 
 const Preview = styled.div`
@@ -130,7 +130,7 @@ const Meta = styled.div`
 `;
 
 const Name = styled.div`
-  font-size: ${fonts.sizes.m}px;
+  font-size: ${fonts.sizes["body"]}px;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
@@ -146,7 +146,7 @@ const TrashIcon = styled(Icon)`
 
 const DownloadIcon = styled(Icon)`
   cursor: pointer;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   padding: 10px;
   bottom: 0;
   right: 0;
@@ -155,7 +155,7 @@ const DownloadIcon = styled(Icon)`
 const SpinIcon = styled(Icon)`
   display: inline-block;
   padding: 10px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   bottom: 0;
   right: 0;
   animation: spin 1s linear infinite;

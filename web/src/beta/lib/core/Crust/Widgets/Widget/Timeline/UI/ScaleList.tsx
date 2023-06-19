@@ -49,7 +49,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
           return (
             <LabeledScale key={idx}>
-              <ScaleLabel size="2xs" customColor publishedTheme={publishedTheme}>
+              <ScaleLabel size="xFootnote" customColor publishedTheme={publishedTheme}>
                 {label}
               </ScaleLabel>
               <Scale
@@ -104,7 +104,7 @@ const ScaleLabel = styled(Text)<StyledColorProps>`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   white-space: nowrap;
 `;
 

@@ -3,8 +3,7 @@ import "github-markdown-css/github-markdown.css";
 
 import { css } from "@reearth/services/theme";
 
-const fontFamilies =
-  "Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif;";
+import { fontFamilies } from "./fonts";
 
 export const styles = css`
   html,

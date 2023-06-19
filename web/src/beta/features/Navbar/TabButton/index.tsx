@@ -30,8 +30,9 @@ const Button = styled.button<ButtonProps>`
   width: 67px;
   height: 35px;
   border-radius: 4px;
-  color: ${({ disabled, theme }) => (disabled ? theme.main.text : theme.main.weak)};
-  background: ${({ disabled, theme }) => (disabled ? theme.main.lighterBg : theme.editorNavBar.bg)};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.general.content.main : theme.general.content.weak};
+  background: ${({ disabled, theme }) => (disabled ? theme.general.bg.weak : theme.navbar.bg)};
   font-weight: 700;
   font-size: 14px;
   line-height: 19px;
@@ -39,7 +40,7 @@ const Button = styled.button<ButtonProps>`
   overflow: hidden;
   text-overflow: ellipsis;
   :hover {
-    background: ${({ theme }) => theme.main.lighterBg};
+    background: ${({ theme }) => theme.general.bg.weak};
     transition: all 0.5s ease;
   }
 `;

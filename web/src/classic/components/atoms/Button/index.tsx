@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Type = "primary" | "secondary" | "danger";
 
@@ -90,28 +90,28 @@ const StyledButton = styled.button<ButtonProps>`
   border-color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.buttonDanger.disabled
-        : theme.buttonDanger.color
+        ? theme.classic.buttonDanger.disabled
+        : theme.classic.buttonDanger.color
       : buttonType === "secondary"
       ? disabled
-        ? theme.buttonSecondary.disabled
-        : theme.buttonSecondary.color
+        ? theme.classic.buttonSecondary.disabled
+        : theme.classic.buttonSecondary.color
       : disabled
-      ? theme.buttonPrimary.disabled
-      : theme.buttonPrimary.color};
+      ? theme.classic.buttonPrimary.disabled
+      : theme.classic.buttonPrimary.color};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.buttonDanger.disabled
-        : theme.buttonDanger.color
+        ? theme.classic.buttonDanger.disabled
+        : theme.classic.buttonDanger.color
       : buttonType === "secondary"
       ? disabled
-        ? theme.buttonSecondary.disabled
-        : theme.buttonSecondary.color
+        ? theme.classic.buttonSecondary.disabled
+        : theme.classic.buttonSecondary.color
       : disabled
-      ? theme.buttonPrimary.disabled
-      : theme.buttonPrimary.color};
+      ? theme.classic.buttonPrimary.disabled
+      : theme.classic.buttonPrimary.color};
   padding: ${({ large }) =>
     large
       ? `${metricsSizes["s"]}px ${metricsSizes["2xl"]}px`
@@ -131,22 +131,22 @@ const StyledButton = styled.button<ButtonProps>`
       disabled
         ? "inherit"
         : buttonType === "danger"
-        ? theme.buttonDanger.bgHover
+        ? theme.classic.buttonDanger.bgHover
         : buttonType === "secondary"
-        ? theme.buttonSecondary.bgHover
-        : theme.buttonPrimary.bgHover};
+        ? theme.classic.buttonSecondary.bgHover
+        : theme.classic.buttonPrimary.bgHover};
     color: ${({ buttonType, disabled, theme }) =>
       buttonType === "danger"
         ? disabled
-          ? theme.buttonDanger.disabled
-          : theme.buttonDanger.colorHover
+          ? theme.classic.buttonDanger.disabled
+          : theme.classic.buttonDanger.colorHover
         : buttonType === "secondary"
         ? disabled
-          ? theme.buttonSecondary.disabled
-          : theme.buttonSecondary.colorHover
+          ? theme.classic.buttonSecondary.disabled
+          : theme.classic.buttonSecondary.colorHover
         : disabled
-        ? theme.buttonPrimary.disabled
-        : theme.buttonPrimary.colorHover};
+        ? theme.classic.buttonPrimary.disabled
+        : theme.classic.buttonPrimary.colorHover};
   }
 `;
 

@@ -5,8 +5,9 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme, metricsSizes } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type PasswordPolicy = {
   tooShort?: RegExp;
@@ -133,16 +134,16 @@ const PasswordModal: React.FC<Props> = ({
             <Text size="m">{t("New password")}</Text>
             <TextBox
               type="password"
-              borderColor={theme.main.border}
+              borderColor={theme.classic.main.border}
               value={password}
               onChange={handlePasswordChange}
               doesChangeEveryTime
               autofocus
               color={
                 passwordPolicy?.tooLong?.test(password)
-                  ? theme.main.danger
+                  ? theme.classic.main.danger
                   : passwordPolicy?.highSecurity?.test(password)
-                  ? theme.main.accent
+                  ? theme.classic.main.accent
                   : undefined
               }
             />
@@ -152,11 +153,11 @@ const PasswordModal: React.FC<Props> = ({
             <Text size="m">{t("New password (for confirmation)")}</Text>
             <TextBox
               type="password"
-              borderColor={theme.main.border}
+              borderColor={theme.classic.main.border}
               value={passwordConfirmation}
               onChange={setPasswordConfirmation}
               doesChangeEveryTime
-              color={password === passwordConfirmation ? theme.main.accent : undefined}
+              color={password === passwordConfirmation ? theme.classic.main.accent : undefined}
             />
           </PasswordField>
         </div>
@@ -165,7 +166,7 @@ const PasswordModal: React.FC<Props> = ({
           <Text size="s">{t("New password")}</Text>
           <TextBox
             type="password"
-            borderColor={theme.main.border}
+            borderColor={theme.classic.main.border}
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
           />
@@ -183,7 +184,7 @@ const PasswordModal: React.FC<Props> = ({
 };
 
 const SubText = styled.div`
-  margin: ${({ theme }) => `${theme.metrics["xl"]}px auto`};
+  margin: ${({ theme }) => `${theme.classic.metrics["xl"]}px auto`};
 `;
 
 const PasswordField = styled(Flex)`

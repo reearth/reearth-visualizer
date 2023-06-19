@@ -31,7 +31,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
         direction="down"
         hasIcon
         label={
-          <Text size="m" weight="bold" color={theme.main.weak}>
+          <Text size="h5" weight="bold" color={theme.general.content.weak}>
             {currentProject?.name}
           </Text>
         }>
@@ -82,7 +82,6 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
 };
 
 const Wrapper = styled.div`
-  min-width: 200px;
   height: 100%;
 `;
 

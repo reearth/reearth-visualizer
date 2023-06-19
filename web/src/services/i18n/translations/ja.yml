@@ -2,6 +2,12 @@ Notfound: ページが見つかりません
 Angle: 角度
 Narrow: 狭い
 Wide: 広い
+Create New Workspace: 新規ワークスペース作成
+Create: 作成
+Cancel: キャンセル
+Workspace Name: ワークスペース名
+Account Settings: アカウント設定
+Log out: ログアウト
 Project settings: プロジェクト設定
 Datasets: データセット
 Plugins: プラグイン
@@ -10,12 +16,6 @@ Documentation: ヘルプ
 Workspaces: ワークスペース
 Manage Workspaces: ワークスペースを管理
 New Workspace: 新規ワークスペース
-Create New Workspace: 新規ワークスペース作成
-Create: 作成
-Cancel: キャンセル
-Workspace Name: ワークスペース名
-Account Settings: アカウント設定
-Log out: ログアウト
 Scene: シーン
 Story: Story
 Widgets: ウィジェット
