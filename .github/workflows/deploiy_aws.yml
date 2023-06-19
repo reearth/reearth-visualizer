@@ -1,6 +1,5 @@
 name: deploy-aws
 on:
-  push: # to register the workflow
   workflow_dispatch:
     inputs:
       keyId:
