@@ -377,7 +377,7 @@ export default ({
 
       if (!(featureFlags & MAP_FEATURE_FLAGS.SINGLE_SELECTION)) return;
 
-      // === Layer selection ===
+      // Layer selection from here
 
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
