@@ -1,4 +1,3 @@
-import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
 
 import CheckBoxField from ".";
@@ -15,6 +14,5 @@ export const Default: Story = {
   args: {
     label: "takanawa_3D_Tiles",
     checked: false,
-    onChange: action("onchange"),
   },
 };
