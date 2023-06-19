@@ -611,13 +611,13 @@ export default ({
 
   useEffect(() => {
     if (!cesium.current?.cesiumElement) return;
-    const canCameraMove = !!(featureFlags & MAP_FEATURE_FLAGS.CAMERA_MOVE);
-    const canCameraZoom = !!(featureFlags & MAP_FEATURE_FLAGS.CAMERA_ZOOM);
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate = canCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = canCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = canCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = canCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = canCameraZoom;
+    const allowCameraMove = !!(featureFlags & MAP_FEATURE_FLAGS.CAMERA_MOVE);
+    const allowCameraZoom = !!(featureFlags & MAP_FEATURE_FLAGS.CAMERA_ZOOM);
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
 
   return {
