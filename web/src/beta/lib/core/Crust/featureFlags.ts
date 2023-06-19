@@ -1,4 +1,4 @@
-export const MAP_FEATURE_FLAGS = {
+export const FEATURE_FLAGS = {
   CAMERA_MOVE: 1 << 0,
   CAMERA_ZOOM: 1 << 1,
   SINGLE_SELECTION: 1 << 2,

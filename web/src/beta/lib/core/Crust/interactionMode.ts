@@ -1,15 +1,12 @@
-import { MAP_FEATURE_FLAGS } from "../Map/featureFlags";
+import { FEATURE_FLAGS } from "./featureFlags";
 
 export type InteractionModeType = "default" | "move" | "selection" | "sketch";
 
 // If you would like to use something feature by each mode,
 // you just set the flags to enable the feature.
 export const INTERACTION_MODES: Record<InteractionModeType, number> = {
-  default:
-    MAP_FEATURE_FLAGS.CAMERA_MOVE |
-    MAP_FEATURE_FLAGS.CAMERA_ZOOM |
-    MAP_FEATURE_FLAGS.SINGLE_SELECTION,
-  move: MAP_FEATURE_FLAGS.CAMERA_MOVE | MAP_FEATURE_FLAGS.CAMERA_ZOOM,
-  selection: MAP_FEATURE_FLAGS.MULTIPLE_SELECTION | MAP_FEATURE_FLAGS.CAMERA_ZOOM,
-  sketch: MAP_FEATURE_FLAGS.SKETCH | MAP_FEATURE_FLAGS.CAMERA_ZOOM,
+  default: FEATURE_FLAGS.CAMERA_MOVE | FEATURE_FLAGS.CAMERA_ZOOM | FEATURE_FLAGS.SINGLE_SELECTION,
+  move: FEATURE_FLAGS.CAMERA_MOVE | FEATURE_FLAGS.CAMERA_ZOOM,
+  selection: FEATURE_FLAGS.MULTIPLE_SELECTION | FEATURE_FLAGS.CAMERA_ZOOM,
+  sketch: FEATURE_FLAGS.SKETCH | FEATURE_FLAGS.CAMERA_ZOOM,
 };
