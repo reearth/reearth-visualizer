@@ -28,9 +28,6 @@ export const Default: Story = {
     title: "Title",
     children: <p>Item</p>,
   },
-  render: args => {
-    return <Component {...args} />;
-  },
 };
 
 export const Empty: Story = {
