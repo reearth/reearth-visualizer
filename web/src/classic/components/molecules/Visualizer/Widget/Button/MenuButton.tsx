@@ -4,8 +4,9 @@ import { usePopper } from "react-popper";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { Camera } from "@reearth/classic/util/value";
-import { styled, usePublishTheme, PublishTheme, metricsSizes, mask } from "@reearth/services/theme";
+import { styled, usePublishTheme, PublishTheme, mask } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
 import { useContext } from "../../Plugin";

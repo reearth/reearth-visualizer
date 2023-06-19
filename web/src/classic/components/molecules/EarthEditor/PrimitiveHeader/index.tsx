@@ -1,7 +1,8 @@
 import React from "react";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
-import { metrics, styled } from "@reearth/services/theme";
+import { metrics } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import PrimitiveCell from "./PrimitiveCell";
 

@@ -2,9 +2,9 @@ import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import { styled } from "@reearth/services/theme";
 
 const MarketplaceButton: React.FC = () => {
   const t = useT();

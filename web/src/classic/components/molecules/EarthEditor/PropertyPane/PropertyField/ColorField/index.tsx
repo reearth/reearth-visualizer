@@ -4,8 +4,9 @@ import { usePopper } from "react-popper";
 
 import Button from "@reearth/classic/components/atoms/Button";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, css, useTheme, metricsSizes } from "@reearth/services/theme";
+import { styled, css, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 

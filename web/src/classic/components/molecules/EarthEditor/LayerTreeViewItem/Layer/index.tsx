@@ -5,9 +5,10 @@ import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
+import { metricsSizes } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
-import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import LayerActions, { Format } from "../LayerActions";
 import LayerActionsList from "../LayerActionsList";

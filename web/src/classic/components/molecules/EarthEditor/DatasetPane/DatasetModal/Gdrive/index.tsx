@@ -8,9 +8,9 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
 import AssetCard from "@reearth/classic/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/classic/components/molecules/Common/AssetModal/AssetListItem";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { GoogleSheet, SheetParameter as SheetParam } from "./hooks";
 

@@ -4,9 +4,9 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { Camera as CameraValue } from "@reearth/classic/util/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { ComponentProps as WidgetProps } from "..";
 

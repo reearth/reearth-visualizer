@@ -6,9 +6,9 @@ import Text from "@reearth/classic/components/atoms/Text";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/classic/components/molecules/Settings/Project/ChangeSiteNameModal";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { Status } from "./hooks";
 

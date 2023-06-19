@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { metricsSizes, styled } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import SelectCore from "../Select/core";

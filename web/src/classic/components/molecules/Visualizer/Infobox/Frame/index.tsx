@@ -5,10 +5,10 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { Typography, typographyStyles } from "@reearth/classic/util/value";
 import { styled, css, usePublishTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import { SceneProperty } from "../../Engine";
 

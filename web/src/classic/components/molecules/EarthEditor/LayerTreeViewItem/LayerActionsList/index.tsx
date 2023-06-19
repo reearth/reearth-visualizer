@@ -7,8 +7,9 @@ import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Layer } from "@reearth/classic/components/molecules/EarthEditor/LayerTreeViewItem/Layer";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, metricsSizes } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   selectedLayerId?: string;

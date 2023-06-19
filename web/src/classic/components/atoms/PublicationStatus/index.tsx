@@ -2,9 +2,9 @@ import React from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
 // Theme
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Status = "published" | "limited" | "unpublished";
 

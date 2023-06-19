@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import Modal, { ActionType } from "./Modal";
 

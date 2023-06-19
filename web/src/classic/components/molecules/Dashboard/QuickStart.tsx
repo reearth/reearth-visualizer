@@ -7,9 +7,9 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme, metrics, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import { styled, useTheme, css } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 
 import ProjectTypeSelectionModal from "../Common/ProjectTypeSelectionModal";
