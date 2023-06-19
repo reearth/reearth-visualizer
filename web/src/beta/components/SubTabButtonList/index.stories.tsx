@@ -1,4 +1,3 @@
-import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
 
 import SubTabButtonList from ".";
@@ -18,6 +17,5 @@ export const Default: Story = {
       { id: "2", name: "Story", active: true },
       { id: "3", name: "Web AR", active: false },
     ],
-    onChange: action("onchange"),
   },
 };
