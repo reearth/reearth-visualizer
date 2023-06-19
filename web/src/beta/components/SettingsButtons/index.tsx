@@ -17,29 +17,30 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
   return (
     <Wrapper>
       <Icon
-        size={20}
+        size={16}
         style={{
           padding: "2px",
         }}
         onClick={onBlock}
         icon={icon}
       />
-      <Text size={"s"} color="white" otherProperties={{ padding: "2px" }} onClick={onBlock}>
+      <Text size={"2xs"} color="white" otherProperties={{ padding: "0px 4px" }} onClick={onBlock}>
         {title}
       </Text>
       <Icon
-        size={20}
+        size={12}
         style={{
-          padding: "2px",
+          justifyItems: "center",
+          padding: "4px",
           borderLeft: "0.5px solid #ffffff",
         }}
         icon={"editIcon"}
         onClick={onEdit}
       />
       <Icon
-        size={20}
+        size={12}
         style={{
-          padding: "2px",
+          padding: "4px",
           borderLeft: "0.5px solid #ffffff",
         }}
         icon={"settings"}
@@ -51,10 +52,8 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: space-around;
   align-items: center;
 
-  width: 100%;
   height: 100%;
   background: ${props => props.theme.infoBox.accent2};
 `;

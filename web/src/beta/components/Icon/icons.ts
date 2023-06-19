@@ -42,6 +42,7 @@ import Settings from "./Icons/settings.svg";
 import ButtonBlock from "./Icons/buttonBlock.svg";
 import Camera from "./Icons/camera.svg";
 import MdFile from "./Icons/mdFile.svg";
+import Clock from "./Icons/clock.svg";
 
 export default {
   file: File,
@@ -71,4 +72,5 @@ export default {
   buttonBlock: ButtonBlock,
   camera: Camera,
   mdFile: MdFile,
+  clock: Clock,
 };
