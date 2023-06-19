@@ -7,17 +7,17 @@ import Text from "../Text";
 
 export type Props = {
   publishedTheme?: PublishTheme;
-  onChange?: (value: boolean) => void;
+  onClick?: (value: boolean) => void;
   checked?: boolean;
   label: string;
 };
 
-const CheckBoxField: FC<Props> = ({ onChange, checked, label, publishedTheme }) => {
+const CheckBoxField: FC<Props> = ({ onClick, checked, label, publishedTheme }) => {
   const theme = useTheme();
   return (
     <Field>
       <BoxFeild
-        onClick={() => onChange?.(checked !== undefined ? checked : false)}
+        onClick={() => onClick?.(checked !== undefined ? checked : false)}
         publishedTheme={publishedTheme}>
         {checked && <CheckMark icon="checkmark" publishedTheme={publishedTheme} />}
       </BoxFeild>
