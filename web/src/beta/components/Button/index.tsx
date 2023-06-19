@@ -90,15 +90,15 @@ const StyledButton = styled.button<ButtonProps>`
   border-color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.general.button.danger.contentDisable
-        : theme.general.button.danger.content
+        ? theme.general.button.danger.disable
+        : theme.general.button.danger.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.general.button.secondary.contentDisable
-        : theme.general.button.secondary.content
+        ? theme.general.button.secondary.disable
+        : theme.general.button.secondary.main
       : disabled
-      ? theme.general.button.primary.contentDisable
-      : theme.general.button.primary.content};
+      ? theme.general.button.primary.disable
+      : theme.general.button.primary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
