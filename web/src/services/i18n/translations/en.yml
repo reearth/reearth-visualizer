@@ -376,7 +376,7 @@ Failed to update account name.: Failed to update account name.
 Failed to update password.: Failed to update password.
 Successfully updated password!: Successfully updated password!
 Failed to change language.: Failed to change language.
-Failed to change theme.classic.: ''
+Failed to change theme.: Failed to change theme.
 Failed to delete dataset.: Failed to delete dataset.
 Dataset was successfully deleted.: Dataset was successfully deleted.
 Failed to archive project.: Failed to archive project.

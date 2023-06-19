@@ -337,7 +337,7 @@ Failed to update account name.: アカウント名の変更に失敗しました
 Failed to update password.: パスワードの更新に失敗しました。
 Successfully updated password!: パスワードの更新が完了しました。
 Failed to change language.: 言語の変更に失敗しました。
-Failed to change theme.classic.: テーマの変更に失敗しました。
+Failed to change theme.: テーマの変更に失敗しました。
 Failed to delete dataset.: デーだセットの削除に失敗したました。
 Dataset was successfully deleted.: データセットが削除されました。
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
