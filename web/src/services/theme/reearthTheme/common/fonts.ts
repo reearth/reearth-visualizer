@@ -160,14 +160,12 @@ export const FootnoteRegular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.footnote}px;
   font-weight: ${fontWeights.regular};
-  font-style: italic;
 `;
 
 export const XFootnoteRegular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.xFootnote}px;
   font-weight: ${fontWeights.regular};
-  font-style: italic;
 `;
 
 type Typography = {
