@@ -15,7 +15,7 @@ const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
   return (
     <Box onClick={onClick}>
       <Icon icon={icon} size={8} />
-      <Text size={"s"} color={"#c7c5c5"}>
+      <Text size={"s"} color={"#c7c5c5"} otherProperties={{ wordBreak: "break-all" }}>
         {title}
       </Text>
     </Box>
@@ -29,7 +29,7 @@ const Box = styled.div`
   padding: 4px 12px;
   gap: 8px;
 
-  height: 28px;
+  min-height: 28px;
 
   background: ${props => props.theme.main.paleBg};
   :hover {
