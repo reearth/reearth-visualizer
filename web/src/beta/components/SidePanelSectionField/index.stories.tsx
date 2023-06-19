@@ -26,9 +26,10 @@ export const Default: Story = {
       background: "",
     },
     title: "Title",
+    children: <p>Item</p>,
   },
   render: args => {
-    return <Component {...args}>{"Item"}</Component>;
+    return <Component {...args} />;
   },
 };
 
