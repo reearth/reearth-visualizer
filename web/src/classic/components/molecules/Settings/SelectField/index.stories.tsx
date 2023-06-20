@@ -16,7 +16,7 @@ const itemsWithIcon = items.map(({ key, label, icon }) =>
 );
 
 export default {
-  title: "molecules/Settings/Workspace/SelectField",
+  title: "classic/molecules/Settings/Workspace/SelectField",
   component: SelectField,
 } as Meta;
 

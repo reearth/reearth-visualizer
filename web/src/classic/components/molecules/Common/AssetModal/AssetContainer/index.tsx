@@ -8,10 +8,10 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import SearchBar from "@reearth/classic/components/atoms/SearchBar";
 import Text from "@reearth/classic/components/atoms/Text";
 import AssetDeleteModal from "@reearth/classic/components/molecules/Common/AssetModal/AssetDeleteModal";
+import { metricsSizes } from "@reearth/classic/theme";
 import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -295,13 +295,13 @@ const StyledIcon = styled(Icon)<{ selected?: boolean }>`
   margin-left: ${metricsSizes["m"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
-  color: ${({ selected, theme }) => (selected ? theme.main.text : theme.main.weak)};
+  color: ${({ selected, theme }) => (selected ? theme.classic.main.text : theme.classic.main.weak)};
   cursor: pointer;
-  ${({ selected, theme }) => selected && `background: ${theme.main.paleBg};`}
+  ${({ selected, theme }) => selected && `background: ${theme.classic.main.paleBg};`}
 
   &:hover {
-    background: ${({ theme }) => theme.main.paleBg};
-    color: ${({ theme }) => theme.main.text};
+    background: ${({ theme }) => theme.classic.main.paleBg};
+    color: ${({ theme }) => theme.classic.main.text};
   }
 `;
 

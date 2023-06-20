@@ -53,7 +53,7 @@ const Content = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   align-content: flex-start;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &::after {
     content: "";
@@ -77,7 +77,7 @@ const Template = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.classic.main.weak};
 `;
 
 const Text = styled.p`

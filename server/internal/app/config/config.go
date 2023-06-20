@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/samber/lo"
@@ -154,6 +155,10 @@ func (c Config) Auths() (res AuthConfigs) {
 		res = append(res, *ac)
 	}
 	return append(res, c.Auth...)
+}
+
+func (c Config) JWTProviders() (res []appx.JWTProvider) {
+	return c.Auths().JWTProviders()
 }
 
 func (c Config) AuthForWeb() *AuthConfig {

@@ -5,7 +5,8 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, css, fonts, metricsSizes } from "@reearth/services/theme";
+import { fonts, metricsSizes } from "@reearth/classic/theme";
+import { styled, css } from "@reearth/services/theme";
 
 import type { Theme } from "../types";
 import { type Typography, typographyStyles } from "../utils";
@@ -224,7 +225,7 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  z-index: ${({ theme }) => theme.zIndexes.propertyFieldPopup};
+  z-index: ${({ theme }) => theme.classic.zIndexes.propertyFieldPopup};
   transition: all 0.6s;
 
   @media (max-width: 624px) {

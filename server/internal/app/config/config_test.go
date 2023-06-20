@@ -42,10 +42,10 @@ func TestReadConfig(t *testing.T) {
 	cfg, err = ReadConfig(false)
 	assert.NoError(t, err)
 	assert.Equal(t, AuthConfigs{
-		{ISS: "https://foo", ClientID: &clientID}, // Auth0
-		{ISS: "hoge", AUD: []string{"foo"}},       // REEARTH_AUTH_*
-		localAuth,                                 // local auth srv
-		{ISS: "bar"},                              // REEARTH_AUTH
+		{ISS: "https://foo/", ClientID: &clientID}, // Auth0
+		{ISS: "hoge", AUD: []string{"foo"}},        // REEARTH_AUTH_*
+		localAuth,                                  // local auth srv
+		{ISS: "bar"},                               // REEARTH_AUTH
 	}, cfg.Auths())
 	assert.Equal(t, "foo", cfg.Auth_AUD)
 	assert.Equal(t, map[string]string{}, cfg.Web)

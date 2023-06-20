@@ -1,7 +1,8 @@
 import { JSONPath } from "jsonpath-plus";
 
+import { generateRandomString } from "../utils";
+
 import { JPLiteral } from "./expression";
-import { generateRandomString } from "./utils";
 
 export const VARIABLE_PREFIX = "czm_";
 

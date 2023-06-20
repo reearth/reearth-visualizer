@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -77,13 +79,22 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	if name == "" {
 		return nil, rerror.ErrNotFound
 	}
-	return r.findOne(ctx, bson.M{
-		"$or": []bson.M{
-			{"alias": name, "publishmentstatus": "limited"},
-			{"domains.domain": name, "publishmentstatus": "public"},
-			{"alias": name, "publishmentstatus": "public"},
+
+	f := bson.D{
+		{
+			Key: "$or",
+			Value: []bson.D{
+				{{Key: "alias", Value: name}, {Key: "publishmentstatus", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}}},
+				{{Key: "domains.domain", Value: name}, {Key: "publishmentstatus", Value: "public"}},
+			},
 		},
-	})
+	}
+
+	res, err := r.findOneWithoutReadFilter(ctx, f)
+	if errors.Is(err, rerror.ErrNotFound) {
+		log.Infof("mongo: project.FindByPublicName: name=%s err=%v filter=%v q=%#v", name, err, r.f.Readable.Strings(), f)
+	}
+	return res, err
 }
 
 func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
@@ -131,9 +142,13 @@ func (r *Project) find(ctx context.Context, filter interface{}) ([]*project.Proj
 	return c.Result, nil
 }
 
-func (r *Project) findOne(ctx context.Context, filter interface{}) (*project.Project, error) {
+func (r *Project) findOne(ctx context.Context, filter any) (*project.Project, error) {
+	return r.findOneWithoutReadFilter(ctx, r.readFilter(filter))
+}
+
+func (r *Project) findOneWithoutReadFilter(ctx context.Context, filter any) (*project.Project, error) {
 	c := mongodoc.NewProjectConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil

@@ -13,6 +13,6 @@ const Visualizer: React.FC = () => {
 export default Visualizer;
 
 const Wrapper = styled.div`
-  background: ${({ theme }) => theme.main.bg};
+  background: ${({ theme }) => theme.general.bg.main};
   height: 100%;
 `;

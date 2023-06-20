@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import TypographyField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/TypographyField",
   component: TypographyField,
 } as Meta;
 

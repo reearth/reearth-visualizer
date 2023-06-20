@@ -70,7 +70,10 @@ func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *
 func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
 	if err != nil || prj == nil {
-		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+		if err == nil {
+			err = rerror.ErrNotFound
+		}
+		return interfaces.ProjectPublishedMetadata{}, err
 	}
 
 	return interfaces.ProjectPublishedMetadataFrom(prj), nil
