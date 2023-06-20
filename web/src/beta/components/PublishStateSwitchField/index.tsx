@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -13,18 +13,20 @@ type Props = {
 
 const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
   const [open, setOpen] = useState(false);
+  const theme = useTheme();
+
   return (
     <Dropdown>
       <SelectedState onClick={() => setOpen(o => !o)}>
         <StatusCircle />
-        <Text color="#888686" size="s">
+        <Text color={theme.general.button.secondary.main} size="footnote">
           {selected ? selected : list[0]}
         </Text>
         <Icon
           icon={"arrowDown"}
           size={16}
           style={{
-            color: "#888686",
+            color: theme.general.button.secondary.main,
           }}
         />
       </SelectedState>
@@ -34,7 +36,10 @@ const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
             {list.map((value, index) => (
               <ListItem key={index}>
                 <MenuItemWrapper>
-                  <Text color={"#888686"} size={"s"} onClick={() => onChange?.(value)}>
+                  <Text
+                    color={theme.general.button.secondary.main}
+                    size={"footnote"}
+                    onClick={() => onChange?.(value)}>
                     {value}
                   </Text>
                 </MenuItemWrapper>
@@ -62,12 +67,12 @@ const SelectedState = styled.div`
   height: inherit;
   width: 100%;
 
-  border: 1px solid rgba(0, 0, 0, 0.25);
+  border: 1px solid ${props => props.theme.general.bg.transparent};
   border-radius: 6px;
-  background: ${props => props.theme.main.deepBg};
+  background: ${props => props.theme.general.bg.veryStrong};
 
   &:hover {
-    background-color: ${props => props.theme.main.bg};
+    background-color: ${props => props.theme.general.bg.weak};
   }
 `;
 
@@ -75,7 +80,7 @@ const StatusCircle = styled.object`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${props => props.theme.main.weak};
+  background: ${props => props.theme.general.button.secondary.contentDisable};
 `;
 
 const StateLists = styled.div`
@@ -87,7 +92,7 @@ const StateLists = styled.div`
   transform: translateY(100%);
   box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
   z-index: ${props => props.theme.zIndexes.dropDown};
-  background: ${props => props.theme.main.deepBg};
+  background: ${props => props.theme.general.bg.veryStrong};
 `;
 const ListWrapper = styled.ul`
   list-style: none;
@@ -97,7 +102,7 @@ const ListWrapper = styled.ul`
 const ListItem = styled.li`
   display: flex;
   &:hover {
-    background-color: ${props => props.theme.main.bg};
+    background-color: ${props => props.theme.general.bg.weak};
   }
 `;
 const MenuItemWrapper = styled.div`
