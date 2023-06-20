@@ -17,6 +17,7 @@ import ArrowLeft from "./Icons/arrowLeft.svg";
 import ArrowRight from "./Icons/arrowRight.svg";
 import ArrowLongLeft from "./Icons/arrowLongLeft.svg";
 import ArrowLongRight from "./Icons/arrowLongRight.svg";
+import ArrowDown from "./Icons/arrowDown.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
@@ -25,6 +26,7 @@ import Crosshair from "./Icons/crosshair.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
+import Help from "./Icons/help.svg";
 import CheckMark from "./Icons/checkMark.svg";
 
 // Dataset
@@ -35,6 +37,14 @@ import Timeline from "./Icons/timeline.svg";
 import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
+
+//Dashboard
+import Dashboard from "./Icons/dashboard.svg";
+import Logout from "./Icons/logout.svg";
+
+//Workspaces
+import WorkspaceAdd from "./Icons/workspaceAdd.svg";
+import Workspaces from "./Icons/workspaces.svg";
 
 export default {
   file: File,
@@ -50,6 +60,7 @@ export default {
   arrowLeft: ArrowLeft,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
+  arrowDown: ArrowDown,
   cancel: Cancel,
   crosshair: Crosshair,
   plusSquare: PlusSquare,
@@ -58,5 +69,10 @@ export default {
   playLeft: PlayLeft,
   timeline: Timeline,
   actionbutton: ActionButton,
+  dashboard: Dashboard,
+  help: Help,
+  logout: Logout,
+  workspaceAdd: WorkspaceAdd,
+  workspaces: Workspaces,
   checkmark: CheckMark,
 };

@@ -61,14 +61,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.general.content.main};
 `;
 
 const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 100%;
-  background-color: ${({ theme }) => theme.main.deepestBg};
+  background-color: ${({ theme }) => theme.general.bg.veryStrong};
 `;
 
 const Center = styled.div`
@@ -79,7 +79,7 @@ const Center = styled.div`
 `;
 
 const VisualizerWrapper = styled.div<{ hasNav: boolean }>`
-  ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.main.deepBg}`};
+  ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.general.bg.veryStrong}`};
   height: 100%;
   border-radius: 4px;
   flex-grow: 1;

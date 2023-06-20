@@ -3,9 +3,9 @@ import React from "react";
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import { Workspace as WorkspaceType } from "../WorkspaceList";
 
@@ -29,11 +29,11 @@ const WorkspaceCell: React.FC<Props> = ({ className, workspace, personal, onSele
       direction="column"
       justify="space-between"
       onClick={() => onSelect?.(workspace)}>
-      <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
+      <Text size="xl" color={theme.classic.main.text} otherProperties={{ userSelect: "none" }}>
         {workspace.name ? workspace.name : t("No Title Workspace")}
       </Text>
       {personal ? (
-        <Text size="m" color={theme.main.weak}>
+        <Text size="m" color={theme.classic.main.weak}>
           {t(
             "This is your personal workspace. Your projects and resources will be managed in this workspace.",
           )}
@@ -52,15 +52,15 @@ const WorkspaceCell: React.FC<Props> = ({ className, workspace, personal, onSele
 };
 
 const Wrapper = styled(Flex)`
-  background: ${props => props.theme.main.lighterBg};
+  background: ${props => props.theme.classic.main.lighterBg};
   box-sizing: border-box;
-  box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
+  box-shadow: 0 0 5px ${props => props.theme.classic.projectCell.shadow};
   padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   height: 240px;
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => theme.main.paleBg};
+    background: ${({ theme }) => theme.classic.main.paleBg};
   }
 `;
 

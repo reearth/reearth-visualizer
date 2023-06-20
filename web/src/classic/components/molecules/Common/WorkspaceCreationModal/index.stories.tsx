@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import WorkSpaceCreationModal from ".";
 
 export default {
-  title: "molecules/Common/WorkSpaceCreationModal",
+  title: "classic/molecules/Common/WorkSpaceCreationModal",
   component: WorkSpaceCreationModal,
 } as Meta;
 

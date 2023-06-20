@@ -9,7 +9,7 @@ const items: { value: string; label: string }[] = [
 ];
 
 export default {
-  title: "atoms/Select",
+  title: "classic/atoms/Select",
   component: Select,
 } as Meta;
 

@@ -6,9 +6,9 @@ import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { fonts, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { fonts, styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type ActionType = "archive" | "unarchive" | "delete";
 
@@ -70,23 +70,23 @@ const DangerModal: React.FC<Props> = ({
       isVisible={isVisible}
       size="sm"
       onClose={onClose}>
-      <Subtitle size="s" color={theme.main.text} weight="bold" center>
+      <Subtitle size="s" color={theme.classic.main.text} weight="bold" center>
         {project?.name}
       </Subtitle>
       {actionType === "archive" && (
         <>
-          <Description size="s" color={theme.main.text}>
+          <Description size="s" color={theme.classic.main.text}>
             {t(
               `Archiving your project will put it into a state where you cannot edit it or it's settings.`,
             )}
           </Description>
-          <Description size="s" color={theme.main.text}>
+          <Description size="s" color={theme.classic.main.text}>
             {t(`Once archived, you can unarchive the repository at any time.`)}
           </Description>
         </>
       )}
       {actionType === "unarchive" && (
-        <Description size="s" color={theme.main.text}>
+        <Description size="s" color={theme.classic.main.text}>
           {t(
             `This will bring this repository back to a state it can be editted and worked on by you and your team.`,
           )}
@@ -94,10 +94,10 @@ const DangerModal: React.FC<Props> = ({
       )}
       {actionType === "delete" && (
         <>
-          <Description size="s" color={theme.main.text}>
+          <Description size="s" color={theme.classic.main.text}>
             {t(`This action cannot be undone.`)}
           </Description>
-          <Description size="s" color={theme.main.text}>
+          <Description size="s" color={theme.classic.main.text}>
             {t(
               `This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.`,
             )}
@@ -105,10 +105,10 @@ const DangerModal: React.FC<Props> = ({
         </>
       )}
       <Divider />
-      <Subtitle size="s" color={theme.main.text} weight="bold">
+      <Subtitle size="s" color={theme.classic.main.text} weight="bold">
         {t(`Please type your project name to continue.`)}
       </Subtitle>
-      <StyledTextBox borderColor={theme.main.border} value={text} onChange={setText} />
+      <StyledTextBox borderColor={theme.classic.main.border} value={text} onChange={setText} />
       <RedButton
         large
         text={

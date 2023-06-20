@@ -23,7 +23,7 @@ const RadioLabel: React.FC<RadioLabelProps> = ({
   const theme = useTheme();
   return (
     <>
-      <Label size="m" weight="bold" color={theme.main.strongText} disabled={disabled}>
+      <Label size="m" weight="bold" color={theme.classic.main.strongText} disabled={disabled}>
         <RadioButton
           value={value}
           disabled={disabled}

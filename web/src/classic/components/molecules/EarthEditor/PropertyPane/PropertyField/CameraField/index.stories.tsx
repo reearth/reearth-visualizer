@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import CameraField, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/CameraField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/CameraField",
   component: CameraField,
 } as Meta;
 

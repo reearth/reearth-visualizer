@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
-import { styled, metrics } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import { styled } from "@reearth/services/theme";
 
 export type Props<T extends string = string> = {
   className?: string;
@@ -159,16 +159,17 @@ const FormWrapper = styled(Flex)<InputProps>`
 const StyledInput = styled.input<InputProps>`
   outline: none;
   border: solid 1px;
-  border-color: ${({ borderColor, theme }) => borderColor || theme.properties.border};
-  background-color: ${({ backgroundColor, theme }) => backgroundColor || theme.properties.bg};
-  color: ${({ color, theme }) => color || theme.properties.contentsText};
+  border-color: ${({ borderColor, theme }) => borderColor || theme.classic.properties.border};
+  background-color: ${({ backgroundColor, theme }) =>
+    backgroundColor || theme.classic.properties.bg};
+  color: ${({ color, theme }) => color || theme.classic.properties.contentsText};
   height: ${metrics.propertyTextInputHeight}px;
   padding-left: ${metricsSizes.xs}px;
   padding-right: ${metricsSizes.xs}px;
   width: 100%;
 
   &:focus {
-    border-color: ${({ theme }) => theme.properties.focusBorder};
+    border-color: ${({ theme }) => theme.classic.properties.focusBorder};
   }
 `;
 
@@ -176,9 +177,10 @@ const StyledTextarea = styled.textarea<InputProps>`
   display: block;
   outline: none;
   border: solid 1px;
-  border-color: ${({ borderColor, theme }) => borderColor || theme.properties.border};
-  background-color: ${({ backgroundColor, theme }) => backgroundColor || theme.properties.bg};
-  color: ${({ color, theme }) => color || theme.properties.contentsText};
+  border-color: ${({ borderColor, theme }) => borderColor || theme.classic.properties.border};
+  background-color: ${({ backgroundColor, theme }) =>
+    backgroundColor || theme.classic.properties.bg};
+  color: ${({ color, theme }) => color || theme.classic.properties.contentsText};
   width: 100%;
   padding: ${metricsSizes.xs}px;
   margin-top: ${metricsSizes.s}px;
@@ -186,16 +188,16 @@ const StyledTextarea = styled.textarea<InputProps>`
   min-height: ${metrics.propertyTextInputHeight}px;
 
   &:focus {
-    border-color: ${({ theme }) => theme.properties.focusBorder};
+    border-color: ${({ theme }) => theme.classic.properties.focusBorder};
   }
 `;
 
 const FloatedText = styled.span<InputProps>`
   color: ${({ color, floatedTextColor, theme }) =>
     floatedTextColor ||
-    theme.properties.contentsFloatText ||
+    theme.classic.properties.contentsFloatText ||
     color ||
-    theme.properties.contentsText};
+    theme.classic.properties.contentsText};
   font-size: ${fonts.sizes.s}px;
   user-select: none;
 `;

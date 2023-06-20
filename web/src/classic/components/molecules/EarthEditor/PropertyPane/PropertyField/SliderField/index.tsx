@@ -2,8 +2,8 @@ import RCSlider from "rc-slider";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
-import theme, { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -29,6 +29,7 @@ const SliderField: React.FC<Props> = ({
   const [sliderValue, setSliderValue] = useState(value);
   const isEditing = useRef(false);
   const isDirty = useRef(false);
+  const theme = useTheme();
 
   const calculatedStep = step ? step : max ? max / 10 : 0.1;
 
@@ -139,7 +140,7 @@ const SliderField: React.FC<Props> = ({
             onChange={handleSliderChange}
             dotStyle={{ display: "none" }}
             trackStyle={{
-              backgroundColor: theme.properties.focusBorder,
+              backgroundColor: theme.classic.properties.focusBorder,
               height: 8,
               marginTop: 1,
               marginLeft: 1,
@@ -150,12 +151,12 @@ const SliderField: React.FC<Props> = ({
               height: 16,
               width: 16,
               marginTop: -3,
-              backgroundColor: theme.properties.focusBorder,
+              backgroundColor: theme.classic.properties.focusBorder,
               boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
             }}
             railStyle={{
               backgroundColor: "inherit",
-              border: `1px solid ${theme.main.border}`,
+              border: `1px solid ${theme.classic.main.border}`,
               height: 10,
               borderRadius: "15px",
             }}
@@ -178,8 +179,8 @@ const InputWrapper = styled(Flex)`
 type InputProps = Pick<Props, "linked" | "overridden"> & { inactive: boolean };
 
 const StyledInput = styled.input<InputProps>`
-  border: 1px solid ${props => props.theme.properties.border};
-  background: ${props => props.theme.properties.bg};
+  border: 1px solid ${props => props.theme.classic.properties.border};
+  background: ${props => props.theme.classic.properties.bg};
   width: 25px;
   height: ${metrics.propertyTextInputHeight - 7}px;
   padding-left: ${metricsSizes.s}px;
@@ -187,12 +188,12 @@ const StyledInput = styled.input<InputProps>`
   outline: none;
   color: ${({ inactive, linked, overridden, theme }) =>
     overridden
-      ? theme.main.warning
+      ? theme.classic.main.warning
       : linked
-      ? theme.main.link
+      ? theme.classic.main.link
       : inactive
-      ? theme.text.pale
-      : theme.properties.contentsText};
+      ? theme.classic.text.pale
+      : theme.classic.properties.contentsText};
 
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
@@ -203,17 +204,17 @@ const StyledInput = styled.input<InputProps>`
   }
 
   &:focus-within {
-    border-color: ${({ theme }) => theme.properties.contentsText};
+    border-color: ${({ theme }) => theme.classic.properties.contentsText};
   }
 `;
 
 const StyledSlider = styled(RCSlider)`
   .rc-slider-mark-text {
-    color: ${({ theme }) => theme.properties.text};
+    color: ${({ theme }) => theme.classic.properties.text};
   }
 
   .rc-slider-mark-text-active {
-    color: ${({ theme }) => theme.text.pale};
+    color: ${({ theme }) => theme.classic.text.pale};
   }
 `;
 

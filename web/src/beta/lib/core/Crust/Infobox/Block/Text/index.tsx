@@ -5,7 +5,7 @@ import Icon from "@reearth/beta/components/Icon";
 import Markdown from "@reearth/beta/components/Markdown";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { CommonProps as BlockProps, Typography } from "..";
 import { Border, typographyStyles } from "../utils";
@@ -135,7 +135,7 @@ const TextBlock: React.FC<Props> = ({
           ) : markdown ? (
             <Markdown
               styles={typography}
-              backgroundColor={bg || theme.infoBox.bg}
+              backgroundColor={bg || theme.general.bg.main}
               onDoubleClick={startEditing}>
               {text}
             </Markdown>
@@ -167,10 +167,10 @@ const Wrapper = styled(Border)<{
       (!isTemplate && !isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.general.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.general.select
+        : theme.general.content.weak};
   border-radius: 6px;
 `;
 
@@ -192,8 +192,8 @@ const InputField = styled.textarea`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.infoBox.mainText};
-  font-size: ${fonts.sizes.s}px;
+  color: ${props => props.theme.general.content.main};
+  font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
   padding: 4px;
@@ -212,12 +212,20 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 export default TextBlock;

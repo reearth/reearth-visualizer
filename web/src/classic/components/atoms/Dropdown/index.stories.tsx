@@ -8,7 +8,7 @@ const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
 );
 
 export default {
-  title: "atoms/Dropdown",
+  title: "classic/atoms/Dropdown",
   component: Dropdown,
 } as Meta;
 

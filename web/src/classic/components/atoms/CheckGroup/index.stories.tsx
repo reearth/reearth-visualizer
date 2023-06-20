@@ -14,7 +14,7 @@ const items: { value: string; label: string }[] = [
 const Check = styled.div<{ value: string; label: string }>``;
 
 export default {
-  title: "atoms/CheckGroup",
+  title: "classic/atoms/CheckGroup",
   component: CheckGroup,
 } as Meta;
 

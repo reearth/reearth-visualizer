@@ -25,7 +25,7 @@ const defaultProps: Props = {
 };
 
 export default {
-  title: "molecules/Common/Header",
+  title: "classic/molecules/Common/Header",
   component: Header,
 } as Meta;
 
