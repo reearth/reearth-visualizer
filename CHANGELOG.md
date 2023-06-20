@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.16.3 - 2023-06-16
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Don&[#39](https://github.com/reearth/reearth/pull/39);t show project select on project creation [`a2def8`](https://github.com/reearth/reearth/commit/a2def8)
+- Published page layer selection ([#503](https://github.com/reearth/reearth/pull/503)) [`2a23f4`](https://github.com/reearth/reearth/commit/2a23f4)
+
+#### ✨ Refactor
+
+- Theme system ([#498](https://github.com/reearth/reearth/pull/498)) [`b7fa18`](https://github.com/reearth/reearth/commit/b7fa18)
+- Organize stories to classic group ([#488](https://github.com/reearth/reearth/pull/488)) [`0eed12`](https://github.com/reearth/reearth/commit/0eed12)
+- Organize Resizable(beta) hooks ([#467](https://github.com/reearth/reearth/pull/467)) [`449335`](https://github.com/reearth/reearth/commit/449335)
+
+#### Miscellaneous Tasks
+
+- Update package.json for v0.16.3 [`116936`](https://github.com/reearth/reearth/commit/116936)
+- Design beta navBar ([#486](https://github.com/reearth/reearth/pull/486)) [`e07837`](https://github.com/reearth/reearth/commit/e07837)
+- Add useManageSwitchState ([#471](https://github.com/reearth/reearth/pull/471)) [`97f7f2`](https://github.com/reearth/reearth/commit/97f7f2)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Ignore filter for project repo findByPublicName ([#499](https://github.com/reearth/reearth/pull/499)) [`612e78`](https://github.com/reearth/reearth/commit/612e78)
+- Published metadata api should return error correctly [`073b30`](https://github.com/reearth/reearth/commit/073b30)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`338c7a`](https://github.com/reearth/reearth/commit/338c7a)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`338c7a`](https://github.com/reearth/reearth/commit/338c7a)
+
 ## 0.16.2 - 2023-06-08
 
 ### Web

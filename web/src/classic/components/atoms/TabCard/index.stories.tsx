@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import TabCard, { Props } from ".";
 
 export default {
-  title: "atoms/TabCard",
+  title: "classic/atoms/TabCard",
   component: TabCard,
 } as Meta;
 

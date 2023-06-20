@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import Check from ".";
 
 export default {
-  title: "atoms/Check",
+  title: "classic/atoms/Check",
   component: Check,
 } as Meta;
 

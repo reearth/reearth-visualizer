@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/AssetsModal/AssetCard",
+  title: "classic/molecules/EarthEditor/AssetsModal/AssetCard",
   component: Component,
 } as Meta;
 

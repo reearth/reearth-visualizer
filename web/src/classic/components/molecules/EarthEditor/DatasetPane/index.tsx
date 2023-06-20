@@ -89,7 +89,10 @@ const DatasetPane: React.FC<Props> = ({
         ) : (
           <NoDataset wrap="wrap" justify="center" align="center">
             {/* TODO 画像入れたい */}
-            <Text size="2xs" color={theme.main.text} otherProperties={{ textAlign: "center" }}>
+            <Text
+              size="2xs"
+              color={theme.classic.main.text}
+              otherProperties={{ textAlign: "center" }}>
               {t("No Dataset is here")}
             </Text>
           </NoDataset>

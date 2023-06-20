@@ -2,9 +2,9 @@ import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { styled } from "@reearth/services/theme";
 
 const MarketplaceButton: React.FC = () => {
   const t = useT();
@@ -41,14 +41,14 @@ const Wrapper = styled(Flex)`
   border-radius: ${metricsSizes["s"]}px;
   cursor: pointer;
   position: relative;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: ${({ theme }) => theme.classic.zIndexes.base};
   overflow: hidden;
 
   max-width: 278px;
   min-width: 200px;
   height: ${metrics.dashboardContentHeight}px;
   padding: ${metricsSizes.xl}px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   transition: color 0.4s;
 
   &:before {
@@ -59,11 +59,11 @@ const Wrapper = styled(Flex)`
     width: 200%;
     height: 100%;
     background: ${({ theme }) =>
-      `linear-gradient(46.66deg, ${theme.dashboard.itemBg} 22.94%, ${theme.main.brandBlue} 72.25%)`};
+      `linear-gradient(46.66deg, ${theme.classic.dashboard.itemBg} 22.94%, ${theme.classic.main.brandBlue} 72.25%)`};
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;
-    z-index: ${({ theme }) => theme.zIndexes.hidden};
+    z-index: ${({ theme }) => theme.classic.zIndexes.hidden};
   }
 
   &:hover: :before {
@@ -71,7 +71,7 @@ const Wrapper = styled(Flex)`
   }
 
   &:hover {
-    color: ${({ theme }) => theme.main.strongText};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 
   @media only screen and (max-width: 1024px) {

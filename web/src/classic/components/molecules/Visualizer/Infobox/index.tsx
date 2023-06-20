@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import AdditionButton from "@reearth/classic/components/atoms/AdditionButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { ValueTypes, ValueType } from "@reearth/classic/util/value";
@@ -12,6 +11,7 @@ import type { SceneProperty } from "../Engine";
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
+import AdditionButton from "./AdditionButton";
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
@@ -151,7 +151,7 @@ const Infobox: React.FC<Props> = ({
               renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)}
           </AdditionButton>
           <NoContentInfo>
-            <InnerWrapper size="xs" color={theme.infoBox.weakText}>
+            <InnerWrapper size="xs" color={theme.classic.infoBox.weakText}>
               <StyledIcon icon="arrowLong" />
               <span>{t(`Move mouse here and click "+" to add content`)}</span>
             </InnerWrapper>
@@ -165,7 +165,7 @@ const Infobox: React.FC<Props> = ({
 const NoContentInfo = styled.div`
   display: flex;
   justify-content: center;
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.classic.main.weak};
   text-align: left;
 `;
 

@@ -3,8 +3,8 @@ import React from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Asset = {
   id: string;
@@ -30,7 +30,7 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, icon, onChec
       <Icon
         icon={checked ? "checkCircle" : icon}
         size={16}
-        color={checked ? theme.assetCard.highlight : theme.assetCard.text}
+        color={checked ? theme.classic.assetCard.highlight : theme.classic.assetCard.text}
       />
       <ListItemName size="m" customColor>
         {asset.name}
@@ -47,19 +47,20 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, icon, onChec
 export default AssetListItem;
 
 const ListItem = styled(Flex)<{ selected?: boolean }>`
-  background: ${({ selected, theme }) => (selected ? theme.assetCard.bgHover : theme.assetCard.bg)};
-  box-shadow: 0 6px 6px -8px ${props => props.theme.other.black};
+  background: ${({ selected, theme }) =>
+    selected ? theme.classic.assetCard.bgHover : theme.classic.assetCard.bg};
+  box-shadow: 0 6px 6px -8px ${props => props.theme.classic.other.black};
   border: 1px solid
-    ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};
+    ${({ selected, theme }) => (selected ? `${theme.classic.assetCard.highlight}` : "transparent")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
   cursor: pointer;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   height: 46px;
   box-sizing: border-box;
 
   &:hover {
-    background: ${({ theme }) => theme.assetCard.bgHover};
-    color: ${({ theme }) => theme.main.strongText};
+    background: ${({ theme }) => theme.classic.assetCard.bgHover};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 `;
 

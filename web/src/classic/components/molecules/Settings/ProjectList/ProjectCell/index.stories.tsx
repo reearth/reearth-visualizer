@@ -10,7 +10,7 @@ const project: Project = {
 };
 
 export default {
-  title: "molecules/ProjectList/ProjectCell",
+  title: "classic/molecules/ProjectList/ProjectCell",
   component: ProjectCell,
 } as Meta;
 

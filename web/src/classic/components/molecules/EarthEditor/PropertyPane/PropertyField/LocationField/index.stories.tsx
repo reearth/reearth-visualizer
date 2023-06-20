@@ -10,7 +10,7 @@ const location: Location = {
 };
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/LocationField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/LocationField",
   component: LocationField,
 } as Meta;
 

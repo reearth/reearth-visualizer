@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "atoms/TextBox",
+  title: "classic/atoms/TextBox",
   component: Component,
   argTypes: {
     color: { control: "color" },

@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Polygon, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Polygon",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Polygon",
   component: Polygon,
 } as Meta;
 
