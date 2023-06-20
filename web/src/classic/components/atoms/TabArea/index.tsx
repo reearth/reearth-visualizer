@@ -56,7 +56,7 @@ const TabArea = <T extends string>({
             }}>
             <StyledIcon size={18} icon={m} alt={m} />
             {(selectedTab === m || !onlyIcon) && (
-              <IconTitle size="xs" color={theme.tabArea.text}>
+              <IconTitle size="xs" color={theme.classic.tabArea.text}>
                 {labels?.[m] ?? m}
               </IconTitle>
             )}
@@ -74,7 +74,7 @@ const TabArea = <T extends string>({
 const Wrapper = styled.div<{ menuAlignment?: MenuAlignment }>`
   display: flex;
   flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "column" : "row")} nowrap;
-  background: ${({ theme }) => theme.leftMenu.bg};
+  background: ${({ theme }) => theme.classic.leftMenu.bg};
   justify-content: stretch;
   width: 100%;
   height: 100%;
@@ -84,7 +84,7 @@ const Wrapper = styled.div<{ menuAlignment?: MenuAlignment }>`
 const Menu = styled.div<{ menuAlignment?: MenuAlignment }>`
   display: flex;
   flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "row" : "column")} nowrap;
-  background-color: ${({ theme }) => theme.tabArea.bg};
+  background-color: ${({ theme }) => theme.classic.tabArea.bg};
 `;
 
 const IconWrapper = styled.div<{ selected?: boolean; expanded?: boolean }>`
@@ -94,12 +94,12 @@ const IconWrapper = styled.div<{ selected?: boolean; expanded?: boolean }>`
   user-select: none;
   display: flex;
   align-items: center;
-  background: ${({ selected, theme }) => (selected ? theme.tabArea.selectedBg : "none")};
+  background: ${({ selected, theme }) => (selected ? theme.classic.tabArea.selectedBg : "none")};
   opacity: ${({ selected }) => (selected ? "1" : "0.7")};
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${({ theme }) => theme.main.strongText};
+  color: ${({ theme }) => theme.classic.main.strongText};
 `;
 
 const IconTitle = styled(Text)`

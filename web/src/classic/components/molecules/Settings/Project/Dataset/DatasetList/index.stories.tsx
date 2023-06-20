@@ -11,7 +11,7 @@ const items = [
 ];
 
 export default {
-  title: "molecules/Settings/Workspace/Dataset/DatasetList",
+  title: "classic/molecules/Settings/Workspace/Dataset/DatasetList",
   component: DatasetList,
 } as Meta;
 

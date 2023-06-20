@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import ColorField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/ColorField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/ColorField",
   component: ColorField,
 } as Meta;
 

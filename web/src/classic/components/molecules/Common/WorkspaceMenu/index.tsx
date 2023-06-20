@@ -50,7 +50,7 @@ const WorkspaceMenu: React.FC<Props> = ({
               <TeamStatus align="center" justify="space-between">
                 <Text
                   size="m"
-                  color={theme.main.text}
+                  color={theme.classic.main.text}
                   otherProperties={{
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -97,7 +97,7 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   margin-left: 4px;
   order: 2;
-  background-color: ${({ theme }) => theme.main.highlighted};
+  background-color: ${({ theme }) => theme.classic.main.highlighted};
 `;
 
 export default WorkspaceMenu;

@@ -55,10 +55,10 @@ export default function BlockComponent<P = any>({
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) =>
-      editable && selected ? theme.infoBox.accent2 : "transparent"};
+      editable && selected ? theme.general.select : "transparent"};
   border-radius: 6px;
 
   &:hover {
-    border-color: ${({ editable, theme }) => (editable ? theme.infoBox.border : null)};
+    border-color: ${({ editable, theme }) => (editable ? theme.general.border : null)};
   }
 `;

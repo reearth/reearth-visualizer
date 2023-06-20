@@ -43,7 +43,7 @@ const ExportPane: React.FC<Props> = ({ className, onExport }) => {
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.properties};
+  background: ${props => props.theme.classic.properties};
   margin: 14px 0;
 `;
 

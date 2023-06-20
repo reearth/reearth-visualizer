@@ -5,7 +5,7 @@ import { Provider } from "../storybook";
 import Component, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Plugin",
+  title: "classic/molecules/Visualizer/Plugin",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

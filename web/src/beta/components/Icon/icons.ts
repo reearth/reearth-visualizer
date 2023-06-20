@@ -26,6 +26,7 @@ import Crosshair from "./Icons/crosshair.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
+import Help from "./Icons/help.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -38,6 +39,13 @@ import Ellipse from "./Icons/ellipse.svg";
 
 // circle
 import PrimSphereIcon from "./Icons/primSphereIcon.svg";
+//Dashboard
+import Dashboard from "./Icons/dashboard.svg";
+import Logout from "./Icons/logout.svg";
+
+//Workspaces
+import WorkspaceAdd from "./Icons/workspaceAdd.svg";
+import Workspaces from "./Icons/workspaces.svg";
 
 export default {
   file: File,
@@ -63,4 +71,9 @@ export default {
   primSphereIcon: PrimSphereIcon,
   timeline: Timeline,
   actionbutton: ActionButton,
+  dashboard: Dashboard,
+  help: Help,
+  logout: Logout,
+  workspaceAdd: WorkspaceAdd,
+  workspaces: Workspaces,
 };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
 
 import { CommonProps as BlockProps } from "..";
 import { Border } from "../utils";
@@ -200,10 +200,10 @@ const Wrapper = styled(Border)<{
       (!isTemplate && !isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.classic.infoBox.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.classic.infoBox.accent2
+        : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;
 
@@ -229,7 +229,7 @@ const InputField = styled.textarea<{ minHeight: number }>`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.infoBox.mainText};
+  color: ${props => props.theme.classic.infoBox.mainText};
   font-size: ${fonts.sizes.s}px;
   outline: none;
   border: none;
@@ -249,12 +249,20 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.classic.infoBox.border
+      : isSelected
+      ? theme.classic.main.select
+      : theme.classic.infoBox.weakText};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.classic.infoBox.border
+      : isSelected
+      ? theme.classic.main.select
+      : theme.classic.infoBox.weakText};
 `;
 
 export default HTMLBlock;

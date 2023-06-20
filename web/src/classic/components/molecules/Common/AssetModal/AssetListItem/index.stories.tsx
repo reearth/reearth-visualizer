@@ -21,7 +21,7 @@ const fileAsset = {
 };
 
 export default {
-  title: "molecules/EarthEditor/AssetsModal/AssetListItem",
+  title: "classic/molecules/EarthEditor/AssetsModal/AssetListItem",
   component: Component,
 } as Meta;
 
