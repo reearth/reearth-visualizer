@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Location, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Block/Location",
+  title: "classic/molecules/Visualizer/Block/Location",
   component: Location,
   argTypes: {
     onClick: { action: "onClick" },

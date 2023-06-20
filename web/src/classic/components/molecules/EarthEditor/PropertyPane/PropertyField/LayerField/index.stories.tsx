@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import Component, { Props, Layer } from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/LayerField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/LayerField",
   component: Component,
   argTypes: { onChange: { action: "onChange" } },
   parameters: { actions: { argTypesRegex: "^on.*" } },

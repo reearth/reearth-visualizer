@@ -11,7 +11,7 @@ const Pane = <div style={{ flex: 1, background: "#ffffff" }} />;
 const Content = <div style={{ width: "100%", height: "100%", background: "#ffffff" }} />;
 
 export default {
-  title: "atoms/Resizable",
+  title: "classic/atoms/Resizable",
   component: Resizable,
 } as Meta;
 

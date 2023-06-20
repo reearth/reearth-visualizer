@@ -47,7 +47,7 @@ const Dashboard: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background: ${({ theme }) => theme.dashboard.bg};
+  background: ${({ theme }) => theme.classic.dashboard.bg};
   height: 100%;
   overflow: auto;
 `;

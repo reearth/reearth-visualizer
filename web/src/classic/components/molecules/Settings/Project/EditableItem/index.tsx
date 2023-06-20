@@ -6,8 +6,8 @@ import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/de
 import TextBox from "@reearth/classic/components/atoms/TextBox";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import SelectField from "@reearth/classic/components/molecules/Settings/SelectField";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Props<T extends string = string> = {
   className?: string;
@@ -151,7 +151,7 @@ const StyledIcon = styled(Icon)`
   margin-left: ${metricsSizes["l"]}px;
   cursor: pointer;
   &:hover {
-    color: ${({ theme }) => theme.main.strongText};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 `;
 

@@ -4,8 +4,9 @@ import Box from "@reearth/classic/components/atoms/Box";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { fonts } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { fonts, styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import DeleteModal from "./deleteModal";
 
@@ -72,7 +73,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
 
 const Wrapper = styled(Flex)`
   width: 100%;
-  padding: ${props => `${props.theme.metrics.xl}px 0`};
+  padding: ${props => `${props.theme.classic.metrics.xl}px 0`};
 `;
 
 const TitleWrapper = styled(Flex)`
@@ -89,8 +90,8 @@ const Thumbnail = styled.img`
 const StyledButton = styled(Button)`
   font-weight: ${fonts.weight.bold};
   width: 153px;
-  border-radius: ${props => props.theme.metrics.s}px;
-  padding: ${({ theme }) => `${theme.metrics.s}px ${theme.metrics["2xl"]}`};
+  border-radius: ${props => props.theme.classic.metrics.s}px;
+  padding: ${({ theme }) => `${theme.classic.metrics.s}px ${theme.classic.metrics["2xl"]}`};
   transition: all 0.3s;
 `;
 

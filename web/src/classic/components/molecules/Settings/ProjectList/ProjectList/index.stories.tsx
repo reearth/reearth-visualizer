@@ -24,7 +24,7 @@ const visualizations: Project[] = [
 ];
 
 export default {
-  title: "molecules/Settings/ProjectList/ProjectList",
+  title: "classic/molecules/Settings/ProjectList/ProjectList",
   component: ProjectList,
 } as Meta;
 

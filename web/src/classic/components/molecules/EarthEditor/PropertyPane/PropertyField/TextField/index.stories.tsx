@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import TextField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/TextField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/TextField",
   component: TextField,
 } as Meta;
 
