@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 import Icon from "@reearth/beta/components/Icon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import { CommonProps as BlockProps } from "..";
 import { Border } from "../utils";
@@ -117,7 +117,9 @@ const HTMLBlock: React.FC<Props> = ({
     // Update the content of the existing or new style element
     style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
     font-family:Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif; 
-    font-size: ${fonts.sizes.s}px; } a { color:${themeColor ?? getComputedStyle(frameRef).color};}`;
+    font-size: ${fonts.sizes.body}px; } a { color:${
+      themeColor ?? getComputedStyle(frameRef).color
+    };}`;
 
     const handleFrameClick = () => handleClick();
 
@@ -200,10 +202,10 @@ const Wrapper = styled(Border)<{
       (!isTemplate && !isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.general.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.general.select
+        : theme.general.content.weak};
   border-radius: 6px;
 `;
 
@@ -229,8 +231,8 @@ const InputField = styled.textarea<{ minHeight: number }>`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.infoBox.mainText};
-  font-size: ${fonts.sizes.s}px;
+  color: ${({ theme }) => theme.general.content.main};
+  font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
   padding: 4px;
@@ -249,12 +251,20 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
+    isHovered
+      ? theme.general.border
+      : isSelected
+      ? theme.general.select
+      : theme.general.content.weak};
 `;
 
 export default HTMLBlock;

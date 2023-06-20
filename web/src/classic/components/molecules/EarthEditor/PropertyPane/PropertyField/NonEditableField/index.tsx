@@ -17,7 +17,7 @@ const NonEditableField: React.FC<Props> = ({ className, linkedDatasetFieldName }
   return (
     <Wrapper
       size="2xs"
-      color={linkedDatasetFieldName ? theme.main.link : theme.layers.smallText}
+      color={linkedDatasetFieldName ? theme.classic.main.link : theme.classic.layers.smallText}
       className={className}>
       {linkedDatasetFieldName
         ? t("This field is linked to {{datasetField}}.", { datasetField: linkedDatasetFieldName })

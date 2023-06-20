@@ -19,6 +19,8 @@ export default function Published({ alias }: Props) {
     error,
     clusters,
     engineMeta,
+    selectedLayerId,
+    selectLayer,
   } = useHooks(alias);
 
   return error ? (
@@ -30,6 +32,8 @@ export default function Published({ alias }: Props) {
       floatingWidgets={widgets?.floatingWidgets}
       widgetAlignSystem={widgets?.alignSystem}
       ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
+      selectedLayerId={selectedLayerId}
+      onLayerSelect={selectLayer}
       tags={tags}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}

@@ -186,7 +186,7 @@ const PropertyPane: React.FC<Props> = ({
           )}
           {mode === "layer" && props.isTemplate && (
             <GroupWrapper className={className} name={t("Dataset")}>
-              <Text size="xs" color={theme.main.strongText}>
+              <Text size="xs" color={theme.classic.main.strongText}>
                 {props.title}
               </Text>
             </GroupWrapper>
@@ -223,7 +223,7 @@ const searchField = (
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.properties};
+  background: ${props => props.theme.classic.properties};
   margin: 14px 0;
 `;
 

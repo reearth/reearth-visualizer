@@ -15,7 +15,7 @@ const DatasetHeader: React.FC<Props> = ({ host }) => {
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.layers.bg};
+  background-color: ${props => props.theme.classic.layers.bg};
   height: 26px;
   width: 100%;
   display: flex;
@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 `;
 
 const HostName = styled.h3`
-  color: ${({ theme }) => theme.leftMenu.text};
+  color: ${({ theme }) => theme.classic.leftMenu.text};
   font-size: 0.8rem;
   margin: 0;
 `;

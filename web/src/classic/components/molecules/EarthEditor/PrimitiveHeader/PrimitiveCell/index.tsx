@@ -54,10 +54,10 @@ const StyledIcon = styled(Icon)`
   height: 20px;
   border-radius: 3px;
   cursor: pointer;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   &:hover {
-    background: ${({ theme }) => theme.main.lighterBg};
-    color: ${({ theme }) => theme.main.strongText};
+    background: ${({ theme }) => theme.classic.main.lighterBg};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 `;
 

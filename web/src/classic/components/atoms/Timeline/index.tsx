@@ -132,7 +132,12 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
        * TODO: Support keyboard operation for accessibility
        * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
        */}
-      <ScaleBox role="slider" {...events} ref={scaleElement} shouldScroll={shouldScroll}>
+      <ScaleBox
+        role="slider"
+        {...events}
+        ref={scaleElement}
+        shouldScroll={shouldScroll}
+        publishedTheme={theme}>
         <ScaleList
           start={startDate}
           scaleCount={scaleCount}
@@ -160,7 +165,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
 });
 
 const Container = styled.div<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.classic.main.deepBg};
   width: 100%;
   height: 40px;
   display: flex;
@@ -172,14 +178,15 @@ const Container = styled.div<StyledColorProps>`
 `;
 
 const OpenButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.classic.main.deepBg};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   padding: 8px 12px;
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.classic.main.select};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,12 +198,12 @@ const ToolBox = styled.ul`
   display: flex;
   align-items: center;
   margin: ${({ theme }) =>
-    `${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.l}px`};
+    `${theme.classic.metrics.s}px ${theme.classic.metrics.s}px ${theme.classic.metrics.s}px ${theme.classic.metrics.l}px`};
   list-style: none;
   padding: 0;
 
   @media (max-width: 768px) {
-    margin-left: ${({ theme }) => `${theme.metrics.s}px`};
+    margin-left: ${({ theme }) => `${theme.classic.metrics.s}px`};
   }
 `;
 
@@ -205,19 +212,19 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   border-width: 1px;
   border-style: solid;
   border-color: ${({ theme, isPlaying, publishedTheme }) =>
-    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.main.text};
+    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.classic.main.text};
   width: 22px;
   height: 22px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
+  margin-left: ${({ isRight, theme }) => (isRight ? `${theme.classic.metrics.s}px` : 0)};
   background: ${({ isPlaying, publishedTheme, theme }) =>
-    isPlaying ? publishedTheme?.select || theme.main.select : "transparent"};
+    isPlaying ? publishedTheme?.select || theme.classic.main.select : "transparent"};
 
   @media (max-width: 768px) {
-    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.xs}px` : 0)};
+    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.classic.metrics.xs}px` : 0)};
   }
 `;
 
@@ -225,26 +232,27 @@ const InputRangeLabel = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${({ theme }) => theme.metrics["2xs"]}px;
+  margin-left: ${({ theme }) => theme.classic.metrics["2xs"]}px;
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
-  margin-right: ${({ theme }) => theme.metrics.s}px;
+  margin-right: ${({ theme }) => theme.classic.metrics.s}px;
 `;
 
 const InputRange = styled.input<StyledColorProps>`
   -webkit-appearance: none;
-  background: ${({ theme }) => theme.main.weak};
+  background: ${({ theme }) => theme.classic.main.weak};
   height: 1px;
   width: 100px;
   border: none;
   ::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
+    background: ${({ theme, publishedTheme }) =>
+      publishedTheme?.select || theme.classic.main.select};
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -256,10 +264,10 @@ const InputRange = styled.input<StyledColorProps>`
 `;
 
 const CurrentTimeWrapper = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.main.weak}`};
+  border: ${({ theme }) => `1px solid ${theme.classic.main.weak}`};
   border-radius: 4px;
-  padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
-  margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
+  padding: ${({ theme }) => `0 ${theme.classic.metrics.s}px`};
+  margin: ${({ theme }) => `${theme.classic.metrics.xs}px 0`};
   flex-shrink: 0;
   width: 70px;
 
@@ -269,13 +277,13 @@ const CurrentTimeWrapper = styled.div`
 `;
 
 const CurrentTime = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.classic.main.text};
   line-height: 16px;
   white-space: pre-line;
 `;
 
-const ScaleBox = styled.div<{ shouldScroll: boolean }>`
-  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
+const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
+  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.classic.main.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
@@ -302,10 +310,10 @@ const ScaleBox = styled.div<{ shouldScroll: boolean }>`
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
+    background-color: ${({ publishedTheme }) => publishedTheme?.mainIcon};
   }
   margin: ${({ theme }) =>
-    `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
+    `${theme.classic.metrics.xs}px ${theme.classic.metrics.s}px ${theme.classic.metrics.xs}px ${theme.classic.metrics.xs}px`};
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -315,7 +323,7 @@ const ScaleBox = styled.div<{ shouldScroll: boolean }>`
 const IconWrapper = styled.div<StyledColorProps>`
   position: absolute;
   top: 2px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.classic.main.select};
 `;
 
 export default Timeline;

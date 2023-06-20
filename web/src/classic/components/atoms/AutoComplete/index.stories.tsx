@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import AutoComplete, { Props } from ".";
 
 export default {
-  title: "atoms/AutoComplete",
+  title: "classic/atoms/AutoComplete",
   component: AutoComplete,
 } as Meta;
 

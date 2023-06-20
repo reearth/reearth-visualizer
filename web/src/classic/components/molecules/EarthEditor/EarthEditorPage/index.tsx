@@ -2,7 +2,8 @@ import React from "react";
 
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Resizable from "@reearth/classic/components/atoms/Resizable";
-import { styled, metrics } from "@reearth/services/theme";
+import { metrics } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 export interface Props {
   loading?: boolean;
