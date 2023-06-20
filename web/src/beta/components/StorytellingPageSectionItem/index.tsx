@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -22,19 +22,18 @@ const StorytellingPageSectionItem: FC<Props> = ({
   onAction,
   onClick,
 }) => {
+  const theme = useTheme();
   return (
     <HorizontalBox>
       <VerticalBox>
-        <Text size={"m"} color="#c7c5c5">
-          {index}
-        </Text>
+        <Text size={"body"}>{index}</Text>
         <Icon icon={icon} />
       </VerticalBox>
       <TitleArea active={active}>
         <Text
           onClick={onClick}
-          size={"s"}
-          color="#ffffff"
+          size={"footnote"}
+          color={theme.general.content.strong}
           otherProperties={{ wordBreak: "break-all" }}>
           {title}
         </Text>
@@ -64,8 +63,9 @@ const TitleArea = styled.div<{ active?: boolean }>`
   padding: 8px;
   gap: 4px;
 
-  background: ${props => (props.active ? props.theme.main.select : props.theme.main.bg)};
-  border: 1px solid ${props => (props.active ? props.theme.main.select : props.theme.main.border)};
+  background: ${props => (props.active ? props.theme.general.select : props.theme.general.bg.main)};
+  border: 1px solid
+    ${props => (props.active ? props.theme.general.select : props.theme.general.bg.veryWeak)};
   border-radius: 6px;
 
   width: 100%;
