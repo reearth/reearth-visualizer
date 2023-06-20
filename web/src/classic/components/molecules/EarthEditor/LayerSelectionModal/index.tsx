@@ -87,7 +87,7 @@ const Main = styled.main`
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
-  color: ${props => props.theme.main.strongText};
+  color: ${props => props.theme.classic.main.strongText};
 `;
 
 const InnerTreeView = (props: TreeViewProps<LayerType, HTMLDivElement>) => (
@@ -95,7 +95,7 @@ const InnerTreeView = (props: TreeViewProps<LayerType, HTMLDivElement>) => (
 );
 
 const StyledTreeView = styled(InnerTreeView)`
-  border: 1px solid ${props => props.theme.main.border};
+  border: 1px solid ${props => props.theme.classic.main.border};
   height: 250px;
   box-sizing: border-box;
   width: 80%;

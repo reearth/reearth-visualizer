@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import NotFound from ".";
 
 export default {
-  title: "atoms/NotFound",
+  title: "classic/atoms/NotFound",
   component: NotFound,
 } as Meta;
 

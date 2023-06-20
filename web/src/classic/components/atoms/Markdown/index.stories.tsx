@@ -16,7 +16,7 @@ A table:
 `;
 
 export default {
-  title: "atoms/Markdown",
+  title: "classic/atoms/Markdown",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

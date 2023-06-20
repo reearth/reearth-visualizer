@@ -93,11 +93,11 @@ const StyledFlex = styled(Flex)`
 `;
 
 const StyledBox = styled(Box)`
-  border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
+  border-bottom: ${props => `solid 1px ${props.theme.classic.main.border}`};
 `;
 
 const StyledText = styled(Text)`
-  color: ${({ theme }) => theme.text.pale};
+  color: ${({ theme }) => theme.classic.text.pale};
 `;
 
 export default PluginInstall;

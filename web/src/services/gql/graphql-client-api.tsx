@@ -2752,7 +2752,7 @@ export type GetProjectBySceneQueryVariables = Exact<{
 }>;
 
 
-export type GetProjectBySceneQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', teamId: string, projectId: string, id: string, project?: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus, name: string } | null } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+export type GetProjectBySceneQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', teamId: string, projectId: string, id: string, project?: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus, name: string, coreSupport: boolean } | null } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type GetTeamProjectsQueryVariables = Exact<{
   teamId: Scalars['ID'];
@@ -5752,6 +5752,7 @@ export const GetProjectBySceneDocument = gql`
         alias
         publishmentStatus
         name
+        coreSupport
       }
     }
   }

@@ -96,10 +96,10 @@ const AssetButton = styled(Icon)<{ active?: boolean }>`
   margin-left: 6px;
   padding: 4px;
   border-radius: 6px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &:hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.classic.main.bg};
   }
 `;
 

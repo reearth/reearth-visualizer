@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import FontSizeField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontSizeField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontSizeField",
   component: FontSizeField,
 } as Meta;
 

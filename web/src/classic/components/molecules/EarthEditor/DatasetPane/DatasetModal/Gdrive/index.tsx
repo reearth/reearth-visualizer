@@ -8,9 +8,9 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Text from "@reearth/classic/components/atoms/Text";
 import AssetCard from "@reearth/classic/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/classic/components/molecules/Common/AssetModal/AssetListItem";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import useHooks, { GoogleSheet, SheetParameter as SheetParam } from "./hooks";
 
@@ -37,12 +37,17 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
 
   return (
     <>
-      <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} color={theme.main.text} />
+      <StyledIcon
+        icon={"arrowLongLeft"}
+        size={24}
+        onClick={onReturn}
+        color={theme.classic.main.text}
+      />
       {syncLoading && <Loading />}
       <Flex justify="center" direction="column" align="center">
         <Flex justify="center" align="center">
           <GdriveIcon size={32} icon="googleDrive" />
-          <Text size="m" color={theme.main.strongText} weight="bold">
+          <Text size="m" color={theme.classic.main.strongText} weight="bold">
             {t("Connect with Google Drive")}
           </Text>
         </Flex>
@@ -82,7 +87,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
           <>
             <Text
               size="m"
-              color={theme.infoBox.weakText}
+              color={theme.classic.infoBox.weakText}
               otherProperties={{ marginBottom: metricsSizes["m"] + "px" }}>
               {t("Re:Earth supports uploading Google Sheets and CSV files.")}
             </Text>

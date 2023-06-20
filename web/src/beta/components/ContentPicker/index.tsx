@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useClickAway } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -33,7 +33,7 @@ const ContentPicker: React.FC<ContentsPickerProps> = ({
           <ContentItem key={item.id}>
             <ContentButton onClick={() => onSelect?.(i)}>
               <StyledIcon icon={item.icon} size={20} />
-              <ButtonText size="xs">{item.name}</ButtonText>
+              <ButtonText size="footnote">{item.name}</ButtonText>
             </ContentButton>
           </ContentItem>
         ))}
@@ -46,14 +46,14 @@ const ContentPicker: React.FC<ContentsPickerProps> = ({
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.infoBox.bg};
+  background: ${({ theme }) => theme.general.bg.main};
   margin-top: 5px;
   padding: 10px;
   box-sizing: border-box;
   border-radius: 3px;
   width: 288px;
-  color: ${props => props.theme.infoBox.mainText};
-  box-shadow: 0 0 5px ${props => props.theme.infoBox.deepBg};
+  color: ${({ theme }) => theme.general.content.main};
+  box-shadow: 0 0 5px ${({ theme }) => theme.general.bg.veryStrong};
   &:after {
     content: "";
     position: absolute;
@@ -64,7 +64,7 @@ const Wrapper = styled.div`
     height: 0px;
     margin: auto;
     border-style: solid;
-    border-color: transparent transparent ${props => props.theme.infoBox.bg} transparent;
+    border-color: transparent transparent ${({ theme }) => theme.general.bg.main} transparent;
     border-width: 0 10px 10px 10px;
   }
 `;
@@ -94,7 +94,7 @@ const ContentButton = styled.div`
 
   &:hover {
     border-radius: 6px;
-    border: solid 0.5px ${props => props.theme.main.select};
+    border: solid 0.5px ${({ theme }) => theme.general.select};
   }
 `;
 

@@ -3,8 +3,8 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
 import HelpButton from "@reearth/classic/components/atoms/HelpButton";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { styled, css } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
 
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 
@@ -114,7 +114,11 @@ const Title = styled.div<{ isLinked?: boolean; isOverridden?: boolean }>`
   height: 100%;
   font-size: ${fonts.sizes.xs}px;
   color: ${({ isLinked, isOverridden, theme }) =>
-    isOverridden ? theme.main.warning : isLinked ? theme.main.link : theme.main.text};
+    isOverridden
+      ? theme.classic.main.warning
+      : isLinked
+      ? theme.classic.main.link
+      : theme.classic.main.text};
   align-items: center;
   cursor: pointer;
 `;
@@ -126,7 +130,7 @@ const PropertyLinkPanelWrapper = styled.div<{ visible: boolean }>`
       visibility: hidden;
       pointer-events: none;
     `}
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${props => props.theme.classic.zIndexes.propertyFieldPopup};
 `;
 
 export default PropertyTitle;
