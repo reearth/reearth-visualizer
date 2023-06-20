@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { styled, useTheme, PublishTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import useManageSwitchState, { SwitchField } from "../../hooks/useManageSwitchState/hooks";
 import Text from "../Text";
@@ -11,11 +11,10 @@ type AdditionalField = {
 type SwitchAdditionalField = SwitchField<AdditionalField>;
 
 export type Props = {
-  publishedTheme?: PublishTheme;
   list: SwitchAdditionalField[];
   onChange?: (id: string) => void;
 };
-const SwitchButtonList: FC<Props> = ({ publishedTheme, list, onChange }) => {
+const SwitchButtonList: FC<Props> = ({ list, onChange }) => {
   const theme = useTheme();
   const { handleActivate, fields } = useManageSwitchState({ fields: list });
   const handleClick = (id: string) => {
@@ -31,7 +30,9 @@ const SwitchButtonList: FC<Props> = ({ publishedTheme, list, onChange }) => {
           onClick={() => handleClick(item.id)}
           first={index === 0}
           end={index === fields.length - 1}>
-          <Text size="xs" color={publishedTheme?.mainText || theme.main.text}>
+          <Text
+            size="footnote"
+            color={item.active ? theme.general.content.strong : theme.general.content.main}>
             {item.text}
           </Text>
         </SwitchButton>
@@ -44,13 +45,14 @@ const SwitchButton = styled.button<{
   first: boolean;
   end: boolean;
 }>`
-  background: ${props => (props.disabled ? props.theme.main.select : "inherit")};
+  background: ${props =>
+    props.disabled ? props.theme.general.select : props.theme.general.bg.strong};
   padding: 8px;
   height: 32px;
   border-radius: ${props =>
     props.first ? "4px 0px 0px 4px" : props.end ? "0px 4px 4px 0px" : "0px"};
   :hover {
-    background: ${props => props.theme.main.select};
+    background: ${props => props.theme.general.select};
     transition: all 0.5s ease;
   }
 `;
