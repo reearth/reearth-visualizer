@@ -17,6 +17,7 @@ import ArrowLeft from "./Icons/arrowLeft.svg";
 import ArrowRight from "./Icons/arrowRight.svg";
 import ArrowLongLeft from "./Icons/arrowLongLeft.svg";
 import ArrowLongRight from "./Icons/arrowLongRight.svg";
+import ArrowDown from "./Icons/arrowDown.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
@@ -25,6 +26,7 @@ import Crosshair from "./Icons/crosshair.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
+import Help from "./Icons/help.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -43,6 +45,13 @@ import ButtonBlock from "./Icons/buttonBlock.svg";
 import Camera from "./Icons/camera.svg";
 import MdFile from "./Icons/mdFile.svg";
 import Clock from "./Icons/clock.svg";
+//Dashboard
+import Dashboard from "./Icons/dashboard.svg";
+import Logout from "./Icons/logout.svg";
+
+//Workspaces
+import WorkspaceAdd from "./Icons/workspaceAdd.svg";
+import Workspaces from "./Icons/workspaces.svg";
 
 export default {
   file: File,
@@ -58,6 +67,7 @@ export default {
   arrowLeft: ArrowLeft,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
+  arrowDown: ArrowDown,
   cancel: Cancel,
   crosshair: Crosshair,
   plusSquare: PlusSquare,
@@ -73,4 +83,9 @@ export default {
   camera: Camera,
   mdFile: MdFile,
   clock: Clock,
+  dashboard: Dashboard,
+  help: Help,
+  logout: Logout,
+  workspaceAdd: WorkspaceAdd,
+  workspaces: Workspaces,
 };

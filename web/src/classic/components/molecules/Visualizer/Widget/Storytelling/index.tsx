@@ -4,9 +4,9 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { Camera as CameraValue } from "@reearth/classic/util/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import { ComponentProps as WidgetProps } from "..";
 
@@ -229,7 +229,7 @@ const Menu = styled.div<{
   align?: string;
 }>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.classic.zIndexes.dropDown};
   position: absolute;
   ${({ area, align }) =>
     area === "top" || (area === "middle" && align === "start") ? "top: 90px" : "bottom: 90px"};
@@ -245,7 +245,7 @@ const Menu = styled.div<{
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
     max-height: ${({ area, align }) =>
       area === "middle" && align === "centered" ? "30vh" : "70vh"};
-    border: 1px solid ${props => props.theme.main.text};
+    border: 1px solid ${props => props.theme.classic.main.text};
     top: ${({ area, align }) =>
       area === "top" || (area === "middle" && align === "start") ? "60px" : null};
     bottom: ${({ area, align }) =>

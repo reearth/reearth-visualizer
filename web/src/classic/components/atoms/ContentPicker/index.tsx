@@ -46,14 +46,14 @@ const ContentPicker: React.FC<ContentsPickerProps> = ({
 };
 
 const Wrapper = styled.div`
-  background: ${props => props.theme.infoBox.bg};
+  background: ${props => props.theme.classic.infoBox.bg};
   margin-top: 5px;
   padding: 10px;
   box-sizing: border-box;
   border-radius: 3px;
   width: 288px;
-  color: ${props => props.theme.infoBox.mainText};
-  box-shadow: 0 0 5px ${props => props.theme.infoBox.deepBg};
+  color: ${props => props.theme.classic.infoBox.mainText};
+  box-shadow: 0 0 5px ${props => props.theme.classic.infoBox.deepBg};
   &:after {
     content: "";
     position: absolute;
@@ -64,7 +64,7 @@ const Wrapper = styled.div`
     height: 0px;
     margin: auto;
     border-style: solid;
-    border-color: transparent transparent ${props => props.theme.infoBox.bg} transparent;
+    border-color: transparent transparent ${props => props.theme.classic.infoBox.bg} transparent;
     border-width: 0 10px 10px 10px;
   }
 `;
@@ -94,7 +94,7 @@ const ContentButton = styled.div`
 
   &:hover {
     border-radius: 6px;
-    border: solid 0.5px ${props => props.theme.main.select};
+    border: solid 0.5px ${props => props.theme.classic.main.select};
   }
 `;
 

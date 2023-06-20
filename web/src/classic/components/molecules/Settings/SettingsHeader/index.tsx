@@ -3,9 +3,9 @@ import { useCallback, useState } from "react";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
 import Policy from "@reearth/classic/components/molecules/Common/Policy";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Props = {
   title?: string;
@@ -36,7 +36,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
   return (
     <Wrapper>
       <Flex gap={12} align="center">
-        <Text size="xl" color={theme.main.strongText} weight="bold">
+        <Text size="xl" color={theme.classic.main.strongText} weight="bold">
           {workspaceName} {workspaceName && (title || currentProject) && " / "}
           {currentProject} {currentProject && title && " / "}
           {title}
@@ -51,7 +51,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
         )}
       </Flex>
       {currentWorkspace?.personal && (
-        <Text size="m" color={theme.main.text} otherProperties={{ marginTop: "12px" }}>
+        <Text size="m" color={theme.classic.main.text} otherProperties={{ marginTop: "12px" }}>
           {t("(Your personal workspace)")}
         </Text>
       )}

@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import DatasetSchemaCell from ".";
 
 export default {
-  title: "molecules/EarthEditor/DatasetPane/DatasetSchemaCell",
+  title: "classic/molecules/EarthEditor/DatasetPane/DatasetSchemaCell",
   component: DatasetSchemaCell,
 } as Meta;
 

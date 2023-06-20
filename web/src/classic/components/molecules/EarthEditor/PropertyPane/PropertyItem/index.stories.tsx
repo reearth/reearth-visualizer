@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import PropertyItem, { Layer } from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyItem",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyItem",
   component: PropertyItem,
 } as Meta;
 

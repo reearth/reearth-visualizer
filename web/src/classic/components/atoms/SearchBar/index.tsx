@@ -1,6 +1,7 @@
 import React from "react";
 
-import { fonts, styled, useTheme } from "@reearth/services/theme";
+import { fonts } from "@reearth/classic/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Box from "../Box";
 import Flex from "../Flex";
@@ -23,15 +24,15 @@ const SearchBar: React.FC<Props> = ({
 }) => {
   const theme = useTheme();
   return (
-    <Box border={`solid 1px ${theme.main.border}`} ph="m">
+    <Box border={`solid 1px ${theme.classic.main.border}`} ph="m">
       <Flex className={className} align="center">
-        {iconPos === "left" && <Icon icon="search" size={20} color={theme.main.text} />}
+        {iconPos === "left" && <Icon icon="search" size={20} color={theme.classic.main.text} />}
         <StyledInput
           placeholder={placeHolder}
           value={value}
           onChange={e => onChange?.(e.currentTarget.value)}
         />
-        {iconPos === "right" && <Icon icon="search" color={theme.main.text} size={20} />}
+        {iconPos === "right" && <Icon icon="search" color={theme.classic.main.text} size={20} />}
       </Flex>
     </Box>
   );
@@ -40,16 +41,16 @@ const SearchBar: React.FC<Props> = ({
 const StyledInput = styled.input`
   border: none;
   font-size: ${fonts.sizes.m}px;
-  padding: ${({ theme }) => `${theme.metrics.s}px ${theme.metrics["2xs"]}px`};
+  padding: ${({ theme }) => `${theme.classic.metrics.s}px ${theme.classic.metrics["2xs"]}px`};
   background-color: inherit;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   &:focus {
     border: none;
     outline: none;
   }
 
   ::placeholder {
-    color: ${({ theme }) => theme.main.weak};
+    color: ${({ theme }) => theme.classic.main.weak};
   }
 `;
 

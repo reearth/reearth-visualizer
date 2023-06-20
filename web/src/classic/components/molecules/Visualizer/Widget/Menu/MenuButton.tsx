@@ -5,8 +5,9 @@ import { useClickAway } from "react-use";
 import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
+import { fonts } from "@reearth/classic/theme";
 import { Camera } from "@reearth/classic/util/value";
-import { fonts, styled, usePublishTheme, PublishTheme } from "@reearth/services/theme";
+import { styled, usePublishTheme, PublishTheme } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
 import { useContext } from "../../Plugin";

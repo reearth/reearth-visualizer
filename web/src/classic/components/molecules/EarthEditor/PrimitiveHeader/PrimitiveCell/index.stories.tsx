@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import PrimitiveCell from ".";
 
 export default {
-  title: "molecules/EarthEditor/PrimitiveHeader/PrimitiveCell",
+  title: "classic/molecules/EarthEditor/PrimitiveHeader/PrimitiveCell",
   component: PrimitiveCell,
 } as Meta;
 

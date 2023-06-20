@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component from ".";
 
 export default {
-  title: "molecules/Published/Error",
+  title: "classic/molecules/Published/Error",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

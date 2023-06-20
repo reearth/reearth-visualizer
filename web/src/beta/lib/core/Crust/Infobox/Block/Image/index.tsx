@@ -123,10 +123,10 @@ const Template = styled.div<{ infoboxSize?: string }>`
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${props =>
     props.isHovered
-      ? props.theme.infoBox.border
+      ? props.theme.general.border
       : props.isSelected
-      ? props.theme.infoBox.accent2
-      : props.theme.infoBox.weakText};
+      ? props.theme.general.select
+      : props.theme.general.content.weak};
 `;
 
 export default ImageBlock;

@@ -54,7 +54,10 @@ const Select = <Value extends string | number>(
       ref={ref}
       selectComponent={
         <SelectWrapper>
-          <Selected inactive={inactive} size="xs" color={!selectedValue ? theme.main.weak : color}>
+          <Selected
+            inactive={inactive}
+            size="xs"
+            color={!selectedValue ? theme.classic.main.weak : color}>
             {selectedLabel || placeholder || t("not set")}
           </Selected>
           <StyledDownArrow icon="arrowSelect" />
@@ -69,7 +72,7 @@ const Select = <Value extends string | number>(
 };
 
 const SelectWrapper = styled.div`
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,7 +89,7 @@ const Selected = styled(Text)<{ inactive: boolean }>`
 `;
 
 const StyledDownArrow = styled(Icon)`
-  color: ${props => props.theme.properties.border};
+  color: ${props => props.theme.classic.properties.border};
 `;
 
 export default forwardRef(Select);
