@@ -16,7 +16,7 @@ const itemsWithIcon = items.map(({ key, label, icon }) =>
 );
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/SelectField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/SelectField",
   component: SelectField,
 } as Meta;
 

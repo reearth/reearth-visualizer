@@ -8,7 +8,7 @@ const Wrapper: React.FC<{ children?: ReactNode }> = ({ children }) => (
 );
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle",
   component: PropertyTitle,
 } as Meta;
 

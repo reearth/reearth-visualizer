@@ -42,6 +42,10 @@ ignore:
   - web/src/gql/graphql-client-api.tsx
 
 flags:
+  web:
+    paths:
+      - web
+    carryforward: true
   web-classic:
     paths:
       - web/src/classic
@@ -59,5 +63,5 @@ flags:
     carryforward: true
   server:
     paths:
-      - server/**
+      - server
     carryforward: true

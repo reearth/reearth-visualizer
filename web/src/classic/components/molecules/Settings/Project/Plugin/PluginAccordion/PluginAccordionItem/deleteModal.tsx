@@ -22,7 +22,7 @@ const DeleteModal: React.FC<Props> = ({ onCancel, onProceed, onClose, isOpen }) 
       buttonAction={t("Uninstall")}
       body={
         <>
-          <Icon icon="alert" size={24} color={theme.main.danger} />
+          <Icon icon="alert" size={24} color={theme.classic.main.danger} />
           <Box mt={"2xl"} mb={"m"}>
             <Text size="m">
               {t(

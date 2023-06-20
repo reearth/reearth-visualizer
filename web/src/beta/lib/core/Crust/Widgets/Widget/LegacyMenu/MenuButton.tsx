@@ -182,7 +182,7 @@ const MenuWrapper = styled.div<{ background?: string }>`
 
 const MenuItem = styled.a<{ item?: MenuItem; color?: string }>`
   display: block;
-  font-size: ${fonts.sizes.xs}px;
+  font-size: ${fonts.sizes["footnote"]}px;
   margin: ${({ item }) => (item?.menuType === "border" ? "0 5px" : null)};
   padding: ${({ item }) => (item?.menuType === "border" ? null : "5px 20px")};
   cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
@@ -197,7 +197,7 @@ const Button = styled.div<{ button?: Button; publishedTheme?: Theme }>`
   min-width: 32px;
   height: 32px;
   padding: 0 10px;
-  font-size: ${fonts.sizes["2xs"]}px;
+  font-size: ${fonts.sizes["xFootnote"]}px;
   line-height: 32px;
   box-sizing: border-box;
   background-color: ${({ button, publishedTheme }) =>

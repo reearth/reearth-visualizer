@@ -4,7 +4,7 @@ import { useState } from "react";
 import ConfirmationModal, { Props } from ".";
 
 export default {
-  title: "atoms/Modal/ConfirmationModal",
+  title: "classic/atoms/Modal/ConfirmationModal",
   component: ConfirmationModal,
 } as Meta;
 

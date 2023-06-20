@@ -77,7 +77,7 @@ func TestToProject(t *testing.T) {
 				IsBasicAuthActive: false,
 				BasicAuthUsername: "",
 				BasicAuthPassword: "",
-				CreatedAt:         now,
+				CreatedAt:         pId.Timestamp(),
 				UpdatedAt:         now,
 				PublishedAt:       nil,
 				Name:              "aaa",

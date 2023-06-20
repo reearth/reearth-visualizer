@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Field, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Infobox/Field",
+  title: "classic/molecules/Visualizer/Infobox/Field",
   component: Field,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

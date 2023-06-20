@@ -6,7 +6,7 @@ import { Provider } from "../storybook";
 import Widget, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Widget",
+  title: "classic/molecules/Visualizer/Widget",
   component: Widget,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

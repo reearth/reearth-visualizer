@@ -117,7 +117,7 @@ const Wrapper = styled.div<{ state: TransitionStatus; bgcolor?: string; duration
   justify-content: center;
   color: #fff;
   padding: 16px;
-  z-index: ${props => props.theme.zIndexes.splashScreen};
+  z-index: ${props => props.theme.classic.zIndexes.splashScreen};
 `;
 
 const Image = styled.img`

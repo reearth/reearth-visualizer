@@ -7,7 +7,7 @@ import deepFind from "@reearth/classic/util/deepFind";
 import Component, { Layer, Widget } from ".";
 
 export default {
-  title: "molecules/EarthEditor/LayerPane",
+  title: "classic/molecules/EarthEditor/LayerPane",
   component: Component,
   argTypes: {
     onLayerRename: { action: "onLayerRename" },

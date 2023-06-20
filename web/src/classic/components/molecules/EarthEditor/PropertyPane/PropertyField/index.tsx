@@ -4,6 +4,7 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import PropertyTitle, {
   Props as PropertyTitleProps,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/PropertyTitle";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useBind } from "@reearth/classic/util/use-bind";
 import {
   ValueType as ValueTypeType,
@@ -12,7 +13,6 @@ import {
   Camera,
 } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 import CameraField from "./CameraField";
 import ColorField from "./ColorField";

@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import Slider from ".";
 
 export default {
-  title: "atoms/Slider",
+  title: "classic/atoms/Slider",
   component: Slider,
 } as Meta;
 
