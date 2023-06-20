@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -12,10 +12,15 @@ type Props = {
 };
 
 const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
+  const theme = useTheme();
+
   return (
     <Box onClick={onClick}>
       <Icon icon={icon} size={8} />
-      <Text size={"s"} color={"#c7c5c5"} otherProperties={{ wordBreak: "break-all" }}>
+      <Text
+        size={"footnote"}
+        color={theme.general.content.main}
+        otherProperties={{ wordBreak: "break-all" }}>
         {title}
       </Text>
     </Box>
@@ -31,9 +36,9 @@ const Box = styled.div`
 
   min-height: 28px;
 
-  background: ${props => props.theme.main.paleBg};
+  background: ${props => props.theme.general.bg.main};
   :hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.general.bg.weak};
   }
 `;
 
