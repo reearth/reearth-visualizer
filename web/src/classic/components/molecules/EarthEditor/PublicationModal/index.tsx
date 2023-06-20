@@ -8,9 +8,9 @@ import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks from "./hooks";
 import InputField from "./InputField";
@@ -170,7 +170,7 @@ const PublicationModal: React.FC<Props> = ({
             <Text size="m">{updateDescriptionText}</Text>
             {url && alias && (
               <PublishLink href={purl} target="blank">
-                <UrlText size="m" color={theme.main.accent}>
+                <UrlText size="m" color={theme.classic.main.accent}>
                   {purl}
                 </UrlText>
               </PublishLink>
@@ -190,12 +190,12 @@ const PublicationModal: React.FC<Props> = ({
         </>
       ) : (
         <Section>
-          <StyledIcon icon="alert" color={theme.main.warning} />
+          <StyledIcon icon="alert" color={theme.classic.main.warning} />
           <Subtitle size="m">{t("Your project will be unpublished.")}</Subtitle>
           <Subtitle size="m">
             {t("This means that anybody with the URL will become unable to view this project.")}
           </Subtitle>
-          <Text size="m" color={theme.main.warning}>
+          <Text size="m" color={theme.classic.main.warning}>
             {t("**Warning**: This includes websites where this project is embedded.")}
           </Text>
         </Section>
@@ -246,7 +246,7 @@ const OptionsToggle = styled.div`
   display: flex;
   align-items: center;
   margin: ${`0 0 ${metricsSizes["m"]}px 0`};
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
   cursor: pointer;
   user-select: none;
 `;

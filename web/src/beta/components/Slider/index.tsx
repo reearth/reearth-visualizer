@@ -20,9 +20,9 @@ const Slider: React.FC<Props> = ({ frame = false, ...props }) => (
 const Wrapper = styled.div<{ frame: boolean }>`
   display: flex;
   align-items: center;
-  border: ${({ frame, theme }) => (frame ? `solid 1px ${theme.properties.border}` : "none")};
+  border: ${({ frame, theme }) => (frame ? `solid 1px ${theme.editor.slider.border}` : "none")};
   border-radius: 3px;
-  background: ${({ frame, theme }) => (frame ? theme.properties.bg : "transparent")};
+  background: ${({ frame, theme }) => (frame ? theme.editor.slider.bg : "transparent")};
   width: 100%;
   flex: 1;
   box-sizing: border-box;
@@ -36,12 +36,12 @@ const Wrapper = styled.div<{ frame: boolean }>`
 
 const StyledSlider = styled(RCSlider)`
   .rc-slider-handle {
-    background-color: ${({ theme }) => theme.slider.handle};
-    border: ${({ theme }) => theme.slider.border};
+    background-color: ${({ theme }) => theme.editor.slider.main};
+    border: ${({ theme }) => theme.editor.slider.main};
   }
 
   .rc-slider-track {
-    background-color: ${({ theme }) => theme.slider.track};
+    background-color: ${({ theme }) => theme.editor.slider.main};
   }
 
   .rc-slider-handle:focus {

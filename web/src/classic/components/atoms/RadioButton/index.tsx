@@ -35,9 +35,9 @@ const RadioInput = styled.input`
     left: 1px;
     height: 7px;
     width: 7px;
-    box-shadow: ${props => `0 0 0 1px ${props.theme.main.accent}`};
-    background-color: ${props => props.theme.main.highlighted};
-    border: 4px solid ${props => props.theme.main.bg};
+    box-shadow: ${props => `0 0 0 1px ${props.theme.classic.main.accent}`};
+    background-color: ${props => props.theme.classic.main.highlighted};
+    border: 4px solid ${props => props.theme.classic.main.bg};
   }
 `;
 
@@ -45,8 +45,8 @@ const RadioIcon = styled.span`
   height: 15px;
   width: 15px;
   border-radius: 50%;
-  background-color: ${props => props.theme.main.bg};
-  border: 1px solid ${props => props.theme.main.accent};
+  background-color: ${props => props.theme.classic.main.bg};
+  border: 1px solid ${props => props.theme.classic.main.accent};
   margin-right: 12px;
 `;
 

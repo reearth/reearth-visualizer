@@ -2,9 +2,9 @@ import React, { Fragment } from "react";
 
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export interface Props {
   className?: string;
@@ -48,13 +48,14 @@ const StyledText = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   cursor: pointer;
   user-select: none;
   transition: background-color 0.1s ease;
-  color: ${({ theme, selected }) => (selected ? theme.main.strongText : theme.text.default)};
-  background-color: ${({ selected, theme }) => (selected ? theme.main.select : null)};
+  color: ${({ theme, selected }) =>
+    selected ? theme.classic.main.strongText : theme.classic.text.default};
+  background-color: ${({ selected, theme }) => (selected ? theme.classic.main.select : null)};
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   &:hover {
-    background-color: ${({ theme, selected }) => (selected ? "" : theme.main.bg)};
+    background-color: ${({ theme, selected }) => (selected ? "" : theme.classic.main.bg)};
   }
 `;
 

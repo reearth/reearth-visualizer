@@ -27,7 +27,9 @@ const StatusSection: React.FC<Props> = ({ projectStatus }) => {
     <Wrapper>
       <Section>
         <Field
-          body={<PublicationStatus status={projectStatus} size="lg" color={theme.main.text} />}
+          body={
+            <PublicationStatus status={projectStatus} size="lg" color={theme.classic.main.text} />
+          }
         />
         <Field body={<Text size="m">{Message}</Text>} />
       </Section>
@@ -36,7 +38,7 @@ const StatusSection: React.FC<Props> = ({ projectStatus }) => {
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
 `;
 
 export default StatusSection;

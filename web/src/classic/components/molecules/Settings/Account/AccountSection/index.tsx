@@ -119,13 +119,13 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.main.paleBg};
+  background-color: ${({ theme }) => theme.classic.main.paleBg};
 `;
 
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   &:hover {
-    color: ${({ theme }) => theme.main.strongText};
+    color: ${({ theme }) => theme.classic.main.strongText};
   }
 `;
 

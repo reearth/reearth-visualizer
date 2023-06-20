@@ -4,10 +4,10 @@ import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import NavigationItem from "@reearth/classic/components/molecules/Settings/NavigationItem";
+import { metricsSizes } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 type Workspace = {
   id?: string;

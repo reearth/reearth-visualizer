@@ -32,13 +32,11 @@ const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar color={theme.main.avatarBg} innerText={user.name} boarderRadius="4px" />
+        <Avatar innerText={user.name} borderRadius="4px" />
       </LabelLeft>
-      <LabelRight>
-        <LabelWorkspaceName size="m" color={theme.main.weak}>
-          {currentWorkspace.name}
-        </LabelWorkspaceName>
-      </LabelRight>
+      <WorkspaceName size="h5" color={theme.general.content.weak}>
+        {currentWorkspace.name}
+      </WorkspaceName>
     </LabelWrapper>
   );
 };
@@ -57,58 +55,50 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
   const dropDownRef = useRef<DropDownRef>(null);
 
   return (
-    <Wrapper>
-      <StyledDropdown
-        ref={dropDownRef}
-        openOnClick
-        noHoverStyle
-        direction="down"
-        hasIcon
-        label={
-          <Label
-            user={user}
-            personalWorkspace={personalWorkspace}
-            currentWorkspace={currentWorkspace}
-          />
-        }>
-        <ChildrenWrapper>
-          <MenuList>
-            <MenuListItem>
-              <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
-            </MenuListItem>
-            <MenuListItem noHover>
-              <WorkspaceMenu
-                currentWorkspace={currentWorkspace}
-                workspaces={workspaces}
-                onWorkspaceChange={onWorkspaceChange}
-                openModal={openModal}
-              />
-            </MenuListItem>
-            <MenuListItem>
-              <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
-            </MenuListItem>
-            <MenuListItem>
-              <MenuListItemLabel text={`v${__APP_VERSION__}`} />
-            </MenuListItem>
-          </MenuList>
-        </ChildrenWrapper>
-      </StyledDropdown>
-    </Wrapper>
+    <StyledDropdown
+      ref={dropDownRef}
+      openOnClick
+      noHoverStyle
+      direction="down"
+      hasIcon
+      label={
+        <Label
+          user={user}
+          personalWorkspace={personalWorkspace}
+          currentWorkspace={currentWorkspace}
+        />
+      }>
+      <ChildrenWrapper>
+        <MenuList>
+          <MenuListItem>
+            <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
+          </MenuListItem>
+          <MenuListItem>
+            <WorkspaceMenu
+              currentWorkspace={currentWorkspace}
+              workspaces={workspaces}
+              onWorkspaceChange={onWorkspaceChange}
+              openModal={openModal}
+            />
+          </MenuListItem>
+          <MenuListItem>
+            <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
+          </MenuListItem>
+        </MenuList>
+        <CurrentVersion size="h5">{`v${__APP_VERSION__}`}</CurrentVersion>
+      </ChildrenWrapper>
+    </StyledDropdown>
   );
 };
 
-const Wrapper = styled.div`
+const StyledDropdown = styled(Dropdown)`
   cursor: pointer;
   height: 100%;
 `;
 
-const StyledDropdown = styled(Dropdown)`
-  padding: 0 24px;
-`;
-
 const ChildrenWrapper = styled.div`
   width: 230px;
-  background-color: ${({ theme }) => theme.header.bg};
+  background-color: ${({ theme }) => theme.general.bg.strong};
   padding: 0;
 `;
 
@@ -118,24 +108,18 @@ const LabelWrapper = styled.div`
   padding-left: 10px;
 `;
 
-const LabelRight = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const WorkspaceName = styled(Text)`
+  align-self: center;
 `;
 
 const LabelLeft = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   margin-right: 16px;
 `;
 
-const LabelWorkspaceName = styled(Text)`
-  text-align: center;
-  margin-top: 2px;
-  font-weight: 700;
-  line-height: 22px;
+const CurrentVersion = styled(Text)`
+  padding: 5px 16px;
+  cursor: default;
+  border-top: ${({ theme }) => `0.5px solid ${theme.general.border}`};
 `;
 
 export default HeaderProfile;

@@ -1,8 +1,8 @@
 import React from "react";
 
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 type Props = {
   className?: string;
@@ -45,7 +45,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   justify-items: center;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   &:not(:last-child) {
     margin-bottom: ${metricsSizes["2xl"]}px;
   }
