@@ -48,7 +48,7 @@ const BasicAuthSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.classic.main.lighterBg};
 `;
 
 export default BasicAuthSection;

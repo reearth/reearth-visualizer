@@ -6,7 +6,7 @@ import type { WidgetAlignSystem } from "@reearth/classic/components/molecules/Vi
 import Component, { Widget, Props, Layer } from ".";
 
 export default {
-  title: "molecules/Visualizer",
+  title: "classic/molecules/Visualizer",
   component: Component,
   argTypes: {
     onBlockChange: { action: "onBlockChange" },

@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Marker, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Marker",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Marker",
   component: Marker,
 } as Meta;
 

@@ -7,8 +7,9 @@ import HelpButton from "@reearth/classic/components/atoms/HelpButton";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Layer } from "@reearth/classic/components/molecules/EarthEditor/LayerTreeViewItem/Layer";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, metricsSizes } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   selectedLayerId?: string;
@@ -98,10 +99,10 @@ const Action = styled.span<{ disabled?: boolean }>`
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  color: ${({ disabled, theme }) => (disabled ? theme.main.weak : theme.main.text)};
+  color: ${({ disabled, theme }) => (disabled ? theme.classic.main.weak : theme.classic.main.text)};
   border-radius: 5px;
   &:hover {
-    background-color: ${({ disabled, theme }) => (disabled ? null : theme.main.bg)};
+    background-color: ${({ disabled, theme }) => (disabled ? null : theme.classic.main.bg)};
   }
 `;
 
@@ -110,19 +111,19 @@ const MenuWrapper = styled.div`
 `;
 
 const Menu = styled.div`
-  background: ${({ theme }) => theme.selectList.option.bg};
-  border: 1px solid ${({ theme }) => theme.main.border};
+  background: ${({ theme }) => theme.classic.selectList.option.bg};
+  border: 1px solid ${({ theme }) => theme.classic.main.border};
   border-radius: 5px;
 `;
 
 const MenuItem = styled(Flex)<{ disabled?: boolean }>`
   padding: ${metricsSizes.xs}px ${metricsSizes.m}px;
-  color: ${({ disabled, theme }) => (disabled ? theme.layers.disableTextColor : undefined)};
+  color: ${({ disabled, theme }) => (disabled ? theme.classic.layers.disableTextColor : undefined)};
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 
   &:hover {
     background: ${({ disabled, theme }) =>
-      !disabled ? theme.selectList.option.hoverBg : undefined};
+      !disabled ? theme.classic.selectList.option.hoverBg : undefined};
   }
 `;
 

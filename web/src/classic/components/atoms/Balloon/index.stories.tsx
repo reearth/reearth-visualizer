@@ -10,7 +10,7 @@ const img = {
 };
 
 export default {
-  title: "atoms/Balloon",
+  title: "classic/atoms/Balloon",
   component: Balloon,
 } as Meta;
 

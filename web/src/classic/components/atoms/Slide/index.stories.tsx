@@ -17,7 +17,7 @@ const Page = styled.div`
 `;
 
 export default {
-  title: "atoms/Slide",
+  title: "classic/atoms/Slide",
   component: Slide,
 } as Meta;
 

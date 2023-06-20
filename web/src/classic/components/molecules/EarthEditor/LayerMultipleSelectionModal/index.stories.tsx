@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import Component, { Props, Layer } from ".";
 
 export default {
-  title: "molecules/EarthEditor/LayerMultipleSelectionModal",
+  title: "classic/molecules/EarthEditor/LayerMultipleSelectionModal",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

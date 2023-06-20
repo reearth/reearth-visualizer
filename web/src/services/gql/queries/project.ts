@@ -43,6 +43,7 @@ export const GET_PROJECT_BY_SCENE = gql`
           alias
           publishmentStatus
           name
+          coreSupport
         }
       }
     }

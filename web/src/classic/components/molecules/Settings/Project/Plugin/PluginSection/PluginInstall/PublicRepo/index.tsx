@@ -61,19 +61,19 @@ const PublicRepo: React.FC<Props> = ({
         }
         button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
         {loading && <Loading overlay />}
-        <Text size="m" color={theme.main.text}>
+        <Text size="m" color={theme.classic.main.text}>
           {t("Repository url:")}
         </Text>
         <Box mv="l">
           <TextBox value={repoUrl} doesChangeEveryTime onChange={handleRepoUrlChange} />
         </Box>
         {validationErr && (
-          <Text size="2xs" color={theme.main.danger}>
+          <Text size="2xs" color={theme.classic.main.danger}>
             {validationErr}
           </Text>
         )}
         {serverSideError && (
-          <Text size="2xs" color={theme.main.danger}>
+          <Text size="2xs" color={theme.classic.main.danger}>
             {serverSideError}
           </Text>
         )}

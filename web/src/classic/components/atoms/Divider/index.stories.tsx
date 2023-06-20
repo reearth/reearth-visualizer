@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import Divider from ".";
 
 export default {
-  title: "atoms/Divider",
+  title: "classic/atoms/Divider",
   component: Divider,
 } as Meta;
 

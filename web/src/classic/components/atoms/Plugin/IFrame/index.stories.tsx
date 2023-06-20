@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Component, { Props, Ref } from ".";
 
 export default {
-  title: "atoms/Plugin/IFrame(classic)",
+  title: "classic/atoms/Plugin/IFrame(classic)",
   component: Component,
   argTypes: {
     onLoad: { action: "onLoad" },

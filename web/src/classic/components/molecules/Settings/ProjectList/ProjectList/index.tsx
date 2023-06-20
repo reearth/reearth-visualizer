@@ -4,8 +4,8 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import ProjectCell, {
   Project as ProjectType,
 } from "@reearth/classic/components/molecules/Settings/ProjectList/ProjectCell";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
 
 export type Project = ProjectType;
 

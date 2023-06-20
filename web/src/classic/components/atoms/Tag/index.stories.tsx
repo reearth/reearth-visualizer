@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Tag, { Props } from ".";
 
 export default {
-  title: "atoms/Tag",
+  title: "classic/atoms/Tag",
   component: Tag,
 } as Meta;
 

@@ -1,45 +1,53 @@
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode, useMemo } from "react";
 
 import { useTheme } from "@reearth/services/theme";
-import { FontWeight, typography, TypographySize } from "@reearth/services/theme/fonts";
+import {
+  FontWeight,
+  typography,
+  FontSize,
+  UniqueTraits,
+} from "@reearth/services/theme/reearthTheme/common/fonts";
 
 type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
 
 type ChangeableProperties = Omit<CSSProperties, NonChangeableProperties>;
 
-export type TextProps = {
+export type Props = {
   className?: string;
-  children: any;
+  children: ReactNode;
   color?: string;
   customColor?: boolean;
-  size: TypographySize;
-  isParagraph?: boolean;
+  size: FontSize;
   weight?: FontWeight;
+  trait?: UniqueTraits;
   otherProperties?: Partial<ChangeableProperties>;
   onClick?: () => void;
 };
 
-const Text: React.FC<TextProps> = ({
+const Text: React.FC<Props> = ({
   className,
   children,
   size,
   color,
   customColor,
-  isParagraph = false,
-  weight = "normal",
+  weight = "regular",
+  trait,
   otherProperties,
   onClick,
 }) => {
   const theme = useTheme();
-  const defaultColor = theme.text.default;
+  const defaultColor = theme.general.content.main;
   const typographyBySize = typography[size];
 
-  // Default is "regular"
-  const Typography = isParagraph
-    ? "paragraph" in typographyBySize && typographyBySize.paragraph
-    : weight === "bold" && "bold" in typographyBySize
-    ? typographyBySize.bold
-    : typographyBySize.regular;
+  const Typography = useMemo(
+    () =>
+      trait && trait in typographyBySize
+        ? typographyBySize[trait]
+        : weight in typographyBySize
+        ? typographyBySize[weight]
+        : typographyBySize.regular,
+    [trait, typographyBySize, weight],
+  );
 
   return Typography ? (
     <Typography

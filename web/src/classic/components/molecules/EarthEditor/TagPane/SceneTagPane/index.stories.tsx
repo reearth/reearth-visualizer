@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import TagPane, { Props, TagGroup } from ".";
 
 export default {
-  title: "molecules/EarthEditor/TagPane",
+  title: "classic/molecules/EarthEditor/TagPane",
   component: TagPane,
 } as Meta;
 

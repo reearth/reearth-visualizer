@@ -49,14 +49,25 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
           return (
             <LabeledScale key={idx}>
-              <ScaleLabel size="2xs" customColor publishedTheme={publishedTheme}>
+              <ScaleLabel size="xFootnote" customColor publishedTheme={publishedTheme}>
                 {label}
               </ScaleLabel>
-              <Scale isHour={isHour} isStrongScale={isStrongScale} />
+              <Scale
+                isHour={isHour}
+                isStrongScale={isStrongScale}
+                publishedTheme={publishedTheme}
+              />
             </LabeledScale>
           );
         }
-        return <Scale key={idx} isHour={isHour} isStrongScale={isStrongScale} />;
+        return (
+          <Scale
+            key={idx}
+            isHour={isHour}
+            isStrongScale={isStrongScale}
+            publishedTheme={publishedTheme}
+          />
+        );
       })}
     </>
   );
@@ -93,19 +104,21 @@ const ScaleLabel = styled(Text)<StyledColorProps>`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
   white-space: nowrap;
 `;
 
-const Scale = styled.div<{
-  isHour: boolean;
-  isStrongScale: boolean;
-}>`
+const Scale = styled.div<
+  StyledColorProps & {
+    isHour: boolean;
+    isStrongScale: boolean;
+  }
+>`
   flex-shrink: 0;
   width: ${({ isStrongScale }) =>
     isStrongScale ? `${STRONG_SCALE_WIDTH}px` : `${NORMAL_SCALE_WIDTH}px`};
   height: ${({ isHour }) => (isHour && "16px") || "12px"};
-  background: ${({ theme }) => theme.colors.publish.dark.text.weak};
+  background: ${({ publishedTheme }) => publishedTheme?.weakText};
 `;
 
 export default ScaleList;

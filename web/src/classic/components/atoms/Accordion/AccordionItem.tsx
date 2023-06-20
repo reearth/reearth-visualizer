@@ -34,7 +34,7 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
                   {({ expanded }) => (
                     <>
                       <StyledIcon
-                        color={theme.text.pale}
+                        color={theme.classic.text.pale}
                         icon="arrowToggle"
                         size={16}
                         open={!!expanded}
