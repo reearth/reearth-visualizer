@@ -41,7 +41,7 @@ const ImageBox = styled.img<{
   display: flex;
   object-fit: ${props => (props.fit ? props.fit : "cover")};
   width: ${props => (props.width ? props.width : undefined)};
-  height: ${props => (props.height ? props.height : "200px")};
+  height: ${props => (props.height ? props.height : undefined)};
   max-height: ${props => (props.maxHeight ? props.maxHeight : undefined)};
   object-position: ${props => (props.align ? props.align : "center")};
 `;
