@@ -13,6 +13,7 @@ window.React = React;
 window.ReactDOM = ReactDOM;
 
 loadConfig().finally(async () => {
+  await import("./services/config/aws.config");
   const element = document.getElementById("root");
   if (!element) throw new Error("root element is not found");
 
