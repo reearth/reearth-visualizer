@@ -48,7 +48,7 @@ const DangerSection: React.FC<Props> = ({ workspace, deleteWorkspace }) => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
   border: 1px solid #ff3c53;
 `;
 

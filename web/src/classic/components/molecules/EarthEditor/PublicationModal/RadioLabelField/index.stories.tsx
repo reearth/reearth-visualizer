@@ -9,7 +9,7 @@ const items: RadioLabelFieldProps["items"] = [
 ];
 
 export default {
-  title: "molecules/EarthEditor/PublicationModal/RadioLabelField",
+  title: "classic/molecules/EarthEditor/PublicationModal/RadioLabelField",
   component: RadioLabelField,
 } as Meta;
 

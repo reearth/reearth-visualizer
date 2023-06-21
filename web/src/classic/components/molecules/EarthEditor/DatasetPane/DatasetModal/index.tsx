@@ -89,7 +89,7 @@ const DatasetModal: React.FC<Props> = ({
               subtext={t("Supports CSV, JSON, GIS files")}
               margin={56}
               border="dashed"
-              borderColor={theme.main.border}
+              borderColor={theme.classic.main.border}
               onClick={handleSelectCsvFile}
             />
             {googleApiKey && (
@@ -100,7 +100,7 @@ const DatasetModal: React.FC<Props> = ({
                 text={t("Google Drive")}
                 margin={56}
                 border="dashed"
-                borderColor={theme.main.border}
+                borderColor={theme.classic.main.border}
                 onClick={handleSetDataType}
               />
             )}
@@ -113,7 +113,7 @@ const DatasetModal: React.FC<Props> = ({
                 text={ext.title}
                 margin={56}
                 border="dashed"
-                borderColor={theme.main.border}
+                borderColor={theme.classic.main.border}
                 onClick={handleSetDataType}
               />
             ))}
@@ -134,11 +134,11 @@ const DatasetModal: React.FC<Props> = ({
                 icon={"arrowLongLeft"}
                 size={24}
                 onClick={handleReturn}
-                color={theme.main.text}
+                color={theme.classic.main.text}
               />
               <Subtitle
                 size="m"
-                color={theme.main.strongText}
+                color={theme.classic.main.strongText}
                 otherProperties={{ textAlign: "center" }}>
                 {t("Upload CSV file")}
               </Subtitle>
@@ -167,10 +167,10 @@ const DatasetModal: React.FC<Props> = ({
           {!dataType && (
             <>
               <Button onClick={handleReturn}>
-                <Icon icon={"arrowLongLeft"} size={24} color={theme.main.text} />
+                <Icon icon={"arrowLongLeft"} size={24} color={theme.classic.main.text} />
               </Button>
 
-              <Subtitle size="m" color={theme.main.strongText}>
+              <Subtitle size="m" color={theme.classic.main.strongText}>
                 {t("Sorry, that service is unavailable at this time.")}
               </Subtitle>
               <Divider margin="24px" />
@@ -188,7 +188,7 @@ const ConnectSection = styled.div`
   & > div > div {
     &:hover {
       cursor: pointer;
-      background: ${props => props.theme.main.paleBg};
+      background: ${props => props.theme.classic.main.paleBg};
     }
   }
 `;

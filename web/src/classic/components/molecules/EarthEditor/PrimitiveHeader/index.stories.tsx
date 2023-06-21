@@ -33,7 +33,7 @@ const defaultProps = {
 };
 
 export default {
-  title: "molecules/EarthEditor/PrimitiveHeader",
+  title: "classic/molecules/EarthEditor/PrimitiveHeader",
   component: PrimitiveHeader,
 } as Meta;
 

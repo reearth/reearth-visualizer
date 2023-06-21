@@ -40,6 +40,7 @@ export default ({ projectId }: Params) => {
             imageUrl: data.node.imageUrl,
             alias: data.node.alias,
             publishmentStatus: data.node.publishmentStatus,
+            projectType: data.node.coreSupport ? "beta" : "classic",
           }
         : undefined,
     [data?.node],

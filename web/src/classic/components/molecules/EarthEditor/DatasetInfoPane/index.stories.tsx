@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import DatasetInfoPane, { Props } from ".";
 
 export default {
-  title: "molecules/EarthEditor/DatasetInfoPane",
+  title: "classic/molecules/EarthEditor/DatasetInfoPane",
   component: DatasetInfoPane,
 } as Meta;
 

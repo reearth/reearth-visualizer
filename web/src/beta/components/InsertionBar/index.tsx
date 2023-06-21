@@ -81,12 +81,11 @@ const InsertionBar: React.FC<Props> = ({
 };
 
 const StyledAddButton = styled(Icon)`
-  background: ${props => props.theme.infoBox.bg};
+  background: ${({ theme }) => theme.general.bg.main};
   cursor: pointer;
   display: block;
-  user-select: nocolor: ${props => props.theme.infoBox.accent};
   padding: 0 3px;
-  `;
+`;
 
 const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   display: ${props => (props.visible ? "block" : "none")};
@@ -94,7 +93,8 @@ const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${props => (props.hovered ? props.theme.infoBox.mainText : props.theme.infoBox.accent)};
+  color: ${({ hovered, theme }) =>
+    hovered ? theme.general.content.strong : theme.general.content.main};
 `;
 
 const InsertLine = styled.div<{ circleVisible?: boolean }>`
@@ -104,7 +104,7 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: ${props => props.theme.main.accent};
+  background: ${({ theme }) => theme.general.select};
 
   &::before {
     display: ${props => (props.circleVisible ? "block" : "none")};
@@ -114,9 +114,8 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
     top: -4px;
     width: 6px;
     height: 6px;
-    border: 2px solid ${props => props.theme.main.accent};
+    border: 2px solid ${({ theme }) => theme.general.select};
     border-radius: 50%;
-    background: ${props => props.theme.layers.bg};
   }
 `;
 

@@ -25,19 +25,19 @@ const Wrapper = styled(Flex)`
   height: 100%;
   background: ${({ theme }) =>
     `linear-gradient(79.71deg, 
-      ${theme.main.brandBlue} 0%, 
-      ${theme.main.brandRed} 25.9%, 
-      ${theme.main.brandRed} 34.81%, 
-      ${theme.main.brandBlue} 88.99%)
+      ${theme.classic.main.brandBlue} 0%, 
+      ${theme.classic.main.brandRed} 25.9%, 
+      ${theme.classic.main.brandRed} 34.81%, 
+      ${theme.classic.main.brandBlue} 88.99%)
     `};
 `;
 
 const FormWrapper = styled(Flex)`
-  background: ${({ theme }) => theme.other.white};
+  background: ${({ theme }) => theme.classic.other.white};
   border-radius: 5px;
   width: 306px;
   padding: 48px;
-  color: ${({ theme }) => theme.main.weak};
+  color: ${({ theme }) => theme.classic.main.weak};
 
   > .form-item {
     margin-bottom: 24px;

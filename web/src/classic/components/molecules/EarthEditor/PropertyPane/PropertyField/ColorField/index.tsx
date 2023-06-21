@@ -4,8 +4,9 @@ import { usePopper } from "react-popper";
 
 import Button from "@reearth/classic/components/atoms/Button";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, css, useTheme, metricsSizes } from "@reearth/services/theme";
+import { styled, css, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -84,7 +85,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               overridden={overridden}
               linked={linked}
             />
-            <PickerText size="2xs" color={theme.properties.contentsFloatText}>
+            <PickerText size="2xs" color={theme.classic.properties.contentsFloatText}>
               {t("Red")}
             </PickerText>
           </Field>
@@ -99,7 +100,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               overridden={overridden}
               linked={linked}
             />
-            <PickerText size="2xs" color={theme.properties.contentsFloatText}>
+            <PickerText size="2xs" color={theme.classic.properties.contentsFloatText}>
               {t("Green")}
             </PickerText>
           </Field>
@@ -114,7 +115,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               overridden={overridden}
               linked={linked}
             />
-            <PickerText size="2xs" color={theme.properties.contentsFloatText}>
+            <PickerText size="2xs" color={theme.classic.properties.contentsFloatText}>
               {t("Blue")}
             </PickerText>
           </Field>
@@ -127,7 +128,7 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
               overridden={overridden}
               linked={linked}
             />
-            <PickerText size="2xs" color={theme.properties.contentsFloatText}>
+            <PickerText size="2xs" color={theme.classic.properties.contentsFloatText}>
               {t("Alpha")}
             </PickerText>
           </Field>
@@ -151,7 +152,7 @@ const Wrapper = styled.div`
 
 const InputWrapper = styled.div`
   display: flex;
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
 `;
 
 const Layers = styled.div`
@@ -181,9 +182,9 @@ linear-gradient(
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${({ theme }) => theme.main.border};
-  background-image: ${({ theme }) => check(theme.toggleButton.bg)},
-    ${({ theme }) => check(theme.toggleButton.bg)};
+  background-color: ${({ theme }) => theme.classic.main.border};
+  background-image: ${({ theme }) => check(theme.classic.toggleButton.bg)},
+    ${({ theme }) => check(theme.classic.toggleButton.bg)};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;
   ${layerStyle};
@@ -205,11 +206,11 @@ const PickerWrapper = styled.div<{ open: boolean }>`
   cursor: default;
   padding: 0;
   box-sizing: border-box;
-  border: solid 1px ${props => props.theme.properties.border};
+  border: solid 1px ${props => props.theme.classic.properties.border};
   border-radius: 5px;
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${props => props.theme.classic.zIndexes.propertyFieldPopup};
 `;
 
 const FormButtonGroup = styled.div`
@@ -232,17 +233,21 @@ const Input = styled.input<{ type?: string; overridden?: boolean; linked?: boole
   width: 100%;
   height: 30px;
   padding: 6px ${metricsSizes["s"]}px;
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
   box-sizing: border-box;
   color: ${({ linked, overridden, theme }) =>
-    overridden ? theme.main.warning : linked ? theme.main.link : theme.properties.contentsText};
+    overridden
+      ? theme.classic.main.warning
+      : linked
+      ? theme.classic.main.link
+      : theme.classic.properties.contentsText};
   outline: none;
-  border: 1px solid ${({ theme }) => theme.properties.border};
+  border: 1px solid ${({ theme }) => theme.classic.properties.border};
   &:focus {
-    border-color: ${({ theme }) => theme.properties.focusBorder};
+    border-color: ${({ theme }) => theme.classic.properties.focusBorder};
   }
   ::placeholder {
-    color: ${({ theme }) => theme.properties.text};
+    color: ${({ theme }) => theme.classic.properties.text};
   }
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {

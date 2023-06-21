@@ -83,12 +83,14 @@ const TabHeader = styled.div<{ menuAlignment?: MenuAlignment }>`
 const TabTitle = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid ${({ selected, theme }) => (selected ? theme.main.select : "none")};
+  border-bottom: 1px solid
+    ${({ selected, theme }) => (selected ? theme.classic.main.select : "none")};
   padding: 0 12px;
 `;
 
 const StyledText = styled(Text)<{ selected?: boolean }>`
-  color: ${({ theme, selected }) => (selected ? theme.main.select : theme.main.text)};
+  color: ${({ theme, selected }) =>
+    selected ? theme.classic.main.select : theme.classic.main.text};
 `;
 
 const ActionWrapper = styled.div<{ expanded?: boolean }>`

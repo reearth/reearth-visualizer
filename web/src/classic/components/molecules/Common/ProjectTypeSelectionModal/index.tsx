@@ -30,25 +30,25 @@ const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit })
 
   return (
     <ModalWrapper isVisible={open} onClose={handleCloseModal}>
-      <TitleText size="xl" color={theme.other.white} weight={"bold"}>
+      <TitleText size="xl" color={theme.classic.other.white} weight={"bold"}>
         {t("Choose Project Type")}
       </TitleText>
       <ProjectTypeContainer>
         <ProjectTypeItem onClick={() => handleTypeSelect("classic")}>
           <Icon icon="logo" size={101} />
-          <Text size="s" color={theme.other.white} weight={"bold"}>
+          <Text size="s" color={theme.classic.other.white} weight={"bold"}>
             {t("classic")}
           </Text>
-          <HintText size="xs" color={theme.main.weak} weight="normal">
+          <HintText size="xs" color={theme.classic.main.weak} weight="normal">
             {t("Create project with classic UI")}
           </HintText>
         </ProjectTypeItem>
         <ProjectTypeItem onClick={() => handleTypeSelect("beta")}>
           <Icon icon="logoColorful" size={101} />
-          <Text size="s" color={theme.other.white} weight={"bold"}>
+          <Text size="s" color={theme.classic.other.white} weight={"bold"}>
             {t("Beta")}
           </Text>
-          <HintText size="xs" color={theme.main.weak} weight="normal">
+          <HintText size="xs" color={theme.classic.main.weak} weight="normal">
             {t(
               "Create project with the latest features and UI system (projects might break without prior notice)",
             )}

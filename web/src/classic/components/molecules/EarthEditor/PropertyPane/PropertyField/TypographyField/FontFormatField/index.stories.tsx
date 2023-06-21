@@ -4,7 +4,7 @@ import { Meta } from "@storybook/react";
 import FontFormatField from ".";
 
 export default {
-  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFormatField",
+  title: "classic/molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFormatField",
   component: FontFormatField,
 } as Meta;
 
