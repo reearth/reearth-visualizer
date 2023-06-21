@@ -4,14 +4,14 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
 
-import { Provider as Auth0Provider } from "./services/auth";
+import { AuthProvider } from "./services/auth";
 import { Provider as GqlProvider } from "./services/gql";
 import { AppRoutes } from "./services/routing";
 import { Provider as ThemeProvider } from "./services/theme";
 
 export default function App() {
   return (
-    <Auth0Provider>
+    <AuthProvider>
       <GqlProvider>
         <ThemeProvider>
           <I18nProvider>
@@ -22,6 +22,6 @@ export default function App() {
           </I18nProvider>
         </ThemeProvider>
       </GqlProvider>
-    </Auth0Provider>
+    </AuthProvider>
   );
 }

@@ -8,6 +8,7 @@ export const config = {
   authClientId: process.env["REEARTH_WEB_AUTH0_CLIENT_ID"],
   authUrl: process.env["REEARTH_WEB_AUTH0_DOMAIN"],
   signUpSecret: process.env["REEARTH_WEB_E2E_SIGNUP_SECRET"],
+  authProvider: process.env["REEARTH_WEB_AUTH_PROVIDER"],
   developerMode: process.env["REEARTH_WEB_DEVELOPER_MODE"],
 };
 
