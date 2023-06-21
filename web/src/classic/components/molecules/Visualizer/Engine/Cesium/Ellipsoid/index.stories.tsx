@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Ellipsoid, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Ellipsoid",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Ellipsoid",
   component: Ellipsoid,
 } as Meta;
 

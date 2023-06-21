@@ -8,7 +8,7 @@ import {
   RefObject,
 } from "react";
 
-import theme, { styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import type { PopupPosition } from "../../plugin_types";
 
@@ -59,7 +59,8 @@ const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
 const Wrapper = styled.div<{ visible: boolean }>`
   position: absolute;
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible }) => (visible ? theme.zIndexes.pluginPopup : theme.zIndexes.hidden)};
+  z-index: ${({ visible, theme }) =>
+    visible ? theme.classic.zIndexes.pluginPopup : theme.classic.zIndexes.hidden};
   transition: opacity 0.25s;
   opacity: ${({ visible }) => (visible ? "1" : "0")};
 `;

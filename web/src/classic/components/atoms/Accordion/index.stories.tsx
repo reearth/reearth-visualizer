@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "atoms/accordion",
+  title: "classic/atoms/accordion",
   component: Component,
 } as Meta;
 

@@ -102,7 +102,7 @@ const AddMemberModal: React.FC<Props> = ({
           <UserListItem key={id}>
             <UserIdentity>
               <Text size="m">{name}</Text>
-              <Text size="s" color={theme.infoBox.weakText}>
+              <Text size="s" color={theme.classic.infoBox.weakText}>
                 {email}
               </Text>
             </UserIdentity>
@@ -138,7 +138,7 @@ const UserIdentity = styled.div`
 `;
 
 const RemoveIcon = styled(Icon)`
-  color: ${({ theme }) => theme.main.danger};
+  color: ${({ theme }) => theme.classic.main.danger};
   cursor: pointer;
 `;
 

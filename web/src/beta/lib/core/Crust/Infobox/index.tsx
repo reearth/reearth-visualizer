@@ -1,12 +1,12 @@
 import React, { type ReactNode } from "react";
 
-import AdditionButton from "@reearth/beta/components/AdditionButton";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import AdditionButton from "./AdditionButton";
 import BlockComponent from "./Block";
 import Field from "./Field";
 import Frame from "./Frame";
@@ -148,7 +148,7 @@ const Infobox: React.FC<Props> = ({
               renderInsertionPopup?.(handleBlockInsert, onInsertionPopUpClose)}
           </AdditionButton>
           <NoContentInfo>
-            <InnerWrapper size="xs" color={theme.infoBox.weakText}>
+            <InnerWrapper size="footnote" color={theme.general.content.weak}>
               <StyledIcon icon="arrowLong" />
               <span>{t(`Move mouse here and click "+" to add content`)}</span>
             </InnerWrapper>
@@ -162,7 +162,7 @@ const Infobox: React.FC<Props> = ({
 const NoContentInfo = styled.div`
   display: flex;
   justify-content: center;
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.general.content.weak};
   text-align: left;
 `;
 

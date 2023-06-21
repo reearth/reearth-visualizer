@@ -4,7 +4,7 @@ import { useState } from "react";
 import Timeline, { Props } from ".";
 
 export default {
-  title: "atoms/Timeline/Timeline",
+  title: "classic/atoms/Timeline/Timeline",
   component: Timeline,
 } as Meta;
 

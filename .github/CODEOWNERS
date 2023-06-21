@@ -6,5 +6,5 @@
 
 /web/src/classic/core/  @keiya01
 
-/web/src/beta/core/     @keiya01
-/web/src/beta/features/ @keiya01 @KaWaite
+/web/src/beta/lib/core/ @keiya01
+/web/src/beta/features/ @KaWaite

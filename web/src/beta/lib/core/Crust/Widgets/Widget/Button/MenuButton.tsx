@@ -129,7 +129,7 @@ export default function MenuButton({
         )}
         {b?.buttonStyle !== "icon" && (
           <Text
-            size="xs"
+            size="footnote"
             customColor
             otherProperties={{
               marginLeft: b?.buttonIcon && b?.buttonStyle === "texticon" ? "5px" : undefined,
@@ -152,7 +152,7 @@ export default function MenuButton({
                 <Flex align="center">
                   {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
                   <Text
-                    size="xs"
+                    size="footnote"
                     customColor
                     otherProperties={{
                       marginLeft: i.menuIcon ? "5px" : undefined,

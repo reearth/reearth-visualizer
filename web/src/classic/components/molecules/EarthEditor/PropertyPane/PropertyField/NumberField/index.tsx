@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
-import { styled, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
+import { styled } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
 
@@ -120,7 +120,7 @@ const Wrapper = styled.div`
 type FormProps = Pick<Props, "linked" | "overridden"> & { inactive: boolean };
 
 const FormWrapper = styled(Flex)<FormProps>`
-  border: 1px solid ${props => props.theme.properties.border};
+  border: 1px solid ${props => props.theme.classic.properties.border};
   width: 100%;
   box-sizing: border-box;
   height: ${metrics.propertyTextInputHeight}px;
@@ -128,21 +128,21 @@ const FormWrapper = styled(Flex)<FormProps>`
   padding-right: ${metricsSizes.s}px;
   color: ${({ inactive, linked, overridden, theme }) =>
     overridden
-      ? theme.main.warning
+      ? theme.classic.main.warning
       : linked
-      ? theme.main.link
+      ? theme.classic.main.link
       : inactive
-      ? theme.text.pale
-      : theme.properties.contentsText};
+      ? theme.classic.text.pale
+      : theme.classic.properties.contentsText};
   &:focus-within {
-    border-color: ${({ theme }) => theme.properties.contentsText};
+    border-color: ${({ theme }) => theme.classic.properties.contentsText};
   }
 `;
 
 const StyledInput = styled.input`
   display: block;
   border: none;
-  background: ${props => props.theme.properties.bg};
+  background: ${props => props.theme.classic.properties.bg};
   outline: none;
   color: inherit;
   width: 100%;

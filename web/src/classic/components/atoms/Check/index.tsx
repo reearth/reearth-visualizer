@@ -1,5 +1,5 @@
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/fonts";
 
 type Props = {
   linked?: boolean;
@@ -19,13 +19,13 @@ const Check = styled.li<Props>`
   font-size: ${fonts.sizes.m}px;
   color: ${({ linked, overridden, selected, inactive, theme }) =>
     selected && linked
-      ? theme.main.accent
+      ? theme.classic.main.accent
       : selected && overridden
-      ? theme.main.danger
+      ? theme.classic.main.danger
       : inactive
-      ? theme.text.pale
-      : theme.properties.contentsText};
-  background: ${({ selected, theme }) => (selected ? theme.main.bg : "none")};
+      ? theme.classic.text.pale
+      : theme.classic.properties.contentsText};
+  background: ${({ selected, theme }) => (selected ? theme.classic.main.bg : "none")};
   cursor: pointer;
   box-sizing: border-box;
   border-radius: 2px;

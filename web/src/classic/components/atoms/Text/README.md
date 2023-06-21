@@ -36,13 +36,13 @@ import Text from "@reearth/classic/components/atoms/Text";
   </LongBannerButton>
 
 const LongBannerButton = styled(Flex)`
-  background: ${props => props.theme.main.paleBg};
+  background: ${props => props.theme.classic.main.paleBg};
   width: 100%;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &:hover {
-    background: ${props => props.theme.main.bg};
-    color: ${props => props.theme.main.strongText};
+    background: ${props => props.theme.classic.main.bg};
+    color: ${props => props.theme.classic.main.strongText};
   }
 `;
 ```
