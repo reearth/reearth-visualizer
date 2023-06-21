@@ -9,19 +9,19 @@ export type Size = "small" | "large";
 export type Props = {
   className?: string;
   size?: Size;
-  color?: string;
+  background?: string;
   avatar?: string;
   innerText?: string | number;
-  boarderRadius?: string;
+  borderRadius?: string;
 };
 
 const Avatar: React.FC<Props> = ({
   className,
   size = "small",
-  color,
+  background,
   avatar,
   innerText,
-  boarderRadius = "50%",
+  borderRadius = "50%",
 }) => {
   const theme = useTheme();
 
@@ -32,10 +32,10 @@ const Avatar: React.FC<Props> = ({
       justify="center"
       size={size}
       avatar={avatar}
-      color={color ?? theme.main.avatarBg}
-      boardeRradius={boarderRadius}>
+      background={background ?? theme.general.bg.veryWeak}
+      borderRadius={borderRadius}>
       {innerText && (
-        <Text size={"l"} color={theme.text.pale}>
+        <Text size="h4" color={theme.general.content.strong}>
           {typeof innerText === "number" ? `+${innerText.toString()}` : innerText.charAt(0)}
         </Text>
       )}
@@ -45,14 +45,14 @@ const Avatar: React.FC<Props> = ({
 const StyledAvatar = styled(Flex)<{
   size?: Size;
   avatar?: string;
-  color?: string;
-  boardeRradius?: string;
+  background?: string;
+  borderRadius?: string;
 }>`
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   width: ${({ size }) => (size === "large" ? "64px" : "32px")};
   height: ${({ size }) => (size === "large" ? "64px" : "32px")};
-  border-radius: ${({ boardeRradius }) => (boardeRradius ? boardeRradius : "50%")};
-  background: ${({ avatar, color }) => (avatar ? `url(${avatar});` : color)};
+  border-radius: ${({ borderRadius }) => borderRadius ?? "50%"};
+  background: ${({ avatar, background }) => (avatar ? `url(${avatar});` : background)};
 `;
 
 export default Avatar;

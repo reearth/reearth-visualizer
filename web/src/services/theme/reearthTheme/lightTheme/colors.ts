@@ -1,3 +1,5 @@
+import commonColors from "../common/colors";
+
 const colors = {
   bg: {
     1: "#8C8A8A",
@@ -5,12 +7,12 @@ const colors = {
     3: "#D0D0D0",
     4: "#E0E0E0",
     5: "#FFFCFC",
-    6: "#3F3D45",
   },
   text: {
     strong: "#272727",
     main: "#434343",
     weak: "#727070",
+    weakest: "#BABABA",
   },
   outline: {
     strong: "#0D0D0D",
@@ -36,15 +38,12 @@ const colors = {
   },
   functional: {
     link: "#0063D8",
+    notice: "#6E9CD2",
+    select: commonColors.brand.orange.strong,
     success: "#00B68D",
     attention: "#E17A00",
+    override: "#D58000",
     error: "#FF3C53",
-    select: "#F57C4B",
-    notice: "#6E9CD2",
-  },
-  other: {
-    black: "#000000",
-    white: "#FFFFFF",
   },
 };
 

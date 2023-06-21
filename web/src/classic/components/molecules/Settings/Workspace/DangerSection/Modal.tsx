@@ -6,10 +6,10 @@ import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
+import { metricsSizes } from "@reearth/classic/theme";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 type Props = {
   className?: string;
@@ -42,22 +42,22 @@ const DangerModal: React.FC<Props> = ({ workspace, isVisible, deleteWorkspace, o
 
   return (
     <Modal title={t("Delete workspace")} isVisible={isVisible} size="sm" onClose={onClose}>
-      <Subtitle size="s" color={theme.main.text} weight="bold" center>
+      <Subtitle size="s" color={theme.classic.main.text} weight="bold" center>
         {workspace?.name}
       </Subtitle>
-      <Description size="s" color={theme.main.text}>
+      <Description size="s" color={theme.classic.main.text}>
         {t(`This action cannot be undone.`)}
       </Description>
-      <Description size="s" color={theme.main.text}>
+      <Description size="s" color={theme.classic.main.text}>
         {t(
           `This will permanently delete the workspace and all related projects, assets and datasets for all team members.`,
         )}
       </Description>
       <Divider />
-      <Subtitle size="s" color={theme.main.text} weight="bold">
+      <Subtitle size="s" color={theme.classic.main.text} weight="bold">
         {t(`Please type your workspace name to continue.`)}
       </Subtitle>
-      <StyledTextBox borderColor={theme.main.border} value={text} onChange={setText} />
+      <StyledTextBox borderColor={theme.classic.main.border} value={text} onChange={setText} />
       <RedButton
         large
         text={t("I am sure I want to delete this workspace.")}

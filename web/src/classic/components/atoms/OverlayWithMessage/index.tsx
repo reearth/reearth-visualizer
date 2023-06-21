@@ -19,8 +19,8 @@ const OverlayWithMessage: React.FC<Props> = ({ title, content, icon, show }) => 
       <Overlay show={show} strong />
       <Wrapper show={show}>
         <Content direction="column" align="center" show={show}>
-          <Icon icon={icon} size={60} color={theme.main.danger} />
-          <Text size="l" color={theme.main.strongText}>
+          <Icon icon={icon} size={60} color={theme.classic.main.danger} />
+          <Text size="l" color={theme.classic.main.strongText}>
             {title}
           </Text>
           <Text size="m">{content}</Text>

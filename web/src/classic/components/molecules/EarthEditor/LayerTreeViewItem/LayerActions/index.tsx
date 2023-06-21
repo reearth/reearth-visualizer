@@ -100,10 +100,10 @@ const Action = styled.span<{ disabled?: boolean }>`
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  color: ${({ disabled, theme }) => (disabled ? theme.main.weak : theme.main.text)};
+  color: ${({ disabled, theme }) => (disabled ? theme.classic.main.weak : theme.classic.main.text)};
   border-radius: 5px;
   &:hover {
-    background-color: ${({ disabled, theme }) => (disabled ? null : theme.main.bg)};
+    background-color: ${({ disabled, theme }) => (disabled ? null : theme.classic.main.bg)};
   }
 `;
 

@@ -43,13 +43,13 @@ overrides:
         - error
         - paths:
             - '@reearth/classic/util/use-dnd'
-            - '@reearth/services/theme'
+            - '@reearth/classic/theme'
   - files: pages/**/*
     rules:
       'no-restricted-imports':
         - error
         - paths:
-            - '@reearth/services/theme'
+            - '@reearth/classic/theme'
   - files: molecules/Visualizer/**/*
     rules:
       'no-restricted-imports':

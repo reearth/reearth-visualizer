@@ -8,9 +8,9 @@ import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/de
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 import { ProjectType } from "@reearth/types";
 
 export interface FormValues {
@@ -99,7 +99,7 @@ const ProjectCreationModal: React.FC<Props> = ({
       <Divider margin="20px" />
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
-          <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
             {t("Project Name")}
           </Text>
           <StyledInput
@@ -111,7 +111,7 @@ const ProjectCreationModal: React.FC<Props> = ({
           />
         </FormInputWrapper>
         <FormInputWrapper>
-          <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
             {t("Description")}
           </Text>
           <StyledTextArea
@@ -123,7 +123,7 @@ const ProjectCreationModal: React.FC<Props> = ({
           />
         </FormInputWrapper>
         <FormInputWrapper>
-          <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
             {t("Select thumbnail image")}
           </Text>
           <Thumbnail
@@ -148,8 +148,8 @@ const FormInputWrapper = styled.div`
 
 const StyledInput = styled.input`
   width: calc(100% - 12px);
-  color: ${props => props.theme.main.text};
-  background: ${props => props.theme.main.deepBg};
+  color: ${props => props.theme.classic.main.text};
+  background: ${props => props.theme.classic.main.deepBg};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.s}px;
   outline: none;
@@ -160,8 +160,8 @@ const StyledInput = styled.input`
 const StyledTextArea = styled.textarea`
   width: calc(100% - 12px);
   resize: none;
-  color: ${props => props.theme.main.text};
-  background: ${props => props.theme.main.deepBg};
+  color: ${props => props.theme.classic.main.text};
+  background: ${props => props.theme.classic.main.deepBg};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.s}px;
   outline: none;

@@ -151,7 +151,7 @@ const Frame: React.FC<Props> = ({
               </IconWrapper>
             )}
             {open && (
-              <Text size="m" weight="bold" customColor>
+              <Text size="h5" weight="bold" customColor>
                 <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
               </Text>
             )}
@@ -295,7 +295,7 @@ const Content = styled.div<{
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   flex: auto;
-  font-size: ${fonts.sizes.s}px;
+  font-size: ${fonts.sizes.body}px;
   padding: 10px 0 20px 0;
   transition: all 0.2s linear;
 

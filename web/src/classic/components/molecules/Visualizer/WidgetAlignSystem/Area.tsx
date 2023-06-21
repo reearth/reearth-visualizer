@@ -116,15 +116,15 @@ export default function Area({
           backgroundColor && !isMobileZone
             ? backgroundColor
             : area === "middle"
-            ? theme.alignSystem.blueBg
-            : theme.alignSystem.orangeBg,
+            ? theme.classic.alignSystem.blueBg
+            : theme.classic.alignSystem.orangeBg,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.alignSystem.blueHighlight}`
-            : `1px solid ${theme.alignSystem.orangeHighlight}`,
+            ? `1px solid ${theme.classic.alignSystem.blueHighlight}`
+            : `1px solid ${theme.classic.alignSystem.orangeHighlight}`,
         cursor: "pointer",
         gap: isMobileZone ? "inherit" : gap,
         alignItems: centered && !isMobileZone ? "center" : "inherit",

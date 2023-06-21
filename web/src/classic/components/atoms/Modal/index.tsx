@@ -28,7 +28,7 @@ const Modal: React.FC<Props> = ({
   const theme = useTheme();
   return (
     <Wrapper className={className} size={size} isVisible={isVisible} onClose={onClose}>
-      <Title size="l" weight="bold" color={theme.main.strongText}>
+      <Title size="l" weight="bold" color={theme.classic.main.strongText}>
         {title}
       </Title>
       {children}

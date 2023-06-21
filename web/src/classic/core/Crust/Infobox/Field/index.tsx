@@ -117,9 +117,9 @@ const Handle = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   margin: 3px 6px;
   color: ${props =>
     props.isHovered
-      ? props.theme.infoBox.border
+      ? props.theme.classic.infoBox.border
       : props.isSelected
-      ? props.theme.infoBox.accent2
+      ? props.theme.classic.infoBox.accent2
       : "none"};
   cursor: grab;
   user-select: none;

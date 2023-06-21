@@ -75,7 +75,7 @@ const Storytelling = ({
               color={selected?.story.layer === story.layer ? theme?.strongText : theme?.mainText}
             />
             <Text
-              size="m"
+              size="h5"
               color={selected?.story.layer === story.layer ? theme?.strongText : theme?.mainText}
               otherProperties={{
                 textOverflow: "ellipsis",
@@ -101,12 +101,12 @@ const Storytelling = ({
             onClick={toggleMenu}
             menuOpen={menuOpen}
           />
-          <Title color={theme?.mainText} size="m" weight="bold">
+          <Title color={theme?.mainText} size="h5" weight="bold">
             {selected?.story.title}
           </Title>
           <Text
             color={theme?.weakText}
-            size={isExtraSmallWindow ? "xs" : "m"}
+            size={isExtraSmallWindow ? "footnote" : "h5"}
             weight="bold"
             otherProperties={{ userSelect: "none" }}>
             {typeof selected === "undefined" ? "-" : selected.index + 1} /{" "}
@@ -239,7 +239,7 @@ const Menu = styled.div<{
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
     max-height: ${({ area, align }) =>
       area === "middle" && align === "centered" ? "30vh" : "70vh"};
-    border: 1px solid ${props => props.theme.main.text};
+    border: 1px solid ${props => props.theme.general.content.main};
     top: ${({ area, align }) =>
       area === "top" || (area === "middle" && align === "start") ? "60px" : null};
     bottom: ${({ area, align }) =>

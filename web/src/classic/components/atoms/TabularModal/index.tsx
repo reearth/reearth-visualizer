@@ -52,17 +52,18 @@ export default function TabularModal<Tab extends string = string>({
 
 const Tabs = styled.div`
   display: flex;
-  color: ${({ theme }) => theme.main.strongText};
+  color: ${({ theme }) => theme.classic.main.strongText};
 `;
 
 const Tab = styled.p<{ selected?: boolean }>`
-  background: ${props => (props.selected ? props.theme.modal.innerBg : props.theme.modal.bodyBg)};
+  background: ${props =>
+    props.selected ? props.theme.classic.modal.innerBg : props.theme.classic.modal.bodyBg};
   padding: 16px 24px;
   cursor: pointer;
 `;
 
 const Content = styled.div`
-  background: ${props => props.theme.modal.innerBg};
+  background: ${props => props.theme.classic.modal.innerBg};
   padding: 12px;
   display: flex;
   flex-direction: column;

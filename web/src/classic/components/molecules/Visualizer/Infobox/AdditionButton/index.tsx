@@ -90,17 +90,17 @@ const InsertArea = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.infoBox.accent};
+  color: ${props => props.theme.classic.infoBox.accent};
 `;
 
 const Button = styled.div`
-  color: ${props => props.theme.infoBox.accent};
+  color: ${props => props.theme.classic.infoBox.accent};
   margin: 0 3px;
 `;
 
 const Line = styled.div`
   width: 43%;
-  background-color: ${props => props.theme.main.accent};
+  background-color: ${props => props.theme.classic.main.accent};
   height: 2px;
   margin-top: -2px;
 `;

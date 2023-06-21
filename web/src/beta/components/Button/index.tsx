@@ -61,11 +61,11 @@ const Button: React.FC<Props> = ({
       onMouseLeave={onMouseLeave}>
       {!iconRight && WrappedIcon}
       {large ? (
-        <Text size="m" weight="bold" customColor>
+        <Text size="h5" weight="bold" customColor>
           {text}
         </Text>
       ) : (
-        <Text size="xs" customColor>
+        <Text size="footnote" customColor>
           {text}
         </Text>
       )}
@@ -90,28 +90,28 @@ const StyledButton = styled.button<ButtonProps>`
   border-color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.buttonDanger.disabled
-        : theme.buttonDanger.color
+        ? theme.general.button.danger.disable
+        : theme.general.button.danger.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.buttonSecondary.disabled
-        : theme.buttonSecondary.color
+        ? theme.general.button.secondary.disable
+        : theme.general.button.secondary.main
       : disabled
-      ? theme.buttonPrimary.disabled
-      : theme.buttonPrimary.color};
+      ? theme.general.button.primary.disable
+      : theme.general.button.primary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.buttonDanger.disabled
-        : theme.buttonDanger.color
+        ? theme.general.button.danger.contentDisable
+        : theme.general.button.danger.content
       : buttonType === "secondary"
       ? disabled
-        ? theme.buttonSecondary.disabled
-        : theme.buttonSecondary.color
+        ? theme.general.button.secondary.contentDisable
+        : theme.general.button.secondary.content
       : disabled
-      ? theme.buttonPrimary.disabled
-      : theme.buttonPrimary.color};
+      ? theme.general.button.primary.contentDisable
+      : theme.general.button.primary.content};
   padding: ${({ large }) =>
     large
       ? `${metricsSizes["s"]}px ${metricsSizes["2xl"]}px`
@@ -131,22 +131,22 @@ const StyledButton = styled.button<ButtonProps>`
       disabled
         ? "inherit"
         : buttonType === "danger"
-        ? theme.buttonDanger.bgHover
+        ? theme.general.button.danger.hover
         : buttonType === "secondary"
-        ? theme.buttonSecondary.bgHover
-        : theme.buttonPrimary.bgHover};
+        ? theme.general.button.secondary.hover
+        : theme.general.button.primary.hover};
     color: ${({ buttonType, disabled, theme }) =>
       buttonType === "danger"
         ? disabled
-          ? theme.buttonDanger.disabled
-          : theme.buttonDanger.colorHover
+          ? theme.general.button.danger.contentDisable
+          : theme.general.button.danger.contentHover
         : buttonType === "secondary"
         ? disabled
-          ? theme.buttonSecondary.disabled
-          : theme.buttonSecondary.colorHover
+          ? theme.general.button.secondary.contentDisable
+          : theme.general.button.secondary.contentHover
         : disabled
-        ? theme.buttonPrimary.disabled
-        : theme.buttonPrimary.colorHover};
+        ? theme.general.button.primary.contentDisable
+        : theme.general.button.primary.contentHover};
   }
 `;
 

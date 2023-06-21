@@ -1,6 +1,6 @@
 {
     "name": "@reearth/web",
-    "version": "0.16.3",
+    "version": "0.16.4",
     "repository": "https://github.com/reearth/reearth.git",
     "author": "Re:Earth contributors <community@reearth.io>",
     "license": "Apache-2.0",
@@ -112,6 +112,7 @@
         "@ungap/event-target": "0.2.4",
         "apollo-link-sentry": "3.2.3",
         "apollo-upload-client": "17.0.0",
+        "aws-amplify": "5.2.2",
         "array-move": "4.0.0",
         "axios": "1.4.0",
         "cesium": "1.105.2",

@@ -80,11 +80,11 @@ const Title = styled.div<{ selected?: boolean; linked?: boolean; overridden?: bo
   color: ${({ selected, overridden, linked, theme }) =>
     selected
       ? overridden
-        ? theme.main.danger
+        ? theme.classic.main.danger
         : linked
-        ? theme.main.link
-        : theme.main.text
-      : theme.main.paleBg};
+        ? theme.classic.main.link
+        : theme.classic.main.text
+      : theme.classic.main.paleBg};
 `;
 
 export default LayerField;

@@ -1,11 +1,11 @@
+import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { typographyStyles } from "@reearth/classic/util/value";
 import { styled } from "@reearth/services/theme";
-import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import type { InfoboxProperty } from "../Infobox";
 
 export const Title = styled.div<{ infoboxProperty?: InfoboxProperty }>`
-  color: ${props => props.theme.infoBox.mainText};
+  color: ${props => props.theme.classic.infoBox.mainText};
   font-size: ${fonts.sizes.xs}px;
   ${({ infoboxProperty }) => typographyStyles(infoboxProperty?.default?.typography)}
 `;
@@ -20,9 +20,9 @@ export const Border = styled.div<{
       (!isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.infoBox.border
+        ? theme.classic.infoBox.border
         : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
+        ? theme.classic.infoBox.accent2
+        : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;

@@ -6,9 +6,9 @@ import Text from "@reearth/classic/components/atoms/Text";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/classic/components/molecules/Settings/Project/ChangeSiteNameModal";
 import Section from "@reearth/classic/components/molecules/Settings/Section";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import useHooks, { Status } from "./hooks";
 
@@ -72,7 +72,7 @@ const PublishSection: React.FC<Props> = ({
     <>
       <Wrapper>
         <Section title={t("Site settings")}>
-          <StyledText size="m" color={theme.main.strongText}>
+          <StyledText size="m" color={theme.classic.main.strongText}>
             {t("Site name")}
           </StyledText>
           <Text size="s">
@@ -124,7 +124,7 @@ const PublishSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
   position: relative;
 `;
 
@@ -138,11 +138,11 @@ const StyledItem = styled(Field)`
 
 const StyledIcon = styled(Icon)`
   cursor: pointer;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   margin-left: ${`${metricsSizes["m"]}px`};
 
   &:hover {
-    color: ${props => props.theme.main.strongText};
+    color: ${props => props.theme.classic.main.strongText};
   }
 `;
 

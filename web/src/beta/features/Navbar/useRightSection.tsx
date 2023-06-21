@@ -57,9 +57,7 @@ const RightSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-  padding-right: 24px;
   gap: 4px;
-  width: 301px;
   height: 35px;
 `;
 
