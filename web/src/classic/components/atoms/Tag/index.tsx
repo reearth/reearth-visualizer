@@ -27,7 +27,7 @@ const Tag: React.FC<Props> = ({ className, id, label, icon, onRemove }) => {
         <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
           <Icon
             icon={icon}
-            color={theme.text.default}
+            color={theme.classic.text.default}
             data-testid="atoms-tag-icon"
             alt="tag-icon"
             size={12}
@@ -40,8 +40,8 @@ const Tag: React.FC<Props> = ({ className, id, label, icon, onRemove }) => {
 
 const Wrapper = styled(Flex)`
   box-shadow: ${({ theme }) =>
-    `0px 4px 4px${theme.descriptionBalloon.shadowColor}`}; //TODO: don't use balloon's color
-  padding: ${({ theme }) => `${theme.metrics.xs}px`};
+    `0px 4px 4px${theme.classic.descriptionBalloon.shadowColor}`}; //TODO: don't use balloon's color
+  padding: ${({ theme }) => `${theme.classic.metrics.xs}px`};
   min-width: 60px;
   width: fit-content;
 `;

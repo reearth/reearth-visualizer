@@ -5,9 +5,9 @@ import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Slide from "@reearth/classic/components/atoms/Slide";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 import Header from "./Header";
 import useHooks from "./hooks";
@@ -88,10 +88,10 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isOverridden && isLinkable && (
             <>
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
-                <Text size="xs" color={theme.main.link}>
+                <Text size="xs" color={theme.classic.main.link}>
                   {linkedDataset ? t("Linkable data") : t("Link to dataset")}
                 </Text>
-                <Icon icon="arrowRight" size={16} color={theme.main.link} />
+                <Icon icon="arrowRight" size={16} color={theme.classic.main.link} />
               </Link>
               <Divider margin="0" />
             </>
@@ -99,7 +99,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isLinkable && ((!isOverridden && !isLinked) || (!linkedDataset && isTemplate)) && (
             <Text
               size="xs"
-              color={theme.main.weak}
+              color={theme.classic.main.weak}
               otherProperties={{ padding: `${metricsSizes["s"]}px` }}>
               {t("No linked data")}
             </Text>
@@ -107,7 +107,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
           {!isLinkable && isLinked && !isOverridden && !isTemplate && (
             <Text
               size="xs"
-              color={theme.main.strongText}
+              color={theme.classic.main.strongText}
               otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
               {t("From")}
             </Text>
@@ -116,12 +116,14 @@ const PropertyLinkPanel: React.FC<Props> = ({
             {!isLinkable && linkedFieldName ? (
               <LinkedDataDetailContent>
                 {isOverridden && (
-                  <Text size="xs" color={theme.main.warning}>
+                  <Text size="xs" color={theme.classic.main.warning}>
                     {t("Overridden")}
                   </Text>
                 )}
                 {((isLinked && !linkedDataset && !isTemplate) || isOverridden) && (
-                  <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.link}>
+                  <Text
+                    size="xs"
+                    color={isOverridden ? theme.classic.main.weak : theme.classic.main.link}>
                     {t("Parent.")}
                     {linkedFieldName}
                   </Text>
@@ -130,7 +132,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                   <>
                     <Text
                       size="xs"
-                      color={isOverridden ? theme.main.weak : theme.main.link}
+                      color={isOverridden ? theme.classic.main.weak : theme.classic.main.link}
                       otherProperties={{
                         textDecoration: "underline",
                         overflow: "hidden",
@@ -139,7 +141,9 @@ const PropertyLinkPanel: React.FC<Props> = ({
                       }}>
                       {selectedDatasetPath.join("/")}
                     </Text>
-                    <Text size="xs" color={isOverridden ? theme.main.weak : theme.main.link}>
+                    <Text
+                      size="xs"
+                      color={isOverridden ? theme.classic.main.weak : theme.classic.main.link}>
                       {selectedDatasetPath[selectedDatasetPath.length - 1]}
                     </Text>
                   </>
@@ -149,10 +153,10 @@ const PropertyLinkPanel: React.FC<Props> = ({
           </LinkedData>
           <Divider margin="0" />
           <Link align="center" justify="space-between" onClick={clear}>
-            <Text size="xs" color={theme.main.danger}>
+            <Text size="xs" color={theme.classic.main.danger}>
               {isOverridden ? t("Reset this field") : t("Clear this field")}
             </Text>
-            <Icon icon="fieldClear" size={16} color={theme.main.danger} />
+            <Icon icon="fieldClear" size={16} color={theme.classic.main.danger} />
           </Link>
         </FirstSlidePage>
         {!fixedDatasetSchemaId && (
@@ -180,12 +184,12 @@ const PropertyLinkPanel: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  background-color: ${({ theme }) => theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.classic.main.lighterBg};
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   width: 200px;
   height: 200px;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${props => props.theme.classic.zIndexes.propertyFieldPopup};
 `;
 
 const SlidePage = styled.div`

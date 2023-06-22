@@ -151,7 +151,7 @@ const Infobox: React.FC<Props> = ({
               renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)}
           </AdditionButton>
           <NoContentInfo>
-            <InnerWrapper size="xs" color={theme.infoBox.weakText}>
+            <InnerWrapper size="xs" color={theme.classic.infoBox.weakText}>
               <StyledIcon icon="arrowLong" />
               <span>{t(`Move mouse here and click "+" to add content`)}</span>
             </InnerWrapper>
@@ -165,7 +165,7 @@ const Infobox: React.FC<Props> = ({
 const NoContentInfo = styled.div`
   display: flex;
   justify-content: center;
-  color: ${props => props.theme.main.weak};
+  color: ${props => props.theme.classic.main.weak};
   text-align: left;
 `;
 

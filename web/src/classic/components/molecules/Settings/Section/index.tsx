@@ -3,8 +3,8 @@ import { ReactNode } from "react";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
 
 export type Props = {
   children?: ReactNode;
@@ -21,14 +21,14 @@ const Section: React.FC<Props> = ({ title, subtitle, actions, children }) => {
         <>
           <SectionHeader justify="space-between">
             <Flex direction="column">
-              <Text size="l" weight="normal" color={theme.main.strongText}>
+              <Text size="l" weight="normal" color={theme.classic.main.strongText}>
                 {title}
               </Text>
               {subtitle && (
                 <Text
                   size="s"
                   weight="normal"
-                  color={theme.main.text}
+                  color={theme.classic.main.text}
                   otherProperties={{ marginTop: metricsSizes["2xs"] + "px" }}>
                   {subtitle}
                 </Text>

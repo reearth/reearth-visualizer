@@ -1,8 +1,9 @@
 const colors = {
   general: {
-    transparent: "transparent",
-    transparentLight: "rgba(0,0,0,0.4)",
+    black: "#000000",
+    white: "#FFFFFF",
     transparentBlack: "rgba(0,0,0,0.7)",
+    transparentLight: "rgba(0,0,0,0.4)",
   },
   brand: {
     blue: {
@@ -17,10 +18,6 @@ const colors = {
       main: "#E95518",
       main50: "#E9551880",
       strong: "#F57C4B",
-    },
-    bg: {
-      1: "#1e2086",
-      2: "#df3013",
     },
   },
 };

@@ -7,9 +7,9 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme, metrics, css } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import { styled, useTheme, css } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 
 import ProjectTypeSelectionModal from "../Common/ProjectTypeSelectionModal";
@@ -70,7 +70,7 @@ const QuickStart: React.FC<Props> = ({
   return (
     <StyledDashboardBlock className={className} grow={4}>
       <Content direction="column" justify="space-around">
-        <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
+        <Text size={isSmallWindow ? "m" : "l"} color={theme.classic.main.text} weight="bold">
           {t("Quick Start")}
         </Text>
         {documentationUrl && (
@@ -147,7 +147,7 @@ const Content = styled(Flex)`
   min-width: ${metrics.dashboardQuickMinWidth}px;
   height: ${metrics.dashboardContentHeight}px;
   padding: ${metricsSizes.xl}px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   @media only screen and (max-width: 1024px) {
     height: ${metrics.dashboardContentSmallHeight}px;
@@ -164,14 +164,14 @@ const BannerButtonStyles = css`
 
 const LongBannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.main.paleBg};
+  background: ${props => props.theme.classic.main.paleBg};
   width: 100%;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   height: 70px;
 
   &:hover {
-    background: ${props => props.theme.main.bg};
-    color: ${props => props.theme.main.strongText};
+    background: ${props => props.theme.classic.main.bg};
+    color: ${props => props.theme.classic.main.strongText};
   }
 
   @media only screen and (max-width: 1024px) {
@@ -181,14 +181,14 @@ const LongBannerButton = styled(Flex)`
 
 const BannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.main.paleBg};
-  color: ${props => props.theme.main.text};
+  background: ${props => props.theme.classic.main.paleBg};
+  color: ${props => props.theme.classic.main.text};
   width: 48%;
   height: 114px;
 
   &:hover {
-    background: ${props => props.theme.main.bg};
-    color: ${props => props.theme.main.strongText};
+    background: ${props => props.theme.classic.main.bg};
+    color: ${props => props.theme.classic.main.strongText};
   }
 
   @media only screen and (max-width: 1024px) {
@@ -199,7 +199,7 @@ const BannerButton = styled(Flex)`
 const HeroBannerButton = styled(Flex)<{ linearGradient?: string }>`
   ${BannerButtonStyles};
   position: relative;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: ${({ theme }) => theme.classic.zIndexes.base};
   overflow: hidden;
 
   padding: 120px auto;
@@ -216,15 +216,15 @@ const HeroBannerButton = styled(Flex)<{ linearGradient?: string }>`
     background: ${({ linearGradient, theme }) =>
       linearGradient
         ? linearGradient
-        : `linear-gradient(140deg, ${theme.main.brandRed} 20%, ${theme.main.brandBlue} 60%)`};
+        : `linear-gradient(140deg, ${theme.classic.main.brandRed} 20%, ${theme.classic.main.brandBlue} 60%)`};
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;
-    z-index: ${({ theme }) => theme.zIndexes.hidden};
+    z-index: ${({ theme }) => theme.classic.zIndexes.hidden};
   }
 
   :hover {
-    color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
+    color: ${({ theme }) => theme.classic.dashboard.heroButtonTextHover};
   }
 
   &:hover:before {

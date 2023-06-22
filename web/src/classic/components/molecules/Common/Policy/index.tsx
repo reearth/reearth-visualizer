@@ -99,9 +99,9 @@ const PolicyText = styled(Text)<{ clickable?: boolean }>`
 
 const PolicyLink = styled.a`
   text-decoration: none;
-  color: ${({ theme }) => theme.main.accent};
+  color: ${({ theme }) => theme.classic.main.accent};
 
   :hover {
-    color: ${({ theme }) => theme.main.select};
+    color: ${({ theme }) => theme.classic.main.select};
   }
 `;

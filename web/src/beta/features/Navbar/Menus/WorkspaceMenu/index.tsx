@@ -49,8 +49,8 @@ const WorkspaceMenu: React.FC<Props> = ({
               onClick={() => workspace.id && handleWorkspaceChange(workspace.id)}>
               <TeamStatus align="center" justify="space-between">
                 <Text
-                  size="m"
-                  color={theme.main.text}
+                  size="h5"
+                  color={theme.general.content.main}
                   otherProperties={{
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -97,7 +97,7 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   margin-left: 4px;
   order: 2;
-  background-color: ${({ theme }) => theme.main.highlighted};
+  background-color: ${({ theme }) => theme.general.select};
 `;
 
 export default WorkspaceMenu;
