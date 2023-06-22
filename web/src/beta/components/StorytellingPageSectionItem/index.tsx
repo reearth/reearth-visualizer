@@ -32,12 +32,14 @@ const StorytellingPageSectionItem: FC<Props> = ({
       <TitleArea active={active}>
         <Text
           onClick={onClick}
-          size={"footnote"}
+          size="footnote"
           color={theme.general.content.strong}
           otherProperties={{ wordBreak: "break-all" }}>
           {title}
         </Text>
-        <Icon icon="actionbutton" onClick={onAction} />
+        <Wrapper>
+          <Icon icon="actionbutton" onClick={onAction} />
+        </Wrapper>
       </TitleArea>
     </HorizontalBox>
   );
@@ -69,6 +71,10 @@ const TitleArea = styled.div<{ active?: boolean }>`
   border-radius: 6px;
 
   width: 100%;
+`;
+
+const Wrapper = styled.div`
+  height: 100%;
 `;
 
 export default StorytellingPageSectionItem;
