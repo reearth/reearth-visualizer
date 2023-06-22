@@ -83,14 +83,14 @@ export default () => {
   );
 
   useEffect(() => {
-    if (!currentWorkspace && lastWorkspace && workspaceId == lastWorkspace.id)
-      setWorkspace(lastWorkspace);
-    else {
-      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
-      setWorkspace(workspace);
-      setLastWorkspace(workspace);
-    }
-  }, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
+  if (currentWorkspace || !lastWorkspace || workspaceId !== lastWorkspace.id) {
+    const workspace = workspaces?.find((workspace) => workspace.id === workspaceId);
+    setWorkspace(workspace);
+    setLastWorkspace(workspace);
+  } else {
+    setWorkspace(lastWorkspace);
+  }
+}, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
 
   useEffect(() => {
     setValidAlias(
