@@ -111,6 +111,7 @@ export type EngineProps = {
     layerId?: string;
     featureId?: string;
   };
+  featureFlags: number;
   layerSelectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;

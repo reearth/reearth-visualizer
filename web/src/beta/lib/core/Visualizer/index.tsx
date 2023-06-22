@@ -12,6 +12,7 @@ import Crust, {
   type InternalWidget,
   WidgetAreaType,
   BuiltinWidgets,
+  InteractionModeType,
 } from "../Crust";
 import { Tag } from "../mantle";
 import Map, {
@@ -57,6 +58,7 @@ export type Props = {
   layers?: Layer[];
   clusters?: Cluster[];
   camera?: Camera;
+  interactionMode?: InteractionModeType;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
@@ -128,6 +130,7 @@ export default function Visualizer({
   selectedWidgetArea,
   hiddenLayers,
   camera: initialCamera,
+  interactionMode: initialInteractionMode,
   meta,
   style,
   pluginBaseUrl,
@@ -159,6 +162,8 @@ export default function Visualizer({
     selectedComputedFeature,
     viewport,
     camera,
+    interactionMode,
+    featureFlags,
     isMobile,
     overriddenSceneProperty,
     overriddenClock,
@@ -169,6 +174,7 @@ export default function Visualizer({
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
+    handleInteractionModeChange,
     handleLayerDrag,
     handleLayerDrop,
     overrideSceneProperty,
@@ -179,6 +185,7 @@ export default function Visualizer({
     rootLayerId,
     isEditable,
     camera: initialCamera,
+    interactionMode: initialInteractionMode,
     selectedBlockId,
     sceneProperty,
     zoomedLayerId,
@@ -211,6 +218,8 @@ export default function Visualizer({
           overriddenClock={overriddenClock}
           blocks={infobox?.blocks}
           camera={camera}
+          interactionMode={interactionMode}
+          overrideInteractionMode={handleInteractionModeChange}
           isMobile={isMobile}
           selectedWidgetArea={selectedWidgetArea}
           selectedComputedLayer={selectedLayer?.layer}
@@ -257,6 +266,7 @@ export default function Visualizer({
           isLayerDraggable={isEditable}
           meta={meta}
           style={style}
+          featureFlags={featureFlags}
           shouldRender={shouldRender}
           // overrides={overrides} // not used for now
           property={overriddenSceneProperty}
