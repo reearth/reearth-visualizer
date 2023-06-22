@@ -99,7 +99,7 @@
     "dependencies": {
         "@apollo/client": "3.7.14",
         "@auth0/auth0-react": "2.1.0",
-        "@aws-amplify/ui-react": "^5.0.2",
+        "@aws-amplify/ui-react": "5.0.2",
         "@emotion/react": "11.11.0",
         "@emotion/styled": "11.11.0",
         "@floating-ui/react-dom": "2.0.0",
