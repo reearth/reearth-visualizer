@@ -52,7 +52,7 @@ const Header: React.FC<Props> = ({ className }) => {
         currentProject={currentProject}
         user={user}
         workspaces={workspaces}
-        teamId={workspaceId}
+        workspaceId={workspaceId}
         currentWorkspace={currentWorkspace}
         modalShown={workspaceModalVisible}
         onPublishmentStatusClick={handlePublicationModalOpen}
