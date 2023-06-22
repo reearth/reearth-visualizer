@@ -12,21 +12,21 @@ type SwitchAdditionalField = SwitchField<AdditionalField>;
 
 export type Props = {
   list: SwitchAdditionalField[];
-  onChange?: (id: string) => void;
+  onClick?: (id: string) => void;
 };
-const SwitchButtonList: FC<Props> = ({ list, onChange }) => {
+const SwitchButtonList: FC<Props> = ({ list, onClick }) => {
   const theme = useTheme();
   const { handleActivate, fields } = useManageSwitchState({ fields: list });
   const handleClick = (id: string) => {
     handleActivate(id);
-    onChange?.(id);
+    onClick?.(id);
   };
   return (
     <>
       {fields.map((item, index) => (
         <SwitchButton
-          key={index}
-          disabled={item.active || false}
+          key={item.id}
+          disabled={!!item?.active}
           onClick={() => handleClick(item.id)}
           first={index === 0}
           end={index === fields.length - 1}>
@@ -53,6 +53,9 @@ const SwitchButton = styled.button<{
     props.first ? "4px 0px 0px 4px" : props.end ? "0px 4px 4px 0px" : "0px"};
   :hover {
     background: ${props => props.theme.general.select};
+    transition: all 0.5s ease;
+  }
+  :not(:hover) {
     transition: all 0.5s ease;
   }
 `;
