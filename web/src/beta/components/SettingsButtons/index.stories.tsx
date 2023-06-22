@@ -10,7 +10,7 @@ export default {
 type Story = StoryObj<typeof SettingsButtons>;
 
 const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <div style={{ width: "96px" }}>{children}</div>
+  <div style={{ display: "flex" }}>{children}</div>
 );
 
 export const Default: Story = {

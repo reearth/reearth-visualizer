@@ -1,5 +1,3 @@
-import React from "react";
-
 import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
