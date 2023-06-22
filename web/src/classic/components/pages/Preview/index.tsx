@@ -5,7 +5,7 @@ import CanvasArea from "@reearth/classic/components/organisms/EarthEditor/Canvas
 import CoreCanvasArea from "@reearth/classic/components/organisms/EarthEditor/core/CanvasArea";
 import { useCore } from "@reearth/classic/util/use-core";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
-import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/services/auth";
+import { withAuthorisation, AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useSceneId } from "@reearth/services/state";
 import { PublishedAppProvider as ThemeProvider } from "@reearth/services/theme";
 
@@ -33,4 +33,6 @@ const PreviewPage: React.FC<Props> = () => {
   ) : null;
 };
 
-export default withAuthenticationRequired(PreviewPage);
+const withAuthenticationFun = withAuthorisation();
+
+export default withAuthenticationFun(PreviewPage);

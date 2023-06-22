@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import Plugin from "@reearth/classic/components/organisms/Settings/Project/Plugin";
-import { withAuthenticationRequired } from "@reearth/services/auth";
+import { withAuthorisation } from "@reearth/services/auth";
 
 export type Props = {
   path?: string;
@@ -13,4 +13,6 @@ const PluginPage: React.FC<Props> = () => {
   return <Plugin projectId={projectId} />;
 };
 
-export default withAuthenticationRequired(PluginPage);
+const withAuthenticationFun = withAuthorisation();
+
+export default withAuthenticationFun(PluginPage);

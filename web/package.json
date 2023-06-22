@@ -99,6 +99,7 @@
     "dependencies": {
         "@apollo/client": "3.7.14",
         "@auth0/auth0-react": "2.1.0",
+        "@aws-amplify/ui-react": "^5.0.2",
         "@emotion/react": "11.11.0",
         "@emotion/styled": "11.11.0",
         "@floating-ui/react-dom": "2.0.0",
@@ -112,8 +113,8 @@
         "@ungap/event-target": "0.2.4",
         "apollo-link-sentry": "3.2.3",
         "apollo-upload-client": "17.0.0",
-        "aws-amplify": "5.2.2",
         "array-move": "4.0.0",
+        "aws-amplify": "5.2.2",
         "axios": "1.4.0",
         "cesium": "1.105.2",
         "cesium-dnd": "1.1.0",
