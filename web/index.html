@@ -17,3 +17,10 @@
 </body>
 
 </html>
+
+<script>
+  // https://github.com/aws-amplify/amplify-js/issues/678
+  if (global === undefined) {
+    var global = window;
+  }
+</script>

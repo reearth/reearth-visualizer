@@ -23,6 +23,7 @@ import type {
 } from "@reearth/beta/lib/core/Map";
 
 import { Block } from "../Infobox";
+import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
 import { CommonReearth } from "./api";
@@ -52,6 +53,7 @@ export type Reearth = {
   readonly engineName?: string;
   readonly camera: Undefinable<Camera>;
   readonly clock?: Clock;
+  readonly interactionMode?: InteractionMode;
   readonly ui: UI;
   readonly modal: Modal;
   readonly popup: Popup;
@@ -167,6 +169,11 @@ export type Clock = {
   readonly tick?: () => Date | void;
   readonly play?: () => void;
   readonly pause?: () => void;
+};
+
+export type InteractionMode = {
+  override?: (mode: InteractionModeType) => void;
+  mode: InteractionModeType;
 };
 
 export type PluginMessage = {
