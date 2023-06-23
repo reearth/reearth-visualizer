@@ -43,6 +43,10 @@ export type Theme = {
       main: string;
       strong: string;
     };
+    publishStatus: {
+      unpublished: string;
+      published: string;
+    };
   };
   dashboard: {
     workspace: unknown;

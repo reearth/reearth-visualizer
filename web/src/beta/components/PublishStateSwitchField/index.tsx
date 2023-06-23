@@ -1,45 +1,31 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import Icon from "../Icon";
-import Text from "../Text";
-
-type Props = {
-  list: string[];
-  selected?: string;
-  onChange?: (label: string) => void;
-};
-
-const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
+const PublishStateSwitchField: React.FC = () => {
+  const labels = ["Unpublished", "Published"];
   const [open, setOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("Unpublished");
   const theme = useTheme();
 
   return (
     <Dropdown>
       <SelectedState onClick={() => setOpen(o => !o)}>
-        <StatusCircle />
-        <Text color={theme.general.button.secondary.main} size="footnote">
-          {selected ? selected : list[0]}
-        </Text>
-        <Icon
-          icon={"arrowDown"}
-          size={16}
-          style={{
-            color: theme.general.button.secondary.main,
-          }}
-        />
+        <StatusCircle isActive={selectedLabel === "Published"} />
+        <StyledText color={theme.general.button.secondary.main} size="footnote">
+          {selectedLabel}
+        </StyledText>
+        <StyledIcon icon={"arrowDown"} size={16} />
       </SelectedState>
       {open && (
         <StateLists onClick={() => setOpen(o => !o)}>
           <ListWrapper>
-            {list.map((value, index) => (
-              <ListItem key={index}>
+            {labels.map(value => (
+              <ListItem key={value} onClick={() => setSelectedLabel(value)}>
                 <MenuItemWrapper>
-                  <Text
-                    color={theme.general.button.secondary.main}
-                    size={"footnote"}
-                    onClick={() => onChange?.(value)}>
+                  <Text color={theme.general.button.secondary.main} size={"footnote"}>
                     {value}
                   </Text>
                 </MenuItemWrapper>
@@ -53,8 +39,9 @@ const PublishStateSwitchField: FC<Props> = ({ list, onChange, selected }) => {
 };
 const Dropdown = styled.div`
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 24px;
+  width: 154px;
+  cursor: pointer;
 `;
 
 const SelectedState = styled.div`
@@ -68,7 +55,6 @@ const SelectedState = styled.div`
   width: 100%;
 
   border: 1px solid ${props => props.theme.general.bg.transparent};
-  border-radius: 6px;
   background: ${props => props.theme.general.bg.veryStrong};
 
   &:hover {
@@ -76,11 +62,24 @@ const SelectedState = styled.div`
   }
 `;
 
-const StatusCircle = styled.object`
+const StyledText = styled(Text)`
+  width: 74px;
+  height: 16px;
+`;
+
+const StyledIcon = styled(Icon)`
+  width: 16px;
+  color: ${props => props.theme.general.button.secondary.main};
+`;
+
+const StatusCircle = styled.object<{ isActive: boolean }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${props => props.theme.general.button.secondary.contentDisable};
+  background: ${props =>
+    props.isActive
+      ? props.theme.general.publishStatus.published
+      : props.theme.general.publishStatus.unpublished};
 `;
 
 const StateLists = styled.div`

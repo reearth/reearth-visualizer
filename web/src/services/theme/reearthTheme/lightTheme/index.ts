@@ -48,6 +48,10 @@ const lightTheme: Theme = {
       main: colors.text.main,
       strong: colors.text.strong,
     },
+    publishStatus: {
+      unpublished: colors.secondary.weakest,
+      published: colors.functional.success,
+    },
   },
   dashboard: {
     workspace: {},
