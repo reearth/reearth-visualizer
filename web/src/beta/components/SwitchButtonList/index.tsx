@@ -1,9 +1,8 @@
 import type { FC } from "react";
 
+import Text from "@reearth/beta/components/Text";
+import useManageSwitchState, { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
-
-import useManageSwitchState, { SwitchField } from "../../hooks/useManageSwitchState/hooks";
-import Text from "../Text";
 
 type AdditionalField = {
   text: string;
