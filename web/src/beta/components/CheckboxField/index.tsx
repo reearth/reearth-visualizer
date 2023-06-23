@@ -1,9 +1,6 @@
-import type { FC } from "react";
-
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
-
-import Icon from "../Icon";
-import Text from "../Text";
 
 export type Props = {
   onClick?: (value: boolean) => void;
@@ -11,13 +8,11 @@ export type Props = {
   label: string;
 };
 
-const CheckBoxField: FC<Props> = ({ onClick, checked, label }) => {
+const CheckBoxField: React.FC<Props> = ({ onClick, checked, label }) => {
   const theme = useTheme();
   return (
-    <Field>
-      <BoxFeild onClick={() => onClick?.(checked !== undefined ? checked : false)}>
-        {checked && <CheckMark icon="checkmark" />}
-      </BoxFeild>
+    <Field onClick={() => onClick?.(checked !== undefined ? checked : false)}>
+      <BoxField>{checked && <CheckMark icon="checkmark" />}</BoxField>
       {label && (
         <Text size="footnote" color={theme.general.content.main}>
           {label}
@@ -27,7 +22,7 @@ const CheckBoxField: FC<Props> = ({ onClick, checked, label }) => {
   );
 };
 
-const Field = styled.div`
+const Field = styled.button`
   display: flex;
   align-items: center;
   gap: 12px;
@@ -35,7 +30,10 @@ const Field = styled.div`
   height: 20px;
 `;
 
-const BoxFeild = styled.button`
+const BoxField = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
   width: 20px;
   height: 20px;
@@ -44,10 +42,8 @@ const BoxFeild = styled.button`
 `;
 
 const CheckMark = styled(Icon)`
-  padding-left: 15%;
-  padding-right: 10%;
-  padding-top: 25%;
-  padding-bottom: 20.83%;
+  width: 15px;
+  height: 10.83px;
   color: ${({ theme }) => theme.general.content.main};
 `;
 
