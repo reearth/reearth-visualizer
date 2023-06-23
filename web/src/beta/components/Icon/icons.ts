@@ -46,6 +46,10 @@ import Logout from "./Icons/logout.svg";
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
+// Square
+import Square from "./Icons/square.svg";
+import TwoRectangle from "./Icons/two-rectangle.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -68,7 +72,9 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  square: Square,
   timeline: Timeline,
+  twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
   dashboard: Dashboard,
   help: Help,
