@@ -74,7 +74,7 @@ const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
 };
 
 const CACHED_COMPONENTS = new LRUCache<string, JSX.Element>({ max: 10000 });
-const FEATURE_DELEGATE_THRESHOLD = 6000;
+const FEATURE_DELEGATE_THRESHOLD = 13000;
 
 export default function Feature({
   layer,
