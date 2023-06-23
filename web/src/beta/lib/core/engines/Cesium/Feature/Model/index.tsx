@@ -6,6 +6,7 @@ import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
+import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -62,6 +63,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     silhouetteColor,
     bearing,
     silhouetteSize = 1,
+    pbr,
   } = property ?? {};
 
   const actualUrl = useMemo(() => model || url || data?.url, [model, url, data?.url]);
@@ -107,6 +109,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
         uri={actualUrl}
         scale={scale}
         shadows={shadowMode(shadows)}
+        customShader={!pbr ? NonPBRLightingShader : undefined}
         colorBlendMode={colorBlendMode(colorBlend)}
         colorBlendAmount={colorBlendAmount}
         color={modelColor}
