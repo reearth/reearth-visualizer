@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 
@@ -9,21 +9,9 @@ type Props = {
 };
 
 const InsertionButton: FC<Props> = ({ onClick }) => {
-  const theme = useTheme();
-
   return (
     <Box onClick={onClick}>
-      <Icon
-        icon={"plus"}
-        style={{
-          width: "9.75px",
-          height: "9.75px",
-          background: theme.general.select,
-          borderRadius: "50%",
-          padding: "2px",
-          color: theme.general.bg.transparent,
-        }}
-      />
+      <StyledIcon icon={"plus"} size={9.75} />
       <Border />
     </Box>
   );
@@ -39,8 +27,11 @@ const Box = styled.div`
   border-radius: 6px;
   opacity: 0;
 
-  &:hover {
+  :hover {
     opacity: 1;
+    transition: all 0.5s ease;
+  }
+  :not(:hover) {
     transition: all 0.5s ease;
   }
   cursor: pointer;
@@ -53,4 +44,12 @@ const Border = styled.object`
   background: ${props => props.theme.general.select};
   border-radius: 1px;
 `;
+
+const StyledIcon = styled(Icon)`
+  background: ${props => props.theme.general.select};
+  border-radius: 50%;
+  padding: 2px;
+  color: ${props => props.theme.general.bg.transparent};
+`;
+
 export default InsertionButton;
