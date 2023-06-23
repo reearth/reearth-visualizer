@@ -14,8 +14,8 @@ export type Props = {
 
 const Header: React.FC<Props> = ({ className }) => {
   const {
-    teams = [],
-    teamId,
+    workspaces = [],
+    workspaceId,
     publicationModalVisible,
     searchIndex,
     publishing,
@@ -51,8 +51,8 @@ const Header: React.FC<Props> = ({ className }) => {
         currentProjectStatus={projectStatus}
         currentProject={currentProject}
         user={user}
-        workspaces={teams}
-        teamId={teamId}
+        workspaces={workspaces}
+        workspaceId={workspaceId}
         currentWorkspace={currentWorkspace}
         modalShown={workspaceModalVisible}
         onPublishmentStatusClick={handlePublicationModalOpen}
