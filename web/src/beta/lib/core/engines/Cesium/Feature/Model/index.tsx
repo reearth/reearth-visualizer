@@ -109,7 +109,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
         uri={actualUrl}
         scale={scale}
         shadows={shadowMode(shadows)}
-        customShader={!pbr ? NonPBRLightingShader : undefined}
+        customShader={pbr === false ? NonPBRLightingShader : undefined}
         colorBlendMode={colorBlendMode(colorBlend)}
         colorBlendAmount={colorBlendAmount}
         color={modelColor}
