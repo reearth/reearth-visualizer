@@ -31,6 +31,9 @@ import { ClientStorage } from "./useClientStorage";
 
 declare global {
   interface Window {
+    // This will be resolved when classic is removed
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Because of duplicated `window.reearth` definition
+    // @ts-ignore
     reearth?: CommonReearth;
   }
 }
