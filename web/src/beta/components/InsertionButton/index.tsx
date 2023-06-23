@@ -1,14 +1,11 @@
-import { FC } from "react";
-
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
-
-import Icon from "../Icon";
 
 type Props = {
   onClick?: () => void;
 };
 
-const InsertionButton: FC<Props> = ({ onClick }) => {
+const InsertionButton: React.FC<Props> = ({ onClick }) => {
   return (
     <Box onClick={onClick}>
       <StyledIcon icon={"plus"} size={9.75} />
