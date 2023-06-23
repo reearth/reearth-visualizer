@@ -18,6 +18,7 @@ import ArrowRight from "./Icons/arrowRight.svg";
 import ArrowLongLeft from "./Icons/arrowLongLeft.svg";
 import ArrowLongRight from "./Icons/arrowLongRight.svg";
 import ArrowDown from "./Icons/arrowDown.svg";
+import ArrowToggle from "./Icons/arrowToggle.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
@@ -60,6 +61,7 @@ export default {
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
   arrowDown: ArrowDown,
+  arrowToggle: ArrowToggle,
   cancel: Cancel,
   crosshair: Crosshair,
   plusSquare: PlusSquare,
