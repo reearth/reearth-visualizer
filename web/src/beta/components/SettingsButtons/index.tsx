@@ -16,14 +16,7 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
 
   return (
     <Wrapper>
-      <Icon
-        size={16}
-        style={{
-          padding: "2px",
-        }}
-        onClick={onBlock}
-        icon={icon}
-      />
+      <StyledMainIcon size={16} onClick={onBlock} icon={icon} />
       <Text
         size={"xFootnote"}
         color={theme.general.content.strong}
@@ -31,25 +24,8 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
         onClick={onBlock}>
         {title}
       </Text>
-      <Icon
-        size={12}
-        style={{
-          justifyItems: "center",
-          padding: "4px",
-          borderLeft: `0.5px solid ${theme.general.content.strong}`,
-        }}
-        icon={"editIcon"}
-        onClick={onEdit}
-      />
-      <Icon
-        size={12}
-        style={{
-          padding: "4px",
-          borderLeft: `0.5px solid ${theme.general.content.strong}`,
-        }}
-        icon={"settings"}
-        onClick={onSetting}
-      />
+      <StyledSubIcon size={12} icon={"editIcon"} onClick={onEdit} />
+      <StyledSubIcon size={12} icon={"settings"} onClick={onSetting} />
     </Wrapper>
   );
 };
@@ -60,6 +36,16 @@ const Wrapper = styled.div`
 
   height: 100%;
   background: ${props => props.theme.general.select};
+`;
+
+const StyledMainIcon = styled(Icon)`
+  padding: 2px;
+`;
+
+const StyledSubIcon = styled(Icon)`
+  padding: 4px;
+  justify-items: center;
+  border-left: 0.5px solid ${props => props.theme.general.content.strong};
 `;
 
 export default SettingsButtons;
