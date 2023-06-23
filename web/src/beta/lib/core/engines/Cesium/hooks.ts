@@ -41,6 +41,30 @@ import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
+const sphericalHarmonicCoefficientsScratch = [
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+];
+
+const debugSphericalHarmonicCoefficients = [
+  new Cartesian3(0.499745965003967, 0.499196201562881, 0.500154078006744),
+  new Cartesian3(0.265826553106308, -0.266099184751511, 0.265922993421555),
+  new Cartesian3(0.243236944079399, 0.266723394393921, -0.265380442142487),
+  new Cartesian3(-0.266895800828934, 0.265416264533997, 0.266921550035477),
+  new Cartesian3(0.000195000306121, -0.000644546060357, -0.000383183418307),
+  new Cartesian3(-0.000396036746679, -0.000622032093816, 0.000262127199676),
+  new Cartesian3(-0.000214280473301, 0.00004872302452, -0.000059724134189),
+  new Cartesian3(0.000107143961941, -0.000126510843984, -0.000425444566645),
+  new Cartesian3(-0.000069071611506, 0.000134039684781, -0.000119135256682),
+];
+
 export default ({
   ref,
   property,
@@ -129,6 +153,33 @@ export default ({
     property?.light?.lightDirectionZ,
     property?.light?.lightIntensity,
   ]);
+
+  // Image-based lighting
+
+  const scaledSphericalHarmonicCoefficients = useMemo(() => {
+    const sphericalHarmonicCoefficients = property?.light?.sphericalHarmonicCoefficient as
+      | Cartesian3[]
+      | undefined;
+    const imageBasedLightingIntensity = property?.light?.imageBasedLightIntensity ?? 1.0;
+    return property?.light?.debugSphericalHarmonicCoefficients
+      ? debugSphericalHarmonicCoefficients
+      : sphericalHarmonicCoefficients?.map((cartesian, index) =>
+          Cartesian3.multiplyByScalar(
+            cartesian,
+            imageBasedLightingIntensity,
+            sphericalHarmonicCoefficientsScratch[index],
+          ),
+        );
+  }, [
+    property?.light?.debugSphericalHarmonicCoefficients,
+    property?.light?.sphericalHarmonicCoefficient,
+    property?.light?.imageBasedLightIntensity,
+  ]);
+
+  const specularEnvironmentMaps = useMemo(
+    () => property?.light?.specularEnvironmentMaps,
+    [property?.light?.specularEnvironmentMaps],
+  );
 
   useEffect(() => {
     engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
@@ -610,6 +661,8 @@ export default ({
     mouseEventHandles,
     context,
     light,
+    scaledSphericalHarmonicCoefficients,
+    specularEnvironmentMaps,
     handleMount,
     handleUnmount,
     handleUpdate,
