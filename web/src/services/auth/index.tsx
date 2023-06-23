@@ -19,12 +19,12 @@ export const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
   ) : null;
 };
 
-export const withAuthorisation = (): ((props: any) => JSX.Element) => {
+export const withAuthorisation = (): ((props: any) => React.FC<any>) => {
   const authProvider = window.REEARTH_CONFIG?.authProvider;
 
   if (authProvider === "cognito") {
-    return withAuthenticator as unknown as (props: any) => JSX.Element;
+    return withAuthenticator as unknown as (props: any) => React.FC<any>;
   }
 
-  return withAuthenticationRequired as unknown as (props: any) => JSX.Element;
+  return withAuthenticationRequired as unknown as (props: any) => React.FC<any>;
 };
