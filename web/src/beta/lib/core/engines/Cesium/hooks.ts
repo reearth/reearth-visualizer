@@ -132,6 +132,19 @@ export default ({
     property?.light?.lightIntensity,
   ]);
 
+  // shadow map
+  useEffect(() => {
+    const shadowMap = cesium?.current?.cesiumElement?.shadowMap;
+    if (!shadowMap) return;
+    shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
+    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.5;
+    shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
+  }, [
+    property?.atmosphere?.softShadow,
+    property?.atmosphere?.shadowDarkness,
+    property?.atmosphere?.shadowResolution,
+  ]);
+
   useEffect(() => {
     engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
   }, [property?.default?.sceneMode, engineAPI]);
