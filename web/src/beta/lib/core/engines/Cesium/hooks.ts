@@ -137,7 +137,7 @@ export default ({
     const shadowMap = cesium?.current?.cesiumElement?.shadowMap;
     if (!shadowMap) return;
     shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
-    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.5;
+    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
     shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
   }, [
     property?.atmosphere?.softShadow,
