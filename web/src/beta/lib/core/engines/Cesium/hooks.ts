@@ -155,26 +155,24 @@ export default ({
   ]);
 
   // Image-based lighting
-
-  const scaledSphericalHarmonicCoefficients = useMemo(() => {
-    const sphericalHarmonicCoefficients = property?.light?.sphericalHarmonicCoefficient as
-      | Cartesian3[]
-      | undefined;
-    const imageBasedLightingIntensity = property?.light?.imageBasedLightIntensity ?? 1.0;
-    return property?.light?.debugSphericalHarmonicCoefficients
-      ? debugSphericalHarmonicCoefficients
-      : sphericalHarmonicCoefficients?.map((cartesian, index) =>
-          Cartesian3.multiplyByScalar(
-            cartesian,
-            imageBasedLightingIntensity,
-            sphericalHarmonicCoefficientsScratch[index],
+  const scaledSphericalHarmonicCoefficients = useMemo(
+    () =>
+      property?.light?.debugSphericalHarmonicCoefficients
+        ? debugSphericalHarmonicCoefficients
+        : (property?.light?.sphericalHarmonicCoefficient as Cartesian3[] | undefined)?.map(
+            (cartesian, index) =>
+              Cartesian3.multiplyByScalar(
+                cartesian,
+                property?.light?.imageBasedLightIntensity ?? 1.0,
+                sphericalHarmonicCoefficientsScratch[index],
+              ),
           ),
-        );
-  }, [
-    property?.light?.debugSphericalHarmonicCoefficients,
-    property?.light?.sphericalHarmonicCoefficient,
-    property?.light?.imageBasedLightIntensity,
-  ]);
+    [
+      property?.light?.debugSphericalHarmonicCoefficients,
+      property?.light?.sphericalHarmonicCoefficient,
+      property?.light?.imageBasedLightIntensity,
+    ],
+  );
 
   const specularEnvironmentMaps = useMemo(
     () => property?.light?.specularEnvironmentMaps,
