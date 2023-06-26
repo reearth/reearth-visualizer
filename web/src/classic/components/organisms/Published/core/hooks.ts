@@ -1,5 +1,5 @@
 import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import type { Block, ClusterProperty } from "@reearth/classic/components/molecules/Visualizer";
 import {
@@ -15,10 +15,7 @@ import {
   type LegacyLayer,
   convertLegacyCluster,
 } from "@reearth/classic/core/mantle";
-import type { ComputedLayer } from "@reearth/classic/core/mantle/types";
-import type { LayerSelectionReason } from "@reearth/classic/core/Map/Layers/hooks";
 import { config } from "@reearth/services/config";
-import { useSelected } from "@reearth/services/state";
 
 import type {
   PublishedData,
@@ -34,7 +31,6 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [selected, select] = useSelected();
 
   const sceneProperty = processProperty(data?.property);
   const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
@@ -57,22 +53,6 @@ export default (alias?: string) => {
   }, [data]);
 
   const tags = data?.tags; // Currently no need to convert tags
-
-  const selectedLayerId = useMemo(() => {
-    return selected?.type === "layer"
-      ? { layerId: selected.layerId, featureId: selected.featureId }
-      : undefined;
-  }, [selected]);
-
-  const selectLayer = useCallback(
-    (
-      id?: string,
-      featureId?: string,
-      _layer?: () => Promise<ComputedLayer | undefined>,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
-    [select],
-  );
 
   const widgets = useMemo<
     | {
@@ -237,8 +217,6 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
-    selectedLayerId,
-    selectLayer,
   };
 };
 

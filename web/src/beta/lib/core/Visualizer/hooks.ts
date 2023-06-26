@@ -5,7 +5,8 @@ import { useWindowSize } from "react-use";
 import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
-import type { Block, BuiltinWidgets } from "../Crust";
+import type { Block, BuiltinWidgets, InteractionModeType } from "../Crust";
+import { INTERACTION_MODES } from "../Crust/interactionMode";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
@@ -26,6 +27,7 @@ const viewportMobileMaxWidth = 768;
 export default function useHooks({
   selectedBlockId: initialSelectedBlockId,
   camera: initialCamera,
+  interactionMode: initialInteractionMode,
   sceneProperty,
   isEditable,
   rootLayerId,
@@ -34,11 +36,13 @@ export default function useHooks({
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
+  onInteractionModeChange,
   onZoomToLayer,
   onLayerDrop,
 }: {
   selectedBlockId?: string;
   camera?: Camera;
+  interactionMode?: InteractionModeType;
   isEditable?: boolean;
   rootLayerId?: string;
   sceneProperty?: SceneProperty;
@@ -52,6 +56,7 @@ export default function useHooks({
   ) => void;
   onBlockSelect?: (blockId?: string) => void;
   onCameraChange?: (camera: Camera) => void;
+  onInteractionModeChange?: (mode: InteractionModeType) => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) {
@@ -195,6 +200,16 @@ export default function useHooks({
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
+  // interaction mode
+  const [_interactionMode, changeInteractionMode] = useValue(
+    initialInteractionMode,
+    onInteractionModeChange,
+  );
+  const interactionMode = _interactionMode || "default";
+
+  // feature flags
+  const featureFlags = INTERACTION_MODES[interactionMode];
+
   // mobile
   const { width } = useWindowSize();
   const isMobile = width < viewportMobileMaxWidth;
@@ -254,6 +269,8 @@ export default function useHooks({
     selectedBlock,
     viewport,
     camera,
+    interactionMode,
+    featureFlags,
     isMobile,
     overriddenSceneProperty,
     overriddenClock,
@@ -264,6 +281,7 @@ export default function useHooks({
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
+    handleInteractionModeChange: changeInteractionMode,
     handleLayerDrag,
     handleLayerDrop,
     overrideSceneProperty,

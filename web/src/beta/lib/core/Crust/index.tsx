@@ -11,7 +11,14 @@ import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera } from "./types";
+import type {
+  ValueTypes,
+  ValueType,
+  MapRef,
+  SceneProperty,
+  Camera,
+  InteractionModeType,
+} from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -21,7 +28,7 @@ import Widgets, {
   type WidgetAreaType,
 } from "./Widgets";
 
-export type { ValueTypes, ValueType } from "./types";
+export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 
 export type { Block } from "./Infobox";
 
@@ -55,6 +62,8 @@ export type Props = {
   overriddenClock: Clock;
   viewport?: Viewport;
   camera?: Camera;
+  interactionMode: InteractionModeType;
+  overrideInteractionMode: (mode: InteractionModeType) => void;
   selectedComputedLayer?: ComputedLayer;
   selectedComputedFeature?: ComputedFeature;
   selectedFeature?: Feature;
@@ -122,6 +131,8 @@ export default function Crust({
   overriddenClock,
   viewport,
   camera,
+  interactionMode,
+  overrideInteractionMode,
   tags,
   selectedLayerId,
   selectedReason,
@@ -188,6 +199,8 @@ export default function Crust({
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
       camera={camera}
+      interactionMode={interactionMode}
+      overrideInteractionMode={overrideInteractionMode}
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}>
