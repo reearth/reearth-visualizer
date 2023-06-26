@@ -31,12 +31,9 @@ const SubTabButton = styled.button<{ disabled: boolean }>`
   padding: 8px;
   height: 32px;
   border-radius: 4px 4px 0px 0px;
+  transition: all 0.5s;
   :hover {
     background: ${({ theme }) => theme.general.select};
-    transition: all 0.5s ease;
-  }
-  :not(:hover) {
-    transition: all 0.5s ease;
   }
   text-align: center;
 `;
