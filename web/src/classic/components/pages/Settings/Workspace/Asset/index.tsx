@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import Asset from "@reearth/classic/components/organisms/Settings/Workspace/Asset";
-import { AuthenticationRequiredPage } from "@reearth/services/auth";
+import { AuthenticationRequiredPage, withAuthorisation } from "@reearth/services/auth";
 
 export type Props = {
   path?: string;
@@ -17,4 +17,6 @@ const AssetPage: React.FC<Props> = () => {
   );
 };
 
-export default AssetPage;
+const withAuthenticationFun = withAuthorisation();
+
+export default withAuthenticationFun(AssetPage);
