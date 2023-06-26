@@ -1,23 +1,32 @@
-import { CSSProperties, FC } from "react";
 import Player from "react-player";
 
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
   url: string;
-  maxHeight?: CSSProperties["maxHeight"];
   controls?: boolean;
+  height?: React.CSSProperties["height"];
 };
 
-const VideoBlock: FC<Props> = ({ url, maxHeight, controls }) => {
+const VideoBlock: React.FC<Props> = ({ url, controls, height }) => {
+  if (url) {
+    return (
+      <Player url={url} controls={controls} width={"100%"} height={height ? height : "auto"} />
+    );
+  }
   return (
-    <Wrapper maxHeight={maxHeight}>
-      <Player url={url} controls={controls} height={"100%"} />
-    </Wrapper>
+    <BlankVideoBox>
+      <Icon icon={"filmStrip"} color={"#2e2e2e"} size={32} />
+    </BlankVideoBox>
   );
 };
-const Wrapper = styled.div<{ maxHeight: CSSProperties["maxHeight"] }>`
+
+const BlankVideoBox = styled.div`
   display: flex;
-  height: ${props => (props.maxHeight ? props.maxHeight : "100%")};
+  aspect-ratio: 43/26;
+  background: #f1f1f1;
+  align-items: center;
+  justify-content: center;
 `;
 export default VideoBlock;
