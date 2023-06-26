@@ -59,16 +59,14 @@ export default (sceneId: string) => {
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
 
   useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setWorkspace]);
-
-  useEffect(() => {
-    if (currentWorkspace) return;
-    const workspace = workspaces?.find(t => t.id === workspaceId);
-    if (!workspace) return;
-    setWorkspace(workspace);
-    setLastWorkspace(currentWorkspace);
-  }, [workspaces, currentWorkspace, setWorkspace, setLastWorkspace, workspaceId]);
+    if (!currentWorkspace && lastWorkspace && workspaceId == lastWorkspace.id)
+      setWorkspace(lastWorkspace);
+    else {
+      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
+      setWorkspace(workspace);
+      setLastWorkspace(workspace);
+    }
+  }, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
 
   useEffect(() => {
     setProject(p =>

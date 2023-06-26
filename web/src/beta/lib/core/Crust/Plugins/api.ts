@@ -19,7 +19,15 @@ import type { PluginInstances } from "./usePluginInstances";
 
 export type CommonReearth = Omit<
   Reearth,
-  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget" | "clientStorage"
+  | "plugin"
+  | "ui"
+  | "modal"
+  | "popup"
+  | "block"
+  | "layer"
+  | "widget"
+  | "clientStorage"
+  | "interactionMode"
 >;
 
 export function exposed({
@@ -303,6 +311,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  interactionMode,
   pluginInstances,
   viewport,
   selectedLayer,
@@ -344,6 +353,7 @@ export function commonReearth({
   viewport: () => GlobalThis["reearth"]["viewport"];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  interactionMode: () => GlobalThis["reearth"]["interactionMode"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
@@ -416,6 +426,9 @@ export function commonReearth({
     },
     get clock() {
       return clock?.();
+    },
+    get interactionMode() {
+      return interactionMode?.();
     },
     scene: {
       get inEditor() {

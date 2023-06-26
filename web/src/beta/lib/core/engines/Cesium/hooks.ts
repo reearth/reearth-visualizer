@@ -20,7 +20,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef } from "@reearth/beta/lib/core/Map";
+import { LayersRef, FEATURE_FLAGS } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -74,6 +74,7 @@ export default ({
   isLayerDraggable,
   meta,
   layersRef,
+  featureFlags,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -91,6 +92,7 @@ export default ({
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
+  featureFlags: number;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -255,6 +257,8 @@ export default ({
   const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
+    if (!(featureFlags & FEATURE_FLAGS.SINGLE_SELECTION)) return;
+
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
@@ -356,7 +360,7 @@ export default ({
           : undefined,
       );
     }
-  }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
+  }, [cesium, selectedLayerId, onLayerSelect, layersRef, featureFlags]);
 
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
@@ -419,6 +423,11 @@ export default ({
   const handleClick = useCallback(
     async (e: CesiumMovementEvent, target: RootEventTarget) => {
       mouseEventHandles.click?.(e, target);
+
+      if (!(featureFlags & FEATURE_FLAGS.SINGLE_SELECTION)) return;
+
+      // Layer selection from here
+
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
@@ -556,7 +565,7 @@ export default ({
       viewer.selectedEntity = undefined;
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles, layersRef],
+    [onLayerSelect, mouseEventHandles, layersRef, featureFlags],
   );
 
   // E2E test
@@ -648,6 +657,18 @@ export default ({
     },
     [engineAPI],
   );
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement) return;
+    const allowCameraMove = !!(featureFlags & FEATURE_FLAGS.CAMERA_MOVE);
+    const allowCameraZoom = !!(featureFlags & FEATURE_FLAGS.CAMERA_ZOOM);
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate =
+      allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
+  }, [featureFlags]);
 
   return {
     backgroundColor,
