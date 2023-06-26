@@ -50,6 +50,9 @@ import Workspaces from "./Icons/workspaces.svg";
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
 
+// video
+import FilmStrip from "./Icons/filmStrip.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -81,4 +84,5 @@ export default {
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  filmStrip: FilmStrip,
 };
