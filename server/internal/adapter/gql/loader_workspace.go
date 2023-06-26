@@ -5,26 +5,26 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 )
 
 type WorkspaceLoader struct {
-	usecase accountinterfaces.Workspace
+	usecase interfaces.Workspace
 }
 
-func NewWorkspaceLoader(usecase accountinterfaces.Workspace) *WorkspaceLoader {
+func NewWorkspaceLoader(usecase interfaces.Workspace) *WorkspaceLoader {
 	return &WorkspaceLoader{usecase: usecase}
 }
 
 func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Team, []error) {
-	uids, err := util.TryMap(ids, gqlmodel.ToID[accountdomain.Workspace])
+	uids, err := util.TryMap(ids, gqlmodel.ToID[id.Workspace])
 	if err != nil {
 		return nil, []error{err}
 	}
 
-	res, err := c.usecase.Fetch(ctx, uids, getAcOperator(ctx))
+	res, err := c.usecase.Fetch(ctx, uids, getOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -37,12 +37,12 @@ func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 }
 
 func (c *WorkspaceLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*gqlmodel.Team, error) {
-	userid, err := gqlmodel.ToID[accountdomain.User](uid)
+	userid, err := gqlmodel.ToID[id.User](uid)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.usecase.FindByUser(ctx, userid, getAcOperator(ctx))
+	res, err := c.usecase.FindByUser(ctx, userid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
