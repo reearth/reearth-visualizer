@@ -37,7 +37,7 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
-// SettingsButton
+// Storytelling blocks
 import Audio from "./Icons/audio.svg";
 import EditIcon from "./Icons/editIcon.svg";
 import Settings from "./Icons/settings.svg";
