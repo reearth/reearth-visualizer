@@ -1,49 +1,43 @@
-import { CSSProperties, FC, ImgHTMLAttributes } from "react";
-
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  src: NonNullable<ImgHTMLAttributes<HTMLImageElement>["src"]>;
-  align?: "left" | "center" | "right"; // default center
-  fit?: "contain" | "cover"; // default cover
-  maxHeight?: CSSProperties["maxHeight"];
-  alt?: ImgHTMLAttributes<HTMLImageElement>["alt"];
-  height?: CSSProperties["width"];
-  width?: CSSProperties["height"];
+  src: NonNullable<React.ImgHTMLAttributes<HTMLImageElement>["src"]>;
+  alt?: React.ImgHTMLAttributes<HTMLImageElement>["alt"];
 };
 
-const ImageBlock: FC<Props> = ({ src, align, fit, maxHeight, alt, width, height }) => {
+const ImageBlock: React.FC<Props> = ({ src, alt }) => {
+  if (src) {
+    return (
+      <Wrapper>
+        <ImageBox src={src} alt={alt} />
+      </Wrapper>
+    );
+  }
   return (
-    <Wrapper>
-      <ImageBox
-        src={src}
-        fit={fit}
-        alt={alt}
-        maxHeight={maxHeight}
-        width={width}
-        height={height}
-        align={align}
-      />
-    </Wrapper>
+    <BlankImageBox>
+      <Icon icon={"image"} color={"#2e2e2e"} size={32} />
+    </BlankImageBox>
   );
 };
 
 const Wrapper = styled.div`
   position: absolute;
-  display: flex;
+  width: inherit;
 `;
 
-const ImageBox = styled.img<{
-  fit?: "contain" | "cover";
-  maxHeight?: CSSProperties["maxHeight"];
-  align?: "left" | "center" | "right";
-}>`
+const ImageBox = styled.img`
   display: flex;
-  object-fit: ${props => (props.fit ? props.fit : "cover")};
-  width: ${props => (props.width ? props.width : undefined)};
-  height: ${props => (props.height ? props.height : undefined)};
-  max-height: ${props => (props.maxHeight ? props.maxHeight : undefined)};
-  object-position: ${props => (props.align ? props.align : "center")};
+  object-fit: cover;
+  width: 100%;
+`;
+
+const BlankImageBox = styled.div`
+  display: flex;
+  aspect-ratio: 43/26;
+  background: #f1f1f1;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default ImageBlock;

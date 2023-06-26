@@ -49,6 +49,8 @@ import Workspaces from "./Icons/workspaces.svg";
 // Square
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
+// image
+import Image from "./Icons/image.svg";
 
 export default {
   file: File,
@@ -81,4 +83,5 @@ export default {
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  image: Image,
 };
