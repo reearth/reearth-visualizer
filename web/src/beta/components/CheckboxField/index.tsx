@@ -11,7 +11,7 @@ export type Props = {
 const CheckBoxField: React.FC<Props> = ({ onClick, checked, label }) => {
   const theme = useTheme();
   return (
-    <Field onClick={() => onClick?.(checked !== undefined ? checked : false)}>
+    <Field onClick={() => onClick?.(!checked)}>
       <BoxField>{checked && <CheckMark icon="checkmark" />}</BoxField>
       {label && (
         <Text size="footnote" color={theme.general.content.main}>
