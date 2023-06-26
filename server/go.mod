@@ -27,7 +27,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.8.0
-	github.com/reearth/reearthx v0.0.0-20230609160350-ab0c16b7ec6f
+	github.com/reearth/reearthx v0.0.0-20230626040959-4ecb15d466d2
 	github.com/samber/lo v1.27.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.9.3

@@ -82,11 +82,19 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			name2 = *name
 		}
 
-		u, err = c.usecase.SignupOIDC(ctx, accountinterfaces.SignupOIDC{
-			Sub:    au.Sub,
-			Email:  au.Email,
-			Name:   name2,
-			Secret: input.Secret,
+		u, err = c.usecase.SignupOIDC(ctx, accountinterfaces.SignupOIDCParam{
+			Sub:         au.Sub,
+			AccessToken: au.Token,
+			Issuer:      au.Iss,
+			Email:       au.Email,
+			Name:        name2,
+			Secret:      input.Secret,
+			User: accountinterfaces.SignupUserParam{
+				UserID:      input.UserID,
+				WorkspaceID: input.WorkspaceID,
+				Lang:        input.Lang,
+				Theme:       input.Theme,
+			},
 		})
 	} else if name != nil && input.Email != nil {
 		u, err = c.usecase.Signup(ctx, accountinterfaces.SignupParam{

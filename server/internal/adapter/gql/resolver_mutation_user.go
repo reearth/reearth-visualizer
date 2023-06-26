@@ -16,11 +16,19 @@ func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInpu
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	u, err := usecases(ctx).User.SignupOIDC(ctx, accountinterfaces.SignupOIDC{
-		Sub:    au.Sub,
-		Email:  au.Email,
-		Name:   au.Name,
-		Secret: input.Secret,
+	u, err := usecases(ctx).User.SignupOIDC(ctx, accountinterfaces.SignupOIDCParam{
+		Sub:         au.Sub,
+		AccessToken: au.Token,
+		Issuer:      au.Iss,
+		Email:       au.Email,
+		Name:        au.Name,
+		Secret:      input.Secret,
+		User: accountinterfaces.SignupUserParam{
+			Lang:        input.Lang,
+			Theme:       gqlmodel.ToTheme(input.Theme),
+			UserID:      gqlmodel.ToIDRef[accountdomain.User](input.UserID),
+			WorkspaceID: gqlmodel.ToIDRef[accountdomain.Workspace](input.TeamID),
+		},
 	})
 	if err != nil {
 		return nil, err
