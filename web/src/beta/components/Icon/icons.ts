@@ -1,6 +1,7 @@
 /* eslint-disable import/order */
 
 // Primitives
+import LayerAdd from "./Icons/layerAddIcon.svg";
 import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg";
 
 // Infobox Blocks
@@ -22,6 +23,7 @@ import ArrowToggle from "./Icons/arrowToggle.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
+import CheckOnVisibility from "./Icons/checkOnVisibility.svg";
 
 // Fields / Actions
 import PlusSquare from "./Icons/plusSquare.svg";
@@ -51,6 +53,7 @@ import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
 
 export default {
+  layerAdd: LayerAdd,
   file: File,
   dl: InfoTable,
   infobox: Infobox,
@@ -81,4 +84,5 @@ export default {
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  checkOnVisibility: CheckOnVisibility,
 };
