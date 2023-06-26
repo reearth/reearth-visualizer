@@ -27,12 +27,6 @@ import { Widget } from "../Widgets";
 
 import { ClientStorage } from "./useClientStorage";
 
-// declare global {
-//   interface Window {
-//     reearth?: CommonReearth;
-//   }
-// }
-
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
