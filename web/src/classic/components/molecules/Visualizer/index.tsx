@@ -321,5 +321,5 @@ const LoadingWrapper = styled.div`
   right: 0;
   bottom: 0;
   background-color: #000;
-  z-index: ${({ theme }) => theme.zIndexes.loading};
+  z-index: ${({ theme }) => theme.classic.zIndexes.loading};
 `;

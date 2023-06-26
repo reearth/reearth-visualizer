@@ -3,8 +3,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Text from "@reearth/classic/components/atoms/Text";
+import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { metricsSizes, styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
@@ -94,7 +95,7 @@ const NewPasswordForm: React.FC<Props> = ({
       <StyledInput
         className="form-item"
         placeholder={t("Email address")}
-        color={theme.main.weak}
+        color={theme.classic.main.weak}
         value={email}
         autoFocus
         onChange={handleEmailInput}
@@ -106,7 +107,7 @@ const NewPasswordForm: React.FC<Props> = ({
           placeholder={t("New password")}
           type="password"
           autoComplete="new-password"
-          color={theme.main.weak}
+          color={theme.classic.main.weak}
           value={newPassword}
           onChange={handlePasswordInput}
         />
@@ -119,8 +120,8 @@ const NewPasswordForm: React.FC<Props> = ({
         large
         onClick={handlePasswordSubmit}
         disabled={disabled}
-        color={disabled ? theme.main.text : theme.other.white}
-        background={disabled ? theme.main.weak : theme.main.link}
+        color={disabled ? theme.classic.main.text : theme.classic.other.white}
+        background={disabled ? theme.classic.main.weak : theme.classic.main.link}
         text={t("Reset password")}
       />
     </>
@@ -130,7 +131,8 @@ const NewPasswordForm: React.FC<Props> = ({
 const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
   background: ${({ background }) => background};
-  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
+  border: ${({ border, theme }) =>
+    border ? `1px solid ${theme.classic.main.borderStrong}` : "none"};
   border-radius: 2px;
   color: ${({ color }) => color};
 
@@ -146,20 +148,20 @@ const StyledInput = styled.input`
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   background: inherit;
-  border: 1px solid ${({ theme }) => theme.main.border};
+  border: 1px solid ${({ theme }) => theme.classic.main.border};
   border-radius: 3px;
   padding: ${metricsSizes.s}px;
   outline: none;
 
   :focus {
-    border: 2px solid ${({ theme }) => theme.main.link};
+    border: 2px solid ${({ theme }) => theme.classic.main.link};
     margin: -1px -1px 23px -1px;
   }
 `;
 
 const PasswordWrapper = styled(Flex)`
   width: 100%;
-  color: ${({ theme }) => theme.text.pale};
+  color: ${({ theme }) => theme.classic.text.pale};
 `;
 
 const PasswordMessage = styled(Text)`

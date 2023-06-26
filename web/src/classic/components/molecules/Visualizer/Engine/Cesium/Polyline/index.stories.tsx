@@ -5,7 +5,7 @@ import { V, location } from "../storybook";
 import Polyline, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Engine/Cesium/Polyline",
+  title: "classic/molecules/Visualizer/Engine/Cesium/Polyline",
   component: Polyline,
 } as Meta;
 

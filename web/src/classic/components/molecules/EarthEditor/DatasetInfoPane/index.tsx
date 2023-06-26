@@ -38,8 +38,8 @@ const DatasetInfoPane: React.FC<Props> = ({
           <Table
             headers={datasetHeaders}
             items={datasets}
-            bg={theme.properties.bg}
-            borderColor={theme.properties.border}
+            bg={theme.classic.properties.bg}
+            borderColor={theme.classic.properties.border}
             textSize="xs"
           />
           {/* <Button

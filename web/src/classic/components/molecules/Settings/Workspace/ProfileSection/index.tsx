@@ -56,7 +56,7 @@ const ProfileSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.classic.main.lighterBg};
 `;
 
 export default ProfileSection;

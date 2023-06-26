@@ -31,7 +31,10 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
     <StyledFloatedPanel visible={visible} onClickAway={handleClickAway}>
       <Wrapper data-camera-popup>
         <FovField>
-          <Text size="xs" color={theme.main.strongText} otherProperties={{ marginRight: "16px" }}>
+          <Text
+            size="xs"
+            color={theme.classic.main.strongText}
+            otherProperties={{ marginRight: "16px" }}>
             {t("Angle")}
           </Text>
           <FieldForm>
@@ -58,14 +61,14 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
 const StyledFloatedPanel = styled(FloatedPanel)`
   top: 10px;
   right: 10px;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${props => props.theme.classic.zIndexes.propertyFieldPopup};
 `;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 220px;
-  background: ${({ theme }) => theme.slider.background};
+  background: ${({ theme }) => theme.classic.slider.background};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   padding: 10px;

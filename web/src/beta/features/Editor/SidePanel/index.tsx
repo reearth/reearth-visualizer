@@ -51,7 +51,7 @@ const Item = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
 `;
 
 const Card = styled.div`
-  background: ${({ theme }) => theme.leftMenu.bg};
+  background: ${({ theme }) => theme.general.bg.strong};
   border-radius: 4px;
   height: 100%;
   display: flex;
@@ -59,7 +59,7 @@ const Card = styled.div`
 `;
 
 const CardTitle = styled.div`
-  background: ${({ theme }) => theme.leftMenu.bgTitle};
+  background: ${({ theme }) => theme.general.bg.veryWeak};
   padding: 8px;
   font-weight: 500;
   font-size: 12px;

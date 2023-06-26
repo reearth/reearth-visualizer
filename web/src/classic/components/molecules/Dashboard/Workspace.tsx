@@ -9,9 +9,9 @@ import Icon from "@reearth/classic/components/atoms/Icon";
 import Text from "@reearth/classic/components/atoms/Text";
 import Policy from "@reearth/classic/components/molecules/Common/Policy";
 import { Workspace as WorkspaceType } from "@reearth/classic/components/molecules/Dashboard/types";
+import { metrics, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme, metrics } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/metrics";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { Member } from "./types";
 
@@ -43,7 +43,7 @@ const Workspace: React.FC<Props> = ({ className, workspace, isPersonal }) => {
     <StyledDashboardBlock className={className} grow={5}>
       <Content direction="column" justify="space-between">
         <WorkspaceHeader align="center" gap={12} wrap="wrap">
-          <Text size={isSmallWindow ? "m" : "xl"} color={theme.main.text} weight="bold">
+          <Text size={isSmallWindow ? "m" : "xl"} color={theme.classic.main.text} weight="bold">
             {name}
             {isPersonal && t("'s workspace")}
           </Text>
@@ -86,7 +86,7 @@ const Content = styled(Flex)`
   min-width: ${metrics.dashboardWorkspaceMinWidth}px;
   height: ${metrics.dashboardContentHeight}px;
   padding: ${metricsSizes.xl}px;
-  color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.classic.main.text};
 
   @media only screen and (max-width: 1024px) {
     order: 3;
@@ -97,15 +97,15 @@ const Content = styled(Flex)`
 const StyledIcon = styled(Icon)`
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
 
   &:hover {
-    background: ${props => props.theme.main.bg};
+    background: ${props => props.theme.classic.main.bg};
   }
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.classic.main.text};
   text-decoration: none;
   display: flex;
   align-items: center;

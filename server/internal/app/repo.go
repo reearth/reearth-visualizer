@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
@@ -36,7 +35,6 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		ctx,
 		options.Client().
 			ApplyURI(conf.DB).
-			SetConnectTimeout(time.Second*10).
 			SetMonitor(otelmongo.NewMonitor()),
 	)
 	if err != nil {

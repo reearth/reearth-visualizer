@@ -6,7 +6,7 @@ import { Provider } from "../../storybook";
 import SplashScreen, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Widget/SplashScreen",
+  title: "classic/molecules/Visualizer/Widget/SplashScreen",
   component: SplashScreen,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

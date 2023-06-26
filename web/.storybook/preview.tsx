@@ -11,6 +11,8 @@ import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 import type { Preview } from "@storybook/react";
 import React from "react";
 
+import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
+import classicLightTheme from "../src/classic/theme/reearthTheme/lightTheme"; // temp classic imports
 import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
 import { GlobalStyles, darkTheme, lightTheme } from "../src/services/theme";
@@ -41,8 +43,14 @@ const preview: Preview = {
   decorators: [
     withThemeFromJSXProvider({
       themes: {
-        light: lightTheme,
-        dark: darkTheme,
+        light: {
+          classic: classicLightTheme,
+          ...lightTheme,
+        },
+        dark: {
+          classic: classicDarkTheme,
+          ...darkTheme,
+        },
       },
       defaultTheme: "dark",
       Provider: ThemeProvider,

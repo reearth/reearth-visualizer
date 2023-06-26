@@ -79,7 +79,7 @@ const SceneTagPane: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  padding: ${({ theme }) => `${theme.metrics.l}px`};
+  padding: ${({ theme }) => `${theme.classic.metrics.l}px`};
 `;
 
 export default SceneTagPane;

@@ -32,7 +32,7 @@ const Markdown: React.FC<Props> = ({
 
   return (
     <Wrapper
-      className="markdown-body" // github-markdown-css is imported at src/services/theme/globalstyle.tsx
+      className="markdown-body" // github-markdown-css is imported at src/classic/theme/globalstyle.tsx
       styles={styles}
       dark={dark}
       onClick={onClick}
