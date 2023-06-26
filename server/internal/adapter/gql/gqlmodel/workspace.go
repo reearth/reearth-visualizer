@@ -1,7 +1,7 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
 func ToWorkspace(t *workspace.Workspace) *Team {
@@ -9,12 +9,12 @@ func ToWorkspace(t *workspace.Workspace) *Team {
 		return nil
 	}
 
-	memberMap := t.Members().Members()
+	memberMap := t.Members().Users()
 	members := make([]*TeamMember, 0, len(memberMap))
 	for u, r := range memberMap {
 		members = append(members, &TeamMember{
 			UserID: IDFrom(u),
-			Role:   ToRole(r),
+			Role:   ToRole(r.Role),
 		})
 	}
 
