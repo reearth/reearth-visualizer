@@ -5,7 +5,6 @@ require (
 	cloud.google.com/go/storage v1.22.1
 	github.com/99designs/gqlgen v0.17.12
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.8.3
-	github.com/auth0/go-jwt-middleware/v2 v2.0.1
 	github.com/avast/retry-go/v4 v4.0.4
 	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
@@ -27,7 +26,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.8.0
-	github.com/reearth/reearthx v0.0.0-20230530055440-86a8d4675853
+	github.com/reearth/reearthx v0.0.0-20230626040959-4ecb15d466d2
 	github.com/samber/lo v1.27.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.9.3
@@ -67,6 +66,7 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
 	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/auth0/go-jwt-middleware/v2 v2.0.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.10 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.3 // indirect

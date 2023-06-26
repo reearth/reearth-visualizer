@@ -2,10 +2,10 @@ import { ReactNode } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal";
 
-import { useAuthenticationRequired } from "./hooks";
+import { useAuthenticationRequired } from "./useAuth";
 
-export { default as Provider } from "./provider";
-export { default as useAuth, useCleanUrl, useAuthenticationRequired } from "./hooks";
+export { AuthProvider } from "./authProvider";
+export { useAuth, useCleanUrl, useAuthenticationRequired } from "./useAuth";
 
 export { withAuthenticationRequired } from "@auth0/auth0-react";
 
