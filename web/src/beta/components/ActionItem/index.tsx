@@ -40,6 +40,8 @@ const Box = styled.div`
   :hover {
     background: ${props => props.theme.general.bg.weak};
   }
+  user-select: none;
+  cursor: pointer;
 `;
 
 export default ActionItem;
