@@ -30,7 +30,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
     handleRgbaInput,
     handleHexInput,
     handleClick,
-    handleKeyPress,
+    handleKeyDown,
   } = useHooks({ value, onChange });
 
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
@@ -64,7 +64,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
           value={colorState || ""}
           placeholder={t("#RRGGBBAA")}
           onChange={handleHexInput}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           onBlur={handleHexSave}
         />
       </InputWrapper>

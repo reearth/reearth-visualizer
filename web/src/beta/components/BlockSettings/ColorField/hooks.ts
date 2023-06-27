@@ -87,7 +87,7 @@ export default ({ value, onChange }: Params) => {
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
-  const handleKeyPress = useCallback(
+  const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         handleHexSave();
@@ -145,6 +145,6 @@ export default ({ value, onChange }: Params) => {
     handleRgbaInput,
     handleHexInput,
     handleClick,
-    handleKeyPress,
+    handleKeyDown,
   };
 };
