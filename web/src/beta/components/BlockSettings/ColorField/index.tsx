@@ -1,4 +1,3 @@
-import React from "react";
 import { RgbaColorPicker } from "react-colorful";
 import { usePopper } from "react-popper";
 
