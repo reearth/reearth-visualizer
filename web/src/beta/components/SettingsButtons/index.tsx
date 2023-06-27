@@ -39,12 +39,14 @@ const Wrapper = styled.div`
 
 const StyledMainIcon = styled(Icon)`
   padding: 2px;
+  cursor: pointer;
 `;
 
 const StyledSubIcon = styled(Icon)`
   padding: 4px;
   justify-items: center;
   border-left: 0.5px solid ${props => props.theme.general.content.strong};
+  cursor: pointer;
 `;
 
 export default SettingsButtons;
