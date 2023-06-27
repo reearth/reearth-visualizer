@@ -16,13 +16,9 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
   return (
     <Wrapper>
       <StyledMainIcon size={16} onClick={onBlock} icon={icon} />
-      <Text
-        size={"xFootnote"}
-        color={theme.general.content.strong}
-        otherProperties={{ padding: "0px 4px" }}
-        onClick={onBlock}>
+      <StyledText size={"xFootnote"} color={theme.general.content.strong} onClick={onBlock}>
         {title}
-      </Text>
+      </StyledText>
       <StyledSubIcon size={12} icon={"editIcon"} onClick={onEdit} />
       <StyledSubIcon size={12} icon={"settings"} onClick={onSetting} />
     </Wrapper>
@@ -35,6 +31,11 @@ const Wrapper = styled.div`
 
   height: 100%;
   background: ${props => props.theme.general.select};
+`;
+
+const StyledText = styled(Text)`
+  padding: 0px 4px;
+  cursor: pointer;
 `;
 
 const StyledMainIcon = styled(Icon)`
