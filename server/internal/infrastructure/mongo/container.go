@@ -6,8 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
+	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -40,8 +39,8 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		Property:       NewProperty(client),
 		Scene:          NewScene(client),
 		Tag:            NewTag(client),
-		Workspace:      accountmongo.NewWorkspace(client),
-		User:           accountmongo.NewUser(client),
+		Workspace:      NewWorkspace(client),
+		User:           NewUser(client),
 		SceneLock:      NewSceneLock(client),
 		Policy:         NewPolicy(client),
 		Lock:           lock,
@@ -79,8 +78,8 @@ func Init(r *repo.Container) error {
 		r.PropertySchema.(*PropertySchema).Init,
 		r.Scene.(*Scene).Init,
 		r.Tag.(*Tag).Init,
-		r.User.(*accountmongo.User).Init,
-		r.Workspace.(*accountmongo.Workspace).Init,
+		r.User.(*User).Init,
+		r.Workspace.(*Workspace).Init,
 	)
 }
 

@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 )
@@ -43,16 +41,14 @@ func Start(debug bool, version string) {
 	}()
 
 	// Init repositories
-	repos, gateways, acRepos, acGateways := initReposAndGateways(ctx, conf, debug)
+	repos, gateways := initReposAndGateways(ctx, conf, debug)
 
 	// Start web server
 	NewServer(ctx, &ServerConfig{
-		Config:          conf,
-		Debug:           debug,
-		Repos:           repos,
-		AccountRepos:    acRepos,
-		Gateways:        gateways,
-		AccountGateways: acGateways,
+		Config:   conf,
+		Debug:    debug,
+		Repos:    repos,
+		Gateways: gateways,
 	}).Run()
 }
 
@@ -62,12 +58,10 @@ type WebServer struct {
 }
 
 type ServerConfig struct {
-	Config          *config.Config
-	Debug           bool
-	Repos           *repo.Container
-	AccountRepos    *accountrepo.Container
-	Gateways        *gateway.Container
-	AccountGateways *accountgateway.Container
+	Config   *config.Config
+	Debug    bool
+	Repos    *repo.Container
+	Gateways *gateway.Container
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {

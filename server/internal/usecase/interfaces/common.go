@@ -1,10 +1,6 @@
 package interfaces
 
-import (
-	"errors"
-
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
-)
+import "errors"
 
 type ListOperation string
 
@@ -30,6 +26,6 @@ type Container struct {
 	Published Published
 	Scene     Scene
 	Tag       Tag
-	Workspace accountinterfaces.Workspace
-	User      accountinterfaces.User
+	Workspace Workspace
+	User      User
 }

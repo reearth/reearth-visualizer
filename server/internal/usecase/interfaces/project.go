@@ -9,12 +9,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 )
 
 type CreateProjectParam struct {
-	WorkspaceID accountdomain.WorkspaceID
+	WorkspaceID id.WorkspaceID
 	Visualizer  visualizer.Visualizer
 	Name        *string
 	Description *string
@@ -55,7 +54,7 @@ var (
 
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
-	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspace(context.Context, id.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
 	Update(context.Context, UpdateProjectParam, *usecase.Operator) (*project.Project, error)
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)

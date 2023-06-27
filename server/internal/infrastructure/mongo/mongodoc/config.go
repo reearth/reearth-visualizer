@@ -2,7 +2,7 @@ package mongodoc
 
 import (
 	"github.com/reearth/reearth/server/pkg/config"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearth/server/pkg/workspace"
 )
 
 type ConfigDocument struct {
