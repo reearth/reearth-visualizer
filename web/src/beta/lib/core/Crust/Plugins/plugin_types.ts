@@ -23,6 +23,7 @@ import type {
 } from "@reearth/beta/lib/core/Map";
 
 import { Block } from "../Infobox";
+import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
 import { CommonReearth } from "./api";
@@ -30,6 +31,9 @@ import { ClientStorage } from "./useClientStorage";
 
 declare global {
   interface Window {
+    // This will be resolved when classic is removed
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Because of duplicated `window.reearth` definition
+    // @ts-ignore
     reearth?: CommonReearth;
   }
 }
@@ -52,6 +56,7 @@ export type Reearth = {
   readonly engineName?: string;
   readonly camera: Undefinable<Camera>;
   readonly clock?: Clock;
+  readonly interactionMode?: InteractionMode;
   readonly ui: UI;
   readonly modal: Modal;
   readonly popup: Popup;
@@ -167,6 +172,11 @@ export type Clock = {
   readonly tick?: () => Date | void;
   readonly play?: () => void;
   readonly pause?: () => void;
+};
+
+export type InteractionMode = {
+  override?: (mode: InteractionModeType) => void;
+  mode: InteractionModeType;
 };
 
 export type PluginMessage = {

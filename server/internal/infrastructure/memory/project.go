@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -32,7 +33,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -64,7 +65,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *use
 	), nil
 }
 
-func (r *Project) FindIDsByWorkspace(ctx context.Context, id id.WorkspaceID) (res []project.ID, _ error) {
+func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []project.ID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -120,7 +121,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) CountByWorkspace(_ context.Context, ws id.WorkspaceID) (n int, _ error) {
+func (r *Project) CountByWorkspace(_ context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -132,7 +133,7 @@ func (r *Project) CountByWorkspace(_ context.Context, ws id.WorkspaceID) (n int,
 	return
 }
 
-func (r *Project) CountPublicByWorkspace(_ context.Context, ws id.WorkspaceID) (n int, _ error) {
+func (r *Project) CountPublicByWorkspace(_ context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

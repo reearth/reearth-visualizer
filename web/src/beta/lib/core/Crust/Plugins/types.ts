@@ -13,7 +13,7 @@ import type {
 } from "@reearth/beta/lib/core/Map";
 import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
 
-import type { MapRef } from "../types";
+import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
 import type { CommonReearth } from "./api";
@@ -37,6 +37,8 @@ export type Props = PropsWithChildren<{
   useExperimentalSandbox?: boolean;
   overrideSceneProperty: (id: string, property: any) => void;
   camera?: Camera;
+  interactionMode: InteractionModeType;
+  overrideInteractionMode: (mode: InteractionModeType) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 }>;
 

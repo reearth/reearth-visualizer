@@ -1,19 +1,7 @@
 package gateway
 
-type AuthenticatorUpdateUserParam struct {
-	ID       string
-	Name     *string
-	Email    *string
-	Password *string
-}
-
-type AuthenticatorUser struct {
-	ID            string
-	Name          string
-	Email         string
-	EmailVerified bool
-}
+import "github.com/reearth/reearthx/account/accountusecase/accountgateway"
 
 type Authenticator interface {
-	UpdateUser(AuthenticatorUpdateUserParam) (AuthenticatorUser, error)
+	UpdateUser(accountgateway.AuthenticatorUpdateUserParam) (accountgateway.AuthenticatorUser, error)
 }
