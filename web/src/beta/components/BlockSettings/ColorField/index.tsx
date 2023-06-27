@@ -3,9 +3,8 @@ import { usePopper } from "react-popper";
 
 import Button from "@reearth/beta/components/Button";
 import Text from "@reearth/beta/components/Text";
-import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
-import { styled, css } from "@reearth/services/theme";
+import { metricsSizes, styled, css } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import "./styles.css";
