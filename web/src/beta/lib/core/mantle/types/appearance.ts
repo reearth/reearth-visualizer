@@ -131,6 +131,7 @@ export type ModelAppearance = {
   silhouetteSize?: number; // default: 1
   near?: number;
   far?: number;
+  pbr?: boolean;
 };
 
 export type Cesium3DTilesAppearance = {
@@ -145,6 +146,7 @@ export type Cesium3DTilesAppearance = {
   experimental_clipping?: EXPERIMENTAL_clipping;
   pointSize?: number;
   meta?: unknown;
+  pbr?: boolean;
 };
 
 export type LegacyPhotooverlayAppearance = {
