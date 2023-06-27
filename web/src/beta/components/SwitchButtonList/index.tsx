@@ -9,17 +9,17 @@ type SwitchAdditionalField = SwitchField<AdditionalField>;
 
 export type Props = {
   list: SwitchAdditionalField[];
-  onClick?: (id: string) => void;
+  onChange?: (id: string) => void;
 };
-const SwitchButtonList: React.FC<Props> = ({ list, onClick }) => {
+const SwitchButtonList: React.FC<Props> = ({ list, onChange }) => {
   const theme = useTheme();
   return (
     <>
       {list.map((item, index) => (
         <SwitchButton
-          key={item.id}
+          key={index}
           disabled={!!item?.active}
-          onClick={() => onClick?.(item.id)}
+          onClick={() => onChange?.(item.id)}
           first={index === 0}
           end={index === list.length - 1}>
           <Text
@@ -45,12 +45,9 @@ const SwitchButton = styled.button<{
   border-top-right-radius: ${props => (props.end ? "4px" : "0px")};
   border-bottom-left-radius: ${props => (props.first ? "4px" : "0px")};
   border-bottom-right-radius: ${props => (props.end ? "4px" : "0px")};
+  transition: all 0.5s ease;
   :hover {
     background: ${props => props.theme.general.select};
-    transition: all 0.5s ease;
-  }
-  :not(:hover) {
-    transition: all 0.5s ease;
   }
 `;
 
