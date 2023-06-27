@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
@@ -68,6 +69,8 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 		return nil, nil
 	}
 
+	log.Infof("TEMP: property mongo find by ids %v", ids)
+
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),
@@ -77,6 +80,9 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 	if err != nil {
 		return nil, err
 	}
+
+	log.Infof("TEMP: property mongo find by ids OK")
+
 	return filterProperties(ids, res), nil
 }
 
