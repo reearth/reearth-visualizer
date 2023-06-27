@@ -43,10 +43,6 @@ export default (workspaceId?: string) => {
   const t = useT();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setCurrentWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setCurrentWorkspace]);
-
   const toPublishmentStatus = (s: PublishmentStatus) =>
     s === PublishmentStatus.Public
       ? "published"
@@ -64,14 +60,28 @@ export default (workspaceId?: string) => {
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
-    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
+    if (!currentWorkspace && lastWorkspace && lastWorkspace.id === workspaceId)
+      setCurrentWorkspace(lastWorkspace);
+    else if (workspace) {
       setCurrentWorkspace({
         personal,
         ...workspace,
       });
-      setLastWorkspace(currentWorkspace);
+      setLastWorkspace({
+        personal,
+        ...workspace,
+      });
     }
-  }, [currentWorkspace, workspace, setCurrentWorkspace, personal, setLastWorkspace]);
+  }, [
+    currentWorkspace,
+    workspace,
+    setCurrentWorkspace,
+    personal,
+    setLastWorkspace,
+    lastWorkspace,
+    workspaceId,
+    workspaces,
+  ]);
 
   const handleWorkspaceChange = useCallback(
     (workspaceId: string) => {
