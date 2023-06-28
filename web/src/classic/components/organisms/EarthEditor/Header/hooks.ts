@@ -14,13 +14,7 @@ import {
   useCreateTeamMutation,
 } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import {
-  useSceneId,
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/services/state";
+import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -29,9 +23,8 @@ export default () => {
 
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
-  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [currentProject, setProject] = useProject();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const navigate = useNavigate();
 
@@ -46,14 +39,15 @@ export default () => {
 
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
 
-  const { data: teamsData } = useGetTeamsQuery();
-  const teams = teamsData?.me?.teams;
+  const { data: WorkspacesData } = useGetTeamsQuery();
+  const workspaces = WorkspacesData?.me?.teams;
 
   const { data } = useGetProjectBySceneQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
   });
-  const teamId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+
+  const workspaceId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
   const project = useMemo(
     () =>
       data?.node?.__typename === "Scene" && data.node.project
@@ -63,7 +57,7 @@ export default () => {
   );
 
   const user: User = {
-    name: teamsData?.me?.name || "",
+    name: WorkspacesData?.me?.name || "",
   };
 
   const [validAlias, setValidAlias] = useState(false);
@@ -80,9 +74,6 @@ export default () => {
     },
     [checkProjectAliasQuery, project],
   );
-  useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   useEffect(() => {
     setValidAlias(
@@ -93,14 +84,6 @@ export default () => {
           checkProjectAliasData.checkProjectAlias.available),
     );
   }, [validatingAlias, checkProjectAliasData, project]);
-
-  useEffect(() => {
-    if (currentWorkspace) return;
-    const team = teams?.find(t => t.id === teamId);
-    if (!team) return;
-    setWorkspace(team);
-    setLastWorkspace(currentWorkspace);
-  }, [teams, currentWorkspace, teamId, setWorkspace, setLastWorkspace]);
 
   useEffect(() => {
     setProject(p =>
@@ -171,16 +154,14 @@ export default () => {
   );
 
   const handleTeamChange = useCallback(
-    (teamId: string) => {
-      const team = teams?.find(team => team.id === teamId);
-      if (team && teamId !== currentWorkspace?.id) {
-        setWorkspace(team);
-        setLastWorkspace(currentWorkspace);
-
-        navigate(`/dashboard/${teamId}`);
+    (id: string) => {
+      const workspace = workspaces?.find(workspace => workspace.id === id);
+      if (workspace && id !== currentWorkspace?.id) {
+        setCurrentWorkspace(workspace);
+        navigate(`/dashboard/${id}`);
       }
     },
-    [teams, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
+    [currentWorkspace?.id, setCurrentWorkspace, workspaces, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -191,13 +172,11 @@ export default () => {
         refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
-        setWorkspace(results.data.createTeam.team);
-        setLastWorkspace(results.data.createTeam.team);
-
+        setCurrentWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setWorkspace, setLastWorkspace, navigate],
+    [createTeamMutation, setCurrentWorkspace, navigate],
   );
 
   useEffect(() => {
@@ -217,8 +196,8 @@ export default () => {
   }, [t, setNotification]);
 
   return {
-    teams,
-    teamId,
+    workspaces,
+    workspaceId,
     publicationModalVisible,
     searchIndex,
     publishing,
