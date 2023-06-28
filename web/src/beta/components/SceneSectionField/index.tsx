@@ -1,35 +1,30 @@
 import Icon from "@reearth/beta/components/Icon";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
-import useManageSwitchState from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type SceneSectionFieldProps = {
   scenes: {
+    id: string;
     label: string;
+    active?: boolean;
   }[];
-  onActive?: (index: number) => void;
-  onAction?: (index: number) => void;
+  onActive?: (id: string) => void;
+  onAction?: (id: string) => void;
 };
 
 const SceneSectionField: React.FC<SceneSectionFieldProps> = ({ scenes, onActive, onAction }) => {
   const theme = useTheme();
-  const { fields, handleActivate } = useManageSwitchState({
-    fields: scenes.map((item, index) => {
-      return { id: index.toString(), ...item };
-    }),
-  });
 
   return (
     <SidePanelSectionField title="scene">
       <List>
-        {fields.map((item, index) => (
+        {scenes.map((item, index) => (
           <Item
             key={index}
             active={item.active}
             onClick={() => {
-              handleActivate(item.id);
-              onActive?.(index);
+              onActive?.(item.id);
             }}>
             <ItemProperty>
               <ItemSpace />
@@ -45,7 +40,7 @@ const SceneSectionField: React.FC<SceneSectionFieldProps> = ({ scenes, onActive,
               size={16}
               color={theme.general.content.main}
               onClick={() => {
-                onAction?.(index);
+                onAction?.(item.id);
               }}
             />
           </Item>

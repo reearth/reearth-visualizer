@@ -13,10 +13,10 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   args: {
     scenes: [
-      { label: "Basemap" },
-      { label: "Environment" },
-      { label: "Terrain" },
-      { label: "Main Camera" },
+      { id: "0", label: "Basemap" },
+      { id: "1", label: "Environment" },
+      { id: "2", label: "Terrain", active: true },
+      { id: "3", label: "Main Camera" },
     ],
   },
 };
