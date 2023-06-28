@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -76,12 +77,16 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Pl
 	var err error
 
 	if len(ids2) > 0 {
+		log.Infof("TEMP: plugin mongo find by ids %v", ids2)
+
 		res, err = r.find(ctx, bson.M{
 			"id": bson.M{"$in": id.PluginIDsToStrings(ids2)},
 		})
 		if err != nil {
 			return nil, err
 		}
+
+		log.Infof("TEMP: plugin mongo find by ids OK")
 	}
 
 	return res.Concat(b.List()).MapToIDs(ids), nil
