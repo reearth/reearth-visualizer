@@ -17,6 +17,4 @@ const AssetPage: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(AssetPage);
+export default withAuthorisation()(AssetPage);
