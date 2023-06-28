@@ -51,6 +51,9 @@ import Workspaces from "./Icons/workspaces.svg";
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
 
+// Plus
+import Plus from "./Icons/plus.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -74,6 +77,7 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   square: Square,
+  plus: Plus,
   timeline: Timeline,
   twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
