@@ -14,7 +14,7 @@ import {
 } from "@reearth/beta/lib/core/Map";
 
 import { commonReearth } from "./api";
-import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
+import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
 import { Context, Props } from "./types";
 import useClientStorage from "./useClientStorage";
 import usePluginInstances from "./usePluginInstances";
@@ -38,6 +38,8 @@ export default function ({
   alignSystem,
   floatingWidgets,
   camera,
+  interactionMode,
+  overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
@@ -74,6 +76,12 @@ export default function ({
       tick: engineRef?.tick,
     };
   }, [engineRef]);
+  const getInteractionMode = useGet(
+    useMemo<InteractionMode>(
+      () => ({ mode: interactionMode, override: overrideInteractionMode }),
+      [interactionMode, overrideInteractionMode],
+    ),
+  );
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
@@ -283,6 +291,7 @@ export default function ({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        interactionMode: getInteractionMode,
         pluginInstances: getPluginInstances,
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
@@ -332,6 +341,7 @@ export default function ({
       getTags,
       getCamera,
       getClock,
+      getInteractionMode,
       getPluginInstances,
       getViewport,
       getSelectedLayer,
