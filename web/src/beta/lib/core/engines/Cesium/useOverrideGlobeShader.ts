@@ -61,9 +61,16 @@ export const useOverrideGlobeShader = ({
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     const surfaceShaderSet = globe._surfaceShaderSet;
+    if (!surfaceShaderSet) {
+      if (import.meta.env.DEV) {
+        throw new Error("`globe._surfaceShaderSet` could not found");
+      }
+      return;
+    }
+
     const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource;
 
-    const GlobeFS = baseFragmentShaderSource.sources[baseFragmentShaderSource.sources.length - 1];
+    const GlobeFS = baseFragmentShaderSource?.sources[baseFragmentShaderSource.sources.length - 1];
 
     if (!GlobeFS) {
       if (import.meta.env.DEV) {
@@ -86,6 +93,13 @@ export const useOverrideGlobeShader = ({
     } catch (e) {
       if (import.meta.env.DEV) {
         throw new Error(`Failed to override GlobeFS: ${JSON.stringify(e)}`);
+      }
+      return;
+    }
+
+    if (!globe?._surface?._tileProvider?.materialUniformMap) {
+      if (import.meta.env.DEV) {
+        throw new Error("`globe._surface._tileProvider.materialUniformMap` could not found");
       }
       return;
     }
