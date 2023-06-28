@@ -392,7 +392,7 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ 
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -422,7 +422,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break

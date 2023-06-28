@@ -189,7 +189,7 @@ func (r *Property) RemoveByScene(ctx context.Context, sceneID id.SceneID) error 
 		"scene": sceneID.String(),
 	})
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }

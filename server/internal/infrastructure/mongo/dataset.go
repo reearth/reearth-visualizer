@@ -238,7 +238,7 @@ func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.Dat
 
 	cursor, err2 := r.client.Client().Aggregate(ctx, pipeline)
 	if err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	defer func() {
 		_ = cursor.Close(ctx)
@@ -246,7 +246,7 @@ func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.Dat
 
 	doc := mongodoc.DatasetExtendedDocument{}
 	if err2 := bson.Unmarshal(cursor.Current, &doc); err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	docs := make([]*mongodoc.DatasetExtendedDocument, 0, len(fields))
 	for i := 0; i < len(fields); i++ {
@@ -265,11 +265,11 @@ func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.Dat
 	res := make(dataset.List, 0, len(docs))
 	for i, d := range docs {
 		if i > 0 && i-1 != d.Depth {
-			return nil, rerror.ErrInternalBy(errors.New("invalid order"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("invalid order"))
 		}
 		ds, err2 := d.DatasetDocument.Model()
 		if err2 != nil {
-			return nil, rerror.ErrInternalBy(err2)
+			return nil, rerror.ErrInternalByWithContext(ctx, err2)
 		}
 		res = append(res, ds)
 	}
@@ -313,7 +313,7 @@ func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 		{Key: "scene", Value: sceneID.String()},
 	})
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }
@@ -321,7 +321,7 @@ func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 func (r *Dataset) find(ctx context.Context, dst dataset.List, filter interface{}) (dataset.List, error) {
 	c := mongodoc.NewDatasetConsumer()
 	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
@@ -338,7 +338,7 @@ func (r *Dataset) paginate(ctx context.Context, filter bson.M, pagination *useca
 	c := mongodoc.NewDatasetConsumer()
 	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return c.Result, pageInfo, nil
 }

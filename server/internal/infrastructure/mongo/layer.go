@@ -263,7 +263,7 @@ func (r *Layer) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	}
 	_, err := r.client.Client().DeleteMany(ctx, filter)
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }

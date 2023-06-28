@@ -330,7 +330,7 @@ func (i *User) UpdateMe(ctx context.Context, p interfaces.UpdateMeParam, operato
 			if a.Provider != "auth0" {
 				continue
 			}
-			if _, err := i.authenticator.UpdateUser(gateway.AuthenticatorUpdateUserParam{
+			if _, err := i.authenticator.UpdateUser(ctx, gateway.AuthenticatorUpdateUserParam{
 				ID:       a.Sub,
 				Name:     p.Name,
 				Email:    p.Email,

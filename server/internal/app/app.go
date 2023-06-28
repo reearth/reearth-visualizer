@@ -76,7 +76,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		e.GET("/graphql", echo.WrapHandler(
 			playground.Handler("reearth", "/api/graphql"),
 		))
-		log.Infof("gql: GraphQL Playground is available")
+		log.Infofc(ctx, "gql: GraphQL Playground is available")
 	}
 
 	// init usecases

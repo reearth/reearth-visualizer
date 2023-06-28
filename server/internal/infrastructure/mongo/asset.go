@@ -89,7 +89,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (i
 		{"$group": bson.M{"_id": nil, "size": bson.M{"$sum": "$size"}}},
 	})
 	if err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	defer func() {
 		_ = c.Close(ctx)
@@ -104,7 +104,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (i
 	}
 	var res resp
 	if err := c.Decode(&res); err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return res.Size, nil
 }
@@ -134,7 +134,7 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 	c := mongodoc.NewAssetConsumer()
 	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return c.Result, pageInfo, nil
@@ -143,7 +143,7 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
 	c := mongodoc.NewAssetConsumer()
 	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
