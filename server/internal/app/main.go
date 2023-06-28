@@ -89,7 +89,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 }
 
 func (w *WebServer) Run() {
-	defer log.Infoln("Server shutdown")
+	defer log.Info("Server shutdown")
 
 	debugLog := ""
 	if w.appServer.Debug {
@@ -99,7 +99,7 @@ func (w *WebServer) Run() {
 
 	go func() {
 		err := w.appServer.StartH2CServer(w.address, &http2.Server{})
-		log.Fatalln(err.Error())
+		log.Fatal(err.Error())
 	}()
 
 	quit := make(chan os.Signal, 1)

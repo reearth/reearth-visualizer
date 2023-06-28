@@ -38,8 +38,8 @@ func NewDataset(client *mongox.Client) *Dataset {
 	}
 }
 
-func (r *Dataset) Init() error {
-	return createIndexes(context.Background(), r.client, datasetIndexes, datasetUniqueIndexes)
+func (r *Dataset) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, datasetIndexes, datasetUniqueIndexes)
 }
 
 func (r *Dataset) Filtered(f repo.SceneFilter) repo.Dataset {

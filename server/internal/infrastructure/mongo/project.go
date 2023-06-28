@@ -32,8 +32,8 @@ func NewProject(client *mongox.Client) *Project {
 	}
 }
 
-func (r *Project) Init() error {
-	return createIndexes(context.Background(), r.client, projectIndexes, projectUniqueIndexes)
+func (r *Project) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, projectIndexes, projectUniqueIndexes)
 }
 
 func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {

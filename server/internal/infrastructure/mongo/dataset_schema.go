@@ -30,8 +30,8 @@ func NewDatasetSchema(client *mongox.Client) *DatasetSchema {
 	}
 }
 
-func (r *DatasetSchema) Init() error {
-	return createIndexes(context.Background(), r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
+func (r *DatasetSchema) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
 }
 
 func (r *DatasetSchema) Filtered(f repo.SceneFilter) repo.DatasetSchema {

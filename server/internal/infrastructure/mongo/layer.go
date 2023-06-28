@@ -46,8 +46,8 @@ func NewLayer(client *mongox.Client) *Layer {
 	}
 }
 
-func (r *Layer) Init() error {
-	return createIndexes(context.Background(), r.client, layerIndexes, layerUniqueIndexes)
+func (r *Layer) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, layerIndexes, layerUniqueIndexes)
 }
 
 func (r *Layer) Filtered(f repo.SceneFilter) repo.Layer {

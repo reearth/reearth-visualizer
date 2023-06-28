@@ -22,6 +22,6 @@ func initGCPProfiler(version string) {
 		Service:        "reearth",
 		ServiceVersion: version,
 	}); err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 }

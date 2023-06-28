@@ -61,7 +61,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// release lock of all scenes
 	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
-		log.Fatalln(fmt.Sprintf("repo initialization error: %+v", err))
+		log.Fatal(fmt.Sprintf("repo initialization error: %+v", err))
 	}
 
 	return repos, gateways
@@ -88,11 +88,11 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 		return
 	}
 
-	log.Infoln("file: local storage is used")
+	log.Info("file: local storage is used")
 	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
 	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
 	if err != nil {
-		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
+		log.Fatal(fmt.Sprintf("file: init error: %+v", err))
 	}
 	return fileRepo
 }

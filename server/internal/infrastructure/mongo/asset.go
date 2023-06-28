@@ -30,8 +30,8 @@ func NewAsset(client *mongox.Client) *Asset {
 	return &Asset{client: client.WithCollection("asset")}
 }
 
-func (r *Asset) Init() error {
-	return createIndexes(context.Background(), r.client, assetIndexes, assetUniqueIndexes)
+func (r *Asset) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, assetIndexes, assetUniqueIndexes)
 }
 
 func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {

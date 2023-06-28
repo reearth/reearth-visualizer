@@ -7,7 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,8 +46,8 @@ func NewProperty(client *mongox.Client) *Property {
 	}
 }
 
-func (r *Property) Init() error {
-	return createIndexes(context.Background(), r.client, propertyIndexes, propertyUniqueIndexes)
+func (r *Property) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, propertyIndexes, propertyUniqueIndexes)
 }
 
 func (r *Property) Filtered(f repo.SceneFilter) repo.Property {
@@ -69,8 +68,6 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 		return nil, nil
 	}
 
-	log.Infof("TEMP: property mongo find by ids %v", ids)
-
 	filter := bson.M{
 		"id": bson.M{
 			"$in": ids.Strings(),
@@ -80,8 +77,6 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 	if err != nil {
 		return nil, err
 	}
-
-	log.Infof("TEMP: property mongo find by ids OK")
 
 	return filterProperties(ids, res), nil
 }

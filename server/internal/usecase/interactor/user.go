@@ -195,7 +195,7 @@ func (i *User) StartPasswordReset(ctx context.Context, email string) error {
 		return err
 	}
 
-	err = i.mailer.SendMail([]mailer.Contact{
+	err = i.mailer.SendMail(ctx, []mailer.Contact{
 		{
 			Email: u.Email(),
 			Name:  u.Name(),

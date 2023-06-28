@@ -23,7 +23,7 @@ import (
 
 func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	if cfg.Config == nil {
-		log.Fatalln("ServerConfig.Config is nil")
+		log.Fatal("ServerConfig.Config is nil")
 	}
 
 	e := echo.New()
