@@ -2,6 +2,8 @@
  * Copied from: https://github.com/takram-design-engineering/plateau-view/blob/b7bba6de249d068e2e56b1601e0f6d86053b5d30/libs/cesium/src/StringMatcher.test.ts
  */
 
+import { describe, expect, test } from "vitest";
+
 import { StringMatcher } from "./StringMatcher";
 
 const source =
