@@ -7,7 +7,7 @@ import {
   useGetProjectBySceneQuery,
   useGetTeamsQuery,
 } from "@reearth/services/gql";
-import { useProject, useSessionWorkspace, useWorkspace } from "@reearth/services/state";
+import { useProject, useWorkspace } from "@reearth/services/state";
 
 type User = {
   name: string;
@@ -16,9 +16,8 @@ type User = {
 export default (sceneId: string) => {
   const { logout: handleLogout } = useAuth();
 
-  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentProject, setProject] = useProject();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
 
@@ -59,16 +58,6 @@ export default (sceneId: string) => {
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
 
   useEffect(() => {
-    if (!currentWorkspace && lastWorkspace && workspaceId == lastWorkspace.id)
-      setWorkspace(lastWorkspace);
-    else {
-      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
-      setWorkspace(workspace);
-      setLastWorkspace(workspace);
-    }
-  }, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
-
-  useEffect(() => {
     setProject(p =>
       p?.id !== project?.id
         ? project
@@ -87,13 +76,12 @@ export default (sceneId: string) => {
     (workspaceId: string) => {
       const workspace = workspaces?.find(team => team.id === workspaceId);
       if (workspace && workspaceId !== currentWorkspace?.id) {
-        setWorkspace(workspace);
-        setLastWorkspace(currentWorkspace);
+        setCurrentWorkspace(workspace);
 
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspaces, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
+    [workspaces, currentWorkspace, setCurrentWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -105,13 +93,12 @@ export default (sceneId: string) => {
         refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
-        setWorkspace(results.data.createTeam.team);
-        setLastWorkspace(results.data.createTeam.team);
+        setCurrentWorkspace(results.data.createTeam.team);
 
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setWorkspace, setLastWorkspace, navigate],
+    [createTeamMutation, setCurrentWorkspace, navigate],
   );
 
   return {
