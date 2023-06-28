@@ -139,12 +139,22 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 	return func(err error, c echo.Context) {
+		ctx := c.Request().Context()
 		if c.Response().Committed {
 			return
 		}
 
 		if errors.Is(err, echo.ErrNotFound) {
 			err = rerror.ErrNotFound
+		}
+
+		if err := rerror.UnwrapErrInternal(err); err != nil {
+			au := adapter.GetAuthInfo(ctx)
+			u := adapter.User(ctx)
+			op := adapter.Operator(ctx)
+			c.Echo().Logger.Errorf("AUTH: %#v", au)
+			c.Echo().Logger.Errorf("USER: %#v", u)
+			c.Echo().Logger.Errorf("OP: %#v", op)
 		}
 
 		code, msg := errorMessage(err, func(f string, args ...interface{}) {
