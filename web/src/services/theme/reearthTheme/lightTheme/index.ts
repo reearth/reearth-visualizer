@@ -72,6 +72,10 @@ const lightTheme: Theme = {
       border: colors.outline.weak,
       main: colors.primary.main,
     },
+    colorField: {
+      border: colors.outline.weak,
+      focusBorder: colors.outline.main,
+    },
   },
   settings: {},
   notifications: {

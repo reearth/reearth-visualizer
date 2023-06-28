@@ -4,7 +4,7 @@ import { usePopper } from "react-popper";
 import Button from "@reearth/beta/components/Button";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
-import { metricsSizes, styled, css } from "@reearth/services/theme";
+import { metricsSizes, styled, css, useTheme } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import "./styles.css";
@@ -16,6 +16,7 @@ export type Props = {
 
 const ColorField: React.FC<Props> = ({ value, onChange }) => {
   const t = useT();
+  const theme = useTheme();
   const {
     wrapperRef,
     pickerRef,
@@ -79,7 +80,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               max={255}
               onChange={handleRgbaInput}
             />
-            <PickerText size="xFootnote" color={colors.text}>
+            <PickerText size="xFootnote" color={theme.general.content.main}>
               {t("Red")}
             </PickerText>
           </Field>
@@ -92,7 +93,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               max={255}
               onChange={handleRgbaInput}
             />
-            <PickerText size="xFootnote" color={colors.text}>
+            <PickerText size="xFootnote" color={theme.general.content.main}>
               {t("Green")}
             </PickerText>
           </Field>
@@ -105,7 +106,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               max={255}
               onChange={handleRgbaInput}
             />
-            <PickerText size="xFootnote" color={colors.text}>
+            <PickerText size="xFootnote" color={theme.general.content.main}>
               {t("Blue")}
             </PickerText>
           </Field>
@@ -116,7 +117,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               value={rgba.a ? Math.round(rgba.a * 100) : undefined}
               onChange={handleRgbaInput}
             />
-            <PickerText size="xFootnote" color={colors.text}>
+            <PickerText size="xFootnote" color={theme.general.content.main}>
               {t("Alpha")}
             </PickerText>
           </Field>
@@ -132,15 +133,6 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
 
 export default ColorField;
 
-const colors = {
-  background: "#2B2A2F",
-  border: "#4A4A4A",
-  check: "#2B2A2F",
-  placeholder: "#4A4A4A",
-  focusBorder: "#A0A0A0",
-  text: "#C7C5C5",
-};
-
 const Wrapper = styled.div`
   text-align: center;
   width: 100%;
@@ -149,7 +141,7 @@ const Wrapper = styled.div`
 
 const InputWrapper = styled.div`
   display: flex;
-  background: ${colors.background};
+  background: ${props => props.theme.general.bg.weak};
 `;
 
 const Layers = styled.div`
@@ -179,8 +171,9 @@ linear-gradient(
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${colors.border};
-  background-image: ${check(colors.check)}, ${check(colors.check)};
+  background-color: ${props => props.theme.editor.colorField.border};
+  background-image: ${props => check(props.theme.general.bg.weak)},
+    ${props => check(props.theme.general.bg.weak)};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;
   ${layerStyle};
@@ -202,9 +195,9 @@ const PickerWrapper = styled.div<{ open: boolean }>`
   cursor: default;
   padding: 0;
   box-sizing: border-box;
-  border: solid 1px ${colors.border};
+  border: solid 1px ${props => props.theme.editor.colorField.border};
   border-radius: 5px;
-  background: ${colors.background};
+  background: ${props => props.theme.general.bg.weak};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
   z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
 `;
@@ -229,16 +222,16 @@ const Input = styled.input<{ type?: string }>`
   width: 100%;
   height: 30px;
   padding: 6px ${metricsSizes["s"]}px;
-  background: ${colors.background};
+  background: ${props => props.theme.general.bg.weak};
   box-sizing: border-box;
-  color: ${colors.text};
+  color: ${props => props.theme.general.content.main};
   outline: none;
-  border: 1px solid ${colors.border};
+  border: 1px solid ${props => props.theme.editor.colorField.border};
   &:focus {
-    border-color: ${colors.focusBorder};
+    border-color: ${props => props.theme.editor.colorField.focusBorder};
   }
   ::placeholder {
-    color: ${colors.placeholder};
+    color: ${props => props.theme.general.content.weak};
   }
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {

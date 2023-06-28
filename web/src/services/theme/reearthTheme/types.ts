@@ -67,6 +67,10 @@ export type Theme = {
       main: string;
       border: string;
     };
+    colorField: {
+      border: string;
+      focusBorder: string;
+    };
   };
   settings: unknown;
   navbar: {
