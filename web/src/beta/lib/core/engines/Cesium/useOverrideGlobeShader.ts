@@ -33,12 +33,14 @@ export const useOverrideGlobeShader = ({
   hasVertexNormals,
 }: {
   cesium: RefObject<CesiumComponentRef<Viewer>>;
-  sphericalHarmonicCoefficients: Cartesian3[];
+  sphericalHarmonicCoefficients?: Cartesian3[];
   globeShadowDarkness?: number;
   globeImageBasedLighting?: boolean;
   hasVertexNormals?: boolean;
 }) => {
-  const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(sphericalHarmonicCoefficients);
+  const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(
+    sphericalHarmonicCoefficients || [],
+  );
   const globeImageBasedLightingRefFunc = useImmutableFunction(globeImageBasedLighting);
 
   useEffect(() => {
