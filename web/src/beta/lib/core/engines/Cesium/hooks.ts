@@ -12,7 +12,7 @@ import {
   SunLight,
   DirectionalLight,
 } from "cesium";
-import type { Viewer as CesiumViewer } from "cesium";
+import type { Viewer as CesiumViewer, ShadowMap } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
@@ -180,6 +180,66 @@ export default ({
     () => property?.light?.specularEnvironmentMaps,
     [property?.light?.specularEnvironmentMaps],
   );
+
+  // shadow map
+  type ShadowMapBias = {
+    polygonOffsetFactor: number;
+    polygonOffsetUnits: number;
+    normalOffsetScale: number;
+    normalShading: boolean;
+    normalShadingSmooth: number;
+    depthBias: number;
+  };
+
+  useEffect(() => {
+    const shadowMap = cesium?.current?.cesiumElement?.shadowMap as
+      | (ShadowMap & {
+          _terrainBias: ShadowMapBias;
+          _pointBias: ShadowMapBias;
+          _primitiveBias: ShadowMapBias;
+        })
+      | undefined;
+    if (!shadowMap) return;
+    shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
+    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
+    shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
+    shadowMap.fadingEnabled = true;
+    shadowMap.maximumDistance = 5000;
+    shadowMap.normalOffset = true;
+
+    // bias
+    const defaultTerrainBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.5,
+      normalShading: true,
+      normalShadingSmooth: 0.3,
+      depthBias: 0.0001,
+    };
+    const defaultPrimitiveBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.1 * 100,
+      normalShading: true,
+      normalShadingSmooth: 0.05,
+      depthBias: 0.00002 * 10,
+    };
+    const defaultPointBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.0,
+      normalShading: true,
+      normalShadingSmooth: 0.1,
+      depthBias: 0.0005,
+    };
+    Object.assign(shadowMap._terrainBias, defaultTerrainBias);
+    Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
+    Object.assign(shadowMap._pointBias, defaultPointBias);
+  }, [
+    property?.atmosphere?.softShadow,
+    property?.atmosphere?.shadowDarkness,
+    property?.atmosphere?.shadowResolution,
+  ]);
 
   useEffect(() => {
     engineAPI.changeSceneMode(property?.default?.sceneMode, 0);

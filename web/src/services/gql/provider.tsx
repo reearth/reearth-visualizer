@@ -10,7 +10,6 @@ import type { ReactNode } from "react";
 import { reportError } from "@reearth/sentry";
 import { useAuth } from "@reearth/services/auth";
 import { e2eAccessToken } from "@reearth/services/config";
-import { useError } from "@reearth/services/state";
 
 import fragmentMatcher from "./fragmentMatcher.json";
 
@@ -51,7 +50,6 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
-  const [, setError] = useError();
   const { getAccessToken } = useAuth();
 
   const authLink = setContext(async (_, { headers }) => {
@@ -83,7 +81,6 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       };
     }
     if (error) {
-      setError(error);
       reportError(error);
     }
   });
