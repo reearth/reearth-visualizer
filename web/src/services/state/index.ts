@@ -1,6 +1,5 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { SyncStorage } from "jotai/utils/atomWithStorage";
 
 import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
 import { LayerSelectionReason } from "@reearth/classic/core/Map";
@@ -96,31 +95,8 @@ export type Workspace = {
   policy?: Policy | null;
 };
 
-const workspace = atomWithStorage<Workspace | undefined>("workspace", undefined);
+const workspace = atom<Workspace | undefined>(undefined);
 export const useWorkspace = () => useAtom(workspace);
-
-const sessionStorageObj: SyncStorage<Workspace | undefined> = {
-  getItem: key => {
-    const value = sessionStorage.getItem(key);
-    if (value === null) {
-      return undefined;
-    }
-    return JSON.parse(value) as Workspace;
-  },
-  setItem: (key, value) => {
-    sessionStorage.setItem(key, JSON.stringify(value));
-  },
-  removeItem: function (): void {
-    throw new Error("Function not implemented.");
-  },
-};
-
-const sessionWorkspace = atomWithStorage<Workspace | undefined>(
-  "lastWorkspace",
-  undefined,
-  sessionStorageObj,
-);
-export const useSessionWorkspace = () => useAtom(sessionWorkspace);
 
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);

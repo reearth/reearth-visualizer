@@ -20,7 +20,6 @@ import {
   useProject,
   useUnselectProject,
   useNotification,
-  useSessionWorkspace,
 } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 
@@ -29,12 +28,10 @@ export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][num
 const projectsPerPage = 9;
 
 export default (workspaceId?: string) => {
-  const [currentWorkspace, setCurrentWorkspace] = useSessionWorkspace();
-
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -60,40 +57,23 @@ export default (workspaceId?: string) => {
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
-    if (!currentWorkspace && lastWorkspace && lastWorkspace.id === workspaceId)
-      setCurrentWorkspace(lastWorkspace);
-    else if (workspace) {
+    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
       setCurrentWorkspace({
         personal,
         ...workspace,
       });
-      setLastWorkspace({
-        personal,
-        ...workspace,
-      });
     }
-  }, [
-    currentWorkspace,
-    workspace,
-    setCurrentWorkspace,
-    personal,
-    setLastWorkspace,
-    lastWorkspace,
-    workspaceId,
-    workspaces,
-  ]);
+  }, [currentWorkspace, workspace, setCurrentWorkspace, personal]);
 
   const handleWorkspaceChange = useCallback(
     (workspaceId: string) => {
       const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
       if (workspace) {
         setCurrentWorkspace(workspace);
-        setLastWorkspace(workspace);
-
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspaces, setCurrentWorkspace, setLastWorkspace, navigate],
+    [workspaces, setCurrentWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -109,20 +89,11 @@ export default (workspaceId?: string) => {
           text: t("Successfully created workspace!"),
         });
         setCurrentWorkspace(results.data.createTeam.team);
-        setLastWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [
-      createTeamMutation,
-      refetch,
-      setNotification,
-      t,
-      setCurrentWorkspace,
-      setLastWorkspace,
-      navigate,
-    ],
+    [createTeamMutation, setCurrentWorkspace, refetch, navigate, t, setNotification],
   );
 
   useEffect(() => {
