@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 import { reportError } from "@reearth/sentry";
 import { useAuth } from "@reearth/services/auth";
 import { e2eAccessToken } from "@reearth/services/config";
+import { useSetError } from "@reearth/services/state";
 
 import fragmentMatcher from "./fragmentMatcher.json";
 
@@ -47,6 +48,8 @@ function offsetFromCursor(items: any, cursor: string, readField: ReadFieldFuncti
 }
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
+  const { setError } = useSetError();
+
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
@@ -81,6 +84,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       };
     }
     if (error) {
+      setError(error);
       reportError(error);
     }
   });
