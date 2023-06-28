@@ -326,9 +326,8 @@ export type SceneProperty = {
     lightColor?: string;
     lightIntensity?: number;
     specularEnvironmentMaps?: string;
-    sphericalHarmonicCoefficient?: { x: number; y: number; z: number }[];
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
     imageBasedLightIntensity?: number;
-    debugSphericalHarmonicCoefficients?: boolean;
   };
 };
 

@@ -158,10 +158,14 @@ export default function Feature({
         {displayType.map(k => {
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
+          const useSphericalHormonicCoefficients =
+            !!props.sceneProperty.light?.sphericalHarmonicCoefficients;
 
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
-          const key = generateIDWithMD5(`${layer?.id || ""}_${k}_${data?.url}_${isVisible}`);
+          const key = generateIDWithMD5(
+            `${layer?.id || ""}_${k}_${data?.url}_${isVisible}_${useSphericalHormonicCoefficients}`,
+          );
 
           return (
             <C
