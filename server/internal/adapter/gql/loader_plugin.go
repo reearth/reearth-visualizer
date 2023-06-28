@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -23,7 +24,11 @@ func (c *PluginLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmode
 		return nil, []error{err}
 	}
 
-	res, err := c.usecase.Fetch(ctx, ids2, getOperator(ctx))
+	op := getOperator(ctx)
+	log.Infof("TEMP: PluginLoader.Fetch op: %#v", op)
+	log.Infof("TEMP: PluginLoader.Fetch ids: %v", ids)
+
+	res, err := c.usecase.Fetch(ctx, ids2, op)
 	if err != nil {
 		return nil, []error{err}
 	}
