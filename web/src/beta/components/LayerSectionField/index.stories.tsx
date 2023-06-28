@@ -13,9 +13,9 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   args: {
     layers: [
-      { label: "Landmark", visible: true },
-      { label: "takanwa_Street.json" },
-      { label: "people_animation" },
+      { id: "0", label: "Landmark", visible: true },
+      { id: "1", label: "takanwa_Street.json" },
+      { id: "2", label: "people_animation", active: true },
     ],
   },
 };

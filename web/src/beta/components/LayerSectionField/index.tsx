@@ -3,20 +3,21 @@ import { useState } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
-import useManageSwitchState from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 
 type LayerSectionItemProps = {
+  id: string;
   label: string;
   visible?: boolean;
+  active?: boolean;
 };
 
 export type LayerSectionFieldProps = {
   layers: LayerSectionItemProps[];
   onClickLayerAdd?: () => void;
-  onActive?: (index: number) => void;
-  onAction?: (index: number) => void;
-  onVisible?: (index: number) => void;
+  onActive?: (id: string) => void;
+  onAction?: (id: string) => void;
+  onVisible?: (id: string) => void;
 };
 
 const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
@@ -29,12 +30,6 @@ const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
   const theme = useTheme();
   const [visibles] = useState(layers);
 
-  const { fields, handleActivate } = useManageSwitchState({
-    fields: layers.map((item, index) => {
-      return { id: index.toString(), ...item };
-    }),
-  });
-
   return (
     <SidePanelSectionField title="Layers">
       <LayerAddFrame>
@@ -46,19 +41,18 @@ const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
         />
       </LayerAddFrame>
       <List>
-        {fields.map((item, index) => (
+        {layers.map((item, index) => (
           <Item
             key={index}
             active={item.active}
             onClick={() => {
-              handleActivate(item.id);
-              onActive?.(index);
+              onActive?.(item.id);
             }}>
             <ItemProperty>
               <ItemVisibility
                 active={item.active}
                 color={theme.general.content.main}
-                onClick={() => onVisible?.(index)}>
+                onClick={() => onVisible?.(item.id)}>
                 {visibles[index].visible && <ItemVisibilityIcon icon="checkOnVisibility" />}
               </ItemVisibility>
               <Text
@@ -73,7 +67,7 @@ const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
               size={16}
               color={theme.general.content.main}
               onClick={() => {
-                onAction?.(index);
+                onAction?.(item.id);
               }}
             />
           </Item>
