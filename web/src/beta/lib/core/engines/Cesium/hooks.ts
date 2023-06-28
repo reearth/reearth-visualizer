@@ -154,6 +154,9 @@ export default ({
     shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
     shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
     shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
+    shadowMap.fadingEnabled = true;
+    shadowMap.maximumDistance = 5000;
+    shadowMap.normalOffset = true;
 
     // bias
     const defaultTerrainBias: ShadowMapBias = {
