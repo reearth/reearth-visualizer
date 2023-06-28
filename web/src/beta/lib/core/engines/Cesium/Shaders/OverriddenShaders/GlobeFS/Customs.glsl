@@ -1,3 +1,6 @@
+// This file refers this implementation:
+// https://github.com/takram-design-engineering/plateau-view/blob/8ea8bf1d5ef64319d92d0eb05b936cca7f1a2e8f/libs/cesium/src/shaders/imageBasedLightingStage.glsl
+
 // Derived from:
 // https://github.com/CesiumGS/cesium/blob/1.106/packages/engine/Source/Shaders/Model/ImageBasedLightingStageFS.glsl
 // Specular term was removed, as I never apply it on terrain.

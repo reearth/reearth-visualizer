@@ -1,11 +1,16 @@
+/**
+ * This file refers this implementation.
+ * https://github.com/takram-design-engineering/plateau-view/blob/8ea8bf1d5ef64319d92d0eb05b936cca7f1a2e8f/libs/cesium/src/useGlobeShader.tsx
+ */
+
 import { ShaderSource } from "@cesium/engine";
 import { Viewer, Globe, Material, Cartesian3 } from "cesium";
 import { RefObject, useEffect } from "react";
 import { CesiumComponentRef } from "resium";
 
 import { useImmutableFunction } from "../../hooks/useRefFunction";
+import { StringMatcher } from "../../utils/StringMatcher";
 
-import CesiumGlobeFS from "./Shaders/OverriddenShaders/GlobeFS/Cesium.glsl?raw";
 import GlobeFSCustoms from "./Shaders/OverriddenShaders/GlobeFS/Customs.glsl?raw";
 import GlobeFSDefinitions from "./Shaders/OverriddenShaders/GlobeFS/Definitions.glsl?raw";
 import { PrivateCesiumGlobe } from "./types";
@@ -55,6 +60,36 @@ export const useOverrideGlobeShader = ({
     if (!cesium.current?.cesiumElement || !hasVertexNormals) return;
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
+    const surfaceShaderSet = globe._surfaceShaderSet;
+    const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource;
+
+    const GlobeFS = baseFragmentShaderSource.sources[baseFragmentShaderSource.sources.length - 1];
+
+    if (!GlobeFS) {
+      if (import.meta.env.DEV) {
+        throw new Error("GlobeFS could not find.");
+      }
+      return;
+    }
+
+    let replacedGlobeFS;
+    try {
+      replacedGlobeFS = new StringMatcher()
+        .replace(
+          [
+            "float diffuseIntensity = clamp(czm_getLambertDiffuse(czm_lightDirectionEC, normalize(v_normalEC)) * u_lambertDiffuseMultiplier + u_vertexShadowDarkness, 0.0, 1.0);",
+            "vec4 finalColor = vec4(color.rgb * czm_lightColor * diffuseIntensity, color.a);",
+          ],
+          "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
+        )
+        .execute(GlobeFS);
+    } catch (e) {
+      if (import.meta.env.DEV) {
+        throw new Error(`Failed to override GlobeFS: ${JSON.stringify(e)}`);
+      }
+      return;
+    }
+
     makeGlobeShadersDirty(globe);
 
     globe._surface._tileProvider.materialUniformMap = {
@@ -63,12 +98,10 @@ export const useOverrideGlobeShader = ({
       u_reearth_globeImageBasedLighting: globeImageBasedLightingRefFunc, // Avoid to rerender globe.
     };
 
-    const surfaceShaderSet = globe._surfaceShaderSet;
-    const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource;
     surfaceShaderSet.baseFragmentShaderSource = new ShaderSource({
       sources: [
         ...baseFragmentShaderSource.sources.slice(0, -1),
-        GlobeFSDefinitions + CesiumGlobeFS + GlobeFSCustoms,
+        GlobeFSDefinitions + replacedGlobeFS + GlobeFSCustoms,
       ],
       defines: baseFragmentShaderSource.defines,
     });

@@ -335,6 +335,7 @@ export default ({
     [engineAPI],
   );
 
+  // TODO: Replace after merged IBL PR.
   const sphericalHarmonicCoefficients = useMemo(
     () =>
       !property?.debugs?.debugSphericalHarmonicCoefficients
