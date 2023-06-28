@@ -89,7 +89,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 }
 
 func (w *WebServer) Run() {
-	defer log.Info("Server shutdown")
+	defer log.Infof("Server shutdown")
 
 	debugLog := ""
 	if w.appServer.Debug {
