@@ -1,4 +1,5 @@
 import Resizable from "@reearth/beta/components/Resizable";
+import { StoryPanel } from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
@@ -16,7 +17,7 @@ const Editor: React.FC<Props> = ({ sceneId, tab }) => {
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
   const { visualizerNav } = useVisualizerNav({ tab });
-
+  const isStory = tab === "story";
   return (
     <DndProvider>
       <Wrapper>
@@ -32,7 +33,8 @@ const Editor: React.FC<Props> = ({ sceneId, tab }) => {
               {leftPanel}
             </Resizable>
           )}
-          <Center>
+          <Center hasStory={isStory}>
+            {isStory && <StoryPanel />}
             <VisualizerWrapper hasNav={!!visualizerNav}>
               {visualizerNav && <div>{visualizerNav}</div>}
               <Visualizer />
@@ -71,11 +73,11 @@ const MainSection = styled.div`
   background-color: ${({ theme }) => theme.general.bg.veryStrong};
 `;
 
-const Center = styled.div`
+const Center = styled.div<{ hasStory: boolean }>`
   height: 100%;
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${hasStory => (hasStory ? "row" : "column")};
 `;
 
 const VisualizerWrapper = styled.div<{ hasNav: boolean }>`

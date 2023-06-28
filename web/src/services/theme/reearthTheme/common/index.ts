@@ -4,7 +4,7 @@ import zIndexes, { ZIndex } from "./zIndex";
 
 export { default as GlobalStyles } from "./globalStyles";
 
-type Common = {
+export type Common = {
   zIndexes: ZIndex;
   colors: Colors;
   metrics: MetricsSizesType;

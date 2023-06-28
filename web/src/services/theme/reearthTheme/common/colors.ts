@@ -20,6 +20,17 @@ const colors = {
       strong: "#F57C4B",
     },
   },
+  scrollBar: {
+    bg: {
+      lightest: "#ffffff",
+      light: "#F1F1F1",
+    },
+    text: {
+      main: "#2E2E2E",
+      weak: "#8C8A8A",
+      weakest: "#C7C5C5",
+    },
+  },
 };
 
 export default colors;
