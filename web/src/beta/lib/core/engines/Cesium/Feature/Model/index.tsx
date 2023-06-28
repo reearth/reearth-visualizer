@@ -6,7 +6,7 @@ import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
-import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
+import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
 import {
   EntityExt,
   extractSimpleLayerData,

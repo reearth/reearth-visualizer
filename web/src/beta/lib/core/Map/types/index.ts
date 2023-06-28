@@ -249,9 +249,13 @@ export type TerrainProperty = {
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
+  terrainNormal?: boolean;
 };
 
 export type SceneProperty = {
+  debugs?: {
+    debugSphericalHarmonicCoefficients: boolean;
+  };
   default?: {
     camera?: Camera;
     allowEnterGround?: boolean;
@@ -293,6 +297,9 @@ export type SceneProperty = {
     brightness_shift?: number;
     hue_shift?: number;
     surturation_shift?: number;
+    sphericalHarmonicCoefficients?: { x: number; y: number; z: number }[];
+    globeShadowDarkness?: number;
+    globeImageBasedLighting?: boolean;
   };
   timeline?: {
     animation?: boolean;
