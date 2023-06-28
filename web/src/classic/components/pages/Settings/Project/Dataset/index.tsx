@@ -17,6 +17,4 @@ const DatasetPage: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(DatasetPage);
+export default withAuthorisation()(DatasetPage);

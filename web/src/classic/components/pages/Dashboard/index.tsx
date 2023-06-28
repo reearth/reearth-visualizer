@@ -17,6 +17,4 @@ const DashboardPage: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(DashboardPage);
+export default withAuthorisation()(DashboardPage);

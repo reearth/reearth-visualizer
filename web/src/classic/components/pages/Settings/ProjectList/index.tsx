@@ -13,6 +13,4 @@ const ProjectList: React.FC<Props> = () => {
   return <OrganismsProjectList workspaceId={workspaceId} />;
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(ProjectList);
+export default withAuthorisation()(ProjectList);

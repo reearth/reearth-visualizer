@@ -33,6 +33,4 @@ const PreviewPage: React.FC<Props> = () => {
   ) : null;
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(PreviewPage);
+export default withAuthorisation()(PreviewPage);

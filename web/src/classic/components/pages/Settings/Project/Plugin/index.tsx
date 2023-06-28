@@ -13,6 +13,4 @@ const PluginPage: React.FC<Props> = () => {
   return <Plugin projectId={projectId} />;
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(PluginPage);
+export default withAuthorisation()(PluginPage);

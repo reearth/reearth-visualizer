@@ -17,6 +17,4 @@ const WorkspaceList: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(WorkspaceList);
+export default withAuthorisation()(WorkspaceList);

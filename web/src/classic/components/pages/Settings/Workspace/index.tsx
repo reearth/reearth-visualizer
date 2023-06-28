@@ -17,6 +17,4 @@ const WorkspacePage: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(WorkspacePage);
+export default withAuthorisation()(WorkspacePage);
