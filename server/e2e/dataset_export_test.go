@@ -35,7 +35,7 @@ func TestDatasetExport(t *testing.T) {
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location\ntest,123,true,\"12.000000, 11.000000\"\n")
+	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
 
 	res = e.GET("/api/datasets/{}.csv", dssId).
 		WithHeader("X-Reearth-Debug-User", uId.String()).
@@ -43,5 +43,5 @@ func TestDatasetExport(t *testing.T) {
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location\ntest,123,true,\"12.000000, 11.000000\"\n")
+	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
 }

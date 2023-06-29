@@ -3,10 +3,12 @@ package dataset
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"io"
 
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/samber/lo"
 )
 
 type Format struct {
@@ -53,28 +55,19 @@ func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error)
 	dsfields := ds.Fields()
 
 	// Write header
-	header := make([]string, len(dsfields))
-	for i, f := range dsfields {
-		header[i] = f.Name()
-	}
-
+	header := lo.FlatMap(dsfields, func(f *SchemaField, _ int) []string {
+		return csvHeader(f)
+	})
 	if err := csvw.Write(header); err != nil {
 		return err
 	}
 
 	// Write data
 	if err := loader(func(d *Dataset) error {
-		row := make([]string, len(dsfields))
-		for i, sf := range dsfields {
+		row := lo.FlatMap(dsfields, func(sf *SchemaField, _ int) []string {
 			f := d.Field(sf.ID())
-			v := f.Value()
-			if v == nil {
-				row[i] = ""
-				continue
-			}
-			row[i] = v.String()
-		}
-
+			return csvValue(f)
+		})
 		return csvw.Write(row)
 	}); err != nil {
 		return err
@@ -96,4 +89,36 @@ func ExportJSON(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error
 	}
 
 	return j.Encode(res)
+}
+
+func csvHeader(f *SchemaField) []string {
+	if f.Type() == ValueTypeLatLng {
+		return []string{f.Name() + "_lng", f.Name() + "_lat"}
+	}
+	if f.Type() == ValueTypeLatLngHeight {
+		return []string{f.Name() + "_lng", f.Name() + "_lat", f.Name() + "_height"}
+	}
+	return []string{f.Name()}
+}
+
+func csvValue(f *Field) []string {
+	if f == nil {
+		return []string{""}
+	}
+
+	if f.Type() == ValueTypeLatLng {
+		v := f.Value().ValueLatLng()
+		if v == nil {
+			return []string{"", ""}
+		}
+		return []string{fmt.Sprintf("%f", v.Lng), fmt.Sprintf("%f", v.Lat)}
+	}
+	if f.Type() == ValueTypeLatLngHeight {
+		v := f.Value().ValueLatLngHeight()
+		if v == nil {
+			return []string{"", "", ""}
+		}
+		return []string{fmt.Sprintf("%f", v.Lng), fmt.Sprintf("%f", v.Lat), fmt.Sprintf("%f", v.Height)}
+	}
+	return []string{f.Value().String()}
 }
