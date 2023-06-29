@@ -29,19 +29,14 @@ func ExportDataset() echo.HandlerFunc {
 		}
 
 		res := c.Response()
-		res.Header().Set(echo.HeaderContentType, "text/csv")
-		name, mediatype, ch, err := u.Dataset.Export(ctx, dsid, strings.TrimPrefix(ext, "."), res)
-		if err != nil {
+
+		if err := u.Dataset.Export(ctx, dsid, strings.TrimPrefix(ext, "."), res, func(name, contentType string) {
+			res.Header().Set(echo.HeaderContentType, contentType)
+			res.Header().Set("Content-Disposition", "attachment;filename="+name)
+			res.WriteHeader(http.StatusOK)
+		}); err != nil {
 			return err
 		}
-
-		res.Header().Set(echo.HeaderContentType, mediatype)
-		res.Header().Set("Content-Disposition", "attachment;filename="+name)
-		res.WriteHeader(http.StatusOK)
-		if err := <-ch; err != nil {
-			return err
-		}
-
 		res.Flush()
 		return nil
 	}

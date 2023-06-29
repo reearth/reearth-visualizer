@@ -66,39 +66,35 @@ func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID) (dataset.List, 
 	return i.datasetRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, w io.Writer) (string, string, chan error, error) {
+func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, w io.Writer, before func(string, string)) error {
 	f, ok := dataset.ExportFormat(format)
 	if !ok {
-		return "", "", nil, rerror.ErrNotFound
+		return rerror.ErrNotFound
 	}
 
 	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
 	if err != nil {
-		return "", "", nil, err
+		return err
 	}
-
-	ch := make(chan error)
-	go func() {
-		if err := dataset.Export(w, format, s, func(f func(*dataset.Dataset) error) error {
-			return i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
-				if d == nil {
-					return nil
-				}
-				return f(d)
-			})
-		}); err != nil {
-			ch <- err
-			return
-		}
-		ch <- nil
-	}()
 
 	name := s.Name()
 	if !strings.HasSuffix(name, "."+f.Ext) {
 		name += "." + f.Ext
 	}
+	before(name, f.ContentType)
 
-	return name, f.ContentType, ch, nil
+	if err := dataset.Export(w, format, s, func(f func(*dataset.Dataset) error) error {
+		return i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
+			if d == nil {
+				return nil
+			}
+			return f(d)
+		})
+	}); err != nil {
+		return rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	return nil
 }
 
 func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
