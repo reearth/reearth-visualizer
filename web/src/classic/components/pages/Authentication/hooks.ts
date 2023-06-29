@@ -5,12 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { useGetTeamsQuery } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import {
-  useWorkspace,
-  useNotification,
-  useUserId,
-  useSessionWorkspace,
-} from "@reearth/services/state";
+import { useWorkspace, useNotification, useUserId } from "@reearth/services/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
@@ -18,8 +13,7 @@ export default () => {
   const [error] = useCleanUrl();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentWorkspace, setCurrentWorkspace] = useSessionWorkspace();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
@@ -32,10 +26,6 @@ export default () => {
     setCurrentUserId(data?.me?.id);
   }
 
-  useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setCurrentWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setCurrentWorkspace]);
-
   const workspaceId = useMemo(() => {
     return currentWorkspace?.id || data?.me?.myTeam.id;
   }, [currentWorkspace?.id, data?.me?.myTeam.id]);
@@ -45,39 +35,10 @@ export default () => {
       login();
   }, [login, location.pathname]);
 
-  const handleRedirect = useCallback(() => {
-    if (currentUserId === data?.me?.id) {
-      setCurrentWorkspace(
-        workspaceId
-          ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
-          : undefined,
-      );
-      setLastWorkspace(currentWorkspace);
-      navigate(`/dashboard/${workspaceId}`);
-    } else {
-      setCurrentUserId(data?.me?.id);
-      setCurrentWorkspace(data?.me?.myTeam);
-      setLastWorkspace(currentWorkspace);
-
-      navigate(`/dashboard/${data?.me?.myTeam.id}`);
-    }
-  }, [
-    currentUserId,
-    data?.me?.id,
-    data?.me?.teams,
-    data?.me?.myTeam,
-    setCurrentWorkspace,
-    workspaceId,
-    setLastWorkspace,
-    currentWorkspace,
-    navigate,
-    setCurrentUserId,
-  ]);
-
   useEffect(() => {
-    if (!isAuthenticated || !data || !workspaceId) return;
-    handleRedirect();
-  }, [isAuthenticated, navigate, data, workspaceId, handleRedirect]);
+    if (!isAuthenticated || currentWorkspace || !data || !workspaceId) return;
+    setCurrentWorkspace(data.me?.myTeam);
+  }, [isAuthenticated, navigate, data, workspaceId, currentWorkspace, setCurrentWorkspace]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {

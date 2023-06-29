@@ -26,8 +26,8 @@ func NewUser(client *mongox.Client) *User {
 	}
 }
 
-func (r *User) Init() error {
-	return createIndexes(context.Background(), r.client, userIndexes, userUniqueIndexes)
+func (r *User) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, userIndexes, userUniqueIndexes)
 }
 
 func (r *User) FindByIDs(ctx context.Context, ids id.UserIDList) ([]*user.User, error) {
