@@ -18,7 +18,6 @@ export default ({ value, onChange }: Params) => {
   const [rgba, setRgba] = useState<RGBA>(tinycolor(value).toRgb());
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
 
   const getHexString = (value?: ColorInput) => {
     if (!value) return undefined;
@@ -58,6 +57,9 @@ export default ({ value, onChange }: Params) => {
   }, []);
 
   const handleClose = useCallback(() => {
+    if (!open) {
+      return;
+    }
     if (value) {
       setColor(value);
       setRgba(tinycolor(value).toRgb());
@@ -66,7 +68,7 @@ export default ({ value, onChange }: Params) => {
       setRgba(tinycolor(colorState == null ? undefined : colorState).toRgb());
     }
     setOpen(false);
-  }, [value, colorState]);
+  }, [open, value, colorState]);
 
   const handleSave = useCallback(() => {
     if (!onChange) return;
@@ -112,29 +114,8 @@ export default ({ value, onChange }: Params) => {
     }
   }, [rgba]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (open && wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        if (colorState != value && !open) {
-          handleSave();
-        }
-        handleClose();
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [handleClose]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return {
     wrapperRef,
-    pickerRef,
     colorState,
     open,
     rgba,

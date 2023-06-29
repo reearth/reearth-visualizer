@@ -1,7 +1,7 @@
 import { RgbaColorPicker } from "react-colorful";
-import { usePopper } from "react-popper";
 
 import Button from "@reearth/beta/components/Button";
+import Popup from "@reearth/beta/components/Popup";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { metricsSizes, styled, css, useTheme } from "@reearth/services/theme";
@@ -19,7 +19,6 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
   const theme = useTheme();
   const {
     wrapperRef,
-    pickerRef,
     colorState,
     open,
     rgba,
@@ -32,26 +31,6 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
     handleClick,
     handleKeyDown,
   } = useHooks({ value, onChange });
-
-  const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 8],
-        },
-      },
-      {
-        name: "eventListeners",
-        enabled: !open,
-        options: {
-          scroll: false,
-          resize: false,
-        },
-      },
-    ],
-  });
 
   return (
     <Wrapper ref={wrapperRef}>
@@ -68,65 +47,67 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
           onBlur={handleHexSave}
         />
       </InputWrapper>
-      <PickerWrapper ref={pickerRef} open={open} style={styles.popper} {...attributes.popper}>
-        <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
-        <RgbaInputWrapper>
-          <Field>
-            <Input
-              name="r"
-              type="number"
-              value={rgba.r}
-              min={0}
-              max={255}
-              onChange={handleRgbaInput}
-            />
-            <PickerText size="xFootnote" color={theme.general.content.main}>
-              {t("Red")}
-            </PickerText>
-          </Field>
-          <Field>
-            <Input
-              name="g"
-              type="number"
-              value={rgba.g}
-              min={0}
-              max={255}
-              onChange={handleRgbaInput}
-            />
-            <PickerText size="xFootnote" color={theme.general.content.main}>
-              {t("Green")}
-            </PickerText>
-          </Field>
-          <Field>
-            <Input
-              name="b"
-              type="number"
-              value={rgba.b}
-              min={0}
-              max={255}
-              onChange={handleRgbaInput}
-            />
-            <PickerText size="xFootnote" color={theme.general.content.main}>
-              {t("Blue")}
-            </PickerText>
-          </Field>
-          <Field>
-            <Input
-              name="a"
-              type="number"
-              value={rgba.a ? Math.round(rgba.a * 100) : undefined}
-              onChange={handleRgbaInput}
-            />
-            <PickerText size="xFootnote" color={theme.general.content.main}>
-              {t("Alpha")}
-            </PickerText>
-          </Field>
-        </RgbaInputWrapper>
-        <FormButtonGroup>
-          <Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />
-          <Button buttonType="primary" text={t("Save")} onClick={handleSave} />
-        </FormButtonGroup>
-      </PickerWrapper>
+      <Popup wrapperRef={wrapperRef} handleClose={handleClose} open={open}>
+        <PickerWrapper>
+          <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
+          <RgbaInputWrapper>
+            <Field>
+              <Input
+                name="r"
+                type="number"
+                value={rgba.r}
+                min={0}
+                max={255}
+                onChange={handleRgbaInput}
+              />
+              <PickerText size="xFootnote" color={theme.general.content.main}>
+                {t("Red")}
+              </PickerText>
+            </Field>
+            <Field>
+              <Input
+                name="g"
+                type="number"
+                value={rgba.g}
+                min={0}
+                max={255}
+                onChange={handleRgbaInput}
+              />
+              <PickerText size="xFootnote" color={theme.general.content.main}>
+                {t("Green")}
+              </PickerText>
+            </Field>
+            <Field>
+              <Input
+                name="b"
+                type="number"
+                value={rgba.b}
+                min={0}
+                max={255}
+                onChange={handleRgbaInput}
+              />
+              <PickerText size="xFootnote" color={theme.general.content.main}>
+                {t("Blue")}
+              </PickerText>
+            </Field>
+            <Field>
+              <Input
+                name="a"
+                type="number"
+                value={rgba.a ? Math.round(rgba.a * 100) : undefined}
+                onChange={handleRgbaInput}
+              />
+              <PickerText size="xFootnote" color={theme.general.content.main}>
+                {t("Alpha")}
+              </PickerText>
+            </Field>
+          </RgbaInputWrapper>
+          <FormButtonGroup>
+            <Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />
+            <Button buttonType="primary" text={t("Save")} onClick={handleSave} />
+          </FormButtonGroup>
+        </PickerWrapper>
+      </Popup>
     </Wrapper>
   );
 };
@@ -184,13 +165,7 @@ const Swatch = styled.div<{ c?: string }>`
   ${layerStyle};
 `;
 
-const PickerWrapper = styled.div<{ open: boolean }>`
-  ${({ open }) =>
-    !open &&
-    css`
-      visibility: hidden;
-      pointer-events: none;
-    `}
+const PickerWrapper = styled.div`
   width: 286px;
   cursor: default;
   padding: 0;
