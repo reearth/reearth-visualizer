@@ -1,10 +1,11 @@
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled } from "@reearth/services/theme";
 
 import SceneSectionItem, { SceneSectionItemProps } from "./item";
 
 export type SceneSectionFieldProps = {
-  scenes: SceneSectionItemProps[];
+  scenes: SwitchField<SceneSectionItemProps>[];
   onActive?: (id: string) => void;
   onAction?: (id: string) => void;
 };

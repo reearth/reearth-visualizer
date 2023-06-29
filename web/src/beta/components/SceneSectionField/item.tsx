@@ -2,15 +2,14 @@ import { useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
+import { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type SceneSectionItemProps = {
-  id: string;
   label: string;
-  active?: boolean;
 };
 export type Props = {
-  scene: SceneSectionItemProps;
+  scene: SwitchField<SceneSectionItemProps>;
   onActive?: (id: string) => void;
   onAction?: (id: string) => void;
 };
