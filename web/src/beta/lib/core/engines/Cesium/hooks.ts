@@ -341,17 +341,7 @@ export default ({
       !property?.debugs?.debugSphericalHarmonicCoefficients
         ? property?.atmosphere?.sphericalHarmonicCoefficients?.map(
             v => new Cartesian3(v.x, v.y, v.z),
-          ) ?? [
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-            new Cartesian3(),
-          ]
+          )
         : [
             new Cartesian3(0.499745965003967, 0.499196201562881, 0.500154078006744), // L00, irradiance, pre-scaled base
             new Cartesian3(0.265826553106308, -0.266099184751511, 0.265922993421555), // L1-1, irradiance, pre-scaled base
@@ -372,7 +362,7 @@ export default ({
   useEffect(() => {
     if (!cesium.current?.cesiumElement) return;
 
-    cesium.current.cesiumElement.scene.sphericalHarmonicCoefficients =
+    (cesium.current.cesiumElement.scene.sphericalHarmonicCoefficients as Cartesian3[] | undefined) =
       sphericalHarmonicCoefficients;
   }, [sphericalHarmonicCoefficients]);
 

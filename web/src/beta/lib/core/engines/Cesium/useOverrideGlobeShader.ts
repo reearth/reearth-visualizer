@@ -46,7 +46,9 @@ export const useOverrideGlobeShader = ({
   const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(
     sphericalHarmonicCoefficients || [],
   );
-  const globeImageBasedLightingRefFunc = useImmutableFunction(globeImageBasedLighting);
+  const globeImageBasedLightingRefFunc = useImmutableFunction(
+    globeImageBasedLighting && !!sphericalHarmonicCoefficients,
+  );
 
   useEffect(() => {
     if (!cesium.current?.cesiumElement || !globeShadowDarkness || !hasVertexNormals) return;
@@ -97,7 +99,7 @@ export const useOverrideGlobeShader = ({
       return;
     }
 
-    if (!globe?._surface?._tileProvider?.materialUniformMap) {
+    if (!globe?._surface?._tileProvider) {
       if (import.meta.env.DEV) {
         throw new Error("`globe._surface._tileProvider.materialUniformMap` could not found");
       }
@@ -107,7 +109,7 @@ export const useOverrideGlobeShader = ({
     makeGlobeShadersDirty(globe);
 
     globe._surface._tileProvider.materialUniformMap = {
-      ...globe._surface._tileProvider.materialUniformMap,
+      ...(globe._surface._tileProvider.materialUniformMap ?? {}),
       u_reearth_sphericalHarmonicCoefficients: sphericalHarmonicCoefficientsRefFunc,
       u_reearth_globeImageBasedLighting: globeImageBasedLightingRefFunc, // Avoid to rerender globe.
     };
