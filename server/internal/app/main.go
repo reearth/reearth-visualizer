@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 )
@@ -25,7 +23,7 @@ func Start(debug bool, version string) {
 	// Load config
 	conf, cerr := config.ReadConfig(debug)
 	if cerr != nil {
-		log.Fatal(cerr)
+		log.Fatalf("failed to load config: %v", cerr)
 	}
 	log.Infof("config: %s", conf.Print())
 
@@ -43,16 +41,14 @@ func Start(debug bool, version string) {
 	}()
 
 	// Init repositories
-	repos, gateways, acRepos, acGateways := initReposAndGateways(ctx, conf, debug)
+	repos, gateways := initReposAndGateways(ctx, conf, debug)
 
 	// Start web server
 	NewServer(ctx, &ServerConfig{
-		Config:          conf,
-		Debug:           debug,
-		Repos:           repos,
-		AccountRepos:    acRepos,
-		Gateways:        gateways,
-		AccountGateways: acGateways,
+		Config:   conf,
+		Debug:    debug,
+		Repos:    repos,
+		Gateways: gateways,
 	}).Run()
 }
 
@@ -62,12 +58,10 @@ type WebServer struct {
 }
 
 type ServerConfig struct {
-	Config          *config.Config
-	Debug           bool
-	Repos           *repo.Container
-	AccountRepos    *accountrepo.Container
-	Gateways        *gateway.Container
-	AccountGateways *accountgateway.Container
+	Config   *config.Config
+	Debug    bool
+	Repos    *repo.Container
+	Gateways *gateway.Container
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
@@ -95,7 +89,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 }
 
 func (w *WebServer) Run() {
-	defer log.Infoln("Server shutdown")
+	defer log.Infof("Server shutdown")
 
 	debugLog := ""
 	if w.appServer.Debug {
@@ -105,7 +99,7 @@ func (w *WebServer) Run() {
 
 	go func() {
 		err := w.appServer.StartH2CServer(w.address, &http2.Server{})
-		log.Fatalln(err.Error())
+		log.Fatalf("failed to run server: %v", err)
 	}()
 
 	quit := make(chan os.Signal, 1)

@@ -33,7 +33,7 @@ func (r *pluginRepo) Filtered(f repo.SceneFilter) repo.Plugin {
 }
 
 func (r *pluginRepo) FindByID(ctx context.Context, pid id.PluginID) (*plugin.Plugin, error) {
-	m, err := readPluginManifest(r.fs, pid)
+	m, err := readPluginManifest(ctx, r.fs, pid)
 	if err != nil {
 		return nil, err
 	}
@@ -58,25 +58,25 @@ func (r *pluginRepo) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugi
 }
 
 func (r *pluginRepo) Save(ctx context.Context, p *plugin.Plugin) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
 func (r *pluginRepo) Remove(ctx context.Context, pid id.PluginID) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
 var translationFileNameRegexp = regexp.MustCompile(`reearth_([a-zA-Z]+(?:-[a-zA-Z]+)?).yml`)
 
-func readPluginManifest(fs afero.Fs, pid id.PluginID) (*manifest.Manifest, error) {
+func readPluginManifest(ctx context.Context, fs afero.Fs, pid id.PluginID) (*manifest.Manifest, error) {
 	base := filepath.Join(pluginDir, pid.String())
-	translationMap, err := readPluginTranslation(fs, base)
+	translationMap, err := readPluginTranslation(ctx, fs, base)
 	if err != nil {
 		return nil, err
 	}
 
 	f, err := fs.Open(filepath.Join(base, manifestFilePath))
 	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	defer func() {
 		_ = f.Close()
@@ -90,10 +90,10 @@ func readPluginManifest(fs afero.Fs, pid id.PluginID) (*manifest.Manifest, error
 	return m, nil
 }
 
-func readPluginTranslation(fs afero.Fs, base string) (manifest.TranslationMap, error) {
+func readPluginTranslation(ctx context.Context, fs afero.Fs, base string) (manifest.TranslationMap, error) {
 	d, err := afero.ReadDir(fs, base)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	translationMap := manifest.TranslationMap{}
@@ -108,7 +108,7 @@ func readPluginTranslation(fs afero.Fs, base string) (manifest.TranslationMap, e
 		}
 		langfile, err := fs.Open(filepath.Join(base, name))
 		if err != nil {
-			return nil, rerror.ErrInternalBy(err)
+			return nil, rerror.ErrInternalByWithContext(ctx, err)
 		}
 		defer func() {
 			_ = langfile.Close()

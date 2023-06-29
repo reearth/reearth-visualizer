@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 )
 
@@ -43,7 +42,7 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
+	tid, err := id.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2"
@@ -33,13 +33,13 @@ type response struct {
 	ErrorDescription string `json:"error_description"`
 }
 
-func (u response) Into() accountgateway.AuthenticatorUser {
+func (u response) Into() gateway.AuthenticatorUser {
 	name := u.UserName
 	if name == "" {
 		name = u.Name
 	}
 
-	return accountgateway.AuthenticatorUser{
+	return gateway.AuthenticatorUser{
 		ID:            u.ID,
 		Name:          name,
 		Email:         u.Email,
@@ -72,7 +72,7 @@ func New(domain, clientID, clientSecret string) *Auth0 {
 	}
 }
 
-func (a *Auth0) UpdateUser(p accountgateway.AuthenticatorUpdateUserParam) (data accountgateway.AuthenticatorUser, err error) {
+func (a *Auth0) UpdateUser(ctx context.Context, p gateway.AuthenticatorUpdateUserParam) (data gateway.AuthenticatorUser, err error) {
 	if err != nil {
 		return
 	}
@@ -93,7 +93,7 @@ func (a *Auth0) UpdateUser(p accountgateway.AuthenticatorUpdateUserParam) (data 
 	}
 
 	var r response
-	r, err = a.exec(http.MethodPatch, "api/v2/users/"+p.ID, payload)
+	r, err = a.exec(ctx, http.MethodPatch, "api/v2/users/"+p.ID, payload)
 	if err != nil {
 		err = rerror.ErrInternalByWith("failed to update user", err)
 		return
@@ -103,7 +103,7 @@ func (a *Auth0) UpdateUser(p accountgateway.AuthenticatorUpdateUserParam) (data 
 	return
 }
 
-func (a *Auth0) exec(method, path string, b any) (r response, err error) {
+func (a *Auth0) exec(ctx context.Context, method, path string, b any) (r response, err error) {
 	if a == nil || a.base == "" {
 		err = errors.New("auth0: domain is not set")
 		return
@@ -124,7 +124,7 @@ func (a *Auth0) exec(method, path string, b any) (r response, err error) {
 	}
 
 	var req *http.Request
-	req, err = http.NewRequest(method, a.base+path, body)
+	req, err = http.NewRequestWithContext(ctx, method, a.base+path, body)
 	if err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func (a *Auth0) exec(method, path string, b any) (r response, err error) {
 	}
 
 	if !a.disableLogging {
-		log.Infof("auth0: path: %s, status: %d, resp: %s", path, resp.StatusCode, respb)
+		log.Infofc(ctx, "auth0: path: %s, status: %d, resp: %s", path, resp.StatusCode, respb)
 	}
 
 	if err = json.Unmarshal(respb, &r); err != nil {

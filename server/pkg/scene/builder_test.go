@@ -4,12 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuilder_IDs(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	lid := NewLayerID()
 	b := New().NewID().RootLayer(lid).Workspace(tid).MustBuild()
 	assert.NotNil(t, b.ID())
@@ -22,13 +21,13 @@ func TestBuilder_IDs(t *testing.T) {
 
 func TestBuilder_UpdatedAt(t *testing.T) {
 	ti := time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC)
-	b := New().NewID().RootLayer(NewLayerID()).Workspace(accountdomain.NewWorkspaceID()).UpdatedAt(ti).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).UpdatedAt(ti).MustBuild()
 	assert.Equal(t, ti, b.UpdatedAt())
 }
 
 func TestBuilder_Property(t *testing.T) {
 	pid := NewPropertyID()
-	b := New().NewID().RootLayer(NewLayerID()).Workspace(accountdomain.NewWorkspaceID()).Property(pid).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Property(pid).MustBuild()
 	assert.Equal(t, pid, b.Property())
 }
 
@@ -36,13 +35,13 @@ func TestBuilder_Plugins(t *testing.T) {
 	ps := NewPlugins([]*Plugin{
 		NewPlugin(OfficialPluginID, NewPropertyID().Ref()),
 	})
-	b := New().NewID().RootLayer(NewLayerID()).Workspace(accountdomain.NewWorkspaceID()).Plugins(ps).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Plugins(ps).MustBuild()
 	assert.Equal(t, ps, b.Plugins())
 }
 
 func TestBuilder_Project(t *testing.T) {
 	pid := NewProjectID()
-	b := New().NewID().RootLayer(NewLayerID()).Workspace(accountdomain.NewWorkspaceID()).Project(pid).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Project(pid).MustBuild()
 	assert.Equal(t, pid, b.Project())
 }
 
@@ -50,12 +49,12 @@ func TestBuilder_Widgets(t *testing.T) {
 	ws := NewWidgets([]*Widget{
 		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", NewPropertyID(), true, false),
 	}, nil)
-	b := New().NewID().RootLayer(NewLayerID()).Workspace(accountdomain.NewWorkspaceID()).Widgets(ws).MustBuild()
+	b := New().NewID().RootLayer(NewLayerID()).Workspace(NewWorkspaceID()).Widgets(ws).MustBuild()
 	assert.Equal(t, ws, b.Widgets())
 }
 
 func TestBuilder_Build(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	sid := NewID()
 	pid := NewProjectID()
 	ppid := NewPropertyID()
@@ -176,7 +175,7 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	sid := NewID()
 	pid := NewProjectID()
 	ppid := NewPropertyID()

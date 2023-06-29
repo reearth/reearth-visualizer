@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -31,8 +30,8 @@ func NewAsset(client *mongox.Client) *Asset {
 	return &Asset{client: client.WithCollection("asset")}
 }
 
-func (r *Asset) Init() error {
-	return createIndexes(context.Background(), r.client, assetIndexes, assetUniqueIndexes)
+func (r *Asset) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, assetIndexes, assetUniqueIndexes)
 }
 
 func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
@@ -62,7 +61,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return filterAssets(ids, res), nil
 }
 
-func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -80,7 +79,7 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
-func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID) (int64, error) {
+func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (int64, error) {
 	if !r.f.CanRead(wid) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -90,7 +89,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.Work
 		{"$group": bson.M{"_id": nil, "size": bson.M{"$sum": "$size"}}},
 	})
 	if err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	defer func() {
 		_ = c.Close(ctx)
@@ -105,7 +104,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.Work
 	}
 	var res resp
 	if err := c.Decode(&res); err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return res.Size, nil
 }
@@ -135,7 +134,7 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 	c := mongodoc.NewAssetConsumer()
 	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return c.Result, pageInfo, nil
@@ -144,7 +143,7 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
 	c := mongodoc.NewAssetConsumer()
 	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
