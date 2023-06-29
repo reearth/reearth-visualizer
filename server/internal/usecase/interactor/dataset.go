@@ -64,12 +64,12 @@ func NewDataset(r *repo.Container, gr *gateway.Container) interfaces.Dataset {
 	}
 }
 
-func (i *Dataset) DynamicSchemaFields() []*dataset.SchemaField {
-	author, _ := dataset.NewSchemaField().NewID().Name("author").Type(dataset.ValueTypeString).Build()
-	content, _ := dataset.NewSchemaField().NewID().Name("content").Type(dataset.ValueTypeString).Build()
-	location, _ := dataset.NewSchemaField().NewID().Name("location").Type(dataset.ValueTypeLatLng).Build()
-	target, _ := dataset.NewSchemaField().NewID().Name("target").Type(dataset.ValueTypeString).Build()
-	return []*dataset.SchemaField{author, content, location, target}
+func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID) (dataset.List, error) {
+	return i.datasetRepo.FindByIDs(ctx, ids)
+}
+
+func (i *Dataset) FetchAll(ctx context.Context, id id.DatasetID, fn func(*dataset.Dataset) error) error {
+	panic("implement me")
 }
 
 func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -100,14 +100,6 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 	// Commit db transaction
 	tx.Commit()
 	return schema, nil
-}
-
-func (i *Dataset) AddDynamicDatasetSchema(_ context.Context, _ interfaces.AddDynamicDatasetSchemaParam) (_ *dataset.Schema, err error) {
-	return nil, errors.New("not supported")
-}
-
-func (i *Dataset) AddDynamicDataset(_ context.Context, _ interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
-	return nil, nil, errors.New("not supported")
 }
 
 func (i *Dataset) ImportDataset(ctx context.Context, inp interfaces.ImportDatasetParam, operator *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -312,10 +304,6 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 	return schema, nil
 }
 
-func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, _ *usecase.Operator) (dataset.List, error) {
-	return i.datasetRepo.FindByIDs(ctx, ids)
-}
-
 func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, _ *usecase.Operator) (io.Reader, string, error) {
 
 	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
@@ -446,10 +434,6 @@ func (i *Dataset) FindSchemaByScene(ctx context.Context, sid id.SceneID, p *usec
 	}
 
 	return i.datasetSchemaRepo.FindByScene(ctx, sid, p)
-}
-
-func (i *Dataset) FindDynamicSchemaByScene(ctx context.Context, sid id.SceneID) (dataset.SchemaList, error) {
-	return i.datasetSchemaRepo.FindAllDynamicByScene(ctx, sid)
 }
 
 func (i *Dataset) Sync(ctx context.Context, sceneID id.SceneID, url string, operator *usecase.Operator) (dss dataset.SchemaList, ds dataset.List, err error) {

@@ -54,28 +54,6 @@ type AddDatasetSchemaPayload struct {
 	DatasetSchema *DatasetSchema `json:"datasetSchema"`
 }
 
-type AddDynamicDatasetInput struct {
-	DatasetSchemaID ID       `json:"datasetSchemaId"`
-	Author          string   `json:"author"`
-	Content         string   `json:"content"`
-	Lat             *float64 `json:"lat"`
-	Lng             *float64 `json:"lng"`
-	Target          *string  `json:"target"`
-}
-
-type AddDynamicDatasetPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema"`
-	Dataset       *Dataset       `json:"dataset"`
-}
-
-type AddDynamicDatasetSchemaInput struct {
-	SceneID ID `json:"sceneId"`
-}
-
-type AddDynamicDatasetSchemaPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema"`
-}
-
 type AddInfoboxFieldInput struct {
 	LayerID     ID   `json:"layerId"`
 	PluginID    ID   `json:"pluginId"`
