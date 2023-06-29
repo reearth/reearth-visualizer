@@ -38,9 +38,6 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if u, ok := ctx.Value(contextUser).(string); ok {
 				userID = u
 			}
-			if au != nil {
-				log.Debugfc(ctx, "auth: info: %#v", au)
-			}
 
 			// debug mode
 			if cfg.Debug {

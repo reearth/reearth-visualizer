@@ -37,7 +37,7 @@ func (c AuthSrvConfig) AuthConfig(debug bool, host string) *AuthConfig {
 	}
 
 	return &AuthConfig{
-		ISS:      domain,
+		ISS:      getAuthDomain(domain),
 		AUD:      aud,
 		ClientID: lo.ToPtr(AuthServerDefaultClientID),
 	}
