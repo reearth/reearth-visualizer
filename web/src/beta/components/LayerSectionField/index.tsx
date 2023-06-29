@@ -1,11 +1,12 @@
 import Icon from "@reearth/beta/components/Icon";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import LayerSectionItem, { LayerSectionItemProps } from "./item";
 
 export type LayerSectionFieldProps = {
-  layers: LayerSectionItemProps[];
+  layers: SwitchField<LayerSectionItemProps>[];
   onClickLayerAdd?: () => void;
   onActive?: (id: string) => void;
   onAction?: (id: string) => void;

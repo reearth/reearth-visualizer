@@ -2,17 +2,16 @@ import { useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
+import { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type LayerSectionItemProps = {
-  id: string;
   label: string;
   visible?: boolean;
-  active?: boolean;
 };
 
 type Props = {
-  layer: LayerSectionItemProps;
+  layer: SwitchField<LayerSectionItemProps>;
   onActive?: (id: string) => void;
   onAction?: (id: string) => void;
   onVisible?: (id: string) => void;
