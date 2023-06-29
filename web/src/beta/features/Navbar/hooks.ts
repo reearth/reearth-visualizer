@@ -1,54 +1,20 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useTeamsFetcher, useProjectFetcher, useCreateTeamFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import {
-  useCreateTeamMutation,
-  useGetProjectBySceneQuery,
-  useGetTeamsQuery,
-} from "@reearth/services/gql";
 import { useProject, useWorkspace } from "@reearth/services/state";
-
-type User = {
-  name: string;
-};
 
 export default (sceneId: string) => {
   const { logout: handleLogout } = useAuth();
 
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentProject, setProject] = useProject();
-
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
+  const { workspaces, workspaceData, user } = useTeamsFetcher();
+  const { workspaceId, project } = useProjectFetcher(sceneId);
 
-  const { data: workspaceData } = useGetTeamsQuery();
   const navigate = useNavigate();
-  const workspaces = useMemo(() => {
-    return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
-  }, [workspaceData?.me?.teams]);
-
-  const { data } = useGetProjectBySceneQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
-
-  const workspaceId = useMemo(() => {
-    return data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
-  }, [data?.node]);
-
-  const project = useMemo(
-    () =>
-      data?.node?.__typename === "Scene" && data.node.project
-        ? { ...data.node.project, sceneId: data.node.id }
-        : undefined,
-    [data?.node],
-  );
-
-  const user: User = useMemo(() => {
-    return {
-      name: workspaceData?.me?.name || "",
-    };
-  }, [workspaceData?.me]);
 
   const personal = useMemo(() => {
     return workspaceId === workspaceData?.me?.myTeam.id;
@@ -84,21 +50,15 @@ export default (sceneId: string) => {
     [workspaces, currentWorkspace, setCurrentWorkspace, navigate],
   );
 
-  const [createTeamMutation] = useCreateTeamMutation();
-
   const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
-      const results = await createTeamMutation({
-        variables: { name: data.name },
-        refetchQueries: ["GetTeams"],
-      });
-      if (results.data?.createTeam) {
-        setCurrentWorkspace(results.data.createTeam.team);
-
-        navigate(`/dashboard/${results.data.createTeam.team.id}`);
+      const team = await useCreateTeamFetcher(data.name);
+      if (team) {
+        setCurrentWorkspace(team);
+        navigate(`/dashboard/${team.id}`);
       }
     },
-    [createTeamMutation, setCurrentWorkspace, navigate],
+    [setCurrentWorkspace, navigate],
   );
 
   return {
