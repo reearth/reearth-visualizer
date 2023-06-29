@@ -90,7 +90,7 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
-	log.Infof("gcs: asset deleted: %s", u)
+	log.Infofc(ctx, "gcs: asset deleted: %s", u)
 
 	sn := getGCSObjectNameFromURL(f.base, u)
 	if sn == "" {
@@ -119,7 +119,7 @@ func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *
 }
 
 func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
-	log.Infof("gcs: plugin deleted: %s", pid)
+	log.Infofc(ctx, "gcs: plugin deleted: %s", pid)
 
 	return f.deleteAll(ctx, path.Join(gcsPluginBasePath, pid.String()))
 }
@@ -152,7 +152,7 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 }
 
 func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
-	log.Infof("gcs: built scene deleted: %s", name)
+	log.Infofc(ctx, "gcs: built scene deleted: %s", name)
 
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
@@ -179,8 +179,8 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorf("gcs: read bucket err: %+v\n", err)
-		return nil, rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: read bucket err: %+v\n", err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	reader, err := bucket.Object(filename).NewReader(ctx)
@@ -188,8 +188,8 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil, rerror.ErrNotFound
 		}
-		log.Errorf("gcs: read err: %+v\n", err)
-		return nil, rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: read err: %+v\n", err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return reader, nil
@@ -202,13 +202,13 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorf("gcs: upload bucket err: %+v\n", err)
-		return 0, rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: upload bucket err: %+v\n", err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	object := bucket.Object(filename)
 	if err := object.Delete(ctx); err != nil && !errors.Is(err, storage.ErrObjectNotExist) {
-		log.Errorf("gcs: upload delete err: %+v\n", err)
+		log.Errorfc(ctx, "gcs: upload delete err: %+v\n", err)
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
@@ -217,12 +217,12 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 
 	size, err := io.Copy(writer, content)
 	if err != nil {
-		log.Errorf("gcs: upload err: %+v\n", err)
+		log.Errorfc(ctx, "gcs: upload err: %+v\n", err)
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
 	if err := writer.Close(); err != nil {
-		log.Errorf("gcs: upload close err: %+v\n", err)
+		log.Errorfc(ctx, "gcs: upload close err: %+v\n", err)
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
@@ -236,8 +236,8 @@ func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorf("gcs: move bucket err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: move bucket err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	object := bucket.Object(from)
@@ -246,13 +246,13 @@ func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return rerror.ErrNotFound
 		}
-		log.Errorf("gcs: move copy err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: move copy err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	if err := object.Delete(ctx); err != nil {
-		log.Errorf("gcs: move delete err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: move delete err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil
@@ -265,8 +265,8 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorf("gcs: delete bucket err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: delete bucket err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	object := bucket.Object(filename)
@@ -275,8 +275,8 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 			return nil
 		}
 
-		log.Errorf("gcs: delete err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: delete err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }
@@ -288,8 +288,8 @@ func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorf("gcs: deleteAll bucket err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "gcs: deleteAll bucket err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	it := bucket.Objects(ctx, &storage.Query{
@@ -302,12 +302,12 @@ func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 			break
 		}
 		if err != nil {
-			log.Errorf("gcs: deleteAll next err: %+v\n", err)
-			return rerror.ErrInternalBy(err)
+			log.Errorfc(ctx, "gcs: deleteAll next err: %+v\n", err)
+			return rerror.ErrInternalByWithContext(ctx, err)
 		}
 		if err := bucket.Object(attrs.Name).Delete(ctx); err != nil {
-			log.Errorf("gcs: deleteAll err: %+v\n", err)
-			return rerror.ErrInternalBy(err)
+			log.Errorfc(ctx, "gcs: deleteAll err: %+v\n", err)
+			return rerror.ErrInternalByWithContext(ctx, err)
 		}
 	}
 	return nil

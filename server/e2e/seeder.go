@@ -9,9 +9,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -43,13 +42,10 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
-	}
 	w := workspace.New().ID(wId).
 		Name("e2e").
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Members(map[id.UserID]workspace.Role{u.ID(): workspace.RoleOwner}).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err

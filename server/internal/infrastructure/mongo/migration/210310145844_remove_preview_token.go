@@ -3,7 +3,7 @@ package migration
 import (
 	"context"
 
-	"github.com/labstack/gommon/log"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -18,7 +18,7 @@ func RemovePreviewToken(ctx context.Context, c DBClient) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			log.Infof("migration: RemoveProjectPreviewToken: hit projects: %d\n", len(rows))
+			log.Infofc(ctx, "migration: RemoveProjectPreviewToken: hit projects: %d\n", len(rows))
 
 			for _, row := range rows {
 				doc := bson.M{}

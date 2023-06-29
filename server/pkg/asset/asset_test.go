@@ -4,13 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAsset(t *testing.T) {
 	aid := NewID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	d := aid.Timestamp()
 
 	tests := []struct {

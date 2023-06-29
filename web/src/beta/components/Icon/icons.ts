@@ -30,6 +30,7 @@ import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
 import Help from "./Icons/help.svg";
+import CheckMark from "./Icons/checkMark.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -51,6 +52,9 @@ import Workspaces from "./Icons/workspaces.svg";
 // Square
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
+
+// Plus
+import Plus from "./Icons/plus.svg";
 
 export default {
   layerAdd: LayerAdd,
@@ -76,6 +80,7 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   square: Square,
+  plus: Plus,
   timeline: Timeline,
   twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
@@ -84,5 +89,6 @@ export default {
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  checkmark: CheckMark,
   checkOnVisibility: CheckOnVisibility,
 };
