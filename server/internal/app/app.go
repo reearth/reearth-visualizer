@@ -23,7 +23,7 @@ import (
 
 func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	if cfg.Config == nil {
-		log.Fatalln("ServerConfig.Config is nil")
+		log.Fatalf("ServerConfig.Config is nil")
 	}
 
 	e := echo.New()
@@ -36,9 +36,10 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	logger := log.NewEcho()
 	e.Logger = logger
 	e.Use(
-		logger.AccessLogger(),
 		middleware.Recover(),
 		otelecho.Middleware("reearth"),
+		echo.WrapMiddleware(appx.RequestIDMiddleware()),
+		logger.AccessLogger(),
 	)
 	if cfg.Config.HTTPSREDIRECT {
 		e.Use(middleware.HTTPSRedirectWithConfig(middleware.RedirectConfig{
@@ -54,8 +55,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		)
 	}
 
+	// auth
+	authConfig := cfg.Config.JWTProviders()
+	log.Infof("auth: config: %#v", authConfig)
 	e.Use(
-		echo.WrapMiddleware(lo.Must(appx.AuthMiddleware(cfg.Config.JWTProviders(), adapter.ContextAuthInfo, true))),
+		echo.WrapMiddleware(lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))),
 		attachOpMiddleware(cfg),
 	)
 
@@ -75,7 +79,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		e.GET("/graphql", echo.WrapHandler(
 			playground.Handler("reearth", "/api/graphql"),
 		))
-		log.Infof("gql: GraphQL Playground is available")
+		log.Infofc(ctx, "gql: GraphQL Playground is available")
 	}
 
 	// init usecases
@@ -139,7 +143,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 	return func(err error, c echo.Context) {
-		ctx := c.Request().Context()
 		if c.Response().Committed {
 			return
 		}
@@ -148,17 +151,8 @@ func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
 			err = rerror.ErrNotFound
 		}
 
-		if err := rerror.UnwrapErrInternal(err); err != nil {
-			au := adapter.GetAuthInfo(ctx)
-			u := adapter.User(ctx)
-			op := adapter.Operator(ctx)
-			c.Echo().Logger.Errorf("AUTH: %#v", au)
-			c.Echo().Logger.Errorf("USER: %#v", u)
-			c.Echo().Logger.Errorf("OP: %#v", op)
-		}
-
 		code, msg := errorMessage(err, func(f string, args ...interface{}) {
-			c.Echo().Logger.Errorf(f, args...)
+			log.Errorfc(c.Request().Context(), f, args...)
 		})
 		if err := c.JSON(code, map[string]string{
 			"error": msg,
