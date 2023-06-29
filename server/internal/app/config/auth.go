@@ -129,6 +129,7 @@ func getAuthDomain(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "https://" + url
 	}
+	// Auth0 JS library adds slash to the end of the domain (issuer)
 	if !strings.HasSuffix(url, "/") {
 		url = url + "/"
 	}
