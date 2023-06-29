@@ -50,8 +50,7 @@ var (
 
 type Dataset interface {
 	Fetch(context.Context, []id.DatasetID) (dataset.List, error)
-	FetchAll(context.Context, id.DatasetID, func(*dataset.Dataset) error) error
-	Export(context.Context, id.DatasetSchemaID, string, *usecase.Operator) (io.Reader, string, error)
+	Export(context.Context, id.DatasetSchemaID, string, io.Writer) (string, string, chan error, error)
 	GraphFetch(context.Context, id.DatasetID, int, *usecase.Operator) (dataset.List, error)
 	FetchSchema(context.Context, []id.DatasetSchemaID, *usecase.Operator) (dataset.SchemaList, error)
 	ImportDataset(context.Context, ImportDatasetParam, *usecase.Operator) (*dataset.Schema, error)

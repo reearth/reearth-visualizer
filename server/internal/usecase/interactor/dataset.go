@@ -68,8 +68,58 @@ func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID) (dataset.List, 
 	return i.datasetRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Dataset) FetchAll(ctx context.Context, id id.DatasetID, fn func(*dataset.Dataset) error) error {
-	panic("implement me")
+func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, w io.Writer) (string, string, chan error, error) {
+	if format != "csv" {
+		return "", "", nil, rerror.ErrNotFound
+	}
+
+	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
+	if err != nil {
+		return "", "", nil, err
+	}
+
+	schemaFields := s.Fields()
+	ch := make(chan error)
+
+	go func() {
+		csvw := csv.NewWriter(w)
+
+		// write headers
+		err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
+			return f.Name()
+		}))
+		if err != nil {
+			ch <- rerror.ErrInternalByWithContext(ctx, err)
+			return
+		}
+
+		// write records
+		if err := i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
+			if d == nil {
+				return nil
+			}
+			records := d.Records(schemaFields)
+			if err := csvw.Write(records); err != nil {
+				return rerror.ErrInternalByWithContext(ctx, err)
+			}
+
+			csvw.Flush()
+			return nil
+		}); err != nil {
+			ch <- err
+			return
+		}
+
+		csvw.Flush()
+		ch <- nil
+	}()
+
+	name := s.Name()
+	if !strings.HasSuffix(name, ".csv") {
+		name += ".csv"
+	}
+
+	return name, "text/csv", ch, nil
 }
 
 func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -302,66 +352,6 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 	// Commit db transaction
 	tx.Commit()
 	return schema, nil
-}
-
-func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, _ *usecase.Operator) (io.Reader, string, error) {
-
-	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
-	if err != nil {
-		return nil, "", err
-	}
-
-	ds, err := i.datasetRepo.FindBySchemaAll(ctx, id)
-	if err != nil {
-		return nil, "", err
-	}
-
-	var r io.Reader
-	switch format {
-	case "csv":
-		r = i.csvExport(s, ds)
-	default:
-		r = i.csvExport(s, ds)
-	}
-
-	return r, s.Name(), nil
-}
-
-func (i *Dataset) csvExport(s *dataset.Schema, ds dataset.List) io.Reader {
-	r, w := io.Pipe()
-	csvW := csv.NewWriter(w)
-
-	go func() {
-		var err error
-
-		defer func() {
-			_ = w.CloseWithError(err)
-		}()
-
-		// write csv headers
-		err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
-			return f.Name()
-		}))
-		if err != nil {
-			return
-		}
-
-		// write values
-		for _, values := range ds {
-			err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
-				fv := values.Field(f.ID())
-				if fv == nil || fv.Value() == nil {
-					return "#ERROR#"
-				}
-				return fv.Value().String()
-			}))
-			if err != nil {
-				return
-			}
-		}
-		csvW.Flush()
-	}()
-	return r
 }
 
 func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ *usecase.Operator) (dataset.List, error) {

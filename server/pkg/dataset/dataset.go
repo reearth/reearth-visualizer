@@ -1,5 +1,7 @@
 package dataset
 
+import "github.com/samber/lo"
+
 type Dataset struct {
 	id     ID
 	source string
@@ -124,4 +126,15 @@ func (d *Dataset) InterfaceWithFieldIDs() map[string]interface{} {
 		m[key] = f.Value().Interface()
 	}
 	return m
+}
+
+func (d *Dataset) Records(schemaFields []*SchemaField) []string {
+	records := lo.Map(schemaFields, func(f *SchemaField, _ int) string {
+		fv := d.Field(f.ID())
+		if fv == nil || fv.Value() == nil {
+			return ""
+		}
+		return fv.Value().String()
+	})
+	return records
 }
