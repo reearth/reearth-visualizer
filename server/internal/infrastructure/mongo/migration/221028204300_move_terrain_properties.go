@@ -3,9 +3,9 @@ package migration
 import (
 	"context"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,7 +52,7 @@ func MoveTerrainProperties(ctx context.Context, c DBClient) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			log.Infof("migration: MoveTerrainProperties: hit properties: %d\n", len(rows))
+			log.Infofc(ctx, "migration: MoveTerrainProperties: hit properties: %d\n", len(rows))
 
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument

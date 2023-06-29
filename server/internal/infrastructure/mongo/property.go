@@ -46,8 +46,8 @@ func NewProperty(client *mongox.Client) *Property {
 	}
 }
 
-func (r *Property) Init() error {
-	return createIndexes(context.Background(), r.client, propertyIndexes, propertyUniqueIndexes)
+func (r *Property) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, propertyIndexes, propertyUniqueIndexes)
 }
 
 func (r *Property) Filtered(f repo.SceneFilter) repo.Property {
@@ -77,6 +77,7 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 	if err != nil {
 		return nil, err
 	}
+
 	return filterProperties(ids, res), nil
 }
 
@@ -188,7 +189,7 @@ func (r *Property) RemoveByScene(ctx context.Context, sceneID id.SceneID) error 
 		"scene": sceneID.String(),
 	})
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }

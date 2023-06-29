@@ -14,10 +14,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
-	"github.com/reearth/reearthx/account/accountusecase"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +32,7 @@ func TestAsset_Create(t *testing.T) {
 	uc := &Asset{
 		repos: &repo.Container{
 			Asset:     memory.NewAsset(),
-			Workspace: accountmemory.NewWorkspaceWith(ws),
+			Workspace: memory.NewWorkspaceWith(ws),
 		},
 		gateways: &gateway.Container{
 			File: f,
@@ -52,9 +50,7 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: accountdomain.WorkspaceIDList{ws.ID()},
-		},
+		WritableWorkspaces: id.WorkspaceIDList{ws.ID()},
 	})
 	assert.NoError(t, err)
 
