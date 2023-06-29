@@ -92,6 +92,24 @@ func (r *Dataset) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchema
 	})
 }
 
+func (r *Dataset) FindBySchemaAllBy(ctx context.Context, s id.DatasetSchemaID, cb func(*dataset.Dataset) error) error {
+	c := mongox.SimpleConsumer[mongodoc.DatasetDocument](func(d mongodoc.DatasetDocument) error {
+		m, err := d.Model()
+		if err != nil {
+			return err
+		}
+		return cb(m)
+	})
+
+	if err := r.client.Find(ctx, r.readFilter(bson.M{
+		"schema": s.String(),
+	}), c); err != nil {
+		return rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	return nil
+}
+
 func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	if len(fields) == 0 {
 		d, err := r.FindByID(ctx, did)

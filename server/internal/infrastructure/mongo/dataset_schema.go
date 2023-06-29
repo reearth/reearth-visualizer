@@ -82,23 +82,6 @@ func (r *DatasetSchema) FindBySceneAll(ctx context.Context, sceneID id.SceneID) 
 	})
 }
 
-func (r *DatasetSchema) FindDynamicByID(ctx context.Context, sid id.DatasetSchemaID) (*dataset.Schema, error) {
-	return r.findOne(ctx, bson.M{
-		"id":      sid.String(),
-		"dynamic": true,
-	})
-}
-
-func (r *DatasetSchema) FindAllDynamicByScene(ctx context.Context, sceneID id.SceneID) (dataset.SchemaList, error) {
-	if !r.f.CanRead(sceneID) {
-		return nil, nil
-	}
-	return r.find(ctx, bson.M{
-		"scene":   sceneID.String(),
-		"dynamic": true,
-	})
-}
-
 func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, sceneID id.SceneID, source string) (dataset.SchemaList, error) {
 	if !r.f.CanRead(sceneID) {
 		return nil, nil
