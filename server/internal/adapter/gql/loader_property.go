@@ -7,7 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -26,8 +25,6 @@ func (c *PropertyLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmo
 	}
 
 	op := getOperator(ctx)
-	log.Infof("TEMP: PropertyLoader.Fetch op: %#v", op)
-	log.Infof("TEMP: PropertyLoader.Fetch ids: %v", ids)
 
 	res, err := c.usecase.Fetch(ctx, ids2, op)
 	if err != nil {

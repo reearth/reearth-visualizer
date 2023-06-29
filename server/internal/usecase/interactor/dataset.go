@@ -137,13 +137,13 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 	}
 
 	defer func() {
-		err = (*csvFile).Close()
+		err = csvFile.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Errorfc(ctx, "failed to close: %v", err)
 		}
 	}()
 
-	return i.importDataset(ctx, *csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
+	return i.importDataset(ctx, csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
 }
 
 func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID, o *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -392,7 +392,7 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ 
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -422,7 +422,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break
