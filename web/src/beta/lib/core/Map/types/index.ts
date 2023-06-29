@@ -292,6 +292,9 @@ export type SceneProperty = {
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
     shadows?: boolean;
+    shadowResolution?: 1024 | 2048 | 4096;
+    softShadow?: boolean;
+    shadowDarkness?: number;
     fog?: boolean;
     fog_density?: number;
     brightness_shift?: number;

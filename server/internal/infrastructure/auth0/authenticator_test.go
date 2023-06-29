@@ -1,6 +1,7 @@
 package auth0
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -88,7 +89,7 @@ func TestAuth0(t *testing.T) {
 	})
 
 	newEmail := "xxxxx"
-	r, err := a.UpdateUser(gateway.AuthenticatorUpdateUserParam{
+	r, err := a.UpdateUser(context.Background(), gateway.AuthenticatorUpdateUserParam{
 		ID:    userID,
 		Email: &newEmail,
 	})
