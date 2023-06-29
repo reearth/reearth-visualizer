@@ -46,8 +46,8 @@ func NewLayer(client *mongox.Client) *Layer {
 	}
 }
 
-func (r *Layer) Init() error {
-	return createIndexes(context.Background(), r.client, layerIndexes, layerUniqueIndexes)
+func (r *Layer) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, layerIndexes, layerUniqueIndexes)
 }
 
 func (r *Layer) Filtered(f repo.SceneFilter) repo.Layer {
@@ -263,7 +263,7 @@ func (r *Layer) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	}
 	_, err := r.client.Client().DeleteMany(ctx, filter)
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }

@@ -29,8 +29,8 @@ func NewScene(client *mongox.Client) *Scene {
 	}
 }
 
-func (r *Scene) Init() error {
-	return createIndexes(context.Background(), r.client, sceneIndexes, sceneUniqueIndexes)
+func (r *Scene) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, sceneIndexes, sceneUniqueIndexes)
 }
 
 func (r *Scene) Filtered(f repo.WorkspaceFilter) repo.Scene {

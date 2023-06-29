@@ -60,7 +60,7 @@ func (r *SceneLock) SaveLock(ctx context.Context, sceneID id.SceneID, lock scene
 	}, &options.UpdateOptions{
 		Upsert: &upsert,
 	}); err2 != nil {
-		return rerror.ErrInternalBy(err2)
+		return rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func (r *SceneLock) SaveLock(ctx context.Context, sceneID id.SceneID, lock scene
 func (r *SceneLock) ReleaseAllLock(ctx context.Context) error {
 	if _, err2 := r.client.Client().DeleteMany(ctx, bson.D{}); err2 != nil {
 		if err2 != mongo.ErrNilDocument && err2 != mongo.ErrNoDocuments {
-			return rerror.ErrInternalBy(err2)
+			return rerror.ErrInternalByWithContext(ctx, err2)
 		}
 	}
 	return nil
