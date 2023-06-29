@@ -67,7 +67,7 @@ export type Theme = {
       main: string;
       border: string;
     };
-    colorField: {
+    popup: {
       border: string;
       focusBorder: string;
     };

@@ -152,7 +152,7 @@ linear-gradient(
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${props => props.theme.editor.colorField.border};
+  background-color: ${props => props.theme.editor.popup.border};
   background-image: ${props => check(props.theme.general.bg.weak)},
     ${props => check(props.theme.general.bg.weak)};
   background-position: 0 0, 6px 6px;
@@ -170,7 +170,7 @@ const PickerWrapper = styled.div`
   cursor: default;
   padding: 0;
   box-sizing: border-box;
-  border: solid 1px ${props => props.theme.editor.colorField.border};
+  border: solid 1px ${props => props.theme.editor.popup.border};
   border-radius: 5px;
   background: ${props => props.theme.general.bg.weak};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
@@ -201,9 +201,9 @@ const Input = styled.input<{ type?: string }>`
   box-sizing: border-box;
   color: ${props => props.theme.general.content.main};
   outline: none;
-  border: 1px solid ${props => props.theme.editor.colorField.border};
+  border: 1px solid ${props => props.theme.editor.popup.border};
   &:focus {
-    border-color: ${props => props.theme.editor.colorField.focusBorder};
+    border-color: ${props => props.theme.editor.popup.focusBorder};
   }
   ::placeholder {
     color: ${props => props.theme.general.content.weak};

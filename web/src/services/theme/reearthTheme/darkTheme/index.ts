@@ -72,7 +72,7 @@ const darkTheme: Theme = {
       border: colors.outline.weak,
       main: colors.primary.main,
     },
-    colorField: {
+    popup: {
       border: colors.outline.weak,
       focusBorder: colors.outline.main,
     },
