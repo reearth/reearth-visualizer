@@ -1,17 +1,10 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useTeamsFetcher, useProjectFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import {
-  useCreateTeamMutation,
-  useGetProjectBySceneQuery,
-  useGetTeamsQuery,
-} from "@reearth/services/gql";
+import { useCreateTeamMutation } from "@reearth/services/gql";
 import { useProject, useSessionWorkspace, useWorkspace } from "@reearth/services/state";
-
-type User = {
-  name: string;
-};
 
 export default (sceneId: string) => {
   const { logout: handleLogout } = useAuth();
@@ -22,34 +15,11 @@ export default (sceneId: string) => {
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
 
-  const { data: workspaceData } = useGetTeamsQuery();
+  const { workspaces, workspaceData, user } = useTeamsFetcher();
+
+  const { workspaceId, project } = useProjectFetcher(sceneId);
+
   const navigate = useNavigate();
-  const workspaces = useMemo(() => {
-    return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
-  }, [workspaceData?.me?.teams]);
-
-  const { data } = useGetProjectBySceneQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
-
-  const workspaceId = useMemo(() => {
-    return data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
-  }, [data?.node]);
-
-  const project = useMemo(
-    () =>
-      data?.node?.__typename === "Scene" && data.node.project
-        ? { ...data.node.project, sceneId: data.node.id }
-        : undefined,
-    [data?.node],
-  );
-
-  const user: User = useMemo(() => {
-    return {
-      name: workspaceData?.me?.name || "",
-    };
-  }, [workspaceData?.me]);
 
   const personal = useMemo(() => {
     return workspaceId === workspaceData?.me?.myTeam.id;
