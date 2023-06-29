@@ -14,7 +14,6 @@ type DatasetSchemaDocument struct {
 	Fields              []*DatasetSchemaFieldDocument
 	RepresentativeField *string
 	Scene               string
-	Dynamic             bool
 }
 
 type DatasetSchemaFieldDocument struct {
@@ -82,7 +81,6 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 		Source:              dataset.Source(),
 		Scene:               dataset.Scene().String(),
 		RepresentativeField: dataset.RepresentativeFieldID().StringRef(),
-		Dynamic:             dataset.Dynamic(),
 	}
 
 	fields := dataset.Fields()

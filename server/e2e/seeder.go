@@ -66,7 +66,6 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	dss := dataset.NewSchema().ID(dssId).
 		Name("test.csv").
 		Scene(sId).
-		Dynamic(false).
 		Fields([]*dataset.SchemaField{
 			dataset.NewSchemaField().ID(fId1).Name("f1").Type(dataset.ValueTypeString).MustBuild(),
 			dataset.NewSchemaField().ID(fId2).Name("f2").Type(dataset.ValueTypeNumber).MustBuild(),
