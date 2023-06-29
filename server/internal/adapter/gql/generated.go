@@ -853,25 +853,24 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
-		Clusters              func(childComplexity int) int
-		CreatedAt             func(childComplexity int) int
-		DatasetSchemas        func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		DynamicDatasetSchemas func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		Plugins               func(childComplexity int) int
-		Project               func(childComplexity int) int
-		ProjectID             func(childComplexity int) int
-		Property              func(childComplexity int) int
-		PropertyID            func(childComplexity int) int
-		RootLayer             func(childComplexity int) int
-		RootLayerID           func(childComplexity int) int
-		TagIds                func(childComplexity int) int
-		Tags                  func(childComplexity int) int
-		Team                  func(childComplexity int) int
-		TeamID                func(childComplexity int) int
-		UpdatedAt             func(childComplexity int) int
-		WidgetAlignSystem     func(childComplexity int) int
-		Widgets               func(childComplexity int) int
+		Clusters          func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
+		DatasetSchemas    func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		ID                func(childComplexity int) int
+		Plugins           func(childComplexity int) int
+		Project           func(childComplexity int) int
+		ProjectID         func(childComplexity int) int
+		Property          func(childComplexity int) int
+		PropertyID        func(childComplexity int) int
+		RootLayer         func(childComplexity int) int
+		RootLayerID       func(childComplexity int) int
+		TagIds            func(childComplexity int) int
+		Tags              func(childComplexity int) int
+		Team              func(childComplexity int) int
+		TeamID            func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
+		WidgetAlignSystem func(childComplexity int) int
+		Widgets           func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -5367,13 +5366,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.DatasetSchemas(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
-	case "Scene.dynamicDatasetSchemas":
-		if e.complexity.Scene.DynamicDatasetSchemas == nil {
-			break
-		}
-
-		return e.complexity.Scene.DynamicDatasetSchemas(childComplexity), true
-
 	case "Scene.id":
 		if e.complexity.Scene.ID == nil {
 			break
@@ -7559,7 +7551,6 @@ extend type Mutation {
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
-  dynamicDatasetSchemas: [DatasetSchema!]!
   project: Project
   team: Team
   property: Property
@@ -7607,7 +7598,8 @@ extend type Query{
 
 extend type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/tag.graphql", Input: `interface Tag {
   id: ID!
   sceneId: ID!
@@ -9813,8 +9805,6 @@ func (ec *executionContext) fieldContext_AddClusterPayload_scene(ctx context.Con
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -10630,8 +10620,6 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(ctx context.Cont
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -12163,8 +12151,6 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(ctx context.Co
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -13923,8 +13909,6 @@ func (ec *executionContext) fieldContext_DatasetSchema_scene(ctx context.Context
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -15671,8 +15655,6 @@ func (ec *executionContext) fieldContext_Infobox_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -16490,8 +16472,6 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(ctx context.Context,
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -16625,8 +16605,6 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -17957,8 +17935,6 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(ctx context.Context, f
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -18983,8 +18959,6 @@ func (ec *executionContext) fieldContext_LayerItem_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -19936,8 +19910,6 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(ctx context.Context
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -20406,8 +20378,6 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(ctx context.Co
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -20945,8 +20915,6 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(ctx context.Context, 
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -27359,8 +27327,6 @@ func (ec *executionContext) fieldContext_Plugin_scene(ctx context.Context, field
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -29692,8 +29658,6 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -35296,8 +35260,6 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -35861,8 +35823,6 @@ func (ec *executionContext) fieldContext_RemoveClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -36447,8 +36407,6 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -36984,74 +36942,6 @@ func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(ctx context.Con
 				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DynamicDatasetSchemas, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.DatasetSchema)
-	fc.Result = res
-	return ec.marshalNDatasetSchema2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchemaᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_DatasetSchema_id(ctx, field)
-			case "source":
-				return ec.fieldContext_DatasetSchema_source(ctx, field)
-			case "name":
-				return ec.fieldContext_DatasetSchema_name(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
-			case "fields":
-				return ec.fieldContext_DatasetSchema_fields(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
-			case "representativeFieldId":
-				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
-			case "dynamic":
-				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
-			case "datasets":
-				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
-			case "scene":
-				return ec.fieldContext_DatasetSchema_scene(ctx, field)
-			case "representativeField":
-				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
 	}
 	return fc, nil
@@ -38863,8 +38753,6 @@ func (ec *executionContext) fieldContext_TagGroup_scene(ctx context.Context, fie
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -40492,8 +40380,6 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(ctx contex
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -40576,8 +40462,6 @@ func (ec *executionContext) fieldContext_UpdateClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41055,8 +40939,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(ct
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41139,8 +41021,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41287,8 +41167,6 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41503,8 +41381,6 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -54453,13 +54329,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Scene_widgetAlignSystem(ctx, field, obj)
 
-		case "dynamicDatasetSchemas":
-
-			out.Values[i] = ec._Scene_dynamicDatasetSchemas(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "project":
 			field := field
 
