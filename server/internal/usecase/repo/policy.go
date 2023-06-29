@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearth/server/pkg/workspace"
 )
 
 type Policy interface {

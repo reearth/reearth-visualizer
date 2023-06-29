@@ -30,8 +30,8 @@ func NewDatasetSchema(client *mongox.Client) *DatasetSchema {
 	}
 }
 
-func (r *DatasetSchema) Init() error {
-	return createIndexes(context.Background(), r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
+func (r *DatasetSchema) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
 }
 
 func (r *DatasetSchema) Filtered(f repo.SceneFilter) repo.DatasetSchema {
@@ -155,7 +155,7 @@ func (r *DatasetSchema) RemoveByScene(ctx context.Context, sceneID id.SceneID) e
 	if _, err := r.client.Client().DeleteMany(ctx, bson.M{
 		"scene": sceneID.String(),
 	}); err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }
@@ -180,7 +180,7 @@ func (r *DatasetSchema) paginate(ctx context.Context, filter bson.M, pagination 
 	c := mongodoc.NewDatasetSchemaConsumer()
 	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return c.Result, pageInfo, nil
 }

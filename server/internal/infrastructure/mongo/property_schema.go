@@ -29,8 +29,8 @@ func NewPropertySchema(client *mongox.Client) *PropertySchema {
 	}
 }
 
-func (r *PropertySchema) Init() error {
-	return createIndexes(context.Background(), r.client, propertySchemaIndexes, propertySchemaUniqueIndexes)
+func (r *PropertySchema) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, propertySchemaIndexes, propertySchemaUniqueIndexes)
 }
 
 func (r *PropertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {

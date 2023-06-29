@@ -2,7 +2,6 @@ package scene
 
 import (
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type ID = id.SceneID
@@ -13,7 +12,7 @@ type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID
-type WorkspaceID = accountdomain.WorkspaceID
+type WorkspaceID = id.WorkspaceID
 
 type IDList = id.SceneIDList
 type WidgetIDList = id.WidgetIDList
@@ -25,7 +24,7 @@ var NewLayerID = id.NewLayerID
 var NewPropertyID = id.NewPropertyID
 var NewPluginID = id.NewPluginID
 var NewProjectID = id.NewProjectID
-var NewWorkspaceID = accountdomain.NewWorkspaceID
+var NewWorkspaceID = id.NewWorkspaceID
 
 var MustID = id.MustSceneID
 var MustWidgetID = id.MustWidgetID
@@ -43,7 +42,7 @@ var LayerIDFrom = id.LayerIDFrom
 var PropertyIDFrom = id.PropertyIDFrom
 var PluginIDFrom = id.PluginIDFrom
 var ProjectIDFrom = id.ProjectIDFrom
-var WorkspaceIDFrom = accountdomain.WorkspaceIDFrom
+var WorkspaceIDFrom = id.WorkspaceIDFrom
 
 var IDFromRef = id.SceneIDFromRef
 var WidgetIDFromRef = id.WidgetIDFromRef
@@ -52,7 +51,7 @@ var LayerIDFromRef = id.LayerIDFromRef
 var PropertyIDFromRef = id.PropertyIDFromRef
 var PluginIDFromRef = id.PluginIDFromRef
 var ProjectIDFromRef = id.ProjectIDFromRef
-var WorkspaceIDFromRef = accountdomain.WorkspaceIDFromRef
+var WorkspaceIDFromRef = id.WorkspaceIDFromRef
 
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID

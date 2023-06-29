@@ -7,8 +7,8 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
@@ -20,8 +20,8 @@ import (
 func TestProject_CountByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := id.NewWorkspaceID()
+	wid2 := id.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
@@ -35,7 +35,7 @@ func TestProject_CountByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: id.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
@@ -45,8 +45,8 @@ func TestProject_CountByWorkspace(t *testing.T) {
 func TestProject_CountPublicByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := id.NewWorkspaceID()
+	wid2 := id.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
@@ -60,7 +60,7 @@ func TestProject_CountPublicByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: id.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountPublicByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
@@ -72,8 +72,8 @@ func TestProject_FindByPublicName(t *testing.T) {
 	defer util.MockNow(now)()
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := id.NewWorkspaceID()
+	wid2 := id.NewWorkspaceID()
 	prj1 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("alias").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
 	prj2 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("aaaaa").PublishmentStatus(project.PublishmentStatusLimited).MustBuild()
 	prj3 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("bbbbb").MustBuild()
@@ -103,7 +103,7 @@ func TestProject_FindByPublicName(t *testing.T) {
 
 	// filter should not work because the projects are public
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: id.WorkspaceIDList{wid2},
 	})
 
 	got, err = r2.FindByPublicName(ctx, "alias")

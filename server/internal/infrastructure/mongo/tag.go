@@ -29,8 +29,8 @@ func NewTag(client *mongox.Client) *Tag {
 	}
 }
 
-func (r *Tag) Init() error {
-	return createIndexes(context.Background(), r.client, tagIndexes, tagUniqueIndexes)
+func (r *Tag) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, tagIndexes, tagUniqueIndexes)
 }
 
 func (r *Tag) Filtered(f repo.SceneFilter) repo.Tag {
@@ -160,7 +160,7 @@ func (r *Tag) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 		"scene": sceneID.String(),
 	})
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }

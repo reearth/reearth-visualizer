@@ -4,13 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuilder_Build(t *testing.T) {
 	aid := NewID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
@@ -55,7 +54,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        0,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -67,7 +66,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "",
 				contentType: "bbb",
@@ -91,7 +90,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          ID{},
 				createdAt:   d,
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -126,7 +125,7 @@ func TestBuilder_Build(t *testing.T) {
 
 func TestBuilder_MustBuild(t *testing.T) {
 	aid := NewID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
@@ -171,7 +170,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        0,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -183,7 +182,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "",
 				contentType: "bbb",
@@ -207,7 +206,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          ID{},
-				workspace:   accountdomain.NewWorkspaceID(),
+				workspace:   NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -244,6 +243,6 @@ func TestBuilder_MustBuild(t *testing.T) {
 }
 
 func TestNewID(t *testing.T) {
-	a := New().NewID().URL("tt://xxx.bb").Workspace(accountdomain.NewWorkspaceID()).Size(10).MustBuild()
+	a := New().NewID().URL("tt://xxx.bb").Workspace(NewWorkspaceID()).Size(10).MustBuild()
 	assert.False(t, a.id.IsNil())
 }

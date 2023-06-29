@@ -12,10 +12,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -26,9 +22,7 @@ type ContainerConfig struct {
 	PublishedIndexURL  *url.URL
 }
 
-func NewContainer(r *repo.Container, g *gateway.Container,
-	ar *accountrepo.Container, ag *accountgateway.Container,
-	config ContainerConfig) interfaces.Container {
+func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfig) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, g.File, config.PublishedIndexURL)
@@ -46,8 +40,8 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Published: published,
 		Scene:     NewScene(r, g),
 		Tag:       NewTag(r),
-		Workspace: accountinteractor.NewWorkspace(ar),
-		User:      accountinteractor.NewUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain),
+		Workspace: NewWorkspace(r),
+		User:      NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
 	}
 }
 
@@ -61,7 +55,7 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanReadWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
@@ -71,7 +65,7 @@ func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operat
 	return nil
 }
 
-func (i common) CanWriteWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanWriteWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}

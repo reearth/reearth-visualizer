@@ -1,7 +1,7 @@
 package mongodoc
 
 import (
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearth/server/pkg/workspace"
 	"github.com/reearth/reearthx/mongox"
 )
 
