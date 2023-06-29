@@ -2,7 +2,6 @@ package interactor
 
 import (
 	"context"
-	"encoding/csv"
 	"errors"
 	"io"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
-	"github.com/samber/lo"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -69,7 +67,8 @@ func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID) (dataset.List, 
 }
 
 func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, w io.Writer) (string, string, chan error, error) {
-	if format != "csv" {
+	f, ok := dataset.ExportFormat(format)
+	if !ok {
 		return "", "", nil, rerror.ErrNotFound
 	}
 
@@ -78,48 +77,28 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format stri
 		return "", "", nil, err
 	}
 
-	schemaFields := s.Fields()
 	ch := make(chan error)
-
 	go func() {
-		csvw := csv.NewWriter(w)
-
-		// write headers
-		err = csvw.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
-			return f.Name()
-		}))
-		if err != nil {
-			ch <- rerror.ErrInternalByWithContext(ctx, err)
-			return
-		}
-
-		// write records
-		if err := i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
-			if d == nil {
-				return nil
-			}
-			records := d.Records(schemaFields)
-			if err := csvw.Write(records); err != nil {
-				return rerror.ErrInternalByWithContext(ctx, err)
-			}
-
-			csvw.Flush()
-			return nil
+		if err := dataset.Export(w, format, s, func(f func(*dataset.Dataset) error) error {
+			return i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
+				if d == nil {
+					return nil
+				}
+				return f(d)
+			})
 		}); err != nil {
 			ch <- err
 			return
 		}
-
-		csvw.Flush()
 		ch <- nil
 	}()
 
 	name := s.Name()
-	if !strings.HasSuffix(name, ".csv") {
-		name += ".csv"
+	if !strings.HasSuffix(name, "."+f.Ext) {
+		name += "." + f.Ext
 	}
 
-	return name, "text/csv", ch, nil
+	return name, f.ContentType, ch, nil
 }
 
 func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
