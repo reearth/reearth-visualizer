@@ -88,7 +88,7 @@ describe("StringMatcher", () => {
     });
   });
 
-  describe("insertBefore", () => {
+  test("insertBefore", () => {
     const injector = new StringMatcher();
     expect(injector.insertBefore("void main()", "uniform vec2 uv;").execute(source)).toBe(
       "uniform sampler2D colorTexture;\n" +
@@ -102,7 +102,7 @@ describe("StringMatcher", () => {
     );
   });
 
-  describe("insertAfter", () => {
+  test("insertAfter", () => {
     const injector = new StringMatcher();
     expect(
       injector.insertAfter("uniform sampler2D depthTexture;", "uniform vec2 uv;").execute(source),
@@ -118,7 +118,7 @@ describe("StringMatcher", () => {
     );
   });
 
-  describe("erase", () => {
+  test("erase", () => {
     const injector = new StringMatcher();
     expect(injector.erase("uniform sampler2D depthTexture;\n").execute(source)).toBe(
       "uniform sampler2D colorTexture;\n" +
