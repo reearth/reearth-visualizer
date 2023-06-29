@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
@@ -61,7 +60,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// release lock of all scenes
 	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
-		log.Fatal(fmt.Sprintf("repo initialization error: %+v", err))
+		log.Fatalf("repo initialization error: %v", err)
 	}
 
 	return repos, gateways
@@ -92,7 +91,7 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
 	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("file: init error: %+v", err))
+		log.Fatalf("file: init error: %+v", err)
 	}
 	return fileRepo
 }

@@ -137,13 +137,13 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 	}
 
 	defer func() {
-		err = (*csvFile).Close()
+		err = csvFile.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Errorfc(ctx, "failed to close: %v", err)
 		}
 	}()
 
-	return i.importDataset(ctx, *csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
+	return i.importDataset(ctx, csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
 }
 
 func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID, o *usecase.Operator) (_ *dataset.Schema, err error) {
