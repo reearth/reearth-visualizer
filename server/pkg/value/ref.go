@@ -38,6 +38,13 @@ func (p *propertyRef) String(i any) string {
 	return i.(string)
 }
 
+func (v *propertyRef) JSONSchema() any {
+	return map[string]any{
+		"type":  "string",
+		"title": "Ref",
+	}
+}
+
 func (v *Value) ValueRef() (vv string, ok bool) {
 	if v == nil {
 		return

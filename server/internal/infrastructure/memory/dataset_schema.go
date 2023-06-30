@@ -79,24 +79,6 @@ func (r *DatasetSchema) FindBySceneAll(_ context.Context, s id.SceneID) (dataset
 	}), nil
 }
 
-func (r *DatasetSchema) FindAllDynamicByScene(ctx context.Context, s id.SceneID) (dataset.SchemaList, error) {
-	if !r.f.CanRead(s) {
-		return nil, nil
-	}
-
-	return r.data.FindAll(func(_ id.DatasetSchemaID, v *dataset.Schema) bool {
-		return v.Scene() == s && v.Dynamic()
-	}), nil
-}
-
-func (r *DatasetSchema) FindDynamicByID(_ context.Context, id id.DatasetSchemaID) (*dataset.Schema, error) {
-	p, ok := r.data.Load(id)
-	if ok && p.Dynamic() && r.f.CanRead(p.Scene()) {
-		return p, nil
-	}
-	return nil, rerror.ErrNotFound
-}
-
 func (r *DatasetSchema) FindBySceneAndSource(_ context.Context, s id.SceneID, src string) (dataset.SchemaList, error) {
 	if !r.f.CanRead(s) {
 		return nil, rerror.ErrNotFound

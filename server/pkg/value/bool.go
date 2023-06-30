@@ -42,6 +42,12 @@ func (p *propertyBool) String(i any) string {
 	return strconv.FormatBool(i.(bool))
 }
 
+func (v *propertyBool) JSONSchema() any {
+	return map[string]any{
+		"type": "boolean",
+	}
+}
+
 func (v *Value) ValueBool() (vv bool, ok bool) {
 	if v == nil {
 		return

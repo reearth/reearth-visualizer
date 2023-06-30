@@ -32,7 +32,7 @@ func (r *Config) LockAndLoad(ctx context.Context) (cfg *config.Config, err error
 	cfgd := &mongodoc.ConfigDocument{}
 	if err := r.client.FindOne(ctx, bson.M{}).Decode(cfgd); err != nil {
 		if !errors.Is(err, mongo.ErrNilDocument) && !errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, rerror.ErrInternalBy(err)
+			return nil, rerror.ErrInternalByWithContext(ctx, err)
 		}
 	}
 	return cfgd.Model(), nil
@@ -49,7 +49,7 @@ func (r *Config) Save(ctx context.Context, cfg *config.Config) error {
 		bson.M{"$set": mongodoc.NewConfig(*cfg)},
 		(&options.UpdateOptions{}).SetUpsert(true),
 	); err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil
@@ -68,7 +68,7 @@ func (r *Config) SaveAuth(ctx context.Context, cfg *config.Auth) error {
 		}},
 		(&options.UpdateOptions{}).SetUpsert(true),
 	); err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil

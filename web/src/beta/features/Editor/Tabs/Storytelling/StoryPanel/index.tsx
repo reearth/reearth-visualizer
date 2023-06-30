@@ -7,7 +7,7 @@ type Props = {};
 
 export const StoryPanel: FC<Props> = () => {
   return (
-    <Root>
+    <Wrapper>
       <IndicatorWrapper>
         <StoryPageIndicator
           currentPage={3}
@@ -17,13 +17,13 @@ export const StoryPanel: FC<Props> = () => {
         />
       </IndicatorWrapper>
       <div>StoryPanel</div>
-    </Root>
+    </Wrapper>
   );
 };
 
 export default StoryPanel;
 
-const Root = styled.div`
+const Wrapper = styled.div`
   position: relative;
   box-sizing: border-box;
   width: 462px;
