@@ -62,3 +62,12 @@ func (d *SchemaField) Clone() *SchemaField {
 		ref:      d.ref.CloneRef(),
 	}
 }
+
+// JSONSchema prints a JSON schema for the schema field.
+func (d *SchemaField) JSONSchema() any {
+	if d == nil {
+		return nil
+	}
+
+	return d.dataType.JSONSchema()
+}

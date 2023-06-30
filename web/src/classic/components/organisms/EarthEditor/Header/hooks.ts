@@ -47,7 +47,17 @@ export default () => {
     skip: !sceneId,
   });
 
-  const workspaceId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+  const workspaceId = useMemo(
+    () => (data?.node?.__typename === "Scene" ? data.node.teamId : undefined),
+    [data?.node],
+  );
+
+  useEffect(() => {
+    if (!currentWorkspace) {
+      setCurrentWorkspace(workspaces?.find(w => w.id === workspaceId));
+    }
+  }, [workspaces, workspaceId, currentWorkspace, setCurrentWorkspace]);
+
   const project = useMemo(
     () =>
       data?.node?.__typename === "Scene" && data.node.project

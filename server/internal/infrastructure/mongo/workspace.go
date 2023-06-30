@@ -27,8 +27,8 @@ func NewWorkspace(client *mongox.Client) repo.Workspace {
 	}
 }
 
-func (r *Workspace) Init() error {
-	return createIndexes(context.Background(), r.client, workspaceIndexes, workspaceUniqueIndexes)
+func (r *Workspace) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, workspaceIndexes, workspaceUniqueIndexes)
 }
 
 func (r *Workspace) FindByUser(ctx context.Context, id id.UserID) (workspace.List, error) {

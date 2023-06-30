@@ -136,6 +136,12 @@ func (p *propertyNumber) String(i any) string {
 	return fmt.Sprintf("%g", i.(float64))
 }
 
+func (v *propertyNumber) JSONSchema() any {
+	return map[string]any{
+		"type": "number",
+	}
+}
+
 func (v *Value) ValueNumber() (vv float64, ok bool) {
 	if v == nil {
 		return

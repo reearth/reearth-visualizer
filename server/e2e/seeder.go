@@ -16,15 +16,16 @@ import (
 )
 
 var (
-	uId    = user.NewID()
+	uID    = user.NewID()
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
-	wId    = workspace.NewID()
-	pId    = id.NewProjectID()
+	wID    = id.NewWorkspaceID()
+	pID    = id.NewProjectID()
 	pAlias = "PROJECT_ALIAS"
 
-	sId   = id.NewSceneID()
-	dssId = dataset.NewSchemaID()
+	sID   = id.NewSceneID()
+	dssID = id.NewDatasetSchemaID()
+	dsID  = id.NewDatasetID()
 
 	now = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 )
@@ -33,8 +34,8 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	defer util.MockNow(now)()
 
 	u := user.New().
-		ID(uId).
-		Workspace(wId).
+		ID(uID).
+		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
 		MustBuild()
@@ -42,7 +43,7 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-	w := workspace.New().ID(wId).
+	w := workspace.New().ID(wID).
 		Name("e2e").
 		Personal(false).
 		Members(map[id.UserID]workspace.Role{u.ID(): workspace.RoleOwner}).
@@ -51,7 +52,7 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-	p := project.New().ID(pId).
+	p := project.New().ID(pID).
 		Name("p1").
 		Description("p1 desc").
 		ImageURL(lo.Must(url.Parse("https://test.com"))).
@@ -63,10 +64,9 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	}
 
 	fId1, fId2, fId3, fId4 := dataset.NewFieldID(), dataset.NewFieldID(), dataset.NewFieldID(), dataset.NewFieldID()
-	dss := dataset.NewSchema().ID(dssId).
+	dss := dataset.NewSchema().ID(dssID).
 		Name("test.csv").
-		Scene(sId).
-		Dynamic(false).
+		Scene(sID).
 		Fields([]*dataset.SchemaField{
 			dataset.NewSchemaField().ID(fId1).Name("f1").Type(dataset.ValueTypeString).MustBuild(),
 			dataset.NewSchemaField().ID(fId2).Name("f2").Type(dataset.ValueTypeNumber).MustBuild(),
@@ -79,7 +79,7 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-	ds := dataset.New().ID(id.NewDatasetID()).Schema(dss.ID()).Scene(sId).
+	ds := dataset.New().ID(dsID).Schema(dss.ID()).Scene(sID).
 		Fields([]*dataset.Field{
 			dataset.NewField(fId1, dataset.ValueTypeString.ValueFrom("test"), ""),
 			dataset.NewField(fId2, dataset.ValueTypeNumber.ValueFrom(123), ""),

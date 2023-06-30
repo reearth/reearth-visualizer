@@ -47,11 +47,6 @@ func (b *SchemaBuilder) Name(name string) *SchemaBuilder {
 	return b
 }
 
-func (b *SchemaBuilder) Dynamic(dynamic bool) *SchemaBuilder {
-	b.d.dynamic = dynamic
-	return b
-}
-
 func (b *SchemaBuilder) Source(source string) *SchemaBuilder {
 	b.d.source = source
 	return b

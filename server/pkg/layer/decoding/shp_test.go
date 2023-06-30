@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/shp"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -61,6 +62,7 @@ var dataForReadTests = map[string]testCaseData{
 }
 
 func testPoint(t *testing.T, points [][]float64, shapes []shp.Shape) {
+	t.Helper()
 	for n, s := range shapes {
 		p, ok := s.(*shp.Point)
 		if !ok {
@@ -71,6 +73,7 @@ func testPoint(t *testing.T, points [][]float64, shapes []shp.Shape) {
 }
 
 func testPolyLine(t *testing.T, points [][]float64, shapes []shp.Shape) {
+	t.Helper()
 	for n, s := range shapes {
 		p, ok := s.(*shp.PolyLine)
 		if !ok {
@@ -83,6 +86,7 @@ func testPolyLine(t *testing.T, points [][]float64, shapes []shp.Shape) {
 }
 
 func testPolygon(t *testing.T, points [][]float64, shapes []shp.Shape) {
+	t.Helper()
 	for n, s := range shapes {
 		p, ok := s.(*shp.Polygon)
 		if !ok {
@@ -95,48 +99,48 @@ func testPolygon(t *testing.T, points [][]float64, shapes []shp.Shape) {
 }
 
 func TestSHPReadZip(t *testing.T) {
+	t.Helper()
 	testshapeIdentity(t, "shapetest/shapes.zip", getShapesFromFile)
 }
 
 func TestSHPReadPoint(t *testing.T) {
+	t.Helper()
 	testshapeIdentity(t, "shapetest/point.shp", getShapesFromFile)
 }
 
 func TestSHPReadPolyLine(t *testing.T) {
+	t.Helper()
 	testshapeIdentity(t, "shapetest/polyline.shp", getShapesFromFile)
 }
 
 func TestSHPReadPolygon(t *testing.T) {
+	t.Helper()
 	testshapeIdentity(t, "shapetest/polygon.shp", getShapesFromFile)
 }
 
 func testshapeIdentity(t *testing.T, prefix string, getter shapeGetterFunc) {
+	t.Helper()
 	shapes := getter(prefix, t)
 	d := dataForReadTests[prefix]
 	d.tester(t, d.points, shapes)
 }
 
 func getShapesFromFile(filename string, t *testing.T) (shapes []shp.Shape) {
+	t.Helper()
+
 	var reader ShapeReader
-	var err error
-	osr, err := os.Open(filename)
-	assert.NoError(t, err)
+	osr := lo.Must(os.Open(filename))
 	if strings.HasSuffix(filename, ".shp") {
-		reader, err = shp.ReadFrom(osr)
+		reader = lo.Must(shp.ReadFrom(osr))
 	} else {
-		reader, err = shp.ReadZipFrom(osr)
-	}
-	if err != nil {
-		t.Fatal("failed to open shapefile: " + filename + " (" + err.Error() + ")")
+		reader = lo.Must(shp.ReadZipFrom(osr))
 	}
 
 	for reader.Next() {
 		_, shape := reader.Shape()
 		shapes = append(shapes, shape)
 	}
-	if reader.Err() != nil {
-		t.Errorf("error while getting shapes for %s: %v", filename, reader.Err())
-	}
+	assert.NoError(t, reader.Err())
 
 	return shapes
 }
