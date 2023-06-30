@@ -4,11 +4,13 @@ import { styled } from "@reearth/services/theme";
 
 type Props = {};
 
-export const StoryPanel: FC<Props> = () => {
-  return <Root>StoryPanel</Root>;
+const StoryPanel: FC<Props> = () => {
+  return <Wrapper>StoryPanel</Wrapper>;
 };
 
-const Root = styled.div`
+export default StoryPanel;
+
+const Wrapper = styled.div`
   box-sizing: border-box;
   width: 462px;
   padding: 10px 24px;
