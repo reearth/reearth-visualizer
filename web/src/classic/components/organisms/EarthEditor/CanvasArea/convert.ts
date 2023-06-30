@@ -33,6 +33,8 @@ import {
   EarthLayer5Fragment,
 } from "@reearth/services/gql";
 
+export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
+
 type BlockType = Item & {
   pluginId: string;
   extensionId: string;
@@ -97,6 +99,7 @@ const processMergedPropertyGroup = (
 const processMergedProperty = (
   p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
 ): P | undefined => {
+  //
   if (!p) return;
   return p.groups.reduce<any>(
     (a, b) => ({
@@ -124,6 +127,7 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox
 const processMergedInfobox = (
   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
 ): Layer["infobox"] | undefined => {
+  //
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
