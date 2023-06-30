@@ -37,8 +37,17 @@ export default () => {
 
   useEffect(() => {
     if (!isAuthenticated || currentWorkspace || !data || !workspaceId) return;
+    setCurrentUserId(data?.me?.id);
     setCurrentWorkspace(data.me?.myTeam);
-  }, [isAuthenticated, navigate, data, workspaceId, currentWorkspace, setCurrentWorkspace]);
+  }, [
+    isAuthenticated,
+    navigate,
+    data,
+    workspaceId,
+    currentWorkspace,
+    setCurrentUserId,
+    setCurrentWorkspace,
+  ]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {

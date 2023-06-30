@@ -133,6 +133,46 @@ func (p *typePropertyTypography) String(i interface{}) string {
 	// return i.(Typography).String()
 }
 
+func (v *typePropertyTypography) JSONSchema() any {
+	return map[string]any{
+		"type":  "object",
+		"title": "Typography",
+		"properties": map[string]any{
+			"fontFamily": map[string]any{
+				"type": "string",
+			},
+			"fontWeight": map[string]any{
+				"type": "string",
+			},
+			"fontSize": map[string]any{
+				"type": "integer",
+			},
+			"color": map[string]any{
+				"type": "string",
+			},
+			"textAlign": map[string]any{
+				"type": "string",
+				"enum": []string{
+					"left",
+					"center",
+					"right",
+					"justify",
+					"justify_all",
+				},
+			},
+			"bold": map[string]any{
+				"type": "boolean",
+			},
+			"italic": map[string]any{
+				"type": "boolean",
+			},
+			"underline": map[string]any{
+				"type": "boolean",
+			},
+		},
+	}
+}
+
 func (v *Value) ValueTypography() (vv Typography, ok bool) {
 	if v == nil {
 		return

@@ -40,6 +40,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		otelecho.Middleware("reearth"),
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),
+		middleware.Gzip(),
 	)
 	if cfg.Config.HTTPSREDIRECT {
 		e.Use(middleware.HTTPSRedirectWithConfig(middleware.RedirectConfig{
