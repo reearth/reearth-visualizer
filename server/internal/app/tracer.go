@@ -27,7 +27,7 @@ func initTracer(ctx context.Context, conf *config.Config) io.Closer {
 func initGCPTracer(ctx context.Context, conf *config.Config) {
 	exporter, err := texporter.New(texporter.WithProjectID(conf.GCPProject))
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("failed to init GCP tracer: %v", err)
 	}
 
 	tp := sdktrace.NewTracerProvider(sdktrace.WithSyncer(exporter), sdktrace.WithSampler(sdktrace.TraceIDRatioBased(conf.TracerSample)))

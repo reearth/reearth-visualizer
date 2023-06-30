@@ -77,6 +77,18 @@ func (r *Dataset) FindBySchemaAll(_ context.Context, s id.DatasetSchemaID) (data
 	}), nil
 }
 
+func (r *Dataset) FindBySchemaAllBy(_ context.Context, s id.DatasetSchemaID, cb func(*dataset.Dataset) error) error {
+	items := r.data.FindAll(func(k id.DatasetID, v *dataset.Dataset) bool {
+		return v.Schema() == s && r.f.CanRead(v.Scene())
+	})
+	for _, item := range items {
+		if err := cb(item); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (r *Dataset) FindGraph(_ context.Context, i id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	result := make(dataset.List, 0, len(fields))
 	next := i

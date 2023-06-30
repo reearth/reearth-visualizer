@@ -13,6 +13,6 @@ func NewGoogle() gateway.Google {
 	return &google{}
 }
 
-func (g google) FetchCSV(token string, fileId string, sheetName string) (*io.ReadCloser, error) {
+func (g google) FetchCSV(token string, fileId string, sheetName string) (io.ReadCloser, error) {
 	return fetchCSV(token, fileId, sheetName)
 }
