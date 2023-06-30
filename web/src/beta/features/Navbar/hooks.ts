@@ -1,7 +1,11 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useTeamsFetcher, useProjectFetcher, useCreateTeamFetcher } from "@reearth/services/api";
+import {
+  useWorkspacesFetcher,
+  useCreateWorkspaceFetcher,
+  useProjectFetcher,
+} from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
 import { useProject, useWorkspace } from "@reearth/services/state";
 
@@ -11,7 +15,7 @@ export default (sceneId: string) => {
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentProject, setProject] = useProject();
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
-  const { workspaces, workspaceData, user } = useTeamsFetcher();
+  const { workspaces, workspaceData, user } = useWorkspacesFetcher();
   const { workspaceId, project } = useProjectFetcher(sceneId);
 
   const navigate = useNavigate();
@@ -52,10 +56,10 @@ export default (sceneId: string) => {
 
   const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
-      const team = await useCreateTeamFetcher(data.name);
-      if (team) {
-        setCurrentWorkspace(team);
-        navigate(`/dashboard/${team.id}`);
+      const workspace = await useCreateWorkspaceFetcher(data.name);
+      if (workspace) {
+        setCurrentWorkspace(workspace);
+        navigate(`/dashboard/${workspace.id}`);
       }
     },
     [setCurrentWorkspace, navigate],

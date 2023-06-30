@@ -1,13 +1,16 @@
 import { useMemo } from "react";
 
-import { useGetTeamsQuery, useCreateTeamMutation } from "@reearth/services/gql";
+import {
+  useGetTeamsQuery as useGetWorkspacesQuery,
+  useCreateTeamMutation as useCreateWorkspaceMutation,
+} from "@reearth/services/gql";
 
 type User = {
   name: string;
 };
 
-export const useTeamsFetcher = () => {
-  const { data: workspaceData } = useGetTeamsQuery();
+export const useWorkspacesFetcher = () => {
+  const { data: workspaceData } = useGetWorkspacesQuery();
 
   const workspaces = useMemo(() => {
     return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
@@ -22,17 +25,17 @@ export const useTeamsFetcher = () => {
   return { workspaces, workspaceData, user };
 };
 
-export const useCreateTeamFetcher = async (name: string) => {
-  const [createTeamMutation] = useCreateTeamMutation();
+export const useCreateWorkspaceFetcher = async (name: string) => {
+  const [createWorkspaceMutation] = useCreateWorkspaceMutation();
 
-  const results = await createTeamMutation({
+  const results = await createWorkspaceMutation({
     variables: { name },
     refetchQueries: ["GetTeams"],
   });
 
   if (results.data?.createTeam) {
-    const team = results.data.createTeam.team;
-    return team;
+    const workspace = results.data.createTeam.team;
+    return workspace;
   }
 
   return null;

@@ -1,2 +1,2 @@
 export { useProjectFetcher } from "./projectApi";
-export { useTeamsFetcher, useCreateTeamFetcher } from "./teamsApi";
+export { useWorkspacesFetcher, useCreateWorkspaceFetcher } from "./workspacesApi";
