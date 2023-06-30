@@ -47,7 +47,11 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
           onBlur={handleHexSave}
         />
       </InputWrapper>
-      <Popup wrapperRef={wrapperRef} handleClose={handleClose} open={open}>
+      <Popup
+        wrapperRef={wrapperRef}
+        onClickAway={handleClose}
+        onEscapeKeyDown={handleClose}
+        open={open}>
         <PickerWrapper>
           <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
           <RgbaInputWrapper>

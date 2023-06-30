@@ -7,9 +7,10 @@ import { styled, css } from "@reearth/services/theme";
 const Popup: React.FC<{
   wrapperRef: RefObject<HTMLDivElement>;
   open: boolean;
-  handleClose: () => void;
+  onClickAway?: () => void;
+  onEscapeKeyDown?: () => void;
   children: ReactNode;
-}> = ({ wrapperRef, open, handleClose, children }) => {
+}> = ({ wrapperRef, open, onClickAway, onEscapeKeyDown, children }) => {
   const pickerRef = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
     placement: "bottom-start",
@@ -32,8 +33,8 @@ const Popup: React.FC<{
   });
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        handleClose();
+      if (open && pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        onClickAway?.();
       }
     };
 
@@ -44,14 +45,14 @@ const Popup: React.FC<{
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [handleClose]);
+  }, [open, onClickAway]);
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Escape") {
-        handleClose();
+        onEscapeKeyDown?.();
       }
     },
-    [handleClose],
+    [onEscapeKeyDown],
   );
 
   return (
