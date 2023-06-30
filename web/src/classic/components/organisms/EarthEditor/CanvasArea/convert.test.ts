@@ -1,8 +1,111 @@
 import { expect, test } from "vitest";
 
-import { EarthLayer5Fragment, ValueType } from "@reearth/services/gql";
+import { EarthLayer5Fragment, EarthLayerFragment, Maybe, ValueType } from "@reearth/services/gql";
 
-import { processLayer, type Layer } from "./convert";
+import { processLayer, processProperty, type Layer, Datasets } from "./convert";
+
+test.skip("proceessProperty", () => {
+  const parent: Maybe<EarthLayerFragment["property"]> = {
+    id: "01h1xptyc7jdjkkdzh3yp2bcsy",
+    items: [
+      {
+        id: "01h1xptyc7jdjkkdzh40srxcxh",
+        schemaGroupId: "default",
+        fields: [
+          {
+            id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_location",
+            fieldId: "location",
+            type: ValueType.Latlng,
+            value: null,
+            links: [
+              {
+                datasetId: null,
+                datasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
+                datasetSchemaFieldId: "01h1xpth3npn29h18t86pw9bh5",
+                // "datasetSchema": {
+                //   "id": "01h1xpth3npn29h18t875d8gvk",
+                //   "name": "hoge.csv",
+                //   "__typename": "DatasetSchema"
+                // },
+                // "dataset": null,
+                // "datasetSchemaField": {
+                //   "id": "01h1xpth3npn29h18t86pw9bh5",
+                //   "name": "location",
+                //   "__typename": "DatasetSchemaField"
+                // },
+                __typename: "PropertyFieldLink",
+              },
+            ],
+            __typename: "PropertyField",
+          },
+          {
+            id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_imageSize",
+            fieldId: "imageSize",
+            type: ValueType.Number,
+            value: 2,
+            links: null,
+            __typename: "PropertyField",
+          },
+        ],
+        __typename: "PropertyGroup",
+      },
+    ],
+    __typename: "Property",
+  };
+
+  const orig: Maybe<EarthLayerFragment["property"]> = {
+    id: "01h1xptyc7jdjkkdzh41qk0tew",
+    items: [],
+    __typename: "Property",
+  };
+
+  const datasets: Datasets = {
+    "01h1xpth3npn29h18t875d8gvk": dummyDataset,
+  };
+
+  expect(processProperty(parent, orig, datasets)).toEqual({
+    default: {
+      location: {
+        lat: 0,
+        lng: 0,
+      }, // vaue come from dataset
+      imageSize: 2, // parent property value (not overridden)
+    },
+  });
+
+  const orig2: Maybe<EarthLayerFragment["property"]> = {
+    id: "01h1xptyc7jdjkkdzh47tz3yyb",
+    items: [
+      {
+        id: "01h4396a7z52v1ncwp8sv85xsg",
+        schemaGroupId: "default",
+        fields: [
+          {
+            id: "01h1xptyc7jdjkkdzh47tz3yyb_01h4396a7z52v1ncwp8sv85xsg_imageSize",
+            fieldId: "imageSize",
+            type: ValueType.Number,
+            value: 10,
+            links: null,
+            __typename: "PropertyField",
+          },
+        ],
+        __typename: "PropertyGroup",
+      },
+    ],
+    __typename: "Property",
+  };
+
+  expect(processProperty(parent, orig2, datasets)).toEqual({
+    default: {
+      imageSize: 10, // overridden value
+      location: {
+        // vaue come from dataset
+        lat: 10,
+        lng: 10,
+      },
+    },
+  });
+});
 
 test("processLayer", () => {
   const expected: Layer = {
@@ -21,6 +124,53 @@ test("processLayer", () => {
         title: "hoge.csv",
         propertyId: "01h1xptyc7jdjkkdzh3yp2bcsy",
         tags: [],
+        property: {
+          id: "01h1xptyc7jdjkkdzh3yp2bcsy",
+          items: [
+            {
+              id: "01h1xptyc7jdjkkdzh40srxcxh",
+              schemaGroupId: "default",
+              fields: [
+                {
+                  id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_location",
+                  fieldId: "location",
+                  type: "LATLNG",
+                  value: null,
+                  links: [
+                    {
+                      datasetId: null,
+                      datasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
+                      datasetSchemaFieldId: "01h1xpth3npn29h18t86pw9bh5",
+                      datasetSchema: {
+                        id: "01h1xpth3npn29h18t875d8gvk",
+                        name: "hoge.csv",
+                        __typename: "DatasetSchema",
+                      },
+                      dataset: null,
+                      datasetSchemaField: {
+                        id: "01h1xpth3npn29h18t86pw9bh5",
+                        name: "location",
+                        __typename: "DatasetSchemaField",
+                      },
+                      __typename: "PropertyFieldLink",
+                    },
+                  ],
+                  __typename: "PropertyField",
+                },
+                {
+                  id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_imageSize",
+                  fieldId: "imageSize",
+                  type: "NUMBER",
+                  value: 2,
+                  links: null,
+                  __typename: "PropertyField",
+                },
+              ],
+              __typename: "PropertyGroup",
+            },
+          ],
+          __typename: "Property",
+        },
         children: [
           {
             id: "01h1xptyc7jdjkkdzh4188qjge",
@@ -106,6 +256,53 @@ const dummyLayer: EarthLayer5Fragment = {
       tags: [],
       infobox: null,
       linkedDatasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
+      property: {
+        id: "01h1xptyc7jdjkkdzh3yp2bcsy",
+        items: [
+          {
+            id: "01h1xptyc7jdjkkdzh40srxcxh",
+            schemaGroupId: "default",
+            fields: [
+              {
+                id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_location",
+                fieldId: "location",
+                type: ValueType.Latlng,
+                value: null,
+                links: [
+                  {
+                    datasetId: null,
+                    datasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
+                    datasetSchemaFieldId: "01h1xpth3npn29h18t86pw9bh5",
+                    datasetSchema: {
+                      id: "01h1xpth3npn29h18t875d8gvk",
+                      name: "hoge.csv",
+                      __typename: "DatasetSchema",
+                    },
+                    dataset: null,
+                    datasetSchemaField: {
+                      id: "01h1xpth3npn29h18t86pw9bh5",
+                      name: "location",
+                      __typename: "DatasetSchemaField",
+                    },
+                    __typename: "PropertyFieldLink",
+                  },
+                ],
+                __typename: "PropertyField",
+              },
+              {
+                id: "01h1xptyc7jdjkkdzh3yp2bcsy_01h1xptyc7jdjkkdzh40srxcxh_imageSize",
+                fieldId: "imageSize",
+                type: ValueType.Number,
+                value: 2,
+                links: null,
+                __typename: "PropertyField",
+              },
+            ],
+            __typename: "PropertyGroup",
+          },
+        ],
+        __typename: "Property",
+      },
       layers: [
         {
           id: "01h1xptyc7jdjkkdzh4188qjge",
@@ -116,70 +313,75 @@ const dummyLayer: EarthLayer5Fragment = {
           extensionId: "marker",
           scenePlugin: null,
           propertyId: "01h1xptyc7jdjkkdzh41qk0tew",
+          property: {
+            id: "01h1xptyc7jdjkkdzh41qk0tew",
+            items: [],
+            __typename: "Property",
+          },
           tags: [],
           infobox: null,
           linkedDatasetId: "01h1xpth3npn29h18t8ajsrdjx",
-          merged: {
-            parentId: "01h1xptyc7jdjkkdzh3yfv5s9x",
-            property: {
-              originalId: "01h1xptyc7jdjkkdzh41qk0tew",
-              parentId: "01h1xptyc7jdjkkdzh3yp2bcsy",
-              linkedDatasetId: "01h1xpth3npn29h18t8ajsrdjx",
-              groups: [
-                {
-                  schemaGroupId: "default",
-                  fields: [
-                    {
-                      fieldId: "location",
-                      type: ValueType.Latlng,
-                      actualValue: {
-                        lat: 0,
-                        lng: 0,
-                      },
-                      overridden: false,
-                      links: [
-                        {
-                          datasetId: "01h1xpth3npn29h18t8ajsrdjx",
-                          datasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
-                          datasetSchemaFieldId: "01h1xpth3npn29h18t86pw9bh5",
-                          datasetSchema: {
-                            id: "01h1xpth3npn29h18t875d8gvk",
-                            name: "hoge.csv",
-                            __typename: "DatasetSchema",
-                          },
-                          dataset: {
-                            id: "01h1xpth3npn29h18t8ajsrdjx",
-                            name: null,
-                            __typename: "Dataset",
-                          },
-                          datasetSchemaField: {
-                            id: "01h1xpth3npn29h18t86pw9bh5",
-                            name: "location",
-                            __typename: "DatasetSchemaField",
-                          },
-                          __typename: "PropertyFieldLink",
-                        },
-                      ],
-                      __typename: "MergedPropertyField",
-                    },
-                    {
-                      fieldId: "imageSize",
-                      type: ValueType.Number,
-                      actualValue: 2,
-                      overridden: false,
-                      links: null,
-                      __typename: "MergedPropertyField",
-                    },
-                  ],
-                  __typename: "MergedPropertyGroup",
-                  groups: [],
-                },
-              ],
-              __typename: "MergedProperty",
-            },
-            infobox: null,
-            __typename: "MergedLayer",
-          },
+          // merged: {
+          //   parentId: "01h1xptyc7jdjkkdzh3yfv5s9x",
+          //   property: {
+          //     originalId: "01h1xptyc7jdjkkdzh41qk0tew",
+          //     parentId: "01h1xptyc7jdjkkdzh3yp2bcsy",
+          //     linkedDatasetId: "01h1xpth3npn29h18t8ajsrdjx",
+          //     groups: [
+          //       {
+          //         schemaGroupId: "default",
+          //         fields: [
+          //           {
+          //             fieldId: "location",
+          //             type: ValueType.Latlng,
+          //             actualValue: {
+          //               lat: 0,
+          //               lng: 0,
+          //             },
+          //             overridden: false,
+          //             links: [
+          //               {
+          //                 datasetId: "01h1xpth3npn29h18t8ajsrdjx",
+          //                 datasetSchemaId: "01h1xpth3npn29h18t875d8gvk",
+          //                 datasetSchemaFieldId: "01h1xpth3npn29h18t86pw9bh5",
+          //                 datasetSchema: {
+          //                   id: "01h1xpth3npn29h18t875d8gvk",
+          //                   name: "hoge.csv",
+          //                   __typename: "DatasetSchema",
+          //                 },
+          //                 dataset: {
+          //                   id: "01h1xpth3npn29h18t8ajsrdjx",
+          //                   name: null,
+          //                   __typename: "Dataset",
+          //                 },
+          //                 datasetSchemaField: {
+          //                   id: "01h1xpth3npn29h18t86pw9bh5",
+          //                   name: "location",
+          //                   __typename: "DatasetSchemaField",
+          //                 },
+          //                 __typename: "PropertyFieldLink",
+          //               },
+          //             ],
+          //             __typename: "MergedPropertyField",
+          //           },
+          //           {
+          //             fieldId: "imageSize",
+          //             type: ValueType.Number,
+          //             actualValue: 2,
+          //             overridden: false,
+          //             links: null,
+          //             __typename: "MergedPropertyField",
+          //           },
+          //         ],
+          //         __typename: "MergedPropertyGroup",
+          //         groups: [],
+          //       },
+          //     ],
+          //     __typename: "MergedProperty",
+          //   },
+          //   infobox: null,
+          //   __typename: "MergedLayer",
+          // },
         },
         {
           id: "01h1xptyc7jdjkkdzh46gc955p",
@@ -339,7 +541,8 @@ const dummyLayer: EarthLayer5Fragment = {
   __typename: "LayerGroup",
 };
 
-const _dummyDataset = [
+// /api/datasets/01h1xpth3npn29h18t875d8gvk.json
+const dummyDataset = [
   {
     $schema: "http://json-schema.org/draft-07/schema#",
     properties: {
@@ -347,13 +550,22 @@ const _dummyDataset = [
         title: "ID",
         type: "string",
       },
-      location_lat: {
-        type: "number",
-      },
-      location_lng: {
-        type: "number",
+      location: {
+        id: "01h1xpth3npn29h18t86pw9bh5",
+        type: "object",
+        title: "LatLng",
+        required: ["lat", "lng"],
+        properties: {
+          lat: {
+            type: "number",
+          },
+          lng: {
+            type: "number",
+          },
+        },
       },
       name: {
+        id: "name",
         type: "string",
       },
     },
@@ -361,27 +573,13 @@ const _dummyDataset = [
     type: "object",
   },
   {
-    "": "01h45kv108mnvqbaazsaqkcte3",
-    location_lat: 0,
-    location_lng: 0,
+    "": "01h1xpth3npn29h18t8ajsrdjx",
+    location: { lat: 0, lng: 0 },
     name: "a",
   },
   {
-    "": "01h45kv108mnvqbaazsbmq1bhf",
-    location_lat: 10,
-    location_lng: 0,
+    "": "01h1xpth3npn29h18t8g6e0kga",
+    location: { lat: 10, lng: 0 },
     name: "b",
-  },
-  {
-    "": "01h45kv108mnvqbaazscc1jeep",
-    location_lat: 0,
-    location_lng: 10,
-    name: "c",
-  },
-  {
-    "": "01h45kv108mnvqbaazse1kkact",
-    location_lat: 10,
-    location_lng: 10,
-    name: "d",
   },
 ];

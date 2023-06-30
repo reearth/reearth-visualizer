@@ -79,6 +79,7 @@ export const convertProperty = (p?: PropertyFragmentFragment | null): P | undefi
 
 const processMergedPropertyGroup = (
   p?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment | null,
+  _datasets?: Datasets,
 ): P | P[] | undefined => {
   if (!p) return;
   if ("groups" in p && p.groups.length) {
@@ -96,8 +97,20 @@ const processMergedPropertyGroup = (
   );
 };
 
+export const processProperty = (
+  _parent: Maybe<EarthLayerFragment["property"]>,
+  _original: EarthLayerFragment["property"],
+  _datasets?: Datasets,
+): P | undefined => {
+  // parent [a b]
+  // original [b c]
+  // final [a b c]
+  throw "implement me";
+};
+
 const processMergedProperty = (
   p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
+  _datasets?: Datasets,
 ): P | undefined => {
   //
   if (!p) return;
@@ -141,7 +154,13 @@ const processMergedInfobox = (
   };
 };
 
-export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
+// TODO: any should be replaced to specific type
+export type Datasets = Record<string, any[]>;
+
+export const processLayer = (
+  layer: EarthLayer5Fragment,
+  _datasets?: Datasets,
+): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -149,8 +168,7 @@ export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
     extensionId: layer.extensionId ?? "",
     isVisible: layer.isVisible,
     title: layer.name,
-    property:
-      layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
+    property: layer.__typename === "LayerItem" ? processMergedProperty() : undefined,
     propertyId: layer.propertyId ?? undefined,
     infobox:
       layer.__typename === "LayerItem"
