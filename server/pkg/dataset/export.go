@@ -14,7 +14,7 @@ import (
 type Format struct {
 	Ext         string
 	ContentType string
-	export      func(io.Writer, *Schema, func(func(*Dataset) error) error) error
+	export      func(io.Writer, *Schema, bool, func(func(*Dataset) error) error) error
 }
 
 var formats = map[string]Format{
@@ -37,20 +37,20 @@ func ExportFormat(f string) (Format, bool) {
 	return format, ok
 }
 
-func Export(w io.Writer, f string, ds *Schema, cb func(func(*Dataset) error) error) error {
+func Export(w io.Writer, f string, ds *Schema, printSchema bool, cb func(func(*Dataset) error) error) error {
 	format, ok := formats[f]
 	if !ok {
 		return ErrUnknownFormat
 	}
 
-	if err := format.export(w, ds, cb); err != nil {
+	if err := format.export(w, ds, printSchema, cb); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error) error {
+func ExportCSV(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Dataset) error) error) error {
 	csvw := csv.NewWriter(w)
 	// nil means the dataset ID
 	dsfields := append([]*SchemaField{nil}, ds.Fields()...)
@@ -81,13 +81,27 @@ func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error)
 	return csvw.Error()
 }
 
-func ExportJSON(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error) error {
+func ExportJSON(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Dataset) error) error) error {
 	if _, err := w.Write([]byte("[")); err != nil {
 		return err
 	}
 
-	var buf []byte
+	// schema
+	if printSchema {
+		b, err := json.Marshal(ds.JSONSchema())
+		if err != nil {
+			return err
+		}
+		if _, err := w.Write(b); err != nil {
+			return err
+		}
+		if _, err := w.Write([]byte(",")); err != nil {
+			return err
+		}
+	}
 
+	// records
+	var buf []byte
 	if err := loader(func(d *Dataset) error {
 		if buf != nil {
 			if _, err := w.Write(buf); err != nil {

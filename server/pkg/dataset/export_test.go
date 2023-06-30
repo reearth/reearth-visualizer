@@ -2,8 +2,10 @@ package dataset
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +24,7 @@ func TestExportCSV(t *testing.T) {
 	}).MustBuild()
 
 	var buf bytes.Buffer
-	err := Export(&buf, "csv", ds, func(cb func(*Dataset) error) error {
+	err := Export(&buf, "csv", ds, true, func(cb func(*Dataset) error) error {
 		return cb(d)
 	})
 	assert.NoError(t, err)
@@ -45,10 +47,53 @@ func TestExportJSON(t *testing.T) {
 	}).MustBuild()
 
 	var buf bytes.Buffer
-	err := Export(&buf, "json", ds, func(cb func(*Dataset) error) error {
+	err := Export(&buf, "json", ds, true, func(cb func(*Dataset) error) error {
 		return cb(d)
 	})
 	assert.NoError(t, err)
 
-	assert.Equal(t, `[{"":"`+d.ID().String()+`","a":1,"b":"2","c":{"lat":1,"lng":2}}]\n`, buf.String())
+	assert.Equal(t, string(lo.Must(json.Marshal([]map[string]any{
+		{
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"title":   "aaa",
+			"type":    "object",
+			"properties": map[string]any{
+				"": map[string]any{
+					"title": "ID",
+					"type":  "string",
+				},
+				"a": map[string]any{
+					"type": "number",
+				},
+				"b": map[string]any{
+					"type": "string",
+				},
+				"c": map[string]any{
+					"type":  "object",
+					"title": "LatLng",
+					"required": []string{
+						"lat",
+						"lng",
+					},
+					"properties": map[string]any{
+						"lat": map[string]any{
+							"type": "number",
+						},
+						"lng": map[string]any{
+							"type": "number",
+						},
+					},
+				},
+			},
+		},
+		{
+			"":  d.ID().String(),
+			"a": 1,
+			"b": "2",
+			"c": map[string]any{
+				"lat": 1.0,
+				"lng": 2.0,
+			},
+		},
+	})))+"\n", buf.String())
 }

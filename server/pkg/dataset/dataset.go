@@ -115,11 +115,12 @@ func (d *Dataset) Interface(s *Schema, idkey string) map[string]interface{} {
 }
 
 // Interface is almost same as Interface, but keys of the map are IDs of fields.
-func (d *Dataset) InterfaceWithFieldIDs() map[string]interface{} {
+func (d *Dataset) InterfaceWithFieldIDs(idkey string) map[string]interface{} {
 	if d == nil {
 		return nil
 	}
 	m := map[string]interface{}{}
+	m[idkey] = d.ID().String()
 	for _, f := range d.fields {
 		key := f.Field().String()
 		m[key] = f.Value().Interface()
