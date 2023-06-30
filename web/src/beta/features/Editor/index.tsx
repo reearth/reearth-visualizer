@@ -1,5 +1,5 @@
 import Resizable from "@reearth/beta/components/Resizable";
-import { StoryPanel } from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPanel";
+import StoryPanel from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
