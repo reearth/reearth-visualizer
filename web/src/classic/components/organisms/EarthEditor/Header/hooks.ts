@@ -163,8 +163,6 @@ export default () => {
     [project, publishProjectMutation, t, setNotification],
   );
 
-  console.log("CW", currentWorkspace);
-
   const handleTeamChange = useCallback(
     (id: string) => {
       const workspace = workspaces?.find(workspace => workspace.id === id);
