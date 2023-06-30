@@ -83,7 +83,7 @@ func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format stri
 	}
 	before(name, f.ContentType)
 
-	if err := dataset.Export(w, format, s, func(f func(*dataset.Dataset) error) error {
+	if err := dataset.Export(w, format, s, true, func(f func(*dataset.Dataset) error) error {
 		return i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
 			if d == nil {
 				return nil

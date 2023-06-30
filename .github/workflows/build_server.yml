@@ -38,7 +38,7 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4
         with:
-          args: release --rm-dist ${{ env.SNAPSHOT }}
+          args: release --clean ${{ env.SNAPSHOT }}
           workdir: server
         env:
           SNAPSHOT: ${{ github.event.inputs.new_tag != 'blank' && '--snapshot' || '' }}

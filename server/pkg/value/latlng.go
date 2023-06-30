@@ -68,6 +68,25 @@ func (p *propertyLatLng) String(i any) string {
 	return i.(LatLng).String()
 }
 
+func (v *propertyLatLng) JSONSchema() any {
+	return map[string]any{
+		"type":  "object",
+		"title": "LatLng",
+		"required": []string{
+			"lat",
+			"lng",
+		},
+		"properties": map[string]any{
+			"lat": map[string]any{
+				"type": "number",
+			},
+			"lng": map[string]any{
+				"type": "number",
+			},
+		},
+	}
+}
+
 func (v *Value) ValueLatLng() (vv LatLng, ok bool) {
 	if v == nil {
 		return

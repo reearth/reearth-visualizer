@@ -70,6 +70,36 @@ func (p *typePropertyCamera) String(i interface{}) string {
 	// return i.(Camera).String()
 }
 
+func (v *typePropertyCamera) JSONSchema() any {
+	return map[string]any{
+		"type":  "object",
+		"title": "Camera",
+		"properties": map[string]any{
+			"lat": map[string]any{
+				"type": "number",
+			},
+			"lng": map[string]any{
+				"type": "number",
+			},
+			"altitude": map[string]any{
+				"type": "number",
+			},
+			"heading": map[string]any{
+				"type": "number",
+			},
+			"pitch": map[string]any{
+				"type": "number",
+			},
+			"roll": map[string]any{
+				"type": "number",
+			},
+			"fov": map[string]any{
+				"type": "number",
+			},
+		},
+	}
+}
+
 func (v *Value) ValueCamera() (vv Camera, ok bool) {
 	if v == nil {
 		return
