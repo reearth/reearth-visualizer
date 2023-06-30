@@ -54,28 +54,6 @@ type AddDatasetSchemaPayload struct {
 	DatasetSchema *DatasetSchema `json:"datasetSchema"`
 }
 
-type AddDynamicDatasetInput struct {
-	DatasetSchemaID ID       `json:"datasetSchemaId"`
-	Author          string   `json:"author"`
-	Content         string   `json:"content"`
-	Lat             *float64 `json:"lat"`
-	Lng             *float64 `json:"lng"`
-	Target          *string  `json:"target"`
-}
-
-type AddDynamicDatasetPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema"`
-	Dataset       *Dataset       `json:"dataset"`
-}
-
-type AddDynamicDatasetSchemaInput struct {
-	SceneID ID `json:"sceneId"`
-}
-
-type AddDynamicDatasetSchemaPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema"`
-}
-
 type AddInfoboxFieldInput struct {
 	LayerID     ID   `json:"layerId"`
 	PluginID    ID   `json:"pluginId"`
@@ -1022,25 +1000,24 @@ type RemoveWidgetPayload struct {
 }
 
 type Scene struct {
-	ID                    ID                       `json:"id"`
-	ProjectID             ID                       `json:"projectId"`
-	TeamID                ID                       `json:"teamId"`
-	PropertyID            ID                       `json:"propertyId"`
-	CreatedAt             time.Time                `json:"createdAt"`
-	UpdatedAt             time.Time                `json:"updatedAt"`
-	RootLayerID           ID                       `json:"rootLayerId"`
-	Widgets               []*SceneWidget           `json:"widgets"`
-	Plugins               []*ScenePlugin           `json:"plugins"`
-	WidgetAlignSystem     *WidgetAlignSystem       `json:"widgetAlignSystem"`
-	DynamicDatasetSchemas []*DatasetSchema         `json:"dynamicDatasetSchemas"`
-	Project               *Project                 `json:"project"`
-	Team                  *Team                    `json:"team"`
-	Property              *Property                `json:"property"`
-	RootLayer             *LayerGroup              `json:"rootLayer"`
-	DatasetSchemas        *DatasetSchemaConnection `json:"datasetSchemas"`
-	TagIds                []ID                     `json:"tagIds"`
-	Tags                  []Tag                    `json:"tags"`
-	Clusters              []*Cluster               `json:"clusters"`
+	ID                ID                       `json:"id"`
+	ProjectID         ID                       `json:"projectId"`
+	TeamID            ID                       `json:"teamId"`
+	PropertyID        ID                       `json:"propertyId"`
+	CreatedAt         time.Time                `json:"createdAt"`
+	UpdatedAt         time.Time                `json:"updatedAt"`
+	RootLayerID       ID                       `json:"rootLayerId"`
+	Widgets           []*SceneWidget           `json:"widgets"`
+	Plugins           []*ScenePlugin           `json:"plugins"`
+	WidgetAlignSystem *WidgetAlignSystem       `json:"widgetAlignSystem"`
+	Project           *Project                 `json:"project"`
+	Team              *Team                    `json:"team"`
+	Property          *Property                `json:"property"`
+	RootLayer         *LayerGroup              `json:"rootLayer"`
+	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
+	TagIds            []ID                     `json:"tagIds"`
+	Tags              []Tag                    `json:"tags"`
+	Clusters          []*Cluster               `json:"clusters"`
 }
 
 func (Scene) IsNode() {}
