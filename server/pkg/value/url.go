@@ -51,6 +51,14 @@ func (p *propertyURL) String(i any) string {
 	return i.(*url.URL).String()
 }
 
+func (v *propertyURL) JSONSchema() any {
+	return map[string]any{
+		"type":   "string",
+		"title":  "URL",
+		"format": "uri",
+	}
+}
+
 func (v *Value) ValueURL() (vv *url.URL, ok bool) {
 	if v == nil {
 		return
