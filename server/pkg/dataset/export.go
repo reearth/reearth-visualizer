@@ -52,7 +52,8 @@ func Export(w io.Writer, f string, ds *Schema, cb func(func(*Dataset) error) err
 
 func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error) error {
 	csvw := csv.NewWriter(w)
-	dsfields := ds.Fields()
+	// nil means the dataset ID
+	dsfields := append([]*SchemaField{nil}, ds.Fields()...)
 
 	// Write header
 	header := lo.FlatMap(dsfields, func(f *SchemaField, _ int) []string {
@@ -65,6 +66,9 @@ func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error)
 	// Write data
 	if err := loader(func(d *Dataset) error {
 		row := lo.FlatMap(dsfields, func(sf *SchemaField, _ int) []string {
+			if sf == nil {
+				return []string{d.ID().String()} // dataset ID
+			}
 			f := d.Field(sf.ID())
 			return csvValue(f)
 		})
@@ -78,20 +82,49 @@ func ExportCSV(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error)
 }
 
 func ExportJSON(w io.Writer, ds *Schema, loader func(func(*Dataset) error) error) error {
-	j := json.NewEncoder(w)
-	res := []any{}
+	if _, err := w.Write([]byte("[")); err != nil {
+		return err
+	}
+
+	var buf []byte
 
 	if err := loader(func(d *Dataset) error {
-		res = append(res, d.Interface(ds))
+		if buf != nil {
+			if _, err := w.Write(buf); err != nil {
+				return err
+			}
+			if _, err := w.Write([]byte(",")); err != nil {
+				return err
+			}
+		}
+
+		buf = nil
+		b, err := json.Marshal(d.Interface(ds, ""))
+		if err != nil {
+			return err
+		}
+		buf = b
 		return nil
 	}); err != nil {
 		return err
 	}
 
-	return j.Encode(res)
+	if buf != nil {
+		if _, err := w.Write(buf); err != nil {
+			return err
+		}
+	}
+
+	if _, err := w.Write([]byte("]\n")); err != nil {
+		return err
+	}
+	return nil
 }
 
 func csvHeader(f *SchemaField) []string {
+	if f == nil {
+		return []string{""} // dataset id
+	}
 	if f.Type() == ValueTypeLatLng {
 		return []string{f.Name() + "_lng", f.Name() + "_lat"}
 	}

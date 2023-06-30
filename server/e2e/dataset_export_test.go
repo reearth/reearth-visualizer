@@ -20,36 +20,36 @@ func TestDatasetExport(t *testing.T) {
 		Status(http.StatusUnauthorized)
 
 	e.GET("/api/datasets/test").
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusNotFound)
 
 	e.GET("/api/datasets/{}", dataset.NewID()).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusNotFound)
 
-	res := e.GET("/api/datasets/{}", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res := e.GET("/api/datasets/{}", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
+	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
-	res = e.GET("/api/datasets/{}.csv", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res = e.GET("/api/datasets/{}.csv", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
+	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
-	res = e.GET("/api/datasets/{}.json", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res = e.GET("/api/datasets/{}.json", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("application/json")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv.json")
-	res.Body().Equal("[{\"f1\":\"test\",\"f2\":123,\"f3\":true,\"location\":{\"lat\":11,\"lng\":12}}]\n")
+	res.Body().Equal(`[{"":"` + dsID.String() + `","f1":"test","f2":123,"f3":true,"location":{"lat":11,"lng":12}}]` + "\n")
 }

@@ -10,11 +10,13 @@ func TestDataset_Interface(t *testing.T) {
 	f1 := NewFieldID()
 	f2 := NewFieldID()
 	sid := NewSchemaID()
+	did := NewID()
 
 	tests := []struct {
 		name    string
 		schema  *Schema
 		dataset *Dataset
+		idkey   string
 		want    map[string]interface{}
 	}{
 		{
@@ -23,11 +25,13 @@ func TestDataset_Interface(t *testing.T) {
 				NewSchemaField().ID(f1).Name("foo").Type(ValueTypeNumber).MustBuild(),
 				NewSchemaField().ID(f2).Name("bar").Type(ValueTypeLatLng).MustBuild(),
 			}).MustBuild(),
-			dataset: New().NewID().Scene(NewSceneID()).Schema(sid).Fields([]*Field{
+			dataset: New().ID(did).Scene(NewSceneID()).Schema(sid).Fields([]*Field{
 				NewField(f1, ValueTypeNumber.ValueFrom(1), ""),
 				NewField(f2, ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}), ""),
 			}).MustBuild(),
+			idkey: "",
 			want: map[string]interface{}{
+				"":    did.String(),
 				"foo": float64(1),
 				"bar": LatLng{Lat: 1, Lng: 2},
 			},
@@ -44,7 +48,7 @@ func TestDataset_Interface(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.dataset.Interface(tt.schema))
+			assert.Equal(t, tt.want, tt.dataset.Interface(tt.schema, tt.idkey))
 		})
 	}
 }

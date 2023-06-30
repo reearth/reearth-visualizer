@@ -27,7 +27,7 @@ func TestExportCSV(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	assert.Equal(t, "a,b,c_lng,c_lat\n1,2,2.000000,1.000000\n", buf.String())
+	assert.Equal(t, ",a,b,c_lng,c_lat\n"+d.ID().String()+",1,2,2.000000,1.000000\n", buf.String())
 }
 
 func TestExportJSON(t *testing.T) {
@@ -50,5 +50,5 @@ func TestExportJSON(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	assert.Equal(t, "[{\"a\":1,\"b\":\"2\",\"c\":{\"lat\":1,\"lng\":2}}]\n", buf.String())
+	assert.Equal(t, `[{"":"`+d.ID().String()+`","a":1,"b":"2","c":{"lat":1,"lng":2}}]\n`, buf.String())
 }
