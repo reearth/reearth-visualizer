@@ -32,7 +32,7 @@ const Popup: React.FC<{
   });
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+      if (open && pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
         handleClose();
       }
     };
@@ -44,7 +44,7 @@ const Popup: React.FC<{
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [handleClose]);
+  }, [open, handleClose]);
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Escape") {
