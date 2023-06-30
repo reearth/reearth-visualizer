@@ -15,6 +15,7 @@ type Dataset interface {
 	FindBySchema(context.Context, id.DatasetSchemaID, *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error)
 	CountBySchema(context.Context, id.DatasetSchemaID) (int, error)
 	FindBySchemaAll(context.Context, id.DatasetSchemaID) (dataset.List, error)
+	FindBySchemaAllBy(context.Context, id.DatasetSchemaID, func(*dataset.Dataset) error) error
 	FindGraph(context.Context, id.DatasetID, id.DatasetFieldIDList) (dataset.List, error)
 	Save(context.Context, *dataset.Dataset) error
 	SaveAll(context.Context, dataset.List) error

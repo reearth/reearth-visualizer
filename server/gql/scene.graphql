@@ -9,7 +9,6 @@ type Scene implements Node {
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
-  dynamicDatasetSchemas: [DatasetSchema!]!
   project: Project
   team: Team
   property: Property

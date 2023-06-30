@@ -8,7 +8,6 @@ type Schema struct {
 	order               []FieldID
 	representativeField *FieldID
 	scene               SceneID
-	dynamic             bool
 }
 
 func (d *Schema) ID() (i SchemaID) {
@@ -107,10 +106,6 @@ func (d *Schema) FieldByType(t ValueType) *SchemaField {
 		}
 	}
 	return nil
-}
-
-func (d *Schema) Dynamic() bool {
-	return d.dynamic
 }
 
 func (u *Schema) Rename(name string) {

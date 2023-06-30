@@ -22,6 +22,6 @@ func initGCPProfiler(version string) {
 		Service:        "reearth",
 		ServiceVersion: version,
 	}); err != nil {
-		log.Fatalln(err)
+		log.Fatalf("failed to init GCP profiler: %v", err)
 	}
 }

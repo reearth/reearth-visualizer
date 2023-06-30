@@ -377,6 +377,7 @@ func (i *User) createVerification(ctx context.Context, u *user.User) error {
 	}
 
 	if err := i.mailer.SendMail(
+		ctx,
 		[]mailer.Contact{
 			{
 				Email: u.Email(),

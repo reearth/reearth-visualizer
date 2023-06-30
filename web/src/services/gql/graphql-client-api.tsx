@@ -45,30 +45,6 @@ export type AddDatasetSchemaPayload = {
   datasetSchema?: Maybe<DatasetSchema>;
 };
 
-export type AddDynamicDatasetInput = {
-  author: Scalars['String'];
-  content: Scalars['String'];
-  datasetSchemaId: Scalars['ID'];
-  lat?: InputMaybe<Scalars['Float']>;
-  lng?: InputMaybe<Scalars['Float']>;
-  target?: InputMaybe<Scalars['String']>;
-};
-
-export type AddDynamicDatasetPayload = {
-  __typename?: 'AddDynamicDatasetPayload';
-  dataset?: Maybe<Dataset>;
-  datasetSchema?: Maybe<DatasetSchema>;
-};
-
-export type AddDynamicDatasetSchemaInput = {
-  sceneId: Scalars['ID'];
-};
-
-export type AddDynamicDatasetSchemaPayload = {
-  __typename?: 'AddDynamicDatasetSchemaPayload';
-  datasetSchema?: Maybe<DatasetSchema>;
-};
-
 export type AddInfoboxFieldInput = {
   extensionId: Scalars['ID'];
   index?: InputMaybe<Scalars['Int']>;
@@ -750,8 +726,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   addCluster?: Maybe<AddClusterPayload>;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
-  addDynamicDataset?: Maybe<AddDynamicDatasetPayload>;
-  addDynamicDatasetSchema?: Maybe<AddDynamicDatasetSchemaPayload>;
   addInfoboxField?: Maybe<AddInfoboxFieldPayload>;
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
@@ -822,16 +796,6 @@ export type MutationAddClusterArgs = {
 
 export type MutationAddDatasetSchemaArgs = {
   input: AddDatasetSchemaInput;
-};
-
-
-export type MutationAddDynamicDatasetArgs = {
-  input: AddDynamicDatasetInput;
-};
-
-
-export type MutationAddDynamicDatasetSchemaArgs = {
-  input: AddDynamicDatasetSchemaInput;
 };
 
 
@@ -1501,7 +1465,6 @@ export type Query = {
   checkProjectAlias: ProjectAliasAvailability;
   datasetSchemas: DatasetSchemaConnection;
   datasets: DatasetConnection;
-  dynamicDatasetSchemas: Array<DatasetSchema>;
   layer?: Maybe<Layer>;
   me?: Maybe<Me>;
   node?: Maybe<Node>;
@@ -1544,11 +1507,6 @@ export type QueryDatasetsArgs = {
   datasetSchemaId: Scalars['ID'];
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryDynamicDatasetSchemasArgs = {
-  sceneId: Scalars['ID'];
 };
 
 
@@ -1735,7 +1693,6 @@ export type Scene = Node & {
   clusters: Array<Cluster>;
   createdAt: Scalars['DateTime'];
   datasetSchemas: DatasetSchemaConnection;
-  dynamicDatasetSchemas: Array<DatasetSchema>;
   id: Scalars['ID'];
   plugins: Array<ScenePlugin>;
   project?: Maybe<Project>;

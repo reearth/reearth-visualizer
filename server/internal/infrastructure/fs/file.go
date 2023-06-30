@@ -102,7 +102,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 // helpers
 
-func (f *fileRepo) read(_ context.Context, filename string) (io.ReadCloser, error) {
+func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
@@ -112,25 +112,25 @@ func (f *fileRepo) read(_ context.Context, filename string) (io.ReadCloser, erro
 		if os.IsNotExist(err) {
 			return nil, rerror.ErrNotFound
 		}
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return file, nil
 }
 
-func (f *fileRepo) upload(_ context.Context, filename string, content io.Reader) (int64, error) {
+func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
 	if filename == "" {
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
 	if fnd := filepath.Dir(filename); fnd != "" {
 		if err := f.fs.MkdirAll(fnd, 0755); err != nil {
-			return 0, rerror.ErrInternalBy(err)
+			return 0, rerror.ErrInternalByWithContext(ctx, err)
 		}
 	}
 
 	dest, err := f.fs.Create(filename)
 	if err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	defer func() {
 		_ = dest.Close()
@@ -144,14 +144,14 @@ func (f *fileRepo) upload(_ context.Context, filename string, content io.Reader)
 	return size, nil
 }
 
-func (f *fileRepo) move(_ context.Context, from, dest string) error {
+func (f *fileRepo) move(ctx context.Context, from, dest string) error {
 	if from == "" || dest == "" || from == dest {
 		return gateway.ErrInvalidFile
 	}
 
 	if destd := filepath.Dir(dest); destd != "" {
 		if err := f.fs.MkdirAll(destd, 0755); err != nil {
-			return rerror.ErrInternalBy(err)
+			return rerror.ErrInternalByWithContext(ctx, err)
 		}
 	}
 
@@ -159,13 +159,13 @@ func (f *fileRepo) move(_ context.Context, from, dest string) error {
 		if os.IsNotExist(err) {
 			return rerror.ErrNotFound
 		}
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil
 }
 
-func (f *fileRepo) delete(_ context.Context, filename string) error {
+func (f *fileRepo) delete(ctx context.Context, filename string) error {
 	if filename == "" {
 		return gateway.ErrFailedToUploadFile
 	}
@@ -174,7 +174,7 @@ func (f *fileRepo) delete(_ context.Context, filename string) error {
 		if os.IsNotExist(err) {
 			return nil
 		}
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }
