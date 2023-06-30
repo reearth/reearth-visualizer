@@ -62,7 +62,7 @@ func TestDataset_InterfaceWithFieldIDs(t *testing.T) {
 		name    string
 		dataset *Dataset
 		idkey   string
-		want    map[string]interface{}
+		want    map[string]any
 	}{
 		{
 			name: "ok",
@@ -71,7 +71,7 @@ func TestDataset_InterfaceWithFieldIDs(t *testing.T) {
 				NewField(f2, ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}), ""),
 			}).MustBuild(),
 			idkey: "",
-			want: map[string]interface{}{
+			want: map[string]any{
 				"":          did.String(),
 				f1.String(): float64(1),
 				f2.String(): LatLng{Lat: 1, Lng: 2},
@@ -80,7 +80,7 @@ func TestDataset_InterfaceWithFieldIDs(t *testing.T) {
 		{
 			name:    "empty",
 			dataset: &Dataset{},
-			want:    map[string]interface{}{},
+			want:    map[string]any{},
 		},
 		{
 			name: "nil",

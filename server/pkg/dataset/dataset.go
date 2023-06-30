@@ -120,7 +120,9 @@ func (d *Dataset) InterfaceWithFieldIDs(idkey string) map[string]interface{} {
 		return nil
 	}
 	m := map[string]interface{}{}
-	m[idkey] = d.ID().String()
+	if !d.ID().IsEmpty() {
+		m[idkey] = d.ID().String()
+	}
 	for _, f := range d.fields {
 		key := f.Field().String()
 		m[key] = f.Value().Interface()
