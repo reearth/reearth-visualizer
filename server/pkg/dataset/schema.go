@@ -111,3 +111,28 @@ func (d *Schema) FieldByType(t ValueType) *SchemaField {
 func (u *Schema) Rename(name string) {
 	u.name = name
 }
+
+// JSONSchema prints a JSON schema for the schema
+func (d *Schema) JSONSchema() map[string]any {
+	if d == nil {
+		return nil
+	}
+
+	properties := map[string]any{
+		"": map[string]any{
+			"title": "ID",
+			"type":  "string",
+		},
+	}
+	for _, f := range d.fields {
+		properties[f.Name()] = f.JSONSchema()
+	}
+
+	m := map[string]any{
+		"$schema":    "http://json-schema.org/draft-07/schema#",
+		"title":      d.name,
+		"type":       "object",
+		"properties": properties,
+	}
+	return m
+}

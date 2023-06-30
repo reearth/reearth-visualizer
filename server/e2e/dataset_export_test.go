@@ -1,11 +1,13 @@
 package e2e
 
 import (
+	"encoding/json"
 	"net/http"
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/samber/lo"
 )
 
 func TestDatasetExport(t *testing.T) {
@@ -20,36 +22,83 @@ func TestDatasetExport(t *testing.T) {
 		Status(http.StatusUnauthorized)
 
 	e.GET("/api/datasets/test").
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusNotFound)
 
 	e.GET("/api/datasets/{}", dataset.NewID()).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusNotFound)
 
-	res := e.GET("/api/datasets/{}", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res := e.GET("/api/datasets/{}", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
+	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
-	res = e.GET("/api/datasets/{}.csv", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res = e.GET("/api/datasets/{}.csv", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("text/csv")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal("f1,f2,f3,location_lng,location_lat\ntest,123,true,12.000000,11.000000\n")
+	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
-	res = e.GET("/api/datasets/{}.json", dssId).
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+	res = e.GET("/api/datasets/{}.json", dssID).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
 		ContentType("application/json")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv.json")
-	res.Body().Equal("[{\"f1\":\"test\",\"f2\":123,\"f3\":true,\"location\":{\"lat\":11,\"lng\":12}}]\n")
+	res.Body().Equal(string(lo.Must(json.Marshal([]map[string]any{
+		{
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"title":   "test.csv",
+			"type":    "object",
+			"properties": map[string]any{
+				"": map[string]any{
+					"title": "ID",
+					"type":  "string",
+				},
+				"f1": map[string]any{
+					"type": "string",
+				},
+				"f2": map[string]any{
+					"type": "number",
+				},
+				"f3": map[string]any{
+					"type": "boolean",
+				},
+				"location": map[string]any{
+					"type":  "object",
+					"title": "LatLng",
+					"required": []string{
+						"lat",
+						"lng",
+					},
+					"properties": map[string]any{
+						"lat": map[string]any{
+							"type": "number",
+						},
+						"lng": map[string]any{
+							"type": "number",
+						},
+					},
+				},
+			},
+		},
+		{
+			"":   dsID.String(),
+			"f1": "test",
+			"f2": 123,
+			"f3": true,
+			"location": map[string]any{
+				"lat": 11.0,
+				"lng": 12.0,
+			},
+		},
+	}))) + "\n")
 }

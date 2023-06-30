@@ -55,6 +55,19 @@ func (p *propertyRect) String(i any) string {
 	return i.(Rect).String()
 }
 
+func (v *propertyRect) JSONSchema() any {
+	return map[string]any{
+		"type":  "object",
+		"title": "Rect",
+		"properties": map[string]any{
+			"west":  map[string]any{"type": "number"},
+			"south": map[string]any{"type": "number"},
+			"east":  map[string]any{"type": "number"},
+			"north": map[string]any{"type": "number"},
+		},
+	}
+}
+
 func (v *Value) ValueRect() (vv Rect, ok bool) {
 	if v == nil {
 		return
