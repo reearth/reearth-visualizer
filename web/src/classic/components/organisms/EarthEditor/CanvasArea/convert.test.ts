@@ -15,6 +15,7 @@ import {
   DatasetMap,
   datasetValue,
   extractDatasetSchemas,
+  RawLayer,
 } from "./convert";
 
 const dummyLayer: EarthLayer5Fragment = {
@@ -299,7 +300,7 @@ const dummyDatasets: DatasetMap = {
 };
 
 test("extractDatasetSchemas", () => {
-  expect(extractDatasetSchemas(dummyLayer)).toEqual(["01h1xpth3npn29h18t875d8gvk"]);
+  expect(extractDatasetSchemas(dummyLayer as RawLayer)).toEqual(["01h1xpth3npn29h18t875d8gvk"]);
 });
 
 test("processLayer", () => {
@@ -374,7 +375,7 @@ test("processLayer", () => {
     ],
   };
 
-  const p = processLayer(dummyLayer, undefined, dummyDatasets);
+  const p = processLayer(dummyLayer as RawLayer, undefined, dummyDatasets);
   // console.log(JSON.stringify(p, null, 2));
   expect(p).toEqual(expected);
 });

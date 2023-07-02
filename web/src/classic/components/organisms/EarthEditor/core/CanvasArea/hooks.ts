@@ -51,6 +51,7 @@ import {
   processLayer,
   processProperty,
   extractDatasetSchemas,
+  RawLayer,
 } from "../../CanvasArea/convert";
 import { useDatasets } from "../../CanvasArea/hooks_dataset";
 
@@ -129,7 +130,7 @@ export default (isBuilt?: boolean) => {
   const datasetSchemaIds = useMemo(
     () =>
       layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
-        ? extractDatasetSchemas(layerData.node.rootLayer)
+        ? extractDatasetSchemas(layerData.node.rootLayer as RawLayer)
         : undefined,
     [layerData],
   );
@@ -142,7 +143,9 @@ export default (isBuilt?: boolean) => {
       layerData?.node &&
       layerData.node.__typename === "Scene" &&
       layerData.node.rootLayer
-        ? convertLegacyLayer(processLayer(layerData?.node.rootLayer, undefined, datasets))
+        ? convertLegacyLayer(
+            processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets),
+          )
         : undefined;
     return l ? [l] : undefined;
   }, [datasetLoaded, datasets, layerData?.node]);

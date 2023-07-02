@@ -27,14 +27,31 @@ import {
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
-  EarthLayer5Fragment,
   PropertyGroupFragmentFragment,
   PropertyFieldFragmentFragment,
   PropertySchemaGroupFragmentFragment,
   PropertySchemaFieldFragmentFragment,
+  EarthLayerItemFragment,
+  EarthLayerCommonFragment,
 } from "@reearth/services/gql";
 
 export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
+
+// export type RawLayer =
+//   | (EarthLayerItemFragment & EarthLayerCommonFragment)
+//   | ({
+//     __typename: "LayerGroup";
+//     layers?: RawLayer[] | null | undefined;
+//   } & EarthLayerCommonFragment);
+
+export type RawLayer = EarthLayerCommonFragment &
+  (
+    | EarthLayerItemFragment
+    | {
+        __typename: "LayerGroup";
+        layers?: RawLayer[] | null | undefined;
+      }
+  );
 
 type BlockType = Item & {
   pluginId: string;
@@ -60,10 +77,10 @@ export type Datasets = {
   datasets: Record<string, any>[];
 };
 
-export const extractDatasetSchemas = (layer: EarthLayer5Fragment | null | undefined): string[] => {
+export const extractDatasetSchemas = (layer: RawLayer | null | undefined): string[] => {
   const datasetSchemaIds = new Set<string>();
 
-  const extract = (layer: EarthLayer5Fragment | null | undefined) => {
+  const extract = (layer: RawLayer | null | undefined) => {
     if (layer?.__typename !== "LayerGroup") return;
     if (layer.linkedDatasetSchemaId) {
       datasetSchemaIds.add(layer.linkedDatasetSchemaId);
@@ -77,8 +94,8 @@ export const extractDatasetSchemas = (layer: EarthLayer5Fragment | null | undefi
 };
 
 export const processLayer = (
-  layer: EarthLayer5Fragment | null | undefined,
-  parent: EarthLayer5Fragment | null | undefined,
+  layer: RawLayer | null | undefined,
+  parent: RawLayer | null | undefined,
   datasets: DatasetMap | null | undefined,
 ): Layer | undefined => {
   if (!layer) return;
@@ -114,7 +131,7 @@ export const processLayer = (
     ...(layer.__typename === "LayerGroup"
       ? {
           children: layer.layers
-            ?.map(l => processLayer(l ?? undefined, isDatasetLayer ? layer : undefined, datasets))
+            ?.map(l => processLayer(l as RawLayer, isDatasetLayer ? layer : undefined, datasets))
             .filter((l): l is Layer => !!l),
         }
       : {}),
