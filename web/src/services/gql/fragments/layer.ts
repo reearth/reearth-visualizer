@@ -92,7 +92,7 @@ export const EarthLayerFragments = gql`
     propertyId
     property {
       id
-      ...PropertyFragmentWithoutSchema
+      ...PropertyFragment
     }
     tags {
       tagId

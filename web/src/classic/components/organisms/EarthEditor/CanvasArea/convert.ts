@@ -20,17 +20,18 @@ import { valueFromGQL } from "@reearth/classic/util/value";
 import {
   GetBlocksQuery,
   Maybe,
-  MergedPropertyGroupFragmentFragment,
   PropertyItemFragmentFragment,
-  MergedPropertyGroupCommonFragmentFragment,
   EarthLayerFragment,
-  EarthLayerItemFragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
   EarthLayer5Fragment,
+  PropertyGroupFragmentFragment,
+  PropertyFieldFragmentFragment,
+  PropertySchemaGroupFragmentFragment,
+  PropertySchemaFieldFragmentFragment,
 } from "@reearth/services/gql";
 
 export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
@@ -42,124 +43,255 @@ type BlockType = Item & {
 
 type P = { [key in string]: any };
 
-const processPropertyGroup = (p?: PropertyItemFragmentFragment | null): P | P[] | undefined => {
-  if (!p) return;
-  if (p.__typename === "PropertyGroupList") {
-    return p.groups
-      .map(g => processPropertyGroup(g))
-      .filter((g): g is P => !!g && !Array.isArray(g));
-  }
-  if (p.__typename === "PropertyGroup") {
-    return p.fields.reduce<P>(
-      (a, b) => ({
-        ...a,
-        [b.fieldId]: valueFromGQL(b.value, b.type)?.value,
-      }),
-      p.id ? { id: p.id } : {},
-    );
-  }
-  return;
+export type Datasets = Record<string, Dataset>;
+
+// TODO: any should be replaced to specific type
+export type Dataset = {
+  // json schema
+  schema: {
+    $schema: string;
+    $id: string;
+    properties: Record<
+      string,
+      {
+        $id: string;
+      }
+    >;
+  };
+  datasets: Record<string, any>[];
 };
 
-export const convertProperty = (p?: PropertyFragmentFragment | null): P | undefined => {
-  if (!p) return;
-  const items = "items" in p ? p.items : undefined;
-  if (!items) return;
+// const processPropertyGroup = (p?: PropertyItemFragmentFragment | null): P | P[] | undefined => {
+//   if (!p) return;
+//   if (p.__typename === "PropertyGroupList") {
+//     return p.groups
+//       .map(g => processPropertyGroup(g))
+//       .filter((g): g is P => !!g && !Array.isArray(g));
+//   }
+//   if (p.__typename === "PropertyGroup") {
+//     return p.fields.reduce<P>(
+//       (a, b) => ({
+//         ...a,
+//         [b.fieldId]: valueFromGQL(b.value, b.type)?.value,
+//       }),
+//       p.id ? { id: p.id } : {},
+//     );
+//   }
+//   return;
+// };
 
-  return Array.isArray(items)
-    ? items.reduce<any>(
-        (a, b) => ({
-          ...a,
-          [b.schemaGroupId]: processPropertyGroup(b),
-        }),
-        {},
-      )
-    : undefined;
-};
+// export const convertProperty = (p?: PropertyFragmentFragment | null): P | undefined => {
+//   if (!p) return;
+//   const items = "items" in p ? p.items : undefined;
+//   if (!items) return;
 
-const processMergedPropertyGroup = (
-  p?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment | null,
-  _datasets?: Datasets,
-): P | P[] | undefined => {
-  if (!p) return;
-  if ("groups" in p && p.groups.length) {
-    return p.groups
-      .map(g => processMergedPropertyGroup(g))
-      .filter((g): g is P => !!g && !Array.isArray(g));
-  }
-  if (!p.fields.length) return;
-  return p.fields.reduce<P>(
-    (a, b) => ({
-      ...a,
-      [b.fieldId]: valueFromGQL(b.actualValue, b.type)?.value,
-    }),
-    {},
-  );
-};
+//   return Array.isArray(items)
+//     ? items.reduce<any>(
+//       (a, b) => ({
+//         ...a,
+//         [b.schemaGroupId]: processPropertyGroup(b),
+//       }),
+//       {},
+//     )
+//     : undefined;
+// };
+
+// const processMergedPropertyGroup = (
+//   p?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment | null,
+//   _datasets?: Datasets,
+// ): P | P[] | undefined => {
+//   if (!p) return;
+//   if ("groups" in p && p.groups.length) {
+//     return p.groups
+//       .map(g => processMergedPropertyGroup(g))
+//       .filter((g): g is P => !!g && !Array.isArray(g));
+//   }
+//   if (!p.fields.length) return;
+//   return p.fields.reduce<P>(
+//     (a, b) => ({
+//       ...a,
+//       [b.fieldId]: valueFromGQL(b.actualValue, b.type)?.value,
+//     }),
+//     {},
+//   );
+// };
 
 export const processProperty = (
-  _parent: Maybe<EarthLayerFragment["property"]>,
-  _original: EarthLayerFragment["property"],
-  _datasets?: Datasets,
+  parent: PropertyFragmentFragment | null | undefined,
+  orig: PropertyFragmentFragment | null | undefined,
+  linkedDatasetId: string | null | undefined,
+  datasets: Datasets | null | undefined,
 ): P | undefined => {
-  // parent [a b]
-  // original [b c]
-  // final [a b c]
-  throw "implement me";
-};
+  const schema = parent?.schema || orig?.schema;
+  if (!schema) return;
 
-const processMergedProperty = (
-  p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
-  _datasets?: Datasets,
-): P | undefined => {
-  //
-  if (!p) return;
-  return p.groups.reduce<any>(
+  const allItems: Record<
+    string,
+    {
+      schema: PropertySchemaGroupFragmentFragment;
+      orig?: PropertyItemFragmentFragment;
+      parent?: PropertyItemFragmentFragment;
+    }
+  > = schema.groups.reduce(
     (a, b) => ({
       ...a,
-      [b.schemaGroupId]: processMergedPropertyGroup(b),
+      [b.schemaGroupId]: {
+        schema: b,
+        orig: orig?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+        parent: parent?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+      },
     }),
     {},
   );
+
+  const mergedProperty: P = Object.fromEntries(
+    Object.entries(allItems)
+      .map(([key, value]) => {
+        const { schema, orig, parent } = value;
+        if (
+          (!orig || orig.__typename === "PropertyGroupList") &&
+          (!parent || parent.__typename === "PropertyGroupList")
+        ) {
+          const used = orig || parent;
+          return [
+            key,
+            used?.groups.map(g =>
+              processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
+            ),
+          ];
+        }
+
+        if (
+          (!orig || orig.__typename === "PropertyGroup") &&
+          (!parent || parent.__typename === "PropertyGroup")
+        ) {
+          return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
+        }
+        return [key, null];
+      })
+      .filter(([, value]) => !!value),
+  );
+
+  return mergedProperty;
 };
 
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox"] => {
-  if (!infobox) return;
+export const processPropertyGroups = (
+  schema: PropertySchemaGroupFragmentFragment,
+  parent: PropertyGroupFragmentFragment | null | undefined,
+  original: PropertyGroupFragmentFragment | null | undefined,
+  linkedDatasetId: string | null | undefined,
+  datasets: Datasets | null | undefined,
+): any => {
+  const allFields: Record<
+    string,
+    {
+      schema: PropertySchemaFieldFragmentFragment;
+      parent?: PropertyFieldFragmentFragment;
+      orig?: PropertyFieldFragmentFragment;
+    }
+  > = schema.fields.reduce(
+    (a, b) => ({
+      ...a,
+      [b.fieldId]: {
+        schema: b,
+        parent: parent?.fields.find(i => i.fieldId === b.fieldId),
+        orig: original?.fields.find(i => i.fieldId === b.fieldId),
+      },
+    }),
+    {},
+  );
+
+  return Object.fromEntries(
+    Object.entries(allFields)
+      .map(([key, { parent, orig }]) => {
+        const used = orig || parent;
+        if (!used) return [key, null];
+
+        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
+        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
+        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
+          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
+        }
+
+        return [key, valueFromGQL(used.value, used.type)?.value];
+      })
+      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+  );
+};
+
+export function datasetValue(
+  datasets: Datasets | null | undefined,
+  datasetSchemaId: string,
+  datasetId: string,
+  fieldId: string,
+) {
+  const dataset = datasets?.[datasetSchemaId];
+  if (!dataset) return;
+
+  const fieldName = Object.entries(dataset.schema.properties).find(([, v]) => {
+    const id = v["$id"].split("/").slice(-1)[0];
+    return id === fieldId;
+  })?.[0];
+
+  if (!fieldName) return;
+  return dataset.datasets.find(d => d[""] === datasetId)?.[fieldName];
+}
+
+// const processMergedProperty = (
+//   p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
+// ): P | undefined => {
+//   //
+//   if (!p) return;
+//   return p.groups.reduce<any>(
+//     (a, b) => ({
+//       ...a,
+//       [b.schemaGroupId]: processMergedPropertyGroup(b),
+//     }),
+//     {},
+//   );
+// };
+
+const processInfobox = (
+  orig: EarthLayerFragment["infobox"] | null | undefined,
+  parent: EarthLayerFragment["infobox"] | null | undefined,
+  linkedDatasetId: string | null | undefined,
+  datasets: Datasets | null | undefined,
+): Layer["infobox"] => {
+  const used = orig || parent;
+  if (!used) return;
   return {
-    property: convertProperty(infobox.property),
-    blocks: infobox.fields.map<Block>(f => ({
+    property: processProperty(parent?.property, orig?.property, linkedDatasetId, datasets),
+    blocks: used.fields.map<Block>(f => ({
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
-      property: convertProperty(f.property),
+      property: processProperty(undefined, f.property, linkedDatasetId, datasets),
       propertyId: f.propertyId, // required by onBlockChange
     })),
   };
 };
 
-const processMergedInfobox = (
-  infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): Layer["infobox"] | undefined => {
-  //
-  if (!infobox) return;
-  return {
-    property: processMergedProperty(infobox.property),
-    blocks: infobox.fields.map<Block & { propertyId?: string }>(f => ({
-      id: f.originalId,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: processMergedProperty(f.property),
-      propertyId: f.property?.originalId ?? undefined, // required by onBlockChange
-    })),
-  };
-};
-
-// TODO: any should be replaced to specific type
-export type Datasets = Record<string, any[]>;
+// const processMergedInfobox = (
+//   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
+// ): Layer["infobox"] | undefined => {
+//   //
+//   if (!infobox) return;
+//   return {
+//     // property: processMergedProperty(infobox.property),
+//     blocks: infobox.fields.map<Block & { propertyId?: string }>(f => ({
+//       id: f.originalId,
+//       pluginId: f.pluginId,
+//       extensionId: f.extensionId,
+//       // property: processMergedProperty(f.property),
+//       propertyId: f.property?.originalId ?? undefined, // required by onBlockChange
+//     })),
+//   };
+// };
 
 export const processLayer = (
-  layer: EarthLayer5Fragment,
-  _datasets?: Datasets,
+  layer: EarthLayer5Fragment | undefined,
+  parent: EarthLayer5Fragment | undefined,
+  datasets: Datasets | undefined,
 ): Layer | undefined => {
   if (!layer) return;
   return {
@@ -168,17 +300,24 @@ export const processLayer = (
     extensionId: layer.extensionId ?? "",
     isVisible: layer.isVisible,
     title: layer.name,
-    property: layer.__typename === "LayerItem" ? processMergedProperty() : undefined,
+    property: processProperty(
+      parent?.property,
+      layer.property,
+      layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+      datasets,
+    ),
     propertyId: layer.propertyId ?? undefined,
-    infobox:
-      layer.__typename === "LayerItem"
-        ? processMergedInfobox(layer.merged?.infobox)
-        : processInfobox(layer.infobox),
+    infobox: processInfobox(
+      layer.infobox,
+      parent?.infobox,
+      layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+      datasets,
+    ),
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
         ? layer.layers
-            ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
+            ?.map(l => processLayer(l ?? undefined, layer, datasets))
             .filter((l): l is Layer => !!l)
         : undefined,
   };
@@ -229,7 +368,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: convertProperty(w.property),
+        property: processProperty(w.property, undefined, undefined, undefined),
       }),
     );
 
@@ -241,7 +380,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: convertProperty(w.property),
+        property: processProperty(w.property, undefined, undefined, undefined),
       }),
     );
 
