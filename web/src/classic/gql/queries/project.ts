@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { projectFragment } from "../fragments/project";
+import { projectFragment } from "../../../services/gql/fragments/project";
 
 export const GET_PROJECT = gql`
   query GetProject($projectId: ID!) {
