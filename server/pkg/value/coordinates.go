@@ -87,7 +87,7 @@ func (p *propertyCoordinates) String(i any) string {
 	return i.(Coordinates).String()
 }
 
-func (v *propertyCoordinates) JSONSchema() any {
+func (v *propertyCoordinates) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":  "array",
 		"title": "Coordinates",
