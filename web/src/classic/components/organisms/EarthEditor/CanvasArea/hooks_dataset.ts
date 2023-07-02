@@ -19,6 +19,8 @@ export function useDatasets(datasetSchemaIds: string[] | undefined) {
     }
 
     const newIds = datasetSchemaIds.filter(d => !fetched.current.includes(d));
+    if (newIds.length === 0) return;
+
     fetched.current = [...fetched.current, ...newIds];
     console.log("fetching datasets", newIds);
 
