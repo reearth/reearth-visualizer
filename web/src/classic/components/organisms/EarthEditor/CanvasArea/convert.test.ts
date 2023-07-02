@@ -12,7 +12,7 @@ import {
   processLayer,
   processProperty,
   type Layer,
-  Datasets,
+  DatasetMap,
   datasetValue,
   extractDatasetSchemas,
 } from "./convert";
@@ -271,7 +271,7 @@ const dummyLayer: EarthLayer5Fragment = {
 };
 
 // /api/datasets/01h1xpth3npn29h18t875d8gvk.json
-const dummyDatasets: Datasets = {
+const dummyDatasets: DatasetMap = {
   "01h1xpth3npn29h18t875d8gvk": {
     schema: {
       $schema: "http://json-schema.org/draft-07/schema#",

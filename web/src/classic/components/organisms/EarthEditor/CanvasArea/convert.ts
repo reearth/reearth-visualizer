@@ -43,10 +43,10 @@ type BlockType = Item & {
 
 type P = { [key in string]: any };
 
-export type Datasets = Record<string, Dataset>;
+export type DatasetMap = Record<string, Datasets>;
 
-export type Dataset = {
-  // json schema
+export type Datasets = {
+  // JSON schema
   schema: {
     $schema: string;
     $id: string;
@@ -79,7 +79,7 @@ export const extractDatasetSchemas = (layer: EarthLayer5Fragment | null | undefi
 export const processLayer = (
   layer: EarthLayer5Fragment | null | undefined,
   parent: EarthLayer5Fragment | null | undefined,
-  datasets: Datasets | null | undefined,
+  datasets: DatasetMap | null | undefined,
 ): Layer | undefined => {
   if (!layer) return;
   const isDatasetLayer = layer.__typename === "LayerGroup" && !!layer.linkedDatasetSchemaId;
@@ -123,11 +123,11 @@ export const processLayer = (
 
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
-  orig: PropertyFragmentFragment | null | undefined,
-  linkedDatasetId: string | null | undefined,
-  datasets: Datasets | null | undefined,
+  orig?: PropertyFragmentFragment | null | undefined,
+  linkedDatasetId?: string | null | undefined,
+  datasets?: DatasetMap | null | undefined,
 ): P | undefined => {
-  const schema = parent?.schema || orig?.schema;
+  const schema = orig?.schema || parent?.schema;
   if (!schema) return;
 
   const allItems: Record<
@@ -185,7 +185,7 @@ const processPropertyGroups = (
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: Datasets | null | undefined,
+  datasets: DatasetMap | null | undefined,
 ): any => {
   const allFields: Record<
     string,
@@ -225,7 +225,7 @@ const processPropertyGroups = (
 };
 
 export function datasetValue(
-  datasets: Datasets | null | undefined,
+  datasets: DatasetMap | null | undefined,
   datasetSchemaId: string,
   datasetId: string,
   fieldId: string,
@@ -246,7 +246,7 @@ const processInfobox = (
   orig: EarthLayerFragment["infobox"] | null | undefined,
   parent: EarthLayerFragment["infobox"] | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: Datasets | null | undefined,
+  datasets: DatasetMap | null | undefined,
 ): Layer["infobox"] => {
   const used = orig || parent;
   if (!used) return;
