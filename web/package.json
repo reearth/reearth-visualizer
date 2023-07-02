@@ -20,7 +20,7 @@
         "format": "eslint --fix .",
         "storybook": "storybook dev -p 9001",
         "storybook:build": "storybook build --quiet -o dist/storybook",
-        "gql": "graphql-codegen --config codegen.yml",
+        "gql": "graphql-codegen",
         "i18n": "i18next",
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
