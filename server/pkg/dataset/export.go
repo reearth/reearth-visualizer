@@ -82,7 +82,7 @@ func ExportCSV(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Data
 }
 
 func ExportJSON(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Dataset) error) error) error {
-	if _, err := w.Write([]byte("[")); err != nil {
+	if _, err := w.Write([]byte(`{"schema":`)); err != nil {
 		return err
 	}
 
@@ -95,7 +95,7 @@ func ExportJSON(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Dat
 		if _, err := w.Write(b); err != nil {
 			return err
 		}
-		if _, err := w.Write([]byte(",")); err != nil {
+		if _, err := w.Write([]byte(`,"datasets":[`)); err != nil {
 			return err
 		}
 	}
@@ -129,7 +129,7 @@ func ExportJSON(w io.Writer, ds *Schema, printSchema bool, loader func(func(*Dat
 		}
 	}
 
-	if _, err := w.Write([]byte("]\n")); err != nil {
+	if _, err := w.Write([]byte("]}\n")); err != nil {
 		return err
 	}
 	return nil
