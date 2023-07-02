@@ -177,9 +177,10 @@ export const processProperty = (
           const used = orig || parent;
           return [
             key,
-            used?.groups.map(g =>
-              processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
-            ),
+            used?.groups.map(g => ({
+              ...processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
+              id: g.id,
+            })),
           ];
         }
 
