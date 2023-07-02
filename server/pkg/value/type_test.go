@@ -153,7 +153,7 @@ func TestType_JSONSchema(t *testing.T) {
 	tests := []struct {
 		name string
 		tr   Type
-		want any
+		want map[string]any
 	}{
 		{
 			name: "default",
