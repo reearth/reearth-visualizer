@@ -114,7 +114,7 @@ export const EarthLayerFragments = gql`
       propertyId
       property {
         id
-        ...PropertyFragmentWithoutSchema
+        ...PropertyFragment
       }
       fields {
         id
@@ -129,7 +129,7 @@ export const EarthLayerFragments = gql`
         }
         property {
           id
-          ...PropertyFragmentWithoutSchema
+          ...PropertyFragment
         }
       }
     }
@@ -148,31 +148,6 @@ export const EarthLayerFragments = gql`
       property {
         id
         ...PropertyFragment
-      }
-    }
-    merged {
-      parentId
-      property {
-        ...MergedPropertyFragmentWithoutSchema
-      }
-      infobox {
-        property {
-          ...MergedPropertyFragmentWithoutSchema
-        }
-        fields {
-          originalId
-          pluginId
-          extensionId
-          property {
-            ...MergedPropertyFragmentWithoutSchema
-          }
-          scenePlugin {
-            property {
-              id
-              ...PropertyFragment
-            }
-          }
-        }
       }
     }
   }
