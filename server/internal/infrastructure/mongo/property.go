@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
@@ -73,11 +74,23 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 			"$in": ids.Strings(),
 		},
 	}
-	res, err := r.find(ctx, filter)
-	if err != nil {
+	c := mongodoc.NewPropertyConsumer()
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-
+	readableScenes := make(map[id.SceneID]struct{})
+	for _, sceneID := range r.f.Readable {
+		readableScenes[sceneID] = struct{}{}
+	}
+	if len(readableScenes) != len(r.f.Readable) {
+		log.Warnc(ctx, "readable id list is not unique")
+	}
+	res := c.Result[:0]
+	for _, col := range c.Result {
+		if _, ok := readableScenes[col.Scene()]; ok {
+			res = append(res, col)
+		}
+	}
 	return filterProperties(ids, res), nil
 }
 
