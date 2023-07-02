@@ -1,5 +1,7 @@
 package dataset
 
+import "fmt"
+
 type SchemaField struct {
 	id       FieldID
 	name     string
@@ -64,10 +66,12 @@ func (d *SchemaField) Clone() *SchemaField {
 }
 
 // JSONSchema prints a JSON schema for the schema field.
-func (d *SchemaField) JSONSchema() any {
+func (d *SchemaField) JSONSchema() map[string]any {
 	if d == nil {
 		return nil
 	}
 
-	return d.dataType.JSONSchema()
+	s := d.dataType.JSONSchema()
+	s["$id"] = fmt.Sprintf("#/properties/%s", d.ID())
+	return s
 }

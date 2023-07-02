@@ -109,6 +109,12 @@ func (d *Dataset) Interface(s *Schema, idkey string) map[string]interface{} {
 	m[idkey] = d.ID().String()
 	for _, f := range d.fields {
 		key := s.Field(f.Field()).Name()
+		if key == "" {
+			key = f.Field().String()
+		}
+		if key == "" {
+			continue
+		}
 		m[key] = f.Value().Interface()
 	}
 	return m

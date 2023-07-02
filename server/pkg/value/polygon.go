@@ -61,7 +61,7 @@ func (p *propertyPolygon) String(i any) string {
 	return i.(Polygon).String()
 }
 
-func (v *propertyPolygon) JSONSchema() any {
+func (v *propertyPolygon) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":  "array",
 		"title": "Polygon",

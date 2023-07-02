@@ -9,6 +9,7 @@ import (
 func TestDataset_Interface(t *testing.T) {
 	f1 := NewFieldID()
 	f2 := NewFieldID()
+	f3 := NewFieldID()
 	sid := NewSchemaID()
 	did := NewID()
 
@@ -24,16 +25,19 @@ func TestDataset_Interface(t *testing.T) {
 			schema: NewSchema().ID(sid).Scene(NewSceneID()).Fields([]*SchemaField{
 				NewSchemaField().ID(f1).Name("foo").Type(ValueTypeNumber).MustBuild(),
 				NewSchemaField().ID(f2).Name("bar").Type(ValueTypeLatLng).MustBuild(),
+				NewSchemaField().ID(f3).Name("").Type(ValueTypeString).MustBuild(),
 			}).MustBuild(),
 			dataset: New().ID(did).Scene(NewSceneID()).Schema(sid).Fields([]*Field{
 				NewField(f1, ValueTypeNumber.ValueFrom(1), ""),
 				NewField(f2, ValueTypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}), ""),
+				NewField(f3, ValueTypeString.ValueFrom("aaa"), ""),
 			}).MustBuild(),
 			idkey: "",
 			want: map[string]interface{}{
-				"":    did.String(),
-				"foo": float64(1),
-				"bar": LatLng{Lat: 1, Lng: 2},
+				"":          did.String(),
+				"foo":       float64(1),
+				"bar":       LatLng{Lat: 1, Lng: 2},
+				f3.String(): "aaa",
 			},
 		},
 		{
