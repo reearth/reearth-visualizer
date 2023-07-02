@@ -60,10 +60,26 @@ export type Dataset = {
   datasets: Record<string, any>[];
 };
 
+export const extractDatasetSchemas = (layer: EarthLayer5Fragment | null | undefined): string[] => {
+  const datasetSchemaIds = new Set<string>();
+
+  const extract = (layer: EarthLayer5Fragment | null | undefined) => {
+    if (layer?.__typename !== "LayerGroup") return;
+    if (layer.linkedDatasetSchemaId) {
+      datasetSchemaIds.add(layer.linkedDatasetSchemaId);
+    }
+    layer.layers?.forEach(extract);
+  };
+
+  extract(layer);
+
+  return Array.from(datasetSchemaIds);
+};
+
 export const processLayer = (
-  layer: EarthLayer5Fragment | undefined,
-  parent: EarthLayer5Fragment | undefined,
-  datasets: Datasets | undefined,
+  layer: EarthLayer5Fragment | null | undefined,
+  parent: EarthLayer5Fragment | null | undefined,
+  datasets: Datasets | null | undefined,
 ): Layer | undefined => {
   if (!layer) return;
   const isDatasetLayer = layer.__typename === "LayerGroup" && !!layer.linkedDatasetSchemaId;

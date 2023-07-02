@@ -8,7 +8,14 @@ import {
   ValueType,
 } from "@reearth/services/gql";
 
-import { processLayer, processProperty, type Layer, Datasets, datasetValue } from "./convert";
+import {
+  processLayer,
+  processProperty,
+  type Layer,
+  Datasets,
+  datasetValue,
+  extractDatasetSchemas,
+} from "./convert";
 
 const dummyLayer: EarthLayer5Fragment = {
   id: "01gw78zrxak1r34xgjeawayem5",
@@ -290,6 +297,10 @@ const dummyDatasets: Datasets = {
     ],
   },
 };
+
+test("extractDatasetSchemas", () => {
+  expect(extractDatasetSchemas(dummyLayer)).toEqual(["01h1xpth3npn29h18t875d8gvk"]);
+});
 
 test("processLayer", () => {
   const expected: Layer = {
