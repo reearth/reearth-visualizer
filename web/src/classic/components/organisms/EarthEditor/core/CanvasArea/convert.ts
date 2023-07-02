@@ -12,7 +12,6 @@ import type {
 } from "@reearth/classic/core/Crust";
 import { isBuiltinWidget } from "@reearth/classic/core/Crust";
 import type { LegacyLayer, Tag } from "@reearth/classic/core/mantle";
-import { valueFromGQL } from "@reearth/classic/util/value";
 import type {
   GetBlocksQuery,
   Maybe,
@@ -27,7 +26,8 @@ import type {
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
   EarthLayer5Fragment,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { valueFromGQL } from "@reearth/classic/util/value";
 
 import { WidgetAreaPadding } from "../../PropertyPane/hooks";
 
