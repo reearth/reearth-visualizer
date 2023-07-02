@@ -34,13 +34,6 @@ export const CREATE_INFOBOX = gql`
         infobox {
           ...InfoboxFragment
         }
-        ... on LayerItem {
-          merged {
-            infobox {
-              ...MergedInfoboxFragment
-            }
-          }
-        }
       }
     }
   }
@@ -55,13 +48,6 @@ export const REMOVE_INFOBOX = gql`
         id
         infobox {
           ...InfoboxFragment
-        }
-        ... on LayerItem {
-          merged {
-            infobox {
-              ...MergedInfoboxFragment
-            }
-          }
         }
       }
     }
