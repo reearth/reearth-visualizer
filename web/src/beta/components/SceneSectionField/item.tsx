@@ -44,7 +44,7 @@ const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onAction }) => {
   );
 };
 
-const Item = styled.button<{ active?: boolean }>`
+const Item = styled.div<{ active?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -52,10 +52,14 @@ const Item = styled.button<{ active?: boolean }>`
 
   align-self: stretch;
 
-  ${props => (props.active ? "background: " + props.theme.general.select + ";" : "")}
+  ${props => (props.active ? `background: ${props.theme.general.select};` : "")}
   ${props => (props.active ? "border-radius: 4px;" : "")}
-  &:hover {${props =>
-    props.active ? "" : "background: " + props.theme.general.bg.weak + "; border-radius: 0px;"}
+  &:hover {
+    ${props => (props.active ? "" : `background: ${props.theme.general.bg.weak};`)}
+    ${props => (props.active ? "" : "border-radius: 0px;")}
+  }
+
+  cursor: pointer;
 `;
 const ItemProperty = styled.div`
   display: flex;
