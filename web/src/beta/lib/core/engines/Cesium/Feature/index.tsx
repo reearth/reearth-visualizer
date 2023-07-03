@@ -90,7 +90,7 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
-  const cacheable = data?.type !== "gtfs";
+  const cacheable = !data?.updateInterval;
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
     const componentId = generateIDWithMD5(
