@@ -11,10 +11,10 @@ export type SceneSectionItemProps = {
 export type Props = {
   scene: SwitchField<SceneSectionItemProps>;
   onActive?: (id: string) => void;
-  onAction?: (id: string) => void;
+  onClickAction?: (id: string) => void;
 };
 
-const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onAction }) => {
+const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onClickAction }) => {
   const theme = useTheme();
   const handleActive = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -26,9 +26,9 @@ const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onAction }) => {
   const handleAction = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      onAction?.(scene.id);
+      onClickAction?.(scene.id);
     },
-    [scene.id, onAction],
+    [scene.id, onClickAction],
   );
 
   return (
