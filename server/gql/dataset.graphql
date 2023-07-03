@@ -55,19 +55,6 @@ input UpdateDatasetSchemaInput {
   name: String!
 }
 
-input AddDynamicDatasetSchemaInput {
-  sceneId: ID!
-}
-
-input AddDynamicDatasetInput {
-  datasetSchemaId: ID!
-  author: String!
-  content: String!
-  lat: Float
-  lng: Float
-  target: String
-}
-
 input RemoveDatasetSchemaInput {
   schemaId: ID!
   force: Boolean
@@ -111,15 +98,6 @@ type RemoveDatasetSchemaPayload {
   schemaId: ID!
 }
 
-type AddDynamicDatasetSchemaPayload {
-  datasetSchema: DatasetSchema
-}
-
-type AddDynamicDatasetPayload {
-  datasetSchema: DatasetSchema
-  dataset: Dataset
-}
-
 type ImportDatasetPayload {
   datasetSchema: DatasetSchema!
 }
@@ -157,14 +135,11 @@ type DatasetEdge {
 extend type Query{
   datasetSchemas(sceneId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   datasets(datasetSchemaId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
-  dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
 }
 
 extend type Mutation {
   updateDatasetSchema(input: UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload
   syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
-  addDynamicDatasetSchema(input: AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload
-  addDynamicDataset(input: AddDynamicDatasetInput!): AddDynamicDatasetPayload
   removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
   importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload

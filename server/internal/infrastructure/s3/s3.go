@@ -99,7 +99,7 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
-	log.Infof("s3: asset deleted: %s", u)
+	log.Infofc(ctx, "s3: asset deleted: %s", u)
 
 	sn := getObjectNameFromURL(f.base, u)
 	if sn == "" {
@@ -128,7 +128,7 @@ func (f *fileRepo) UploadPluginFile(ctx context.Context, pid id.PluginID, file *
 }
 
 func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
-	log.Infof("s3: plugin deleted: %s", pid)
+	log.Infofc(ctx, "s3: plugin deleted: %s", pid)
 
 	return f.deleteAll(ctx, path.Join(pluginBasePath, pid.String()))
 }
@@ -161,7 +161,7 @@ func (f *fileRepo) MoveBuiltScene(ctx context.Context, oldName, name string) err
 }
 
 func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
-	log.Infof("s3: built scene deleted: %s", name)
+	log.Infofc(ctx, "s3: built scene deleted: %s", name)
 
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
@@ -182,8 +182,7 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 		Key:    aws.String(filename),
 	})
 	if err != nil {
-		log.Errorf("s3: read err: %+v\n", err)
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, fmt.Errorf("s3: read err: %+v", err))
 	}
 
 	return obj.Body, nil
@@ -199,7 +198,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 
 	ba, err := io.ReadAll(content)
 	if err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	body := bytes.NewReader(ba)
 
@@ -211,7 +210,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		ContentLength: body.Size(),
 	})
 	if err != nil {
-		log.Errorf("s3: upload err: %+v\n", err)
+		log.Errorfc(ctx, "s3: upload err: %v", err)
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
@@ -220,7 +219,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		Key:    aws.String(filename),
 	})
 	if err != nil {
-		log.Errorf("s3: check file size after upload err: %+v\n", err)
+		log.Errorfc(ctx, "s3: check file size after upload err: %v", err)
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
@@ -239,8 +238,8 @@ func (f *fileRepo) copy(ctx context.Context, from, dest string) error {
 		Key:        aws.String(dest),
 	})
 	if err != nil {
-		log.Errorf("s3: copy err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "s3: copy err: %+v\n", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil
@@ -274,8 +273,8 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 		Key:    aws.String(filename),
 	})
 	if err != nil {
-		log.Errorf("s3: delete err: %+v\n", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "s3: delete err: %v", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil
@@ -291,8 +290,8 @@ func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 		Prefix: aws.String(path),
 	})
 	if err != nil {
-		log.Errorf("s3: Unable to list object for delete %v", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "s3: unable to list object for delete %v", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	keys := lo.Map(l.Contents, func(obj types.Object, _ int) types.ObjectIdentifier {
@@ -305,8 +304,8 @@ func (f *fileRepo) deleteAll(ctx context.Context, path string) error {
 		},
 	})
 	if err != nil {
-		log.Errorf("s3: Unable to delete object %v", err)
-		return rerror.ErrInternalBy(err)
+		log.Errorfc(ctx, "s3: unable to delete object: %v", err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return nil

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/log"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -38,18 +38,18 @@ func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (
 		return nil, err
 	}
 
-	log.Infof("marketplace: downloading plugin package from \"%s\"", url)
+	log.Infofc(ctx, "marketplace: downloading plugin package from \"%s\"", url)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	if m.secret != "" {
 		req.Header.Set(secretHeader, m.secret)
 	}
 	res, err := m.client(ctx).Do(req)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	defer func() {
@@ -61,10 +61,14 @@ func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
+		return nil, rerror.ErrInternalByWithContext(ctx, fmt.Errorf("status code is %d", res.StatusCode))
 	}
 
-	return pluginpack.PackageFromZip(res.Body, nil, pluginPackageSizeLimit)
+	p, err := pluginpack.PackageFromZip(res.Body, nil, pluginPackageSizeLimit)
+	if err != nil {
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
+	}
+	return p, nil
 }
 
 func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error {
@@ -74,11 +78,11 @@ func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error
 	}
 	url = url + "/download"
 
-	log.Infof("marketplace: notify donwload to \"%s\"", url)
+	log.Infofc(ctx, "marketplace: notify donwload to \"%s\"", url)
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	if m.secret != "" {
 		req.Header.Set(secretHeader, m.secret)
@@ -86,7 +90,7 @@ func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error
 
 	res, err := m.client(ctx).Do(req)
 	if err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	defer func() {
@@ -94,7 +98,7 @@ func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error
 	}()
 
 	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusNotFound {
-		return rerror.ErrInternalBy(fmt.Errorf("status code is %d", res.StatusCode))
+		return rerror.ErrInternalByWithContext(ctx, fmt.Errorf("status code is %d", res.StatusCode))
 	}
 	return nil
 }

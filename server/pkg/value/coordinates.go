@@ -87,6 +87,16 @@ func (p *propertyCoordinates) String(i any) string {
 	return i.(Coordinates).String()
 }
 
+func (v *propertyCoordinates) JSONSchema() map[string]any {
+	return map[string]any{
+		"type":  "array",
+		"title": "Coordinates",
+		"items": map[string]any{
+			"type": "number",
+		},
+	}
+}
+
 func (v *Value) ValueCoordinates() (vv Coordinates, ok bool) {
 	if v == nil {
 		return

@@ -14,13 +14,7 @@ import {
   useCreateTeamMutation,
 } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import {
-  useSceneId,
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/services/state";
+import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -29,9 +23,8 @@ export default () => {
 
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
-  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
   const [currentProject, setProject] = useProject();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const navigate = useNavigate();
 
@@ -54,7 +47,17 @@ export default () => {
     skip: !sceneId,
   });
 
-  const workspaceId = data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
+  const workspaceId = useMemo(
+    () => (data?.node?.__typename === "Scene" ? data.node.teamId : undefined),
+    [data?.node],
+  );
+
+  useEffect(() => {
+    if (!currentWorkspace) {
+      setCurrentWorkspace(workspaces?.find(w => w.id === workspaceId));
+    }
+  }, [workspaces, workspaceId, currentWorkspace, setCurrentWorkspace]);
+
   const project = useMemo(
     () =>
       data?.node?.__typename === "Scene" && data.node.project
@@ -81,16 +84,6 @@ export default () => {
     },
     [checkProjectAliasQuery, project],
   );
-
-  useEffect(() => {
-    if (!currentWorkspace && lastWorkspace && workspaceId == lastWorkspace.id)
-      setWorkspace(lastWorkspace);
-    else {
-      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
-      setWorkspace(workspace);
-      setLastWorkspace(workspace);
-    }
-  }, [currentWorkspace, lastWorkspace, setLastWorkspace, setWorkspace, workspaceId, workspaces]);
 
   useEffect(() => {
     setValidAlias(
@@ -171,16 +164,14 @@ export default () => {
   );
 
   const handleTeamChange = useCallback(
-    (workspaceId: string) => {
-      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
-      if (workspace && workspaceId !== currentWorkspace?.id) {
-        setWorkspace(workspace);
-        setLastWorkspace(currentWorkspace);
-
-        navigate(`/dashboard/${workspaceId}`);
+    (id: string) => {
+      const workspace = workspaces?.find(workspace => workspace.id === id);
+      if (workspace && id !== currentWorkspace?.id) {
+        setCurrentWorkspace(workspace);
+        navigate(`/dashboard/${id}`);
       }
     },
-    [workspaces, currentWorkspace, setWorkspace, setLastWorkspace, navigate],
+    [currentWorkspace?.id, setCurrentWorkspace, workspaces, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -191,13 +182,11 @@ export default () => {
         refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
-        setWorkspace(results.data.createTeam.team);
-        setLastWorkspace(results.data.createTeam.team);
-
+        setCurrentWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setWorkspace, setLastWorkspace, navigate],
+    [createTeamMutation, setCurrentWorkspace, navigate],
   );
 
   useEffect(() => {

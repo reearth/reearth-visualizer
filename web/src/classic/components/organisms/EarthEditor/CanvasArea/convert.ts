@@ -20,18 +20,38 @@ import { valueFromGQL } from "@reearth/classic/util/value";
 import {
   GetBlocksQuery,
   Maybe,
-  MergedPropertyGroupFragmentFragment,
   PropertyItemFragmentFragment,
-  MergedPropertyGroupCommonFragmentFragment,
   EarthLayerFragment,
-  EarthLayerItemFragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
-  EarthLayer5Fragment,
+  PropertyGroupFragmentFragment,
+  PropertyFieldFragmentFragment,
+  PropertySchemaGroupFragmentFragment,
+  PropertySchemaFieldFragmentFragment,
+  EarthLayerItemFragment,
+  EarthLayerCommonFragment,
 } from "@reearth/services/gql";
+
+export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
+
+// export type RawLayer =
+//   | (EarthLayerItemFragment & EarthLayerCommonFragment)
+//   | ({
+//     __typename: "LayerGroup";
+//     layers?: RawLayer[] | null | undefined;
+//   } & EarthLayerCommonFragment);
+
+export type RawLayer = EarthLayerCommonFragment &
+  (
+    | EarthLayerItemFragment
+    | {
+        __typename: "LayerGroup";
+        layers?: RawLayer[] | null | undefined;
+      }
+  );
 
 type BlockType = Item & {
   pluginId: string;
@@ -40,125 +60,223 @@ type BlockType = Item & {
 
 type P = { [key in string]: any };
 
-const processPropertyGroup = (p?: PropertyItemFragmentFragment | null): P | P[] | undefined => {
-  if (!p) return;
-  if (p.__typename === "PropertyGroupList") {
-    return p.groups
-      .map(g => processPropertyGroup(g))
-      .filter((g): g is P => !!g && !Array.isArray(g));
-  }
-  if (p.__typename === "PropertyGroup") {
-    return p.fields.reduce<P>(
-      (a, b) => ({
-        ...a,
-        [b.fieldId]: valueFromGQL(b.value, b.type)?.value,
-      }),
-      p.id ? { id: p.id } : {},
-    );
-  }
-  return;
-};
+export type DatasetMap = Record<string, Datasets>;
 
-export const convertProperty = (p?: PropertyFragmentFragment | null): P | undefined => {
-  if (!p) return;
-  const items = "items" in p ? p.items : undefined;
-  if (!items) return;
-
-  return Array.isArray(items)
-    ? items.reduce<any>(
-        (a, b) => ({
-          ...a,
-          [b.schemaGroupId]: processPropertyGroup(b),
-        }),
-        {},
-      )
-    : undefined;
-};
-
-const processMergedPropertyGroup = (
-  p?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment | null,
-): P | P[] | undefined => {
-  if (!p) return;
-  if ("groups" in p && p.groups.length) {
-    return p.groups
-      .map(g => processMergedPropertyGroup(g))
-      .filter((g): g is P => !!g && !Array.isArray(g));
-  }
-  if (!p.fields.length) return;
-  return p.fields.reduce<P>(
-    (a, b) => ({
-      ...a,
-      [b.fieldId]: valueFromGQL(b.actualValue, b.type)?.value,
-    }),
-    {},
-  );
-};
-
-const processMergedProperty = (
-  p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
-): P | undefined => {
-  if (!p) return;
-  return p.groups.reduce<any>(
-    (a, b) => ({
-      ...a,
-      [b.schemaGroupId]: processMergedPropertyGroup(b),
-    }),
-    {},
-  );
-};
-
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox"] => {
-  if (!infobox) return;
-  return {
-    property: convertProperty(infobox.property),
-    blocks: infobox.fields.map<Block>(f => ({
-      id: f.id,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: convertProperty(f.property),
-      propertyId: f.propertyId, // required by onBlockChange
-    })),
+export type Datasets = {
+  // JSON schema
+  schema: {
+    $schema: string;
+    $id: string;
+    properties: Record<
+      string,
+      {
+        $id: string;
+      }
+    >;
   };
+  datasets: Record<string, any>[];
 };
 
-const processMergedInfobox = (
-  infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): Layer["infobox"] | undefined => {
-  if (!infobox) return;
-  return {
-    property: processMergedProperty(infobox.property),
-    blocks: infobox.fields.map<Block & { propertyId?: string }>(f => ({
-      id: f.originalId,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: processMergedProperty(f.property),
-      propertyId: f.property?.originalId ?? undefined, // required by onBlockChange
-    })),
+export const extractDatasetSchemas = (layer: RawLayer | null | undefined): string[] => {
+  const datasetSchemaIds = new Set<string>();
+
+  const extract = (layer: RawLayer | null | undefined) => {
+    if (layer?.__typename !== "LayerGroup") return;
+    if (layer.linkedDatasetSchemaId) {
+      datasetSchemaIds.add(layer.linkedDatasetSchemaId);
+    }
+    layer.layers?.forEach(extract);
   };
+
+  extract(layer);
+
+  return Array.from(datasetSchemaIds);
 };
 
-export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
+export const processLayer = (
+  layer: RawLayer | null | undefined,
+  parent: RawLayer | null | undefined,
+  datasets: DatasetMap | null | undefined,
+): Layer | undefined => {
   if (!layer) return;
+  const isDatasetLayer = layer.__typename === "LayerGroup" && !!layer.linkedDatasetSchemaId;
   return {
     id: layer.id,
     pluginId: layer.pluginId ?? "",
     extensionId: layer.extensionId ?? "",
     isVisible: layer.isVisible,
     title: layer.name,
-    property:
-      layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
-    propertyId: layer.propertyId ?? undefined,
-    infobox:
-      layer.__typename === "LayerItem"
-        ? processMergedInfobox(layer.merged?.infobox)
-        : processInfobox(layer.infobox),
     tags: processLayerTags(layer.tags),
-    children:
-      layer.__typename === "LayerGroup"
-        ? layer.layers
-            ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
-            .filter((l): l is Layer => !!l)
-        : undefined,
+    propertyId: layer.propertyId ?? undefined,
+    ...(!isDatasetLayer
+      ? {
+          property: processProperty(
+            parent?.property,
+            layer.property,
+            layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+            datasets,
+          ),
+        }
+      : {}),
+    ...(layer.infobox || parent?.infobox
+      ? {
+          infobox: processInfobox(
+            layer.infobox,
+            parent?.infobox,
+            layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+            datasets,
+          ),
+        }
+      : {}),
+    ...(layer.__typename === "LayerGroup"
+      ? {
+          children: layer.layers
+            ?.map(l => processLayer(l as RawLayer, isDatasetLayer ? layer : undefined, datasets))
+            .filter((l): l is Layer => !!l),
+        }
+      : {}),
+  };
+};
+
+export const processProperty = (
+  parent: PropertyFragmentFragment | null | undefined,
+  orig?: PropertyFragmentFragment | null | undefined,
+  linkedDatasetId?: string | null | undefined,
+  datasets?: DatasetMap | null | undefined,
+): P | undefined => {
+  const schema = orig?.schema || parent?.schema;
+  if (!schema) return;
+
+  const allItems: Record<
+    string,
+    {
+      schema: PropertySchemaGroupFragmentFragment;
+      orig?: PropertyItemFragmentFragment;
+      parent?: PropertyItemFragmentFragment;
+    }
+  > = schema.groups.reduce(
+    (a, b) => ({
+      ...a,
+      [b.schemaGroupId]: {
+        schema: b,
+        orig: orig?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+        parent: parent?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+      },
+    }),
+    {},
+  );
+
+  const mergedProperty: P = Object.fromEntries(
+    Object.entries(allItems)
+      .map(([key, value]) => {
+        const { schema, orig, parent } = value;
+        if (
+          (!orig || orig.__typename === "PropertyGroupList") &&
+          (!parent || parent.__typename === "PropertyGroupList")
+        ) {
+          const used = orig || parent;
+          return [
+            key,
+            used?.groups.map(g => ({
+              ...processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
+              id: g.id,
+            })),
+          ];
+        }
+
+        if (
+          (!orig || orig.__typename === "PropertyGroup") &&
+          (!parent || parent.__typename === "PropertyGroup")
+        ) {
+          return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
+        }
+        return [key, null];
+      })
+      .filter(([, value]) => !!value),
+  );
+
+  return mergedProperty;
+};
+
+const processPropertyGroups = (
+  schema: PropertySchemaGroupFragmentFragment,
+  parent: PropertyGroupFragmentFragment | null | undefined,
+  original: PropertyGroupFragmentFragment | null | undefined,
+  linkedDatasetId: string | null | undefined,
+  datasets: DatasetMap | null | undefined,
+): any => {
+  const allFields: Record<
+    string,
+    {
+      schema: PropertySchemaFieldFragmentFragment;
+      parent?: PropertyFieldFragmentFragment;
+      orig?: PropertyFieldFragmentFragment;
+    }
+  > = schema.fields.reduce(
+    (a, b) => ({
+      ...a,
+      [b.fieldId]: {
+        schema: b,
+        parent: parent?.fields.find(i => i.fieldId === b.fieldId),
+        orig: original?.fields.find(i => i.fieldId === b.fieldId),
+      },
+    }),
+    {},
+  );
+
+  return Object.fromEntries(
+    Object.entries(allFields)
+      .map(([key, { parent, orig }]) => {
+        const used = orig || parent;
+        if (!used) return [key, null];
+
+        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
+        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
+        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
+          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
+        }
+
+        return [key, valueFromGQL(used.value, used.type)?.value];
+      })
+      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+  );
+};
+
+export function datasetValue(
+  datasets: DatasetMap | null | undefined,
+  datasetSchemaId: string,
+  datasetId: string,
+  fieldId: string,
+) {
+  const dataset = datasets?.[datasetSchemaId];
+  if (!dataset?.schema) return;
+
+  const fieldName = Object.entries(dataset.schema.properties).find(([, v]) => {
+    const id = v["$id"].split("/").slice(-1)[0];
+    return id === fieldId;
+  })?.[0];
+
+  if (!fieldName) return;
+  return dataset.datasets.find(d => d[""] === datasetId)?.[fieldName];
+}
+
+const processInfobox = (
+  orig: EarthLayerFragment["infobox"] | null | undefined,
+  parent: EarthLayerFragment["infobox"] | null | undefined,
+  linkedDatasetId: string | null | undefined,
+  datasets: DatasetMap | null | undefined,
+): Layer["infobox"] => {
+  const used = orig || parent;
+  if (!used) return;
+  return {
+    property: processProperty(parent?.property, orig?.property, linkedDatasetId, datasets),
+    blocks: used.fields.map<Block>(f => ({
+      id: f.id,
+      pluginId: f.pluginId,
+      extensionId: f.extensionId,
+      property: processProperty(undefined, f.property, linkedDatasetId, datasets),
+      propertyId: f.propertyId, // required by onBlockChange
+    })),
   };
 };
 
@@ -169,7 +287,7 @@ export const convertWidgets = (
       floatingWidgets: Widget[];
       alignSystem: WidgetAlignSystem;
       layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
-      ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
+      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
     }
   | undefined => {
   if (!data?.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
@@ -207,7 +325,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: convertProperty(w.property),
+        property: processProperty(w.property, undefined, undefined, undefined),
       }),
     );
 
@@ -219,7 +337,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: convertProperty(w.property),
+        property: processProperty(w.property, undefined, undefined, undefined),
       }),
     );
 
@@ -269,17 +387,12 @@ export const convertWidgets = (
     };
   };
 
-  const ownBuiltinWidgets = data.node.widgets.reduce<{
-    [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K];
-  }>((res, next) => {
-    const id = `${next.pluginId}/${next.extensionId}`;
-    return isBuiltinWidget(id)
-      ? {
-          ...res,
-          [id]: true,
-        }
-      : res;
-  }, {});
+  const ownBuiltinWidgets = data.node.widgets
+    .filter(w => w.enabled)
+    .map(w => {
+      return `${w.pluginId}/${w.extensionId}` as keyof BuiltinWidgets;
+    })
+    .filter(isBuiltinWidget);
 
   return {
     floatingWidgets,
