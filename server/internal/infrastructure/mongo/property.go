@@ -7,8 +7,10 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -78,6 +80,9 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
+
+	log.Debugfc(ctx, "mongo: property.FindByIDs: len(c.Result)=%d len(ids)=%d len(readable)=%d len(uniq readable)", len(c.Result), len(ids), len(r.f.Readable), len(lo.Uniq(r.f.Readable)))
+
 	return filterProperties(ids, c.Result), nil
 }
 
