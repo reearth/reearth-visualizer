@@ -13,11 +13,11 @@ export type LayerSectionItemProps = {
 type Props = {
   layer: SwitchField<LayerSectionItemProps>;
   onActive?: (id: string) => void;
-  onAction?: (id: string) => void;
-  onVisible?: (id: string) => void;
+  onClickAction?: (id: string) => void;
+  onClickVisible?: (id: string) => void;
 };
 
-const LayerSectionItem: React.FC<Props> = ({ layer, onActive, onAction, onVisible }) => {
+const LayerSectionItem: React.FC<Props> = ({ layer, onActive, onClickAction, onClickVisible }) => {
   const theme = useTheme();
   const handleActive = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -29,16 +29,16 @@ const LayerSectionItem: React.FC<Props> = ({ layer, onActive, onAction, onVisibl
   const handleVisible = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      onVisible?.(layer.id);
+      onClickVisible?.(layer.id);
     },
-    [layer.id, onVisible],
+    [layer.id, onClickVisible],
   );
   const handleAction = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      onAction?.(layer.id);
+      onClickAction?.(layer.id);
     },
-    [layer.id, onAction],
+    [layer.id, onClickAction],
   );
 
   return (

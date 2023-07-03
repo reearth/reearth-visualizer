@@ -9,16 +9,16 @@ export type LayerSectionFieldProps = {
   layers: SwitchField<LayerSectionItemProps>[];
   onClickLayerAdd?: () => void;
   onActive?: (id: string) => void;
-  onAction?: (id: string) => void;
-  onVisible?: (id: string) => void;
+  onClickAction?: (id: string) => void;
+  onClickVisible?: (id: string) => void;
 };
 
 const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
   layers,
   onClickLayerAdd,
   onActive,
-  onAction,
-  onVisible,
+  onClickAction,
+  onClickVisible,
 }) => {
   const theme = useTheme();
 
@@ -38,8 +38,8 @@ const LayerSectionField: React.FC<LayerSectionFieldProps> = ({
             key={index}
             layer={item}
             onActive={onActive}
-            onAction={onAction}
-            onVisible={onVisible}
+            onClickAction={onClickAction}
+            onClickVisible={onClickVisible}
           />
         ))}
       </List>
