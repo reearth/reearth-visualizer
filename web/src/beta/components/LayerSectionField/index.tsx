@@ -51,6 +51,8 @@ const LayerAddFrame = styled.div`
   display: flex;
   justify-content: flex-end;
   padding: 0px 8px;
+
+  cursor: pointer;
 `;
 const List = styled.div`
   box-sizing: border-box;
