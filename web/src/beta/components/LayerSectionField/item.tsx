@@ -19,15 +19,27 @@ type Props = {
 
 const LayerSectionItem: React.FC<Props> = ({ layer, onActive, onAction, onVisible }) => {
   const theme = useTheme();
-  const handleActive = useCallback(() => {
-    onActive?.(layer.id);
-  }, [layer.id, onActive]);
-  const handleVisible = useCallback(() => {
-    onVisible?.(layer.id);
-  }, [layer.id, onVisible]);
-  const handleAction = useCallback(() => {
-    onAction?.(layer.id);
-  }, [layer.id, onAction]);
+  const handleActive = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onActive?.(layer.id);
+    },
+    [layer.id, onActive],
+  );
+  const handleVisible = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onVisible?.(layer.id);
+    },
+    [layer.id, onVisible],
+  );
+  const handleAction = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onAction?.(layer.id);
+    },
+    [layer.id, onAction],
+  );
 
   return (
     <Item active={layer.active} onClick={handleActive}>
@@ -45,17 +57,14 @@ const LayerSectionItem: React.FC<Props> = ({ layer, onActive, onAction, onVisibl
           {layer.label}
         </Text>
       </ItemProperty>
-      <Icon
-        icon={"actionbutton"}
-        size={16}
-        color={theme.general.content.main}
-        onClick={handleAction}
-      />
+      <ActionButton onClick={handleAction}>
+        <Icon icon={"actionbutton"} size={16} color={theme.general.content.main} />
+      </ActionButton>
     </Item>
   );
 };
 
-const Item = styled.button<{ active?: boolean }>`
+const Item = styled.div<{ active?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -69,13 +78,15 @@ const Item = styled.button<{ active?: boolean }>`
     ${props => (props.active ? "" : `background: ${props.theme.general.bg.weak};`)}
     ${props => (props.active ? "" : "border-radius: 0px;")}
   }
+
+  cursor: pointer;
 `;
 const ItemProperty = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
 `;
-const ItemVisibility = styled.div<{ active?: boolean; onClick?: () => void }>`
+const ItemVisibility = styled.div<{ active?: boolean }>`
   box-sizing: border-box;
 
   width: 20px;
@@ -90,5 +101,6 @@ const ItemVisibilityIcon = styled(Icon)`
   padding-top: 30%;
   padding-bottom: 27.34%;
 `;
+const ActionButton = styled.div``;
 
 export default LayerSectionItem;
