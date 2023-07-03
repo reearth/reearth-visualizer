@@ -1,0 +1,61 @@
+package storytelling
+
+import (
+	"errors"
+
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/property"
+)
+
+type Block struct {
+	id        BlockID
+	plugin    PluginID
+	extension PluginExtensionID
+	property  PropertyID
+}
+
+func (i *Block) ID() BlockID {
+	return i.id
+}
+
+func (i *Block) Plugin() PluginID {
+	return i.plugin
+}
+
+func (i *Block) Extension() PluginExtensionID {
+	return i.extension
+}
+
+func (i *Block) Property() PropertyID {
+	return i.property
+}
+
+func (i *Block) PropertyRef() *PropertyID {
+	if i == nil {
+		return nil
+	}
+	return i.property.Ref()
+}
+
+func (i *Block) ValidateProperty(pm property.Map) error {
+	if i == nil || pm == nil {
+		return nil
+	}
+
+	lp := pm[i.property]
+	if lp == nil {
+		return errors.New("property does not exist")
+	}
+	if !lp.Schema().Equal(NewPropertySchemaID(i.plugin, i.extension.String())) {
+		return errors.New("property has a invalid schema")
+	}
+
+	return nil
+}
+
+func (i *Block) UpgradePlugin(id plugin.ID) {
+	if i == nil || !i.plugin.NameEqual(id) {
+		return
+	}
+	i.plugin = id
+}

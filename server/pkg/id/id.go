@@ -202,3 +202,41 @@ var NewTagIDSet = idx.NewSet[Tag]
 var NewWorkspaceIDSet = idx.NewSet[Workspace]
 var NewUserIDSet = idx.NewSet[User]
 var NewWidgetIDSet = idx.NewSet[Widget]
+
+// Storytelling ids
+
+type Storytelling struct{}
+type Page struct{}
+type Block struct{}
+
+func (Storytelling) Type() string { return "storytelling" }
+func (Page) Type() string         { return "page" }
+func (Block) Type() string        { return "block" }
+
+type StorytellingID = idx.ID[Storytelling]
+type PageID = idx.ID[Page]
+type BlockID = idx.ID[Block]
+
+var NewStorytellingID = idx.New[Storytelling]
+var NewPageID = idx.New[Page]
+var NewBlockID = idx.New[Block]
+
+var MustStorytellingID = idx.Must[Storytelling]
+var MustPageID = idx.Must[Page]
+var MustBlockID = idx.Must[Block]
+
+var StorytellingIDFrom = idx.From[Storytelling]
+var PageIDFrom = idx.From[Page]
+var BlockIDFrom = idx.From[Block]
+
+var StorytellingIDFromRef = idx.FromRef[Storytelling]
+var PageIDFromRef = idx.FromRef[Page]
+var BlockIDFromRef = idx.FromRef[Block]
+
+type StorytellingIDList = idx.List[Storytelling]
+type PageIDList = idx.List[Page]
+type BlockIDList = idx.List[Block]
+
+var StorytellingIDListFrom = idx.ListFrom[Storytelling]
+var PageIDListFrom = idx.ListFrom[Page]
+var BlockIDListFrom = idx.ListFrom[Block]

@@ -24,6 +24,7 @@ var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, 
 var (
 	PropertySchemaIDVisualizerCesium = property.MustSchemaID("reearth/cesium")
 	PropertySchemaIDInfobox          = property.MustSchemaID("reearth/infobox")
+	PropertySchemaIDPage             = property.MustSchemaID("reearth/page")
 )
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
