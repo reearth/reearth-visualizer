@@ -16,12 +16,20 @@ export type Props = {
 
 const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onAction }) => {
   const theme = useTheme();
-  const handleActive = useCallback(() => {
-    onActive?.(scene.id);
-  }, [scene.id, onActive]);
-  const handleAction = useCallback(() => {
-    onAction?.(scene.id);
-  }, [scene.id, onAction]);
+  const handleActive = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onActive?.(scene.id);
+    },
+    [scene.id, onActive],
+  );
+  const handleAction = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onAction?.(scene.id);
+    },
+    [scene.id, onAction],
+  );
 
   return (
     <Item active={scene.active} onClick={handleActive}>
@@ -34,12 +42,9 @@ const SceneSectionItem: React.FC<Props> = ({ scene, onActive, onAction }) => {
           {scene.label}
         </Text>
       </ItemProperty>
-      <Icon
-        icon={"actionbutton"}
-        size={16}
-        color={theme.general.content.main}
-        onClick={handleAction}
-      />
+      <ActionButton onClick={handleAction}>
+        <Icon icon={"actionbutton"} size={16} color={theme.general.content.main} />
+      </ActionButton>
     </Item>
   );
 };
@@ -72,5 +77,6 @@ const ItemSpace = styled.div`
   width: 20px;
   height: 20px;
 `;
+const ActionButton = styled.div``;
 
 export default SceneSectionItem;
