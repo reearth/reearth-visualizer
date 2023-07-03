@@ -39,6 +39,14 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
+// Storytelling blocks
+import Audio from "./Icons/audio.svg";
+import EditIcon from "./Icons/editIcon.svg";
+import Settings from "./Icons/settings.svg";
+import ButtonBlock from "./Icons/buttonBlock.svg";
+import Camera from "./Icons/camera.svg";
+import MdFile from "./Icons/mdFile.svg";
+import Clock from "./Icons/clock.svg";
 //Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -81,6 +89,13 @@ export default {
   timeline: Timeline,
   twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
+  audio: Audio,
+  editIcon: EditIcon,
+  settings: Settings,
+  buttonBlock: ButtonBlock,
+  camera: Camera,
+  mdFile: MdFile,
+  clock: Clock,
   dashboard: Dashboard,
   help: Help,
   logout: Logout,
