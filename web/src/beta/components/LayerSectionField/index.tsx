@@ -51,8 +51,6 @@ const LayerAddFrame = styled.div`
   display: flex;
   justify-content: flex-end;
   padding: 0px 8px;
-
-  width: 100%;
 `;
 const List = styled.div`
   box-sizing: border-box;
@@ -60,8 +58,6 @@ const List = styled.div`
   flex-direction: column;
   padding: 8px;
   gap: 8px;
-
-  width: 100%;
 `;
 
 export default LayerSectionField;
