@@ -19,6 +19,9 @@ export default function Published({ alias }: Props) {
     error,
     clusters,
     engineMeta,
+    selectedLayerId,
+    layerSelectionReason,
+    selectLayer,
   } = useHooks(alias);
 
   return error ? (
@@ -38,6 +41,9 @@ export default function Published({ alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}
+      selectedLayerId={selectedLayerId}
+      layerSelectionReason={layerSelectionReason}
+      onLayerSelect={selectLayer}
     />
   );
 }
