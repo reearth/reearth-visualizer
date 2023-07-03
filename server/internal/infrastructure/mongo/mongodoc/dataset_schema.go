@@ -4,7 +4,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/mongox"
+	"golang.org/x/exp/slices"
 )
 
 type DatasetSchemaDocument struct {
@@ -23,10 +23,12 @@ type DatasetSchemaFieldDocument struct {
 	Source string
 }
 
-type DatasetSchemaConsumer = mongox.SliceFuncConsumer[*DatasetSchemaDocument, *dataset.Schema]
+type DatasetSchemaConsumer = Consumer[*DatasetSchemaDocument, *dataset.Schema]
 
-func NewDatasetSchemaConsumer() *DatasetSchemaConsumer {
-	return NewComsumer[*DatasetSchemaDocument, *dataset.Schema]()
+func NewDatasetSchemaConsumer(scenes []id.SceneID) *DatasetSchemaConsumer {
+	return NewConsumer[*DatasetSchemaDocument, *dataset.Schema](func(a *dataset.Schema) bool {
+		return scenes == nil || slices.Contains(scenes, a.Scene())
+	})
 }
 
 func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {

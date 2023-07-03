@@ -131,8 +131,8 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 		}
 	}
 
-	c := mongodoc.NewAssetConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -141,16 +141,16 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 }
 
 func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err2 := r.client.Find(ctx, filter, c); err2 != nil {
 		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
 
 func (r *Asset) findOne(ctx context.Context, filter any) (*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
@@ -171,9 +171,9 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 	return res
 }
 
-func (r *Asset) readFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Readable)
-}
+// func (r *Asset) readFilter(filter any) any {
+// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// }
 
 func (r *Asset) writeFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Writable)
