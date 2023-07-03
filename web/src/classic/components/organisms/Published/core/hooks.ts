@@ -212,11 +212,13 @@ export default (alias?: string) => {
     [],
   );
 
-  const selectedLayerId = useMemo(() => {
-    return selected?.type === "layer"
-      ? { layerId: selected.layerId, featureId: selected.featureId }
-      : undefined;
-  }, [selected]);
+  const selectedLayerId = useMemo(
+    () =>
+      selected?.type === "layer"
+        ? { layerId: selected.layerId, featureId: selected.featureId }
+        : undefined,
+    [selected],
+  );
 
   const layerSelectionReason = useMemo(
     () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
