@@ -81,7 +81,7 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 		return nil, err
 	}
 
-	log.Debugfc(ctx, "mongo: property.FindByIDs: len(c.Result)=%d len(ids)=%d len(readable)=%d len(uniq readable)", len(c.Result), len(ids), len(r.f.Readable), len(lo.Uniq(r.f.Readable)))
+	log.Debugfc(ctx, "mongo: property.FindByIDs: len(c.Result)=%d len(ids)=%d len(readable)=%d len(uniq readable)=%d", len(c.Result), len(ids), len(r.f.Readable), len(lo.Uniq(r.f.Readable)))
 
 	return filterProperties(ids, c.Result), nil
 }
