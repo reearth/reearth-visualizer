@@ -7,7 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
@@ -74,24 +73,12 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 			"$in": ids.Strings(),
 		},
 	}
-	c := mongodoc.NewPropertyConsumer()
+
+	c := mongodoc.NewPropertyConsumer(r.f.Readable)
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	readableScenes := make(map[id.SceneID]struct{})
-	for _, sceneID := range r.f.Readable {
-		readableScenes[sceneID] = struct{}{}
-	}
-	if len(readableScenes) != len(r.f.Readable) {
-		log.Warnc(ctx, "readable id list is not unique")
-	}
-	res := c.Result[:0]
-	for _, col := range c.Result {
-		if _, ok := readableScenes[col.Scene()]; ok {
-			res = append(res, col)
-		}
-	}
-	return filterProperties(ids, res), nil
+	return filterProperties(ids, c.Result), nil
 }
 
 func (r *Property) FindLinkedAll(ctx context.Context, id id.SceneID) (property.List, error) {
@@ -208,16 +195,16 @@ func (r *Property) RemoveByScene(ctx context.Context, sceneID id.SceneID) error 
 }
 
 func (r *Property) find(ctx context.Context, filter any) (property.List, error) {
-	c := mongodoc.NewPropertyConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPropertyConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
 func (r *Property) findOne(ctx context.Context, filter any) (*property.Property, error) {
-	c := mongodoc.NewPropertyConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPropertyConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
@@ -238,9 +225,9 @@ func filterProperties(ids []id.PropertyID, rows property.List) property.List {
 	return res
 }
 
-func (r *Property) readFilter(filter any) any {
-	return applySceneFilter(filter, r.f.Readable)
-}
+// func (r *Property) readFilter(filter any) any {
+// 	return applySceneFilter(filter, r.f.Readable)
+// }
 
 func (r *Property) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)
