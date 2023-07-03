@@ -170,6 +170,20 @@ type AttachTagToLayerPayload struct {
 	Layer Layer `json:"layer"`
 }
 
+type Block struct {
+	ID              ID               `json:"id"`
+	PropertyID      ID               `json:"propertyId"`
+	PluginID        ID               `json:"pluginId"`
+	ExtensionID     ID               `json:"extensionId"`
+	LinkedDatasetID *ID              `json:"linkedDatasetId"`
+	Page            *Page            `json:"page"`
+	Property        *Property        `json:"property"`
+	Plugin          *Plugin          `json:"plugin"`
+	Extension       *PluginExtension `json:"extension"`
+}
+
+func (Block) IsNode() {}
+
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
@@ -196,12 +210,40 @@ type CreateAssetPayload struct {
 	Asset *Asset `json:"asset"`
 }
 
+type CreateBlockInput struct {
+	StoryID     ID   `json:"storyId"`
+	PageID      ID   `json:"pageId"`
+	PluginID    ID   `json:"pluginId"`
+	ExtensionID ID   `json:"extensionId"`
+	Index       *int `json:"index"`
+}
+
+type CreateBlockPayload struct {
+	Block *Block `json:"block"`
+	Page  *Page  `json:"page"`
+	Story *Story `json:"story"`
+	Index int    `json:"index"`
+}
+
 type CreateInfoboxInput struct {
 	LayerID ID `json:"layerId"`
 }
 
 type CreateInfoboxPayload struct {
 	Layer Layer `json:"layer"`
+}
+
+type CreatePageInput struct {
+	StoryID     ID      `json:"storyId"`
+	Title       *string `json:"title"`
+	Swipe       *bool   `json:"swipe"`
+	Layers      []ID    `json:"layers"`
+	SwipeLayers []ID    `json:"swipeLayers"`
+}
+
+type CreatePagePayload struct {
+	Page  *Page  `json:"page"`
+	Story *Story `json:"story"`
 }
 
 type CreateProjectInput struct {
@@ -221,6 +263,12 @@ type CreateSceneInput struct {
 
 type CreateScenePayload struct {
 	Scene *Scene `json:"scene"`
+}
+
+type CreateStoryInput struct {
+	SceneID ID     `json:"sceneId"`
+	Title   string `json:"title"`
+	Index   *int   `json:"index"`
 }
 
 type CreateTagGroupInput struct {
@@ -338,12 +386,30 @@ type DeleteMePayload struct {
 	UserID ID `json:"userId"`
 }
 
+type DeletePageInput struct {
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+}
+
+type DeletePagePayload struct {
+	PageID ID     `json:"pageId"`
+	Story  *Story `json:"story"`
+}
+
 type DeleteProjectInput struct {
 	ProjectID ID `json:"projectId"`
 }
 
 type DeleteProjectPayload struct {
 	ProjectID ID `json:"projectId"`
+}
+
+type DeleteStoryInput struct {
+	StoryID ID `json:"storyId"`
+}
+
+type DeleteStoryPayload struct {
+	StoryID ID `json:"storyId"`
 }
 
 type DeleteTeamInput struct {
@@ -613,6 +679,20 @@ type MergedPropertyGroup struct {
 	LinkedDataset      *Dataset               `json:"linkedDataset"`
 }
 
+type MoveBlockInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	BlockID ID  `json:"blockId"`
+	Index   int `json:"index"`
+}
+
+type MoveBlockPayload struct {
+	Block *Block `json:"block"`
+	Page  *Page  `json:"page"`
+	Story *Story `json:"story"`
+	Index int    `json:"index"`
+}
+
 type MoveInfoboxFieldInput struct {
 	LayerID        ID  `json:"layerId"`
 	InfoboxFieldID ID  `json:"infoboxFieldId"`
@@ -638,12 +718,43 @@ type MoveLayerPayload struct {
 	Index           int         `json:"index"`
 }
 
+type MovePageInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	Index   int `json:"index"`
+}
+
+type MovePagePayload struct {
+	Page  *Page  `json:"page"`
+	Story *Story `json:"story"`
+	Index int    `json:"index"`
+}
+
 type MovePropertyItemInput struct {
 	PropertyID    ID  `json:"propertyId"`
 	SchemaGroupID ID  `json:"schemaGroupId"`
 	ItemID        ID  `json:"itemId"`
 	Index         int `json:"index"`
 }
+
+type MoveStoryInput struct {
+	StoryID ID  `json:"storyId"`
+	Index   int `json:"index"`
+}
+
+type Page struct {
+	ID          ID        `json:"id"`
+	Title       string    `json:"title"`
+	Blocks      []*Block  `json:"blocks"`
+	Swipe       bool      `json:"swipe"`
+	Layers      []ID      `json:"layers"`
+	SwipeLayers []ID      `json:"swipeLayers"`
+	Property    *Property `json:"property"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+func (Page) IsNode() {}
 
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor"`
@@ -893,6 +1004,12 @@ type PublishProjectInput struct {
 	Status    PublishmentStatus `json:"status"`
 }
 
+type PublishStoryInput struct {
+	StoryID ID                `json:"storyId"`
+	Alias   *string           `json:"alias"`
+	Status  PublishmentStatus `json:"status"`
+}
+
 type Rect struct {
 	West  float64 `json:"west"`
 	South float64 `json:"south"`
@@ -906,6 +1023,18 @@ type RemoveAssetInput struct {
 
 type RemoveAssetPayload struct {
 	AssetID ID `json:"assetId"`
+}
+
+type RemoveBlockInput struct {
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+	BlockID ID `json:"blockId"`
+}
+
+type RemoveBlockPayload struct {
+	BlockID ID     `json:"blockId"`
+	Page    *Page  `json:"page"`
+	Story   *Story `json:"story"`
 }
 
 type RemoveClusterInput struct {
@@ -1014,6 +1143,7 @@ type Scene struct {
 	Team              *Team                    `json:"team"`
 	Property          *Property                `json:"property"`
 	RootLayer         *LayerGroup              `json:"rootLayer"`
+	Stories           []*Story                 `json:"stories"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
 	Tags              []Tag                    `json:"tags"`
@@ -1052,6 +1182,24 @@ type SignupInput struct {
 type SignupPayload struct {
 	User *User `json:"user"`
 	Team *Team `json:"team"`
+}
+
+type Story struct {
+	ID                ID                `json:"id"`
+	Title             string            `json:"title"`
+	Alias             string            `json:"alias"`
+	Property          *Property         `json:"property"`
+	Pages             []*Page           `json:"pages"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	PublishedAt       *time.Time        `json:"publishedAt"`
+}
+
+func (Story) IsNode() {}
+
+type StoryPayload struct {
+	Story *Story `json:"story"`
 }
 
 type SyncDatasetInput struct {
@@ -1196,6 +1344,20 @@ type UpdateMemberOfTeamPayload struct {
 	Team *Team `json:"team"`
 }
 
+type UpdatePageInput struct {
+	StoryID     ID      `json:"storyId"`
+	PageID      ID      `json:"pageId"`
+	Title       *string `json:"title"`
+	Swipe       *bool   `json:"swipe"`
+	Layers      []ID    `json:"layers"`
+	SwipeLayers []ID    `json:"swipeLayers"`
+}
+
+type UpdatePagePayload struct {
+	Page  *Page  `json:"page"`
+	Story *Story `json:"story"`
+}
+
 type UpdateProjectInput struct {
 	ProjectID         ID       `json:"projectId"`
 	Name              *string  `json:"name"`
@@ -1235,6 +1397,12 @@ type UpdatePropertyValueInput struct {
 	FieldID       ID          `json:"fieldId"`
 	Value         interface{} `json:"value"`
 	Type          ValueType   `json:"type"`
+}
+
+type UpdateStoryInput struct {
+	StoryID ID      `json:"storyId"`
+	Title   *string `json:"title"`
+	Index   *int    `json:"index"`
 }
 
 type UpdateTagInput struct {

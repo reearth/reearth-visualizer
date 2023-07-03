@@ -1,0 +1,183 @@
+type Story implements Node {
+  id: ID!
+  title: String!
+  alias: String!
+  property: Property
+  pages: [Page!]!
+  publishmentStatus: PublishmentStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+}
+
+type Page implements Node {
+  id: ID!
+  title: String!
+  blocks: [Block!]!
+  swipe: Boolean!
+  layers: [ID!]!
+  swipeLayers: [ID!]
+  property: Property
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Block implements Node {
+  id: ID!
+  propertyId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  linkedDatasetId: ID
+  page: Page!
+  property: Property
+  plugin: Plugin
+  extension: PluginExtension
+#  linkedDataset: Dataset
+}
+
+# InputType
+
+input CreateStoryInput {
+  sceneId: ID!
+  title: String!
+  index: Int
+}
+
+input UpdateStoryInput {
+  storyId: ID!
+  title: String
+  index: Int
+}
+
+input MoveStoryInput {
+  storyId: ID!
+  index: Int!
+}
+
+input DeleteStoryInput {
+  storyId: ID!
+}
+
+input PublishStoryInput {
+  storyId: ID!
+  alias: String
+  status: PublishmentStatus!
+}
+
+input CreatePageInput {
+  storyId: ID!
+  title: String
+  swipe: Boolean
+  layers: [ID!]
+  swipeLayers: [ID!]
+}
+
+input UpdatePageInput {
+  storyId: ID!
+  pageId: ID!
+  title: String
+  swipe: Boolean
+  layers: [ID!]
+  swipeLayers: [ID!]
+}
+
+input MovePageInput {
+  storyId: ID!
+  pageId: ID!
+  index: Int!
+}
+
+input DeletePageInput {
+  storyId: ID!
+  pageId: ID!
+}
+
+input CreateBlockInput {
+  storyId: ID!
+  pageId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  index: Int
+}
+
+input MoveBlockInput {
+  storyId: ID!
+  pageId: ID!
+  blockId: ID!
+  index: Int!
+}
+
+input RemoveBlockInput {
+  storyId: ID!
+  pageId: ID!
+  blockId: ID!
+}
+
+# Payload
+
+type StoryPayload {
+  story: Story!
+}
+
+type DeleteStoryPayload {
+  storyId: ID!
+}
+
+type CreatePagePayload {
+  page: Page!
+  story: Story!
+}
+
+type UpdatePagePayload {
+  page: Page!
+  story: Story!
+}
+
+type MovePagePayload {
+  page: Page!
+  story: Story!
+  index: Int!
+}
+
+type DeletePagePayload {
+  pageId: ID!
+  story: Story!
+}
+
+type CreateBlockPayload {
+  block: Block!
+  page: Page!
+  story: Story!
+  index: Int!
+}
+
+type MoveBlockPayload {
+  block: Block!
+  page: Page!
+  story: Story!
+  index: Int!
+}
+
+type RemoveBlockPayload {
+  blockId: ID!
+  page: Page!
+  story: Story!
+}
+
+extend type Mutation {
+  createStorytelling(input: CreateStoryInput!): StoryPayload!
+  updateStorytelling(input: UpdateStoryInput!): StoryPayload!
+  deleteStorytelling(input: DeleteStoryInput!): DeleteStoryPayload!
+  publishStorytelling(input: PublishStoryInput!): StoryPayload!
+  moveStorytelling(input: PublishStoryInput!): StoryPayload!
+
+  createPage(input: CreatePageInput!): CreatePagePayload!
+  updatePage(input: UpdatePageInput!): UpdatePagePayload!
+  removePage(input: DeletePageInput!): DeletePagePayload!
+  movePage(input: MovePageInput!): MovePagePayload!
+#  dublicatePage(input: MovePageInput!): MovePagePayload!
+
+  createBlock(input: CreateBlockInput!): CreateBlockPayload!
+  moveBlock(input: MoveBlockInput!): MoveBlockPayload!
+  removeBlock(input: RemoveBlockInput!): RemoveBlockPayload!
+}
