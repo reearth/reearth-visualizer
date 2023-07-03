@@ -77,6 +77,9 @@ const ItemSpace = styled.div`
   width: 20px;
   height: 20px;
 `;
-const ActionButton = styled.div``;
+const ActionButton = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 export default SceneSectionItem;
