@@ -269,16 +269,16 @@ func (r *Layer) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 }
 
 func (r *Layer) find(ctx context.Context, dst layer.List, filter interface{}) (layer.List, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return lo.ToSlicePtr(c.Result), nil
 }
 
 func (r *Layer) findOne(ctx context.Context, filter interface{}) (layer.Layer, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {
@@ -288,8 +288,8 @@ func (r *Layer) findOne(ctx context.Context, filter interface{}) (layer.Layer, e
 }
 
 func (r *Layer) findItemOne(ctx context.Context, filter interface{}) (*layer.Item, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {
@@ -299,8 +299,8 @@ func (r *Layer) findItemOne(ctx context.Context, filter interface{}) (*layer.Ite
 }
 
 func (r *Layer) findGroupOne(ctx context.Context, filter interface{}) (*layer.Group, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	if len(c.Result) == 0 {
@@ -310,16 +310,16 @@ func (r *Layer) findGroupOne(ctx context.Context, filter interface{}) (*layer.Gr
 }
 
 func (r *Layer) findItems(ctx context.Context, dst layer.ItemList, filter interface{}) (layer.ItemList, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerItemList(), nil
 }
 
 func (r *Layer) findGroups(ctx context.Context, dst layer.GroupList, filter interface{}) (layer.GroupList, error) {
-	c := mongodoc.NewLayerConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewLayerConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerGroupList(), nil
@@ -373,9 +373,9 @@ func filterLayerGroups(ids []id.LayerID, rows []*layer.Group) []*layer.Group {
 	return res
 }
 
-func (r *Layer) readFilter(filter interface{}) interface{} {
-	return applySceneFilter(filter, r.f.Readable)
-}
+// func (r *Layer) readFilter(filter interface{}) interface{} {
+// 	return applySceneFilter(filter, r.f.Readable)
+// }
 
 func (r *Layer) writeFilter(filter interface{}) interface{} {
 	return applySceneFilter(filter, r.f.Writable)
